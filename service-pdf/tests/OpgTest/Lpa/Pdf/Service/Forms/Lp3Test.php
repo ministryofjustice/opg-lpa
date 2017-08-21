@@ -2,13 +2,21 @@
 
 namespace OpgTest\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\Pdf\Service\Forms\Lp3;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Pdf\Service\Forms\Lp3;
 use mikehaertl\pdftk\Pdf;
 use RuntimeException;
 
 class Lp3Test extends AbstractFormTestClass
 {
+    public function testConstructorThrowsExceptionNotEnoughData()
+    {
+        $this->setExpectedException('RuntimeException', 'LPA does not contain all the required data to generate a LP3');
+
+        new Lp3(new Lpa());
+    }
+
     public function testGeneratePF()
     {
         $lpa = $this->getLpa();

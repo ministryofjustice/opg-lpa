@@ -2,8 +2,8 @@
 
 namespace Opg\Lpa\Pdf\Worker;
 
-use DynamoQueue\Worker\ProcessorInterface;
 use Opg\Lpa\Pdf\Config\Config;
+use DynamoQueue\Worker\ProcessorInterface;
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Exception\InvalidArgumentException;
 use Zend\Filter\Decompress;
@@ -29,9 +29,7 @@ class DynamoQueueWorker extends AbstractWorker implements ProcessorInterface
      */
     public function perform($jobId, $message)
     {
-        $messageSize = strlen($message);
-
-        $this->logger->info("New message: $messageSize bytes\n");
+        $this->logger->info("New message: strlen($message) bytes\n");
 
         $config = Config::getInstance();
         $encryptionConfig = $config['pdf']['encryption'];
@@ -43,19 +41,16 @@ class DynamoQueueWorker extends AbstractWorker implements ProcessorInterface
 
         //  We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
         $blockCipher = BlockCipher::factory('mcrypt', $encryptionConfig['options']);
-
-        //  Set the secret key
         $blockCipher->setKey($encryptionKeysQueue);
 
-        $compressedJson = $blockCipher->decrypt($message);
-
-        //  Decompress the JSON
+        //  Get the JSON from the message and decompress it
         $decompressFilter = new Decompress('Gz');
+        $compressedJson = $blockCipher->decrypt($message);
         $json = $decompressFilter->filter($compressedJson);
 
         $data = json_decode($json, true);
 
-        // Run the job...
+        //  Run the job...
         $this->run($jobId, $data['type'], $data['lpa']);
     }
 }

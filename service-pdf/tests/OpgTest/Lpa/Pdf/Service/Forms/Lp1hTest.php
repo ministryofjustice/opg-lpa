@@ -3,6 +3,7 @@
 namespace OpgTest\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Service\Forms\Lp1h;
 use mikehaertl\pdftk\Pdf;
 use Mockery;
@@ -10,6 +11,13 @@ use UnexpectedValueException;
 
 class Lp1hTest extends AbstractFormTestClass
 {
+    public function testConstructorThrowsExceptionNotEnoughData()
+    {
+        $this->setExpectedException('RuntimeException', 'LPA does not contain all the required data to generate a LP1');
+
+        new Lp1h(new Lpa());
+    }
+
     public function testGenerate()
     {
         $lpa = $this->getLpa(false);
@@ -2234,148 +2242,6 @@ class Lp1hTest extends AbstractFormTestClass
                 "applicant-1-hw",
                 "applicant-2-hw",
                 "applicant-3-hw",
-            ],
-        ];
-
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
-    }
-
-    public function testGenerateZeroAttorneys()
-    {
-        $lpa = $this->getLpa(false);
-
-        //  Adapt the LPA data as required
-        //  Remove primary attorneys and any concerned data
-        $lpa->document->primaryAttorneys = [];
-        $lpa->document->whoIsRegistering = [];
-
-        //  Remove replacement attorneys and any concerned data
-        $lpa->document->replacementAttorneys = [];
-
-        $lp1f = new Lp1h($lpa);
-
-        $form = $lp1f->generate();
-
-        $this->assertInstanceOf(Lp1h::class, $form);
-
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
-
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
-            'lpa-document-donor-name-title' => "Mrs",
-            'lpa-document-donor-name-first' => "Nancy",
-            'lpa-document-donor-name-last' => "Garrison",
-            'lpa-document-donor-otherNames' => "",
-            'lpa-document-donor-dob-date-day' => "11",
-            'lpa-document-donor-dob-date-month' => "01",
-            'lpa-document-donor-dob-date-year' => "1948",
-            'lpa-document-donor-address-address1' => "Bank End Farm House",
-            'lpa-document-donor-address-address2' => "Undercliff Drive",
-            'lpa-document-donor-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-donor-address-postcode' => "PO38 1UL",
-            'lpa-document-donor-email-address' => "opglpademo+LouiseJames@gmail.com",
-            'how-attorneys-act' => "jointly-attorney-severally",
-            'lpa-document-peopleToNotify-0-name-title' => "Mr",
-            'lpa-document-peopleToNotify-0-name-first' => "Anthony",
-            'lpa-document-peopleToNotify-0-name-last' => "Webb",
-            'lpa-document-peopleToNotify-0-address-address1' => "Brickhill Cottage",
-            'lpa-document-peopleToNotify-0-address-address2' => "Birch Cross",
-            'lpa-document-peopleToNotify-0-address-address3' => "Marchington, Uttoxeter, Staffordshire",
-            'lpa-document-peopleToNotify-0-address-postcode' => "BS18 6PL",
-            'lpa-document-peopleToNotify-1-name-title' => "Miss",
-            'lpa-document-peopleToNotify-1-name-first' => "Louie",
-            'lpa-document-peopleToNotify-1-name-last' => "Wade",
-            'lpa-document-peopleToNotify-1-address-address1' => "33 Lincoln Green Lane",
-            'lpa-document-peopleToNotify-1-address-address2' => "",
-            'lpa-document-peopleToNotify-1-address-address3' => "Cholderton, Oxfordshire",
-            'lpa-document-peopleToNotify-1-address-postcode' => "SP4 4DY",
-            'lpa-document-peopleToNotify-2-name-title' => "Mr",
-            'lpa-document-peopleToNotify-2-name-first' => "Stern",
-            'lpa-document-peopleToNotify-2-name-last' => "Hamlet",
-            'lpa-document-peopleToNotify-2-address-address1' => "33 Junction road",
-            'lpa-document-peopleToNotify-2-address-address2' => "Brighton",
-            'lpa-document-peopleToNotify-2-address-address3' => "Sussex",
-            'lpa-document-peopleToNotify-2-address-postcode' => "JL7 8AK",
-            'lpa-document-peopleToNotify-3-name-title' => "Mr",
-            'lpa-document-peopleToNotify-3-name-first' => "Jayden",
-            'lpa-document-peopleToNotify-3-name-last' => "Rodriguez",
-            'lpa-document-peopleToNotify-3-address-address1' => "42 York Road",
-            'lpa-document-peopleToNotify-3-address-address2' => "Canterbury",
-            'lpa-document-peopleToNotify-3-address-address3' => "Kent",
-            'lpa-document-peopleToNotify-3-address-postcode' => "YL4 5DL",
-            'has-more-than-4-notified-people' => "On",
-            'has-more-than-5-notified-people' => "On",
-            'lpa-document-preference' => "\r\nLorem ipsum dolor sit amet, consectetur adipiscing elit.                            ",
-            'lpa-document-instruction' => "\r\nMaecenas posuere augue sed purus malesuada dapibus.                                 ",
-            'see_continuation_sheet_3' => "see continuation sheet 3",
-            'lpa-document-certificateProvider-name-title' => "Mr",
-            'lpa-document-certificateProvider-name-first' => "Reece",
-            'lpa-document-certificateProvider-name-last' => "Richards",
-            'lpa-document-certificateProvider-address-address1' => "11 Brookside",
-            'lpa-document-certificateProvider-address-address2' => "Cholsey",
-            'lpa-document-certificateProvider-address-address3' => "Wallingford, Oxfordshire",
-            'lpa-document-certificateProvider-address-postcode' => "OX10 9NN",
-            'who-is-applicant' => "attorney",
-            'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
-            'correspondent-contact-by-post' => "On",
-            'correspondent-contact-by-phone' => "On",
-            'lpa-document-correspondent-phone-number' => "01234123456",
-            'correspondent-contact-by-email' => "On",
-            'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
-            'correspondent-contact-in-welsh' => "On",
-            'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
-            'pay-by' => "card",
-            'lpa-payment-phone-number' => "NOT REQUIRED.",
-            'apply-for-fee-reduction' => "On",
-            'lpa-payment-reference' => "ABCD-1234",
-            'lpa-payment-amount' => "£0.00",
-            'lpa-payment-date-day' => "26",
-            'lpa-payment-date-month' => "07",
-            'lpa-payment-date-year' => "2017",
-            'footer-instrument-right' => "LP1H Health and welfare (07.15)",
-            'footer-registration-right' => "LP1H Register your LPA (07.15)",
-        ];
-
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
-
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
-            5 => [
-                "life-sustain-B",
-            ],
-            19 => [
-                "applicant-signature-3",
-                "applicant-signature-2",
-                "applicant-signature-1",
-                "applicant-signature-0",
-            ],
-            4 => [
-                "replacementAttorney-0-hw",
-                "replacementAttorney-1-hw",
-            ],
-            12 => [
-                "attorney-signature-hw",
-            ],
-            13 => [
-                "attorney-signature-hw",
-            ],
-            14 => [
-                "attorney-signature-hw",
-            ],
-            11 => [
-                "attorney-signature-hw",
             ],
         ];
 

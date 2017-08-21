@@ -3,10 +3,16 @@
 namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use mikehaertl\pdftk\Pdf;
 
 class Cs2 extends AbstractForm
 {
+    /**
+     * Filename of the PDF template to use
+     *
+     * @var string|array
+     */
+    protected $pdfTemplateFile = 'LPC_Continuation_Sheet_2.pdf';
+
     private $contentType;
     private $content;
 
@@ -56,17 +62,16 @@ class Cs2 extends AbstractForm
             }
 
             //  Set the PDF form data
-            $this->pdfFormData['cs2-is'] = $this->contentType;
-            $this->pdfFormData['cs2-content'] = $this->getContentForBox($pageNo, $this->content, $this->contentType);
-            $this->pdfFormData['cs2-donor-full-name'] = $this->lpa->document->donor->name->__toString();
-            $this->pdfFormData['cs2-continued'] = $cs2Continued;
-            $this->pdfFormData['cs2-footer-right'] = $this->config['footer']['cs2'];
+            $this->dataForForm['cs2-is'] = $this->contentType;
+            $this->dataForForm['cs2-content'] = $this->getContentForBox($pageNo, $this->content, $this->contentType);
+            $this->dataForForm['cs2-donor-full-name'] = $this->lpa->document->donor->name->__toString();
+            $this->dataForForm['cs2-continued'] = $cs2Continued;
+            $this->dataForForm['cs2-footer-right'] = $this->config['footer']['cs2'];
 
-            $this->pdf = new Pdf($this->pdfTemplatePath . "/LPC_Continuation_Sheet_2.pdf");
-
-            $this->pdf->fillForm($this->pdfFormData)
-                      ->flatten()
-                      ->saveAs($filePath);
+            $pdf = $this->getPdfObject(true);
+            $pdf->fillForm($this->dataForForm)
+                ->flatten()
+                ->saveAs($filePath);
         }
 
         return $this->interFileStack;

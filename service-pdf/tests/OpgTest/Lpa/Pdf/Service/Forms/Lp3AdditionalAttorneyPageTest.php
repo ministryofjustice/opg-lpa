@@ -42,20 +42,8 @@ class Lp3AdditionalAttorneyPageTest extends AbstractFormTestClass
         ];
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
-    }
 
-    public function testGeneratePFReturnBlankTooFewAttorneys()
-    {
-        $lpa = $this->getLpa();
-
-        //  Adapt the LPA data as required
-        //  Reduce the number of primary attorneys down to one
-        array_splice($lpa->document->primaryAttorneys, 1);
-        array_splice($lpa->document->whoIsRegistering, 1);
-
-        $lp3AdditionalAttorneyPage = new Lp3AdditionalAttorneyPage($lpa);
-
-        $this->assertNull($lp3AdditionalAttorneyPage->generate());
+        //  TODO - Expand this test to check the strike through lines also
     }
 
     public function testGenerateHW()
@@ -88,19 +76,7 @@ class Lp3AdditionalAttorneyPageTest extends AbstractFormTestClass
         ];
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
-    }
 
-    public function testGenerateHWReturnBlankTooFewAttorneys()
-    {
-        $lpa = $this->getLpa();
-
-        //  Adapt the LPA data as required
-        //  Reduce the number of primary attorneys down to one
-        array_splice($lpa->document->primaryAttorneys, 1);
-        array_splice($lpa->document->whoIsRegistering, 1);
-
-        $lp3AdditionalAttorneyPage = new Lp3AdditionalAttorneyPage($lpa);
-
-        $this->assertNull($lp3AdditionalAttorneyPage->generate());
+        //  TODO - Expand this test to check the strike through lines also
     }
 }

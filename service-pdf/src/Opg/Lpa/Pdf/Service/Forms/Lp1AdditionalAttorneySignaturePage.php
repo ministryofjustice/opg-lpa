@@ -4,10 +4,19 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use mikehaertl\pdftk\Pdf;
 
 class Lp1AdditionalAttorneySignaturePage extends AbstractForm
 {
+    /**
+     * Filename of the PDF template to use
+     *
+     * @var string|array
+     */
+    protected $pdfTemplateFile =  [
+        Document::LPA_TYPE_PF => 'LP1F_AdditionalAttorneySignature.pdf',
+        Document::LPA_TYPE_HW => 'LP1H_AdditionalAttorneySignature.pdf',
+    ];
+
     public function generate()
     {
         $this->logGenerationStatement();
@@ -32,16 +41,15 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
 
             $lpaType = ($this->lpa->document->type == Document::LPA_TYPE_PF)?'lp1f':'lp1h';
 
-            $this->pdfFormData['signature-attorney-name-title'] = $attorney->name->title;
-            $this->pdfFormData['signature-attorney-name-first'] = $attorney->name->first;
-            $this->pdfFormData['signature-attorney-name-last'] = $attorney->name->last;
-            $this->pdfFormData['footer-instrument-right-additional'] = $this->config['footer'][$lpaType]['instrument'];
+            $this->dataForForm['signature-attorney-name-title'] = $attorney->name->title;
+            $this->dataForForm['signature-attorney-name-first'] = $attorney->name->first;
+            $this->dataForForm['signature-attorney-name-last'] = $attorney->name->last;
+            $this->dataForForm['footer-instrument-right-additional'] = $this->config['footer'][$lpaType]['instrument'];
 
-            $this->pdf = new Pdf($this->pdfTemplatePath. (($this->lpa->document->type == Document::LPA_TYPE_PF)?"/LP1F_AdditionalAttorneySignature.pdf":"/LP1H_AdditionalAttorneySignature.pdf"));
-
-            $this->pdf->fillForm($this->pdfFormData)
-                      ->flatten()
-                      ->saveAs($filePath);
+            $pdf = $this->getPdfObject(true);
+            $pdf->fillForm($this->dataForForm)
+                ->flatten()
+                ->saveAs($filePath);
         }
 
         return $this->interFileStack;

@@ -7,9 +7,11 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 class CoversheetRegistration extends AbstractCoversheet
 {
     /**
-     * @return array
+     * Filename of the PDF template to use
+     *
+     * @var string|array
      */
-    protected $coversheetTemplateFiles = [
+    protected $pdfTemplateFile =  [
         Document::LPA_TYPE_PF => 'LP1F_CoversheetRegistration.pdf',
         Document::LPA_TYPE_HW => 'LP1H_CoversheetRegistration.pdf',
     ];

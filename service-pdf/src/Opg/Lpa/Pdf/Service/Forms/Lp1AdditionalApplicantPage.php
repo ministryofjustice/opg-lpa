@@ -4,10 +4,19 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use mikehaertl\pdftk\Pdf;
 
 class Lp1AdditionalApplicantPage extends AbstractForm
 {
+    /**
+     * Filename of the PDF template to use
+     *
+     * @var string|array
+     */
+    protected $pdfTemplateFile =  [
+        Document::LPA_TYPE_PF => 'LP1F_AdditionalApplicant.pdf',
+        Document::LPA_TYPE_HW => 'LP1H_AdditionalApplicant.pdf',
+    ];
+
     public function generate()
     {
         $this->logGenerationStatement();
@@ -21,21 +30,19 @@ class Lp1AdditionalApplicantPage extends AbstractForm
         for ($i = 0; $i < $totalAdditionalPages; $i++) {
             $filePath = $this->registerTempFile('AdditionalApplicant');
 
-            $this->pdf = new Pdf($this->pdfTemplatePath . (($this->lpa->document->type == Document::LPA_TYPE_PF) ? "/LP1F_AdditionalApplicant.pdf" : "/LP1H_AdditionalApplicant.pdf"));
-
             for ($j = 0; $j < self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
                 $attorneyId = $this->lpa->document->whoIsRegistering[(1 + $i) * self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM + $j];
                 $attorney = $this->lpa->document->getPrimaryAttorneyById($attorneyId);
 
                 if ($attorney instanceof TrustCorporation) {
-                    $this->pdfFormData['applicant-' . $j . '-name-last'] = $attorney->name;
+                    $this->dataForForm['applicant-' . $j . '-name-last'] = $attorney->name;
                 } else {
-                    $this->pdfFormData['applicant-' . $j . '-name-title'] = $attorney->name->title;
-                    $this->pdfFormData['applicant-' . $j . '-name-first'] = $attorney->name->first;
-                    $this->pdfFormData['applicant-' . $j . '-name-last'] = $attorney->name->last;
-                    $this->pdfFormData['applicant-' . $j . '-dob-date-day'] = $attorney->dob->date->format('d');
-                    $this->pdfFormData['applicant-' . $j . '-dob-date-month'] = $attorney->dob->date->format('m');
-                    $this->pdfFormData['applicant-' . $j . '-dob-date-year'] = $attorney->dob->date->format('Y');
+                    $this->dataForForm['applicant-' . $j . '-name-title'] = $attorney->name->title;
+                    $this->dataForForm['applicant-' . $j . '-name-first'] = $attorney->name->first;
+                    $this->dataForForm['applicant-' . $j . '-name-last'] = $attorney->name->last;
+                    $this->dataForForm['applicant-' . $j . '-dob-date-day'] = $attorney->dob->date->format('d');
+                    $this->dataForForm['applicant-' . $j . '-dob-date-month'] = $attorney->dob->date->format('m');
+                    $this->dataForForm['applicant-' . $j . '-dob-date-year'] = $attorney->dob->date->format('Y');
                 }
 
                 if (++$totalMappedAdditionalApplicants >= $totalAdditionalApplicant) {
@@ -43,17 +50,18 @@ class Lp1AdditionalApplicantPage extends AbstractForm
                 }
             }
 
-            $this->pdfFormData['who-is-applicant'] = 'attorney';
+            $this->dataForForm['who-is-applicant'] = 'attorney';
 
             if ($this->lpa->document->type == Document::LPA_TYPE_PF) {
-                $this->pdfFormData['footer-registration-right-additional'] = $this->config['footer']['lp1f']['registration'];
+                $this->dataForForm['footer-registration-right-additional'] = $this->config['footer']['lp1f']['registration'];
             } else {
-                $this->pdfFormData['footer-registration-right-additional'] = $this->config['footer']['lp1h']['registration'];
+                $this->dataForForm['footer-registration-right-additional'] = $this->config['footer']['lp1h']['registration'];
             }
 
-            $this->pdf->fillForm($this->pdfFormData)
-                      ->flatten()
-                      ->saveAs($filePath);
+            $pdf = $this->getPdfObject(true);
+            $pdf->fillForm($this->dataForForm)
+                ->flatten()
+                ->saveAs($filePath);
         }
 
         // draw cross lines if there's any blank slot

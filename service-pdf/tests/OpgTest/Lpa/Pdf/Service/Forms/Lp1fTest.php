@@ -3,6 +3,7 @@
 namespace OpgTest\Lpa\Pdf\Service\Forms;
 
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Service\Forms\Lp1f;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use mikehaertl\pdftk\Pdf;
@@ -11,6 +12,13 @@ use UnexpectedValueException;
 
 class Lp1fTest extends AbstractFormTestClass
 {
+    public function testConstructorThrowsExceptionNotEnoughData()
+    {
+        $this->setExpectedException('RuntimeException', 'LPA does not contain all the required data to generate a LP1');
+
+        new Lp1f(new Lpa());
+    }
+
     public function testGenerate()
     {
         $lpa = $this->getLpa();

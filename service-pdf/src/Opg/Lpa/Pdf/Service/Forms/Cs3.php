@@ -2,24 +2,28 @@
 
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use mikehaertl\pdftk\Pdf;
-
 class Cs3 extends AbstractForm
 {
+    /**
+     * Filename of the PDF template to use
+     *
+     * @var string|array
+     */
+    protected $pdfTemplateFile = 'LPC_Continuation_Sheet_3.pdf';
+
     public function generate()
     {
         $this->logGenerationStatement();
 
         $filePath = $this->registerTempFile('CS3');
 
-        $this->pdfFormData['cs3-donor-full-name'] = $this->lpa->document->donor->name->__toString();
-        $this->pdfFormData['cs3-footer-right'] = $this->config['footer']['cs3'];
+        $this->dataForForm['cs3-donor-full-name'] = $this->lpa->document->donor->name->__toString();
+        $this->dataForForm['cs3-footer-right'] = $this->config['footer']['cs3'];
 
-        $this->pdf = new Pdf($this->pdfTemplatePath."/LPC_Continuation_Sheet_3.pdf");
-
-        $this->pdf->fillForm($this->pdfFormData)
-                  ->flatten()
-                  ->saveAs($filePath);
+        $pdf = $this->getPdfObject();
+        $pdf->fillForm($this->dataForForm)
+            ->flatten()
+            ->saveAs($filePath);
 
         return $this->interFileStack;
     }

@@ -2,78 +2,76 @@
 
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use mikehaertl\pdftk\Pdf;
-
 class Lp3AdditionalAttorneyPage extends AbstractForm
 {
+    /**
+     * Filename of the PDF template to use
+     *
+     * @var string|array
+     */
+    protected $pdfTemplateFile = 'LP3_AdditionalAttorney.pdf';
+
     public function generate()
     {
         $this->logGenerationStatement();
 
-        $noOfAttorneys = count($this->lpa->document->primaryAttorneys);
+        $primaryAttorneys = $this->lpa->document->primaryAttorneys;
 
-        if ($noOfAttorneys <= self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
-            return;
-        }
+        //  Get the additional attorneys
+        $additionalAttorneys = array_slice($primaryAttorneys, self::MAX_ATTORNEYS_ON_STANDARD_FORM);
 
-        $additionalAttorneys = $noOfAttorneys - self::MAX_ATTORNEYS_ON_STANDARD_FORM;
-        $additionalPages = ceil($additionalAttorneys / self::MAX_ATTORNEYS_ON_STANDARD_FORM);
-        $populatedAttorneys = 0;
+        //  Loop through the additional attorneys (after the first 4) and add them into the additional sheets (4 per sheet)
+        if (count($additionalAttorneys) > 0) {
+            $dataForForm = [];
+            $i = 0;
 
-        $attorneys = $this->lpa->document->primaryAttorneys;
-
-        for ($i = 0; $i < $additionalPages; $i++) {
-            $filePath = $this->registerTempFile('AdditionalAttorneys');
-
-            if ($this->lpa->document->primaryAttorneyDecisions->how != null) {
-                $this->pdfFormData['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
-            }
-
-            $additionalAttorneys = count($this->lpa->document->primaryAttorneys) - self::MAX_ATTORNEYS_ON_STANDARD_FORM;
-
-            for ($j = 0; $j < self::MAX_ATTORNEYS_ON_STANDARD_FORM; $j++) {
-                if ($populatedAttorneys >= $additionalAttorneys) {
-                    break;
-                }
-
-                $attorneyIndex = self::MAX_ATTORNEYS_ON_STANDARD_FORM * (1 + $i) + $j;
-
-                if (is_string($attorneys[$attorneyIndex]->name)) {
-                    $this->pdfFormData['lpa-document-primaryAttorneys-' . $j . '-name-last'] = $attorneys[$attorneyIndex]->name;
+            foreach ($additionalAttorneys as $j => $additionalAttorney) {
+                if (is_string($additionalAttorney->name)) {
+                    $dataForForm['lpa-document-primaryAttorneys-' . $i . '-name-last'] = $additionalAttorney->name;
                 } else {
-                    $this->pdfFormData['lpa-document-primaryAttorneys-' . $j . '-name-title'] = $attorneys[$attorneyIndex]->name->title;
-                    $this->pdfFormData['lpa-document-primaryAttorneys-' . $j . '-name-first'] = $attorneys[$attorneyIndex]->name->first;
-                    $this->pdfFormData['lpa-document-primaryAttorneys-' . $j . '-name-last'] = $attorneys[$attorneyIndex]->name->last;
+                    $dataForForm['lpa-document-primaryAttorneys-' . $i . '-name-title'] = $additionalAttorney->name->title;
+                    $dataForForm['lpa-document-primaryAttorneys-' . $i . '-name-first'] = $additionalAttorney->name->first;
+                    $dataForForm['lpa-document-primaryAttorneys-' . $i . '-name-last'] = $additionalAttorney->name->last;
                 }
 
-                $this->pdfFormData['lpa-document-primaryAttorneys-' . $j . '-address-address1'] = $attorneys[$attorneyIndex]->address->address1;
-                $this->pdfFormData['lpa-document-primaryAttorneys-' . $j . '-address-address2'] = $attorneys[$attorneyIndex]->address->address2;
-                $this->pdfFormData['lpa-document-primaryAttorneys-' . $j . '-address-address3'] = $attorneys[$attorneyIndex]->address->address3;
-                $this->pdfFormData['lpa-document-primaryAttorneys-' . $j . '-address-postcode'] = $attorneys[$attorneyIndex]->address->postcode;
+                $dataForForm['lpa-document-primaryAttorneys-' . $i . '-address-address1'] = $additionalAttorney->address->address1;
+                $dataForForm['lpa-document-primaryAttorneys-' . $i . '-address-address2'] = $additionalAttorney->address->address2;
+                $dataForForm['lpa-document-primaryAttorneys-' . $i . '-address-address3'] = $additionalAttorney->address->address3;
+                $dataForForm['lpa-document-primaryAttorneys-' . $i . '-address-postcode'] = $additionalAttorney->address->postcode;
 
-                if (++$populatedAttorneys == $additionalAttorneys) {
-                    break;
+                //  Iterate to the next space on the sheet
+                $i++;
+
+                //  If we've got too far, or this is the last additional attorney, output a page
+                if ($i == self::MAX_ATTORNEYS_ON_STANDARD_FORM || ($j + 1 == count($additionalAttorneys))) {
+                    //  Complete the remaining data
+                    $dataForForm['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
+                    $dataForForm['footer-right-page-three'] = $this->config['footer']['lp3'];
+
+                    $filePath = $this->registerTempFile('AdditionalAttorneys');
+
+                    $pdf = $this->getPdfObject(true);
+                    $pdf->fillForm($dataForForm)
+                        ->flatten()
+                        ->saveAs($filePath);
+
+                    //  If $i is less than the number of attorneys on a sheet then insert some strike through lines
+                    $crossLineParams = [];
+
+                    while ($i < self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+                        $crossLineParams[] = 'lp3-primaryAttorney-' . $i;
+                        $i++;
+                    }
+
+                    if (!empty($crossLineParams)) {
+                        $this->drawCrossLines($filePath, [$crossLineParams]);
+                    }
+
+                    //  Reset the loop data for the next iteration
+                    $dataForForm = [];
+                    $i = 0;
                 }
             }
-
-            $this->pdfFormData['footer-right-page-three'] = $this->config['footer']['lp3'];
-
-            $this->pdf = new Pdf($this->pdfTemplatePath . "/LP3_AdditionalAttorney.pdf");
-
-            $this->pdf->fillForm($this->pdfFormData)
-                      ->flatten()
-                      ->saveAs($filePath);
-        }
-
-        if ($additionalAttorneys % self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
-            $crossLineParams = array(array());
-
-            for ($k = self::MAX_ATTORNEYS_ON_STANDARD_FORM - $additionalAttorneys % self::MAX_ATTORNEYS_ON_STANDARD_FORM; $k >= 1; $k--) {
-                // draw on page 0.
-                $crossLineParams[0][] = 'lp3-primaryAttorney-' . (self::MAX_ATTORNEYS_ON_STANDARD_FORM - $k);
-            }
-
-            $this->drawCrossLines($filePath, $crossLineParams);
         }
 
         return $this->interFileStack;

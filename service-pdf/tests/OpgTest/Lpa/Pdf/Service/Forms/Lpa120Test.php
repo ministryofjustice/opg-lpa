@@ -3,13 +3,20 @@
 namespace OpgTest\Lpa\Pdf\Service\Forms;
 
 use Exception;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Service\Forms\Lpa120;
-use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use mikehaertl\pdftk\Pdf;
 use RuntimeException;
 
 class Lps120Test extends AbstractFormTestClass
 {
+    public function testConstructorThrowsExceptionNotEnoughData()
+    {
+        $this->setExpectedException('RuntimeException', 'LPA does not contain all the required data to generate a LPA120');
+
+        new Lpa120(new Lpa());
+    }
+
     public function testGeneratePF()
     {
         $lpa = $this->getLpa();

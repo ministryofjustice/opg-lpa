@@ -10,13 +10,28 @@ use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use mikehaertl\pdftk\Pdf;
+use Opg\Lpa\DataModel\Lpa\StateChecker;
+use RuntimeException;
 
 class Lpa120 extends AbstractTopForm
 {
+    /**
+     * Filename of the PDF template to use
+     *
+     * @var string|array
+     */
+    protected $pdfTemplateFile = 'LPA120.pdf';
+
     public function __construct(Lpa $lpa)
     {
         parent::__construct($lpa);
+
+        $stateChecker = new StateChecker($lpa);
+
+        //  Check that the document can be created
+        if (!$stateChecker->canGenerateLP3()) {
+            throw new RuntimeException('LPA does not contain all the required data to generate a LPA120');
+        }
 
         //  Generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LPA120');
@@ -31,24 +46,13 @@ class Lpa120 extends AbstractTopForm
     {
         $this->logGenerationStatement();
 
-        $lpa = $this->lpa;
-        $lpaPayment = $lpa->payment;
-
-        //  Check eligibility for exemption or remission.
-        if (!$lpa->repeatCaseNumber && !$lpaPayment->reducedFeeLowIncome
-            && !($lpaPayment->reducedFeeReceivesBenefits && $lpaPayment->reducedFeeAwardedDamages)
-            && !$lpaPayment->reducedFeeUniversalCredit) {
-
-            throw new \RuntimeException("LPA120 is not available for this LPA.");
-        }
-
         $this->generatedPdfFilePath = $this->registerTempFile('LPA120');
 
         // populate forms
-        $this->pdf = new Pdf($this->pdfTemplatePath . '/LPA120.pdf');
-        $this->pdf->fillForm($this->dataMapping())
-                  ->flatten()
-                  ->saveAs($this->generatedPdfFilePath);
+        $pdf = $this->getPdfObject();
+        $pdf->fillForm($this->dataMapping())
+            ->flatten()
+            ->saveAs($this->generatedPdfFilePath);
 
         $this->protectPdf();
 
@@ -123,26 +127,26 @@ class Lpa120 extends AbstractTopForm
             $applicantLastName = $applicant->name->last;
         }
 
-        $this->pdfFormData['donor-full-name'] = $lpaDocument->donor->name->__toString();
-        $this->pdfFormData['donor-address'] = "\n" . (string)$lpaDocument->donor->address;
-        $this->pdfFormData['lpa-type'] = ($lpaDocument->type == Document::LPA_TYPE_PF ? 'property-and-financial-affairs' : 'health-and-welfare');
-        $this->pdfFormData['is-repeat-application'] = (is_null($lpa->repeatCaseNumber) ? null : self::CHECK_BOX_ON);
-        $this->pdfFormData['case-number'] = $lpa->repeatCaseNumber;
-        $this->pdfFormData['applicant-type'] = $applicantType;
-        $this->pdfFormData['applicant-type-other'] = $applicantTypeOther;
-        $this->pdfFormData['applicant-name-title'] = $applicantTitle;
-        $this->pdfFormData['applicant-name-title-other'] = $applicantTitleOther;
-        $this->pdfFormData['applicant-name-first'] = $applicantFirstName;
-        $this->pdfFormData['applicant-name-last'] = $applicantLastName;
-        $this->pdfFormData['applicant-address'] = "\n" . ($applicant->address instanceof Address ? (string)$applicant->address : '');
-        $this->pdfFormData['applicant-phone-number'] = $applicantPhoneNumber;
-        $this->pdfFormData['applicant-email-address'] = ($applicant->email instanceof EmailAddress ? (string)$applicant->email : null);
-        $this->pdfFormData['receive-benefits'] = $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeReceivesBenefits);
-        $this->pdfFormData['damage-awarded'] = (is_null($lpaPayment->reducedFeeAwardedDamages) ? null : $this->getYesNoNullValueFromBoolean(!$lpaPayment->reducedFeeAwardedDamages));
-        $this->pdfFormData['low-income'] = $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeLowIncome);
-        $this->pdfFormData['receive-universal-credit'] = $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeUniversalCredit);
+        $this->dataForForm['donor-full-name'] = $lpaDocument->donor->name->__toString();
+        $this->dataForForm['donor-address'] = "\n" . (string)$lpaDocument->donor->address;
+        $this->dataForForm['lpa-type'] = ($lpaDocument->type == Document::LPA_TYPE_PF ? 'property-and-financial-affairs' : 'health-and-welfare');
+        $this->dataForForm['is-repeat-application'] = (is_null($lpa->repeatCaseNumber) ? null : self::CHECK_BOX_ON);
+        $this->dataForForm['case-number'] = $lpa->repeatCaseNumber;
+        $this->dataForForm['applicant-type'] = $applicantType;
+        $this->dataForForm['applicant-type-other'] = $applicantTypeOther;
+        $this->dataForForm['applicant-name-title'] = $applicantTitle;
+        $this->dataForForm['applicant-name-title-other'] = $applicantTitleOther;
+        $this->dataForForm['applicant-name-first'] = $applicantFirstName;
+        $this->dataForForm['applicant-name-last'] = $applicantLastName;
+        $this->dataForForm['applicant-address'] = "\n" . ($applicant->address instanceof Address ? (string)$applicant->address : '');
+        $this->dataForForm['applicant-phone-number'] = $applicantPhoneNumber;
+        $this->dataForForm['applicant-email-address'] = ($applicant->email instanceof EmailAddress ? (string)$applicant->email : null);
+        $this->dataForForm['receive-benefits'] = $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeReceivesBenefits);
+        $this->dataForForm['damage-awarded'] = (is_null($lpaPayment->reducedFeeAwardedDamages) ? null : $this->getYesNoNullValueFromBoolean(!$lpaPayment->reducedFeeAwardedDamages));
+        $this->dataForForm['low-income'] = $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeLowIncome);
+        $this->dataForForm['receive-universal-credit'] = $this->getYesNoNullValueFromBoolean($lpaPayment->reducedFeeUniversalCredit);
 
-        return $this->pdfFormData;
+        return $this->dataForForm;
     }
 
     /**

@@ -2,15 +2,8 @@
 
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use mikehaertl\pdftk\Pdf;
-
 abstract class AbstractCoversheet extends AbstractForm
 {
-    /**
-     * @return array
-     */
-    protected $coversheetTemplateFiles = [];
-
     /**
      * @return array
      */
@@ -21,9 +14,9 @@ abstract class AbstractCoversheet extends AbstractForm
         $filePath = $this->registerTempFile('Coversheet');
 
         //  Get the appropriate PDF coversheet template
-        $this->pdf = new Pdf($this->pdfTemplatePath . '//' . $this->coversheetTemplateFiles[$this->lpa->document->type]);
-        $this->pdf->flatten()
-                  ->saveAs($filePath);
+        $pdf = $this->getPdfObject();
+        $pdf->flatten()
+            ->saveAs($filePath);
 
         return $this->interFileStack;
     }

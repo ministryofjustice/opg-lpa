@@ -22,10 +22,6 @@ abstract class AbstractTopForm extends AbstractForm
 
     protected function mergerIntermediateFilePaths($paths)
     {
-        if (empty($paths)) {
-            return;
-        }
-
         foreach ($paths as $type => $path) {
             if (isset($this->interFileStack[$type])) {
                 $this->interFileStack[$type] = array_merge($this->interFileStack[$type], $path);
@@ -38,5 +34,10 @@ abstract class AbstractTopForm extends AbstractForm
     protected function nextTag($tag = '')
     {
         return ++$tag;
+    }
+
+    public function __destruct()
+    {
+        $this->cleanup();
     }
 }

@@ -9,6 +9,7 @@ use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
 use ZendPdf\PdfDocument as ZendPdfDocument;
 use mikehaertl\pdftk\Pdf;
+use Exception;
 
 abstract class AbstractForm
 {
@@ -58,7 +59,7 @@ abstract class AbstractForm
      *
      * @var array
      */
-    protected $pdfFormData = [];
+    protected $dataForForm = [];
 
     /**
      * The path of the pdf file to be generated.
@@ -76,7 +77,14 @@ abstract class AbstractForm
      * The folder that stores template PDFs which all form elements values are empty.
      * @var string
      */
-    protected $pdfTemplatePath;
+    protected $pdfTemplatesPath;
+
+    /**
+     * Filename of the PDF template to use
+     *
+     * @var string|array
+     */
+    protected $pdfTemplateFile;
 
     /**
      * bx - bottom x
@@ -135,7 +143,7 @@ abstract class AbstractForm
         $this->config = Config::getInstance();
 
         $this->lpa = $lpa;
-        $this->pdfTemplatePath = $this->config['service']['assets']['template_path_on_ram_disk'];
+        $this->pdfTemplatesPath = $this->config['service']['assets']['template_path_on_ram_disk'];
     }
 
     abstract protected function generate();
@@ -166,9 +174,41 @@ abstract class AbstractForm
         return $this->generatedPdfFilePath;
     }
 
-    public function getPdfObject()
+    /**
+     * Get the PDF for this form - instantiate it if necessary
+     *
+     * @param  bool $forceNew
+     * @return Pdf
+     * @throws Exception
+     */
+    public function getPdfObject($forceNew = false)
     {
+        if ($forceNew === true || is_null($this->pdf)) {
+            $pdfTemplateFile = $this->pdfTemplateFile;
+
+            //  If the PDF template file variable is an array then we need to pick a file by LPA type
+            if (is_array($pdfTemplateFile)) {
+                if (!isset($pdfTemplateFile[$this->lpa->document->type])) {
+                    throw new Exception(sprintf('%s PDF template file can not be determined for LPA type %s', get_class($this), $this->lpa->document->type));
+                }
+
+                $pdfTemplateFile = $pdfTemplateFile[$this->lpa->document->type];
+            }
+
+            $this->pdf = new Pdf($this->getPdfTemplateFilePath($pdfTemplateFile));
+        }
+
         return $this->pdf;
+    }
+
+    public function getPdfTemplateFilePath($pdfTemplateFilename)
+    {
+        return $this->pdfTemplatesPath . '//' . $pdfTemplateFilename;
+    }
+
+    public function getBlankPdfTemplateFilePath()
+    {
+        return $this->getPdfTemplateFilePath('blank.pdf');
     }
 
     /**
@@ -177,9 +217,11 @@ abstract class AbstractForm
      */
     protected function getTmpFilePath($fileType)
     {
-        $intermediateFileBasePath = $this->config['service']['assets']['intermediate_file_path'];
+        $lpaFileRef = Formatter::id($this->lpa->id) . '-' . microtime(true);
 
-        return $intermediateFileBasePath . '/' . $fileType . '-' . str_replace(array(' ', '.'), '-', Formatter::id($this->lpa->id) . '-' . microtime(true)) . '.pdf';
+        $filename = $fileType . '-' . str_replace(array(' ', '.'), '-', $lpaFileRef) . '.pdf';
+
+        return $this->config['service']['assets']['intermediate_file_path'] . '/' . $filename;
     }
 
     /**
@@ -306,6 +348,7 @@ abstract class AbstractForm
 
     public function cleanup()
     {
+        //  TODO - Refactor this...
         if (\file_exists($this->generatedPdfFilePath)) {
             unlink($this->generatedPdfFilePath);
         }

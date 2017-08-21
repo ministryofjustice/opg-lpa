@@ -5,42 +5,22 @@ namespace Opg\Lpa\Pdf\Service\Forms;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use mikehaertl\pdftk\Pdf;
 
 class Lp1h extends AbstractLp1
 {
+    /**
+     * Filename of the PDF template to use
+     *
+     * @var string|array
+     */
+    protected $pdfTemplateFile = 'LP1H.pdf';
+
     public function __construct(Lpa $lpa)
     {
         parent::__construct($lpa);
 
         // generate a file path with lpa id and timestamp;
         $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP1H');
-
-        $this->pdf = new Pdf($this->pdfTemplatePath . '/LP1H.pdf');
-    }
-
-    protected function generateAdditionalPages()
-    {
-        parent::generateAdditionalPages();
-
-
-
-
-
-
-
-        // if number of attorneys (including replacements) is greater than 4, duplicate Section 11 - Attorneys Signatures page
-        // as many as needed to be able to fit all attorneys in the form.
-        $totalAttorneys = count($this->lpa->document->primaryAttorneys) + count($this->lpa->document->replacementAttorneys);
-
-
-
-
-
-        if ($totalAttorneys > self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
-            $generatedAdditionalAttorneySignaturePages = (new Lp1AdditionalAttorneySignaturePage($this->lpa))->generate();
-            $this->mergerIntermediateFilePaths($generatedAdditionalAttorneySignaturePages);
-        }
     }
 
     protected function dataMapping()
@@ -51,20 +31,20 @@ class Lp1h extends AbstractLp1
         $i = 0;
 
         foreach ($this->lpa->document->primaryAttorneys as $primaryAttorney) {
-            $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-name-title'] = $primaryAttorney->name->title;
-            $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-name-first'] = $primaryAttorney->name->first;
-            $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-name-last'] = $primaryAttorney->name->last;
+            $this->dataForForm['lpa-document-primaryAttorneys-' . $i . '-name-title'] = $primaryAttorney->name->title;
+            $this->dataForForm['lpa-document-primaryAttorneys-' . $i . '-name-first'] = $primaryAttorney->name->first;
+            $this->dataForForm['lpa-document-primaryAttorneys-' . $i . '-name-last'] = $primaryAttorney->name->last;
 
-            $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-dob-date-day'] = $primaryAttorney->dob->date->format('d');
-            $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-dob-date-month'] = $primaryAttorney->dob->date->format('m');
-            $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-dob-date-year'] = $primaryAttorney->dob->date->format('Y');
+            $this->dataForForm['lpa-document-primaryAttorneys-' . $i . '-dob-date-day'] = $primaryAttorney->dob->date->format('d');
+            $this->dataForForm['lpa-document-primaryAttorneys-' . $i . '-dob-date-month'] = $primaryAttorney->dob->date->format('m');
+            $this->dataForForm['lpa-document-primaryAttorneys-' . $i . '-dob-date-year'] = $primaryAttorney->dob->date->format('Y');
 
-            $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-address-address1'] = $primaryAttorney->address->address1;
-            $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-address-address2'] = $primaryAttorney->address->address2;
-            $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-address-address3'] = $primaryAttorney->address->address3;
-            $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-address-postcode'] = $primaryAttorney->address->postcode;
+            $this->dataForForm['lpa-document-primaryAttorneys-' . $i . '-address-address1'] = $primaryAttorney->address->address1;
+            $this->dataForForm['lpa-document-primaryAttorneys-' . $i . '-address-address2'] = $primaryAttorney->address->address2;
+            $this->dataForForm['lpa-document-primaryAttorneys-' . $i . '-address-address3'] = $primaryAttorney->address->address3;
+            $this->dataForForm['lpa-document-primaryAttorneys-' . $i . '-address-postcode'] = $primaryAttorney->address->postcode;
 
-            $this->pdfFormData['lpa-document-primaryAttorneys-' . $i . '-email-address'] = ($primaryAttorney->email instanceof EmailAddress) ? "\n" . $primaryAttorney->email->address : null;
+            $this->dataForForm['lpa-document-primaryAttorneys-' . $i . '-email-address'] = ($primaryAttorney->email instanceof EmailAddress) ? "\n" . $primaryAttorney->email->address : null;
 
             if (++$i == self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
                 break;
@@ -79,20 +59,20 @@ class Lp1h extends AbstractLp1
         $i = 0;
 
         foreach ($this->lpa->document->replacementAttorneys as $replacementAttorney) {
-            $this->pdfFormData['lpa-document-replacementAttorneys-' . $i . '-name-title'] = $replacementAttorney->name->title;
-            $this->pdfFormData['lpa-document-replacementAttorneys-' . $i . '-name-first'] = $replacementAttorney->name->first;
-            $this->pdfFormData['lpa-document-replacementAttorneys-' . $i . '-name-last'] = $replacementAttorney->name->last;
+            $this->dataForForm['lpa-document-replacementAttorneys-' . $i . '-name-title'] = $replacementAttorney->name->title;
+            $this->dataForForm['lpa-document-replacementAttorneys-' . $i . '-name-first'] = $replacementAttorney->name->first;
+            $this->dataForForm['lpa-document-replacementAttorneys-' . $i . '-name-last'] = $replacementAttorney->name->last;
 
-            $this->pdfFormData['lpa-document-replacementAttorneys-' . $i . '-dob-date-day'] = $replacementAttorney->dob->date->format('d');
-            $this->pdfFormData['lpa-document-replacementAttorneys-' . $i . '-dob-date-month'] = $replacementAttorney->dob->date->format('m');
-            $this->pdfFormData['lpa-document-replacementAttorneys-' . $i . '-dob-date-year'] = $replacementAttorney->dob->date->format('Y');
+            $this->dataForForm['lpa-document-replacementAttorneys-' . $i . '-dob-date-day'] = $replacementAttorney->dob->date->format('d');
+            $this->dataForForm['lpa-document-replacementAttorneys-' . $i . '-dob-date-month'] = $replacementAttorney->dob->date->format('m');
+            $this->dataForForm['lpa-document-replacementAttorneys-' . $i . '-dob-date-year'] = $replacementAttorney->dob->date->format('Y');
 
-            $this->pdfFormData['lpa-document-replacementAttorneys-' . $i . '-address-address1'] = $replacementAttorney->address->address1;
-            $this->pdfFormData['lpa-document-replacementAttorneys-' . $i . '-address-address2'] = $replacementAttorney->address->address2;
-            $this->pdfFormData['lpa-document-replacementAttorneys-' . $i . '-address-address3'] = $replacementAttorney->address->address3;
-            $this->pdfFormData['lpa-document-replacementAttorneys-' . $i . '-address-postcode'] = $replacementAttorney->address->postcode;
+            $this->dataForForm['lpa-document-replacementAttorneys-' . $i . '-address-address1'] = $replacementAttorney->address->address1;
+            $this->dataForForm['lpa-document-replacementAttorneys-' . $i . '-address-address2'] = $replacementAttorney->address->address2;
+            $this->dataForForm['lpa-document-replacementAttorneys-' . $i . '-address-address3'] = $replacementAttorney->address->address3;
+            $this->dataForForm['lpa-document-replacementAttorneys-' . $i . '-address-postcode'] = $replacementAttorney->address->postcode;
 
-            $this->pdfFormData['lpa-document-replacementAttorneys-' . $i . '-email-address'] = ($replacementAttorney->email instanceof EmailAddress ? "\n" . $replacementAttorney->email->address : null);
+            $this->dataForForm['lpa-document-replacementAttorneys-' . $i . '-email-address'] = ($replacementAttorney->email instanceof EmailAddress ? "\n" . $replacementAttorney->email->address : null);
 
             if (++$i == self::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM) {
                 break;
@@ -109,11 +89,7 @@ class Lp1h extends AbstractLp1
 
         // Life Sustaining (Section 5)
         if ($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
-            if ($this->lpa->document->primaryAttorneyDecisions->canSustainLife === true) {
-                $this->drawingTargets[5] = array('life-sustain-B');
-            } else {
-                $this->drawingTargets[5] = array('life-sustain-A');
-            }
+            $this->drawingTargets[5] = ($this->lpa->document->primaryAttorneyDecisions->canSustainLife === true ? ['life-sustain-B'] : ['life-sustain-A']);
         }
 
         // Attorney/Replacement signature (Section 11)
@@ -121,9 +97,9 @@ class Lp1h extends AbstractLp1
         $attorneyIndex = 0;
 
         foreach ($allAttorneys as $attorney) {
-            $this->pdfFormData['signature-attorney-' . $attorneyIndex . '-name-title'] = $attorney->name->title;
-            $this->pdfFormData['signature-attorney-' . $attorneyIndex . '-name-first'] = $attorney->name->first;
-            $this->pdfFormData['signature-attorney-' . $attorneyIndex . '-name-last'] = $attorney->name->last;
+            $this->dataForForm['signature-attorney-' . $attorneyIndex . '-name-title'] = $attorney->name->title;
+            $this->dataForForm['signature-attorney-' . $attorneyIndex . '-name-first'] = $attorney->name->first;
+            $this->dataForForm['signature-attorney-' . $attorneyIndex . '-name-last'] = $attorney->name->last;
 
             if (++$attorneyIndex == self::MAX_ATTORNEY_SIGNATURE_PAGES_ON_STANDARD_FORM) {
                 break;
@@ -141,12 +117,6 @@ class Lp1h extends AbstractLp1
                 $this->drawingTargets[14] = array('attorney-signature-hw');
                 break;
             case 1:
-                $this->drawingTargets[12] = array('attorney-signature-hw');
-                $this->drawingTargets[13] = array('attorney-signature-hw');
-                $this->drawingTargets[14] = array('attorney-signature-hw');
-                break;
-            case 0:
-                $this->drawingTargets[11] = array('attorney-signature-hw');
                 $this->drawingTargets[12] = array('attorney-signature-hw');
                 $this->drawingTargets[13] = array('attorney-signature-hw');
                 $this->drawingTargets[14] = array('attorney-signature-hw');
@@ -170,9 +140,9 @@ class Lp1h extends AbstractLp1
             }
         }
 
-        $this->pdfFormData['footer-instrument-right'] = $this->config['footer']['lp1h']['instrument'];
-        $this->pdfFormData['footer-registration-right'] = $this->config['footer']['lp1h']['registration'];
+        $this->dataForForm['footer-instrument-right'] = $this->config['footer']['lp1h']['instrument'];
+        $this->dataForForm['footer-registration-right'] = $this->config['footer']['lp1h']['registration'];
 
-        return $this->pdfFormData;
+        return $this->dataForForm;
     }
 }
