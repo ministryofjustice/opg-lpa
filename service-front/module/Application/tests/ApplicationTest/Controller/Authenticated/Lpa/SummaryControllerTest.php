@@ -25,6 +25,8 @@ class SummaryControllerTest extends AbstractControllerTest
      */
     public function testIndexActionNoLpa()
     {
+        $this->params->shouldReceive('fromQuery')->with('return-route', 'lpa/applicant')->andReturn('lpa/applicant')->once();
+
         $this->controller->indexAction();
     }
 }

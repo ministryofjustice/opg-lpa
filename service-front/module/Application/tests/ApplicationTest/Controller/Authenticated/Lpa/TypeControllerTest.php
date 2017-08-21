@@ -35,6 +35,8 @@ class TypeControllerTest extends AbstractControllerTest
      */
     public function testIndexActionNoLpa()
     {
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+
         $this->controller->indexAction();
     }
 }
