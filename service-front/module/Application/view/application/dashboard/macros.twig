@@ -36,7 +36,7 @@
                 {% endif %}
             </td>
             <td class="lpa-number">{{ formatLpaId(lpa.id) }}</td>
-            <td class="lpa-type">{{ lpa.type == 'property-and-financial' ? 'P & F' : ((lpa.type == 'health-and-welfare') ? 'H & W' : 'Not selected') }}</td>
+            <td class="lpa-type">{{ lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : 'Not selected') }}</td>
             <td class="lpa-progress">
                 <span class="progress {{ lpa.progress == 'Started' ? 'progress-started' : 'progress-completed' }}">{{ lpa.progress }}</span>
             </td>
