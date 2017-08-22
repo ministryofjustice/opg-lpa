@@ -23,14 +23,14 @@
 	    {% if (type == 'all' or type == lpa.type) %}
 
         <tr>
-            <td class="lpa-donor">
-                <h3 class="heading-{{ shortList == true ? 'medium' : 'small' }} flush--ends">
+            <td class="lpa-donor text">
+                <strong class="bold">
                 {% if lpa.donor|length > 0 %}
                     {{ lpa.donor }}
                 {% else %}
                     No donor added
                 {% endif %}
-                </h3>
+                </strong>
                 {% if not shortList %}
                     <div class="lpa-number-alt">{{ formatLpaId(lpa.id) }}</div>
                 {% endif %}
