@@ -3224,7 +3224,7 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
     $scrollEl
       .animate({
         scrollTop: topPos
-      }, 300)
+      },0)
       .promise()
       .done(function () {
         $target.closest('.group').find('input, select, textarea').first().focus();
@@ -3235,7 +3235,7 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
   moj.Helpers.scrollPos = function (target) {
     /*jshint laxbreak: true */
     return moj.Helpers.isPopupOpen()
-              ? target.offset().top - $('#popup').offset().top + parseInt($('#popup').css('marginTop'), 10)
+              ? target.offset().top - $('#popup').offset().top
               : target.offset().top;
   };
 
@@ -4005,6 +4005,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     },
 
     checkReusedDetails: function () {
+      // Align to top after loading in the content to avoid having the form starting half
+      // way down (a scenario that happens when you've scrolled far down on Reuse details page)
+      moj.Helpers.scrollTo('#popup-content');
       // If the user is reusing details then trigger some actions manually to give warning messages a chance to display
       $('#dob-date-day').trigger('change');
       $('input[name="name-first"]').trigger('change');
