@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Controller;
 
+use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
@@ -113,6 +114,14 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @var MockInterface|Request
      */
     protected $request;
+    /**
+     * @var MockInterface|Client
+     */
+    protected $apiClient;
+    /**
+     * @var MockInterface|StorageInterface
+     */
+    protected $cache;
 
     /**
      * @param AbstractController $controller
@@ -228,6 +237,12 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->responseCollection->shouldReceive('stopped')->andReturn(false);
         $controller->dispatch($this->request);
+
+        $this->apiClient = Mockery::mock(Client::class);
+        $this->serviceLocator->shouldReceive('get')->with('ApiClient')->andReturn($this->apiClient);
+
+        $this->cache = Mockery::mock(StorageInterface::class);
+        $this->serviceLocator->shouldReceive('get')->with('Cache')->andReturn($this->cache);
     }
 
     public function tearDown()

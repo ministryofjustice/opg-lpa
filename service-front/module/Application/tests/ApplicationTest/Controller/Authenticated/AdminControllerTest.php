@@ -3,11 +3,15 @@
 namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\AdminController;
+use Application\Form\Admin\PaymentSwitch;
+use Application\Form\Admin\SystemMessageForm;
 use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
 use Mockery;
+use Mockery\MockInterface;
 use OpgTest\Lpa\DataModel\FixturesData;
+use Zend\Form\Element;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
@@ -19,11 +23,31 @@ class AdminControllerTest extends AbstractControllerTest
      * @var AdminController
      */
     private $controller;
+    /**
+     * @var MockInterface|SystemMessageForm
+     */
+    private $systemMessageForm;
+    private $systemMessagePostData = [
+        'message' => 'New system unit test message'
+    ];
+    /**
+     * @var MockInterface|PaymentSwitch
+     */
+    private $paymentSwitchForm;
+    private $paymentSwitchPostData = [
+        'percentage' => 50
+    ];
 
     public function setUp()
     {
         $this->controller = new AdminController();
         parent::controllerSetUp($this->controller);
+
+        $this->systemMessageForm = Mockery::mock(SystemMessageForm::class);
+        $this->formElementManager->shouldReceive('get')->with('Application\Form\Admin\SystemMessageForm')->andReturn($this->systemMessageForm);
+
+        $this->paymentSwitchForm = Mockery::mock(PaymentSwitch::class);
+        $this->formElementManager->shouldReceive('get')->with('Application\Form\Admin\PaymentSwitch')->andReturn($this->paymentSwitchForm);
     }
 
     public function testIndexAction()
@@ -68,7 +92,6 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testOnDispatchUserIsAdminPageNotFound()
     {
-        $response = new Response();
         $event = new MvcEvent();
         $routeMatch = Mockery::mock(RouteMatch::class);
         $event->setRouteMatch($routeMatch);
@@ -89,5 +112,173 @@ class AdminControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('Page not found', $result->getVariable('content'));
+    }
+
+    public function testStatsAction()
+    {
+        $this->apiClient->shouldReceive('getApiStats')->andReturn($this->getLpasPerUserStats())->once();
+        $this->apiClient->shouldReceive('getAuthStats')->andReturn($this->getAuthStats())->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->statsAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->getLpasPerUserStats()['byLpaCount'], $result->getVariable('api_stats'));
+        $this->assertEquals($this->getAuthStats(), $result->getVariable('auth_stats'));
+        $this->assertEquals('Admin stats', $result->getVariable('pageTitle'));
+    }
+
+    public function testSystemMessageActionGet()
+    {
+        $messageElement = Mockery::mock(Element::class);
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+        $this->systemMessageForm->shouldReceive('get')->with('message')->andReturn($messageElement)->once();
+        $this->cache->shouldReceive('getItem')->with('system-message')->andReturn('System unit test message')->once();
+        $messageElement->shouldReceive('setValue')->with('System unit test message')->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->systemMessageAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->systemMessageForm, $result->getVariable('form'));
+    }
+
+    public function testSystemMessageActionPostInvalid()
+    {
+        $this->request->shouldReceive('isPost')->andReturn(true)->once();
+        $this->request->shouldReceive('getPost')->andReturn($this->systemMessagePostData)->once();
+        $this->systemMessageForm->shouldReceive('setData')->with($this->systemMessagePostData)->once();
+        $this->systemMessageForm->shouldReceive('isValid')->andReturn(false)->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->systemMessageAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->systemMessageForm, $result->getVariable('form'));
+    }
+
+    public function testSystemMessageActionPostEmptyMessage()
+    {
+        $response = new Response();
+
+        $postData = $this->systemMessagePostData;
+        $postData['message'] = '';
+
+        $this->request->shouldReceive('isPost')->andReturn(true)->once();
+        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
+        $this->systemMessageForm->shouldReceive('setData')->with($postData)->once();
+        $this->systemMessageForm->shouldReceive('isValid')->andReturn(true)->once();
+        $this->cache->shouldReceive('removeItem')->with('system-message')->once();
+        $this->redirect->shouldReceive('toRoute')->with('home')->andReturn($response)->once();
+
+        $result = $this->controller->systemMessageAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testSystemMessageActionPostMessage()
+    {
+        $response = new Response();
+
+        $this->request->shouldReceive('isPost')->andReturn(true)->once();
+        $this->request->shouldReceive('getPost')->andReturn($this->systemMessagePostData)->once();
+        $this->systemMessageForm->shouldReceive('setData')->with($this->systemMessagePostData)->once();
+        $this->systemMessageForm->shouldReceive('isValid')->andReturn(true)->once();
+        $this->cache->shouldReceive('setItem')->with('system-message', $this->systemMessagePostData['message'])->once();
+        $this->redirect->shouldReceive('toRoute')->with('home')->andReturn($response)->once();
+
+        $result = $this->controller->systemMessageAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testPaymentSwitchActionGet()
+    {
+        $percentageElement = Mockery::mock(Element::class);
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+        $this->paymentSwitchForm->shouldReceive('get')->with('percentage')->andReturn($percentageElement)->once();
+        $this->cache->shouldReceive('getItem')->with('worldpay-percentage')->andReturn(100)->once();
+        $percentageElement->shouldReceive('setValue')->with(100)->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->paymentSwitchAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->paymentSwitchForm, $result->getVariable('form'));
+        $this->assertEquals(false, $result->getVariable('save'));
+    }
+
+    public function testPaymentSwitchActionGetPercentageNonNumeric()
+    {
+        $percentageElement = Mockery::mock(Element::class);
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+        $this->paymentSwitchForm->shouldReceive('get')->with('percentage')->andReturn($percentageElement)->once();
+        $this->cache->shouldReceive('getItem')->with('worldpay-percentage')->andReturn('50%')->once();
+        $percentageElement->shouldReceive('setValue')->with(0)->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->paymentSwitchAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->paymentSwitchForm, $result->getVariable('form'));
+        $this->assertEquals(false, $result->getVariable('save'));
+    }
+
+    public function testPaymentSwitchActionPostInvalid()
+    {
+        $this->request->shouldReceive('isPost')->andReturn(true)->once();
+        $this->request->shouldReceive('getPost')->andReturn($this->paymentSwitchPostData)->once();
+        $this->paymentSwitchForm->shouldReceive('setData')->with($this->paymentSwitchPostData)->once();
+        $this->paymentSwitchForm->shouldReceive('isValid')->andReturn(false)->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->paymentSwitchAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->paymentSwitchForm, $result->getVariable('form'));
+        $this->assertEquals(false, $result->getVariable('save'));
+    }
+
+    public function testPaymentSwitchActionPostPercentage()
+    {
+        $this->request->shouldReceive('isPost')->andReturn(true)->once();
+        $this->request->shouldReceive('getPost')->andReturn($this->paymentSwitchPostData)->once();
+        $this->paymentSwitchForm->shouldReceive('setData')->with($this->paymentSwitchPostData)->once();
+        $this->paymentSwitchForm->shouldReceive('isValid')->andReturn(true)->once();
+        $this->paymentSwitchForm->shouldReceive('getData')->andReturn($this->paymentSwitchPostData)->once();
+        $this->cache->shouldReceive('setItem')->with('worldpay-percentage', $this->paymentSwitchPostData['percentage'])->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->paymentSwitchAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->paymentSwitchForm, $result->getVariable('form'));
+        $this->assertEquals(true, $result->getVariable('save'));
+    }
+
+    private function getLpasPerUserStats()
+    {
+        $stats = [
+            'byLpaCount' => [1 => 2]
+        ];
+
+        return $stats;
+    }
+
+    private function getAuthStats()
+    {
+        return [
+            'total' => 1,
+            'activated' => 1,
+            'activated-this-month' => 1,
+            'deleted' => 1,
+        ];
     }
 }
