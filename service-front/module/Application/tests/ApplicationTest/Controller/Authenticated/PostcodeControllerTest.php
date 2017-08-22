@@ -8,6 +8,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
+use Zend\View\Model\ViewModel;
 
 class PostcodeControllerTest extends AbstractControllerTest
 {
@@ -40,10 +41,11 @@ class PostcodeControllerTest extends AbstractControllerTest
         $this->params->shouldReceive('fromQuery')->with('postcode')->andReturn(null)->once();
         $this->event->shouldReceive('getRouteMatch')->andReturn($this->routeMatch)->once();
         $this->routeMatch->shouldReceive('setParam')->with('action', 'not-found')->once();
-        $this->pluginManager->shouldReceive('get')->with('createHttpNotFoundModel', null)->once();
 
+        /** @var ViewModel $result */
         $result = $this->controller->indexAction();
 
-        $this->assertEquals(null, $result);
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('Page not found', $result->getVariable('content'));
     }
 }

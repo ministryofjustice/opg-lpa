@@ -91,9 +91,9 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
         $this->url->shouldReceive('fromRoute')->with('forgot-password')->andReturn('forgot-password')->once();
         $this->resetPasswordEmailForm->shouldReceive('setAttribute')->with('action', 'forgot-password')->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData);
-        $this->resetPasswordEmailForm->shouldReceive('setData')->with($this->postData);
-        $this->resetPasswordEmailForm->shouldReceive('isValid')->andReturn(false);
+        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
+        $this->resetPasswordEmailForm->shouldReceive('setData')->with($this->postData)->once();
+        $this->resetPasswordEmailForm->shouldReceive('isValid')->andReturn(false)->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

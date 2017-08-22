@@ -16,6 +16,7 @@ use Zend\EventManager\EventManager;
 use Zend\EventManager\ResponseCollection;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractController;
+use Zend\Mvc\Controller\Plugin\CreateHttpNotFoundModel;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
 use Zend\Mvc\Controller\Plugin\Params;
 use Zend\Mvc\Controller\Plugin\Redirect;
@@ -60,6 +61,10 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @var MockInterface|FlashMessenger
      */
     protected $flashMessenger;
+    /**
+     * @var MockInterface|CreateHttpNotFoundModel
+     */
+    protected $createHttpNotFoundModel;
     /**
      * @var MockInterface|EventManager
      */
@@ -144,6 +149,9 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         $this->flashMessenger = Mockery::mock(FlashMessenger::class);
         $this->pluginManager->shouldReceive('get')->with('flashMessenger', null)->andReturn($this->flashMessenger);
 
+        $this->createHttpNotFoundModel = new CreateHttpNotFoundModel();
+        $this->pluginManager->shouldReceive('get')->with('createHttpNotFoundModel', null)->andReturn($this->createHttpNotFoundModel);
+
         $this->eventManager = Mockery::mock(EventManager::class);
         $this->eventManager->shouldReceive('setIdentifiers');
         $this->eventManager->shouldReceive('attach');
@@ -154,6 +162,12 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         $this->config = [
             'version' => [
                 'tag' => '1.2.3.4-test',
+            ],
+            'terms' => [
+                'lastUpdated' => '2015-02-17 14:00 UTC',
+            ],
+            'admin' => [
+                'accounts' => ['admin@test.com'],
             ],
             'session' => [
                 'native_settings' => [
