@@ -18,6 +18,11 @@
 .form-date {
     margin-bottom: 30px;
     overflow: hidden;
+
+    // Hide a new placement of error messages only for within popup
+    .error-group-popup {
+        display: none;
+    }
 }
 
 .form-group-day,

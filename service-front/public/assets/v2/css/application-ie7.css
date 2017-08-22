@@ -2133,6 +2133,8 @@ input[type=number] {
 .form-date {
   margin-bottom: 30px;
   overflow: hidden; }
+  .form-date .error-group-popup {
+    display: none; }
 
 .form-group-day.error,
 .form-group-month.error,
@@ -3311,11 +3313,14 @@ input[type=number] {
     top: 13px;
     left: 150px;
     width: 280%; }
-  .form-popup .form-date.error .form-group {
-    top: -37px; }
   .form-popup .form-date .error-message {
-    top: 80px;
-    left: 0; }
+    top: -11px;
+    left: 0;
+    width: 100%; }
+  .form-popup .form-date .error-group {
+    display: none; }
+  .form-popup .form-date .error-group-popup {
+    display: block; }
   .form-popup .use-details-link-panel {
     padding: 15px;
     padding-left: 165px; }
