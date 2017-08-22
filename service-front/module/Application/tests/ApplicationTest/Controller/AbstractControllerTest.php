@@ -170,12 +170,18 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'email' => [
+                'sendgrid' => [
+                    'webhook' => [
+                        'token' => 'ValidToken',
+                    ],
+                ],
                 'sender' => [
                     'default' => [
                         'name' => 'Unit Tests',
                         'address' => 'unit@test.com',
                     ]
-                ]
+                ],
+                'blacklist' => ['from@blacklist.com']
             ]
         ];
         $this->serviceLocator->shouldReceive('get')->with('config')->andReturn($this->config);

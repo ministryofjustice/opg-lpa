@@ -11,6 +11,7 @@ use Exception;
 use Mockery;
 use Mockery\MockInterface;
 use Twig_Environment;
+use Twig_Template;
 use Zend\Http\Header\HeaderInterface;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
