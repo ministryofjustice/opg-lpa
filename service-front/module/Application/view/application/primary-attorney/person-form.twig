@@ -191,10 +191,12 @@
         <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'error'}}">
             <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
-            {{ formElementErrorsV2(dobYear) }}
-            {{ formElementErrorsV2(dobMonth) }}
-            {{ formElementErrorsV2(dobDay) }}
-            {{ formElementErrorsV2(dob) }}
+            <div class="error-group">
+                {{ formElementErrorsV2(dobYear) }}
+                {{ formElementErrorsV2(dobMonth) }}
+                {{ formElementErrorsV2(dobDay) }}
+                {{ formElementErrorsV2(dob) }}
+            </div>
 
             <div class="form-group form-group-day {{ dob.getMessages|length >0 ? 'error'}}">
                 <label class="form-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
@@ -209,6 +211,13 @@
             <div class="form-group form-group-year {{ dob.getMessages|length >0 ? 'error'}}">
                 <label class="form-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
                 {{ formElement(dobYear) }}
+            </div>
+
+            <div class="error-group-popup">
+                {{ formElementErrorsV2(dobYear) }}
+                {{ formElementErrorsV2(dobMonth) }}
+                {{ formElementErrorsV2(dobDay) }}
+                {{ formElementErrorsV2(dob) }}
             </div>
         </div>
 
