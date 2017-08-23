@@ -167,19 +167,23 @@
 
     // scss-lint:disable MergeableSelector
     .form-date {
-        &.error {
-            .form-group {
-                @include media(tablet) {
-                    top: -37px;
-                }
-            }
-        }
 
         .error-message {
             @include media(tablet) {
-                top: 80px;
+                top: -11px;
                 left: 0;
+                width: 100%;
             }
+        }
+
+        // Hide the normal placement of error messages inside popup
+        .error-group {
+            display: none;
+        }
+
+        // Show new placement of error messages within popup
+        .error-group-popup {
+            display: block;
         }
     }
     // scss-lint:enable MergeableSelector
