@@ -208,21 +208,18 @@
     }
 
     .lpa-donor {
+        box-sizing: border-box;
         width: 100%;
         float: left;
+        padding-right: 120px;
 
-        .heading-medium {
-            padding-right: 120px;
-
-            @include media($min-width: 870px) {
-                padding-right: 210px;
-            }
+        @include media($min-width: 870px) {
+            padding-right: 210px;
         }
     }
 
     .lpa-number {
         width: 100%;
-        padding-top: 6px;
         float: left;
         color: $secondary-text-colour;
     }
@@ -234,7 +231,6 @@
     .lpa-progress,
     .lpa-date {
         position: absolute;
-        top: 19px;
         right: 0;
         width: 128px;
         padding: 0;
@@ -414,17 +410,6 @@
             padding-top: 0;
             color: $secondary-text-colour;
             font-size: 16px;
-
-            &:after {
-                position: absolute;
-                top: 0;
-                left: 135px;
-                content: '|';
-
-                @include media($max-width: 420px) {
-                    content: '';
-                }
-            }
         }
 
         .lpa-number-alt {
@@ -441,27 +426,12 @@
         }
 
         .lpa-progress {
-            position: absolute;
-            top: 39px;
-            left: 170px;
             width: 150px;
             font-size: 16px;
 
-            @include media($max-width: 420px) {
-                position: static;
-            }
-
             &:before {
                 color: $secondary-text-colour;
-                content: '';
-
-                @include media($min-width: 460px) {
-                    content: 'Status: ';
-                }
-
-                @include media($max-width: 420px) {
-                    content: 'Status: ';
-                }
+                content: 'Status: ';
             }
 
         }

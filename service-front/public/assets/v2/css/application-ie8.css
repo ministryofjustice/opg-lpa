@@ -2769,14 +2769,13 @@ input[type=number] {
   border-bottom: 0;
   font-size: 19px; }
 .lpa-cards .lpa-donor {
+  box-sizing: border-box;
   width: 100%;
-  float: left; }
-  .lpa-cards .lpa-donor .heading-medium {
-    padding-right: 120px;
-    padding-right: 210px; }
+  float: left;
+  padding-right: 120px;
+  padding-right: 210px; }
 .lpa-cards .lpa-number {
   width: 100%;
-  padding-top: 6px;
   float: left;
   color: #6f777b; }
 .lpa-cards .lpa-type {
@@ -2784,7 +2783,6 @@ input[type=number] {
 .lpa-cards .lpa-progress,
 .lpa-cards .lpa-date {
   position: absolute;
-  top: 19px;
   right: 0;
   width: 128px;
   padding: 0;
