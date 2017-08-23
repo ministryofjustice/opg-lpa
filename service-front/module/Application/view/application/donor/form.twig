@@ -158,7 +158,7 @@
 {{ address2.setOptions({label:'Address line 2'}) ? '' }}
 {{ address3.setOptions({label:'Address line 3'}) ? '' }}
 {{ postcode.setOptions({label:'Postcode'}) ? '' }}
-{{ canSign.setOptions({label:'This person cannot physically sign or make a mark on the LPA'}) ? '' }}
+{{ canSign.setOptions({label:'The donor is unable to sign or make a mark on the LPA'}) ? '' }}
 
 <header class="popup-header">
     <i class="icon icon-person"></i>
@@ -269,7 +269,7 @@
             <label class="block-label" for="{{ canSign.getAttribute('id') }}">
                 {{ formElement(canSign) }}
                 {{ canSign.getOption('label') }}
-                <span class="form-hint flush--bottom">We'll include an extra signature sheet so someone can sign on their behalf</span>
+                <span class="form-hint flush--bottom">We'll add an extra sheet to the LPA so someone can sign on their behalf</span>
                 {{ formElementErrorsV2(canSign) }}
             </label>
         </div>
