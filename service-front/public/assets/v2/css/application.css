@@ -3260,16 +3260,15 @@ input[type=number] {
   border-bottom: 0;
   font-size: 19px; }
 .lpa-cards .lpa-donor {
+  box-sizing: border-box;
   width: 100%;
-  float: left; }
-  .lpa-cards .lpa-donor .heading-medium {
-    padding-right: 120px; }
-    @media (min-width: 870px) {
-      .lpa-cards .lpa-donor .heading-medium {
-        padding-right: 210px; } }
+  float: left;
+  padding-right: 120px; }
+  @media (min-width: 870px) {
+    .lpa-cards .lpa-donor {
+      padding-right: 210px; } }
 .lpa-cards .lpa-number {
   width: 100%;
-  padding-top: 6px;
   float: left;
   color: #6f777b; }
 .lpa-cards .lpa-type {
@@ -3277,7 +3276,6 @@ input[type=number] {
 .lpa-cards .lpa-progress,
 .lpa-cards .lpa-date {
   position: absolute;
-  top: 19px;
   right: 0;
   width: 128px;
   padding: 0;
@@ -3409,17 +3407,6 @@ input[type=number] {
     padding-top: 0;
     color: #6f777b;
     font-size: 16px; }
-    .lpa-table .lpa-number:after,
-    .lpa-cards .lpa-number:after {
-      position: absolute;
-      top: 0;
-      left: 135px;
-      content: '|'; } }
-    @media (max-width: 640px) and (max-width: 420px) {
-      .lpa-table .lpa-number:after,
-      .lpa-cards .lpa-number:after {
-        content: ''; } }
-@media (max-width: 640px) {
   .lpa-table .lpa-number-alt,
   .lpa-cards .lpa-number-alt {
     display: none; }
@@ -3432,29 +3419,12 @@ input[type=number] {
       content: 'Type: '; }
   .lpa-table .lpa-progress,
   .lpa-cards .lpa-progress {
-    position: absolute;
-    top: 39px;
-    left: 170px;
     width: 150px;
-    font-size: 16px; } }
-  @media (max-width: 640px) and (max-width: 420px) {
-    .lpa-table .lpa-progress,
-    .lpa-cards .lpa-progress {
-      position: static; } }
-@media (max-width: 640px) {
+    font-size: 16px; }
     .lpa-table .lpa-progress:before,
     .lpa-cards .lpa-progress:before {
       color: #6f777b;
-      content: ''; } }
-    @media (max-width: 640px) and (min-width: 460px) {
-      .lpa-table .lpa-progress:before,
-      .lpa-cards .lpa-progress:before {
-        content: 'Status: '; } }
-    @media (max-width: 640px) and (max-width: 420px) {
-      .lpa-table .lpa-progress:before,
-      .lpa-cards .lpa-progress:before {
-        content: 'Status: '; } }
-@media (max-width: 640px) {
+      content: 'Status: '; }
   .lpa-table .lpa-date,
   .lpa-cards .lpa-date {
     display: block;
