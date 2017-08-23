@@ -2346,6 +2346,8 @@ input[type=number] {
 .form-date {
   margin-bottom: 30px;
   overflow: hidden; }
+  .form-date .error-group-popup {
+    display: none; }
 
 .form-group-day.error,
 .form-group-month.error,
@@ -4033,12 +4035,14 @@ input[type=number] {
       left: 150px;
       width: 280%; } }
   @media (min-width: 641px) {
-    .form-popup .form-date.error .form-group {
-      top: -37px; } }
-  @media (min-width: 641px) {
     .form-popup .form-date .error-message {
-      top: 80px;
-      left: 0; } }
+      top: -11px;
+      left: 0;
+      width: 100%; } }
+  .form-popup .form-date .error-group {
+    display: none; }
+  .form-popup .form-date .error-group-popup {
+    display: block; }
   @media (max-width: 640px) {
     .form-popup .dob-label {
       display: none; } }
