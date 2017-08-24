@@ -7,6 +7,7 @@ use ApplicationTest\Controller\AbstractControllerTest;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
+use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
 class IndexControllerTest extends AbstractControllerTest
@@ -25,7 +26,8 @@ class IndexControllerTest extends AbstractControllerTest
         $this->controller = new IndexController();
         parent::controllerSetUp($this->controller);
 
-        $this->lpa = FixturesData::getPfLpa();
+        $this->lpa = new Lpa();
+        $this->lpa->id = 123;
     }
 
     /**
@@ -37,17 +39,16 @@ class IndexControllerTest extends AbstractControllerTest
         $this->controller->indexAction();
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionNoSeed()
     {
-        $this->controller->setLpa($this->lpa);
-        $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => $this->lpa->document->whoIsRegistering])->once();
+        $response = new Response();
 
-        /** @var ViewModel $result */
+        $this->controller->setLpa($this->lpa);
+        $this->lpaApplicationService->shouldReceive('setMetaData')->with($this->lpa->id, ['analyticsReturnCount' => 1])->once();
+        $this->redirect->shouldReceive('toRoute')->with('lpa/form-type', ['lpa-id' => $this->lpa->id], [])->andReturn($response)->once();
+
         $result = $this->controller->indexAction();
 
-        $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals($response, $result);
     }
 }

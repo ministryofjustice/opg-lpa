@@ -34,7 +34,7 @@ class TypeControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(TypeForm::class);
         $this->lpa = FixturesData::getPfLpa();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\TypeForm', ['lpa' => $this->lpa])->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\TypeForm')->andReturn($this->form);
     }
 
     /**
@@ -52,7 +52,10 @@ class TypeControllerTest extends AbstractControllerTest
     {
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => $this->lpa->document->whoIsRegistering])->once();
+        $this->form->shouldReceive('bind')->with($this->lpa->document->flatten())->once();
+        $this->setMatchedRouteName($this->controller, 'lpa/form-type');
+        $this->url->shouldReceive('fromRoute')->with('lpa/donor', ['lpa-id' => $this->lpa->id])->andReturn('lpa/donor?lpa-id=' .$this->lpa->id)->once();
+        $this->url->shouldReceive('fromRoute')->with('user/dashboard/create-lpa', ['lpa-id' => $this->lpa->id])->andReturn('user/dashboard/create-lpa?lpa-id=' .$this->lpa->id)->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -60,5 +63,9 @@ class TypeControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals('user/dashboard/create-lpa?lpa-id=' .$this->lpa->id, $result->getVariable('cloneUrl'));
+        $this->assertEquals('lpa/donor?lpa-id=' .$this->lpa->id, $result->getVariable('nextUrl'));
+        $this->assertEquals('', $result->getVariable('isChangeAllowed'));
+        $this->assertEquals([], $result->getVariable('analyticsDimensions'));
     }
 }

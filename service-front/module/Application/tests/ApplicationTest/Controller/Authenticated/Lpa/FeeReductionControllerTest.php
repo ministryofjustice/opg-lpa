@@ -10,6 +10,7 @@ use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
+use Zend\Form\Element\Select;
 use Zend\View\Model\ViewModel;
 
 class FeeReductionControllerTest extends AbstractControllerTest
@@ -26,6 +27,11 @@ class FeeReductionControllerTest extends AbstractControllerTest
      * @var Lpa
      */
     private $lpa;
+    private $options;
+    /**
+     * @var MockInterface|Select
+     */
+    private $reductionOptions;
 
     public function setUp()
     {
@@ -35,6 +41,18 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->form = Mockery::mock(FeeReductionForm::class);
         $this->lpa = FixturesData::getPfLpa();
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\FeeReductionForm', ['lpa' => $this->lpa])->andReturn($this->form);
+
+        $this->options = [
+            'value_options' => [
+                'reducedFeeReceivesBenefits' => ['value' => 'reducedFeeReceivesBenefits'],
+                'reducedFeeUniversalCredit' => ['value' => 'reducedFeeUniversalCredit'],
+                'reducedFeeLowIncome' => ['value' => 'reducedFeeLowIncome'],
+                'notApply' => ['value' => 'notApply']
+            ]
+        ];
+
+        $this->reductionOptions = Mockery::mock(Select::class);
+        $this->reductionOptions->shouldReceive('getOptions')->andReturn($this->options);
     }
 
     /**
@@ -46,11 +64,13 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->controller->indexAction();
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGetNoPayment()
     {
+        $this->lpa->payment = null;
         $this->controller->setLpa($this->lpa);
+        $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
+        $this->form->shouldReceive('get')->with('reductionOptions')->andReturn($this->reductionOptions)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => $this->lpa->document->whoIsRegistering])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -58,5 +78,6 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals(4, count($result->getVariable('reductionOptions')));
     }
 }

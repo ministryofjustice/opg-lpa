@@ -50,7 +50,7 @@ class LifeSustainingControllerTest extends AbstractControllerTest
     {
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => $this->lpa->document->whoIsRegistering])->once();
+        $this->form->shouldReceive('bind')->with($this->lpa->document->primaryAttorneyDecisions->flatten())->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

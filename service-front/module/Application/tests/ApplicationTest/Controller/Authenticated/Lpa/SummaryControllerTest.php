@@ -39,17 +39,18 @@ class SummaryControllerTest extends AbstractControllerTest
         $this->controller->indexAction();
     }
 
-    public function testIndexActionGet()
+    public function testIndexAction()
     {
         $this->controller->setLpa($this->lpa);
-        $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => $this->lpa->document->whoIsRegistering])->once();
+        $this->params->shouldReceive('fromQuery')->with('return-route', 'lpa/applicant')->andReturn('lpa/applicant')->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals('lpa/applicant', $result->getVariable('returnRoute'));
+        $this->assertEquals(82, $result->getVariable('fullFee'));
+        $this->assertEquals(41, $result->getVariable('lowIncomeFee'));
     }
 }

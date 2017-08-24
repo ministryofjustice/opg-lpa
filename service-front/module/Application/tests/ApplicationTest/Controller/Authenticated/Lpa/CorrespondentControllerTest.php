@@ -34,7 +34,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(CorrespondentForm::class);
         $this->lpa = FixturesData::getPfLpa();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\CorrespondentForm', ['lpa' => $this->lpa])->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\CorrespondenceForm', ['lpa' => $this->lpa])->andReturn($this->form);
     }
 
     /**
@@ -49,8 +49,21 @@ class CorrespondentControllerTest extends AbstractControllerTest
     public function testIndexActionGet()
     {
         $this->controller->setLpa($this->lpa);
+        $this->url->shouldReceive('fromRoute')->with('lpa/correspondent', ['lpa-id' => $this->lpa->id])->andReturn('lpa/correspondent?lpa-id=' . $this->lpa->id)->once();
+        $this->form->shouldReceive('setAttribute')->with('action', 'lpa/correspondent?lpa-id=' . $this->lpa->id)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => $this->lpa->document->whoIsRegistering])->once();
+        $this->form->shouldReceive('bind')->with([
+            'contactInWelsh' => false,
+            'correspondence' => [
+                'contactByEmail' => true,
+                'email-address'  => $this->lpa->document->donor->email->address,
+                'contactByPhone' => true,
+                'phone-number'   => $this->lpa->document->correspondent->phone->number,
+                'contactByPost'  => false
+            ]
+        ])->once();
+        $this->setMatchedRouteName($this->controller, 'lpa/correspondent');
+        $this->url->shouldReceive('fromRoute')->with('lpa/correspondent/edit', ['lpa-id' => $this->lpa->id])->andReturn('lpa/correspondent/edit')->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -58,5 +71,11 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals($this->lpa->document->correspondent->name, $result->getVariable('correspondentName'));
+        $this->assertEquals($this->lpa->document->correspondent->address, $result->getVariable('correspondentAddress'));
+        $this->assertEquals($this->lpa->document->correspondent->email, $result->getVariable('contactEmail'));
+        $this->assertEquals($this->lpa->document->correspondent->phone->number, $result->getVariable('contactPhone'));
+        $this->assertEquals('lpa/correspondent/edit', $result->getVariable('changeRoute'));
+        $this->assertEquals(false, $result->getVariable('allowEditButton'));
     }
 }
