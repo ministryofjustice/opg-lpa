@@ -49,8 +49,12 @@ class DateCheckControllerTest extends AbstractControllerTest
     public function testIndexActionGet()
     {
         $this->controller->setLpa($this->lpa);
+        $this->params->shouldReceive('fromPost')->with('return-route', null)->andReturn(null)->once();
+        $currentRouteName = 'lpa/date-check/complete';
+        $this->setMatchedRouteName($this->controller, $currentRouteName);
+        $this->url->shouldReceive('fromRoute')->with($currentRouteName, ['lpa-id' => $this->lpa->id])->andReturn($currentRouteName)->once();
+        $this->form->shouldReceive('setAttribute')->with('action', $currentRouteName)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => $this->lpa->document->whoIsRegistering])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

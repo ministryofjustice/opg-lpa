@@ -50,7 +50,7 @@ class InstructionsControllerTest extends AbstractControllerTest
     {
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => $this->lpa->document->whoIsRegistering])->once();
+        $this->form->shouldReceive('bind')->with($this->lpa->document->flatten())->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -58,5 +58,6 @@ class InstructionsControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals(true, $result->getVariable('isPfLpa'));
     }
 }

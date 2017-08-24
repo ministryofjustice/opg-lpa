@@ -4,7 +4,9 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Form\Lpa\ReuseDetailsForm;
+use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
+use DateTime;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -15,7 +17,7 @@ use Zend\View\Model\ViewModel;
 class ReuseDetailsControllerTest extends AbstractControllerTest
 {
     /**
-     * @var ReuseDetailsController
+     * @var TestableReuseDetailsController
      */
     private $controller;
     /**
@@ -29,12 +31,14 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new ReuseDetailsController();
+        $this->controller = new TestableReuseDetailsController();
         parent::controllerSetUp($this->controller);
+
+        $this->user = FixturesData::getUser();
+        $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
 
         $this->form = Mockery::mock(ReuseDetailsForm::class);
         $this->lpa = FixturesData::getPfLpa();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\ReuseDetailsForm', ['lpa' => $this->lpa])->andReturn($this->form);
     }
 
     /**
@@ -49,11 +53,47 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
         $this->controller->indexAction();
     }
 
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage Required data missing when attempting to load the reuse details screen
+     */
+    public function testIndexActionGetMissingParameters()
+    {
+        $queryParameters = [
+            'calling-url' => '',
+            'include-trusts' => null,
+            'actor-name' => '',
+        ];
+        $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
+
+        $this->controller->indexAction();
+    }
+
     public function testIndexActionGet()
     {
+        $queryParameters = [
+            'calling-url' => '/lpa/' . $this->lpa->id . '/donor/add',
+            'include-trusts' => '0',
+            'actor-name' => 'Donor',
+        ];
         $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
+        $this->userDetailsSession->user = $this->user;
+
+        $this->formElementManager->shouldReceive('get')->with(
+            'Application\Form\Lpa\ReuseDetailsForm',
+            ['actorReuseDetails' => $this->controller->testGetActorReuseDetails(false, false)]
+        )->andReturn($this->form);
+
+        $this->url->shouldReceive('fromRoute')
+            ->with('lpa/reuse-details', ['lpa-id' => $this->lpa->id], ['query' => $queryParameters])
+            ->andReturn('lpa/reuse-details?lpa-id=' . $this->lpa->id)->once();
+
+        $this->form->shouldReceive('setAttribute')->with('action', 'lpa/reuse-details?lpa-id=' . $this->lpa->id)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => $this->lpa->document->whoIsRegistering])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -61,5 +101,7 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals('/lpa/' . $this->lpa->id . '/donor', $result->cancelUrl);
+        $this->assertEquals($queryParameters['actor-name'], $result->actorName);
     }
 }

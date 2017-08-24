@@ -4,6 +4,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\RepeatApplicationController;
 use Application\Form\Lpa\RepeatApplicationForm;
+use Application\Model\Service\Lpa\Metadata;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
@@ -46,11 +47,11 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->controller->indexAction();
     }
 
-    public function testIndexActionGet()
+    public function testIndexActionGetNotRepeatApplication()
     {
+        unset($this->lpa->metadata[Metadata::REPEAT_APPLICATION_CONFIRMED]);
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => $this->lpa->document->whoIsRegistering])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -58,5 +59,6 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals(41, $result->getVariable('lpaRepeatFee'));
     }
 }
