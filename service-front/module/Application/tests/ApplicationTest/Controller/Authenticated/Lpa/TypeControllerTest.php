@@ -7,7 +7,10 @@ use Application\Form\Lpa\TypeForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
+use Zend\View\Model\ViewModel;
 
 class TypeControllerTest extends AbstractControllerTest
 {
@@ -19,6 +22,10 @@ class TypeControllerTest extends AbstractControllerTest
      * @var MockInterface|TypeForm
      */
     private $form;
+    /**
+     * @var Lpa
+     */
+    private $lpa;
 
     public function setUp()
     {
@@ -26,7 +33,8 @@ class TypeControllerTest extends AbstractControllerTest
         parent::controllerSetUp($this->controller);
 
         $this->form = Mockery::mock(TypeForm::class);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\TypeForm')->andReturn($this->form);
+        $this->lpa = FixturesData::getPfLpa();
+        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\TypeForm', ['lpa' => $this->lpa])->andReturn($this->form);
     }
 
     /**
@@ -38,5 +46,19 @@ class TypeControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         $this->controller->indexAction();
+    }
+
+    public function testIndexActionGet()
+    {
+        $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => $this->lpa->document->whoIsRegistering])->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->indexAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->form, $result->getVariable('form'));
     }
 }

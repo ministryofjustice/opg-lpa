@@ -128,11 +128,7 @@ class TypeControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setType')->andReturn($lpa->id, $this->postData['type'])->andReturn(true)->once();
 
-        $event = new MvcEvent();
-        $routeMatch = Mockery::mock(RouteMatch::class);
-        $event->setRouteMatch($routeMatch);
-        $this->controller->setEvent($event);
-        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/form-type')->once();
+        $this->setMatchedRouteName($this->controller, 'lpa/form-type');
         $this->redirect->shouldReceive('toRoute')->with('lpa/donor', ['lpa-id' => $lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
 
         $result = $this->controller->indexAction();

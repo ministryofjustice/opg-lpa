@@ -23,6 +23,8 @@ use Zend\Mvc\Controller\Plugin\Params;
 use Zend\Mvc\Controller\Plugin\Redirect;
 use Zend\Mvc\Controller\Plugin\Url;
 use Zend\Mvc\Controller\PluginManager;
+use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Router\RouteMatch;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Storage\StorageInterface;
@@ -243,6 +245,29 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->cache = Mockery::mock(StorageInterface::class);
         $this->serviceLocator->shouldReceive('get')->with('Cache')->andReturn($this->cache);
+    }
+
+    /**
+     * @param AbstractController $controller
+     * @return MockInterface|RouteMatch
+     */
+    public function getRouteMatch($controller)
+    {
+        $event = new MvcEvent();
+        $routeMatch = Mockery::mock(RouteMatch::class);
+        $event->setRouteMatch($routeMatch);
+        $controller->setEvent($event);
+        return $routeMatch;
+    }
+
+    /**
+     * @param AbstractController$controller
+     * @param string $routeName
+     */
+    public function setMatchedRouteName($controller, $routeName)
+    {
+        $routeMatch = $this->getRouteMatch($controller);
+        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($routeName)->once();
     }
 
     public function tearDown()
