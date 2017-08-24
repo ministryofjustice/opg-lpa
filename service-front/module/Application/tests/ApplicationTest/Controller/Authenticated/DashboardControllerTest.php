@@ -167,10 +167,7 @@ class DashboardControllerTest extends AbstractControllerTest
      */
     public function testDeleteActionException()
     {
-        $event = new MvcEvent();
-        $routeMatch = Mockery::mock(RouteMatch::class);
-        $event->setRouteMatch($routeMatch);
-        $this->controller->setEvent($event);
+        $routeMatch = $this->getRouteMatch($this->controller);
         $routeMatch->shouldReceive('getParam')->with('lpa-id')->andReturn(1)->once();
         $this->lpaApplicationService->shouldReceive('deleteApplication')->andReturn(false)->once();
 
@@ -196,10 +193,7 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testConfirmDeleteLpaActionNonJs()
     {
-        $event = new MvcEvent();
-        $routeMatch = Mockery::mock(RouteMatch::class);
-        $event->setRouteMatch($routeMatch);
-        $this->controller->setEvent($event);
+        $routeMatch = $this->getRouteMatch($this->controller);
         $routeMatch->shouldReceive('getParam')->with('lpa-id')->andReturn(1)->once();
         $lpa = FixturesData::getPfLpa();
         $this->lpaApplicationService->shouldReceive('getApplication')->with(1)->andReturn($lpa)->once();

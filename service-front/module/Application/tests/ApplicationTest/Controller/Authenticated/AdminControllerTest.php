@@ -93,7 +93,7 @@ class AdminControllerTest extends AbstractControllerTest
     public function testOnDispatchUserIsAdminPageNotFound()
     {
         $event = new MvcEvent();
-        $routeMatch = Mockery::mock(RouteMatch::class);
+        $routeMatch = $this->getRouteMatch($this->controller);
         $event->setRouteMatch($routeMatch);
         $this->controller->setEvent($event);
 
