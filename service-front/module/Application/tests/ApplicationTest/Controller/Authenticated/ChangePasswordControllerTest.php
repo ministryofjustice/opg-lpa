@@ -110,8 +110,6 @@ class ChangePasswordControllerTest extends AbstractControllerTest
 
     public function testIndexActionUpdateFailes()
     {
-        $response = new Response();
-
         $this->url->shouldReceive('fromRoute')->with('user/change-password')->andReturn('user/change-password')->once();
         $this->form->shouldReceive('setAttribute')->with('action', 'user/change-password')->once();
         $this->authenticationAdapter->shouldReceive('setEmail')->with($this->user->email->address)->once();
