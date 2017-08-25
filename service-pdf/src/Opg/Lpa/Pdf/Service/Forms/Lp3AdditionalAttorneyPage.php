@@ -64,8 +64,10 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
                         $i++;
                     }
 
+                    $this->drawingTargets = [$crossLineParams];
+
                     if (!empty($crossLineParams)) {
-                        $this->drawCrossLines($filePath, [$crossLineParams]);
+                        $this->drawCrossLines($filePath);
                     }
 
                     //  Reset the loop data for the next iteration

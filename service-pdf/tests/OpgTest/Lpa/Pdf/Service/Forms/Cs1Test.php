@@ -82,6 +82,11 @@ class Cs1Test extends AbstractFormTestClass
         foreach ($cs1->getCs1s() as $i => $cs1Pdf) {
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($cs1Pdf));
         }
+
+        //  Confirm the crossed lines data is as expected
+        $expectedCrossedLines = [];
+
+        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($cs1));
     }
 
     public function testGenerateHW()
@@ -147,5 +152,14 @@ class Cs1Test extends AbstractFormTestClass
         foreach ($cs1->getCs1s() as $i => $cs1Pdf) {
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($cs1Pdf));
         }
+
+        //  Confirm the crossed lines data is as expected
+        $expectedCrossedLines = [
+            0 => [
+                'cs1'
+            ],
+        ];
+
+        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($cs1));
     }
 }

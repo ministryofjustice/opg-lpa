@@ -43,7 +43,15 @@ class Lp3AdditionalAttorneyPageTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  TODO - Expand this test to check the strike through lines also
+        //  Confirm the crossed lines data is as expected
+        $expectedCrossedLines = [
+            0 => [
+                'lp3-primaryAttorney-2',
+                'lp3-primaryAttorney-3',
+            ],
+        ];
+
+        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($lp3AdditionalAttorneyPage));
     }
 
     public function testGenerateHW()
@@ -77,6 +85,15 @@ class Lp3AdditionalAttorneyPageTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  TODO - Expand this test to check the strike through lines also
+        //  Confirm the crossed lines data is as expected
+        $expectedCrossedLines = [
+            0 => [
+                'lp3-primaryAttorney-1',
+                'lp3-primaryAttorney-2',
+                'lp3-primaryAttorney-3',
+            ],
+        ];
+
+        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($lp3AdditionalAttorneyPage));
     }
 }

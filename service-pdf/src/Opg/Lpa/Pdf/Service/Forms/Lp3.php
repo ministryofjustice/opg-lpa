@@ -140,15 +140,14 @@ class Lp3 extends AbstractTopForm
         }
 
         //  Determine if any cross lines should be drawn
-        $crossLineParams = [];
         $numOfAttorneys = count($this->lpa->document->primaryAttorneys);
 
         if ($numOfAttorneys < self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
-            $crossLineParams[2] = [];
+            $this->drawingTargets[2] = [];
 
             for ($i = self::MAX_ATTORNEYS_ON_STANDARD_FORM - $numOfAttorneys; $i >= 1; $i--) {
                 // draw on page 2.
-                $crossLineParams[2][] = 'lp3-primaryAttorney-' . (self::MAX_ATTORNEYS_ON_STANDARD_FORM - $i);
+                $this->drawingTargets[2][] = 'lp3-primaryAttorney-' . (self::MAX_ATTORNEYS_ON_STANDARD_FORM - $i);
             }
         }
 
@@ -170,9 +169,7 @@ class Lp3 extends AbstractTopForm
                     ->flatten()
                     ->saveAs($filePath);
 
-                if (!empty($crossLineParams)) {
-                    $this->drawCrossLines($filePath, $crossLineParams);
-                }
+                $this->drawCrossLines($filePath);
             }
         }
 

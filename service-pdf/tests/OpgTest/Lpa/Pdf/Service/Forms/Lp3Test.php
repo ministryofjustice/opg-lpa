@@ -294,6 +294,11 @@ class Lp3Test extends AbstractFormTestClass
         foreach ($form->getLp3s() as $i => $lp3Pdf) {
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
+
+        //  Confirm the crossed lines data is as expected
+        $expectedCrossedLines = [];
+
+        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
     }
 
     public function testGeneratePFNoPeopleToNotifyException()
@@ -490,6 +495,17 @@ class Lp3Test extends AbstractFormTestClass
         foreach ($form->getLp3s() as $i => $lp3Pdf) {
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
+
+        //  Confirm the crossed lines data is as expected
+        $expectedCrossedLines = [
+            2 => [
+                'lp3-primaryAttorney-1',
+                'lp3-primaryAttorney-2',
+                'lp3-primaryAttorney-3',
+            ]
+        ];
+
+        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
     }
 
     public function testGeneratePFDonorRegistering()
@@ -774,6 +790,11 @@ class Lp3Test extends AbstractFormTestClass
         foreach ($form->getLp3s() as $i => $lp3Pdf) {
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
+
+        //  Confirm the crossed lines data is as expected
+        $expectedCrossedLines = [];
+
+        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
     }
 
     public function testGeneratePFTrustAttorneyOnly()
@@ -951,6 +972,17 @@ class Lp3Test extends AbstractFormTestClass
         foreach ($form->getLp3s() as $i => $lp3Pdf) {
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
+
+        //  Confirm the crossed lines data is as expected
+        $expectedCrossedLines = [
+            2 => [
+                'lp3-primaryAttorney-1',
+                'lp3-primaryAttorney-2',
+                'lp3-primaryAttorney-3',
+            ]
+        ];
+
+        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
     }
 
     public function testGenerateHW()
@@ -1230,6 +1262,11 @@ class Lp3Test extends AbstractFormTestClass
         foreach ($form->getLp3s() as $i => $lp3Pdf) {
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
+
+        //  Confirm the crossed lines data is as expected
+        $expectedCrossedLines = [];
+
+        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
     }
 
     public function testGenerateHWNoPeopleToNotifyException()
@@ -1426,6 +1463,17 @@ class Lp3Test extends AbstractFormTestClass
         foreach ($form->getLp3s() as $i => $lp3Pdf) {
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
+
+        //  Confirm the crossed lines data is as expected
+        $expectedCrossedLines = [
+            2 => [
+                'lp3-primaryAttorney-1',
+                'lp3-primaryAttorney-2',
+                'lp3-primaryAttorney-3',
+            ]
+        ];
+
+        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
     }
 
     public function testGenerateHWDonorRegistering()
@@ -1710,5 +1758,10 @@ class Lp3Test extends AbstractFormTestClass
         foreach ($form->getLp3s() as $i => $lp3Pdf) {
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
+
+        //  Confirm the crossed lines data is as expected
+        $expectedCrossedLines = [];
+
+        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
     }
 }

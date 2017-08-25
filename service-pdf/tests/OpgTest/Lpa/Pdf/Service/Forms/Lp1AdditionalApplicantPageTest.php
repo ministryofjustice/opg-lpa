@@ -37,6 +37,16 @@ class Lp1AdditionalApplicantPageTest extends AbstractFormTestClass
         ];
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+
+        //  Confirm the crossed lines data is as expected
+        $expectedCrossedLines = [
+            0 => [
+                'additional-applicant-2-pf',
+                'additional-applicant-3-pf',
+            ],
+        ];
+
+        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($lp1AdditionalApplicantPage));
     }
 
     public function testGenerateHW()
@@ -68,5 +78,16 @@ class Lp1AdditionalApplicantPageTest extends AbstractFormTestClass
         ];
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+
+        //  Confirm the crossed lines data is as expected
+        $expectedCrossedLines = [
+            0 => [
+                'additional-applicant-1-hw',
+                'additional-applicant-2-hw',
+                'additional-applicant-3-hw',
+            ],
+        ];
+
+        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($lp1AdditionalApplicantPage));
     }
 }

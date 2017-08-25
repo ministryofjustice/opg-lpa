@@ -78,6 +78,15 @@ abstract class AbstractForm
     protected $pdfTemplateFile;
 
     /**
+     * Store cross line strokes parameters.
+     * The array index is the page number of pdf document,
+     * and value is array of cross line param keys.
+     *
+     * @var array
+     */
+    protected $drawingTargets = [];
+
+    /**
      * bx - bottom x
      * by - bottom y
      * tx - top x
@@ -233,36 +242,40 @@ abstract class AbstractForm
     }
 
     /**
-     * Draw cross lines
+     * Draw cross lines if any have been set
+     *
      * @param string $filePath
-     * @param array $params [pageNo=>crossLineParamName]
      * @codeCoverageIgnore
      */
-    protected function drawCrossLines($filePath, $params)
+    protected function drawCrossLines($filePath)
     {
-        //  Check to see if drawing cross lines is disabled or not
-        $disableDrawCrossLines = false;
+        if (!empty($this->drawingTargets)) {
+            //  Check to see if drawing cross lines is disabled or not
+            $disableDrawCrossLines = false;
 
-        if (isset($this->config['service']['disable_draw_cross_lines'])) {
-            $disableDrawCrossLines = (bool)$this->config['service']['disable_draw_cross_lines'];
-        }
+            if (isset($this->config['service']['disable_draw_cross_lines'])) {
+                $disableDrawCrossLines = (bool)$this->config['service']['disable_draw_cross_lines'];
+            }
 
-        if (!$disableDrawCrossLines) {
-            // draw cross lines
-            $pdf = ZendPdfDocument::load($filePath);
-            foreach ($params as $pageNo => $blockNames) {
-                $page = $pdf->pages[$pageNo]->setLineWidth(10);
-                foreach ($blockNames as $blockName) {
-                    $page->drawLine(
-                        $this->strikeThroughCoordinates[$blockName]['bx'],
-                        $this->strikeThroughCoordinates[$blockName]['by'],
-                        $this->strikeThroughCoordinates[$blockName]['tx'],
-                        $this->strikeThroughCoordinates[$blockName]['ty']
-                    );
+            if (!$disableDrawCrossLines) {
+                // draw cross lines
+                $pdf = ZendPdfDocument::load($filePath);
+
+                foreach ($this->drawingTargets as $pageNo => $pageDrawingTargets) {
+                    $page = $pdf->pages[$pageNo]->setLineWidth(10);
+
+                    foreach ($pageDrawingTargets as $pageDrawingTarget) {
+                        $page->drawLine(
+                            $this->strikeThroughCoordinates[$pageDrawingTarget]['bx'],
+                            $this->strikeThroughCoordinates[$pageDrawingTarget]['by'],
+                            $this->strikeThroughCoordinates[$pageDrawingTarget]['tx'],
+                            $this->strikeThroughCoordinates[$pageDrawingTarget]['ty']
+                        );
+                    }
                 }
-            } // foreach
 
-            $pdf->save($filePath);
+                $pdf->save($filePath);
+            }
         }
     }
 

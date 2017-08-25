@@ -121,7 +121,8 @@ class Cs1 extends AbstractForm
 
             //  If required draw a strike through line
             if ($pageNumber == $thisPageNumber && !$startNewPage) {
-                $this->drawCrossLines($filePath, [['cs1']]);
+                $this->drawingTargets[0] = ['cs1'];
+                $this->drawCrossLines($filePath);
             }
         }
 

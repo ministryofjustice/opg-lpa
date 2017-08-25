@@ -17,7 +17,7 @@ abstract class AbstractFormTestClass extends TestCase
     {
         ConfigSetUp::init();
 
-        $formReflectionClass = new \ReflectionClass('Opg\Lpa\Pdf\Service\Forms\AbstractLp1');
+        $formReflectionClass = new \ReflectionClass('Opg\Lpa\Pdf\Service\Forms\AbstractForm');
         $this->drawingTargetsReflectionProperty = $formReflectionClass->getProperty('drawingTargets');
         $this->drawingTargetsReflectionProperty->setAccessible(true);
     }

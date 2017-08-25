@@ -28,15 +28,6 @@ abstract class AbstractLp1 extends AbstractTopForm
     protected $pdf;
 
     /**
-     * Store cross line strokes parameters.
-     * The array index is the page number of pdf document,
-     * and value is array of cross line param keys.
-     *
-     * @var array
-     */
-    protected $drawingTargets = [];
-
-    /**
      * There or not the registration section of teh LPA is complete
      *
      * @var bool
@@ -83,10 +74,7 @@ abstract class AbstractLp1 extends AbstractTopForm
             $this->addLpaIdBarcode($filePath);
         }
 
-        // draw cross lines if there's any blank slot
-        if (!empty($this->drawingTargets)) {
-            $this->drawCrossLines($filePath, $this->drawingTargets);
-        }
+        $this->drawCrossLines($filePath);
 
         //  Generate the additional pages - using the functions in descendant classes
         $this->generateAdditionalPages();
