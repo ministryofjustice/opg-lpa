@@ -131,6 +131,44 @@ class DashboardControllerTest extends AbstractControllerTest
         $this->assertEquals(['lastLogin' => $this->userIdentity->lastLogin()], $result->getVariable('user'));
     }
 
+    public function testIndexActionLastPage()
+    {
+        $lpasSummary = [
+            'applications' => [],
+            'total' => 0
+        ];
+
+        $lpa = FixturesData::getHwLpa();
+        for ($i = 1; $i <= 150; $i++) {
+            $lpasSummary['applications'][] = $lpa->abbreviatedToArray();
+            $lpasSummary['total'] = $i;
+        }
+
+        $this->controller->setUser($this->userIdentity);
+        $this->params->shouldReceive('fromQuery')->with('search', null)->andReturn(null)->once();
+        $this->params->shouldReceive('fromRoute')->with('page', 1)->andReturn(3)->once();
+        $this->applicationList->shouldReceive('getLpaSummaries')->with(null, 3, 50)->andReturn($lpasSummary)->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->indexAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($lpasSummary['applications'], $result->getVariable('lpas'));
+        $this->assertEquals($lpasSummary['total'], $result->getVariable('lpaTotalCount'));
+        $this->assertEquals([
+            'page' => 3,
+            'pageCount' => 3,
+            'pagesInRange' => [3, 2, 1],
+            'firstItemNumber' => 101,
+            'lastItemNumber' => 150,
+            'totalItemCount' => 150
+        ], $result->getVariable('paginationControlData'));
+        $this->assertEquals(null, $result->getVariable('freeText'));
+        $this->assertEquals(false, $result->getVariable('isSearch'));
+        $this->assertEquals(['lastLogin' => $this->userIdentity->lastLogin()], $result->getVariable('user'));
+    }
+
     public function testCreateActionSeedLpaFailed()
     {
         $response = new Response();

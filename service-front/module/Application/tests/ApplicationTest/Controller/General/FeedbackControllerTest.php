@@ -74,7 +74,7 @@ class FeedbackControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
-        $this->feedbackService->shouldReceive('sendMail')->andReturn(false);
+        $this->feedbackService->shouldReceive('sendMail')->andReturn(false)->once();
 
         $this->controller->indexAction();
     }
@@ -87,7 +87,8 @@ class FeedbackControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
-        $this->feedbackService->shouldReceive('sendMail')->andReturn(true);
+        $this->feedbackService->shouldReceive('sendMail')->andReturn(true)->once();
+        $this->url->shouldReceive('fromRoute')->with('home')->andReturn('home')->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
