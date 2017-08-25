@@ -10,6 +10,7 @@ use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManager;
 use Mockery;
 use Mockery\MockInterface;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\Logger;
 use PHPUnit_Framework_Error_Deprecated;
@@ -292,6 +293,36 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
     {
         $routeMatch = $this->getHttpRouteMatch($controller);
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($routeName)->once();
+    }
+
+    /**
+     * @param Lpa $seedLpa
+     * @return array
+     */
+    public function getSeedData($seedLpa)
+    {
+        $result = array('seed' => $seedLpa->id);
+
+        if ($seedLpa->document == null) {
+            return $result;
+        }
+
+        $document = $seedLpa->document->toArray();
+
+        $result = $result + array_intersect_key($document, array_flip([
+                'donor',
+                'correspondent',
+                'certificateProvider',
+                'primaryAttorneys',
+                'replacementAttorneys',
+                'peopleToNotify'
+            ]));
+
+        $result = array_filter($result, function ($v) {
+            return !empty($v);
+        });
+
+        return $result;
     }
 
     public function tearDown()
