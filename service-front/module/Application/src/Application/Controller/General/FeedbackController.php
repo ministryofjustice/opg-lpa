@@ -2,10 +2,9 @@
 
 namespace Application\Controller\General;
 
-use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
-use Application\Form\General\FeedbackForm;
 use Zend\Session\Container;
+use Zend\View\Model\ViewModel;
 
 class FeedbackController extends AbstractBaseController
 {
@@ -34,11 +33,21 @@ class FeedbackController extends AbstractBaseController
                     'email'     => $data['email'],
                     'phone'     => $data['phone'],
                     'agent'     => $_SERVER['HTTP_USER_AGENT'],
-                    'fromPage'  => $container->feedbackLinkClickedFromPage,
+                    'fromPage'  => (is_string($container->feedbackLinkClickedFromPage) ? $container->feedbackLinkClickedFromPage : 'Unknown'),
                 ]);
 
                 if ($result === true) {
-                    $successView = new ViewModel();
+                    //  Determine the return target to go to from the thank you page
+                    $returnTarget = $container->feedbackLinkClickedFromPage;
+
+                    if (is_null($returnTarget)) {
+                        $returnTarget = $this->url()->fromRoute('home');
+                    }
+
+                    $successView = new ViewModel([
+                        'returnTarget' => $returnTarget,
+                    ]);
+
                     $successView->setTemplate('application/feedback/thankyou');
 
                     return $successView;
@@ -52,7 +61,7 @@ class FeedbackController extends AbstractBaseController
             if ($this->getRequest()->getHeader('Referer') != false) {
                 $container->feedbackLinkClickedFromPage = $this->getRequest()->getHeader('Referer')->uri()->getPath();
             } else {
-                $container->feedbackLinkClickedFromPage = 'Unknown';
+                $container->feedbackLinkClickedFromPage = null;
             }
         }
 
