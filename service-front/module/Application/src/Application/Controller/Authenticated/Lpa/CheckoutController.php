@@ -253,7 +253,7 @@ class CheckoutController extends AbstractLpaController
         // Lookup the payment ID in play...
 
         if (is_null($lpa->payment->gatewayReference)) {
-            die('Payment id needed');
+            throw new RuntimeException('Payment id needed');
         }
 
         //---
