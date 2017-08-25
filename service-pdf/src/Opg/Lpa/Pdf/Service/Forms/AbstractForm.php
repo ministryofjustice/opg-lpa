@@ -78,64 +78,11 @@ abstract class AbstractForm
     protected $pdfTemplateFile;
 
     /**
-     * Store cross line strokes parameters.
-     * The array index is the page number of pdf document,
-     * and value is array of cross line param keys.
+     * Array to hold the areas where we should so a strike through on the PDF pages
      *
      * @var array
      */
-    protected $drawingTargets = [];
-
-    /**
-     * bx - bottom x
-     * by - bottom y
-     * tx - top x
-     * ty - top y
-     * @var array - cross lines coordinates
-     */
-    private $strikeThroughCoordinates = [
-        'primaryAttorney-1-hw' =>               ['bx' => 313, 'by' => 243, 'tx' => 550, 'ty' => 546],
-        'primaryAttorney-1-pf' =>               ['bx' => 313, 'by' => 178, 'tx' => 550, 'ty' => 471],
-        'primaryAttorney-2' =>                  ['bx' => 45, 'by' => 375, 'tx' => 282, 'ty' => 679],
-        'primaryAttorney-3' =>                  ['bx' => 313, 'by' => 375, 'tx' => 550, 'ty' => 679],
-        'replacementAttorney-0-hw' =>           ['bx' => 45, 'by' => 317, 'tx' => 283, 'ty' => 538],
-        'replacementAttorney-1-hw' =>           ['bx' => 313, 'by' => 317, 'tx' => 551, 'ty' => 538],
-        'replacementAttorney-0-pf' =>           ['bx' => 45, 'by' => 308, 'tx' => 283, 'ty' => 530],
-        'replacementAttorney-1-pf' =>           ['bx' => 313, 'by' => 308, 'tx' => 551, 'ty' => 530],
-        'life-sustain-A' =>                     ['bx' => 44, 'by' => 265, 'tx' => 283, 'ty' => 478],
-        'life-sustain-B' =>                     ['bx' => 307, 'by' => 265, 'tx' => 550, 'ty' => 478],
-        'people-to-notify-0' =>                 ['bx' => 44, 'by' => 335, 'tx' => 283, 'ty' => 501],
-        'people-to-notify-1' =>                 ['bx' => 312, 'by' => 335, 'tx' => 552, 'ty' => 501],
-        'people-to-notify-2' =>                 ['bx' => 44, 'by' => 127, 'tx' => 283, 'ty' => 294],
-        'people-to-notify-3' =>                 ['bx' => 312, 'by' => 127, 'tx' => 552, 'ty' => 294],
-        'preference' =>                         ['bx' => 41, 'by' => 423, 'tx' => 554, 'ty' => 532],
-        'instruction' =>                        ['bx' => 41, 'by' => 122, 'tx' => 554, 'ty' => 231],
-        'attorney-signature-hw' =>              ['bx' => 42, 'by' => 143, 'tx' => 553, 'ty' => 317],
-        'attorney-signature-pf' =>              ['bx' => 42, 'by' => 131, 'tx' => 553, 'ty' => 306],
-        'applicant-0-hw' =>                     ['bx' => 42, 'by' => 315, 'tx' => 283, 'ty' => 413],
-        'applicant-1-hw' =>                     ['bx' => 308, 'by' => 315, 'tx' => 549, 'ty' => 413],
-        'applicant-2-hw' =>                     ['bx' => 42, 'by' => 147, 'tx' => 283, 'ty' => 245],
-        'applicant-3-hw' =>                     ['bx' => 308, 'by' => 147, 'tx' => 549, 'ty' => 245],
-        'applicant-0-pf' =>                     ['bx' => 42, 'by' => 319, 'tx' => 283, 'ty' => 417],
-        'applicant-1-pf' =>                     ['bx' => 308, 'by' => 319, 'tx' => 549, 'ty' => 417],
-        'applicant-2-pf' =>                     ['bx' => 42, 'by' => 155, 'tx' => 283, 'ty' => 253],
-        'applicant-3-pf' =>                     ['bx' => 308, 'by' => 155, 'tx' => 549, 'ty' => 253],
-        'applicant-signature-1' =>              ['bx' => 308, 'by' => 395, 'tx' => 549, 'ty' => 493],
-        'applicant-signature-2' =>              ['bx' => 42, 'by' => 262, 'tx' => 283, 'ty' => 360],
-        'applicant-signature-3' =>              ['bx' => 308, 'by' => 262, 'tx' => 549, 'ty' => 360],
-        'additional-applicant-1-hw' =>          ['bx' => 308, 'by' => 315, 'tx' => 549, 'ty' => 413],
-        'additional-applicant-2-hw' =>          ['bx' => 42, 'by' => 147, 'tx' => 283, 'ty' => 245],
-        'additional-applicant-3-hw' =>          ['bx' => 308, 'by' => 147, 'tx' => 549, 'ty' => 245],
-        'additional-applicant-1-pf' =>          ['bx' => 308, 'by' => 319, 'tx' => 549, 'ty' => 417],
-        'additional-applicant-2-pf' =>          ['bx' => 42, 'by' => 155, 'tx' => 283, 'ty' => 253],
-        'additional-applicant-3-pf' =>          ['bx' => 308, 'by' => 155, 'tx' => 549, 'ty' => 253],
-        'correspondent-empty-address' =>        ['bx' => 42, 'by' => 362, 'tx' => 284, 'ty' => 433],
-        'correspondent-empty-name-address' =>   ['bx' => 42, 'by' => 362, 'tx' => 413, 'ty' => 565],
-        'cs1' =>                                ['bx' => 313, 'by' => 262, 'tx' => 558, 'ty' => 645],
-        'lp3-primaryAttorney-1' =>              ['bx' => 312, 'by' => 458, 'tx' => 552, 'ty' => 602],
-        'lp3-primaryAttorney-2' =>              ['bx' => 43, 'by' => 242, 'tx' => 283, 'ty' => 386],
-        'lp3-primaryAttorney-3' =>              ['bx' => 312, 'by' => 242, 'tx' => 552, 'ty' => 386]
-    ];
+    private $strikeThroughTargets = [];
 
     public function __construct(Lpa $lpa)
     {
@@ -242,35 +189,59 @@ abstract class AbstractForm
     }
 
     /**
-     * Draw cross lines if any have been set
+     * Add a strike through line to the specified page
+     *
+     * @param $areaReference
+     * @param int $pageNumber
+     * @return $this
+     */
+    protected function addStrikeThrough($areaReference, $pageNumber = 0)
+    {
+        //  If a section doesn't exist for this page create one now
+        if (!isset($this->strikeThroughTargets[$pageNumber])) {
+            $this->strikeThroughTargets[$pageNumber] = [];
+        }
+
+        $this->strikeThroughTargets[$pageNumber][] = $areaReference;
+
+        return $this;
+    }
+
+    /**
+     * Draw strike through lines if any have been set
      *
      * @param string $filePath
      * @codeCoverageIgnore
      */
-    protected function drawCrossLines($filePath)
+    protected function drawStrikeThroughs($filePath)
     {
-        if (!empty($this->drawingTargets)) {
+        if (!empty($this->strikeThroughTargets)) {
             //  Check to see if drawing cross lines is disabled or not
-            $disableDrawCrossLines = false;
+            $disableStrikeThroughLines = false;
 
-            if (isset($this->config['service']['disable_draw_cross_lines'])) {
-                $disableDrawCrossLines = (bool)$this->config['service']['disable_draw_cross_lines'];
+            if (isset($this->config['service']['disable_strike_through_lines'])) {
+                $disableStrikeThroughLines = (bool)$this->config['service']['disable_strike_through_lines'];
             }
 
-            if (!$disableDrawCrossLines) {
+            if (!$disableStrikeThroughLines) {
                 // draw cross lines
                 $pdf = ZendPdfDocument::load($filePath);
 
-                foreach ($this->drawingTargets as $pageNo => $pageDrawingTargets) {
+                foreach ($this->strikeThroughTargets as $pageNo => $pageDrawingTargets) {
                     $page = $pdf->pages[$pageNo]->setLineWidth(10);
 
                     foreach ($pageDrawingTargets as $pageDrawingTarget) {
-                        $page->drawLine(
-                            $this->strikeThroughCoordinates[$pageDrawingTarget]['bx'],
-                            $this->strikeThroughCoordinates[$pageDrawingTarget]['by'],
-                            $this->strikeThroughCoordinates[$pageDrawingTarget]['tx'],
-                            $this->strikeThroughCoordinates[$pageDrawingTarget]['ty']
-                        );
+                        //  Get the coordinates for this target from the config
+                        if (isset($this->config['strike_throughs'][$pageDrawingTarget])) {
+                            $targetStrikeThroughCoordinates = $this->config['strike_throughs'][$pageDrawingTarget];
+
+                            $page->drawLine(
+                                $targetStrikeThroughCoordinates['bx'],
+                                $targetStrikeThroughCoordinates['by'],
+                                $targetStrikeThroughCoordinates['tx'],
+                                $targetStrikeThroughCoordinates['ty']
+                            );
+                        }
                     }
                 }
 

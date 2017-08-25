@@ -57,18 +57,12 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
                         ->saveAs($filePath);
 
                     //  If $i is less than the number of attorneys on a sheet then insert some strike through lines
-                    $crossLineParams = [];
-
                     while ($i < self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
-                        $crossLineParams[] = 'lp3-primaryAttorney-' . $i;
+                        $this->addStrikeThrough('lp3-primaryAttorney-' . $i);
                         $i++;
                     }
 
-                    $this->drawingTargets = [$crossLineParams];
-
-                    if (!empty($crossLineParams)) {
-                        $this->drawCrossLines($filePath);
-                    }
+                    $this->drawStrikeThroughs($filePath);
 
                     //  Reset the loop data for the next iteration
                     $formData = [];

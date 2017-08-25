@@ -48,7 +48,7 @@ class Lp1h extends AbstractLp1
         }
 
         if (count($this->lpa->document->primaryAttorneys) == 1) {
-            $this->drawingTargets[1] = ['primaryAttorney-1-hw'];
+            $this->addStrikeThrough('primaryAttorney-1-hw', 1);
         }
 
         // Section 4
@@ -78,14 +78,16 @@ class Lp1h extends AbstractLp1
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
 
         if ($noOfReplacementAttorneys == 0) {
-            $this->drawingTargets[4] = ['replacementAttorney-0-hw', 'replacementAttorney-1-hw'];
+            $this->addStrikeThrough('replacementAttorney-0-hw', 4)
+                 ->addStrikeThrough('replacementAttorney-1-hw', 4);
         } elseif ($noOfReplacementAttorneys == 1) {
-            $this->drawingTargets[4] = ['replacementAttorney-1-hw'];
+            $this->addStrikeThrough('replacementAttorney-1-hw', 4);
         }
 
         // Life Sustaining (Section 5)
         if ($this->lpa->document->primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions) {
-            $this->drawingTargets[5] = ($this->lpa->document->primaryAttorneyDecisions->canSustainLife === true ? ['life-sustain-B'] : ['life-sustain-A']);
+            $areaReference = ($this->lpa->document->primaryAttorneyDecisions->canSustainLife ? 'life-sustain-B' : 'life-sustain-A');
+            $this->addStrikeThrough($areaReference, 5);
         }
 
         // Attorney/Replacement signature (Section 11)
@@ -106,32 +108,38 @@ class Lp1h extends AbstractLp1
 
         switch ($numberOfHumanAttorneys) {
             case 3:
-                $this->drawingTargets[14] = ['attorney-signature-hw'];
+                $this->addStrikeThrough('attorney-signature-hw', 14);
                 break;
             case 2:
-                $this->drawingTargets[13] = ['attorney-signature-hw'];
-                $this->drawingTargets[14] = ['attorney-signature-hw'];
+                $this->addStrikeThrough('attorney-signature-hw', 13)
+                     ->addStrikeThrough('attorney-signature-hw', 14);
                 break;
             case 1:
-                $this->drawingTargets[12] = ['attorney-signature-hw'];
-                $this->drawingTargets[13] = ['attorney-signature-hw'];
-                $this->drawingTargets[14] = ['attorney-signature-hw'];
+                $this->addStrikeThrough('attorney-signature-hw', 12)
+                     ->addStrikeThrough('attorney-signature-hw', 13)
+                     ->addStrikeThrough('attorney-signature-hw', 14);
                 break;
         }
 
         // Section 12
         if ($this->lpa->document->whoIsRegistering == 'donor') {
-            $this->drawingTargets[16] = ['applicant-0-hw', 'applicant-1-hw', 'applicant-2-hw', 'applicant-3-hw'];
+            $this->addStrikeThrough('applicant-0-hw', 16)
+                 ->addStrikeThrough('applicant-1-hw', 16)
+                 ->addStrikeThrough('applicant-2-hw', 16)
+                 ->addStrikeThrough('applicant-3-hw', 16);
         } elseif (is_array($this->lpa->document->whoIsRegistering)) {
             switch (count($this->lpa->document->whoIsRegistering)) {
                 case 3:
-                    $this->drawingTargets[16] = ['applicant-3-hw'];
+                    $this->addStrikeThrough('applicant-3-hw', 16);
                     break;
                 case 2:
-                    $this->drawingTargets[16] = ['applicant-2-hw', 'applicant-3-hw'];
+                    $this->addStrikeThrough('applicant-2-hw', 16)
+                         ->addStrikeThrough('applicant-3-hw', 16);
                     break;
                 case 1:
-                    $this->drawingTargets[16] = ['applicant-1-hw', 'applicant-2-hw', 'applicant-3-hw'];
+                    $this->addStrikeThrough('applicant-1-hw', 16)
+                         ->addStrikeThrough('applicant-2-hw', 16)
+                         ->addStrikeThrough('applicant-3-hw', 16);
                     break;
             }
         }

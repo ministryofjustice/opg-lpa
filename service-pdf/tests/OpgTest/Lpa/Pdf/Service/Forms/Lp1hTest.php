@@ -224,14 +224,14 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateDraft()
@@ -437,14 +437,14 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateSimpleLpaWithNoContinuationSheets()
@@ -657,14 +657,14 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateCanSustainLifeFalse()
@@ -878,14 +878,14 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-A",
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateDonorRegistering()
@@ -1075,8 +1075,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -1093,7 +1093,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateSinglePrimaryAttorney()
@@ -1256,8 +1256,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -1280,7 +1280,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateSingleReplacementAttorney()
@@ -1482,8 +1482,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -1492,7 +1492,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateZeroReplacementAttorneys()
@@ -1683,8 +1683,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -1694,7 +1694,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateThreeAttorneys()
@@ -1868,8 +1868,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -1891,7 +1891,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateTwoAttorneys()
@@ -2045,8 +2045,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -2074,7 +2074,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateOneAttorneys()
@@ -2208,8 +2208,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -2245,7 +2245,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGeneratePrimaryAttorneysActJointly()
@@ -2459,14 +2459,14 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateLessThanSixPeopleToNotify()
@@ -2671,8 +2671,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -2681,7 +2681,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateEmptyInstructionsAndPreferences()
@@ -2894,8 +2894,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -2905,7 +2905,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateContactDetailsEnteredManuallyFalse()
@@ -3112,8 +3112,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -3122,7 +3122,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateCorrespondentIsAttorney()
@@ -3334,8 +3334,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -3344,7 +3344,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateCorrespondentIsAttorneyEnteredManually()
@@ -3560,14 +3560,14 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateCorrespondentIsCertificateProvider()
@@ -3783,14 +3783,14 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testMergePdfsThrowsUnexpectedValueException()
@@ -4017,14 +4017,14 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateAdditionalPagesReplacementAttorneysActJointlyAndSeverally()
@@ -4190,8 +4190,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -4214,7 +4214,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateAdditionalPagesReplacementAttorneysActJointly()
@@ -4379,8 +4379,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -4403,7 +4403,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateAdditionalPagesSingleReplacementAttorneyStepsInWhenFirst()
@@ -4607,8 +4607,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -4617,7 +4617,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateAdditionalPagesSingleReplacementAttorneyStepsInDepends()
@@ -4823,8 +4823,8 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
@@ -4833,7 +4833,7 @@ class Lp1hTest extends AbstractFormTestClass
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateAdditionalPagesMultiReplacementAttorneysActJointlyAndSeverally()
@@ -5047,14 +5047,14 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateAdditionalPagesMultiReplacementAttorneysActJointly()
@@ -5267,14 +5267,14 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateAdditionalPagesMultiReplacementAttorneysStepsInDepends()
@@ -5489,14 +5489,14 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateAdditionalPagesLongInstructionsAndPreferences()
@@ -5713,13 +5713,13 @@ class Lp1hTest extends AbstractFormTestClass
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             5 => [
                 "life-sustain-B",
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 }

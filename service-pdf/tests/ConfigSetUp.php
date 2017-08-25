@@ -13,7 +13,7 @@ class ConfigSetUp
         $config = Config::getInstance();
 
         $serviceConfig = $config['service'];
-        $serviceConfig['disable_draw_cross_lines'] = true;
+        $serviceConfig['disable_strike_through_lines'] = true;
         $serviceConfig['assets']['template_path_on_ram_disk'] = '/tmp/assets/v2';
         $serviceConfig['assets']['intermediate_file_path'] = '/tmp';
 

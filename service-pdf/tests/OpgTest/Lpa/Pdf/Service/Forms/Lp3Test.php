@@ -295,10 +295,10 @@ class Lp3Test extends AbstractFormTestClass
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [];
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGeneratePFNoPeopleToNotifyException()
@@ -496,8 +496,8 @@ class Lp3Test extends AbstractFormTestClass
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             2 => [
                 'lp3-primaryAttorney-1',
                 'lp3-primaryAttorney-2',
@@ -505,7 +505,7 @@ class Lp3Test extends AbstractFormTestClass
             ]
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGeneratePFDonorRegistering()
@@ -791,10 +791,10 @@ class Lp3Test extends AbstractFormTestClass
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [];
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGeneratePFTrustAttorneyOnly()
@@ -973,8 +973,8 @@ class Lp3Test extends AbstractFormTestClass
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             2 => [
                 'lp3-primaryAttorney-1',
                 'lp3-primaryAttorney-2',
@@ -982,7 +982,7 @@ class Lp3Test extends AbstractFormTestClass
             ]
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateHW()
@@ -1263,10 +1263,10 @@ class Lp3Test extends AbstractFormTestClass
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [];
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateHWNoPeopleToNotifyException()
@@ -1464,8 +1464,8 @@ class Lp3Test extends AbstractFormTestClass
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             2 => [
                 'lp3-primaryAttorney-1',
                 'lp3-primaryAttorney-2',
@@ -1473,7 +1473,7 @@ class Lp3Test extends AbstractFormTestClass
             ]
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
     public function testGenerateHWDonorRegistering()
@@ -1759,9 +1759,9 @@ class Lp3Test extends AbstractFormTestClass
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($lp3Pdf));
         }
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [];
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($form));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 }

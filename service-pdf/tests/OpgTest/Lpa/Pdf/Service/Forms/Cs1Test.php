@@ -83,10 +83,10 @@ class Cs1Test extends AbstractFormTestClass
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($cs1Pdf));
         }
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [];
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($cs1));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($cs1));
     }
 
     public function testGenerateHW()
@@ -153,13 +153,13 @@ class Cs1Test extends AbstractFormTestClass
             $this->assertEquals($expectedData[$i], $this->extractPdfFormData($cs1Pdf));
         }
 
-        //  Confirm the crossed lines data is as expected
-        $expectedCrossedLines = [
+        //  Confirm the strike through data is as expected
+        $expectedStrikeThroughTargets = [
             0 => [
                 'cs1'
             ],
         ];
 
-        $this->assertEquals($expectedCrossedLines, $this->extractCrossedLines($cs1));
+        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($cs1));
     }
 }

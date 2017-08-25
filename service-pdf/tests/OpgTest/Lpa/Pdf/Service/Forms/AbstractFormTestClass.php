@@ -11,15 +11,15 @@ use PHPUnit\Framework\TestCase;
 
 abstract class AbstractFormTestClass extends TestCase
 {
-    private $drawingTargetsReflectionProperty;
+    private $strikeThroughTargetsReflectionProperty;
 
     protected function setUp()
     {
         ConfigSetUp::init();
 
         $formReflectionClass = new \ReflectionClass('Opg\Lpa\Pdf\Service\Forms\AbstractForm');
-        $this->drawingTargetsReflectionProperty = $formReflectionClass->getProperty('drawingTargets');
-        $this->drawingTargetsReflectionProperty->setAccessible(true);
+        $this->strikeThroughTargetsReflectionProperty = $formReflectionClass->getProperty('strikeThroughTargets');
+        $this->strikeThroughTargetsReflectionProperty->setAccessible(true);
     }
 
     protected function getLpa($isPfLpa = true)
@@ -106,12 +106,12 @@ abstract class AbstractFormTestClass extends TestCase
     }
 
     /**
-     * Extract the set crossed lines targets using reflection
+     * Extract the strike through targets using reflection
      *
      * @param AbstractForm $form
      */
-    protected function extractCrossedLines(AbstractForm $form)
+    protected function extractStrikeThroughTargets(AbstractForm $form)
     {
-        return $this->drawingTargetsReflectionProperty->getValue($form);
+        return $this->strikeThroughTargetsReflectionProperty->getValue($form);
     }
 }

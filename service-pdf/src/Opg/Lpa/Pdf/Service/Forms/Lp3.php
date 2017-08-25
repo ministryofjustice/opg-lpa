@@ -143,11 +143,9 @@ class Lp3 extends AbstractTopForm
         $numOfAttorneys = count($this->lpa->document->primaryAttorneys);
 
         if ($numOfAttorneys < self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
-            $this->drawingTargets[2] = [];
-
             for ($i = self::MAX_ATTORNEYS_ON_STANDARD_FORM - $numOfAttorneys; $i >= 1; $i--) {
-                // draw on page 2.
-                $this->drawingTargets[2][] = 'lp3-primaryAttorney-' . (self::MAX_ATTORNEYS_ON_STANDARD_FORM - $i);
+                $areaReference = 'lp3-primaryAttorney-' . (self::MAX_ATTORNEYS_ON_STANDARD_FORM - $i);
+                $this->addStrikeThrough($areaReference, 2);
             }
         }
 
@@ -169,7 +167,7 @@ class Lp3 extends AbstractTopForm
                     ->flatten()
                     ->saveAs($filePath);
 
-                $this->drawCrossLines($filePath);
+                $this->drawStrikeThroughs($filePath);
             }
         }
 

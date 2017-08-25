@@ -74,7 +74,7 @@ abstract class AbstractLp1 extends AbstractTopForm
             $this->addLpaIdBarcode($filePath);
         }
 
-        $this->drawCrossLines($filePath);
+        $this->drawStrikeThroughs($filePath);
 
         //  Generate the additional pages - using the functions in descendant classes
         $this->generateAdditionalPages();
@@ -304,11 +304,13 @@ abstract class AbstractLp1 extends AbstractTopForm
         //  attorneys section (section 2)
         $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
         if ($noOfPrimaryAttorneys == 1) {
-            $this->drawingTargets[2] = ['primaryAttorney-2', 'primaryAttorney-3'];
+            $this->addStrikeThrough('primaryAttorney-2', 2)
+                 ->addStrikeThrough('primaryAttorney-3', 2);
         } elseif ($noOfPrimaryAttorneys == 2) {
-            $this->drawingTargets[2] = ['primaryAttorney-2', 'primaryAttorney-3'];
+            $this->addStrikeThrough('primaryAttorney-2', 2)
+                 ->addStrikeThrough('primaryAttorney-3', 2);
         } elseif ($noOfPrimaryAttorneys == 3) {
-            $this->drawingTargets[2] = ['primaryAttorney-3'];
+            $this->addStrikeThrough('primaryAttorney-3', 2);
         }
 
         if ($noOfPrimaryAttorneys > 4) {
@@ -397,9 +399,8 @@ abstract class AbstractLp1 extends AbstractTopForm
         }
 
         if ($noOfPeopleToNotify < self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
-            $this->drawingTargets[6] = [];
             for ($i = self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM - $noOfPeopleToNotify; $i > 0; $i--) {
-                $this->drawingTargets[6][] = 'people-to-notify-' . (self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM - $i);
+                $this->addStrikeThrough('people-to-notify-' . (self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM - $i), 6);
             }
         }
 
@@ -411,7 +412,7 @@ abstract class AbstractLp1 extends AbstractTopForm
 
             $formData['lpa-document-preference'] = $this->getInstructionsAndPreferencesContent(0, $this->lpa->document->preference);
         } else {
-            $this->drawingTargets[7] = ['preference'];
+            $this->addStrikeThrough('preference', 7);
         }
 
         if (!empty((string)$this->lpa->document->instruction)) {
@@ -421,7 +422,7 @@ abstract class AbstractLp1 extends AbstractTopForm
 
             $formData['lpa-document-instruction'] = $this->getInstructionsAndPreferencesContent(0, $this->lpa->document->instruction);
         } else {
-            $this->drawingTargets[7] = (isset($this->drawingTargets[7]) ? ['preference', 'instruction'] : ['instruction']);
+            $this->addStrikeThrough('instruction', 7);
         }
 
         //  Section 9 - Donor signature page
@@ -442,11 +443,10 @@ abstract class AbstractLp1 extends AbstractTopForm
         //  Applicant (Section 12)
         if ($this->lpa->document->whoIsRegistering == 'donor') {
             $formData['who-is-applicant'] = 'donor';
-            $this->drawingTargets[19] = [
-                'applicant-signature-1',
-                'applicant-signature-2',
-                'applicant-signature-3',
-            ];
+
+            $this->addStrikeThrough('applicant-signature-1', 19)
+                 ->addStrikeThrough('applicant-signature-2', 19)
+                 ->addStrikeThrough('applicant-signature-3', 19);
         } elseif (is_array($this->lpa->document->whoIsRegistering)) {
             $formData['who-is-applicant'] = 'attorney';
             $i = 0;
@@ -472,10 +472,8 @@ abstract class AbstractLp1 extends AbstractTopForm
 
             // Cross-out any unused boxes if we need less than 4
             if (count($this->lpa->document->whoIsRegistering) < 4) {
-                $this->drawingTargets[19] = [];
-
                 for ($x = 3; $x >= count($this->lpa->document->whoIsRegistering); $x--) {
-                    $this->drawingTargets[19][] = "applicant-signature-{$x}";
+                    $this->addStrikeThrough("applicant-signature-{$x}", 19);
                 }
             }
         }
@@ -495,7 +493,7 @@ abstract class AbstractLp1 extends AbstractTopForm
                         $formData['lpa-document-correspondent-address-address3'] = $this->lpa->document->correspondent->address->address3;
                         $formData['lpa-document-correspondent-address-postcode'] = $this->lpa->document->correspondent->address->postcode;
                     } else {
-                        $this->drawingTargets[17] = ['correspondent-empty-name-address'];
+                        $this->addStrikeThrough('correspondent-empty-name-address', 17);
                     }
                     break;
                 case Correspondence::WHO_ATTORNEY:
@@ -517,7 +515,7 @@ abstract class AbstractLp1 extends AbstractTopForm
                     }
 
                     if ($isAddressCrossedOut) {
-                        $this->drawingTargets[17] = ['correspondent-empty-address'];
+                        $this->addStrikeThrough('correspondent-empty-address', 17);
                     }
 
                     $formData['lpa-document-correspondent-company'] = $this->lpa->document->correspondent->company;

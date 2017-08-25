@@ -55,7 +55,7 @@ class Lp1f extends AbstractLp1
         }
 
         if (count($this->lpa->document->primaryAttorneys) == 1) {
-            $this->drawingTargets[1] = ['primaryAttorney-1-pf'];
+            $this->addStrikeThrough('primaryAttorney-1-pf', 1);
         }
 
         // Section 4
@@ -90,9 +90,10 @@ class Lp1f extends AbstractLp1
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
 
         if ($noOfReplacementAttorneys == 0) {
-            $this->drawingTargets[4] = ['replacementAttorney-0-pf', 'replacementAttorney-1-pf'];
+            $this->addStrikeThrough('replacementAttorney-0-pf', 4)
+                 ->addStrikeThrough('replacementAttorney-1-pf', 4);
         } elseif ($noOfReplacementAttorneys == 1) {
-            $this->drawingTargets[4] = ['replacementAttorney-1-pf'];
+            $this->addStrikeThrough('replacementAttorney-1-pf', 4);
         }
 
         //  When attroney can make decisions (Section 5)
@@ -126,38 +127,44 @@ class Lp1f extends AbstractLp1
 
         switch ($numberOfHumanAttorneys) {
             case 3:
-                $this->drawingTargets[14] = ['attorney-signature-pf'];
+                $this->addStrikeThrough('attorney-signature-pf', 14);
                 break;
             case 2:
-                $this->drawingTargets[13] = ['attorney-signature-pf'];
-                $this->drawingTargets[14] = ['attorney-signature-pf'];
+                $this->addStrikeThrough('attorney-signature-pf', 13)
+                     ->addStrikeThrough('attorney-signature-pf', 14);
                 break;
             case 1:
-                $this->drawingTargets[12] = ['attorney-signature-pf'];
-                $this->drawingTargets[13] = ['attorney-signature-pf'];
-                $this->drawingTargets[14] = ['attorney-signature-pf'];
+                $this->addStrikeThrough('attorney-signature-pf', 12)
+                     ->addStrikeThrough('attorney-signature-pf', 13)
+                     ->addStrikeThrough('attorney-signature-pf', 14);
                 break;
             case 0:
-                $this->drawingTargets[11] = ['attorney-signature-pf'];
-                $this->drawingTargets[12] = ['attorney-signature-pf'];
-                $this->drawingTargets[13] = ['attorney-signature-pf'];
-                $this->drawingTargets[14] = ['attorney-signature-pf'];
+                $this->addStrikeThrough('attorney-signature-pf', 11)
+                     ->addStrikeThrough('attorney-signature-pf', 12)
+                     ->addStrikeThrough('attorney-signature-pf', 13)
+                     ->addStrikeThrough('attorney-signature-pf', 14);
                 break;
         }
 
         // Section 12
         if ($this->lpa->document->whoIsRegistering == 'donor') {
-            $this->drawingTargets[16] = ['applicant-0-pf', 'applicant-1-pf', 'applicant-2-pf', 'applicant-3-pf'];
+            $this->addStrikeThrough('applicant-0-pf', 16)
+                 ->addStrikeThrough('applicant-1-pf', 16)
+                 ->addStrikeThrough('applicant-2-pf', 16)
+                 ->addStrikeThrough('applicant-3-pf', 16);
         } elseif (is_array($this->lpa->document->whoIsRegistering)) {
             switch (count($this->lpa->document->whoIsRegistering)) {
                 case 3:
-                    $this->drawingTargets[16] = ['applicant-3-pf'];
+                    $this->addStrikeThrough('applicant-3-pf', 16);
                     break;
                 case 2:
-                    $this->drawingTargets[16] = ['applicant-2-pf', 'applicant-3-pf'];
+                    $this->addStrikeThrough('applicant-2-pf', 16)
+                         ->addStrikeThrough('applicant-3-pf', 16);
                     break;
                 case 1:
-                    $this->drawingTargets[16] = ['applicant-1-pf', 'applicant-2-pf', 'applicant-3-pf'];
+                    $this->addStrikeThrough('applicant-1-pf', 16)
+                         ->addStrikeThrough('applicant-2-pf', 16)
+                         ->addStrikeThrough('applicant-3-pf', 16);
                     break;
             }
         }
