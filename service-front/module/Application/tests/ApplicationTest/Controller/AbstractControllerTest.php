@@ -25,6 +25,7 @@ use Zend\Mvc\Controller\Plugin\Url;
 use Zend\Mvc\Controller\PluginManager;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
+use Zend\Mvc\Router\Http\RouteMatch as HttpRouteMatch;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Storage\StorageInterface;
@@ -261,12 +262,35 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param AbstractController $controller
+     * @return MockInterface|RouteMatch
+     */
+    public function getHttpRouteMatch($controller)
+    {
+        $event = new MvcEvent();
+        $routeMatch = Mockery::mock(HttpRouteMatch::class);
+        $event->setRouteMatch($routeMatch);
+        $controller->setEvent($event);
+        return $routeMatch;
+    }
+
+    /**
      * @param AbstractController$controller
      * @param string $routeName
      */
     public function setMatchedRouteName($controller, $routeName)
     {
         $routeMatch = $this->getRouteMatch($controller);
+        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($routeName)->once();
+    }
+
+    /**
+     * @param AbstractController$controller
+     * @param string $routeName
+     */
+    public function setMatchedRouteNameHttp($controller, $routeName)
+    {
+        $routeMatch = $this->getHttpRouteMatch($controller);
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($routeName)->once();
     }
 
