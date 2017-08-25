@@ -64,7 +64,7 @@ class Lp1AdditionalApplicantPage extends AbstractForm
 
         // draw cross lines if there's any blank slot
         if ($totalAdditionalApplicant % self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) {
-            $crossLineParams = array(array());
+            $crossLineParams = [[]];
 
             for ($i = self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $totalAdditionalApplicant % self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $i >= 1; $i--) {
                 $crossLineParams[0][] = 'additional-applicant-' . (self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $i) . '-' . (($this->lpa->document->type == Document::LPA_TYPE_PF) ? 'pf' : 'hw');

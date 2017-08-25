@@ -62,7 +62,7 @@ abstract class AbstractForm
      * Storage path for intermediate pdf files - needed for LP1F/H and LP3.
      * @var array
      */
-    protected $interFileStack = array();
+    protected $interFileStack = [];
 
     /**
      * The folder that stores template PDFs which all form elements values are empty.
@@ -82,51 +82,51 @@ abstract class AbstractForm
      * by - bottom y
      * tx - top x
      * ty - top y
-     * @var array - cross lines corrrdinates
+     * @var array - cross lines coordinates
      */
-    protected $crossLineParams = array(
-        'primaryAttorney-1-hw' => array('bx' => 313, 'by' => 243, 'tx' => 550, 'ty' => 546),
-        'primaryAttorney-1-pf' => array('bx' => 313, 'by' => 178, 'tx' => 550, 'ty' => 471),
-        'primaryAttorney-2' => array('bx' => 45, 'by' => 375, 'tx' => 282, 'ty' => 679),
-        'primaryAttorney-3' => array('bx' => 313, 'by' => 375, 'tx' => 550, 'ty' => 679),
-        'replacementAttorney-0-hw' => array('bx' => 45, 'by' => 317, 'tx' => 283, 'ty' => 538),
-        'replacementAttorney-1-hw' => array('bx' => 313, 'by' => 317, 'tx' => 551, 'ty' => 538),
-        'replacementAttorney-0-pf' => array('bx' => 45, 'by' => 308, 'tx' => 283, 'ty' => 530),
-        'replacementAttorney-1-pf' => array('bx' => 313, 'by' => 308, 'tx' => 551, 'ty' => 530),
-        'life-sustain-A' => array('bx' => 44, 'by' => 265, 'tx' => 283, 'ty' => 478),
-        'life-sustain-B' => array('bx' => 307, 'by' => 265, 'tx' => 550, 'ty' => 478),
-        'people-to-notify-0' => array('bx' => 44, 'by' => 335, 'tx' => 283, 'ty' => 501),
-        'people-to-notify-1' => array('bx' => 312, 'by' => 335, 'tx' => 552, 'ty' => 501),
-        'people-to-notify-2' => array('bx' => 44, 'by' => 127, 'tx' => 283, 'ty' => 294),
-        'people-to-notify-3' => array('bx' => 312, 'by' => 127, 'tx' => 552, 'ty' => 294),
-        'preference' => array('bx' => 41, 'by' => 423, 'tx' => 554, 'ty' => 532),
-        'instruction' => array('bx' => 41, 'by' => 122, 'tx' => 554, 'ty' => 231),
-        'attorney-signature-hw' => array('bx' => 42, 'by' => 143, 'tx' => 553, 'ty' => 317),
-        'attorney-signature-pf' => array('bx' => 42, 'by' => 131, 'tx' => 553, 'ty' => 306),
-        'applicant-0-hw' => array('bx' => 42, 'by' => 315, 'tx' => 283, 'ty' => 413),
-        'applicant-1-hw' => array('bx' => 308, 'by' => 315, 'tx' => 549, 'ty' => 413),
-        'applicant-2-hw' => array('bx' => 42, 'by' => 147, 'tx' => 283, 'ty' => 245),
-        'applicant-3-hw' => array('bx' => 308, 'by' => 147, 'tx' => 549, 'ty' => 245),
-        'applicant-0-pf' => array('bx' => 42, 'by' => 319, 'tx' => 283, 'ty' => 417),
-        'applicant-1-pf' => array('bx' => 308, 'by' => 319, 'tx' => 549, 'ty' => 417),
-        'applicant-2-pf' => array('bx' => 42, 'by' => 155, 'tx' => 283, 'ty' => 253),
-        'applicant-3-pf' => array('bx' => 308, 'by' => 155, 'tx' => 549, 'ty' => 253),
-        'applicant-signature-1' => array('bx' => 308, 'by' => 395, 'tx' => 549, 'ty' => 493),
-        'applicant-signature-2' => array('bx' => 42, 'by' => 262, 'tx' => 283, 'ty' => 360),
-        'applicant-signature-3' => array('bx' => 308, 'by' => 262, 'tx' => 549, 'ty' => 360),
-        'additional-applicant-1-hw' => array('bx' => 308, 'by' => 315, 'tx' => 549, 'ty' => 413),
-        'additional-applicant-2-hw' => array('bx' => 42, 'by' => 147, 'tx' => 283, 'ty' => 245),
-        'additional-applicant-3-hw' => array('bx' => 308, 'by' => 147, 'tx' => 549, 'ty' => 245),
-        'additional-applicant-1-pf' => array('bx' => 308, 'by' => 319, 'tx' => 549, 'ty' => 417),
-        'additional-applicant-2-pf' => array('bx' => 42, 'by' => 155, 'tx' => 283, 'ty' => 253),
-        'additional-applicant-3-pf' => array('bx' => 308, 'by' => 155, 'tx' => 549, 'ty' => 253),
-        'correspondent-empty-address' => array('bx' => 42, 'by' => 362, 'tx' => 284, 'ty' => 433),
-        'correspondent-empty-name-address' => array('bx' => 42, 'by' => 362, 'tx' => 413, 'ty' => 565),
-        'cs1' => array('bx' => 313, 'by' => 262, 'tx' => 558, 'ty' => 645),
-        'lp3-primaryAttorney-1' => array('bx' => 312, 'by' => 458, 'tx' => 552, 'ty' => 602),
-        'lp3-primaryAttorney-2' => array('bx' => 43, 'by' => 242, 'tx' => 283, 'ty' => 386),
-        'lp3-primaryAttorney-3' => array('bx' => 312, 'by' => 242, 'tx' => 552, 'ty' => 386)
-    );
+    private $strikeThroughCoordinates = [
+        'primaryAttorney-1-hw' =>               ['bx' => 313, 'by' => 243, 'tx' => 550, 'ty' => 546],
+        'primaryAttorney-1-pf' =>               ['bx' => 313, 'by' => 178, 'tx' => 550, 'ty' => 471],
+        'primaryAttorney-2' =>                  ['bx' => 45, 'by' => 375, 'tx' => 282, 'ty' => 679],
+        'primaryAttorney-3' =>                  ['bx' => 313, 'by' => 375, 'tx' => 550, 'ty' => 679],
+        'replacementAttorney-0-hw' =>           ['bx' => 45, 'by' => 317, 'tx' => 283, 'ty' => 538],
+        'replacementAttorney-1-hw' =>           ['bx' => 313, 'by' => 317, 'tx' => 551, 'ty' => 538],
+        'replacementAttorney-0-pf' =>           ['bx' => 45, 'by' => 308, 'tx' => 283, 'ty' => 530],
+        'replacementAttorney-1-pf' =>           ['bx' => 313, 'by' => 308, 'tx' => 551, 'ty' => 530],
+        'life-sustain-A' =>                     ['bx' => 44, 'by' => 265, 'tx' => 283, 'ty' => 478],
+        'life-sustain-B' =>                     ['bx' => 307, 'by' => 265, 'tx' => 550, 'ty' => 478],
+        'people-to-notify-0' =>                 ['bx' => 44, 'by' => 335, 'tx' => 283, 'ty' => 501],
+        'people-to-notify-1' =>                 ['bx' => 312, 'by' => 335, 'tx' => 552, 'ty' => 501],
+        'people-to-notify-2' =>                 ['bx' => 44, 'by' => 127, 'tx' => 283, 'ty' => 294],
+        'people-to-notify-3' =>                 ['bx' => 312, 'by' => 127, 'tx' => 552, 'ty' => 294],
+        'preference' =>                         ['bx' => 41, 'by' => 423, 'tx' => 554, 'ty' => 532],
+        'instruction' =>                        ['bx' => 41, 'by' => 122, 'tx' => 554, 'ty' => 231],
+        'attorney-signature-hw' =>              ['bx' => 42, 'by' => 143, 'tx' => 553, 'ty' => 317],
+        'attorney-signature-pf' =>              ['bx' => 42, 'by' => 131, 'tx' => 553, 'ty' => 306],
+        'applicant-0-hw' =>                     ['bx' => 42, 'by' => 315, 'tx' => 283, 'ty' => 413],
+        'applicant-1-hw' =>                     ['bx' => 308, 'by' => 315, 'tx' => 549, 'ty' => 413],
+        'applicant-2-hw' =>                     ['bx' => 42, 'by' => 147, 'tx' => 283, 'ty' => 245],
+        'applicant-3-hw' =>                     ['bx' => 308, 'by' => 147, 'tx' => 549, 'ty' => 245],
+        'applicant-0-pf' =>                     ['bx' => 42, 'by' => 319, 'tx' => 283, 'ty' => 417],
+        'applicant-1-pf' =>                     ['bx' => 308, 'by' => 319, 'tx' => 549, 'ty' => 417],
+        'applicant-2-pf' =>                     ['bx' => 42, 'by' => 155, 'tx' => 283, 'ty' => 253],
+        'applicant-3-pf' =>                     ['bx' => 308, 'by' => 155, 'tx' => 549, 'ty' => 253],
+        'applicant-signature-1' =>              ['bx' => 308, 'by' => 395, 'tx' => 549, 'ty' => 493],
+        'applicant-signature-2' =>              ['bx' => 42, 'by' => 262, 'tx' => 283, 'ty' => 360],
+        'applicant-signature-3' =>              ['bx' => 308, 'by' => 262, 'tx' => 549, 'ty' => 360],
+        'additional-applicant-1-hw' =>          ['bx' => 308, 'by' => 315, 'tx' => 549, 'ty' => 413],
+        'additional-applicant-2-hw' =>          ['bx' => 42, 'by' => 147, 'tx' => 283, 'ty' => 245],
+        'additional-applicant-3-hw' =>          ['bx' => 308, 'by' => 147, 'tx' => 549, 'ty' => 245],
+        'additional-applicant-1-pf' =>          ['bx' => 308, 'by' => 319, 'tx' => 549, 'ty' => 417],
+        'additional-applicant-2-pf' =>          ['bx' => 42, 'by' => 155, 'tx' => 283, 'ty' => 253],
+        'additional-applicant-3-pf' =>          ['bx' => 308, 'by' => 155, 'tx' => 549, 'ty' => 253],
+        'correspondent-empty-address' =>        ['bx' => 42, 'by' => 362, 'tx' => 284, 'ty' => 433],
+        'correspondent-empty-name-address' =>   ['bx' => 42, 'by' => 362, 'tx' => 413, 'ty' => 565],
+        'cs1' =>                                ['bx' => 313, 'by' => 262, 'tx' => 558, 'ty' => 645],
+        'lp3-primaryAttorney-1' =>              ['bx' => 312, 'by' => 458, 'tx' => 552, 'ty' => 602],
+        'lp3-primaryAttorney-2' =>              ['bx' => 43, 'by' => 242, 'tx' => 283, 'ty' => 386],
+        'lp3-primaryAttorney-3' =>              ['bx' => 312, 'by' => 242, 'tx' => 552, 'ty' => 386]
+    ];
 
     public function __construct(Lpa $lpa)
     {
@@ -209,7 +209,7 @@ abstract class AbstractForm
 
         $lpaFileRef = Formatter::id($this->lpa->id) . '-' . microtime(true);
 
-        $filename = $fileType . '-' . str_replace(array(' ', '.'), '-', $lpaFileRef) . '.pdf';
+        $filename = $fileType . '-' . str_replace([' ', '.'], '-', $lpaFileRef) . '.pdf';
 
         return $this->config['service']['assets']['intermediate_file_path'] . '/' . $filename;
     }
@@ -254,10 +254,10 @@ abstract class AbstractForm
                 $page = $pdf->pages[$pageNo]->setLineWidth(10);
                 foreach ($blockNames as $blockName) {
                     $page->drawLine(
-                        $this->crossLineParams[$blockName]['bx'],
-                        $this->crossLineParams[$blockName]['by'],
-                        $this->crossLineParams[$blockName]['tx'],
-                        $this->crossLineParams[$blockName]['ty']
+                        $this->strikeThroughCoordinates[$blockName]['bx'],
+                        $this->strikeThroughCoordinates[$blockName]['by'],
+                        $this->strikeThroughCoordinates[$blockName]['tx'],
+                        $this->strikeThroughCoordinates[$blockName]['ty']
                     );
                 }
             } // foreach

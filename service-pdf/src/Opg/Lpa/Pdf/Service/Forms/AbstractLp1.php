@@ -34,7 +34,7 @@ abstract class AbstractLp1 extends AbstractTopForm
      *
      * @var array
      */
-    protected $drawingTargets = array();
+    protected $drawingTargets = [];
 
     /**
      * There or not the registration section of teh LPA is complete

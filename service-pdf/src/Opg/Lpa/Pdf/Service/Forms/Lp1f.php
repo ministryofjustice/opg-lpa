@@ -55,7 +55,7 @@ class Lp1f extends AbstractLp1
         }
 
         if (count($this->lpa->document->primaryAttorneys) == 1) {
-            $this->drawingTargets[1] = array('primaryAttorney-1-pf');
+            $this->drawingTargets[1] = ['primaryAttorney-1-pf'];
         }
 
         // Section 4
@@ -90,9 +90,9 @@ class Lp1f extends AbstractLp1
         $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
 
         if ($noOfReplacementAttorneys == 0) {
-            $this->drawingTargets[4] = array('replacementAttorney-0-pf', 'replacementAttorney-1-pf');
+            $this->drawingTargets[4] = ['replacementAttorney-0-pf', 'replacementAttorney-1-pf'];
         } elseif ($noOfReplacementAttorneys == 1) {
-            $this->drawingTargets[4] = array('replacementAttorney-1-pf');
+            $this->drawingTargets[4] = ['replacementAttorney-1-pf'];
         }
 
         //  When attroney can make decisions (Section 5)
@@ -126,38 +126,38 @@ class Lp1f extends AbstractLp1
 
         switch ($numberOfHumanAttorneys) {
             case 3:
-                $this->drawingTargets[14] = array('attorney-signature-pf');
+                $this->drawingTargets[14] = ['attorney-signature-pf'];
                 break;
             case 2:
-                $this->drawingTargets[13] = array('attorney-signature-pf');
-                $this->drawingTargets[14] = array('attorney-signature-pf');
+                $this->drawingTargets[13] = ['attorney-signature-pf'];
+                $this->drawingTargets[14] = ['attorney-signature-pf'];
                 break;
             case 1:
-                $this->drawingTargets[12] = array('attorney-signature-pf');
-                $this->drawingTargets[13] = array('attorney-signature-pf');
-                $this->drawingTargets[14] = array('attorney-signature-pf');
+                $this->drawingTargets[12] = ['attorney-signature-pf'];
+                $this->drawingTargets[13] = ['attorney-signature-pf'];
+                $this->drawingTargets[14] = ['attorney-signature-pf'];
                 break;
             case 0:
-                $this->drawingTargets[11] = array('attorney-signature-pf');
-                $this->drawingTargets[12] = array('attorney-signature-pf');
-                $this->drawingTargets[13] = array('attorney-signature-pf');
-                $this->drawingTargets[14] = array('attorney-signature-pf');
+                $this->drawingTargets[11] = ['attorney-signature-pf'];
+                $this->drawingTargets[12] = ['attorney-signature-pf'];
+                $this->drawingTargets[13] = ['attorney-signature-pf'];
+                $this->drawingTargets[14] = ['attorney-signature-pf'];
                 break;
         }
 
         // Section 12
         if ($this->lpa->document->whoIsRegistering == 'donor') {
-            $this->drawingTargets[16] = array('applicant-0-pf', 'applicant-1-pf', 'applicant-2-pf', 'applicant-3-pf');
+            $this->drawingTargets[16] = ['applicant-0-pf', 'applicant-1-pf', 'applicant-2-pf', 'applicant-3-pf'];
         } elseif (is_array($this->lpa->document->whoIsRegistering)) {
             switch (count($this->lpa->document->whoIsRegistering)) {
                 case 3:
-                    $this->drawingTargets[16] = array('applicant-3-pf');
+                    $this->drawingTargets[16] = ['applicant-3-pf'];
                     break;
                 case 2:
-                    $this->drawingTargets[16] = array('applicant-2-pf', 'applicant-3-pf');
+                    $this->drawingTargets[16] = ['applicant-2-pf', 'applicant-3-pf'];
                     break;
                 case 1:
-                    $this->drawingTargets[16] = array('applicant-1-pf', 'applicant-2-pf', 'applicant-3-pf');
+                    $this->drawingTargets[16] = ['applicant-1-pf', 'applicant-2-pf', 'applicant-3-pf'];
                     break;
             }
         }
