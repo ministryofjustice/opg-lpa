@@ -16,17 +16,13 @@ class CompleteControllerTest extends AbstractControllerTest
      * @var CompleteController
      */
     private $controller;
-    /**
-     * @var Lpa
-     */
-    private $lpa;
 
     public function setUp()
     {
         $this->controller = new CompleteController();
         parent::controllerSetUp($this->controller);
 
-        $this->lpa = FixturesData::getPfLpa();
+        $lpa = FixturesData::getPfLpa();
     }
 
     /**
@@ -40,28 +36,51 @@ class CompleteControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetNotLocked()
     {
-        $this->controller->setLpa($this->lpa);
-        $this->lpaApplicationService->shouldReceive('lockLpa')->with($this->lpa->id)->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/download', ['lpa-id' => $this->lpa->id, 'pdf-type' => 'lp1'])->andReturn('lpa/download/' . $this->lpa->id . '/pdf/lp1')->once();
-        $this->url->shouldReceive('fromRoute')->with('user/dashboard/create-lpa', ['lpa-id' => $this->lpa->id])->andReturn('user/dashboard/create-lpa?seed=' . $this->lpa->id)->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/date-check/complete', ['lpa-id' => $this->lpa->id])->andReturn('lpa/date-check/complete?lpa-id=' . $this->lpa->id)->once();
+        $lpa = FixturesData::getPfLpa();
+        $this->controller->setLpa($lpa);
+        $this->lpaApplicationService->shouldReceive('lockLpa')->with($lpa->id)->once();
+        $this->url->shouldReceive('fromRoute')->with('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp1'])->andReturn("lpa/{$lpa->id}/download/pdf/lp1")->once();
+        $this->url->shouldReceive('fromRoute')->with('user/dashboard/create-lpa', ['lpa-id' => $lpa->id])->andReturn('user/dashboard/create-lpa?seed=' . $lpa->id)->once();
+        $this->url->shouldReceive('fromRoute')->with('lpa/date-check/complete', ['lpa-id' => $lpa->id])->andReturn("lpa/{$lpa->id}/date-check/complete")->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/complete/complete.twig', $result->getTemplate());
-        $this->assertEquals('lpa/download/' . $this->lpa->id . '/pdf/lp1', $result->getVariable('lp1Url'));
-        $this->assertEquals('user/dashboard/create-lpa?seed=' . $this->lpa->id, $result->getVariable('cloneUrl'));
-        $this->assertEquals('lpa/date-check/complete?lpa-id=' . $this->lpa->id, $result->getVariable('dateCheckUrl'));
-        $this->assertEquals($this->lpa->document->correspondent->name, $result->getVariable('correspondentName'));
-        $this->assertEquals($this->lpa->payment->amount, $result->getVariable('paymentAmount'));
-        $this->assertEquals($this->lpa->payment->reference, $result->getVariable('paymentReferenceNo'));
+        $this->assertEquals("lpa/{$lpa->id}/download/pdf/lp1", $result->getVariable('lp1Url'));
+        $this->assertEquals('user/dashboard/create-lpa?seed=' . $lpa->id, $result->getVariable('cloneUrl'));
+        $this->assertEquals("lpa/{$lpa->id}/date-check/complete", $result->getVariable('dateCheckUrl'));
+        $this->assertEquals($lpa->document->correspondent->name, $result->getVariable('correspondentName'));
+        $this->assertEquals($lpa->payment->amount, $result->getVariable('paymentAmount'));
+        $this->assertEquals($lpa->payment->reference, $result->getVariable('paymentReferenceNo'));
         $this->assertEquals(false, $result->getVariable('hasRemission'));
         $this->assertEquals(true, $result->getVariable('isPaymentSkipped'));
         $this->assertEquals([
             'dimension2' => '2017-03-07',
             'dimension3' => 4
         ], $result->getVariable('analyticsDimensions'));
+    }
+
+    public function testViewDocsActionPeopleToNotifyFeeReduction()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $lpa->payment->reducedFeeUniversalCredit = true;
+        $this->controller->setLpa($lpa);
+        $this->lpaApplicationService->shouldReceive('lockLpa')->with($lpa->id)->once();
+        $this->url->shouldReceive('fromRoute')->with('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp1'])->andReturn("lpa/{$lpa->id}/download/pdf/lp1")->once();
+        $this->url->shouldReceive('fromRoute')->with('user/dashboard/create-lpa', ['lpa-id' => $lpa->id])->andReturn('user/dashboard/create-lpa?seed=' . $lpa->id)->once();
+        $this->url->shouldReceive('fromRoute')->with('lpa/date-check/complete', ['lpa-id' => $lpa->id])->andReturn("lpa/{$lpa->id}/date-check/complete")->once();
+        $this->url->shouldReceive('fromRoute')->with('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp3'])->andReturn("lpa/{$lpa->id}/download/pdf/lp3")->once();
+        $this->url->shouldReceive('fromRoute')->with('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lpa120'])->andReturn("lpa/{$lpa->id}/download/pdf/lpa120")->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->viewDocsAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals("lpa/{$lpa->id}/download/pdf/lp3", $result->getVariable('lp3Url'));
+        $this->assertEquals($lpa->document->peopleToNotify, $result->getVariable('peopleToNotify'));
+        $this->assertEquals("lpa/{$lpa->id}/download/pdf/lpa120", $result->getVariable('lpa120Url'));
     }
 }
