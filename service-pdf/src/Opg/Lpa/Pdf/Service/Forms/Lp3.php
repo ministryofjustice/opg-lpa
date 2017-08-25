@@ -172,6 +172,7 @@ class Lp3 extends AbstractForm
             $lp3Path = $this->interFileStack['LP3'][$i];
             $lp3FileTag = $fileTag;
             $pdf->addFile($lp3Path, $lp3FileTag);
+            $blankPageRequired = false;
 
             //Concatenating the pdf pages forces the toolkit to compress the file significantly reducing its file size
             $pdf->cat(1, 3, $lp3FileTag);
@@ -181,17 +182,16 @@ class Lp3 extends AbstractForm
                     $fileTag = $this->nextTag($fileTag);
                     $pdf->addFile($additionalPage, $fileTag);
                     $pdf->cat(1, null, $fileTag);
+
+                    //  Toggle the switch to add the blank page
+                    $blankPageRequired = !$blankPageRequired;
                 }
             }
 
             $pdf->cat(4, null, $lp3FileTag);
             $fileTag = $this->nextTag($fileTag);
 
-            //If the number of attorney pages is an even number, we need to add a blank page
-            //to ensure double sided printing works correctly
-            $numOfAttorneys = count($this->lpa->document->primaryAttorneys);
-
-            if ($i + 1 < $noOfLp3 && floor($numOfAttorneys / self::MAX_ATTORNEYS_ON_STANDARD_FORM) % 2 == 1) {
+            if ($blankPageRequired) {
                 $fileName = Config::getInstance()['service']['assets']['source_template_path'] . '/blank.pdf';
                 $pdf->addFile($fileName, 'BLANK');
                 $pdf->cat(1, null, 'BLANK');
