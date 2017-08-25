@@ -2,7 +2,7 @@
 
 namespace OpgTest\Lpa\Pdf\Service\Forms;
 
-class AbstractTopFormTest extends AbstractFormTestClass
+class AbstractAndAbstractTopFormTest extends AbstractFormTestClass
 {
     public function testGetContentForBoxReturnsNull()
     {
@@ -81,5 +81,21 @@ class AbstractTopFormTest extends AbstractFormTestClass
         $testForm = new AbstractTesterForm($lpa);
 
         $this->assertEquals($expected, $testForm->nextTagExt($input));
+    }
+
+    public function testGetPdfFormThrowsException()
+    {
+        $lpa = $this->getLpa();
+        $testForm = new AbstractTesterForm($lpa);
+
+        //  Change the PDF template file value to an empty array
+        $formReflectionClass = new \ReflectionClass('OpgTest\Lpa\Pdf\Service\Forms\AbstractTesterForm');
+        $reflectionProperty = $formReflectionClass->getProperty('pdfTemplateFile');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($testForm, []);
+
+        $this->setExpectedException('Exception', 'OpgTest\Lpa\Pdf\Service\Forms\AbstractTesterForm PDF template file can not be determined for LPA type property-and-financial');
+
+        $testForm->getPdfObject();
     }
 }

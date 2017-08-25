@@ -13,8 +13,6 @@ use Exception;
 
 abstract class AbstractForm
 {
-    const CONTENT_TYPE_ATTORNEY_DECISIONS = 'decisions';
-    const CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN = 'how-replacement-attorneys-step-in';
     const CONTENT_TYPE_PREFERENCES = 'preferences';
     const CONTENT_TYPE_INSTRUCTIONS = 'instructions';
 
@@ -166,15 +164,6 @@ abstract class AbstractForm
     }
 
     /**
-     * Get generated PDF file path
-     * @return string
-     */
-    public function getPdfFilePath()
-    {
-        return $this->generatedPdfFilePath;
-    }
-
-    /**
      * Get the PDF for this form - instantiate it if necessary
      *
      * @param  bool $forceNew
@@ -206,17 +195,25 @@ abstract class AbstractForm
         return $this->pdfTemplatesPath . '//' . $pdfTemplateFilename;
     }
 
-    public function getBlankPdfTemplateFilePath()
-    {
-        return $this->getPdfTemplateFilePath('blank.pdf');
-    }
-
     /**
+     * Get a temp file path to be used for the specified file type right now (in milliseconds)
+     * If no file type is passed into the constructor then derive it from the constructor
+     *
      * @param string $fileType
      * @return string
      */
-    protected function getTmpFilePath($fileType)
+    protected function getTmpFilePath($fileType = null)
     {
+        if (is_null($fileType)) {
+            $fileType = explode('\\', get_class($this));
+            $fileType = strtoupper(array_pop($fileType));
+
+            //  If this is a top level PDF form then prefix with 'PDF-'
+            if ($this instanceof AbstractTopForm) {
+                $fileType = 'PDF-' . $fileType;
+            }
+        }
+
         $lpaFileRef = Formatter::id($this->lpa->id) . '-' . microtime(true);
 
         $filename = $fileType . '-' . str_replace(array(' ', '.'), '-', $lpaFileRef) . '.pdf';
@@ -317,54 +314,20 @@ abstract class AbstractForm
      *
      * @param int $pageNo
      * @param string $content - user input content for preference/instruction/decisions/step-in
-     * @param $contentType
      * @return string|null
      */
-    protected function getContentForBox($pageNo, $content, $contentType)
+    protected function getInstructionsAndPreferencesContent($pageNo, $content)
     {
         $flattenContent = $this->flattenTextContent($content);
 
-        // return content for preference or instruction in section 7.
-        if (($contentType == self::CONTENT_TYPE_INSTRUCTIONS) || ($contentType == self::CONTENT_TYPE_PREFERENCES)) {
-            if ($pageNo == 0) {
-                return "\r\n" . substr($flattenContent, 0, (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS);
-            } else {
-                $chunks = str_split(substr($flattenContent, (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS), (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS_CS2);
-                if (isset($chunks[$pageNo - 1])) {
-                    return "\r\n" . $chunks[$pageNo - 1];
-                } else {
-                    return null;
-                }
-            }
+        if ($pageNo == 0) {
+            return "\r\n" . substr($flattenContent, 0, (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS);
         } else {
-            $chunks = str_split($flattenContent, (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS_CS2);
-            if (isset($chunks[$pageNo])) {
-                return "\r\n" . $chunks[$pageNo];
+            $chunks = str_split(substr($flattenContent, (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS), (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS_CS2);
+            if (isset($chunks[$pageNo - 1])) {
+                return "\r\n" . $chunks[$pageNo - 1];
             } else {
                 return null;
-            }
-        }
-    }
-
-    public function cleanup()
-    {
-        //  TODO - Refactor this...
-        if (\file_exists($this->generatedPdfFilePath)) {
-            unlink($this->generatedPdfFilePath);
-        }
-
-        // remove all generated intermediate pdf files
-        foreach ($this->interFileStack as $type => $paths) {
-            if (is_string($paths)) {
-                if (\file_exists($paths)) {
-                    unlink($paths);
-                }
-            } elseif (is_array($paths)) {
-                foreach ($paths as $path) {
-                    if (\file_exists($path)) {
-                        unlink($path);
-                    }
-                }
             }
         }
     }

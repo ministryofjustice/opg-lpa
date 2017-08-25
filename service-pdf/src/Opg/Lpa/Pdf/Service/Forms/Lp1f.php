@@ -16,14 +16,6 @@ class Lp1f extends AbstractLp1
      */
     protected $pdfTemplateFile = 'LP1F.pdf';
 
-    public function __construct(Lpa $lpa)
-    {
-        parent::__construct($lpa);
-
-        // generate a file path with lpa id and timestamp;
-        $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP1F');
-    }
-
     protected function dataMapping()
     {
         parent::dataMapping();

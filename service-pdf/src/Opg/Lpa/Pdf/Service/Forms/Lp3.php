@@ -25,7 +25,7 @@ class Lp3 extends AbstractTopForm
      *
      * @var array
      */
-    public $lp3Pdfs = [];
+    private $lp3Pdfs = [];
 
     public function __construct(Lpa $lpa)
     {
@@ -37,9 +37,6 @@ class Lp3 extends AbstractTopForm
         if (!$stateChecker->canGenerateLP3()) {
             throw new RuntimeException('LPA does not contain all the required data to generate a LP3');
         }
-
-        // generate a file path with lpa id and timestamp;
-        $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LP3');
     }
 
     /**
@@ -241,6 +238,8 @@ class Lp3 extends AbstractTopForm
             }
         }
 
+        // generate a file path with lpa id and timestamp;
+        $this->generatedPdfFilePath = $this->getTmpFilePath();
         $pdf->saveAs($this->generatedPdfFilePath);
     }
 }

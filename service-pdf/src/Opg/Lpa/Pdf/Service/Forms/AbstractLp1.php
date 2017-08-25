@@ -94,15 +94,9 @@ abstract class AbstractLp1 extends AbstractTopForm
         $this->logGenerationStatement('Coversheets');
 
         //  Instantiate and generate the correct coversheet
-        $coversheet = null;
-
-        if (!$this->registrationIsComplete) {
-            $coversheet = new CoversheetInstrument($this->lpa);
-        } else {
-            $coversheet = new CoversheetRegistration($this->lpa);
-        }
-
+        $coversheet = ($this->registrationIsComplete ? new CoversheetRegistration($this->lpa) : new CoversheetInstrument($this->lpa));
         $coversheet = $coversheet->generate();
+
         $this->mergerIntermediateFilePaths($coversheet);
 
         $this->mergePdfs();
@@ -139,6 +133,7 @@ abstract class AbstractLp1 extends AbstractTopForm
 
         $imageResource = $renderer->draw();
 
+        //  TODO - Try not to use getTmpFilePath here so we can condense that down...
         $barcodeTmpFile = $this->getTmpFilePath('barcode');
 
         // Save to temporary file...
@@ -192,82 +187,54 @@ abstract class AbstractLp1 extends AbstractTopForm
 
         // generate a CS2 page if how attorneys making decisions depends on a special arrangement
         if ($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-            $cs2 = new Cs2($this->lpa, self::CONTENT_TYPE_ATTORNEY_DECISIONS, $this->lpa->document->primaryAttorneyDecisions->howDetails);
+            $cs2 = new Cs2PrimaryAttorneyDecisions($this->lpa);
             $generatedCs2 = $cs2->generate();
             $this->mergerIntermediateFilePaths($generatedCs2);
         }
 
-        // generate a CS2 page if how replacement attorneys decisions differs to the default arrangement
-        $content = "";
+        //  Determine if the replacement attorney continuation sheet should be created
+        $createReplacementAttorneyCs2 = false;
 
         if ((count($this->lpa->document->primaryAttorneys) == 1
             || (count($this->lpa->document->primaryAttorneys) > 1
                 && $this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY))
             && count($this->lpa->document->replacementAttorneys) > 1) {
 
-            switch ($this->lpa->document->replacementAttorneyDecisions->how) {
-                case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
-                    $content = "Replacement attorneys are to act jointly and severally\r\n";
-                    break;
-                case ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
-                    $content = "Replacement attorneys are to act jointly for some decisions and jointly and severally for others, as below:\r\n" . $this->lpa->document->replacementAttorneyDecisions->howDetails . "\r\n";
-                    break;
-                case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
-                    // default arrangement
-                    break;
-            }
+            $createReplacementAttorneyCs2 = in_array($this->lpa->document->replacementAttorneyDecisions->how, [
+                ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+                ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS
+            ]);
         } elseif (count($this->lpa->document->primaryAttorneys) > 1 && $this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
             if (count($this->lpa->document->replacementAttorneys) == 1) {
-                switch ($this->lpa->document->replacementAttorneyDecisions->when) {
-                    case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST:
-                        // default arrangement, as per how primary attorneys making decision arrangement
-                        break;
-                    case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST:
-                        $content = "Replacement attorney to step in only when none of the original attorneys can act\r\n";
-                        break;
-                    case ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS:
-                        $content = "How replacement attorneys will replace the original attorneys:\r\n" . $this->lpa->document->replacementAttorneyDecisions->whenDetails;
-                        break;
-                }
+                $createReplacementAttorneyCs2 = in_array($this->lpa->document->replacementAttorneyDecisions->how, [
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS
+                ]);
             } elseif (count($this->lpa->document->replacementAttorneys) > 1) {
                 if ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST) {
-                    $content = "Replacement attorneys to step in only when none of the original attorneys can act\r\n";
-
-                    switch ($this->lpa->document->replacementAttorneyDecisions->how) {
-                        case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
-                            $content .= "Replacement attorneys are to act jointly and severally\r\n";
-                            break;
-                        case ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS:
-                            $content .= "Replacement attorneys are to act joint for some decisions, joint and several for other decisions, as below:\r\n" . $this->lpa->document->replacementAttorneyDecisions->howDetails . "\r\n";
-                            break;
-                        case ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
-                            // default arrangement
-                            $content = "";
-                            break;
-                    }
+                    $createReplacementAttorneyCs2 = ($this->lpa->document->replacementAttorneyDecisions->how != ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY);
                 } elseif ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
-                    $content = "How replacement attorneys will replace the original attorneys:\r\n" . $this->lpa->document->replacementAttorneyDecisions->whenDetails;
+                    $createReplacementAttorneyCs2 = true;
                 }
             }
         }
 
-        if (!empty($content)) {
-            $cs2 = new Cs2($this->lpa, self::CONTENT_TYPE_REPLACEMENT_ATTORNEY_STEP_IN, $content);
+        if ($createReplacementAttorneyCs2) {
+            $cs2 = new Cs2ReplacementAttorneys($this->lpa);
             $generatedCs2 = $cs2->generate();
             $this->mergerIntermediateFilePaths($generatedCs2);
         }
 
-
         // generate a CS2 page if preference exceed available space on standard form
         if (!$this->canFitIntoTextBox($this->lpa->document->preference)) {
-            $cs2 = new Cs2($this->lpa, self::CONTENT_TYPE_PREFERENCES, $this->lpa->document->preference);
+            $cs2 = new Cs2Preferences($this->lpa);
             $generatedCs2 = $cs2->generate();
             $this->mergerIntermediateFilePaths($generatedCs2);
         }
 
         // generate a CS2 page if instruction exceed available space on standard form
         if (!$this->canFitIntoTextBox($this->lpa->document->instruction)) {
-            $cs2 = new Cs2($this->lpa, self::CONTENT_TYPE_INSTRUCTIONS, $this->lpa->document->instruction);
+            $cs2 = new Cs2Instructions($this->lpa);
             $generatedCs2 = $cs2->generate();
             $this->mergerIntermediateFilePaths($generatedCs2);
         }
@@ -449,7 +416,7 @@ abstract class AbstractLp1 extends AbstractTopForm
                 $this->dataForForm['has-more-preferences'] = self::CHECK_BOX_ON;
             }
 
-            $this->dataForForm['lpa-document-preference'] = $this->getContentForBox(0, $this->lpa->document->preference, self::CONTENT_TYPE_PREFERENCES);
+            $this->dataForForm['lpa-document-preference'] = $this->getInstructionsAndPreferencesContent(0, $this->lpa->document->preference);
         } else {
             $this->drawingTargets[7] = ['preference'];
         }
@@ -459,7 +426,7 @@ abstract class AbstractLp1 extends AbstractTopForm
                 $this->dataForForm['has-more-instructions'] = self::CHECK_BOX_ON;
             }
 
-            $this->dataForForm['lpa-document-instruction'] = $this->getContentForBox(0, $this->lpa->document->instruction, self::CONTENT_TYPE_INSTRUCTIONS);
+            $this->dataForForm['lpa-document-instruction'] = $this->getInstructionsAndPreferencesContent(0, $this->lpa->document->instruction);
         } else {
             $this->drawingTargets[7] = (isset($this->drawingTargets[7]) ? ['preference', 'instruction'] : ['instruction']);
         }
@@ -773,6 +740,7 @@ abstract class AbstractLp1 extends AbstractTopForm
         $pdf->addFile($registrationPdf, $fileTag);
         $pdf->cat(1, 'end', $fileTag);
 
+        $this->generatedPdfFilePath = $this->getTmpFilePath();
         $pdf->saveAs($this->generatedPdfFilePath);
     }
 

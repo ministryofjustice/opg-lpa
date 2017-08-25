@@ -32,9 +32,6 @@ class Lpa120 extends AbstractTopForm
         if (!$stateChecker->canGenerateLP3()) {
             throw new RuntimeException('LPA does not contain all the required data to generate a LPA120');
         }
-
-        //  Generate a file path with lpa id and timestamp;
-        $this->generatedPdfFilePath = $this->getTmpFilePath('PDF-LPA120');
     }
 
     /**
@@ -46,7 +43,7 @@ class Lpa120 extends AbstractTopForm
     {
         $this->logGenerationStatement();
 
-        $this->generatedPdfFilePath = $this->registerTempFile('LPA120');
+        $this->generatedPdfFilePath = $this->getTmpFilePath();
 
         // populate forms
         $pdf = $this->getPdfObject();

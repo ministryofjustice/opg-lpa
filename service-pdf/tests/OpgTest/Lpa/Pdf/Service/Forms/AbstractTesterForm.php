@@ -34,9 +34,9 @@ class AbstractTesterForm extends AbstractTopForm
         return $this;
     }
 
-    public function getContentForBoxExt($pageNo, $content, $contentType)
+    public function getInstructionsAndPreferencesContentExt($pageNo, $content)
     {
-        return $this->getContentForBox($pageNo, $content, $contentType);
+        return $this->getInstructionsAndPreferencesContent($pageNo, $content);
     }
 
     public function nextTagExt($tag)

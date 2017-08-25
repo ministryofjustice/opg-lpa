@@ -603,7 +603,7 @@ class Lp1fTest extends AbstractFormTestClass
             'lpa-document-primaryAttorneys-3-address-address2' => "Solihull",
             'lpa-document-primaryAttorneys-3-address-address3' => "Birmingham",
             'lpa-document-primaryAttorneys-3-address-postcode' => "B37 6NA",
-            'lpa-document-primaryAttorneys-3-email-address' => "\nopglpademo+HenryTalor@gmail.com",
+            'lpa-document-primaryAttorneys-3-email-address' => "\nopglpademo+HenryTaylor@gmail.com",
             'lpa-document-replacementAttorneys-0-name-title' => "Ms",
             'lpa-document-replacementAttorneys-0-name-first' => "Isobel",
             'lpa-document-replacementAttorneys-0-name-last' => "Ward",
