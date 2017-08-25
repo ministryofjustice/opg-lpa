@@ -2,10 +2,8 @@
 
 namespace Opg\Lpa\Pdf\Service\Forms;
 
-use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Common\Name;
-use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 
 class Cs1 extends AbstractForm
 {
@@ -42,6 +40,8 @@ class Cs1 extends AbstractForm
     {
         $this->logGenerationStatement();
 
+        $formData = [];
+
         //  Loop through these actor types and write any "additional" ones to this continuation sheet PDF
         $additionalActorTypes = [
             'primaryAttorneys'     => self::MAX_ATTORNEYS_ON_STANDARD_FORM,
@@ -73,35 +73,35 @@ class Cs1 extends AbstractForm
                         $positionIdx = 0;
 
                         //  Set up the data storage array
-                        $this->dataForForm[$pageNumber] = [];
-                        $dataForFormPage = &$this->dataForForm[$pageNumber];
+                        $formData[$pageNumber] = [];
+                        $formDataForPage = &$formData[$pageNumber];
 
                         //  If this is a new page then add the common data
-                        $dataForFormPage['cs1-donor-full-name'] = $this->lpa->document->donor->name->__toString();
-                        $dataForFormPage['cs1-footer-right'] = $this->config['footer']['cs1'];
+                        $formDataForPage['cs1-donor-full-name'] = $this->lpa->document->donor->name->__toString();
+                        $formDataForPage['cs1-footer-right'] = $this->config['footer']['cs1'];
                     }
 
-                    $dataForFormPage['cs1-' . $positionIdx . '-is'] = $additionalActorType;
+                    $formDataForPage['cs1-' . $positionIdx . '-is'] = $additionalActorType;
 
                     if ($additionalActor->name instanceof Name) {
-                        $dataForFormPage['cs1-' . $positionIdx . '-name-title'] = $additionalActor->name->title;
-                        $dataForFormPage['cs1-' . $positionIdx . '-name-first'] = $additionalActor->name->first;
-                        $dataForFormPage['cs1-' . $positionIdx . '-name-last'] = $additionalActor->name->last;
+                        $formDataForPage['cs1-' . $positionIdx . '-name-title'] = $additionalActor->name->title;
+                        $formDataForPage['cs1-' . $positionIdx . '-name-first'] = $additionalActor->name->first;
+                        $formDataForPage['cs1-' . $positionIdx . '-name-last'] = $additionalActor->name->last;
                     }
 
-                    $dataForFormPage['cs1-' . $positionIdx . '-address-address1'] = $additionalActor->address->address1;
-                    $dataForFormPage['cs1-' . $positionIdx . '-address-address2'] = $additionalActor->address->address2;
-                    $dataForFormPage['cs1-' . $positionIdx . '-address-address3'] = $additionalActor->address->address3;
-                    $dataForFormPage['cs1-' . $positionIdx . '-address-postcode'] = $additionalActor->address->postcode;
+                    $formDataForPage['cs1-' . $positionIdx . '-address-address1'] = $additionalActor->address->address1;
+                    $formDataForPage['cs1-' . $positionIdx . '-address-address2'] = $additionalActor->address->address2;
+                    $formDataForPage['cs1-' . $positionIdx . '-address-address3'] = $additionalActor->address->address3;
+                    $formDataForPage['cs1-' . $positionIdx . '-address-postcode'] = $additionalActor->address->postcode;
 
                     if (property_exists($additionalActor, 'dob')) {
-                        $dataForFormPage['cs1-' . $positionIdx . '-dob-date-day'] = $additionalActor->dob->date->format('d');
-                        $dataForFormPage['cs1-' . $positionIdx . '-dob-date-month'] = $additionalActor->dob->date->format('m');
-                        $dataForFormPage['cs1-' . $positionIdx . '-dob-date-year'] = $additionalActor->dob->date->format('Y');
+                        $formDataForPage['cs1-' . $positionIdx . '-dob-date-day'] = $additionalActor->dob->date->format('d');
+                        $formDataForPage['cs1-' . $positionIdx . '-dob-date-month'] = $additionalActor->dob->date->format('m');
+                        $formDataForPage['cs1-' . $positionIdx . '-dob-date-year'] = $additionalActor->dob->date->format('Y');
                     }
 
                     if (property_exists($additionalActor, 'email') && ($additionalActor->email instanceof EmailAddress)) {
-                        $dataForFormPage['cs1-' . $positionIdx . '-email-address'] = "\n" . $additionalActor->email->address;
+                        $formDataForPage['cs1-' . $positionIdx . '-email-address'] = "\n" . $additionalActor->email->address;
                     }
 
                     //  Toggle the start new page flag
@@ -111,7 +111,7 @@ class Cs1 extends AbstractForm
         }
 
         //  Loop through the data and create the pages and add a strike through line if required
-        foreach ($this->dataForForm as $thisPageNumber => $thisPageData) {
+        foreach ($formData as $thisPageNumber => $thisPageData) {
             $filePath = $this->registerTempFile('CS1');
 
             $this->cs1Pdfs[] = $pdf = $this->getPdfObject(true);

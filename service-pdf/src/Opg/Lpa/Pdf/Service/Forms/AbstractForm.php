@@ -53,13 +53,6 @@ abstract class AbstractForm
     protected $pdf;
 
     /**
-     * Data to be populated into PDF form elements.
-     *
-     * @var array
-     */
-    protected $dataForForm = [];
-
-    /**
      * The path of the pdf file to be generated.
      * @var string
      */
@@ -340,53 +333,32 @@ abstract class AbstractForm
      */
     protected function sortAttorneys($attorneyType)
     {
-        if (count($this->lpa->document->$attorneyType) < 2) {
-            return $this->lpa->document->$attorneyType;
-        }
-
-        if ($this->hasTrustCorporation($this->lpa->document->$attorneyType)) {
-            $attorneys = $this->lpa->document->$attorneyType;
-        } else {
-            return $this->lpa->document->$attorneyType;
-        }
-
         $sortedAttorneys = [];
+        $trustAttorney = null;
 
-        foreach ($attorneys as $idx => $attorney) {
+        foreach ($this->lpa->document->$attorneyType as $attorney) {
             if ($attorney instanceof TrustCorporation) {
-                $trustCorp = $attorney;
+                $trustAttorney = $attorney;
             } else {
                 $sortedAttorneys[] = $attorney;
             }
         }
 
-        array_unshift($sortedAttorneys, $trustCorp);
+        if (!is_null($trustAttorney)) {
+            array_unshift($sortedAttorneys, $trustAttorney);
+        }
 
         return $sortedAttorneys;
     }
 
     /**
-     * check if there is a trust corp in the whole LPA or in primary attorneys or replacement attorneys.
+     * Get the trust corporation from the LPA if one exists - return null if not
      *
-     * @param  $attorneys
-     * @return bool
-     */
-    protected function hasTrustCorporation($attorneys = null)
-    {
-        return ($this->getTrustCorporation($attorneys) instanceof TrustCorporation);
-    }
-
-    /**
-     * Get the trust corporation from the provided array of attorneys, or the LPA, if one exists - return null if not
-     *
-     * @param  $attorneys
      * @return TrustCorporation|null
      */
-    protected function getTrustCorporation($attorneys = null)
+    protected function getTrustCorporation()
     {
-        if (is_null($attorneys)) {
-            $attorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
-        }
+        $attorneys = array_merge($this->lpa->document->primaryAttorneys, $this->lpa->document->replacementAttorneys);
 
         //  Loop through the attorneys to try to find the trust attorney
         foreach ($attorneys as $attorney) {

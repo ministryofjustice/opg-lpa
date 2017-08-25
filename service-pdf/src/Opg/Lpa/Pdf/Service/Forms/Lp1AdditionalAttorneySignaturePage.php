@@ -26,6 +26,8 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
         $skipped = 0;
 
         foreach ($allAttorneys as $attorney) {
+            $formData = [];
+
             // skip trust corp
             if ($attorney instanceof TrustCorporation) {
                 continue;
@@ -39,15 +41,15 @@ class Lp1AdditionalAttorneySignaturePage extends AbstractForm
 
             $filePath = $this->registerTempFile('AdditionalAttorneySignature');
 
-            $lpaType = ($this->lpa->document->type == Document::LPA_TYPE_PF)?'lp1f':'lp1h';
+            $formData['signature-attorney-name-title'] = $attorney->name->title;
+            $formData['signature-attorney-name-first'] = $attorney->name->first;
+            $formData['signature-attorney-name-last'] = $attorney->name->last;
 
-            $this->dataForForm['signature-attorney-name-title'] = $attorney->name->title;
-            $this->dataForForm['signature-attorney-name-first'] = $attorney->name->first;
-            $this->dataForForm['signature-attorney-name-last'] = $attorney->name->last;
-            $this->dataForForm['footer-instrument-right-additional'] = $this->config['footer'][$lpaType]['instrument'];
+            $lpaType = ($this->lpa->document->type == Document::LPA_TYPE_PF ? 'lp1f' : 'lp1h');
+            $formData['footer-instrument-right-additional'] = $this->config['footer'][$lpaType]['instrument'];
 
             $pdf = $this->getPdfObject(true);
-            $pdf->fillForm($this->dataForForm)
+            $pdf->fillForm($formData)
                 ->flatten()
                 ->saveAs($filePath);
         }

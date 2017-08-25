@@ -22,14 +22,15 @@ class Cs2Instructions extends AbstractCs2
             $filePath = $this->registerTempFile('CS2');
 
             //  Set the PDF form data
-            $this->dataForForm['cs2-is'] = self::CONTENT_TYPE_INSTRUCTIONS;
-            $this->dataForForm['cs2-content'] = $this->getInstructionsAndPreferencesContent($i + 1, $content);
-            $this->dataForForm['cs2-donor-full-name'] = $this->lpa->document->donor->name->__toString();
-            $this->dataForForm['cs2-continued'] = '(Continued)';
-            $this->dataForForm['cs2-footer-right'] = $this->config['footer']['cs2'];
+            $formData = [];
+            $formData['cs2-is'] = self::CONTENT_TYPE_INSTRUCTIONS;
+            $formData['cs2-content'] = $this->getInstructionsAndPreferencesContent($i + 1, $content);
+            $formData['cs2-donor-full-name'] = $this->lpa->document->donor->name->__toString();
+            $formData['cs2-continued'] = '(Continued)';
+            $formData['cs2-footer-right'] = $this->config['footer']['cs2'];
 
             $pdf = $this->getPdfObject(true);
-            $pdf->fillForm($this->dataForForm)
+            $pdf->fillForm($formData)
                 ->flatten()
                 ->saveAs($filePath);
         }

@@ -17,11 +17,12 @@ class Cs4 extends AbstractForm
 
         $filePath = $this->registerTempFile('CS4');
 
-        $this->dataForForm['cs4-trust-corporation-company-registration-number'] = $this->getTrustCorporation()->number;
-        $this->dataForForm['cs4-footer-right'] = $this->config['footer']['cs4'];
+        $formData = [];
+        $formData['cs4-trust-corporation-company-registration-number'] = $this->getTrustCorporation()->number;
+        $formData['cs4-footer-right'] = $this->config['footer']['cs4'];
 
         $pdf = $this->getPdfObject();
-        $pdf->fillForm($this->dataForForm)
+        $pdf->fillForm($formData)
             ->flatten()
             ->saveAs($filePath);
 

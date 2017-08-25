@@ -17,11 +17,12 @@ class Cs3 extends AbstractForm
 
         $filePath = $this->registerTempFile('CS3');
 
-        $this->dataForForm['cs3-donor-full-name'] = $this->lpa->document->donor->name->__toString();
-        $this->dataForForm['cs3-footer-right'] = $this->config['footer']['cs3'];
+        $formData = [];
+        $formData['cs3-donor-full-name'] = $this->lpa->document->donor->name->__toString();
+        $formData['cs3-footer-right'] = $this->config['footer']['cs3'];
 
         $pdf = $this->getPdfObject();
-        $pdf->fillForm($this->dataForForm)
+        $pdf->fillForm($formData)
             ->flatten()
             ->saveAs($filePath);
 

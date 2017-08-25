@@ -77,14 +77,15 @@ class Cs2ReplacementAttorneys extends AbstractCs2
             $filePath = $this->registerTempFile('CS2');
 
             //  Set the PDF form data
-            $this->dataForForm['cs2-is'] = 'how-replacement-attorneys-step-in';
-            $this->dataForForm['cs2-content'] = $this->getFormattedContent($i, $content);
-            $this->dataForForm['cs2-donor-full-name'] = $this->lpa->document->donor->name->__toString();
-            $this->dataForForm['cs2-continued'] = ($i > 0 ? '(Continued)' : '');
-            $this->dataForForm['cs2-footer-right'] = $this->config['footer']['cs2'];
+            $formData = [];
+            $formData['cs2-is'] = 'how-replacement-attorneys-step-in';
+            $formData['cs2-content'] = $this->getFormattedContent($i, $content);
+            $formData['cs2-donor-full-name'] = $this->lpa->document->donor->name->__toString();
+            $formData['cs2-continued'] = ($i > 0 ? '(Continued)' : '');
+            $formData['cs2-footer-right'] = $this->config['footer']['cs2'];
 
             $pdf = $this->getPdfObject(true);
-            $pdf->fillForm($this->dataForForm)
+            $pdf->fillForm($formData)
                 ->flatten()
                 ->saveAs($filePath);
         }

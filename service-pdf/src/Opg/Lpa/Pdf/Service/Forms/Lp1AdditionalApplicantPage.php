@@ -29,20 +29,21 @@ class Lp1AdditionalApplicantPage extends AbstractForm
 
         for ($i = 0; $i < $totalAdditionalPages; $i++) {
             $filePath = $this->registerTempFile('AdditionalApplicant');
+            $formData = [];
 
             for ($j = 0; $j < self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $j++) {
                 $attorneyId = $this->lpa->document->whoIsRegistering[(1 + $i) * self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM + $j];
                 $attorney = $this->lpa->document->getPrimaryAttorneyById($attorneyId);
 
                 if ($attorney instanceof TrustCorporation) {
-                    $this->dataForForm['applicant-' . $j . '-name-last'] = $attorney->name;
+                    $formData['applicant-' . $j . '-name-last'] = $attorney->name;
                 } else {
-                    $this->dataForForm['applicant-' . $j . '-name-title'] = $attorney->name->title;
-                    $this->dataForForm['applicant-' . $j . '-name-first'] = $attorney->name->first;
-                    $this->dataForForm['applicant-' . $j . '-name-last'] = $attorney->name->last;
-                    $this->dataForForm['applicant-' . $j . '-dob-date-day'] = $attorney->dob->date->format('d');
-                    $this->dataForForm['applicant-' . $j . '-dob-date-month'] = $attorney->dob->date->format('m');
-                    $this->dataForForm['applicant-' . $j . '-dob-date-year'] = $attorney->dob->date->format('Y');
+                    $formData['applicant-' . $j . '-name-title'] = $attorney->name->title;
+                    $formData['applicant-' . $j . '-name-first'] = $attorney->name->first;
+                    $formData['applicant-' . $j . '-name-last'] = $attorney->name->last;
+                    $formData['applicant-' . $j . '-dob-date-day'] = $attorney->dob->date->format('d');
+                    $formData['applicant-' . $j . '-dob-date-month'] = $attorney->dob->date->format('m');
+                    $formData['applicant-' . $j . '-dob-date-year'] = $attorney->dob->date->format('Y');
                 }
 
                 if (++$totalMappedAdditionalApplicants >= $totalAdditionalApplicant) {
@@ -50,16 +51,13 @@ class Lp1AdditionalApplicantPage extends AbstractForm
                 }
             }
 
-            $this->dataForForm['who-is-applicant'] = 'attorney';
+            $formData['who-is-applicant'] = 'attorney';
 
-            if ($this->lpa->document->type == Document::LPA_TYPE_PF) {
-                $this->dataForForm['footer-registration-right-additional'] = $this->config['footer']['lp1f']['registration'];
-            } else {
-                $this->dataForForm['footer-registration-right-additional'] = $this->config['footer']['lp1h']['registration'];
-            }
+            $lpaType = ($this->lpa->document->type == Document::LPA_TYPE_PF ? 'lp1f' : 'lp1h');
+            $formData['footer-registration-right-additional'] = $this->config['footer'][$lpaType]['registration'];
 
             $pdf = $this->getPdfObject(true);
-            $pdf->fillForm($this->dataForForm)
+            $pdf->fillForm($formData)
                 ->flatten()
                 ->saveAs($filePath);
         }

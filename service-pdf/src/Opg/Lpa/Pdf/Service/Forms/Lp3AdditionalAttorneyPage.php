@@ -22,22 +22,22 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
 
         //  Loop through the additional attorneys (after the first 4) and add them into the additional sheets (4 per sheet)
         if (count($additionalAttorneys) > 0) {
-            $dataForForm = [];
+            $formData = [];
             $i = 0;
 
             foreach ($additionalAttorneys as $j => $additionalAttorney) {
                 if (is_string($additionalAttorney->name)) {
-                    $dataForForm['lpa-document-primaryAttorneys-' . $i . '-name-last'] = $additionalAttorney->name;
+                    $formData['lpa-document-primaryAttorneys-' . $i . '-name-last'] = $additionalAttorney->name;
                 } else {
-                    $dataForForm['lpa-document-primaryAttorneys-' . $i . '-name-title'] = $additionalAttorney->name->title;
-                    $dataForForm['lpa-document-primaryAttorneys-' . $i . '-name-first'] = $additionalAttorney->name->first;
-                    $dataForForm['lpa-document-primaryAttorneys-' . $i . '-name-last'] = $additionalAttorney->name->last;
+                    $formData['lpa-document-primaryAttorneys-' . $i . '-name-title'] = $additionalAttorney->name->title;
+                    $formData['lpa-document-primaryAttorneys-' . $i . '-name-first'] = $additionalAttorney->name->first;
+                    $formData['lpa-document-primaryAttorneys-' . $i . '-name-last'] = $additionalAttorney->name->last;
                 }
 
-                $dataForForm['lpa-document-primaryAttorneys-' . $i . '-address-address1'] = $additionalAttorney->address->address1;
-                $dataForForm['lpa-document-primaryAttorneys-' . $i . '-address-address2'] = $additionalAttorney->address->address2;
-                $dataForForm['lpa-document-primaryAttorneys-' . $i . '-address-address3'] = $additionalAttorney->address->address3;
-                $dataForForm['lpa-document-primaryAttorneys-' . $i . '-address-postcode'] = $additionalAttorney->address->postcode;
+                $formData['lpa-document-primaryAttorneys-' . $i . '-address-address1'] = $additionalAttorney->address->address1;
+                $formData['lpa-document-primaryAttorneys-' . $i . '-address-address2'] = $additionalAttorney->address->address2;
+                $formData['lpa-document-primaryAttorneys-' . $i . '-address-address3'] = $additionalAttorney->address->address3;
+                $formData['lpa-document-primaryAttorneys-' . $i . '-address-postcode'] = $additionalAttorney->address->postcode;
 
                 //  Iterate to the next space on the sheet
                 $i++;
@@ -45,13 +45,14 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
                 //  If we've got too far, or this is the last additional attorney, output a page
                 if ($i == self::MAX_ATTORNEYS_ON_STANDARD_FORM || ($j + 1 == count($additionalAttorneys))) {
                     //  Complete the remaining data
-                    $dataForForm['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
-                    $dataForForm['footer-right-page-three'] = $this->config['footer']['lp3'];
+                    $formData['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
+
+                    $formData['footer-right-page-three'] = $this->config['footer']['lp3'];
 
                     $filePath = $this->registerTempFile('AdditionalAttorneys');
 
                     $pdf = $this->getPdfObject(true);
-                    $pdf->fillForm($dataForForm)
+                    $pdf->fillForm($formData)
                         ->flatten()
                         ->saveAs($filePath);
 
@@ -68,7 +69,7 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
                     }
 
                     //  Reset the loop data for the next iteration
-                    $dataForForm = [];
+                    $formData = [];
                     $i = 0;
                 }
             }

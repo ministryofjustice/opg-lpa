@@ -26,15 +26,13 @@ class Lp1AdditionalApplicantSignaturePage extends AbstractForm
 
         for ($i=0; $i<$totalAdditionalApplicantSignaturePages; $i++) {
             $filePath = $this->registerTempFile('AdditionalApplicantSignature');
+            $formData = [];
 
-            if ($this->lpa->document->type == Document::LPA_TYPE_PF) {
-                $this->dataForForm['footer-registration-right-additional'] = $this->config['footer']['lp1f']['registration'];
-            } else {
-                $this->dataForForm['footer-registration-right-additional'] = $this->config['footer']['lp1h']['registration'];
-            }
+            $lpaType = ($this->lpa->document->type == Document::LPA_TYPE_PF ? 'lp1f' : 'lp1h');
+            $formData['footer-registration-right-additional'] = $this->config['footer'][$lpaType]['registration'];
 
             $pdf = $this->getPdfObject(true);
-            $pdf->fillForm($this->dataForForm)
+            $pdf->fillForm($formData)
                 ->flatten()
                 ->saveAs($filePath);
         }
