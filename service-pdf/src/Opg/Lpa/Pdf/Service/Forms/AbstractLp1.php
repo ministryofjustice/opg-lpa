@@ -21,6 +21,16 @@ use RuntimeException;
 abstract class AbstractLp1 extends AbstractTopForm
 {
     /**
+     * Filename of the PDF template to use
+     *
+     * @var string|array
+     */
+    protected $pdfTemplateFile =  [
+        Document::LPA_TYPE_PF => 'LP1F.pdf',
+        Document::LPA_TYPE_HW => 'LP1H.pdf',
+    ];
+
+    /**
      * PDFTK pdf object
      *
      * @var Pdf
@@ -74,10 +84,10 @@ abstract class AbstractLp1 extends AbstractTopForm
             $this->addLpaIdBarcode($filePath);
         }
 
-        $this->drawStrikeThroughs($filePath);
-
         //  Generate the additional pages - using the functions in descendant classes
         $this->generateAdditionalPages();
+
+        $this->drawStrikeThroughs($filePath);
 
         //  Generate coversheets
         $this->logGenerationStatement('Coversheets');
@@ -95,189 +105,6 @@ abstract class AbstractLp1 extends AbstractTopForm
     }
 
     /**
-     * Add an LPA ID barcode to the file specified
-     *
-     * @param $filePath
-     */
-    private function addLpaIdBarcode($filePath)
-    {
-        // Generate the barcode
-        // Zero pad the ID, and prepend the 'A'
-        $formattedLpaId = 'A' . sprintf("%011d", $this->lpa->id);
-
-        $renderer = Barcode::factory(
-            'code39',
-            'pdf',
-            [
-                'text' => $formattedLpaId,
-                'drawText' => false,
-                'factor' => 2,
-                'barHeight' => 25,
-            ],
-            [
-                'topOffset' => 789,
-                'leftOffset' => 40,
-            ]
-        );
-
-        $imageResource = $renderer->draw();
-
-        //  TODO - Try not to use getTmpFilePath here so we can condense that down...
-        $barcodeTmpFile = $this->getTmpFilePath('barcode');
-
-        // Save to temporary file...
-        $imageResource->save($barcodeTmpFile);
-
-        // Merge the barcode into the page
-        // Take a copy of the PDF to work with
-        $pdfWithBarcode = new Pdf($filePath);
-
-        // Pull out the page the barcode is appended to
-        $pdfWithBarcode->cat(19);
-
-        // Add the barcode to the page
-        $pdfWithBarcode = new Pdf($pdfWithBarcode);
-        $pdfWithBarcode->stamp($barcodeTmpFile);
-
-        // Re-integrate the page into the full PDF
-        $pdf = new Pdf();
-
-        $pdf->addFile($filePath, 'A');
-        $pdf->addFile($pdfWithBarcode, 'B');
-
-        // Swap out page 19 for the one with the barcode
-        $pdf->cat(1, 18, 'A');
-        $pdf->cat(1, null, 'B');
-        $pdf->cat(20, 'end', 'A');
-
-        $pdf->flatten()
-            ->saveAs($filePath);
-
-        //  Cleanup - remove tmp barcode file
-        unlink($barcodeTmpFile);
-    }
-
-    /**
-     * Generate additional pages depending on the LPA's composition
-     */
-    private function generateAdditionalPages()
-    {
-        $this->logGenerationStatement('Additional Pages');
-
-        // generate CS1
-        if (count($this->lpa->document->primaryAttorneys) > self::MAX_ATTORNEYS_ON_STANDARD_FORM
-            || count($this->lpa->document->replacementAttorneys) > self::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM
-            || count($this->lpa->document->peopleToNotify) > self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
-
-            $cs1 = new Cs1($this->lpa);
-            $generatedCs1 = $cs1->generate();
-            $this->mergerIntermediateFilePaths($generatedCs1);
-        }
-
-        // generate a CS2 page if how attorneys making decisions depends on a special arrangement
-        if ($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-            $cs2 = new Cs2PrimaryAttorneyDecisions($this->lpa);
-            $generatedCs2 = $cs2->generate();
-            $this->mergerIntermediateFilePaths($generatedCs2);
-        }
-
-        //  Determine if the replacement attorney continuation sheet should be created
-        $createReplacementAttorneyCs2 = false;
-
-        if ((count($this->lpa->document->primaryAttorneys) == 1
-            || (count($this->lpa->document->primaryAttorneys) > 1
-                && $this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY))
-            && count($this->lpa->document->replacementAttorneys) > 1) {
-
-            $createReplacementAttorneyCs2 = in_array($this->lpa->document->replacementAttorneyDecisions->how, [
-                ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
-                ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS
-            ]);
-        } elseif (count($this->lpa->document->primaryAttorneys) > 1 && $this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
-            if (count($this->lpa->document->replacementAttorneys) == 1) {
-                $createReplacementAttorneyCs2 = in_array($this->lpa->document->replacementAttorneyDecisions->how, [
-                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
-                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS
-                ]);
-            } elseif (count($this->lpa->document->replacementAttorneys) > 1) {
-                if ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST) {
-                    $createReplacementAttorneyCs2 = ($this->lpa->document->replacementAttorneyDecisions->how != ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY);
-                } elseif ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
-                    $createReplacementAttorneyCs2 = true;
-                }
-            }
-        }
-
-        if ($createReplacementAttorneyCs2) {
-            $cs2 = new Cs2ReplacementAttorneys($this->lpa);
-            $generatedCs2 = $cs2->generate();
-            $this->mergerIntermediateFilePaths($generatedCs2);
-        }
-
-        // generate a CS2 page if preference exceed available space on standard form
-        if (!$this->canFitIntoTextBox($this->lpa->document->preference)) {
-            $cs2 = new Cs2Preferences($this->lpa);
-            $generatedCs2 = $cs2->generate();
-            $this->mergerIntermediateFilePaths($generatedCs2);
-        }
-
-        // generate a CS2 page if instruction exceed available space on standard form
-        if (!$this->canFitIntoTextBox($this->lpa->document->instruction)) {
-            $cs2 = new Cs2Instructions($this->lpa);
-            $generatedCs2 = $cs2->generate();
-            $this->mergerIntermediateFilePaths($generatedCs2);
-        }
-
-        // generate CS3 page if donor cannot sign on LPA
-        if (false === $this->lpa->document->donor->canSign) {
-            $cs3 = new Cs3($this->lpa);
-            $generatedCs3 = $cs3->generate();
-            $this->mergerIntermediateFilePaths($generatedCs3);
-        }
-
-        // CS4
-        $trustAttorney = $this->getTrustCorporation();
-
-        if (!is_null($trustAttorney)) {
-            $generatedCs4 = (new Cs4($this->lpa))->generate();
-            $this->mergerIntermediateFilePaths($generatedCs4);
-        }
-
-        // if number of attorneys (including replacements) is greater than 4, duplicate Section 11 - Attorneys Signatures page
-        // as many as needed to be able to fit all attorneys in the form.
-        $totalAttorneys = count($this->lpa->document->primaryAttorneys) + count($this->lpa->document->replacementAttorneys);
-
-        if (!is_null($trustAttorney)) {
-            $totalAttorneys--;
-        }
-
-        if ($totalAttorneys > self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
-            $generatedAdditionalAttorneySignaturePages = (new Lp1AdditionalAttorneySignaturePage($this->lpa))->generate();
-            $this->mergerIntermediateFilePaths($generatedAdditionalAttorneySignaturePages);
-        }
-
-        $numOfApplicants = count($this->lpa->document->whoIsRegistering);
-
-        // Section 12 - Applicants - If number of applicant is greater than 4, duplicate this page as many as needed in order to fit all applicants in
-        if (is_array($this->lpa->document->whoIsRegistering) && $numOfApplicants > self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) {
-            $lp1AdditionalApplicantPage = new Lp1AdditionalApplicantPage($this->lpa);
-            $generatedAdditionalApplicantPages = $lp1AdditionalApplicantPage->generate();
-            $this->mergerIntermediateFilePaths($generatedAdditionalApplicantPages);
-        }
-
-        // Section 15 - additional applicants signature
-        if (is_array($this->lpa->document->whoIsRegistering) && $numOfApplicants > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM) {
-            $totalAdditionalApplicants = $numOfApplicants - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
-            $totalAdditionalApplicantPages = ceil($totalAdditionalApplicants / self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
-            if ($totalAdditionalApplicantPages > 0) {
-                $lp1AdditionalApplicantSignaturePage = new Lp1AdditionalApplicantSignaturePage($this->lpa);
-                $generatedAdditionalApplicantSignaturePages = $lp1AdditionalApplicantSignaturePage->generate();
-                $this->mergerIntermediateFilePaths($generatedAdditionalApplicantSignaturePages);
-            }
-        }
-    }
-
-    /**
      * Get an array of data to use in the LP1 form generation
      *
      * @return array
@@ -285,6 +112,8 @@ abstract class AbstractLp1 extends AbstractTopForm
     protected function getLp1PdfData()
     {
         $formData = [];
+
+        $formTypeSuffix = $this->getFormTypeSuffix();
 
         //  Donor section (section 1)
         $formData['lpa-id'] = Formatter::id($this->lpa->id);
@@ -301,14 +130,49 @@ abstract class AbstractLp1 extends AbstractTopForm
         $formData['lpa-document-donor-address-postcode'] = $this->lpa->document->donor->address->postcode;
         $formData['lpa-document-donor-email-address'] = ($this->lpa->document->donor->email instanceof EmailAddress ? $this->lpa->document->donor->email->address : null);
 
+        // Section 2
+        $i = 0;
+
+        $primaryAttorneys = $this->sortAttorneys('primaryAttorneys');
+        $noOfPrimaryAttorneys = count($primaryAttorneys);
+
+        foreach ($primaryAttorneys as $primaryAttorney) {
+            if ($primaryAttorney instanceof TrustCorporation) {
+                $formData['attorney-' . $i . '-is-trust-corporation'] = self::CHECK_BOX_ON;
+                $formData['lpa-document-primaryAttorneys-' . $i . '-name-last'] = (string)$primaryAttorney->name;
+            } else {
+                $formData['lpa-document-primaryAttorneys-' . $i . '-name-title'] = $primaryAttorney->name->title;
+                $formData['lpa-document-primaryAttorneys-' . $i . '-name-first'] = $primaryAttorney->name->first;
+                $formData['lpa-document-primaryAttorneys-' . $i . '-name-last'] = $primaryAttorney->name->last;
+
+                $formData['lpa-document-primaryAttorneys-' . $i . '-dob-date-day'] = $primaryAttorney->dob->date->format('d');
+                $formData['lpa-document-primaryAttorneys-' . $i . '-dob-date-month'] = $primaryAttorney->dob->date->format('m');
+                $formData['lpa-document-primaryAttorneys-' . $i . '-dob-date-year'] = $primaryAttorney->dob->date->format('Y');
+            }
+
+            $formData['lpa-document-primaryAttorneys-' . $i . '-address-address1'] = $primaryAttorney->address->address1;
+            $formData['lpa-document-primaryAttorneys-' . $i . '-address-address2'] = $primaryAttorney->address->address2;
+            $formData['lpa-document-primaryAttorneys-' . $i . '-address-address3'] = $primaryAttorney->address->address3;
+            $formData['lpa-document-primaryAttorneys-' . $i . '-address-postcode'] = $primaryAttorney->address->postcode;
+
+            $formData['lpa-document-primaryAttorneys-' . $i . '-email-address'] = ($primaryAttorney->email instanceof EmailAddress ? "\n" . $primaryAttorney->email->address : null);
+
+            if (++$i == self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+                break;
+            }
+        }
+
+        if ($noOfPrimaryAttorneys == 1) {
+            $this->addStrikeThrough('primaryAttorney-1-' . $formTypeSuffix, 1);
+        }
+
         //  attorneys section (section 2)
-        $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
         if ($noOfPrimaryAttorneys == 1) {
             $this->addStrikeThrough('primaryAttorney-2', 2)
-                 ->addStrikeThrough('primaryAttorney-3', 2);
+                ->addStrikeThrough('primaryAttorney-3', 2);
         } elseif ($noOfPrimaryAttorneys == 2) {
             $this->addStrikeThrough('primaryAttorney-2', 2)
-                 ->addStrikeThrough('primaryAttorney-3', 2);
+                ->addStrikeThrough('primaryAttorney-3', 2);
         } elseif ($noOfPrimaryAttorneys == 3) {
             $this->addStrikeThrough('primaryAttorney-3', 2);
         }
@@ -317,6 +181,7 @@ abstract class AbstractLp1 extends AbstractTopForm
             $formData['has-more-than-4-attorneys'] = self::CHECK_BOX_ON;
         }
 
+
         //  attorney decision section (section 3)
         if ($noOfPrimaryAttorneys == 1) {
             $formData['how-attorneys-act'] = 'only-one-attorney-appointed';
@@ -324,8 +189,49 @@ abstract class AbstractLp1 extends AbstractTopForm
             $formData['how-attorneys-act'] = $this->lpa->document->primaryAttorneyDecisions->how;
         }
 
+
+        // Section 4
+        $i = 0;
+
+        $replacementAttorneys = $this->sortAttorneys('replacementAttorneys');
+        $noOfReplacementAttorneys = count($replacementAttorneys);
+
+        foreach ($replacementAttorneys as $replacementAttorney) {
+            if ($replacementAttorney instanceof TrustCorporation) {
+                $formData['replacement-attorney-' . $i . '-is-trust-corporation'] = self::CHECK_BOX_ON;
+                $formData['lpa-document-replacementAttorneys-' . $i . '-name-last'] = (string)$replacementAttorney->name;
+            } else {
+                $formData['lpa-document-replacementAttorneys-' . $i . '-name-title'] = $replacementAttorney->name->title;
+                $formData['lpa-document-replacementAttorneys-' . $i . '-name-first'] = $replacementAttorney->name->first;
+                $formData['lpa-document-replacementAttorneys-' . $i . '-name-last'] = $replacementAttorney->name->last;
+
+                $formData['lpa-document-replacementAttorneys-' . $i . '-dob-date-day'] = $replacementAttorney->dob->date->format('d');
+                $formData['lpa-document-replacementAttorneys-' . $i . '-dob-date-month'] = $replacementAttorney->dob->date->format('m');
+                $formData['lpa-document-replacementAttorneys-' . $i . '-dob-date-year'] = $replacementAttorney->dob->date->format('Y');
+            }
+
+            $formData['lpa-document-replacementAttorneys-' . $i . '-address-address1'] = $replacementAttorney->address->address1;
+            $formData['lpa-document-replacementAttorneys-' . $i . '-address-address2'] = $replacementAttorney->address->address2;
+            $formData['lpa-document-replacementAttorneys-' . $i . '-address-address3'] = $replacementAttorney->address->address3;
+            $formData['lpa-document-replacementAttorneys-' . $i . '-address-postcode'] = $replacementAttorney->address->postcode;
+
+            $formData['lpa-document-replacementAttorneys-' . $i . '-email-address'] = ($replacementAttorney->email instanceof EmailAddress ? "\n" . $replacementAttorney->email->address : null);
+
+            if (++$i == self::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM) {
+                break;
+            }
+        }
+
+
+        if ($noOfReplacementAttorneys == 0) {
+            $this->addStrikeThrough('replacementAttorney-0-' . $formTypeSuffix, 4)
+                 ->addStrikeThrough('replacementAttorney-1-' . $formTypeSuffix, 4);
+        } elseif ($noOfReplacementAttorneys == 1) {
+            $this->addStrikeThrough('replacementAttorney-1-' . $formTypeSuffix, 4);
+        }
+
+
         //  replacement attorneys section (section 4)
-        $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
         if ($noOfReplacementAttorneys > 2) {
             $formData['has-more-than-2-replacement-attorneys'] = self::CHECK_BOX_ON;
         }
@@ -440,13 +346,81 @@ abstract class AbstractLp1 extends AbstractTopForm
         $formData['lpa-document-certificateProvider-address-address3'] = $this->lpa->document->certificateProvider->address->address3;
         $formData['lpa-document-certificateProvider-address-postcode'] = $this->lpa->document->certificateProvider->address->postcode;
 
+
+
+
+
+        // Attorney/Replacement signature (Section 11)
+        $allAttorneys = array_merge($primaryAttorneys, $this->lpa->document->replacementAttorneys);
+        $attorneyIndex = 0;
+
+        foreach ($allAttorneys as $attorney) {
+            if ($attorney instanceof TrustCorporation) {
+                continue;
+            }
+
+            $formData['signature-attorney-' . $attorneyIndex . '-name-title'] = $attorney->name->title;
+            $formData['signature-attorney-' . $attorneyIndex . '-name-first'] = $attorney->name->first;
+            $formData['signature-attorney-' . $attorneyIndex . '-name-last'] = $attorney->name->last;
+
+            if (++$attorneyIndex == self::MAX_ATTORNEY_SIGNATURE_PAGES_ON_STANDARD_FORM) {
+                break;
+            }
+        }
+
+        $numberOfHumanAttorneys = $attorneyIndex;
+
+        switch ($numberOfHumanAttorneys) {
+            case 3:
+                $this->addStrikeThrough('attorney-signature-' . $formTypeSuffix, 14);
+                break;
+            case 2:
+                $this->addStrikeThrough('attorney-signature-' . $formTypeSuffix, 13)
+                     ->addStrikeThrough('attorney-signature-' . $formTypeSuffix, 14);
+                break;
+            case 1:
+                $this->addStrikeThrough('attorney-signature-' . $formTypeSuffix, 12)
+                     ->addStrikeThrough('attorney-signature-' . $formTypeSuffix, 13)
+                     ->addStrikeThrough('attorney-signature-' . $formTypeSuffix, 14);
+                break;
+            case 0:
+                $this->addStrikeThrough('attorney-signature-' . $formTypeSuffix, 11)
+                     ->addStrikeThrough('attorney-signature-' . $formTypeSuffix, 12)
+                     ->addStrikeThrough('attorney-signature-' . $formTypeSuffix, 13)
+                     ->addStrikeThrough('attorney-signature-' . $formTypeSuffix, 14);
+                break;
+        }
+
+
+
+
+
+        //  Determine how many sections in section 12 to strike through
+        $strikeThroughCount = self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM;
+
+        if (is_array($this->lpa->document->whoIsRegistering)) {
+            $strikeThroughCount -= count($this->lpa->document->whoIsRegistering);
+        }
+
+        while ($strikeThroughCount > 0) {
+            $areaReferenceIdx = self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $strikeThroughCount;
+
+            $areaReference = 'applicant-' . $areaReferenceIdx . '-' . $formTypeSuffix;
+            $this->addStrikeThrough($areaReference, 16);
+
+            $strikeThroughCount--;
+        }
+
+
+
+
         //  Applicant (Section 12)
         if ($this->lpa->document->whoIsRegistering == 'donor') {
             $formData['who-is-applicant'] = 'donor';
 
             $this->addStrikeThrough('applicant-signature-1', 19)
-                 ->addStrikeThrough('applicant-signature-2', 19)
-                 ->addStrikeThrough('applicant-signature-3', 19);
+                ->addStrikeThrough('applicant-signature-2', 19)
+                ->addStrikeThrough('applicant-signature-3', 19);
         } elseif (is_array($this->lpa->document->whoIsRegistering)) {
             $formData['who-is-applicant'] = 'attorney';
             $i = 0;
@@ -599,6 +573,192 @@ abstract class AbstractLp1 extends AbstractTopForm
 
 
         return $formData;
+    }
+
+    /**
+     * Add an LPA ID barcode to the file specified
+     *
+     * @param $filePath
+     */
+    private function addLpaIdBarcode($filePath)
+    {
+        // Generate the barcode
+        // Zero pad the ID, and prepend the 'A'
+        $formattedLpaId = 'A' . sprintf("%011d", $this->lpa->id);
+
+        $renderer = Barcode::factory(
+            'code39',
+            'pdf',
+            [
+                'text' => $formattedLpaId,
+                'drawText' => false,
+                'factor' => 2,
+                'barHeight' => 25,
+            ],
+            [
+                'topOffset' => 789,
+                'leftOffset' => 40,
+            ]
+        );
+
+        $imageResource = $renderer->draw();
+
+        //  TODO - Try not to use getTmpFilePath here so we can condense that down...
+        $barcodeTmpFile = $this->getTmpFilePath('barcode');
+
+        // Save to temporary file...
+        $imageResource->save($barcodeTmpFile);
+
+        // Merge the barcode into the page
+        // Take a copy of the PDF to work with
+        $pdfWithBarcode = new Pdf($filePath);
+
+        // Pull out the page the barcode is appended to
+        $pdfWithBarcode->cat(19);
+
+        // Add the barcode to the page
+        $pdfWithBarcode = new Pdf($pdfWithBarcode);
+        $pdfWithBarcode->stamp($barcodeTmpFile);
+
+        // Re-integrate the page into the full PDF
+        $pdf = new Pdf();
+
+        $pdf->addFile($filePath, 'A');
+        $pdf->addFile($pdfWithBarcode, 'B');
+
+        // Swap out page 19 for the one with the barcode
+        $pdf->cat(1, 18, 'A');
+        $pdf->cat(1, null, 'B');
+        $pdf->cat(20, 'end', 'A');
+
+        $pdf->flatten()
+            ->saveAs($filePath);
+
+        //  Cleanup - remove tmp barcode file
+        unlink($barcodeTmpFile);
+    }
+
+    /**
+     * Generate additional pages depending on the LPA's composition
+     */
+    private function generateAdditionalPages()
+    {
+        $this->logGenerationStatement('Additional Pages');
+
+        $noOfPrimaryAttorneys = count($this->lpa->document->primaryAttorneys);
+        $noOfReplacementAttorneys = count($this->lpa->document->replacementAttorneys);
+
+        // generate CS1
+        if ($noOfPrimaryAttorneys > self::MAX_ATTORNEYS_ON_STANDARD_FORM
+            || $noOfReplacementAttorneys > self::MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM
+            || count($this->lpa->document->peopleToNotify) > self::MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM) {
+
+            $cs1 = new Cs1($this->lpa);
+            $generatedCs1 = $cs1->generate();
+            $this->mergerIntermediateFilePaths($generatedCs1);
+        }
+
+        // generate a CS2 page if how attorneys making decisions depends on a special arrangement
+        if ($this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+            $cs2 = new Cs2PrimaryAttorneyDecisions($this->lpa);
+            $generatedCs2 = $cs2->generate();
+            $this->mergerIntermediateFilePaths($generatedCs2);
+        }
+
+        //  Determine if the replacement attorney continuation sheet should be created
+        $createReplacementAttorneyCs2 = false;
+
+        if (($noOfPrimaryAttorneys == 1
+            || ($noOfPrimaryAttorneys > 1
+                && $this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY))
+            && $noOfReplacementAttorneys > 1) {
+
+            $createReplacementAttorneyCs2 = in_array($this->lpa->document->replacementAttorneyDecisions->how, [
+                ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+                ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS
+            ]);
+        } elseif ($noOfPrimaryAttorneys > 1 && $this->lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY) {
+            if ($noOfReplacementAttorneys == 1) {
+                $createReplacementAttorneyCs2 = in_array($this->lpa->document->replacementAttorneyDecisions->how, [
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS
+                ]);
+            } elseif ($noOfReplacementAttorneys > 1) {
+                if ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST) {
+                    $createReplacementAttorneyCs2 = ($this->lpa->document->replacementAttorneyDecisions->how != ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY);
+                } elseif ($this->lpa->document->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
+                    $createReplacementAttorneyCs2 = true;
+                }
+            }
+        }
+
+        if ($createReplacementAttorneyCs2) {
+            $cs2 = new Cs2ReplacementAttorneys($this->lpa);
+            $generatedCs2 = $cs2->generate();
+            $this->mergerIntermediateFilePaths($generatedCs2);
+        }
+
+        // generate a CS2 page if preference exceed available space on standard form
+        if (!$this->canFitIntoTextBox($this->lpa->document->preference)) {
+            $cs2 = new Cs2Preferences($this->lpa);
+            $generatedCs2 = $cs2->generate();
+            $this->mergerIntermediateFilePaths($generatedCs2);
+        }
+
+        // generate a CS2 page if instruction exceed available space on standard form
+        if (!$this->canFitIntoTextBox($this->lpa->document->instruction)) {
+            $cs2 = new Cs2Instructions($this->lpa);
+            $generatedCs2 = $cs2->generate();
+            $this->mergerIntermediateFilePaths($generatedCs2);
+        }
+
+        // generate CS3 page if donor cannot sign on LPA
+        if (false === $this->lpa->document->donor->canSign) {
+            $cs3 = new Cs3($this->lpa);
+            $generatedCs3 = $cs3->generate();
+            $this->mergerIntermediateFilePaths($generatedCs3);
+        }
+
+        // CS4
+        $trustAttorney = $this->getTrustCorporation();
+
+        if (!is_null($trustAttorney)) {
+            $generatedCs4 = (new Cs4($this->lpa))->generate();
+            $this->mergerIntermediateFilePaths($generatedCs4);
+        }
+
+        // if number of attorneys (including replacements) is greater than 4, duplicate Section 11 - Attorneys Signatures page
+        // as many as needed to be able to fit all attorneys in the form.
+        $totalAttorneys = $noOfPrimaryAttorneys + $noOfReplacementAttorneys;
+
+        if (!is_null($trustAttorney)) {
+            $totalAttorneys--;
+        }
+
+        if ($totalAttorneys > self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
+            $generatedAdditionalAttorneySignaturePages = (new Lp1AdditionalAttorneySignaturePage($this->lpa))->generate();
+            $this->mergerIntermediateFilePaths($generatedAdditionalAttorneySignaturePages);
+        }
+
+        $numOfApplicants = count($this->lpa->document->whoIsRegistering);
+
+        // Section 12 - Applicants - If number of applicant is greater than 4, duplicate this page as many as needed in order to fit all applicants in
+        if (is_array($this->lpa->document->whoIsRegistering) && $numOfApplicants > self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) {
+            $lp1AdditionalApplicantPage = new Lp1AdditionalApplicantPage($this->lpa);
+            $generatedAdditionalApplicantPages = $lp1AdditionalApplicantPage->generate();
+            $this->mergerIntermediateFilePaths($generatedAdditionalApplicantPages);
+        }
+
+        // Section 15 - additional applicants signature
+        if (is_array($this->lpa->document->whoIsRegistering) && $numOfApplicants > self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM) {
+            $totalAdditionalApplicants = $numOfApplicants - self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM;
+            $totalAdditionalApplicantPages = ceil($totalAdditionalApplicants / self::MAX_ATTORNEY_APPLICANTS_SIGNATURE_ON_STANDARD_FORM);
+            if ($totalAdditionalApplicantPages > 0) {
+                $lp1AdditionalApplicantSignaturePage = new Lp1AdditionalApplicantSignaturePage($this->lpa);
+                $generatedAdditionalApplicantSignaturePages = $lp1AdditionalApplicantSignaturePage->generate();
+                $this->mergerIntermediateFilePaths($generatedAdditionalApplicantSignaturePages);
+            }
+        }
     }
 
     /**

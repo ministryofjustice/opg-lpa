@@ -2,6 +2,7 @@
 
 namespace Opg\Lpa\Pdf\Service\Forms;
 
+use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -352,5 +353,15 @@ abstract class AbstractForm
         }
 
         return null;
+    }
+
+    /**
+     * Convenience method to get the form type suffix - used by multiple parts of the code
+     *
+     * @return string
+     */
+    protected function getFormTypeSuffix()
+    {
+        return ($this->lpa->document->type == Document::LPA_TYPE_PF ? 'pf' : 'hw');
     }
 }

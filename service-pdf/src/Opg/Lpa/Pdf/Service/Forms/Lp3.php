@@ -82,11 +82,8 @@ class Lp3 extends AbstractTopForm
                         $formData['who-is-applicant'] = 'attorney';
                     }
 
-                    if ($this->lpa->document->type == Document::LPA_TYPE_PF) {
-                        $formData['lpa-type'] = 'property-and-financial-affairs';
-                    } elseif ($this->lpa->document->type == Document::LPA_TYPE_HW) {
-                        $formData['lpa-type'] = 'health-and-welfare';
-                    }
+                    //  If this is a PF LPA then the type text for the form data is slightly different
+                    $formData['lpa-type'] = ($this->lpa->document->type == Document::LPA_TYPE_PF ? 'property-and-financial-affairs' : $this->lpa->document->type);
 
                     $formData['footer-right-page-two'] = $footerContent;
 

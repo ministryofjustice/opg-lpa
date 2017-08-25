@@ -64,10 +64,8 @@ class Lp1AdditionalApplicantPage extends AbstractForm
 
         // draw cross lines if there's any blank slot
         if ($totalAdditionalApplicant % self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM) {
-            $formTypeSuffix = ($this->lpa->document->type == Document::LPA_TYPE_PF ? 'pf' : 'hw');
-
             for ($i = self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $totalAdditionalApplicant % self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM; $i >= 1; $i--) {
-                $areaReference = 'additional-applicant-' . (self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $i) . '-' . $formTypeSuffix;
+                $areaReference = 'additional-applicant-' . (self::MAX_ATTORNEY_APPLICANTS_ON_STANDARD_FORM - $i) . '-' . $this->getFormTypeSuffix();
                 $this->addStrikeThrough($areaReference);
             }
 
