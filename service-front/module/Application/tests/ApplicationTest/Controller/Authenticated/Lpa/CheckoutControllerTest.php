@@ -140,17 +140,12 @@ class CheckoutControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
-        $postData = [];
-
         $this->lpa->payment->method = null;
         $this->controller->setUser($this->userIdentity);
         $this->controller->setLpa($this->lpa);
         $this->cache->shouldReceive('getItem')->with('worldpay-percentage')->andReturn(100)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->twice();
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(false)->once();
+        $this->setPostInvalid($this->form, [], 2);
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

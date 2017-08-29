@@ -219,15 +219,10 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
-        $postData = [];
-
         $this->controller->setLpa($this->lpa);
         $this->url->shouldReceive('fromRoute')->with('lpa/correspondent', ['lpa-id' => $this->lpa->id])->andReturn('lpa/correspondent?lpa-id=' . $this->lpa->id)->once();
         $this->form->shouldReceive('setAttribute')->with('action', 'lpa/correspondent?lpa-id=' . $this->lpa->id)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(false)->once();
+        $this->setPostInvalid($this->form, []);
         $this->setMatchedRouteName($this->controller, 'lpa/correspondent');
         $this->url->shouldReceive('fromRoute')->with('lpa/correspondent/edit', ['lpa-id' => $this->lpa->id])->andReturn('lpa/correspondent/edit')->once();
 
@@ -326,6 +321,26 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->url->shouldReceive('fromRoute')->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/correspondent/edit")->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', "lpa/{$this->lpa->id}/correspondent/edit"])->once();
         $this->form->shouldReceive('bind')->withArgs([$this->lpa->document->correspondent->flatten()])->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['lpa/correspondent', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/correspondent")->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->editAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals("lpa/{$this->lpa->id}/correspondent", $result->cancelUrl);
+        $this->assertEquals(false, $result->getVariable('allowEditButton'));
+    }
+
+    public function testEditActionPostInvalid()
+    {
+        $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn('existing-correspondent')->once();
+        $this->setPostInvalid($this->form, []);
+        $this->url->shouldReceive('fromRoute')->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/correspondent/edit")->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', "lpa/{$this->lpa->id}/correspondent/edit"])->once();
         $this->url->shouldReceive('fromRoute')->withArgs(['lpa/correspondent', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/correspondent")->once();
 
         /** @var ViewModel $result */

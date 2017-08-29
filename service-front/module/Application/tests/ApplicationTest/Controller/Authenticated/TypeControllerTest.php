@@ -59,10 +59,7 @@ class TypeControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->form->shouldReceive('setData')->with($this->postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(false)->once();
+        $this->setPostInvalid($this->form, $this->postData);
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

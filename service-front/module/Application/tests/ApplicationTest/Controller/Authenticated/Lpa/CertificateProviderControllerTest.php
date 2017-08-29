@@ -173,22 +173,17 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
     public function testAddActionPostInvalid()
     {
-        $postData = [];
-
         $this->lpa->document->certificateProvider = null;
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->twice();
         $this->url->shouldReceive('fromRoute')
             ->with('lpa/certificate-provider/add', ['lpa-id' => $this->lpa->id])
             ->andReturn("lpa/{$this->lpa->id}/certificate-provider/add")->once();
         $this->form->shouldReceive('setAttribute')->with('action', "lpa/{$this->lpa->id}/certificate-provider/add")->once();
         $this->form->shouldReceive('setExistingActorNamesData')->once();
         $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider', ['lpa-id' => $this->lpa->id])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(false)->once();
+        $this->setPostInvalid($this->form, [], 2);
 
         /** @var ViewModel $result */
         $result = $this->controller->addAction();
@@ -281,8 +276,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
     public function testEditActionPostInvalid()
     {
-        $postData = [];
-
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->url->shouldReceive('fromRoute')
@@ -290,10 +283,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
             ->andReturn("lpa/{$this->lpa->id}/certificate-provider/edit")->once();
         $this->form->shouldReceive('setAttribute')->with('action', "lpa/{$this->lpa->id}/certificate-provider/edit")->once();
         $this->form->shouldReceive('setExistingActorNamesData')->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(false)->once();
+        $this->setPostInvalid($this->form, []);
         $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider', ['lpa-id' => $this->lpa->id])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
 
         /** @var ViewModel $result */

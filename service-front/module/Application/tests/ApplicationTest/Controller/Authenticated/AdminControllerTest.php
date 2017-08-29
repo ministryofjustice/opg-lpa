@@ -147,10 +147,7 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testSystemMessageActionPostInvalid()
     {
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->systemMessagePostData)->once();
-        $this->systemMessageForm->shouldReceive('setData')->with($this->systemMessagePostData)->once();
-        $this->systemMessageForm->shouldReceive('isValid')->andReturn(false)->once();
+        $this->setPostInvalid($this->systemMessageForm, $this->systemMessagePostData);
 
         /** @var ViewModel $result */
         $result = $this->controller->systemMessageAction();
@@ -231,10 +228,7 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testPaymentSwitchActionPostInvalid()
     {
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->paymentSwitchPostData)->once();
-        $this->paymentSwitchForm->shouldReceive('setData')->with($this->paymentSwitchPostData)->once();
-        $this->paymentSwitchForm->shouldReceive('isValid')->andReturn(false)->once();
+        $this->setPostInvalid($this->paymentSwitchForm, $this->paymentSwitchPostData);
 
         /** @var ViewModel $result */
         $result = $this->controller->paymentSwitchAction();

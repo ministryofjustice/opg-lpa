@@ -325,6 +325,18 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         return $result;
     }
 
+    /**
+     * @param $form
+     * @param array $postData
+     */
+    public function setPostInvalid($form, $postData, $expectedPostTimes = 1)
+    {
+        $this->request->shouldReceive('isPost')->andReturn(true)->times($expectedPostTimes);
+        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
+        $form->shouldReceive('setData')->with($postData)->once();
+        $form->shouldReceive('isValid')->andReturn(false)->once();
+    }
+
     public function tearDown()
     {
         Mockery::close();
