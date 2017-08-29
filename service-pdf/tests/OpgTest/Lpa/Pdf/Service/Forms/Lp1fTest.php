@@ -2581,7 +2581,7 @@ class Lp1fTest extends AbstractFormTestClass
         $lpa = $this->getLpa();
 
         //  Adapt the LPA data as required
-        //  Change how the primary attorneys act to depends
+        //  Change how the primary attorneys act to jointly
         $lpa->document->primaryAttorneyDecisions->how = 'jointly';
 
         $lp1f = new Lp1f($lpa);
@@ -4312,7 +4312,7 @@ class Lp1fTest extends AbstractFormTestClass
         array_splice($lpa->document->primaryAttorneys, 1);
         array_splice($lpa->document->whoIsRegistering, 1);
 
-        //  Change how the primary attorneys act to depends
+        //  Change how the primary attorneys act to jointly and severally
         $lpa->document->replacementAttorneyDecisions->how = 'jointly-attorney-severally';
 
         $lp1f = new Lp1f($lpa);
@@ -4499,8 +4499,9 @@ class Lp1fTest extends AbstractFormTestClass
         //  Reduce the number of replacement attorneys down to one
         array_splice($lpa->document->replacementAttorneys, 1);
 
-        //  Change how the primary attorneys act to depends
+        //  Change when replacement attorneys step in to first and how they act to null (because there is only one)
         $lpa->document->replacementAttorneyDecisions->when = 'first';
+        $lpa->document->replacementAttorneyDecisions->how = null;
 
         $lp1f = new Lp1f($lpa);
 
