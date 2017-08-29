@@ -8,6 +8,12 @@ use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManager;
+use ApplicationTest\Controller\Authenticated\Lpa\CertificateProviderControllerTest;
+use ApplicationTest\Controller\Authenticated\Lpa\CorrespondentControllerTest;
+use ApplicationTest\Controller\Authenticated\Lpa\DonorControllerTest;
+use ApplicationTest\Controller\Authenticated\Lpa\PeopleToNotifyControllerTest;
+use ApplicationTest\Controller\Authenticated\Lpa\PrimaryAttorneyControllerTest;
+use ApplicationTest\Controller\Authenticated\Lpa\ReplacementAttorneyControllerTest;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -17,6 +23,7 @@ use PHPUnit_Framework_Error_Deprecated;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\ResponseCollection;
 use Zend\Http\Request;
+use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractController;
 use Zend\Mvc\Controller\Plugin\CreateHttpNotFoundModel;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
@@ -31,6 +38,7 @@ use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Storage\StorageInterface;
 use Zend\Stdlib\ArrayObject;
+use Zend\Uri\Uri;
 
 abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 {
@@ -279,9 +287,9 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @param AbstractController$controller
      * @param string $routeName
      */
-    public function setMatchedRouteName($controller, $routeName)
+    public function setMatchedRouteName($controller, $routeName, $routeMatch = null)
     {
-        $routeMatch = $this->getRouteMatch($controller);
+        $routeMatch = $routeMatch ?: $this->getRouteMatch($controller);
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($routeName)->once();
     }
 
@@ -339,6 +347,94 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         $this->request->shouldReceive('getPost')->andReturn($postData)->times($expectedGetPostTimes);
         $form->shouldReceive('setData')->with($postData)->once();
         $form->shouldReceive('isValid')->andReturn(true)->once();
+    }
+
+    public function setRedirectToRoute($route, $lpa, $response, $addCurrentFragment = true)
+    {
+        $args = [$route, ['lpa-id' => $lpa->id]];
+        if ($addCurrentFragment === true) {
+            $args[] = ['fragment' => 'current'];
+        }
+        $this->redirect->shouldReceive('toRoute')->withArgs($args)->andReturn($response)->once();
+    }
+
+    /**
+     * @param User $user
+     * @param Lpa $lpa
+     * @param string $lpaRoute e.g. lpa/certificate-provider/edit
+     * @param Response $response
+     */
+    public function setRedirectToReuseDetails($user, $lpa, $lpaRoute, $response)
+    {
+        $this->userDetailsSession->user = $user;
+
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+
+        $url = str_replace('lpa/', "http://localhost/lpa/{$lpa->id}/", $lpaRoute);
+        $uri = new Uri($url);
+
+        $includeTrusts = false;
+        $actorName = null;
+
+        if ($this instanceof CertificateProviderControllerTest) {
+            $actorName = 'Certificate provider';
+        } elseif ($this instanceof CorrespondentControllerTest) {
+            $actorName = 'Correspondent';
+        } elseif ($this instanceof DonorControllerTest) {
+            $actorName = 'Donor';
+        } elseif ($this instanceof PeopleToNotifyControllerTest) {
+            $actorName = 'Person to notify';
+        } elseif ($this instanceof PrimaryAttorneyControllerTest) {
+            $includeTrusts = true;
+            $actorName = 'Attorney';
+        } elseif ($this instanceof ReplacementAttorneyControllerTest) {
+            $includeTrusts = true;
+            $actorName = 'Replacement attorney';
+        }
+
+        $this->request->shouldReceive('getUri')->andReturn($uri)->once();
+        $queryParams = [
+            'calling-url'    => $uri->getPath(),
+            'include-trusts' => $includeTrusts,
+            'actor-name'     => $actorName,
+        ];
+
+        $reuseDetailsUrl = "lpa/{$lpa->id}/reuse-details?" . implode('&', array_map(function ($value, $key) {
+            $valueString = is_bool($value) ? $value === true ? '1' : '0' : $value;
+            return "$key=$valueString";
+        }, $queryParams, array_keys($queryParams)));
+
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs([
+                'lpa/reuse-details',
+                ['lpa-id' => $lpa->id],
+                ['query' => $queryParams]
+            ])->andReturn($reuseDetailsUrl)->once();
+
+        $this->redirect->shouldReceive('toUrl')->withArgs([$reuseDetailsUrl])->andReturn($response);
+    }
+
+    public function setReuseDetails($controller, $form, $user, $who)
+    {
+        $this->userDetailsSession->user = $user;
+
+        $routeMatch = $this->getRouteMatch($controller);
+
+        $actorReuseDetails = $controller->testGetActorReuseDetails();
+
+        $index = 0;
+        foreach ($actorReuseDetails as $key => $value) {
+            if ($value['data']['who'] === $who) {
+                $index = $key;
+                break;
+            }
+        }
+
+        $routeMatch->shouldReceive('getParam')->withArgs(['reuseDetailsIndex'])->andReturn($index)->once();
+
+        $form->shouldReceive('bind')->withArgs([$actorReuseDetails[$index]['data']])->once();
+
+        return $routeMatch;
     }
 
     public function tearDown()

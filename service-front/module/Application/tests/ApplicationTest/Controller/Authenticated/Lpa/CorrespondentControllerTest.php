@@ -4,21 +4,28 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\CorrespondentController;
 use Application\Form\Lpa\CorrespondentForm;
+use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
+use DateTime;
 use Mockery;
 use Mockery\MockInterface;
+use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\LongName;
+use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
+use Zend\Uri\Uri;
+use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class CorrespondentControllerTest extends AbstractControllerTest
 {
     /**
-     * @var CorrespondentController
+     * @var TestableCorrespondentController
      */
     private $controller;
     /**
@@ -47,11 +54,23 @@ class CorrespondentControllerTest extends AbstractControllerTest
             'phone-number' => '0123456789'
         ]
     ];
+    private $postDataCorrespondence = [
+        'name' => [
+            'title' => 'Miss',
+            'first' => 'Unit',
+            'last' => 'Test'
+        ],
+        'email' => ['address' => 'unit@test.com'],
+        'phone' => ['number' => '0123456789']
+    ];
 
     public function setUp()
     {
-        $this->controller = new CorrespondentController();
+        $this->controller = new TestableCorrespondentController();
         parent::controllerSetUp($this->controller);
+
+        $this->user = FixturesData::getUser();
+        $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
 
         $this->form = Mockery::mock(CorrespondentForm::class);
         $this->lpa = FixturesData::getPfLpa();
@@ -355,16 +374,133 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn('existing-correspondent')->once();
-        $this->setPostValid($this->form, $this->postDataNoContact);
-        $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataNoContact)->once();
+        $this->setPostValid($this->form, $this->postDataCorrespondence);
+        $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataCorrespondence)->once();
         $this->url->shouldReceive('fromRoute')->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/correspondent/edit")->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', "lpa/{$this->lpa->id}/correspondent/edit"])->once();
         $this->lpaApplicationService->shouldReceive('setCorrespondent')->withArgs(function ($lpaId, $correspondent) {
             return $lpaId === $this->lpa->id
-                && $correspondent->contactInWelsh === false
-                && $correspondent->contactByPost === false;
+                && $correspondent->name == new LongName($this->postDataCorrespondence['name'])
+                && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
+                && $correspondent->phone == new PhoneNumber($this->postDataCorrespondence['phone']);
         })->andReturn(false)->once();
 
         $this->controller->editAction();
+    }
+
+    public function testEditActionPostSuccess()
+    {
+        $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
+        $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn('existing-correspondent')->once();
+        $this->setPostValid($this->form, $this->postDataCorrespondence);
+        $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataCorrespondence)->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/correspondent/edit")->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', "lpa/{$this->lpa->id}/correspondent/edit"])->once();
+        $this->lpaApplicationService->shouldReceive('setCorrespondent')->withArgs(function ($lpaId, $correspondent) {
+            return $lpaId === $this->lpa->id
+                && $correspondent->name == new LongName($this->postDataCorrespondence['name'])
+                && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
+                && $correspondent->phone == new PhoneNumber($this->postDataCorrespondence['phone']);
+        })->andReturn(true)->once();
+
+        /** @var JsonModel $result */
+        $result = $this->controller->editAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals(true, $result->getVariable('success'));
+    }
+
+    public function testEditActionPostSuccessNoJs()
+    {
+        $response = new Response();
+
+        $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
+        $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn('existing-correspondent')->once();
+        $this->setPostValid($this->form, $this->postDataCorrespondence);
+        $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataCorrespondence)->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/correspondent/edit")->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', "lpa/{$this->lpa->id}/correspondent/edit"])->once();
+        $this->lpaApplicationService->shouldReceive('setCorrespondent')->withArgs(function ($lpaId, $correspondent) {
+            return $lpaId === $this->lpa->id
+                && $correspondent->name == new LongName($this->postDataCorrespondence['name'])
+                && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
+                && $correspondent->phone == new PhoneNumber($this->postDataCorrespondence['phone']);
+        })->andReturn(true)->once();
+        $this->setRedirectToRoute('lpa/correspondent', $this->lpa, $response);
+
+        $result = $this->controller->editAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testEditActionGetReuseDetailsNull()
+    {
+        $response = new Response();
+
+        $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn(null)->once();
+        $this->setRedirectToReuseDetails($this->user, $this->lpa, 'lpa/correspondent', $response);
+
+        $result = $this->controller->editAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testEditActionPostReuseDonorDetailsFormEditable()
+    {
+        $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->request->shouldReceive('isPost')->andReturn(true)->twice();
+        $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn(1)->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/correspondent/edit")->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', "lpa/{$this->lpa->id}/correspondent/edit"])->once();
+
+        $routeMatch = $this->setReuseDetails($this->controller, $this->form, $this->user, 'donor');
+        $this->form->shouldReceive('isEditable')->andReturn(true);
+        $this->setMatchedRouteName($this->controller, 'lpa/correspondent/edit', $routeMatch);
+        $this->url->shouldReceive('fromRoute')->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/correspondent/edit")->once();
+        $routeMatch->shouldReceive('getParam')->withArgs(['callingUrl'])->andReturn("http://localhost/lpa/{$this->lpa->id}/lpa/correspondent/edit")->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['lpa/correspondent', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/correspondent")->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->editAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals("http://localhost/lpa/{$this->lpa->id}/lpa/correspondent/edit", $result->backButtonUrl);
+        $this->assertEquals("lpa/{$this->lpa->id}/correspondent", $result->cancelUrl);
+        $this->assertEquals(false, $result->getVariable('allowEditButton'));
+    }
+
+    public function testEditActionPostReuseDonorDetailsFormNotEditable()
+    {
+        $response = new Response();
+
+        $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
+        $this->request->shouldReceive('isPost')->andReturn(true)->twice();
+        $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn(1)->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/correspondent/edit")->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', "lpa/{$this->lpa->id}/correspondent/edit"])->once();
+
+        $this->setReuseDetails($this->controller, $this->form, $this->user, 'donor');
+        $this->form->shouldReceive('isEditable')->andReturn(false);
+        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataCorrespondence)->once();
+        $this->lpaApplicationService->shouldReceive('setCorrespondent')->withArgs(function ($lpaId, $correspondent) {
+            return $lpaId === $this->lpa->id
+                && $correspondent->name == new LongName($this->postDataCorrespondence['name'])
+                && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
+                && $correspondent->phone == new PhoneNumber($this->postDataCorrespondence['phone']);
+        })->andReturn(true)->once();
+        $this->setRedirectToRoute('lpa/correspondent', $this->lpa, $response);
+
+        $result = $this->controller->editAction();
+
+        $this->assertEquals($response, $result);
     }
 }
