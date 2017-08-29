@@ -92,10 +92,7 @@ class ChangePasswordControllerTest extends AbstractControllerTest
         $this->authenticationAdapter->shouldReceive('setEmail')->with($this->user->email->address)->once();
         $this->authenticationService->shouldReceive('setAdapter')->with($this->authenticationAdapter)->once();
         $this->form->shouldReceive('setAuthenticationService')->with($this->authenticationService)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->form->shouldReceive('setData')->with($this->postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $this->postData);
         $this->aboutYouDetails->shouldReceive('updatePassword')->with($this->form)->andReturn(true)->once();
         $this->flashMessenger->shouldReceive('addSuccessMessage')->with('Your new password has been saved. Please remember to use this new password to sign in from now on.')->once();
         $this->redirect->shouldReceive('toRoute')->with('user/about-you')->andReturn($response)->once();
@@ -112,10 +109,7 @@ class ChangePasswordControllerTest extends AbstractControllerTest
         $this->authenticationAdapter->shouldReceive('setEmail')->with($this->user->email->address)->once();
         $this->authenticationService->shouldReceive('setAdapter')->with($this->authenticationAdapter)->once();
         $this->form->shouldReceive('setAuthenticationService')->with($this->authenticationService)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->form->shouldReceive('setData')->with($this->postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $this->postData);
         $this->aboutYouDetails->shouldReceive('updatePassword')->with($this->form)->andReturn(false)->once();
 
         /** @var ViewModel $result */

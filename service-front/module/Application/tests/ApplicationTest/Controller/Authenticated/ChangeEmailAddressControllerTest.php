@@ -89,10 +89,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
         $this->authenticationAdapter->shouldReceive('setEmail')->with($this->user->email->address)->once();
         $this->authenticationService->shouldReceive('setAdapter')->with($this->authenticationAdapter)->once();
         $this->form->shouldReceive('setAuthenticationService')->with($this->authenticationService)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->form->shouldReceive('setData')->with($this->postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $this->postData);
         $this->aboutYouDetails->shouldReceive('requestEmailUpdate')->andReturnUsing(function ($form, $emailConfirmCallback, $currentAddress, $userId) {
             //Exercise the anonymous functions as the concrete Register class would
             $emailConfirmCallback($userId, 'ValidToken');
@@ -116,10 +113,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
         $this->authenticationAdapter->shouldReceive('setEmail')->with($this->user->email->address)->once();
         $this->authenticationService->shouldReceive('setAdapter')->with($this->authenticationAdapter)->once();
         $this->form->shouldReceive('setAuthenticationService')->with($this->authenticationService)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->form->shouldReceive('setData')->with($this->postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $this->postData);
         $this->aboutYouDetails->shouldReceive('requestEmailUpdate')->andReturn(false)->once();
 
         /** @var ViewModel $result */

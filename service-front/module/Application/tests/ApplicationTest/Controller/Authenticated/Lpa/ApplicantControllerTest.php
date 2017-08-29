@@ -124,10 +124,7 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->lpa->document->whoIsRegistering = Correspondence::WHO_DONOR;
 
         $this->controller->setLpa($this->lpa);
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $postData);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/applicant');
         $this->redirect->shouldReceive('toRoute')->with('lpa/correspondent', ['lpa-id' => $this->lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
@@ -149,10 +146,7 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->lpa->document->whoIsRegistering = [1];
 
         $this->controller->setLpa($this->lpa);
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $postData);
         $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')->with($this->lpa->id, Correspondence::WHO_DONOR)->andReturn(false);
 
         $this->controller->indexAction();
@@ -173,10 +167,7 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->lpa->document->primaryAttorneyDecisions->how = AbstractDecisions::LPA_DECISION_HOW_JOINTLY;
 
         $this->controller->setLpa($this->lpa);
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')->with($this->lpa->id, [1])->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -203,10 +194,7 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->lpa->document->primaryAttorneyDecisions->how = AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY;
 
         $this->controller->setLpa($this->lpa);
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')->with($this->lpa->id, '1,2,3')->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();

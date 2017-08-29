@@ -78,10 +78,7 @@ class TypeControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->form->shouldReceive('setData')->with($this->postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $this->postData);
         $this->lpaApplicationService->shouldReceive('createApplication')->andReturn(null)->once();
         $this->flashMessenger->shouldReceive('addErrorMessage')->with('Error creating a new LPA. Please try again.')->once();
         $this->redirect->shouldReceive('toRoute')->with('user/dashboard')->andReturn($response)->once();
@@ -97,10 +94,7 @@ class TypeControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostSetTypeException()
     {
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->form->shouldReceive('setData')->with($this->postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $this->postData);
         $lpa = FixturesData::getHwLpa();
         $this->lpaApplicationService->shouldReceive('createApplication')->andReturn($lpa)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
@@ -113,10 +107,7 @@ class TypeControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->form->shouldReceive('setData')->with($this->postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $this->postData);
         $lpa = new Lpa();
         $lpa->id = 123;
         $lpa->document = new Document();
