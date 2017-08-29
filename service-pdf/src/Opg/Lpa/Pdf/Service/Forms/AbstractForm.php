@@ -127,11 +127,13 @@ abstract class AbstractForm
 
             //  If the PDF template file variable is an array then we need to pick a file by LPA type
             if (is_array($pdfTemplateFile)) {
-                if (!isset($pdfTemplateFile[$this->lpa->document->type])) {
-                    throw new Exception(sprintf('%s PDF template file can not be determined for LPA type %s', get_class($this), $this->lpa->document->type));
+                $lpaType = $this->lpa->document->type;
+
+                if (!isset($pdfTemplateFile[$lpaType]) || !is_string($pdfTemplateFile[$lpaType])) {
+                    throw new Exception(sprintf('%s PDF template file can not be determined for LPA type %s', get_class($this), $lpaType));
                 }
 
-                $pdfTemplateFile = $pdfTemplateFile[$this->lpa->document->type];
+                $pdfTemplateFile = $pdfTemplateFile[$lpaType];
             }
 
             $this->pdf = new Pdf($this->getPdfTemplateFilePath($pdfTemplateFile));

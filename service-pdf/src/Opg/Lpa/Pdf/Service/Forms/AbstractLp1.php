@@ -21,16 +21,6 @@ use RuntimeException;
 abstract class AbstractLp1 extends AbstractTopForm
 {
     /**
-     * Filename of the PDF template to use
-     *
-     * @var string|array
-     */
-    protected $pdfTemplateFile =  [
-        Document::LPA_TYPE_PF => 'LP1F.pdf',
-        Document::LPA_TYPE_HW => 'LP1H.pdf',
-    ];
-
-    /**
      * PDFTK pdf object
      *
      * @var Pdf
@@ -65,8 +55,6 @@ abstract class AbstractLp1 extends AbstractTopForm
      */
     public function generate()
     {
-        $this->logGenerationStatement();
-
         //  Generate the standard form
         $this->logGenerationStatement('Standard Form');
 
@@ -75,7 +63,7 @@ abstract class AbstractLp1 extends AbstractTopForm
 
         // populate form data and generate pdf
         $pdf = $this->getPdfObject();
-        $pdf->fillForm($this->getLp1PdfData())
+        $pdf->fillForm($this->getPdfData())
             ->flatten()
             ->saveAs($filePath);
 
@@ -93,7 +81,7 @@ abstract class AbstractLp1 extends AbstractTopForm
         $this->logGenerationStatement('Coversheets');
 
         //  Instantiate and generate the correct coversheet
-        $coversheet = ($this->registrationIsComplete ? new CoversheetRegistration($this->lpa) : new CoversheetInstrument($this->lpa));
+        $coversheet = new Coversheet($this->lpa);
         $coversheet = $coversheet->generate();
 
         $this->mergerIntermediateFilePaths($coversheet);
@@ -109,7 +97,7 @@ abstract class AbstractLp1 extends AbstractTopForm
      *
      * @return array
      */
-    protected function getLp1PdfData()
+    protected function getPdfData()
     {
         $formData = [];
 
