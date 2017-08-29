@@ -85,10 +85,7 @@ class AboutYouControllerTest extends AbstractControllerTest
         $user = new User();
         $this->form->shouldReceive('setData')->with($user->flatten())->once();
         $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->form->shouldReceive('setData')->with($this->postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $this->postData);
         $this->aboutYouDetails->shouldReceive('updateAllDetails')->with($this->form)->once();
 
         $this->flashMessenger->shouldReceive('addSuccessMessage')->with('Your details have been updated.')->once();
@@ -121,10 +118,7 @@ class AboutYouControllerTest extends AbstractControllerTest
         $user = new User();
         $this->form->shouldReceive('setData')->with($user->flatten())->once();
         $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->form->shouldReceive('setData')->with($this->postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $this->postData);
         $this->aboutYouDetails->shouldReceive('updateAllDetails')->with($this->form)->once();
 
         $this->redirect->shouldReceive('toRoute')->with('user/dashboard')->andReturn($response)->once();

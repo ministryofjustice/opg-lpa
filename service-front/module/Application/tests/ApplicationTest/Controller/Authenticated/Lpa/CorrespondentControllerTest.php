@@ -29,6 +29,24 @@ class CorrespondentControllerTest extends AbstractControllerTest
      * @var Lpa
      */
     private $lpa;
+    private $postDataNoContact = [
+        'contactInWelsh' => false,
+        'correspondence' => [
+            'contactByPost' => false,
+            'contactByEmail' => false,
+            'contactByPhone' => false,
+        ]
+    ];
+    private $postDataContact = [
+        'contactInWelsh' => false,
+        'correspondence' => [
+            'contactByPost' => true,
+            'contactByEmail' => true,
+            'email-address' => 'unit@test.com',
+            'contactByPhone' => true,
+            'phone-number' => '0123456789'
+        ]
+    ];
 
     public function setUp()
     {
@@ -246,23 +264,11 @@ class CorrespondentControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostFailure()
     {
-        $postData = [
-            'contactInWelsh' => false,
-            'correspondence' => [
-                'contactByPost' => false,
-                'contactByEmail' => false,
-                'contactByPhone' => false,
-            ]
-        ];
-
         $this->controller->setLpa($this->lpa);
         $this->url->shouldReceive('fromRoute')->with('lpa/correspondent', ['lpa-id' => $this->lpa->id])->andReturn('lpa/correspondent?lpa-id=' . $this->lpa->id)->once();
         $this->form->shouldReceive('setAttribute')->with('action', 'lpa/correspondent?lpa-id=' . $this->lpa->id)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
-        $this->form->shouldReceive('getData')->andReturn($postData)->once();
+        $this->setPostValid($this->form, $this->postDataNoContact);
+        $this->form->shouldReceive('getData')->andReturn($this->postDataNoContact)->once();
         $this->lpaApplicationService->shouldReceive('setCorrespondent')->withArgs(function ($lpaId, $correspondent) {
             return $lpaId === $this->lpa->id
                 && $correspondent->contactInWelsh === false
@@ -275,27 +281,14 @@ class CorrespondentControllerTest extends AbstractControllerTest
     public function testIndexActionPostSuccess()
     {
         $response = new Response();
-        $postData = [
-            'contactInWelsh' => false,
-            'correspondence' => [
-                'contactByPost' => true,
-                'contactByEmail' => true,
-                'email-address' => 'unit@test.com',
-                'contactByPhone' => true,
-                'phone-number' => '0123456789'
-            ]
-        ];
 
         $this->lpa->document->correspondent = null;
         $this->lpa->document->whoIsRegistering = Correspondence::WHO_DONOR;
         $this->controller->setLpa($this->lpa);
         $this->url->shouldReceive('fromRoute')->with('lpa/correspondent', ['lpa-id' => $this->lpa->id])->andReturn('lpa/correspondent?lpa-id=' . $this->lpa->id)->once();
         $this->form->shouldReceive('setAttribute')->with('action', 'lpa/correspondent?lpa-id=' . $this->lpa->id)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
-        $this->form->shouldReceive('getData')->andReturn($postData)->once();
+        $this->setPostValid($this->form, $this->postDataContact);
+        $this->form->shouldReceive('getData')->andReturn($this->postDataContact)->once();
         $this->lpaApplicationService->shouldReceive('setCorrespondent')->withArgs(function ($lpaId, $correspondent) {
             return $lpaId === $this->lpa->id
                 && $correspondent->contactInWelsh === false
@@ -351,5 +344,27 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals("lpa/{$this->lpa->id}/correspondent", $result->cancelUrl);
         $this->assertEquals(false, $result->getVariable('allowEditButton'));
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage API client failed to update correspondent for id: 91333263035
+     */
+    public function testEditActionPostFailed()
+    {
+        $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn('existing-correspondent')->once();
+        $this->setPostValid($this->form, $this->postDataNoContact);
+        $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataNoContact)->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/correspondent/edit")->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', "lpa/{$this->lpa->id}/correspondent/edit"])->once();
+        $this->lpaApplicationService->shouldReceive('setCorrespondent')->withArgs(function ($lpaId, $correspondent) {
+            return $lpaId === $this->lpa->id
+                && $correspondent->contactInWelsh === false
+                && $correspondent->contactByPost === false;
+        })->andReturn(false)->once();
+
+        $this->controller->editAction();
     }
 }

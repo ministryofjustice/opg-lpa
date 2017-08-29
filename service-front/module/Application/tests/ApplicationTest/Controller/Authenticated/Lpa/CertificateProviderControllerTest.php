@@ -206,15 +206,12 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->twice();
         $this->url->shouldReceive('fromRoute')
             ->with('lpa/certificate-provider/add', ['lpa-id' => $this->lpa->id])
             ->andReturn("lpa/{$this->lpa->id}/certificate-provider/add")->once();
         $this->form->shouldReceive('setAttribute')->with('action', "lpa/{$this->lpa->id}/certificate-provider/add")->once();
         $this->form->shouldReceive('setExistingActorNamesData')->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $postData, 2);
 
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setCertificateProvider')->andReturn(false);
@@ -232,15 +229,12 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
-        $this->request->shouldReceive('isPost')->andReturn(true)->twice();
         $this->url->shouldReceive('fromRoute')
             ->with('lpa/certificate-provider/add', ['lpa-id' => $this->lpa->id])
             ->andReturn("lpa/{$this->lpa->id}/certificate-provider/add")->once();
         $this->form->shouldReceive('setAttribute')->with('action', "lpa/{$this->lpa->id}/certificate-provider/add")->once();
         $this->form->shouldReceive('setExistingActorNamesData')->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->twice();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $postData, 2, 2);
 
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setCertificateProvider')->andReturn(true);
@@ -310,10 +304,8 @@ class CertificateProviderControllerTest extends AbstractControllerTest
             ->andReturn("lpa/{$this->lpa->id}/certificate-provider/edit")->once();
         $this->form->shouldReceive('setAttribute')->with('action', "lpa/{$this->lpa->id}/certificate-provider/edit")->once();
         $this->form->shouldReceive('setExistingActorNamesData')->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $postData);
+
 
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setCertificateProvider')->andReturn(false);
@@ -334,10 +326,8 @@ class CertificateProviderControllerTest extends AbstractControllerTest
             ->andReturn("lpa/{$this->lpa->id}/certificate-provider/edit")->once();
         $this->form->shouldReceive('setAttribute')->with('action', "lpa/{$this->lpa->id}/certificate-provider/edit")->once();
         $this->form->shouldReceive('setExistingActorNamesData')->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $postData);
+
 
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setCertificateProvider')->andReturn(true);

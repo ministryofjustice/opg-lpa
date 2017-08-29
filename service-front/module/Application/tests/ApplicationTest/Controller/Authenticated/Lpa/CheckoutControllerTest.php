@@ -169,11 +169,8 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->controller->setUser($this->userIdentity);
         $this->controller->setLpa($this->lpa);
         $this->cache->shouldReceive('getItem')->with('worldpay-percentage')->andReturn(100)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->twice();
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $postData, 2);
         $this->lpaApplicationService->shouldReceive('setPayment')->with($this->lpa->id, $this->lpa->payment)->andReturn(false)->once();
 
         $this->controller->indexAction();
@@ -192,11 +189,8 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->controller->setUser($this->userIdentity);
         $this->controller->setLpa($this->lpa);
         $this->cache->shouldReceive('getItem')->with('worldpay-percentage')->andReturn(100)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->twice();
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $postData, 2);
         $this->lpaApplicationService->shouldReceive('setPayment')->with($this->lpa->id, $this->lpa->payment)->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $options = [];
@@ -605,10 +599,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         Calculator::calculate($this->lpa);
         $this->controller->setLpa($this->lpa);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $postData);
         $this->lpaApplicationService->shouldReceive('setPayment')->with($this->lpa->id, $this->lpa->payment)->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $options = [];
@@ -668,10 +659,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         Calculator::calculate($this->lpa);
         $this->controller->setLpa($this->lpa);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $postData);
         $this->lpaApplicationService->shouldReceive('setPayment')->with($this->lpa->id, $this->lpa->payment)->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $options = [];

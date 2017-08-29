@@ -65,10 +65,7 @@ class FeedbackControllerTest extends AbstractControllerTest
      */
     public function testSendFeedbackFail()
     {
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->form->shouldReceive('setData')->with($this->postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
         $this->feedbackService->shouldReceive('sendMail')->andReturn(false)->once();
@@ -78,10 +75,7 @@ class FeedbackControllerTest extends AbstractControllerTest
 
     public function testSendFeedbackSuccess()
     {
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->form->shouldReceive('setData')->with($this->postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(true)->once();
+        $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
         $this->feedbackService->shouldReceive('sendMail')->andReturn(true)->once();

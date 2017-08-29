@@ -142,10 +142,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->routeMatch->shouldReceive('getMatchedRouteName')->andReturn('user/dashboard')->once();
         $this->url->shouldReceive('fromRoute')->with('user/dashboard')->andReturn('user/dashboard')->once();
         $this->form->shouldReceive('setAttribute')->with('action', 'user/dashboard')->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData);
-        $this->form->shouldReceive('setData')->with($this->postData);
-        $this->form->shouldReceive('isValid')->andReturn(true);
+        $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->register->shouldReceive('registerAccount')->andReturn('Unit test error')->once();
 
@@ -167,10 +164,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->routeMatch->shouldReceive('getMatchedRouteName')->andReturn('user/dashboard')->once();
         $this->url->shouldReceive('fromRoute')->with('user/dashboard')->andReturn('user/dashboard')->once();
         $this->form->shouldReceive('setAttribute')->with('action', 'user/dashboard')->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData);
-        $this->form->shouldReceive('setData')->with($this->postData);
-        $this->form->shouldReceive('isValid')->andReturn(true);
+        $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->url->shouldReceive('fromRoute')->with('register/callback', ['token' => 'unit@test.compassword'], ['force_canonical' => true])->andReturn('register/callback')->once();
 
