@@ -21,8 +21,6 @@ class CompleteControllerTest extends AbstractControllerTest
     {
         $this->controller = new CompleteController();
         parent::controllerSetUp($this->controller);
-
-        $lpa = FixturesData::getPfLpa();
     }
 
     /**

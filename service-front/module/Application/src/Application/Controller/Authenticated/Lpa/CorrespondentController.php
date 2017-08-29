@@ -200,7 +200,8 @@ class CorrespondentController extends AbstractLpaActorController
         }
 
         //  Determine if we are directly editing the existing correspondent
-        $editingExistingCorrespondent = ($this->params()->fromQuery('reuse-details') == 'existing-correspondent');
+        $fromQuery = $this->params()->fromQuery('reuse-details');
+        $editingExistingCorrespondent = ($fromQuery == 'existing-correspondent');
 
         //  If we are not directly editing the existing correspondent then execute the parent function to determine if we should redirect to the reuse details view
         if (!$editingExistingCorrespondent) {

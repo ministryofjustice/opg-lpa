@@ -116,17 +116,8 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->request->shouldReceive('getUri')->andReturn(new Uri("http://localhost/lpa/{$this->lpa->id}/certificate-provider/add"))->once();
-        $reuseDetailsUrl = "/lpa/{$this->lpa->id}/reuse-details?calling-url=/lpa/{$this->lpa->id}/certificate-provider/add&include-trusts=0&actor-name=Certificate provider";
-        $this->url->shouldReceive('fromRoute')
-            ->with('lpa/reuse-details', ['lpa-id' => $this->lpa->id], ['query' => [
-                'calling-url'    => "/lpa/{$this->lpa->id}/certificate-provider/add",
-                'include-trusts' => false,
-                'actor-name'     => 'Certificate provider',
-            ]])
-            ->andReturn($reuseDetailsUrl);
-        $this->redirect->shouldReceive('toUrl')->with($reuseDetailsUrl)->andReturn($response)->once();
+
+        $this->setRedirectToReuseDetails($this->user, $this->lpa, 'lpa/certificate-provider/add', $response);
 
         $result = $this->controller->addAction();
 
