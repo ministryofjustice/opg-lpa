@@ -103,13 +103,8 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
-        $postData = [];
-
         $this->controller->setLpa($this->lpa);
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->form->shouldReceive('setData')->with($postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(false)->once();
+        $this->setPostInvalid($this->form, []);
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

@@ -65,12 +65,9 @@ class AboutYouControllerTest extends AbstractControllerTest
         $user = new User();
         $this->form->shouldReceive('setData')->with($user->flatten())->once();
         $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
         $this->url->shouldReceive('fromRoute')->with('user/about-you')->andReturn('user/about-you')->once();
         $this->form->shouldReceive('setAttribute')->with('action', 'user/about-you')->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->form->shouldReceive('setData')->with($this->postData)->once();
-        $this->form->shouldReceive('isValid')->andReturn(false)->once();
+        $this->setPostInvalid($this->form, $this->postData);
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

@@ -123,10 +123,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->routeMatch->shouldReceive('getMatchedRouteName')->andReturn('user/dashboard')->once();
         $this->url->shouldReceive('fromRoute')->with('user/dashboard')->andReturn('user/dashboard')->once();
         $this->form->shouldReceive('setAttribute')->with('action', 'user/dashboard')->once();
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->postData);
-        $this->form->shouldReceive('setData')->with($this->postData);
-        $this->form->shouldReceive('isValid')->andReturn(false);
+        $this->setPostInvalid($this->form, $this->postData);
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
