@@ -27,6 +27,7 @@ use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractController;
 use Zend\Mvc\Controller\Plugin\CreateHttpNotFoundModel;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
+use Zend\Mvc\Controller\Plugin\Layout;
 use Zend\Mvc\Controller\Plugin\Params;
 use Zend\Mvc\Controller\Plugin\Redirect;
 use Zend\Mvc\Controller\Plugin\Url;
@@ -78,6 +79,10 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @var MockInterface|CreateHttpNotFoundModel
      */
     protected $createHttpNotFoundModel;
+    /**
+     * @var MockInterface|Layout
+     */
+    protected $layout;
     /**
      * @var MockInterface|EventManager
      */
@@ -172,6 +177,9 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->createHttpNotFoundModel = new CreateHttpNotFoundModel();
         $this->pluginManager->shouldReceive('get')->with('createHttpNotFoundModel', null)->andReturn($this->createHttpNotFoundModel);
+
+        $this->layout = Mockery::mock(Layout::class);
+        $this->pluginManager->shouldReceive('get')->with('layout', null)->andReturn($this->layout);
 
         $this->eventManager = Mockery::mock(EventManager::class);
         $this->eventManager->shouldReceive('setIdentifiers');
