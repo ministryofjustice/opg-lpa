@@ -109,9 +109,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $seedLpa = FixturesData::getHwLpa();
-        $this->lpa->seed = $seedLpa->id;
-        $this->lpaApplicationService->shouldReceive('getSeedDetails')->with($this->lpa->id)->andReturn($this->getSeedData($seedLpa))->once();
+        $this->setSeedLpa($this->lpa, FixturesData::getHwLpa());
 
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;

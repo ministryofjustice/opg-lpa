@@ -303,6 +303,12 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($routeName)->once();
     }
 
+    public function setSeedLpa($lpa, $seedLpa)
+    {
+        $lpa->seed = $seedLpa->id;
+        $this->lpaApplicationService->shouldReceive('getSeedDetails')->with($lpa->id)->andReturn($this->getSeedData($seedLpa))->once();
+    }
+
     /**
      * @param Lpa $seedLpa
      * @return array
@@ -435,6 +441,14 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         $form->shouldReceive('bind')->withArgs([$actorReuseDetails[$index]['data']])->once();
 
         return $routeMatch;
+    }
+
+    public function setFormAction($form, $lpa, $route)
+    {
+        $url = str_replace('lpa/', "lpa/{$lpa->id}/", $route);
+        $this->url->shouldReceive('fromRoute')->withArgs([$route, ['lpa-id' => $lpa->id]])
+            ->andReturn($url)->once();
+        $form->shouldReceive('setAttribute')->with('action', $url)->once();
     }
 
     public function tearDown()
