@@ -26,8 +26,7 @@ class IndexControllerTest extends AbstractControllerTest
         $this->controller = new IndexController();
         parent::controllerSetUp($this->controller);
 
-        $this->lpa = new Lpa();
-        $this->lpa->id = 123;
+        $this->lpa = FixturesData::getPfLpa();
     }
 
     /**
@@ -43,9 +42,26 @@ class IndexControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
+        $lpa = new Lpa();
+        $lpa->id = 123;
+        $this->controller->setLpa($lpa);
+        $this->lpaApplicationService->shouldReceive('setMetaData')->with($lpa->id, ['analyticsReturnCount' => 1])->once();
+        $this->redirect->shouldReceive('toRoute')->with('lpa/form-type', ['lpa-id' => $lpa->id], [])->andReturn($response)->once();
+
+        $result = $this->controller->indexAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testIndexActionSeed()
+    {
+        $response = new Response();
+
+        $seedLpa = FixturesData::getHwLpa();
+        $this->lpa->seed = $seedLpa->id;
         $this->controller->setLpa($this->lpa);
-        $this->lpaApplicationService->shouldReceive('setMetaData')->with($this->lpa->id, ['analyticsReturnCount' => 1])->once();
-        $this->redirect->shouldReceive('toRoute')->with('lpa/form-type', ['lpa-id' => $this->lpa->id], [])->andReturn($response)->once();
+        $this->lpaApplicationService->shouldReceive('setMetaData')->with($this->lpa->id, ['analyticsReturnCount' => 5])->once();
+        $this->redirect->shouldReceive('toRoute')->with('lpa/replacement-attorney', ['lpa-id' => $this->lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
 
         $result = $this->controller->indexAction();
 

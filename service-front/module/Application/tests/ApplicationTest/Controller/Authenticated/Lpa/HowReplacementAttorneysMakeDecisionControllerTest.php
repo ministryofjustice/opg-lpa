@@ -4,8 +4,6 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\HowReplacementAttorneysMakeDecisionController;
 use Application\Form\Lpa\HowAttorneysMakeDecisionForm;
-use Application\Model\Service\Lpa\ApplicantCleanup;
-use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;

@@ -10,6 +10,7 @@ use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
+use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
 class InstructionsControllerTest extends AbstractControllerTest
@@ -26,6 +27,10 @@ class InstructionsControllerTest extends AbstractControllerTest
      * @var Lpa
      */
     private $lpa;
+    private $postData = [
+        'instruction' => 'Unit test instructions',
+        'preference' => 'Unit test preferences'
+    ];
 
     public function setUp()
     {
@@ -59,5 +64,107 @@ class InstructionsControllerTest extends AbstractControllerTest
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(true, $result->getVariable('isPfLpa'));
+    }
+
+    public function testIndexActionPostInvalid()
+    {
+        $this->controller->setLpa($this->lpa);
+        $this->setPostInvalid($this->form, []);
+
+        /** @var ViewModel $result */
+        $result = $this->controller->indexAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals(true, $result->getVariable('isPfLpa'));
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage API client failed to set LPA instructions for id: 91333263035
+     */
+    public function testIndexActionPostInstructionsFailed()
+    {
+        $this->controller->setLpa($this->lpa);
+        $this->setPostValid($this->form, $this->postData);
+        $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
+        $this->lpaApplicationService->shouldReceive('setInstructions')
+            ->withArgs([$this->lpa->id, $this->postData['instruction']])->andReturn(false)->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->indexAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals(true, $result->getVariable('isPfLpa'));
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage API client failed to set LPA preferences for id: 91333263035
+     */
+    public function testIndexActionPostPreferencesFailed()
+    {
+        $this->controller->setLpa($this->lpa);
+        $this->setPostValid($this->form, $this->postData);
+        $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
+        $this->lpaApplicationService->shouldReceive('setInstructions')
+            ->withArgs([$this->lpa->id, $this->postData['instruction']])->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setPreferences')
+            ->withArgs([$this->lpa->id, $this->postData['preference']])->andReturn(false)->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->indexAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals(true, $result->getVariable('isPfLpa'));
+    }
+
+    public function testIndexActionPostSuccess()
+    {
+        $response = new Response();
+
+        $this->controller->setLpa($this->lpa);
+        $this->setPostValid($this->form, $this->postData);
+        $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
+        $this->lpaApplicationService->shouldReceive('setInstructions')
+            ->withArgs([$this->lpa->id, $this->postData['instruction']])->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setPreferences')
+            ->withArgs([$this->lpa->id, $this->postData['preference']])->andReturn(true)->once();
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->setMatchedRouteNameHttp($this->controller, 'lpa/instructions');
+        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/applicant', ['lpa-id' => $this->lpa->id], ['fragment' => 'current']])->andReturn($response)->once();
+
+        $result = $this->controller->indexAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testIndexActionPostMetadata()
+    {
+        $response = new Response();
+
+        $this->lpa->metadata['instruction-confirmed'] = false;
+
+        $this->controller->setLpa($this->lpa);
+        $this->setPostValid($this->form, $this->postData);
+        $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
+        $this->lpaApplicationService->shouldReceive('setInstructions')
+            ->withArgs([$this->lpa->id, $this->postData['instruction']])->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setPreferences')
+            ->withArgs([$this->lpa->id, $this->postData['preference']])->andReturn(true)->once();
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->setMatchedRouteNameHttp($this->controller, 'lpa/instructions');
+        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/applicant', ['lpa-id' => $this->lpa->id], ['fragment' => 'current']])->andReturn($response)->once();
+        $this->lpaApplicationService->shouldReceive('setMetaData')
+            ->withArgs([$this->lpa->id, ['instruction-confirmed' => true]])->andReturn(true)->once();
+
+        $result = $this->controller->indexAction();
+
+        $this->assertEquals($response, $result);
     }
 }
