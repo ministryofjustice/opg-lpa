@@ -7,6 +7,7 @@ use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Session\SessionManager;
 use ApplicationTest\Controller\Authenticated\Lpa\CertificateProviderControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\CorrespondentControllerTest;
@@ -139,6 +140,10 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @var MockInterface|StorageInterface
      */
     protected $cache;
+    /**
+     * @var MockInterface|Metadata
+     */
+    protected $metadata;
 
     /**
      * @param AbstractController $controller
@@ -263,6 +268,9 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->cache = Mockery::mock(StorageInterface::class);
         $this->serviceLocator->shouldReceive('get')->with('Cache')->andReturn($this->cache);
+
+        $this->metadata = Mockery::mock(Metadata::class);
+        $this->serviceLocator->shouldReceive('get')->with('Metadata')->andReturn($this->metadata);
     }
 
     /**
