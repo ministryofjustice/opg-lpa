@@ -6,20 +6,24 @@ use Application\Controller\Authenticated\Lpa\PeopleToNotifyController;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Form\Lpa\PeopleToNotifyForm;
 use Application\Model\Service\Authentication\Identity\User;
+use Application\Model\Service\Lpa\Metadata;
 use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
 use Mockery;
 use Mockery\MockInterface;
+use Opg\Lpa\DataModel\Common\Address;
+use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
+use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class PeopleToNotifyControllerTest extends AbstractControllerTest
 {
     /**
-     * @var PeopleToNotifyController
+     * @var TestablePeopleToNotifyController
      */
     private $controller;
     /**
@@ -34,10 +38,23 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
      * @var Lpa
      */
     private $lpa;
+    private $postData = [
+        'name' => [
+            'title' => 'Miss',
+            'first' => 'Unit',
+            'last' => 'Test'
+        ],
+        'address' => [
+            'address1' => 'Address line 1',
+            'address2' => 'Address line 2',
+            'address3' => 'Address line 3',
+            'postcode' => 'PO5 3DE'
+        ]
+    ];
 
     public function setUp()
     {
-        $this->controller = new PeopleToNotifyController();
+        $this->controller = new TestablePeopleToNotifyController();
         parent::controllerSetUp($this->controller);
 
         $this->user = FixturesData::getUser();
@@ -217,6 +234,122 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/people-to-notify/form.twig', $result->getTemplate());
         $this->assertEquals($this->peopleToNotifyForm, $result->getVariable('form'));
+        $this->assertEquals($cancelUrl, $result->cancelUrl);
+    }
+
+    public function testAddActionPostInvalid()
+    {
+        $this->controller->setLpa($this->lpa);
+        $this->userDetailsSession->user = $this->user;
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->setPostInvalid($this->peopleToNotifyForm, [], 2);
+        $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
+        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify');
+
+        /** @var ViewModel $result */
+        $result = $this->controller->addAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('application/people-to-notify/form.twig', $result->getTemplate());
+        $this->assertEquals($this->peopleToNotifyForm, $result->getVariable('form'));
+        $this->assertEquals($cancelUrl, $result->cancelUrl);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage API client failed to add a notified person for id: 5531003156
+     */
+    public function testAddActionPostFailure()
+    {
+        $this->controller->setLpa($this->lpa);
+        $this->userDetailsSession->user = $this->user;
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->setPostValid($this->peopleToNotifyForm, $this->postData, 2);
+        $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
+        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
+        $this->lpaApplicationService->shouldReceive('addNotifiedPerson')
+            ->withArgs(function ($lpaId, $notifiedPerson) {
+                return $lpaId === $this->lpa->id
+                    && $notifiedPerson->name == new Name($this->postData['name'])
+                    && $notifiedPerson->address == new Address($this->postData['address']);
+            })->andReturn(false)->once();
+
+        $this->controller->addAction();
+    }
+
+    public function testAddActionPostSuccess()
+    {
+        $response = new Response();
+
+        $this->controller->setLpa($this->lpa);
+        $this->userDetailsSession->user = $this->user;
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
+        $this->setPostValid($this->peopleToNotifyForm, $this->postData, 2, 2);
+        $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
+        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
+        $this->lpaApplicationService->shouldReceive('addNotifiedPerson')
+            ->withArgs(function ($lpaId, $notifiedPerson) {
+                return $lpaId === $this->lpa->id
+                    && $notifiedPerson->name == new Name($this->postData['name'])
+                    && $notifiedPerson->address == new Address($this->postData['address']);
+            })->andReturn(true)->once();
+        $this->setMatchedRouteNameHttp($this->controller, 'lpa/people-to-notify');
+        $this->setRedirectToRoute('lpa/instructions', $this->lpa, $response);
+
+        $result = $this->controller->addAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testAddActionPostMetadata()
+    {
+        unset($this->lpa->metadata[Metadata::PEOPLE_TO_NOTIFY_CONFIRMED]);
+
+        $this->controller->setLpa($this->lpa);
+        $this->userDetailsSession->user = $this->user;
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
+        $this->setPostValid($this->peopleToNotifyForm, $this->postData, 2, 1);
+        $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
+        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
+        $this->lpaApplicationService->shouldReceive('addNotifiedPerson')
+            ->withArgs(function ($lpaId, $notifiedPerson) {
+                return $lpaId === $this->lpa->id
+                    && $notifiedPerson->name == new Name($this->postData['name'])
+                    && $notifiedPerson->address == new Address($this->postData['address']);
+            })->andReturn(true)->once();
+        $this->metadata->shouldReceive('setPeopleToNotifyConfirmed')->withArgs([$this->lpa])->once();
+
+        /** @var JsonModel $result */
+        $result = $this->controller->addAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals(true, $result->getVariable('success'));
+    }
+
+    public function testAddActionPostReuseDetails()
+    {
+        $this->setSeedLpa($this->lpa, FixturesData::getPfLpa());
+        $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->request->shouldReceive('isPost')->andReturn(true)->twice();
+        $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add', 2);
+        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify');
+        $routeMatch = $this->setReuseDetails($this->controller, $this->peopleToNotifyForm, $this->user, 'attorney');
+        $this->setMatchedRouteName($this->controller, 'lpa/people-to-notify/add', $routeMatch);
+        $routeMatch->shouldReceive('getParam')->withArgs(['callingUrl'])->andReturn("http://localhost/lpa/{$this->lpa->id}/lpa/people-to-notify/add")->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->addAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('application/people-to-notify/form.twig', $result->getTemplate());
+        $this->assertEquals($this->peopleToNotifyForm, $result->getVariable('form'));
+        $this->assertEquals("http://localhost/lpa/{$this->lpa->id}/lpa/people-to-notify/add", $result->backButtonUrl);
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 

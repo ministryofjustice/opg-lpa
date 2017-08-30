@@ -20,7 +20,7 @@ use Zend\View\Model\ViewModel;
 class CertificateProviderControllerTest extends AbstractControllerTest
 {
     /**
-     * @var CertificateProviderController
+     * @var TestableCertificateProviderController
      */
     private $controller;
     /**
@@ -34,7 +34,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new CertificateProviderController();
+        $this->controller = new TestableCertificateProviderController();
         parent::controllerSetUp($this->controller);
 
         $this->user = FixturesData::getUser();
@@ -221,6 +221,30 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertEquals($response, $result);
+    }
+
+    public function testAddActionPostReuseDetails()
+    {
+        $this->lpa->document->certificateProvider = null;
+        $this->setSeedLpa($this->lpa, FixturesData::getPfLpa());
+        $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->request->shouldReceive('isPost')->andReturn(true)->twice();
+        $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/add', 2);
+        $this->form->shouldReceive('setExistingActorNamesData')->once();
+        $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/certificate-provider');
+        $routeMatch = $this->setReuseDetails($this->controller, $this->form, $this->user, 'attorney');
+        $this->setMatchedRouteName($this->controller, 'lpa/certificate-provider/add', $routeMatch);
+        $routeMatch->shouldReceive('getParam')->withArgs(['callingUrl'])->andReturn("http://localhost/lpa/{$this->lpa->id}/lpa/certificate-provider/add")->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->addAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('application/certificate-provider/form.twig', $result->getTemplate());
+        $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals("http://localhost/lpa/{$this->lpa->id}/lpa/certificate-provider/add", $result->backButtonUrl);
+        $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
     public function testEditActionGet()

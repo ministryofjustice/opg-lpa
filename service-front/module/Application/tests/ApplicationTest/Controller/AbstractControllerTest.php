@@ -307,6 +307,7 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
     {
         $routeMatch = $routeMatch ?: $this->getRouteMatch($controller);
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($routeName)->once();
+        return $routeMatch;
     }
 
     /**
@@ -317,6 +318,7 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
     {
         $routeMatch = $this->getHttpRouteMatch($controller);
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($routeName)->once();
+        return $routeMatch;
     }
 
     public function setSeedLpa($lpa, $seedLpa)
@@ -459,11 +461,11 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         return $routeMatch;
     }
 
-    public function setFormAction($form, $lpa, $route)
+    public function setFormAction($form, $lpa, $route, $expectedFromRouteTimes = 1)
     {
         $url = $this->getLpaUrl($lpa, $route);
         $this->url->shouldReceive('fromRoute')->withArgs([$route, ['lpa-id' => $lpa->id]])
-            ->andReturn($url)->once();
+            ->andReturn($url)->times($expectedFromRouteTimes);
         $form->shouldReceive('setAttribute')->with('action', $url)->once();
         return $url;
     }
