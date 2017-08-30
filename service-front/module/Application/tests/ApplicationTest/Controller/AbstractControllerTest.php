@@ -331,10 +331,10 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @param AbstractController$controller
      * @param string $routeName
      */
-    public function setMatchedRouteNameHttp($controller, $routeName)
+    public function setMatchedRouteNameHttp($controller, $routeName, $expectedMatchedRouteNameTimes = 1)
     {
         $routeMatch = $this->getHttpRouteMatch($controller);
-        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($routeName)->once();
+        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn($routeName)->times($expectedMatchedRouteNameTimes);
         return $routeMatch;
     }
 
