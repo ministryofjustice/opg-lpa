@@ -474,7 +474,7 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 
     public function setFormActionIndex($form, $lpa, $route, $idx, $expectedFromRouteTimes = 1)
     {
-        $url = $this->getLpaUrl($lpa, $route);
+        $url = $this->getLpaUrl($lpa, $route, ['idx' => $idx]);
         $this->url->shouldReceive('fromRoute')->withArgs([$route, ['lpa-id' => $lpa->id, 'idx' => $idx]])
             ->andReturn($url)->times($expectedFromRouteTimes);
         $form->shouldReceive('setAttribute')->with('action', $url)->once();
