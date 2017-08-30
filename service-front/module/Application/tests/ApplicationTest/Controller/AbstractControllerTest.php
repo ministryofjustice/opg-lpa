@@ -380,6 +380,8 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         $args = [$route, ['lpa-id' => $lpa->id]];
         if ($addCurrentFragment === true) {
             $args[] = ['fragment' => 'current'];
+        } else {
+            $args[] = [];
         }
         $this->redirect->shouldReceive('toRoute')->withArgs($args)->andReturn($response)->once();
     }
