@@ -87,8 +87,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->lpa->whoAreYouAnswered = false;
         $this->controller->setLpa($this->lpa);
         $this->setMatchedRouteName($this->controller, 'lpa/who-are-you');
-        $this->url->shouldReceive('fromRoute')->with('lpa/who-are-you', ['lpa-id' => $this->lpa->id])->andReturn('lpa/who-are-you?lpa-id=' .$this->lpa->id)->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'lpa/who-are-you?lpa-id=' .$this->lpa->id)->once();
+        $this->setFormAction($this->form, $this->lpa, 'lpa/who-are-you');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('get')->with('who')->andReturn($this->whoOptions)->once();
         $this->form->shouldReceive('get')->with('professional')->andReturn($this->professionalOptions)->once();
