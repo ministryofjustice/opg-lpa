@@ -92,6 +92,10 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      */
     protected $forward;
     /**
+     * @var MockInterface|ResetSessionCloneData
+     */
+    protected $resetSessionCloneData;
+    /**
      * @var MockInterface|EventManager
      */
     protected $eventManager;
