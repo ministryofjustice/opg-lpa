@@ -260,7 +260,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
      * @expectedException        RuntimeException
      * @expectedExceptionMessage API client failed to add a notified person for id: 5531003156
      */
-    public function testAddActionPostFailure()
+    public function testAddActionPostFailed()
     {
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
@@ -351,6 +351,229 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->assertEquals($this->peopleToNotifyForm, $result->getVariable('form'));
         $this->assertEquals("http://localhost/lpa/{$this->lpa->id}/lpa/people-to-notify/add", $result->backButtonUrl);
         $this->assertEquals($cancelUrl, $result->cancelUrl);
+    }
+
+    public function testEditActionInvalidIndex()
+    {
+        $response = Mockery::mock(Response::class);
+        $this->controller->dispatch($this->request, $response);
+
+        $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn(-1)->once();
+        $routeMatch = $this->getHttpRouteMatch($this->controller);
+        $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
+        $response->shouldReceive('setStatusCode')->withArgs([404])->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->editAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('Page not found', $result->content);
+    }
+
+    public function testEditActionGet()
+    {
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $this->userDetailsSession->user = $this->user;
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+        $this->setFormActionIndex($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/edit', $idx);
+        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('bind')->withArgs([$this->lpa->document->peopleToNotify[$idx]->flatten()])->once();
+        $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify');
+
+        /** @var ViewModel $result */
+        $result = $this->controller->editAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('application/people-to-notify/form.twig', $result->getTemplate());
+        $this->assertEquals($this->peopleToNotifyForm, $result->getVariable('form'));
+        $this->assertEquals($cancelUrl, $result->cancelUrl);
+    }
+
+    public function testEditActionPostInvalid()
+    {
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $this->userDetailsSession->user = $this->user;
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->setPostInvalid($this->peopleToNotifyForm, []);
+        $this->setFormActionIndex($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/edit', $idx);
+        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify');
+
+        /** @var ViewModel $result */
+        $result = $this->controller->editAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('application/people-to-notify/form.twig', $result->getTemplate());
+        $this->assertEquals($this->peopleToNotifyForm, $result->getVariable('form'));
+        $this->assertEquals($cancelUrl, $result->cancelUrl);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage API client failed to update notified person 0 for id: 5531003156
+     */
+    public function testEditActionPostFailed()
+    {
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $this->userDetailsSession->user = $this->user;
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->setPostValid($this->peopleToNotifyForm, $this->postData);
+        $this->setFormActionIndex($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/edit', $idx);
+        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
+        $this->lpaApplicationService->shouldReceive('setNotifiedPerson')
+            ->withArgs(function ($lpaId, $notifiedPerson) {
+                return $lpaId === $this->lpa->id
+                    && $notifiedPerson->name == new Name($this->postData['name'])
+                    && $notifiedPerson->address == new Address($this->postData['address']);
+            })->andReturn(false)->once();
+
+        $this->controller->editAction();
+    }
+
+    public function testEditActionPostSuccess()
+    {
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $this->userDetailsSession->user = $this->user;
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->setPostValid($this->peopleToNotifyForm, $this->postData);
+        $this->setFormActionIndex($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/edit', $idx);
+        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
+        $this->lpaApplicationService->shouldReceive('setNotifiedPerson')
+            ->withArgs(function ($lpaId, $notifiedPerson) {
+                return $lpaId === $this->lpa->id
+                    && $notifiedPerson->name == new Name($this->postData['name'])
+                    && $notifiedPerson->address == new Address($this->postData['address']);
+            })->andReturn(true)->once();
+
+        /** @var JsonModel $result */
+        $result = $this->controller->editAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals(true, $result->getVariable('success'));
+    }
+
+    public function testConfirmDeleteActionInvalidIndex()
+    {
+        $response = Mockery::mock(Response::class);
+        $this->controller->dispatch($this->request, $response);
+
+        $this->controller->setLpa($this->lpa);
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn(-1)->once();
+        $routeMatch = $this->getHttpRouteMatch($this->controller);
+        $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
+        $response->shouldReceive('setStatusCode')->withArgs([404])->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->confirmDeleteAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('Page not found', $result->content);
+    }
+
+    public function testEditConfirmDeleteActionGetJs()
+    {
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
+        $deleteRoute = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify/delete', ['idx' => $idx]);
+        $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify');
+
+        /** @var ViewModel $result */
+        $result = $this->controller->confirmDeleteAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($deleteRoute, $result->deleteRoute);
+        $this->assertEquals($this->lpa->document->peopleToNotify[$idx]->name, $result->personName);
+        $this->assertEquals($this->lpa->document->peopleToNotify[$idx]->address, $result->personAddress);
+        $this->assertEquals($cancelUrl, $result->cancelUrl);
+        $this->assertEquals(true, $result->isPopup);
+    }
+
+    public function testEditConfirmDeleteActionGetNoJs()
+    {
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $deleteRoute = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify/delete', ['idx' => $idx]);
+        $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify');
+
+        /** @var ViewModel $result */
+        $result = $this->controller->confirmDeleteAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($deleteRoute, $result->deleteRoute);
+        $this->assertEquals($this->lpa->document->peopleToNotify[$idx]->name, $result->personName);
+        $this->assertEquals($this->lpa->document->peopleToNotify[$idx]->address, $result->personAddress);
+        $this->assertEquals($cancelUrl, $result->cancelUrl);
+        $this->assertEquals(false, $result->isPopup);
+    }
+
+    public function testDeleteActionInvalidIndex()
+    {
+        $response = Mockery::mock(Response::class);
+        $this->controller->dispatch($this->request, $response);
+
+        $this->controller->setLpa($this->lpa);
+        $routeMatch = $this->getHttpRouteMatch($this->controller);
+        $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn(-1)->once();
+        $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
+        $response->shouldReceive('setStatusCode')->withArgs([404])->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->deleteAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('Page not found', $result->content);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage API client failed to delete notified person 0 for id: 5531003156
+     */
+    public function testDeleteActionFailed()
+    {
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $routeMatch = $this->getHttpRouteMatch($this->controller);
+        $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->lpaApplicationService->shouldReceive('deleteNotifiedPerson')
+            ->withArgs([$this->lpa->id, $this->lpa->document->peopleToNotify[$idx]->id])->andReturn(false)->once();
+
+        $this->controller->deleteAction();
+    }
+
+    public function testDeleteActionSuccess()
+    {
+        $response = new Response();
+
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $routeMatch = $this->getHttpRouteMatch($this->controller);
+        $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->lpaApplicationService->shouldReceive('deleteNotifiedPerson')
+            ->withArgs([$this->lpa->id, $this->lpa->document->peopleToNotify[$idx]->id])->andReturn(true)->once();
+        $this->setRedirectToRoute('lpa/people-to-notify', $this->lpa, $response);
+
+        $result = $this->controller->deleteAction();
+
+        $this->assertEquals($response, $result);
     }
 
     /**

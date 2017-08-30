@@ -470,10 +470,23 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         return $url;
     }
 
-    public function setUrlFromRoute($lpa, $route)
+    public function setFormActionIndex($form, $lpa, $route, $idx, $expectedFromRouteTimes = 1)
     {
         $url = $this->getLpaUrl($lpa, $route);
-        $this->url->shouldReceive('fromRoute')->with($route, ['lpa-id' => $lpa->id])->andReturn($url)->once();
+        $this->url->shouldReceive('fromRoute')->withArgs([$route, ['lpa-id' => $lpa->id, 'idx' => $idx]])
+            ->andReturn($url)->times($expectedFromRouteTimes);
+        $form->shouldReceive('setAttribute')->with('action', $url)->once();
+        return $url;
+    }
+
+    public function setUrlFromRoute($lpa, $route, $extraQueryParameters = null)
+    {
+        $url = $this->getLpaUrl($lpa, $route);
+        $queryParameters = ['lpa-id' => $lpa->id];
+        if (is_array($extraQueryParameters)) {
+            $queryParameters = array_merge($queryParameters, $extraQueryParameters);
+        }
+        $this->url->shouldReceive('fromRoute')->with($route, $queryParameters)->andReturn($url)->once();
         return $url;
     }
 

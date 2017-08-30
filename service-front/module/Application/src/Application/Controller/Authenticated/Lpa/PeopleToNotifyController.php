@@ -213,7 +213,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
             $personToNotifyId = $lpa->document->peopleToNotify[$personIdx]->id;
 
             if (!$this->getLpaApplicationService()->deleteNotifiedPerson($lpa->id, $personToNotifyId)) {
-                throw new \RuntimeException('API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpaId);
+                throw new \RuntimeException('API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpa->id);
             }
         } else {
             // if notified person idx does not exist in lpa, return 404.
