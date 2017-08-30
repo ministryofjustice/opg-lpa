@@ -11,6 +11,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Form\Element\Select;
+use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
 class WhoAreYouControllerTest extends AbstractControllerTest
@@ -37,6 +38,9 @@ class WhoAreYouControllerTest extends AbstractControllerTest
      * @var MockInterface|Select
      */
     private $professionalOptions;
+    private $postData = [
+        'who' => 'donor'
+    ];
 
     public function setUp()
     {
@@ -82,6 +86,21 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->controller->indexAction();
     }
 
+    public function testIndexActionGetWhoAreYouAnsweredTrue()
+    {
+        $this->lpa->whoAreYouAnswered = true;
+        $this->controller->setLpa($this->lpa);
+        $this->setMatchedRouteName($this->controller, 'lpa/who-are-you');
+        $nextUrl = $this->setUrlFromRoute($this->lpa, 'lpa/repeat-application');
+
+        /** @var ViewModel $result */
+        $result = $this->controller->indexAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($nextUrl, $result->nextUrl);
+    }
+
     public function testIndexActionGetWhoAreYouAnsweredFalse()
     {
         $this->lpa->whoAreYouAnswered = false;
@@ -102,5 +121,69 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(6, count($result->getVariable('whoOptions')));
         $this->assertEquals(3, count($result->getVariable('professionalOptions')));
+    }
+
+    public function testIndexActionPostInvalid()
+    {
+        $this->lpa->whoAreYouAnswered = false;
+        $this->controller->setLpa($this->lpa);
+        $this->setMatchedRouteName($this->controller, 'lpa/who-are-you');
+        $this->setFormAction($this->form, $this->lpa, 'lpa/who-are-you');
+        $this->setPostInvalid($this->form, []);
+        $this->form->shouldReceive('get')->with('who')->andReturn($this->whoOptions)->once();
+        $this->form->shouldReceive('get')->with('professional')->andReturn($this->professionalOptions)->once();
+        $this->whoOptions->shouldReceive('getValue')->andReturn('')->times(6);
+        $this->professionalOptions->shouldReceive('getValue')->andReturn('')->times(3);
+
+        /** @var ViewModel $result */
+        $result = $this->controller->indexAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->form, $result->getVariable('form'));
+        $this->assertEquals(6, count($result->getVariable('whoOptions')));
+        $this->assertEquals(3, count($result->getVariable('professionalOptions')));
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage API client failed to set Who Are You for id: 91333263035
+     */
+    public function testIndexActionPostFailed()
+    {
+        $this->lpa->whoAreYouAnswered = false;
+        $this->controller->setLpa($this->lpa);
+        $this->setMatchedRouteName($this->controller, 'lpa/who-are-you');
+        $this->setFormAction($this->form, $this->lpa, 'lpa/who-are-you');
+        $this->setPostValid($this->form, $this->postData);
+        $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
+        $this->lpaApplicationService->shouldReceive('setWhoAreYou')->withArgs(function ($lpaId, $whoAreYou) {
+            return $lpaId === $this->lpa->id
+                && $whoAreYou->who === $this->postData['who'];
+        })->andReturn(false)->once();
+
+        $this->controller->indexAction();
+    }
+
+    public function testIndexActionPostSuccess()
+    {
+        $response = new Response();
+
+        $this->lpa->whoAreYouAnswered = false;
+        $this->controller->setLpa($this->lpa);
+        $this->setFormAction($this->form, $this->lpa, 'lpa/who-are-you');
+        $this->setPostValid($this->form, $this->postData);
+        $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
+        $this->lpaApplicationService->shouldReceive('setWhoAreYou')->withArgs(function ($lpaId, $whoAreYou) {
+            return $lpaId === $this->lpa->id
+                && $whoAreYou->who === $this->postData['who'];
+        })->andReturn(true)->once();
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->setMatchedRouteNameHttp($this->controller, 'lpa/who-are-you', 2);
+        $this->setRedirectToRoute('lpa/repeat-application', $this->lpa, $response);
+
+        $result = $this->controller->indexAction();
+
+        $this->assertEquals($response, $result);
     }
 }

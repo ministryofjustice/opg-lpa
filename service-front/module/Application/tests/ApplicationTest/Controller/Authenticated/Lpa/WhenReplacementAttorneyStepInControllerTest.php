@@ -126,4 +126,28 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
 
         $this->assertEquals($response, $result);
     }
+
+    public function testIndexActionPostSuccessDepends()
+    {
+        $response = new Response();
+
+        $this->lpa->document->replacementAttorneyDecisions = null;
+        $this->controller->setLpa($this->lpa);
+        $this->setPostValid($this->form, $this->postDataDepends);
+        $this->form->shouldReceive('getData')->andReturn($this->postDataDepends)->twice();
+        $this->lpaApplicationService->shouldReceive('setReplacementAttorneyDecisions')->withArgs(function ($lpaId, $replacementAttorneyDecisions) {
+            return $lpaId === $this->lpa->id
+                && $replacementAttorneyDecisions->when === $this->postDataDepends['when']
+                && $replacementAttorneyDecisions->whenDetails === $this->postDataDepends['whenDetails'];
+        })->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$this->lpa->id])->andReturn($this->lpa)->once();
+        $this->serviceLocator->shouldReceive('get')->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $this->setMatchedRouteNameHttp($this->controller, 'lpa/when-replacement-attorney-step-in');
+        $this->setRedirectToRoute('lpa/certificate-provider', $this->lpa, $response);
+
+        $result = $this->controller->indexAction();
+
+        $this->assertEquals($response, $result);
+    }
 }
