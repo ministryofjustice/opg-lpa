@@ -451,6 +451,25 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         $this->assertEquals('lpa/primary-attorney/add', $result->switchAttorneyTypeRoute);
     }
 
+    public function testEditActionInvalidIndex()
+    {
+        $response = Mockery::mock(Response::class);
+        $this->controller->dispatch($this->request, $response);
+
+        $this->controller->setLpa($this->lpa);
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn(-1)->once();
+        $routeMatch = $this->getHttpRouteMatch($this->controller);
+        $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
+        $response->shouldReceive('setStatusCode')->withArgs([404])->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->editAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('Page not found', $result->content);
+    }
+
     public function testEditActionGet()
     {
         $idx = 0;
@@ -542,5 +561,145 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(JsonModel::class, $result);
         $this->assertEquals(true, $result->getVariable('success'));
+    }
+
+    public function testConfirmDeleteActionInvalidIndex()
+    {
+        $response = Mockery::mock(Response::class);
+        $this->controller->dispatch($this->request, $response);
+
+        $this->controller->setLpa($this->lpa);
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn(-1)->once();
+        $routeMatch = $this->getHttpRouteMatch($this->controller);
+        $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
+        $response->shouldReceive('setStatusCode')->withArgs([404])->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->confirmDeleteAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('Page not found', $result->content);
+    }
+
+    public function testConfirmDeleteActionGetJs()
+    {
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
+        $deleteRoute = $this->setUrlFromRoute($this->lpa, 'lpa/primary-attorney/delete', ['idx' => $idx]);
+        $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/primary-attorney');
+
+        /** @var ViewModel $result */
+        $result = $this->controller->confirmDeleteAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($deleteRoute, $result->deleteRoute);
+        $this->assertEquals($this->lpa->document->primaryAttorneys[$idx]->name, $result->attorneyName);
+        $this->assertEquals($this->lpa->document->primaryAttorneys[$idx]->address, $result->attorneyAddress);
+        $this->assertEquals(false, $result->isTrust);
+        $this->assertEquals($cancelUrl, $result->cancelUrl);
+        $this->assertEquals(true, $result->isPopup);
+    }
+
+    public function testConfirmDeleteActionGetNoJs()
+    {
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
+        $deleteRoute = $this->setUrlFromRoute($this->lpa, 'lpa/primary-attorney/delete', ['idx' => $idx]);
+        $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/primary-attorney');
+
+        /** @var ViewModel $result */
+        $result = $this->controller->confirmDeleteAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($deleteRoute, $result->deleteRoute);
+        $this->assertEquals($this->lpa->document->primaryAttorneys[$idx]->name, $result->attorneyName);
+        $this->assertEquals($this->lpa->document->primaryAttorneys[$idx]->address, $result->attorneyAddress);
+        $this->assertEquals(false, $result->isTrust);
+        $this->assertEquals($cancelUrl, $result->cancelUrl);
+        $this->assertEquals(false, $result->isPopup);
+    }
+
+    public function testConfirmDeleteActionTrust()
+    {
+        $this->lpa->document->primaryAttorneys[] = FixturesData::getAttorneyTrust();
+
+        $idx = count($this->lpa->document->primaryAttorneys) - 1;
+        $this->controller->setLpa($this->lpa);
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
+        $deleteRoute = $this->setUrlFromRoute($this->lpa, 'lpa/primary-attorney/delete', ['idx' => $idx]);
+        $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/primary-attorney');
+
+        /** @var ViewModel $result */
+        $result = $this->controller->confirmDeleteAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($deleteRoute, $result->deleteRoute);
+        $this->assertEquals($this->lpa->document->primaryAttorneys[$idx]->name, $result->attorneyName);
+        $this->assertEquals($this->lpa->document->primaryAttorneys[$idx]->address, $result->attorneyAddress);
+        $this->assertEquals(true, $result->isTrust);
+        $this->assertEquals($cancelUrl, $result->cancelUrl);
+        $this->assertEquals(true, $result->isPopup);
+    }
+
+    public function testDeleteActionInvalidIndex()
+    {
+        $response = Mockery::mock(Response::class);
+        $this->controller->dispatch($this->request, $response);
+
+        $this->controller->setLpa($this->lpa);
+        $routeMatch = $this->getHttpRouteMatch($this->controller);
+        $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn(-1)->once();
+        $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
+        $response->shouldReceive('setStatusCode')->withArgs([404])->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->deleteAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('Page not found', $result->content);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage API client failed to delete a primary attorney 0 for id: 91333263035
+     */
+    public function testDeleteActionFailed()
+    {
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $routeMatch = $this->getHttpRouteMatch($this->controller);
+        $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->lpaApplicationService->shouldReceive('deletePrimaryAttorney')
+            ->withArgs([$this->lpa->id, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(false)->once();
+
+        $this->controller->deleteAction();
+    }
+
+    public function testDeleteActionSuccess()
+    {
+        $response = new Response();
+
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $routeMatch = $this->getHttpRouteMatch($this->controller);
+        $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->lpaApplicationService->shouldReceive('deletePrimaryAttorney')
+            ->withArgs([$this->lpa->id, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
+        $this->serviceLocator->shouldReceive('get')->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
+        $this->serviceLocator->shouldReceive('get')->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
+        $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
+
+        $result = $this->controller->deleteAction();
+
+        $this->assertEquals($response, $result);
     }
 }

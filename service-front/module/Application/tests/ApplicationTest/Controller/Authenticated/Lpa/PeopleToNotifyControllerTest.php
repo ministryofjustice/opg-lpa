@@ -483,7 +483,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->assertEquals('Page not found', $result->content);
     }
 
-    public function testEditConfirmDeleteActionGetJs()
+    public function testConfirmDeleteActionGetJs()
     {
         $idx = 0;
         $this->controller->setLpa($this->lpa);
@@ -504,7 +504,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->assertEquals(true, $result->isPopup);
     }
 
-    public function testEditConfirmDeleteActionGetNoJs()
+    public function testConfirmDeleteActionGetNoJs()
     {
         $idx = 0;
         $this->controller->setLpa($this->lpa);
