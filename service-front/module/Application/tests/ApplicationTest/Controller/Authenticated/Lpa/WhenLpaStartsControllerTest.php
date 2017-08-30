@@ -84,6 +84,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostFailed()
     {
+        $this->lpa->document->primaryAttorneyDecisions = null;
         $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
