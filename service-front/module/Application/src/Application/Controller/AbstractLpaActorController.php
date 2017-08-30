@@ -518,7 +518,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                     if ($isTrust) {
                         $correspondent->company = $actor->name;
                     } else {
-                        $correspondent->name = $actor->name;
+                        $correspondent->name = new LongName($actor->name->flatten());
                     }
 
                     $correspondent->address = $actor->address;

@@ -15,7 +15,10 @@ use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Common\Address;
 use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
@@ -296,6 +299,41 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         $this->assertEquals($response, $result);
     }
 
+    public function testAddActionPostUpdateWhoIsRegistering()
+    {
+        $response = new Response();
+
+        $this->lpa->document->primaryAttorneyDecisions->how = PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY;
+        $this->lpa->document->whoIsRegistering = [];
+
+        $this->controller->setLpa($this->lpa);
+        $this->userDetailsSession->user = $this->user;
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
+        $this->setPostValid($this->primaryAttorneyForm, $this->postDataHuman, 2, 2);
+        $this->setFormAction($this->primaryAttorneyForm, $this->lpa, 'lpa/primary-attorney/add');
+        $this->primaryAttorneyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->primaryAttorneyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataHuman)->once();
+        $this->lpaApplicationService->shouldReceive('addPrimaryAttorney')
+            ->withArgs(function ($lpaId, $primaryAttorney) {
+                return $lpaId === $this->lpa->id
+                    && $primaryAttorney->name == new Name($this->postDataHuman['name'])
+                    && $primaryAttorney->address == new Address($this->postDataHuman['address'])
+                    && $primaryAttorney->email == new EmailAddress($this->postDataHuman['email']);
+            })->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
+        $this->serviceLocator->shouldReceive('get')->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
+        $this->serviceLocator->shouldReceive('get')->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
+        $this->setMatchedRouteNameHttp($this->controller, 'lpa/primary-attorney');
+        $this->setRedirectToRoute('lpa/how-primary-attorneys-make-decision', $this->lpa, $response);
+
+        $this->lpaApplicationService->shouldReceive('getPrimaryAttorneys')->withArgs([$this->lpa->id])->andReturn($this->lpa->document->primaryAttorneys)->once();
+        $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')->withArgs([$this->lpa->id, [0 => 1, 1 => 2, 2 => 3]])->andReturn(true)->once();
+
+        $result = $this->controller->addAction();
+
+        $this->assertEquals($response, $result);
+    }
+
     public function testAddActionPostReuseDetails()
     {
         $this->setSeedLpa($this->lpa, FixturesData::getPfLpa());
@@ -492,6 +530,29 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
+    public function testEditActionGetTrust()
+    {
+        $this->lpa->document->primaryAttorneys[] = FixturesData::getAttorneyTrust();
+
+        $idx = count($this->lpa->document->primaryAttorneys) - 1;
+        $this->controller->setLpa($this->lpa);
+        $this->userDetailsSession->user = $this->user;
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+        $this->setFormActionIndex($this->trustCorporationForm, $this->lpa, 'lpa/primary-attorney/edit', $idx);
+        $this->trustCorporationForm->shouldReceive('bind')->withArgs([$this->getFlattenedAttorneyData($this->lpa->document->primaryAttorneys[$idx])])->once();
+        $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/primary-attorney');
+
+        /** @var ViewModel $result */
+        $result = $this->controller->editAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('application/primary-attorney/trust-form.twig', $result->getTemplate());
+        $this->assertEquals($this->trustCorporationForm, $result->getVariable('form'));
+        $this->assertEquals($cancelUrl, $result->cancelUrl);
+    }
+
     public function testEditActionPostInvalid()
     {
         $idx = 0;
@@ -529,10 +590,12 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         $this->primaryAttorneyForm->shouldReceive('setExistingActorNamesData')->once();
         $this->primaryAttorneyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataHuman)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorney')
-            ->withArgs(function ($lpaId, $primaryAttorney) {
+            ->withArgs(function ($lpaId, $primaryAttorney, $primaryAttorneyId) {
                 return $lpaId === $this->lpa->id
                     && $primaryAttorney->name == new Name($this->postDataHuman['name'])
-                    && $primaryAttorney->address == new Address($this->postDataHuman['address']);
+                    && $primaryAttorney->address == new Address($this->postDataHuman['address'])
+                    && $primaryAttorney->email == new EmailAddress($this->postDataHuman['email'])
+                    && $primaryAttorneyId === 1;
             })->andReturn(false)->once();
 
         $this->controller->editAction();
@@ -550,10 +613,81 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         $this->primaryAttorneyForm->shouldReceive('setExistingActorNamesData')->once();
         $this->primaryAttorneyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataHuman)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorney')
-            ->withArgs(function ($lpaId, $primaryAttorney) {
+            ->withArgs(function ($lpaId, $primaryAttorney, $primaryAttorneyId) {
                 return $lpaId === $this->lpa->id
                     && $primaryAttorney->name == new Name($this->postDataHuman['name'])
-                    && $primaryAttorney->address == new Address($this->postDataHuman['address']);
+                    && $primaryAttorney->address == new Address($this->postDataHuman['address'])
+                    && $primaryAttorney->email == new EmailAddress($this->postDataHuman['email'])
+                    && $primaryAttorneyId === 1;
+            })->andReturn(true)->once();
+
+        /** @var JsonModel $result */
+        $result = $this->controller->editAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals(true, $result->getVariable('success'));
+    }
+
+    public function testEditActionPostCorrespondent()
+    {
+        $attorney = $this->lpa->document->primaryAttorneys[0];
+        $correspondent = new Correspondence();
+        $correspondent->name = new LongName($attorney->name->flatten());
+        $correspondent->address = $attorney->address;
+        $correspondent->who = Correspondence::WHO_ATTORNEY;
+        $this->lpa->document->correspondent = $correspondent;
+
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $this->userDetailsSession->user = $this->user;
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->setPostValid($this->primaryAttorneyForm, $this->postDataHuman);
+        $this->setFormActionIndex($this->primaryAttorneyForm, $this->lpa, 'lpa/primary-attorney/edit', $idx);
+        $this->primaryAttorneyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->primaryAttorneyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataHuman)->once();
+        $this->lpaApplicationService->shouldReceive('setPrimaryAttorney')
+            ->withArgs(function ($lpaId, $primaryAttorney, $primaryAttorneyId) {
+                return $lpaId === $this->lpa->id
+                    && $primaryAttorney->name == new Name($this->postDataHuman['name'])
+                    && $primaryAttorney->address == new Address($this->postDataHuman['address'])
+                    && $primaryAttorney->email == new EmailAddress($this->postDataHuman['email'])
+                    && $primaryAttorneyId === 1;
+            })->andReturn(true)->once();
+
+        $this->lpaApplicationService->shouldReceive('setCorrespondent')->withArgs(function ($lpaId, $correspondent) {
+            return $lpaId === $this->lpa->id
+                && $correspondent->name == new LongName($this->postDataHuman['name'])
+                && $correspondent->address == new Address($this->postDataHuman['address']);
+        })->andReturn(true)->once();
+
+        /** @var JsonModel $result */
+        $result = $this->controller->editAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals(true, $result->getVariable('success'));
+    }
+
+    public function testEditActionPostSuccessTrust()
+    {
+        $this->lpa->document->primaryAttorneys[] = FixturesData::getAttorneyTrust();
+
+        $idx = count($this->lpa->document->primaryAttorneys) - 1;
+        $this->controller->setLpa($this->lpa);
+        $this->userDetailsSession->user = $this->user;
+        $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
+        $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->setPostValid($this->trustCorporationForm, $this->postDataTrust);
+        $this->setFormActionIndex($this->trustCorporationForm, $this->lpa, 'lpa/primary-attorney/edit', $idx);
+        $this->trustCorporationForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataTrust)->once();
+        $this->lpaApplicationService->shouldReceive('setPrimaryAttorney')
+            ->withArgs(function ($lpaId, $primaryAttorney, $primaryAttorneyId) {
+                return $lpaId === $this->lpa->id
+                    && $primaryAttorney->name === $this->postDataTrust['name']
+                    && $primaryAttorney->number === $this->postDataTrust['number']
+                    && $primaryAttorney->address == new Address($this->postDataTrust['address'])
+                    && $primaryAttorney->email == new EmailAddress($this->postDataTrust['email'])
+                    && $primaryAttorneyId === 4;
             })->andReturn(true)->once();
 
         /** @var JsonModel $result */
@@ -691,6 +825,90 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $routeMatch = $this->getHttpRouteMatch($this->controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn($idx)->once();
+        $this->lpaApplicationService->shouldReceive('deletePrimaryAttorney')
+            ->withArgs([$this->lpa->id, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
+        $this->serviceLocator->shouldReceive('get')->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
+        $this->serviceLocator->shouldReceive('get')->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
+        $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
+
+        $result = $this->controller->deleteAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testDeleteActionOneAttorneyRemaining()
+    {
+        $response = new Response();
+
+        while (count($this->lpa->document->primaryAttorneys) > 2) {
+            unset($this->lpa->document->primaryAttorneys[count($this->lpa->document->primaryAttorneys) - 1]);
+        }
+
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $routeMatch = $this->getHttpRouteMatch($this->controller);
+        $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn($idx)->once();
+
+        $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
+            ->withArgs(function ($lpaId, $primaryAttorneyDecisions) {
+                return $lpaId === $this->lpa->id
+                    && $primaryAttorneyDecisions->how === null
+                    && $primaryAttorneyDecisions->howDetails === null;
+            })->andReturn(true)->once();
+
+        $this->lpaApplicationService->shouldReceive('deletePrimaryAttorney')
+            ->withArgs([$this->lpa->id, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
+        $this->serviceLocator->shouldReceive('get')->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
+        $this->serviceLocator->shouldReceive('get')->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
+        $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
+
+        $result = $this->controller->deleteAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testDeleteActionAttorneyRegistering()
+    {
+        $response = new Response();
+
+        $this->lpa->document->whoIsRegistering = [1,2,3];
+
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $routeMatch = $this->getHttpRouteMatch($this->controller);
+        $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn($idx)->once();
+
+        $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')
+            ->withArgs([$this->lpa->id, [1 => 2, 2 => 3]])->andReturn(true)->once();
+
+        $this->lpaApplicationService->shouldReceive('deletePrimaryAttorney')
+            ->withArgs([$this->lpa->id, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
+        $this->serviceLocator->shouldReceive('get')->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
+        $this->serviceLocator->shouldReceive('get')->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
+        $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
+
+        $result = $this->controller->deleteAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testDeleteActionAllAttorneyRegistering()
+    {
+        $response = new Response();
+
+        $this->lpa->document->whoIsRegistering = [1];
+
+        $idx = 0;
+        $this->controller->setLpa($this->lpa);
+        $routeMatch = $this->getHttpRouteMatch($this->controller);
+        $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn($idx)->once();
+
+        $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')
+            ->withArgs([$this->lpa->id, null])->andReturn(true)->once();
+
         $this->lpaApplicationService->shouldReceive('deletePrimaryAttorney')
             ->withArgs([$this->lpa->id, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
