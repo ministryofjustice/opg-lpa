@@ -583,24 +583,18 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     {
         $expectedPeopleToNotifyParams = [];
         foreach ($this->lpa->document->peopleToNotify as $idx => $peopleToNotify) {
-            $this->url->shouldReceive('fromRoute')
-                ->with('lpa/people-to-notify/edit', ['lpa-id' => $this->lpa->id, 'idx' => $idx])
-                ->andReturn('lpa/people-to-notify/edit?lpa-id=' . $this->lpa->id . '&idx=' . $idx)->once();
-            $this->url->shouldReceive('fromRoute')
-                ->with('lpa/people-to-notify/confirm-delete', ['lpa-id' => $this->lpa->id, 'idx' => $idx])
-                ->andReturn('lpa/people-to-notify/confirm-delete?lpa-id=' . $this->lpa->id . '&idx=' . $idx)->once();
-            $this->url->shouldReceive('fromRoute')
-                ->with('lpa/people-to-notify/delete', ['lpa-id' => $this->lpa->id, 'idx' => $idx])
-                ->andReturn('lpa/people-to-notify/delete?lpa-id=' . $this->lpa->id . '&idx=' . $idx)->once();
+            $editUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify/edit', ['idx' => $idx]);
+            $confirmDeleteUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify/confirm-delete', ['idx' => $idx]);
+            $deleteUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify/delete', ['idx' => $idx]);
 
             $expectedPeopleToNotifyParams[] = [
                 'notifiedPerson' => [
                     'name' => $peopleToNotify->name,
                     'address' => $peopleToNotify->address
                 ],
-                'editRoute' => 'lpa/people-to-notify/edit?lpa-id=' . $this->lpa->id . '&idx=' . $idx,
-                'confirmDeleteRoute' => 'lpa/people-to-notify/confirm-delete?lpa-id=' . $this->lpa->id . '&idx=' . $idx,
-                'deleteRoute' => 'lpa/people-to-notify/delete?lpa-id=' . $this->lpa->id . '&idx=' . $idx,
+                'editRoute' => $editUrl,
+                'confirmDeleteRoute' => $confirmDeleteUrl,
+                'deleteRoute' => $deleteUrl
             ];
         }
         return $expectedPeopleToNotifyParams;
