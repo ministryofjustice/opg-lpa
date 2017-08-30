@@ -461,14 +461,33 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 
     public function setFormAction($form, $lpa, $route)
     {
-        $url = str_replace('lpa/', "lpa/{$lpa->id}/", $route);
+        $url = $this->getLpaUrl($lpa, $route);
         $this->url->shouldReceive('fromRoute')->withArgs([$route, ['lpa-id' => $lpa->id]])
             ->andReturn($url)->once();
         $form->shouldReceive('setAttribute')->with('action', $url)->once();
+        return $url;
+    }
+
+    public function setUrlFromRoute($lpa, $route)
+    {
+        $url = $this->getLpaUrl($lpa, $route);
+        $this->url->shouldReceive('fromRoute')->with($route, ['lpa-id' => $lpa->id])->andReturn($url)->once();
+        return $url;
     }
 
     public function tearDown()
     {
         Mockery::close();
+    }
+
+    /**
+     * @param $lpa
+     * @param $route
+     * @return mixed
+     */
+    private function getLpaUrl($lpa, $route)
+    {
+        $url = str_replace('lpa/', "lpa/{$lpa->id}/", $route);
+        return $url;
     }
 }

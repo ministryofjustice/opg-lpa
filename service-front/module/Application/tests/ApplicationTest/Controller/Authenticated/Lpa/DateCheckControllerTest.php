@@ -62,8 +62,7 @@ class DateCheckControllerTest extends AbstractControllerTest
         $this->params->shouldReceive('fromPost')->with('return-route', null)->andReturn(null)->once();
         $currentRouteName = 'lpa/date-check/complete';
         $this->setMatchedRouteName($this->controller, $currentRouteName);
-        $this->url->shouldReceive('fromRoute')->with($currentRouteName, ['lpa-id' => $this->lpa->id])->andReturn($currentRouteName)->once();
-        $this->form->shouldReceive('setAttribute')->with('action', $currentRouteName)->once();
+        $this->setFormAction($this->form, $this->lpa, $currentRouteName);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -81,8 +80,7 @@ class DateCheckControllerTest extends AbstractControllerTest
         $this->params->shouldReceive('fromPost')->with('return-route', null)->andReturn(null)->once();
         $currentRouteName = 'lpa/date-check/complete';
         $this->setMatchedRouteName($this->controller, $currentRouteName);
-        $this->url->shouldReceive('fromRoute')->with($currentRouteName, ['lpa-id' => $this->lpa->id])->andReturn($currentRouteName)->once();
-        $this->form->shouldReceive('setAttribute')->with('action', $currentRouteName)->once();
+        $this->setFormAction($this->form, $this->lpa, $currentRouteName);
         $this->setPostInvalid($this->form, []);
 
         /** @var ViewModel $result */
@@ -104,8 +102,7 @@ class DateCheckControllerTest extends AbstractControllerTest
         $this->params->shouldReceive('fromPost')->with('return-route', null)->andReturn(null)->once();
         $currentRouteName = 'lpa/date-check/complete';
         $this->setMatchedRouteName($this->controller, $currentRouteName);
-        $this->url->shouldReceive('fromRoute')->with($currentRouteName, ['lpa-id' => $this->lpa->id])->andReturn($currentRouteName)->once();
-        $this->form->shouldReceive('setAttribute')->with('action', $currentRouteName)->once();
+        $this->setFormAction($this->form, $this->lpa, $currentRouteName);
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
 
@@ -128,8 +125,7 @@ class DateCheckControllerTest extends AbstractControllerTest
         $this->params->shouldReceive('fromPost')->with('return-route', null)->andReturn(null)->once();
         $currentRouteName = 'lpa/date-check/complete';
         $this->setMatchedRouteName($this->controller, $currentRouteName);
-        $this->url->shouldReceive('fromRoute')->with($currentRouteName, ['lpa-id' => $this->lpa->id])->andReturn($currentRouteName)->once();
-        $this->form->shouldReceive('setAttribute')->with('action', $currentRouteName)->once();
+        $this->setFormAction($this->form, $this->lpa, $currentRouteName);
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->url->shouldReceive('fromRoute')->with('lpa/date-check/valid', ['lpa-id' => $this->lpa->id], ['query' => ['return-route' => 'lpa/complete']])->andReturn("lpa/{$this->lpa->id}/date-check/valid")->once();
