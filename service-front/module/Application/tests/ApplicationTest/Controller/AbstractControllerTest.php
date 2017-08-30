@@ -30,6 +30,7 @@ use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractController;
 use Zend\Mvc\Controller\Plugin\CreateHttpNotFoundModel;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
+use Zend\Mvc\Controller\Plugin\Forward;
 use Zend\Mvc\Controller\Plugin\Layout;
 use Zend\Mvc\Controller\Plugin\Params;
 use Zend\Mvc\Controller\Plugin\Redirect;
@@ -86,6 +87,10 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @var MockInterface|Layout
      */
     protected $layout;
+    /**
+     * @var MockInterface|Forward
+     */
+    protected $forward;
     /**
      * @var MockInterface|EventManager
      */
@@ -146,6 +151,10 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @var MockInterface|Metadata
      */
     protected $metadata;
+    /**
+     * @var MockInterface
+     */
+    protected $router;
 
     /**
      * @param AbstractController $controller
@@ -187,6 +196,9 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->layout = Mockery::mock(Layout::class);
         $this->pluginManager->shouldReceive('get')->with('layout', null)->andReturn($this->layout);
+
+        $this->forward = Mockery::mock(Forward::class);
+        $this->pluginManager->shouldReceive('get')->with('forward', null)->andReturn($this->forward);
 
         $this->eventManager = Mockery::mock(EventManager::class);
         $this->eventManager->shouldReceive('setIdentifiers');
@@ -273,6 +285,9 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->metadata = Mockery::mock(Metadata::class);
         $this->serviceLocator->shouldReceive('get')->with('Metadata')->andReturn($this->metadata);
+
+        $this->router = Mockery::mock(ArrayObject::class);
+        $this->serviceLocator->shouldReceive('get')->with('Router')->andReturn($this->router);
     }
 
     /**
