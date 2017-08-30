@@ -92,13 +92,7 @@ class InstructionsControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setInstructions')
             ->withArgs([$this->lpa->id, $this->postData['instruction']])->andReturn(false)->once();
 
-        /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
-
-        $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals(true, $result->getVariable('isPfLpa'));
+         $this->controller->indexAction();
     }
 
     /**
@@ -115,13 +109,7 @@ class InstructionsControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setPreferences')
             ->withArgs([$this->lpa->id, $this->postData['preference']])->andReturn(false)->once();
 
-        /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
-
-        $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals(true, $result->getVariable('isPfLpa'));
+        $this->controller->indexAction();
     }
 
     public function testIndexActionPostSuccess()
