@@ -2,13 +2,20 @@
 
 namespace ApplicationTest\Controller;
 
-use Application\Model\Service\Authentication\Identity\User;
+use Application\Model\Service\Authentication\Identity\User as UserIdentity;
+use Application\Model\Service\User\Details;
 use DateTime;
-use Opg\Lpa\DataModel\Common\Name;
+use Mockery;
+use Mockery\MockInterface;
+use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
+use RuntimeException;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Router\RouteMatch;
+use Zend\Session\Container;
 use Zend\Stdlib\ArrayObject;
+use Zend\View\Model\ViewModel;
 
 class AbstractAuthenticatedControllerTest extends AbstractControllerTest
 {
@@ -16,6 +23,10 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
      * @var TestableAbstractAuthenticatedController
      */
     private $controller;
+    /**
+     * @var MockInterface|Details
+     */
+    private $aboutYouDetails;
 
     public function setUp()
     {
@@ -23,7 +34,10 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
         parent::controllerSetUp($this->controller);
 
         $this->user = FixturesData::getUser();
-        $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
+        $this->userIdentity = new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime());
+
+        $this->aboutYouDetails = Mockery::mock(Details::class);
+        $this->serviceLocator->shouldReceive('get')->with('AboutYouDetails')->andReturn($this->aboutYouDetails);
     }
 
     public function testOnDispatchNotAuthenticated()
@@ -44,7 +58,7 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
         $response = new Response();
         $event = new MvcEvent();
 
-        $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime('2014-01-01'));
+        $this->userIdentity = new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime('2014-01-01'));
         $this->controller->setUser($this->userIdentity);
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
         $this->logger->shouldReceive('info')->withArgs(['Request to ApplicationTest\Controller\TestableAbstractAuthenticatedController', $this->userIdentity->toArray()])->once();
@@ -73,5 +87,79 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
         $result = $this->controller->onDispatch($event);
 
         $this->assertEquals($result, $response);
+    }
+
+    public function testOnDispatchRedirectToNewUser()
+    {
+        $response = new Response();
+        $event = new MvcEvent();
+
+        $this->controller->setUser($this->userIdentity);
+        $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
+        $this->logger->shouldReceive('info')->withArgs(['Request to ApplicationTest\Controller\TestableAbstractAuthenticatedController', $this->userIdentity->toArray()])->once();
+        $user = new User();
+        $this->userDetailsSession->user = $user;
+        $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['user/about-you/new'])->andReturn($response)->once();
+
+        $result = $this->controller->onDispatch($event);
+
+        $this->assertEquals($result, $response);
+    }
+
+    public function testOnDispatchLoadUser()
+    {
+        $event = Mockery::mock(MvcEvent::class);
+
+        $this->controller->setUser($this->userIdentity);
+        $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
+        $this->logger->shouldReceive('info')->withArgs(['Request to ApplicationTest\Controller\TestableAbstractAuthenticatedController', $this->userIdentity->toArray()])->once();
+        $this->userDetailsSession->user = new User();
+        $this->aboutYouDetails->shouldReceive('load')->andReturn(FixturesData::getUser())->once();
+        $routeMatch = Mockery::mock(RouteMatch::class);
+        $event->shouldReceive('getRouteMatch')->andReturn($routeMatch)->once();
+        $routeMatch->shouldReceive('getParam')->withArgs(['action', 'not-found'])->andReturn('index')->once();
+        $event->shouldReceive('setResult')->withArgs(function ($actionResponse) {
+            return $actionResponse->content === 'Placeholder page';
+        })->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->onDispatch($event);
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals('Placeholder page', $result->content);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage A valid Identity has not been set
+     */
+    public function testGetUserNull()
+    {
+        $this->controller->getUser();
+    }
+
+    public function testGetUserDetailsNull()
+    {
+        $result = $this->controller->getUserDetails();
+
+        $this->assertNull($result);
+    }
+
+    public function testResetSessionCloneData()
+    {
+        $this->sessionManager->shouldReceive('start')->once();
+        $this->storage->shouldReceive('offsetExists')->with('clone')->andReturn(true)->times(8);
+        $seedId = new ArrayObject(['12345' => '12345']);
+        $this->storage->shouldReceive('offsetGet')->with('clone')->andReturn($seedId)->times(13);
+        $this->storage->shouldReceive('getMetadata')->with('clone')->times(4);
+        $this->storage->shouldReceive('getRequestAccessTime')->twice();
+
+        Container::setDefaultManager($this->sessionManager);
+        $result = $this->controller->testResetSessionCloneData('12345');
+        Container::setDefaultManager(null);
+
+        $this->assertNull($result);
     }
 }
