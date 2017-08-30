@@ -17,6 +17,8 @@ use ApplicationTest\Controller\Authenticated\Lpa\PrimaryAttorneyControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\ReplacementAttorneyControllerTest;
 use Mockery;
 use Mockery\MockInterface;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\Logger;
@@ -479,15 +481,39 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         return $url;
     }
 
-    public function setUrlFromRoute($lpa, $route, $extraQueryParameters = null)
+    public function setUrlFromRoute($lpa, $route, $extraQueryParameters = null, $fragment = null)
     {
-        $url = $this->getLpaUrl($lpa, $route);
+        $url = $this->getLpaUrl($lpa, $route, $extraQueryParameters, $fragment);
         $queryParameters = ['lpa-id' => $lpa->id];
         if (is_array($extraQueryParameters)) {
             $queryParameters = array_merge($queryParameters, $extraQueryParameters);
         }
-        $this->url->shouldReceive('fromRoute')->with($route, $queryParameters)->andReturn($url)->once();
+        if (is_array($fragment)) {
+            $this->url->shouldReceive('fromRoute')->with($route, $queryParameters, $fragment)->andReturn($url)->once();
+        } else {
+            $this->url->shouldReceive('fromRoute')->with($route, $queryParameters)->andReturn($url)->once();
+        }
         return $url;
+    }
+
+    /**
+     * @param AbstractAttorney $attorney
+     * @return mixed
+     */
+    public function getFlattenedAttorneyData($attorney)
+    {
+        $flattenAttorneyData = $attorney->flatten();
+
+        if ($attorney instanceof Human) {
+            $dob = $attorney->dob->date;
+            $flattenAttorneyData['dob-date'] = [
+                'day'   => $dob->format('d'),
+                'month' => $dob->format('m'),
+                'year'  => $dob->format('Y'),
+            ];
+        }
+
+        return $flattenAttorneyData;
     }
 
     public function tearDown()
@@ -500,9 +526,22 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
      * @param $route
      * @return mixed
      */
-    private function getLpaUrl($lpa, $route)
+    private function getLpaUrl($lpa, $route, $queryParameters = null, $fragment = null)
     {
         $url = str_replace('lpa/', "lpa/{$lpa->id}/", $route);
+        $queryParams = [];
+        if (is_array($queryParameters)) {
+            $queryParams = array_merge($queryParams, $queryParameters);
+        }
+        if (is_array($fragment)) {
+            $queryParams = array_merge($queryParams, $fragment);
+        }
+        if (count($queryParams) > 0) {
+            $url .= '?' . implode('&', array_map(function ($value, $key) {
+                $valueString = is_bool($value) ? $value === true ? '1' : '0' : $value;
+                return "$key=$valueString";
+            }, $queryParams, array_keys($queryParams)));
+        }
         return $url;
     }
 }

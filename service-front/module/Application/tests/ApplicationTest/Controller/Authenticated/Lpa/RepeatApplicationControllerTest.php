@@ -4,8 +4,10 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\RepeatApplicationController;
 use Application\Form\Lpa\RepeatApplicationForm;
+use Application\Model\Service\Authentication\Identity\User;
 use Application\Model\Service\Lpa\Metadata;
 use ApplicationTest\Controller\AbstractControllerTest;
+use DateTime;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -32,6 +34,9 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
     {
         $this->controller = new RepeatApplicationController();
         parent::controllerSetUp($this->controller);
+
+        $this->user = FixturesData::getUser();
+        $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
 
         $this->form = Mockery::mock(RepeatApplicationForm::class);
         $this->lpa = FixturesData::getPfLpa();
