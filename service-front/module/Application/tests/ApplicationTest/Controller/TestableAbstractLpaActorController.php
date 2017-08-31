@@ -4,6 +4,7 @@ namespace ApplicationTest\Controller;
 
 use Application\Controller\AbstractLpaActorController;
 use Application\Form\Lpa\AbstractActorForm;
+use Opg\Lpa\DataModel\AbstractData;
 
 class TestableAbstractLpaActorController extends AbstractLpaActorController
 {
@@ -15,5 +16,10 @@ class TestableAbstractLpaActorController extends AbstractLpaActorController
     public function testGetActorReuseDetails($includeTrusts = true, $forCorrespondent = false)
     {
         return parent::getActorReuseDetails($includeTrusts, $forCorrespondent);
+    }
+
+    public function testUpdateCorrespondentData(AbstractData $actor)
+    {
+        return parent::updateCorrespondentData($actor);
     }
 }
