@@ -95,30 +95,27 @@
 	{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
 	<fieldset id="how">
-      <legend class="visuallyhidden">How should the replacement attorneys make decisions?</legend>
+        <legend class="visuallyhidden">How should the replacement attorneys make decisions?</legend>
+            <h2 class="heading-medium flush--top">How should the replacement attorneys make decisions?</h2>
 
-      <h2 class="heading-medium flush--top">How should the replacement attorneys make decisions?</h2>
+            <div class="form-group {{ how.getMessages|length > 0 ? 'error'}}">
+                {{ formElementErrorsV2(how) }}
+                {{ formElement(how) }}
+                <div id="decisions-details" class="panel panel-border-narrow js-hidden">
+                    <p class="text">
+                        Please tell us which decisions have to be made jointly, and which can be made jointly and severally. These decisions will be printed on a extra sheet the donor will need to sign and date.
+                        <a class="js-guidance" href="/guide#topic-how-multiple-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-multiple-attorneys-make-decisions">Take a look at the guidance</a> for examples of how to make your wishes clear.
+                    </p>
+                    {{ macros.formGroup(howDetails) }}
+                </div>
+            </div>
+    </fieldset>
 
-      <div class="form-group {{ how.getMessages|length > 0 ? 'error'}}">
-          {{ formElementErrorsV2(how) }}
-          {{ formElement(how) }}
-	        <div id="decisions-details" class="panel panel-border-narrow js-hidden">
-			        <p class="text">
-                  Please tell us which decisions have to be made jointly, and which can be made jointly and severally.
-                  <a class="js-guidance" href="/guide#topic-how-multiple-attorneys-make-decisions" data-journey-click="stageprompt.lpa:help:how-multiple-attorneys-make-decisions">
-                      Take a look at the guidance
-                  </a> for examples of how to make your wishes clear.
-              </p>
-			        {{ macros.formGroup(howDetails) }}
-          </div>
-      </div>
-  </fieldset>
+    <div class="form-group">
+        {{ formElement(form.get('save')) }}
+    </div>
 
-  <div class="form-group">
-      {{ formElement(form.get('save')) }}
-  </div>
-
-  {{ form().closeTag|raw }}
+    {{ form().closeTag|raw }}
 
 </li>
 
