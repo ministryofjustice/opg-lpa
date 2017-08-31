@@ -247,6 +247,34 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('Hon Ayden Armstrong, A Company Ltd.', $result->getVariable('correspondentName'));
+        $this->assertEquals(false, $result->allowEditButton);
+    }
+
+    public function testIndexActionGetCorrespondentOther()
+    {
+        $this->lpa->document->correspondent->who = Correspondence::WHO_OTHER;
+        $this->controller->setLpa($this->lpa);
+        $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+        $this->form->shouldReceive('bind')->with([
+            'contactInWelsh' => false,
+            'correspondence' => [
+                'contactByEmail' => true,
+                'email-address'  => $this->lpa->document->donor->email->address,
+                'contactByPhone' => true,
+                'phone-number'   => $this->lpa->document->correspondent->phone->number,
+                'contactByPost'  => false
+            ]
+        ])->once();
+        $this->setMatchedRouteName($this->controller, 'lpa/correspondent');
+        $this->url->shouldReceive('fromRoute')->with('lpa/correspondent/edit', ['lpa-id' => $this->lpa->id])->andReturn('lpa/correspondent/edit')->once();
+
+        /** @var ViewModel $result */
+        $result = $this->controller->indexAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('Hon Ayden Armstrong', $result->getVariable('correspondentName'));
+        $this->assertEquals(true, $result->allowEditButton);
     }
 
     public function testIndexActionPostInvalid()
