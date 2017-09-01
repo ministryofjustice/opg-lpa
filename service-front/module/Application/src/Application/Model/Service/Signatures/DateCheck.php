@@ -35,11 +35,27 @@ class DateCheck implements ServiceLocatorAwareInterface
         }
 
         $minAttorneyDate = $dates['attorneys'][0];
+        $maxAttorneyDate = $dates['attorneys'][0];
         for ($i = 1; $i < count($dates['attorneys']); $i++) {
             $timestamp = $dates['attorneys'][$i];
 
             if ($timestamp < $minAttorneyDate) {
                 $minAttorneyDate = $timestamp;
+            }
+            if ($timestamp > $maxAttorneyDate) {
+                $maxAttorneyDate = $timestamp;
+            }
+        }
+
+        $minApplicantDate = $maxAttorneyDate;
+        if (isset($dates['applicants'])) {
+            $minApplicantDate = $dates['applicants'][0];
+            for ($i = 1; $i < count($dates['applicants']); $i++) {
+                $timestamp = $dates['applicants'][$i];
+
+                if ($timestamp < $minApplicantDate) {
+                    $minApplicantDate = $timestamp;
+                }
             }
         }
 
@@ -55,6 +71,14 @@ class DateCheck implements ServiceLocatorAwareInterface
         // CP must be next
         if ($certificateProvider > $minAttorneyDate) {
             return 'The Certificate Provider must sign the LPA before the attorneys.';
+        }
+
+        // Applicants must sign on or after last attorney
+        if ($minApplicantDate < $maxAttorneyDate) {
+            if (count($dates['applicants']) > 1) {
+                return 'The applicants must sign on the same day or after all Section 11\'s have been signed.';
+            }
+            return 'The applicant must sign on the same day or after all Section 11\'s have been signed.';
         }
 
         return true;
