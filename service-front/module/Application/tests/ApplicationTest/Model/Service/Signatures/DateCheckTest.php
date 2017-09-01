@@ -34,6 +34,24 @@ class DateCheckTest extends AbstractHttpControllerTestCase
         $this->assertTrue(DateCheck::checkDates($dates));
     }
 
+    public function testAllSignedInCorrectOrderIncludingApplicant()
+    {
+        $dates = [
+            'donor' => new DateTime('2015-01-14'),
+            'certificate-provider' => new DateTime('2015-01-16'),
+            'attorneys' => [
+                new DateTime('2015-01-18'),
+                new DateTime('2015-01-16'),
+                new DateTime('2015-01-17'),
+            ],
+            'applicants' => [
+                new DateTime('2015-01-18')
+            ]
+        ];
+
+        $this->assertTrue(DateCheck::checkDates($dates));
+    }
+
     public function testDonorSignsAfterCertificateProvider()
     {
         $dates = [
@@ -45,7 +63,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ],
         ];
 
-        $this->assertEquals(DateCheck::checkDates($dates), 'The donor must be the first person to sign the LPA.');
+        $this->assertEquals('The donor must be the first person to sign the LPA.', DateCheck::checkDates($dates));
     }
 
     public function testCertificateProviderSignsAfterOneOfTheAttorneys()
@@ -59,7 +77,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ],
         ];
 
-        $this->assertEquals(DateCheck::checkDates($dates), 'The Certificate Provider must sign the LPA before the attorneys.');
+        $this->assertEquals('The Certificate Provider must sign the LPA before the attorneys.', DateCheck::checkDates($dates));
     }
 
     public function testDonorSignsAfterEveryoneElse()
@@ -73,7 +91,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ],
         ];
 
-        $this->assertEquals(DateCheck::checkDates($dates), 'The donor must be the first person to sign the LPA.');
+        $this->assertEquals('The donor must be the first person to sign the LPA.', DateCheck::checkDates($dates));
     }
 
     public function testOneAttorneySignsBeforeEveryoneElse()
@@ -87,7 +105,44 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ],
         ];
 
-        $this->assertEquals(DateCheck::checkDates($dates), 'The donor must be the first person to sign the LPA.');
+        $this->assertEquals('The donor must be the first person to sign the LPA.', DateCheck::checkDates($dates));
+    }
+
+    public function testApplicantSignsBeforeLastAttorney()
+    {
+        $dates = [
+            'donor' => new DateTime('2015-01-14'),
+            'certificate-provider' => new DateTime('2015-01-16'),
+            'attorneys' => [
+                new DateTime('2015-01-18'),
+                new DateTime('2015-01-16'),
+                new DateTime('2015-01-17'),
+            ],
+            'applicants' => [
+                new DateTime('2015-01-17')
+            ]
+        ];
+
+        $this->assertEquals('The applicant must sign on the same day or after all Section 11\'s have been signed.', DateCheck::checkDates($dates));
+    }
+
+    public function testApplicantsSignBeforeLastAttorney()
+    {
+        $dates = [
+            'donor' => new DateTime('2015-01-14'),
+            'certificate-provider' => new DateTime('2015-01-16'),
+            'attorneys' => [
+                new DateTime('2015-01-18'),
+                new DateTime('2015-01-16'),
+                new DateTime('2015-01-17'),
+            ],
+            'applicants' => [
+                new DateTime('2015-01-17'),
+                new DateTime('2015-01-18')
+            ]
+        ];
+
+        $this->assertEquals('The applicants must sign on the same day or after all Section 11\'s have been signed.', DateCheck::checkDates($dates));
     }
 
     /**
