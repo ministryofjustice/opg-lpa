@@ -10,4 +10,3 @@ build/
 phpunit.xml
 *.DS_store
 .idea/*
-.php_cs.cache

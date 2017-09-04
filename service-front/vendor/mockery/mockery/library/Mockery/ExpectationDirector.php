@@ -14,7 +14,7 @@
  *
  * @category   Mockery
  * @package    Mockery
- * @copyright  Copyright (c) 2010 Pádraic Brady (http://blog.astrumfutura.com)
+ * @copyright  Copyright (c) 2010-2014 Pádraic Brady (http://blog.astrumfutura.com)
  * @license    http://github.com/padraic/mockery/blob/master/LICENSE New BSD License
  */
 
@@ -22,6 +22,7 @@ namespace Mockery;
 
 class ExpectationDirector
 {
+
     /**
      * Method name the director is directing
      *
@@ -72,7 +73,7 @@ class ExpectationDirector
     /**
      * Add a new expectation to the director
      *
-     * @param \Mockery\Expectation $expectation
+     * @param Mutateme\Expectation $expectation
      */
     public function addExpectation(\Mockery\Expectation $expectation)
     {
@@ -133,17 +134,11 @@ class ExpectationDirector
      */
     public function findExpectation(array $args)
     {
-        $expectation = null;
-
         if (!empty($this->_expectations)) {
-            $expectation = $this->_findExpectationIn($this->_expectations, $args);
+            return $this->_findExpectationIn($this->_expectations, $args);
+        } else {
+            return $this->_findExpectationIn($this->_defaults, $args);
         }
-
-        if ($expectation === null && !empty($this->_defaults)) {
-            $expectation = $this->_findExpectationIn($this->_defaults, $args);
-        }
-
-        return $expectation;
     }
 
     /**
@@ -175,7 +170,7 @@ class ExpectationDirector
     protected function _findExpectationIn(array $expectations, array $args)
     {
         foreach ($expectations as $exp) {
-            if ($exp->isEligible() && $exp->matchArgs($args)) {
+            if ($exp->matchArgs($args) && $exp->isEligible()) {
                 return $exp;
             }
         }
@@ -194,16 +189,6 @@ class ExpectationDirector
     public function getExpectations()
     {
         return $this->_expectations;
-    }
-
-    /**
-     * Return all expectations assigned to this director
-     *
-     * @return array
-     */
-    public function getDefaultExpectations()
-    {
-        return $this->_defaults;
     }
 
     /**
