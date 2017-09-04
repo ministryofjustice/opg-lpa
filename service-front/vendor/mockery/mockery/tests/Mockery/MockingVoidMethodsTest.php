@@ -15,7 +15,7 @@
  * @category   Mockery
  * @package    Mockery
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2010 Pádraic Brady (http://blog.astrumfutura.com)
+ * @copyright  Copyright (c) 2010-2014 Pádraic Brady (http://blog.astrumfutura.com)
  * @license    http://github.com/padraic/mockery/blob/master/LICENSE New BSD License
  */
 
@@ -28,26 +28,29 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
  */
 class MockingVoidMethodsTest extends MockeryTestCase
 {
-    protected function setUp()
+    public function setup()
     {
-        require_once __DIR__."/Fixtures/MethodWithVoidReturnType.php";
+        require_once __DIR__ . '/Fixtures/VoidMethod.php';
+        $this->container = new \Mockery\Container;
     }
 
-
-    /** @test */
-    public function itShouldSuccessfullyBuildTheMock()
+    public function teardown()
     {
-        $mock = mock("test\Mockery\Fixtures\MethodWithVoidReturnType");
-
-        $this->assertTrue($mock instanceof \test\Mockery\Fixtures\MethodWithVoidReturnType);
+        $this->container->mockery_close();
     }
 
     /** @test */
-    public function it_can_stub_and_mock_void_methods()
+    public function shouldAllowMockingVoidMethods()
     {
-        $mock = mock("test\Mockery\Fixtures\MethodWithVoidReturnType");
+        $this->expectOutputString('1');
 
-        $mock->shouldReceive("foo");
+        $mock = $this->container->mock('test\Mockery\Fixtures\VoidMethod');
+        $mock->shouldReceive("foo")->andReturnUsing(
+            function () {
+                echo 1;
+            }
+        );
+
         $mock->foo();
     }
 }

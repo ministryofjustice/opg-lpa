@@ -15,7 +15,7 @@
  * @category   Mockery
  * @package    Mockery
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2010 Pádraic Brady (http://blog.astrumfutura.com)
+ * @copyright  Copyright (c) 2010-2014 Pádraic Brady (http://blog.astrumfutura.com)
  * @license    http://github.com/padraic/mockery/blob/master/LICENSE New BSD License
  */
 
@@ -24,43 +24,62 @@
  */
 error_reporting(E_ALL);
 
-function isAbsolutePath($path)
-{
-    $windowsPattern = '~^[A-Z]:[\\/]~i';
-    return ($path[0] === DIRECTORY_SEPARATOR) || (preg_match($windowsPattern, $path) === 1);
-}
-
+/*
+ * Determine the root, library, and tests directories of the framework
+ * distribution.
+ */
 $root    = realpath(dirname(dirname(__FILE__)));
-$composerVendorDirectory = getenv("COMPOSER_VENDOR_DIR") ?: "vendor";
-
-if (!isAbsolutePath($composerVendorDirectory)) {
-    $composerVendorDirectory = $root . DIRECTORY_SEPARATOR . $composerVendorDirectory;
-}
+$library = "$root/library";
+$tests   = "$root/tests";
 
 /**
- * Check that composer installation was done
+ * Check that --dev composer installation was done
  */
-$autoloadPath = $composerVendorDirectory . DIRECTORY_SEPARATOR . 'autoload.php';
-if (!file_exists($autoloadPath)) {
+if (!file_exists($root . '/vendor/autoload.php')) {
     throw new Exception(
-        'Please run "php composer.phar install" in root directory '
+        'Please run "php composer.phar install --dev" in root directory '
         . 'to setup unit test dependencies before running the tests'
     );
 }
 
-require_once $autoloadPath;
+/*
+ * Prepend the Mutateme library/ and tests/ directories to the
+ * include_path. This allows the tests to run out of the box and helps prevent
+ * loading other copies of the code and tests that would supercede
+ * this copy.
+ */
+$path = array(
+    $library, // required for `testCallingRegisterRegistersSelfAsSplAutoloaderFunction`
+    get_include_path(),
+);
+set_include_path(implode(PATH_SEPARATOR, $path));
 
-$hamcrestRelativePath = 'hamcrest/hamcrest-php/hamcrest/Hamcrest.php';
-if (DIRECTORY_SEPARATOR !== '/') {
-    $hamcrestRelativePath = str_replace('/', DIRECTORY_SEPARATOR, $hamcrestRelativePath);
+require_once "$root/vendor/hamcrest/hamcrest-php/hamcrest/Hamcrest.php";
+
+if (defined('TESTS_GENERATE_REPORT') && TESTS_GENERATE_REPORT === true &&
+    version_compare(PHPUnit_Runner_Version::id(), '3.1.6', '>=')) {
+
+    /*
+     * Add Mutateme library/ directory to the PHPUnit code coverage
+     * whitelist. This has the effect that only production code source files
+     * appear in the code coverage report and that all production code source
+     * files, even those that are not covered by a test yet, are processed.
+     */
+    PHPUnit_Util_Filter::addDirectoryToWhitelist($library);
+
+    /*
+     * Omit from code coverage reports the contents of the tests directory
+     */
+    foreach (array('.php', '.phtml', '.csv', '.inc') as $suffix) {
+        PHPUnit_Util_Filter::addDirectoryToFilter($tests, $suffix);
+    }
+    PHPUnit_Util_Filter::addDirectoryToFilter(PEAR_INSTALL_DIR);
+    PHPUnit_Util_Filter::addDirectoryToFilter(PHP_LIBDIR);
 }
-$hamcrestPath = $composerVendorDirectory . DIRECTORY_SEPARATOR . $hamcrestRelativePath;
 
-require_once $hamcrestPath;
-
-Mockery::globalHelpers();
+require __DIR__.'/../vendor/autoload.php';
 
 /*
  * Unset global variables that are no longer needed.
  */
-unset($root, $autoloadPath, $hamcrestPath, $composerVendorDirectory);
+unset($root, $library, $tests, $path);

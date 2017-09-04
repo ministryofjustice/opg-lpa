@@ -15,7 +15,7 @@
  * @category   Mockery
  * @package    Mockery
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2010 Pádraic Brady (http://blog.astrumfutura.com)
+ * @copyright  Copyright (c) 2010-2014 Pádraic Brady (http://blog.astrumfutura.com)
  * @license    http://github.com/padraic/mockery/blob/master/LICENSE New BSD License
  */
 
@@ -23,17 +23,18 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class HamcrestExpectationTest extends MockeryTestCase
 {
+
     public function setUp()
     {
-        parent::setUp();
-        $this->mock = mock('foo');
+        $this->container = new \Mockery\Container(\Mockery::getDefaultGenerator(), \Mockery::getDefaultLoader());
+        $this->mock = $this->container->mock('foo');
     }
 
 
     public function tearDown()
     {
         \Mockery::getConfiguration()->allowMockingNonExistentMethods(true);
-        parent::tearDown();
+        $this->container->mockery_close();
     }
 
     /** Just a quickie roundup of a few Hamcrest matchers to check nothing obvious out of place **/
@@ -42,12 +43,14 @@ class HamcrestExpectationTest extends MockeryTestCase
     {
         $this->mock->shouldReceive('foo')->with(anything())->once();
         $this->mock->foo(2);
+        $this->container->mockery_verify();
     }
 
     public function testGreaterThanConstraintMatchesArgument()
     {
         $this->mock->shouldReceive('foo')->with(greaterThan(1))->once();
         $this->mock->foo(2);
+        $this->container->mockery_verify();
     }
 
     /**
@@ -55,8 +58,8 @@ class HamcrestExpectationTest extends MockeryTestCase
      */
     public function testGreaterThanConstraintNotMatchesArgument()
     {
-        $this->mock->shouldReceive('foo')->with(greaterThan(1));
+        $this->mock->shouldReceive('foo')->with(greaterThan(1))->once();
         $this->mock->foo(1);
-        Mockery::close();
+        $this->container->mockery_verify();
     }
 }

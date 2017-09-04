@@ -6,8 +6,8 @@ PHPUnit Integration
 
 Mockery was designed as a simple-to-use *standalone* mock object framework, so
 its need for integration with any testing framework is entirely optional.  To
-integrate Mockery, we need to define a ``tearDown()`` method for our tests
-containing the following (we may use a shorter ``\Mockery`` namespace
+integrate Mockery, you just need to define a ``tearDown()`` method for your
+tests containing the following (you may use a shorter ``\Mockery`` namespace
 alias):
 
 .. code-block:: php
@@ -17,9 +17,9 @@ alias):
     }
 
 This static call cleans up the Mockery container used by the current test, and
-run any verification tasks needed for our expectations.
+run any verification tasks needed for your expectations.
 
-For some added brevity when it comes to using Mockery, we can also explicitly
+For some added brevity when it comes to using Mockery, you can also explicitly
 use the Mockery namespace with a shorter alias. For example:
 
 .. code-block:: php
@@ -40,9 +40,9 @@ use the Mockery namespace with a shorter alias. For example:
         }
     }
 
-Mockery ships with an autoloader so we don't need to litter our tests with
-``require_once()`` calls. To use it, ensure Mockery is on our
-``include_path`` and add the following to our test suite's ``Bootstrap.php``
+Mockery ships with an autoloader so you don't need to litter your tests with
+``require_once()`` calls. To use it, ensure Mockery is on your
+``include_path`` and add the following to your test suite's ``Bootstrap.php``
 or ``TestHelper.php`` file:
 
 .. code-block:: php
@@ -53,8 +53,8 @@ or ``TestHelper.php`` file:
     $loader = new \Mockery\Loader;
     $loader->register();
 
-If we are using Composer, we can simplify this to including the Composer
-generated autoloader file:
+If you are using Composer, you can simplify this to just including the
+Composer generated autoloader file:
 
 .. code-block:: php
 
@@ -67,31 +67,22 @@ generated autoloader file:
     the file name is updated for all your projects.)
 
 To integrate Mockery into PHPUnit and avoid having to call the close method
-and have Mockery remove itself from code coverage reports, use this in a test
+and have Mockery remove itself from code coverage reports, use this in you
 suite:
 
 .. code-block:: php
 
-    class MyTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
-    {
+    // Create Suite
+    $suite = new PHPUnit_Framework_TestSuite();
 
-    }
+    // Create a result listener or add it
+    $result = new PHPUnit_Framework_TestResult();
+    $result->addListener(new \Mockery\Adapter\Phpunit\TestListener());
 
-An alternative is to use the supplied trait:
+    // Run the tests.
+    $suite->run($result);
 
-.. code-block:: php
-
-    class MyTest extends \PHPUnit\Framework\TestCase
-    {
-        use \Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-
-    }
-
-Mockery provides a PHPUnit listener that makes tests fail if
-``Mockery::close()`` has not been called. It can help identify tests where
-we've forgotten to include the trait or extend the ``MockeryTestCase``.
-
-If we are using PHPUnit's XML configuration approach, we can include the
+If you are using PHPUnit's XML configuration approach, you can include the
 following to load the ``TestListener``:
 
 .. code-block:: xml
@@ -101,35 +92,19 @@ following to load the ``TestListener``:
     </listeners>
 
 Make sure Composer's or Mockery's autoloader is present in the bootstrap file
-or we will need to also define a "file" attribute pointing to the file of the
-``TestListener`` class.
-
-If we are creating the test suite programmatically we may add the listener
-like this:
-
-.. code-block:: php
-
-    // Create the suite.
-    $suite = new PHPUnit_Framework_TestSuite();
-
-    // Create the listener and add it to the suite.
-    $result = new PHPUnit_Framework_TestResult();
-    $result->addListener(new \Mockery\Adapter\Phpunit\TestListener());
-
-    // Run the tests.
-    $suite->run($result);
+or you will need to also define a "file" attribute pointing to the file of the
+above ``TestListener`` class.
 
 .. caution::
 
     PHPUnit provides a functionality that allows
-    `tests to run in a separated process <http://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.annotations.runTestsInSeparateProcesses>`_,
+    `tests to run in a separated process <http://phpunit.de/manual/4.0/en/appendixes.annotations.html#appendixes.annotations.runTestsInSeparateProcesses>`_,
     to ensure better isolation. Mockery verifies the mocks expectations using the
     ``Mockery::close()`` method, and provides a PHPUnit listener, that automatically
-    calls this method for us after every test.
+    calls this method for you after every test.
 
-    However, this listener is not called in the right process when using
-    PHPUnit's process isolation, resulting in expectations that might not be
-    respected, but without raising any ``Mockery\Exception``. To avoid this,
-    we cannot rely on the supplied Mockery PHPUnit ``TestListener``, and we need
-    to explicitly call ``Mockery::close``. The easiest solution to include this
-    call in the ``tearDown()`` method, as explained previously.
+    However, this listener is not called in the right process when using PHPUnit's process
+    isolation, resulting in expectations that might not be respected, but without raising
+    any ``Mockery\Exception``. To avoid this, you cannot rely on the supplied Mockery PHPUnit
+    ``TestListener``, and you need to explicitly calls ``Mockery::close``. The easiest solution
+    to include this call in the ``tearDown()`` method, as explained previously.

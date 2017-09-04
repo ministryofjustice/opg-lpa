@@ -50,18 +50,6 @@ framework.
 
 .. include:: reference/map.rst.inc
 
-Mockery
--------
-
-Learn about Mockery's configuration, reserved method names, exceptions...
-
-.. toctree::
-    :hidden:
-
-    mockery/index
-
-.. include:: mockery/map.rst.inc
-
 Cookbook
 --------
 

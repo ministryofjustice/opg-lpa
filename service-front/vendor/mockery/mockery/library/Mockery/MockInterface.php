@@ -14,7 +14,7 @@
  *
  * @category   Mockery
  * @package    Mockery
- * @copyright  Copyright (c) 2010 Pádraic Brady (http://blog.astrumfutura.com)
+ * @copyright  Copyright (c) 2010-2014 Pádraic Brady (http://blog.astrumfutura.com)
  * @license    http://github.com/padraic/mockery/blob/master/LICENSE New BSD License
  */
 
@@ -22,6 +22,7 @@ namespace Mockery;
 
 interface MockInterface
 {
+
     /**
      * Alternative setup method to constructor
      *
@@ -34,19 +35,18 @@ interface MockInterface
     /**
      * Set expected method calls
      *
-     * @param array ...$methodNames one or many methods that are expected to be called in this mock
-     *
-     * @return \Mockery\ExpectationInterface|\Mockery\HigherOrderMessage
+     * @param mixed ...
+     * @return \Mockery\Expectation
      */
-    public function shouldReceive(...$methodNames);
+    public function shouldReceive();
 
     /**
      * Shortcut method for setting an expectation that a method should not be called.
      *
-     * @param array $methodNames one or many methods that are expected not to be called in this mock
-     * @return \Mockery\Expectation|\Mockery\HigherOrderMessage
+     * @param mixed ...
+     * @return \Mockery\Expectation
      */
-    public function shouldNotReceive(...$methodNames);
+    public function shouldNotReceive();
 
     /**
      * Allows additional methods to be mocked that do not explicitly exist on mocked class
@@ -81,16 +81,16 @@ interface MockInterface
     public function makePartial();
 
     /**
-     * @param null|string $method
+     * @param $method
      * @param null $args
-     * @return mixed
+     * @return \Mockery\Expectation
      */
     public function shouldHaveReceived($method, $args = null);
 
     /**
-     * @param null|string $method
+     * @param $method
      * @param null $args
-     * @return mixed
+     * @return null
      */
     public function shouldNotHaveReceived($method, $args = null);
 
@@ -103,6 +103,20 @@ interface MockInterface
      * @return self
      */
     public function byDefault();
+
+    /**
+     * Capture calls to this mock and check against expectations
+     *
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     */
+        /**
+         * Unfortunately we need to allow type hinting agnostic __call()
+         * definitions since any interface/class being mocked can go either
+         * way.
+         */
+    //public function __call($method, array $args);
 
     /**
      * Iterate across all expectation directors and validate each
