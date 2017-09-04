@@ -125,9 +125,9 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         $this->logger->shouldReceive('info')->withArgs(['Request to ApplicationTest\Controller\TestableAbstractLpaController', $this->userIdentity->toArray()])->once();
         $this->userDetailsSession->user = $this->user;
         $routeMatch->shouldReceive('getParam')->withArgs(['action', 'not-found'])->andReturn('index')->once();
-        $event->shouldReceive('setResult')->withArgs(function ($actionResponse) {
+        $event->shouldReceive('setResult')/*->withArgs(function ($actionResponse) {
             return $actionResponse instanceof ViewModel;
-        })->once();
+        })*/->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->onDispatch($event);
