@@ -83,6 +83,7 @@ pipeline {
         stage('functional tests') {
             steps {
                 sh '''
+                    docker-compose down
                     docker-compose up -d
                     docker run -i --net=host --rm --user `id -u` -v $(pwd)/module/Application/tests/functional:/mnt/test registry.service.opg.digital/opguk/casperjs /mnt/test/start.sh 'tests/'
                     docker-compose down
