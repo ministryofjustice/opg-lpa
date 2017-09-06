@@ -17,7 +17,7 @@ pipeline {
                         . venv/bin/activate
                         pip install git+https://github.com/ministryofjustice/semvertag.git@1.1.0
                         git fetch --tags
-                        semvertag bump patch >> semvertag.txt
+                        semvertag bump patch $STAGEARG >> semvertag.txt
                     '''
                 }
                 script {
