@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  pdf:
+    container_name: pdf
+    build: .
+    env_file:
+      - env/pdf.env
+    volumes:
+      - .:/app
