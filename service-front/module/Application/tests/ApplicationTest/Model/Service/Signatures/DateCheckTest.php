@@ -172,7 +172,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
 
         $this->dateService->shouldReceive('getToday')->andReturn(new DateTime('2015-01-18'))->once();
 
-        $this->assertEquals('No sign date can be in the future.', DateCheck::checkDates($dates, $this->dateService));
+        $this->assertEquals('No signed date can be in the future.', DateCheck::checkDates($dates, $this->dateService));
     }
 
     /**
