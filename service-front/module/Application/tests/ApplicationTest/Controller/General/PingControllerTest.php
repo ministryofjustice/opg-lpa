@@ -100,15 +100,6 @@ class PingControllerTest extends AbstractControllerTest
         $this->assertEquals($this->checkResultOk, $result->getVariable('status'));
     }
 
-    public function testElbActionSuccess()
-    {
-        $result = $this->controller->elbAction();
-
-        $this->assertInstanceOf(Response::class, $result);
-        $this->assertEquals(200, $result->getStatusCode());
-        $this->assertEquals('Happy face', $result->getContent());
-    }
-
     public function testJsonAction()
     {
         $this->status->shouldReceive('check')->andReturn($this->checkResultOk)->once();
