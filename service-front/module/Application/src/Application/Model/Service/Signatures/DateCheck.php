@@ -80,7 +80,7 @@ class DateCheck implements ServiceLocatorAwareInterface
                 $timestamp = $timestamp->getTimestamp();
             }
             if ($timestamp > $today) {
-                return 'No signed date can be in the future.';
+                return 'No signature date can be in the future.';
             }
         }
 
