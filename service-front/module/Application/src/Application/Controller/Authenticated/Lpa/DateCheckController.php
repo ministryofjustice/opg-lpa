@@ -50,11 +50,21 @@ class DateCheckController extends AbstractLpaController
                     }
                 }
 
+                //  Extract the applicant dates from the post data
+                $applicantSignatureDates = [];
+
+                foreach ($data as $name => $date) {
+                    if (preg_match('/sign-date-applicant-\d/', $name)) {
+                        $applicantSignatureDates[] = $date;
+                    }
+                }
+
                 $result = DateCheck::checkDates([
                     'donor'                 => $this->dateArrayToTime($data['sign-date-donor']),
                     'donor-life-sustaining' => isset($data['sign-date-donor-life-sustaining']) ? $this->dateArrayToTime($data['sign-date-donor-life-sustaining']) : null,
                     'certificate-provider'  => $this->dateArrayToTime($data['sign-date-certificate-provider']),
                     'attorneys'             => array_map([$this, 'dateArrayToTime'], $attorneySignatureDates),
+                    'applicants'             => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
                 ]);
 
                 if ($result === true) {
@@ -77,8 +87,30 @@ class DateCheckController extends AbstractLpaController
             }
         }
 
+        $applicants = [];
+        if ($lpa->document->whoIsRegistering === 'donor') {
+            $applicants[0] = [
+                'name' => $lpa->document->donor->name,
+                'isHuman' => true,
+            ];
+        } elseif (is_array($lpa->document->whoIsRegistering)) {
+            //Applicant is one or more primary attorneys
+            foreach ($lpa->document->whoIsRegistering as $id) {
+                foreach ($lpa->document->primaryAttorneys as $primaryAttorney) {
+                    if ($id == $primaryAttorney->id) {
+                        $applicants[] = [
+                            'name' => $primaryAttorney->name,
+                            'isHuman' => isset($primaryAttorney->dob),
+                        ];
+                        break;
+                    }
+                }
+            }
+        }
+
         $viewModel->form = $form;
         $viewModel->returnRoute = $returnRoute;
+        $viewModel->applicants = $applicants;
 
         return $viewModel;
     }
