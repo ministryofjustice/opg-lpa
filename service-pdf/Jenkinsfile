@@ -137,12 +137,12 @@ pipeline {
             }
         }
 
-        stage('Tag repo with build tag') {
-            steps {
-                sh '''
-                  semvertag tag ${NEWTAG}
-                '''
-            }
-        }
+        //stage('Tag repo with build tag') {
+        //    steps {
+        //        sh '''
+        //          semvertag tag ${NEWTAG}
+        //        '''
+        //    }
+        //}
     }
 }
