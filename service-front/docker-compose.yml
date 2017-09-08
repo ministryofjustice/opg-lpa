@@ -2,7 +2,6 @@ version: '2'
 
 services:
   front:
-    container_name: front
     build: .
     ports:
       - 80:80

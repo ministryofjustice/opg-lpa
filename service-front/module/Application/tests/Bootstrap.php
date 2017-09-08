@@ -9,7 +9,7 @@ use Zend\ServiceManager\ServiceManager;
 use RuntimeException;
 
 date_default_timezone_set('UTC');
-error_reporting(E_ALL | E_STRICT);
+error_reporting(E_ALL ^ E_USER_DEPRECATED);
 chdir(__DIR__);
 
 /**
@@ -119,3 +119,4 @@ Bootstrap::init();
 Bootstrap::chroot();
 
 require __DIR__ . '/../../../vendor/ministryofjustice/opg-lpa-datamodels/tests/OpgTest/Lpa/DataModel/FixturesData.php';
+require __DIR__ . '/ApplicationTest/ControllerFactory/NonDispatchableController.php';

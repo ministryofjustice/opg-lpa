@@ -46,11 +46,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                 'deleteRoute'   => $this->url()->fromRoute($currentRouteName . '/delete', ['lpa-id' => $lpa->id, 'idx' => $idx]),
             ];
 
-            if ($attorney instanceof Human) {
-                $params['attorney']['name'] = $attorney->name;
-            } else {
-                $params['attorney']['name'] = $attorney->name;
-            }
+            $params['attorney']['name'] = $attorney->name;
 
             $attorneysParams[] = $params;
         }

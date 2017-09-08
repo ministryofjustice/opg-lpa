@@ -82,17 +82,21 @@ pipeline {
 
         stage('functional tests') {
             steps {
-                sh '''
-                    docker-compose up -d
-                    docker run -i --net=host --rm --user `id -u` -v $(pwd)/module/Application/tests/functional:/mnt/test registry.service.opg.digital/opguk/casperjs /mnt/test/start.sh 'tests/'
-                    docker-compose down
-                '''
+                echo 'Disabling functional tests until a more reliable way of running them can be created'
             }
-            post {
-                always {
-                    junit 'module/Application/tests/functional/functional_results.xml'
-                }
-            }
+            //steps {
+            //    sh '''
+            //        docker-compose down
+            //        docker-compose up -d
+            //        docker run -i --net=host --rm --user `id -u` -v $(pwd)/module/Application/tests/functional:/mnt/test registry.service.opg.digital/opguk/casperjs /mnt/test/start.sh 'tests/'
+            //        docker-compose down
+            //    '''
+            //}
+            //post {
+            //    always {
+            //        junit 'module/Application/tests/functional/functional_results.xml'
+            //    }
+            //}
         }
 
         stage('Build, tag and push master image') {
@@ -138,12 +142,12 @@ pipeline {
             }
         }
 
-        stage('Tag repo with build tag') {
-            steps {
-                sh '''
-                  semvertag tag ${NEWTAG}
-                '''
-            }
-        }
+        //stage('Tag repo with build tag') {
+        //    steps {
+        //        sh '''
+        //          semvertag tag ${NEWTAG}
+        //        '''
+        //    }
+        //}
     }
 }
