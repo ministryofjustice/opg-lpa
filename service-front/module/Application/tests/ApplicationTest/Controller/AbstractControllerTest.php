@@ -43,6 +43,7 @@ use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Storage\StorageInterface;
 use Zend\Stdlib\ArrayObject;
+use Zend\Stdlib\SplPriorityQueue;
 use Zend\Uri\Uri;
 
 abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
@@ -174,6 +175,8 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
         $this->serviceLocator = Mockery::mock(ServiceLocatorInterface::class);
 
         $this->logger = Mockery::mock(Logger::class);
+        $this->logger->shouldReceive('setWriters')->passthru();
+        $this->logger->setWriters(new SplPriorityQueue());
         $this->serviceLocator->shouldReceive('get')->with('Logger')->andReturn($this->logger);
 
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
