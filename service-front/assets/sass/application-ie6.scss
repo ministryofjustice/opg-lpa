@@ -6,7 +6,8 @@
 
 // GOVUK Elements
 $is-ie: true;
-$ie-version: 8;
+$ie-version: 6;
+$mobile-ie6: false;
 @import "govuk-elements";
 
 // Extensions
