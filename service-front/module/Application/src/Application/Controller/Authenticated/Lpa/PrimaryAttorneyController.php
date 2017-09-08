@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
+use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
@@ -157,7 +158,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 if ($correspondent instanceof Correspondence && $correspondent->who == Correspondence::WHO_ATTORNEY) {
                     //  Compare the appropriate name and address
                     $nameToCompare = ($attorney instanceof TrustCorporation ? $correspondent->company : $correspondent->name);
-                    $updateCorrespondent = ($attorney->name == $nameToCompare && $correspondent->address == $attorney->address);
+                    $updateCorrespondent = ($attorney->name == new Name($nameToCompare->flatten()) && $correspondent->address == $attorney->address);
                 }
 
                 //  Update the attorney with new details and transfer across the ID value
