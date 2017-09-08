@@ -207,10 +207,10 @@ class AuthControllerTest extends AbstractControllerTest
     private function setPreAuthRequestUrl($url)
     {
         $this->sessionManager->shouldReceive('start')->once();
-        $this->storage->shouldReceive('offsetExists')->with('PreAuthRequest')->andReturn(true);
+        $this->storage->shouldReceive('offsetExists')->with('PreAuthRequest')->andReturn(true)->atLeast(1);
         $preAuthRequest = new ArrayObject(['url' => $url]);
-        $this->storage->shouldReceive('offsetGet')->with('PreAuthRequest')->andReturn($preAuthRequest);
-        $this->storage->shouldReceive('getMetadata')->with('PreAuthRequest');
-        $this->storage->shouldReceive('getRequestAccessTime');
+        $this->storage->shouldReceive('offsetGet')->with('PreAuthRequest')->andReturn($preAuthRequest)->atLeast(1);
+        $this->storage->shouldReceive('getMetadata')->with('PreAuthRequest')->atLeast(1);
+        $this->storage->shouldReceive('getRequestAccessTime')->atLeast(1);
     }
 }
