@@ -20,6 +20,8 @@ class PingController extends AbstractBaseController {
      * Endpoint for the AWS ELB.
      * All we're checking is that PHP can be called and a 200 returned.
      */
+    //This method contains calls that can't be mocked so ignoring until this code is refactored
+    // @codeCoverageIgnoreStart
     public function elbAction(){
 
         $response = $this->getResponse();
@@ -32,13 +34,10 @@ class PingController extends AbstractBaseController {
 
         if( !is_link($path) | !is_readable($path) || !is_link($path) || empty(file_get_contents($path)) ){
 
-            //The calls above can't be mocked so ignoring these lines until this code is refactored
-            // @codeCoverageIgnoreStart
             $response->setStatusCode(500);
             $response->setContent('Sad face');
 
         } else {
-            // @codeCoverageIgnoreEnd
 
             $response->setContent('Happy face');
 
@@ -49,6 +48,7 @@ class PingController extends AbstractBaseController {
         return $response;
 
     } // function
+    // @codeCoverageIgnoreEnd
 
     public function jsonAction(){
 
