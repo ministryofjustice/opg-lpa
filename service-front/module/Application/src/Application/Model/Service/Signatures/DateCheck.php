@@ -2,6 +2,8 @@
 
 namespace Application\Model\Service\Signatures;
 
+use Application\Model\Service\Date\DateService;
+use Application\Model\Service\Date\IDateService;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
@@ -22,22 +24,31 @@ class DateCheck implements ServiceLocatorAwareInterface
      *    ]
      *  ];
      *
-     * @param   array   $dates
-     * @return  array|boolean   List of errors or true if no errors
+     * @param   array $dates
+     * @param IDateService $dateService
+     * @return array|bool List of errors or true if no errors
      */
-    public static function checkDates(array $dates)
+    public static function checkDates(array $dates, $dateService = null)
     {
         $donor = $dates['donor'];
         $certificateProvider = $dates['certificate-provider'];
 
+        $allDates = [
+            $donor,
+            $certificateProvider
+        ];
+
         if (isset($dates['donor-life-sustaining'])) {
             $donorLifeSustaining = $dates['donor-life-sustaining'];
+            $allDates[] = $donorLifeSustaining;
         }
 
         $minAttorneyDate = $dates['attorneys'][0];
         $maxAttorneyDate = $dates['attorneys'][0];
+        $allDates[] = $minAttorneyDate;
         for ($i = 1; $i < count($dates['attorneys']); $i++) {
             $timestamp = $dates['attorneys'][$i];
+            $allDates[] = $timestamp;
 
             if ($timestamp < $minAttorneyDate) {
                 $minAttorneyDate = $timestamp;
@@ -50,12 +61,22 @@ class DateCheck implements ServiceLocatorAwareInterface
         $minApplicantDate = $maxAttorneyDate;
         if (isset($dates['applicants'])) {
             $minApplicantDate = $dates['applicants'][0];
+            $allDates[] = $minApplicantDate;
             for ($i = 1; $i < count($dates['applicants']); $i++) {
                 $timestamp = $dates['applicants'][$i];
+                $allDates[] = $timestamp;
 
                 if ($timestamp < $minApplicantDate) {
                     $minApplicantDate = $timestamp;
                 }
+            }
+        }
+
+        $dateService = $dateService ?: new DateService();
+        $today = $dateService->getToday();
+        foreach ($allDates as $date) {
+            if ($date > $today) {
+                return 'No sign date can be in the future.';
             }
         }
 
