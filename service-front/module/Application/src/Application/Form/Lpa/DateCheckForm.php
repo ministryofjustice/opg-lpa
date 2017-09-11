@@ -4,6 +4,7 @@ namespace Application\Form\Lpa;
 
 use Application\Form\AbstractCsrfForm;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 
 class DateCheckForm extends AbstractCsrfForm
 {
@@ -47,6 +48,17 @@ class DateCheckForm extends AbstractCsrfForm
         //  Add a signing date for each replacement attorney
         foreach ($this->lpa->document->replacementAttorneys as $idx => $attorney) {
             $this->addDataCheckFieldset('sign-date-replacement-attorney-' . $idx);
+        }
+
+        //  Add the applicant(s)
+        if ($this->lpa->document->whoIsRegistering === 'donor') {
+            //Applicant is donor
+            $this->addDataCheckFieldset('sign-date-applicant-0');
+        } elseif (is_array($this->lpa->document->whoIsRegistering)) {
+            //Applicant is one or more primary attorneys
+            for ($i = 0; $i < count($this->lpa->document->whoIsRegistering); $i++) {
+                $this->addDataCheckFieldset('sign-date-applicant-' . $i);
+            }
         }
 
         //  Add the submit button

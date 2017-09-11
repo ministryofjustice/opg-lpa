@@ -2,6 +2,9 @@
 
 namespace Application\Model\Service\Signatures;
 
+use Application\Model\Service\Date\DateService;
+use Application\Model\Service\Date\IDateService;
+use DateTime;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
@@ -22,24 +25,62 @@ class DateCheck implements ServiceLocatorAwareInterface
      *    ]
      *  ];
      *
-     * @param   array   $dates
-     * @return  array|boolean   List of errors or true if no errors
+     * @param   array $dates
+     * @param IDateService $dateService
+     * @return array|bool List of errors or true if no errors
      */
-    public static function checkDates(array $dates)
+    public static function checkDates(array $dates, $dateService = null)
     {
         $donor = $dates['donor'];
         $certificateProvider = $dates['certificate-provider'];
 
+        $allTimestamps = [
+            $donor,
+            $certificateProvider
+        ];
+
         if (isset($dates['donor-life-sustaining'])) {
             $donorLifeSustaining = $dates['donor-life-sustaining'];
+            $allTimestamps[] = $donorLifeSustaining;
         }
 
         $minAttorneyDate = $dates['attorneys'][0];
+        $maxAttorneyDate = $dates['attorneys'][0];
+        $allTimestamps[] = $minAttorneyDate;
         for ($i = 1; $i < count($dates['attorneys']); $i++) {
             $timestamp = $dates['attorneys'][$i];
+            $allTimestamps[] = $timestamp;
 
             if ($timestamp < $minAttorneyDate) {
                 $minAttorneyDate = $timestamp;
+            }
+            if ($timestamp > $maxAttorneyDate) {
+                $maxAttorneyDate = $timestamp;
+            }
+        }
+
+        $minApplicantDate = $maxAttorneyDate;
+        if (isset($dates['applicants'])) {
+            $minApplicantDate = $dates['applicants'][0];
+            $allTimestamps[] = $minApplicantDate;
+            for ($i = 1; $i < count($dates['applicants']); $i++) {
+                $timestamp = $dates['applicants'][$i];
+                $allTimestamps[] = $timestamp;
+
+                if ($timestamp < $minApplicantDate) {
+                    $minApplicantDate = $timestamp;
+                }
+            }
+        }
+
+        $dateService = $dateService ?: new DateService();
+        $today = $dateService->getToday()->getTimestamp();
+        foreach ($allTimestamps as $timestamp) {
+            if ($timestamp instanceof DateTime) {
+                $timestamp = $timestamp->getTimestamp();
+            }
+            if ($timestamp > $today) {
+                return 'No signature date can be in the future.';
             }
         }
 
@@ -55,6 +96,14 @@ class DateCheck implements ServiceLocatorAwareInterface
         // CP must be next
         if ($certificateProvider > $minAttorneyDate) {
             return 'The Certificate Provider must sign the LPA before the attorneys.';
+        }
+
+        // Applicants must sign on or after last attorney
+        if ($minApplicantDate < $maxAttorneyDate) {
+            if (count($dates['applicants']) > 1) {
+                return 'The applicants must sign on the same day or after all Section 11\'s have been signed.';
+            }
+            return 'The applicant must sign on the same day or after all Section 11\'s have been signed.';
         }
 
         return true;
