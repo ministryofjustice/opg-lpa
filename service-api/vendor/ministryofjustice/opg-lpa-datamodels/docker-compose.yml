@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  datamodels:
+    container_name: datamodels
+    build: .
+    volumes:
+      - .:/app
