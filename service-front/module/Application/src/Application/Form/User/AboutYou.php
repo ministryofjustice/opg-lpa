@@ -18,6 +18,17 @@ class AboutYou extends AbstractCsrfForm
         $this->add([
             'name' => 'name-title',
             'type' => 'Text',
+            'attributes' => [
+                'data-select-options' => json_encode([
+                    '',
+                    'Mr',
+                    'Mrs',
+                    'Miss',
+                    'Ms',
+                    'Dr',
+                    'Other',
+                ]),
+            ],
         ]);
 
         $this->add([
@@ -76,8 +87,17 @@ class AboutYou extends AbstractCsrfForm
 
         $this->addToInputFilter([
             'name'     => 'name-title',
-            'required' => false,
+            'required' => true,
             'validators' => [
+                [
+                    'name'    => 'NotEmpty',
+                    'break_chain_on_failure' => true,
+                    'options' => [
+                        'messages' => [
+                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
+                        ],
+                    ],
+                ],
                 [
                     'name'    => 'StringLength',
                     'options' => [

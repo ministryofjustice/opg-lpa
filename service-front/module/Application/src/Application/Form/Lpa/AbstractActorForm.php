@@ -13,6 +13,26 @@ abstract class AbstractActorForm extends AbstractLpaForm
      */
     protected $actorModel;
 
+    public function init()
+    {
+        //  If the form has a title field then add the select attributes to be used in a dropdown menu
+        if (isset($this->formElements['name-title'])) {
+            $this->formElements['name-title']['attributes'] = [
+                'data-select-options' => json_encode([
+                    '',
+                    'Mr',
+                    'Mrs',
+                    'Miss',
+                    'Ms',
+                    'Dr',
+                    'Other',
+                ]),
+            ];
+        }
+
+        parent::init();
+    }
+
     /**
      * Validate form input data through model validators
      *
@@ -49,6 +69,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
 
             if (array_key_exists('name', $dataForModel) && ($dataForModel['name'] == null) && $validation->offsetExists('name')) {
                 if (array_key_exists('name-first', $this->data)) {
+                    $validation['name-title'] = $validation['name'];
                     $validation['name-first'] = $validation['name'];
                     $validation['name-last'] = $validation['name'];
                     unset($validation['name']);
