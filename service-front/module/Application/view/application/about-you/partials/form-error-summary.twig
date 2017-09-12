@@ -1,6 +1,9 @@
 {% import "application/macros.twig" as macros %}
 
 {% set form = formErrorTextExchange(form,  {
+    'name-title' : {
+        'cannot-be-empty' : 'Please enter your title'
+    },
     'name-first' : {
         'cannot-be-empty' : 'Please enter your first names'
     },
@@ -16,7 +19,7 @@
     },
     'dob-date-year' : {
         'must-be-between-1866-and-2016-characters' : 'Please enter a year between 1866 and 2016'
-    } 
+    }
 }) %}
 
 {{ macros.formErrorSummary(error,form,'There was a problem submitting your details') }}
