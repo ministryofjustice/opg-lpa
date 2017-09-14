@@ -2,7 +2,6 @@
     "name": "opg-lpa",
     "version": "0.0.1",
     "dependencies": {
-        "jquery": "1.*",
         "govuk_frontend_toolkit": "git://github.com/alphagov/govuk_frontend_toolkit.git#5.1.*",
         "govuk_template": "git://github.com/alphagov/govuk_template.git#0.19.*",
         "govuk_elements": "git://github.com/alphagov/govuk_elements.git#2.2.*",
