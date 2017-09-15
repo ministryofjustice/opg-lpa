@@ -93,9 +93,9 @@ pipeline {
             steps {
                 sh '''
                   . venv/bin/activate
-                  docker build . -t registry.service.opg.digital/opguk/opg-lpa-api:${NEWTAG}
+                  docker build . -t registry.service.opg.digital/opguk/lpa-api:${NEWTAG}
                   semvertag tag ${NEWTAG}
-                  docker push "registry.service.opg.digital/opguk/opg-lpa-api:${NEWTAG}"
+                  docker push "registry.service.opg.digital/opguk/lpa-api:${NEWTAG}"
                 '''
             }
         }
