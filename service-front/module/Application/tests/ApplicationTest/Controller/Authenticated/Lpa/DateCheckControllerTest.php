@@ -28,13 +28,13 @@ class DateCheckControllerTest extends AbstractControllerTest
      */
     private $lpa;
     private $postData = [
-        'sign-date-donor'                 => ['day' => 1, 'month' => 2, 'year' => 2020],
-        'sign-date-donor-life-sustaining' => ['day' => 1, 'month' => 2, 'year' => 2020],
-        'sign-date-attorney-0'  => ['day' => 1, 'month' => 2, 'year' => 2020],
-        'sign-date-attorney-1'  => ['day' => 1, 'month' => 2, 'year' => 2020],
-        'sign-date-replacement-attorney-0'  => ['day' => 1, 'month' => 2, 'year' => 2020],
-        'sign-date-replacement-attorney-1'  => ['day' => 1, 'month' => 2, 'year' => 2020],
-        'sign-date-certificate-provider'  => ['day' => 1, 'month' => 2, 'year' => 2020]
+        'sign-date-donor'                 => ['day' => 1, 'month' => 2, 'year' => 2016],
+        'sign-date-donor-life-sustaining' => ['day' => 1, 'month' => 2, 'year' => 2016],
+        'sign-date-attorney-0'  => ['day' => 1, 'month' => 2, 'year' => 2016],
+        'sign-date-attorney-1'  => ['day' => 1, 'month' => 2, 'year' => 2016],
+        'sign-date-replacement-attorney-0'  => ['day' => 1, 'month' => 2, 'year' => 2016],
+        'sign-date-replacement-attorney-1'  => ['day' => 1, 'month' => 2, 'year' => 2016],
+        'sign-date-certificate-provider'  => ['day' => 1, 'month' => 2, 'year' => 2016]
     ];
 
     public function setUp()
@@ -96,7 +96,7 @@ class DateCheckControllerTest extends AbstractControllerTest
     {
         //Donor must be the first to sign
         $postData = $this->postData;
-        $postData['sign-date-donor']['year'] = 2021;
+        $postData['sign-date-donor']['year'] = 2017;
 
         $this->controller->setLpa($this->lpa);
         $this->params->shouldReceive('fromPost')->with('return-route', null)->andReturn(null)->once();
