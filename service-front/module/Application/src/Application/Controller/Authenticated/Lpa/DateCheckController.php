@@ -88,21 +88,23 @@ class DateCheckController extends AbstractLpaController
         }
 
         $applicants = [];
-        if ($lpa->document->whoIsRegistering === 'donor') {
-            $applicants[0] = [
-                'name' => $lpa->document->donor->name,
-                'isHuman' => true,
-            ];
-        } elseif (is_array($lpa->document->whoIsRegistering)) {
-            //Applicant is one or more primary attorneys
-            foreach ($lpa->document->whoIsRegistering as $id) {
-                foreach ($lpa->document->primaryAttorneys as $primaryAttorney) {
-                    if ($id == $primaryAttorney->id) {
-                        $applicants[] = [
-                            'name' => $primaryAttorney->name,
-                            'isHuman' => isset($primaryAttorney->dob),
-                        ];
-                        break;
+        if ($lpa->completedAt !== null) {
+            if ($lpa->document->whoIsRegistering === 'donor') {
+                $applicants[0] = [
+                    'name' => $lpa->document->donor->name,
+                    'isHuman' => true,
+                ];
+            } elseif (is_array($lpa->document->whoIsRegistering)) {
+                //Applicant is one or more primary attorneys
+                foreach ($lpa->document->whoIsRegistering as $id) {
+                    foreach ($lpa->document->primaryAttorneys as $primaryAttorney) {
+                        if ($id == $primaryAttorney->id) {
+                            $applicants[] = [
+                                'name' => $primaryAttorney->name,
+                                'isHuman' => isset($primaryAttorney->dob),
+                            ];
+                            break;
+                        }
                     }
                 }
             }
