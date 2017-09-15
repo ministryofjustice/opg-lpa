@@ -8,7 +8,10 @@ pipeline {
             steps {
                 script {
                     if (env.BRANCH_NAME != "master") {
-                        env.STAGEARG = "--stage dev"
+                        env.STAGEARG = "--stage ci"
+                    } else {
+                        // this can change to `-dev` tags we we switch over.
+                        env.STAGEARG = "--stage master"
                     }
                 }
                 script {
@@ -99,55 +102,16 @@ pipeline {
             //}
         }
 
-        stage('Build, tag and push master image') {
-            when {
-                branch 'master'
-            }
+        stage('Build, tag, push image') {
             steps {
-                script {
-                    sh '''
-                    docker build . -t registry.service.opg.digital/opguk/opg-lpa-front
-                    docker tag registry.service.opg.digital/opguk/opg-lpa-front \
-                        "registry.service.opg.digital/opguk/opg-lpa-front:${NEWTAG}"
-                    '''
-                }
-                script {
-                    sh '''
-                      . venv/bin/activate
-                      docker push registry.service.opg.digital/opguk/opg-lpa-front
-                      docker push "registry.service.opg.digital/opguk/opg-lpa-front:${NEWTAG}"
-                    '''
-                }
+                sh '''
+                  . venv/bin/activate
+                  docker build . -t registry.service.opg.digital/opguk/opg-lpa-front:${NEWTAG}
+                  semvertag tag ${NEWTAG}
+                  docker push "registry.service.opg.digital/opguk/opg-lpa-front:${NEWTAG}"
+                '''
             }
         }
 
-        stage('Build, tag and push non-master image') {
-            when{
-                not {
-                    branch 'master'
-                }
-            }
-            steps {
-                script {
-                    sh '''
-                    docker build . -t "registry.service.opg.digital/opguk/opg-lpa-front:${NEWTAG}"
-                    '''
-                }
-                script {
-                    sh '''
-                      . venv/bin/activate
-                      docker push "registry.service.opg.digital/opguk/opg-lpa-front:${NEWTAG}"
-                    '''
-                }
-            }
-        }
-
-        //stage('Tag repo with build tag') {
-        //    steps {
-        //        sh '''
-        //          semvertag tag ${NEWTAG}
-        //        '''
-        //    }
-        //}
     }
 }
