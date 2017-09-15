@@ -60,7 +60,7 @@ class DateCheck implements ServiceLocatorAwareInterface
         }
 
         $minApplicantDate = $maxAttorneyDate;
-        if (isset($dates['applicants'])) {
+        if (isset($dates['applicants']) && count($dates['applicants']) > 0) {
             $minApplicantDate = $dates['applicants'][0];
             $allTimestamps[] = $minApplicantDate;
             for ($i = 1; $i < count($dates['applicants']); $i++) {
