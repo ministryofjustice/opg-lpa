@@ -370,65 +370,61 @@
 
     {% endfor %}
 
-    {% if lpa.completedAt is not empty %}
+    {% for idx, applicant in applicants %}
 
-        {% for idx, applicant in applicants %}
+        {% set element = form.get('sign-date-applicant-' ~ idx) %}
+        {% set elementDay = element.get('day') %}
+        {% set elementMonth = element.get('month') %}
+        {% set elementYear = element.get('year') %}
 
-            {% set element = form.get('sign-date-applicant-' ~ idx) %}
-            {% set elementDay = element.get('day') %}
-            {% set elementMonth = element.get('month') %}
-            {% set elementYear = element.get('year') %}
+        {{ elementDay.setAttributes({
+            class: 'form-control'
+        }) ? '' }}
+        {{ elementMonth.setAttributes({
+            class: 'form-control'
+        }) ? '' }}
+        {{ elementYear.setAttributes({
+            class: 'form-control'
+        }) ? '' }}
 
-            {{ elementDay.setAttributes({
-                class: 'form-control'
-            }) ? '' }}
-            {{ elementMonth.setAttributes({
-                class: 'form-control'
-            }) ? '' }}
-            {{ elementYear.setAttributes({
-                class: 'form-control'
-            }) ? '' }}
+        <div class="date-check-person person person--full">
+            <h3 class="person-name heading-small flush--ends">{{ applicant['name'] }} (applicant)</h3>
+            <div class="person-address flush--ends">
+                <div class="dob-element form-date {{ element.getMessages|length >0 ? 'error'}}">
+                    {{ formElementErrorsV2(elementDay) }}
+                    {{ formElementErrorsV2(elementMonth) }}
+                    {{ formElementErrorsV2(elementYear) }}
+                    {{ formElementErrorsV2(element) }}
 
-            <div class="date-check-person person person--full">
-                <h3 class="person-name heading-small flush--ends">{{ applicant['name'] }} (applicant)</h3>
-                <div class="person-address flush--ends">
-                    <div class="dob-element form-date {{ element.getMessages|length >0 ? 'error'}}">
-                        {{ formElementErrorsV2(elementDay) }}
-                        {{ formElementErrorsV2(elementMonth) }}
-                        {{ formElementErrorsV2(elementYear) }}
-                        {{ formElementErrorsV2(element) }}
+                    <p>
+                        {% if applicant['isHuman'] %}
+                            This person signed Section 15 of the LPA on
+                        {% else %}
+                            This corporation signed Section 15 of the LPA on
+                        {% endif %}
+                    </p>
 
-                        <p>
-                            {% if applicant['isHuman'] %}
-                                This person signed Section 15 of the LPA on
-                            {% else %}
-                                This corporation signed Section 15 of the LPA on
-                            {% endif %}
-                        </p>
+                    <div id="{{ element.getAttribute('id') }}" class="date-check-dates">
+                        <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'error'}}">
+                            <label class="form-label" for="{{ elementDay.getAttribute('id') }}">Day</label>
+                            {{ formElement(elementDay) }}
+                        </div>
 
-                        <div id="{{ element.getAttribute('id') }}" class="date-check-dates">
-                            <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'error'}}">
-                                <label class="form-label" for="{{ elementDay.getAttribute('id') }}">Day</label>
-                                {{ formElement(elementDay) }}
-                            </div>
+                        <div class="form-group form-group-month {{ element.getMessages|length >0 ? 'error'}}">
+                            <label class="form-label" for="{{ elementMonth.getAttribute('id') }}">Month</label>
+                            {{ formElement(elementMonth) }}
+                        </div>
 
-                            <div class="form-group form-group-month {{ element.getMessages|length >0 ? 'error'}}">
-                                <label class="form-label" for="{{ elementMonth.getAttribute('id') }}">Month</label>
-                                {{ formElement(elementMonth) }}
-                            </div>
-
-                            <div class="form-group form-group-year {{ element.getMessages|length >0 ? 'error'}}">
-                                <label class="form-label" for="{{ elementYear.getAttribute('id') }}">Year</label>
-                                {{ formElement(elementYear) }}
-                            </div>
+                        <div class="form-group form-group-year {{ element.getMessages|length >0 ? 'error'}}">
+                            <label class="form-label" for="{{ elementYear.getAttribute('id') }}">Year</label>
+                            {{ formElement(elementYear) }}
                         </div>
                     </div>
                 </div>
             </div>
-            
-        {% endfor %}
+        </div>
 
-    {% endif %}
+    {% endfor %}
 
     <div class="divorced">
         <input type="submit" name="save" value="Check dates" class="button">
