@@ -45,6 +45,7 @@ class DonorFormTest extends \PHPUnit_Framework_TestCase
     public function testValidateByModelOK()
     {
         $this->form->setData([
+            'name-title'       => 'Mr',
             'name-first'       => 'first',
             'name-last'        => 'last',
             'email-address'    => '',
@@ -97,6 +98,9 @@ class DonorFormTest extends \PHPUnit_Framework_TestCase
             ],
             'canSign' => [
                 0 => 'expected-type:bool'
+            ],
+            'name-title' => [
+                0 => 'cannot-be-blank'
             ],
         ], $this->form->getMessages());
     }
