@@ -51,18 +51,14 @@ class ForgotPasswordController extends AbstractBaseController
 
                 $result = $this->getServiceLocator()->get('PasswordReset')->requestPasswordResetEmail( $form->getData()['email'], $fpCallback, $activateCallback );
 
-                if( $result === true || $result == 'account-not-activated' ) {
-                    
-                      $viewParams = [
-                          'email' => $form->getData()['email'],
-                          'accountNotActivated' => ($result === 'account-not-activated'),
-                      ];
-                      
-                      return (new ViewModel( $viewParams ))->setTemplate('application/forgot-password/email-sent');
+                //We do not want to confirm or deny the existence of a registered user so do not check the result.
+                //Exceptions would still be propagated
+                $viewParams = [
+                    'email' => $form->getData()['email'],
+                    'accountNotActivated' => ($result === 'account-not-activated'),
+                ];
 
-                }
-
-                $error = $result;
+                return (new ViewModel( $viewParams ))->setTemplate('application/forgot-password/email-sent');
 
             } // if
 

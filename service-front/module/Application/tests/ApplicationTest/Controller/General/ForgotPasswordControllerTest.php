@@ -110,7 +110,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
         $this->resetPasswordEmailForm->shouldReceive('setData')->with($this->postData)->once();
         $this->resetPasswordEmailForm->shouldReceive('isValid')->andReturn(true)->once();
-        $this->resetPasswordEmailForm->shouldReceive('getData')->andReturn($this->postData)->once();
+        $this->resetPasswordEmailForm->shouldReceive('getData')->andReturn($this->postData)->twice();
 
         $this->passwordReset->shouldReceive('requestPasswordResetEmail')->andReturn('Password reset failed');
 
@@ -118,9 +118,9 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->resetPasswordEmailForm, $result->getVariable('form'));
-        $this->assertEquals('Password reset failed', $result->getVariable('error'));
+        $this->assertEquals('application/forgot-password/email-sent', $result->getTemplate());
+        $this->assertEquals($this->postData['email'], $result->getVariable('email'));
+        $this->assertEquals(false, $result->getVariable('accountNotActivated'));
     }
 
     public function testIndexActionPostAccountNotActivated()
