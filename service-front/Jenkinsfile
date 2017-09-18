@@ -85,21 +85,17 @@ pipeline {
 
         stage('functional tests') {
             steps {
-                echo 'Disabling functional tests until a more reliable way of running them can be created'
+                sh '''
+                    docker-compose down --remove-orphans
+                    docker-compose run --rm --user `id -u` tests
+                    docker-compose down
+                '''
             }
-            //steps {
-            //    sh '''
-            //        docker-compose down
-            //        docker-compose up -d
-            //        docker run -i --net=host --rm --user `id -u` -v $(pwd)/module/Application/tests/functional:/mnt/test registry.service.opg.digital/opguk/casperjs /mnt/test/start.sh 'tests/'
-            //        docker-compose down
-            //    '''
-            //}
-            //post {
-            //    always {
-            //        junit 'module/Application/tests/functional/functional_results.xml'
-            //    }
-            //}
+            post {
+                always {
+                    junit 'module/Application/tests/functional/functional_results.xml'
+                }
+            }
         }
 
         stage('Build, tag, push image') {
