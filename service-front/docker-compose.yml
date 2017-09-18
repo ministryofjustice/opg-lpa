@@ -10,3 +10,13 @@ services:
       - ./env/front.env
     volumes:
       - .:/app
+
+  tests:
+    image: registry.service.opg.digital/opguk/casperjs:latest
+    environment:
+      - BASE_DOMAIN=front
+    volumes:
+      - ./module/Application/tests/functional:/mnt/test
+    command: sh -c "/mnt/test/start.sh 'tests/'"
+    depends_on:
+      - front
