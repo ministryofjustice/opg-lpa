@@ -1,6 +1,6 @@
 var system = require('system');
 
-var baseDomain = 'localhost'
+var baseDomain = system.env["BASE_DOMAIN"];
 
 var basePath = 'https://' + baseDomain;
 
