@@ -14,3 +14,4 @@ assets/bower/*
 public/nocommit/*
 local.php.old
 module/Application/tests/coverage/
+venv
