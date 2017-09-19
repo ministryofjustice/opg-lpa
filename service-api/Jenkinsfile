@@ -100,5 +100,15 @@ pipeline {
             }
         }
 
+        stage('Store tag as artifact') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo 'Storing ${env.NEWTAG}'
+                archiveArtifacts artifacts: 'semvertag.txt'
+            }
+        }
+
     }
 }
