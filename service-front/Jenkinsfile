@@ -25,6 +25,7 @@ pipeline {
                 }
                 script {
                     env.NEWTAG = readFile('semvertag.txt').trim()
+                    currentBuild.description = "Front:${NEWTAG}"
                 }
                 echo "NEWTAG will be ${env.NEWTAG}"
             }
