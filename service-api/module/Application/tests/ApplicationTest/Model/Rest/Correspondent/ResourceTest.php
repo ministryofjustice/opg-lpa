@@ -71,8 +71,6 @@ class ResourceTest extends AbstractResourceTest
         $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->type);
         $this->assertEquals('Bad Request', $validationError->title);
         $validation = $validationError->validation;
-        $this->assertEquals(4, count($validation));
-        $this->assertTrue(array_key_exists('name', $validation));
         $this->assertTrue(array_key_exists('name/company', $validation));
         $this->assertTrue(array_key_exists('who', $validation));
         $this->assertTrue(array_key_exists('address', $validation));
