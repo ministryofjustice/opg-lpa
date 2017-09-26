@@ -116,7 +116,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
             $dataForModel['phone'] = null;
         }
 
-        if (isset($dataForModel['name']) && is_array($dataForModel['name']) && ($dataForModel['name']['first'] == "") && ($dataForModel['name']['last'] == "")) {
+        if (isset($dataForModel['name']) && is_array($dataForModel['name']) && ($dataForModel['name']['title'] == "") && ($dataForModel['name']['first'] == "") && ($dataForModel['name']['last'] == "")) {
             $dataForModel['name'] = null;
         }
 

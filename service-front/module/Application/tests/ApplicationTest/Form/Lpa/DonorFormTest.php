@@ -66,6 +66,7 @@ class DonorFormTest extends \PHPUnit_Framework_TestCase
     public function testValidateByModelInvalid()
     {
         $this->form->setData([
+            'name-title'       => '',
             'name-first'       => '',
             'name-last'        => '',
             'address-address1' => 'add1',

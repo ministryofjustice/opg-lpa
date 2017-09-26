@@ -12,15 +12,18 @@
 {% set form = formErrorTextExchange(form,  {
     'name-title' : {
         'cannot-be-blank' : 'Please enter the correspondent\'s title',
-        'must-be-less-than-or-equal:5' : 'Title must be five letters or fewer - please abbreviate, if necessary'
+        'must-be-less-than-or-equal:5' : 'Title must be five letters or fewer - please abbreviate, if necessary',
+        'linked-1-cannot-be-null' : 'Please enter the correspondent\'s title or company name'
     },
     'name-first' : {
         'cannot-be-blank' : 'Please enter the correspondent\'s first names',
-        'must-be-less-than-or-equal:53' : 'Correspondent\'s first names can not be longer than 53 characters long'
+        'must-be-less-than-or-equal:53' : 'Correspondent\'s first names can not be longer than 53 characters long',
+        'linked-1-cannot-be-null' : 'Please enter the correspondent\'s first names or company name'
     },
     'name-last' : {
         'cannot-be-blank' : 'Please enter the correspondent\'s last name',
-        'must-be-less-than-or-equal:61' : 'Correspondent\'s last name can not be longer than 61 characters long'
+        'must-be-less-than-or-equal:61' : 'Correspondent\'s last name can not be longer than 61 characters long',
+        'linked-1-cannot-be-null' : 'Please enter the correspondent\'s last name or company name'
     },
     'company' : {
         'linked-1-cannot-be-null' : 'Please enter the correspondent\'s name or company name'
