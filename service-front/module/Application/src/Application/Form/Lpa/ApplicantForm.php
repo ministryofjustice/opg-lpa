@@ -72,7 +72,7 @@ class ApplicantForm extends AbstractMainFlowForm
     {
         $lpaDocument = clone $this->lpa->document;
 
-        if ($this->data['whoIsRegistering'] == 'donor') {
+        if (isset($this->data['whoIsRegistering']) && $this->data['whoIsRegistering'] == 'donor') {
             $lpaDocument->whoIsRegistering = $this->data['whoIsRegistering'];
         } elseif (count($lpaDocument->primaryAttorneys) > 1 && $lpaDocument->primaryAttorneyDecisions->how != PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) {
             if (array_key_exists('attorneyList', $this->data)) {
@@ -82,7 +82,7 @@ class ApplicantForm extends AbstractMainFlowForm
                 // this is when NONE of the attorney checkboxes was ticked.
                 $lpaDocument->whoIsRegistering = [];
             }
-        } else {
+        } elseif (isset($this->data['whoIsRegistering'])) {
             // if lpa has only 1 attorney, or has more than 1 attorney and they make decision jointly, user can only select the donor or all attorneys.
             $lpaDocument->whoIsRegistering = explode(',', $this->data['whoIsRegistering']);
         }
