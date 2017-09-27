@@ -125,7 +125,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                build job: '/lpa/opg-lpa-docker', propagate: false, wait: false
+                build job: '/lpa/opg-lpa-docker/master', propagate: false, wait: false
             }
         }
 
