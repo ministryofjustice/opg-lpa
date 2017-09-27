@@ -82,9 +82,9 @@ class ApplicantForm extends AbstractMainFlowForm
                 // this is when NONE of the attorney checkboxes was ticked.
                 $lpaDocument->whoIsRegistering = [];
             }
-        } elseif (isset($this->data['whoIsRegistering'])) {
+        } else {
             // if lpa has only 1 attorney, or has more than 1 attorney and they make decision jointly, user can only select the donor or all attorneys.
-            $lpaDocument->whoIsRegistering = explode(',', $this->data['whoIsRegistering']);
+            $lpaDocument->whoIsRegistering = (isset($this->data['whoIsRegistering']) ? explode(',', $this->data['whoIsRegistering']) : []);
         }
 
         $validation = $lpaDocument->validate(['whoIsRegistering']);
