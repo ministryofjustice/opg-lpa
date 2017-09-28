@@ -2,6 +2,11 @@ pipeline {
 
     agent { label "!master"} //run on slaves only
 
+    environment {
+        DOCKER_REGISTRY = 'registry.service.opg.digital'
+        IMAGE = 'opguk/lpa-front'
+    }
+
     stages {
 
         stage('lint') {
@@ -92,7 +97,7 @@ pipeline {
                         NEWTAG=$(cat semvertag.txt); semvertag tag ${NEWTAG}
                     '''
                     env.NEWTAG = readFile('semvertag.txt').trim()
-                    currentBuild.description = "Front:${NEWTAG}"
+                    currentBuild.description = "${IMAGE}:${NEWTAG}"
                 }
                 echo "Storing ${env.NEWTAG}"
                 archiveArtifacts artifacts: 'semvertag.txt'
@@ -102,7 +107,7 @@ pipeline {
         stage('build image') {
             steps {
                 sh '''
-                  docker build . -t registry.service.opg.digital/opguk/lpa-front:${NEWTAG}
+                  docker build . -t ${DOCKER_REGISTRY}/${IMAGE}:${NEWTAG}
                 '''
             }
         }
@@ -110,7 +115,7 @@ pipeline {
         stage('push image') {
             steps {
                 sh '''
-                  docker push "registry.service.opg.digital/opguk/lpa-front:${NEWTAG}"
+                  docker push ${DOCKER_REGISTRY}/${IMAGE}:${NEWTAG}
                 '''
             }
         }
