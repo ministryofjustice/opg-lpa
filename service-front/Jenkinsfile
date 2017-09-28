@@ -128,6 +128,15 @@ pipeline {
                 build job: '/lpa/opg-lpa-docker/master', propagate: false, wait: false
             }
         }
-
     }
+
+    post {
+        // Always cleanup docker containers, especially for aborted jobs.
+        always {
+            sh '''
+              docker-compose down --remove-orphans
+            '''
+        }
+    }
+
 }
