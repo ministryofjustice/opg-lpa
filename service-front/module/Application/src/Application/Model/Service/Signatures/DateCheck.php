@@ -37,6 +37,11 @@ class DateCheck implements ServiceLocatorAwareInterface
         $donor = $dates['sign-date-donor'];
         $certificateProvider = $dates['sign-date-certificate-provider'];
 
+        // Donor must be first
+        if ($donor > $certificateProvider) {
+            $errors['sign-date-certificate-provider'][] = 'The donor must be the first person to sign the LPA';
+        }
+
         $allTimestamps = [
             'sign-date-donor'                => $donor,
             'sign-date-certificate-provider' => $certificateProvider
@@ -45,14 +50,18 @@ class DateCheck implements ServiceLocatorAwareInterface
         if (isset($dates['sign-date-donor-life-sustaining'])) {
             $donorLifeSustaining = $dates['sign-date-donor-life-sustaining'];
             $allTimestamps['sign-date-donor-life-sustaining'] = $donorLifeSustaining;
+
+            if ($donor < $donorLifeSustaining) {
+                $errors['sign-date-donor-life-sustaining'][] = 'The donor must sign Section 5 on the same day or before section 9';
+            }
         }
 
         $minAttorneyDate = $dates['sign-date-attorneys'][0];
         $maxAttorneyDate = $dates['sign-date-attorneys'][0];
-        $allTimestamps['sign-date-attorney-0'] = $minAttorneyDate;
-        for ($i = 1; $i < count($dates['sign-date-attorneys']); $i++) {
+        for ($i = 0; $i < count($dates['sign-date-attorneys']); $i++) {
             $timestamp = $dates['sign-date-attorneys'][$i];
-            $allTimestamps['sign-date-attorney-' . $i] = $timestamp;
+            $attorneyKey = 'sign-date-attorney-' . $i;
+            $allTimestamps[$attorneyKey] = $timestamp;
 
             if ($timestamp < $minAttorneyDate) {
                 $minAttorneyDate = $timestamp;
@@ -60,18 +69,32 @@ class DateCheck implements ServiceLocatorAwareInterface
             if ($timestamp > $maxAttorneyDate) {
                 $maxAttorneyDate = $timestamp;
             }
+
+            // Donor must be first
+            if ($donor > $timestamp) {
+                $errors[$attorneyKey][] = 'The donor must be the first person to sign the LPA';
+            }
         }
 
-        $minApplicantDate = $maxAttorneyDate;
-        if (isset($dates['sign-date-applicants']) && count($dates['sign-date-applicants']) > 0) {
-            $minApplicantDate = $dates['sign-date-applicants'][0];
-            $allTimestamps['sign-date-applicant-0'] = $minApplicantDate;
-            for ($i = 1; $i < count($dates['sign-date-applicants']); $i++) {
-                $timestamp = $dates['sign-date-applicants'][$i];
-                $allTimestamps['sign-date-applicant-' . $i] = $timestamp;
+        // CP must be next
+        if ($certificateProvider > $minAttorneyDate) {
+            $errors['sign-date-certificate-provider'][] = 'The Certificate Provider must sign the LPA before the attorneys';
+        }
 
-                if ($timestamp < $minApplicantDate) {
-                    $minApplicantDate = $timestamp;
+        if (isset($dates['sign-date-applicants']) && count($dates['sign-date-applicants']) > 0) {
+            for ($i = 0; $i < count($dates['sign-date-applicants']); $i++) {
+                $timestamp = $dates['sign-date-applicants'][$i];
+                $applicantKey = 'sign-date-applicant-' . $i;
+                $allTimestamps[$applicantKey] = $timestamp;
+
+                // Donor must be first
+                if ($donor > $timestamp) {
+                    $errors[$applicantKey][] = 'The donor must be the first person to sign the LPA';
+                }
+
+                // Applicants must sign on or after last attorney
+                if ($timestamp < $maxAttorneyDate) {
+                    $errors[$applicantKey][] = 'The applicant must sign on the same day or after all Section 11\'s have been signed';
                 }
             }
         }
@@ -84,41 +107,19 @@ class DateCheck implements ServiceLocatorAwareInterface
             }
             if ($timestamp > $today) {
                 if ($timestampKey === 'sign-date-donor') {
-                    $errors[$timestampKey] = 'The donor\'s signature date cannot be in the future';
+                    $errors[$timestampKey][] = 'The donor\'s signature date cannot be in the future';
                 } elseif ($timestampKey === 'sign-date-certificate-provider') {
-                    $errors[$timestampKey] = 'The certificate provider\'s signature date cannot be in the future';
+                    $errors[$timestampKey][] = 'The certificate provider\'s signature date cannot be in the future';
                 } elseif ($timestampKey === 'sign-date-donor-life-sustaining') {
-                    $errors[$timestampKey] = 'The donor\'s signature date cannot be in the future';
+                    $errors[$timestampKey][] = 'The donor\'s signature date cannot be in the future';
                 } elseif (strpos($timestampKey, 'sign-date-attorney-') === 0) {
-                    $errors[$timestampKey] = 'The attorney\'s signature date cannot be in the future';
+                    $errors[$timestampKey][] = 'The attorney\'s signature date cannot be in the future';
                 } elseif (strpos($timestampKey, 'sign-date-applicant-') === 0) {
-                    $errors[$timestampKey] = 'The applicant\'s signature date cannot be in the future';
+                    $errors[$timestampKey][] = 'The applicant\'s signature date cannot be in the future';
                 } else {
                     throw new InvalidArgumentException("timestampKey {$timestampKey} was not recognised");
                 }
             }
-        }
-
-        if (isset($donorLifeSustaining) && $donor < $donorLifeSustaining) {
-            return 'The donor must sign Section 5 on the same day or before section 9.';
-        }
-
-        // Donor must be first
-        if ($donor > $certificateProvider || $donor > $minAttorneyDate) {
-            return 'The donor must be the first person to sign the LPA.';
-        }
-
-        // CP must be next
-        if ($certificateProvider > $minAttorneyDate) {
-            return 'The Certificate Provider must sign the LPA before the attorneys.';
-        }
-
-        // Applicants must sign on or after last attorney
-        if ($minApplicantDate < $maxAttorneyDate) {
-            if (count($dates['sign-date-applicants']) > 1) {
-                return 'The applicants must sign on the same day or after all Section 11\'s have been signed.';
-            }
-            return 'The applicant must sign on the same day or after all Section 11\'s have been signed.';
         }
 
         if (count($errors) > 0) {
