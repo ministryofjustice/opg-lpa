@@ -78,7 +78,7 @@ class DateCheck implements ServiceLocatorAwareInterface
 
         // CP must be next
         if ($certificateProvider > $minAttorneyDate) {
-            $errors['sign-date-certificate-provider'][] = 'The Certificate Provider must sign the LPA before the attorneys';
+            $errors['sign-date-certificate-provider'][] = 'The certificate provider must sign the LPA before the attorneys';
         }
 
         if (isset($dates['sign-date-applicants']) && count($dates['sign-date-applicants']) > 0) {

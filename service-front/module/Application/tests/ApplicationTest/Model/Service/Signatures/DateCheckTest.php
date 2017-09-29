@@ -116,7 +116,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
         $this->assertNotTrue($errors);
 
         $this->assertEquals([
-            'sign-date-certificate-provider' => ['The Certificate Provider must sign the LPA before the attorneys']
+            'sign-date-certificate-provider' => ['The certificate provider must sign the LPA before the attorneys']
         ], $errors);
     }
 
@@ -143,7 +143,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             'sign-date-attorney-1' => ['The donor must be the first person to sign the LPA'],
             'sign-date-certificate-provider' => [
                 'The donor must be the first person to sign the LPA',
-                'The Certificate Provider must sign the LPA before the attorneys'
+                'The certificate provider must sign the LPA before the attorneys'
             ],
             'sign-date-applicant-0' => ['The donor must be the first person to sign the LPA'],
             'sign-date-applicant-1' => ['The donor must be the first person to sign the LPA'],
