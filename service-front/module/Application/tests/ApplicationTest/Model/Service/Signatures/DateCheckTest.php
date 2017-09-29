@@ -32,9 +32,9 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testAllSignedInCorrectOrder()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-16'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-16'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-18'),
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-17'),
@@ -47,14 +47,14 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testAllSignedInCorrectOrderIncludingApplicant()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-16'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-16'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-18'),
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-17'),
             ],
-            'applicants' => [
+            'sign-date-applicants' => [
                 new DateTime('2015-01-18')
             ]
         ];
@@ -62,12 +62,27 @@ class DateCheckTest extends AbstractHttpControllerTestCase
         $this->assertTrue(DateCheck::checkDates($dates));
     }
 
+    public function testDonorSignsOnOrBeforeLifeSustaining()
+    {
+        $dates = [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-16'),
+            'sign-date-donor-life-sustaining' => new DateTime('2015-01-16'),
+            'sign-date-attorneys' => [
+                new DateTime('2015-01-16'),
+                new DateTime('2015-01-17'),
+            ],
+        ];
+
+        $this->assertEquals('The donor must sign Section 5 on the same day or before section 9.', DateCheck::checkDates($dates));
+    }
+
     public function testDonorSignsAfterCertificateProvider()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-12'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-12'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-17'),
             ],
@@ -79,9 +94,9 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testCertificateProviderSignsAfterOneOfTheAttorneys()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-17'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-17'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-18'),
             ],
@@ -93,9 +108,9 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testDonorSignsAfterEveryoneElse()
     {
         $dates = [
-            'donor' => new DateTime('2015-02-14'),
-            'certificate-provider' => new DateTime('2015-01-15'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-02-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-15'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-02-15'),
                 new DateTime('2015-02-18'),
             ],
@@ -107,9 +122,9 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testOneAttorneySignsBeforeEveryoneElse()
     {
         $dates = [
-            'donor' => new DateTime('2015-02-14'),
-            'certificate-provider' => new DateTime('2015-01-17'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-02-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-17'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-06'),
                 new DateTime('2015-01-18'),
             ],
@@ -121,14 +136,14 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testApplicantSignsBeforeLastAttorney()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-16'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-16'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-18'),
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-17'),
             ],
-            'applicants' => [
+            'sign-date-applicants' => [
                 new DateTime('2015-01-17')
             ]
         ];
@@ -139,14 +154,14 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testApplicantsSignBeforeLastAttorney()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-16'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-16'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-18'),
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-17'),
             ],
-            'applicants' => [
+            'sign-date-applicants' => [
                 new DateTime('2015-01-17'),
                 new DateTime('2015-01-18')
             ]
@@ -158,21 +173,33 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testDatesCannotBeInFuture()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-16'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-15'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-16'),
+            'sign-date-donor-life-sustaining' => new DateTime('2015-01-14'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-18'),
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-17'),
             ],
-            'applicants' => [
+            'sign-date-applicants' => [
                 new DateTime('2015-01-19')
             ]
         ];
 
-        $this->dateService->shouldReceive('getToday')->andReturn(new DateTime('2015-01-18'))->once();
+        $this->dateService->shouldReceive('getToday')->andReturn(new DateTime('2015-01-10'))->once();
 
-        $this->assertEquals('No signature date can be in the future.', DateCheck::checkDates($dates, $this->dateService));
+        $errors = DateCheck::checkDates($dates, $this->dateService);
+        $this->assertNotTrue($errors);
+
+        $this->assertEquals([
+            'sign-date-donor' => 'The donor\'s signature date cannot be in the future',
+            'sign-date-certificate-provider' => 'The certificate provider\'s signature date cannot be in the future',
+            'sign-date-donor-life-sustaining' => 'The donor\'s signature date cannot be in the future',
+            'sign-date-attorney-0' => 'The attorney\'s signature date cannot be in the future',
+            'sign-date-attorney-1' => 'The attorney\'s signature date cannot be in the future',
+            'sign-date-attorney-2' => 'The attorney\'s signature date cannot be in the future',
+            'sign-date-applicant-0' => 'The applicant\'s signature date cannot be in the future'
+        ], $errors);
     }
 
     /**
