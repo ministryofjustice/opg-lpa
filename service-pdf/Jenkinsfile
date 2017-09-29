@@ -2,30 +2,12 @@ pipeline {
 
     agent { label "!master"} //run on slaves only
 
-    stages {
+    environment {
+        DOCKER_REGISTRY = 'registry.service.opg.digital'
+        IMAGE = 'opguk/lpa-pdf'
+    }
 
-        stage('initial setup and newtag') {
-            steps {
-                script {
-                    if (env.BRANCH_NAME != "master") {
-                        env.STAGEARG = "--stage dev"
-                    }
-                }
-                script {
-                    sh '''
-                        virtualenv venv
-                        . venv/bin/activate
-                        pip install git+https://github.com/ministryofjustice/semvertag.git@1.1.0
-                        git fetch --tags
-                        semvertag bump patch $STAGEARG >> semvertag.txt
-                    '''
-                }
-                script {
-                    env.NEWTAG = readFile('semvertag.txt').trim()
-                }
-                echo "NEWTAG will be ${env.NEWTAG}"
-            }
-        }
+    stages {
 
         stage('lint') {
             steps {
@@ -93,56 +75,67 @@ pipeline {
                 }
             }
         }
-        
-        stage('Build, tag and push master image') {
+
+        stage('create the tag') {
+            steps {
+                script {
+                    if (env.BRANCH_NAME != "master") {
+                        env.STAGEARG = "--stage ci"
+                    } else {
+                        // this can change to `-dev` tags we we switch over.
+                        env.STAGEARG = "--stage master"
+                    }
+                }
+                script {
+                    sh '''
+                        virtualenv venv
+                        . venv/bin/activate
+                        pip install git+https://github.com/ministryofjustice/semvertag.git@1.1.0
+                        git fetch --tags
+                        semvertag bump patch $STAGEARG >> semvertag.txt
+                        NEWTAG=$(cat semvertag.txt); semvertag tag ${NEWTAG}
+                    '''
+                    env.NEWTAG = readFile('semvertag.txt').trim()
+                    currentBuild.description = "${IMAGE}:${NEWTAG}"
+                }
+                echo "Storing ${env.NEWTAG}"
+                archiveArtifacts artifacts: 'semvertag.txt'
+            }
+        }
+
+        stage('build image') {
+            steps {
+                sh '''
+                  docker build . -t ${DOCKER_REGISTRY}/${IMAGE}:${NEWTAG}
+                '''
+            }
+        }
+
+        stage('push image') {
+            steps {
+                sh '''
+                  docker push ${DOCKER_REGISTRY}/${IMAGE}:${NEWTAG}
+                '''
+            }
+        }
+
+        stage('trigger downstream build') {
             when {
                 branch 'master'
             }
             steps {
-                script {
-                    sh '''
-                    docker build . -t registry.service.opg.digital/opguk/opg-lpa-pdf
-                    docker tag registry.service.opg.digital/opguk/opg-lpa-pdf \
-                        "registry.service.opg.digital/opguk/opg-lpa-pdf:${NEWTAG}"
-                    '''
-                }
-                script {
-                    sh '''
-                      . venv/bin/activate
-                      docker push registry.service.opg.digital/opguk/opg-lpa-pdf
-                      docker push "registry.service.opg.digital/opguk/opg-lpa-pdf:${NEWTAG}"
-                    '''
-                }
+                build job: '/lpa/opg-lpa-docker/master', propagate: false, wait: false
             }
         }
-    
-        stage('Build, tag and push non-master image') {
-            when{
-                not {
-                    branch 'master'
-                }
-            }
-            steps {
-                script {
-                    sh '''
-                    docker build . -t "registry.service.opg.digital/opguk/opg-lpa-pdf:${NEWTAG}"
-                    '''
-                }
-                script {
-                    sh '''
-                      . venv/bin/activate
-                      docker push "registry.service.opg.digital/opguk/opg-lpa-pdf:${NEWTAG}"
-                    '''
-                }
-            }
-        }
-
-        //stage('Tag repo with build tag') {
-        //    steps {
-        //        sh '''
-        //          semvertag tag ${NEWTAG}
-        //        '''
-        //    }
-        //}
     }
+
+    post {
+        // Always cleanup docker containers, especially for aborted jobs.
+        always {
+            sh '''
+              docker-compose down --remove-orphans
+            '''
+        }
+    }
+
 }
