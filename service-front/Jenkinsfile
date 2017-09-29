@@ -65,7 +65,6 @@ pipeline {
         stage('functional tests') {
             steps {
                 sh '''
-                    docker-compose down
                     docker-compose run --rm --user `id -u` tests
                     docker-compose down
                 '''
