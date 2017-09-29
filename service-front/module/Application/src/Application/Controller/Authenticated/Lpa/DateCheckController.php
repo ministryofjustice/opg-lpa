@@ -82,7 +82,7 @@ class DateCheckController extends AbstractLpaController
 
                     return $this->redirect()->toUrl($validUrl);
                 } else {
-                    $viewModel->dateError = $result;
+                    $form->setMessages($result);
                 }
             }
         }
