@@ -338,6 +338,31 @@ class Resource extends AbstractResource
                 'completedAt' => $dateRange
             ], $readPreference);
 
+            $month['contactByEmail'] = $collection->count([
+                'completedAt' => $dateRange,
+                'document.correspondent' => [
+                    '$ne' => null
+                ], 'document.correspondent.email' => [
+                    '$ne' => null
+                ]
+            ], $readPreference);
+
+            $month['contactByPhone'] = $collection->count([
+                'completedAt' => $dateRange,
+                'document.correspondent' => [
+                    '$ne' => null
+                ], 'document.correspondent.phone' => [
+                    '$ne' => null
+                ]
+            ], $readPreference);
+
+            $month['contactByPost'] = $collection->count([
+                'completedAt' => $dateRange,
+                'document.correspondent' => [
+                    '$ne' => null
+                ], 'document.correspondent.contactByPost' => true
+            ], $readPreference);
+
             $month['contactInEnglish'] = $collection->count([
                 'completedAt' => $dateRange,
                 'document.correspondent' => [
