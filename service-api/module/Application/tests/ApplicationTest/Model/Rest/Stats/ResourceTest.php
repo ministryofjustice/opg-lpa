@@ -209,7 +209,7 @@ class ResourceTest extends AbstractResourceTest
         $resourceBuilder->verify();
     }
 
-    public function testFetchWelshLanguage()
+    public function testFetchCorrespondence()
     {
         $lpaCollection = Mockery::mock(MongoCollection::class);
         $lpaCollection->shouldReceive('setReadPreference');
@@ -217,7 +217,7 @@ class ResourceTest extends AbstractResourceTest
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withLpaCollection($lpaCollection)->build();
 
-        $entity = $resource->fetch('welshlanguage');
+        $entity = $resource->fetch('correspondence');
 
         $start = new \DateTime('first day of this month');
         $start->setTime(0, 0, 0);
@@ -229,6 +229,9 @@ class ResourceTest extends AbstractResourceTest
         for ($i = 1; $i <=4; $i++) {
             $expectedStats[date('Y-m', $start->getTimestamp())] = [
                 'completed' => 1,
+                'contactByEmail' => 1,
+                'contactByPhone' => 1,
+                'contactByPost' => 1,
                 'contactInEnglish' => 1,
                 'contactInWelsh' => 1
             ];

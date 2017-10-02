@@ -316,7 +316,7 @@ class Resource extends AbstractResource
             'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
         ];
 
-        $welshLanguageStats = [];
+        $correspondenceStats = [];
 
         $start = new DateTime('first day of this month');
         $start->setTime(0, 0, 0);
@@ -377,13 +377,13 @@ class Resource extends AbstractResource
                 ], 'document.correspondent.contactInWelsh' => true
             ], $readPreference);
 
-            $welshLanguageStats[date('Y-m', $start->getTimestamp())] = $month;
+            $correspondenceStats[date('Y-m', $start->getTimestamp())] = $month;
 
             $start->modify("first day of -1 month");
             $end->modify("last day of -1 month");
         }
 
-        return $welshLanguageStats;
+        return $correspondenceStats;
     }
 
     private function getPreferencesInstructionsStats()
