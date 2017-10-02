@@ -232,6 +232,24 @@
                 {% endfor %}
             </tr>
             <tr>
+                <td>Contact by email</td>
+                {% for month,values in correspondence %}
+                    <td class="numeric">{{ values.contactByEmail }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td>Contact by phone</td>
+                {% for month,values in correspondence %}
+                    <td class="numeric">{{ values.contactByPhone }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td>Contact by post</td>
+                {% for month,values in correspondence %}
+                    <td class="numeric">{{ values.contactByPost }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
                 <td>Correspondence in English</td>
                 {% for month,values in correspondence %}
                     <td class="numeric">{{ values.contactInEnglish }}</td>
