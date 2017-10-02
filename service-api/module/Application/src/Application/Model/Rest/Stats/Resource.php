@@ -44,8 +44,8 @@ class Resource extends AbstractResource
                 return new Entity($this->getWhoAreYou());
             case 'lpasperuser':
                 return new Entity($this->getLpasPerUser());
-            case 'welshlanguage':
-                return new Entity($this->getWelshLanguageStats());
+            case 'correspondence':
+                return new Entity($this->getCorrespondenceStats());
             case 'preferencesinstructions':
                 return new Entity($this->getPreferencesInstructionsStats());
             default:
@@ -307,7 +307,7 @@ class Resource extends AbstractResource
         ];
     }
 
-    private function getWelshLanguageStats()
+    private function getCorrespondenceStats()
     {
         $collection = $this->getCollection('lpa');
 
