@@ -5,7 +5,7 @@ Once you have completed the questions in the first part of your LPA form, this s
 To register your LPA:
 
 1. Using this service, answer the questions in the registration part of the LPA form.
-2. Pay the application fee online or by cheque.
+2. Pay the application fee by card online or by cheque.
 3. Print the completed LPA, including the registration section, and sign it in the right order.
 4. Send your signed LPA form to the Office of the Public Guardian (OPG), along with a fee remission form and evidence if you are applying to pay a reduced fee.
 
