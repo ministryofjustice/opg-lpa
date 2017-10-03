@@ -32,9 +32,9 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testAllSignedInCorrectOrder()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-16'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-16'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-18'),
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-17'),
@@ -47,14 +47,14 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     public function testAllSignedInCorrectOrderIncludingApplicant()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-16'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-16'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-18'),
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-17'),
             ],
-            'applicants' => [
+            'sign-date-applicants' => [
                 new DateTime('2015-01-18')
             ]
         ];
@@ -62,117 +62,172 @@ class DateCheckTest extends AbstractHttpControllerTestCase
         $this->assertTrue(DateCheck::checkDates($dates));
     }
 
-    public function testDonorSignsAfterCertificateProvider()
+    public function testDonorSignsOnOrBeforeLifeSustaining()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-12'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-16'),
+            'sign-date-donor-life-sustaining' => new DateTime('2015-01-16'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-17'),
             ],
         ];
 
-        $this->assertEquals('The donor must be the first person to sign the LPA.', DateCheck::checkDates($dates));
+        $errors = DateCheck::checkDates($dates);
+        $this->assertNotTrue($errors);
+
+        $this->assertEquals([
+            'sign-date-donor-life-sustaining' => ['The donor must sign Section 5 on the same day or before section 9']
+        ], $errors);
+    }
+
+    public function testDonorSignsAfterCertificateProvider()
+    {
+        $dates = [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-12'),
+            'sign-date-attorneys' => [
+                new DateTime('2015-01-16'),
+                new DateTime('2015-01-17'),
+            ],
+        ];
+
+        $errors = DateCheck::checkDates($dates);
+        $this->assertNotTrue($errors);
+
+        $this->assertEquals([
+            'sign-date-certificate-provider' => ['The donor must be the first person to sign the LPA']
+        ], $errors);
     }
 
     public function testCertificateProviderSignsAfterOneOfTheAttorneys()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-17'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-17'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-18'),
             ],
         ];
 
-        $this->assertEquals('The Certificate Provider must sign the LPA before the attorneys.', DateCheck::checkDates($dates));
+        $errors = DateCheck::checkDates($dates);
+        $this->assertNotTrue($errors);
+
+        $this->assertEquals([
+            'sign-date-certificate-provider' => ['The certificate provider must sign the LPA before the attorneys']
+        ], $errors);
     }
 
     public function testDonorSignsAfterEveryoneElse()
     {
         $dates = [
-            'donor' => new DateTime('2015-02-14'),
-            'certificate-provider' => new DateTime('2015-01-15'),
-            'attorneys' => [
-                new DateTime('2015-02-15'),
-                new DateTime('2015-02-18'),
-            ],
-        ];
-
-        $this->assertEquals('The donor must be the first person to sign the LPA.', DateCheck::checkDates($dates));
-    }
-
-    public function testOneAttorneySignsBeforeEveryoneElse()
-    {
-        $dates = [
-            'donor' => new DateTime('2015-02-14'),
-            'certificate-provider' => new DateTime('2015-01-17'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-02-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-17'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-06'),
-                new DateTime('2015-01-18'),
+                new DateTime('2015-01-12'),
+            ],
+            'sign-date-applicants' => [
+                new DateTime('2015-01-16'),
+                new DateTime('2015-01-17')
             ],
         ];
 
-        $this->assertEquals('The donor must be the first person to sign the LPA.', DateCheck::checkDates($dates));
+        $errors = DateCheck::checkDates($dates);
+        $this->assertNotTrue($errors);
+
+        $this->assertEquals([
+            'sign-date-attorney-0' => ['The donor must be the first person to sign the LPA'],
+            'sign-date-attorney-1' => ['The donor must be the first person to sign the LPA'],
+            'sign-date-certificate-provider' => [
+                'The donor must be the first person to sign the LPA',
+                'The certificate provider must sign the LPA before the attorneys'
+            ],
+            'sign-date-applicant-0' => ['The donor must be the first person to sign the LPA'],
+            'sign-date-applicant-1' => ['The donor must be the first person to sign the LPA'],
+        ], $errors);
     }
 
     public function testApplicantSignsBeforeLastAttorney()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-16'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-16'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-18'),
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-17'),
             ],
-            'applicants' => [
+            'sign-date-applicants' => [
                 new DateTime('2015-01-17')
             ]
         ];
 
-        $this->assertEquals('The applicant must sign on the same day or after all Section 11\'s have been signed.', DateCheck::checkDates($dates));
+        $errors = DateCheck::checkDates($dates);
+        $this->assertNotTrue($errors);
+
+        $this->assertEquals([
+            'sign-date-applicant-0' => ['The applicant must sign on the same day or after all Section 11\'s have been signed']
+        ], $errors);
     }
 
     public function testApplicantsSignBeforeLastAttorney()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-16'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-14'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-16'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-18'),
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-17'),
             ],
-            'applicants' => [
-                new DateTime('2015-01-17'),
-                new DateTime('2015-01-18')
+            'sign-date-applicants' => [
+                new DateTime('2015-01-16'),
+                new DateTime('2015-01-17')
             ]
         ];
 
-        $this->assertEquals('The applicants must sign on the same day or after all Section 11\'s have been signed.', DateCheck::checkDates($dates));
+        $errors = DateCheck::checkDates($dates);
+        $this->assertNotTrue($errors);
+
+        $this->assertEquals([
+            'sign-date-applicant-0' => ['The applicant must sign on the same day or after all Section 11\'s have been signed'],
+            'sign-date-applicant-1' => ['The applicant must sign on the same day or after all Section 11\'s have been signed']
+        ], $errors);
     }
 
     public function testDatesCannotBeInFuture()
     {
         $dates = [
-            'donor' => new DateTime('2015-01-14'),
-            'certificate-provider' => new DateTime('2015-01-16'),
-            'attorneys' => [
+            'sign-date-donor' => new DateTime('2015-01-15'),
+            'sign-date-certificate-provider' => new DateTime('2015-01-16'),
+            'sign-date-donor-life-sustaining' => new DateTime('2015-01-14'),
+            'sign-date-attorneys' => [
                 new DateTime('2015-01-18'),
                 new DateTime('2015-01-16'),
                 new DateTime('2015-01-17'),
             ],
-            'applicants' => [
+            'sign-date-applicants' => [
                 new DateTime('2015-01-19')
             ]
         ];
 
-        $this->dateService->shouldReceive('getToday')->andReturn(new DateTime('2015-01-18'))->once();
+        $this->dateService->shouldReceive('getToday')->andReturn(new DateTime('2015-01-10'))->once();
 
-        $this->assertEquals('No signature date can be in the future.', DateCheck::checkDates($dates, $this->dateService));
+        $errors = DateCheck::checkDates($dates, $this->dateService);
+        $this->assertNotTrue($errors);
+
+        $this->assertEquals([
+            'sign-date-donor' => ['The donor\'s signature date cannot be in the future'],
+            'sign-date-certificate-provider' => ['The certificate provider\'s signature date cannot be in the future'],
+            'sign-date-donor-life-sustaining' => ['The donor\'s signature date cannot be in the future'],
+            'sign-date-attorney-0' => ['The attorney\'s signature date cannot be in the future'],
+            'sign-date-attorney-1' => ['The attorney\'s signature date cannot be in the future'],
+            'sign-date-attorney-2' => ['The attorney\'s signature date cannot be in the future'],
+            'sign-date-applicant-0' => ['The applicant\'s signature date cannot be in the future']
+        ], $errors);
     }
 
     /**

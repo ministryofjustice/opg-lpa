@@ -60,11 +60,11 @@ class DateCheckController extends AbstractLpaController
                 }
 
                 $result = DateCheck::checkDates([
-                    'donor'                 => $this->dateArrayToTime($data['sign-date-donor']),
-                    'donor-life-sustaining' => isset($data['sign-date-donor-life-sustaining']) ? $this->dateArrayToTime($data['sign-date-donor-life-sustaining']) : null,
-                    'certificate-provider'  => $this->dateArrayToTime($data['sign-date-certificate-provider']),
-                    'attorneys'             => array_map([$this, 'dateArrayToTime'], $attorneySignatureDates),
-                    'applicants'             => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
+                    'sign-date-donor'                 => $this->dateArrayToTime($data['sign-date-donor']),
+                    'sign-date-donor-life-sustaining' => isset($data['sign-date-donor-life-sustaining']) ? $this->dateArrayToTime($data['sign-date-donor-life-sustaining']) : null,
+                    'sign-date-certificate-provider'  => $this->dateArrayToTime($data['sign-date-certificate-provider']),
+                    'sign-date-attorneys'             => array_map([$this, 'dateArrayToTime'], $attorneySignatureDates),
+                    'sign-date-applicants'            => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
                 ]);
 
                 if ($result === true) {
@@ -82,7 +82,7 @@ class DateCheckController extends AbstractLpaController
 
                     return $this->redirect()->toUrl($validUrl);
                 } else {
-                    $viewModel->dateError = $result;
+                    $form->setMessages($result);
                 }
             }
         }
