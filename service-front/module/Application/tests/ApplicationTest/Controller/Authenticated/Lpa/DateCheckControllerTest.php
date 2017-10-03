@@ -105,6 +105,7 @@ class DateCheckControllerTest extends AbstractControllerTest
         $this->setFormAction($this->form, $this->lpa, $currentRouteName);
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
+        $this->form->shouldReceive('setMessages')->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -113,7 +114,7 @@ class DateCheckControllerTest extends AbstractControllerTest
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals('lpa/complete', $result->getVariable('returnRoute'));
-        $this->assertEquals('The donor must be the first person to sign the LPA.', $result->dateError);
+        $this->assertEquals(null, $result->dateError);
     }
 
     public function testIndexActionPostValidDates()
