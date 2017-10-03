@@ -44,8 +44,8 @@ class Resource extends AbstractResource
                 return new Entity($this->getWhoAreYou());
             case 'lpasperuser':
                 return new Entity($this->getLpasPerUser());
-            case 'welshlanguage':
-                return new Entity($this->getWelshLanguageStats());
+            case 'correspondence':
+                return new Entity($this->getCorrespondenceStats());
             case 'preferencesinstructions':
                 return new Entity($this->getPreferencesInstructionsStats());
             default:
@@ -307,7 +307,7 @@ class Resource extends AbstractResource
         ];
     }
 
-    private function getWelshLanguageStats()
+    private function getCorrespondenceStats()
     {
         $collection = $this->getCollection('lpa');
 
@@ -316,7 +316,7 @@ class Resource extends AbstractResource
             'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
         ];
 
-        $welshLanguageStats = [];
+        $correspondenceStats = [];
 
         $start = new DateTime('first day of this month');
         $start->setTime(0, 0, 0);
@@ -338,6 +338,31 @@ class Resource extends AbstractResource
                 'completedAt' => $dateRange
             ], $readPreference);
 
+            $month['contactByEmail'] = $collection->count([
+                'completedAt' => $dateRange,
+                'document.correspondent' => [
+                    '$ne' => null
+                ], 'document.correspondent.email' => [
+                    '$ne' => null
+                ]
+            ], $readPreference);
+
+            $month['contactByPhone'] = $collection->count([
+                'completedAt' => $dateRange,
+                'document.correspondent' => [
+                    '$ne' => null
+                ], 'document.correspondent.phone' => [
+                    '$ne' => null
+                ]
+            ], $readPreference);
+
+            $month['contactByPost'] = $collection->count([
+                'completedAt' => $dateRange,
+                'document.correspondent' => [
+                    '$ne' => null
+                ], 'document.correspondent.contactByPost' => true
+            ], $readPreference);
+
             $month['contactInEnglish'] = $collection->count([
                 'completedAt' => $dateRange,
                 'document.correspondent' => [
@@ -352,13 +377,13 @@ class Resource extends AbstractResource
                 ], 'document.correspondent.contactInWelsh' => true
             ], $readPreference);
 
-            $welshLanguageStats[date('Y-m', $start->getTimestamp())] = $month;
+            $correspondenceStats[date('Y-m', $start->getTimestamp())] = $month;
 
             $start->modify("first day of -1 month");
             $end->modify("last day of -1 month");
         }
 
-        return $welshLanguageStats;
+        return $correspondenceStats;
     }
 
     private function getPreferencesInstructionsStats()
