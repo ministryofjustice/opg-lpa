@@ -67,7 +67,12 @@
       $('body > *').addClass('print-hidden');
 
       // Join it all together
-      this.$popup.data('settings', opts).addClass(opts.ident).append(this.$close).append(this.$content.html(html)).appendTo(this.$mask);
+      this.$popup.data('settings', opts)
+        .removeClass()
+        .addClass('popup ' + opts.ident)
+        .append(this.$close)
+        .append(this.$content.html(html))
+        .appendTo(this.$mask);
 
       // bind event handlers
       this._bindEvents();
