@@ -22,9 +22,9 @@ class StatsController extends AbstractBaseController
         //  Get the user stats
         $userStats = $applicationService->getAuthStats();
 
-        //  Get the Welsh language stats - ensure the months are ordered correctly
-        $welshLanguageStats = $applicationService->getApiStats('welshlanguage');
-        ksort($welshLanguageStats);
+        //  Get the correspondence stats - ensure the months are ordered correctly
+        $correspondenceStats = $applicationService->getApiStats('correspondence');
+        ksort($correspondenceStats);
 
         //  Get the preferences and instructions stats - ensure the months are ordered correctly
         $preferencesInstructionsStats = $applicationService->getApiStats('preferencesinstructions');
@@ -34,7 +34,7 @@ class StatsController extends AbstractBaseController
             'lpas' => $generalLpaStats,
             'who' => $whoAreYouStats,
             'users' => $userStats,
-            'welshLanguage' => $welshLanguageStats,
+            'correspondence' => $correspondenceStats,
             'preferencesInstructions' => $preferencesInstructionsStats,
         ]);
     }

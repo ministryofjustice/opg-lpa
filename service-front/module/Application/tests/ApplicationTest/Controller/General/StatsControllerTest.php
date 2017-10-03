@@ -24,7 +24,7 @@ class StatsControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('getApiStats')->with('lpas')->andReturn($this->getApiStats())->once();
         $this->lpaApplicationService->shouldReceive('getApiStats')->with('whoareyou')->andReturn($this->getWhoAreYouStats())->once();
         $this->lpaApplicationService->shouldReceive('getAuthStats')->andReturn($this->getAuthStats())->once();
-        $this->lpaApplicationService->shouldReceive('getApiStats')->with('welshlanguage')->andReturn($this->getWelshLanguageStats())->once();
+        $this->lpaApplicationService->shouldReceive('getApiStats')->with('correspondence')->andReturn($this->getCorrespondenceStats())->once();
         $this->lpaApplicationService->shouldReceive('getApiStats')->with('preferencesinstructions')->andReturn($this->getPreferencesInstructionsStats())->once();
 
         /** @var ViewModel $result */
@@ -35,7 +35,7 @@ class StatsControllerTest extends AbstractControllerTest
         $this->assertEquals($this->getApiStats(), $result->getVariable('lpas'));
         $this->assertEquals($this->getWhoAreYouStats(), $result->getVariable('who'));
         $this->assertEquals($this->getAuthStats(), $result->getVariable('users'));
-        $this->assertEquals($this->getWelshLanguageStats(), $result->getVariable('welshLanguage'));
+        $this->assertEquals($this->getCorrespondenceStats(), $result->getVariable('correspondence'));
         $this->assertEquals($this->getPreferencesInstructionsStats(), $result->getVariable('preferencesInstructions'));
     }
 
@@ -174,7 +174,7 @@ class StatsControllerTest extends AbstractControllerTest
         return $stats;
     }
 
-    private function getWelshLanguageStats()
+    private function getCorrespondenceStats()
     {
         $start = new \DateTime('first day of this month');
         $start->setTime(0, 0, 0);
@@ -186,6 +186,9 @@ class StatsControllerTest extends AbstractControllerTest
         for ($i = 1; $i <=4; $i++) {
             $stats[date('Y-m', $start->getTimestamp())] = [
                 'completed' => 1,
+                'contactByEmail' => 1,
+                'contactByPhone' => 1,
+                'contactByPost' => 1,
                 'contactInEnglish' => 1,
                 'contactInWelsh' => 1
             ];
