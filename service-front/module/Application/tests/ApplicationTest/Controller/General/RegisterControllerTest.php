@@ -166,13 +166,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('setAttribute')->with('action', 'user/dashboard')->once();
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
-        $this->url->shouldReceive('fromRoute')->with('register/callback', ['token' => 'unit@test.compassword'], ['force_canonical' => true])->andReturn('register/callback')->once();
-
-        //Exercise the anonymous functions as the concrete Register class would
-        $this->register->shouldReceive('registerAccount')->andReturnUsing(function ($email, $password, $callback) {
-            $callback($email . $password);
-            return true;
-        });
+        $this->register->shouldReceive('registerAccount')->andReturn(true);
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

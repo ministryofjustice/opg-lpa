@@ -14,7 +14,7 @@ class PasswordReset implements ServiceLocatorAwareInterface
 {
     use ServiceLocatorAwareTrait;
 
-    public function requestPasswordResetEmail($email, callable $fpRouteCallback, callable $activateRouteCallback)
+    public function requestPasswordResetEmail($email)
     {
         $logger = $this->getServiceLocator()->get('Logger');
         $logger->info('User requested password reset email');
@@ -30,7 +30,7 @@ class PasswordReset implements ServiceLocatorAwareInterface
 
                     if (isset($body['activation_token'])) {
                         // If they have not yet activated their account, we re-send them the activation link.
-                        $this->sendActivateEmail($email, $activateRouteCallback($body['activation_token']));
+                        $this->sendActivateEmail($email, $body['activation_token']);
 
                         return 'account-not-activated';
                     }
@@ -50,7 +50,7 @@ class PasswordReset implements ServiceLocatorAwareInterface
         }
 
         // Send the email
-        $this->sendResetEmail($email, $fpRouteCallback($resetToken));
+        $this->sendResetEmail($email, $resetToken);
 
         $logger->info('Password reset email sent to ' . $email);
 
@@ -98,7 +98,7 @@ class PasswordReset implements ServiceLocatorAwareInterface
         return true;
     }
 
-    private function sendResetEmail($email, $callbackUrl)
+    private function sendResetEmail($email, $token)
     {
         $logger = $this->getServiceLocator()->get('Logger');
         $logger->info('Sending password reset email');
@@ -118,7 +118,7 @@ class PasswordReset implements ServiceLocatorAwareInterface
         $content = $this->getServiceLocator()
                         ->get('TwigEmailRenderer')
                         ->loadTemplate('password-reset.twig')->render([
-                            'callback' => $callbackUrl,
+                            'token' => $token,
                         ]);
 
         if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
@@ -146,7 +146,7 @@ class PasswordReset implements ServiceLocatorAwareInterface
         return true;
     }
 
-    private function sendActivateEmail($email, $callbackUrl)
+    private function sendActivateEmail($email, $token)
     {
         $logger = $this->getServiceLocator()->get('Logger');
         $logger->info('Sending account activation email');
@@ -167,7 +167,7 @@ class PasswordReset implements ServiceLocatorAwareInterface
                         ->get('TwigEmailRenderer')
                         ->loadTemplate('password-reset-not-active.twig')
                         ->render([
-                            'callback' => $callbackUrl,
+                            'token' => $token,
                         ]);
 
         if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
