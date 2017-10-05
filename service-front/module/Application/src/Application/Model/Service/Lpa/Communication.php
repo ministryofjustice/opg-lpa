@@ -12,7 +12,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 
 /**
  * A model service class for sending emails on LPA creation and completion.
- * 
+ *
  * Class Communication
  * @package Application\Model\Service\Lpa
  */
@@ -22,7 +22,7 @@ class Communication implements ServiceLocatorAwareInterface {
 
     //---
 
-    public function sendRegistrationCompleteEmail( Lpa $lpa, $returnUrl ){
+    public function sendRegistrationCompleteEmail( Lpa $lpa){
 
 
         //-------------------------------
@@ -59,7 +59,6 @@ class Communication implements ServiceLocatorAwareInterface {
         $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('lpa-registration.twig')->render([
             'lpa' => $lpa,
             'paymentAmount' => ( $lpa->payment->amount > 0 ) ? money_format('%i', $lpa->payment->amount) : null,
-            'signinUrl' => $returnUrl,
             'isHealthAndWelfare' => ( $lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW ),
         ]);
 

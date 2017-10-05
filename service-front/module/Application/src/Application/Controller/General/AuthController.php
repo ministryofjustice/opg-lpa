@@ -85,8 +85,14 @@ class AuthController extends AbstractBaseController {
                     if( isset($nextUrl) ){
                         $pathArray = explode("/", parse_url($nextUrl, PHP_URL_PATH));
 
-                        // does that url refer to an LPA? If so redirect to next page which needs filling out.
+                        //  Does that url refer to an LPA?
                         if (count($pathArray) > 2 && $pathArray[1] == "lpa" && is_numeric($pathArray[2])) {
+                            //  It does but check if the requested URL is the date check page
+                            if (isset($pathArray[3]) && $pathArray[3] == 'date-check') {
+                                return $this->redirect()->toUrl($nextUrl);
+                            }
+
+                            //  Redirect to next page which needs filling out
                             $lpaId = $pathArray[2];
                             $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int)$lpaId);
                             $formFlowChecker = new FormFlowChecker($lpa);
