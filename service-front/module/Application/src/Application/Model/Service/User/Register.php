@@ -14,7 +14,7 @@ class Register implements ServiceLocatorAwareInterface
 {
     use ServiceLocatorAwareTrait;
 
-    public function registerAccount($email, $password, callable $routeCallback)
+    public function registerAccount($email, $password)
     {
         $logger = $this->getServiceLocator()->get('Logger');
         $logger->info('Account registration attempt for ' . $email);
@@ -51,7 +51,7 @@ class Register implements ServiceLocatorAwareInterface
                         ->get('TwigEmailRenderer')
                         ->loadTemplate('registration.twig')
                         ->render([
-                            'callback' => $routeCallback($activationToken),
+                            'token' => $activationToken,
                         ]);
 
         if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {

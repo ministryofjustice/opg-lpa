@@ -90,12 +90,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
         $this->authenticationService->shouldReceive('setAdapter')->with($this->authenticationAdapter)->once();
         $this->form->shouldReceive('setAuthenticationService')->with($this->authenticationService)->once();
         $this->setPostValid($this->form, $this->postData);
-        $this->aboutYouDetails->shouldReceive('requestEmailUpdate')->andReturnUsing(function ($form, $emailConfirmCallback, $currentAddress, $userId) {
-            //Exercise the anonymous functions as the concrete Register class would
-            $emailConfirmCallback($userId, 'ValidToken');
-            return true;
-        })->once();
-        $this->url->shouldReceive('fromRoute')->with('user/change-email-address/verify', ['token'=>'ValidToken'], ['force_canonical' => true])->once();
+        $this->aboutYouDetails->shouldReceive('requestEmailUpdate')->once()->andReturn(true);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
         /** @var ViewModel $result */

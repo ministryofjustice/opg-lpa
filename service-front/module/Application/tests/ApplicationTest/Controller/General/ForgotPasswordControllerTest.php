@@ -133,19 +133,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->resetPasswordEmailForm->shouldReceive('setData')->with($this->postData)->once();
         $this->resetPasswordEmailForm->shouldReceive('isValid')->andReturn(true)->once();
         $this->resetPasswordEmailForm->shouldReceive('getData')->andReturn($this->postData)->twice();
-
-        $this->url->shouldReceive('fromRoute')
-            ->with('forgot-password/callback', ['token' => $this->postData['email']], ['force_canonical' => true])
-            ->andReturn('forgot-password/callback')->once();
-        $this->url->shouldReceive('fromRoute')
-            ->with('register/callback', ['token' => $this->postData['email']], ['force_canonical' => true])
-            ->andReturn('register/callback')->once();
-        //Exercise the two anonymous functions as the concrete PasswordReset class would
-        $this->passwordReset->shouldReceive('requestPasswordResetEmail')->andReturnUsing(function($email, $fpCallback, $activateCallback){
-            $fpCallback($email);
-            $activateCallback($email);
-            return 'account-not-activated';
-        });
+        $this->passwordReset->shouldReceive('requestPasswordResetEmail')->andReturn('account-not-activated');
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

@@ -71,12 +71,10 @@ class Details implements ServiceLocatorAwareInterface
      * Update the user's email address.
      *
      * @param AbstractCsrfForm $details
-     * @param Callback $activateEmailCallback
      * @param string $currentAddress
-     * @param string $userId
      * @return bool|string
      */
-    public function requestEmailUpdate(AbstractCsrfForm $details, $activateEmailCallback, $currentAddress, $userId)
+    public function requestEmailUpdate(AbstractCsrfForm $details, $currentAddress)
     {
         $identityArray = $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray();
 
@@ -102,10 +100,10 @@ class Details implements ServiceLocatorAwareInterface
 
         $this->sendNotifyNewEmailEmail($currentAddress, $data['email']);
 
-        return $this->sendActivateNewEmailEmail($data['email'], $activateEmailCallback($userId, $updateToken ));
+        return $this->sendActivateNewEmailEmail($data['email'], $updateToken);
     }
 
-    private function sendActivateNewEmailEmail($newEmailAddress, $activateUrl)
+    private function sendActivateNewEmailEmail($newEmailAddress, $token)
     {
         $this->getServiceLocator()->get('Logger')->info('Sending new email verification email');
 
@@ -124,7 +122,7 @@ class Details implements ServiceLocatorAwareInterface
                         ->get('TwigEmailRenderer')
                         ->loadTemplate('new-email-verify.twig')
                         ->render([
-                            'activateUrl' => $activateUrl,
+                            'token' => $token,
                         ]);
 
         if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
