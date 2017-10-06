@@ -14,6 +14,13 @@ class Register implements ServiceLocatorAwareInterface
 {
     use ServiceLocatorAwareTrait;
 
+    /**
+     * Register the user account and send the activate account email
+     *
+     * @param $email
+     * @param $password
+     * @return bool|mixed|string
+     */
     public function registerAccount($email, $password)
     {
         $logger = $this->getServiceLocator()->get('Logger');
@@ -35,7 +42,19 @@ class Register implements ServiceLocatorAwareInterface
             return "unknown-error";
         }
 
-        // Send the email
+        return $this->sendActivateEmail($email, $activationToken);
+    }
+
+    /**
+     * Send the activate email to the user
+     *
+     * @param $email
+     * @param $token
+     * @param bool $fromResetRequest
+     * @return bool|string
+     */
+    public function sendActivateEmail($email, $token, $fromResetRequest = false)
+    {
         $message = new MailMessage();
 
         $config = $this->getServiceLocator()->get('config');
@@ -45,19 +64,35 @@ class Register implements ServiceLocatorAwareInterface
 
         $message->addCategory('opg');
         $message->addCategory('opg-lpa');
-        $message->addCategory('opg-lpa-signup');
+
+        //  Change the last category depending on where this request came from
+        if ($fromResetRequest) {
+            $message->addCategory('opg-lpa-passwordreset');
+            $message->addCategory('opg-lpa-passwordreset-activate');
+        } else {
+            $message->addCategory('opg-lpa-signup');
+        }
+
+        $template = 'registration.twig';
+        $defaultSubject = 'Activate your lasting power of attorney account';
+
+        //  If this request came from the password reset tool then change some values
+        if ($fromResetRequest) {
+            $template = 'password-reset-not-active.twig';
+            $defaultSubject = 'Password reset request';
+        }
 
         $content = $this->getServiceLocator()
-                        ->get('TwigEmailRenderer')
-                        ->loadTemplate('registration.twig')
-                        ->render([
-                            'token' => $activationToken,
-                        ]);
+            ->get('TwigEmailRenderer')
+            ->loadTemplate($template)
+            ->render([
+                'token' => $token,
+            ]);
 
         if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
             $message->setSubject($matches[1]);
         } else {
-            $message->setSubject('Activate your lasting power of attorney account');
+            $message->setSubject($defaultSubject);
         }
 
         $html = new MimePart($content);
@@ -68,17 +103,43 @@ class Register implements ServiceLocatorAwareInterface
 
         $message->setBody($body);
 
+        $logger = $this->getServiceLocator()->get('Logger');
+
         try {
-            $logger->info('Sending account registration email to ' . $email);
+            $logger->info('Sending account activation email to ' . $email);
 
             $this->getServiceLocator()->get('MailTransport')->send($message);
         } catch (Exception $e) {
-            $logger->err('Failed to send account registration email to ' . $email);
+            $logger->err('Failed to send account activation email to ' . $email);
 
             return "failed-sending-email";
         }
 
         return true;
+    }
+
+    /**
+     * Resend the activate email to an inactive user
+     *
+     * @param $email
+     * @return bool|string
+     */
+    public function resendActivateEmail($email)
+    {
+        //  Trigger a request to reset the password in the API - this will return the activation token
+        $client = $this->getServiceLocator()->get('ApiClient');
+        $resetToken = $client->requestPasswordReset(strtolower($email));
+
+        if ($resetToken instanceof ResponseException && $resetToken->getMessage() == 'account-not-activated') {
+            $body = json_decode($resetToken->getResponse()->getBody(), true);
+
+            if (isset($body['activation_token'])) {
+                // If they have not yet activated their account, we re-send them the activation link.
+                return $this->sendActivateEmail($email, $body['activation_token']);
+            }
+        }
+
+        return false;
     }
 
     /**
