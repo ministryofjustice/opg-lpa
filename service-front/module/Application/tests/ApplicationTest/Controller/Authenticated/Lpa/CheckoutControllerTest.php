@@ -267,8 +267,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->lpaApplicationService->shouldReceive('setPayment')->with($this->lpa->id, $this->lpa->payment)->andReturn(true)->twice();
         $this->lpaApplicationService->shouldReceive('lockLpa')->with($this->lpa->id)->andReturn(true)->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/view-docs', ['lpa-id' => $this->lpa->id], ['force_canonical' => true])->andReturn("lpa/{$this->lpa->id}/view-docs")->once();
-        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->with($this->lpa, "lpa/{$this->lpa->id}/view-docs")->once();
+        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->with($this->lpa)->once();
         $this->redirect->shouldReceive('toRoute')->with('lpa/complete', ['lpa-id' => $this->lpa->id])->andReturn($response)->once();
 
         $result = $this->controller->chequeAction();
@@ -314,8 +313,7 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         $this->controller->setLpa($this->lpa);
         $this->lpaApplicationService->shouldReceive('lockLpa')->with($this->lpa->id)->andReturn(true)->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/view-docs', ['lpa-id' => $this->lpa->id], ['force_canonical' => true])->andReturn("lpa/{$this->lpa->id}/view-docs")->once();
-        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->with($this->lpa, "lpa/{$this->lpa->id}/view-docs")->once();
+        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->with($this->lpa)->once();
         $this->redirect->shouldReceive('toRoute')->with('lpa/complete', ['lpa-id' => $this->lpa->id])->andReturn($response)->once();
 
         $result = $this->controller->confirmAction();
@@ -405,8 +403,7 @@ class CheckoutControllerTest extends AbstractControllerTest
                 && $lpa->payment->email->address === 'unit@test.com';
         })*/;
         $this->lpaApplicationService->shouldReceive('lockLpa')->with($this->lpa->id)->andReturn(true)->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/view-docs', ['lpa-id' => $this->lpa->id], ['force_canonical' => true])->andReturn("lpa/{$this->lpa->id}/view-docs")->once();
-        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->with($this->lpa, "lpa/{$this->lpa->id}/view-docs")->once();
+        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->with($this->lpa)->once();
         $this->redirect->shouldReceive('toRoute')->with('lpa/complete', ['lpa-id' => $this->lpa->id])->andReturn($response)->once();
 
         $result = $this->controller->payAction();
@@ -556,8 +553,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->payment->shouldReceive('updateLpa')->withArgs([$params, $this->lpa])->once();
 
         $this->lpaApplicationService->shouldReceive('lockLpa')->with($this->lpa->id)->andReturn(true)->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/view-docs', ['lpa-id' => $this->lpa->id], ['force_canonical' => true])->andReturn("lpa/{$this->lpa->id}/view-docs")->once();
-        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->with($this->lpa, "lpa/{$this->lpa->id}/view-docs")->once();
+        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->with($this->lpa)->once();
         $this->redirect->shouldReceive('toRoute')->with('lpa/complete', ['lpa-id' => $this->lpa->id])->andReturn($response)->once();
 
         $result = $this->controller->worldpaySuccessAction();
