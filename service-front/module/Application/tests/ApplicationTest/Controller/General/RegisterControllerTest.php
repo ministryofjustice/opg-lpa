@@ -101,9 +101,8 @@ class RegisterControllerTest extends AbstractControllerTest
         $referer->setUri('https://localhost/home');
         $this->request->shouldReceive('getHeader')->with('Referer')->andReturn($referer)->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
-        $this->routeMatch->shouldReceive('getMatchedRouteName')->andReturn('user/dashboard')->once();
-        $this->url->shouldReceive('fromRoute')->with('user/dashboard')->andReturn('user/dashboard')->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'user/dashboard')->once();
+        $this->url->shouldReceive('fromRoute')->with('register')->andReturn('register')->once();
+        $this->form->shouldReceive('setAttribute')->with('action', 'register')->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -120,9 +119,8 @@ class RegisterControllerTest extends AbstractControllerTest
         $referer->setUri('https://localhost/home');
         $this->request->shouldReceive('getHeader')->with('Referer')->andReturn($referer)->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
-        $this->routeMatch->shouldReceive('getMatchedRouteName')->andReturn('user/dashboard')->once();
-        $this->url->shouldReceive('fromRoute')->with('user/dashboard')->andReturn('user/dashboard')->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'user/dashboard')->once();
+        $this->url->shouldReceive('fromRoute')->with('register')->andReturn('register')->once();
+        $this->form->shouldReceive('setAttribute')->with('action', 'register')->once();
         $this->setPostInvalid($this->form, $this->postData);
 
         /** @var ViewModel $result */
@@ -139,9 +137,8 @@ class RegisterControllerTest extends AbstractControllerTest
         $referer->setUri('https://localhost/home');
         $this->request->shouldReceive('getHeader')->with('Referer')->andReturn($referer)->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
-        $this->routeMatch->shouldReceive('getMatchedRouteName')->andReturn('user/dashboard')->once();
-        $this->url->shouldReceive('fromRoute')->with('user/dashboard')->andReturn('user/dashboard')->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'user/dashboard')->once();
+        $this->url->shouldReceive('fromRoute')->with('register')->andReturn('register')->once();
+        $this->form->shouldReceive('setAttribute')->with('action', 'register')->once();
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->register->shouldReceive('registerAccount')->andReturn('Unit test error')->once();
@@ -157,24 +154,28 @@ class RegisterControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostSuccess()
     {
+        $response = new Response();
+
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
         $this->request->shouldReceive('getHeader')->with('Referer')->andReturn($referer)->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
-        $this->routeMatch->shouldReceive('getMatchedRouteName')->andReturn('user/dashboard')->once();
-        $this->url->shouldReceive('fromRoute')->with('user/dashboard')->andReturn('user/dashboard')->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'user/dashboard')->once();
+        $this->url->shouldReceive('fromRoute')->with('register')->andReturn('register')->once();
+        $this->form->shouldReceive('setAttribute')->with('action', 'register')->once();
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->register->shouldReceive('registerAccount')->andReturn(true);
 
+        $this->redirect->shouldReceive('toRoute')->with('register/email-sent', [], [
+            'query' => [
+                'email' => 'unit@test.com'
+            ]
+        ])->andReturn($response)->once();
+
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
 
-        $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/register/email-sent', $result->getTemplate());
-        $this->assertEquals(false, $result->getVariable('strictVars'));
-        $this->assertEquals($this->postData['email'], $result->getVariable('email'));
+        $this->assertEquals($response, $result);
     }
 
     public function testConfirmActionNoToken()
