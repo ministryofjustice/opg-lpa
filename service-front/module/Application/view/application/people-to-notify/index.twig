@@ -31,7 +31,7 @@
 
     {% if peopleToNotify|length < 5 %}
 
-        <div class="form-group">
+        <div class="{% if (peopleToNotify) %}action-item{% endif %} form-group">
             <a href="{{ addRoute }}" class="{% if not (peopleToNotify) %}button{% endif %} js-form-popup" >
                 {% if (peopleToNotify) %}
                     Add another 'person to notify'
