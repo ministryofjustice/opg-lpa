@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block pageTitle %}
-    Reset your password
+    Resend your activation email
 {% endblock %}
 
 {% block content %}
@@ -35,7 +35,7 @@
 {{ email_confirm.setOptions({ label: 'Confirm your email address' }) ? '' }}
 
 <div class="text">
-    <p>Enter your email address below. If there's an account associated with the address, we'll send you a link to reset your password.</p>
+    <p>Enter your email address below. If there's an unactivated account associated with the address, we'll send you the activation email.</p>
 </div>
 
 {# begin form #}
@@ -44,13 +44,13 @@
     {{ formElement(form.getCsrf) }}
 
     <fieldset>
-        <legend class="visuallyhidden">Reset your password</legend>
+        <legend class="visuallyhidden">Resend your activation email</legend>
 
         {{ macros.formGroup(email) }}
         {{ macros.formGroup(email_confirm) }}
 
         <div class="form-group">
-            <input type="submit" name="submit" id="form-submit" class="button" value="Email me the link">
+            <input type="submit" name="submit" id="form-submit" class="button" value="Send me the email">
         </div>
 
     </fieldset>

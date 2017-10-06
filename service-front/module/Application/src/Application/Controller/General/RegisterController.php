@@ -3,8 +3,10 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
+use Application\Form\Validator\EmailAddress;
 use Zend\Http\Response as HttpResponse;
 use Zend\View\Model\ViewModel;
+use Exception;
 
 class RegisterController extends AbstractBaseController
 {
@@ -42,7 +44,7 @@ class RegisterController extends AbstractBaseController
         $form = $this->getServiceLocator()
                      ->get('FormElementManager')
                      ->get('Application\Form\User\Registration');
-        $form->setAttribute('action', $this->url()->fromRoute($currentRoute = $this->getEvent()->getRouteMatch()->getMatchedRouteName()));
+        $form->setAttribute('action', $this->url()->fromRoute($this->getEvent()->getRouteMatch()->getMatchedRouteName()));
 
         $viewModel = new ViewModel();
         $viewModel->form = $form;
@@ -61,8 +63,12 @@ class RegisterController extends AbstractBaseController
                                );
 
                 if ($result === true) {
-                    $viewModel->email = $data['email'];
-                    $viewModel->setTemplate('application/register/email-sent');
+                    //  Redirect to email sent route
+                    return $this->redirect()->toRoute('register/email-sent', [], [
+                        'query' => [
+                            'email' => $data['email'],
+                        ],
+                    ]);
                 } else {
                     $viewModel->error = $result;
                 }
@@ -70,6 +76,77 @@ class RegisterController extends AbstractBaseController
         }
 
         return $viewModel;
+    }
+
+    /**
+     * Display email sent page
+     *
+     * @return ViewModel
+     * @throws Exception
+     */
+    public function emailSentAction()
+    {
+        $check = $this->preventAuthenticatedUser();
+
+        if ($check !== true) {
+            return $check;
+        }
+
+        $email = $this->params()->fromQuery('email');
+
+        $emailValidator = new EmailAddress();
+
+        if (is_null($email) || !$emailValidator->isValid($email)) {
+            throw new Exception('Valid email address must be provided to view');
+        }
+
+        return  new ViewModel([
+            'email' => $email,
+        ]);
+    }
+
+    /**
+     * Display the form to resend the activation email or process a post
+     *
+     * @return ViewModel
+     */
+    public function resendEmailAction()
+    {
+        $check = $this->preventAuthenticatedUser();
+
+        if ($check !== true) {
+            return $check;
+        }
+
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\ConfirmEmail');
+        $form->setAttribute('action', $this->url()->fromRoute($this->getEvent()->getRouteMatch()->getMatchedRouteName()));
+
+        $error = null;
+
+        $request = $this->getRequest();
+
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                $data = $form->getData();
+
+                $result = $this->getServiceLocator()->get('Register')->resendActivateEmail($form->getData()['email']);
+
+                //  We do not want to confirm or deny the existence of a registered user so do not check the result
+                return $this->redirect()->toRoute('register/email-sent', [], [
+                    'query' => [
+                        'email' => $data['email'],
+                    ],
+                ]);
+            }
+        }
+
+        return new ViewModel(
+            array_merge(
+                compact('form', 'error')
+            )
+        );
     }
 
     /**

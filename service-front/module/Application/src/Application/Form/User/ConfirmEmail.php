@@ -7,16 +7,17 @@ use Zend\Validator\Identical;
 use Zend\Validator\NotEmpty;
 
 /**
- * For to request a password reset email be sent out.
+ * Form to accept and validate email addresses
+ * Used by the password reset and resend activate token flows
  *
- * Class ResetPasswordEmail
+ * Class ConfirmEmail
  * @package Application\Form\User
  */
-class ResetPasswordEmail extends AbstractCsrfForm
+class ConfirmEmail extends AbstractCsrfForm
 {
     public function init()
     {
-        $this->setName('reset-password-email');
+        $this->setName('confirm-email');
 
         $this->add([
             'name' => 'email',
@@ -45,7 +46,7 @@ class ResetPasswordEmail extends AbstractCsrfForm
                     ],
                 ],
                 [
-                    'name'    => 'Application\Form\Validator\EmailAddress',
+                    'name' => 'Application\Form\Validator\EmailAddress',
                 ],
             ],
         ]);

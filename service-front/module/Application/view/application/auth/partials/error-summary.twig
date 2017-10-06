@@ -21,7 +21,7 @@
       <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem signing you in</h1>
             {% if authError == 'not-activated' %}
                 <p>Your account has not been activated. Click on the link in the email sent to you when you created the account.
-                If you haven't received an email, check your spam, bulk or junk email folder.</p>
+                    If you haven't received an email, check your spam, bulk or junk email folder or <a href="{{ url('register/resend-email') }}">resend activation email</a>.</p>
             {% elseif authError == 'incorrect-4' %}
                 <p>Email and password combination not recognised. Did you click the link in the email we sent you to activate your account?</p>
                 <p>You can make 1 more attempt to sign in. If you enter the wrong details you won't be able to try again for 15 minutes. Forgotten your password? <a href="{{ url('forgot-password') }}">Reset your password now</a>.</p>
