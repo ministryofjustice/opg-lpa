@@ -2,11 +2,16 @@
 // LOADING SPINNER
 
 .spinner {
-    margin: 0 0 -3px 8px;
+    width: 18px;
+    margin: 0 5px -13px 8px;
+
+    .action-item & {
+        margin-bottom: -3px;
+    }
 
     @include media(mobile) {
         display: block;
-        margin: $gutter-half auto 0;
+        margin: $gutter-half auto $gutter-half;
         // special cases with action links - needs to be
         // next to the link instead of under
         .action-item & {
