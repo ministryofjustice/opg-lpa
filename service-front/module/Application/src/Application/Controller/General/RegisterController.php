@@ -53,21 +53,11 @@ class RegisterController extends AbstractBaseController
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                //  Create a callback for the Model to get the callback URL from
-                $callback = function ($token) {
-                    return $this->url()->fromRoute('register/callback', [
-                        'token' => $token
-                    ], [
-                        'force_canonical' => true
-                    ]);
-                };
-
                 $result = $this->getServiceLocator()
                                ->get('Register')
                                ->registerAccount(
                                    $data['email'],
-                                   $data['password'],
-                                   $callback
+                                   $data['password']
                                );
 
                 if ($result === true) {
