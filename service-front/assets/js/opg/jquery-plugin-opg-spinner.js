@@ -35,9 +35,9 @@
         return;
       }
       if (this.options.placement === 'after') {
-        this.$spinElement.after($('<img src="/assets/v2/images/ajax-loader-small.gif" alt="Loading spinner" class="spinner" />'));
+        this.$spinElement.after($('<img src="/assets/v2/images/ajax-loader.gif" alt="Loading spinner" class="spinner" />'));
       } else if (this.options.placement === 'before') {
-        this.$spinElement.before($('<img src="/assets/v2/images/ajax-loader-small.gif" alt="Loading spinner" class="spinner" />'));
+        this.$spinElement.before($('<img src="/assets/v2/images/ajax-loader.gif" alt="Loading spinner" class="spinner" />'));
       }
       this.disable();
     },
