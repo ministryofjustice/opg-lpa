@@ -44,7 +44,7 @@ class RegisterController extends AbstractBaseController
         $form = $this->getServiceLocator()
                      ->get('FormElementManager')
                      ->get('Application\Form\User\Registration');
-        $form->setAttribute('action', $this->url()->fromRoute($this->getEvent()->getRouteMatch()->getMatchedRouteName()));
+        $form->setAttribute('action', $this->url()->fromRoute('register'));
 
         $viewModel = new ViewModel();
         $viewModel->form = $form;
@@ -100,8 +100,18 @@ class RegisterController extends AbstractBaseController
             throw new Exception('Valid email address must be provided to view');
         }
 
+        //  Set up a form so the resend can be triggered again easily from a link
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\ConfirmEmail');
+        $form->setAttribute('action', $this->url()->fromRoute('register/resend-email'));
+
+        $form->populateValues([
+            'email'         => $email,
+            'email_confirm' => $email,
+        ]);
+
         return  new ViewModel([
             'email' => $email,
+            'form'  => $form,
         ]);
     }
 
@@ -119,7 +129,7 @@ class RegisterController extends AbstractBaseController
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\ConfirmEmail');
-        $form->setAttribute('action', $this->url()->fromRoute($this->getEvent()->getRouteMatch()->getMatchedRouteName()));
+        $form->setAttribute('action', $this->url()->fromRoute('register/resend-email'));
 
         $error = null;
 

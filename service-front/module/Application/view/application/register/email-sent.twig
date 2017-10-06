@@ -6,12 +6,21 @@
 
 {% block content %}
 
-<div class="text">
-    <p class="lede">We've sent you a link to <span class="bold-medium">{{ email }}</span> that you need to click to verify your email address and activate your account.</p>
-    <p>You'll need to use this link within 24 hours or you'll have to enter your details again.</p>
-    <p>If you haven't received the email within a few minutes, please check your spam, bulk or junk email folder &ndash; your email system may have blocked it by mistake &ndash; or <a href="{{ url('register/resend-email') }}">resend activation email</a>.</p>
-    <p>If you've already activated your account, you can <a href="{{ url('login') }}">sign in now</a>.</p>
-</div>
+{# begin form #}
+{{ form.prepare() ? '' }}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.getCsrf) }}
 
+    {{ formHidden(form.get('email')) }}
+    {{ formHidden(form.get('email_confirm')) }}
+
+    <div class="text">
+        <p class="lede">We've sent you a link to <span class="bold-medium">{{ email }}</span> that you need to click to verify your email address and activate your account.</p>
+        <p>You'll need to use this link within 24 hours or you'll have to enter your details again.</p>
+        <p>If you haven't received the email within a few minutes, please check your spam, bulk or junk email folder &ndash; your email system may have blocked it by mistake &ndash; or <input type="submit" class="button-input-to-link" value="resend activation email">.</p>
+        <p>If you've already activated your account, you can <a href="{{ url('login') }}">sign in now</a>.</p>
+    </div>
+
+{{ form().closeTag|raw }}
 
 {% endblock content %}
