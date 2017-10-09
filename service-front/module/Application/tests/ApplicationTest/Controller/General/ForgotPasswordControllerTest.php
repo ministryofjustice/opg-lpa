@@ -3,7 +3,7 @@
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\ForgotPasswordController;
-use Application\Form\User\ResetPasswordEmail;
+use Application\Form\User\ConfirmEmail;
 use Application\Form\User\SetPassword;
 use Application\Model\Service\Authentication\Identity\User;
 use Application\Model\Service\User\PasswordReset;
@@ -22,7 +22,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
      */
     private $controller;
     /**
-     * @var MockInterface|ResetPasswordEmail
+     * @var MockInterface|ConfirmEmail
      */
     private $resetPasswordEmailForm;
     /**
@@ -44,8 +44,8 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->controller = new ForgotPasswordController();
         parent::controllerSetUp($this->controller);
 
-        $this->resetPasswordEmailForm = Mockery::mock(ResetPasswordEmail::class);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\User\ResetPasswordEmail')->andReturn($this->resetPasswordEmailForm);
+        $this->resetPasswordEmailForm = Mockery::mock(ConfirmEmail::class);
+        $this->formElementManager->shouldReceive('get')->with('Application\Form\User\ConfirmEmail')->andReturn($this->resetPasswordEmailForm);
 
         $this->setPasswordForm = Mockery::mock(SetPassword::class);
         $this->formElementManager->shouldReceive('get')->with('Application\Form\User\SetPassword')->andReturn($this->setPasswordForm);

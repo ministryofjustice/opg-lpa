@@ -193,7 +193,7 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
-                    'callback' => [
+                    'confirm' => [
                         'type'    => 'Segment',
                         'options' => [
                             'route'    => '/confirm/:token',
@@ -202,6 +202,24 @@ return [
                             ],
                             'defaults' => [
                                 'action'     => 'confirm',
+                            ],
+                        ],
+                    ],
+                    'email-sent' => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/email-sent',
+                            'defaults' => [
+                                'action' => 'email-sent',
+                            ],
+                        ],
+                    ],
+                    'resend-email' => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/resend-email',
+                            'defaults' => [
+                                'action' => 'resend-email',
                             ],
                         ],
                     ],

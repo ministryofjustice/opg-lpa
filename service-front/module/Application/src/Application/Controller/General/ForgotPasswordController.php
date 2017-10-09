@@ -21,7 +21,7 @@ class ForgotPasswordController extends AbstractBaseController
             return $check;
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\ResetPasswordEmail');
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\ConfirmEmail');
         $form->setAttribute('action', $this->url()->fromRoute('forgot-password'));
 
         $error = null;

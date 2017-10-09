@@ -10,7 +10,7 @@ use Zend\Validator\StringLength;
 /**
  * For to request a password reset email be sent out.
  *
- * Class ResetPasswordEmail
+ * Class SetPassword
  * @package Application\Form\User
  */
 class SetPassword extends AbstractCsrfForm
