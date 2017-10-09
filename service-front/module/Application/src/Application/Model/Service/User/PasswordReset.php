@@ -29,8 +29,8 @@ class PasswordReset implements ServiceLocatorAwareInterface
                     $body = json_decode($resetToken->getResponse()->getBody(), true);
 
                     if (isset($body['activation_token'])) {
-                        // If they have not yet activated their account, we re-send them the activation link.
-                        $this->sendActivateEmail($email, $body['activation_token']);
+                        //  If they have not yet activated their account we re-send them the activation link via the register service
+                        $result = $this->getServiceLocator()->get('Register')->sendActivateEmail($email, $body['activation_token'], true);
 
                         return 'account-not-activated';
                     }
@@ -118,55 +118,6 @@ class PasswordReset implements ServiceLocatorAwareInterface
         $content = $this->getServiceLocator()
                         ->get('TwigEmailRenderer')
                         ->loadTemplate('password-reset.twig')->render([
-                            'token' => $token,
-                        ]);
-
-        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
-            $message->setSubject($matches[1]);
-        } else {
-            $message->setSubject('Password reset request');
-        }
-
-        $html = new MimePart($content);
-        $html->type = "text/html";
-
-        $body = new MimeMessage();
-        $body->setParts([$html]);
-
-        $message->setBody($body);
-
-        try {
-            $this->getServiceLocator()
-                 ->get('MailTransport')
-                 ->send($message);
-        } catch (Exception $e) {
-            return "failed-sending-email";
-        }
-
-        return true;
-    }
-
-    private function sendActivateEmail($email, $token)
-    {
-        $logger = $this->getServiceLocator()->get('Logger');
-        $logger->info('Sending account activation email');
-
-        $message = new MailMessage();
-
-        $config = $this->getServiceLocator()->get('config');
-        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
-
-        $message->addTo($email);
-
-        $message->addCategory('opg');
-        $message->addCategory('opg-lpa');
-        $message->addCategory('opg-lpa-passwordreset');
-        $message->addCategory('opg-lpa-passwordreset-activate');
-
-        $content = $this->getServiceLocator()
-                        ->get('TwigEmailRenderer')
-                        ->loadTemplate('password-reset-not-active.twig')
-                        ->render([
                             'token' => $token,
                         ]);
 
