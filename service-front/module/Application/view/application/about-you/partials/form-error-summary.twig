@@ -2,13 +2,16 @@
 
 {% set form = formErrorTextExchange(form,  {
     'name-title' : {
-        'cannot-be-empty' : 'Please enter your title'
+        'cannot-be-empty' : 'Please enter your title',
+        'max-5-characters' : 'Title must be five letters or fewer - please abbreviate, if necessary'
     },
     'name-first' : {
-        'cannot-be-empty' : 'Please enter your first names'
+        'cannot-be-empty' : 'Please enter your first names',
+        'max-53-characters' : 'First names can not be longer than 53 characters long'
     },
     'name-last' : {
-        'cannot-be-empty' : 'Please enter your last name'
+        'cannot-be-empty' : 'Please enter your last name',
+        'max-61-characters' : 'Last name can not be longer than 61 characters long'
     },
     'dob-date-day' : {
         'must-be-between-1-and-31-characters' : 'Please enter a day between 1 and 31',
@@ -19,6 +22,18 @@
     },
     'dob-date-year' : {
         'must-be-between-1866-and-2016-characters' : 'Please enter a year between 1866 and 2016'
+    },
+    'address-address1' : {
+        'max-40-characters' : 'Address line 1 can not be longer than 40 characters long'
+    },
+    'address-address2' : {
+        'max-40-characters' : 'Address line 2 can not be longer than 40 characters long'
+    },
+    'address-address3' : {
+        'max-40-characters' : 'Address line 3 can not be longer than 40 characters long'
+    },
+    'address-postcode' : {
+        'max-8-characters' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines rather than in the postcode field.'
     }
 }) %}
 

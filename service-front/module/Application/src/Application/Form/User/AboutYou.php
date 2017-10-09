@@ -3,7 +3,9 @@
 namespace Application\Form\User;
 
 use Application\Form\AbstractCsrfForm;
+use Opg\Lpa\DataModel\Common\Address;
 use Opg\Lpa\DataModel\Common\Dob;
+use Opg\Lpa\DataModel\Common\LongName;
 use Zend\Form\FormInterface;
 use Zend\Validator\Between;
 use Zend\Validator\NotEmpty;
@@ -101,7 +103,7 @@ class AboutYou extends AbstractCsrfForm
                 [
                     'name'    => 'StringLength',
                     'options' => [
-                        'max' => 5,
+                        'max' => LongName::TITLE_MAX_LENGTH,
                         'messages' => [ StringLength::TOO_LONG => "max-%max%-characters" ],
                     ],
                 ],
@@ -124,7 +126,7 @@ class AboutYou extends AbstractCsrfForm
                 [
                     'name'    => 'StringLength',
                     'options' => [
-                        'max' => 50,
+                        'max' => LongName::FIRST_NAME_MAX_LENGTH,
                         'messages' => [ StringLength::TOO_LONG => "max-%max%-characters" ],
                     ],
                 ],
@@ -147,7 +149,7 @@ class AboutYou extends AbstractCsrfForm
                 [
                     'name'    => 'StringLength',
                     'options' => [
-                        'max' => 50,
+                        'max' => LongName::LAST_NAME_MAX_LENGTH,
                         'messages' => [ StringLength::TOO_LONG => "max-%max%-characters" ],
                     ],
                 ],
@@ -212,7 +214,7 @@ class AboutYou extends AbstractCsrfForm
                 [
                     'name'    => 'StringLength',
                     'options' => [
-                        'max' => 50,
+                        'max' => Address::ADDRESS_LINE_MAX_LENGTH,
                         'messages' => [ StringLength::TOO_LONG => "max-%max%-characters" ],
                     ],
                 ],
@@ -226,7 +228,7 @@ class AboutYou extends AbstractCsrfForm
                 [
                     'name'    => 'StringLength',
                     'options' => [
-                        'max' => 50,
+                        'max' => Address::ADDRESS_LINE_MAX_LENGTH,
                         'messages' => [ StringLength::TOO_LONG => "max-%max%-characters" ],
                     ],
                 ],
@@ -240,7 +242,7 @@ class AboutYou extends AbstractCsrfForm
                 [
                     'name'    => 'StringLength',
                     'options' => [
-                        'max' => 50,
+                        'max' => Address::ADDRESS_LINE_MAX_LENGTH,
                         'messages' => [ StringLength::TOO_LONG => "max-%max%-characters" ],
                     ],
                 ],
@@ -254,8 +256,8 @@ class AboutYou extends AbstractCsrfForm
                 [
                     'name'    => 'StringLength',
                     'options' => [
-                        'min' => 1,
-                        'max' => 8,
+                        'min' => Address::POSTCODE_MIN_LENGTH,
+                        'max' => Address::POSTCODE_MAX_LENGTH,
                         'messages' => [
                             StringLength::TOO_SHORT => "min-%min%-characters",
                             StringLength::TOO_LONG => "max-%max%-characters",
