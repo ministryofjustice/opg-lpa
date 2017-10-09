@@ -2615,6 +2615,8 @@ input[type=number] {
   .button-input-to-link::-moz-focus-inner {
     padding: 0;
     border: 0; }
+  .button-input-to-link + .spinner {
+    margin-bottom: -3px; }
 
 .help-header {
   display: none;
@@ -3053,13 +3055,18 @@ input[type=number] {
   .button-input-to-link::-moz-focus-inner {
     padding: 0;
     border: 0; }
+  .button-input-to-link + .spinner {
+    margin-bottom: -3px; }
 
 .postcode-input {
   width: 27%;
   width: 32%; }
 
 .spinner {
-  margin: 0 0 -3px 8px; }
+  width: 18px;
+  margin: 0 5px -13px 8px; }
+  .action-item .spinner {
+    margin-bottom: -3px; }
 
 .loading {
   text-align: center; }
@@ -3216,6 +3223,7 @@ input[type=number] {
   top: 10px;
   right: 0; }
   .person-actions .action-item {
+    margin-left: 8px;
     float: right; }
   .person-actions .action-edit {
     background-color: #dee0e2;
@@ -3282,6 +3290,8 @@ input[type=number] {
       filter: chroma(color=#0b0c0c); }
     .person-actions .action-edit[type=submit].button {
       filter: none; }
+    .person-actions .action-edit + .spinner {
+      margin-bottom: -3px; }
   .person-actions .action-delete {
     display: inline-block;
     margin: 6px 30px 0 0; }

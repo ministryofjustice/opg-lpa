@@ -3055,9 +3055,9 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
         return;
       }
       if (this.options.placement === 'after') {
-        this.$spinElement.after($('<img src="/assets/v2/images/ajax-loader-small.gif" alt="Loading spinner" class="spinner" />'));
+        this.$spinElement.after($('<img src="/assets/v2/images/ajax-loader.gif" alt="Loading spinner" class="spinner" />'));
       } else if (this.options.placement === 'before') {
-        this.$spinElement.before($('<img src="/assets/v2/images/ajax-loader-small.gif" alt="Loading spinner" class="spinner" />'));
+        this.$spinElement.before($('<img src="/assets/v2/images/ajax-loader.gif" alt="Loading spinner" class="spinner" />'));
       }
       this.disable();
     },
@@ -3486,7 +3486,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"loading\">\n	<img src=\"/assets/v2/images/ajax-loader-large.gif\" class=\"spinner\">\n	<p>Loading</p>\n</div>\n";
+  return "<div class=\"loading\">\n	<img src=\"/assets/v2/images/ajax-loader.gif\" class=\"spinner\">\n	<p>Loading</p>\n</div>\n";
   });;
 // Fees module for LPA
 // Dependencies: moj, jQuery
