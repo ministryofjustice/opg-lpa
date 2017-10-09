@@ -48,6 +48,7 @@
 
     .action-item {
         @include media(tablet) {
+            margin-left: 8px;
             float: right;
         }
     }
@@ -55,6 +56,9 @@
     .action-edit {
         @include media(tablet) {
             @include button($grey-3);
+            + .spinner {
+                margin-bottom: -3px;
+            }
         }
     }
 

@@ -109,10 +109,12 @@
         <h3 class="person-name heading-small flush--ends">{{ correspondentName }}</h3>
         <p class="person-address flush--ends">{{ correspondentAddress }}</p>
         <ul class="person-actions">
-            <li class="action-item">
-                {% if allowEditButton %}
+            {% if allowEditButton %}
+                <li class="action-item">
                     <a href="{{ changeRoute }}?reuse-details=existing-correspondent" class="action-edit js-form-popup">Edit</a>
-                {% endif %}
+                </li>
+            {% endif %}
+            <li class="action-item">
                 <a href="{{ changeRoute }}" class="action-edit js-form-popup">Change correspondent</a>
             </li>
         </ul>

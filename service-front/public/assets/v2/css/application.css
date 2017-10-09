@@ -2955,6 +2955,8 @@ input[type=number] {
   .button-input-to-link::-moz-focus-inner {
     padding: 0;
     border: 0; }
+  .button-input-to-link + .spinner {
+    margin-bottom: -3px; }
 
 .help-header {
   display: none;
@@ -3646,6 +3648,8 @@ input[type=number] {
   .button-input-to-link::-moz-focus-inner {
     padding: 0;
     border: 0; }
+  .button-input-to-link + .spinner {
+    margin-bottom: -3px; }
 
 @media (min-width: 641px) {
   .postcode-input {
@@ -3660,11 +3664,14 @@ input[type=number] {
     text-align: center; } }
 
 .spinner {
-  margin: 0 0 -3px 8px; }
+  width: 18px;
+  margin: 0 5px -13px 8px; }
+  .action-item .spinner {
+    margin-bottom: -3px; }
   @media (max-width: 640px) {
     .spinner {
       display: block;
-      margin: 15px auto 0; }
+      margin: 15px auto 15px; }
       .action-item .spinner {
         display: inline;
         margin: -3px 6px; } }
@@ -3867,6 +3874,7 @@ input[type=number] {
     right: 0; } }
 @media (min-width: 641px) {
   .person-actions .action-item {
+    margin-left: 8px;
     float: right; } }
 @media (min-width: 641px) {
   .person-actions .action-edit {
@@ -3925,7 +3933,9 @@ input[type=number] {
       left: 0; }
     .person-actions .action-edit:active:before {
       top: -10%;
-      height: 120%; } }
+      height: 120%; }
+    .person-actions .action-edit + .spinner {
+      margin-bottom: -3px; } }
 @media (min-width: 641px) {
   .person-actions .action-delete {
     display: inline-block;
