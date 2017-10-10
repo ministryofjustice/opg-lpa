@@ -39,7 +39,7 @@ class DateCheck implements ServiceLocatorAwareInterface
 
         // Donor must be first
         if ($donor > $certificateProvider) {
-            $errors['sign-date-certificate-provider'][] = 'The donor must be the first person to sign the LPA';
+            $errors['sign-date-certificate-provider'][] = 'The donor must be the first person to sign the LPA. You need to print and re-sign sections 10, 11 and 15';
         }
 
         $allTimestamps = [
@@ -52,7 +52,7 @@ class DateCheck implements ServiceLocatorAwareInterface
             $allTimestamps['sign-date-donor-life-sustaining'] = $donorLifeSustaining;
 
             if ($donor < $donorLifeSustaining) {
-                $errors['sign-date-donor-life-sustaining'][] = 'The donor must sign Section 5 on the same day or before section 9';
+                $errors['sign-date-donor-life-sustaining'][] = 'The donor must sign Section 5 and any continuation sheets on the same day or before section 9. You need to print and re-sign sections 9, 10, 11 and 15';
             }
         }
 
@@ -72,13 +72,13 @@ class DateCheck implements ServiceLocatorAwareInterface
 
             // Donor must be first
             if ($donor > $timestamp) {
-                $errors[$attorneyKey][] = 'The donor must be the first person to sign the LPA';
+                $errors[$attorneyKey][] = 'The donor must be the first person to sign the LPA. You need to print and re-sign sections 10, 11 and 15';
             }
         }
 
         // CP must be next
         if ($certificateProvider > $minAttorneyDate) {
-            $errors['sign-date-certificate-provider'][] = 'The certificate provider must sign the LPA before the attorneys';
+            $errors['sign-date-certificate-provider'][] = 'The certificate provider must sign the LPA before the attorneys. You need to print and re-sign sections 11 and 15';
         }
 
         if (isset($dates['sign-date-applicants']) && count($dates['sign-date-applicants']) > 0) {
@@ -89,12 +89,12 @@ class DateCheck implements ServiceLocatorAwareInterface
 
                 // Donor must be first
                 if ($donor > $timestamp) {
-                    $errors[$applicantKey][] = 'The donor must be the first person to sign the LPA';
+                    $errors[$applicantKey][] = 'The donor must be the first person to sign the LPA. You need to print and re-sign sections 10, 11 and 15';
                 }
 
                 // Applicants must sign on or after last attorney
                 if ($timestamp < $maxAttorneyDate) {
-                    $errors[$applicantKey][] = 'The applicant must sign on the same day or after all Section 11\'s have been signed';
+                    $errors[$applicantKey][] = 'The applicant must sign on the same day or after all Section 11\'s have been signed. You need to print and re-sign section 15';
                 }
             }
         }
@@ -107,15 +107,15 @@ class DateCheck implements ServiceLocatorAwareInterface
             }
             if ($timestamp > $today) {
                 if ($timestampKey === 'sign-date-donor') {
-                    $errors[$timestampKey][] = 'The donor\'s signature date cannot be in the future';
+                    $errors[$timestampKey][] = 'Check your dates. The donor\'s signature date cannot be in the future';
                 } elseif ($timestampKey === 'sign-date-certificate-provider') {
-                    $errors[$timestampKey][] = 'The certificate provider\'s signature date cannot be in the future';
+                    $errors[$timestampKey][] = 'Check your dates. The certificate provider\'s signature date cannot be in the future';
                 } elseif ($timestampKey === 'sign-date-donor-life-sustaining') {
-                    $errors[$timestampKey][] = 'The donor\'s signature date cannot be in the future';
+                    $errors[$timestampKey][] = 'Check your dates. The donor\'s signature date cannot be in the future';
                 } elseif (strpos($timestampKey, 'sign-date-attorney-') === 0) {
-                    $errors[$timestampKey][] = 'The attorney\'s signature date cannot be in the future';
+                    $errors[$timestampKey][] = 'Check your dates. The attorney\'s signature date cannot be in the future';
                 } elseif (strpos($timestampKey, 'sign-date-applicant-') === 0) {
-                    $errors[$timestampKey][] = 'The applicant\'s signature date cannot be in the future';
+                    $errors[$timestampKey][] = 'Check your dates. The applicant\'s signature date cannot be in the future';
                 } else {
                     throw new InvalidArgumentException("timestampKey {$timestampKey} was not recognised");
                 }
