@@ -110,8 +110,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             if( is_null($userDetails->name) && $this->excludeFromAboutYouCheck !== true ) {
 
                 // Redirect to the About You page.
-                return $this->redirect()->toRoute( 'user/about-you/new' );
-
+                return $this->redirect()->toUrl('/user/about-you/new');
             }
 
             // Store the details in the session...

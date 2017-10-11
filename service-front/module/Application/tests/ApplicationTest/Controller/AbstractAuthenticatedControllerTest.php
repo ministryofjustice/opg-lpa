@@ -87,7 +87,7 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
         $this->storage->shouldReceive('getRequestAccessTime')->atLeast(1);
 
         $this->aboutYouDetails->shouldReceive('load')->andReturn(new User())->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/about-you/new'])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toUrl')->withArgs(['/user/about-you/new'])->andReturn($response)->once();
 
         Container::setDefaultManager($this->sessionManager);
         $result = $this->controller->onDispatch($event);
@@ -127,7 +127,7 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
         $user = new User();
         $this->userDetailsSession->user = $user;
         $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/about-you/new'])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toUrl')->withArgs(['/user/about-you/new'])->andReturn($response)->once();
 
         $result = $this->controller->onDispatch($event);
 
