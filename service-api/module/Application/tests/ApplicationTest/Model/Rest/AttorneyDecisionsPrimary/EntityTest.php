@@ -5,8 +5,9 @@ namespace ApplicationTest\Model\Rest\AttorneyDecisionsPrimary;
 use Application\Model\Rest\AttorneyDecisionsPrimary\Entity;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
+use PHPUnit\Framework\TestCase;
 
-class EntityTest extends \PHPUnit_Framework_TestCase
+class EntityTest extends TestCase
 {
     /**
      * @var Entity

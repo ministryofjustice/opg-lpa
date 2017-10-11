@@ -5,8 +5,9 @@ namespace ApplicationTest\Model\Rest\Applications;
 use Application\Model\Rest\Applications\Entity;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
+use PHPUnit\Framework\TestCase;
 
-class ComparisonTest extends \PHPUnit_Framework_TestCase
+class ComparisonTest extends TestCase
 {
     public function testEntityIsEqual()
     {

@@ -7,10 +7,11 @@ use Aws\Command;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class DynamoCronLockTest extends \PHPUnit_Framework_TestCase
+class DynamoCronLockTest extends TestCase
 {
     private $config = array();
 

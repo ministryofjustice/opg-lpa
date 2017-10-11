@@ -5,10 +5,11 @@ namespace ApplicationTest\Model\Rest\NotifiedPeople;
 use Application\Model\Rest\NotifiedPeople\Collection;
 use Application\Model\Rest\NotifiedPeople\Entity;
 use OpgTest\Lpa\DataModel\FixturesData;
+use PHPUnit\Framework\TestCase;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Adapter\NullFill;
 
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends TestCase
 {
     public function testConstructor()
     {

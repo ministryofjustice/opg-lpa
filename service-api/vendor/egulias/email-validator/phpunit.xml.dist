@@ -9,11 +9,11 @@
          processIsolation="false"
          stopOnFailure="false"
          syntaxCheck="false"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap.php"
 >
 <testsuites>
   <testsuite name="EmailValidator Test Suite">
-    <directory>./Tests/EmailValidator</directory>
+    <directory>./tests/egulias/Tests/</directory>
     <exclude>./vendor/</exclude>
   </testsuite>
 </testsuites>

@@ -5,8 +5,9 @@ namespace ApplicationTest\Model\Rest\Instruction;
 use Application\Model\Rest\Instruction\Entity;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
+use PHPUnit\Framework\TestCase;
 
-class EntityTest extends \PHPUnit_Framework_TestCase
+class EntityTest extends TestCase
 {
     /**
      * @var Entity

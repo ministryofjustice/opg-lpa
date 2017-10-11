@@ -5,9 +5,10 @@ namespace ApplicationTest;
 use Application\Library\Authorization\UnauthorizedException;
 use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
+use PHPUnit\Framework\TestCase;
 use ZfcRbac\Service\AuthorizationService;
 
-abstract class AbstractResourceTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractResourceTest extends TestCase
 {
     /**
      * @param AbstractResourceBuilder $resourceBuilder
