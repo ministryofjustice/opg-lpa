@@ -19,7 +19,7 @@
         "aws/aws-sdk-php": "^3.0",
         "nocarrier/hal": "0.9.10",
         "zfcampus/zf-api-problem": "1.0.*",
-        "guzzlehttp/guzzle": "^6.2",
+        "guzzlehttp/guzzle": "^5.1",
         "ministryofjustice/opg-lpa-logger": "dev-LPA-2109-php-7",
         "ministryofjustice/opg-lpa-datamodels": "dev-LPA-2109-php-7",
         "zf-commons/zfc-rbac": "~2.4",
