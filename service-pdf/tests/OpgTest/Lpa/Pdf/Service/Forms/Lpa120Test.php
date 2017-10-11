@@ -2,9 +2,11 @@
 
 namespace OpgTest\Lpa\Pdf\Service\Forms;
 
+use Exception;
 use Opg\Lpa\Pdf\Service\Forms\Lpa120;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use mikehaertl\pdftk\Pdf;
+use RuntimeException;
 
 class Lps120Test extends AbstractFormTestClass
 {
@@ -58,7 +60,8 @@ class Lps120Test extends AbstractFormTestClass
 
         $lpa120 = new Lpa120($lpa);
 
-        $this->setExpectedException('RuntimeException', 'LPA120 is not available for this LPA.');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('LPA120 is not available for this LPA.');
 
         $lpa120->generate();
     }
@@ -252,7 +255,8 @@ class Lps120Test extends AbstractFormTestClass
 
         $lpa120 = new Lpa120($lpa);
 
-        $this->setExpectedException('Exception', 'When generating LPA120, applicant was found invalid');
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('When generating LPA120, applicant was found invalid');
 
         $form = $lpa120->generate();
     }

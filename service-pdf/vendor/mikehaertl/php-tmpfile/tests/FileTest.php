@@ -1,7 +1,7 @@
 <?php
 use mikehaertl\tmp\File;
 
-class FileTest extends \PHPUnit\Framework\TestCase
+class FileTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanCreateFile()
     {
@@ -55,7 +55,6 @@ class FileTest extends \PHPUnit\Framework\TestCase
         $tmp = new File($content);
         $fileName = $tmp->getFileName();
 
-        $this->assertFileExists($fileName);
         $this->assertTrue($tmp->saveAs($out));
         $this->assertFileExists($out);
         $readContent = file_get_contents($out);
@@ -63,24 +62,6 @@ class FileTest extends \PHPUnit\Framework\TestCase
         unset($tmp);
         $this->assertFileNotExists($fileName);
         $this->assertFileExists($out);
-        unlink($out);
-    }
-
-    public function testCanKeepTempFile()
-    {
-        $out = __DIR__.'/test.txt';
-        $content = 'test content';
-        $tmp = new File($content);
-        $tmp->delete = false;
-        $fileName = $tmp->getFileName();
-
-        $this->assertFileExists($fileName);
-        $this->assertTrue($tmp->saveAs($out));
-        $this->assertFileExists($out);
-        unset($tmp);
-        $this->assertFileExists($fileName);
-        $this->assertFileExists($out);
-        unlink($out);
     }
 
     public function testCanCastToFileName()

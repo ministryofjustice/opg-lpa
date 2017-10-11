@@ -5,6 +5,7 @@ namespace OpgTest\Lpa\Pdf\Service\Forms;
 use Opg\Lpa\Pdf\Service\Forms\Lp3;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use mikehaertl\pdftk\Pdf;
+use RuntimeException;
 
 class Lp3Test extends AbstractFormTestClass
 {
@@ -88,7 +89,8 @@ class Lp3Test extends AbstractFormTestClass
 
         $lp3 = new Lp3($lpa);
 
-        $this->setExpectedException('RuntimeException', 'LP3 is not available for this LPA.');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('LP3 is not available for this LPA.');
 
         $lp3->generate();
     }
@@ -363,7 +365,8 @@ class Lp3Test extends AbstractFormTestClass
 
         $lp3 = new Lp3($lpa);
 
-        $this->setExpectedException('RuntimeException', 'LP3 is not available for this LPA.');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('LP3 is not available for this LPA.');
 
         $lp3->generate();
     }

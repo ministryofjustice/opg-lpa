@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "7737b59751b0c786a6d1589706880e0e",
+    "content-hash": "0cff45cf8abb471a9bee4d4841cc8f1e",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.36.24",
+            "version": "3.36.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "aa3d8ca598c40f0cc03245d92fa8ac727410e47b"
+                "reference": "c7a93ab8a4aff2915f4dd1545c99f9f59e13bafd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/aa3d8ca598c40f0cc03245d92fa8ac727410e47b",
-                "reference": "aa3d8ca598c40f0cc03245d92fa8ac727410e47b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c7a93ab8a4aff2915f4dd1545c99f9f59e13bafd",
+                "reference": "c7a93ab8a4aff2915f4dd1545c99f9f59e13bafd",
                 "shasum": ""
             },
             "require": {
@@ -84,7 +84,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2017-10-10T17:49:15+00:00"
+            "time": "2017-10-11T19:12:01+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -406,22 +406,22 @@
         },
         {
             "name": "mikehaertl/php-pdftk",
-            "version": "0.4.2",
+            "version": "0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikehaertl/php-pdftk.git",
-                "reference": "ae9cfc157538a2584d57c15de127323af234aeb0"
+                "reference": "2158b121379d2cee589829548cbc12544609e3bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikehaertl/php-pdftk/zipball/ae9cfc157538a2584d57c15de127323af234aeb0",
-                "reference": "ae9cfc157538a2584d57c15de127323af234aeb0",
+                "url": "https://api.github.com/repos/mikehaertl/php-pdftk/zipball/2158b121379d2cee589829548cbc12544609e3bd",
+                "reference": "2158b121379d2cee589829548cbc12544609e3bd",
                 "shasum": ""
             },
             "require": {
-                "mikehaertl/php-shellcommand": "^1.0.2",
-                "mikehaertl/php-tmpfile": "^1.0.0",
-                "php": ">=5.3.0"
+                "mikehaertl/php-shellcommand": "~1.0.2",
+                "mikehaertl/php-tmpfile": "1.0.*",
+                "php": ">=5.0.0"
             },
             "suggest": {
                 "mikehaertl/pdftk2-precise-amd64": "pdftk 2 binary for Ubuntu 12.04 LTS (amd64)"
@@ -447,20 +447,20 @@
                 "pdf",
                 "pdftk"
             ],
-            "time": "2017-10-10T11:50:23+00:00"
+            "time": "2014-10-15T09:00:31+00:00"
         },
         {
             "name": "mikehaertl/php-shellcommand",
-            "version": "1.2.5",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikehaertl/php-shellcommand.git",
-                "reference": "35a81f344bd771b0b1c1ae3f4dc986dddfd234b9"
+                "reference": "888c5c9b2646650c63111dc526c8159e85bddea7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikehaertl/php-shellcommand/zipball/35a81f344bd771b0b1c1ae3f4dc986dddfd234b9",
-                "reference": "35a81f344bd771b0b1c1ae3f4dc986dddfd234b9",
+                "url": "https://api.github.com/repos/mikehaertl/php-shellcommand/zipball/888c5c9b2646650c63111dc526c8159e85bddea7",
+                "reference": "888c5c9b2646650c63111dc526c8159e85bddea7",
                 "shasum": ""
             },
             "type": "library",
@@ -483,20 +483,20 @@
             "keywords": [
                 "shell"
             ],
-            "time": "2017-06-30T06:21:01+00:00"
+            "time": "2015-06-30T13:50:15+00:00"
         },
         {
             "name": "mikehaertl/php-tmpfile",
-            "version": "1.1.1",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikehaertl/php-tmpfile.git",
-                "reference": "0ff48ed52ffee46d0f21fc34e8806f15467eb9b1"
+                "reference": "e34d43fa546d09f434b59ea8c05d4e4d55d55687"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikehaertl/php-tmpfile/zipball/0ff48ed52ffee46d0f21fc34e8806f15467eb9b1",
-                "reference": "0ff48ed52ffee46d0f21fc34e8806f15467eb9b1",
+                "url": "https://api.github.com/repos/mikehaertl/php-tmpfile/zipball/e34d43fa546d09f434b59ea8c05d4e4d55d55687",
+                "reference": "e34d43fa546d09f434b59ea8c05d4e4d55d55687",
                 "shasum": ""
             },
             "type": "library",
@@ -511,7 +511,7 @@
             ],
             "authors": [
                 {
-                    "name": "Michael Härtl",
+                    "name": "Michael Haertl",
                     "email": "haertl.mike@gmail.com"
                 }
             ],
@@ -519,7 +519,7 @@
             "keywords": [
                 "files"
             ],
-            "time": "2017-08-28T11:21:51+00:00"
+            "time": "2014-07-09T11:08:51+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",

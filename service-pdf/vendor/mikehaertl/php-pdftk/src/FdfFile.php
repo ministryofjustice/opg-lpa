@@ -10,6 +10,7 @@ use mikehaertl\tmp\File;
  * with valid unicode characters.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
+ * @version 0.2.1
  * @license http://www.opensource.org/licenses/MIT
  */
 class FdfFile extends File
@@ -51,25 +52,14 @@ FDF;
         rename($this->_fileName, $newName);
         $this->_fileName = $newName;
 
-        if (!function_exists('mb_convert_encoding')) {
-            throw new \Exception('MB extension required.');
-        }
-
         $fields = '';
         foreach ($data as $key=>$value) {
             // Create UTF-16BE string encode as ASCII hex
             // See http://blog.tremily.us/posts/PDF_forms/
             $utf16Value = mb_convert_encoding($value,'UTF-16BE', $encoding);
-
-            /* Also create UTF-16BE encoded key, this allows field names containing
-             * german umlauts and most likely many other "special" characters.
-             * See issue #17 (https://github.com/mikehaertl/php-pdftk/issues/17)
-             */
-            $utf16Key = mb_convert_encoding($key,'UTF-16BE', $encoding);
-
             // Escape parenthesis
             $utf16Value = strtr($utf16Value, array('(' => '\\(', ')'=>'\\)'));
-            $fields .= "<</T(".chr(0xFE).chr(0xFF).$utf16Key.")/V(".chr(0xFE).chr(0xFF).$utf16Value.")>>\n";
+            $fields .= "<</T($key)/V(".chr(0xFE).chr(0xFF).$utf16Value.")>>\n";
         }
 
         // Use fwrite, since file_put_contents() messes around with character encoding

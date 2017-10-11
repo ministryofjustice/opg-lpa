@@ -6,6 +6,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\Pdf\Service\Forms\Lp1h;
 use mikehaertl\pdftk\Pdf;
 use Mockery;
+use UnexpectedValueException;
 
 class Lp1hTest extends AbstractFormTestClass
 {
@@ -3933,7 +3934,8 @@ class Lp1hTest extends AbstractFormTestClass
         $lp1f->shouldReceive('generateCoversheets')
              ->andReturnNull();
 
-        $this->setExpectedException('UnexpectedValueException', 'LP1 pdf was not generated before merging pdf intermediate files');
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('LP1 pdf was not generated before merging pdf intermediate files');
 
         $lp1f->generate();
     }
