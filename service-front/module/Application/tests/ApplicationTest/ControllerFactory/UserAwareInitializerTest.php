@@ -6,9 +6,10 @@ use Application\ControllerFactory\UserAwareInitializer;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class UserAwareInitializerTest extends \PHPUnit_Framework_TestCase
+class UserAwareInitializerTest extends TestCase
 {
     /**
      * @var UserAwareInitializer

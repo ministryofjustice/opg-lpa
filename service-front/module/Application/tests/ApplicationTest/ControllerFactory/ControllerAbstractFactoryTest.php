@@ -5,10 +5,11 @@ namespace ApplicationTest\ControllerFactory;
 use Application\Controller\General\HomeController;
 use Application\ControllerFactory\ControllerAbstractFactory;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class ControllerAbstractFactoryTest extends \PHPUnit_Framework_TestCase
+class ControllerAbstractFactoryTest extends TestCase
 {
     /**
      * @var ControllerAbstractFactory

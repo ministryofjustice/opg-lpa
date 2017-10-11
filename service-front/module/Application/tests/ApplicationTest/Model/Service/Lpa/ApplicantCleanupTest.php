@@ -6,8 +6,9 @@ use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Mockery;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use OpgTest\Lpa\DataModel\FixturesData;
+use PHPUnit\Framework\TestCase;
 
-class ApplicantCleanupTest extends \PHPUnit_Framework_TestCase
+class ApplicantCleanupTest extends TestCase
 {
     public function testCleanUpValid()
     {
