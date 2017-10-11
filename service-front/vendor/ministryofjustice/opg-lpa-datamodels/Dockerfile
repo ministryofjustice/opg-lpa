@@ -1,14 +1,12 @@
-FROM registry.service.opg.digital/opguk/php-fpm
+FROM registry.service.opg.digital/opg-php-fpm-1604
 
-RUN php5enmod mcrypt
+# We need version 1.2 of the mongo extension
+RUN apt remove -y php-mongodb
 
-RUN apt-get update && apt-get install -y \
-    php5-curl php-pear php5-dev
-
-RUN apt-get install -y pkg-config
+RUN apt-get install -y php-dev pkg-config
 
 RUN pecl install mongodb-1.2.9 && \
-    echo "extension=mongodb.so" > /etc/php5/mods-available/mongodb.ini && \
-    php5enmod mongodb
+    echo "extension=mongodb.so" > /etc/php/7.0/mods-available/mongodb.ini && \
+    phpenmod mongodb
 
-RUN  cd /tmp && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
+RUN cd /tmp && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer

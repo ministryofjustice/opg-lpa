@@ -10,43 +10,31 @@
 
 /**
  * Utility class that can print to STDOUT or write to a file.
- *
- * @package    PHPUnit
- * @subpackage Util
- * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  Sebastian Bergmann <sebastian@phpunit.de>
- * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @link       http://www.phpunit.de/
- * @since      Class available since Release 2.0.0
  */
 class PHPUnit_Util_Printer
 {
     /**
      * If true, flush output after every write.
      *
-     * @var boolean
+     * @var bool
      */
     protected $autoFlush = false;
 
     /**
-     * @var    resource
+     * @var resource
      */
     protected $out;
 
     /**
-     * @var    string
+     * @var string
      */
     protected $outTarget;
 
     /**
-     * @var    boolean
-     */
-    protected $printsHTML = false;
-
-    /**
      * Constructor.
      *
-     * @param  mixed                       $out
+     * @param mixed $out
+     *
      * @throws PHPUnit_Framework_Exception
      */
     public function __construct($out = null)
@@ -56,7 +44,7 @@ class PHPUnit_Util_Printer
                 if (strpos($out, 'socket://') === 0) {
                     $out = explode(':', str_replace('socket://', '', $out));
 
-                    if (sizeof($out) != 2) {
+                    if (count($out) != 2) {
                         throw new PHPUnit_Framework_Exception;
                     }
 
@@ -78,27 +66,12 @@ class PHPUnit_Util_Printer
     }
 
     /**
-     * Flush buffer, optionally tidy up HTML, and close output if it's not to a php stream
+     * Flush buffer and close output if it's not to a PHP stream
      */
     public function flush()
     {
         if ($this->out && strncmp($this->outTarget, 'php://', 6) !== 0) {
             fclose($this->out);
-        }
-
-        if ($this->printsHTML === true &&
-            $this->outTarget !== null &&
-            strpos($this->outTarget, 'php://') !== 0 &&
-            strpos($this->outTarget, 'socket://') !== 0 &&
-            extension_loaded('tidy')) {
-            file_put_contents(
-                $this->outTarget,
-                tidy_repair_file(
-                    $this->outTarget,
-                    array('indent' => true, 'wrap' => 0),
-                    'utf8'
-                )
-            );
         }
     }
 
@@ -108,8 +81,6 @@ class PHPUnit_Util_Printer
      * Do not confuse this function with the flush() function of this class,
      * since the flush() function may close the file being written to, rendering
      * the current object no longer usable.
-     *
-     * @since  Method available since Release 3.3.0
      */
     public function incrementalFlush()
     {
@@ -132,8 +103,8 @@ class PHPUnit_Util_Printer
                 $this->incrementalFlush();
             }
         } else {
-            if (PHP_SAPI != 'cli') {
-                $buffer = htmlspecialchars($buffer);
+            if (PHP_SAPI != 'cli' && PHP_SAPI != 'phpdbg') {
+                $buffer = htmlspecialchars($buffer, ENT_SUBSTITUTE);
             }
 
             print $buffer;
@@ -147,8 +118,7 @@ class PHPUnit_Util_Printer
     /**
      * Check auto-flush mode.
      *
-     * @return boolean
-     * @since  Method available since Release 3.3.0
+     * @return bool
      */
     public function getAutoFlush()
     {
@@ -161,8 +131,7 @@ class PHPUnit_Util_Printer
      * If set, *incremental* flushes will be done after each write. This should
      * not be confused with the different effects of this class' flush() method.
      *
-     * @param boolean $autoFlush
-     * @since  Method available since Release 3.3.0
+     * @param bool $autoFlush
      */
     public function setAutoFlush($autoFlush)
     {

@@ -5,9 +5,10 @@ namespace OpgTest\Lpa\DataModel\Lpa\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
-class DonorTest extends \PHPUnit_Framework_TestCase
+class DonorTest extends TestCase
 {
     public function testLoadValidatorMetadata()
     {

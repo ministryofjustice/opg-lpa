@@ -5,3 +5,4 @@ tests/sns.credentials
 .buildpath
 .settings
 .project
+tests/coverage/

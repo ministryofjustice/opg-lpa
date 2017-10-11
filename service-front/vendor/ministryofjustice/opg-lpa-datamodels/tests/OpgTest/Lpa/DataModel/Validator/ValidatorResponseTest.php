@@ -3,8 +3,9 @@
 namespace OpgTest\Lpa\DataModel\Validator;
 
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
+use PHPUnit\Framework\TestCase;
 
-class ValidatorResponseTest extends \PHPUnit_Framework_TestCase
+class ValidatorResponseTest extends TestCase
 {
 
     /**

@@ -8,8 +8,9 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
 use OpgTest\Lpa\DataModel\FixturesData;
+use PHPUnit\Framework\TestCase;
 
-class StateCheckerTest extends \PHPUnit_Framework_TestCase
+class StateCheckerTest extends TestCase
 {
     public function testConstructor()
     {
@@ -21,7 +22,8 @@ class StateCheckerTest extends \PHPUnit_Framework_TestCase
     public function testConstructorNoLpa()
     {
         $stateChecker = new StateChecker(null);
-        $this->setExpectedException(\InvalidArgumentException::class, 'No LPA has been set');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('No LPA has been set');
         $stateChecker->getLpa();
     }
 

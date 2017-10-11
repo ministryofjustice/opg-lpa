@@ -4,8 +4,9 @@ namespace OpgTest\Lpa\DataModel\WhoAreYou;
 
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use OpgTest\Lpa\DataModel\TestHelper;
+use PHPUnit\Framework\TestCase;
 
-class WhoAreYouTest extends \PHPUnit_Framework_TestCase
+class WhoAreYouTest extends TestCase
 {
     public function testValidationFailed()
     {

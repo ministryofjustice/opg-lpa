@@ -17,6 +17,13 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class Address extends AbstractData
 {
     /**
+     * Field length constants
+     */
+    const ADDRESS_LINE_MAX_LENGTH = 40;
+    const POSTCODE_MIN_LENGTH = 1;
+    const POSTCODE_MAX_LENGTH = 8;
+
+    /**
      * @var string First line of the address.
      */
     protected $address1;
@@ -44,7 +51,7 @@ class Address extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'max' => 40
+                'max' => self::ADDRESS_LINE_MAX_LENGTH
             ]),
         ]);
 
@@ -53,7 +60,7 @@ class Address extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'max' => 40
+                'max' => self::ADDRESS_LINE_MAX_LENGTH
             ]),
         ]);
 
@@ -62,7 +69,7 @@ class Address extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'max' => 40
+                'max' => self::ADDRESS_LINE_MAX_LENGTH
             ]),
         ]);
 
@@ -72,8 +79,8 @@ class Address extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'min' => 1,
-                'max' => 8
+                'min' => self::POSTCODE_MIN_LENGTH,
+                'max' => self::POSTCODE_MAX_LENGTH,
             ]),
         ]);
 
