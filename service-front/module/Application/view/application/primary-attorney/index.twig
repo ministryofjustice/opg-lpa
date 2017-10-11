@@ -4,21 +4,25 @@
 
 <li id="primary-attorney-section" class="section current">
 
-    <h2 class="heading-medium accordion-header flush--top">Who are your attorneys?</h2>
+    <h2 class="heading-medium accordion-header flush--top">Who are the attorneys?</h2>
 
     <div class="accordion-info">
         <div class="text">
-            <p>Attorneys are people who you appoint to make decisions on your behalf.</p>
+            <p>Attorneys are people who a donor appoints to make decisions on their behalf.</p>
+
             <ul class="list list-bullet">
-                <li>You can have 1 or more attorneys</li>
+                <li>A donor can have 1 or more attorneys</li>
                 <li>Attorneys must be 18 or over</li>
                 <li>Attorneys must have mental capacity – the ability to make decisions</li>
                 {% if lpa.document.type == 'property-and-financial' %}
                     <li>An attorney must not be bankrupt or subject to a debt relief order</li>
                 {% endif %}
             </ul>
-            <p>The most important thing is that your attorneys are people you trust to respect your wishes and act in your best interests.</p>
-            <p>There are some other things you must know and consider before you decide.</p>
+
+            <p>The most important thing is that the attorneys are people the donor can trust to respect their wishes and act in their best interests.</p>
+
+            <p>You will be asked if you'd like to add <a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="stageprompt.lpa:help:replacement-attorneys">replacement attorneys</a> in a separate question. These would step in if your original attorneys are unable or unwilling to continue.</p>
+
             <p><a class="js-guidance" href="/guide#topic-attorneys" data-journey-click="stageprompt.lpa:help:attorneys">Find out more about attorneys</a></p>
         </div>
     </div>
