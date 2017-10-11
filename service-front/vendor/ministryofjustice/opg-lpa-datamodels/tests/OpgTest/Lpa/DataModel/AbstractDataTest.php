@@ -2,6 +2,8 @@
 
 namespace OpgTest\Lpa\DataModel;
 
+use Exception;
+use InvalidArgumentException;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use Opg\Lpa\DataModel\User\User;
 use PHPUnit\Framework\TestCase;
@@ -14,17 +16,21 @@ use PHPUnit\Framework\TestCase;
  */
 class AbstractDataTest extends TestCase
 {
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid JSON passed to constructor
+     */
     public function testConstructorNullData()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid JSON passed to constructor');
         new User('<HTML></HTML>');
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid argument passed to constructor
+     */
     public function testConstructorInvalidData()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid argument passed to constructor');
         new User(new \DateTime());
     }
 
@@ -34,19 +40,23 @@ class AbstractDataTest extends TestCase
         $this->assertFalse(isset($user->NullProperty));
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage NullProperty is not a valid property
+     */
     public function testGetInvalidProperty()
     {
         $user = new User();
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('NullProperty is not a valid property');
         $user->get('NullProperty');
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage NullProperty is not a valid property
+     */
     public function testSetInvalidProperty()
     {
         $user = new User();
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('NullProperty is not a valid property');
         $user->set('NullProperty', null);
     }
 
@@ -93,11 +103,13 @@ class AbstractDataTest extends TestCase
         $this->assertTrue($userArray['createdAt'] instanceof \DateTime);
     }
 
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Is this used anywhere? If not I am going to remove it.
+     */
     public function testGetArrayCopy()
     {
         $user = new User();
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Is this used anywhere? If not I am going to remove it.');
         $user->getArrayCopy();
     }
 
