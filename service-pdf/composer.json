@@ -19,16 +19,16 @@
         "aws/aws-sdk-php": "^3.0",
         "mikehaertl/php-pdftk": "0.2.1",
         "zendframework/zendpdf": "^2.0.2",
-        "zendframework/zend-crypt": "^2.3.4",
-        "zendframework/zend-filter": "^2.4.9",
-        "ministryofjustice/opg-lpa-datamodels": "^5.0",
-        "ministryofjustice/opg-lpa-logger": "1.1.*",
+        "zendframework/zend-crypt": "^2.5",
+        "zendframework/zend-filter": "^2.5",
+        "ministryofjustice/opg-lpa-datamodels": "dev-LPA-2109-php-7",
+        "ministryofjustice/opg-lpa-logger": "dev-LPA-2109-php-7",
         "NSmithUK/dynamo-queue-php": "^1.0",
-        "zendframework/zend-barcode": "^2.6"
+        "zendframework/zend-barcode": "^2.5"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.0",
-        "mockery/mockery": "@stable"
+        "phpunit/phpunit": "^6.0",
+        "mockery/mockery": "^1.0"
     },
     "autoload": {
         "psr-4": {"Opg\\Lpa\\Pdf\\": "src/Opg/Lpa/Pdf/", "OpgTest\\Lpa\\Pdf\\": "tests/Opg/Lpa/Pdf/"}
