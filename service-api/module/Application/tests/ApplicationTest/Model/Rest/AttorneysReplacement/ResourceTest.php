@@ -46,7 +46,8 @@ class ResourceTest extends AbstractResourceTest
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
-        $this->setExpectedException(\RuntimeException::class, 'Invalid type passed');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Invalid type passed');
 
         $attorney = new Human();
         $attorneyArray = $attorney->toArray();
@@ -223,7 +224,8 @@ class ResourceTest extends AbstractResourceTest
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
-        $this->setExpectedException(\RuntimeException::class, 'Invalid type passed');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Invalid type passed');
 
         $attorney = new Human();
         $attorneyArray = $attorney->toArray();

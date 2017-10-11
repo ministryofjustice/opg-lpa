@@ -37,7 +37,8 @@ class ResourceTest extends AbstractResourceTest
 
     public function testGetRouteUserException()
     {
-        $this->setExpectedException(\RuntimeException::class, 'Route User not set');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Route User not set');
         $resource = new Resource();
         $resource->getRouteUser();
     }
@@ -53,7 +54,8 @@ class ResourceTest extends AbstractResourceTest
 
     public function testGetLpaException()
     {
-        $this->setExpectedException(\RuntimeException::class, 'LPA not set');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('LPA not set');
         $resource = new Resource();
         $resource->getLpa();
     }
@@ -108,7 +110,8 @@ class ResourceTest extends AbstractResourceTest
             ->withAuthorizationService($authorizationServiceMock)
             ->build();
 
-        $this->setExpectedException(UnauthorizedException::class, 'You need to be authenticated to access this resource');
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You need to be authenticated to access this resource');
         $resource->fetch(1);
 
         $resourceBuilder->verify();
@@ -127,7 +130,8 @@ class ResourceTest extends AbstractResourceTest
             ->withAuthorizationService($authorizationServiceMock)
             ->build();
 
-        $this->setExpectedException(UnauthorizedException::class, 'You do not have permission to access this resource');
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You do not have permission to access this resource');
         $resource->fetch(1);
 
         $resourceBuilder->verify();
@@ -163,7 +167,8 @@ class ResourceTest extends AbstractResourceTest
         $resource = $resourceBuilder->withUser($user)->build();
 
         //So we expect an exception and for no document to be inserted
-        $this->setExpectedException(\RuntimeException::class, 'A malformed LPA object was created');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('A malformed LPA object was created');
 
         $resource->create(null);
 
@@ -279,7 +284,8 @@ class ResourceTest extends AbstractResourceTest
         $lpa->document = new Document();
         $lpa->document->type = 'invalid';
 
-        $this->setExpectedException(\RuntimeException::class, 'LPA object is invalid');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('LPA object is invalid');
         $resource->testUpdateLpa($lpa);
 
         $resourceBuilder->verify();
@@ -343,7 +349,8 @@ class ResourceTest extends AbstractResourceTest
             ->withLocked(true)
             ->build();
 
-        $this->setExpectedException(LockedException::class, 'LPA has already been locked.');
+        $this->expectException(LockedException::class);
+        $this->expectExceptionMessage('LPA has already been locked.');
         $lpa = FixturesData::getPfLpa();
         $resource->patch($lpa->toArray(), $lpa->id);
 
@@ -445,7 +452,8 @@ class ResourceTest extends AbstractResourceTest
             ->withUpdateNumberModified(2)
             ->build();
 
-        $this->setExpectedException(\RuntimeException::class, 'Unable to update LPA. This might be because "updatedAt" has changed.');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unable to update LPA. This might be because "updatedAt" has changed.');
         $resource->patch($lpa->toArray(), $lpa->id);
 
         $resourceBuilder->verify();

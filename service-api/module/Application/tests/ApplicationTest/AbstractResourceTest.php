@@ -27,7 +27,7 @@ abstract class AbstractResourceTest extends TestCase
                                     ->build();
 
         //Should not be authorised for any Resource method
-        $this->setExpectedException(UnauthorizedException::class);
+        $this->expectException(UnauthorizedException::class);
 
         return $resource;
     }
