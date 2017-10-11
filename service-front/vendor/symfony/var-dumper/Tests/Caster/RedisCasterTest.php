@@ -11,13 +11,14 @@
 
 namespace Symfony\Component\VarDumper\Tests\Caster;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\VarDumper\Test\VarDumperTestTrait;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  * @requires extension redis
  */
-class RedisCasterTest extends \PHPUnit_Framework_TestCase
+class RedisCasterTest extends TestCase
 {
     use VarDumperTestTrait;
 
@@ -60,8 +61,7 @@ Redis {
 EODUMP;
         } else {
             $xCast = <<<'EODUMP'
-Redis {
-  +"socket": Redis Socket Buffer resource
+Redis {%A
   isConnected: true
   host: "127.0.0.1"
   port: 6379

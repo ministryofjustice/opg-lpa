@@ -164,7 +164,7 @@ abstract class AbstractControllerTestCase extends PHPUnit_Framework_TestCase
         $this->application = Application::init($appConfig);
 
         $events = $this->application->getEventManager();
-        $this->application->getServiceManager()->get('SendResponseListener')->detach($events);
+        $events->detach($this->application->getServiceManager()->get('SendResponseListener'));
 
         return $this->application;
     }
@@ -307,9 +307,7 @@ abstract class AbstractControllerTestCase extends PHPUnit_Framework_TestCase
         $_POST    = [];
 
         // reset singleton
-        if (class_exists(StaticEventManager::class)) {
-            StaticEventManager::resetInstance();
-        }
+        StaticEventManager::resetInstance();
 
         return $this;
     }
@@ -341,8 +339,7 @@ abstract class AbstractControllerTestCase extends PHPUnit_Framework_TestCase
             return false;
         };
 
-        $event->setName($eventName);
-        return $events->triggerEventUntil($shortCircuit, $event);
+        return $events->trigger($eventName, $event, $shortCircuit);
     }
 
     /**

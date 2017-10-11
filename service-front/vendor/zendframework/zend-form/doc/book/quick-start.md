@@ -44,7 +44,6 @@ $subject->setAttributes([
 ]);
 
 // Create a textarea element to capture a message:
-$email = new Element\Email('email');
 $message = new Element\Textarea('message');
 $message->setLabel('Message');
 
@@ -478,7 +477,7 @@ must implement `Zend\InputFilter\InputFilterProviderInterface`, which defines a
 
 In the case of an element, the `getInputSpecification()` method should return
 data to be used by the input filter factory to create an input. Every HTML5
-(`email`, `url`, `color`, etc.) element has a built-in element that use this
+(`email`, `url`, `color`, etc.) element has a built-in element that uses this
 logic. For instance, here is how the `Zend\Form\Element\Color` element is
 defined:
 
@@ -672,7 +671,7 @@ use Zend\Form\FormInterface;
 $data = $form->getData(FormInterface::VALUES_AS_ARRAY);
 ```
 
-Zend Framework ships several standard [hydrators](https://zendframework.github.io/zend-hydrator/);
+Zend Framework ships several standard [hydrators](https://docs.zendframework.com/zend-hydrator/);
 you can create custom hydrators by implementing `Zend\Hydrator\HydratorInterface`,
 which looks like this:
 

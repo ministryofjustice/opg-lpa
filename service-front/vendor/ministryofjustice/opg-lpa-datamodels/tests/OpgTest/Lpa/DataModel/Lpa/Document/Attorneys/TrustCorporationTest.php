@@ -6,9 +6,10 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
-class TrustCorporationTest extends \PHPUnit_Framework_TestCase
+class TrustCorporationTest extends TestCase
 {
     public function testLoadValidatorMetadata()
     {

@@ -15,6 +15,14 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 class Name extends AbstractData
 {
     /**
+     * Field length constants
+     */
+    const TITLE_MIN_LENGTH = 1;
+    const TITLE_MAX_LENGTH = 5;
+    const FIRST_NAME_MAX_LENGTH = 32;
+    const LAST_NAME_MAX_LENGTH = 40;
+
+    /**
      * @var string A person's title. E.g. Mr, Miss, Mrs, etc.
      */
     protected $title;
@@ -37,8 +45,8 @@ class Name extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'min' => 1,
-                'max' => 5
+                'min' => self::TITLE_MIN_LENGTH,
+                'max' => self::TITLE_MAX_LENGTH,
             ]),
         ]);
 
@@ -48,7 +56,7 @@ class Name extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'max' => 32
+                'max' => self::FIRST_NAME_MAX_LENGTH,
             ]),
         ]);
 
@@ -58,7 +66,7 @@ class Name extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'max' => 40
+                'max' => self::LAST_NAME_MAX_LENGTH,
             ]),
         ]);
     }

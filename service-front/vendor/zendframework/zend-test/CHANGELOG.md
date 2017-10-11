@@ -2,49 +2,6 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.6.1 - 2016-03-02
-
-### Added
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- [#20](https://github.com/zendframework/zend-test/pull/20) updates the zend-mvc
-  requirement to 2.7.1, ensuring deprecation notices will not occur in the
-  majority of circumstances.
-
-## 2.6.0 - 2016-03-01
-
-### Added
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- [#19](https://github.com/zendframework/zend-test/pull/19) updates the
-  code to be forwards compatible with:
-  - zend-eventmanager v3
-  - zend-servicemanager v3
-  - zend-stdlib v3
-  - zend-mvc v2.7
-
 ## 2.5.3 - 2016-03-01
 
 ### Added

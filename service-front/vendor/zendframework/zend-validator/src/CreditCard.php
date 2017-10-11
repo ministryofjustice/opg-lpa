@@ -83,14 +83,14 @@ class CreditCard extends AbstractValidator
         self::AMERICAN_EXPRESS => [15],
         self::DINERS_CLUB      => [14],
         self::DINERS_CLUB_US   => [16],
-        self::DISCOVER         => [16],
+        self::DISCOVER         => [16, 19],
         self::JCB              => [15, 16],
         self::LASER            => [16, 17, 18, 19],
         self::MAESTRO          => [12, 13, 14, 15, 16, 17, 18, 19],
         self::MASTERCARD       => [16],
         self::SOLO             => [16, 18, 19],
         self::UNIONPAY         => [16, 17, 18, 19],
-        self::VISA             => [16],
+        self::VISA             => [13, 16, 19],
     ];
 
     /**
@@ -143,17 +143,17 @@ class CreditCard extends AbstractValidator
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
-        } elseif (!is_array($options)) {
+        } elseif (! is_array($options)) {
             $options = func_get_args();
             $temp['type'] = array_shift($options);
-            if (!empty($options)) {
+            if (! empty($options)) {
                 $temp['service'] = array_shift($options);
             }
 
             $options = $temp;
         }
 
-        if (!array_key_exists('type', $options)) {
+        if (! array_key_exists('type', $options)) {
             $options['type'] = self::ALL;
         }
 
@@ -203,7 +203,7 @@ class CreditCard extends AbstractValidator
         }
 
         foreach ($type as $typ) {
-            if (defined('self::' . strtoupper($typ)) && !in_array($typ, $this->options['type'])) {
+            if (defined('self::' . strtoupper($typ)) && ! in_array($typ, $this->options['type'])) {
                 $this->options['type'][] = $typ;
             }
 
@@ -234,7 +234,7 @@ class CreditCard extends AbstractValidator
      */
     public function setService($service)
     {
-        if (!is_callable($service)) {
+        if (! is_callable($service)) {
             throw new Exception\InvalidArgumentException('Invalid callback given');
         }
 
@@ -252,12 +252,12 @@ class CreditCard extends AbstractValidator
     {
         $this->setValue($value);
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             $this->error(self::INVALID, $value);
             return false;
         }
 
-        if (!ctype_digit($value)) {
+        if (! ctype_digit($value)) {
             $this->error(self::CONTENT, $value);
             return false;
         }
@@ -303,11 +303,11 @@ class CreditCard extends AbstractValidator
         }
 
         $service = $this->getService();
-        if (!empty($service)) {
+        if (! empty($service)) {
             try {
                 $callback = new Callback($service);
                 $callback->setOptions($this->getType());
-                if (!$callback->isValid($value)) {
+                if (! $callback->isValid($value)) {
                     $this->error(self::SERVICE, $value);
                     return false;
                 }

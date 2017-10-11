@@ -5,8 +5,9 @@ namespace OpgTest\Lpa\DataModel\User;
 use Opg\Lpa\DataModel\Common\Address;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
+use PHPUnit\Framework\TestCase;
 
-class AddressTest extends \PHPUnit_Framework_TestCase
+class AddressTest extends TestCase
 {
     public function testToString()
     {

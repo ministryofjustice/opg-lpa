@@ -3,8 +3,9 @@
 namespace OpgTest\Lpa\DataModel\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Formatter;
+use PHPUnit\Framework\TestCase;
 
-class FormatterTest extends \PHPUnit_Framework_TestCase
+class FormatterTest extends TestCase
 {
     public function testId()
     {
@@ -14,7 +15,8 @@ class FormatterTest extends \PHPUnit_Framework_TestCase
 
     public function testIdString()
     {
-        $this->setExpectedException(\InvalidArgumentException::class, 'The passed value must be an integer.');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The passed value must be an integer.');
 
         Formatter::id('27');
     }
