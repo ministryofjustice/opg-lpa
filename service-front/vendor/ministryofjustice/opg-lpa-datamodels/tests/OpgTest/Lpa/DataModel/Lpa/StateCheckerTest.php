@@ -2,6 +2,7 @@
 
 namespace OpgTest\Lpa\DataModel\Lpa;
 
+use InvalidArgumentException;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
@@ -19,11 +20,13 @@ class StateCheckerTest extends TestCase
         $this->assertTrue($lpa === $stateChecker->getLpa());
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage No LPA has been set
+     */
     public function testConstructorNoLpa()
     {
         $stateChecker = new StateChecker(null);
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('No LPA has been set');
         $stateChecker->getLpa();
     }
 

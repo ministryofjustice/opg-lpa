@@ -2,6 +2,7 @@
 
 namespace OpgTest\Lpa\DataModel\Lpa\Document\Attorneys;
 
+use InvalidArgumentException;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
@@ -11,12 +12,13 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class AbstractAttorneyTest extends TestCase
 {
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid JSON passed to constructor
+     */
     public function testFactoryNotJson()
     {
         $data = 'Not JSON';
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid JSON passed to constructor');
 
         AbstractAttorney::factory($data);
     }
