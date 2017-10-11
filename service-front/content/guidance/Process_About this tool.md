@@ -31,7 +31,7 @@ See [Fees and reductions](/help/#topic-fees-and-reductions)
 You can pay by:
 
 * cheque
-* WorldPay secure online payment
+* GOV.UK Pay secure online payment
 
 ## Before you begin
 
