@@ -5,8 +5,9 @@ namespace ApplicationTest\Form\Lpa;
 use Application\Form\Lpa\AbstractLpaForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use PHPUnit\Framework\TestCase;
 
-class FormTest extends \PHPUnit_Framework_TestCase
+class FormTest extends TestCase
 {
     use FormTestSetupTrait;
 

@@ -22,6 +22,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\Logger;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_Error_Deprecated;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\ResponseCollection;
@@ -46,7 +47,7 @@ use Zend\Stdlib\ArrayObject;
 use Zend\Stdlib\SplPriorityQueue;
 use Zend\Uri\Uri;
 
-abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractControllerTest extends TestCase
 {
     /**
      * @var MockInterface|ServiceLocatorInterface
