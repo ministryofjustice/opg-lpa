@@ -552,12 +552,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "cfea460aacd3b9d5d28f4b9a4be1b60c6cf902aa"
+                "reference": "90c487b51d4c4dddfbbb610f211be8ee1ea2470e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/cfea460aacd3b9d5d28f4b9a4be1b60c6cf902aa",
-                "reference": "cfea460aacd3b9d5d28f4b9a4be1b60c6cf902aa",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/90c487b51d4c4dddfbbb610f211be8ee1ea2470e",
+                "reference": "90c487b51d4c4dddfbbb610f211be8ee1ea2470e",
                 "shasum": ""
             },
             "require": {
@@ -568,7 +568,7 @@
                 "symfony/validator": "^2.7"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.0"
+                "phpunit/phpunit": "^5.0"
             },
             "type": "library",
             "autoload": {
@@ -584,7 +584,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/LPA-2109-php-7",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2017-10-11T14:08:39+00:00"
+            "time": "2017-10-11T16:33:01+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
@@ -592,12 +592,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
-                "reference": "7be00aac75add6499c479b6d9f438e04186c9954"
+                "reference": "15e2561d33ac8ee2b1c917ef57f83e8803b73785"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/7be00aac75add6499c479b6d9f438e04186c9954",
-                "reference": "7be00aac75add6499c479b6d9f438e04186c9954",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/15e2561d33ac8ee2b1c917ef57f83e8803b73785",
+                "reference": "15e2561d33ac8ee2b1c917ef57f83e8803b73785",
                 "shasum": ""
             },
             "require": {
@@ -607,7 +607,7 @@
                 "zendframework/zend-log": "^2.5"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.0"
+                "phpunit/phpunit": "^5.0"
             },
             "type": "library",
             "autoload": {
@@ -623,7 +623,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/LPA-2109-php-7",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
             },
-            "time": "2017-10-11T11:54:00+00:00"
+            "time": "2017-10-11T16:35:11+00:00"
         },
         {
             "name": "mongodb/mongodb",
