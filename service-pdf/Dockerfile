@@ -2,7 +2,8 @@ FROM registry.service.opg.digital/opg-base-1604
 
 RUN groupadd supervisor
 
-RUN apt-get install -y php-dev pkg-config
+RUN apt-get update && apt-get install -y \
+    make php-cli php-dev pdftk php-mcrypt php-curl php-pear
 
 RUN pecl install proctitle-0.1.2 && \
     echo "extension=proctitle.so" > /etc/php/7.0/mods-available/proctitle.ini && \
