@@ -5,8 +5,9 @@ namespace OpgTest\Lpa\DataModel\User;
 use Opg\Lpa\DataModel\Common\Dob;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
+use PHPUnit\Framework\TestCase;
 
-class DobTest extends \PHPUnit_Framework_TestCase
+class DobTest extends TestCase
 {
     public function testValidation()
     {

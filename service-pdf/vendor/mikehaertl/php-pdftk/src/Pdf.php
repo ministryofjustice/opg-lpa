@@ -12,7 +12,6 @@ use mikehaertl\tmp\File;
  * but you may have to use slightly different page rotation options (e.g 'E' instead 'east').
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 0.2.1
  * @license http://www.opensource.org/licenses/MIT
  */
 class Pdf
@@ -26,7 +25,7 @@ class Pdf
     public $ignoreWarnings = false;
 
     /**
-     * @var mikehaertl\tmp\File the temporary output file
+     * @var File the temporary output file
      */
     protected $_tmpFile;
 
@@ -63,7 +62,7 @@ class Pdf
     protected $_data_utf8;
 
     /**
-     * @var string the PDF form field data as returned from getDataFields()
+     * @var DataFields the PDF form field data as returned from getDataFields()
      */
     protected $_dataFields;
     protected $_dataFields_utf8;
@@ -108,7 +107,7 @@ class Pdf
      */
     public function addFile($name, $handle = null, $password = null)
     {
-        if ($handle===null) {
+        if ($handle===null || is_numeric($handle)) {
             $handle = $this->nextHandle();
         }
         if ($name instanceof Pdf) {
@@ -208,7 +207,7 @@ class Pdf
      * Generate the FDF file for a single PDF file.
      *
      * @param string $name name of the FDF file
-     * @return Pdf the pdf instance for method chaining
+     * @return bool whether the pdf is generated successful
      */
     public function generateFdfFile($name)
     {
@@ -221,17 +220,24 @@ class Pdf
     /**
      * Fill a PDF form
      *
-     * @param string|array $data either a FDF filename or an array with form field data (name => value)
-     * @param string the encoding of the data. Default is 'UTF-8'.
-     * @param bool whether to drop XFA forms (see dropXfa()). Default is true.
+     * @param string|array $data either a XFDF/FDF filename or an array with form field data (name => value)
+     * @param string $encoding the encoding of the data. Default is 'UTF-8'.
+     * @param bool $dropXfa whether to drop XFA forms (see dropXfa()). Default is true.
+     * @param string $format the file format to use for form filling when passing an array in `$data`. This can be
+     * `xfdf` or `fdf`. `xfdf` should give best results so you should not have to change the default.
      * @return Pdf the pdf instance for method chaining
      */
-    public function fillForm($data, $encoding = 'UTF-8', $dropXfa = true)
+    public function fillForm($data, $encoding = 'UTF-8', $dropXfa = true, $format = 'xfdf')
     {
         $this->constrainSingleFile();
+        if (is_array($data)) {
+            $className = '\mikehaertl\pdftk\\'. ($format==='xfdf' ? 'XfdfFile' : 'FdfFile');
+            $data = new $className($data, null, null, null, $encoding);
+        }
         $this->getCommand()
             ->setOperation('fill_form')
-            ->setOperationArgument(is_array($data) ? new FdfFile($data, null, null, null, $encoding) : $data, true);
+            ->setOperationArgument($data, true);
+
         if ($dropXfa) {
             $this->dropXfa();
         }
@@ -317,7 +323,7 @@ class Pdf
             if (!$command->execute()) {
                 return false;
             } else {
-                $this->$property = $command->getOutput();
+                $this->$property = trim($command->getOutput());
             }
         }
         return $this->$property;
@@ -325,7 +331,7 @@ class Pdf
 
     /**
      * @param bool $utf8 whether to dump the data UTF-8 encoded. Default is true.
-     * @return string|bool data about the PDF form fields or false on failure
+     * @return DataFields|bool data about the PDF form fields or false on failure
      */
     public function getDataFields($utf8 = true)
     {
@@ -336,7 +342,7 @@ class Pdf
             if (!$command->execute()) {
                 return false;
             } else {
-                $this->$property = $command->getOutput();
+                $this->$property = new DataFields(trim($command->getOutput()));
             }
         }
         return $this->$property;
@@ -488,8 +494,9 @@ class Pdf
         if (!$this->getCommand()->getExecuted() && !$this->execute()) {
             return false;
         }
-        if (!copy((string) $this->getTmpFile(),$name)) {
-            $this->_error = "Could not copy PDF from tmp location '$tmpFile' to '$filename'";
+        $tmpFile = (string) $this->getTmpFile();
+        if (!copy($tmpFile, $name)) {
+            $this->_error = "Could not copy PDF from tmp location '$tmpFile' to '$name'";
             return false;
         }
         return true;
@@ -523,7 +530,7 @@ class Pdf
     }
 
     /**
-     * @return mikehaertl\tmp\File the temporary output file instance
+     * @return File the temporary output file instance
      */
     public function getTmpFile()
     {
@@ -578,14 +585,18 @@ class Pdf
     }
 
     /**
-     * @return string the next handle in the series Z, Y, X, ..
+     * @return string the next handle in the series A, B, C, ... Z, AA, AB...
      */
     protected function nextHandle()
     {
-        if ($this->_handle>26) {
-            throw new \Exception('Ran out of hanldes for input PDFs');
+        // N.B. Multi-character handles are only available in pdftk 1.45+
+
+        $i = $this->_handle++;
+        $char = 'A';
+        while ($i-- > 0) {
+            $char++;
         }
-        $chars = range('Z','A');
-        return $chars[$this->_handle++];
+
+        return $char;
     }
 }

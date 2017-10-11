@@ -10,7 +10,6 @@ use mikehaertl\shellcommand\Command as BaseCommand;
  * and adds pdftk specific features to add options and operations.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 0.2.1
  * @license http://www.opensource.org/licenses/MIT
  */
 class Command extends BaseCommand
@@ -221,7 +220,7 @@ class Command extends BaseCommand
     }
 
     /**
-     * Ensure that the command was not exectued yet. Throws exception otherwhise.
+     * Ensure that the command was not exectued yet. Throws exception otherwise.
      */
     protected function checkExecutionStatus()
     {

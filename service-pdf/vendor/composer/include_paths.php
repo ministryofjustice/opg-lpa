@@ -7,5 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     $baseDir . '/config',
-    $vendorDir . '/phpunit/php-file-iterator',
 );

@@ -1,5 +1,7 @@
 <?php
-class BeforeAndAfterTest extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class BeforeAndAfterTest extends TestCase
 {
     public static $beforeWasRun;
     public static $afterWasRun;
@@ -7,7 +9,7 @@ class BeforeAndAfterTest extends PHPUnit_Framework_TestCase
     public static function resetProperties()
     {
         self::$beforeWasRun = 0;
-        self::$afterWasRun = 0;
+        self::$afterWasRun  = 0;
     }
 
     /**

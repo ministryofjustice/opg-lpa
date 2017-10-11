@@ -8,38 +8,29 @@
  * file that was distributed with this source code.
  */
 
-/**
- *
- *
- * @package    PHPUnit
- * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  Sebastian Bergmann <sebastian@phpunit.de>
- * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @link       http://www.phpunit.de/
- */
-class Util_GlobalStateTest extends PHPUnit_Framework_TestCase
-{
+namespace PHPUnit\Util;
 
-    /**
-     * @covers PHPUnit_Util_GlobalState::processIncludedFilesAsString
-     */
+use PHPUnit\Framework\TestCase;
+
+class GlobalStateTest extends TestCase
+{
     public function testIncludedFilesAsStringSkipsVfsProtocols()
     {
-        $dir = __DIR__;
-        $files = array(
+        $dir   = __DIR__;
+        $files = [
             'phpunit', // The 0 index is not used
             $dir . '/ConfigurationTest.php',
             $dir . '/GlobalStateTest.php',
             'vfs://' . $dir . '/RegexTest.php',
             'phpvfs53e46260465c7://' . $dir . '/TestTest.php',
-            'file://' . $dir . '/XMLTest.php'
-        );
+            'file://' . $dir . '/XmlTest.php'
+        ];
 
         $this->assertEquals(
             "require_once '" . $dir . "/ConfigurationTest.php';\n" .
             "require_once '" . $dir . "/GlobalStateTest.php';\n" .
-            "require_once 'file://" . $dir . "/XMLTest.php';\n"
-        , PHPUnit_Util_GlobalState::processIncludedFilesAsString($files));
+            "require_once 'file://" . $dir . "/XmlTest.php';\n",
+            GlobalState::processIncludedFilesAsString($files)
+        );
     }
-
 }

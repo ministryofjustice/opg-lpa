@@ -1,8 +1,10 @@
 <?php
-class Issue1570Test extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class Issue1570Test extends TestCase
 {
     public function testOne()
     {
-        print "*";
+        print '*';
     }
 }

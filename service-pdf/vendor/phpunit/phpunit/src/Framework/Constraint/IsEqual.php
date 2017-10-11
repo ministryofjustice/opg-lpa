@@ -7,6 +7,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace PHPUnit\Framework\Constraint;
+
+use PHPUnit\Framework\ExpectationFailedException;
+use PHPUnit\Util\InvalidArgumentHelper;
+use SebastianBergmann;
 
 /**
  * Constraint that checks if one value is equal to another.
@@ -16,18 +21,8 @@
  * Two values are equal if they have the same value disregarding type.
  *
  * The expected value is passed in the constructor.
- *
- * @package    PHPUnit
- * @subpackage Framework_Constraint
- * @author     Kore Nordmann <kn@ez.no>
- * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @author     Bernhard Schussek <bschussek@2bepublished.at>
- * @copyright  Sebastian Bergmann <sebastian@phpunit.de>
- * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @link       http://www.phpunit.de/
- * @since      Class available since Release 3.0.0
  */
-class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
+class IsEqual extends Constraint
 {
     /**
      * @var mixed
@@ -40,17 +35,17 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
     protected $delta = 0.0;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $maxDepth = 10;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $canonicalize = false;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $ignoreCase = false;
 
@@ -60,31 +55,32 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
     protected $lastFailure;
 
     /**
-     * @param  mixed                       $value
-     * @param  float                       $delta
-     * @param  integer                     $maxDepth
-     * @param  boolean                     $canonicalize
-     * @param  boolean                     $ignoreCase
-     * @throws PHPUnit_Framework_Exception
+     * @param mixed $value
+     * @param float $delta
+     * @param int   $maxDepth
+     * @param bool  $canonicalize
+     * @param bool  $ignoreCase
+     *
+     * @throws \PHPUnit\Framework\Exception
      */
     public function __construct($value, $delta = 0.0, $maxDepth = 10, $canonicalize = false, $ignoreCase = false)
     {
         parent::__construct();
 
-        if (!is_numeric($delta)) {
-            throw PHPUnit_Util_InvalidArgumentHelper::factory(2, 'numeric');
+        if (!\is_numeric($delta)) {
+            throw InvalidArgumentHelper::factory(2, 'numeric');
         }
 
-        if (!is_int($maxDepth)) {
-            throw PHPUnit_Util_InvalidArgumentHelper::factory(3, 'integer');
+        if (!\is_int($maxDepth)) {
+            throw InvalidArgumentHelper::factory(3, 'integer');
         }
 
-        if (!is_bool($canonicalize)) {
-            throw PHPUnit_Util_InvalidArgumentHelper::factory(4, 'boolean');
+        if (!\is_bool($canonicalize)) {
+            throw InvalidArgumentHelper::factory(4, 'boolean');
         }
 
-        if (!is_bool($ignoreCase)) {
-            throw PHPUnit_Util_InvalidArgumentHelper::factory(5, 'boolean');
+        if (!\is_bool($ignoreCase)) {
+            throw InvalidArgumentHelper::factory(5, 'boolean');
         }
 
         $this->value        = $value;
@@ -104,11 +100,13 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
      * a boolean value instead: true in case of success, false in case of a
      * failure.
      *
-     * @param  mixed                                        $other        Value or object to evaluate.
-     * @param  string                                       $description  Additional information about the test
-     * @param  bool                                         $returnResult Whether to return a result or throw an exception
+     * @param mixed  $other        Value or object to evaluate.
+     * @param string $description  Additional information about the test
+     * @param bool   $returnResult Whether to return a result or throw an exception
+     *
      * @return mixed
-     * @throws PHPUnit_Framework_ExpectationFailedException
+     *
+     * @throws ExpectationFailedException
      */
     public function evaluate($other, $description = '', $returnResult = false)
     {
@@ -139,8 +137,8 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
                 return false;
             }
 
-            throw new PHPUnit_Framework_ExpectationFailedException(
-                trim($description . "\n" . $f->getMessage()),
+            throw new ExpectationFailedException(
+                \trim($description . "\n" . $f->getMessage()),
                 $f
             );
         }
@@ -157,28 +155,28 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
     {
         $delta = '';
 
-        if (is_string($this->value)) {
-            if (strpos($this->value, "\n") !== false) {
+        if (\is_string($this->value)) {
+            if (\strpos($this->value, "\n") !== false) {
                 return 'is equal to <text>';
-            } else {
-                return sprintf(
-                    'is equal to <string:%s>',
-                    $this->value
-                );
-            }
-        } else {
-            if ($this->delta != 0) {
-                $delta = sprintf(
-                    ' with delta <%F>',
-                    $this->delta
-                );
             }
 
-            return sprintf(
-                'is equal to %s%s',
-                $this->exporter->export($this->value),
-                $delta
+            return \sprintf(
+                'is equal to <string:%s>',
+                $this->value
             );
         }
+
+        if ($this->delta != 0) {
+            $delta = \sprintf(
+                ' with delta <%F>',
+                $this->delta
+            );
+        }
+
+        return \sprintf(
+            'is equal to %s%s',
+            $this->exporter->export($this->value),
+            $delta
+        );
     }
 }

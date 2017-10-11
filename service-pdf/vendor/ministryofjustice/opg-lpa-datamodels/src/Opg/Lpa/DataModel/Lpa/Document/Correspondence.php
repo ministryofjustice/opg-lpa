@@ -21,6 +21,12 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  */
 class Correspondence extends AbstractData
 {
+    /**
+     * Field length constants
+     */
+    const COMPANY_MIN_LENGTH = 1;
+    const COMPANY_MAX_LENGTH = 75;
+
     const WHO_DONOR = 'donor';
     const WHO_ATTORNEY = 'attorney';
     const WHO_CERTIFICATE_PROVIDER = 'certificateProvider';
@@ -104,8 +110,8 @@ class Correspondence extends AbstractData
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'min' => 1,
-                'max' => 75
+                'min' => self::COMPANY_MIN_LENGTH,
+                'max' => self::COMPANY_MAX_LENGTH,
             ]),
         ]);
 

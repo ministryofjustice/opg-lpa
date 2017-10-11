@@ -7,6 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace PHPUnit\Framework;
+
+use PHPUnit\Util\Filter;
+use Throwable;
 
 /**
  * Wraps Exceptions thrown by code under test.
@@ -14,59 +18,55 @@
  * Re-instantiates Exceptions thrown by user-space code to retain their original
  * class names, properties, and stack traces (but without arguments).
  *
- * Unlike PHPUnit_Framework_Exception, the complete stack of previous Exceptions
+ * Unlike PHPUnit\Framework_\Exception, the complete stack of previous Exceptions
  * is processed.
- *
- * @package    PHPUnit
- * @subpackage Framework
- * @author     Daniel F. Kudwien <sun@unleashedmind.com>
- * @copyright  Sebastian Bergmann <sebastian@phpunit.de>
- * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @link       http://www.phpunit.de/
- * @since      Class available since Release 4.3.0
  */
-class PHPUnit_Framework_ExceptionWrapper extends PHPUnit_Framework_Exception
+class ExceptionWrapper extends Exception
 {
     /**
      * @var string
      */
-    protected $classname;
+    protected $className;
 
     /**
-     * @var PHPUnit_Framework_ExceptionWrapper|null
+     * @var ExceptionWrapper|null
      */
     protected $previous;
 
-    public function __construct(Exception $e)
+    /**
+     * @param Throwable $t
+     */
+    public function __construct(Throwable $t)
     {
         // PDOException::getCode() is a string.
         // @see http://php.net/manual/en/class.pdoexception.php#95812
-        parent::__construct($e->getMessage(), (int) $e->getCode());
+        parent::__construct($t->getMessage(), (int) $t->getCode());
 
-        $this->classname = get_class($e);
-        $this->file = $e->getFile();
-        $this->line = $e->getLine();
+        $this->className = \get_class($t);
+        $this->file      = $t->getFile();
+        $this->line      = $t->getLine();
 
-        $this->serializableTrace = $e->getTrace();
+        $this->serializableTrace = $t->getTrace();
+
         foreach ($this->serializableTrace as $i => $call) {
             unset($this->serializableTrace[$i]['args']);
         }
 
-        if ($e->getPrevious()) {
-            $this->previous = new self($e->getPrevious());
+        if ($t->getPrevious()) {
+            $this->previous = new self($t->getPrevious());
         }
     }
 
     /**
      * @return string
      */
-    public function getClassname()
+    public function getClassName()
     {
-        return $this->classname;
+        return $this->className;
     }
 
     /**
-     * @return PHPUnit_Framework_ExceptionWrapper
+     * @return ExceptionWrapper
      */
     public function getPreviousWrapped()
     {
@@ -78,9 +78,9 @@ class PHPUnit_Framework_ExceptionWrapper extends PHPUnit_Framework_Exception
      */
     public function __toString()
     {
-        $string = PHPUnit_Framework_TestFailure::exceptionToString($this);
+        $string = TestFailure::exceptionToString($this);
 
-        if ($trace = PHPUnit_Util_Filter::getFilteredStacktrace($this)) {
+        if ($trace = Filter::getFilteredStacktrace($this)) {
             $string .= "\n" . $trace;
         }
 

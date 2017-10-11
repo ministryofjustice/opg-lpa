@@ -7,19 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace PHPUnit\Framework;
 
 /**
  * An incomplete test case
- *
- * @package    PHPUnit
- * @subpackage Framework
- * @author     Davey Shafik <me@daveyshafik.com>
- * @copyright  Sebastian Bergmann <sebastian@phpunit.de>
- * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @link       http://www.phpunit.de/
- * @since      Class available since Release 4.3.0
  */
-class PHPUnit_Framework_IncompleteTestCase extends PHPUnit_Framework_TestCase
+class IncompleteTestCase extends TestCase
 {
     /**
      * @var string
@@ -27,27 +20,27 @@ class PHPUnit_Framework_IncompleteTestCase extends PHPUnit_Framework_TestCase
     protected $message = '';
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $backupGlobals = false;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $backupStaticAttributes = false;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $runTestInSeparateProcess = false;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $useErrorHandler = false;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $useOutputBuffering = false;
 
@@ -63,7 +56,7 @@ class PHPUnit_Framework_IncompleteTestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @throws PHPUnit_Framework_Exception
+     * @throws Exception
      */
     protected function runTest()
     {

@@ -76,7 +76,7 @@ class WhoAreYou extends AbstractData
 
             // A qualifier is optional, so only invalid if a qualifier is not allowed, but one is set.
             if ($options[$object->who]['qualifier'] == false && !is_null($value)) {
-                $context->buildViolation((new Assert\Null)->message)->addViolation();
+                $context->buildViolation((new Assert\IsNull)->message)->addViolation();
             }
         }));
     }

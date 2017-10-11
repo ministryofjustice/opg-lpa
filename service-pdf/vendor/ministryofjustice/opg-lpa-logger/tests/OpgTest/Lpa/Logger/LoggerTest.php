@@ -3,69 +3,45 @@
 namespace OpgTest\Lpa\Logger;
 
 use Opg\Lpa\Logger\Logger;
+use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_TestCase;
 
-class LoggerTest extends \PHPUnit_Framework_TestCase
+class LoggerTest extends TestCase
 {
-    public function testMessageLoggingWithSns()
-    {
-        $message1 = 'Hello world';
-        $message2 = 'Hello again';
-        $message3 = 'I am warning you';
-        $message4 = 'EMERGENCY!';
+    private $fileLogPath = 'testlog.log';
 
-        $logger = new Logger();
-        
-        // Create sentry.key file in /tests to test sending to Sentry
-        // It should be ignored by .gitignore
-        if (file_exists('sns.credentials')) {
-            $config = require('sns.credentials');
-            $logger->setSnsCredentials(
-                $config['client'],
-                $config['endpoints']
-            );
-        }
-    
-        $logger->alert($message1);
-        $logger->err($message2);
-        $logger->warn($message3);
-        $logger->emerg($message4);
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+    public function setUp()
+    {
+        $this->logger = new Logger();
+        $this->logger->setFileLogPath($this->fileLogPath);
     }
-    
-    public function testMessageLoggingWithSentry()
-    {
-        $filename = '/tmp/logger-test-' . uniqid() . '.temp';
-        
-        $message1 = 'Hello world';
-        $message2 = 'Hello again';
-        $message3 = 'I am warning you';
-        
-        $logger = new Logger();
-        $logger->setFileLogPath($filename);
-        
-        // Create sentry.key file in /tests to test sending to Sentry
-        // It should be ignored by .gitignore
-        if (file_exists('sentry.key')) {
-            $sentryKey = file_get_contents('sentry.key');
-            $logger->setSentryUri($sentryKey);
-        }
-        
-        $logger->alert($message1);
-        $logger->err($message2);
-        $logger->warn($message3);
-        
-        $jsonLines = file($filename);
 
-        $decodedJson = [];
-        
-        foreach ($jsonLines as $jsonLine) {
-            $decodedJson[] = json_decode($jsonLine);
+    public function testInfo()
+    {
+        $this->logger->alert('Alert');
+        $logged = $this->getLogLine();
+        $this->assertContains('"priority":1,"priorityName":"ALERT","message":"Alert"', $logged);
+    }
+
+    public function tearDown()
+    {
+        unlink($this->fileLogPath);
+    }
+
+    /**
+     * @return bool|string
+     */
+    public function getLogLine()
+    {
+        $line = fgets(fopen($this->fileLogPath, 'r'));
+        if ($line !== false) {
+            $line = preg_replace('/\r|\n/', '', $line);
         }
-        
-        $this->assertEquals($message1, $decodedJson[0]->message);
-        $this->assertEquals($message2, $decodedJson[1]->message);
-        $this->assertEquals($message3, $decodedJson[2]->message);
-        
-        $this->assertEquals('ALERT', $decodedJson[0]->priorityName);
-        $this->assertEquals('ERR', $decodedJson[1]->priorityName);
+        return $line;
     }
 }
