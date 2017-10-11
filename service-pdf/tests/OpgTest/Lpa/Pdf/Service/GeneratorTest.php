@@ -9,8 +9,9 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Validator\ValidatorResponseInterface;
 use ConfigSetUp;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 
-class GeneratorTest extends \PHPUnit_Framework_TestCase
+class GeneratorTest extends TestCase
 {
     public function setUp()
     {

@@ -7,8 +7,9 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use ConfigSetUp;
 use mikehaertl\pdftk\FdfFile;
 use mikehaertl\pdftk\Pdf;
+use PHPUnit\Framework\TestCase;
 
-abstract class AbstractFormTestClass extends \PHPUnit_Framework_TestCase
+abstract class AbstractFormTestClass extends TestCase
 {
     private $drawingTargetsReflectionProperty;
 
