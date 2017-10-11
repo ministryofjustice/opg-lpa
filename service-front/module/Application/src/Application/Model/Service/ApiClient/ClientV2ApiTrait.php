@@ -60,7 +60,7 @@ trait ClientV2ApiTrait
         $url = new Uri($this->apiBaseUri . $path);
 
         try {
-            $response = $this->httpPost($url);
+            $response = $this->httpPost($url, ['']);
 
             if ($response->getStatusCode() == 201) {
                 return Response\Lpa::buildFromResponse($response);
