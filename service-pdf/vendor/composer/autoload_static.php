@@ -86,10 +86,6 @@ class ComposerStaticInitf16902dd85272873c41381a1e27c3546
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
-        'E' => 
-        array (
-            'Egulias\\EmailValidator\\' => 23,
-        ),
         'D' => 
         array (
             'DynamoQueue\\' => 12,
@@ -238,10 +234,6 @@ class ComposerStaticInitf16902dd85272873c41381a1e27c3546
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
-        'Egulias\\EmailValidator\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator',
-        ),
         'DynamoQueue\\' => 
         array (
             0 => __DIR__ . '/..' . '/nsmithuk/dynamo-queue-php/src/DynamoQueue',
@@ -298,6 +290,13 @@ class ComposerStaticInitf16902dd85272873c41381a1e27c3546
             'Mockery' => 
             array (
                 0 => __DIR__ . '/..' . '/mockery/mockery/library',
+            ),
+        ),
+        'E' => 
+        array (
+            'Egulias\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/egulias/email-validator/src',
             ),
         ),
         'D' => 
