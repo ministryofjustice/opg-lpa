@@ -280,7 +280,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
             }
 
             $actorReuseDetails[] = [
-                'label' => $userDetailsObj->name . ' (myself)',
+                'label' => sprintf('%s %s (myself)', $userDetailsObj->name->first, $userDetailsObj->name->last),
                 'data'  => $userDetails,
             ];
         }
