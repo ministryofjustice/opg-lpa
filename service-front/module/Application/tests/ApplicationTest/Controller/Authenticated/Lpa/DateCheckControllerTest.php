@@ -81,7 +81,7 @@ class DateCheckControllerTest extends AbstractControllerTest
         $currentRouteName = 'lpa/date-check/complete';
         $this->setMatchedRouteName($this->controller, $currentRouteName);
         $this->setFormAction($this->form, $this->lpa, $currentRouteName);
-        $this->setPostInvalid($this->form, []);
+        $this->setPostInvalid($this->form);
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

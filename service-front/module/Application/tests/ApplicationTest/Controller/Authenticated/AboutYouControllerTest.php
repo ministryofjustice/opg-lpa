@@ -12,6 +12,7 @@ use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\User\User;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
+use DateTime;
 
 class AboutYouControllerTest extends AbstractControllerTest
 {
@@ -57,7 +58,7 @@ class AboutYouControllerTest extends AbstractControllerTest
 
         //  Set up the form
         $this->form->shouldReceive('setAttribute')->with('action', '/user/about-you')->once();
-        $this->form->shouldReceive('setData')->with($user->flatten())->once();
+        $this->form->shouldReceive('bind')->with($user->flatten())->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -69,14 +70,17 @@ class AboutYouControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        $user = $this->getUserDetails();
+
         //  Set up any route or request parameters
         $this->params->shouldReceive('fromRoute')->with('new', null)->andReturn(null)->once();
 
         //  Set up helpers and service
         $this->url->shouldReceive('fromRoute')->with('user/about-you', [])->andReturn('/user/about-you')->once();
+        $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
 
         //  Set up form
-        $this->setPostInvalid($this->form, $this->postData);
+        $this->setPostInvalid($this->form, $this->postData, $this->getExpectedDataToSet($user));
         $this->form->shouldReceive('setAttribute')->with('action', '/user/about-you')->once();
 
         /** @var ViewModel $result */
@@ -90,18 +94,20 @@ class AboutYouControllerTest extends AbstractControllerTest
     public function testIndexActionPostValid()
     {
         $response = new Response();
+        $user = $this->getUserDetails();
 
         //  Set up any route or request parameters
         $this->params->shouldReceive('fromRoute')->with('new', null)->andReturn(null)->once();
 
         //  Set up helpers and service
         $this->url->shouldReceive('fromRoute')->with('user/about-you', [])->andReturn('/user/about-you')->once();
+        $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
         $this->aboutYouDetails->shouldReceive('updateAllDetails')->with($this->form)->once();
         $this->flashMessenger->shouldReceive('addSuccessMessage')->with('Your details have been updated.')->once();
         $this->redirect->shouldReceive('toRoute')->with('user/dashboard')->andReturn($response)->once();
 
         //  Set up form
-        $this->setPostValid($this->form, $this->postData);
+        $this->setPostValid($this->form, $this->postData, $this->getExpectedDataToSet($user));
         $this->form->shouldReceive('setAttribute')->with('action', '/user/about-you')->once();
 
         $result = $this->controller->indexAction();
@@ -125,7 +131,7 @@ class AboutYouControllerTest extends AbstractControllerTest
 
         //  Set up form
         $this->form->shouldReceive('setAttribute')->with('action', '/user/about-you/new')->once();
-        $this->form->shouldReceive('setData')->with($user->flatten())->once();
+        $this->form->shouldReceive('bind')->with($user->flatten())->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -138,6 +144,7 @@ class AboutYouControllerTest extends AbstractControllerTest
     public function testNewActionPostValid()
     {
         $response = new Response();
+        $user = $this->getUserDetails(true);
 
         //  Set up any route or request parameters
         $this->params->shouldReceive('fromRoute')->with('new', null)->andReturn('new')->once();
@@ -147,12 +154,13 @@ class AboutYouControllerTest extends AbstractControllerTest
         $this->url->shouldReceive('fromRoute')->with('user/about-you', [
             'new' => 'new',
         ])->andReturn('/user/about-you/new')->once();
+        $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
         $this->aboutYouDetails->shouldReceive('updateAllDetails')->with($this->form)->once();
         $this->redirect->shouldReceive('toRoute')->with('user/dashboard')->andReturn($response)->once();
 
         //  Set up form
         $this->form->shouldReceive('setAttribute')->with('action', '/user/about-you/new')->once();
-        $this->setPostValid($this->form, $this->postData);
+        $this->setPostValid($this->form, $this->postData, $this->getExpectedDataToSet($user));
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -172,6 +180,12 @@ class AboutYouControllerTest extends AbstractControllerTest
 
         if (!$newDetails) {
             //  Just set a name for the user details to be considered existing
+            $user->id = 123;
+
+            $user->createdAt = new DateTime();
+
+            $user->updatedAt = new DateTime();
+
             $user->name = new Name([
                 'title' => 'Mrs',
                 'first' => 'New',
@@ -180,5 +194,20 @@ class AboutYouControllerTest extends AbstractControllerTest
         }
 
         return $user;
+    }
+
+    /**
+     * The data expected to set in the form will be different to the form data
+     *
+     * @param User $user
+     * @return array
+     */
+    private function getExpectedDataToSet(User $user)
+    {
+        //  Get the filtered user data in the same way a controller would
+        $userDetails = $user->flatten();
+        $existingSetData = array_intersect_key($userDetails, array_flip(['id', 'createdAt', 'updatedAt']));
+
+        return array_merge($this->postData, $existingSetData);
     }
 }

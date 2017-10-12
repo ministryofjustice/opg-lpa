@@ -281,7 +281,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
     {
         $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
-        $this->setPostInvalid($this->form, []);
+        $this->setPostInvalid($this->form);
         $this->setMatchedRouteName($this->controller, 'lpa/correspondent');
         $this->url->shouldReceive('fromRoute')->with('lpa/correspondent/edit', ['lpa-id' => $this->lpa->id])->andReturn('lpa/correspondent/edit')->once();
 
@@ -369,7 +369,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn('existing-correspondent')->once();
-        $this->setPostInvalid($this->form, []);
+        $this->setPostInvalid($this->form);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent/edit');
         $this->url->shouldReceive('fromRoute')->withArgs(['lpa/correspondent', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/correspondent")->once();
 

@@ -34,9 +34,10 @@
 {% set title = form.get('name-title') %}
 {% set firstName = form.get('name-first') %}
 {% set lastName = form.get('name-last') %}
-{% set dayOfBirth = form.get('dob-date-day') %}
-{% set monthOfBirth = form.get('dob-date-month') %}
-{% set yearOfBirth = form.get('dob-date-year') %}
+{% set dob = form.get('dob-date') %}
+{% set dayOfBirth = dob.get('day') %}
+{% set monthOfBirth = dob.get('month') %}
+{% set yearOfBirth = dob.get('year') %}
 {% set address1 = form.get('address-address1') %}
 {% set address2 = form.get('address-address2') %}
 {% set address3 = form.get('address-address3') %}
@@ -49,17 +50,17 @@
 }) ? ''}}
 
 {{ firstName.setAttributes({
-    id: 'firstname',
+    id: 'name-first',
     class: 'form-control'
-}) ? ''}}
+}) ? '' }}
 
 {{ lastName.setAttributes({
-    id: 'surname',
+    id: 'name-last',
     class: 'form-control'
-}) ? ''}}
+}) ? '' }}
 
 {{ dayOfBirth.setAttributes({
-    id: 'dob-day',
+    id: 'dob-date-day',
     type: 'tel',
     class: 'form-control',
     maxlength: '2',
@@ -69,7 +70,7 @@
 }) ? ''}}
 
 {{ monthOfBirth.setAttributes({
-    id: 'dob-month',
+    id: 'dob-date-month',
     type: 'tel',
     class: 'form-control',
     maxlength: '2',
@@ -79,7 +80,7 @@
  }) ? ''}}
 
 {{ yearOfBirth.setAttributes({
-    id: 'dob-year',
+    id: 'dob-date-year',
     type: 'tel',
     class: 'form-control',
     maxlength: '4',
@@ -87,22 +88,22 @@
 })  ? ''}}
 
 {{ address1.setAttributes({
-    id: 'addr1',
+    id: 'address-address1',
     class: 'form-control'
 }) ? ''}}
 
 {{ address2.setAttributes({
-    id: 'addr2',
+    id: 'address-address2',
     class: 'form-control'
 }) ? ''}}
 
 {{ address3.setAttributes({
-    id: 'addr3',
+    id: 'address-address3',
     class: 'form-control'
 }) ? ''}}
 
 {{ postcode.setAttributes({
-    id: 'postcode',
+    id: 'address-postcode',
     class: 'form-control'
 }) ? ''}}
 
@@ -137,28 +138,31 @@
 
     <h2 class="heading-medium">What is your date of birth?</h2>
 
-    <fieldset>
+    <fieldset id="{{ dob.getAttribute('name') }}">
         <legend class="visuallyhidden">Date of birth</legend>
 
-        <div class="form-date {{ dayOfBirth.getMessages|length >0 or monthOfBirth.getMessages|length >0 or yearOfBirth.getMessages|length >0 ? 'error'}}">
+        <div class="form-date {{ dob.getMessages|length >0 ? 'error'}}">
             <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
-            {{ formElementErrorsV2(yearOfBirth) }}
-            {{ formElementErrorsV2(monthOfBirth) }}
-            {{ formElementErrorsV2(dayOfBirth) }}
+            <div class="error-group">
+                {{ formElementErrorsV2(yearOfBirth) }}
+                {{ formElementErrorsV2(monthOfBirth) }}
+                {{ formElementErrorsV2(dayOfBirth) }}
+                {{ formElementErrorsV2(dob) }}
+            </div>
 
-            <div class="form-group form-group-day {{ dayOfBirth.getMessages|length >0 ? 'error'}}">
-                <label for="dob-day">Day</label>
+            <div class="form-group form-group-day {{ dob.getMessages|length > 0 ? 'error'}}">
+                <label for="dob-date-day">Day</label>
                 {{ formElement(dayOfBirth) }}
             </div>
 
-            <div class="form-group form-group-month {{ monthOfBirth.getMessages|length >0 ? 'error'}}">
-                <label for="dob-month">Month</label>
+            <div class="form-group form-group-month {{ dob.getMessages|length > 0 ? 'error'}}">
+                <label for="dob-date-month">Month</label>
                 {{ formElement(monthOfBirth) }}
             </div>
 
-            <div class="form-group form-group-year {{ yearOfBirth.getMessages|length >0 ? 'error'}}">
-                <label for="dob-year">Year</label>
+            <div class="form-group form-group-year {{ dob.getMessages|length > 0 ? 'error'}}">
+                <label for="dob-date-year">Year</label>
                 {{ formElement(yearOfBirth) }}
             </div>
         </div>

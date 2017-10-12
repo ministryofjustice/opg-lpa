@@ -32,8 +32,17 @@ class AboutYouController extends AbstractAuthenticatedController
         $request = $this->getRequest();
         $aboutYouService = $this->getServiceLocator()->get('AboutYouDetails');
 
+        //  Get any existing data for the user
+        $userDetails = $aboutYouService->load();
+        $userDetailsArr = $userDetails->flatten();
+
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            //  Merge any existing data - this is required for the datamodel validation that will execute in the form
+            $data = $request->getPost()->toArray();
+            $existingData = array_intersect_key($userDetailsArr, array_flip(['id', 'createdAt', 'updatedAt']));
+
+            //  Validate the new data with the existing data that doesn't change in the form
+            $form->setData(array_merge($data, $existingData));
 
             if ($form->isValid()) {
                 $aboutYouService->updateAllDetails($form);
@@ -51,15 +60,22 @@ class AboutYouController extends AbstractAuthenticatedController
                 return $this->redirect()->toRoute('user/dashboard');
             }
         } else {
-            //  Get any existing data for the user
-            $userDetails = $aboutYouService->load();
-
             //  if the user is new then ensure they are accessing the new route only
             if (!$isNew && is_null($userDetails->name)) {
                 return $this->redirect()->toUrl('/user/about-you/new');
             }
 
-            $form->setData($userDetails->flatten());
+            if (!is_null($userDetails->dob)) {
+                $dob = $userDetails->dob->date;
+
+                $userDetailsArr['dob-date'] = [
+                    'day'   => $dob->format('d'),
+                    'month' => $dob->format('m'),
+                    'year'  => $dob->format('Y'),
+                ];
+            }
+
+            $form->bind($userDetailsArr);
         }
 
         return new ViewModel([
