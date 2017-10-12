@@ -129,7 +129,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->setMatchedRouteName($this->controller, 'lpa/who-are-you');
         $this->setFormAction($this->form, $this->lpa, 'lpa/who-are-you');
-        $this->setPostInvalid($this->form, []);
+        $this->setPostInvalid($this->form);
         $this->form->shouldReceive('get')->with('who')->andReturn($this->whoOptions)->once();
         $this->form->shouldReceive('get')->with('professional')->andReturn($this->professionalOptions)->once();
         $this->whoOptions->shouldReceive('getValue')->andReturn('')->times(6);

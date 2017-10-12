@@ -150,7 +150,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->peopleToNotify = [];
         $this->controller->setLpa($this->lpa);
-        $this->setPostInvalid($this->blankMainFlowForm, []);
+        $this->setPostInvalid($this->blankMainFlowForm);
         $this->setMatchedRouteName($this->controller, 'lpa/people-to-notify');
         $this->url->shouldReceive('fromRoute')
             ->with('lpa/people-to-notify/add', ['lpa-id' => $this->lpa->id])
@@ -171,7 +171,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
         $this->lpa->document->peopleToNotify = [];
         $this->controller->setLpa($this->lpa);
-        $this->setPostValid($this->blankMainFlowForm, []);
+        $this->setPostValid($this->blankMainFlowForm);
         $this->metadata->shouldReceive('setPeopleToNotifyConfirmed')->withArgs([$this->lpa])->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/people-to-notify');
@@ -242,7 +242,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setPostInvalid($this->peopleToNotifyForm, [], 2);
+        $this->setPostInvalid($this->peopleToNotifyForm, [], null, 2);
         $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
         $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
         $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify');
@@ -265,7 +265,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setPostValid($this->peopleToNotifyForm, $this->postData, 2);
+        $this->setPostValid($this->peopleToNotifyForm, $this->postData, null, 2);
         $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
         $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
@@ -286,7 +286,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
-        $this->setPostValid($this->peopleToNotifyForm, $this->postData, 2, 2);
+        $this->setPostValid($this->peopleToNotifyForm, $this->postData, null, 2, 2);
         $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
         $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
@@ -311,7 +311,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
-        $this->setPostValid($this->peopleToNotifyForm, $this->postData, 2, 1);
+        $this->setPostValid($this->peopleToNotifyForm, $this->postData, null, 2, 1);
         $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
         $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
@@ -401,7 +401,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
-        $this->setPostInvalid($this->peopleToNotifyForm, []);
+        $this->setPostInvalid($this->peopleToNotifyForm);
         $this->setFormActionIndex($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/edit', $idx);
         $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
         $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify');

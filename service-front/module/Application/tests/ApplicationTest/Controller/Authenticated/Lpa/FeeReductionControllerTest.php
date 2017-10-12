@@ -176,7 +176,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
         $this->form->shouldReceive('get')->with('reductionOptions')->andReturn($this->reductionOptions)->once();
-        $this->setPostInvalid($this->form, []);
+        $this->setPostInvalid($this->form);
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
