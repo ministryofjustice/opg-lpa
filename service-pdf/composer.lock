@@ -567,12 +567,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
-                "reference": "15e2561d33ac8ee2b1c917ef57f83e8803b73785"
+                "reference": "2a49136af02aabbf2835c245c278fd6a85811378"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/15e2561d33ac8ee2b1c917ef57f83e8803b73785",
-                "reference": "15e2561d33ac8ee2b1c917ef57f83e8803b73785",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/2a49136af02aabbf2835c245c278fd6a85811378",
+                "reference": "2a49136af02aabbf2835c245c278fd6a85811378",
                 "shasum": ""
             },
             "require": {
@@ -598,7 +598,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/LPA-2109-php-7",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
             },
-            "time": "2017-10-11T16:35:11+00:00"
+            "time": "2017-10-12T07:57:39+00:00"
         },
         {
             "name": "mongodb/mongodb",
