@@ -25,22 +25,20 @@ class Lp3AdditionalAttorneyPageTest extends AbstractFormTestClass
 
         //  Confirm that the form data is as expected
         $expectedData = [
-            'how-attorneys-act' => 'jointly-attorney-severally',
-            'lpa-document-primaryAttorneys-0-name-last' => 'Taylor',
-            'lpa-document-primaryAttorneys-0-address-address1' => 'Lark Meadow Drive',
-            'lpa-document-primaryAttorneys-0-address-address2' => 'Solihull',
-            'lpa-document-primaryAttorneys-0-address-address3' => 'Birmingham',
-            'lpa-document-primaryAttorneys-0-address-postcode' => 'B37 6NA',
-            'lpa-document-primaryAttorneys-1-name-title' => 'Mr',
-            'lpa-document-primaryAttorneys-1-name-first' => 'Elliot',
-            'lpa-document-primaryAttorneys-1-name-last' => 'Sanders',
-            'lpa-document-primaryAttorneys-1-address-address1' => '12 Church Lane',
-            'lpa-document-primaryAttorneys-1-address-address2' => 'Brierfield',
-            'lpa-document-primaryAttorneys-1-address-address3' => 'Lancashire',
-            'lpa-document-primaryAttorneys-1-address-postcode' => 'L21 4WL',
-            'footer-right-page-three' => 'LP3 People to notify (07.15)',
-            'lpa-document-primaryAttorneys-0-name-title' => 'Dr',
-            'lpa-document-primaryAttorneys-0-name-first' => 'Henry'
+            'how-attorneys-act' => "jointly-attorney-severally",
+            'lpa-document-primaryAttorneys-0-name-last' => "Standard Trust",
+            'lpa-document-primaryAttorneys-0-address-address1' => "1 Laburnum Place",
+            'lpa-document-primaryAttorneys-0-address-address2' => "Sketty",
+            'lpa-document-primaryAttorneys-0-address-address3' => "Swansea, Abertawe",
+            'lpa-document-primaryAttorneys-0-address-postcode' => "SA2 8HT",
+            'lpa-document-primaryAttorneys-1-name-title' => "Mr",
+            'lpa-document-primaryAttorneys-1-name-first' => "Elliot",
+            'lpa-document-primaryAttorneys-1-name-last' => "Sanders",
+            'lpa-document-primaryAttorneys-1-address-address1' => "12 Church Lane",
+            'lpa-document-primaryAttorneys-1-address-address2' => "Brierfield",
+            'lpa-document-primaryAttorneys-1-address-address3' => "Lancashire",
+            'lpa-document-primaryAttorneys-1-address-postcode' => "L21 4WL",
+            'footer-right-page-three' => "LP3 People to notify (07.15)",
         ];
 
         $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
