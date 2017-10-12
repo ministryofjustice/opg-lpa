@@ -42,6 +42,7 @@ use Zend\Mvc\Router\RouteMatch;
 use Zend\Mvc\Router\Http\RouteMatch as HttpRouteMatch;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Session\Container;
 use Zend\Session\Storage\StorageInterface;
 use Zend\Stdlib\ArrayObject;
 use Zend\Stdlib\SplPriorityQueue;
@@ -350,6 +351,11 @@ abstract class AbstractControllerTest extends TestCase
     {
         $lpa->seed = $seedLpa->id;
         $this->lpaApplicationService->shouldReceive('getSeedDetails')->with($lpa->id)->andReturn($this->getSeedData($seedLpa))->once();
+
+        //Make sure the container hasn't cached the seed lpa
+        $seedId = $lpa->seed;
+        $cloneContainer = new Container('clone');
+        $cloneContainer->$seedId = null;
     }
 
     /**
@@ -543,6 +549,9 @@ abstract class AbstractControllerTest extends TestCase
 
     public function tearDown()
     {
+        //Clear out Zend containers
+        $preAuthRequest = new Container('PreAuthRequest');
+        $preAuthRequest->url = null;
         Mockery::close();
     }
 
