@@ -19,8 +19,9 @@ class ApplicantCleanupTest extends TestCase
         $cleanup = new TestableApplicantCleanup();
         $cleanup->updatedApplicantOverride = $lpa->document->whoIsRegistering;
 
-        $cleanup->cleanUp($lpa, $lpaApplicationService);
+        $result = $cleanup->cleanUp($lpa, $lpaApplicationService);
 
+        $this->assertNull($result);
         $lpaApplicationService->mockery_verify();
         Mockery::close();
     }
@@ -34,8 +35,9 @@ class ApplicantCleanupTest extends TestCase
         $cleanup = new TestableApplicantCleanup();
         $cleanup->updatedApplicantOverride = [1];
 
-        $cleanup->cleanUp($lpa, $lpaApplicationService);
+        $result = $cleanup->cleanUp($lpa, $lpaApplicationService);
 
+        $this->assertNull($result);
         $lpaApplicationService->mockery_verify();
         Mockery::close();
     }

@@ -156,7 +156,7 @@ class FormFlowCheckerTest extends TestCase
 
     public function testRouteException()
     {
-        $this->setExpectedException('RuntimeException');
+        $this->expectException('RuntimeException');
 
         $this->checker->getNearestAccessibleRoute('invalid-current-route-name');
     }

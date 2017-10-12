@@ -31,7 +31,10 @@ class DeleteControllerTest extends AbstractControllerTest
 
     public function testIndexAction()
     {
-        $this->controller->indexAction();
+        /** @var ViewModel $result */
+        $result = $this->controller->indexAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
     }
 
     public function testConfirmActionFailed()
