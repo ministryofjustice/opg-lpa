@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.36.24",
+            "version": "3.36.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "aa3d8ca598c40f0cc03245d92fa8ac727410e47b"
+                "reference": "c7a93ab8a4aff2915f4dd1545c99f9f59e13bafd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/aa3d8ca598c40f0cc03245d92fa8ac727410e47b",
-                "reference": "aa3d8ca598c40f0cc03245d92fa8ac727410e47b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c7a93ab8a4aff2915f4dd1545c99f9f59e13bafd",
+                "reference": "c7a93ab8a4aff2915f4dd1545c99f9f59e13bafd",
                 "shasum": ""
             },
             "require": {
@@ -84,7 +84,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2017-10-10T17:49:15+00:00"
+            "time": "2017-10-11T19:12:01+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -592,12 +592,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
-                "reference": "15e2561d33ac8ee2b1c917ef57f83e8803b73785"
+                "reference": "2a49136af02aabbf2835c245c278fd6a85811378"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/15e2561d33ac8ee2b1c917ef57f83e8803b73785",
-                "reference": "15e2561d33ac8ee2b1c917ef57f83e8803b73785",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/2a49136af02aabbf2835c245c278fd6a85811378",
+                "reference": "2a49136af02aabbf2835c245c278fd6a85811378",
                 "shasum": ""
             },
             "require": {
@@ -623,7 +623,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/LPA-2109-php-7",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
             },
-            "time": "2017-10-11T16:35:11+00:00"
+            "time": "2017-10-12T07:57:39+00:00"
         },
         {
             "name": "mongodb/mongodb",
