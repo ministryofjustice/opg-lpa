@@ -30,7 +30,6 @@ class Lp3AdditionalAttorneyPage extends AbstractForm
         $populatedAttorneys = 0;
 
         $attorneys = $this->lpa->document->primaryAttorneys;
-        sort($attorneys);
         for($i=0; $i<$additionalPages; $i++) {
             $filePath = $this->registerTempFile('AdditionalAttorneys');
 
