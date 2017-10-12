@@ -192,19 +192,17 @@ class Resource extends AbstractResource
 
         //-----------------------------------------
 
-        $validation = $user->validate();
-
-        if( $validation->hasErrors() ){
-            return new ValidationApiProblem( $validation );
-        }
-
-        //-----------------------------------------
-
         if ($new){
 
             $collection->insertOne( $user->toMongoArray() );
 
         } else {
+
+            $validation = $user->validate();
+
+            if( $validation->hasErrors() ){
+                return new ValidationApiProblem( $validation );
+            }
 
             $lastUpdated = new UTCDateTime($user->updatedAt);
 
