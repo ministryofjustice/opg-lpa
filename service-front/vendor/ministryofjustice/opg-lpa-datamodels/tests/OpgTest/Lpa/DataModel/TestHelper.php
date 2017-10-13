@@ -2,11 +2,13 @@
 
 namespace OpgTest\Lpa\DataModel;
 
+use PHPUnit\Framework\TestCase;
+
 class TestHelper
 {
     /**
      * @param $errors
-     * @param \PHPUnit_Framework_TestCase $testCase
+     * @param TestCase $testCase
      */
     public static function assertNoDuplicateErrorMessages($errors, $testCase)
     {

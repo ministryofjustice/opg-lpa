@@ -5,8 +5,9 @@ namespace OpgTest\Lpa\DataModel\User;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
+use PHPUnit\Framework\TestCase;
 
-class EmailAddressTest extends \PHPUnit_Framework_TestCase
+class EmailAddressTest extends TestCase
 {
     public function testValidation()
     {

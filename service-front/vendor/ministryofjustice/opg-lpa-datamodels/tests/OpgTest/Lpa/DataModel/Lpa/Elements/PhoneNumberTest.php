@@ -4,8 +4,9 @@ namespace OpgTest\Lpa\DataModel\Lpa\Elements;
 
 use Opg\Lpa\DataModel\Common\PhoneNumber;
 use OpgTest\Lpa\DataModel\TestHelper;
+use PHPUnit\Framework\TestCase;
 
-class PhoneNumberTest extends \PHPUnit_Framework_TestCase
+class PhoneNumberTest extends TestCase
 {
     public function testValidation()
     {

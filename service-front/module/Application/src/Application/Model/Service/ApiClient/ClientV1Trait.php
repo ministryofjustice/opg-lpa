@@ -772,7 +772,8 @@ trait ClientV1Trait
         $endpoint = $this->getApiBaseUriForLpa($lpaId, $resourceType);
 
         $response = $this->getClient()->delete($endpoint . (!is_null($index) ? '/' . $index : ''), [
-            'headers' => ['Content-Type' => 'application/json']
+            'headers' => ['Content-Type' => 'application/json'],
+            'body' => '{}'
         ]);
 
         if ($response->getStatusCode() != 204) {

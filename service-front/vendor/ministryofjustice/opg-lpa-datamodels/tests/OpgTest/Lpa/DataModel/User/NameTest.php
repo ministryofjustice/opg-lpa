@@ -5,8 +5,9 @@ namespace OpgTest\Lpa\DataModel\User;
 use Opg\Lpa\DataModel\Common\Name;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
+use PHPUnit\Framework\TestCase;
 
-class NameTest extends \PHPUnit_Framework_TestCase
+class NameTest extends TestCase
 {
     public function testValidation()
     {

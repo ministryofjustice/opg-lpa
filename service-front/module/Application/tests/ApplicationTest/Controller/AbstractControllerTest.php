@@ -22,6 +22,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\Logger;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_Error_Deprecated;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\ResponseCollection;
@@ -41,12 +42,13 @@ use Zend\Mvc\Router\RouteMatch;
 use Zend\Mvc\Router\Http\RouteMatch as HttpRouteMatch;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Session\Container;
 use Zend\Session\Storage\StorageInterface;
 use Zend\Stdlib\ArrayObject;
 use Zend\Stdlib\SplPriorityQueue;
 use Zend\Uri\Uri;
 
-abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractControllerTest extends TestCase
 {
     /**
      * @var MockInterface|ServiceLocatorInterface
@@ -349,6 +351,11 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
     {
         $lpa->seed = $seedLpa->id;
         $this->lpaApplicationService->shouldReceive('getSeedDetails')->with($lpa->id)->andReturn($this->getSeedData($seedLpa))->once();
+
+        //Make sure the container hasn't cached the seed lpa
+        $seedId = $lpa->seed;
+        $cloneContainer = new Container('clone');
+        $cloneContainer->$seedId = null;
     }
 
     /**
@@ -542,6 +549,9 @@ abstract class AbstractControllerTest extends \PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        //Clear out Zend containers
+        $preAuthRequest = new Container('PreAuthRequest');
+        $preAuthRequest->url = null;
         Mockery::close();
     }
 

@@ -5,8 +5,9 @@ namespace OpgTest\Lpa\DataModel\Lpa\Payment;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
+use PHPUnit\Framework\TestCase;
 
-class PaymentTest extends \PHPUnit_Framework_TestCase
+class PaymentTest extends TestCase
 {
     public function testMap()
     {

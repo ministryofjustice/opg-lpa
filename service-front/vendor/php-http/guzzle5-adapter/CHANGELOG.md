@@ -1,5 +1,26 @@
 # Change Log
 
+## 1.0.1 - 2017-07-11
+
+### Fixed
+
+- A HEAD request with the curl handler can be endless
+
+## 1.0.0 - 2016-07-18
+
+### Changed
+
+- Improved package files
+- Discovery updated to ^1.0
+- Client now requires a Response factory instead of a Message factory
+
+
+## 0.6.0 - 2016-06-27
+
+### Changed
+
+- Updated discovery dependency
+
 
 ## 0.5.0 - 2016-02-23
 

@@ -10,8 +10,6 @@ return array(
     'ZendXml\\' => array($vendorDir . '/zendframework/zendxml/library'),
     'ZFConfigDump\\' => array($vendorDir . '/nsmithuk/zf-config-dump/src'),
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
-    'Symfony\\Component\\Validator\\' => array($vendorDir . '/symfony/validator'),
-    'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),
     'Smtpapi' => array($vendorDir . '/sendgrid/smtpapi/lib'),
     'SendGrid' => array($vendorDir . '/sendgrid/sendgrid/lib'),
     'Raven_' => array($vendorDir . '/sentry/sentry/lib'),

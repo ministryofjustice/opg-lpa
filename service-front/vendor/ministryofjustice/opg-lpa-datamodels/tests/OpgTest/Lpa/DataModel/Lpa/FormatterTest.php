@@ -2,9 +2,11 @@
 
 namespace OpgTest\Lpa\DataModel\Lpa;
 
+use InvalidArgumentException;
 use Opg\Lpa\DataModel\Lpa\Formatter;
+use PHPUnit\Framework\TestCase;
 
-class FormatterTest extends \PHPUnit_Framework_TestCase
+class FormatterTest extends TestCase
 {
     public function testId()
     {
@@ -12,10 +14,12 @@ class FormatterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('A000 1234 5678', $formatted);
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage The passed value must be an integer.
+     */
     public function testIdString()
     {
-        $this->setExpectedException(\InvalidArgumentException::class, 'The passed value must be an integer.');
-
         Formatter::id('27');
     }
 }

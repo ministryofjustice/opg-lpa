@@ -2,6 +2,69 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.10.2 - 2017-05-18
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#161](https://github.com/zendframework/zend-form/pull/161) adds an import
+  statement to the `ElementFactory`, fixing an error whereby checks for
+  `Traversable` creation options would lead to a service creation exception;
+  these now correctly identify traversable options and convert them to an array.
+- [#164](https://github.com/zendframework/zend-form/pull/164) fixes how the
+  `FormElementManagerFactory` factory initializes the plugin manager instance,
+  ensuring it is injecting the relevant configuration from the `config` service
+  and thus seeding it with configured form/form element services.  This means
+  that the `form_elements` configuration will now be honored in non-zend-mvc
+  contexts.
+- [#159](https://github.com/zendframework/zend-form/pull/159) fixes the behavior
+  of the `min` and `max` attributes of the various `DateTime` elements, ensuring
+  that the elements raise an exception during instantiation if the values
+  provided are in a format that `DateTime` does not recognize for the element
+  type in question.
+
+## 2.10.1 - 2017-04-26
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#134](https://github.com/zendframework/zend-form/pull/134) fixes how the
+  `FormElementManager` handles invokable classes when the `autoAddInvokableClass`
+  flag is enabled. Previously, it used the built-in utilities from
+  zend-servicemanager, but now correctly uses its own `setInvokableClass()`
+  method, which forces usage of the `ElementFactory` for such classes, and thus
+  ensures the name and options are passed to the element constructor.
+- [#136](https://github.com/zendframework/zend-form/pull/136) fixes how error
+  messages are provided when an element uses a required `ArrayInput`, but no
+  values are submitted. Previously, no messages were returned; now they are.
+- [#156](https://github.com/zendframework/zend-form/pull/156) fixes how elements
+  that act as `InputProvider`s are merged into parent `CollectionInputFilter`s;
+  previously, forms did not check if the element was in the target input filter
+  composed in a `CollectionInputFilter`, leading to duplicate elements with
+  varying behavior; now the inputs are correctly merged.
+
 ## 2.10.0 - 2017-02-23
 
 ### Added

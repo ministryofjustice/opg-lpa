@@ -1,11 +1,12 @@
 <?php
 namespace ApplicationTest\View\Helper;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use PHPUnit\Framework\TestCase;
 
 /**
  * AccordionTop test case.
  */
-class AccordionTopTest extends \PHPUnit_Framework_TestCase
+class AccordionTopTest extends TestCase
 {
 
     /**

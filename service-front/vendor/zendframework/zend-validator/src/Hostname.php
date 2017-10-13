@@ -35,6 +35,7 @@ class Hostname extends AbstractValidator
     const UNDECIPHERABLE_TLD      = 'hostnameUndecipherableTld';
     const UNKNOWN_TLD             = 'hostnameUnknownTld';
 
+    // @codingStandardsIgnoreStart
     /**
      * @var array
      */
@@ -51,6 +52,7 @@ class Hostname extends AbstractValidator
         self::UNDECIPHERABLE_TLD      => "The input appears to be a DNS hostname but cannot extract TLD part",
         self::UNKNOWN_TLD             => "The input appears to be a DNS hostname but cannot match TLD against known list",
     ];
+    // @codingStandardsIgnoreEnd
 
     /**
      * @var array
@@ -67,7 +69,7 @@ class Hostname extends AbstractValidator
 
     /**
      * Array of valid top-level-domains
-     * IanaVersion 2017012900
+     * IanaVersion 2017082200
      *
      * @see ftp://data.iana.org/TLD/tlds-alpha-by-domain.txt  List of all TLDs by domain
      * @see http://www.iana.org/domains/root/db/ Official list of supported TLDs
@@ -103,6 +105,7 @@ class Hostname extends AbstractValidator
         'af',
         'afamilycompany',
         'afl',
+        'africa',
         'ag',
         'agakhan',
         'agency',
@@ -141,6 +144,7 @@ class Hostname extends AbstractValidator
         'aq',
         'aquarelle',
         'ar',
+        'arab',
         'aramco',
         'archi',
         'army',
@@ -476,6 +480,7 @@ class Hostname extends AbstractValidator
         'estate',
         'esurance',
         'et',
+        'etisalat',
         'eu',
         'eurovision',
         'eus',
@@ -610,6 +615,7 @@ class Hostname extends AbstractValidator
         'gratis',
         'green',
         'gripe',
+        'grocery',
         'group',
         'gs',
         'gt',
@@ -659,6 +665,7 @@ class Hostname extends AbstractValidator
         'hosting',
         'hot',
         'hoteles',
+        'hotels',
         'hotmail',
         'house',
         'how',
@@ -849,6 +856,7 @@ class Hostname extends AbstractValidator
         'man',
         'management',
         'mango',
+        'map',
         'market',
         'marketing',
         'markets',
@@ -872,6 +880,7 @@ class Hostname extends AbstractValidator
         'men',
         'menu',
         'meo',
+        'merckmsd',
         'metlife',
         'mg',
         'mh',
@@ -917,7 +926,6 @@ class Hostname extends AbstractValidator
         'msd',
         'mt',
         'mtn',
-        'mtpc',
         'mtr',
         'mu',
         'museum',
@@ -1000,7 +1008,6 @@ class Hostname extends AbstractValidator
         'orange',
         'org',
         'organic',
-        'orientexpress',
         'origins',
         'osaka',
         'otsuka',
@@ -1026,6 +1033,7 @@ class Hostname extends AbstractValidator
         'pg',
         'ph',
         'pharmacy',
+        'phd',
         'philips',
         'phone',
         'photo',
@@ -1129,6 +1137,7 @@ class Hostname extends AbstractValidator
         'rs',
         'rsvp',
         'ru',
+        'rugby',
         'ruhr',
         'run',
         'rw',
@@ -1170,6 +1179,7 @@ class Hostname extends AbstractValidator
         'scot',
         'sd',
         'se',
+        'search',
         'seat',
         'secure',
         'security',
@@ -1441,13 +1451,16 @@ class Hostname extends AbstractValidator
         'कॉम',
         'セール',
         '佛山',
+        'ಭಾರತ',
         '慈善',
         '集团',
         '在线',
         '한국',
+        'ଭାରତ',
         '大众汽车',
         '点看',
         'คอม',
+        'ভাৰত',
         'ভারত',
         '八卦',
         'موقع',
@@ -1501,7 +1514,9 @@ class Hostname extends AbstractValidator
         'クラウド',
         'ભારત',
         '通販',
+        'भारतम्',
         'भारत',
+        'भारोत',
         '网店',
         'संगठन',
         '餐厅',
@@ -1522,14 +1537,18 @@ class Hostname extends AbstractValidator
         'ارامكو',
         'ایران',
         'العليان',
+        'اتصالات',
         'امارات',
         'بازار',
+        'پاکستان',
         'الاردن',
         'موبايلي',
+        'بارت',
         'بھارت',
         'المغرب',
         'ابوظبي',
         'السعودية',
+        'ڀارت',
         'كاثوليك',
         'سودان',
         'همراه',
@@ -1540,6 +1559,7 @@ class Hostname extends AbstractValidator
         '政府',
         'شبكة',
         'بيتك',
+        'عرب',
         'გე',
         '机构',
         '组织机构',
@@ -1556,6 +1576,7 @@ class Hostname extends AbstractValidator
         'ελ',
         '世界',
         '書籍',
+        'ഭാരതം',
         'ਭਾਰਤ',
         '网址',
         '닷넷',
@@ -1604,6 +1625,7 @@ class Hostname extends AbstractValidator
         'zw',
     ];
 
+    // @codingStandardsIgnoreStart
     /**
      * Array for valid Idns
      * @see http://www.iana.org/domains/idn-tables/ Official list of supported IDN Chars
@@ -1624,6 +1646,7 @@ class Hostname extends AbstractValidator
      * (.ES) Spain https://www.nic.es/media/2008-05/1210147705287.pdf
      * (.FI) Finland http://www.ficora.fi/en/index/palvelut/fiverkkotunnukset/aakkostenkaytto.html
      * (.GR) Greece https://grweb.ics.forth.gr/CharacterTable1_en.jsp
+     * (.HR) Croatia https://www.dns.hr/en/portal/files/Odluka-1,2alfanum-dijak.pdf
      * (.HU) Hungary http://www.domain.hu/domain/English/szabalyzat/szabalyzat.html
      * (.IL) Israel http://www.isoc.org.il/domains/il-domain-rules.html
      * (.INFO) International http://www.nic.info/info/idn
@@ -1671,7 +1694,7 @@ class Hostname extends AbstractValidator
         'CN'  => 'Hostname/Cn.php',
         'COM' => 'Hostname/Com.php',
         'DE'  => [1 => '/^[\x{002d}0-9a-zà-öø-ÿăąāćĉčċďđĕěėęēğĝġģĥħĭĩįīıĵķĺľļłńňņŋŏőōœĸŕřŗśŝšşťţŧŭůűũųūŵŷźžż]{1,63}$/iu'],
-        'DK'  => [1 => '/^[\x{002d}0-9a-zäéöü]{1,63}$/iu'],
+        'DK'  => [1 => '/^[\x{002d}0-9a-zäåæéöøü]{1,63}$/iu'],
         'EE'  => [1 => '/^[\x{002d}0-9a-zäõöüšž]{1,63}$/iu'],
         'ES'  => [1 => '/^[\x{002d}0-9a-zàáçèéíïñòóúü·]{1,63}$/iu'],
         'EU'  => [1 => '/^[\x{002d}0-9a-zà-öø-ÿ]{1,63}$/iu',
@@ -1683,10 +1706,11 @@ class Hostname extends AbstractValidator
         'FI'  => [1 => '/^[\x{002d}0-9a-zäåö]{1,63}$/iu'],
         'GR'  => [1 => '/^[\x{002d}0-9a-zΆΈΉΊΌΎ-ΡΣ-ώἀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ᾼῂῃῄῆ-ῌῐ-ΐῖ-Ίῠ-Ῥῲῳῴῶ-ῼ]{1,63}$/iu'],
         'HK'  => 'Hostname/Cn.php',
+        'HR'  => [1 => '/^[\x{002d}0-9a-zžćčđš]{1,63}$/iu'],
         'HU'  => [1 => '/^[\x{002d}0-9a-záéíóöúüőű]{1,63}$/iu'],
         'IL'  => [1 => '/^[\x{002d}0-9\x{05D0}-\x{05EA}]{1,63}$/iu',
             2 => '/^[\x{002d}0-9a-z]{1,63}$/i'],
-        'INFO'=> [1 => '/^[\x{002d}0-9a-zäåæéöøü]{1,63}$/iu',
+        'INFO' => [1 => '/^[\x{002d}0-9a-zäåæéöøü]{1,63}$/iu',
             2 => '/^[\x{002d}0-9a-záéíóöúüőű]{1,63}$/iu',
             3 => '/^[\x{002d}0-9a-záæéíðóöúýþ]{1,63}$/iu',
             4 => '/^[\x{AC00}-\x{D7A3}]{1,17}$/iu',
@@ -1723,30 +1747,30 @@ class Hostname extends AbstractValidator
             7 => '/^[\x{002d}0-9a-zóąćęłńśźż]{1,63}$/iu',
             8 => '/^[\x{002d}0-9a-zàáâãçéêíòóôõúü]{1,63}$/iu',
             9 => '/^[\x{002d}0-9a-zâîăşţ]{1,63}$/iu',
-            10=> '/^[\x{002d}0-9a-záäéíóôúýčďĺľňŕšťž]{1,63}$/iu',
-            11=> '/^[\x{002d}0-9a-zçë]{1,63}$/iu',
-            12=> '/^[\x{002d}0-9а-ик-шђјљњћџ]{1,63}$/iu',
-            13=> '/^[\x{002d}0-9a-zćčđšž]{1,63}$/iu',
-            14=> '/^[\x{002d}0-9a-zâçöûüğış]{1,63}$/iu',
-            15=> '/^[\x{002d}0-9a-záéíñóúü]{1,63}$/iu',
-            16=> '/^[\x{002d}0-9a-zäõöüšž]{1,63}$/iu',
-            17=> '/^[\x{002d}0-9a-zĉĝĥĵŝŭ]{1,63}$/iu',
-            18=> '/^[\x{002d}0-9a-zâäéëîô]{1,63}$/iu',
-            19=> '/^[\x{002d}0-9a-zàáâäåæçèéêëìíîïðñòôöøùúûüýćčłńřśš]{1,63}$/iu',
-            20=> '/^[\x{002d}0-9a-zäåæõöøüšž]{1,63}$/iu',
-            21=> '/^[\x{002d}0-9a-zàáçèéìíòóùú]{1,63}$/iu',
-            22=> '/^[\x{002d}0-9a-zàáéíóöúüőű]{1,63}$/iu',
-            23=> '/^[\x{002d}0-9ΐά-ώ]{1,63}$/iu',
-            24=> '/^[\x{002d}0-9a-zàáâåæçèéêëðóôöøüþœ]{1,63}$/iu',
-            25=> '/^[\x{002d}0-9a-záäéíóöúüýčďěňřšťůž]{1,63}$/iu',
-            26=> '/^[\x{002d}0-9a-z·àçèéíïòóúü]{1,63}$/iu',
-            27=> '/^[\x{002d}0-9а-ъьюя\x{0450}\x{045D}]{1,63}$/iu',
-            28=> '/^[\x{002d}0-9а-яёіў]{1,63}$/iu',
-            29=> '/^[\x{002d}0-9a-ząčėęįšūųž]{1,63}$/iu',
-            30=> '/^[\x{002d}0-9a-záäåæéëíðóöøúüýþ]{1,63}$/iu',
-            31=> '/^[\x{002d}0-9a-zàâæçèéêëîïñôùûüÿœ]{1,63}$/iu',
-            32=> '/^[\x{002d}0-9а-щъыьэюяёєіїґ]{1,63}$/iu',
-            33=> '/^[\x{002d}0-9א-ת]{1,63}$/iu'],
+            10 => '/^[\x{002d}0-9a-záäéíóôúýčďĺľňŕšťž]{1,63}$/iu',
+            11 => '/^[\x{002d}0-9a-zçë]{1,63}$/iu',
+            12 => '/^[\x{002d}0-9а-ик-шђјљњћџ]{1,63}$/iu',
+            13 => '/^[\x{002d}0-9a-zćčđšž]{1,63}$/iu',
+            14 => '/^[\x{002d}0-9a-zâçöûüğış]{1,63}$/iu',
+            15 => '/^[\x{002d}0-9a-záéíñóúü]{1,63}$/iu',
+            16 => '/^[\x{002d}0-9a-zäõöüšž]{1,63}$/iu',
+            17 => '/^[\x{002d}0-9a-zĉĝĥĵŝŭ]{1,63}$/iu',
+            18 => '/^[\x{002d}0-9a-zâäéëîô]{1,63}$/iu',
+            19 => '/^[\x{002d}0-9a-zàáâäåæçèéêëìíîïðñòôöøùúûüýćčłńřśš]{1,63}$/iu',
+            20 => '/^[\x{002d}0-9a-zäåæõöøüšž]{1,63}$/iu',
+            21 => '/^[\x{002d}0-9a-zàáçèéìíòóùú]{1,63}$/iu',
+            22 => '/^[\x{002d}0-9a-zàáéíóöúüőű]{1,63}$/iu',
+            23 => '/^[\x{002d}0-9ΐά-ώ]{1,63}$/iu',
+            24 => '/^[\x{002d}0-9a-zàáâåæçèéêëðóôöøüþœ]{1,63}$/iu',
+            25 => '/^[\x{002d}0-9a-záäéíóöúüýčďěňřšťůž]{1,63}$/iu',
+            26 => '/^[\x{002d}0-9a-z·àçèéíïòóúü]{1,63}$/iu',
+            27 => '/^[\x{002d}0-9а-ъьюя\x{0450}\x{045D}]{1,63}$/iu',
+            28 => '/^[\x{002d}0-9а-яёіў]{1,63}$/iu',
+            29 => '/^[\x{002d}0-9a-ząčėęįšūųž]{1,63}$/iu',
+            30 => '/^[\x{002d}0-9a-záäåæéëíðóöøúüýþ]{1,63}$/iu',
+            31 => '/^[\x{002d}0-9a-zàâæçèéêëîïñôùûüÿœ]{1,63}$/iu',
+            32 => '/^[\x{002d}0-9а-щъыьэюяёєіїґ]{1,63}$/iu',
+            33 => '/^[\x{002d}0-9א-ת]{1,63}$/iu'],
         'PR'  => [1 => '/^[\x{002d}0-9a-záéíóúñäëïüöâêîôûàèùæçœãõ]{1,63}$/iu'],
         'PT'  => [1 => '/^[\x{002d}0-9a-záàâãçéêíóôõú]{1,63}$/iu'],
         'RU'  => [1 => '/^[\x{002d}0-9а-яё]{1,63}$/iu'],
@@ -1786,13 +1810,14 @@ class Hostname extends AbstractValidator
         'فلسطين' => [1 => '/^[\x{0621}-\x{0624}\x{0626}-\x{063A}\x{0641}\x{0642}\x{0644}-\x{0648}\x{067E}\x{0686}\x{0698}\x{06A9}\x{06AF}\x{06CC}\x{06F0}-\x{06F9}]{1,30}$/iu'],
         'شبكة'  => [1 => '/^[\x{0621}-\x{0624}\x{0626}-\x{063A}\x{0641}\x{0642}\x{0644}-\x{0648}\x{067E}\x{0686}\x{0698}\x{06A9}\x{06AF}\x{06CC}\x{06F0}-\x{06F9}]{1,30}$/iu'],
     ];
+    // @codingStandardsIgnoreEnd
 
     protected $idnLength = [
         'BIZ' => [5 => 17, 11 => 15, 12 => 20],
         'CN'  => [1 => 20],
         'COM' => [3 => 17, 5 => 20],
         'HK'  => [1 => 15],
-        'INFO'=> [4 => 17],
+        'INFO' => [4 => 17],
         'KR'  => [1 => 17],
         'NET' => [3 => 17, 5 => 20],
         'ORG' => [6 => 17],
@@ -1836,25 +1861,25 @@ class Hostname extends AbstractValidator
      */
     public function __construct($options = [])
     {
-        if (!is_array($options)) {
+        if (! is_array($options)) {
             $options = func_get_args();
             $temp['allow'] = array_shift($options);
-            if (!empty($options)) {
+            if (! empty($options)) {
                 $temp['useIdnCheck'] = array_shift($options);
             }
 
-            if (!empty($options)) {
+            if (! empty($options)) {
                 $temp['useTldCheck'] = array_shift($options);
             }
 
-            if (!empty($options)) {
+            if (! empty($options)) {
                 $temp['ipValidator'] = array_shift($options);
             }
 
             $options = $temp;
         }
 
-        if (!array_key_exists('ipValidator', $options)) {
+        if (! array_key_exists('ipValidator', $options)) {
             $options['ipValidator'] = null;
         }
 
@@ -1966,7 +1991,7 @@ class Hostname extends AbstractValidator
      */
     public function isValid($value)
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             $this->error(self::INVALID);
             return false;
         }
@@ -1977,7 +2002,7 @@ class Hostname extends AbstractValidator
                 || (preg_match('/^[0-9a-f:.]*$/i', $value) && strpos($value, ':') !== false))
             && $this->getIpValidator()->setTranslator($this->getTranslator())->isValid($value)
         ) {
-            if (!($this->getAllow() & self::ALLOW_IP)) {
+            if (! ($this->getAllow() & self::ALLOW_IP)) {
                 $this->error(self::IP_ADDRESS_NOT_ALLOWED);
                 return false;
             }
@@ -2041,8 +2066,8 @@ class Hostname extends AbstractValidator
 
                     // Match TLD against known list
                     if ($this->getTldCheck()) {
-                        if (!in_array(strtolower($this->tld), $this->validTlds)
-                            && !in_array($this->tld, $this->validTlds)) {
+                        if (! in_array(strtolower($this->tld), $this->validTlds)
+                            && ! in_array($this->tld, $this->validTlds)) {
                             $this->error(self::UNKNOWN_TLD);
                             $status = false;
                             break;
@@ -2084,7 +2109,11 @@ class Hostname extends AbstractValidator
                                 && $utf8StrWrapper->strpos($domainPart, '-', 2) == 2
                                 && $utf8StrWrapper->strpos($domainPart, '-', 3) == 3
                             )
-                            || ($utf8StrWrapper->strpos($domainPart, '-') === ($utf8StrWrapper->strlen($domainPart) - 1))
+                            || (
+                                $utf8StrWrapper->strpos($domainPart, '-') === (
+                                $utf8StrWrapper->strlen($domainPart) - 1
+                                )
+                            )
                         ) {
                             $this->error(self::INVALID_DASH);
                             $status = false;
@@ -2160,12 +2189,12 @@ class Hostname extends AbstractValidator
         }
 
         // If the input does not pass as a local network name, add a message
-        if (!$status) {
+        if (! $status) {
             $this->error(self::INVALID_LOCAL_NAME);
         }
 
         // If local network names are not allowed, add a message
-        if ($status && !$allowLocal) {
+        if ($status && ! $allowLocal) {
             $this->error(self::LOCAL_NAME_NOT_ALLOWED);
         }
 
@@ -2181,7 +2210,7 @@ class Hostname extends AbstractValidator
      */
     protected function decodePunycode($encoded)
     {
-        if (!preg_match('/^[a-z0-9-]+$/i', $encoded)) {
+        if (! preg_match('/^[a-z0-9-]+$/i', $encoded)) {
             // no punycode encoded string
             $this->error(self::CANNOT_DECODE_PUNYCODE);
             return false;

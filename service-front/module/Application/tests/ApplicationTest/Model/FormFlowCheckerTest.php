@@ -19,6 +19,7 @@ use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use DateTime;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 /**
@@ -27,7 +28,7 @@ use RuntimeException;
  * This set of unit tests with execute sequentially starting with a basic LPA datamodel - which will
  * check the correct position in the flow to return the user to
  */
-class FormFlowCheckerTest extends \PHPUnit_Framework_TestCase
+class FormFlowCheckerTest extends TestCase
 {
     /**
      * LPA document to test
@@ -155,7 +156,7 @@ class FormFlowCheckerTest extends \PHPUnit_Framework_TestCase
 
     public function testRouteException()
     {
-        $this->setExpectedException('RuntimeException');
+        $this->expectException('RuntimeException');
 
         $this->checker->getNearestAccessibleRoute('invalid-current-route-name');
     }

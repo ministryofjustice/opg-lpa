@@ -114,10 +114,14 @@ class AbstractLpaActorControllerTest extends AbstractControllerTest
         $this->lpa->document->correspondent->who = Correspondence::WHO_ATTORNEY;
         $this->controller->setLpa($this->lpa);
 
-        $this->lpaApplicationService->shouldReceive('setCorrespondent')->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setCorrespondent')->withArgs(function ($lpaId, $correspondent) {
+            return $lpaId === $this->lpa->id && $correspondent->company === FixturesData::getAttorneyTrust()->name;
+        })->andReturn(true)->once();
 
         $trust = FixturesData::getAttorneyTrust();
-        $this->controller->testUpdateCorrespondentData($trust);
+        $result = $this->controller->testUpdateCorrespondentData($trust);
+
+        $this->assertNull($result);
     }
 
     /**

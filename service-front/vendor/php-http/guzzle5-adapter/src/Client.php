@@ -8,7 +8,7 @@ use GuzzleHttp\Message\RequestInterface as GuzzleRequest;
 use GuzzleHttp\Message\ResponseInterface as GuzzleResponse;
 use Http\Client\HttpClient;
 use Http\Discovery\MessageFactoryDiscovery;
-use Http\Message\MessageFactory;
+use Http\Message\ResponseFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Http\Client\Exception as HttplugException;
@@ -26,18 +26,18 @@ class Client implements HttpClient
     private $client;
 
     /**
-     * @var MessageFactory
+     * @var ResponseFactory
      */
-    private $messageFactory;
+    private $responseFactory;
 
     /**
      * @param ClientInterface|null $client
-     * @param MessageFactory|null  $messageFactory
+     * @param ResponseFactory|null $responseFactory
      */
-    public function __construct(ClientInterface $client = null, MessageFactory $messageFactory = null)
+    public function __construct(ClientInterface $client = null, ResponseFactory $responseFactory = null)
     {
         $this->client = $client ?: new GuzzleClient();
-        $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
+        $this->responseFactory = $responseFactory ?: MessageFactoryDiscovery::find();
     }
 
     /**
@@ -72,7 +72,8 @@ class Client implements HttpClient
 
         $options['version'] = $request->getProtocolVersion();
         $options['headers'] = $request->getHeaders();
-        $options['body'] = (string) $request->getBody();
+        $body = (string) $request->getBody();
+        $options['body'] = '' === $body ? null : $body;
 
         return $this->client->createRequest(
             $request->getMethod(),
@@ -92,7 +93,7 @@ class Client implements HttpClient
     {
         $body = $response->getBody();
 
-        return $this->messageFactory->createResponse(
+        return $this->responseFactory->createResponse(
             $response->getStatusCode(),
             null,
             $response->getHeaders(),
