@@ -6,8 +6,9 @@ use Application\Model\Rest\Status\Entity;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
 use OpgTest\Lpa\DataModel\FixturesData;
+use PHPUnit\Framework\TestCase;
 
-class EntityTest extends \PHPUnit_Framework_TestCase
+class EntityTest extends TestCase
 {
     /**
      * @var Entity

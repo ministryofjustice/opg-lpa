@@ -10,8 +10,6 @@ return array(
     'ZfcRbac\\' => array($vendorDir . '/zf-commons/zfc-rbac/src'),
     'ZendXml\\' => array($vendorDir . '/zendframework/zendxml/library'),
     'ZFConfigDump\\' => array($vendorDir . '/nsmithuk/zf-config-dump/src'),
-    'Symfony\\Component\\Validator\\' => array($vendorDir . '/symfony/validator'),
-    'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),
     'Rbac\\' => array($vendorDir . '/zfr/rbac/src'),
     'Raven_' => array($vendorDir . '/sentry/sentry/lib'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),

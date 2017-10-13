@@ -6,10 +6,11 @@ use Application\Model\Rest\Pdfs\Collection;
 use Application\Model\Rest\Pdfs\Entity;
 use Application\Model\Rest\Pdfs\Resource;
 use OpgTest\Lpa\DataModel\FixturesData;
+use PHPUnit\Framework\TestCase;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Adapter\NullFill;
 
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends TestCase
 {
     public function testConstructor()
     {

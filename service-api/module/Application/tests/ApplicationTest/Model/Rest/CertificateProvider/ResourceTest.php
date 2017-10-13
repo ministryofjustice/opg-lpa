@@ -87,7 +87,8 @@ class ResourceTest extends AbstractResourceTest
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
         //So we expect an exception and for no document to be updated
-        $this->setExpectedException(\RuntimeException::class, 'A malformed LPA object');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('A malformed LPA object');
 
         $resource->update($lpa->document->certificateProvider->toArray(), -1); //Id is ignored
 
@@ -152,7 +153,8 @@ class ResourceTest extends AbstractResourceTest
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
         //So we expect an exception and for no document to be updated
-        $this->setExpectedException(\RuntimeException::class, 'A malformed LPA object');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('A malformed LPA object');
 
         $resource->delete(); //Id is ignored
 

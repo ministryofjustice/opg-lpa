@@ -4,8 +4,9 @@ namespace OpgTest\Lpa\DataModel\Lpa\Payment;
 
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use OpgTest\Lpa\DataModel\FixturesData;
+use PHPUnit\Framework\TestCase;
 
-class CalculatorTest extends \PHPUnit_Framework_TestCase
+class CalculatorTest extends TestCase
 {
     public function testCalculateNullPayment()
     {

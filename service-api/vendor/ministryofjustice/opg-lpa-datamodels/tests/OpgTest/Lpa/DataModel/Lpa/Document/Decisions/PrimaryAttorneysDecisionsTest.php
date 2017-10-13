@@ -5,9 +5,10 @@ namespace OpgTest\Lpa\DataModel\Lpa\Document\Decisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
-class PrimaryAttorneyDecisionsTest extends \PHPUnit_Framework_TestCase
+class PrimaryAttorneyDecisionsTest extends TestCase
 {
     public function testLoadValidatorMetadata()
     {

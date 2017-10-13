@@ -6,9 +6,10 @@ use Application\DataAccess\Mongo\CollectionFactory;
 use Application\Model\Service\System\Stats;
 use Mockery;
 use MongoCollection;
+use PHPUnit\Framework\TestCase;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class StatsTest extends \PHPUnit_Framework_TestCase
+class StatsTest extends TestCase
 {
     public function testGenerate()
     {

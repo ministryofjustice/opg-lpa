@@ -298,7 +298,8 @@ class ResourceTest extends AbstractResourceTest
         $mockS3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
         $resource->setS3Client($mockS3Client);
 
-        $this->setExpectedException(CryptInvalidArgumentException::class, 'Invalid encryption key');
+        $this->expectException(CryptInvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid encryption key');
         $resource->fetch('lp1');
 
         $resourceBuilder->verify();
@@ -343,7 +344,8 @@ class ResourceTest extends AbstractResourceTest
         $mockS3Client->shouldReceive('getObject')->andReturn($s3Result)->once();
         $resource->setS3Client($mockS3Client);
 
-        $this->setExpectedException(CryptInvalidArgumentException::class, 'Invalid encryption key');
+        $this->expectException(CryptInvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid encryption key');
         $resource->fetch('lp1.pdf');
 
         $resourceBuilder->verify();

@@ -5,10 +5,11 @@ namespace ApplicationTest\Model\Rest\AttorneysPrimary;
 use Application\Model\Rest\AttorneysPrimary\Collection;
 use Application\Model\Rest\AttorneysPrimary\Entity;
 use OpgTest\Lpa\DataModel\FixturesData;
+use PHPUnit\Framework\TestCase;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Adapter\NullFill;
 
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends TestCase
 {
     public function testConstructor()
     {

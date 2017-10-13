@@ -46,9 +46,9 @@ abstract class AbstractGuard implements GuardInterface
     /**
      * {@inheritDoc}
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = AbstractGuard::EVENT_PRIORITY)
     {
-        $this->listeners[] = $events->attach(static::EVENT_NAME, [$this, 'onResult'], static::EVENT_PRIORITY);
+        $this->listeners[] = $events->attach(static::EVENT_NAME, [$this, 'onResult'], $priority);
     }
 
     /**
@@ -68,11 +68,13 @@ abstract class AbstractGuard implements GuardInterface
             403
         ));
 
-        $event->stopPropagation(true);
-
         $application  = $event->getApplication();
         $eventManager = $application->getEventManager();
 
-        $eventManager->trigger(MvcEvent::EVENT_DISPATCH_ERROR, $event);
+        $event->setName(MvcEvent::EVENT_DISPATCH_ERROR);
+        $eventManager->triggerEvent($event);
+
+        // just in case
+        $event->stopPropagation(true);
     }
 }

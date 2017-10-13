@@ -167,7 +167,8 @@ class ResourceTest extends AbstractResourceTest
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
 
-        $this->setExpectedException(\RuntimeException::class, 'Unable to update User. This might be because "updatedAt" has changed.');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unable to update User. This might be because "updatedAt" has changed.');
         $userUpdate = FixturesData::getUser();
         $userUpdate->name->first = 'Edited';
         $resource->update($userUpdate->toArray(), $user->id);

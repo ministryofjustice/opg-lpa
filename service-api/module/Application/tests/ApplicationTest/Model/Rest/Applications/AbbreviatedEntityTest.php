@@ -4,8 +4,9 @@ namespace ApplicationTest\Model\Rest\Applications;
 
 use Application\Model\Rest\Applications\AbbreviatedEntity;
 use OpgTest\Lpa\DataModel\FixturesData;
+use PHPUnit\Framework\TestCase;
 
-class AbbreviatedEntityTest extends \PHPUnit_Framework_TestCase
+class AbbreviatedEntityTest extends TestCase
 {
     public function testToArray()
     {

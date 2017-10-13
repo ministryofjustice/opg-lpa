@@ -1,21 +1,16 @@
-FROM registry.service.opg.digital/opguk/php-fpm
+FROM registry.service.opg.digital/opg-php-fpm-1604
+
+# We need version 1.2 of the mongo extension
+RUN apt remove -y php-mongodb
+
+RUN apt-get install -y php-dev pkg-config
+
+RUN pecl install mongodb-1.2.9 && \
+    echo "extension=mongodb.so" > /etc/php/7.0/mods-available/mongodb.ini && \
+    phpenmod mongodb
 
 RUN groupadd webservice && \
     groupadd supervisor
-
-RUN apt-get update && apt-get install -y \
-    php5-curl php-pear php5-dev
-
-RUN apt-get install -y pkg-config
-
-RUN pecl install mongodb-1.2.9 && \
-    echo "extension=mongodb.so" > /etc/php5/mods-available/mongodb.ini && \
-    php5enmod mongodb
-
-RUN php5enmod mcrypt
-
-RUN echo "expose_php = Off" > /etc/php5/mods-available/do_not_expose_php.ini && \
-    php5enmod do_not_expose_php
 
 # Add application logging config(s)
 ADD docker/beaver.d /etc/beaver.d
