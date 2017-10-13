@@ -78,7 +78,6 @@ class User extends AbstractData
         ]);
 
         $metadata->addPropertyConstraints('name', [
-            new Assert\NotBlank,
             new Assert\Type([
                 'type' => '\Opg\Lpa\DataModel\Common\Name'
             ]),
