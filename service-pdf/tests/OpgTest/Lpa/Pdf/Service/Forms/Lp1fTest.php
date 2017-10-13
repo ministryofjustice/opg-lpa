@@ -4076,19 +4076,6 @@ class Lp1fTest extends AbstractFormTestClass
         $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
     }
 
-    public function testMergePdfsThrowsUnexpectedValueException()
-    {
-        //  Create a partially mocked version of the form to short circuit the generateCoversheets method
-        $lp1f = Mockery::mock(Lp1f::class . '[generateCoversheets]', [$this->getLpa()])->shouldAllowMockingProtectedMethods();
-        $lp1f->shouldReceive('generateCoversheets')
-             ->andReturnNull();
-
-        $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('LP1 pdf was not generated before merging pdf intermediate files');
-
-        $lp1f->generate();
-    }
-
     public function testGenerateAdditionalPagesPrimaryAttorneysActDepends()
     {
         $lpa = $this->getLpa();

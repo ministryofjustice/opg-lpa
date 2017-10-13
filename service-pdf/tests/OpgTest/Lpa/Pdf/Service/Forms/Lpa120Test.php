@@ -2,10 +2,11 @@
 
 namespace OpgTest\Lpa\Pdf\Service\Forms;
 
-use Exception;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\Pdf\Service\Forms\Lpa120;
 use mikehaertl\pdftk\Pdf;
+use Exception;
 use RuntimeException;
 
 class Lps120Test extends AbstractFormTestClass
@@ -65,12 +66,10 @@ class Lps120Test extends AbstractFormTestClass
         $lpa->repeatCaseNumber = null;
         $lpa->payment = new Payment();
 
-        $lpa120 = new Lpa120($lpa);
-
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('LPA120 is not available for this LPA.');
+        $this->expectExceptionMessage('LPA does not contain all the required data to generate a LPA120');
 
-        $lpa120->generate();
+        $lpa120 = new Lpa120($lpa);
     }
 
     public function testGeneratePFAttorneyCorrespondentEnteredManually()

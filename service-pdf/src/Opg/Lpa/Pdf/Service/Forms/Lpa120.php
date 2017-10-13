@@ -29,7 +29,7 @@ class Lpa120 extends AbstractTopForm
         $stateChecker = new StateChecker($lpa);
 
         //  Check that the document can be created
-        if (!$stateChecker->canGenerateLP3()) {
+        if (!$stateChecker->canGenerateLPA120()) {
             throw new RuntimeException('LPA does not contain all the required data to generate a LPA120');
         }
     }

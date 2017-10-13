@@ -309,12 +309,10 @@ class Lp3Test extends AbstractFormTestClass
         //  Remove the people to notify
         $lpa->document->peopleToNotify = [];
 
-        $lp3 = new Lp3($lpa);
-
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('LP3 is not available for this LPA.');
+        $this->expectExceptionMessage('LPA does not contain all the required data to generate a LP3');
 
-        $lp3->generate();
+        $lp3 = new Lp3($lpa);
     }
 
     public function testGeneratePFSinglePrimaryAttorney()
@@ -1277,12 +1275,10 @@ class Lp3Test extends AbstractFormTestClass
         //  Remove the people to notify
         $lpa->document->peopleToNotify = [];
 
-        $lp3 = new Lp3($lpa);
-
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('LP3 is not available for this LPA.');
+        $this->expectExceptionMessage('LPA does not contain all the required data to generate a LP3');
 
-        $lp3->generate();
+        $lp3 = new Lp3($lpa);
     }
 
     public function testGenerateHWSinglePrimaryAttorney()
