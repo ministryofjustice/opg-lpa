@@ -7212,7 +7212,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "ministryofjustice/opg-lpa-datamodels": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
