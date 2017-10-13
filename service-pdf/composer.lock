@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f89987e95da41932ba23fa7f5e36e99e",
+    "content-hash": "cc35f7f0eabd4af1df6bc16d6cb8885d",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.36.25",
+            "version": "3.36.26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c7a93ab8a4aff2915f4dd1545c99f9f59e13bafd"
+                "reference": "96f2c1525d3fd17a0802329c309c76c01a78aa51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c7a93ab8a4aff2915f4dd1545c99f9f59e13bafd",
-                "reference": "c7a93ab8a4aff2915f4dd1545c99f9f59e13bafd",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/96f2c1525d3fd17a0802329c309c76c01a78aa51",
+                "reference": "96f2c1525d3fd17a0802329c309c76c01a78aa51",
                 "shasum": ""
             },
             "require": {
@@ -84,7 +84,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2017-10-11T19:12:01+00:00"
+            "time": "2017-10-12T19:45:50+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -523,16 +523,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "dev-LPA-2109-php-7",
+            "version": "6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "90c487b51d4c4dddfbbb610f211be8ee1ea2470e"
+                "reference": "b33dde4f44cee17af1c1d19b57c6c70a0f3695a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/90c487b51d4c4dddfbbb610f211be8ee1ea2470e",
-                "reference": "90c487b51d4c4dddfbbb610f211be8ee1ea2470e",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/b33dde4f44cee17af1c1d19b57c6c70a0f3695a0",
+                "reference": "b33dde4f44cee17af1c1d19b57c6c70a0f3695a0",
                 "shasum": ""
             },
             "require": {
@@ -556,23 +556,23 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/LPA-2109-php-7",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/6.0.0",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2017-10-11T16:33:01+00:00"
+            "time": "2017-10-13T09:06:15+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
-            "version": "dev-LPA-2109-php-7",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
-                "reference": "2a49136af02aabbf2835c245c278fd6a85811378"
+                "reference": "7df59264aabd6e01aacedf55853156a70250c1cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/2a49136af02aabbf2835c245c278fd6a85811378",
-                "reference": "2a49136af02aabbf2835c245c278fd6a85811378",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/7df59264aabd6e01aacedf55853156a70250c1cb",
+                "reference": "7df59264aabd6e01aacedf55853156a70250c1cb",
                 "shasum": ""
             },
             "require": {
@@ -595,10 +595,10 @@
             ],
             "description": "Common logger component for OPG LPA modules",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/LPA-2109-php-7",
+                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/2.0.0",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
             },
-            "time": "2017-10-12T07:57:39+00:00"
+            "time": "2017-10-13T09:08:53+00:00"
         },
         {
             "name": "mongodb/mongodb",
@@ -3454,10 +3454,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "ministryofjustice/opg-lpa-datamodels": 20,
-        "ministryofjustice/opg-lpa-logger": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
