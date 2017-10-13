@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "cc35f7f0eabd4af1df6bc16d6cb8885d",
+    "content-hash": "54113a159a9c70e05ef68c2462f763d8",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -475,7 +475,7 @@
             ],
             "authors": [
                 {
-                    "name": "Michael H??rtl",
+                    "name": "Michael H?rtl",
                     "email": "haertl.mike@gmail.com"
                 }
             ],
@@ -2166,7 +2166,7 @@
             ],
             "authors": [
                 {
-                    "name": "P??draic Brady",
+                    "name": "P?draic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
                 },
@@ -3454,7 +3454,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "ministryofjustice/opg-lpa-datamodels": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
