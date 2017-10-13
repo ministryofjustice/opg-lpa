@@ -54,8 +54,6 @@ class Cs1 extends AbstractForm
                 $actors = $this->lpa->document->$actorGroup;
             }
 
-            sort($actors);
-
             $this->actors[$actorType] = $actors;
         }
     }

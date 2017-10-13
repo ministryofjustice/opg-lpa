@@ -9,8 +9,11 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Validator\ValidatorResponseInterface;
 use ConfigSetUp;
 use Mockery;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use UnexpectedValueException;
 
-class GeneratorTest extends \PHPUnit_Framework_TestCase
+class GeneratorTest extends TestCase
 {
     public function setUp()
     {
@@ -43,7 +46,8 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerateLpaFailsValidation()
     {
-        $this->setExpectedException('RuntimeException', 'LPA failed validation');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('LPA failed validation');
 
         $generator = new Generator(Generator::TYPE_FORM_LP1, $this->getLpa(true, false), $this->getResponse());
 
@@ -59,7 +63,8 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
         $generator = new Generator(Generator::TYPE_FORM_LP1, $lpa, $this->getResponse());
 
-        $this->setExpectedException('RuntimeException', 'LPA does not contain all the required data to generate a LP1');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('LPA does not contain all the required data to generate a LP1');
 
         $generator->generate();
     }
@@ -79,7 +84,8 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
         $generator = new Generator(Generator::TYPE_FORM_LP3, $lpa, $this->getResponse());
 
-        $this->setExpectedException('RuntimeException', 'LPA does not contain all the required data to generate a LP3');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('LPA does not contain all the required data to generate a LP3');
 
         $generator->generate();
     }
@@ -99,7 +105,8 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
         $generator = new Generator(Generator::TYPE_FORM_LPA120, $lpa, $this->getResponse());
 
-        $this->setExpectedException('RuntimeException', 'LPA does not contain all the required data to generate a LPA120');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('LPA does not contain all the required data to generate a LPA120');
 
         $generator->generate();
     }
@@ -108,7 +115,8 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $generator = new Generator('LPA999', $this->getLpa(), $this->getResponse());
 
-        $this->setExpectedException('UnexpectedValueException', 'Invalid form type: LPA999');
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Invalid form type: LPA999');
 
         $generator->generate();
     }

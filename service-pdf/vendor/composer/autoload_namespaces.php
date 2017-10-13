@@ -8,8 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     'cli' => array($vendorDir . '/wp-cli/php-cli-tools/lib'),
     'ZendPdf\\' => array($vendorDir . '/zendframework/zendpdf/library'),
-    'Symfony\\Component\\Validator\\' => array($vendorDir . '/symfony/validator'),
-    'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),
     'Raven_' => array($vendorDir . '/sentry/sentry/lib'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),

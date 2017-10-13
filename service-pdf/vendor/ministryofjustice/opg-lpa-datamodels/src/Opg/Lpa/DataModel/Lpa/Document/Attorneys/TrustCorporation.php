@@ -14,6 +14,14 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 class TrustCorporation extends AbstractAttorney
 {
     /**
+     * Field length constants
+     */
+    const NAME_MIN_LENGTH = 1;
+    const NAME_MAX_LENGTH = 40;
+    const NUMBER_MIN_LENGTH = 1;
+    const NUMBER_MAX_LENGTH = 40;
+
+    /**
      * @var string The company name,
      */
     protected $name;
@@ -31,8 +39,8 @@ class TrustCorporation extends AbstractAttorney
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'min' => 1,
-                'max' => 40
+                'min' => self::NAME_MIN_LENGTH,
+                'max' => self::NAME_MAX_LENGTH,
             ]),
         ]);
 
@@ -42,8 +50,8 @@ class TrustCorporation extends AbstractAttorney
                 'type' => 'string'
             ]),
             new Assert\Length([
-                'min' => 1,
-                'max' => 40
+                'min' => self::NUMBER_MIN_LENGTH,
+                'max' => self::NUMBER_MAX_LENGTH,
             ]),
         ]);
     }

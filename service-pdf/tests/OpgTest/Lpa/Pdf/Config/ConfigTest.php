@@ -3,8 +3,9 @@
 namespace OpgTest\Lpa\Pdf\Config;
 
 use Opg\Lpa\Pdf\Config\Config;
+use PHPUnit\Framework\TestCase;
 
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends TestCase
 {
     public function testGetInstance()
     {

@@ -4,8 +4,9 @@ namespace OpgTest\Lpa\Pdf\Logger;
 
 use Opg\Lpa\Pdf\Logger\Logger;
 use ConfigSetUp;
+use PHPUnit\Framework\TestCase;
 
-class LoggerTest extends \PHPUnit_Framework_TestCase
+class LoggerTest extends TestCase
 {
     public function setUp()
     {
