@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e96ec203095c3113717a5fd9cf0325f6",
+    "content-hash": "0955b3db0f88d97b0f8d2ab97094900f",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -6370,7 +6370,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "ministryofjustice/opg-lpa-datamodels": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
