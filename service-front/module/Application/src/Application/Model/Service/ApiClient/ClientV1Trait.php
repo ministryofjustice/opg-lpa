@@ -115,6 +115,7 @@ trait ClientV1Trait
                 'Content-Type' => 'application/json',
                 'Token' => $this->getToken(),
             ],
+            'body' => '{}',
         ]);
 
         if ($response->getStatusCode() != 204) {
