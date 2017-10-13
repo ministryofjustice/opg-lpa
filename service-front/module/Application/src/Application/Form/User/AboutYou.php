@@ -107,7 +107,7 @@ class AboutYou extends AbstractActorForm
         }
 
         //  If the address is empty then remove it - it is optional
-        if (empty($data['address-address1']) && empty($data['address-address2ß']) && empty($data['address-address3']) && empty($data['address-postcode'])) {
+        if (empty($data['address-address1']) && empty($data['address-address2']) && empty($data['address-address3']) && empty($data['address-postcode'])) {
             $data['address'] = null;
         }
     }
