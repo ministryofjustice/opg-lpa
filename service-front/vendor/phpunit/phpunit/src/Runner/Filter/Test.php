@@ -8,15 +8,6 @@
  * file that was distributed with this source code.
  */
 
-/**
- * @package    PHPUnit
- * @subpackage Runner
- * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  Sebastian Bergmann <sebastian@phpunit.de>
- * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @link       http://www.phpunit.de/
- * @since      Class available since Release 4.0.0
- */
 class PHPUnit_Runner_Filter_Test extends RecursiveFilterIterator
 {
     /**
@@ -25,11 +16,11 @@ class PHPUnit_Runner_Filter_Test extends RecursiveFilterIterator
     protected $filter = null;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $filterMin;
     /**
-     * @var integer
+     * @var int
      */
     protected $filterMax;
 
@@ -92,7 +83,7 @@ class PHPUnit_Runner_Filter_Test extends RecursiveFilterIterator
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function accept()
     {
@@ -102,18 +93,22 @@ class PHPUnit_Runner_Filter_Test extends RecursiveFilterIterator
             return true;
         }
 
-        $tmp = PHPUnit_Util_Test::describe($test, false);
-
-        if ($tmp[0] != '') {
-            $name = join('::', $tmp);
+        if ($test instanceof PHPUnit_Framework_WarningTestCase) {
+            $name = $test->getMessage();
         } else {
-            $name = $tmp[1];
+            $tmp = PHPUnit_Util_Test::describe($test, false);
+
+            if ($tmp[0] != '') {
+                $name = implode('::', $tmp);
+            } else {
+                $name = $tmp[1];
+            }
         }
 
-        $accepted = preg_match($this->filter, $name, $matches);
+        $accepted = @preg_match($this->filter, $name, $matches);
 
         if ($accepted && isset($this->filterMax)) {
-            $set = end($matches);
+            $set      = end($matches);
             $accepted = $set >= $this->filterMin && $set <= $this->filterMax;
         }
 

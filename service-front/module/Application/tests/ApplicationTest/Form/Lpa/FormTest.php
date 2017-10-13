@@ -5,8 +5,10 @@ namespace ApplicationTest\Form\Lpa;
 use Application\Form\Lpa\AbstractLpaForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
-class FormTest extends \PHPUnit_Framework_TestCase
+class FormTest extends TestCase
 {
     use FormTestSetupTrait;
 
@@ -17,8 +19,9 @@ class FormTest extends \PHPUnit_Framework_TestCase
         foreach (glob(__DIR__ . '/../../../../src/Application/Form/Lpa/*.php') as $filepath) {
             $pathInfo = pathinfo(realpath($filepath));
             $className = 'Application\\Form\\Lpa\\' . $pathInfo['filename'];
+            $reflectionClass = new ReflectionClass($className);
 
-            if (class_exists($className) && $className instanceof AbstractLpaForm) {
+            if (class_exists($className) && !$reflectionClass->isAbstract() && $reflectionClass->isSubclassOf(AbstractLpaForm::class)) {
                 //  Instantiate the form object and test
                 $form = new $className('name', [
                     'lpa' => $lpa

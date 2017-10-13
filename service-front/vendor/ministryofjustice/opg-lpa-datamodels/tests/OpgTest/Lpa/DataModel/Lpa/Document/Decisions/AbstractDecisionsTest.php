@@ -3,9 +3,10 @@
 namespace OpgTest\Lpa\DataModel\Lpa\Document\Decisions;
 
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
-class AbstractDecisionsTest extends \PHPUnit_Framework_TestCase
+class AbstractDecisionsTest extends TestCase
 {
     public function testLoadValidatorMetadata()
     {

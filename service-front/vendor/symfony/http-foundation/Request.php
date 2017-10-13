@@ -243,8 +243,6 @@ class Request
     );
 
     /**
-     * Constructor.
-     *
      * @param array           $query      The GET parameters
      * @param array           $request    The POST parameters
      * @param array           $attributes The request attributes (parameters parsed from the PATH_INFO, ...)
@@ -463,22 +461,22 @@ class Request
     public function duplicate(array $query = null, array $request = null, array $attributes = null, array $cookies = null, array $files = null, array $server = null)
     {
         $dup = clone $this;
-        if ($query !== null) {
+        if (null !== $query) {
             $dup->query = new ParameterBag($query);
         }
-        if ($request !== null) {
+        if (null !== $request) {
             $dup->request = new ParameterBag($request);
         }
-        if ($attributes !== null) {
+        if (null !== $attributes) {
             $dup->attributes = new ParameterBag($attributes);
         }
-        if ($cookies !== null) {
+        if (null !== $cookies) {
             $dup->cookies = new ParameterBag($cookies);
         }
-        if ($files !== null) {
+        if (null !== $files) {
             $dup->files = new FileBag($files);
         }
-        if ($server !== null) {
+        if (null !== $server) {
             $dup->server = new ServerBag($server);
             $dup->headers = new HeaderBag($dup->server->getHeaders());
         }
@@ -581,7 +579,7 @@ class Request
      * You should only list the reverse proxies that you manage directly.
      *
      * @param array $proxies          A list of trusted proxies
-     * @param int   $trustedHeaderSet A bit field of Request::HEADER_*, usually either Request::HEADER_FORWARDED or Request::HEADER_X_FORWARDED_ALL, to set which headers to trust from your proxies
+     * @param int   $trustedHeaderSet A bit field of Request::HEADER_*, to set which headers to trust from your proxies
      *
      * @throws \InvalidArgumentException When $trustedHeaderSet is invalid
      */
@@ -590,10 +588,11 @@ class Request
         self::$trustedProxies = $proxies;
 
         if (2 > func_num_args()) {
-            // @deprecated code path in 3.3, to be replaced by mandatory argument in 4.0.
-            throw new \InvalidArgumentException(sprintf('The %s() method expects a bit field of Request::HEADER_* as second argument. Defining it is required since version 3.3. See http://symfony.com/doc/current/components/http_foundation/trusting_proxies.html for more info.', __METHOD__));
+            @trigger_error(sprintf('The %s() method expects a bit field of Request::HEADER_* as second argument since version 3.3. Defining it will be required in 4.0. ', __METHOD__), E_USER_DEPRECATED);
+
+            return;
         }
-        $trustedHeaderSet = func_get_arg(1);
+        $trustedHeaderSet = (int) func_get_arg(1);
 
         foreach (self::$trustedHeaderNames as $header => $name) {
             self::$trustedHeaders[$header] = $header & $trustedHeaderSet ? $name : null;
@@ -665,13 +664,23 @@ class Request
      *
      * @throws \InvalidArgumentException
      *
-     * @deprecated since version 3.3, to be removed in 4.0. Use "X-Forwarded-*" headers or the "Forwarded" header defined in RFC7239, and the $trustedHeaderSet argument of the Request::setTrustedProxies() method instead.
+     * @deprecated since version 3.3, to be removed in 4.0. Use the $trustedHeaderSet argument of the Request::setTrustedProxies() method instead.
      */
     public static function setTrustedHeaderName($key, $value)
     {
-        @trigger_error(sprintf('The "%s()" method is deprecated since version 3.3 and will be removed in 4.0. Use "X-Forwarded-*" headers or the "Forwarded" header defined in RFC7239, and the $trustedHeaderSet argument of the Request::setTrustedProxies() method instead.', __METHOD__), E_USER_DEPRECATED);
+        @trigger_error(sprintf('The "%s()" method is deprecated since version 3.3 and will be removed in 4.0. Use the $trustedHeaderSet argument of the Request::setTrustedProxies() method instead.', __METHOD__), E_USER_DEPRECATED);
 
-        if (!array_key_exists($key, self::$trustedHeaders)) {
+        if ('forwarded' === $key) {
+            $key = self::HEADER_FORWARDED;
+        } elseif ('client_ip' === $key) {
+            $key = self::HEADER_CLIENT_IP;
+        } elseif ('client_host' === $key) {
+            $key = self::HEADER_CLIENT_HOST;
+        } elseif ('client_proto' === $key) {
+            $key = self::HEADER_CLIENT_PROTO;
+        } elseif ('client_port' === $key) {
+            $key = self::HEADER_CLIENT_PORT;
+        } elseif (!array_key_exists($key, self::$trustedHeaders)) {
             throw new \InvalidArgumentException(sprintf('Unable to set the trusted header name for key "%s".', $key));
         }
 
@@ -679,6 +688,9 @@ class Request
 
         if (null !== $value) {
             self::$trustedHeaderNames[$key] = $value;
+            self::$trustedHeaderSet |= $key;
+        } else {
+            self::$trustedHeaderSet &= ~$key;
         }
     }
 
@@ -886,8 +898,8 @@ class Request
      * adding the IP address where it received the request from.
      *
      * If your reverse proxy uses a different header name than "X-Forwarded-For",
-     * ("Client-Ip" for instance), configure it via "setTrustedHeaderName()" with
-     * the "client-ip" key.
+     * ("Client-Ip" for instance), configure it via the $trustedHeaderSet
+     * argument of the Request::setTrustedProxies() method instead.
      *
      * @return string|null The client IP address
      *
@@ -993,7 +1005,8 @@ class Request
      * The "X-Forwarded-Port" header must contain the client port.
      *
      * If your reverse proxy uses a different header name than "X-Forwarded-Port",
-     * configure it via "setTrustedHeaderName()" with the "client-port" key.
+     * configure it via via the $trustedHeaderSet argument of the
+     * Request::setTrustedProxies() method instead.
      *
      * @return int|string can be a string if fetched from the server bag
      */
@@ -1007,7 +1020,7 @@ class Request
             return $this->server->get('SERVER_PORT');
         }
 
-        if ($host[0] === '[') {
+        if ('[' === $host[0]) {
             $pos = strpos($host, ':', strrpos($host, ']'));
         } else {
             $pos = strrpos($host, ':');
@@ -1069,7 +1082,7 @@ class Request
         $scheme = $this->getScheme();
         $port = $this->getPort();
 
-        if (('http' == $scheme && $port == 80) || ('https' == $scheme && $port == 443)) {
+        if (('http' == $scheme && 80 == $port) || ('https' == $scheme && 443 == $port)) {
             return $this->getHost();
         }
 
@@ -1210,8 +1223,8 @@ class Request
      * The "X-Forwarded-Proto" header must contain the protocol: "https" or "http".
      *
      * If your reverse proxy uses a different header name than "X-Forwarded-Proto"
-     * ("SSL_HTTPS" for instance), configure it via "setTrustedHeaderName()" with
-     * the "client-proto" key.
+     * ("SSL_HTTPS" for instance), configure it via the $trustedHeaderSet
+     * argument of the Request::setTrustedProxies() method instead.
      *
      * @return bool
      */
@@ -1235,7 +1248,8 @@ class Request
      * The "X-Forwarded-Host" header must contain the client host name.
      *
      * If your reverse proxy uses a different header name than "X-Forwarded-Host",
-     * configure it via "setTrustedHeaderName()" with the "client-host" key.
+     * configure it via the $trustedHeaderSet argument of the
+     * Request::setTrustedProxies() method instead.
      *
      * @return string
      *
@@ -1577,7 +1591,7 @@ class Request
     public function getContent($asResource = false)
     {
         $currentContentIsResource = is_resource($this->content);
-        if (PHP_VERSION_ID < 50600 && false === $this->content) {
+        if (\PHP_VERSION_ID < 50600 && false === $this->content) {
             throw new \LogicException('getContent() can only be called once when using the resource return type and PHP below 5.6.');
         }
 
@@ -1693,7 +1707,7 @@ class Request
                     }
                 } else {
                     for ($i = 0, $max = count($codes); $i < $max; ++$i) {
-                        if ($i === 0) {
+                        if (0 === $i) {
                             $lang = strtolower($codes[0]);
                         } else {
                             $lang .= '_'.strtoupper($codes[$i]);
@@ -1788,7 +1802,7 @@ class Request
             // IIS with ISAPI_Rewrite
             $requestUri = $this->headers->get('X_REWRITE_URL');
             $this->headers->remove('X_REWRITE_URL');
-        } elseif ($this->server->get('IIS_WasUrlRewritten') == '1' && $this->server->get('UNENCODED_URL') != '') {
+        } elseif ('1' == $this->server->get('IIS_WasUrlRewritten') && '' != $this->server->get('UNENCODED_URL')) {
             // IIS7 with URL Rewrite: make sure we get the unencoded URL (double slash problem)
             $requestUri = $this->server->get('UNENCODED_URL');
             $this->server->remove('UNENCODED_URL');
@@ -1797,7 +1811,7 @@ class Request
             $requestUri = $this->server->get('REQUEST_URI');
             // HTTP proxy reqs setup request URI with scheme and host [and port] + the URL path, only use URL path
             $schemeAndHttpHost = $this->getSchemeAndHttpHost();
-            if (strpos($requestUri, $schemeAndHttpHost) === 0) {
+            if (0 === strpos($requestUri, $schemeAndHttpHost)) {
                 $requestUri = substr($requestUri, strlen($schemeAndHttpHost));
             }
         } elseif ($this->server->has('ORIG_PATH_INFO')) {
@@ -1874,7 +1888,7 @@ class Request
         // If using mod_rewrite or ISAPI_Rewrite strip the script filename
         // out of baseUrl. $pos !== 0 makes sure it is not matching a value
         // from PATH_INFO or QUERY_STRING
-        if (strlen($requestUri) >= strlen($baseUrl) && (false !== $pos = strpos($requestUri, $baseUrl)) && $pos !== 0) {
+        if (strlen($requestUri) >= strlen($baseUrl) && (false !== $pos = strpos($requestUri, $baseUrl)) && 0 !== $pos) {
             $baseUrl = substr($requestUri, 0, $pos + strlen($baseUrl));
         }
 

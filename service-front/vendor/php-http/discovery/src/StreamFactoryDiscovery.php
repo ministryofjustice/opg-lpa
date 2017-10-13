@@ -2,6 +2,7 @@
 
 namespace Http\Discovery;
 
+use Http\Discovery\Exception\DiscoveryFailedException;
 use Http\Message\StreamFactory;
 
 /**
@@ -15,19 +16,21 @@ final class StreamFactoryDiscovery extends ClassDiscovery
      * Finds a Stream Factory.
      *
      * @return StreamFactory
+     *
+     * @throws Exception\NotFoundException
      */
     public static function find()
     {
         try {
-            $streamFactory = static::findOneByType('Http\Message\StreamFactory');
-
-            return new $streamFactory();
-        } catch (NotFoundException $e) {
+            $streamFactory = static::findOneByType(StreamFactory::class);
+        } catch (DiscoveryFailedException $e) {
             throw new NotFoundException(
-                'No factories found. To use Guzzle or Diactoros factories install php-http/message and the chosen message implementation.',
+                'No stream factories found. To use Guzzle, Diactoros or Slim Framework factories install php-http/message and the chosen message implementation.',
                 0,
                 $e
             );
         }
+
+        return static::instantiateClass($streamFactory);
     }
 }

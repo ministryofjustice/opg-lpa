@@ -4,8 +4,9 @@ namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\DonorForm;
 use ApplicationTest\Form\FormTestSetupTrait;
+use PHPUnit\Framework\TestCase;
 
-class DonorFormTest extends \PHPUnit_Framework_TestCase
+class DonorFormTest extends TestCase
 {
     use FormTestSetupTrait;
 

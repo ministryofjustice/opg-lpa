@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd tests
-phpunit --coverage-html coverage/
+../vendor/phpunit/phpunit/phpunit --coverage-html coverage/
 open coverage/index.html

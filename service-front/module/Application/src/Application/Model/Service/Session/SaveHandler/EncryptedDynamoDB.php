@@ -79,7 +79,9 @@ class EncryptedDynamoDB extends DynamoDB {
         $data = parent::read( $id );
 
         // If there's no data, just return
-        if( empty($data) ){ return null; }
+        if( empty($data) ){
+            return $data;
+        }
 
         // Split the data into encryption key ident, and actual session data.
         $data = explode( '.', $data );

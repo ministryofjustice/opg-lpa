@@ -9,13 +9,14 @@ use Application\Model\Service\Authentication\Identity\User;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Mockery;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class LpaAwareInitializerTest extends \PHPUnit_Framework_TestCase
+class LpaAwareInitializerTest extends TestCase
 {
     /**
      * @var LpaAwareInitializer

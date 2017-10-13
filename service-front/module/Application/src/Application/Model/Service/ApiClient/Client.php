@@ -140,7 +140,7 @@ class Client
 
     private function httpDelete(Uri $url)
     {
-        $request = new Request('DELETE', $url, $this->buildHeaders());
+        $request = new Request('DELETE', $url, $this->buildHeaders(), '{}');
 
         try {
             $response = $this->getHttpClient()->sendRequest($request);
