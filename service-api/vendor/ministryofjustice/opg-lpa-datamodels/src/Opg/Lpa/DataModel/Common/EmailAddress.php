@@ -26,10 +26,6 @@ class EmailAddress extends AbstractData
             new Assert\NotBlank,
             new Assert\Email([
                 'strict' => true
-            ]),
-            new Assert\Regex([
-                'pattern' => '/\.([^.@]{2,63})$/u',
-                'message' => 'invalid-email-address'
             ])
         ]);
     }
