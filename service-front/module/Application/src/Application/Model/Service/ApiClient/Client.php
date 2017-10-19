@@ -85,7 +85,7 @@ class Client
             $url = Uri::withQueryValue($url, $name, $value);
         }
 
-        $request = new Request('GET', $url, $this->buildHeaders());
+        $request = new Request('GET', $url, $this->buildHeaders(), '{}');
 
         try {
             $response = $this->getHttpClient()->sendRequest($request);
