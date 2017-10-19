@@ -3,6 +3,7 @@
 namespace Application\Model\Service\Mail\Transport;
 
 use Application\Model\Service\Mail\Message;
+use Html2Text\Html2Text;
 use Opg\Lpa\Logger\Logger;
 use SendGrid as SendGridClient;
 use SendGrid\Email as SendGridMessage;
@@ -154,8 +155,15 @@ class SendGrid implements TransportInterface
                                 throw new InvalidArgumentException("SendGrid only supports a single HTML body");
                             }
 
-                            $email->setHtml($part->getRawContent());
+                            $html = $part->getRawContent();
+                            $email->setHtml($html);
                             $htmlTextSet = true;
+
+                            if (!$plainTextSet) {
+                                $text = Html2Text::convert($html);
+                                $email->setText($text);
+                                $plainTextSet = true;
+                            }
                             break;
                         default:
                             throw new InvalidArgumentException("Unimplemented content part found: {$part->type}");
