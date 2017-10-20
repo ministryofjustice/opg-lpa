@@ -132,7 +132,7 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
             ->andReturn('lpa/reuse-details?lpa-id=' . $this->lpa->id)->once();
 
         $this->form->shouldReceive('setAttribute')->with('action', 'lpa/reuse-details?lpa-id=' . $this->lpa->id)->once();
-        $this->setPostInvalid($this->form, []);
+        $this->setPostInvalid($this->form);
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

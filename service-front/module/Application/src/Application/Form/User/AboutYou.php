@@ -2,291 +2,69 @@
 
 namespace Application\Form\User;
 
-use Application\Form\AbstractCsrfForm;
-use Opg\Lpa\DataModel\Common\Dob;
+use Application\Form\Lpa\AbstractActorForm;
+use Opg\Lpa\DataModel\User\User;
 use Zend\Form\FormInterface;
-use Zend\Validator\Between;
-use Zend\Validator\NotEmpty;
-use Zend\Validator\StringLength;
 
-class AboutYou extends AbstractCsrfForm
+class AboutYou extends AbstractActorForm
 {
+    /**
+     * @var array
+     */
+    protected $formElements = [
+        'name-title' => [
+            'type' => 'Text',
+        ],
+        'name-first' => [
+            'type' => 'Text',
+        ],
+        'name-last' => [
+            'type' => 'Text',
+        ],
+        'dob-date' => [
+            'type' => 'Application\Form\Fieldset\Dob',
+        ],
+        'address-address1' => [
+            'type' => 'Text',
+        ],
+        'address-address2' => [
+            'type' => 'Text',
+        ],
+        'address-address3' => [
+            'type' => 'Text',
+        ],
+        'address-postcode' => [
+            'type' => 'Text',
+        ],
+    ];
+
+    /**
+     * init
+     */
     public function init()
     {
         $this->setName('about-you');
 
-        $this->add([
-            'name' => 'name-title',
-            'type' => 'Text',
-            'attributes' => [
-                'data-select-options' => json_encode([
-                    '',
-                    'Mr',
-                    'Mrs',
-                    'Miss',
-                    'Ms',
-                    'Dr',
-                    'Other',
-                ]),
-            ],
-        ]);
-
-        $this->add([
-            'name' => 'name-first',
-            'type' => 'Text',
-        ]);
-
-        $this->add([
-            'name' => 'name-last',
-            'type' => 'Text',
-        ]);
-
-        //---
-
-        $this->add([
-            'name' => 'dob-date-day',
-            'type' => 'Text',
-        ]);
-
-        $this->add([
-            'name' => 'dob-date-month',
-            'type' => 'Text',
-        ]);
-
-        $this->add([
-            'name' => 'dob-date-year',
-            'type' => 'Text',
-        ]);
-
-        //---
-
-        $this->add([
-            'name' => 'address-address1',
-            'type' => 'Text',
-        ]);
-
-        $this->add([
-            'name' => 'address-address2',
-            'type' => 'Text',
-        ]);
-
-        $this->add([
-            'name' => 'address-address3',
-            'type' => 'Text',
-        ]);
-
-        $this->add([
-            'name' => 'address-postcode',
-            'type' => 'Text',
-        ]);
-
-        //--------------------------------
-
-        //  Add data to the input filter
-        $this->setUseInputFilterDefaults(false);
-
-        $this->addToInputFilter([
-            'name'     => 'name-title',
-            'required' => true,
-            'validators' => [
-                [
-                    'name'    => 'NotEmpty',
-                    'break_chain_on_failure' => true,
-                    'options' => [
-                        'messages' => [
-                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
-                        ],
-                    ],
-                ],
-                [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'max' => 5,
-                        'messages' => [ StringLength::TOO_LONG => "max-%max%-characters" ],
-                    ],
-                ],
-            ],
-        ]);
-
-        $this->addToInputFilter([
-            'name'     => 'name-first',
-            'required' => true,
-            'validators' => [
-                [
-                    'name'    => 'NotEmpty',
-                    'break_chain_on_failure' => true,
-                    'options' => [
-                        'messages' => [
-                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
-                        ],
-                    ],
-                ],
-                [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'max' => 50,
-                        'messages' => [ StringLength::TOO_LONG => "max-%max%-characters" ],
-                    ],
-                ],
-            ],
-        ]);
-
-        $this->addToInputFilter([
-            'name'     => 'name-last',
-            'required' => true,
-            'validators' => [
-                [
-                    'name'    => 'NotEmpty',
-                    'break_chain_on_failure' => true,
-                    'options' => [
-                        'messages' => [
-                            NotEmpty::IS_EMPTY => 'cannot-be-empty',
-                        ],
-                    ],
-                ],
-                [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'max' => 50,
-                        'messages' => [ StringLength::TOO_LONG => "max-%max%-characters" ],
-                    ],
-                ],
-            ],
-        ]);
-
-        $this->addToInputFilter([
-            'name'     => 'dob-date-day',
-            'required' => false,
-            'allowEmpty' => true,
-            'validators' => [
-                [
-                    'name'    => 'Between',
-                    'options' => [
-                        'min' => 1, 'max' => 31,
-                        'messages' => [
-                            Between::NOT_BETWEEN => "must-be-between-%min%-and-%max%-characters",
-                        ],
-                    ],
-                ],
-            ],
-        ]);
-
-        $this->addToInputFilter([
-            'name'     => 'dob-date-month',
-            'required' => false,
-            'allowEmpty' => true,
-            'validators' => [
-                [
-                    'name'    => 'Between',
-                    'options' => [
-                        'min' => 1, 'max' => 12,
-                        'messages' => [
-                            Between::NOT_BETWEEN => "must-be-between-%min%-and-%max%-characters",
-                        ],
-                    ],
-                ],
-            ],
-        ]);
-
-        $this->addToInputFilter([
-            'name'     => 'dob-date-year',
-            'required' => false,
-            'allowEmpty' => true,
-            'validators' => [
-                [
-                    'name'    => 'Between',
-                    'options' => [
-                        'min' => (int)date('Y') - 150, 'max' => (int)date('Y'),
-                        'messages' => [
-                            Between::NOT_BETWEEN => "must-be-between-%min%-and-%max%-characters",
-                        ],
-                    ],
-                ],
-            ],
-        ]);
-
-        $this->addToInputFilter([
-            'name'     => 'address-address1',
-            'required' => false,
-            'validators' => [
-                [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'max' => 50,
-                        'messages' => [ StringLength::TOO_LONG => "max-%max%-characters" ],
-                    ],
-                ],
-            ],
-        ]);
-
-        $this->addToInputFilter([
-            'name'     => 'address-address2',
-            'required' => false,
-            'validators' => [
-                [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'max' => 50,
-                        'messages' => [ StringLength::TOO_LONG => "max-%max%-characters" ],
-                    ],
-                ],
-            ],
-        ]);
-
-        $this->addToInputFilter([
-            'name'     => 'address-address3',
-            'required' => false,
-            'validators' => [
-                [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'max' => 50,
-                        'messages' => [ StringLength::TOO_LONG => "max-%max%-characters" ],
-                    ],
-                ],
-            ],
-        ]);
-
-        $this->addToInputFilter([
-            'name'     => 'address-postcode',
-            'required' => false,
-            'validators' => [
-                [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'min' => 1,
-                        'max' => 8,
-                        'messages' => [
-                            StringLength::TOO_SHORT => "min-%min%-characters",
-                            StringLength::TOO_LONG => "max-%max%-characters",
-                        ],
-                    ],
-                ],
-            ],
-        ]);
+        $this->actorModel = new User();
 
         parent::init();
     }
 
+    /**
+     * Set data in the form - remove the the date of birth and address data if it has been totally omitted
+     *
+     * @param  array $data
+     * @return self
+     */
     public function setData($data)
     {
-        if (isset($data['dob-date'])) {
-            $dob = new \DateTime($data['dob-date']);
+        $this->filterData($data);
 
-            $data['dob-date-day'] = $dob->format('j');
-            $data['dob-date-month'] = $dob->format('n');
-            $data['dob-date-year'] = $dob->format('Y');
-        }
-
-        parent::setData($data);
+        return parent::setData($data);
     }
 
     /**
-     * Retrieve the validated data
-     * We need to convert the DOB for the model
-     *
-     * By default, retrieves normalized values; pass one of the
-     * FormInterface::VALUES_* constants to shape the behavior.
+     * Retrieve the validated data - used AFTER form validation to retrieve an array of data before sending it to the API
      *
      * @param  int $flag
      * @return array|object
@@ -295,49 +73,42 @@ class AboutYou extends AbstractCsrfForm
     {
         $data = parent::getData($flag);
 
-        if (is_array($data)) {
-            if ($data['dob-date-day'] > 0 && $data['dob-date-month'] > 0 && $data['dob-date-year'] > 0) {
-                $data['dob-date'] = "{$data['dob-date-year']}-{$data['dob-date-month']}-{$data['dob-date-day']}";
-            }
+        $this->filterData($data);
 
-            // Strip these working fields out...
-            unset($data['dob-date-day'], $data['dob-date-month'], $data['dob-date-year']);
+        //  Filter the date of birth here into a single value or remove if fully missing
+        //  This can not be done in the filter function below because it will replace the array value that is necessary
+        //  to keep the inputs populated if we are returning to the input screen with errors
+        if (array_key_exists('dob-date', $data) && is_array($data['dob-date'])) {
+            $dobDateArr = $data['dob-date'];
 
-            $data = array_filter($data, function ($v) {
-                return !empty($v);
-            });
-
-            // If no address is set, ensure NULL is passed.
-
-            if (empty($data['address-address1'])
-                && empty($data['address-address2'])
-                && empty($data['address-address3'])
-                && empty($data['address-postcode'])) {
-
-                $data['address'] = null;
+            if (!empty($dobDateArr['year']) && !empty($dobDateArr['month']) && !empty($dobDateArr['day'])) {
+                $data['dob-date'] = $dobDateArr['year'] . '-' . $dobDateArr['month'] . '-' . $dobDateArr['day'];
             }
         }
 
         return $data;
     }
 
-    public function isValid()
+    /**
+     * Filter an array to remove any parts of the data that are fully missing
+     *
+     * @param array $data
+     */
+    private function filterData(array &$data)
     {
-        if (!empty($this->data['dob-date-day']) || !empty($this->data['dob-date-month']) || !empty($this->data['dob-date-year'])) {
-            if (!checkdate($this->data['dob-date-month'], $this->data['dob-date-day'], $this->data['dob-date-year'])) {
-                $this->setMessages(['dob-date-day' => ['invalid-date']]);
-                return parent::isValid() & false;
-            }
+        //  If the date of birth is empty then remove it here completely
+        if (array_key_exists('dob-date', $data)
+            && is_array($data['dob-date'])
+            && empty($data['dob-date']['year'])
+            && empty($data['dob-date']['month'])
+            && empty($data['dob-date']['day'])) {
 
-            // Ensure the date is in the past...
-            $date = Dob::parseDob("{$this->data['dob-date-year']}-{$this->data['dob-date-month']}-{$this->data['dob-date-day']}");
-
-            if (!($date instanceof \DateTime) || $date >= new \DateTime('today')) {
-                $this->setMessages(['dob-date-day' => ['invalid-date']]);
-                return parent::isValid() & false;
-            }
+            unset($data['dob-date']);
         }
 
-        return parent::isValid();
+        //  If the address is empty then remove it - it is optional
+        if (empty($data['address-address1']) && empty($data['address-address2']) && empty($data['address-address3']) && empty($data['address-postcode'])) {
+            $data['address'] = null;
+        }
     }
 }

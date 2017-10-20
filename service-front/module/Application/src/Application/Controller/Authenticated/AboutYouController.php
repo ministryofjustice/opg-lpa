@@ -2,11 +2,11 @@
 
 namespace Application\Controller\Authenticated;
 
-use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
+use Zend\View\Model\ViewModel;
 
-class AboutYouController extends AbstractAuthenticatedController {
-
+class AboutYouController extends AbstractAuthenticatedController
+{
     /**
      * Allow access to this controller before About You details are set.
      *
@@ -14,97 +14,73 @@ class AboutYouController extends AbstractAuthenticatedController {
      */
     protected $excludeFromAboutYouCheck = true;
 
-
-    public function indexAction(){
-        
-        $result = $this->process();
-
-        if( $result === true ){
-
-            $this->flashMessenger()->addSuccessMessage('Your details have been updated.');
-
-            return $this->redirect()->toRoute( 'user/dashboard' );
-
-        }
-
-        //---
-
-        $result['form']->setAttribute( 'action', $this->url()->fromRoute('user/about-you') );
-
-        return new ViewModel($result);
-
-    } // function
-
-    //-------------------------
-
     /**
-     * User to set the About Me details for a newly registered user.
-     *
      * @return \Zend\Http\Response|ViewModel
      */
-    public function newAction(){
-        
-        $result = $this->process();
+    public function indexAction()
+    {
+        $isNew = !is_null($this->params()->fromRoute('new', null));
 
-        if( $result === true ){
-            return $this->redirect()->toRoute( 'user/dashboard' );
-        }
-
-        //---
-
-        $result['form']->setAttribute( 'action', $this->url()->fromRoute('user/about-you/new') );
-
-        return $result;
-
-    } // function
-
-    //--------------------------------------------
-
-    /**
-     * Create and return the Form.
-     *
-     * @return array|bool
-     */
-    private function process(){
-
-        $service = $this->getServiceLocator()->get('AboutYouDetails');
-
-        //---
-
+        //  Set up the about you form
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\AboutYou');
+        $actionTarget = $this->url()->fromRoute('user/about-you', $isNew ? [
+            'new' => 'new',
+        ] : []);
 
-        $form->setData( $service->load()->flatten() );
-
-        $error = null;
-
-        //---
+        $form->setAttribute('action', $actionTarget);
 
         $request = $this->getRequest();
+        $aboutYouService = $this->getServiceLocator()->get('AboutYouDetails');
+
+        //  Get any existing data for the user
+        $userDetails = $aboutYouService->load();
+        $userDetailsArr = $userDetails->flatten();
 
         if ($request->isPost()) {
+            //  Merge any existing data - this is required for the datamodel validation that will execute in the form
+            $data = $request->getPost()->toArray();
+            $existingData = array_intersect_key($userDetailsArr, array_flip(['id', 'createdAt', 'updatedAt']));
 
-            $form->setData($request->getPost());
+            //  Validate the new data with the existing data that doesn't change in the form
+            $form->setData(array_merge($data, $existingData));
 
             if ($form->isValid()) {
-
-                $service->updateAllDetails( $form );
+                $aboutYouService->updateAllDetails($form);
 
                 // Clear the old details out the session.
                 // They will be reloaded the next time the the AbstractAuthenticatedController is called.
                 $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
                 unset($detailsContainer->user);
 
-                // Save successful
-                return true;
+                //  Saved successful so return to dashboard with message if required
+                if (!$isNew) {
+                    $this->flashMessenger()->addSuccessMessage('Your details have been updated.');
+                }
 
-            } // if
+                return $this->redirect()->toRoute('user/dashboard');
+            }
+        } else {
+            //  if the user is new then ensure they are accessing the new route only
+            if (!$isNew && is_null($userDetails->name)) {
+                return $this->redirect()->toUrl('/user/about-you/new');
+            }
 
-        } // if
+            if (!is_null($userDetails->dob)) {
+                $dob = $userDetails->dob->date;
 
-        //---
+                $userDetailsArr['dob-date'] = [
+                    'day'   => $dob->format('d'),
+                    'month' => $dob->format('m'),
+                    'year'  => $dob->format('Y'),
+                ];
+            }
 
-        return compact( 'form', 'error') ;
+            $form->bind($userDetailsArr);
+        }
 
-    } // function
-
-} // class
+        return new ViewModel([
+            'form'  => $form,
+            'isNew' => $isNew,
+        ]);
+    }
+}
