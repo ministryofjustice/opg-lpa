@@ -105,7 +105,7 @@ class TypeControllerTest extends AbstractControllerTest
     public function testIndexActionPostInvalid()
     {
         $this->controller->setLpa($this->lpa);
-        $this->setPostInvalid($this->form, []);
+        $this->setPostInvalid($this->form);
         $this->setMatchedRouteName($this->controller, 'lpa/form-type');
         $this->url->shouldReceive('fromRoute')->with('lpa/donor', ['lpa-id' => $this->lpa->id])->andReturn('lpa/donor?lpa-id=' .$this->lpa->id)->once();
         $this->url->shouldReceive('fromRoute')->with('user/dashboard/create-lpa', ['lpa-id' => $this->lpa->id])->andReturn('user/dashboard/create-lpa?lpa-id=' .$this->lpa->id)->once();

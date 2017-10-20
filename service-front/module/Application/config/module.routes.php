@@ -338,22 +338,10 @@ return [
                     'about-you' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/about-you',
+                            'route'    => '/about-you[/:new]',
                             'defaults' => [
                                 'controller' => 'Authenticated\AboutYouController',
                                 'action'     => 'index',
-                            ],
-                        ],
-                        'may_terminate' => true,
-                        'child_routes' => [
-                            'new' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/new',
-                                    'defaults' => [
-                                        'action'     => 'new',
-                                    ],
-                                ],
                             ],
                         ],
                     ], // about-you

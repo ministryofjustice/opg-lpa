@@ -45,6 +45,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Container;
 use Zend\Session\Storage\StorageInterface;
 use Zend\Stdlib\ArrayObject;
+use Zend\Stdlib\Parameters;
 use Zend\Stdlib\SplPriorityQueue;
 use Zend\Uri\Uri;
 
@@ -388,19 +389,35 @@ abstract class AbstractControllerTest extends TestCase
         return $result;
     }
 
-    public function setPostInvalid($form, $postData, $expectedPostTimes = 1)
+    public function setPostInvalid($form, array $postData = [], $dataToSet = null, $expectedPostTimes = 1)
     {
+        //  Post data is got from the form it will be a Parameters object
+        $postData = (is_array($postData) ? new Parameters($postData) : $postData);
+
+        //  If the data to set is null then make it equal to the post data in array form
+        if (is_null($dataToSet)) {
+            $dataToSet = $postData;
+        }
+
         $this->request->shouldReceive('isPost')->andReturn(true)->times($expectedPostTimes);
         $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $form->shouldReceive('setData')->with($postData)->once();
+        $form->shouldReceive('setData')->with($dataToSet)->once();
         $form->shouldReceive('isValid')->andReturn(false)->once();
     }
 
-    public function setPostValid($form, $postData, $expectedPostTimes = 1, $expectedGetPostTimes = 1)
+    public function setPostValid($form, array $postData = [], $dataToSet = null, $expectedPostTimes = 1, $expectedGetPostTimes = 1)
     {
+        //  Post data is got from the form it will be a Parameters object
+        $postData = (is_array($postData) ? new Parameters($postData) : $postData);
+
+        //  If the data to set is null then make it equal to the post data in array form
+        if (is_null($dataToSet)) {
+            $dataToSet = $postData;
+        }
+
         $this->request->shouldReceive('isPost')->andReturn(true)->times($expectedPostTimes);
         $this->request->shouldReceive('getPost')->andReturn($postData)->times($expectedGetPostTimes);
-        $form->shouldReceive('setData')->with($postData)->once();
+        $form->shouldReceive('setData')->with($dataToSet)->once();
         $form->shouldReceive('isValid')->andReturn(true)->once();
     }
 

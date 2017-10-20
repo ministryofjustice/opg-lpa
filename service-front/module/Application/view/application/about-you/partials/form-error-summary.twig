@@ -2,23 +2,36 @@
 
 {% set form = formErrorTextExchange(form,  {
     'name-title' : {
-        'cannot-be-empty' : 'Please enter your title'
+        'cannot-be-blank' : 'Please enter your title',
+        'must-be-less-than-or-equal:5' : 'Title must be five letters or fewer - please abbreviate, if necessary'
     },
     'name-first' : {
-        'cannot-be-empty' : 'Please enter your first names'
+        'cannot-be-blank' : 'Please enter your first names',
+        'must-be-less-than-or-equal:32' : 'First names can not be longer than 32 characters long'
     },
     'name-last' : {
-        'cannot-be-empty' : 'Please enter your last name'
+        'cannot-be-blank' : 'Please enter your last name',
+        'must-be-less-than-or-equal:40' : 'Last name can not be longer than 40 characters long'
     },
-    'dob-date-day' : {
-        'must-be-between-1-and-31-characters' : 'Please enter a day between 1 and 31',
-        'invalid-date' : 'Please enter a valid date'
+    'dob-date' : {
+        'cannot-be-blank' : 'Please enter a valid date of birth',
+        'must-be-less-than-or-equal-to-today' : 'Date of birth must be before today',
+        'expected-type:DateTime' : 'Please enter a valid date of birth'
     },
-    'dob-date-month' : {
-        'must-be-between-1-and-12-characters' : 'Please enter a month between 1 and 12'
+    'address-address1' : {
+        'cannot-be-blank' : 'Please enter the first line of address',
+        'must-be-less-than-or-equal:40' : 'Address line 1 can not be longer than 40 characters long'
     },
-    'dob-date-year' : {
-        'must-be-between-1866-and-2016-characters' : 'Please enter a year between 1866 and 2016'
+    'address-address2' : {
+        'linked-1-cannot-be-null' : 'Please enter the second line of address',
+        'must-be-less-than-or-equal:40' : 'Address line 2 can not be longer than 40 characters long'
+    },
+    'address-address3' : {
+        'must-be-less-than-or-equal:40' : 'Address line 3 can not be longer than 40 characters long'
+    },
+    'address-postcode' : {
+        'linked-1-cannot-be-null' : 'Please enter the postcode',
+        'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines rather than in the postcode field.'
     }
 }) %}
 

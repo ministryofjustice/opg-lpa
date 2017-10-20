@@ -141,7 +141,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
     public function testIndexActionPostInvalid()
     {
         $this->controller->setLpa($this->lpa);
-        $this->setPostInvalid($this->blankMainFlowForm, []);
+        $this->setPostInvalid($this->blankMainFlowForm);
         $this->setMatchedRouteName($this->controller, 'lpa/replacement-attorney');
         $expectedAttorneyParams = $this->getExpectedAttorneyParams();
         $addRoute = $this->setUrlFromRoute($this->lpa, 'lpa/replacement-attorney/add');
@@ -162,7 +162,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $response = new Response();
 
         $this->controller->setLpa($this->lpa);
-        $this->setPostValid($this->blankMainFlowForm, []);
+        $this->setPostValid($this->blankMainFlowForm);
         $this->metadata->shouldReceive('setReplacementAttorneysConfirmed')->withArgs([$this->lpa])->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/replacement-attorney');
@@ -260,7 +260,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setPostInvalid($this->replacementAttorneyForm, [], 2);
+        $this->setPostInvalid($this->replacementAttorneyForm, [], null, 2);
         $this->setFormAction($this->replacementAttorneyForm, $this->lpa, 'lpa/replacement-attorney/add');
         $this->replacementAttorneyForm->shouldReceive('setExistingActorNamesData')->once();
         $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/replacement-attorney');
@@ -284,7 +284,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setPostValid($this->replacementAttorneyForm, $this->postDataHuman, 2);
+        $this->setPostValid($this->replacementAttorneyForm, $this->postDataHuman, null, 2);
         $this->setFormAction($this->replacementAttorneyForm, $this->lpa, 'lpa/replacement-attorney/add');
         $this->replacementAttorneyForm->shouldReceive('setExistingActorNamesData')->once();
         $this->replacementAttorneyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataHuman)->once();
@@ -306,7 +306,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
-        $this->setPostValid($this->replacementAttorneyForm, $this->postDataHuman, 2, 2);
+        $this->setPostValid($this->replacementAttorneyForm, $this->postDataHuman, null, 2, 2);
         $this->setFormAction($this->replacementAttorneyForm, $this->lpa, 'lpa/replacement-attorney/add');
         $this->replacementAttorneyForm->shouldReceive('setExistingActorNamesData')->once();
         $this->replacementAttorneyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataHuman)->once();
@@ -336,7 +336,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
-        $this->setPostValid($this->replacementAttorneyForm, $this->postDataHuman, 2, 2);
+        $this->setPostValid($this->replacementAttorneyForm, $this->postDataHuman, null, 2, 2);
         $this->setFormAction($this->replacementAttorneyForm, $this->lpa, 'lpa/replacement-attorney/add');
         $this->replacementAttorneyForm->shouldReceive('setExistingActorNamesData')->once();
         $this->replacementAttorneyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataHuman)->once();
@@ -423,7 +423,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setPostInvalid($this->trustCorporationForm, []);
+        $this->setPostInvalid($this->trustCorporationForm);
         $this->setFormAction($this->trustCorporationForm, $this->lpa, 'lpa/replacement-attorney/add-trust');
         $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/replacement-attorney');
 
@@ -468,7 +468,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
-        $this->setPostValid($this->trustCorporationForm, $this->postDataTrust, 1, 2);
+        $this->setPostValid($this->trustCorporationForm, $this->postDataTrust, null, 1, 2);
         $this->setFormAction($this->trustCorporationForm, $this->lpa, 'lpa/replacement-attorney/add-trust');
         $this->trustCorporationForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataTrust)->once();
         $this->lpaApplicationService->shouldReceive('addReplacementAttorney')
@@ -498,7 +498,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
-        $this->setPostValid($this->trustCorporationForm, $this->postDataTrust, 1, 2);
+        $this->setPostValid($this->trustCorporationForm, $this->postDataTrust, null, 1, 2);
         $this->setFormAction($this->trustCorporationForm, $this->lpa, 'lpa/replacement-attorney/add-trust');
         $this->trustCorporationForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataTrust)->once();
         $this->lpaApplicationService->shouldReceive('addReplacementAttorney')
@@ -614,7 +614,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
-        $this->setPostInvalid($this->replacementAttorneyForm, []);
+        $this->setPostInvalid($this->replacementAttorneyForm);
         $this->setFormActionIndex($this->replacementAttorneyForm, $this->lpa, 'lpa/replacement-attorney/edit', $idx);
         $this->replacementAttorneyForm->shouldReceive('setExistingActorNamesData')->once();
         $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/replacement-attorney');
