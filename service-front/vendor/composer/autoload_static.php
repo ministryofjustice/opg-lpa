@@ -138,6 +138,7 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Http\\Discovery\\' => 15,
             'Http\\Client\\' => 12,
             'Http\\Adapter\\Guzzle5\\' => 21,
+            'Html2Text\\' => 10,
         ),
         'G' => 
         array (
@@ -486,6 +487,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'Http\\Adapter\\Guzzle5\\' => 
         array (
             0 => __DIR__ . '/..' . '/php-http/guzzle5-adapter/src',
+        ),
+        'Html2Text\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/soundasleep/html2text/src',
         ),
         'GuzzleHttp\\Stream\\' => 
         array (
