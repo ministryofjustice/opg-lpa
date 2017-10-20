@@ -475,7 +475,7 @@
             ],
             "authors": [
                 {
-                    "name": "Michael H?rtl",
+                    "name": "Michael Härtl",
                     "email": "haertl.mike@gmail.com"
                 }
             ],
@@ -523,16 +523,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "6.0.2",
+            "version": "dev-LPA-2454-500_error_address_too_long",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "e1b5f1983b07ea058fbd7e233c925942ac456786"
+                "reference": "c49610b16c925728a750ff65ddfa7773d722d2ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/e1b5f1983b07ea058fbd7e233c925942ac456786",
-                "reference": "e1b5f1983b07ea058fbd7e233c925942ac456786",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/c49610b16c925728a750ff65ddfa7773d722d2ac",
+                "reference": "c49610b16c925728a750ff65ddfa7773d722d2ac",
                 "shasum": ""
             },
             "require": {
@@ -556,10 +556,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/6.0.2",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/LPA-2454-500_error_address_too_long",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2017-10-19T06:39:18+00:00"
+            "time": "2017-10-20 08:00:11"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
@@ -2166,7 +2166,7 @@
             ],
             "authors": [
                 {
-                    "name": "P?draic Brady",
+                    "name": "Pádraic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
                 },
