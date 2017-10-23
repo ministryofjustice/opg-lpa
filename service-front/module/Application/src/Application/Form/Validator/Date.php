@@ -4,6 +4,7 @@ namespace Application\Form\Validator;
 
 use Zend\Validator\Date as DateValidator;
 use DateTime;
+use Exception;
 
 class Date extends DateValidator
 {
@@ -22,17 +23,27 @@ class Date extends DateValidator
     {
         if (is_array($value)) {
             if (!array_key_exists('year', $value) || !array_key_exists('month', $value) || !array_key_exists('day', $value)) {
-                throw new \Exception('Invalid date array passed to Application\Form\Lpa\Validator\Date validator');
+                throw new Exception('Invalid date array passed to Application\Form\Lpa\Validator\Date validator');
             }
 
-            $day = (int) $value['day'];
-            $month = (int) $value['month'];
-            $year = (int) $value['year'];
+            $day = $value['day'];
+            $month = $value['month'];
+            $year = $value['year'];
 
             if (empty($day) || empty($month) || empty($year)) {
                 $this->error(self::EMPTY_DATE);
                 return false;
             }
+
+            if (!is_numeric($day) || !is_numeric($month) || !is_numeric($year)) {
+                $this->error(parent::INVALID_DATE);
+                return false;
+            }
+
+            //  Cast the values to integers to ensure the comparisons below are correct
+            $day = (int) $day;
+            $month = (int) $month;
+            $year = (int) $year;
 
             //  If possible check the date value by using the same conversion that will take place in the Dob date model
             //  This is required to make sure that PHP doesn't 'shift' the time in an attempt to be helpful
@@ -40,7 +51,7 @@ class Date extends DateValidator
             $dateStr = implode('-', array_reverse($value));
             $date = date_parse_from_format(DateTime::ISO8601, $dateStr);
 
-            if ($date['day'] != $value['day'] || $date['month'] != $value['month'] || $date['year'] != $value['year']) {
+            if ($date['day'] != $day || $date['month'] != $month || $date['year'] != $year) {
                 $this->error(parent::INVALID_DATE);
                 return false;
             }
