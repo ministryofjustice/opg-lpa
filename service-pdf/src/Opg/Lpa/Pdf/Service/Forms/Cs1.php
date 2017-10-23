@@ -83,6 +83,9 @@ class Cs1 extends AbstractForm
             $pIdx = ($idx % self::$SETTINGS['max-slots-on-cs1-form']);
 
             if($pIdx == 0) {
+                //  Initialise the pdfFormData to empty it
+                $this->pdfFormData = [];
+
                 $this->pdfFormData['cs1-donor-full-name'] = $this->fullName($this->lpa->document->donor->name);
                 $this->pdfFormData['cs1-footer-right'] = Config::getInstance()['footer']['cs1'];
             }
