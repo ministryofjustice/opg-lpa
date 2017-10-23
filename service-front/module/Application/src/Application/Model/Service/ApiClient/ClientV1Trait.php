@@ -278,6 +278,17 @@ trait ClientV1Trait
     }
 
     /**
+     * Delete the correspondent
+     *
+     * @param string $lpaId
+     * @return boolean
+     */
+    public function deleteCorrespondent($lpaId)
+    {
+        return $this->deleteResource($lpaId, 'correspondent');
+    }
+
+    /**
      * Set the payment information
      *
      * @param string $lpaId

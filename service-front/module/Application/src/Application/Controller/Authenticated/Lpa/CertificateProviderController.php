@@ -160,6 +160,9 @@ class CertificateProviderController extends AbstractLpaActorController
     {
         $lpa = $this->getLpa();
 
+        //  If the certificate provider is also set as the correspondent then this will delete those details too
+        $this->updateCorrespondentData($this->getLpa()->document->certificateProvider, true);
+
         // delete certificate provider
         if (!$this->getLpaApplicationService()->deleteCertificateProvider($lpa->id)) {
             throw new \RuntimeException('API client failed to delete certificate provider for id: ' . $lpa->id);
