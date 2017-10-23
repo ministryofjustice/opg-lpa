@@ -4,11 +4,11 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
 use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Zend\View\Model\ViewModel;
 
 class PrimaryAttorneyController extends AbstractLpaActorController
@@ -152,14 +152,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
             if ($form->isValid()) {
                 //  Before going any further determine if the data for the attorney we are editing has also been saved in the correspondence data
-                $updateCorrespondent = false;
-                $correspondent = $lpaDocument->correspondent;
-
-                if ($correspondent instanceof Correspondence && $correspondent->who == Correspondence::WHO_ATTORNEY) {
-                    //  Compare the appropriate name and address
-                    $nameToCompare = ($attorney instanceof TrustCorporation ? $correspondent->company : $correspondent->name);
-                    $updateCorrespondent = ($attorney->name == new Name($nameToCompare->flatten()) && $correspondent->address == $attorney->address);
-                }
+                $isCorrespondent = $this->attorneyIsCorrespondent($attorney);
 
                 //  Update the attorney with new details and transfer across the ID value
                 $attorneyId = $attorney->id;
@@ -176,7 +169,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 }
 
                 //  Attempt to update the LPA correspondent too if appropriate
-                if ($updateCorrespondent) {
+                if ($isCorrespondent) {
                     $this->updateCorrespondentData($attorney);
                 }
 
@@ -248,6 +241,13 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
 
         if (array_key_exists($attorneyIdx, $lpa->document->primaryAttorneys)) {
+            $attorney = $lpa->document->primaryAttorneys[$attorneyIdx];
+
+            //  If this attorney is set as the correspondent then delete those details too
+            if ($this->attorneyIsCorrespondent($attorney)) {
+                $this->updateCorrespondentData($attorney, true);
+            }
+
             //  If the deletion of the attorney means there are no longer multiple attorneys then reset the how decisions
             if (count($lpa->document->primaryAttorneys) <= 2) {
                 $primaryAttorneyDecisions = $lpa->document->primaryAttorneyDecisions;
@@ -260,14 +260,12 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 }
             }
 
-            $primaryAttorneyId = $lpa->document->primaryAttorneys[$attorneyIdx]->id;
-
             //  If the attorney being removed was set as registering the LPA then remove from there too
             $whoIsRegistering = $lpa->document->whoIsRegistering;
 
             if (is_array($whoIsRegistering)) {
                 foreach ($whoIsRegistering as $idx => $aid) {
-                    if ($aid == $primaryAttorneyId) {
+                    if ($aid == $attorney->id) {
                         unset($whoIsRegistering[$idx]);
 
                         if (count($whoIsRegistering) == 0) {
@@ -281,7 +279,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             }
 
             // delete attorney
-            if (!$this->getLpaApplicationService()->deletePrimaryAttorney($lpa->id, $primaryAttorneyId)) {
+            if (!$this->getLpaApplicationService()->deletePrimaryAttorney($lpa->id, $attorney->id)) {
                 throw new \RuntimeException('API client failed to delete a primary attorney ' . $attorneyIdx . ' for id: ' . $lpa->id);
             }
 
@@ -371,5 +369,24 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
             $this->getLpaApplicationService()->setWhoIsRegistering($this->getLpa()->id, $this->getLpa()->document->whoIsRegistering);
         }
+    }
+
+    /**
+     * Simple method to return a boolean indicating if the provided attorney is also set as the correspondent for this LPA
+     *
+     * @param AbstractAttorney $attorney
+     * @return bool
+     */
+    private function attorneyIsCorrespondent(AbstractAttorney $attorney)
+    {
+        $correspondent = $this->getLpa()->document->correspondent;
+
+        if ($correspondent instanceof Correspondence && $correspondent->who == Correspondence::WHO_ATTORNEY) {
+            //  Compare the appropriate name and address
+            $nameToCompare = ($attorney instanceof TrustCorporation ? $correspondent->company : $correspondent->name);
+            return ($attorney->name == new Name($nameToCompare->flatten()) && $correspondent->address == $attorney->address);
+        }
+
+        return false;
     }
 }
