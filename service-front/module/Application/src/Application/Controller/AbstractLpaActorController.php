@@ -488,11 +488,12 @@ abstract class AbstractLpaActorController extends AbstractLpaController
     }
 
     /**
-     * If a correspondent is already set in the LPA and the core data of the actor selected (donor and attorney only) then update the data in the correspondent data also
+     * If a correspondent is already set in the LPA and the core data of the actor selected (donor and attorney only) is updated/deleted then update/delete the data in the correspondent also
      *
      * @param AbstractData $actor
+     * @param bool $isDelete
      */
-    protected function updateCorrespondentData(AbstractData $actor)
+    protected function updateCorrespondentData(AbstractData $actor, $isDelete = false)
     {
         $correspondent = $this->getLpa()->document->correspondent;
 
@@ -502,29 +503,35 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                 || ($actor instanceof Attorneys\AbstractAttorney && $correspondent->who == Correspondence::WHO_ATTORNEY)
                 || ($actor instanceof CertificateProvider && $correspondent->who == Correspondence::WHO_CERTIFICATE_PROVIDER)) {
 
-                //  Get the correct name to compare (for a trust that will be the company name)
-                $isTrust = ($actor instanceof Attorneys\TrustCorporation);
-                $nameToCompare = ($isTrust ? $correspondent->name : $correspondent->company);
-
-                //  Determine if the correspondent data needs to be updated or not
-                if ($actor->name != $nameToCompare || $actor->address != $correspondent->address) {
-                    //  Create an updated correspondent datamodel with the data from the existing correspondent EXCEPT the name
-                    //  This is necessary because we may need to null the name field if this actor is a trust
-                    $correspondentData = $correspondent->toArray();
-                    unset($correspondentData['name']);
-                    $correspondent = new Correspondence($correspondentData);
-
-                    //  Update the required values
-                    if ($isTrust) {
-                        $correspondent->company = $actor->name;
-                    } else {
-                        $correspondent->name = new LongName($actor->name->flatten());
+                if ($isDelete) {
+                    if (!$this->getLpaApplicationService()->deleteCorrespondent($this->getLpa()->id)) {
+                        throw new \RuntimeException('API client failed to delete correspondent for id: ' . $this->getLpa()->id);
                     }
+                } else {
+                    //  Get the correct name to compare (for a trust that will be the company name)
+                    $isTrust = ($actor instanceof Attorneys\TrustCorporation);
+                    $nameToCompare = ($isTrust ? $correspondent->name : $correspondent->company);
 
-                    $correspondent->address = $actor->address;
+                    //  Determine if the correspondent data needs to be updated or not
+                    if ($actor->name != $nameToCompare || $actor->address != $correspondent->address) {
+                        //  Create an updated correspondent datamodel with the data from the existing correspondent EXCEPT the name
+                        //  This is necessary because we may need to null the name field if this actor is a trust
+                        $correspondentData = $correspondent->toArray();
+                        unset($correspondentData['name']);
+                        $correspondent = new Correspondence($correspondentData);
 
-                    if (!$this->getLpaApplicationService()->setCorrespondent($this->getLpa()->id, $correspondent)) {
-                        throw new \RuntimeException('API client failed to update correspondent for id: ' . $this->getLpa()->id);
+                        //  Update the required values
+                        if ($isTrust) {
+                            $correspondent->company = $actor->name;
+                        } else {
+                            $correspondent->name = new LongName($actor->name->flatten());
+                        }
+
+                        $correspondent->address = $actor->address;
+
+                        if (!$this->getLpaApplicationService()->setCorrespondent($this->getLpa()->id, $correspondent)) {
+                            throw new \RuntimeException('API client failed to update correspondent for id: ' . $this->getLpa()->id);
+                        }
                     }
                 }
             }
