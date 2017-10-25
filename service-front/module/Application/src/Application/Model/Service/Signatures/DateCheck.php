@@ -26,11 +26,12 @@ class DateCheck implements ServiceLocatorAwareInterface
      *    ]
      *  ];
      *
-     * @param   array $dates
-     * @param IDateService $dateService
-     * @return array|bool List of errors or true if no errors
+     * @param   array           $dates
+     * @param   boolean         $isDraft
+     * @param   IDateService    $dateService
+     * @return  array|bool List of errors or true if no errors
      */
-    public static function checkDates(array $dates, $dateService = null)
+    public static function checkDates(array $dates, $isDraft = false, $dateService = null)
     {
         $errors = [];
 
@@ -39,7 +40,7 @@ class DateCheck implements ServiceLocatorAwareInterface
 
         // Donor must be first
         if ($donor > $certificateProvider) {
-            $errors['sign-date-certificate-provider'][] = 'The donor must be the first person to sign the LPA. You need to print and re-sign sections 10, 11 and 15';
+            $errors['sign-date-certificate-provider'][] = 'The donor must be the first person to sign the LPA. ' . ($isDraft === true ? 'You need to print and re-sign sections 10 and 11' : 'You need to print and re-sign sections 10, 11 and 15');
         }
 
         $allTimestamps = [
@@ -52,7 +53,7 @@ class DateCheck implements ServiceLocatorAwareInterface
             $allTimestamps['sign-date-donor-life-sustaining'] = $donorLifeSustaining;
 
             if ($donor < $donorLifeSustaining) {
-                $errors['sign-date-donor-life-sustaining'][] = 'The donor must sign Section 5 and any continuation sheets on the same day or before section 9. You need to print and re-sign sections 9, 10, 11 and 15';
+                $errors['sign-date-donor-life-sustaining'][] = 'The donor must sign Section 5 and any continuation sheets on the same day or before section 9. ' . ($isDraft === true ? 'You need to print and re-sign sections 9, 10 and 11' : 'You need to print and re-sign sections 9, 10, 11 and 15');
             }
         }
 
@@ -72,16 +73,16 @@ class DateCheck implements ServiceLocatorAwareInterface
 
             // Donor must be first
             if ($donor > $timestamp) {
-                $errors[$attorneyKey][] = 'The donor must be the first person to sign the LPA. You need to print and re-sign sections 10, 11 and 15';
+                $errors[$attorneyKey][] = 'The donor must be the first person to sign the LPA. ' . ($isDraft === true ? 'You need to print and re-sign sections 10 and 11' : 'You need to print and re-sign sections 10, 11 and 15');
             }
         }
 
         // CP must be next
         if ($certificateProvider > $minAttorneyDate) {
-            $errors['sign-date-certificate-provider'][] = 'The certificate provider must sign the LPA before the attorneys. You need to print and re-sign sections 11 and 15';
+            $errors['sign-date-certificate-provider'][] = 'The certificate provider must sign the LPA before the attorneys. ' . ($isDraft === true ? 'You need to print and re-sign section 11' : 'You need to print and re-sign sections 11 and 15');
         }
 
-        if (isset($dates['sign-date-applicants']) && count($dates['sign-date-applicants']) > 0) {
+        if (!$isDraft && isset($dates['sign-date-applicants']) && count($dates['sign-date-applicants']) > 0) {
             for ($i = 0; $i < count($dates['sign-date-applicants']); $i++) {
                 $timestamp = $dates['sign-date-applicants'][$i];
                 $applicantKey = 'sign-date-applicant-' . $i;
@@ -89,12 +90,12 @@ class DateCheck implements ServiceLocatorAwareInterface
 
                 // Donor must be first
                 if ($donor > $timestamp) {
-                    $errors[$applicantKey][] = 'The donor must be the first person to sign the LPA. You need to print and re-sign sections 10, 11 and 15';
+                    $errors[$applicantKey][] = 'The donor must be the first person to sign the LPA. ' . ($isDraft === true ? 'You need to print and re-sign sections 10 and 11' : 'You need to print and re-sign sections 10, 11 and 15');
                 }
 
                 // Applicants must sign on or after last attorney
                 if ($timestamp < $maxAttorneyDate) {
-                    $errors[$applicantKey][] = 'The applicant must sign on the same day or after all Section 11\'s have been signed. You need to print and re-sign section 15';
+                    $errors[$applicantKey][] = 'The applicant must sign on the same day or after all Section 11\'s have been signed. ' . ($isDraft === true ? '' : '') . 'You need to print and re-sign section 15';
                 }
             }
         }
