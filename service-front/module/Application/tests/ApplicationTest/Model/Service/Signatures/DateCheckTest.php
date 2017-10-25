@@ -74,6 +74,15 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ],
         ];
 
+        //  Test draft LPA
+        $errors = DateCheck::checkDates($dates, true);
+        $this->assertNotTrue($errors);
+
+        $this->assertEquals([
+            'sign-date-donor-life-sustaining' => ['The donor must sign Section 5 and any continuation sheets on the same day or before section 9. You need to print and re-sign sections 9, 10 and 11']
+        ], $errors);
+
+        //  Test completed LPA
         $errors = DateCheck::checkDates($dates);
         $this->assertNotTrue($errors);
 
@@ -93,6 +102,15 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ],
         ];
 
+        //  Test draft LPA
+        $errors = DateCheck::checkDates($dates, true);
+        $this->assertNotTrue($errors);
+
+        $this->assertEquals([
+            'sign-date-certificate-provider' => ['The donor must be the first person to sign the LPA. You need to print and re-sign sections 10 and 11']
+        ], $errors);
+
+        //  Test completed LPA
         $errors = DateCheck::checkDates($dates);
         $this->assertNotTrue($errors);
 
@@ -112,6 +130,15 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ],
         ];
 
+        //  Test draft LPA
+        $errors = DateCheck::checkDates($dates, true);
+        $this->assertNotTrue($errors);
+
+        $this->assertEquals([
+            'sign-date-certificate-provider' => ['The certificate provider must sign the LPA before the attorneys. You need to print and re-sign section 11']
+        ], $errors);
+
+        //  Test completed LPA
         $errors = DateCheck::checkDates($dates);
         $this->assertNotTrue($errors);
 
@@ -135,6 +162,21 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ],
         ];
 
+        //  Test draft LPA
+        $errors = DateCheck::checkDates($dates, true);
+        $this->assertNotTrue($errors);
+
+        $this->assertEquals([
+            'sign-date-attorney-0' => ['The donor must be the first person to sign the LPA. You need to print and re-sign sections 10 and 11'],
+            'sign-date-attorney-1' => ['The donor must be the first person to sign the LPA. You need to print and re-sign sections 10 and 11'],
+            'sign-date-certificate-provider' => [
+                'The donor must be the first person to sign the LPA. You need to print and re-sign sections 10 and 11',
+                'The certificate provider must sign the LPA before the attorneys. You need to print and re-sign section 11'
+            ],
+            //  No applicant validation/errors in draft
+        ], $errors);
+
+        //  Test completed LPA
         $errors = DateCheck::checkDates($dates);
         $this->assertNotTrue($errors);
 
@@ -165,6 +207,10 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ]
         ];
 
+        //  Test draft LPA - we won't be validating the applicant dates at all so this should be OK
+        $this->assertTrue(DateCheck::checkDates($dates, true));
+
+        //  Test completed LPA
         $errors = DateCheck::checkDates($dates);
         $this->assertNotTrue($errors);
 
@@ -189,6 +235,10 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             ]
         ];
 
+        //  Test draft LPA - we won't be validating the applicant dates at all so this should be OK
+        $this->assertTrue(DateCheck::checkDates($dates, true));
+
+        //  Test completed LPA
         $errors = DateCheck::checkDates($dates);
         $this->assertNotTrue($errors);
 
@@ -216,7 +266,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
 
         $this->dateService->shouldReceive('getToday')->andReturn(new DateTime('2015-01-10'))->once();
 
-        $errors = DateCheck::checkDates($dates, $this->dateService);
+        $errors = DateCheck::checkDates($dates, false, $this->dateService);
         $this->assertNotTrue($errors);
 
         $this->assertEquals([
