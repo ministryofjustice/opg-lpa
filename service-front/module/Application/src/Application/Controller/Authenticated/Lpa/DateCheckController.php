@@ -10,8 +10,6 @@ class DateCheckController extends AbstractLpaController
 {
     public function indexAction()
     {
-        $viewModel = new ViewModel();
-
         $lpa = $this->getLpa();
 
         //  If the return route has been submitted in the post then just use it
@@ -65,7 +63,7 @@ class DateCheckController extends AbstractLpaController
                     'sign-date-certificate-provider'  => $this->dateArrayToTime($data['sign-date-certificate-provider']),
                     'sign-date-attorneys'             => array_map([$this, 'dateArrayToTime'], $attorneySignatureDates),
                     'sign-date-applicants'            => array_map([$this, 'dateArrayToTime'], $applicantSignatureDates),
-                ]);
+                ], empty($lpa->completedAt));
 
                 if ($result === true) {
                     $queryParams = [];
@@ -88,6 +86,7 @@ class DateCheckController extends AbstractLpaController
         }
 
         $applicants = [];
+
         if ($lpa->completedAt !== null) {
             if ($lpa->document->whoIsRegistering === 'donor') {
                 $applicants[0] = [
@@ -110,11 +109,11 @@ class DateCheckController extends AbstractLpaController
             }
         }
 
-        $viewModel->form = $form;
-        $viewModel->returnRoute = $returnRoute;
-        $viewModel->applicants = $applicants;
-
-        return $viewModel;
+        return new ViewModel([
+            'form'        => $form,
+            'returnRoute' => $returnRoute,
+            'applicants'  => $applicants,
+        ]);
     }
 
 
