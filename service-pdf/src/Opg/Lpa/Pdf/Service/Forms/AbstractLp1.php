@@ -711,7 +711,8 @@ abstract class AbstractLp1 extends AbstractTopForm
         $trustAttorney = $this->getTrustCorporation();
 
         if (!is_null($trustAttorney)) {
-            $generatedCs4 = (new Cs4($this->lpa))->generate();
+            $cs4 = new Cs4($this->lpa);
+            $generatedCs4 = $cs4->generate();
             $this->mergerIntermediateFilePaths($generatedCs4);
         }
 
@@ -724,7 +725,8 @@ abstract class AbstractLp1 extends AbstractTopForm
         }
 
         if ($totalAttorneys > self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
-            $generatedAdditionalAttorneySignaturePages = (new Lp1AdditionalAttorneySignaturePage($this->lpa))->generate();
+            $lp1AdditionalAttorneySignaturePage = new Lp1AdditionalAttorneySignaturePage($this->lpa);
+            $generatedAdditionalAttorneySignaturePages = $lp1AdditionalAttorneySignaturePage->generate();
             $this->mergerIntermediateFilePaths($generatedAdditionalAttorneySignaturePages);
         }
 

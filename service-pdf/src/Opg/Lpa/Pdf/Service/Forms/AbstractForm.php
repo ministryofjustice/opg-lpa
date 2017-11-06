@@ -14,9 +14,6 @@ use Exception;
 
 abstract class AbstractForm
 {
-    const CONTENT_TYPE_PREFERENCES = 'preferences';
-    const CONTENT_TYPE_INSTRUCTIONS = 'instructions';
-
     const MAX_ATTORNEYS_ON_STANDARD_FORM = 4;
     const MAX_REPLACEMENT_ATTORNEYS_ON_STANDARD_FORM = 2;
     const MAX_PEOPLE_TO_NOTIFY_ON_STANDARD_FORM = 4;

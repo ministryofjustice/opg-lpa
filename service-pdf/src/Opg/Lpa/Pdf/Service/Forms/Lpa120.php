@@ -11,6 +11,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
+use Exception;
 use RuntimeException;
 
 class Lpa120 extends AbstractTopForm
@@ -38,6 +39,7 @@ class Lpa120 extends AbstractTopForm
      * Populate LPA data into PDF forms, generate pdf file and save into file path.
      *
      * @return $this
+     * @throws Exception
      */
     public function generate()
     {
@@ -82,7 +84,7 @@ class Lpa120 extends AbstractTopForm
                     break;
                 }
             } else {
-                throw new \Exception('When generating LPA120, applicant was found invalid');
+                throw new Exception('When generating LPA120, applicant was found invalid');
             }
         }
 

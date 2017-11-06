@@ -69,8 +69,8 @@ class Cs2ReplacementAttorneys extends AbstractCs2
             }
         }
 
-
         $formattedContentLength = strlen($this->flattenTextContent($content));
+
         $totalAdditionalPages = ceil($formattedContentLength / ((self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS_CS2));
 
         for ($i = 0; $i < $totalAdditionalPages; $i++) {
@@ -91,20 +91,5 @@ class Cs2ReplacementAttorneys extends AbstractCs2
         }
 
         return $this->interFileStack;
-    }
-
-    private function getFormattedContent($pageNo, $content)
-    {
-        $flattenContent = $this->flattenTextContent($content);
-
-        $chunks = str_split($flattenContent, (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS_CS2);
-
-        $formattedContent = null;
-
-        if (isset($chunks[$pageNo])) {
-            $formattedContent = "\r\n" . $chunks[$pageNo];
-        }
-
-        return $formattedContent;
     }
 }

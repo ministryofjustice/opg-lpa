@@ -104,28 +104,28 @@ abstract class AbstractWorker
 
             //  Generate the required PDF
             if ($type == 'LP1' && $lpa->document->type == Document::LPA_TYPE_PF) {
-                $pdf = new Lp1f($lpa);
+                $form = new Lp1f($lpa);
             } elseif ($type == 'LP1' && $lpa->document->type == Document::LPA_TYPE_HW) {
-                $pdf = new Lp1h($lpa);
+                $form = new Lp1h($lpa);
             } elseif ($type == 'LP3') {
-                $pdf = new Lp3($lpa);
+                $form = new Lp3($lpa);
             } elseif ($type == 'LPA120') {
-                $pdf = new Lpa120($lpa);
+                $form = new Lpa120($lpa);
             } else {
                 throw new UnexpectedValueException('Invalid form type: ' . $type);
             }
 
             //  TODO - Check the return type here?
-            $pdf->generate();
+            $form->generate();
 
             //  Add the file path to the logging params
-            $loggingParams['filePath'] = $pdf->getPdfFilePath();
+            $loggingParams['filePath'] = $form->getPdfFilePath();
 
             //  Save the generated file in the response
             $response = $this->getResponseObject($docId);
-            $response->save(new SplFileInfo($pdf->getPdfFilePath()));
+            $response->save(new SplFileInfo($form->getPdfFilePath()));
 
-            $pdf->cleanup();
+            $form->cleanup();
         } catch (Exception $e) {
             $isError = true;
             $message = 'PDF generation failed with exception: ' . $e->getMessage();

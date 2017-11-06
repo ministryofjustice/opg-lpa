@@ -170,7 +170,8 @@ class Lp3 extends AbstractTopForm
 
         if (count($this->lpa->document->primaryAttorneys) > self::MAX_ATTORNEYS_ON_STANDARD_FORM) {
             // depending on how many additional primary attorneys in the LPA, generate additional attorney pages.
-            $generatedAdditionalAttorneyPages = (new Lp3AdditionalAttorneyPage($this->lpa))->generate();
+            $lp3AdditionalAttorneyPage = new Lp3AdditionalAttorneyPage($this->lpa);
+            $generatedAdditionalAttorneyPages = $lp3AdditionalAttorneyPage->generate();
             $this->mergerIntermediateFilePaths($generatedAdditionalAttorneyPages);
         }
 

@@ -23,7 +23,7 @@ class Cs2Instructions extends AbstractCs2
 
             //  Set the PDF form data
             $formData = [];
-            $formData['cs2-is'] = self::CONTENT_TYPE_INSTRUCTIONS;
+            $formData['cs2-is'] = 'instructions';
             $formData['cs2-content'] = $this->getInstructionsAndPreferencesContent($i + 1, $content);
             $formData['cs2-donor-full-name'] = $this->lpa->document->donor->name->__toString();
             $formData['cs2-continued'] = '(Continued)';
