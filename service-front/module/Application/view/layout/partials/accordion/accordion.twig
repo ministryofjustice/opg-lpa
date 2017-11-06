@@ -2,19 +2,16 @@
 
 {% for item in items %}
 
-	{% if (item.routeName == 'lpa/form-type') %}
+    {% if (item.routeName == 'lpa/form-type') %}
         {{ macros.accordionBar({
-        		'desktop' : (lpa.document.type == 'property-and-financial') ?
-        					'This LPA covers property and financial affairs' :
-        					'This LPA covers health and welfare',
-        		'mobile' : (lpa.document.type == 'property-and-financial') ?
-        					'This LPA covers property and financial affairs' :
-        					'This LPA covers health and welfare',
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-        		'readOnly' : (lpa.document.donor is not empty),
-				'noCurrentAnchor' : true
-        	})
+                'desktop' : (lpa.document.type == 'property-and-financial') ?
+                    'This LPA covers property and financial affairs' :
+                    'This LPA covers health and welfare',
+                'mobile' : (lpa.document.type == 'property-and-financial') ?
+                    'This LPA covers property and financial affairs' :
+                    'This LPA covers health and welfare',
+                'titleBoxCssClass': 'title-box--full',
+            })
         }}
     {% endif %}
 
