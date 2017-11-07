@@ -4,10 +4,10 @@ namespace Opg\Lpa\Pdf\Worker;
 
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
+use Opg\Lpa\Pdf\Lpa120;
 use Opg\Lpa\Pdf\Service\Forms\Lp1f;
 use Opg\Lpa\Pdf\Service\Forms\Lp1h;
 use Opg\Lpa\Pdf\Service\Forms\Lp3;
-use Opg\Lpa\Pdf\Service\Forms\Lpa120;
 use Opg\Lpa\Pdf\Worker\Response\AbstractResponse;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -103,29 +103,34 @@ abstract class AbstractWorker
             }
 
             //  Generate the required PDF
+            $pdf = null;
+            $pdfFilePath = null;
+
             if ($type == 'LP1' && $lpa->document->type == Document::LPA_TYPE_PF) {
-                $form = new Lp1f($lpa);
+                $pdf = new Lp1f($lpa);
+                $pdf->generate();
+                $pdfFilePath = $pdf->getPdfFilePath();
             } elseif ($type == 'LP1' && $lpa->document->type == Document::LPA_TYPE_HW) {
-                $form = new Lp1h($lpa);
+                $pdf = new Lp1h($lpa);
+                $pdf->generate();
+                $pdfFilePath = $pdf->getPdfFilePath();
             } elseif ($type == 'LP3') {
-                $form = new Lp3($lpa);
+                $pdf = new Lp3($lpa);
+                $pdf->generate();
+                $pdfFilePath = $pdf->getPdfFilePath();
             } elseif ($type == 'LPA120') {
-                $form = new Lpa120($lpa);
+                $pdf = new Lpa120($lpa);
+                $pdfFilePath = $pdf->generate(true);
             } else {
                 throw new UnexpectedValueException('Invalid form type: ' . $type);
             }
 
-            //  TODO - Check the return type here?
-            $form->generate();
-
             //  Add the file path to the logging params
-            $loggingParams['filePath'] = $form->getPdfFilePath();
+            $loggingParams['filePath'] = $pdfFilePath;
 
             //  Save the generated file in the response
             $response = $this->getResponseObject($docId);
-            $response->save(new SplFileInfo($form->getPdfFilePath()));
-
-            $form->cleanup();
+            $response->save(new SplFileInfo($pdfFilePath));
         } catch (Exception $e) {
             $isError = true;
             $message = 'PDF generation failed with exception: ' . $e->getMessage();
