@@ -13,6 +13,13 @@ class AuthController extends AbstractBaseController {
 
     public function indexAction(){
 
+        //  Temporarily disable and bounce to makeshift maintenance screen
+        $state = $this->params('state');
+
+        if ($state != 'allow') {
+            return $this->redirect()->toRoute('home');
+        }
+
         $check = $this->preventAuthenticatedUser();
         if( $check !== true ){ return $check; }
 
@@ -152,7 +159,7 @@ class AuthController extends AbstractBaseController {
     private function getLoginForm(){
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\Login');
-        $form->setAttribute( 'action', $this->url()->fromRoute('login') );
+        $form->setAttribute( 'action', '/login/allow');
 
         return $form;
 
