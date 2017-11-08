@@ -10,11 +10,11 @@ class HomeController extends AbstractBaseController
 {
     public function indexAction()
     {
-        $dockerTag = $this->getServiceLocator()->get('Config')['version']['tag'];
+//        $dockerTag = $this->getServiceLocator()->get('Config')['version']['tag'];
 
         return new ViewModel([
-            'lpaFee' => Calculator::getFullFee(),
-            'dockerTag' => $dockerTag,
+//            'lpaFee' => Calculator::getFullFee(),
+//            'dockerTag' => $dockerTag,
         ]);
     }
 
