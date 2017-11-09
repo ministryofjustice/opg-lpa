@@ -4,6 +4,8 @@
 	* About LPAs_LPA basics.md
 * About this service
 	* Process_About this service.md
+* Before you begin
+	* Process_Before you begin.md
 * The 2 types of LPA
 	* About LPAs_The 2 types of LPA.md
 * Donor
