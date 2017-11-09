@@ -5,9 +5,9 @@ namespace Opg\Lpa\Pdf\Worker;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
 use Opg\Lpa\Pdf\Lpa120;
+use Opg\Lpa\Pdf\Lp3Aggregator;
 use Opg\Lpa\Pdf\Service\Forms\Lp1f;
 use Opg\Lpa\Pdf\Service\Forms\Lp1h;
-use Opg\Lpa\Pdf\Service\Forms\Lp3;
 use Opg\Lpa\Pdf\Worker\Response\AbstractResponse;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -115,9 +115,8 @@ abstract class AbstractWorker
                 $pdf->generate();
                 $pdfFilePath = $pdf->getPdfFilePath();
             } elseif ($type == 'LP3') {
-                $pdf = new Lp3($lpa);
-                $pdf->generate();
-                $pdfFilePath = $pdf->getPdfFilePath();
+                $pdf = new Lp3Aggregator($lpa);
+                $pdfFilePath = $pdf->generate(true);
             } elseif ($type == 'LPA120') {
                 $pdf = new Lpa120($lpa);
                 $pdfFilePath = $pdf->generate(true);

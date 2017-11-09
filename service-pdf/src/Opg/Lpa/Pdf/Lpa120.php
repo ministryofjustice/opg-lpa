@@ -9,7 +9,6 @@ use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 
@@ -17,8 +16,13 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
  * Class Lpa120
  * @package Opg\Lpa\Pdf
  */
-class Lpa120 extends AbstractPdf
+class Lpa120 extends AbstractIndividualPdf
 {
+    /**
+     * Constants
+     */
+    const CHECK_BOX_ON = 'On';
+
     /**
      * PDF template file name (without path) for this PDF object
      *
@@ -41,17 +45,27 @@ class Lpa120 extends AbstractPdf
      */
     protected function create(Lpa $lpa)
     {
-        $this->setData('lpa-type', $lpa->document->type == Document::LPA_TYPE_PF ? 'property-and-financial-affairs' : 'health-and-welfare');
+        //  No content to populate before page 3
+        $this->populatePageThree($lpa);
+        $this->populatePageFour($lpa->payment);
+    }
 
-        $this->setDonorData($lpa->document->donor);
-
-        $this->setPaymentDetails($lpa->payment);
+    /**
+     * @param Lpa $lpa
+     */
+    private function populatePageThree(Lpa $lpa)
+    {
+        //  Set the donor details
+        $this->setData('donor-full-name', (string) $lpa->document->donor->name)
+             ->setData('donor-address', (string) $lpa->document->donor->address);
 
         //  Set repeat case details
         if (!is_null($lpa->repeatCaseNumber)) {
             $this->setData('is-repeat-application', self::CHECK_BOX_ON)
                  ->setData('case-number', $lpa->repeatCaseNumber);
         }
+
+        $this->setData('lpa-type', $lpa->document->type == Document::LPA_TYPE_PF ? 'property-and-financial-affairs' : 'health-and-welfare');
 
         //  IMPORTANT NOTE!
         //  The details to be entered as the "applicant" below should ALWAYS be to correspondent details and NOT the applicant as we understand it in the data
@@ -80,14 +94,14 @@ class Lpa120 extends AbstractPdf
                  ->setData('applicant-name-last', $correspondent->name->last);
         }
 
-        //  Set the phone number
-        if ($correspondent->phone instanceof PhoneNumber) {
-            $this->setData('applicant-phone-number', $correspondent->phone->number);
-        }
-
         //  Set the address
         if ($correspondent->address instanceof Address) {
             $this->setData('applicant-address', (string) $correspondent->address);
+        }
+
+        //  Set the phone number
+        if ($correspondent->phone instanceof PhoneNumber) {
+            $this->setData('applicant-phone-number', $correspondent->phone->number);
         }
 
         //  Set the email address
@@ -97,18 +111,9 @@ class Lpa120 extends AbstractPdf
     }
 
     /**
-     * @param Donor $donor
-     */
-    private function setDonorData(Donor $donor)
-    {
-        $this->setData('donor-full-name', (string) $donor->name)
-             ->setData('donor-address', (string) $donor->address);
-    }
-
-    /**
      * @param Payment $payment
      */
-    private function setPaymentDetails(Payment $payment)
+    private function populatePageFour(Payment $payment)
     {
         $this->setData('receive-benefits', $this->getYesNoNullValueFromBoolean($payment->reducedFeeReceivesBenefits))
              ->setData('damage-awarded', is_null($payment->reducedFeeAwardedDamages) ? null : $this->getYesNoNullValueFromBoolean(!$payment->reducedFeeAwardedDamages))

@@ -2,12 +2,11 @@
 
 namespace Opg\Lpa\Pdf;
 
-use mikehaertl\pdftk\Pdf as PdftkPdf;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\StateChecker;
 use Opg\Lpa\Pdf\Config\Config;
 use Opg\Lpa\Pdf\Logger\Logger;
+use mikehaertl\pdftk\Pdf as PdftkPdf;
 use Exception;
 
 /**
@@ -16,11 +15,6 @@ use Exception;
  */
 abstract class AbstractPdf extends PdftkPdf
 {
-    /**
-     * Constants
-     */
-    const CHECK_BOX_ON = 'On';
-
     /**
      * Logger utility
      *
@@ -36,73 +30,60 @@ abstract class AbstractPdf extends PdftkPdf
     protected $config;
 
     /**
-     * PDF template file name (without path) for this PDF object - value to be set in extending class
-     *
-     * @var
-     */
-    protected $templateFileName;
-
-    /**
      * Unique file name (with path) for the PDF being created
      *
      * @var
      */
-    private $pdfFile;
+    protected $pdfFile;
 
     /**
-     * @var array
-     */
-    private $data = [];
-
-    /**
-     * @var array
-     */
-    protected $leadingNewLineFields = [];
-
-    /**
-     * @param Lpa $lpa
+     * Constructor can be triggered with or without an LPA object
+     * If an LPA object is passed then the PDF object will execute the create function to populate the data
+     *
+     * @param Lpa|null $lpa
+     * @param null $templateFileName
+     * @param array $options
      * @throws Exception
      */
-    public function __construct(Lpa $lpa)
+    public function __construct(Lpa $lpa = null, $templateFileName = null, array $options = [])
     {
-        //  Confirm that the LPA provided can be used to generate this type of PDF
-        $stateChecker = new StateChecker($lpa);
-
-        //  If applicable check that the document can be created
-        if ($this instanceof Lpa120 && !$stateChecker->canGenerateLPA120()) {
-            throw new Exception('LPA does not contain all the required data to generate ' . get_class($this));
-        }
-
         $this->logger = Logger::getInstance();
         $this->config = Config::getInstance();
 
-        //  Determine the PDF template file to use and check it exists
-        $templateFile = $this->config['service']['assets']['template_path_on_ram_disk'] . '/' . $this->templateFileName;
+        //  Determine the PDF template file to use and, if applicable, check it exists
+        $templateFile = null;
 
-        //  Check that the PDF template exists
-        if (!file_exists($templateFile)) {
-            throw new Exception('The requested PDF template file ' . $templateFile .  ' does not exist');
+        if (!is_null($templateFileName)) {
+            $templateFile = $this->config['service']['assets']['template_path_on_ram_disk'] . '/' . $templateFileName;
+
+            if (!file_exists($templateFile)) {
+                throw new Exception('The requested PDF template file ' . $templateFile . ' does not exist');
+            }
         }
 
-        //  Trigger the parent constructor to set up the PDF with the template file
-        parent::__construct($templateFile);
+        //  Trigger the parent constructor for any additional set up
+        parent::__construct($templateFile, $options);
 
-        //  Generate the unique file name for this PDF and set with the full path
-        $fileType = array_pop(explode('\\', get_class($this)));
-        $lpaReference = str_replace(' ', '-', Formatter::id($lpa->id));
+        //  Build up a PDF file name to use
+        $className = array_pop(explode('\\', get_class($this)));
+        $pdfFileName =  sprintf('%s-%s.pdf', $className, microtime(true));
 
-        $pdfFileName = sprintf('%s-%s-%s.pdf', strtoupper($fileType), $lpaReference, floor(microtime(true)));
+        //  If an LPA has been passed then set up the PDF object and trigger the create
+        if ($lpa instanceof Lpa) {
+            //  Prefix the PDF file name with the LPA reference
+            $pdfFileName = str_replace(' ', '-', Formatter::id($lpa->id)) . '-' . $pdfFileName;
 
-        //  Log a message for this PDF creation
-        $this->logger->info('Creating ' . $pdfFileName, [
-            'lpaId' => $lpa->id
-        ]);
+            //  Log a message for this PDF creation
+            $this->logger->info('Creating ' . $pdfFileName, [
+                'lpaId' => $lpa->id
+            ]);
+
+            //  Trigger the create now - this will trigger in the child class
+            $this->create($lpa);
+        }
 
         //  Set the full file path for this PDF
         $this->pdfFile = $this->config['service']['assets']['intermediate_file_path'] . '/' . $pdfFileName;
-
-        //  Trigger the create now - this will trigger in the child class
-        $this->create($lpa);
     }
 
     /**
@@ -120,39 +101,15 @@ abstract class AbstractPdf extends PdftkPdf
      */
     public function generate($protect = false)
     {
-        $this->fillForm($this->data)
-             ->flatten()
-             ->saveAs($this->pdfFile);
-
         //  If required re-get the PDF and set the password - this is actually shrinks the PDF again
-        //  TODO - Investigate why this is the case!
         if ($protect) {
-            $pdf = new PdftkPdf($this->pdfFile);
-            $pdf->allow('Printing CopyContents')
-                ->setPassword($this->config['pdf']['password'])
-                ->saveAs($this->pdfFile);
+            $pdfToProtect = new PdftkPdf($this->pdfFile);
+            $pdfToProtect->allow('Printing CopyContents')
+                         ->setPassword($this->config['pdf']['password'])
+                         ->saveAs($this->pdfFile);
         }
 
         return $this->pdfFile;
-    }
-
-    /**
-     * Easy way to set the data to fill in the PDF - chainable
-     *
-     * @param $key
-     * @param $value
-     * @return $this
-     */
-    protected function setData($key, $value)
-    {
-        //  If applicable insert a new line char
-        if (in_array($key, $this->leadingNewLineFields)) {
-            $value = "\n" . $value;
-        }
-
-        $this->data[$key] = $value;
-
-        return $this;
     }
 
     /**
