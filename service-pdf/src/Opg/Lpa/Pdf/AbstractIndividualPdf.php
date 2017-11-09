@@ -93,6 +93,17 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     }
 
     /**
+     * Return the footer content from the config
+     *
+     * @param $type
+     * @return mixed
+     */
+    protected function getFooter($type)
+    {
+        return $this->config['footer'][$type];
+    }
+
+    /**
      * Generate the PDF - this will save a copy to the file system
      *
      * @param bool $protect

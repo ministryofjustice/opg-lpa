@@ -79,7 +79,7 @@ class Lp3 extends AbstractIndividualPdf
              ->setData('lpa-document-peopleToNotify-address-address3', $personToNotify->address->address3)
              ->setData('lpa-document-peopleToNotify-address-postcode', $personToNotify->address->postcode);
 
-        $this->setData('footer-right-page-one', $this->config['footer']['lp3']);
+        $this->setData('footer-right-page-one', $this->getFooter('lp3'));
     }
 
     /**
@@ -103,7 +103,7 @@ class Lp3 extends AbstractIndividualPdf
         //  Set LPA type
         $this->setData('lpa-type', ($lpa->document->type == Document::LPA_TYPE_PF ? 'property-and-financial-affairs' : $lpa->document->type));
 
-        $this->setData('footer-right-page-two', $this->config['footer']['lp3']);
+        $this->setData('footer-right-page-two', $this->getFooter('lp3'));
     }
 
     /**
@@ -166,11 +166,11 @@ class Lp3 extends AbstractIndividualPdf
             }
         }
 
-        $this->setData('footer-right-page-three', $this->config['footer']['lp3']);
+        $this->setData('footer-right-page-three', $this->getFooter('lp3'));
     }
 
     private function populatePageFour()
     {
-        $this->setData('footer-right-page-four', $this->config['footer']['lp3']);
+        $this->setData('footer-right-page-four', $this->getFooter('lp3'));
     }
 }
