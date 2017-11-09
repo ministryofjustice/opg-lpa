@@ -173,8 +173,8 @@
 
 	{% if (item.routeName == 'review-link') %}
 		{{ macros.accordionBar({
-			'desktop' : 'You can edit the LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}, {}) ~ '?return-route=' ~ routeName() ~ '">review the LPA</a>',
-			'mobile' : 'You can edit the LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}) ~ '?return-route=' ~ routeName() ~ '">review the LPA</a>',
+			'desktop' : 'You can edit the LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}, {}) ~ '?return-route=' ~ routeName() ~ '">preview the LPA</a>',
+			'mobile' : 'You can edit the LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}) ~ '?return-route=' ~ routeName() ~ '">preview the LPA</a>',
             'titleBoxCssClass': 'title-box--full',
             'current': true
 		})
