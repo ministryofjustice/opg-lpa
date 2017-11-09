@@ -48,7 +48,7 @@ If you have a long-term health condition, you can create a written care plan wit
 ### Advance decision
 This is a legally binding document that allows you to specify types of treatments that you don't want, in case you aren't able to make a decision about them in the future. NHS Choices website has <a href="http://www.nhs.uk/Planners/end-of-life-care/Pages/advance-decision-to-refuse-treatment.aspx" rel="external" target="_blank">information about advance decisions.</a>
 
-If you've made an advance decision, you can still make an LPA. If you want the advance decision to be taken into account, you should state this when you have the opportunity to 'add extra instructions' in the instructions and preferences section of your LPA.
+If you've made an advance decision, you can still make an LPA. If you want the advance decision to be taken into account, you should state this when you have the opportunity to 'add extra instructions' in the preferences and instructions section of your LPA.
 
 When making a health and welfare LPA, you'll have to decide whether your attorneys or your doctors should make decisions about life-sustaining treatment. If you let your attorneys decide about life-sustaining treatments that you've previously made an advance decision about, the LPA will take the place of the advance decision.
 
