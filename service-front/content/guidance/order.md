@@ -23,7 +23,7 @@
 * People to notify
 	* People_People to be told.md
 * Preferences and instructions
-	* Decisions_Restrictions and guidance.md
+	* Decisions_Preferences and instructions.md
 * How to preview the LPA
 	* Process_How to preview the LPA.md
 * Signing the LPA
