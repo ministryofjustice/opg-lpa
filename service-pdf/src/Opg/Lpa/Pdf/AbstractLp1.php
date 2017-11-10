@@ -15,8 +15,9 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Exception;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
+use Opg\Lpa\Pdf\Aggregator\ContinuationSheet1 as ContinuationSheet1Aggregator;
+use Exception;
 
 /**
  * Class AbstractLp1
@@ -27,9 +28,6 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     /**
      * Constants
      */
-    const MAX_ATTORNEYS_SECTION_2 = 4;
-    const MAX_REPLACEMENT_ATTORNEYS_SECTION_4 = 2;
-    const MAX_PEOPLE_TO_NOTIFY_SECTION_6 = 4;
     const MAX_ATTORNEYS_PER_PAGE_SECTION_11 = 4;
     const MAX_APPLICANTS_SECTION_12 = 4;
     const MAX_SIGNATURES_SECTION_15 = 4;
@@ -649,7 +647,33 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     private function addContinuationSheets(Lpa $lpa)
     {
-//TODO
+        $continuationSheetsAdded = false;
+
+        //  Add continuation sheet 1 instances if required
+        $primaryAttorneys = array_splice($this->getOrderedAttorneys($lpa->document->primaryAttorneys), self::MAX_ATTORNEYS_SECTION_2);
+        $replacementAttorneys = array_splice($this->getOrderedAttorneys($lpa->document->replacementAttorneys), self::MAX_REPLACEMENT_ATTORNEYS_SECTION_4);
+        $peopleToNotify = array_splice($lpa->document->peopleToNotify, self::MAX_PEOPLE_TO_NOTIFY_SECTION_6);
+
+        if (!empty($primaryAttorneys) || !empty($replacementAttorneys) || !empty($peopleToNotify)) {
+            $continuationSheet1 = new ContinuationSheet1Aggregator($lpa, $primaryAttorneys, $replacementAttorneys, $peopleToNotify);
+            $this->addConstituentPdf($continuationSheet1, 1, $continuationSheet1->getPageCount(), 15);
+
+            $continuationSheetsAdded = true;
+        }
+
+        //  Add continuation sheet 2 instances if required
+        //TODO
+
+        //  Add continuation sheet 3 instances if required
+        //TODO
+
+        //  Add continuation sheet 4 instances if required
+        //TODO
+
+        //  If any continuation sheets have been added append another blank page
+        if ($continuationSheetsAdded) {
+            $this->insertBlankPage(15);
+        }
     }
 
     /**

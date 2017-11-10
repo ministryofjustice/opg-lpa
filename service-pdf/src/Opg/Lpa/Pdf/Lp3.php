@@ -33,9 +33,6 @@ class Lp3 extends AbstractIndividualPdf
     private $personToNotify;
 
     /**
-     * Constructor can be triggered with or without an LPA object
-     * If an LPA object is passed then the PDF object will execute the create function to populate the data
-     *
      * @param Lpa|null $lpa
      * @param NotifiedPerson|null $personToNotify
      */

@@ -39,9 +39,6 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     private $constituentPdfs = [];
 
     /**
-     * Constructor can be triggered with or without an LPA object
-     * If an LPA object is passed then the PDF object will execute the create function to populate the data
-     *
      * @param Lpa|null $lpa
      * @param array $options
      * @throws Exception
@@ -175,7 +172,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                     $constituentPdfFile = $constituentPdfData['pdf'];
 
                     //  If this PDF is an abstract PDF then trigger the generate and get the path
-                    if ($constituentPdfFile instanceof AbstractIndividualPdf) {
+                    if ($constituentPdfFile instanceof AbstractPdf) {
                         $constituentPdfFile = $constituentPdfFile->generate();
                     }
 
@@ -245,7 +242,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     /**
      * Insert a number of pages of the constituent PDF after a specified page
      *
-     * @param AbstractIndividualPdf|string $pdf
+     * @param AbstractPdf|string $pdf
      * @param $start
      * @param $pages
      * @param $insertAfter
@@ -254,8 +251,8 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     protected function addConstituentPdf($pdf, $start, $pages, $insertAfter)
     {
         //  Ensure that the PDF is an expected type
-        if (!is_string($pdf) && !$pdf instanceof AbstractIndividualPdf) {
-            throw new Exception('Constituent PDF must be a type AbstractIndividualPdf or a string representing a file path');
+        if (!is_string($pdf) && !$pdf instanceof AbstractPdf) {
+            throw new Exception('Constituent PDF must be a type AbstractPdf or a string representing a file path');
         }
 
         //  Ensure that the start page and page count are numeric values
@@ -280,11 +277,11 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     /**
      * Insert a single page of the constituent PDF after a specified page
      *
-     * @param AbstractIndividualPdf $pdf
+     * @param AbstractPdf|string $pdf
      * @param $pageNumber
      * @param $insertAfter
      */
-    protected function addConstituentPdfPage(AbstractIndividualPdf $pdf, $pageNumber, $insertAfter)
+    protected function addConstituentPdfPage($pdf, $pageNumber, $insertAfter)
     {
         $this->addConstituentPdf($pdf, $pageNumber, 1, $insertAfter);
     }

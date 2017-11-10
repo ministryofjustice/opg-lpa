@@ -16,6 +16,13 @@ use Exception;
 abstract class AbstractPdf extends PdftkPdf
 {
     /**
+     * Constants
+     */
+    const MAX_ATTORNEYS_SECTION_2 = 4;
+    const MAX_REPLACEMENT_ATTORNEYS_SECTION_4 = 2;
+    const MAX_PEOPLE_TO_NOTIFY_SECTION_6 = 4;
+
+    /**
      * Logger utility
      *
      * @var Logger
