@@ -27,11 +27,6 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     private $data = [];
 
     /**
-     * @var array
-     */
-    protected $leadingNewLineFields = [];
-
-    /**
      * Area references that should have a strike through
      *
      * @var array
@@ -63,7 +58,8 @@ abstract class AbstractIndividualPdf extends AbstractPdf
             $stateChecker = new StateChecker($lpa);
 
             //  If applicable check that the document can be created
-            if (($this instanceof Lp3 && !$stateChecker->canGenerateLP3())
+            if (($this instanceof AbstractLp1 && !$stateChecker->canGenerateLP1())
+                || ($this instanceof Lp3 && !$stateChecker->canGenerateLP3())
                 || ($this instanceof Lpa120 && !$stateChecker->canGenerateLPA120())) {
 
                 throw new Exception('LPA does not contain all the required data to generate ' . get_class($this));
@@ -78,12 +74,13 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      *
      * @param $key
      * @param $value
+     * @param bool $insertLeadingNewLine
      * @return $this
      */
-    protected function setData($key, $value)
+    protected function setData($key, $value, $insertLeadingNewLine = false)
     {
         //  If applicable insert a new line char
-        if (in_array($key, $this->leadingNewLineFields)) {
+        if ($insertLeadingNewLine === true) {
             $value = "\n" . $value;
         }
 
@@ -93,14 +90,25 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     }
 
     /**
-     * Return the footer content from the config
+     * Easy way to set a check box cross
      *
-     * @param $type
-     * @return mixed
+     * @param $key
+     * @return $this
      */
-    protected function getFooter($type)
+    protected function setCheckBox($key)
     {
-        return $this->config['footer'][$type];
+        return $this->setData($key, 'On');
+    }
+
+    /**
+     * Set the footer content from the config
+     *
+     * @param $key
+     * @param $type
+     */
+    public function setFooter($key, $type)
+    {
+        $this->setData($key, $this->config['footer'][$type]);
     }
 
     /**
@@ -128,10 +136,10 @@ abstract class AbstractIndividualPdf extends AbstractPdf
 
             if (!$disableStrikeThroughLines) {
                 // draw cross lines
-                $pdfForStrikethroughs = ZendPdfDocument::load($this->pdfFile);
+                $pdfForStrikeThroughs = ZendPdfDocument::load($this->pdfFile);
 
                 foreach ($this->strikeThroughTargets as $pageNo => $pageDrawingTargets) {
-                    $page = $pdfForStrikethroughs->pages[$pageNo]->setLineWidth(10);
+                    $page = $pdfForStrikeThroughs->pages[$pageNo]->setLineWidth(10);
 
                     foreach ($pageDrawingTargets as $pageDrawingTarget) {
                         //  Get the coordinates for this target from the config
@@ -148,43 +156,57 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                     }
                 }
 
-                $pdfForStrikethroughs->save($this->pdfFile);
+                $pdfForStrikeThroughs->save($this->pdfFile);
             }
         }
 
         //  Process any constituent PDFs
         if (!empty($this->constituentPdfs)) {
+            //  Sort the constituent PDFs into the required insertion order
+            ksort($this->constituentPdfs, SORT_NATURAL);
+
+            //  Keep track of the page shift so we can insert pages in the correct locations as we go
+            $pageShift = 0;
+
             //  Loop through the constituent PDF settings and gradually adapt the document
-            foreach ($this->constituentPdfs as $constituentPdfData) {
-                //  Execute the generation for this constituent
-                $constituentPdfFile = $constituentPdfData['pdf'];
+            foreach ($this->constituentPdfs as $insertAfter => $constituentPdfsData) {
+                foreach ($constituentPdfsData as $constituentPdfData) {
+                    //  Execute the generation for this constituent
+                    $constituentPdfFile = $constituentPdfData['pdf'];
 
-                //  If this PDF is an abstract PDF then trigger the generate and get the path
-                if ($constituentPdfFile instanceof AbstractIndividualPdf) {
-                    $constituentPdfFile = $constituentPdfFile->generate();
-                }
+                    //  If this PDF is an abstract PDF then trigger the generate and get the path
+                    if ($constituentPdfFile instanceof AbstractIndividualPdf) {
+                        $constituentPdfFile = $constituentPdfFile->generate();
+                    }
 
-                $pdfMaster = new PdftkPdf([
-                    'A' => $this->pdfFile,
-                    'B' => $constituentPdfFile,
-                ]);
+                    $pdfMaster = new PdftkPdf([
+                        'A' => $this->pdfFile,
+                        'B' => $constituentPdfFile,
+                    ]);
 
-                $insertAt = $constituentPdfData['pos'];
-                $startAt = $constituentPdfData['start'];
-                $endAt = (is_numeric($constituentPdfData['pages']) ? $startAt + $constituentPdfData['pages'] - 1 : $constituentPdfData['pages']);
+                    //  Get the start point, number of pages and work out the end point
+                    $startAt = $constituentPdfData['start'];
+                    $pages = $constituentPdfData['pages'];
+                    $endAt = $startAt + $pages - 1;
 
-                if ($insertAt == 'end') {
-                    //  Add the constituent pages to the end
-                    $pdfMaster->cat(1, 'end', 'A')
+                    //  Determine where the pages should be inserted taking into account the page shift
+                    $insertPoint = (is_numeric($insertAfter) ? $insertAfter + $pageShift : $insertAfter);
+
+                    //  Insert the constituent pages in the specified position
+                    $pdfMaster->cat(1, $insertPoint, 'A')
                               ->cat($startAt, $endAt, 'B');
-                } else {
-                    //  Insert the constituent pages in the middle
-                    $pdfMaster->cat(1, $insertAt - 1, 'A')
-                              ->cat($startAt, $endAt, 'B')
-                              ->cat($insertAt, 'end', 'A');
-                }
 
-                $pdfMaster->saveAs($this->pdfFile);
+                    //  If the insert point was numeric then add the rest of the master file
+                    //  If it wasn't numeric (e.g. 'end', etc) then do nothing
+                    if (is_numeric($insertPoint)) {
+                        $pdfMaster->cat($insertPoint + 1, 'end', 'A');
+                    }
+
+                    $pdfMaster->saveAs($this->pdfFile);
+
+                    //  Update the page shift
+                    $pageShift += $pages;
+                }
             }
         }
 
@@ -215,47 +237,71 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     }
 
     /**
-     * Insert a number of pages of the constituent PDF at a set position (page)
+     * Insert a number of pages of the constituent PDF after a specified page
      *
-     * @param AbstractIndividualPdf $pdf
+     * @param AbstractIndividualPdf|string $pdf
      * @param $start
      * @param $pages
-     * @param $position
+     * @param $insertAfter
+     * @throws Exception
      */
-    protected function addConstituentPdf(AbstractIndividualPdf $pdf, $start, $pages, $position)
+    protected function addConstituentPdf($pdf, $start, $pages, $insertAfter)
     {
-        $this->constituentPdfs[] = [
+        //  Ensure that the PDF is an expected type
+        if (!is_string($pdf) && !$pdf instanceof AbstractIndividualPdf) {
+            throw new Exception('Constituent PDF must be a type AbstractIndividualPdf or a string representing a file path');
+        }
+
+        //  Ensure that the start page and page count are numeric values
+        //  This is required to ensure that the page shift can be tracked during generation
+        if (!is_numeric($start) || !is_numeric($pages)) {
+            throw new Exception('Start page and page count must be numeric values when adding a constituent PDF');
+        }
+
+        //  Add the constituent PDF details using the insertion point as a key
+        //  The entries will be processed in order on generation
+        if (!array_key_exists($insertAfter, $this->constituentPdfs)) {
+            $this->constituentPdfs[$insertAfter] = [];
+        }
+
+        $this->constituentPdfs[$insertAfter][] = [
             'pdf'   => $pdf,
             'start' => $start,
             'pages' => $pages,
-            'pos'   => $position,
         ];
     }
 
     /**
-     * Insert a single page of the constituent PDF at a set position (page)
+     * Insert a single page of the constituent PDF after a specified page
      *
      * @param AbstractIndividualPdf $pdf
      * @param $pageNumber
-     * @param $position
+     * @param $insertAfter
      */
-    protected function addConstituentPdfPage(AbstractIndividualPdf $pdf, $pageNumber, $position)
+    protected function addConstituentPdfPage(AbstractIndividualPdf $pdf, $pageNumber, $insertAfter)
     {
-        $this->addConstituentPdf($pdf, $pageNumber, 1, $position);
+        $this->addConstituentPdf($pdf, $pageNumber, 1, $insertAfter);
     }
 
     /**
-     * Insert a blank page as a constituent PDF
+     * Insert a static PDF after a specified page
      *
-     * @param string $position
+     * @param $pdfFileName
+     * @param string $insertAfter
      */
-    protected function insertBlankPage($position = 'end')
+    protected function insertStaticPDF($pdfFileName, $start, $pages, $insertAfter)
     {
-        $this->constituentPdfs[] = [
-            'pdf'   => $this->config['service']['assets']['template_path_on_ram_disk'] . '/blank.pdf',
-            'start' => 1,
-            'pages' => 1,
-            'pos'   => $position,
-        ];
+        $pdfPath = $this->config['service']['assets']['template_path_on_ram_disk'] . '/' . $pdfFileName;
+        $this->addConstituentPdf($pdfPath, $start, $pages, $insertAfter);
+    }
+
+    /**
+     * Insert a blank page (static PDF) after a specified page
+     *
+     * @param string $insertAfter
+     */
+    protected function insertBlankPage($insertAfter)
+    {
+        $this->insertStaticPDF('blank.pdf', 1, 1, $insertAfter);
     }
 }

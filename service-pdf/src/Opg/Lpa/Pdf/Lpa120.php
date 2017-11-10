@@ -19,24 +19,11 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 class Lpa120 extends AbstractIndividualPdf
 {
     /**
-     * Constants
-     */
-    const CHECK_BOX_ON = 'On';
-
-    /**
      * PDF template file name (without path) for this PDF object
      *
      * @var
      */
     protected $templateFileName = 'LPA120.pdf';
-
-    /**
-     * @var array
-     */
-    protected $leadingNewLineFields = [
-        'applicant-address',
-        'donor-address'
-    ];
 
     /**
      * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
@@ -45,7 +32,7 @@ class Lpa120 extends AbstractIndividualPdf
      */
     protected function create(Lpa $lpa)
     {
-        //  No content to populate before page 3
+        //  No content on pages 1 & 2
         $this->populatePageThree($lpa);
         $this->populatePageFour($lpa->payment);
     }
@@ -57,11 +44,11 @@ class Lpa120 extends AbstractIndividualPdf
     {
         //  Set the donor details
         $this->setData('donor-full-name', (string) $lpa->document->donor->name)
-             ->setData('donor-address', (string) $lpa->document->donor->address);
+             ->setData('donor-address', (string) $lpa->document->donor->address, true);
 
         //  Set repeat case details
         if (!is_null($lpa->repeatCaseNumber)) {
-            $this->setData('is-repeat-application', self::CHECK_BOX_ON)
+            $this->setCheckBox('is-repeat-application')
                  ->setData('case-number', $lpa->repeatCaseNumber);
         }
 
@@ -96,7 +83,7 @@ class Lpa120 extends AbstractIndividualPdf
 
         //  Set the address
         if ($correspondent->address instanceof Address) {
-            $this->setData('applicant-address', (string) $correspondent->address);
+            $this->setData('applicant-address', (string) $correspondent->address, true);
         }
 
         //  Set the phone number

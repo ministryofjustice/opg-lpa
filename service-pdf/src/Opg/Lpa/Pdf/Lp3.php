@@ -18,7 +18,7 @@ class Lp3 extends AbstractIndividualPdf
     /**
      * Constants
      */
-    const MAX_ATTORNEYS_ON_STANDARD_FORM = 4;
+    const MAX_ATTORNEYS_PER_PAGE = 4;
 
     /**
      * PDF template file name (without path) for this PDF object
@@ -58,11 +58,13 @@ class Lp3 extends AbstractIndividualPdf
         $this->populatePageThree($lpa);
         $this->populatePageFour();
 
-        //  If there is an even number of attorney pages then append a blank page to the end of the PDF
-        $primaryAttorneysForPages = array_chunk($lpa->document->primaryAttorneys, self::MAX_ATTORNEYS_ON_STANDARD_FORM);
+        //  Determine how many additional page three instances were added
+        //  If there is an odd number of additional pages then we need to insert a blank page
+        $additionalPages = ceil(count($lpa->document->primaryAttorneys) / self::MAX_ATTORNEYS_PER_PAGE) - 1;
 
-        if (count($primaryAttorneysForPages) % 2 == 0) {
-            $this->insertBlankPage();
+        if ($additionalPages % 2 == 1) {
+            //  Insert a single blank page at the end of the document
+            $this->insertBlankPage('end');
         }
     }
 
@@ -79,7 +81,7 @@ class Lp3 extends AbstractIndividualPdf
              ->setData('lpa-document-peopleToNotify-address-address3', $personToNotify->address->address3)
              ->setData('lpa-document-peopleToNotify-address-postcode', $personToNotify->address->postcode);
 
-        $this->setData('footer-right-page-one', $this->getFooter('lp3'));
+        $this->setFooter('footer-right-page-one', 'lp3');
     }
 
     /**
@@ -103,7 +105,7 @@ class Lp3 extends AbstractIndividualPdf
         //  Set LPA type
         $this->setData('lpa-type', ($lpa->document->type == Document::LPA_TYPE_PF ? 'property-and-financial-affairs' : $lpa->document->type));
 
-        $this->setData('footer-right-page-two', $this->getFooter('lp3'));
+        $this->setFooter('footer-right-page-two', 'lp3');
     }
 
     /**
@@ -112,7 +114,7 @@ class Lp3 extends AbstractIndividualPdf
     private function populatePageThree(Lpa $lpa, $pageIteration = 0)
     {
         //  This page is repeatable so determine which PDF object to use
-        $pdf = ($pageIteration > 0 ? new Lp3() : $this);
+        $pdf = ($pageIteration > 0 ? new $this() : $this);
 
         $primaryAttorneys = $lpa->document->primaryAttorneys;
 
@@ -124,12 +126,12 @@ class Lp3 extends AbstractIndividualPdf
         }
 
         //  Populate the details for primary attorneys on this page
-        $primaryAttorneysForPages = array_chunk($primaryAttorneys, self::MAX_ATTORNEYS_ON_STANDARD_FORM);
+        $primaryAttorneysForPages = array_chunk($primaryAttorneys, self::MAX_ATTORNEYS_PER_PAGE);
 
         if (array_key_exists($pageIteration, $primaryAttorneysForPages)) {
             $primaryAttorneysForPage = $primaryAttorneysForPages[$pageIteration];
 
-            for ($i = 0; $i < self::MAX_ATTORNEYS_ON_STANDARD_FORM; $i++) {
+            for ($i = 0; $i < self::MAX_ATTORNEYS_PER_PAGE; $i++) {
                 //  If there is a primary attorney for this index then render the details
                 if (array_key_exists($i, $primaryAttorneysForPage)) {
                     $primaryAttorney = $primaryAttorneysForPage[$i];
@@ -147,30 +149,29 @@ class Lp3 extends AbstractIndividualPdf
                         ->setData('lpa-document-primaryAttorneys-' . $i . '-address-address3', $primaryAttorney->address->address3)
                         ->setData('lpa-document-primaryAttorneys-' . $i . '-address-postcode', $primaryAttorney->address->postcode);
                 } else {
-                    //  Add a strikethrough
+                    //  Add a strike through
                     $pdf->addStrikeThrough('lp3-primaryAttorney-' . $i, 3);
                 }
             }
 
             //  If applicable add the page PDF as a constituent
             if ($pdf !== $this) {
-                $insertPosition = 3 + $pageIteration;  //  The first page will be inserted as page 4
-                $this->addConstituentPdfPage($pdf, 3, $insertPosition);
+                $this->addConstituentPdfPage($pdf, 3, 3);
             }
 
             //  If there is another page of primary attorneys trigger again
-            $nextPage = $pageIteration + 1;
+            $pageIteration++;
 
-            if (array_key_exists($nextPage, $primaryAttorneysForPages)) {
-                $this->populatePageThree($lpa, $nextPage);
+            if (array_key_exists($pageIteration, $primaryAttorneysForPages)) {
+                $this->populatePageThree($lpa, $pageIteration);
             }
         }
 
-        $this->setData('footer-right-page-three', $this->getFooter('lp3'));
+        $pdf->setFooter('footer-right-page-three', 'lp3');
     }
 
     private function populatePageFour()
     {
-        $this->setData('footer-right-page-four', $this->getFooter('lp3'));
+        $this->setFooter('footer-right-page-four', 'lp3');
     }
 }
