@@ -16,11 +16,18 @@
             {% if (lpa.document.primaryAttorneyDecisions) %}
                 {% if (lpa.document.primaryAttorneyDecisions.how == 'jointly') %}
                 <div class="alert" role="alert">
-                    <i class="icon icon-information" role="presentation"></i>
+                    <i class="icon icon-important-small" role="presentation"></i>
                     <div class="alert-message">
-                        <h3 class="heading-small flush--top">You appointed your original attorneys jointly</h3>
-                        <p>This means if ANY of your original attorneys can no longer act they will ALL be replaced by your replacement attorneys, unless you describe a different arrangement in the 'Instructions' section later.</p>
-                        <p>If you don't add any replacement attorneys and one of your original attorneys can no longer act, then your LPA can normally no longer be used.</p>
+                        <p>You appointed your original attorneys jointly. This means that:</p>
+                        <ul class="list list-bullet">
+                            <li>
+                                <p><strong class="bold">if ANY of your original attorneys can no longer act they will ALL be replaced by your replacement attorney(s)</strong></p>
+                            </li>
+                            <li>
+                                <p><strong class="bold">if you don't add any replacement attorneys and one of your original attorneys can no longer act, then your LPA can no longer be used</strong></p>
+                            </li>
+                        </ul>
+                        <p>If you don't want the above to happen, you need to state this when you have the opportunity to 'add extra instructions' in the preferences and instructions section.</p>
                     </div>
                 </div>
                 {% elseif (lpa.document.primaryAttorneyDecisions.how == 'depends') %}
