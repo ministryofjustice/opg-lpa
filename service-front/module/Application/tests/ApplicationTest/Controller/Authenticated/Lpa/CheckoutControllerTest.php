@@ -114,7 +114,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $lpa->id = 123;
         $this->controller->setLpa($lpa);
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->redirect->shouldReceive('toRoute')->with('lpa/more-info-required', ['lpa-id' => $lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/more-info-required', $lpa, $response);
 
         $result = $this->controller->indexAction();
 
@@ -224,7 +224,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $lpa = new Lpa();
         $lpa->id = 123;
         $this->controller->setLpa($lpa);
-        $this->redirect->shouldReceive('toRoute')->with('lpa/more-info-required', ['lpa-id' => $lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/more-info-required', $lpa, $response);
 
         $result = $this->controller->chequeAction();
 
@@ -283,7 +283,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $lpa = new Lpa();
         $lpa->id = 123;
         $this->controller->setLpa($lpa);
-        $this->redirect->shouldReceive('toRoute')->with('lpa/more-info-required', ['lpa-id' => $lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/more-info-required', $lpa, $response);
 
         $result = $this->controller->confirmAction();
 
@@ -329,7 +329,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $lpa = new Lpa();
         $lpa->id = 123;
         $this->controller->setLpa($lpa);
-        $this->redirect->shouldReceive('toRoute')->with('lpa/more-info-required', ['lpa-id' => $lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/more-info-required', $lpa, $response);
 
         $result = $this->controller->payAction();
 

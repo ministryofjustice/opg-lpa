@@ -117,7 +117,7 @@ class TypeControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setType')->andReturn($lpa->id, $this->postData['type'])->andReturn(true)->once();
 
         $this->setMatchedRouteName($this->controller, 'lpa/form-type');
-        $this->redirect->shouldReceive('toRoute')->with('lpa/donor', ['lpa-id' => $lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/donor', $lpa, $response);
 
         $result = $this->controller->indexAction();
 

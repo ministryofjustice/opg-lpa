@@ -127,7 +127,7 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->setPostValid($this->form, $postData);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/applicant');
-        $this->redirect->shouldReceive('toRoute')->with('lpa/correspondent', ['lpa-id' => $this->lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')->with('lpa/correspondent', ['lpa-id' => $this->lpa->id], $this->getExpectedRouteOptions('lpa/correspondent'))->andReturn($response)->once();
 
         $result = $this->controller->indexAction();
 
@@ -172,7 +172,7 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')->with($this->lpa->id, [1])->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/applicant');
-        $this->redirect->shouldReceive('toRoute')->with('lpa/correspondent', ['lpa-id' => $this->lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/correspondent', $this->lpa, $response);
 
         $result = $this->controller->indexAction();
 
@@ -199,7 +199,7 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')->with($this->lpa->id, '1,2,3')->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/applicant');
-        $this->redirect->shouldReceive('toRoute')->with('lpa/correspondent', ['lpa-id' => $this->lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/correspondent', $this->lpa, $response);
 
         $result = $this->controller->indexAction();
 
