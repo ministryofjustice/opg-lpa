@@ -8,7 +8,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
  * Class ContinuationSheet3
  * @package Opg\Lpa\Pdf
  */
-class ContinuationSheet3 extends AbstractIndividualPdf
+class ContinuationSheet3 extends AbstractContinuationSheet
 {
     /**
      * PDF template file name (without path) for this PDF object
@@ -24,8 +24,7 @@ class ContinuationSheet3 extends AbstractIndividualPdf
      */
     protected function create(Lpa $lpa)
     {
-        //  Add a leading blank page - this is done for all continuation sheets
-        $this->insertBlankPage('start');
+        parent::create($lpa);
 
         $this->setData('cs3-donor-full-name', (string) $lpa->document->donor->name);
 

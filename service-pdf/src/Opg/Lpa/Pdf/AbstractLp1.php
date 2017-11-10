@@ -10,13 +10,14 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
 use Opg\Lpa\Pdf\Aggregator\ContinuationSheet1 as ContinuationSheet1Aggregator;
+use Opg\Lpa\Pdf\Aggregator\ContinuationSheet2 as ContinuationSheet2Aggregator;
+use Opg\Lpa\Pdf\Traits\LongContentTrait;
 use Exception;
 
 /**
@@ -25,16 +26,14 @@ use Exception;
  */
 abstract class AbstractLp1 extends AbstractIndividualPdf
 {
+    use LongContentTrait;
+
     /**
      * Constants
      */
     const MAX_ATTORNEYS_PER_PAGE_SECTION_11 = 4;
     const MAX_APPLICANTS_SECTION_12 = 4;
     const MAX_SIGNATURES_SECTION_15 = 4;
-
-    const BOX_CHARS_PER_ROW = 84;
-    const BOX_NO_OF_ROWS = 6;
-    const BOX_NO_OF_ROWS_CS2 = 14;
 
     /**
      * PDF file name for the coversheet
@@ -161,7 +160,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
                 if ($strikeThroughPage == 2) {
                     //  Add the required strike through area prefix
-                    $strikeThroughArea .= '-' . $this->getStrikeThroughSuffix($lpaDocument->type);
+                    $strikeThroughArea .= '-' . $this->getStrikeThroughSuffix();
                 }
 
                 $this->addStrikeThrough($strikeThroughArea, $strikeThroughPage);
@@ -214,7 +213,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 }
             } else {
                 //  Add a strike through on the appropriate page
-                $strikeThroughArea = 'replacementAttorney-' . $i . '-' . $this->getStrikeThroughSuffix($lpaDocument->type);
+                $strikeThroughArea = 'replacementAttorney-' . $i . '-' . $this->getStrikeThroughSuffix();
                 $strikeThroughPage = 5 + floor($i/2);
 
                 $this->addStrikeThrough($strikeThroughArea, $strikeThroughPage);
@@ -226,49 +225,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         }
 
         //  Determine whether to check the when/how my attorneys can act checkbox
-//  TODO - centralise this code so it can be used by CS1 generation too?
-        $noOfPrimaryAttorneys = count($lpaDocument->primaryAttorneys);
-        $noOfReplacementAttorneys = count($replacementAttorneys);
+        $replacementAttorneysContent = $this->getHowWhenReplacementAttorneysCanActContent($lpaDocument);
 
-        if ($noOfPrimaryAttorneys == 1) {
-            if ($noOfReplacementAttorneys > 1
-                && ($lpaDocument->replacementAttorneyDecisions->how == ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
-                    || $lpaDocument->replacementAttorneyDecisions->how == ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS)) {
-
-                $this->setCheckBox('change-how-replacement-attorneys-step-in');
-            }
-        } elseif ($noOfPrimaryAttorneys > 1) {
-            switch ($lpaDocument->primaryAttorneyDecisions->how) {
-                case PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY:
-                    if ($noOfReplacementAttorneys == 1) {
-                        if ($lpaDocument->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST
-                            || $lpaDocument->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
-
-                            $this->setCheckBox('change-how-replacement-attorneys-step-in');
-                        }
-                    } elseif ($noOfReplacementAttorneys > 1) {
-                        if ($lpaDocument->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS) {
-                            $formData['change-how-replacement-attorneys-step-in'] = self::CHECK_BOX_ON;
-                        } elseif ($lpaDocument->replacementAttorneyDecisions->when == ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST) {
-                            if ($lpaDocument->replacementAttorneyDecisions->how == ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
-                                || $lpaDocument->replacementAttorneyDecisions->how == ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-
-                                $this->setCheckBox('change-how-replacement-attorneys-step-in');
-                            }
-                        }
-                    }
-
-                    break;
-                case PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY:
-                    if ($noOfReplacementAttorneys > 1) {
-                        if ($lpaDocument->replacementAttorneyDecisions->how == ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
-                            || $lpaDocument->replacementAttorneyDecisions->how == ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-
-                            $this->setCheckBox('change-how-replacement-attorneys-step-in');
-                        }
-                    }
-                    break;
-            }
+        if (!empty($replacementAttorneysContent)) {
+            $this->setCheckBox('change-how-replacement-attorneys-step-in');
         }
     }
 
@@ -326,9 +286,9 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             if (empty($detailString)) {
                 $this->addStrikeThrough($detailKey, 8);
             } else {
-                $this->setData($detailKey, $this->getInstructionsAndPreferencesContent(0, $detailString));
+                $this->setData($detailKey, $this->getInstructionsAndPreferencesContent($detailString));
 
-                if (!$this->canFitIntoTextBox($detailString)) {
+                if ($this->fillsInstructionsPreferencesBox($detailString)) {
                     $this->setCheckBox($hasMoreKey);
                 }
             }
@@ -399,7 +359,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         } else {
             //  Add a strike through on the appropriate page
             $pageNumber = 12 + $pageIteration;
-            $strikeThroughArea = 'attorney-signature-' . $this->getStrikeThroughSuffix($lpa->document->type);
+            $strikeThroughArea = 'attorney-signature-' . $this->getStrikeThroughSuffix();
             $pdf->addStrikeThrough($strikeThroughArea, $pageNumber);
         }
 
@@ -476,7 +436,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         //  Draw the strike throughs
         while ($strikeThroughIndex < self::MAX_APPLICANTS_SECTION_12) {
-            $areaReference = 'applicant-' . $strikeThroughIndex . '-' . $this->getStrikeThroughSuffix($lpaDocument->type);
+            $areaReference = 'applicant-' . $strikeThroughIndex . '-' . $this->getStrikeThroughSuffix();
             $pdf->addStrikeThrough($areaReference, 17);
             $strikeThroughIndex++;
         }
@@ -620,13 +580,14 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     }
 
     /**
-     * @param $type
      * @return string
      */
-    private function getStrikeThroughSuffix($type)
-    {
-        return ($type == Document::LPA_TYPE_PF ? 'pf' : 'hw');
-    }
+    abstract protected function getStrikeThroughSuffix();
+
+    /**
+     * @return string
+     */
+    abstract protected function getFooterContentRef();
 
     /**
      * @param Lpa $lpa
@@ -636,7 +597,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $stateChecker = new StateChecker($lpa);
 
         if ($stateChecker->isStateCompleted()) {
-            $this->setFooter('footer-instrument-right', $lpa->document->type == Document::LPA_TYPE_PF ? 'lp1f' : 'lp1h');
+            $this->setFooter('footer-instrument-right', $this->getFooterContentRef());
         } else {
             $this->setFooter('footer-registration-right', 'lp1-draft');
         }
@@ -662,7 +623,38 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         }
 
         //  Add continuation sheet 2 (primary attorney decisions) instances if required
-//TODO
+        if ($lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2Aggregator::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS);
+            $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
+
+            $continuationSheetsAdded = true;
+        }
+
+        //  Add continuation sheet 2 (how replacement attorneys can act) instances if required
+        $replacementAttorneysContent = $this->getHowWhenReplacementAttorneysCanActContent($lpa->document);
+
+        if (!empty($replacementAttorneysContent)) {
+            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2Aggregator::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN);
+            $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
+
+            $continuationSheetsAdded = true;
+        }
+
+        //  Add continuation sheet 2 (preferences) instances if required
+        if ($this->fillsInstructionsPreferencesBox($lpa->document->preference)) {
+            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2Aggregator::CS2_TYPE_PREFERENCES);
+            $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
+
+            $continuationSheetsAdded = true;
+        }
+
+        //  Add continuation sheet 2 (instructions) instances if required
+        if ($this->fillsInstructionsPreferencesBox($lpa->document->instruction)) {
+            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2Aggregator::CS2_TYPE_INSTRUCTIONS);
+            $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
+
+            $continuationSheetsAdded = true;
+        }
 
         //  Add continuation sheet 3 instances if required
         if ($lpa->document->donor->canSign === false) {
@@ -723,84 +715,6 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         return null;
     }
-
-
-/////////////////////////////////////
-//TODO - Everything below might need to move to an abstract for access by this file and a CS
-    /**
-     * Get content for a multiline text box.
-     *
-     * @param int $pageNo
-     * @param string $content - user input content for preference/instruction/decisions/step-in
-     * @return string|null
-     */
-    protected function getInstructionsAndPreferencesContent($pageNo, $content)
-    {
-        $flattenContent = $this->flattenTextContent($content);
-
-        if ($pageNo == 0) {
-            return "\r\n" . substr($flattenContent, 0, (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS);
-        } else {
-            $chunks = str_split(substr($flattenContent, (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS), (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS_CS2);
-            if (isset($chunks[$pageNo - 1])) {
-                return "\r\n" . $chunks[$pageNo - 1];
-            } else {
-                return null;
-            }
-        }
-    }
-
-    /**
-     * Check if the text content can fit into the text box in the Section 7 page in the base PDF form.
-     *
-     * @return boolean
-     */
-    protected function canFitIntoTextBox($content)
-    {
-        $flattenContent = $this->flattenTextContent($content);
-        return strlen($flattenContent) <= (self::BOX_CHARS_PER_ROW + 2) * self::BOX_NO_OF_ROWS;
-    }
-
-    /**
-     * Convert all new lines with spaces to fill out to the end of each line
-     *
-     * @param string $contentIn
-     * @return string
-     */
-    protected function flattenTextContent($contentIn)
-    {
-        $content = '';
-
-        foreach (explode("\r\n", trim($contentIn)) as $contentLine) {
-            $content .= wordwrap($contentLine, self::BOX_CHARS_PER_ROW, "\r\n", false);
-            $content .= "\r\n";
-        }
-
-        $paragraphs = explode("\r\n", $content);
-
-        for ($i = 0; $i < count($paragraphs); $i++) {
-            $paragraphs[$i] = trim($paragraphs[$i]);
-
-            if (strlen($paragraphs[$i]) == 0) {
-                unset($paragraphs[$i]);
-            } else {
-                // calculate how many space chars to be appended to replace the new line in this paragraph.
-                if (strlen($paragraphs[$i]) % self::BOX_CHARS_PER_ROW) {
-                    $noOfSpaces = self::BOX_CHARS_PER_ROW - strlen($paragraphs[$i]) % self::BOX_CHARS_PER_ROW;
-                    if ($noOfSpaces > 0) {
-                        $paragraphs[$i] .= str_repeat(" ", $noOfSpaces);
-                    }
-                }
-            }
-        }
-
-        return implode("\r\n", $paragraphs);
-    }
-//TODO - Look at the above for refactor...
-/////////////////////////////////////
-
-
-
 
     /**
      * Generate the PDF - this will save a copy to the file system

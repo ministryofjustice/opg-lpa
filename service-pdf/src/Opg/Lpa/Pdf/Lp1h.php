@@ -42,4 +42,20 @@ class Lp1h extends AbstractLp1
             $this->addStrikeThrough($strikeThroughArea, 6);
         }
     }
+
+    /**
+     * @return string
+     */
+    protected function getStrikeThroughSuffix()
+    {
+        return 'hw';
+    }
+
+    /**
+     * @return string
+     */
+    protected function getFooterContentRef()
+    {
+        return 'lp1h';
+    }
 }

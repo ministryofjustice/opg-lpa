@@ -9,7 +9,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
  * Class ContinuationSheet4
  * @package Opg\Lpa\Pdf
  */
-class ContinuationSheet4 extends AbstractIndividualPdf
+class ContinuationSheet4 extends AbstractContinuationSheet
 {
     /**
      * PDF template file name (without path) for this PDF object
@@ -25,8 +25,7 @@ class ContinuationSheet4 extends AbstractIndividualPdf
      */
     protected function create(Lpa $lpa)
     {
-        //  Add a leading blank page - this is done for all continuation sheets
-        $this->insertBlankPage('start');
+        parent::create($lpa);
 
         //  Get the trust from the attorneys
         $attorneys = array_merge($lpa->document->primaryAttorneys, $lpa->document->replacementAttorneys);

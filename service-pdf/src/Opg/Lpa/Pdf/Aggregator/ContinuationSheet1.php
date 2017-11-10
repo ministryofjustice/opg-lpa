@@ -9,7 +9,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
  * Class ContinuationSheet1
  * @package Opg\Lpa\Pdf\Aggregator
  */
-class ContinuationSheet1 extends AbstractAggregator
+class ContinuationSheet1 extends AbstractContinuationSheetAggregator
 {
     /**
      * Constants
@@ -71,13 +71,5 @@ class ContinuationSheet1 extends AbstractAggregator
                 }
             }
         }
-    }
-
-    /**
-     * @return int
-     */
-    public function getPageCount()
-    {
-        return count($this->pdfs) * 2;  //  2 pages per PDF
     }
 }

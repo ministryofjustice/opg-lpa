@@ -42,4 +42,20 @@ class Lp1f extends AbstractLp1
             $this->setData('when-attorneys-may-make-decisions', $whenAttorneysMakeDecisions);
         }
     }
+
+    /**
+     * @return string
+     */
+    protected function getStrikeThroughSuffix()
+    {
+        return 'pf';
+    }
+
+    /**
+     * @return string
+     */
+    protected function getFooterContentRef()
+    {
+        return 'lp1f';
+    }
 }
