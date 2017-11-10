@@ -661,14 +661,26 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             $continuationSheetsAdded = true;
         }
 
-        //  Add continuation sheet 2 instances if required
-        //TODO
+        //  Add continuation sheet 2 (primary attorney decisions) instances if required
+//TODO
 
         //  Add continuation sheet 3 instances if required
-        //TODO
+        if ($lpa->document->donor->canSign === false) {
+            $continuationSheet3 = new ContinuationSheet3($lpa);
+            $this->addConstituentPdf($continuationSheet3, 1, 2, 15);
+
+            $continuationSheetsAdded = true;
+        }
 
         //  Add continuation sheet 4 instances if required
-        //TODO
+        $attorneys = array_merge($lpa->document->primaryAttorneys, $lpa->document->replacementAttorneys);
+
+        if ($this->getTrustAttorney($attorneys) instanceof TrustCorporation) {
+            $continuationSheet4 = new ContinuationSheet4($lpa);
+            $this->addConstituentPdf($continuationSheet4, 1, 2, 15);
+
+            $continuationSheetsAdded = true;
+        }
 
         //  If any continuation sheets have been added append another blank page
         if ($continuationSheetsAdded) {
@@ -697,6 +709,20 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         return $attorneys;
     }
 
+    /**
+     * @param array $attorneys
+     * @return mixed|null
+     */
+    private function getTrustAttorney(array $attorneys)
+    {
+        foreach ($attorneys as $attorney) {
+            if ($attorney instanceof TrustCorporation) {
+                return $attorney;
+            }
+        }
+
+        return null;
+    }
 
 
 /////////////////////////////////////
