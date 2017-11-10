@@ -92,7 +92,7 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/how-primary-attorneys-make-decision');
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/replacement-attorney', ['lpa-id' => $this->lpa->id], ['fragment' => 'current']])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/replacement-attorney', $this->lpa, $response);
 
         $result = $this->controller->indexAction();
 
@@ -145,7 +145,7 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
         $this->serviceLocator->shouldReceive('get')->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/how-primary-attorneys-make-decision');
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/replacement-attorney', ['lpa-id' => $this->lpa->id], ['fragment' => 'current']])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/replacement-attorney', $this->lpa, $response);
 
         $result = $this->controller->indexAction();
 

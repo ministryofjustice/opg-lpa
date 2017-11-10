@@ -125,7 +125,7 @@ class InstructionsControllerTest extends AbstractControllerTest
             ->withArgs([$this->lpa->id, $this->postData['preference']])->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/instructions');
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/applicant', ['lpa-id' => $this->lpa->id], ['fragment' => 'current']])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/applicant', $this->lpa, $response);
 
         $result = $this->controller->indexAction();
 
@@ -147,7 +147,7 @@ class InstructionsControllerTest extends AbstractControllerTest
             ->withArgs([$this->lpa->id, $this->postData['preference']])->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/instructions');
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/applicant', ['lpa-id' => $this->lpa->id], ['fragment' => 'current']])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/applicant', $this->lpa, $response);
         $this->lpaApplicationService->shouldReceive('setMetaData')
             ->withArgs([$this->lpa->id, ['instruction-confirmed' => true]])->andReturn(true)->once();
 

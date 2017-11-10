@@ -110,7 +110,7 @@ class LifeSustainingControllerTest extends AbstractControllerTest
             })*/->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/life-sustaining');
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/primary-attorney', ['lpa-id' => $this->lpa->id], ['fragment' => 'current']])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
 
         $result = $this->controller->indexAction();
 

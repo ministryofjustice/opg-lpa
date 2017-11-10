@@ -89,7 +89,7 @@ class DonorControllerTest extends AbstractControllerTest
         $this->url->shouldReceive('fromRoute')->with('lpa/donor/add', ['lpa-id' => $this->lpa->id])->andReturn('lpa/donor/add')->once();
         $this->url->shouldReceive('fromRoute')->with('lpa/donor/edit', ['lpa-id' => $this->lpa->id])->andReturn('lpa/donor/edit')->once();
         $this->setMatchedRouteName($this->controller, 'lpa/donor');
-        $this->url->shouldReceive('fromRoute')->with('lpa/when-lpa-starts', ['lpa-id' => $this->lpa->id], ['fragment' => 'current'])->andReturn('lpa/when-lpa-starts')->once();
+        $this->url->shouldReceive('fromRoute')->with('lpa/when-lpa-starts', ['lpa-id' => $this->lpa->id], $this->getExpectedRouteOptions('lpa/when-lpa-starts'))->andReturn('lpa/when-lpa-starts')->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -125,7 +125,7 @@ class DonorControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id], ['fragment' => 'current']])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/donor', $this->lpa, $response);
 
         $result = $this->controller->addAction();
 

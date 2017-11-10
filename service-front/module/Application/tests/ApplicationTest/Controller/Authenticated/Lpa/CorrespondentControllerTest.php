@@ -337,7 +337,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
         })*/->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/correspondent');
-        $this->redirect->shouldReceive('toRoute')->with('lpa/who-are-you', ['lpa-id' => $this->lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/who-are-you', $this->lpa, $response);
 
         $result = $this->controller->indexAction();
 

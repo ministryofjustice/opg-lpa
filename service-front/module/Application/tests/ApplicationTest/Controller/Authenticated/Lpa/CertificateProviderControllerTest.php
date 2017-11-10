@@ -77,7 +77,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider/edit', ['lpa-id' => $this->lpa->id])->andReturn('lpa/certificate-provider/edit')->once();
         $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider/confirm-delete', ['lpa-id' => $this->lpa->id])->andReturn('lpa/certificate-provider/confirm-delete')->once();
         $this->setMatchedRouteName($this->controller, 'lpa/certificate-provider');
-        $this->url->shouldReceive('fromRoute')->with('lpa/people-to-notify', ['lpa-id' => $this->lpa->id], ['fragment' => 'current'])->andReturn('lpa/certificate-provider/add')->once();
+        $this->url->shouldReceive('fromRoute')->with('lpa/people-to-notify', ['lpa-id' => $this->lpa->id], $this->getExpectedRouteOptions('lpa/people-to-notify'))->andReturn('lpa/certificate-provider/add')->once();
         $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider/add', ['lpa-id' => $this->lpa->id])->andReturn('lpa/certificate-provider/add')->once();
 
         /** @var ViewModel $result */
@@ -98,7 +98,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->redirect->shouldReceive('toRoute')->with('lpa/certificate-provider', ['lpa-id' => $this->lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/certificate-provider', $this->lpa, $response);
 
         $result = $this->controller->addAction();
 
@@ -130,7 +130,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->redirect->shouldReceive('toRoute')->with('lpa/certificate-provider', ['lpa-id' => $this->lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/certificate-provider', $this->lpa, $response);
 
         $result = $this->controller->addAction();
 
@@ -216,7 +216,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setCertificateProvider')->andReturn(true);
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/certificate-provider');
-        $this->redirect->shouldReceive('toRoute')->with('lpa/people-to-notify', ['lpa-id' => $this->lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/people-to-notify', $this->lpa, $response);
 
         $result = $this->controller->addAction();
 
@@ -321,7 +321,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setCertificateProvider')->andReturn(true);
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/certificate-provider');
-        $this->redirect->shouldReceive('toRoute')->with('lpa/people-to-notify', ['lpa-id' => $this->lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/people-to-notify', $this->lpa, $response);
 
         $result = $this->controller->editAction();
 
