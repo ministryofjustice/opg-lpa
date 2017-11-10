@@ -287,18 +287,9 @@ class FormFlowChecker extends StateChecker
         return false;
     }
 
-    public function hasCurrentAnchor($route)
-    {
-        return !in_array($route, [
-            'lpa/form-type',
-            'lpa/checkout',
-            'lpa/view-docs'
-        ]);
-    }
-
     public function getRouteOptions($route)
     {
-        return $this->hasCurrentAnchor($route) ? ['fragment' => 'current'] : [];
+        return [];
     }
 
     private function isLpaAccessible()

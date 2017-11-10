@@ -120,6 +120,7 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.sticky-nav.js',
           'assets/js/moj/moj.modules/moj.repeat-application.js',
           'assets/js/moj/moj.modules/moj.dashboard.js',
+          'assets/js/moj/moj.modules/moj.ui-behaviour.js',
           'assets/js/moj/moj.modules/moj.applicant.js',
           'assets/js/moj/moj.modules/moj.fees.js',
           'assets/js/moj/moj.modules/moj.who-are-you.js',
