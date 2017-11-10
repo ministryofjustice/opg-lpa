@@ -192,14 +192,20 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                     //  Determine where the pages should be inserted taking into account the page shift
                     $insertPoint = (is_numeric($insertAfter) ? $insertAfter + $pageShift : $insertAfter);
 
-                    //  Insert the constituent pages in the specified position
-                    $pdfMaster->cat(1, $insertPoint, 'A')
-                              ->cat($startAt, $endAt, 'B');
+                    if ($insertPoint == 'start') {
+                        //  Pre append the constituent PDF to the master PDF
+                        $pdfMaster->cat($startAt, $endAt, 'B')
+                                  ->cat(1, 'end', 'A');
+                    } else {
+                        //  Insert the constituent pages in the specified position
+                        $pdfMaster->cat(1, $insertPoint, 'A')
+                                  ->cat($startAt, $endAt, 'B');
 
-                    //  If the insert point was numeric then add the rest of the master file
-                    //  If it wasn't numeric (e.g. 'end', etc) then do nothing
-                    if (is_numeric($insertPoint)) {
-                        $pdfMaster->cat($insertPoint + 1, 'end', 'A');
+                        //  If the insert point was numeric then add the rest of the master file
+                        //  If it wasn't numeric (e.g. 'end', etc) then do nothing
+                        if (is_numeric($insertPoint)) {
+                            $pdfMaster->cat($insertPoint + 1, 'end', 'A');
+                        }
                     }
 
                     $pdfMaster->saveAs($this->pdfFile);

@@ -25,6 +25,13 @@ class Lp1f extends AbstractLp1
     protected $coversheetFileName = 'LP1F_CoversheetRegistration.pdf';
 
     /**
+     * PDF file name for the draft coversheet
+     *
+     * @var
+     */
+    protected $coversheetFileNameDraft = 'LP1F_CoversheetInstrument.pdf';
+
+    /**
      * @param PrimaryAttorneyDecisions $primaryAttorneyDecisions
      */
     protected function populatePageSix(PrimaryAttorneyDecisions $primaryAttorneyDecisions = null)

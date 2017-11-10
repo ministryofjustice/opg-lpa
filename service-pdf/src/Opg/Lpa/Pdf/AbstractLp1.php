@@ -74,6 +74,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     protected function create(Lpa $lpa)
     {
+        //  Add an appropriate coversheet to the start of the document
+        $stateChecker = new StateChecker($lpa);
+        $this->insertStaticPDF($stateChecker->isStateCompleted() ? $this->coversheetFileName : $this->coversheetFileNameDraft, 1, 2, 'start');
+
         $this->populatePageOne($lpa->document->donor);
         $this->populatePageTwoThreeFour($lpa->document);
         $this->populatePageFive($lpa->document);
@@ -631,7 +635,6 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     private function setFooterContent(Lpa $lpa)
     {
-        //  Set the footer content
         $stateChecker = new StateChecker($lpa);
 
         if ($stateChecker->isStateCompleted()) {
@@ -763,11 +766,6 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         //  Generate the LP1 PDF
         $pdfFile = parent::generate($protect);
-
-//        //  Add an appropriate coversheet to the start of the document
-////TODO - add this to be the first step in the generate?
-//        $stateChecker = new StateChecker($lpa);
-//        $this->insertStaticPDF($stateChecker->isStateCompleted() ? $this->coversheetFileName : $this->coversheetFileNameDraft, 1);
 
         return $pdfFile;
     }
