@@ -32,12 +32,6 @@ Choose option A if you want your attorneys to decide about life-sustaining treat
 
 At the end of the LPA service there is a section where you can add preferences and instructions for your attorneys. If you have specific wishes about life-sustaining treatment, make them clear in that section, so that any decisions your attorneys make are as close as possible to the decisions you would have made.
 
-You can specify medical or physical conditions where your attorneys must or must not consent to life-sustaining treatment on your behalf. For example, you can state that your attorneys must not agree to life-sustaining treatment if you are in a persistent vegetative state.
-
-If you have already made an 'advance decision' to refuse a specific life-sustaining treatment, your LPA will override the advance decision if you give your attorneys the power to decide about life-sustaining treatment.
-
-An advance decision is a legally binding document in which you state which life-sustaining treatments you don't want, in case you cannot decide at some point.
-
 See [Preferences and instructions](/help/#topic-preferences-and-instructions) for more on giving guidance to your attorneys.
 
 ### Option B: doctors

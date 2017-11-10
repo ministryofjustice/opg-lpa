@@ -77,6 +77,11 @@ You can add instructions about, for instance, medical treatment that fits with y
 
 These are just a few examples. Don't add any that aren't right for you. You can make instructions about other things that matter to you.
 
+### If you chose option A, to give your attorneys decisions about life sustaining treatment:
+
+You can specify medical or physical conditions where your attorneys must or must not consent to life-sustaining treatment on your behalf. For example, you can state that your attorneys must not agree to life-sustaining treatment if you are in a persistent vegetative state.
+
+If you have already made an ['advance decision'](/help/#topic-glossary) to refuse a specific life-sustaining treatment, your LPA will override the advance decision if you give your attorneys the power to decide about life-sustaining treatment.
 
 ## Avoiding problems
 
