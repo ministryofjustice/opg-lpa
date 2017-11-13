@@ -3,6 +3,7 @@
 namespace Application\Model\Rest\Stats;
 
 use Application\Model\Rest\AbstractResource;
+use DateTime;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use MongoDB\Driver\ReadPreference;
 
@@ -42,7 +43,8 @@ class Resource extends AbstractResource
         $stats = $collection->findOne([], $readPreference);
 
         if (!isset($stats['generated'])) {
-            // Regenerate stats
+            // Regenerate stats as missing or using old format
+            $this->getServiceLocator()->get('StatsService')->generate();
         }
 
         $stats['generated'] = date('d/m/Y H:i:s', $stats['generated']->toDateTime()->getTimestamp());
