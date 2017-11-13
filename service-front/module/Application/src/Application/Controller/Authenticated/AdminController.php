@@ -33,23 +33,6 @@ class AdminController extends AbstractAuthenticatedController
         return $this->redirect()->toRoute('home');
     }
 
-    public function statsAction()
-    {
-        $apiClient = $this->getServiceLocator()->get('ApiClient');
-
-        $lpaUserStats = $apiClient->getApiStats('lpasperuser');
-
-        krsort($lpaUserStats['byLpaCount']);
-
-        $authStats = $apiClient->getAuthStats();
-
-        return new ViewModel([
-            'api_stats'  => $lpaUserStats['byLpaCount'],
-            'auth_stats' => $authStats,
-            'pageTitle'  => 'Admin stats',
-        ]);
-    }
-
     public function systemMessageAction()
     {
         $form = $this->getServiceLocator()
