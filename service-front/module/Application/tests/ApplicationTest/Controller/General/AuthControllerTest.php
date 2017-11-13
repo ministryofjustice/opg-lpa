@@ -153,7 +153,7 @@ class AuthControllerTest extends AbstractControllerTest
         $authenticationResult = new Result(1, null);
         $response = new Response();
 
-        $this->setPreAuthRequestUrl('https://localhost/lpa/3503563157/when-lpa-starts#current');
+        $this->setPreAuthRequestUrl('https://localhost/lpa/3503563157/when-lpa-starts');
 
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
