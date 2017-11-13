@@ -11,31 +11,14 @@ class StatsController extends AbstractBaseController
     {
         $applicationService = $this->getServiceLocator()->get('LpaApplicationService');
 
-        //  Get the general stats and sort - ensure the months are ordered correctly
-        $generalLpaStats = $applicationService->getApiStats('lpas');
-        ksort($generalLpaStats['by-month']);
-
-        //  Get the "who are you" stats - ensure the months are ordered correctly
-        $whoAreYouStats = $applicationService->getApiStats('whoareyou');
-        ksort($whoAreYouStats['by-month']);
-
-        //  Get the user stats
+        // Get the user stats from auth service
         $userStats = $applicationService->getAuthStats();
 
-        //  Get the correspondence stats - ensure the months are ordered correctly
-        $correspondenceStats = $applicationService->getApiStats('correspondence');
-        ksort($correspondenceStats);
+        // Get all other stats from api
+        $stats = $applicationService->getApiStats();
 
-        //  Get the preferences and instructions stats - ensure the months are ordered correctly
-        $preferencesInstructionsStats = $applicationService->getApiStats('preferencesinstructions');
-        ksort($preferencesInstructionsStats);
+        $stats['users'] = $userStats;
 
-        return new ViewModel([
-            'lpas' => $generalLpaStats,
-            'who' => $whoAreYouStats,
-            'users' => $userStats,
-            'correspondence' => $correspondenceStats,
-            'preferencesInstructions' => $preferencesInstructionsStats,
-        ]);
+        return new ViewModel($stats);
     }
 }
