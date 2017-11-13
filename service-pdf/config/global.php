@@ -95,14 +95,15 @@ return [
     ],
 
     'footer' => [
-        'lp1f'      => 'LP1F Property and financial affairs (07.15)',
-        'lp1h'      => 'LP1H Health and welfare (07.15)',
-        'lp1-draft' => 'LP1H Register your LPA (07.15)',
-        'lp3'       => 'LP3 People to notify (07.15)',
-        'cs1'       => 'LPC Continuation sheet 1 (07.15)',
-        'cs2'       => 'LPC Continuation sheet 2 (07.15)',
-        'cs3'       => 'LPC Continuation sheet 3 (07.15)',
-        'cs4'       => 'LPC Continuation sheet 4 (07.15)',
+        'lp1f'       => 'LP1F Property and financial affairs (07.15)',
+        'lp1f-draft' => 'LP1F Register your LPA (07.15)',
+        'lp1h'       => 'LP1H Health and welfare (07.15)',
+        'lp1h-draft' => 'LP1H Register your LPA (07.15)',
+        'lp3'        => 'LP3 People to notify (07.15)',
+        'cs1'        => 'LPC Continuation sheet 1 (07.15)',
+        'cs2'        => 'LPC Continuation sheet 2 (07.15)',
+        'cs3'        => 'LPC Continuation sheet 3 (07.15)',
+        'cs4'        => 'LPC Continuation sheet 4 (07.15)',
     ],
 
 ];

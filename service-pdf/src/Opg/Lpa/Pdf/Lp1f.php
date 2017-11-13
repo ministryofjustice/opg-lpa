@@ -50,12 +50,4 @@ class Lp1f extends AbstractLp1
     {
         return 'pf';
     }
-
-    /**
-     * @return string
-     */
-    protected function getFooterContentRef()
-    {
-        return 'lp1f';
-    }
 }

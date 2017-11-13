@@ -585,22 +585,14 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     abstract protected function getStrikeThroughSuffix();
 
     /**
-     * @return string
-     */
-    abstract protected function getFooterContentRef();
-
-    /**
      * @param Lpa $lpa
      */
     private function setFooterContent(Lpa $lpa)
     {
-        $stateChecker = new StateChecker($lpa);
+        $footerContentRef = ($lpa->document->type == Document::LPA_TYPE_PF ? 'lp1f' : 'lp1h');
 
-        if ($stateChecker->isStateCompleted()) {
-            $this->setFooter('footer-instrument-right', $this->getFooterContentRef());
-        } else {
-            $this->setFooter('footer-registration-right', 'lp1-draft');
-        }
+        $this->setFooter('footer-instrument-right', $footerContentRef);
+        $this->setFooter('footer-registration-right', $footerContentRef . '-draft');
     }
 
     /**
