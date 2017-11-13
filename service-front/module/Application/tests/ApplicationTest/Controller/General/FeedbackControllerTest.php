@@ -92,7 +92,7 @@ class FeedbackControllerTest extends AbstractControllerTest
     public function testSendFeedbackFormGetReferer()
     {
         $referer = new Referer();
-        $referer->setUri('https://localhost/lpa/3503563157/when-lpa-starts#current');
+        $referer->setUri('https://localhost/lpa/3503563157/when-lpa-starts');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->request->shouldReceive('getHeader')->with('Referer')->andReturn($referer)->twice();
 
