@@ -459,56 +459,58 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     /**
      * @param Correspondence $correspondent
      */
-    private function populatePageEighteen(Correspondence $correspondent)
+    private function populatePageEighteen(Correspondence $correspondent = null)
     {
-        //  Set the correspondent type - if this is the certificate provider then set it to other
-        $correspondentType = ($correspondent->who == Correspondence::WHO_CERTIFICATE_PROVIDER ? Correspondence::WHO_OTHER : $correspondent->who);
-        $this->setData('who-is-correspondent', $correspondentType);
+        if (!is_null($correspondent)) {
+            //  Set the correspondent type - if this is the certificate provider then set it to other
+            $correspondentType = ($correspondent->who == Correspondence::WHO_CERTIFICATE_PROVIDER ? Correspondence::WHO_OTHER : $correspondent->who);
+            $this->setData('who-is-correspondent', $correspondentType);
 
-        //  Display the name details
-        if ($correspondent->who == Correspondence::WHO_DONOR) {
-            //  No need to display the name for the donor
-            $this->addStrikeThrough('correspondent-empty-name-address', 18);
-        } else {
-            if ($correspondent->name instanceof LongName) {
-                $this->setData('lpa-document-correspondent-name-title', $correspondent->name->title)
-                     ->setData('lpa-document-correspondent-name-first', $correspondent->name->first)
-                     ->setData('lpa-document-correspondent-name-last', $correspondent->name->last);
-            }
-
-            if (isset($correspondent->company)) {
-                $this->setData('lpa-document-correspondent-company', $correspondent->company);
-            }
-
-            //  If the correspondent is an attorney then strike through the address field
-            if ($correspondent->who == Correspondence::WHO_ATTORNEY) {
-                $this->addStrikeThrough('correspondent-empty-address', 18);
+            //  Display the name details
+            if ($correspondent->who == Correspondence::WHO_DONOR) {
+                //  No need to display the name for the donor
+                $this->addStrikeThrough('correspondent-empty-name-address', 18);
             } else {
-                //  The correspondent is "other" so display the full address
-                $this->setData('lpa-document-correspondent-address-address1', $correspondent->address->address1)
-                     ->setData('lpa-document-correspondent-address-address2', $correspondent->address->address2)
-                     ->setData('lpa-document-correspondent-address-address3', $correspondent->address->address3)
-                     ->setData('lpa-document-correspondent-address-postcode', $correspondent->address->postcode);
+                if ($correspondent->name instanceof LongName) {
+                    $this->setData('lpa-document-correspondent-name-title', $correspondent->name->title)
+                        ->setData('lpa-document-correspondent-name-first', $correspondent->name->first)
+                        ->setData('lpa-document-correspondent-name-last', $correspondent->name->last);
+                }
+
+                if (isset($correspondent->company)) {
+                    $this->setData('lpa-document-correspondent-company', $correspondent->company);
+                }
+
+                //  If the correspondent is an attorney then strike through the address field
+                if ($correspondent->who == Correspondence::WHO_ATTORNEY) {
+                    $this->addStrikeThrough('correspondent-empty-address', 18);
+                } else {
+                    //  The correspondent is "other" so display the full address
+                    $this->setData('lpa-document-correspondent-address-address1', $correspondent->address->address1)
+                        ->setData('lpa-document-correspondent-address-address2', $correspondent->address->address2)
+                        ->setData('lpa-document-correspondent-address-address3', $correspondent->address->address3)
+                        ->setData('lpa-document-correspondent-address-postcode', $correspondent->address->postcode);
+                }
             }
-        }
 
-        //  Set the contact preferences
-        if ($correspondent->contactByPost === true) {
-            $this->setCheckBox('correspondent-contact-by-post');
-        }
+            //  Set the contact preferences
+            if ($correspondent->contactByPost === true) {
+                $this->setCheckBox('correspondent-contact-by-post');
+            }
 
-        if ($correspondent->phone instanceof PhoneNumber) {
-            $this->setCheckBox('correspondent-contact-by-phone')
-                ->setData('lpa-document-correspondent-phone-number', str_replace(" ", "", $correspondent->phone->number));
-        }
+            if ($correspondent->phone instanceof PhoneNumber) {
+                $this->setCheckBox('correspondent-contact-by-phone')
+                    ->setData('lpa-document-correspondent-phone-number', str_replace(" ", "", $correspondent->phone->number));
+            }
 
-        if ($correspondent->email instanceof EmailAddress) {
-            $this->setCheckBox('correspondent-contact-by-email')
-                ->setData('lpa-document-correspondent-email-address', $correspondent->email->address);
-        }
+            if ($correspondent->email instanceof EmailAddress) {
+                $this->setCheckBox('correspondent-contact-by-email')
+                    ->setData('lpa-document-correspondent-email-address', $correspondent->email->address);
+            }
 
-        if ($correspondent->contactInWelsh === true) {
-            $this->setCheckBox('correspondent-contact-in-welsh');
+            if ($correspondent->contactInWelsh === true) {
+                $this->setCheckBox('correspondent-contact-in-welsh');
+            }
         }
     }
 
