@@ -30,8 +30,8 @@ class Stats implements ServiceLocatorAwareInterface
         $stats = [
             'generated'               => new DateTime(),
             'lpas'                    => $this->getLpaStats(),
-            'whoAreYou'               => $this->getWhoAreYou(),
             'lpasPerUser'             => $this->getLpasPerUser(),
+            'who'                     => $this->getWhoAreYou(),
             'correspondence'          => $this->getCorrespondenceStats(),
             'preferencesInstructions' => $this->getPreferencesInstructionsStats()
         ];
@@ -178,100 +178,14 @@ class Stats implements ServiceLocatorAwareInterface
             ]
         ], $readPreference);
 
+        ksort($byMonth);
+
         return [
             'all' => $summary,
             'health-and-welfare' => $hw,
             'property-and-finance' => $pf,
             'by-month' => $byMonth
         ];
-    }
-
-    /**
-     * Return a breakdown of the Who Are You stats.
-     *
-     * @return array
-     */
-    private function getWhoAreYou()
-    {
-        $results = [];
-
-        $firstDayOfThisMonth = strtotime('first day of ' . date('F Y'));
-
-        $lastTimestamp = time(); // initially set to now...
-
-        for ($i = 0; $i < 4; $i++) {
-            $ts = strtotime("-{$i} months", $firstDayOfThisMonth);
-
-            $results['by-month'][date('Y-m', $ts)] = $this->getWhoAreYouStatsForTimeRange($ts, $lastTimestamp);
-
-            $lastTimestamp = $ts;
-        }
-
-        $results['all'] = $this->getWhoAreYouStatsForTimeRange(0, time());
-
-        return $results;
-    }
-
-    /**
-     * Return the WhoAreYou values for a specific date range.
-     *
-     * @param $start
-     * @param $end
-     * @return array
-     */
-    private function getWhoAreYouStatsForTimeRange($start, $end)
-    {
-        $collection = $this->getCollection('stats-who');
-
-        // Stats can (ideally) be processed on a secondary.
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
-        // Convert the timestamps to MongoIds
-        $start = str_pad(dechex($start), 8, "0", STR_PAD_LEFT);
-        $start = new MongoId($start."0000000000000000");
-
-        $end = str_pad(dechex($end), 8, "0", STR_PAD_LEFT);
-        $end = new MongoId($end."0000000000000000");
-
-        $range = [
-            '$gte' => $start,
-            '$lte' => $end
-        ];
-
-        $result = [];
-
-        // Base the groupings on the Model's data.
-        $options = WhoAreYou::options();
-
-        // For each top level 'who' level...
-        foreach ($options as $topLevel => $details) {
-            // Get the count for all top level...
-            $result[$topLevel] = [
-                'count' => $collection->count([
-                    'who' => $topLevel,
-                    '_id' => $range
-                ], $readPreference),
-            ];
-
-            // Count all the subquestion values
-            $result[$topLevel]['subquestions'] = [];
-
-            foreach ($details['subquestion'] as $subquestion) {
-                if (empty($subquestion)) {
-                    continue;
-                }
-
-                $result[$topLevel]['subquestions'][$subquestion] = $collection->count([
-                    'who' => $topLevel,
-                    'subquestion' => $subquestion,
-                    '_id' => $range
-                ], $readPreference);
-            }
-        }
-
-        return $result;
     }
 
     /**
@@ -358,6 +272,96 @@ class Stats implements ServiceLocatorAwareInterface
         return $lpasPerUser;
     }
 
+    /**
+     * Return a breakdown of the Who Are You stats.
+     *
+     * @return array
+     */
+    private function getWhoAreYou()
+    {
+        $results = [];
+
+        $firstDayOfThisMonth = strtotime('first day of ' . date('F Y'));
+
+        $lastTimestamp = time(); // initially set to now...
+
+        for ($i = 0; $i < 4; $i++) {
+            $ts = strtotime("-{$i} months", $firstDayOfThisMonth);
+
+            $results['by-month'][date('Y-m', $ts)] = $this->getWhoAreYouStatsForTimeRange($ts, $lastTimestamp);
+
+            $lastTimestamp = $ts;
+        }
+
+        $results['all'] = $this->getWhoAreYouStatsForTimeRange(0, time());
+
+        ksort($results['by-month']);
+
+        return $results;
+    }
+
+    /**
+     * Return the WhoAreYou values for a specific date range.
+     *
+     * @param $start
+     * @param $end
+     * @return array
+     */
+    private function getWhoAreYouStatsForTimeRange($start, $end)
+    {
+        $collection = $this->getCollection('stats-who');
+
+        // Stats can (ideally) be processed on a secondary.
+        $readPreference = [
+            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
+        ];
+
+        // Convert the timestamps to MongoIds
+        $start = str_pad(dechex($start), 8, "0", STR_PAD_LEFT);
+        $start = new MongoId($start."0000000000000000");
+
+        $end = str_pad(dechex($end), 8, "0", STR_PAD_LEFT);
+        $end = new MongoId($end."0000000000000000");
+
+        $range = [
+            '$gte' => $start,
+            '$lte' => $end
+        ];
+
+        $result = [];
+
+        // Base the groupings on the Model's data.
+        $options = WhoAreYou::options();
+
+        // For each top level 'who' level...
+        foreach ($options as $topLevel => $details) {
+            // Get the count for all top level...
+            $result[$topLevel] = [
+                'count' => $collection->count([
+                    'who' => $topLevel,
+                    '_id' => $range
+                ], $readPreference),
+            ];
+
+            // Count all the subquestion values
+            $result[$topLevel]['subquestions'] = [];
+
+            foreach ($details['subquestion'] as $subquestion) {
+                if (empty($subquestion)) {
+                    continue;
+                }
+
+                $result[$topLevel]['subquestions'][$subquestion] = $collection->count([
+                    'who' => $topLevel,
+                    'subquestion' => $subquestion,
+                    '_id' => $range
+                ], $readPreference);
+            }
+        }
+
+        return $result;
+    }
+
     private function getCorrespondenceStats()
     {
         $collection = $this->getCollection('lpa');
@@ -434,6 +438,8 @@ class Stats implements ServiceLocatorAwareInterface
             $end->modify("last day of -1 month");
         }
 
+        ksort($correspondenceStats);
+
         return $correspondenceStats;
     }
 
@@ -483,6 +489,8 @@ class Stats implements ServiceLocatorAwareInterface
             $start->modify("first day of -1 month");
             $end->modify("last day of -1 month");
         }
+
+        ksort($preferencesInstructionsStats);
 
         return $preferencesInstructionsStats;
     }

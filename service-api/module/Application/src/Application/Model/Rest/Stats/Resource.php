@@ -50,7 +50,7 @@ class Resource extends AbstractResource
             // Regenerate stats
         }
 
-        return $stats;
+        return new Entity($stats);
     }
 
     /**
