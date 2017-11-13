@@ -3,8 +3,6 @@
 namespace Application\Model\Rest\Stats;
 
 use Application\Model\Rest\AbstractResource;
-use DateTime;
-use MongoDB\BSON\UTCDateTime as MongoDate;
 use MongoDB\Driver\ReadPreference;
 
 class Resource extends AbstractResource
