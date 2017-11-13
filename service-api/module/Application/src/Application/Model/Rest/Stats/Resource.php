@@ -2,7 +2,6 @@
 
 namespace Application\Model\Rest\Stats;
 
-use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Rest\AbstractResource;
 use MongoDB\BSON\ObjectID as MongoId;
 use MongoDB\BSON\Regex;
@@ -37,20 +36,21 @@ class Resource extends AbstractResource
 
     public function fetch($type)
     {
-        switch ($type) {
-            case 'lpas':
-                return new Entity($this->getLpaStats());
-            case 'whoareyou':
-                return new Entity($this->getWhoAreYou());
-            case 'lpasperuser':
-                return new Entity($this->getLpasPerUser());
-            case 'correspondence':
-                return new Entity($this->getCorrespondenceStats());
-            case 'preferencesinstructions':
-                return new Entity($this->getPreferencesInstructionsStats());
-            default:
-                return new ApiProblem(404, 'Stats type not found.');
+        $collection = $this->getCollection('stats-lpas');
+
+        // Return all the cached data.// Stats can (ideally) be processed on a secondary.
+        $readPreference = [
+            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
+        ];
+
+        // Stats can (ideally) be pulled from a secondary.
+        $stats = $collection->findOne([], $readPreference);
+
+        if (!isset($stats['generated'])) {
+            // Regenerate stats
         }
+
+        return $stats;
     }
 
     /**
@@ -294,20 +294,10 @@ class Resource extends AbstractResource
         ];
 
         // Stats can (ideally) be pulled from a secondary.
-        $cursor = $collection->find([], $readPreference);
-
-        $byLpaCount = [];
-
-        foreach ($cursor as $cachedStats) {
-            foreach ($cachedStats as $stat) {
-                if (is_array($stat)) {
-                    $byLpaCount[$stat['_id']] = $stat['count'];
-                }
-            }
-        }
+        $stats = $collection->findOne([], $readPreference);
 
         return [
-            'byLpaCount' => $byLpaCount,
+            'byLpaCount' => $stats['lpasPerUser'],
         ];
     }
 
