@@ -55,11 +55,11 @@ class Stats implements ServiceLocatorAwareInterface {
         ]);
 
         // Stats can (ideally) be processed on a secondary.
-        $results = $manager->executeCommand(
+        $document = $cursor = $manager->executeCommand(
             $collection->getDatabaseName(),
             $command,
             new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        )->toArray()['results'];
+        )->toArray()[0];
 
         //------------------------------------
 
@@ -73,10 +73,10 @@ class Stats implements ServiceLocatorAwareInterface {
          */
 
         $byLpaCount = array_reduce(
-            $results,
+            $document->results,
             function( $carry, $item ){
 
-                $count = (int)$item['value'];
+                $count = (int)$item->value;
 
                 if( !isset($carry[$count]) ){
                     $carry[$count] = 1;
@@ -105,14 +105,14 @@ class Stats implements ServiceLocatorAwareInterface {
         $collection = $this->getServiceLocator()->get(CollectionFactory::class . '-stats-lpas');
 
         // Empty the collection
-        $collection->remove( [] );
+        $collection->deleteMany( [] );
 
         // Add the new data
-        $result = $collection->batchInsert( $mongodata );
+        $collection->insertOne( $mongodata );
 
         //---
 
-        return (bool)$result['ok'];
+        return (bool)$document->ok;
 
     }
 

@@ -294,12 +294,16 @@ class Resource extends AbstractResource
         ];
 
         // Stats can (ideally) be pulled from a secondary.
-        $cachedStats = $collection->find([], $readPreference);
+        $cursor = $collection->find([], $readPreference);
 
         $byLpaCount = [];
 
-        foreach ($cachedStats as $stat) {
-            $byLpaCount[$stat['_id']] = $stat['count'];
+        foreach ($cursor as $cachedStats) {
+            foreach ($cachedStats as $stat) {
+                if (is_array($stat)) {
+                    $byLpaCount[$stat['_id']] = $stat['count'];
+                }
+            }
         }
 
         return [
