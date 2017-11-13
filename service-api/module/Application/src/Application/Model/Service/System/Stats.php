@@ -28,7 +28,7 @@ class Stats implements ServiceLocatorAwareInterface
     public function generate()
     {
         $stats = [
-            'generated'               => new DateTime(),
+            'generated'               => new MongoDate(new DateTime()),
             'lpas'                    => $this->getLpaStats(),
             'lpasPerUser'             => $this->getLpasPerUser(),
             'who'                     => $this->getWhoAreYou(),
