@@ -44,6 +44,13 @@ abstract class AbstractPdf extends PdftkPdf
     protected $pdfFile;
 
     /**
+     * Formatted LPA reference in the format ANNN-NNNN-NNNN
+     *
+     * @var
+     */
+    protected $formattedLpaRef;
+
+    /**
      * Constructor can be triggered with or without an LPA object
      * If an LPA object is passed then the PDF object will execute the create function to populate the data
      *
@@ -61,7 +68,7 @@ abstract class AbstractPdf extends PdftkPdf
         $templateFile = null;
 
         if (!is_null($templateFileName)) {
-            $templateFile = $this->config['service']['assets']['template_path_on_ram_disk'] . '/' . $templateFileName;
+            $templateFile = $this->getTemplatePdfFilePath($templateFileName);
 
             if (!file_exists($templateFile)) {
                 throw new Exception('The requested PDF template file ' . $templateFile . ' does not exist');
@@ -72,16 +79,15 @@ abstract class AbstractPdf extends PdftkPdf
         parent::__construct($templateFile, $options);
 
         //  Build up a PDF file name to use
-        $className = array_pop(explode('\\', get_class($this)));
-        $pdfFileName =  sprintf('%s-%s.pdf', $className, microtime(true));
+        $pdfFileName =  array_pop(explode('\\', get_class($this))) . '.pdf';
 
         //  If an LPA has been passed then set up the PDF object and trigger the create
         if ($lpa instanceof Lpa) {
-            //  Prefix the PDF file name with the LPA reference
-            $pdfFileName = str_replace(' ', '-', Formatter::id($lpa->id)) . '-' . $pdfFileName;
+            //  Set the formatted LPA ref for use later
+            $this->formattedLpaRef = Formatter::id($lpa->id);
 
             //  Log a message for this PDF creation
-            $this->logger->info('Creating ' . $pdfFileName, [
+            $this->logger->info('Creating ' . $pdfFileName . ' for ' . $this->formattedLpaRef, [
                 'lpaId' => $lpa->id
             ]);
 
@@ -90,7 +96,32 @@ abstract class AbstractPdf extends PdftkPdf
         }
 
         //  Set the full file path for this PDF
-        $this->pdfFile = $this->config['service']['assets']['intermediate_file_path'] . '/' . $pdfFileName;
+        $this->pdfFile = $this->getIntermediatePdfFilePath($pdfFileName);
+    }
+
+    /**
+     * @param string $templatePdfFileName
+     * @return string
+     */
+    protected function getTemplatePdfFilePath($templatePdfFileName)
+    {
+        return $this->config['service']['assets']['template_path_on_ram_disk'] . '/' . $templatePdfFileName;
+    }
+
+    /**
+     * Get a unique intermediary file name and path - a micro timestamp will be used here to ensure uniqueness
+     *
+     * @param $intermediatePdfFileName
+     * @return string
+     */
+    protected function getIntermediatePdfFilePath($intermediatePdfFileName)
+    {
+        //  Create a (near) unique intermediate file name using the formatted LPA ref (if set) and a micro timestamp
+        if (!is_null($this->formattedLpaRef)) {
+            $intermediatePdfFileName = str_replace(' ', '-', $this->formattedLpaRef) . '-' . $intermediatePdfFileName;
+        }
+
+        return sprintf('%s/%s-%s', $this->config['service']['assets']['intermediate_file_path'], microtime(true), $intermediatePdfFileName);
     }
 
     /**

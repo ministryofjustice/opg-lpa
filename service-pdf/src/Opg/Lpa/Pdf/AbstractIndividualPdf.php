@@ -39,6 +39,14 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     private $constituentPdfs = [];
 
     /**
+     * Integer value to track how the pages have shifted from their starting positions in the PDF, most likely
+     * due to inserting content
+     *
+     * @var
+     */
+    protected $pageShift = 0;
+
+    /**
      * @param Lpa|null $lpa
      * @param array $options
      * @throws Exception
@@ -162,9 +170,6 @@ abstract class AbstractIndividualPdf extends AbstractPdf
             //  Sort the constituent PDFs into the required insertion order
             ksort($this->constituentPdfs, SORT_NATURAL);
 
-            //  Keep track of the page shift so we can insert pages in the correct locations as we go
-            $pageShift = 0;
-
             //  Loop through the constituent PDF settings and gradually adapt the document
             foreach ($this->constituentPdfs as $insertAfter => $constituentPdfsData) {
                 foreach ($constituentPdfsData as $constituentPdfData) {
@@ -187,7 +192,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                     $endAt = $startAt + $pages - 1;
 
                     //  Determine where the pages should be inserted taking into account the page shift
-                    $insertPoint = (is_numeric($insertAfter) ? $insertAfter + $pageShift : $insertAfter);
+                    $insertPoint = (is_numeric($insertAfter) ? $insertAfter + $this->pageShift : $insertAfter);
 
                     if ($insertPoint == 'start') {
                         //  Pre append the constituent PDF to the master PDF
@@ -208,7 +213,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                     $pdfMaster->saveAs($this->pdfFile);
 
                     //  Update the page shift
-                    $pageShift += $pages;
+                    $this->pageShift += $pages;
                 }
             }
         }
@@ -294,7 +299,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      */
     protected function insertStaticPDF($pdfFileName, $start, $pages, $insertAfter)
     {
-        $pdfPath = $this->config['service']['assets']['template_path_on_ram_disk'] . '/' . $pdfFileName;
+        $pdfPath = $this->getTemplatePdfFilePath($pdfFileName);
         $this->addConstituentPdf($pdfPath, $start, $pages, $insertAfter);
     }
 

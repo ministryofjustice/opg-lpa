@@ -19,6 +19,8 @@ use Opg\Lpa\Pdf\Aggregator\ContinuationSheet1 as ContinuationSheet1Aggregator;
 use Opg\Lpa\Pdf\Aggregator\ContinuationSheet2 as ContinuationSheet2Aggregator;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
 use Exception;
+use mikehaertl\pdftk\Pdf as Pdftk;
+use Zend\Barcode\Barcode;
 
 /**
  * Class AbstractLp1
@@ -50,15 +52,28 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     protected $coversheetFileNameDraft;
 
     /**
-     * @param null $lpa
+     * Flag to indicate if the LPA should be considered completed or not - assume not until proven otherwise
+     *
+     * @var bool
+     */
+    private $lpaIsComplete = false;
+
+    /**
+     * @param Lpa|null $lpa
      * @param array $options
      * @throws Exception
      */
-    public function __construct($lpa = null, array $options = [])
+    public function __construct(Lpa $lpa = null, array $options = [])
     {
         //  Check that the coversheet variables have been set
         if (is_null($this->coversheetFileName)) {
             throw new Exception('PDF coversheet file name must be defined to create an LP1');
+        }
+
+        //  If an LPA has been provided - check that it has been completed
+        if ($lpa instanceof Lpa) {
+            $stateChecker = new StateChecker($lpa);
+            $this->lpaIsComplete = $stateChecker->isStateCompleted();
         }
 
         parent::__construct($lpa, $options);
@@ -72,8 +87,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     protected function create(Lpa $lpa)
     {
         //  Add an appropriate coversheet to the start of the document
-        $stateChecker = new StateChecker($lpa);
-        $this->insertStaticPDF($stateChecker->isStateCompleted() ? $this->coversheetFileName : $this->coversheetFileNameDraft, 1, 2, 'start');
+        $this->insertStaticPDF($this->lpaIsComplete ? $this->coversheetFileName : $this->coversheetFileNameDraft, 1, 2, 'start');
 
         $this->populatePageOne($lpa->document->donor);
         $this->populatePageTwoThreeFour($lpa->document);
@@ -716,14 +730,89 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     public function generate($protect = false)
     {
-
-//TODO - How to implement the barcode here??
-
-
         //  Generate the LP1 PDF
         $pdfFile = parent::generate($protect);
 
+        //  Only perform the stamping if this is the main PDF being generated rather than a constituent PDF
+        if (!is_null($this->formattedLpaRef)) {
+            //  If the LPA is completed then stamp it with a barcode
+            if ($this->lpaIsComplete) {
+                // Generate the barcode
+                $renderer = Barcode::factory(
+                    'code39',
+                    'pdf',
+                    [
+                        'text' => $this->formattedLpaRef,
+                        'drawText' => false,
+                        'factor' => 2,
+                        'barHeight' => 25,
+                    ],
+                    [
+                        'topOffset' => 789,
+                        'leftOffset' => 40,
+                    ]
+                );
+
+                //  Create a blank PDF with the barcode only
+                $barcodeOnlyPdf = $renderer->draw();
+                $barcodePdfFile = $this->getIntermediatePdfFilePath('barcode.pdf');
+                $barcodeOnlyPdf->save($barcodePdfFile);
+
+                //  Stamp the required page with the new barcode using the unshifted page number
+                $this->stampPageWith($barcodePdfFile, 19);
+
+                //  Cleanup - remove tmp barcode file
+                unlink($barcodePdfFile);
+            } else {
+                //  If the LPA is not completed then stamp with the draft watermark
+                $draftWatermarkPdf = $this->getTemplatePdfFilePath('RegistrationWatermark.pdf');
+
+                $this->stampPageWith($draftWatermarkPdf, 16);
+                $this->stampPageWith($draftWatermarkPdf, 17);
+                $this->stampPageWith($draftWatermarkPdf, 18);
+                $this->stampPageWith($draftWatermarkPdf, 19);
+                $this->stampPageWith($draftWatermarkPdf, 20);
+            }
+        }
+
         return $pdfFile;
     }
-}
 
+    /**
+     * Apply the required stamp to the specified page by creating a new copy of the PDF
+     *
+     * @param $stampPdf
+     * @param $pageNumber
+     */
+    private function stampPageWith($stampPdf, $pageNumber)
+    {
+        //  Create a copy of the LPA PDF with the barcode stamped on it on all pages so we can extract the required page later
+        $tmpStampPdfName = $this->getIntermediatePdfFilePath('stamp.pdf');
+        $pdfStampedAllPages = new Pdftk($this->pdfFile);
+        $pdfStampedAllPages->stamp($stampPdf)
+                           ->flatten()
+                           ->saveAs($tmpStampPdfName);
+
+        $newPdf = new Pdftk([
+            'A' => $this->pdfFile,
+            'B' => $tmpStampPdfName
+        ]);
+
+        //  Account for the page shift from previous PDF generation
+        $pageNumber = $pageNumber + $this->pageShift;
+
+        $newPdf->cat(1, $pageNumber - 1, 'A')
+               ->cat($pageNumber, null, 'B');
+
+        //  TODO - Remove this temp fix
+        if (($pageNumber - $this->pageShift) < 20) {
+            $newPdf->cat($pageNumber + 1, 'end', 'A');
+        }
+
+        $newPdf->flatten()
+               ->saveAs($this->pdfFile);
+
+        //  Remove the temp PDF with all the pages stamped
+        unlink($tmpStampPdfName);
+    }
+}
