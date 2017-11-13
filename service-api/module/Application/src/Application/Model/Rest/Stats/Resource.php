@@ -50,6 +50,25 @@ class Resource extends AbstractResource
             // Regenerate stats
         }
 
+        // Return specific subset of stats if requested
+        switch ($type) {
+            case 'lpas':
+                $stats = $stats['lpas'];
+                break;
+            case 'whoareyou':
+                $stats = $stats['who'];
+                break;
+            case 'lpasperuser':
+                $stats = $stats['lpasPerUser'];
+                break;
+            case 'correspondence':
+                $stats = $stats['correspondence'];
+                break;
+            case 'preferencesinstructions':
+                $stats = $stats['preferencesInstructions'];
+                break;
+        }
+
         return new Entity($stats);
     }
 
