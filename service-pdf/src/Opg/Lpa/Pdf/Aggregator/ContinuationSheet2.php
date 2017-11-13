@@ -5,6 +5,7 @@ namespace Opg\Lpa\Pdf\Aggregator;
 use Opg\Lpa\Pdf\ContinuationSheet2 as ContinuationSheet2Pdf;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
+use Exception;
 
 /**
  * Class ContinuationSheet2
@@ -43,64 +44,50 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
      * Create the PDF in preparation for it to be generated - this function alone will not save a copy to the file system
      *
      * @param Lpa $lpa
+     * @throws Exception
      */
     protected function create(Lpa $lpa)
     {
+        //  Get the full content and determine the starting page
+        $page = 1;
+        $fullContent = null;
 
-//TODO - Refactor this to cut down
-
-        if ($this->cs2Type == self::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS) {
-            //  Loop through the details and pass chunks of content to the PDF object to render
-            $page = 1;
-
-            do {
-                $content = $this->getContinuationSheet2Content($lpa->document->primaryAttorneyDecisions->howDetails, $page);
-
-                if (!is_null($content)) {
-                    $isContinued = ($page > 1);
-                    $this->addPdf(new ContinuationSheet2Pdf($lpa, $this->cs2Type, $content, $isContinued));
-                    $page++;
-                }
-            } while (!is_null($content));
-        } elseif ($this->cs2Type == self::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN) {
-            //  Loop through the details and pass chunks of content to the PDF object to render
-            $page = 1;
-
-            $replacementAttorneysContent = $this->getHowWhenReplacementAttorneysCanActContent($lpa->document);
-
-            do {
-                $content = $this->getContinuationSheet2Content($replacementAttorneysContent, $page);
-
-                if (!is_null($content)) {
-                    $isContinued = ($page > 1);
-                    $this->addPdf(new ContinuationSheet2Pdf($lpa, $this->cs2Type, $content, $isContinued));
-                    $page++;
-                }
-            } while (!is_null($content));
-        } elseif ($this->cs2Type == self::CS2_TYPE_INSTRUCTIONS) {
-            //  Loop through the details and pass chunks of content to the PDF object to render
-            $page = 2;
-
-            do {
-                $content = $this->getInstructionsAndPreferencesContent($lpa->document->instruction, $page);
-
-                if (!is_null($content)) {
-                    $this->addPdf(new ContinuationSheet2Pdf($lpa, $this->cs2Type, $content, true));
-                    $page++;
-                }
-            } while (!is_null($content));
-        } elseif ($this->cs2Type == self::CS2_TYPE_PREFERENCES) {
-            //  Loop through the details and pass chunks of content to the PDF object to render
-            $page = 2;
-
-            do {
-                $content = $this->getInstructionsAndPreferencesContent($lpa->document->preference, $page);
-
-                if (!is_null($content)) {
-                    $this->addPdf(new ContinuationSheet2Pdf($lpa, $this->cs2Type, $content, true));
-                    $page++;
-                }
-            } while (!is_null($content));
+        switch ($this->cs2Type) {
+            case self::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS:
+                $fullContent = $lpa->document->primaryAttorneyDecisions->howDetails;
+                break;
+            case self::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN:
+                $fullContent = $this->getHowWhenReplacementAttorneysCanActContent($lpa->document);
+                break;
+            case self::CS2_TYPE_PREFERENCES:
+                $fullContent = $lpa->document->preference;
+                $page = 2;
+                break;
+            case self::CS2_TYPE_INSTRUCTIONS:
+                $fullContent = $lpa->document->instruction;
+                $page = 2;
+                break;
+            default:
+                throw new Exception('Unexpected content type found for continuation sheet 2: ' . $this->cs2Type);
         }
+
+        //  Loop through the details and pass chunks of content to the PDF object to render
+        do {
+            //  Get the correct block of content
+            if (in_array($this->cs2Type, [
+                self::CS2_TYPE_PREFERENCES,
+                self::CS2_TYPE_INSTRUCTIONS,
+            ])) {
+                $content = $this->getInstructionsAndPreferencesContent($fullContent, $page);
+            } else {
+                $content = $this->getContinuationSheet2Content($fullContent, $page);
+            }
+
+            if (!is_null($content)) {
+                $isContinued = ($page > 1);
+                $this->addPdf(new ContinuationSheet2Pdf($lpa, $this->cs2Type, $content, $isContinued));
+                $page++;
+            }
+        } while (!is_null($content));
     }
 }
