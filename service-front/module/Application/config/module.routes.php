@@ -281,17 +281,6 @@ return [
             //--------------------------------------------------
             // Signed in User routes
 
-            'admin-stats' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => [
-                    'route'    => '/admin/stats',
-                    'defaults' => [
-                        'controller' => 'Authenticated\AdminController',
-                        'action'     => 'stats',
-                    ],
-                ],
-            ],
-
             'admin-system-message' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
