@@ -43,6 +43,9 @@ class Resource extends AbstractResource
         if (!isset($stats['generated'])) {
             // Regenerate stats as missing or using old format
             $this->getServiceLocator()->get('StatsService')->generate();
+
+            // Retrieve generated stats
+            $stats = $collection->findOne([]);
         }
 
         $stats['generated'] = date('d/m/Y H:i:s', $stats['generated']->toDateTime()->getTimestamp());

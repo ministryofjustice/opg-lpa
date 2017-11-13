@@ -36,8 +36,6 @@ class Stats implements ServiceLocatorAwareInterface
             'preferencesInstructions' => $this->getPreferencesInstructionsStats()
         ];
 
-        var_dump($stats);
-
         //---------------------------------------------------
         // Save the results
 
