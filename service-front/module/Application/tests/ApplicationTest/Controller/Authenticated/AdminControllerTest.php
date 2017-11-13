@@ -114,21 +114,6 @@ class AdminControllerTest extends AbstractControllerTest
         $this->assertEquals('Page not found', $result->getVariable('content'));
     }
 
-    public function testStatsAction()
-    {
-        $this->apiClient->shouldReceive('getApiStats')->andReturn($this->getLpasPerUserStats())->once();
-        $this->apiClient->shouldReceive('getAuthStats')->andReturn($this->getAuthStats())->once();
-
-        /** @var ViewModel $result */
-        $result = $this->controller->statsAction();
-
-        $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->getLpasPerUserStats()['byLpaCount'], $result->getVariable('api_stats'));
-        $this->assertEquals($this->getAuthStats(), $result->getVariable('auth_stats'));
-        $this->assertEquals('Admin stats', $result->getVariable('pageTitle'));
-    }
-
     public function testSystemMessageActionGet()
     {
         $messageElement = Mockery::mock(Element::class);

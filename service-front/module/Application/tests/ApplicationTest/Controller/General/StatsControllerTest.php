@@ -21,18 +21,15 @@ class StatsControllerTest extends AbstractControllerTest
 
     public function testIndexAction()
     {
-        $this->lpaApplicationService->shouldReceive('getApiStats')->with('lpas')->andReturn($this->getApiStats())->once();
-        $this->lpaApplicationService->shouldReceive('getApiStats')->with('whoareyou')->andReturn($this->getWhoAreYouStats())->once();
         $this->lpaApplicationService->shouldReceive('getAuthStats')->andReturn($this->getAuthStats())->once();
-        $this->lpaApplicationService->shouldReceive('getApiStats')->with('correspondence')->andReturn($this->getCorrespondenceStats())->once();
-        $this->lpaApplicationService->shouldReceive('getApiStats')->with('preferencesinstructions')->andReturn($this->getPreferencesInstructionsStats())->once();
+        $this->lpaApplicationService->shouldReceive('getApiStats')->andReturn($this->getApiStats())->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->getApiStats(), $result->getVariable('lpas'));
+        $this->assertEquals($this->getLpaStats(), $result->getVariable('lpas'));
         $this->assertEquals($this->getWhoAreYouStats(), $result->getVariable('who'));
         $this->assertEquals($this->getAuthStats(), $result->getVariable('users'));
         $this->assertEquals($this->getCorrespondenceStats(), $result->getVariable('correspondence'));
@@ -40,6 +37,17 @@ class StatsControllerTest extends AbstractControllerTest
     }
 
     private function getApiStats()
+    {
+        return [
+            'generated'               => '01/02/2017 14:22:11',
+            'lpas'                    => $this->getLpaStats(),
+            'who'                     => $this->getWhoAreYouStats(),
+            'correspondence'          => $this->getCorrespondenceStats(),
+            'preferencesInstructions' => $this->getPreferencesInstructionsStats()
+        ];
+    }
+
+    private function getLpaStats()
     {
         $start = new \DateTime('first day of this month');
         $start->setTime(0, 0, 0);
