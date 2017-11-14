@@ -133,7 +133,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         }
 
         $this->setMatchedRouteName($this->controller, 'lpa/primary-attorney');
-        $nextUrl = $this->setUrlFromRoute($this->lpa, 'lpa/how-primary-attorneys-make-decision', null, ['fragment' => 'current']);
+        $nextUrl = $this->setUrlFromRoute($this->lpa, 'lpa/how-primary-attorneys-make-decision', null, $this->getExpectedRouteOptions('lpa/how-primary-attorneys-make-decision'));
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

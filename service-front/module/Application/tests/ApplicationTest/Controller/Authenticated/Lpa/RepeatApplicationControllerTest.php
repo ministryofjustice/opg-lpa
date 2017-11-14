@@ -187,7 +187,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->metadata->shouldReceive('setRepeatApplicationConfirmed')->withArgs([$this->lpa])->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/fee-reduction');
-        $this->setRedirectToRoute('lpa/checkout', $this->lpa, $response, false);
+        $this->setRedirectToRoute('lpa/checkout', $this->lpa, $response);
 
         $result = $this->controller->indexAction();
 
