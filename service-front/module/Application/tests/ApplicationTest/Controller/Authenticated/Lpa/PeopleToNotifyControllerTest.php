@@ -175,7 +175,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->metadata->shouldReceive('setPeopleToNotifyConfirmed')->withArgs([$this->lpa])->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/people-to-notify');
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/instructions', ['lpa-id' => $this->lpa->id], ['fragment' => 'current']])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/instructions', $this->lpa, $response);
 
         $result = $this->controller->indexAction();
 
@@ -211,7 +211,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/people-to-notify', ['lpa-id' => $this->lpa->id], ['fragment' => 'current']])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/people-to-notify', $this->lpa, $response);
 
         $result = $this->controller->addAction();
 

@@ -90,7 +90,7 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/how-replacement-attorneys-make-decision');
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/certificate-provider', ['lpa-id' => $this->lpa->id], ['fragment' => 'current']])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/certificate-provider', $this->lpa, $response);
 
         $result = $this->controller->indexAction();
 
@@ -142,7 +142,7 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
         })*/->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/how-replacement-attorneys-make-decision');
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/certificate-provider', ['lpa-id' => $this->lpa->id], ['fragment' => 'current']])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/certificate-provider', $this->lpa, $response);
 
         $result = $this->controller->indexAction();
 

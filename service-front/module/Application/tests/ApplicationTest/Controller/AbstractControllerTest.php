@@ -421,14 +421,10 @@ abstract class AbstractControllerTest extends TestCase
         $form->shouldReceive('isValid')->andReturn(true)->once();
     }
 
-    public function setRedirectToRoute($route, $lpa, $response, $addCurrentFragment = true)
+    public function setRedirectToRoute($route, $lpa, $response)
     {
         $args = [$route, ['lpa-id' => $lpa->id]];
-        if ($addCurrentFragment === true) {
-            $args[] = ['fragment' => 'current'];
-        } else {
-            $args[] = [];
-        }
+        $args[] = $this->getExpectedRouteOptions($route);
         $this->redirect->shouldReceive('toRoute')->withArgs($args)->andReturn($response)->once();
     }
 
@@ -594,5 +590,10 @@ abstract class AbstractControllerTest extends TestCase
             }, $queryParams, array_keys($queryParams)));
         }
         return $url;
+    }
+
+    public function getExpectedRouteOptions($route)
+    {
+        return [];
     }
 }

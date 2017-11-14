@@ -61,7 +61,7 @@ class IndexControllerTest extends AbstractControllerTest
         $this->lpa->seed = $seedLpa->id;
         $this->controller->setLpa($this->lpa);
         $this->lpaApplicationService->shouldReceive('setMetaData')->with($this->lpa->id, ['analyticsReturnCount' => 5])->once();
-        $this->redirect->shouldReceive('toRoute')->with('lpa/replacement-attorney', ['lpa-id' => $this->lpa->id], ['fragment' => 'current'])->andReturn($response)->once();
+        $this->setRedirectToRoute('lpa/replacement-attorney', $this->lpa, $response);
 
         $result = $this->controller->indexAction();
 
