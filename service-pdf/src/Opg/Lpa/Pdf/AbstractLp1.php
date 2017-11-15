@@ -294,13 +294,12 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         ];
 
         foreach ($details as $dataKey => $hasMoreKey) {
-            $detailKey = 'lpa-document-' . $dataKey;
             $detailString = $lpaDocument->$dataKey;
 
             if (empty($detailString)) {
-                $this->addStrikeThrough($detailKey, 8);
+                $this->addStrikeThrough($dataKey, 8);
             } else {
-                $this->setData($detailKey, $this->getInstructionsAndPreferencesContent($detailString));
+                $this->setData('lpa-document-' . $dataKey, $this->getInstructionsAndPreferencesContent($detailString));
 
                 if ($this->fillsInstructionsPreferencesBox($detailString)) {
                     $this->setCheckBox($hasMoreKey);
