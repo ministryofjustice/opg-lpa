@@ -619,8 +619,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $continuationSheetsAdded = false;
 
         //  Add continuation sheet 1 instances if required
-        $primaryAttorneys = array_splice($this->getOrderedAttorneys($lpa->document->primaryAttorneys), self::MAX_ATTORNEYS_SECTION_2);
-        $replacementAttorneys = array_splice($this->getOrderedAttorneys($lpa->document->replacementAttorneys), self::MAX_REPLACEMENT_ATTORNEYS_SECTION_4);
+        $primaryAttorneys = $this->getOrderedAttorneys($lpa->document->primaryAttorneys);
+        $primaryAttorneys = array_splice($primaryAttorneys, self::MAX_ATTORNEYS_SECTION_2);
+        $replacementAttorneys = $this->getOrderedAttorneys($lpa->document->replacementAttorneys);
+        $replacementAttorneys = array_splice($replacementAttorneys, self::MAX_REPLACEMENT_ATTORNEYS_SECTION_4);
         $peopleToNotify = array_splice($lpa->document->peopleToNotify, self::MAX_PEOPLE_TO_NOTIFY_SECTION_6);
 
         if (!empty($primaryAttorneys) || !empty($replacementAttorneys) || !empty($peopleToNotify)) {

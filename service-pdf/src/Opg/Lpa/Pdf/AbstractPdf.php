@@ -79,7 +79,8 @@ abstract class AbstractPdf extends PdftkPdf
         parent::__construct($templateFile, $options);
 
         //  Build up a PDF file name to use
-        $pdfFileName =  array_pop(explode('\\', get_class($this))) . '.pdf';
+        $pdfClassArr = explode('\\', get_class($this));
+        $pdfFileName =  array_pop($pdfClassArr) . '.pdf';
 
         //  If an LPA has been passed then set up the PDF object and trigger the create
         if ($lpa instanceof Lpa) {
