@@ -6,6 +6,8 @@
 
 {% block content %}
 
+<p>Generated {{ generated }}</p>
+
 <h2 class="heading-medium">Users</h2>
 
 <div class="mobile-scroll">
@@ -29,7 +31,7 @@
     </table>
 </div>
 
-    <p>* since 17 December 2015</p>
+<p>* since 17 December 2015</p>
 
 <h2 class="heading-medium">Status by type</h2>
 
@@ -296,6 +298,27 @@
                     <td class="numeric">{{ values.instructionsStated }}</td>
                 {% endfor %}
             </tr>
+        </tbody>
+    </table>
+</div>
+
+<h2 class="heading-medium">Applications</h2>
+
+<div class="mobile-scroll">
+    <table>
+        <thead>
+        <tr>
+            <th class="numeric">Number of LPAs</th>
+            <th class="numeric">Number of Users</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for lpas, users in lpasPerUser %}
+            <tr>
+                <td class="numeric">{{ lpas }}</td>
+                <td class="numeric">{{ users }}</td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>

@@ -562,9 +562,9 @@ trait ClientV1Trait
      * @param $type string - The stats type (or context)
      * @return bool|mixed
      */
-    public function getApiStats($type)
+    public function getApiStats()
     {
-        $response = $this->getClient()->get($this->apiBaseUri . '/v1/stats/' . $type);
+        $response = $this->getClient()->get($this->apiBaseUri . '/v1/stats/all');
 
         $code = $response->getStatusCode();
 
