@@ -808,8 +808,8 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $newPdf->cat(1, $pageNumber - 1, 'A')
                ->cat($pageNumber, null, 'B');
 
-        //  TODO - Remove this temp fix
-        if (($pageNumber - $this->pageShift) < 20) {
+        //  If the last page is being stamped then do not append any more pages
+        if (($pageNumber - $this->pageShift) < $this->numberOfPages) {
             $newPdf->cat($pageNumber + 1, 'end', 'A');
         }
 

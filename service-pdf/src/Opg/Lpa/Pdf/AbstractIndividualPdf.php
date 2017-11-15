@@ -295,7 +295,9 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * Insert a static PDF after a specified page
      *
      * @param $pdfFileName
-     * @param string $insertAfter
+     * @param $start
+     * @param $pages
+     * @param $insertAfter
      */
     protected function insertStaticPDF($pdfFileName, $start, $pages, $insertAfter)
     {

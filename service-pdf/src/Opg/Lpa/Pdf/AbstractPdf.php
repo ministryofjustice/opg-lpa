@@ -44,6 +44,11 @@ abstract class AbstractPdf extends PdftkPdf
     protected $pdfFile;
 
     /**
+     * @var int
+     */
+    protected $numberOfPages;
+
+    /**
      * Formatted LPA reference in the format ANNN-NNNN-NNNN
      *
      * @var
@@ -72,6 +77,15 @@ abstract class AbstractPdf extends PdftkPdf
 
             if (!file_exists($templateFile)) {
                 throw new Exception('The requested PDF template file ' . $templateFile . ' does not exist');
+            }
+
+            //  Determine the number of pages for the PDF template using the suggest method in...
+            //  https://github.com/mikehaertl/php-pdftk/issues/56
+            //  Create a new copy of the PDF for this so as not to trigger the command finally
+            $pageCountPdf = new PdftkPdf($templateFile);
+
+            if (preg_match('/NumberOfPages: (\d+)/', $pageCountPdf->getData(), $m)) {
+                $this->numberOfPages = $m[1];
             }
         }
 
