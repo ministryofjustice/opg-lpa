@@ -9,7 +9,7 @@ use Opg\Lpa\Pdf\Aggregator\AbstractAggregator;
 use Opg\Lpa\Pdf\Config\Config;
 use PHPUnit\Framework\TestCase;
 
-abstract class AbstractFormTestClass extends TestCase
+abstract class AbstractPdfTestClass extends TestCase
 {
     private $reflectionProperties = [];
 

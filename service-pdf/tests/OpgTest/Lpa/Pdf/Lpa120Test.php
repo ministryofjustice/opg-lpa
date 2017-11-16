@@ -7,7 +7,7 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\Pdf\Lpa120;
 use Exception;
 
-class Lpa120Test extends AbstractFormTestClass
+class Lpa120Test extends AbstractPdfTestClass
 {
     public function testConstructorThrowsExceptionNotEnoughData()
     {

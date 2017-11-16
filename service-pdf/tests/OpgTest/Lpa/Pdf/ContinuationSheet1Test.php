@@ -4,7 +4,7 @@ namespace OpgTest\Lpa\Pdf;
 
 use Opg\Lpa\Pdf\ContinuationSheet1;
 
-class ContinuationSheet1Test extends AbstractFormTestClass
+class ContinuationSheet1Test extends AbstractPdfTestClass
 {
     public function testGeneratePF()
     {
