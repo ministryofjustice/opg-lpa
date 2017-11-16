@@ -65,21 +65,27 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
 
         //  Loop through the details and pass chunks of content to the PDF object to render
         do {
-            //  Get the correct block of content
-            if (in_array($this->cs2Type, [
-                ContinuationSheet2Pdf::CS2_TYPE_PREFERENCES,
-                ContinuationSheet2Pdf::CS2_TYPE_INSTRUCTIONS,
-            ])) {
-                $content = $this->getInstructionsAndPreferencesContent($fullContent, $page);
-            } else {
-                $content = $this->getContinuationSheet2Content($fullContent, $page);
+            //  Get the correct block of content - if we request a page too far then an exception will be thrown
+            $contentFullyProcessed = false;
+
+            try {
+                //  TODO - implement a check for this instead of just getting the content...
+                if (in_array($this->cs2Type, [
+                    ContinuationSheet2Pdf::CS2_TYPE_PREFERENCES,
+                    ContinuationSheet2Pdf::CS2_TYPE_INSTRUCTIONS,
+                ])) {
+                    $content = $this->getInstructionsAndPreferencesContent($fullContent, $page);
+                } else {
+                    $content = $this->getContinuationSheet2Content($fullContent, $page);
+                }
+
+                $this->addPdf(new ContinuationSheet2Pdf($lpa, $this->cs2Type, $fullContent, $page));
+            } catch (Exception $ignore) {
+                //  We've requested a page too far so break the loop
+                $contentFullyProcessed = true;
             }
 
-            if (!is_null($content)) {
-                $isContinued = ($page > 1);
-                $this->addPdf(new ContinuationSheet2Pdf($lpa, $this->cs2Type, $content, $isContinued));
-                $page++;
-            }
-        } while (!is_null($content));
+            $page++;
+        } while (!$contentFullyProcessed);
     }
 }
