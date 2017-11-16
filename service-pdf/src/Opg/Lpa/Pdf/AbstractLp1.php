@@ -817,6 +817,8 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                ->saveAs($this->pdfFile);
 
         //  Remove the temp PDF with all the pages stamped
-        unlink($tmpStampPdfName);
+        if (file_exists($tmpStampPdfName)) {
+            unlink($tmpStampPdfName);
+        }
     }
 }
