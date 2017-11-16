@@ -19,7 +19,5 @@ abstract class AbstractContinuationSheet extends AbstractIndividualPdf
     {
         //  Add a leading blank page - this is done for all continuation sheets
         $this->insertBlankPage('start');
-
-        $this->setData('cs2-donor-full-name', (string) $lpa->document->donor->name);
     }
 }
