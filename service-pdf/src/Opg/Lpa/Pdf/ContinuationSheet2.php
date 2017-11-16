@@ -93,11 +93,8 @@ class ContinuationSheet2 extends AbstractContinuationSheet
 
         $this->setData('cs2-donor-full-name', (string) $lpa->document->donor->name)
              ->setData('cs2-is', $this->cs2Type)
-             ->setData('cs2-content', $this->content);
-
-        if ($this->isContinued) {
-            $this->setData('cs2-continued', '(Continued)');
-        }
+             ->setData('cs2-content', $this->content)
+             ->setData('cs2-continued', ($this->isContinued ? '(Continued)' : ''));
 
         //  Set footer data
         $this->setFooter('cs2-footer-right', 'cs2');
