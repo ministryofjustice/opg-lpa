@@ -35,7 +35,7 @@ class ContinuationSheet4Test extends AbstractFormTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $numberOfPages, $formattedLpaRef, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $numberOfPages, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -71,7 +71,7 @@ class ContinuationSheet4Test extends AbstractFormTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $numberOfPages, $formattedLpaRef, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $numberOfPages, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();

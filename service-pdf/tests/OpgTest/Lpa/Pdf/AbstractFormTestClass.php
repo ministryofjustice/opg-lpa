@@ -5,6 +5,7 @@ namespace OpgTest\Lpa\Pdf;
 use Opg\Lpa\Pdf\AbstractIndividualPdf;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use ConfigSetUp;
+use Opg\Lpa\Pdf\Aggregator\AbstractAggregator;
 use Opg\Lpa\Pdf\Config\Config;
 use PHPUnit\Framework\TestCase;
 
@@ -55,56 +56,96 @@ abstract class AbstractFormTestClass extends TestCase
         return $config['service']['assets']['template_path_on_ram_disk'] . '/' . $templateName;
     }
 
-    protected function verifyExpectedPdfData(AbstractIndividualPdf $pdf, $numberOfPages, $formattedLpaRef, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift)
+    protected function verifyExpectedPdfData(AbstractIndividualPdf $pdf, $templateFileName, $strikeThroughTargets, $constituentPdfs, $data, $pageShift, $numberOfPages = null, $formattedLpaRef = null)
     {
         //  Verify the provided expected data is as expected
-        $this->verifyNumberOfPages($pdf, $numberOfPages);
-        $this->verifyFormattedLpaRef($pdf, $formattedLpaRef);
         $this->verifyTemplateFileName($pdf, $templateFileName);
-        $this->verifyStrikeThroughTargets($pdf, $strikeThroughs);
+        $this->verifyStrikeThroughTargets($pdf, $strikeThroughTargets);
         $this->verifyConstituentPdfs($pdf, $constituentPdfs);
         $this->verifyData($pdf, $data);
         $this->verifyPageShift($pdf, $pageShift);
+
+        //  Only verify the number of pages and formatted LPA reference if they were provided
+        if (!is_null($numberOfPages)) {
+            $this->verifyNumberOfPages($pdf, $numberOfPages);
+        }
+
+        if (!is_null($formattedLpaRef)) {
+            $this->verifyFormattedLpaRef($pdf, $formattedLpaRef);
+        }
     }
 
-    private function verifyNumberOfPages(AbstractIndividualPdf $form, $expectedValue)
+    private function verifyNumberOfPages(AbstractIndividualPdf $pdf, $expectedValue)
     {
-        $this->verifyReflectionProperty('numberOfPages', $form, $expectedValue);
+        $this->verifyReflectionProperty('numberOfPages', $pdf, $expectedValue);
     }
 
-    private function verifyFormattedLpaRef(AbstractIndividualPdf $form, $expectedValue)
+    private function verifyFormattedLpaRef(AbstractIndividualPdf $pdf, $expectedValue)
     {
-        $this->verifyReflectionProperty('formattedLpaRef', $form, $expectedValue);
+        $this->verifyReflectionProperty('formattedLpaRef', $pdf, $expectedValue);
     }
 
-    private function verifyTemplateFileName(AbstractIndividualPdf $form, $expectedValue)
+    private function verifyTemplateFileName(AbstractIndividualPdf $pdf, $expectedValue)
     {
-        $this->verifyReflectionProperty('templateFileName', $form, $expectedValue);
+        $this->verifyReflectionProperty('templateFileName', $pdf, $expectedValue);
     }
 
-    private function verifyData(AbstractIndividualPdf $form, $expectedValue)
+    private function verifyData(AbstractIndividualPdf $pdf, $expectedValue)
     {
-        $this->verifyReflectionProperty('data', $form, $expectedValue);
+        $this->verifyReflectionProperty('data', $pdf, $expectedValue);
     }
 
-    private function verifyStrikeThroughTargets(AbstractIndividualPdf $form, $expectedValue)
+    private function verifyStrikeThroughTargets(AbstractIndividualPdf $pdf, $expectedValue)
     {
-        $this->verifyReflectionProperty('strikeThroughTargets', $form, $expectedValue);
+        $this->verifyReflectionProperty('strikeThroughTargets', $pdf, $expectedValue);
     }
 
-    private function verifyConstituentPdfs(AbstractIndividualPdf $form, $expectedValue)
+    private function verifyConstituentPdfs(AbstractIndividualPdf $pdf, $expectedValue)
     {
-        $this->verifyReflectionProperty('constituentPdfs', $form, $expectedValue);
+        //  First loop through the reflection values and swap out the instances where the pdf set is actually a PDF object
+        //  We do not need to test that here
+        $constituentPdfsForPages = $this->reflectionProperties['constituentPdfs']->getValue($pdf);
+
+        foreach ($constituentPdfsForPages as $page => $constituentPdfsForPage) {
+            foreach ($constituentPdfsForPage as $constituentPdfIdx => $constituentPdfForPage) {
+                //  Confirm that there is a corresponding entry in the expected values
+                if (!isset($expectedValue[$page]) || !array_key_exists($constituentPdfIdx, $expectedValue[$page])) {
+                    $this->fail(sprintf('Expected value missing while trying to verify constituent PDF index %s inserted after page %s', $constituentPdfIdx, $page));
+                }
+
+                $expectedPdf = $expectedValue[$page][$constituentPdfIdx];
+                $constituentPdf = $constituentPdfForPage['pdf'];
+
+                if ($constituentPdf instanceof AbstractIndividualPdf) {
+                    //  Confirm that the provided expected value is an array
+                    if (!is_array($expectedPdf)) {
+                        $this->fail(sprintf('Expected value is not an array of data while trying to verify constituent PDF index %s inserted after page %s', $constituentPdfIdx, $page));
+                    }
+
+                    $templateFileName = $expectedPdf['templateFileName'];
+                    $strikeThroughTargets = $expectedPdf['strikeThroughTargets'] ?? [];
+                    $constituentPdfs = $expectedPdf['constituentPdfs'] ?? [];
+                    $data = $expectedPdf['data'] ?? [];
+
+                    $this->verifyExpectedPdfData($constituentPdf, $templateFileName, $strikeThroughTargets, $constituentPdfs, $data, 0);
+                } elseif ($constituentPdf instanceof AbstractAggregator) {
+                    //  TODO - How to test aggregators here? Make the PDFs protected property in there be visible too and feed back in?
+                } else {
+                    //  The value should be a string so do a direct comparison
+                    $this->assertEquals($expectedPdf, $constituentPdf);
+                }
+            }
+        }
     }
 
-    private function verifyPageShift(AbstractIndividualPdf $form, $expectedValue)
+    private function verifyPageShift(AbstractIndividualPdf $pdf, $expectedValue)
     {
-        $this->verifyReflectionProperty('pageShift', $form, $expectedValue);
+        $this->verifyReflectionProperty('pageShift', $pdf, $expectedValue);
     }
 
-    private function verifyReflectionProperty($propertyName, AbstractIndividualPdf $form, $expectedValue)
+    private function verifyReflectionProperty($propertyName, AbstractIndividualPdf $pdf, $expectedValue)
     {
-        $property = $this->reflectionProperties[$propertyName]->getValue($form);
+        $property = $this->reflectionProperties[$propertyName]->getValue($pdf);
 
         $this->assertEquals($expectedValue, $property);
     }
