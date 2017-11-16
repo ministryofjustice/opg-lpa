@@ -2,19 +2,19 @@
 
 namespace OpgTest\Lpa\Pdf;
 
-use Opg\Lpa\Pdf\ContinuationSheet4;
+use Opg\Lpa\Pdf\ContinuationSheet3;
 
-class ContinuationSheet4Test extends AbstractFormTestClass
+class ContinuationSheet3Test extends AbstractFormTestClass
 {
     public function testGeneratePF()
     {
         $lpa = $this->getLpa();
-        $pdf = new ContinuationSheet4($lpa);
+        $pdf = new ContinuationSheet3($lpa);
 
         //  Set up the expected data for verification
         $numberOfPages = 1;
         $formattedLpaRef = 'A510 7295 5715';
-        $templateFileName = 'LPC_Continuation_Sheet_4.pdf';
+        $templateFileName = 'LPC_Continuation_Sheet_3.pdf';
 
         $strikeThroughs = [];
 
@@ -29,8 +29,8 @@ class ContinuationSheet4Test extends AbstractFormTestClass
         ];
 
         $data = [
-            'cs4-trust-corporation-company-registration-number' => "678437685",
-            'cs4-footer-right' => "LPC Continuation sheet 4 (07.15)",
+            'cs3-donor-full-name' => "Mrs Nancy Garrison",
+            'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
         ];
 
         $pageShift = 0;
@@ -40,18 +40,18 @@ class ContinuationSheet4Test extends AbstractFormTestClass
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
 
-        $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet4.pdf');
+        $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet3.pdf');
     }
 
     public function testGenerateHW()
     {
         $lpa = $this->getLpa(false);
-        $pdf = new ContinuationSheet4($lpa);
+        $pdf = new ContinuationSheet3($lpa);
 
         //  Set up the expected data for verification
         $numberOfPages = 1;
         $formattedLpaRef = 'A510 7295 5716';
-        $templateFileName = 'LPC_Continuation_Sheet_4.pdf';
+        $templateFileName = 'LPC_Continuation_Sheet_3.pdf';
 
         $strikeThroughs = [];
 
@@ -66,7 +66,8 @@ class ContinuationSheet4Test extends AbstractFormTestClass
         ];
 
         $data = [
-            'cs4-footer-right' => "LPC Continuation sheet 4 (07.15)",
+            'cs3-donor-full-name' => "Mrs Nancy Garrison",
+            'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
         ];
 
         $pageShift = 0;
@@ -76,6 +77,6 @@ class ContinuationSheet4Test extends AbstractFormTestClass
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
 
-        $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet4.pdf');
+        $this->verifyTmpFileName($lpa, $pdfFile, 'ContinuationSheet3.pdf');
     }
 }
