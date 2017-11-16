@@ -17,6 +17,7 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
 use Opg\Lpa\Pdf\Aggregator\ContinuationSheet1 as ContinuationSheet1Aggregator;
 use Opg\Lpa\Pdf\Aggregator\ContinuationSheet2 as ContinuationSheet2Aggregator;
+use Opg\Lpa\Pdf\ContinuationSheet2;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
 use Exception;
 use mikehaertl\pdftk\Pdf as Pdftk;
@@ -633,7 +634,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         //  Add continuation sheet 2 (primary attorney decisions) instances if required
         if ($lpa->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2Aggregator::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS);
+            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS);
             $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
 
             $continuationSheetsAdded = true;
@@ -643,7 +644,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         $replacementAttorneysContent = $this->getHowWhenReplacementAttorneysCanActContent($lpa->document);
 
         if (!empty($replacementAttorneysContent)) {
-            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2Aggregator::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN);
+            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN);
             $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
 
             $continuationSheetsAdded = true;
@@ -651,7 +652,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         //  Add continuation sheet 2 (preferences) instances if required
         if ($this->fillsInstructionsPreferencesBox($lpa->document->preference)) {
-            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2Aggregator::CS2_TYPE_PREFERENCES);
+            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_PREFERENCES);
             $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
 
             $continuationSheetsAdded = true;
@@ -659,7 +660,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         //  Add continuation sheet 2 (instructions) instances if required
         if ($this->fillsInstructionsPreferencesBox($lpa->document->instruction)) {
-            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2Aggregator::CS2_TYPE_INSTRUCTIONS);
+            $continuationSheet2 = new ContinuationSheet2Aggregator($lpa, ContinuationSheet2::CS2_TYPE_INSTRUCTIONS);
             $this->addConstituentPdf($continuationSheet2, 1, $continuationSheet2->getPageCount(), 15);
 
             $continuationSheetsAdded = true;

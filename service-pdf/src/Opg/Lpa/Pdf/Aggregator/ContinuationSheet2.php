@@ -16,14 +16,6 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
     use LongContentTrait;
 
     /**
-     * Constant
-     */
-    const CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS   = 'decisions';
-    const CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN = 'how-replacement-attorneys-step-in';
-    const CS2_TYPE_PREFERENCES                   = 'preferences';
-    const CS2_TYPE_INSTRUCTIONS                  = 'instructions';
-
-    /**
      * @var
      */
     private $cs2Type;
@@ -53,17 +45,17 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
         $fullContent = null;
 
         switch ($this->cs2Type) {
-            case self::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS:
+            case ContinuationSheet2Pdf::CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS:
                 $fullContent = $lpa->document->primaryAttorneyDecisions->howDetails;
                 break;
-            case self::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN:
+            case ContinuationSheet2Pdf::CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN:
                 $fullContent = $this->getHowWhenReplacementAttorneysCanActContent($lpa->document);
                 break;
-            case self::CS2_TYPE_PREFERENCES:
+            case ContinuationSheet2Pdf::CS2_TYPE_PREFERENCES:
                 $fullContent = $lpa->document->preference;
                 $page = 2;
                 break;
-            case self::CS2_TYPE_INSTRUCTIONS:
+            case ContinuationSheet2Pdf::CS2_TYPE_INSTRUCTIONS:
                 $fullContent = $lpa->document->instruction;
                 $page = 2;
                 break;
@@ -75,8 +67,8 @@ class ContinuationSheet2 extends AbstractContinuationSheetAggregator
         do {
             //  Get the correct block of content
             if (in_array($this->cs2Type, [
-                self::CS2_TYPE_PREFERENCES,
-                self::CS2_TYPE_INSTRUCTIONS,
+                ContinuationSheet2Pdf::CS2_TYPE_PREFERENCES,
+                ContinuationSheet2Pdf::CS2_TYPE_INSTRUCTIONS,
             ])) {
                 $content = $this->getInstructionsAndPreferencesContent($fullContent, $page);
             } else {

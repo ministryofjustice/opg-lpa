@@ -11,6 +11,14 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 class ContinuationSheet2 extends AbstractContinuationSheet
 {
     /**
+     * Constant
+     */
+    const CS2_TYPE_PRIMARY_ATTORNEYS_DECISIONS   = 'decisions';
+    const CS2_TYPE_REPLACEMENT_ATTORNEYS_STEP_IN = 'how-replacement-attorneys-step-in';
+    const CS2_TYPE_PREFERENCES                   = 'preferences';
+    const CS2_TYPE_INSTRUCTIONS                  = 'instructions';
+
+    /**
      * PDF template file name (without path) for this PDF object
      *
      * @var
