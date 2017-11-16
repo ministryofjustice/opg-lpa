@@ -20,7 +20,6 @@ abstract class AbstractPdfTestClass extends TestCase
         //  Make some private/protected fields be accessible via reflection
         $pdfProperties = [
             'Opg\Lpa\Pdf\AbstractPdf' => [
-                'numberOfPages',
                 'formattedLpaRef',
             ],
             'Opg\Lpa\Pdf\AbstractIndividualPdf' => [
@@ -56,7 +55,7 @@ abstract class AbstractPdfTestClass extends TestCase
         return $config['service']['assets']['template_path_on_ram_disk'] . '/' . $templateName;
     }
 
-    protected function verifyExpectedPdfData(AbstractIndividualPdf $pdf, $templateFileName, $strikeThroughTargets, $constituentPdfs, $data, $pageShift, $numberOfPages = null, $formattedLpaRef = null)
+    protected function verifyExpectedPdfData(AbstractIndividualPdf $pdf, $templateFileName, $strikeThroughTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef = null)
     {
         //  Verify the provided expected data is as expected
         $this->verifyTemplateFileName($pdf, $templateFileName);
@@ -65,19 +64,9 @@ abstract class AbstractPdfTestClass extends TestCase
         $this->verifyData($pdf, $data);
         $this->verifyPageShift($pdf, $pageShift);
 
-        //  Only verify the number of pages and formatted LPA reference if they were provided
-        if (!is_null($numberOfPages)) {
-            $this->verifyNumberOfPages($pdf, $numberOfPages);
-        }
-
         if (!is_null($formattedLpaRef)) {
             $this->verifyFormattedLpaRef($pdf, $formattedLpaRef);
         }
-    }
-
-    private function verifyNumberOfPages(AbstractIndividualPdf $pdf, $expectedValue)
-    {
-        $this->verifyReflectionProperty('numberOfPages', $pdf, $expectedValue);
     }
 
     private function verifyFormattedLpaRef(AbstractIndividualPdf $pdf, $expectedValue)

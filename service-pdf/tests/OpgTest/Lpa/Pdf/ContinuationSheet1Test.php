@@ -21,7 +21,6 @@ class ContinuationSheet1Test extends AbstractPdfTestClass
         $pdf = new ContinuationSheet1($lpa, $actorGroups);
 
         //  Set up the expected data for verification
-        $numberOfPages = 1;
         $formattedLpaRef = 'A510 7295 5715';
         $templateFileName = 'LPC_Continuation_Sheet_1.pdf';
 
@@ -29,11 +28,7 @@ class ContinuationSheet1Test extends AbstractPdfTestClass
 
         $constituentPdfs = [
             'start' => [
-                [
-                    'pdf'   => $this->getFullTemplatePath('blank.pdf'),
-                    'start' => 1,
-                    'pages' => 1,
-                ],
+                $this->getFullTemplatePath('blank.pdf'),
             ],
         ];
 
@@ -68,7 +63,7 @@ class ContinuationSheet1Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $numberOfPages, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -91,7 +86,6 @@ class ContinuationSheet1Test extends AbstractPdfTestClass
         $pdf = new ContinuationSheet1($lpa, $actorGroups);
 
         //  Set up the expected data for verification
-        $numberOfPages = 1;
         $formattedLpaRef = 'A510 7295 5716';
         $templateFileName = 'LPC_Continuation_Sheet_1.pdf';
 
@@ -99,11 +93,7 @@ class ContinuationSheet1Test extends AbstractPdfTestClass
 
         $constituentPdfs = [
             'start' => [
-                [
-                    'pdf'   => $this->getFullTemplatePath('blank.pdf'),
-                    'start' => 1,
-                    'pages' => 1,
-                ],
+                $this->getFullTemplatePath('blank.pdf'),
             ],
         ];
 
@@ -138,7 +128,7 @@ class ContinuationSheet1Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $numberOfPages, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
