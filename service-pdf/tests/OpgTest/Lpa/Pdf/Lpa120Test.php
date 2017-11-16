@@ -1,19 +1,18 @@
 <?php
 
-namespace OpgTest\Lpa\Pdf\Service\Forms;
+namespace OpgTest\Lpa\Pdf;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Opg\Lpa\Pdf\Service\Forms\Lpa120;
-use mikehaertl\pdftk\Pdf;
+use Opg\Lpa\Pdf\Lpa120;
 use Exception;
-use RuntimeException;
 
-class Lps120Test extends AbstractFormTestClass
+class Lpa120Test extends AbstractFormTestClass
 {
     public function testConstructorThrowsExceptionNotEnoughData()
     {
-        $this->setExpectedException('RuntimeException', 'LPA does not contain all the required data to generate a LPA120');
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('LPA does not contain all the required data to generate Opg\Lpa\Pdf\Lpa120');
 
         new Lpa120(new Lpa());
     }
@@ -21,24 +20,24 @@ class Lps120Test extends AbstractFormTestClass
     public function testGeneratePF()
     {
         $lpa = $this->getLpa();
-        $lpa120 = new Lpa120($lpa);
 
-        $form = $lpa120->generate();
+        $pdf = new Lpa120($lpa);
 
-        $this->assertInstanceOf(Lpa120::class, $form);
+        //  Set up the expected data for verification
+        $numberOfPages = 4;
+        $formattedLpaRef = 'A510 7295 5715';
+        $templateFileName = 'LPA120.pdf';
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LPA120');
+        $strikeThroughs = [];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
+        $constituentPdfs = [];
 
-        //  Confirm that the form data is as expected
-        $expectedData = [
+        $data = [
             'donor-full-name' => "Mrs Nancy Garrison",
             'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
             'lpa-type' => "property-and-financial-affairs",
             'is-repeat-application' => "On",
-            'case-number' => "12345678",
+            'case-number' => 12345678,
             'applicant-type' => "donor",
             'applicant-type-other' => "",
             'applicant-name-title' => "mrs",
@@ -54,7 +53,14 @@ class Lps120Test extends AbstractFormTestClass
             'receive-universal-credit' => "yes",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
+
+        $this->verifyExpectedPdfData($pdf, $numberOfPages, $formattedLpaRef, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift);
+
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
     }
 
     public function testGenerateNoRepeatCaseNumberException()
@@ -66,10 +72,10 @@ class Lps120Test extends AbstractFormTestClass
         $lpa->repeatCaseNumber = null;
         $lpa->payment = new Payment();
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('LPA does not contain all the required data to generate a LPA120');
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('LPA does not contain all the required data to generate Opg\Lpa\Pdf\Lpa120');
 
-        $lpa120 = new Lpa120($lpa);
+        $pdf = new Lpa120($lpa);
     }
 
     public function testGeneratePFAttorneyCorrespondentEnteredManually()
@@ -80,24 +86,23 @@ class Lps120Test extends AbstractFormTestClass
         //  Change the correspondent to an attorney
         $lpa->document->correspondent->who = 'attorney';
 
-        $lpa120 = new Lpa120($lpa);
+        $pdf = new Lpa120($lpa);
 
-        $form = $lpa120->generate();
+        //  Set up the expected data for verification
+        $numberOfPages = 4;
+        $formattedLpaRef = 'A510 7295 5715';
+        $templateFileName = 'LPA120.pdf';
 
-        $this->assertInstanceOf(Lpa120::class, $form);
+        $strikeThroughs = [];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LPA120');
+        $constituentPdfs = [];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
+        $data = [
             'donor-full-name' => "Mrs Nancy Garrison",
             'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
             'lpa-type' => "property-and-financial-affairs",
             'is-repeat-application' => "On",
-            'case-number' => "12345678",
+            'case-number' => 12345678,
             'applicant-type' => "attorney",
             'applicant-type-other' => "",
             'applicant-name-title' => "mrs",
@@ -113,7 +118,14 @@ class Lps120Test extends AbstractFormTestClass
             'receive-universal-credit' => "yes",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
+
+        $this->verifyExpectedPdfData($pdf, $numberOfPages, $formattedLpaRef, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift);
+
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
     }
 
     public function testGeneratePFOtherCorrespondentEnteredManually()
@@ -124,24 +136,23 @@ class Lps120Test extends AbstractFormTestClass
         //  Change the correspondent to an other party
         $lpa->document->correspondent->who = 'other';
 
-        $lpa120 = new Lpa120($lpa);
+        $pdf = new Lpa120($lpa);
 
-        $form = $lpa120->generate();
+        //  Set up the expected data for verification
+        $numberOfPages = 4;
+        $formattedLpaRef = 'A510 7295 5715';
+        $templateFileName = 'LPA120.pdf';
 
-        $this->assertInstanceOf(Lpa120::class, $form);
+        $strikeThroughs = [];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LPA120');
+        $constituentPdfs = [];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
+        $data = [
             'donor-full-name' => "Mrs Nancy Garrison",
             'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
             'lpa-type' => "property-and-financial-affairs",
             'is-repeat-application' => "On",
-            'case-number' => "12345678",
+            'case-number' => 12345678,
             'applicant-type' => "other",
             'applicant-type-other' => "Correspondent",
             'applicant-name-title' => "mrs",
@@ -157,7 +168,14 @@ class Lps120Test extends AbstractFormTestClass
             'receive-universal-credit' => "yes",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
+
+        $this->verifyExpectedPdfData($pdf, $numberOfPages, $formattedLpaRef, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift);
+
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
     }
 
     public function testGeneratePFDonorCorrespondent()
@@ -166,27 +184,25 @@ class Lps120Test extends AbstractFormTestClass
 
         //  Adapt the LPA data as required
         //  Change the correspondent to the donor and remove the manually entered data
-        $lpa->document->correspondent = null;
         $lpa->document->whoIsRegistering = 'donor';
 
-        $lpa120 = new Lpa120($lpa);
+        $pdf = new Lpa120($lpa);
 
-        $form = $lpa120->generate();
+        //  Set up the expected data for verification
+        $numberOfPages = 4;
+        $formattedLpaRef = 'A510 7295 5715';
+        $templateFileName = 'LPA120.pdf';
 
-        $this->assertInstanceOf(Lpa120::class, $form);
+        $strikeThroughs = [];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LPA120');
+        $constituentPdfs = [];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
+        $data = [
             'donor-full-name' => "Mrs Nancy Garrison",
             'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
             'lpa-type' => "property-and-financial-affairs",
             'is-repeat-application' => "On",
-            'case-number' => "12345678",
+            'case-number' => 12345678,
             'applicant-type' => "donor",
             'applicant-type-other' => "",
             'applicant-name-title' => "mrs",
@@ -194,7 +210,7 @@ class Lps120Test extends AbstractFormTestClass
             'applicant-name-first' => "Nancy",
             'applicant-name-last' => "Garrison",
             'applicant-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
-            'applicant-phone-number' => "",
+            'applicant-phone-number' => "01234 123456",
             'applicant-email-address' => "opglpademo+LouiseJames@gmail.com",
             'receive-benefits' => "",
             'damage-awarded' => "",
@@ -202,69 +218,14 @@ class Lps120Test extends AbstractFormTestClass
             'receive-universal-credit' => "yes",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
-    }
+        $pageShift = 0;
 
-    public function testGeneratePFAttorneyCorrespondent()
-    {
-        $lpa = $this->getLpa();
+        $this->verifyExpectedPdfData($pdf, $numberOfPages, $formattedLpaRef, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift);
 
-        //  Adapt the LPA data as required
-        //  Change the correspondent to an attorney and remove the manually entered data
-        $lpa->document->correspondent = null;
-        $lpa->document->whoIsRegistering = [1];
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
 
-        $lpa120 = new Lpa120($lpa);
-
-        $form = $lpa120->generate();
-
-        $this->assertInstanceOf(Lpa120::class, $form);
-
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LPA120');
-
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'donor-full-name' => "Mrs Nancy Garrison",
-            'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
-            'lpa-type' => "property-and-financial-affairs",
-            'is-repeat-application' => "On",
-            'case-number' => "12345678",
-            'applicant-type' => "attorney",
-            'applicant-type-other' => "",
-            'applicant-name-title' => "mrs",
-            'applicant-name-title-other' => "",
-            'applicant-name-first' => "Amy",
-            'applicant-name-last' => "Wheeler",
-            'applicant-address' => "\nBrickhill Cottage, Birch Cross, Marchington, Uttoxeter, Staffordshire, ST14 8NX",
-            'applicant-phone-number' => "",
-            'applicant-email-address' => "opglpademo+AmyWheeler@gmail.com",
-            'receive-benefits' => "",
-            'damage-awarded' => "",
-            'low-income' => "",
-            'receive-universal-credit' => "yes",
-        ];
-
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
-    }
-
-    public function testGeneratePFOtherCorrespondentThrowsException()
-    {
-        $lpa = $this->getLpa();
-
-        //  Adapt the LPA data as required
-        //  Change the correspondent to an attorney and remove the manually entered data
-        $lpa->document->correspondent = null;
-        $lpa->document->whoIsRegistering = false;
-
-        $lpa120 = new Lpa120($lpa);
-
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('When generating LPA120, applicant was found invalid');
-
-        $form = $lpa120->generate();
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
     }
 
     public function testGeneratePFApplicantTitleOther()
@@ -275,24 +236,23 @@ class Lps120Test extends AbstractFormTestClass
         //  Change the correspondent title to a custom value
         $lpa->document->correspondent->name->title = 'Sir';
 
-        $lpa120 = new Lpa120($lpa);
+        $pdf = new Lpa120($lpa);
 
-        $form = $lpa120->generate();
+        //  Set up the expected data for verification
+        $numberOfPages = 4;
+        $formattedLpaRef = 'A510 7295 5715';
+        $templateFileName = 'LPA120.pdf';
 
-        $this->assertInstanceOf(Lpa120::class, $form);
+        $strikeThroughs = [];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LPA120');
+        $constituentPdfs = [];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
+        $data = [
             'donor-full-name' => "Mrs Nancy Garrison",
             'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
             'lpa-type' => "property-and-financial-affairs",
             'is-repeat-application' => "On",
-            'case-number' => "12345678",
+            'case-number' => 12345678,
             'applicant-type' => "donor",
             'applicant-type-other' => "",
             'applicant-name-title' => "other",
@@ -308,7 +268,14 @@ class Lps120Test extends AbstractFormTestClass
             'receive-universal-credit' => "yes",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
+
+        $this->verifyExpectedPdfData($pdf, $numberOfPages, $formattedLpaRef, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift);
+
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
     }
 
     public function testGeneratePFBooleanAsNo()
@@ -319,24 +286,23 @@ class Lps120Test extends AbstractFormTestClass
         //  Change a value to return a "No" for a false boolean
         $lpa->payment->reducedFeeReceivesBenefits = false;
 
-        $lpa120 = new Lpa120($lpa);
+        $pdf = new Lpa120($lpa);
 
-        $form = $lpa120->generate();
+        //  Set up the expected data for verification
+        $numberOfPages = 4;
+        $formattedLpaRef = 'A510 7295 5715';
+        $templateFileName = 'LPA120.pdf';
 
-        $this->assertInstanceOf(Lpa120::class, $form);
+        $strikeThroughs = [];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LPA120');
+        $constituentPdfs = [];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
+        $data = [
             'donor-full-name' => "Mrs Nancy Garrison",
             'donor-address' => "\nBank End Farm House, Undercliff Drive, Ventnor, Isle of Wight, PO38 1UL",
             'lpa-type' => "property-and-financial-affairs",
             'is-repeat-application' => "On",
-            'case-number' => "12345678",
+            'case-number' => 12345678,
             'applicant-type' => "donor",
             'applicant-type-other' => "",
             'applicant-name-title' => "mrs",
@@ -352,6 +318,13 @@ class Lps120Test extends AbstractFormTestClass
             'receive-universal-credit' => "yes",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
+
+        $this->verifyExpectedPdfData($pdf, $numberOfPages, $formattedLpaRef, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift);
+
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lpa120.pdf');
     }
 }
