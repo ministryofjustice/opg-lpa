@@ -3,6 +3,7 @@
 namespace Application\Model\Rest;
 
 use Application\DataAccess\Mongo\CollectionFactory;
+use Application\DataAccess\Mongo\DateCallback;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\DateTime;
 use Application\Library\Lpa\StateChecker;
@@ -278,7 +279,7 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
         // if the Document has changed since this process loaded it.
         $result = $collection->updateOne(
             [ '_id'=>$lpa->id, 'updatedAt'=>$lastUpdated ],
-            ['$set' => array_merge($lpa->toMongoArray(), ['search' => $searchField])],
+            ['$set' => array_merge($lpa->toArray(new DateCallback()), ['search' => $searchField])],
             [ 'upsert'=>false, 'multiple'=>false ]
         );
 

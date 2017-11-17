@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Rest\Users;
 
+use Application\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Users\Entity;
@@ -68,7 +69,7 @@ class ResourceTest extends AbstractResourceTest
     {
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollectionFactory::class);
-        $userCollection->shouldReceive('findOne')->andReturn($user->toMongoArray())->once();
+        $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $userCollection->shouldNotReceive('insertOne');
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
@@ -113,7 +114,7 @@ class ResourceTest extends AbstractResourceTest
     {
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollectionFactory::class);
-        $userCollection->shouldReceive('findOne')->andReturn($user->toMongoArray())->once();
+        $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $userCollection->shouldNotReceive('updateOne');
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
@@ -138,7 +139,7 @@ class ResourceTest extends AbstractResourceTest
     {
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollectionFactory::class);
-        $userCollection->shouldReceive('findOne')->andReturn($user->toMongoArray())->once();
+        $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $updateResult = Mockery::mock(UpdateResult::class);
         $updateResult->shouldReceive('getModifiedCount')->andReturn(1);
         $userCollection->shouldReceive('updateOne')->andReturn($updateResult)->once();
@@ -160,7 +161,7 @@ class ResourceTest extends AbstractResourceTest
     {
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollectionFactory::class);
-        $userCollection->shouldReceive('findOne')->andReturn($user->toMongoArray())->once();
+        $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $updateResult = Mockery::mock(UpdateResult::class);
         $updateResult->shouldReceive('getModifiedCount')->andReturn(2);
         $userCollection->shouldReceive('updateOne')->andReturn($updateResult)->once();

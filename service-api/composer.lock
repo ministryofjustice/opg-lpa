@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e96ec203095c3113717a5fd9cf0325f6",
+    "content-hash": "9623a672ca0a099a5208f44c0b10e7f7",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -548,21 +548,20 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "6.0.3",
+            "version": "dev-LPA-2448-mongo_logic_out_of_datamodels",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "d3f1c0d786b5cd64afa360d010f6b4ebe766c3af"
+                "reference": "929b68c582478a8b271a517d5f4bdbde3053f258"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/d3f1c0d786b5cd64afa360d010f6b4ebe766c3af",
-                "reference": "d3f1c0d786b5cd64afa360d010f6b4ebe766c3af",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/929b68c582478a8b271a517d5f4bdbde3053f258",
+                "reference": "929b68c582478a8b271a517d5f4bdbde3053f258",
                 "shasum": ""
             },
             "require": {
                 "egulias/email-validator": "~1.2",
-                "mongodb/mongodb": "^1.1",
                 "php": "7.0.*",
                 "symfony/intl": "^2.7",
                 "symfony/validator": "^2.7"
@@ -581,10 +580,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/6.0.3",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/LPA-2448-mongo_logic_out_of_datamodels",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2017-10-20T11:59:12+00:00"
+            "time": "2017-11-17T20:48:52+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
@@ -6370,7 +6369,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "ministryofjustice/opg-lpa-datamodels": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

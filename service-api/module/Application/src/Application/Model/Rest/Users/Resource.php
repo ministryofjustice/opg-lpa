@@ -2,6 +2,7 @@
 
 namespace Application\Model\Rest\Users;
 
+use Application\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
@@ -194,7 +195,7 @@ class Resource extends AbstractResource
 
         if ($new){
 
-            $collection->insertOne( $user->toMongoArray() );
+            $collection->insertOne( $user->toArray(new DateCallback()) );
 
         } else {
 
@@ -213,7 +214,7 @@ class Resource extends AbstractResource
             // if the User has changed since this process loaded it.
             $result = $collection->updateOne(
                 ['_id' => $user->id, 'updatedAt' => $lastUpdated],
-                ['$set' => $user->toMongoArray()],
+                ['$set' => $user->toArray(new DateCallback())],
                 ['upsert' => false, 'multiple' => false]
             );
 

@@ -3,6 +3,7 @@
 namespace ApplicationTest;
 
 use Application\DataAccess\Mongo\CollectionFactory;
+use Application\DataAccess\Mongo\DateCallback;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Users\Entity as UserEntity;
 use Application\Library\Authentication\Identity\User as UserIdentity;
@@ -171,10 +172,10 @@ abstract class AbstractResourceBuilder
 
                 $this->lpaCollection->shouldReceive('findOne')
                     ->with(['_id' => (int)$this->lpa->id, 'user' => $this->user->id])
-                    ->andReturn($this->lpa->toMongoArray());
+                    ->andReturn($this->lpa->toArray(new DateCallback()));
                 $this->lpaCollection->shouldReceive('findOne')
                     ->with(['_id' => $this->lpa->id])
-                    ->andReturn($this->lpa->toMongoArray());
+                    ->andReturn($this->lpa->toArray(new DateCallback()));
 
                 if ($this->locked) {
                     $this->lpaCollection->shouldReceive('count')

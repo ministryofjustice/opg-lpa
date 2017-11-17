@@ -6,6 +6,7 @@ use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
 use PHPUnit\Framework\TestCase;
+use DateTime;
 
 class UserTest extends TestCase
 {
@@ -31,11 +32,14 @@ class UserTest extends TestCase
         $this->assertNotNull($errors['updatedAt']);
     }
 
-    public function testToMongoArray()
+    public function testToArrayForMongo()
     {
         $user = FixturesData::getUser();
 
-        $mongoArray = $user->toMongoArray();
-        $this->assertEquals($user->get('id'), $mongoArray['_id']);
+        $lpaArray = $user->toArray(function (DateTime $dateTime) {
+            //  Dummy callable
+        });
+
+        $this->assertEquals($user->get('id'), $lpaArray['_id']);
     }
 }

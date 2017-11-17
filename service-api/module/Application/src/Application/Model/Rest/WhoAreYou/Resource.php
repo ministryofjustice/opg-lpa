@@ -2,6 +2,7 @@
 
 namespace Application\Model\Rest\WhoAreYou;
 
+use Application\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Rest\AbstractResource;
@@ -110,7 +111,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $collection = $this->getCollection('stats-who');
 
-        $collection->insertOne( $answer->toMongoArray() );
+        $collection->insertOne( $answer->toArray(new DateCallback()) );
 
         //---
 

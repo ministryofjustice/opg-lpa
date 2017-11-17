@@ -2,6 +2,7 @@
 
 namespace Application\Model\Rest\Applications;
 
+use Application\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
@@ -133,7 +134,7 @@ class Resource extends AbstractResource implements UserConsumerInterface
 
         }
 
-        $collection->insertOne( $lpa->toMongoArray() );
+        $collection->insertOne( $lpa->toArray(new DateCallback()) );
 
         $entity = new Entity( $lpa );
 

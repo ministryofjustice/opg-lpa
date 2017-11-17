@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Rest\Applications;
 
+use Application\DataAccess\Mongo\DateCallback;
 use Iterator;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
@@ -18,7 +19,7 @@ class DummyLpaMongoCursor implements Iterator
     {
         $this->lpas = [];
         foreach ($lpas as $lpa) {
-            array_push($this->lpas, $lpa->toMongoArray());
+            array_push($this->lpas, $lpa->toArray(new DateCallback()));
         }
         $this->lpaIndex = 0;
     }
