@@ -94,6 +94,12 @@ return [
         'lp3-primaryAttorney-3' =>              ['bx' => 312, 'by' => 242, 'tx' => 552, 'ty' => 386]
     ],
 
+    'blanks' => [
+        'applicant-signature-1' => ['x1' => 297, 'y1' => 509, 'x2' => 560, 'y2' => 382],
+        'applicant-signature-2' => ['x1' => 31,  'y1' => 379, 'x2' => 295, 'y2' => 252],
+        'applicant-signature-3' => ['x1' => 297, 'y1' => 379, 'x2' => 560, 'y2' => 252]
+    ],
+
     'footer' => [
         'lp1f'       => 'LP1F Property and financial affairs (07.15)',
         'lp1f-draft' => 'LP1F Register your LPA (07.15)',

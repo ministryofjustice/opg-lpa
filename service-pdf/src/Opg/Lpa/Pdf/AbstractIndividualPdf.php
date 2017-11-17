@@ -7,6 +7,7 @@ use Opg\Lpa\DataModel\Lpa\StateChecker;
 use mikehaertl\pdftk\Pdf as PdftkPdf;
 use ZendPdf\PdfDocument as ZendPdfDocument;
 use Exception;
+use ZendPdf\Resource\Image\Png;
 
 /**
  * Class AbstractIndividualPdf
@@ -32,6 +33,13 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * @var array
      */
     private $strikeThroughTargets = [];
+
+    /**
+     * Area references that should have a blank drawn over them
+     *
+     * @var array
+     */
+    private $blankTargets = [];
 
     /**
      * @var array
@@ -165,6 +173,44 @@ abstract class AbstractIndividualPdf extends AbstractPdf
             }
         }
 
+        //  Draw any blanks
+        if (!empty($this->blankTargets)) {
+            //  Check to see if drawing blanks is disabled or not
+            $disableBlanks = false;
+
+            if (isset($this->config['service']['disable_blanks'])) {
+                $disableBlanks = (bool)$this->config['service']['disable_blanks'];
+            }
+
+            if (!$disableBlanks) {
+                // draw blank image
+                $pdfForStrikeThroughs = ZendPdfDocument::load($this->pdfFile);
+
+                $blank = new Png($this->config['service']['assets']['source_template_path']."/blank.png");
+
+                foreach ($this->blankTargets as $pageNo => $pageDrawingTargets) {
+                    $page = $pdfForStrikeThroughs->pages[$pageNo];
+
+                    foreach ($pageDrawingTargets as $pageDrawingTarget) {
+                        //  Get the coordinates for this target from the config
+                        if (isset($this->config['blanks'][$pageDrawingTarget])) {
+                            $blankCoordinates = $this->config['blanks'][$pageDrawingTarget];
+
+                            $page->drawImage(
+                                $blank,
+                                $blankCoordinates['x1'],
+                                $blankCoordinates['y1'],
+                                $blankCoordinates['x2'],
+                                $blankCoordinates['y2']
+                            );
+                        }
+                    }
+                }
+
+                $pdfForStrikeThroughs->save($this->pdfFile);
+            }
+        }
+
         //  Process any constituent PDFs
         if (!empty($this->constituentPdfs)) {
             //  Sort the constituent PDFs into the required insertion order
@@ -240,6 +286,28 @@ abstract class AbstractIndividualPdf extends AbstractPdf
         }
 
         $this->strikeThroughTargets[$pageNumber][] = $areaReference;
+
+        return $this;
+    }
+
+    /**
+     * Draw a blank section on the specified page
+     *
+     * @param $areaReference
+     * @param int $pageNumber
+     * @return $this
+     */
+    protected function addBlank($areaReference, $pageNumber = 1)
+    {
+        //  Adjust the page number for zero based indexes
+        $pageNumber--;
+
+        //  If a section doesn't exist for this page create one now
+        if (!isset($this->blankTargets[$pageNumber])) {
+            $this->blankTargets[$pageNumber] = [];
+        }
+
+        $this->blankTargets[$pageNumber][] = $areaReference;
 
         return $this;
     }
