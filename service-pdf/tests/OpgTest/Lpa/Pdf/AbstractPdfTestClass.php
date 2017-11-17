@@ -119,6 +119,8 @@ abstract class AbstractPdfTestClass extends TestCase
                     $this->verifyExpectedPdfData($constituentPdf, $templateFileName, $strikeThroughTargets, $constituentPdfs, $data, 0);
                 } elseif ($constituentPdf instanceof AbstractAggregator) {
                     //  TODO - How to test aggregators here? Make the PDFs protected property in there be visible too and feed back in?
+                    //  For now just assert that the expected value is null as a placeholder
+                    $this->assertTrue(is_null($expectedPdf));
                 } else {
                     //  The value should be a string so do a direct comparison
                     $this->assertEquals($expectedPdf, $constituentPdf);
