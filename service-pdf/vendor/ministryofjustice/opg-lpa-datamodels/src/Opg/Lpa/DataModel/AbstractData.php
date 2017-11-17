@@ -8,7 +8,6 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use DateTime;
 use InvalidArgumentException;
 use JsonSerializable;
-use MongoDB\BSON\UTCDateTime as MongoDate;
 
 /**
  * This class is extended by all entities that make up an LPA, including the LPA object itself.
@@ -121,7 +120,10 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
             throw new InvalidArgumentException("$property is not a valid property");
         }
 
-        if ($value instanceof MongoDate) {
+        //  TODO - Find a better solution for this
+        //  Check to see if the value is a UTC date time from Mongo
+        //  This is an 'is_a' check to avoid the need to add Mongo as a package dependency for datamodels
+        if (is_a($value, 'MongoDB\BSON\UTCDateTime')) {
             $value = $value->toDateTime();
         }
 
@@ -240,30 +242,26 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     /**
      * Returns $this as an array, propagating to all properties that implement AccessorInterface.
      *
-     * @param string $dateFormat
+     * @param callable|null $mongoDateCallback
      * @return array
      */
-    public function toArray($dateFormat = 'string')
+    public function toArray(callable $mongoDateCallback = null)
     {
         $values = get_object_vars($this);
 
         foreach ($values as $k => $v) {
             if ($v instanceof DateTime) {
-                switch ($dateFormat) {
-                    case 'string':
-                        $values[$k] = $v->format('Y-m-d\TH:i:s.uO'); // ISO8601 including microseconds
-                        break;
-                    case 'mongo':
-                        //Convert to MongoDate, including microseconds...
-                        $values[$k] = new MongoDate($v);
-                        break;
-                    default:
+                if (is_callable($mongoDateCallback)) {
+                    $values[$k] = call_user_func($mongoDateCallback, $v);
+                } else {
+                    //  Get the value as a normal datetime string
+                    $values[$k] = $v->format('Y-m-d\TH:i:s.uO'); // ISO8601 including microseconds
                 }
             }
 
             // Recursively build this array...
             if ($v instanceof AccessorInterface) {
-                $values[$k] = $v->toArray($dateFormat);
+                $values[$k] = $v->toArray($mongoDateCallback);
             }
 
             // If the value is an array, check if it contains instances of AccessorInterface...
@@ -271,30 +269,13 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
                 // If so, map them...
                 foreach ($v as $a => $b) {
                     if ($b instanceof AccessorInterface) {
-                        $values[$k][$a] = $b->toArray($dateFormat);
+                        $values[$k][$a] = $b->toArray($mongoDateCallback);
                     }
                 }
             }
         }
 
         return $values;
-    }
-
-    public function getArrayCopy()
-    {
-        throw new \Exception('Is this used anywhere? If not I am going to remove it.');
-
-        return $this->toArray();
-    }
-
-    /**
-     * Returns $this as an array suitable for inserting into MongoDB.
-     *
-     * @return array
-     */
-    public function toMongoArray()
-    {
-        return $this->toArray('mongo');
     }
 
     /**
@@ -304,7 +285,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      */
     public function jsonSerialize()
     {
-        return $this->toArray('string');
+        return $this->toArray();
     }
 
     /**
@@ -336,7 +317,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      */
     public function flatten($prefix = '')
     {
-        return $this->flattenArray($this->toArray('string'), $prefix);
+        return $this->flattenArray($this->toArray(), $prefix);
     }
 
     /**

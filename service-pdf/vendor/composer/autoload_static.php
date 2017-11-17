@@ -14,7 +14,6 @@ class ComposerStaticInitf16902dd85272873c41381a1e27c3546
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '8a9dc1de0ca7e01f3e08231539562f61' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/functions.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '3a37ebac017bc098e9a86b35401e7a68' => __DIR__ . '/..' . '/mongodb/mongodb/src/functions.php',
         'be01b9b16925dcb22165c40b46681ac6' => __DIR__ . '/..' . '/wp-cli/php-cli-tools/lib/cli/cli.php',
         '6a47392539ca2329373e0d33e1dba053' => __DIR__ . '/..' . '/symfony/polyfill-intl-icu/bootstrap.php',
     );
@@ -71,7 +70,6 @@ class ComposerStaticInitf16902dd85272873c41381a1e27c3546
         'M' => 
         array (
             'Monolog\\' => 8,
-            'MongoDB\\' => 8,
         ),
         'J' => 
         array (
@@ -214,10 +212,6 @@ class ComposerStaticInitf16902dd85272873c41381a1e27c3546
         'Monolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
-        ),
-        'MongoDB\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/mongodb/mongodb/src',
         ),
         'JmesPath\\' => 
         array (
