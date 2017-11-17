@@ -1,19 +1,18 @@
 <?php
 
-namespace OpgTest\Lpa\Pdf\Service\Forms;
+namespace OpgTest\Lpa\Pdf;
 
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\Pdf\Service\Forms\Lp1h;
-use mikehaertl\pdftk\Pdf;
-use Mockery;
-use UnexpectedValueException;
+use Opg\Lpa\Pdf\Lp1h;
+use Exception;
 
-class Lp1hTest extends AbstractFormTestClass
+class Lp1hTest extends AbstractPdfTestClass
 {
     public function testConstructorThrowsExceptionNotEnoughData()
     {
-        $this->setExpectedException('RuntimeException', 'LPA does not contain all the required data to generate a LP1');
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('LPA does not contain all the required data to generate Opg\Lpa\Pdf\Lp1h');
 
         new Lp1h(new Lpa());
     }
@@ -21,20 +20,119 @@ class Lp1hTest extends AbstractFormTestClass
     public function testGenerate()
     {
         $lpa = $this->getLpa(false);
-        $lp1f = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        $pdf = new Lp1h($lpa);
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -117,13 +215,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -131,7 +222,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -194,7 +285,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -205,7 +295,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -222,16 +311,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateDraft()
@@ -242,20 +329,118 @@ class Lp1hTest extends AbstractFormTestClass
         //  Remove some details so the LPA is determined to be in a draft state
         $lpa->payment = null;
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetInstrument.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -338,13 +523,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -352,7 +530,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'lpa-document-primaryAttorneys-0-name-title' => "Mrs",
             'lpa-document-primaryAttorneys-0-name-first' => "Amy",
             'lpa-document-primaryAttorneys-0-name-last' => "Wheeler",
@@ -407,7 +585,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -418,7 +595,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -435,16 +611,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateSimpleLpaWithNoContinuationSheets()
@@ -458,20 +632,97 @@ class Lp1hTest extends AbstractFormTestClass
         array_splice($lpa->document->replacementAttorneys, 2);
         array_splice($lpa->document->peopleToNotify, 4);
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -550,13 +801,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -564,7 +808,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -627,7 +871,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -638,7 +881,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -655,16 +897,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateCanSustainLifeFalse()
@@ -675,20 +915,118 @@ class Lp1hTest extends AbstractFormTestClass
         //  Change when the life sustaining treatment questions can be made
         $lpa->document->primaryAttorneyDecisions->canSustainLife = false;
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-A",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -771,13 +1109,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -785,7 +1116,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -848,7 +1179,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -859,7 +1189,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -876,16 +1205,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-A",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateDonorRegistering()
@@ -896,20 +1223,129 @@ class Lp1hTest extends AbstractFormTestClass
         //  Change the person registering the LPA to the donor
         $lpa->document->whoIsRegistering = 'donor';
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            16 => [
+                "applicant-0-hw",
+                "applicant-1-hw",
+                "applicant-2-hw",
+                "applicant-3-hw",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+            19 => [
+                "applicant-signature-1",
+                "applicant-signature-2",
+                "applicant-signature-3",
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -968,13 +1404,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-certificateProvider-address-postcode' => "OX10 9NN",
             'who-is-applicant' => "donor",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -982,7 +1411,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -1045,7 +1474,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -1056,7 +1484,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -1073,27 +1500,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            19 => [
-                "applicant-signature-1",
-                "applicant-signature-2",
-                "applicant-signature-3",
-            ],
-            16 => [
-                "applicant-0-hw",
-                "applicant-1-hw",
-                "applicant-2-hw",
-                "applicant-3-hw",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateSinglePrimaryAttorney()
@@ -1105,20 +1519,95 @@ class Lp1hTest extends AbstractFormTestClass
         array_splice($lpa->document->primaryAttorneys, 1);
         array_splice($lpa->document->whoIsRegistering, 1);
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            1 => [
+                "primaryAttorney-1-hw",
+            ],
+            5 => [
+                "life-sustain-B",
+            ],
+            2 => [
+                "primaryAttorney-2",
+                "primaryAttorney-3",
+            ],
+            16 => [
+                "applicant-1-hw",
+                "applicant-2-hw",
+                "applicant-3-hw",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+            19 => [
+                "applicant-signature-1",
+                "applicant-signature-2",
+                "applicant-signature-3",
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -1182,13 +1671,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-0-dob-date-month' => "05",
             'applicant-0-dob-date-year' => "1975",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -1196,7 +1678,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -1226,7 +1708,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -1237,7 +1718,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -1254,33 +1734,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            2 => [
-                "primaryAttorney-2",
-                "primaryAttorney-3",
-            ],
-            19 => [
-                "applicant-signature-3",
-                "applicant-signature-2",
-                "applicant-signature-1",
-            ],
-            1 => [
-                "primaryAttorney-1-hw",
-            ],
-            16 => [
-                "applicant-1-hw",
-                "applicant-2-hw",
-                "applicant-3-hw",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateSingleReplacementAttorney()
@@ -1291,20 +1752,101 @@ class Lp1hTest extends AbstractFormTestClass
         //  Reduce the number of replacement attorneys down to one
         array_splice($lpa->document->replacementAttorneys, 1);
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            4 => [
+                "replacementAttorney-1-hw",
+            ],
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -1386,13 +1928,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -1400,7 +1935,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -1463,7 +1998,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -1480,19 +2014,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            4 => [
-                "replacementAttorney-1-hw",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateZeroReplacementAttorneys()
@@ -1504,20 +2033,91 @@ class Lp1hTest extends AbstractFormTestClass
         $lpa->document->replacementAttorneys = [];
         $lpa->document->replacementAttorneyDecisions = null;
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            4 => [
+                "replacementAttorney-0-hw",
+                "replacementAttorney-1-hw",
+            ],
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -1598,13 +2198,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -1612,7 +2205,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -1681,20 +2274,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            4 => [
-                "replacementAttorney-0-hw",
-                "replacementAttorney-1-hw",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateThreeAttorneys()
@@ -1710,20 +2297,93 @@ class Lp1hTest extends AbstractFormTestClass
         $lpa->document->replacementAttorneys = [];
         $lpa->document->replacementAttorneyDecisions = null;
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            2 => [
+                "primaryAttorney-3",
+            ],
+            4 => [
+                "replacementAttorney-0-hw",
+                "replacementAttorney-1-hw",
+            ],
+            5 => [
+                "life-sustain-B",
+            ],
+            14 => [
+                "attorney-signature-hw",
+            ],
+            16 => [
+                "applicant-3-hw",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+            19 => [
+                "applicant-signature-3",
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -1797,13 +2457,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-2-dob-date-month' => "09",
             'applicant-2-dob-date-year' => "1982",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -1811,7 +2464,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -1866,32 +2519,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            2 => [
-                "primaryAttorney-3",
-            ],
-            19 => [
-                "applicant-signature-3",
-            ],
-            4 => [
-                "replacementAttorney-0-hw",
-                "replacementAttorney-1-hw",
-            ],
-            14 => [
-                "attorney-signature-hw",
-            ],
-            16 => [
-                "applicant-3-hw",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateTwoAttorneys()
@@ -1907,20 +2542,99 @@ class Lp1hTest extends AbstractFormTestClass
         $lpa->document->replacementAttorneys = [];
         $lpa->document->replacementAttorneyDecisions = null;
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            2 => [
+                "primaryAttorney-2",
+                "primaryAttorney-3",
+            ],
+            4 => [
+                "replacementAttorney-0-hw",
+                "replacementAttorney-1-hw",
+            ],
+            5 => [
+                "life-sustain-B",
+            ],
+            13 => [
+                "attorney-signature-hw",
+            ],
+            14 => [
+                "attorney-signature-hw",
+            ],
+            16 => [
+                "applicant-2-hw",
+                "applicant-3-hw",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+            19 => [
+                "applicant-signature-2",
+                "applicant-signature-3",
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -1988,13 +2702,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-1-dob-date-month' => "03",
             'applicant-1-dob-date-year' => "1972",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -2002,7 +2709,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -2043,38 +2750,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            2 => [
-                "primaryAttorney-2",
-                "primaryAttorney-3",
-            ],
-            19 => [
-                "applicant-signature-3",
-                "applicant-signature-2",
-            ],
-            4 => [
-                "replacementAttorney-0-hw",
-                "replacementAttorney-1-hw",
-            ],
-            14 => [
-                "attorney-signature-hw",
-            ],
-            16 => [
-                "applicant-2-hw",
-                "applicant-3-hw",
-            ],
-            13 => [
-                "attorney-signature-hw",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateOneAttorneys()
@@ -2090,20 +2773,107 @@ class Lp1hTest extends AbstractFormTestClass
         $lpa->document->replacementAttorneys = [];
         $lpa->document->replacementAttorneyDecisions = null;
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            1 => [
+                "primaryAttorney-1-hw",
+            ],
+            2 => [
+                "primaryAttorney-2",
+                "primaryAttorney-3",
+            ],
+            4 => [
+                "replacementAttorney-0-hw",
+                "replacementAttorney-1-hw",
+            ],
+            5 => [
+                "life-sustain-B",
+            ],
+            12 => [
+                "attorney-signature-hw",
+            ],
+            13 => [
+                "attorney-signature-hw",
+            ],
+            14 => [
+                "attorney-signature-hw",
+            ],
+            16 => [
+                "applicant-1-hw",
+                "applicant-2-hw",
+                "applicant-3-hw",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+            19 => [
+                "applicant-signature-1",
+                "applicant-signature-2",
+                "applicant-signature-3",
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -2165,13 +2935,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-0-dob-date-month' => "05",
             'applicant-0-dob-date-year' => "1975",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -2179,7 +2942,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -2206,46 +2969,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            2 => [
-                "primaryAttorney-2",
-                "primaryAttorney-3",
-            ],
-            19 => [
-                "applicant-signature-3",
-                "applicant-signature-2",
-                "applicant-signature-1",
-            ],
-            1 => [
-                "primaryAttorney-1-hw",
-            ],
-            4 => [
-                "replacementAttorney-0-hw",
-                "replacementAttorney-1-hw",
-            ],
-            12 => [
-                "attorney-signature-hw",
-            ],
-            13 => [
-                "attorney-signature-hw",
-            ],
-            14 => [
-                "attorney-signature-hw",
-            ],
-            16 => [
-                "applicant-1-hw",
-                "applicant-2-hw",
-                "applicant-3-hw",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGeneratePrimaryAttorneysActJointly()
@@ -2256,20 +2987,118 @@ class Lp1hTest extends AbstractFormTestClass
         //  Change how the primary attorneys act to jointly
         $lpa->document->primaryAttorneyDecisions->how = 'jointly';
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -2352,13 +3181,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -2366,7 +3188,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -2429,7 +3251,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -2440,7 +3261,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -2457,16 +3277,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateLessThanSixPeopleToNotify()
@@ -2477,20 +3295,121 @@ class Lp1hTest extends AbstractFormTestClass
         //  Reduce the number of people to notify to 3
         array_splice($lpa->document->peopleToNotify, 3);
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            6 => [
+                "people-to-notify-3",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -2564,13 +3483,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -2578,7 +3490,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -2641,7 +3553,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -2652,7 +3563,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -2669,19 +3579,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            6 => [
-                "people-to-notify-3",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateEmptyInstructionsAndPreferences()
@@ -2693,20 +3598,122 @@ class Lp1hTest extends AbstractFormTestClass
         $lpa->document->instruction = '';
         $lpa->document->preference = '';
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            7 => [
+                "preference",
+                "instruction",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -2787,13 +3794,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -2801,7 +3801,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -2864,7 +3864,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -2875,7 +3874,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -2892,20 +3890,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            7 => [
-                "preference",
-                "instruction",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateContactDetailsEnteredManuallyFalse()
@@ -2916,20 +3908,118 @@ class Lp1hTest extends AbstractFormTestClass
         //  Set contact details entered manually to false
         $lpa->document->correspondent->contactDetailsEnteredManually = false;
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -3019,7 +4109,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -3082,7 +4172,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -3093,7 +4182,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -3110,19 +4198,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            17 => [
-                "correspondent-empty-name-address",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateCorrespondentIsAttorney()
@@ -3140,20 +4223,118 @@ class Lp1hTest extends AbstractFormTestClass
             'contactDetailsEnteredManually' => false,
         ]);
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -3241,7 +4422,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-name-last' => "Wheeler",
             'lpa-document-correspondent-company' => "",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -3304,7 +4485,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -3315,7 +4495,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -3332,19 +4511,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            17 => [
-                "correspondent-empty-address",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateCorrespondentIsAttorneyEnteredManually()
@@ -3362,20 +4536,118 @@ class Lp1hTest extends AbstractFormTestClass
             'contactDetailsEnteredManually' => true,
         ]);
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -3462,12 +4734,8 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-name-first' => "Amy",
             'lpa-document-correspondent-name-last' => "Wheeler",
             'lpa-document-correspondent-company' => "",
-            'lpa-document-correspondent-address-address1' => "Brickhill Cottage",
-            'lpa-document-correspondent-address-address2' => "Birch Cross",
-            'lpa-document-correspondent-address-address3' => "Marchington, Uttoxeter, Staffordshire",
-            'lpa-document-correspondent-address-postcode' => "ST14 8NX",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -3530,7 +4798,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -3541,7 +4808,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -3558,16 +4824,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateCorrespondentIsCertificateProvider()
@@ -3585,20 +4849,115 @@ class Lp1hTest extends AbstractFormTestClass
             'contactDetailsEnteredManually' => true,
         ]);
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -3690,7 +5049,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-address-address3' => "Wallingford, Oxfordshire",
             'lpa-document-correspondent-address-postcode' => "OX10 9NN",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -3753,7 +5112,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -3764,7 +5122,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -3781,16 +5138,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateAdditionalPagesPrimaryAttorneysActDepends()
@@ -3802,20 +5157,118 @@ class Lp1hTest extends AbstractFormTestClass
         $lpa->document->primaryAttorneyDecisions->how = 'depends';
         $lpa->document->primaryAttorneyDecisions->howDetails = 'Some information about how they act here';
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -3897,13 +5350,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -3911,7 +5357,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -3974,7 +5420,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -3985,7 +5430,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -4002,16 +5446,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateAdditionalPagesReplacementAttorneysActJointlyAndSeverally()
@@ -4026,20 +5468,95 @@ class Lp1hTest extends AbstractFormTestClass
         //  Change how the replacement attorneys act to jointly and severally
         $lpa->document->replacementAttorneyDecisions->how = 'jointly-attorney-severally';
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            1 => [
+                "primaryAttorney-1-hw",
+            ],
+            2 => [
+                "primaryAttorney-2",
+                "primaryAttorney-3",
+            ],
+            5 => [
+                "life-sustain-B",
+            ],
+            16 => [
+                "applicant-1-hw",
+                "applicant-2-hw",
+                "applicant-3-hw",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+            19 => [
+                "applicant-signature-1",
+                "applicant-signature-2",
+                "applicant-signature-3",
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -4103,13 +5620,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-0-dob-date-month' => "05",
             'applicant-0-dob-date-year' => "1975",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -4117,7 +5627,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -4147,7 +5657,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -4158,7 +5667,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -4175,33 +5683,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            2 => [
-                "primaryAttorney-2",
-                "primaryAttorney-3",
-            ],
-            19 => [
-                "applicant-signature-3",
-                "applicant-signature-2",
-                "applicant-signature-1",
-            ],
-            1 => [
-                "primaryAttorney-1-hw",
-            ],
-            16 => [
-                "applicant-1-hw",
-                "applicant-2-hw",
-                "applicant-3-hw",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateAdditionalPagesReplacementAttorneysActJointly()
@@ -4216,20 +5705,94 @@ class Lp1hTest extends AbstractFormTestClass
         //  Change how the replacement attorneys act to jointly
         $lpa->document->replacementAttorneyDecisions->how = 'jointly';
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            1 => [
+                "primaryAttorney-1-hw",
+            ],
+            2 => [
+                "primaryAttorney-2",
+                "primaryAttorney-3",
+            ],
+            5 => [
+                "life-sustain-B",
+            ],
+            16 => [
+                "applicant-1-hw",
+                "applicant-2-hw",
+                "applicant-3-hw",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+            19 => [
+                "applicant-signature-1",
+                "applicant-signature-2",
+                "applicant-signature-3",
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -4292,13 +5855,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-0-dob-date-month' => "05",
             'applicant-0-dob-date-year' => "1975",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -4306,7 +5862,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -4336,7 +5892,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -4347,7 +5902,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -4364,33 +5918,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            2 => [
-                "primaryAttorney-2",
-                "primaryAttorney-3",
-            ],
-            19 => [
-                "applicant-signature-3",
-                "applicant-signature-2",
-                "applicant-signature-1",
-            ],
-            1 => [
-                "primaryAttorney-1-hw",
-            ],
-            16 => [
-                "applicant-1-hw",
-                "applicant-2-hw",
-                "applicant-3-hw",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateAdditionalPagesSingleReplacementAttorneyStepsInWhenFirst()
@@ -4405,20 +5940,100 @@ class Lp1hTest extends AbstractFormTestClass
         $lpa->document->replacementAttorneyDecisions->when = 'first';
         $lpa->document->replacementAttorneyDecisions->how = null;
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            4 => [
+                "replacementAttorney-1-hw",
+            ],
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -4499,13 +6114,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -4513,7 +6121,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -4576,7 +6184,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -4593,19 +6200,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            4 => [
-                "replacementAttorney-1-hw",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateAdditionalPagesSingleReplacementAttorneyStepsInDepends()
@@ -4620,20 +6222,101 @@ class Lp1hTest extends AbstractFormTestClass
         $lpa->document->replacementAttorneyDecisions->when = 'depends';
         $lpa->document->replacementAttorneyDecisions->whenDetails = 'Some information about how they step in here';
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            4 => [
+                "replacementAttorney-1-hw",
+            ],
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -4715,13 +6398,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -4729,7 +6405,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -4792,7 +6468,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -4809,19 +6484,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-            4 => [
-                "replacementAttorney-1-hw",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateAdditionalPagesMultiReplacementAttorneysActJointlyAndSeverally()
@@ -4832,20 +6502,118 @@ class Lp1hTest extends AbstractFormTestClass
         //  Change how the replacement attorneys act to jointly and severally
         $lpa->document->replacementAttorneyDecisions->how = 'jointly-attorney-severally';
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -4928,13 +6696,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -4942,7 +6703,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -5005,7 +6766,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -5016,7 +6776,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -5033,16 +6792,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateAdditionalPagesMultiReplacementAttorneysActJointly()
@@ -5053,20 +6810,117 @@ class Lp1hTest extends AbstractFormTestClass
         //  Change how the replacement attorneys act to jointly
         $lpa->document->replacementAttorneyDecisions->how = 'jointly';
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -5148,13 +7002,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -5162,7 +7009,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -5225,7 +7072,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -5236,7 +7082,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -5253,16 +7098,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateAdditionalPagesMultiReplacementAttorneysStepsInDepends()
@@ -5274,20 +7117,118 @@ class Lp1hTest extends AbstractFormTestClass
         $lpa->document->replacementAttorneyDecisions->when = 'depends';
         $lpa->document->replacementAttorneyDecisions->whenDetails = 'Some information about how they step in here';
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -5370,13 +7311,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -5384,7 +7318,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -5447,7 +7381,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -5458,7 +7391,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -5475,16 +7407,14 @@ class Lp1hTest extends AbstractFormTestClass
             'footer-registration-right' => "LP1H Register your LPA (07.15)",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 
     public function testGenerateAdditionalPagesLongInstructionsAndPreferences()
@@ -5496,20 +7426,120 @@ class Lp1hTest extends AbstractFormTestClass
         $lpa->document->instruction = 'Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here Some long instructions here';
         $lpa->document->preference = 'Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here Some long preferences here';
 
-        $lp1f = new Lp1h($lpa);
+        $pdf = new Lp1h($lpa);
 
-        $form = $lp1f->generate();
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5716';
+        $templateFileName = 'LP1H.pdf';
 
-        $this->assertInstanceOf(Lp1h::class, $form);
+        $strikeThroughs = [
+            5 => [
+                "life-sustain-B",
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
 
-        $this->verifyTmpFileName($lpa, $form->getPdfFilePath(), 'PDF-LP1H');
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1H_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Elliot",
+                        'signature-attorney-3-name-last' => "Sanders",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Isobel",
+                        'signature-attorney-3-name-last' => "Ward",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Mr",
+                        'signature-attorney-3-name-first' => "Ewan",
+                        'signature-attorney-3-name-last' => "Adams",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'data' => [
+                        'signature-attorney-3-name-title' => "Ms",
+                        'signature-attorney-3-name-first' => "Erica",
+                        'signature-attorney-3-name-last' => "Schmidt",
+                        'footer-instrument-right' => "LP1H Health and welfare (07.15)",
+                        'footer-registration-right' => "LP1H Register your LPA (07.15)",
+                    ],
+                ],
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                null,   //TODO - To be changed after we fix the aggregator checking
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-1-hw',
+                            'applicant-2-hw',
+                            'applicant-3-hw',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-title' => "Mr",
+                        'applicant-0-name-first' => "Elliot",
+                        'applicant-0-name-last' => "Sanders",
+                        'applicant-0-dob-date-day' => "10",
+                        'applicant-0-dob-date-month' => "10",
+                        'applicant-0-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1H.pdf',
+                    'strikeThroughTargets' => [
+                        19 => [
+                            'applicant-signature-1',
+                            'applicant-signature-2',
+                            'applicant-signature-3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $pdf = $form->getPdfObject();
-        $this->assertInstanceOf(Pdf::class, $pdf);
-
-        //  Confirm that the form data is as expected
-        $expectedData = [
-            'lpa-id' => "A510 7295 5716",
+        $data = [
             'lpa-document-donor-name-title' => "Mrs",
             'lpa-document-donor-name-first' => "Nancy",
             'lpa-document-donor-name-last' => "Garrison",
@@ -5592,13 +7622,6 @@ class Lp1hTest extends AbstractFormTestClass
             'applicant-3-dob-date-month' => "09",
             'applicant-3-dob-date-year' => "1973",
             'who-is-correspondent' => "donor",
-            'lpa-document-correspondent-name-title' => "Mrs",
-            'lpa-document-correspondent-name-first' => "Nancy",
-            'lpa-document-correspondent-name-last' => "Garrison",
-            'lpa-document-correspondent-address-address1' => "Bank End Farm House",
-            'lpa-document-correspondent-address-address2' => "Undercliff Drive",
-            'lpa-document-correspondent-address-address3' => "Ventnor, Isle of Wight",
-            'lpa-document-correspondent-address-postcode' => "PO38 1UL",
             'correspondent-contact-by-post' => "On",
             'correspondent-contact-by-phone' => "On",
             'lpa-document-correspondent-phone-number' => "01234123456",
@@ -5606,7 +7629,7 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
             'correspondent-contact-in-welsh' => "On",
             'is-repeat-application' => "On",
-            'repeat-application-case-number' => "12345678",
+            'repeat-application-case-number' => 12345678,
             'pay-by' => "card",
             'lpa-payment-phone-number' => "NOT REQUIRED.",
             'apply-for-fee-reduction' => "On",
@@ -5669,7 +7692,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-0-email-address' => "",
             'lpa-document-replacementAttorneys-1-name-title' => "Mr",
             'lpa-document-replacementAttorneys-1-name-first' => "Ewan",
             'lpa-document-replacementAttorneys-1-name-last' => "Adams",
@@ -5680,7 +7702,6 @@ class Lp1hTest extends AbstractFormTestClass
             'lpa-document-replacementAttorneys-1-address-address2' => "Staplehay",
             'lpa-document-replacementAttorneys-1-address-address3' => "Trull, Taunton, Somerset",
             'lpa-document-replacementAttorneys-1-address-postcode' => "TA3 7HF",
-            'lpa-document-replacementAttorneys-1-email-address' => "",
             'signature-attorney-0-name-title' => "Mrs",
             'signature-attorney-0-name-first' => "Amy",
             'signature-attorney-0-name-last' => "Wheeler",
@@ -5699,15 +7720,13 @@ class Lp1hTest extends AbstractFormTestClass
             'has-more-instructions' => "On",
         ];
 
-        $this->assertEquals($expectedData, $this->extractPdfFormData($pdf));
+        $pageShift = 0;
 
-        //  Confirm the strike through data is as expected
-        $expectedStrikeThroughTargets = [
-            5 => [
-                "life-sustain-B",
-            ],
-        ];
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
-        $this->assertEquals($expectedStrikeThroughTargets, $this->extractStrikeThroughTargets($form));
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1h.pdf');
     }
 }
