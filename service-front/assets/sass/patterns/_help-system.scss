@@ -29,6 +29,7 @@
     .column-left {
         @include box-sizing(border-box);
         width: 75%;
+        min-height: 820px;
         padding: 0 $gutter-half;
         float: left;
 
