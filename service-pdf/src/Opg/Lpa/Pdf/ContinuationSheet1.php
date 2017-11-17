@@ -15,6 +15,11 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 class ContinuationSheet1 extends AbstractContinuationSheet
 {
     /**
+     * Constants
+     */
+    const MAX_ACTORS_CONTINUATION_SHEET_1 = 2;
+
+    /**
      * PDF template file name (without path) for this PDF object
      *
      * @var
@@ -77,7 +82,17 @@ class ContinuationSheet1 extends AbstractContinuationSheet
                 }
 
                 $i++;
+
+                //  If we have filled the sheet then exit
+                if ($i == self::MAX_ACTORS_CONTINUATION_SHEET_1) {
+                    break;
+                }
             }
+        }
+
+        //  If required add a strike through
+        if ($i % self::MAX_ACTORS_CONTINUATION_SHEET_1 > 0) {
+            $this->addStrikeThrough('cs1');
         }
 
         //  Set footer data

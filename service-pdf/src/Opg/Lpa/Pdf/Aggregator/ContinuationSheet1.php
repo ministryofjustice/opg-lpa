@@ -12,11 +12,6 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 class ContinuationSheet1 extends AbstractContinuationSheetAggregator
 {
     /**
-     * Constants
-     */
-    const MAX_ACTORS_CONTINUATION_SHEET_1 = 2;
-
-    /**
      * @var array
      */
     private $actorGroups;
@@ -47,29 +42,34 @@ class ContinuationSheet1 extends AbstractContinuationSheetAggregator
     protected function create(Lpa $lpa)
     {
         //  Loop through the actors and extract sets to send to the continuation sheet PDF for processing
-        $actorsPackage = [];
+        $actorsPackages = [];
         $actorCount = 0;
 
+        //  Divide the actors up into packages and use them to construct the individual continuation sheets
         foreach ($this->actorGroups as $actorType => $actors) {
             foreach ($actors as $actor) {
-                //  If there is no space for this actor type at the moment create it now
-                if (!array_key_exists($actorType, $actorsPackage)) {
-                    $actorsPackage[$actorType] = [];
+                //  If we have filled a package then increment the count
+                $idx = (int) floor($actorCount / ContinuationSheet1Pdf::MAX_ACTORS_CONTINUATION_SHEET_1);
+
+                //  If the required place in the packages array doesn't exist create it now
+                if (!isset($actorsPackages[$idx])) {
+                    $actorsPackages[$idx] = [];
                 }
 
-                //  Add the actor and increment the count
-                $actorsPackage[$actorType][] = $actor;
+                if (!isset($actorsPackages[$idx][$actorType])) {
+                    $actorsPackages[$idx][$actorType] = [];
+                }
+
+                //  Add the actor to the package
+                $actorsPackages[$idx][$actorType][] = $actor;
+
                 $actorCount++;
-
-                //  If ready send to PDF object
-                if ($actorCount == self::MAX_ACTORS_CONTINUATION_SHEET_1) {
-                    $this->addPdf(new ContinuationSheet1Pdf($lpa, $actorsPackage));
-
-                    //  Clear the package and reset the count ready to start again
-                    $actorsPackage = [];
-                    $actorCount = 0;
-                }
             }
+        }
+
+        //  Loop through the actor packages and create the continuation sheets
+        foreach ($actorsPackages as $actorsPackage) {
+            $this->addPdf(new ContinuationSheet1Pdf($lpa, $actorsPackage));
         }
     }
 }
