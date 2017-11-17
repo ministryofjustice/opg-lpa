@@ -2,9 +2,7 @@
 
 namespace OpgTest\Lpa\DataModel;
 
-use Exception;
 use InvalidArgumentException;
-use MongoDB\BSON\UTCDateTime as MongoDate;
 use Opg\Lpa\DataModel\User\User;
 use PHPUnit\Framework\TestCase;
 
@@ -60,14 +58,6 @@ class AbstractDataTest extends TestCase
         $user->set('NullProperty', null);
     }
 
-    public function testSetMongoDate()
-    {
-        $user = new User();
-        $mongoDate = new MongoDate();
-        $user->set('createdAt', $mongoDate);
-        $this->assertEquals($mongoDate->toDateTime(), $user->get('createdAt'));
-    }
-
     public function testValidationAllGroups()
     {
         $user = FixturesData::getUser();
@@ -94,23 +84,6 @@ class AbstractDataTest extends TestCase
         $this->assertEquals(1, count($errors));
         TestHelper::assertNoDuplicateErrorMessages($errors, $this);
         $this->assertNotNull($errors['id']);
-    }
-
-    public function testToArrayDateFormat()
-    {
-        $user = FixturesData::getUser();
-        $userArray = $user->toArray('default');
-        $this->assertTrue($userArray['createdAt'] instanceof \DateTime);
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Is this used anywhere? If not I am going to remove it.
-     */
-    public function testGetArrayCopy()
-    {
-        $user = new User();
-        $user->getArrayCopy();
     }
 
     public function testJsonSerialize()

@@ -224,18 +224,20 @@ class Lpa extends AbstractData
     }
 
     /**
-     * Returns $this as an array suitable for inserting into MongoDB.
-     *
+     * @param callable|null $mongoDateCallback
      * @return array
      */
-    public function toMongoArray()
+    public function toArray(callable $mongoDateCallback = null)
     {
-        $data = parent::toMongoArray();
+        $data = parent::toArray($mongoDateCallback);
 
-        // Rename 'id' to '_id' (keeping it at the beginning of the array)
-        $data = ['_id' => $data['id']] + $data;
+        //  If a mongo callback was used then convert the id value to _id
+        if (is_callable($mongoDateCallback)) {
+            // Rename 'id' to '_id' (keeping it at the beginning of the array)
+            $data = ['_id' => $data['id']] + $data;
 
-        unset($data['id']);
+            unset($data['id']);
+        }
 
         return $data;
     }
