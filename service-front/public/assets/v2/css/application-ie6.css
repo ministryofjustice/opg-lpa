@@ -2647,6 +2647,7 @@ input[type=number] {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   width: 75%;
+  min-height: 820px;
   padding: 0 15px;
   float: left;
   width: 70%; }

@@ -18,7 +18,7 @@ If you can't sign or make a mark yourself, you can ask someone else to sign on y
 
 1. Create your LPA and pay the registration fee: make decisions about your LPA, choose the people you want to be involved, review it and then pay the registration fee. See [Registering your LPA](/help/#topic-registering-the-lpa)
 2. Print and sign your LPA: make sure that all the required people sign your LPA document in the correct order. See [Signing the LPA](/help/#topic-signing-the-lpa)
-3. Post your LPA to OPG: include all documentary evidence required (for example, to pay a reduced fee), as well as a cheque if you are not paying online. 
+3. Post your LPA to OPG: include all documentary evidence required (for example, to pay a reduced fee), as well as a cheque if you are not paying online.
 
 You don't have to register your LPA right after you create it but it's a good idea to. You can then sort out any problems in good time and your LPA will then be ready to use as soon as you need it.
 
@@ -32,18 +32,3 @@ You can pay by:
 
 * cheque
 * GOV.UK Pay secure online payment
-
-## Before you begin
-
-You need to make quite a few decisions when you make your LPA. You should think about these decisions in advance. It's important to know how your LPA will work and to talk to the people you want to be involved.
-
-### Questions to ask yourself
-
-* Who will be your attorneys? These are the people who act on your behalf under the LPA.
-* How many attorneys do you need?
-* Should you have replacement attorneys? These are people who step in if original attorneys can no longer act, so they're a way to protect your LPA.
-* How should your attorneys make decisions on your behalf? Should they act together or individually, or a mixture of the two?
-* Do you want to give your attorneys any instructions about how to make decisions?
-* Do you want to state any preferences about your beliefs and values to guide your attorneys' decision-making?
-* Who's the independent person – the certificate provider – who can sign your LPA to confirm that you understand it and no one is forcing you to make it? This person is a safeguard who can raise concerns when you make your LPA.
-* Are there any 'people to notify' about your LPA when it is about to be registered? These people are an optional safeguard who can raise concerns about your LPA before it can be used.
