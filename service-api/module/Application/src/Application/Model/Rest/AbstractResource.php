@@ -190,7 +190,7 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
 
         if( $isCreated ){
 
-            $this->info('LPA exists in database', ['lpaid' => $lpa->id]);
+            $this->info('LPA is created', ['lpaid' => $lpa->id]);
 
             if( !($lpa->createdAt instanceof \DateTime) ){
 
@@ -201,7 +201,7 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
 
         } else {
 
-            $this->info('LPA does not exist in database', ['lpaid' => $lpa->id]);
+            $this->info('LPA is not fully created', ['lpaid' => $lpa->id]);
 
             $lpa->createdAt = null;
         }
