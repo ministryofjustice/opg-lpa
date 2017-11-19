@@ -60,6 +60,10 @@ class Module{
 
         }
 
+        //  Convert the route to lowercase
+        $path = $request->getUri()->getPath();
+        $request->getUri()->setPath(strtolower($path));
+
     } // function
 
     /**
