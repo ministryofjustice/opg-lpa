@@ -120,10 +120,8 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
             throw new InvalidArgumentException("$property is not a valid property");
         }
 
-        //  TODO - Find a better solution for this
-        //  Check to see if the value is a UTC date time from Mongo
-        //  This is an 'is_a' check to avoid the need to add Mongo as a package dependency for datamodels
-        if (is_a($value, 'MongoDB\BSON\UTCDateTime')) {
+        //  If this value has a toDateTime method then call that here
+        if (method_exists($value, 'toDateTime')) {
             $value = $value->toDateTime();
         }
 
@@ -242,17 +240,17 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     /**
      * Returns $this as an array, propagating to all properties that implement AccessorInterface.
      *
-     * @param callable|null $mongoDateCallback
+     * @param callable|null $dateCallback
      * @return array
      */
-    public function toArray(callable $mongoDateCallback = null)
+    public function toArray(callable $dateCallback = null)
     {
         $values = get_object_vars($this);
 
         foreach ($values as $k => $v) {
             if ($v instanceof DateTime) {
-                if (is_callable($mongoDateCallback)) {
-                    $values[$k] = call_user_func($mongoDateCallback, $v);
+                if (is_callable($dateCallback)) {
+                    $values[$k] = call_user_func($dateCallback, $v);
                 } else {
                     //  Get the value as a normal datetime string
                     $values[$k] = $v->format('Y-m-d\TH:i:s.uO'); // ISO8601 including microseconds
@@ -261,7 +259,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
 
             // Recursively build this array...
             if ($v instanceof AccessorInterface) {
-                $values[$k] = $v->toArray($mongoDateCallback);
+                $values[$k] = $v->toArray($dateCallback);
             }
 
             // If the value is an array, check if it contains instances of AccessorInterface...
@@ -269,7 +267,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
                 // If so, map them...
                 foreach ($v as $a => $b) {
                     if ($b instanceof AccessorInterface) {
-                        $values[$k][$a] = $b->toArray($mongoDateCallback);
+                        $values[$k][$a] = $b->toArray($dateCallback);
                     }
                 }
             }
