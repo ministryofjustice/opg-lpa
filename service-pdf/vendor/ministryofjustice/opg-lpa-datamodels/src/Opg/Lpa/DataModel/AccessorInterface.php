@@ -42,10 +42,10 @@ interface AccessorInterface
     /**
      * Returns an array representation of $this instance.
      *
-     * @param callable|null $mongoDateCallback
+     * @param callable|null $dateCallback
      * @return array
      */
-    public function toArray(callable $mongoDateCallback = null);
+    public function toArray(callable $dateCallback = null);
 
     /**
      * Returns an JSON representation of $this instance.

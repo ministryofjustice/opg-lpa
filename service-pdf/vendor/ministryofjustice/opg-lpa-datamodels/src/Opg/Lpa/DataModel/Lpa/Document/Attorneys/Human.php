@@ -64,9 +64,9 @@ class Human extends AbstractAttorney
         return parent::map($property, $v);
     }
 
-    public function toArray(callable $mongoDateCallback = null)
+    public function toArray(callable $dateCallback = null)
     {
-        return array_merge(parent::toArray($mongoDateCallback), [
+        return array_merge(parent::toArray($dateCallback), [
             'type' => 'human'
         ]);
     }
