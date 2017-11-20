@@ -33,7 +33,7 @@ var postLogoutUrl = 'https://www.gov.uk/done/lasting-power-of-attorney';
 var rootRedirectUrl = 'https://www.gov.uk/power-of-attorney/make-lasting-power';
 
 // Number of articles contained in the guidance popup.
-var numberOfGuidanceHelpTopics = 19;
+var numberOfGuidanceHelpTopics = 20;
 
 // Regular expression to check Gov Pay landing page
 var govPayUrlRegExp = new RegExp('^https:\/\/www\.payments\.service\.gov\.uk\/card\_details\/[0-9a-z]{24,}$' );
