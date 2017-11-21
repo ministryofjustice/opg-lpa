@@ -42,16 +42,10 @@ interface AccessorInterface
     /**
      * Returns an array representation of $this instance.
      *
+     * @param callable|null $dateCallback
      * @return array
      */
-    public function toArray();
-
-    /**
-     * Returns an array representation of $this instance suitable to be saved to Mongo.
-     *
-     * @return array
-     */
-    public function toMongoArray();
+    public function toArray(callable $dateCallback = null);
 
     /**
      * Returns an JSON representation of $this instance.
