@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.5 - 2017-11-07
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#151](https://github.com/zendframework/zend-inputfilter/pull/151) fixes an
+  issue in `Factory::createInput()` introduced in
+  [#2](https://github.com/zendframework/zend-inputfilter/pull/2) whereby an
+  input pulled from the input filter manager would be injected with the default
+  filter and validator chains, overwriting any chains that were set during
+  instantiation and/or `init()`. They are now never overwritten.
+
+- [#149](https://github.com/zendframework/zend-inputfilter/pull/149) fixes an
+  issue with how error messages for collection input field items were reported;
+  previously, as soon as one item in the collection failed, the same validation
+  message was propagated to all other items. This is now resolved.
+
+- [#131](https://github.com/zendframework/zend-inputfilter/pull/131) fixes a
+  regression introduced in version 2.2.6 within
+  `BaseInputFilter::setValidatorGroup()` whereby it began emitting exceptions if
+  a given input was not an input filter. This raises issues when mixing input
+  filters and inputs in the same validator group specification, as you will
+  generally provide the input names as keys instead of values. The patch provide
+  ensures both styles work going forwards.
+
 ## 2.7.4 - 2017-05-18
 
 ### Added

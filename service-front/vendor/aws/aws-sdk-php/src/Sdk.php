@@ -62,6 +62,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionCognitoSync(array $args = [])
  * @method \Aws\ConfigService\ConfigServiceClient createConfigService(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionConfigService(array $args = [])
+ * @method \Aws\CostExplorer\CostExplorerClient createCostExplorer(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionCostExplorer(array $args = [])
  * @method \Aws\CostandUsageReportService\CostandUsageReportServiceClient createCostandUsageReportService(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionCostandUsageReportService(array $args = [])
  * @method \Aws\DAX\DAXClient createDAX(array $args = [])
@@ -162,6 +164,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionPinpoint(array $args = [])
  * @method \Aws\Polly\PollyClient createPolly(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionPolly(array $args = [])
+ * @method \Aws\Pricing\PricingClient createPricing(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionPricing(array $args = [])
  * @method \Aws\Rds\RdsClient createRds(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionRds(array $args = [])
  * @method \Aws\Redshift\RedshiftClient createRedshift(array $args = [])
@@ -215,7 +219,7 @@ namespace Aws;
  */
 class Sdk
 {
-    const VERSION = '3.36.29';
+    const VERSION = '3.39.0';
 
     /** @var array Arguments for creating clients */
     private $args;
