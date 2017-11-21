@@ -6,6 +6,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
 use PHPUnit\Framework\TestCase;
+use DateTime;
 
 class LpaTest extends TestCase
 {
@@ -36,12 +37,15 @@ class LpaTest extends TestCase
         $this->assertNotNull($errors['metadata']);
     }
 
-    public function testToMongoArray()
+    public function testToArrayForMongo()
     {
         $lpa = FixturesData::getHwLpa();
 
-        $mongoArray = $lpa->toMongoArray();
-        $this->assertEquals($lpa->get('id'), $mongoArray['_id']);
+        $lpaArray = $lpa->toArray(function (DateTime $dateTime) {
+            //  Dummy callable
+        });
+
+        $this->assertEquals($lpa->get('id'), $lpaArray['_id']);
     }
 
     public function testAbbreviatedToArray()
