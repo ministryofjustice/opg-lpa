@@ -21,8 +21,6 @@ PHPUnit_TextUI_Command::main();
 --EXPECTF--
 PHPUnit %s by Sebastian Bergmann and contributors.
 
-Warning:       Deprecated JSON test listener used
-
 {
     "event": "suiteStart",
     "suite": "BankAccountTest",
