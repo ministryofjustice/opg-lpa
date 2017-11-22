@@ -787,7 +787,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     private function stampPageWith($stampPdf, $pageNumber)
     {
-        //  Create a copy of the LPA PDF with the barcode stamped on it on all pages so we can extract the required page later
+        //  Create a copy of the LPA PDF with the contents of the provided PDF stamped on the specified page
         $tmpStampPdfName = $this->getIntermediatePdfFilePath('stamp.pdf');
         $pdfStampedAllPages = new Pdftk($this->pdfFile);
         $pdfStampedAllPages->stamp($stampPdf)
