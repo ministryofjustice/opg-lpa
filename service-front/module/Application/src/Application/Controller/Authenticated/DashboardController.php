@@ -168,7 +168,6 @@ class DashboardController extends AbstractAuthenticatedController
 
         $viewModel = new ViewModel([
             'lpaId' => $lpa->id,
-            'donorName' => $lpa->document->donor->name
         ]);
 
         $viewModel->setTemplate('application/dashboard/confirm-delete.twig');
@@ -176,6 +175,10 @@ class DashboardController extends AbstractAuthenticatedController
         if ($this->getRequest()->isXmlHttpRequest()) {
             $viewModel->setTerminal(true);
             $viewModel->isPopup = true;
+        }
+
+        if (isset($lpa->document->donor)) {
+            $viewModel->donorName = $lpa->document->donor->name;
         }
 
         return $viewModel;
