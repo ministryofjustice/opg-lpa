@@ -743,7 +743,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                     'code39',
                     'pdf',
                     [
-                        'text' => $this->formattedLpaRef,
+                        'text' => str_replace(' ', '', $this->formattedLpaRef),
                         'drawText' => false,
                         'factor' => 2,
                         'barHeight' => 25,
