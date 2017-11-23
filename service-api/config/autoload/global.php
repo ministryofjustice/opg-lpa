@@ -47,6 +47,7 @@ return array(
                     'replicaSet' => 'rs0',
                     'connect' => false,
                     'connectTimeoutMS' => 1000,
+                    'socketTimeoutMS' => 0,
                     'w' => 'majority',
                     'ssl' => true,
                     'password' => getenv('OPG_LPA_API_MONGODB_PASSWORD') ?: null,
