@@ -60,17 +60,6 @@ class Module{
 
         }
 
-        //  Convert the route chunks to lowercase - but don't convert token values
-        $pathParts = explode('/', $request->getUri()->getPath());
-
-        foreach ($pathParts as $i => $pathPart) {
-            if (!preg_match('/[a-zA-Z0-9]{22}/', $pathPart) && !preg_match('/[a-zA-Z0-9]{32}/', $pathPart)) {
-                $pathParts[$i] = strtolower($pathPart);
-            }
-        }
-
-        $request->getUri()->setPath(implode('/', $pathParts));
-
     } // function
 
     /**
