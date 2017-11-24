@@ -21,6 +21,13 @@ class ManagerFactory implements FactoryInterface
         // Split the array out into comma separated values.
         $uri = 'mongodb://' . implode(',', $config['hosts']) . '/' . $config['options']['db'];
 
-        return new Manager($uri, $config['options'], $config['driverOptions']);
+        $options = $config['options'];
+        if (isset($options['socketTimeoutMS'])) {
+            // This connection option only works on the url itself
+            $uri .= '?socketTimeoutMS=1000';
+            unset($options['socketTimeoutMS']);
+        }
+
+        return new Manager($uri, $options, $config['driverOptions']);
     }
 }
