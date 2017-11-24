@@ -2,7 +2,9 @@
 namespace Application\Model\Service\System;
 
 use Application\DataAccess\Mongo\CollectionFactory;
+use Application\Traits\LogTrait;
 use DateTime;
+use Exception;
 use MongoDB\BSON\Javascript as MongoCode;
 use MongoDB\BSON\ObjectID as MongoId;
 use MongoDB\BSON\Regex;
@@ -24,17 +26,56 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
 class Stats implements ServiceLocatorAwareInterface
 {
     use ServiceLocatorAwareTrait;
+    use LogTrait;
 
     public function generate()
     {
-        $stats = [
-            'generated'               => new MongoDate(new DateTime()),
-            'lpas'                    => $this->getLpaStats(),
-            'lpasPerUser'             => $this->getLpasPerUser(),
-            'who'                     => $this->getWhoAreYou(),
-            'correspondence'          => $this->getCorrespondenceStats(),
-            'preferencesInstructions' => $this->getPreferencesInstructionsStats()
-        ];
+        $stats = [];
+
+        $start = microtime(true);
+
+        try {
+            $stats['lpas'] = $this->getLpaStats();
+            $this->info("Successfully generated lpas stats");
+        } catch (Exception $ex) {
+            $this->err("Failed to generate lpas stats due to {$ex->getMessage()}", [$ex]);
+            $stats['lpas'] = ['generated' => false];
+        }
+
+        try {
+            $stats['lpasPerUser'] = $this->getLpasPerUser();
+            $this->info("Successfully generated lpasPerUser stats");
+        } catch (Exception $ex) {
+            $this->err("Failed to generate lpasPerUser stats due to {$ex->getMessage()}", [$ex]);
+            $stats['lpasPerUser'] = ['generated' => false];
+        }
+
+        try {
+            $stats['who'] = $this->getWhoAreYou();
+            $this->info("Successfully generated who stats");
+        } catch (Exception $ex) {
+            $this->err("Failed to generate who stats due to {$ex->getMessage()}", [$ex]);
+            $stats['who'] = ['generated' => false];
+        }
+
+        try {
+            $stats['correspondence'] = $this->getCorrespondenceStats();
+            $this->info("Successfully generated correspondence stats");
+        } catch (Exception $ex) {
+            $this->err("Failed to generate correspondence stats due to {$ex->getMessage()}", [$ex]);
+            $stats['correspondence'] = ['generated' => false];
+        }
+
+        try {
+            $stats['preferencesInstructions'] = $this->getPreferencesInstructionsStats();
+            $this->info("Successfully generated preferencesInstructions stats");
+        } catch (Exception $ex) {
+            $this->err("Failed to generate preferencesInstructions stats due to {$ex->getMessage()}", [$ex]);
+            $stats['preferencesInstructions'] = ['generated' => false];
+        }
+
+        $stats['generated'] = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
+        $stats['generationTimeInMs'] = round((microtime(true) - $start) * 1000);
 
         //---------------------------------------------------
         // Save the results
@@ -62,6 +103,8 @@ class Stats implements ServiceLocatorAwareInterface
      */
     private function getLpaStats()
     {
+        $start = microtime(true);
+
         $collection = $this->getCollection('lpa');
 
         // Stats can (ideally) be processed on a secondary.
@@ -179,6 +222,8 @@ class Stats implements ServiceLocatorAwareInterface
         ksort($byMonth);
 
         return [
+            'generated' => date('d/m/Y H:i:s', (new DateTime())->getTimestamp()),
+            'generationTimeInMs' => round((microtime(true) - $start) * 1000),
             'all' => $summary,
             'health-and-welfare' => $hw,
             'property-and-finance' => $pf,
@@ -197,6 +242,8 @@ class Stats implements ServiceLocatorAwareInterface
      */
     private function getLpasPerUser()
     {
+        $start = microtime(true);
+
         $collection = $this->getCollection('lpa');
 
         //------------------------------------
@@ -267,6 +314,9 @@ class Stats implements ServiceLocatorAwareInterface
         // Sort by key so they're pre-ordered when sent to Mongo.
         krsort($lpasPerUser);
 
+        $lpasPerUser['generated'] = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
+        $lpasPerUser['generationTimeInMs'] = round((microtime(true) - $start) * 1000);
+
         return $lpasPerUser;
     }
 
@@ -277,6 +327,8 @@ class Stats implements ServiceLocatorAwareInterface
      */
     private function getWhoAreYou()
     {
+        $start = microtime(true);
+
         $results = [];
 
         $firstDayOfThisMonth = strtotime('first day of ' . date('F Y'));
@@ -295,6 +347,9 @@ class Stats implements ServiceLocatorAwareInterface
 
         ksort($results['by-month']);
 
+        $result['generated'] = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
+        $result['generationTimeInMs'] = round((microtime(true) - $start) * 1000);
+
         return $results;
     }
 
@@ -307,6 +362,8 @@ class Stats implements ServiceLocatorAwareInterface
      */
     private function getWhoAreYouStatsForTimeRange($start, $end)
     {
+        $start = microtime(true);
+
         $collection = $this->getCollection('stats-who');
 
         // Stats can (ideally) be processed on a secondary.
@@ -357,11 +414,16 @@ class Stats implements ServiceLocatorAwareInterface
             }
         }
 
+        $result['generated'] = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
+        $result['generationTimeInMs'] = round((microtime(true) - $start) * 1000);
+
         return $result;
     }
 
     private function getCorrespondenceStats()
     {
+        $start = microtime(true);
+
         $collection = $this->getCollection('lpa');
 
         // Stats can (ideally) be processed on a secondary.
@@ -438,11 +500,16 @@ class Stats implements ServiceLocatorAwareInterface
 
         ksort($correspondenceStats);
 
+        $correspondenceStats['generated'] = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
+        $correspondenceStats['generationTimeInMs'] = round((microtime(true) - $start) * 1000);
+
         return $correspondenceStats;
     }
 
     private function getPreferencesInstructionsStats()
     {
+        $start = microtime(true);
+
         $collection = $this->getCollection('lpa');
 
         // Stats can (ideally) be processed on a secondary.
@@ -489,6 +556,9 @@ class Stats implements ServiceLocatorAwareInterface
         }
 
         ksort($preferencesInstructionsStats);
+
+        $preferencesInstructionsStats['generated'] = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
+        $preferencesInstructionsStats['generationTimeInMs'] = round((microtime(true) - $start) * 1000);
 
         return $preferencesInstructionsStats;
     }
