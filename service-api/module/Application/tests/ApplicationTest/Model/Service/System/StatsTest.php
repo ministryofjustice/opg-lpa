@@ -6,6 +6,7 @@ use Application\DataAccess\Mongo\CollectionFactory;
 use Application\Model\Service\System\Stats;
 use Mockery;
 use MongoCollection;
+use Opg\Lpa\Logger\Logger;
 use PHPUnit\Framework\TestCase;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -44,6 +45,10 @@ class StatsTest extends TestCase
         $serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-lpa')->andReturn($lpaCollection);
         $serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-stats-who')->andReturn($statsWhoCollection);
         $serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-stats-lpas')->andReturn($statsLpasCollection);
+        $logger = Mockery::mock(Logger::class);
+        $logger->shouldReceive('info');
+        $logger->shouldReceive('err');
+        $serviceLocatorMock->shouldReceive('get')->with('Logger')->andReturn($logger);
 
         $stats = new Stats();
         $stats->setServiceLocator($serviceLocatorMock);
