@@ -22,9 +22,12 @@ class ManagerFactory implements FactoryInterface
         $uri = 'mongodb://' . implode(',', $config['hosts']) . '/' . $config['options']['db'];
 
         $options = $config['options'];
-        if (isset($options['socketTimeoutMS'])) {
-            // This connection option only works on the url itself
-            $uri .= '?socketTimeoutMS=' . $options['socketTimeoutMS'];
+
+        if (array_key_exists('socketTimeoutMS', $options)) {
+            if (is_int($options['socketTimeoutMS'])) {
+                // This connection option only works on the url itself
+                $uri .= '?socketTimeoutMS=' . $options['socketTimeoutMS'];
+            }
             unset($options['socketTimeoutMS']);
         }
 
