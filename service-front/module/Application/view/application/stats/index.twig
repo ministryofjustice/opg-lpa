@@ -6,321 +6,367 @@
 
 {% block content %}
 
-<p>Generated {{ generated }}</p>
+{% if (generated == false) %}
+    <p>LPA Statistics failed to generate</p>
+{% else %}
 
-<h2 class="heading-medium">Users</h2>
+    <p>Generated {{ generated }} in {{ generationTimeInMs }}</p>
 
-<div class="mobile-scroll">
-    <table>
-        <thead>
-            <tr>
-                <th class="numeric">Total no. of registered users</th>
-                <th class="numeric">Total no. of activated users</th>
-                <th class="numeric">No. of activated users this month</th>
-                <th class="numeric">No. of deleted user accounts*</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="numeric">{{ users.total }}</td>
-                <td class="numeric">{{ users.activated }}</td>
-                <td class="numeric">{{ users['activated-this-month'] }}</td>
-                <td class="numeric">{{ users.deleted }}</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+    <h2 class="heading-medium">Users</h2>
 
-<p>* since 17 December 2015</p>
+    <div class="mobile-scroll">
+        <table>
+            <thead>
+                <tr>
+                    <th class="numeric">Total no. of registered users</th>
+                    <th class="numeric">Total no. of activated users</th>
+                    <th class="numeric">No. of activated users this month</th>
+                    <th class="numeric">No. of deleted user accounts*</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="numeric">{{ users.total }}</td>
+                    <td class="numeric">{{ users.activated }}</td>
+                    <td class="numeric">{{ users['activated-this-month'] }}</td>
+                    <td class="numeric">{{ users.deleted }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-<h2 class="heading-medium">Status by type</h2>
+    <p>* since 17 December 2015</p>
 
-<div class="mobile-scroll">
-    <table>
-        <thead>
-            <tr>
-                <th>Status</th>
-                <th class="numeric">All applications</th>
-                <th class="numeric">Health and Welfare</th>
-                <th class="numeric">Property and Financial Affairs</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Started</td>
-                <td class="numeric">{{ lpas.all.started }}</td>
-                <td class="numeric">{{ lpas['health-and-welfare'].started }}</td>
-                <td class="numeric">{{ lpas['property-and-finance'].started }}</td>
-            </tr>
-            <tr>
-                <td>Created</td>
-                <td class="numeric">{{ lpas.all.created }}</td>
-                <td class="numeric">{{ lpas['health-and-welfare'].created }}</td>
-                <td class="numeric">{{ lpas['property-and-finance'].created }}</td>
-            </tr>
-            <tr>
-                <td>Completed</td>
-                <td class="numeric">{{ lpas.all.completed }}</td>
-                <td class="numeric">{{ lpas['health-and-welfare'].completed }}</td>
-                <td class="numeric">{{ lpas['property-and-finance'].completed }}</td>
-            </tr>
-            <tr>
-                <td><strong>Total</strong></td>
-                <td class="numeric">{{ lpas.all.started + lpas.all.created + lpas.all.completed }}</td>
-                <td class="numeric">{{ lpas['health-and-welfare'].started + lpas['health-and-welfare'].created + lpas['health-and-welfare'].completed }}</td>
-                <td class="numeric">{{ lpas['property-and-finance'].started + lpas['property-and-finance'].created + lpas['property-and-finance'].completed }}</td>
-            </tr>
-            <tr>
-                <td>Deleted</td>
-                <td class="numeric">{{ lpas.all.deleted }}</td>
-                <td class="numeric">&nbsp;</td>
-                <td class="numeric">&nbsp;</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+    <h2 class="heading-medium">Status by type</h2>
 
-<h2 class="heading-medium">Status by date</h2>
+    {% if (lpas.generated == false) %}
+        <p>Status by type failed to generate</p>
+    {% else %}
 
-<div class="mobile-scroll">
-    <table>
-        <thead>
-            <tr>
-                <th>Status</th>
-                {% for month,values in lpas['by-month'] %}
-                    <th class="numeric">{{ month }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Started LPAs</td>
-                {% for month,values in lpas['by-month'] %}
-                    <td class="numeric">{{ values.started }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Created LPAs</td>
-                {% for month,values in lpas['by-month'] %}
-                    <td class="numeric">{{ values.created }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Completed LPAs</td>
-                {% for month,values in lpas['by-month'] %}
-                    <td class="numeric">{{ values.completed }}</td>
-                {% endfor %}
-            </tr>
-        </tbody>
-    </table>
-</div>
+        <p>Generated {{ lpas.generated }} in {{ lpas.generationTimeInMs }}</p>
 
-<h2 class="heading-medium">Type of users</h2>
+        <div class="mobile-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th class="numeric">All applications</th>
+                        <th class="numeric">Health and Welfare</th>
+                        <th class="numeric">Property and Financial Affairs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Started</td>
+                        <td class="numeric">{{ lpas.all.started }}</td>
+                        <td class="numeric">{{ lpas['health-and-welfare'].started }}</td>
+                        <td class="numeric">{{ lpas['property-and-finance'].started }}</td>
+                    </tr>
+                    <tr>
+                        <td>Created</td>
+                        <td class="numeric">{{ lpas.all.created }}</td>
+                        <td class="numeric">{{ lpas['health-and-welfare'].created }}</td>
+                        <td class="numeric">{{ lpas['property-and-finance'].created }}</td>
+                    </tr>
+                    <tr>
+                        <td>Completed</td>
+                        <td class="numeric">{{ lpas.all.completed }}</td>
+                        <td class="numeric">{{ lpas['health-and-welfare'].completed }}</td>
+                        <td class="numeric">{{ lpas['property-and-finance'].completed }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td class="numeric">{{ lpas.all.started + lpas.all.created + lpas.all.completed }}</td>
+                        <td class="numeric">{{ lpas['health-and-welfare'].started + lpas['health-and-welfare'].created + lpas['health-and-welfare'].completed }}</td>
+                        <td class="numeric">{{ lpas['property-and-finance'].started + lpas['property-and-finance'].created + lpas['property-and-finance'].completed }}</td>
+                    </tr>
+                    <tr>
+                        <td>Deleted</td>
+                        <td class="numeric">{{ lpas.all.deleted }}</td>
+                        <td class="numeric">&nbsp;</td>
+                        <td class="numeric">&nbsp;</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-<div class="mobile-scroll">
-    <table>
-        <thead>
-            <tr>
-                <th>Type of user</th>
-                <th class="numeric">All time</th>
-                {% for month,values in who['by-month'] %}
-                    <th class="numeric">{{ month }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Donor</td>
-                <td class="numeric">{{ who.all.donor.count }}</td>
-                {% for month,values in who['by-month'] %}
-                    <td class="numeric">{{ values.donor.count }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Friend or family</td>
-                <td class="numeric">{{ who.all.friendOrFamily.count }}</td>
-                {% for month,values in who['by-month'] %}
-                    <td class="numeric">{{ values.friendOrFamily.count }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Professional</td>
-                <td class="numeric">{{ who.all.professional.count }}</td>
-                {% for month,values in who['by-month'] %}
-                    <td class="numeric">{{ values.professional.count }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Digital Partner</td>
-                <td class="numeric">{{ who.all.digitalPartner.count }}</td>
-                {% for month,values in who['by-month'] %}
-                    <td class="numeric">{{ values.digitalPartner.count }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Another organisation</td>
-                <td class="numeric">{{ who.all.organisation.count }}</td>
-                {% for month,values in who['by-month'] %}
-                    <td class="numeric">{{ values.organisation.count }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Not said</td>
-                <td class="numeric">{{ who.all.notSaid.count }}</td>
-                {% for month,values in who['by-month'] %}
-                    <td class="numeric">{{ values.notSaid.count }}</td>
-                {% endfor %}
-            </tr>
-        </tbody>
-    </table>
-</div>
+        <h2 class="heading-medium">Status by date</h2>
 
-<h2 class="heading-medium">Professionals</h2>
+        <div class="mobile-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        {% for month,values in lpas['by-month'] %}
+                            <th class="numeric">{{ month }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Started LPAs</td>
+                        {% for month,values in lpas['by-month'] %}
+                            <td class="numeric">{{ values.started }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Created LPAs</td>
+                        {% for month,values in lpas['by-month'] %}
+                            <td class="numeric">{{ values.created }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Completed LPAs</td>
+                        {% for month,values in lpas['by-month'] %}
+                            <td class="numeric">{{ values.completed }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-<div class="mobile-scroll">
-    <table>
-        <thead>
-            <tr>
-                <th>Type of user</th>
-                <th class="numeric">All time</th>
-                {% for month,values in who['by-month'] %}
-                    <th class="numeric">{{ month }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Solicitor</td>
-                <td class="numeric">{{ who.all.professional.subquestions.solicitor }}</td>
-                {% for month,values in who['by-month'] %}
-                    <td class="numeric">{{ values.professional.subquestions.solicitor }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Will-writer</td>
-                <td class="numeric">{{ who.all.professional.subquestions['will-writer'] }}</td>
-                {% for month,values in who['by-month'] %}
-                    <td class="numeric">{{ values.professional.subquestions['will-writer'] }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Other</td>
-                <td class="numeric">{{ who.all.professional.subquestions.other }}</td>
-                {% for month,values in who['by-month'] %}
-                    <td class="numeric">{{ values.professional.subquestions.other }}</td>
-                {% endfor %}
-            </tr>
-        </tbody>
-    </table>
-</div>
+    {% endif %}
 
-<h2 class="heading-medium">Correspondence</h2>
+    <h2 class="heading-medium">Type of users</h2>
 
-<div class="mobile-scroll">
-    <table>
-        <thead>
-            <tr>
-                <th>Status</th>
-                {% for month,values in correspondence %}
-                    <th class="numeric">{{ month }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Completed LPAs</td>
-                {% for month,values in correspondence %}
-                    <td class="numeric">{{ values.completed }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Contact by email</td>
-                {% for month,values in correspondence %}
-                    <td class="numeric">{{ values.contactByEmail }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Contact by phone</td>
-                {% for month,values in correspondence %}
-                    <td class="numeric">{{ values.contactByPhone }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Contact by post</td>
-                {% for month,values in correspondence %}
-                    <td class="numeric">{{ values.contactByPost }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Correspondence in English</td>
-                {% for month,values in correspondence %}
-                    <td class="numeric">{{ values.contactInEnglish }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Correspondence in Welsh</td>
-                {% for month,values in correspondence %}
-                    <td class="numeric">{{ values.contactInWelsh }}</td>
-                {% endfor %}
-            </tr>
-        </tbody>
-    </table>
-</div>
+    {% if (who.generated == false) %}
+        <p>Type of users failed to generate</p>
+    {% else %}
 
-<h2 class="heading-medium">Preferences and Instructions</h2>
+        <p>Generated {{ who.generated }} in {{ who.generationTimeInMs }}</p>
 
-<div class="mobile-scroll">
-    <table>
-        <thead>
-            <tr>
-                <th>Status</th>
-                {% for month,values in preferencesInstructions %}
-                    <th class="numeric">{{ month }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Completed LPAs</td>
-                {% for month,values in preferencesInstructions %}
-                    <td class="numeric">{{ values.completed }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Preferences stated</td>
-                {% for month,values in preferencesInstructions %}
-                    <td class="numeric">{{ values.preferencesStated }}</td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>Instructions stated</td>
-                {% for month,values in preferencesInstructions %}
-                    <td class="numeric">{{ values.instructionsStated }}</td>
-                {% endfor %}
-            </tr>
-        </tbody>
-    </table>
-</div>
+        <div class="mobile-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type of user</th>
+                        <th class="numeric">All time</th>
+                        {% for month,values in who['by-month'] %}
+                            <th class="numeric">{{ month }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Donor</td>
+                        <td class="numeric">{{ who.all.donor.count }}</td>
+                        {% for month,values in who['by-month'] %}
+                            <td class="numeric">{{ values.donor.count }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Friend or family</td>
+                        <td class="numeric">{{ who.all.friendOrFamily.count }}</td>
+                        {% for month,values in who['by-month'] %}
+                            <td class="numeric">{{ values.friendOrFamily.count }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Professional</td>
+                        <td class="numeric">{{ who.all.professional.count }}</td>
+                        {% for month,values in who['by-month'] %}
+                            <td class="numeric">{{ values.professional.count }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Digital Partner</td>
+                        <td class="numeric">{{ who.all.digitalPartner.count }}</td>
+                        {% for month,values in who['by-month'] %}
+                            <td class="numeric">{{ values.digitalPartner.count }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Another organisation</td>
+                        <td class="numeric">{{ who.all.organisation.count }}</td>
+                        {% for month,values in who['by-month'] %}
+                            <td class="numeric">{{ values.organisation.count }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Not said</td>
+                        <td class="numeric">{{ who.all.notSaid.count }}</td>
+                        {% for month,values in who['by-month'] %}
+                            <td class="numeric">{{ values.notSaid.count }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-<h2 class="heading-medium">Applications</h2>
+        <h2 class="heading-medium">Professionals</h2>
 
-<div class="mobile-scroll">
-    <table>
-        <thead>
-        <tr>
-            <th class="numeric">Number of LPAs</th>
-            <th class="numeric">Number of Users</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for lpas, users in lpasPerUser %}
-            <tr>
-                <td class="numeric">{{ lpas }}</td>
-                <td class="numeric">{{ users }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
+        <div class="mobile-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type of user</th>
+                        <th class="numeric">All time</th>
+                        {% for month,values in who['by-month'] %}
+                            <th class="numeric">{{ month }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Solicitor</td>
+                        <td class="numeric">{{ who.all.professional.subquestions.solicitor }}</td>
+                        {% for month,values in who['by-month'] %}
+                            <td class="numeric">{{ values.professional.subquestions.solicitor }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Will-writer</td>
+                        <td class="numeric">{{ who.all.professional.subquestions['will-writer'] }}</td>
+                        {% for month,values in who['by-month'] %}
+                            <td class="numeric">{{ values.professional.subquestions['will-writer'] }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Other</td>
+                        <td class="numeric">{{ who.all.professional.subquestions.other }}</td>
+                        {% for month,values in who['by-month'] %}
+                            <td class="numeric">{{ values.professional.subquestions.other }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    {% endif %}
+
+    <h2 class="heading-medium">Correspondence</h2>
+
+    {% if (correspondence.generated == false) %}
+        <p>Correspondence failed to generate</p>
+    {% else %}
+
+        <p>Generated {{ correspondence.generated }} in {{ correspondence.generationTimeInMs }}</p>
+
+        <div class="mobile-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        {% for month,values in correspondence %}
+                            <th class="numeric">{{ month }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Completed LPAs</td>
+                        {% for month,values in correspondence %}
+                            <td class="numeric">{{ values.completed }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Contact by email</td>
+                        {% for month,values in correspondence %}
+                            <td class="numeric">{{ values.contactByEmail }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Contact by phone</td>
+                        {% for month,values in correspondence %}
+                            <td class="numeric">{{ values.contactByPhone }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Contact by post</td>
+                        {% for month,values in correspondence %}
+                            <td class="numeric">{{ values.contactByPost }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Correspondence in English</td>
+                        {% for month,values in correspondence %}
+                            <td class="numeric">{{ values.contactInEnglish }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Correspondence in Welsh</td>
+                        {% for month,values in correspondence %}
+                            <td class="numeric">{{ values.contactInWelsh }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    {% endif %}
+
+    <h2 class="heading-medium">Preferences and Instructions</h2>
+
+    {% if (preferencesInstructions.generated == false) %}
+        <p>Preferences and Instructions failed to generate</p>
+    {% else %}
+
+        <p>Generated {{ preferencesInstructions.generated }} in {{ preferencesInstructions.generationTimeInMs }}</p>
+
+        <div class="mobile-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        {% for month,values in preferencesInstructions %}
+                            <th class="numeric">{{ month }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Completed LPAs</td>
+                        {% for month,values in preferencesInstructions %}
+                            <td class="numeric">{{ values.completed }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Preferences stated</td>
+                        {% for month,values in preferencesInstructions %}
+                            <td class="numeric">{{ values.preferencesStated }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Instructions stated</td>
+                        {% for month,values in preferencesInstructions %}
+                            <td class="numeric">{{ values.instructionsStated }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    {% endif %}
+
+    <h2 class="heading-medium">Applications</h2>
+
+    {% if (lpasPerUser.generated == false) %}
+        <p>Applications failed to generate</p>
+    {% else %}
+
+        <p>Generated {{ lpasPerUser.generated }} in {{ lpasPerUser.generationTimeInMs }}</p>
+
+        <div class="mobile-scroll">
+            <table>
+                <thead>
+                <tr>
+                    <th class="numeric">Number of LPAs</th>
+                    <th class="numeric">Number of Users</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for lpas, users in lpasPerUser %}
+                    <tr>
+                        <td class="numeric">{{ lpas }}</td>
+                        <td class="numeric">{{ users }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% endif %}
+
+{% endif %}
 
 {% endblock content %}
