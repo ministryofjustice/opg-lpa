@@ -40,7 +40,7 @@ class Resource extends AbstractResource
         // Stats can (ideally) be pulled from a secondary.
         $stats = $collection->findOne([], $readPreference);
 
-        if (!isset($stats['generated'])) {
+        if (!isset($stats['generated']) || !is_string($stats['generated'])) {
             return new Entity(['generated' => false]);
         }
 
