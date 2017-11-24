@@ -10,7 +10,7 @@
     <p>LPA Statistics failed to generate</p>
 {% else %}
 
-    <p>Generated {{ generated }} in {{ generationTimeInMs }}</p>
+    <p>Generated {{ generated }} in {{ generationTimeInMs }}ms</p>
 
     <h2 class="heading-medium">Users</h2>
 
@@ -43,7 +43,7 @@
         <p>Status by type failed to generate</p>
     {% else %}
 
-        <p>Generated {{ lpas.generated }} in {{ lpas.generationTimeInMs }}</p>
+        <p>Generated {{ lpas.generated }} in {{ lpas.generationTimeInMs }}ms</p>
 
         <div class="mobile-scroll">
             <table>
@@ -133,7 +133,7 @@
         <p>Type of users failed to generate</p>
     {% else %}
 
-        <p>Generated {{ who.generated }} in {{ who.generationTimeInMs }}</p>
+        <p>Generated {{ who.generated }} in {{ who.generationTimeInMs }}ms</p>
 
         <div class="mobile-scroll">
             <table>
@@ -240,7 +240,7 @@
         <p>Correspondence failed to generate</p>
     {% else %}
 
-        <p>Generated {{ correspondence.generated }} in {{ correspondence.generationTimeInMs }}</p>
+        <p>Generated {{ correspondence.generated }} in {{ correspondence.generationTimeInMs }}ms</p>
 
         <div class="mobile-scroll">
             <table>
@@ -301,7 +301,7 @@
         <p>Preferences and Instructions failed to generate</p>
     {% else %}
 
-        <p>Generated {{ preferencesInstructions.generated }} in {{ preferencesInstructions.generationTimeInMs }}</p>
+        <p>Generated {{ preferencesInstructions.generated }} in {{ preferencesInstructions.generationTimeInMs }}ms</p>
 
         <div class="mobile-scroll">
             <table>
@@ -344,7 +344,7 @@
         <p>Applications failed to generate</p>
     {% else %}
 
-        <p>Generated {{ lpasPerUser.generated }} in {{ lpasPerUser.generationTimeInMs }}</p>
+        <p>Generated {{ lpasPerUser.generated }} in {{ lpasPerUser.generationTimeInMs }}ms</p>
 
         <div class="mobile-scroll">
             <table>
@@ -355,7 +355,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for lpas, users in lpasPerUser %}
+                {% for lpas, users in lpasPerUser.all %}
                     <tr>
                         <td class="numeric">{{ lpas }}</td>
                         <td class="numeric">{{ users }}</td>
