@@ -24,7 +24,7 @@ class ManagerFactory implements FactoryInterface
         $options = $config['options'];
         if (isset($options['socketTimeoutMS'])) {
             // This connection option only works on the url itself
-            $uri .= '?socketTimeoutMS=1000';
+            $uri .= '?socketTimeoutMS=' . $options['socketTimeoutMS'];
             unset($options['socketTimeoutMS']);
         }
 
