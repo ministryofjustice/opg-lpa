@@ -36,7 +36,6 @@ class Stats implements ServiceLocatorAwareInterface
 
         try {
             $stats['lpas'] = $this->getLpaStats();
-            //var_dump($stats['lpas']);
             $this->info("Successfully generated lpas stats");
         } catch (Exception $ex) {
             $this->err("Failed to generate lpas stats due to {$ex->getMessage()}", [$ex]);
@@ -45,7 +44,6 @@ class Stats implements ServiceLocatorAwareInterface
 
         try {
             $stats['lpasPerUser'] = $this->getLpasPerUser();
-            //var_dump($stats['lpas']);
             $this->info("Successfully generated lpasPerUser stats");
         } catch (Exception $ex) {
             $this->err("Failed to generate lpasPerUser stats due to {$ex->getMessage()}", [$ex]);
@@ -54,7 +52,6 @@ class Stats implements ServiceLocatorAwareInterface
 
         try {
             $stats['who'] = $this->getWhoAreYou();
-            //var_dump($stats['lpas']);
             $this->info("Successfully generated who stats");
         } catch (Exception $ex) {
             $this->err("Failed to generate who stats due to {$ex->getMessage()}", [$ex]);
@@ -63,7 +60,6 @@ class Stats implements ServiceLocatorAwareInterface
 
         try {
             $stats['correspondence'] = $this->getCorrespondenceStats();
-            //var_dump($stats['lpas']);
             $this->info("Successfully generated correspondence stats");
         } catch (Exception $ex) {
             $this->err("Failed to generate correspondence stats due to {$ex->getMessage()}", [$ex]);
@@ -72,7 +68,6 @@ class Stats implements ServiceLocatorAwareInterface
 
         try {
             $stats['preferencesInstructions'] = $this->getPreferencesInstructionsStats();
-            //var_dump($stats['lpas']);
             $this->info("Successfully generated preferencesInstructions stats");
         } catch (Exception $ex) {
             $this->err("Failed to generate preferencesInstructions stats due to {$ex->getMessage()}", [$ex]);
