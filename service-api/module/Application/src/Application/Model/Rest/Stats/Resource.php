@@ -40,15 +40,9 @@ class Resource extends AbstractResource
         // Stats can (ideally) be pulled from a secondary.
         $stats = $collection->findOne([], $readPreference);
 
-        if (!isset($stats['generated'])) {
-            // Regenerate stats as missing or using old format
-            $this->getServiceLocator()->get('StatsService')->generate();
-
-            // Retrieve generated stats
-            $stats = $collection->findOne([]);
+        if (!isset($stats['generated']) || !is_string($stats['generated'])) {
+            return new Entity(['generated' => false]);
         }
-
-        $stats['generated'] = date('d/m/Y H:i:s', $stats['generated']->toDateTime()->getTimestamp());
 
         // Return specific subset of stats if requested
         switch ($type) {

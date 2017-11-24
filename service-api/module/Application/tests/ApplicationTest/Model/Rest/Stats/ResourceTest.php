@@ -6,6 +6,7 @@ use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Stats\Entity;
 use Application\Model\Rest\Stats\Resource;
 use ApplicationTest\AbstractResourceTest;
+use DateTime;
 use Mockery;
 use MongoCollection;
 use MongoDB\BSON\UTCDateTime as MongoDate;
@@ -33,7 +34,7 @@ class ResourceTest extends AbstractResourceTest
 
     public function testFetch()
     {
-        $generated = new MongoDate();
+        $generated = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
 
         $statsLpasCollection = Mockery::mock(MongoCollection::class);
         $statsLpasCollection->shouldReceive('setReadPreference');
@@ -46,7 +47,7 @@ class ResourceTest extends AbstractResourceTest
 
         $entity = $resource->fetch('all');
 
-        $this->assertEquals(new Entity(['generated' => date('d/m/Y H:i:s', $generated->toDateTime()->getTimestamp())]), $entity);
+        $this->assertEquals(new Entity(['generated' => $generated]), $entity);
 
         $resourceBuilder->verify();
     }
