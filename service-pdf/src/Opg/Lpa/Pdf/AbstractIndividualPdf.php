@@ -184,12 +184,12 @@ abstract class AbstractIndividualPdf extends AbstractPdf
 
             if (!$disableBlanks) {
                 // draw blank image
-                $pdfForStrikeThroughs = ZendPdfDocument::load($this->pdfFile);
+                $pdfForBlanks = ZendPdfDocument::load($this->pdfFile);
 
                 $blank = new Png($this->config['service']['assets']['source_template_path']."/blank.png");
 
                 foreach ($this->blankTargets as $pageNo => $pageDrawingTargets) {
-                    $page = $pdfForStrikeThroughs->pages[$pageNo];
+                    $page = $pdfForBlanks->pages[$pageNo];
 
                     foreach ($pageDrawingTargets as $pageDrawingTarget) {
                         //  Get the coordinates for this target from the config
@@ -207,7 +207,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                     }
                 }
 
-                $pdfForStrikeThroughs->save($this->pdfFile);
+                $pdfForBlanks->save($this->pdfFile);
             }
         }
 
