@@ -138,21 +138,28 @@ abstract class AbstractIndividualPdf extends AbstractPdf
              ->flatten()
              ->saveAs($this->pdfFile);
 
-        //  Draw any strike throughs
-        if (!empty($this->strikeThroughTargets)) {
-            //  Check to see if drawing cross lines is disabled or not
+        //  Draw any strike throughs and/or blanks
+        if (!empty($this->strikeThroughTargets) || !empty($this->blankTargets)) {
+            //  Check to see if drawing cross lines and blanks is disabled or not
             $disableStrikeThroughLines = false;
+            $disableBlanks = false;
 
             if (isset($this->config['service']['disable_strike_through_lines'])) {
                 $disableStrikeThroughLines = (bool)$this->config['service']['disable_strike_through_lines'];
             }
 
-            if (!$disableStrikeThroughLines) {
-                // draw cross lines
-                $pdfForStrikeThroughs = ZendPdfDocument::load($this->pdfFile);
+            if (isset($this->config['service']['disable_blanks'])) {
+                $disableBlanks = (bool)$this->config['service']['disable_blanks'];
+            }
 
+            //  Get the PDF to manipulate
+            $pdfForDrawings = ZendPdfDocument::load($this->pdfFile);
+            $changesMade = false;
+
+            if (!$disableStrikeThroughLines) {
                 foreach ($this->strikeThroughTargets as $pageNo => $pageDrawingTargets) {
-                    $page = $pdfForStrikeThroughs->pages[$pageNo]->setLineWidth(10);
+                    $page = $pdfForDrawings->pages[$pageNo];
+                    $page->setLineWidth(10);
 
                     foreach ($pageDrawingTargets as $pageDrawingTarget) {
                         //  Get the coordinates for this target from the config
@@ -165,31 +172,18 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                                 $targetStrikeThroughCoordinates['tx'],
                                 $targetStrikeThroughCoordinates['ty']
                             );
+
+                            $changesMade = true;
                         }
                     }
                 }
-
-                $pdfForStrikeThroughs->save($this->pdfFile);
-            }
-        }
-
-        //  Draw any blanks
-        if (!empty($this->blankTargets)) {
-            //  Check to see if drawing blanks is disabled or not
-            $disableBlanks = false;
-
-            if (isset($this->config['service']['disable_blanks'])) {
-                $disableBlanks = (bool)$this->config['service']['disable_blanks'];
             }
 
             if (!$disableBlanks) {
-                // draw blank image
-                $pdfForBlanks = ZendPdfDocument::load($this->pdfFile);
-
                 $blank = new Png($this->config['service']['assets']['source_template_path'] . '/blank.png');
 
                 foreach ($this->blankTargets as $pageNo => $pageDrawingTargets) {
-                    $page = $pdfForBlanks->pages[$pageNo];
+                    $page = $pdfForDrawings->pages[$pageNo];
 
                     foreach ($pageDrawingTargets as $pageDrawingTarget) {
                         //  Get the coordinates for this target from the config
@@ -203,11 +197,16 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                                 $blankCoordinates['x2'],
                                 $blankCoordinates['y2']
                             );
+
+                            $changesMade = true;
                         }
                     }
                 }
+            }
 
-                $pdfForBlanks->save($this->pdfFile);
+            //  If changes have been made save a copy now
+            if ($changesMade) {
+                $pdfForDrawings->save($this->pdfFile);
             }
         }
 
