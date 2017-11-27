@@ -2,7 +2,16 @@
 
 ### Sign the LPA in the right order
 
-The LPA must be signed in the right order - if not, OPG cannot register the LPA and you may have to pay the application fee again.
+The different sections of the LPA must be signed in the right order. If they're not, we can't register the LPA and you may have to pay the application fee again.
+
+Sections must be signed in this order:
+
+1. Continuation sheets
+2. Section 5 (if the LPA is for Health and Welfare)
+3. Section 9
+4. Section 10
+5. Section 11
+6. Section 15
 
 ### How to sign and date your LPA
 
