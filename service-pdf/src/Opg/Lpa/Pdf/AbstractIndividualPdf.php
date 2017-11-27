@@ -186,7 +186,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                 // draw blank image
                 $pdfForBlanks = ZendPdfDocument::load($this->pdfFile);
 
-                $blank = new Png($this->config['service']['assets']['source_template_path']."/blank.png");
+                $blank = new Png($this->config['service']['assets']['source_template_path'] . '/blank.png');
 
                 foreach ($this->blankTargets as $pageNo => $pageDrawingTargets) {
                     $page = $pdfForBlanks->pages[$pageNo];
@@ -277,17 +277,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      */
     protected function addStrikeThrough($areaReference, $pageNumber = 1)
     {
-        //  Adjust the page number for zero based indexes
-        $pageNumber--;
-
-        //  If a section doesn't exist for this page create one now
-        if (!isset($this->strikeThroughTargets[$pageNumber])) {
-            $this->strikeThroughTargets[$pageNumber] = [];
-        }
-
-        $this->strikeThroughTargets[$pageNumber][] = $areaReference;
-
-        return $this;
+        return $this->addDrawingTarget($this->strikeThroughTargets, $areaReference, $pageNumber);
     }
 
     /**
@@ -299,15 +289,28 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      */
     protected function addBlank($areaReference, $pageNumber = 1)
     {
+        return $this->addDrawingTarget($this->blankTargets, $areaReference, $pageNumber);
+    }
+
+    /**
+     * Add a drawing target (strike through or blank) to the specified page
+     *
+     * @param array $drawingTargets
+     * @param $areaReference
+     * @param int $pageNumber
+     * @return $this
+     */
+    private function addDrawingTarget(array &$drawingTargets, $areaReference, $pageNumber)
+    {
         //  Adjust the page number for zero based indexes
         $pageNumber--;
 
         //  If a section doesn't exist for this page create one now
-        if (!isset($this->blankTargets[$pageNumber])) {
-            $this->blankTargets[$pageNumber] = [];
+        if (!isset($drawingTargets[$pageNumber])) {
+            $drawingTargets[$pageNumber] = [];
         }
 
-        $this->blankTargets[$pageNumber][] = $areaReference;
+        $drawingTargets[$pageNumber][] = $areaReference;
 
         return $this;
     }
