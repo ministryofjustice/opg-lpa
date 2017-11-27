@@ -22,6 +22,14 @@ If you can't sign or make a mark yourself, you can ask someone else to sign on y
 
 You don't have to register your LPA right after you create it but it's a good idea to. You can then sort out any problems in good time and your LPA will then be ready to use as soon as you need it.
 
+## If you find a mistake
+
+Once you've created your LPA online, we'll ask you to confirm all the information you've entered is correct. After this you can't make any more changes to your LPA.
+
+If you later find a mistake, you'll need to create a new LPA. You can [view your LPAs](/user/dashboard) and reuse the information you've already entered.
+
+If you find a mistake after you've paid the registration fee, you'll need to create a new LPA and pay another fee. As long as you only post us the new LPA, we'll refund the first registration fee.
+
 ## Fees
 
 It currently costs £82 to register an LPA. Some people qualify for a reduced fee or can pay no fee.
