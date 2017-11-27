@@ -26,6 +26,7 @@ abstract class AbstractPdfTestClass extends TestCase
                 'templateFileName',
                 'data',
                 'strikeThroughTargets',
+                'blankTargets',
                 'constituentPdfs',
                 'pageShift',
             ],
@@ -55,11 +56,12 @@ abstract class AbstractPdfTestClass extends TestCase
         return $config['service']['assets']['template_path_on_ram_disk'] . '/' . $templateName;
     }
 
-    protected function verifyExpectedPdfData(AbstractIndividualPdf $pdf, $templateFileName, $strikeThroughTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef = null)
+    protected function verifyExpectedPdfData(AbstractIndividualPdf $pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef = null)
     {
         //  Verify the provided expected data is as expected
         $this->verifyTemplateFileName($pdf, $templateFileName);
         $this->verifyStrikeThroughTargets($pdf, $strikeThroughTargets);
+        $this->verifyBlankTargets($pdf, $blankTargets);
         $this->verifyConstituentPdfs($pdf, $constituentPdfs);
         $this->verifyData($pdf, $data);
         $this->verifyPageShift($pdf, $pageShift);
@@ -89,6 +91,11 @@ abstract class AbstractPdfTestClass extends TestCase
         $this->verifyReflectionProperty('strikeThroughTargets', $pdf, $expectedValue);
     }
 
+    private function verifyBlankTargets(AbstractIndividualPdf $pdf, $expectedValue)
+    {
+        $this->verifyReflectionProperty('blankTargets', $pdf, $expectedValue);
+    }
+
     private function verifyConstituentPdfs(AbstractIndividualPdf $pdf, $expectedValue)
     {
         //  First loop through the reflection values and swap out the instances where the pdf set is actually a PDF object
@@ -113,10 +120,11 @@ abstract class AbstractPdfTestClass extends TestCase
 
                     $templateFileName = $expectedPdf['templateFileName'];
                     $strikeThroughTargets = $expectedPdf['strikeThroughTargets'] ?? [];
+                    $blankTargets = $expectedPdf['blankTargets'] ?? [];
                     $constituentPdfs = $expectedPdf['constituentPdfs'] ?? [];
                     $data = $expectedPdf['data'] ?? [];
 
-                    $this->verifyExpectedPdfData($constituentPdf, $templateFileName, $strikeThroughTargets, $constituentPdfs, $data, 0);
+                    $this->verifyExpectedPdfData($constituentPdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, 0);
                 } elseif ($constituentPdf instanceof AbstractAggregator) {
                     //  TODO - How to test aggregators here? Make the PDFs protected property in there be visible too and feed back in?
                     //  For now just assert that the expected value is null as a placeholder

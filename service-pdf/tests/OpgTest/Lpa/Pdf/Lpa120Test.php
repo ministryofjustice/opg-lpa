@@ -27,7 +27,9 @@ class Lpa120Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5715';
         $templateFileName = 'LPA120.pdf';
 
-        $strikeThroughs = [];
+        $strikeThroughTargets = [];
+
+        $blankTargets = [];
 
         $constituentPdfs = [];
 
@@ -54,7 +56,7 @@ class Lpa120Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -91,7 +93,9 @@ class Lpa120Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5715';
         $templateFileName = 'LPA120.pdf';
 
-        $strikeThroughs = [];
+        $strikeThroughTargets = [];
+
+        $blankTargets = [];
 
         $constituentPdfs = [];
 
@@ -118,7 +122,7 @@ class Lpa120Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -140,7 +144,9 @@ class Lpa120Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5715';
         $templateFileName = 'LPA120.pdf';
 
-        $strikeThroughs = [];
+        $strikeThroughTargets = [];
+
+        $blankTargets = [];
 
         $constituentPdfs = [];
 
@@ -167,7 +173,7 @@ class Lpa120Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -189,7 +195,9 @@ class Lpa120Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5715';
         $templateFileName = 'LPA120.pdf';
 
-        $strikeThroughs = [];
+        $strikeThroughTargets = [];
+
+        $blankTargets = [];
 
         $constituentPdfs = [];
 
@@ -216,7 +224,7 @@ class Lpa120Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -238,7 +246,9 @@ class Lpa120Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5715';
         $templateFileName = 'LPA120.pdf';
 
-        $strikeThroughs = [];
+        $strikeThroughTargets = [];
+
+        $blankTargets = [];
 
         $constituentPdfs = [];
 
@@ -265,7 +275,7 @@ class Lpa120Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -287,7 +297,9 @@ class Lpa120Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5715';
         $templateFileName = 'LPA120.pdf';
 
-        $strikeThroughs = [];
+        $strikeThroughTargets = [];
+
+        $blankTargets = [];
 
         $constituentPdfs = [];
 
@@ -314,7 +326,7 @@ class Lpa120Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();

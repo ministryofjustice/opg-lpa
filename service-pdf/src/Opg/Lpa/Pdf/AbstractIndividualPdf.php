@@ -152,61 +152,63 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                 $disableBlanks = (bool)$this->config['service']['disable_blanks'];
             }
 
-            //  Get the PDF to manipulate
-            $pdfForDrawings = ZendPdfDocument::load($this->pdfFile);
-            $changesMade = false;
+            if (!$disableStrikeThroughLines || !$disableBlanks) {
+                //  Get the PDF to manipulate
+                $pdfForDrawings = ZendPdfDocument::load($this->pdfFile);
+                $changesMade = false;
 
-            if (!$disableStrikeThroughLines) {
-                foreach ($this->strikeThroughTargets as $pageNo => $pageDrawingTargets) {
-                    $page = $pdfForDrawings->pages[$pageNo];
-                    $page->setLineWidth(10);
+                if (!$disableStrikeThroughLines) {
+                    foreach ($this->strikeThroughTargets as $pageNo => $pageDrawingTargets) {
+                        $page = $pdfForDrawings->pages[$pageNo];
+                        $page->setLineWidth(10);
 
-                    foreach ($pageDrawingTargets as $pageDrawingTarget) {
-                        //  Get the coordinates for this target from the config
-                        if (isset($this->config['strike_throughs'][$pageDrawingTarget])) {
-                            $targetStrikeThroughCoordinates = $this->config['strike_throughs'][$pageDrawingTarget];
+                        foreach ($pageDrawingTargets as $pageDrawingTarget) {
+                            //  Get the coordinates for this target from the config
+                            if (isset($this->config['strike_throughs'][$pageDrawingTarget])) {
+                                $targetStrikeThroughCoordinates = $this->config['strike_throughs'][$pageDrawingTarget];
 
-                            $page->drawLine(
-                                $targetStrikeThroughCoordinates['bx'],
-                                $targetStrikeThroughCoordinates['by'],
-                                $targetStrikeThroughCoordinates['tx'],
-                                $targetStrikeThroughCoordinates['ty']
-                            );
+                                $page->drawLine(
+                                    $targetStrikeThroughCoordinates['bx'],
+                                    $targetStrikeThroughCoordinates['by'],
+                                    $targetStrikeThroughCoordinates['tx'],
+                                    $targetStrikeThroughCoordinates['ty']
+                                );
 
-                            $changesMade = true;
+                                $changesMade = true;
+                            }
                         }
                     }
                 }
-            }
 
-            if (!$disableBlanks) {
-                $blank = new Png($this->config['service']['assets']['source_template_path'] . '/blank.png');
+                if (!$disableBlanks) {
+                    $blank = new Png($this->config['service']['assets']['source_template_path'] . '/blank.png');
 
-                foreach ($this->blankTargets as $pageNo => $pageDrawingTargets) {
-                    $page = $pdfForDrawings->pages[$pageNo];
+                    foreach ($this->blankTargets as $pageNo => $pageDrawingTargets) {
+                        $page = $pdfForDrawings->pages[$pageNo];
 
-                    foreach ($pageDrawingTargets as $pageDrawingTarget) {
-                        //  Get the coordinates for this target from the config
-                        if (isset($this->config['blanks'][$pageDrawingTarget])) {
-                            $blankCoordinates = $this->config['blanks'][$pageDrawingTarget];
+                        foreach ($pageDrawingTargets as $pageDrawingTarget) {
+                            //  Get the coordinates for this target from the config
+                            if (isset($this->config['blanks'][$pageDrawingTarget])) {
+                                $blankCoordinates = $this->config['blanks'][$pageDrawingTarget];
 
-                            $page->drawImage(
-                                $blank,
-                                $blankCoordinates['x1'],
-                                $blankCoordinates['y1'],
-                                $blankCoordinates['x2'],
-                                $blankCoordinates['y2']
-                            );
+                                $page->drawImage(
+                                    $blank,
+                                    $blankCoordinates['x1'],
+                                    $blankCoordinates['y1'],
+                                    $blankCoordinates['x2'],
+                                    $blankCoordinates['y2']
+                                );
 
-                            $changesMade = true;
+                                $changesMade = true;
+                            }
                         }
                     }
                 }
-            }
 
-            //  If changes have been made save a copy now
-            if ($changesMade) {
-                $pdfForDrawings->save($this->pdfFile);
+                //  If changes have been made save a copy now
+                if ($changesMade) {
+                    $pdfForDrawings->save($this->pdfFile);
+                }
             }
         }
 
