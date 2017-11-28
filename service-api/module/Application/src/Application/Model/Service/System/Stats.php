@@ -496,10 +496,11 @@ class Stats implements ServiceLocatorAwareInterface
 
         ksort($correspondenceStats);
 
-        $correspondenceStats['generated'] = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
-        $correspondenceStats['generationTimeInMs'] = round((microtime(true) - $startGeneration) * 1000);
-
-        return $correspondenceStats;
+        return [
+            'generated' => date('d/m/Y H:i:s', (new DateTime())->getTimestamp()),
+            'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000),
+            'by-month' => $correspondenceStats
+        ];
     }
 
     private function getPreferencesInstructionsStats()
@@ -553,10 +554,11 @@ class Stats implements ServiceLocatorAwareInterface
 
         ksort($preferencesInstructionsStats);
 
-        $preferencesInstructionsStats['generated'] = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
-        $preferencesInstructionsStats['generationTimeInMs'] = round((microtime(true) - $startGeneration) * 1000);
-
-        return $preferencesInstructionsStats;
+        return [
+            'generated' => date('d/m/Y H:i:s', (new DateTime())->getTimestamp()),
+            'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000),
+            'by-month' => $preferencesInstructionsStats
+        ];
     }
 
     /**
