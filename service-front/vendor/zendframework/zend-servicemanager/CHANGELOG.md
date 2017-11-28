@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.9 - 2017-11-27
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#205](https://github.com/zendframework/zend-servicemanager/pull/205) fixes
+  how the `AbstractPluginManager` handles repeated retrievals of the same
+  service when instance options are provided and the service is marked as
+  "shared".  Previously, it incorrectly would return the first instance
+  retrieved; with this release, no instance created with instance options is
+  ever shared.
+
 ## 2.7.8 - 2016-12-19
 
 ### Added
