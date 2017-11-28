@@ -2,12 +2,12 @@
 
 namespace Application\Controller\General;
 
-use Application\Form\User\Login as LoginForm;
-
-use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
-use Zend\Session\Container;
+use Application\Form\User\Login as LoginForm;
 use Application\Model\FormFlowChecker;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Zend\Session\Container;
+use Zend\View\Model\ViewModel;
 
 class AuthController extends AbstractBaseController {
 
@@ -95,9 +95,12 @@ class AuthController extends AbstractBaseController {
                             //  Redirect to next page which needs filling out
                             $lpaId = $pathArray[2];
                             $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int)$lpaId);
-                            $formFlowChecker = new FormFlowChecker($lpa);
-                            $destinationRoute = $formFlowChecker->backToForm();
-                            return $this->redirect()->toRoute($destinationRoute, ['lpa-id'=>$lpa->id], $formFlowChecker->getRouteOptions($destinationRoute));
+
+                            if ($lpa instanceof Lpa) {
+                                $formFlowChecker = new FormFlowChecker($lpa);
+                                $destinationRoute = $formFlowChecker->backToForm();
+                                return $this->redirect()->toRoute($destinationRoute, ['lpa-id' => $lpa->id], $formFlowChecker->getRouteOptions($destinationRoute));
+                            }
                         }
 
                         //not an LPA url so redirect directly to it
