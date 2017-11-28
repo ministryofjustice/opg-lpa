@@ -247,7 +247,7 @@
                 <thead>
                     <tr>
                         <th>Status</th>
-                        {% for month,values in correspondence %}
+                        {% for month,values in correspondence['by-month'] %}
                             <th class="numeric">{{ month }}</th>
                         {% endfor %}
                     </tr>
@@ -255,37 +255,37 @@
                 <tbody>
                     <tr>
                         <td>Completed LPAs</td>
-                        {% for month,values in correspondence %}
+                        {% for month,values in correspondence['by-month'] %}
                             <td class="numeric">{{ values.completed }}</td>
                         {% endfor %}
                     </tr>
                     <tr>
                         <td>Contact by email</td>
-                        {% for month,values in correspondence %}
+                        {% for month,values in correspondence['by-month'] %}
                             <td class="numeric">{{ values.contactByEmail }}</td>
                         {% endfor %}
                     </tr>
                     <tr>
                         <td>Contact by phone</td>
-                        {% for month,values in correspondence %}
+                        {% for month,values in correspondence['by-month'] %}
                             <td class="numeric">{{ values.contactByPhone }}</td>
                         {% endfor %}
                     </tr>
                     <tr>
                         <td>Contact by post</td>
-                        {% for month,values in correspondence %}
+                        {% for month,values in correspondence['by-month'] %}
                             <td class="numeric">{{ values.contactByPost }}</td>
                         {% endfor %}
                     </tr>
                     <tr>
                         <td>Correspondence in English</td>
-                        {% for month,values in correspondence %}
+                        {% for month,values in correspondence['by-month'] %}
                             <td class="numeric">{{ values.contactInEnglish }}</td>
                         {% endfor %}
                     </tr>
                     <tr>
                         <td>Correspondence in Welsh</td>
-                        {% for month,values in correspondence %}
+                        {% for month,values in correspondence['by-month'] %}
                             <td class="numeric">{{ values.contactInWelsh }}</td>
                         {% endfor %}
                     </tr>
@@ -308,7 +308,7 @@
                 <thead>
                     <tr>
                         <th>Status</th>
-                        {% for month,values in preferencesInstructions %}
+                        {% for month,values in preferencesInstructions['by-month'] %}
                             <th class="numeric">{{ month }}</th>
                         {% endfor %}
                     </tr>
@@ -316,19 +316,19 @@
                 <tbody>
                     <tr>
                         <td>Completed LPAs</td>
-                        {% for month,values in preferencesInstructions %}
+                        {% for month,values in preferencesInstructions['by-month'] %}
                             <td class="numeric">{{ values.completed }}</td>
                         {% endfor %}
                     </tr>
                     <tr>
                         <td>Preferences stated</td>
-                        {% for month,values in preferencesInstructions %}
+                        {% for month,values in preferencesInstructions['by-month'] %}
                             <td class="numeric">{{ values.preferencesStated }}</td>
                         {% endfor %}
                     </tr>
                     <tr>
                         <td>Instructions stated</td>
-                        {% for month,values in preferencesInstructions %}
+                        {% for month,values in preferencesInstructions['by-month'] %}
                             <td class="numeric">{{ values.instructionsStated }}</td>
                         {% endfor %}
                     </tr>
