@@ -62,6 +62,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionCognitoSync(array $args = [])
  * @method \Aws\ConfigService\ConfigServiceClient createConfigService(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionConfigService(array $args = [])
+ * @method \Aws\CostExplorer\CostExplorerClient createCostExplorer(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionCostExplorer(array $args = [])
  * @method \Aws\CostandUsageReportService\CostandUsageReportServiceClient createCostandUsageReportService(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionCostandUsageReportService(array $args = [])
  * @method \Aws\DAX\DAXClient createDAX(array $args = [])
@@ -148,6 +150,16 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionMarketplaceEntitlementService(array $args = [])
  * @method \Aws\MarketplaceMetering\MarketplaceMeteringClient createMarketplaceMetering(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionMarketplaceMetering(array $args = [])
+ * @method \Aws\MediaConvert\MediaConvertClient createMediaConvert(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionMediaConvert(array $args = [])
+ * @method \Aws\MediaLive\MediaLiveClient createMediaLive(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionMediaLive(array $args = [])
+ * @method \Aws\MediaPackage\MediaPackageClient createMediaPackage(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionMediaPackage(array $args = [])
+ * @method \Aws\MediaStore\MediaStoreClient createMediaStore(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionMediaStore(array $args = [])
+ * @method \Aws\MediaStoreData\MediaStoreDataClient createMediaStoreData(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionMediaStoreData(array $args = [])
  * @method \Aws\MigrationHub\MigrationHubClient createMigrationHub(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionMigrationHub(array $args = [])
  * @method \Aws\Mobile\MobileClient createMobile(array $args = [])
@@ -162,6 +174,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionPinpoint(array $args = [])
  * @method \Aws\Polly\PollyClient createPolly(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionPolly(array $args = [])
+ * @method \Aws\Pricing\PricingClient createPricing(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionPricing(array $args = [])
  * @method \Aws\Rds\RdsClient createRds(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionRds(array $args = [])
  * @method \Aws\Redshift\RedshiftClient createRedshift(array $args = [])
@@ -215,7 +229,7 @@ namespace Aws;
  */
 class Sdk
 {
-    const VERSION = '3.36.29';
+    const VERSION = '3.40.0';
 
     /** @var array Arguments for creating clients */
     private $args;
