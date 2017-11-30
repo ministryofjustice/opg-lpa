@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.2 - TBD
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.8.1 - 2017-11-20
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#26](https://github.com/zendframework/zend-serializer/pull/26)
+  Travis: Remove fast finish flag
+- [#32](https://github.com/zendframework/zend-serializer/pull/32)
+  Travis: fix doctrine/instantiator on PHP-5.6
+- [#27](https://github.com/zendframework/zend-serializer/pull/27)
+  CS fixes for new coding standard
+- [#25](https://github.com/zendframework/zend-serializer/pull/25)
+  Travis: Move coverage to latest-env to make composer.lock usefull again
+- [#30](https://github.com/zendframework/zend-serializer/issues/30) 
+  Fixed unserialize PythonPickle on big endian
+
 ## 2.8.0 - 2016-06-21
 
 ### Added
