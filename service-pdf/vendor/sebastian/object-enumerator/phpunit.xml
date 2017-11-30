@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/5.7/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/5.3/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          backupGlobals="false"
-         beStrictAboutCoversAnnotation="true"
+         backupStaticAttributes="false"
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTestsThatDoNotTestAnything="true"
          beStrictAboutTodoAnnotatedTests="true"
+         checkForUnintentionallyCoveredCode="true"
          verbose="true">
     <testsuite>
         <directory suffix="Test.php">tests</directory>

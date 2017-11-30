@@ -22,6 +22,10 @@ $_FILES['g']   = 'g';
 $_REQUEST['h'] = 'h';
 $GLOBALS['i']  = 'i';
 
+/**
+ * @since      Class available since Release 2.0.0
+ * @covers     PHPUnit_Framework_TestCase
+ */
 class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
 {
     protected $backupGlobalsBlacklist = ['i', 'singleton'];
@@ -29,7 +33,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
     /**
      * Used be testStaticAttributesBackupPre
      */
-    protected static $testStatic = 0;
+    protected static $_testStatic = 0;
 
     public function testCaseToString()
     {
@@ -48,7 +52,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $result->errorCount());
         $this->assertEquals(0, $result->failureCount());
         $this->assertEquals(0, $result->skippedCount());
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
     }
 
     public function testFailure()
@@ -60,7 +64,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $result->errorCount());
         $this->assertEquals(1, $result->failureCount());
         $this->assertEquals(0, $result->skippedCount());
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
     }
 
     public function testError()
@@ -72,7 +76,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, $result->errorCount());
         $this->assertEquals(0, $result->failureCount());
         $this->assertEquals(0, $result->skippedCount());
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
     }
 
     public function testSkipped()
@@ -85,7 +89,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $result->errorCount());
         $this->assertEquals(0, $result->failureCount());
         $this->assertEquals(1, $result->skippedCount());
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
     }
 
     public function testIncomplete()
@@ -98,7 +102,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $result->errorCount());
         $this->assertEquals(0, $result->failureCount());
         $this->assertEquals(0, $result->skippedCount());
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
     }
 
     public function testExceptionInSetUp()
@@ -168,7 +172,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
 
         $t->run($result);
 
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertEquals(0, $result->failureCount());
         $this->assertEquals(0, $result->errorCount());
     }
@@ -188,7 +192,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
 
         $result = $test->run();
 
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertTrue($result->wasSuccessful());
     }
 
@@ -199,7 +203,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
 
         $result = $test->run();
 
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertTrue($result->wasSuccessful());
     }
 
@@ -210,7 +214,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
 
         $result = $test->run();
 
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertTrue($result->wasSuccessful());
     }
 
@@ -222,7 +226,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
 
         $result = $test->run();
 
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertTrue($result->wasSuccessful());
     }
 
@@ -235,7 +239,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $result = $test->run();
 
         $this->assertEquals(1, $result->failureCount());
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertEquals(
             "Failed asserting that exception message 'A runtime error occurred' contains 'A logic error occurred'.",
             $test->getStatusMessage()
@@ -250,7 +254,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
 
         $result = $test->run();
 
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertTrue($result->wasSuccessful());
     }
 
@@ -263,13 +267,16 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $result = $test->run();
 
         $this->assertEquals(1, $result->failureCount());
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertEquals(
             "Failed asserting that exception message 'A runtime error occurred' matches '/logic .*? occurred/'.",
             $test->getStatusMessage()
         );
     }
 
+    /**
+     * @covers PHPUnit_Framework_Constraint_ExceptionMessageRegExp
+     */
     public function testExceptionWithInvalidRegexpMessage()
     {
         $test = new ThrowExceptionTestCase('test');
@@ -292,7 +299,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $result = $test->run();
 
         $this->assertEquals(1, $result->failureCount());
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
     }
 
     public function testWrongException()
@@ -303,7 +310,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $result = $test->run();
 
         $this->assertEquals(1, $result->failureCount());
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
     }
 
     /**
@@ -378,7 +385,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
     public function testStaticAttributesBackupPre()
     {
         $GLOBALS['singleton'] = Singleton::getInstance();
-        self::$testStatic     = 123;
+        self::$_testStatic    = 123;
     }
 
     /**
@@ -387,7 +394,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
     public function testStaticAttributesBackupPost()
     {
         $this->assertNotSame($GLOBALS['singleton'], Singleton::getInstance());
-        $this->assertSame(0, self::$testStatic);
+        $this->assertSame(0, self::$_testStatic);
     }
 
     public function testIsInIsolationReturnsFalse()
@@ -395,7 +402,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $test   = new IsolationTest('testIsInIsolationReturnsFalse');
         $result = $test->run();
 
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertTrue($result->wasSuccessful());
     }
 
@@ -405,7 +412,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $test->setRunTestInSeparateProcess(true);
         $result = $test->run();
 
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertTrue($result->wasSuccessful());
     }
 
@@ -414,7 +421,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $test   = new OutputTestCase('testExpectOutputStringFooActualFoo');
         $result = $test->run();
 
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertTrue($result->wasSuccessful());
     }
 
@@ -423,7 +430,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $test   = new OutputTestCase('testExpectOutputStringFooActualBar');
         $result = $test->run();
 
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertFalse($result->wasSuccessful());
     }
 
@@ -432,7 +439,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $test   = new OutputTestCase('testExpectOutputRegexFooActualFoo');
         $result = $test->run();
 
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertTrue($result->wasSuccessful());
     }
 
@@ -441,7 +448,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $test   = new OutputTestCase('testExpectOutputRegexFooActualBar');
         $result = $test->run();
 
-        $this->assertCount(1, $result);
+        $this->assertEquals(1, count($result));
         $this->assertFalse($result->wasSuccessful());
     }
 
@@ -631,59 +638,5 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
 
         $cloned = clone $mock;
         $this->assertFalse($cloned->cloned);
-    }
-
-    public function testConfiguredMockCanBeCreated()
-    {
-        /** @var Mockable $mock */
-        $mock = $this->createConfiguredMock(
-            Mockable::class,
-            [
-                'foo' => false
-            ]
-        );
-
-        $this->assertFalse($mock->foo());
-        $this->assertNull($mock->bar());
-    }
-
-    public function testProvidingOfAutoreferencedArray()
-    {
-        $test = new \TestAutoreferenced('testJsonEncodeException', $this->getAutoreferencedArray());
-        $test->runBare();
-
-        $this->assertInternalType('array', $test->myTestData);
-        $this->assertArrayHasKey('data', $test->myTestData);
-        $this->assertEquals($test->myTestData['data'][0], $test->myTestData['data']);
-    }
-
-    /**
-     * @return array
-     */
-    private function getAutoreferencedArray()
-    {
-        $recursionData   = [];
-        $recursionData[] = &$recursionData;
-
-        return [
-            'RECURSION' => [
-                'data' => $recursionData
-            ]
-        ];
-    }
-
-    public function testProvidingArrayThatMixesObjectsAndScalars()
-    {
-        $data = [
-            [123],
-            ['foo'],
-            [$this->createMock(Mockable::class)],
-        ];
-
-        $test = new \TestAutoreferenced('testJsonEncodeException', [$data]);
-        $test->runBare();
-
-        $this->assertInternalType('array', $test->myTestData);
-        $this->assertSame($data, $test->myTestData);
     }
 }
