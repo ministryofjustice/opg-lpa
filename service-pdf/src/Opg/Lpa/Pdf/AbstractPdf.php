@@ -154,15 +154,24 @@ abstract class AbstractPdf extends PdftkPdf
      */
     public function generate($protect = false)
     {
-        //  If required re-get the PDF and set the password - this is actually shrinks the PDF again
+        //  If required re-get the PDF and set the password
         if ($protect) {
-            $pdfToProtect = new PdftkPdf($this->pdfFile);
-            $pdfToProtect->allow('Printing CopyContents')
-                         ->setPassword($this->config['pdf']['password'])
-                         ->saveAs($this->pdfFile);
+            $this->protectPdf();
         }
 
         return $this->pdfFile;
+    }
+
+    /**
+     * Protect the PDF with the password
+     */
+    protected function protectPdf()
+    {
+        $pdfToProtect = new PdftkPdf($this->pdfFile);
+
+        $pdfToProtect->allow('Printing CopyContents')
+                     ->setPassword($this->config['pdf']['password'])
+                     ->saveAs($this->pdfFile);
     }
 
     /**

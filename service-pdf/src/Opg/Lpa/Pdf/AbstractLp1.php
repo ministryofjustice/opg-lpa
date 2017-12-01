@@ -731,8 +731,9 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     public function generate($protect = false)
     {
-        //  Generate the LP1 PDF
-        $pdfFile = parent::generate($protect);
+        //  Generate the LP1 PDF - don't protect the PDF at this point
+        //  The password will only be set below if this in the main PDF being generated
+        $pdfFile = parent::generate(false);
 
         //  Only perform the stamping if this is the main PDF being generated rather than a constituent PDF
         if (!is_null($this->formattedLpaRef)) {
@@ -774,6 +775,9 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 $this->stampPageWith($draftWatermarkPdf, 19);
                 $this->stampPageWith($draftWatermarkPdf, 20);
             }
+
+            //  Protect the PDF with a password now
+            $this->protectPdf();
         }
 
         return $pdfFile;
