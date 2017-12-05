@@ -19,8 +19,8 @@ class Name extends AbstractData
      */
     const TITLE_MIN_LENGTH = 1;
     const TITLE_MAX_LENGTH = 5;
-    const FIRST_NAME_MAX_LENGTH = 32;
-    const LAST_NAME_MAX_LENGTH = 40;
+    const FIRST_NAME_MAX_LENGTH = 50;//32;
+    const LAST_NAME_MAX_LENGTH = 50;//40;
 
     /**
      * @var string A person's title. E.g. Mr, Miss, Mrs, etc.
