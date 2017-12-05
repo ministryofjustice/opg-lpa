@@ -17,9 +17,9 @@ class TrustCorporation extends AbstractAttorney
      * Field length constants
      */
     const NAME_MIN_LENGTH = 1;
-    const NAME_MAX_LENGTH = 40;
+    const NAME_MAX_LENGTH = 75;//40;
     const NUMBER_MIN_LENGTH = 1;
-    const NUMBER_MAX_LENGTH = 40;
+    const NUMBER_MAX_LENGTH = 75;//40;
 
     /**
      * @var string The company name,
