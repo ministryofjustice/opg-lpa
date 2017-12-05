@@ -19,7 +19,7 @@ class Address extends AbstractData
     /**
      * Field length constants
      */
-    const ADDRESS_LINE_MAX_LENGTH = 40;
+    const ADDRESS_LINE_MAX_LENGTH = 50;//40;
     const POSTCODE_MIN_LENGTH = 1;
     const POSTCODE_MAX_LENGTH = 8;
 
