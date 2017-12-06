@@ -73,7 +73,7 @@
         </legend>
         <div class="form-group {{ details.getMessages|length >0 ? 'error'}}">
             <label class="form-label text" for="{{ details.getAttribute('id') }}">
-                <span class="visuallyhidden">Your feedback<br></span>
+                <span class="visually-hidden">Your feedback<br></span>
                 <span class="form-hint">2000 characters max<br></span>
                 {{ formElementErrorsV2(details) }}
             </label>
@@ -103,7 +103,7 @@
         </legend>
         <div class="form-group {{ phone.getMessages|length >0 ? 'error'}}">
             <label class="form-label text" for="{{ phone.getAttribute('id') }}">
-                <span class="visuallyhidden">Your phone number (optional)</span>
+                <span class="visually-hidden">Your phone number (optional)</span>
                 {{ formElementErrorsV2(phone) }}
             </label>
             {{ formElement(phone) }}
