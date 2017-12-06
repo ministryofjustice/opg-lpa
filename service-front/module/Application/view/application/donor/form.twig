@@ -185,7 +185,7 @@
     <h2 class="heading-medium popup-exclude">What is the donor's name?</h2>
 
     <fieldset>
-        <legend class="visuallyhidden">Add donor details</legend>
+        <legend class="visually-hidden">Add donor details</legend>
 
         {{ macros.formGroup(title) }}
         {{ macros.formGroup(firstname) }}
@@ -245,7 +245,7 @@
     <h2 class="heading-medium popup-exclude">What is the donor's email address?</h2>
 
     <fieldset>
-        <legend class="visuallyhidden">Email address</legend>
+        <legend class="visually-hidden">Email address</legend>
 
         {{ macros.formGroup(email) }}
 
@@ -254,7 +254,7 @@
     <h2 class="heading-medium popup-exclude">What is the donor's address?</h2>
 
     <fieldset class="postcodelookup">
-        <legend class="visuallyhidden">Address</legend>
+        <legend class="visually-hidden">Address</legend>
         <div class="js-PostcodeLookup__postal-add">
             {{ macros.formGroup(address1) }}
             {{ macros.formGroup(address2) }}
@@ -264,7 +264,7 @@
     </fieldset>
 
     <fieldset>
-        <legend class="visuallyhidden"></legend>
+        <legend class="visually-hidden"></legend>
 
         <div class="form-group {{ canSign.getMessages|length >0 ? 'error'}}">
             <label class="block-label" for="{{ canSign.getAttribute('id') }}">
