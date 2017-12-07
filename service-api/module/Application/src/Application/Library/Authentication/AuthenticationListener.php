@@ -1,12 +1,11 @@
 <?php
+
 namespace Application\Library\Authentication;
 
+use Zend\Authentication\Result as AuthenticationResult;
 use Zend\Mvc\MvcEvent;
-
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
-
-use Zend\Authentication\Result as AuthenticationResult;
 
 /**
  * Authenticate the user from a header token.
@@ -16,15 +15,17 @@ use Zend\Authentication\Result as AuthenticationResult;
  * Class AuthenticationListener
  * @package Application\Library\Authentication
  */
-class AuthenticationListener {
+class AuthenticationListener
+{
+    public function authenticate(MvcEvent $e)
+    {
+        $serviceManager = $e->getApplication()->getServiceManager();
 
-    public function authenticate( MvcEvent $e ){
+        $logger = $serviceManager->get('Logger');
 
-        $log = $e->getApplication()->getServiceManager()->get('Logger');
-        
-        $auth = $e->getApplication()->getServiceManager()->get('AuthenticationService');
+        $authService = $serviceManager->get('AuthenticationService');
 
-        $config = $e->getApplication()->getServiceManager()->get('Config');
+        $authConfig = $serviceManager->get('Config')['authentication'];
 
         /*
          * Do some authentication. Initially this will will just be via the token passed from front-2.
@@ -34,49 +35,40 @@ class AuthenticationListener {
          * This will leave the standard 'Authorization' namespace free for when OAuth is done properly.
          */
         $token = $e->getRequest()->getHeader('Token');
-        
+
         if (!$token) {
+            //  Check to see if this is a request from the auth service to clean up data
+            $token = $e->getRequest()->getHeader('AuthCleanUpToken');
 
-            // No token; set Guest....
-            $auth->getStorage()->write( new Identity\Guest() );
-            
-            $log->info(
-                'No token, guest set in Authentication Listener'
-            );
+            if ($token && trim($token->getFieldValue()) == $authConfig['clean-up-token']) {
+                //  Set identity as the auth service
+                $authService->getStorage()->write(new Identity\AuthService());
 
-        } else {
-
-            $token = trim($token->getFieldValue());
-            
-            $log->info(
-                'Authentication attempt - token supplied'
-            );
-
-            $authAdapter = new Adapter\LpaAuth( $token, $config['authentication']['endpoint'] );
-
-            // If successful, the identity will be persisted for the request.
-            $result = $auth->authenticate($authAdapter);
-
-            if( AuthenticationResult::SUCCESS !== $result->getCode() ){
-
-                $log->info(
-                    'Authentication failed'
-                );
-                
-                return new ApiProblemResponse( new ApiProblem( 401, 'Invalid authentication token' ) );
-
+                $logger->info('Authentication success - auth service for clean up');
             } else {
+                //  No token; set Guest....
+                $authService->getStorage()->write(new Identity\Guest());
 
-                $log->info(
-                    'Authentication success'
-                );
+                $logger->info('No token, guest set in Authentication Listener');
+            }
+        } else {
+            $token = trim($token->getFieldValue());
+
+            $logger->info('Authentication attempt - token supplied');
+
+            //  Attempt to authenticate - if successful the identity will be persisted for the request
+            $authAdapter = new Adapter\LpaAuth($token, $authConfig['endpoint']);
+            $result = $authService->authenticate($authAdapter);
+
+            if (AuthenticationResult::SUCCESS !== $result->getCode()) {
+                $logger->info('Authentication failed');
+
+                return new ApiProblemResponse(new ApiProblem(401, 'Invalid authentication token'));
+            } else {
+                $logger->info('Authentication success');
 
                 // On SUCCESS, we don't return anything (as we're in a Listener).
-
             }
-
-        } // if token
-
-    } // function
-
-} // class
+        }
+    }
+}
