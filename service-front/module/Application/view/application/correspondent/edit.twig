@@ -146,7 +146,7 @@
     <h2 class="heading-medium popup-exclude">Correspondent's details?</h2>
 
     <fieldset>
-        <legend class="visuallyhidden">Add correspondent's details</legend>
+        <legend class="visually-hidden">Add correspondent's details</legend>
 
         {{ macros.formGroup(title) }}
         {{ macros.formGroup(firstname) }}
@@ -172,7 +172,7 @@
     <h2 class="heading-medium popup-exclude">{{ form.trustSelected() ? 'Correspondent\'s address' : 'What is the correspondent\'s address?' }}</h2>
 
     <fieldset class="postcodelookup">
-        <legend class="visuallyhidden">Add address details</legend>
+        <legend class="visually-hidden">Add address details</legend>
 
         {% if form.trustSelected() %}
             {{ formHidden(address1) }}
@@ -209,7 +209,7 @@
     <h2 class="heading-medium popup-exclude">Correspondent's contact details?</h2>
 
     <fieldset>
-        <legend class="visuallyhidden">Add correspondent's contact details</legend>
+        <legend class="visually-hidden">Add correspondent's contact details</legend>
 
         {{ macros.formGroup(email) }}
         {{ macros.formGroup(phone) }}

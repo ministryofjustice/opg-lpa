@@ -45,9 +45,10 @@ Choose this option if you want your attorneys to agree on every decision, regard
 
 With this option:
 
-*	if your attorneys can’t all agree on a decision, it can’t be made
+*   if your attorneys can’t all agree on a decision, it can’t be made
 *	if your attorneys can’t work together, your LPA won’t work
-*	if one attorney can no longer act or dies, your LPA will stop working, unless you’ve appointed replacements
+*	if one attorney can no longer act or dies, your LPA will stop working, unless you’ve appointed replacements or unless stated otherwise in [instructions](/help/#topic-preferences-and-instructions)
+*   your attorneys may not be able to use internet or telephone banking to manage your bank accounts
 
 If you have appointed replacement attorneys, they all take over if one of your original attorneys can no longer act – your original attorneys stop acting for you. This is because the law treats attorneys who act jointly as a single unit.
 
