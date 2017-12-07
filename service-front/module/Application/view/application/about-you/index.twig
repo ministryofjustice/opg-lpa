@@ -128,7 +128,7 @@
     <h2 class="heading-medium">What is your name?</h2>
 
     <fieldset>
-        <legend class="visuallyhidden">Name</legend>
+        <legend class="visually-hidden">Name</legend>
 
         {{ macros.formGroup(title) }}
         {{ macros.formGroup(firstName) }}
@@ -139,7 +139,7 @@
     <h2 class="heading-medium">What is your date of birth?</h2>
 
     <fieldset id="{{ dob.getAttribute('name') }}">
-        <legend class="visuallyhidden">Date of birth</legend>
+        <legend class="visually-hidden">Date of birth</legend>
 
         <div class="form-date {{ dob.getMessages|length >0 ? 'error'}}">
             <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
@@ -172,7 +172,7 @@
     <h2 class="heading-medium">What is your address?</h2>
 
     <fieldset class="js-PostcodeLookup">
-        <legend class="visuallyhidden">Address</legend>
+        <legend class="visually-hidden">Address</legend>
 
         <div class="js-PostcodeLookup__postal-add">
             {{ macros.formGroup(address1) }}
