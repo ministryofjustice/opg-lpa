@@ -168,9 +168,6 @@ return array(
                         'address' => 'opg@lastingpowerofattorney.service.gov.uk',
                 ],
         ], // opg email sender
-
-        'blacklist' => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_BLACKLIST') ? explode(',',getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_BLACKLIST')) : array(),
-
     ], // email
 
 
