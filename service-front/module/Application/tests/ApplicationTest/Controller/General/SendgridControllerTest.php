@@ -82,58 +82,6 @@ class SendgridControllerTest extends AbstractControllerTest
         $this->assertEquals('', $result->getContent());
     }
 
-    public function testBounceActionBlacklistToAddress()
-    {
-        $this->request->shouldReceive('getPost')->with('from')->andReturn($this->postData['from'])->once();
-        $this->request->shouldReceive('getPost')->with('to')->andReturn('blackhole@lastingpowerofattorney.service.gov.uk')->once();
-        $this->request->shouldReceive('getPost')->with('subject')->andReturn($this->postData['subject'])->once();
-        $this->request->shouldReceive('getPost')->with('spam_score')->andReturn($this->postData['spam_score'])->once();
-        $this->request->shouldReceive('getPost')->with('text')->andReturn('Text\r\n\r\nSent from Mail for Windows 10')->once();
-
-        $loggingData = [
-            'from-address'          => $this->postData['from'],
-            'to-address'            => 'blackhole@lastingpowerofattorney.service.gov.uk',
-            'subject'               => $this->postData['subject'],
-            'spam-score'            => $this->postData['spam_score'],
-            'sent-from-windows-10'  => true,
-        ];
-
-        $this->logger->shouldReceive('err')->with('Sender or recipient missing, or email sent to blackhole@lastingpowerofattorney.service.gov.uk - the message message will not be sent to SendGrid', $loggingData)->once();
-
-        /** @var Response $result */
-        $result = $this->controller->bounceAction();
-
-        $this->assertInstanceOf(Response::class, $result);
-        $this->assertEquals(200, $result->getStatusCode());
-        $this->assertEquals('', $result->getContent());
-    }
-
-    public function testBounceActionBlacklistFromAddress()
-    {
-        $this->request->shouldReceive('getPost')->with('from')->andReturn('from@blacklist.com')->once();
-        $this->request->shouldReceive('getPost')->with('to')->andReturn($this->postData['to'])->once();
-        $this->request->shouldReceive('getPost')->with('subject')->andReturn($this->postData['subject'])->once();
-        $this->request->shouldReceive('getPost')->with('spam_score')->andReturn($this->postData['spam_score'])->once();
-        $this->request->shouldReceive('getPost')->with('text')->andReturn($this->postData['text'])->once();
-
-        $loggingData = [
-            'from-address'          => 'from@blacklist.com',
-            'to-address'            => $this->postData['to'],
-            'subject'               => $this->postData['subject'],
-            'spam-score'            => $this->postData['spam_score'],
-            'sent-from-windows-10'  => false,
-        ];
-
-        $this->logger->shouldReceive('err')->with('From email address is blacklisted - the unmonitored email will not be sent to this user', $loggingData)->once();
-
-        /** @var Response $result */
-        $result = $this->controller->bounceAction();
-
-        $this->assertInstanceOf(Response::class, $result);
-        $this->assertEquals(200, $result->getStatusCode());
-        $this->assertEquals('', $result->getContent());
-    }
-
     public function testBounceActionEmptyToken()
     {
         $this->request->shouldReceive('getPost')->with('from')->andReturn($this->postData['from'])->once();
