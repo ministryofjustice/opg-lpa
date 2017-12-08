@@ -2,72 +2,55 @@
 
 namespace Opg\Lpa\Pdf\Worker;
 
-use DynamoQueue\Worker\ProcessorInterface;
 use Opg\Lpa\Pdf\Config\Config;
+use DynamoQueue\Worker\ProcessorInterface;
 use Zend\Crypt\BlockCipher;
-use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
+use Zend\Crypt\Symmetric\Exception\InvalidArgumentException;
 use Zend\Filter\Decompress;
 
-class DynamoQueueWorker extends AbstractWorker implements ProcessorInterface {
-
+class DynamoQueueWorker extends AbstractWorker implements ProcessorInterface
+{
     /**
-     * The compression adapter to use (with ZF2 Filters)
-     * We compress JSON put into the queue with this.
-     */
-    const COMPRESSION_ADAPTER = 'Gz';
-
-    //----------------------------------------------------
-
-    /**
-     * Return the RedisResponse for handling the response.
+     * Return the object for handling the response
      *
      * @param $docId
-     * @return \Opg\Lpa\Pdf\Service\ResponseInterface
+     * @return Response\S3Response
      */
-    protected function getResponseObject( $docId ){
-        return new Response\S3Response( $docId );
+    protected function getResponseObject($docId)
+    {
+        return new Response\S3Response($docId);
     }
 
+    /**
+     * Process the specified job
+     *
+     * @param $jobId
+     * @param $message
+     */
+    public function perform($jobId, $message)
+    {
+        $this->logger->info("New message: strlen($message) bytes\n");
 
-    public function perform( $jobId, $message ){
+        $config = Config::getInstance();
+        $encryptionConfig = $config['pdf']['encryption'];
+        $encryptionKeysQueue = $encryptionConfig['keys']['queue'];
 
-        $messageSize = strlen( $message );
-
-        $this->logger->info("New message: $messageSize bytes\n");
-
-        //---------------------------------------------
-        // Decrypt the JSON...
-
-        $config = Config::getInstance()['pdf']['encryption'];
-
-        if( !is_string($config['keys']['queue']) || strlen($config['keys']['queue']) != 32 ){
-            throw new CryptInvalidArgumentException('Invalid encryption key');
+        if (!is_string($encryptionKeysQueue) || strlen($encryptionKeysQueue) != 32) {
+            throw new InvalidArgumentException('Invalid encryption key');
         }
 
-        //---
+        //  We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
+        $blockCipher = BlockCipher::factory('mcrypt', $encryptionConfig['options']);
+        $blockCipher->setKey($encryptionKeysQueue);
 
-        // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
-        $blockCipher = BlockCipher::factory('mcrypt', $config['options']);
+        //  Get the JSON from the message and decompress it
+        $decompressFilter = new Decompress('Gz');
+        $compressedJson = $blockCipher->decrypt($message);
+        $json = $decompressFilter->filter($compressedJson);
 
-        // Set the secret key
-        $blockCipher->setKey( $config['keys']['queue'] );
+        $data = json_decode($json, true);
 
-        $compressedJson = $blockCipher->decrypt( $message );
-
-        //---------------------------------------------
-        // Decompress the JSON...
-
-        $json = (new Decompress( self::COMPRESSION_ADAPTER ))->filter( $compressedJson );
-
-        //---
-
-        $data = json_decode( $json, true );
-
-        //---------------------------------------------
-        // Run the job...
-
-        $this->run( $jobId, $data['type'], $data['lpa'] );
-
-    } // function
-
+        //  Run the job...
+        $this->run($jobId, $data['type'], $data['lpa']);
+    }
 }

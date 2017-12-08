@@ -1,37 +1,38 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Config;
 
 use ArrayAccess;
 use Countable;
 
-class Config implements Countable, ArrayAccess {
-
+class Config implements Countable, ArrayAccess
+{
     private static $instance = null;
 
     private $container = null;
 
-    private function __construct( ) {
-        if($this->container === null) {
-
+    private function __construct()
+    {
+        if ($this->container === null) {
             $this->container = include('global.php');
 
-            if( stream_resolve_include_path('local.php') !== false ){
-                $this->container = static::merge( $this->container, include('local.php') );
+            if (stream_resolve_include_path('local.php') !== false) {
+                $this->container = static::merge($this->container, include('local.php'));
             }
-
         }
     }
 
-    static public function getInstance( )
+    public static function getInstance()
     {
-        if(self::$instance === null) {
-            self::$instance = new self( );
+        if (self::$instance === null) {
+            self::$instance = new self();
         }
 
         return self::$instance;
     }
 
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value)
+    {
         if (is_null($offset)) {
             $this->container[] = $value;
         } else {
@@ -39,23 +40,25 @@ class Config implements Countable, ArrayAccess {
         }
     }
 
-    public function offsetExists($offset) {
+    public function offsetExists($offset)
+    {
         return isset($this->container[$offset]);
     }
 
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset)
+    {
         unset($this->container[$offset]);
     }
 
-    public function offsetGet($offset) {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+    public function offsetGet($offset)
+    {
+        return (isset($this->container[$offset]) ? $this->container[$offset] : null);
     }
 
-    public function count(){
+    public function count()
+    {
         return count($this->container);
     }
-
-    //------------------------------------------------
 
     /**
      * Merge two arrays together.
@@ -86,10 +89,4 @@ class Config implements Countable, ArrayAccess {
         }
         return $a;
     }
-
-    public static function destroy()
-    {
-        self::$instance = null;
-    }
-
-} // class
+}

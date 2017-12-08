@@ -1,104 +1,67 @@
 <?php
+
 namespace Opg\Lpa\Pdf\Worker\Response;
 
+use Aws\S3\Exception\S3Exception;
+use Aws\S3\S3Client;
+use Zend\Crypt\BlockCipher;
+use Zend\Crypt\Symmetric\Exception\InvalidArgumentException;
 use SplFileInfo;
 
-use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Service\ResponseInterface;
-
-use Zend\Crypt\BlockCipher;
-use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
-
-use Aws\S3\S3Client;
-
 /**
- * Stores the generated PDF into Amazon S3.
+ * Stores the generated PDF into Amazon S3
  *
- * Files will be automatically deleted after a period by the bucket's Lifecycle policy.
- *
- * Class S3Response
- * @package Opg\Lpa\Pdf\Worker\Response
+ * Files will be automatically deleted after a period by the bucket's Lifecycle policy
  */
-class S3Response implements ResponseInterface
+class S3Response extends AbstractResponse
 {
-
-    private $docId;
-    private $config;
-
-    //---
-
-    public function __construct($docId){
-
-        $this->docId = $docId;
-
-        // load config/local.php by default
-        $this->config = Config::getInstance()['worker']['s3Response'];
-
-    }
-
-
     /**
      * Store the file on the passed path for retrieval by the API service.
      *
-     * @param $file
+     * @param SplFileInfo $file
+     * @throws InvalidArgumentException|S3Exception
      */
-    public function save( SplFileInfo $file ){
+    public function save(SplFileInfo $file)
+    {
+        $this->logToConsole('Response received: ' . $file->getRealPath());
 
-        echo "{$this->docId}: Response received: ".$file->getRealPath()."\n";
+        //  Get the file contents and encrypt them
+        $fileContents = file_get_contents($file->getRealPath());
 
-        //---
+        $encryptionConfig = $this->config['pdf']['encryption'];
+        $encryptionKeysDocument = $encryptionConfig['keys']['document'];
 
-        $data = file_get_contents( $file->getRealPath() );
-
-        //-------------------------------------------
-        // Secure data
-
-        $config = Config::getInstance()['pdf']['encryption'];
-
-        if( !is_string($config['keys']['document']) || strlen($config['keys']['document']) != 32 ){
-            throw new CryptInvalidArgumentException('Invalid encryption key');
+        if (!is_string($encryptionKeysDocument) || strlen($encryptionKeysDocument) != 32) {
+            throw new InvalidArgumentException('Invalid encryption key');
         }
 
-        // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
-        $blockCipher = BlockCipher::factory('mcrypt', $config['options']);
+        //  We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
+        $blockCipher = BlockCipher::factory('mcrypt', $encryptionConfig['options']);
+        $blockCipher->setKey($encryptionKeysDocument);
+        $blockCipher->setBinaryOutput(true);
 
-        // Set the secret key
-        $blockCipher->setKey( $config['keys']['document'] );
-        $blockCipher->setBinaryOutput( true );
+        //  Encrypt the PDF...
+        $fileContentsEncrypted = $blockCipher->encrypt($fileContents);
 
-        // Encrypt the PDF...
-        $encryptedData = $blockCipher->encrypt( $data );
-
-        //-------------------------------------------
-        // Save to S3
-
-        $s3 = new S3Client( $this->config['client'] );
-
-        $file = $this->config['settings'] + [
-            'Key' => (string)$this->docId,
-            'Body' => $encryptedData,
-        ];
-
-        //---
+        //  Create the S3 client
+        $workerConfig = $this->config['worker']['s3Response'];
+        $workerSettingsConfig = $workerConfig['settings'];
+        $s3 = new S3Client($workerConfig['client']);
 
         try {
+            //  Put the encrypted file to S3
+            $file = $workerSettingsConfig + [
+                'Key'  => (string)$this->docId,
+                'Body' => $fileContentsEncrypted,
+            ];
 
-            // Upload the file to S3.
             $s3->putObject($file);
+        } catch (S3Exception $e) {
+            $this->logToConsole('ERROR: Failed to save to S3 in ' . $workerSettingsConfig['Bucket']);
 
-        } catch (\Aws\Exception\S3Exception $e) {
-
-            echo "{$this->docId}: Failed to saved to S3"."\n";
-
-            // Re-throw the exception to catch further up the stack.
             throw $e;
-
         }
 
-        //---
-
-        echo "{$this->docId}: Saved to S3 in {$this->config['settings']['Bucket']}"."\n";
-
-    } // function
-
-} // class
+        $this->logToConsole('Saved to S3 in ' . $workerSettingsConfig['Bucket']);
+    }
+}

@@ -4,45 +4,36 @@ namespace Opg\Lpa\Pdf\Worker\Response;
 
 use SplFileInfo;
 
-use Opg\Lpa\Pdf\Config\Config;
-use Opg\Lpa\Pdf\Service\ResponseInterface;
-
-class TestResponse implements ResponseInterface  {
-
-    private $docId;
-    private $config;
-
-    public function __construct( $docId ) {
-
-        $this->docId = $docId;
-
-        // load config/local.php by default
-        $this->config = Config::getInstance( );
-
-    }
-
+/**
+ * Generates PDF files and stores them in a location on the file system
+ */
+class TestResponse extends AbstractResponse
+{
     /**
      * Store the file on the passed path for retrieval by the API service.
      *
-     * @param $pathToFile
+     * @param SplFileInfo $file
      */
-    public function save( SplFileInfo $pathToFile ){
+    public function save(SplFileInfo $file)
+    {
+        $this->logToConsole('Response received: ' . $file->getRealPath());
 
-        echo "{$this->docId}: Response received: ".$pathToFile->getRealPath()."\n";
-        
-        if( !\file_exists($this->config['worker']['testResponse']['path']) ) {
-            mkdir( $this->config['worker']['testResponse']['path'], 0777, true );
+        $filesPath = $this->config['worker']['testResponse']['path'];
+
+        //  If the folder for the files is not present create it now
+        if (!\file_exists($filesPath)) {
+            mkdir($filesPath, 0777, true);
         }
 
-        $path = realpath($this->config['worker']['testResponse']['path'])."/{$this->docId}.pdf";
-        
-        if(\file_exists($pathToFile->getPathname())) {
+        $targetFilePath = realpath($filesPath) . "/{$this->docId}.pdf";
 
-            copy( $pathToFile->getPathname(), $path );
-    
-            echo "{$this->docId}: File saved to {$path}\n";
+        //  If the file can be found then copy it to the target location
+        if (\file_exists($file->getPathname())) {
+            copy($file->getPathname(), $targetFilePath);
+
+            $this->logToConsole('File saved to ' . $targetFilePath);
+        } else {
+            $this->logToConsole('ERROR: Failed to save to ' . $targetFilePath);
         }
-
-    } // function
-
-} // interface
+    }
+}
