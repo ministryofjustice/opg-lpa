@@ -253,7 +253,6 @@ abstract class AbstractControllerTest extends TestCase
                         'address' => 'unit@test.com',
                     ]
                 ],
-                'blacklist' => ['from@blacklist.com']
             ]
         ];
         $this->serviceLocator->shouldReceive('get')->with('config')->andReturn($this->config);

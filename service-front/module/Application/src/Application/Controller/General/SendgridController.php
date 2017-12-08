@@ -53,15 +53,6 @@ class SendgridController extends AbstractBaseController
         $config = $this->getServiceLocator()->get('config');
         $emailConfig = $config['email'];
 
-        //  Get the email blacklist to check if the destination email address is on that
-        $blacklistEmailAddresses = $emailConfig['blacklist'];
-
-        if (in_array($fromAddress, $blacklistEmailAddresses)) {
-            $this->log()->err('From email address is blacklisted - the unmonitored email will not be sent to this user', $loggingData);
-
-            return $this->getResponse();
-        }
-
         $token = $this->params()->fromRoute('token');
 
         if (!$token || $token !== $emailConfig['sendgrid']['webhook']['token']) {
