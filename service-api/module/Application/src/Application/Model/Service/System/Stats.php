@@ -650,7 +650,7 @@ class Stats implements ServiceLocatorAwareInterface
                 ], $readPreference),
                 'no' => $collection->count([
                     'completedAt' => $dateRange,
-                    'document.replacementAttorneys' => null
+                    'document.replacementAttorneys' => []
                 ], $readPreference),
                 'multiple' => $collection->count([
                     'completedAt' => $dateRange,
@@ -674,7 +674,7 @@ class Stats implements ServiceLocatorAwareInterface
                 ], $readPreference),
                 'no' => $collection->count([
                     'completedAt' => $dateRange,
-                    'document.peopleToNotify' => null
+                    'document.peopleToNotify' => []
                 ], $readPreference),
                 'multiple' => $collection->count([
                     'completedAt' => $dateRange,
@@ -692,7 +692,7 @@ class Stats implements ServiceLocatorAwareInterface
             $month['whoIsRegistering'] = [
                 'donor' => $collection->count([
                     'completedAt' => $dateRange,
-                    'document.whoIsRegistering' => null
+                    'document.whoIsRegistering' => 'donor'
                 ], $readPreference),
                 'attorneys' => $collection->count([
                     'completedAt' => $dateRange,
