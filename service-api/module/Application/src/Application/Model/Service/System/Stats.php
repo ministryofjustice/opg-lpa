@@ -74,6 +74,14 @@ class Stats implements ServiceLocatorAwareInterface
             $stats['preferencesInstructions'] = ['generated' => false];
         }
 
+        try {
+            $stats['radioButtons'] = $this->getRadioButtonsStats();
+            $this->info("Successfully generated radioButtons stats");
+        } catch (Exception $ex) {
+            $this->err("Failed to generate radioButtons stats due to {$ex->getMessage()}", [$ex]);
+            $stats['radioButtons'] = ['generated' => false];
+        }
+
         $stats['generated'] = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
         $stats['generationTimeInMs'] = round((microtime(true) - $startGeneration) * 1000);
 
@@ -570,5 +578,64 @@ class Stats implements ServiceLocatorAwareInterface
         /** @var Collection $collection */
         $collection = $this->getServiceLocator()->get(CollectionFactory::class . "-{$collection}");
         return $collection;
+    }
+
+    private function getRadioButtonsStats()
+    {
+        //https://opgtransform.atlassian.net/browse/LPA-2492
+        //db.getCollection('lpa').count({"document" : {$ne : null}, "document.type" : "health-and-welfare"})
+        //db.getCollection('lpa').count({"document" : {$ne : null}, "document.type" : "property-and-financial"})
+
+        //https://opgtransform.atlassian.net/browse/LPA-2493
+        //db.getCollection('lpa').count({"document.donor" : {$ne : null}, "document.donor.canSign" : true})
+        //db.getCollection('lpa').count({"document.donor" : {$ne : null}, "document.donor.canSign" : false})
+
+        //https://opgtransform.atlassian.net/browse/LPA-2494
+        //db.getCollection('lpa').count({"document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.when" : "now"})
+        //db.getCollection('lpa').count({"document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.when" : "no-capacity"})
+
+        //https://opgtransform.atlassian.net/browse/LPA-2495
+        //db.getCollection('lpa').count({"document.replacementAttorneys" : {$ne : null}, "document.replacementAttorneys" : { $gt: [] }})
+
+        //https://opgtransform.atlassian.net/browse/LPA-2496
+        //db.getCollection('lpa').count({"document.peopleToNotify" : {$ne : null}, "document.peopleToNotify" : { $gt: [] }})
+
+        //https://opgtransform.atlassian.net/browse/LPA-2497
+        //db.getCollection('lpa').count({"document.whoIsRegistering" : {$ne : null}, "document.whoIsRegistering" : "donor"})
+        //db.getCollection('lpa').count({"document.whoIsRegistering" : {$ne : null}, "document.whoIsRegistering" : { $gt: [] }}) //Attorney(s)
+
+        //https://opgtransform.atlassian.net/browse/LPA-2498
+        //db.getCollection('lpa').count({"repeatCaseNumber" : { $ne: null }})
+
+        //https://opgtransform.atlassian.net/browse/LPA-2499
+        //db.getCollection('lpa').count({"payment" : {$ne : null}, "payment.reducedFeeReceivesBenefits" : true, "payment.reducedFeeAwardedDamages" : true, "payment.reducedFeeLowIncome" : null, "payment.reducedFeeUniversalCredit" : null}) //reducedFeeReceivesBenefits
+        //db.getCollection('lpa').count({"payment" : {$ne : null}, "payment.reducedFeeReceivesBenefits" : false, "payment.reducedFeeAwardedDamages" : null, "payment.reducedFeeLowIncome" : false, "payment.reducedFeeUniversalCredit" : true}) //reducedFeeUniversalCredit
+        //db.getCollection('lpa').count({"payment" : {$ne : null}, "payment.reducedFeeReceivesBenefits" : false, "payment.reducedFeeAwardedDamages" : null, "payment.reducedFeeLowIncome" : true, "payment.reducedFeeUniversalCredit" : false}) //reducedFeeLowIncome
+        //db.getCollection('lpa').count({"payment" : {$ne : null}, "payment.reducedFeeReceivesBenefits" : null, "payment.reducedFeeAwardedDamages" : null, "payment.reducedFeeLowIncome" : null, "payment.reducedFeeUniversalCredit" : null}) //notApply
+
+        //https://opgtransform.atlassian.net/browse/LPA-2500
+        //db.getCollection('lpa').count({"payment" : {$ne : null}, "payment.method" : "card"})
+        //db.getCollection('lpa').count({"payment" : {$ne : null}, "payment.method" : "cheque"})
+
+        //https://opgtransform.atlassian.net/browse/LPA-2501
+        //db.getCollection('lpa').count({"document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.how" : "jointly-attorney-severally"})
+        //db.getCollection('lpa').count({"document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.how" : "jointly"})
+        //db.getCollection('lpa').count({"document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.how" : "depends"})
+        //db.getCollection('lpa').count({"document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.how" : null}) //Single attorney
+
+        //https://opgtransform.atlassian.net/browse/LPA-2502
+        //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.how" : "jointly-attorney-severally"})
+        //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.how" : "jointly"})
+        //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.how" : "depends"})
+        //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.how" : null}) //Single attorney
+
+        //https://opgtransform.atlassian.net/browse/LPA-2503
+        //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.when" : "first"})
+        //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.when" : "last"})
+        //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.when" : "depends"})
+
+        //https://opgtransform.atlassian.net/browse/LPA-2504
+        //db.getCollection('lpa').count({"document" : {$ne : null}, "document.type" : "health-and-welfare", "document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.canSustainLife" : true})
+        //db.getCollection('lpa').count({"document" : {$ne : null}, "document.type" : "health-and-welfare", "document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.canSustainLife" : false})
     }
 } // class
