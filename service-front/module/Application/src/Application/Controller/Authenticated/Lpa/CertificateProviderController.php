@@ -10,22 +10,32 @@ class CertificateProviderController extends AbstractLpaActorController
 {
     public function indexAction()
     {
-        $lpaId = $this->getLpa()->id;
+        $lpa = $this->getLpa();
 
-        $viewModel = new ViewModel();
+        //  Set hidden form for setting metadata to skip certificate provider if required
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+            'lpa' => $lpa
+        ]);
 
-        if ($this->getLpa()->document->certificateProvider instanceof CertificateProvider) {
-            $viewModel->editUrl = $this->url()->fromRoute('lpa/certificate-provider/edit', ['lpa-id' => $lpaId]);
-            $viewModel->confirmDeleteUrl = $this->url()->fromRoute('lpa/certificate-provider/confirm-delete', ['lpa-id' => $lpaId]);
+        if ($this->request->isPost()) {
+            $form->setData($this->request->getPost());
 
-            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-            $nextRoute = $this->getFlowChecker()->nextRoute($currentRouteName);
-            $viewModel->nextUrl = $this->url()->fromRoute($nextRoute, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($nextRoute));
+            if ($form->isValid()) {
+                $this->getServiceLocator()->get('Metadata')->setCertificateProviderSkipped($this->getLpa());
+
+                return $this->moveToNextRoute();
+            }
         }
 
-        $viewModel->addUrl = $this->url()->fromRoute('lpa/certificate-provider/add', ['lpa-id' => $lpaId]);
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        $nextRoute = $this->getFlowChecker()->nextRoute($currentRouteName);
+        $nextRouteOptions = $this->getFlowChecker()->getRouteOptions($nextRoute);
 
-        return $viewModel;
+        return new ViewModel([
+            'nextRoute'        => $nextRoute,
+            'nextRouteOptions' => $nextRouteOptions,
+            'form'             => $form,
+        ]);
     }
 
     public function addAction()
