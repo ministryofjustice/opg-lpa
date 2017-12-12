@@ -16,171 +16,171 @@
         }}
     {% endif %}
 
-	{% if (item.routeName == 'lpa/donor') %}
+    {% if (item.routeName == 'lpa/donor') %}
         {{ macros.accordionBar({
-            	'desktop' : 'The donor is ' ~ lpa.document.donor.name,
-            	'mobile' : 'The donor is ' ~ lpa.document.donor.name,
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
+                'desktop' : 'The donor is ' ~ lpa.document.donor.name,
+                'mobile' : 'The donor is ' ~ lpa.document.donor.name,
+                'status' : 'Complete',
+                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            })
         }}
     {% endif %}
 
-	{% if (item.routeName == 'lpa/life-sustaining') %}
+    {% if (item.routeName == 'lpa/life-sustaining') %}
         {{ macros.accordionBar({
-            	'desktop' : lpa.document.primaryAttorneyDecisions.canSustainLife == true ?
-					'Option A - The attorneys can make decisions about life-sustaining treatment' :
-					'Option B - The attorneys can\'t make decisions about life-sustaining treatment',
-            	'mobile' : lpa.document.primaryAttorneyDecisions.canSustainLife == true ?
-					'Option A - The attorneys can make decisions about life-sustaining treatment' :
-					'Option B - The attorneys can\'t make decisions about life-sustaining treatment',
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
+                'desktop' : lpa.document.primaryAttorneyDecisions.canSustainLife == true ?
+                    'Option A - The attorneys can make decisions about life-sustaining treatment' :
+                    'Option B - The attorneys can\'t make decisions about life-sustaining treatment',
+                'mobile' : lpa.document.primaryAttorneyDecisions.canSustainLife == true ?
+                    'Option A - The attorneys can make decisions about life-sustaining treatment' :
+                    'Option B - The attorneys can\'t make decisions about life-sustaining treatment',
+                'status' : 'Complete',
+                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            })
         }}
     {% endif %}
 
     {% if (item.routeName == 'lpa/primary-attorney') %}
         {{ macros.accordionBar({
-            	'desktop' : 'The attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.primaryAttorneys),
-            	'mobile' :  'The attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.primaryAttorneys),
-        		'status' : lpa.document.primaryAttorneys|length ~ ' Attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's' : ''),
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
+                'desktop' : 'The attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.primaryAttorneys),
+                'mobile' :  'The attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.primaryAttorneys),
+                'status' : lpa.document.primaryAttorneys|length ~ ' Attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's' : ''),
+                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            })
         }}
     {% endif %}
 
     {% if (item.routeName == 'lpa/when-lpa-starts') %}
         {{ macros.accordionBar({
                 'desktop' : 'The LPA starts ' ~ (lpa.document.primaryAttorneyDecisions.when == 'now' ?
-					'as soon as it\'s registered (with my consent)' :
-					'only if I don\'t have mental capacity'),
+                    'as soon as it\'s registered (with my consent)' :
+                    'only if I don\'t have mental capacity'),
                 'mobile' : 'The LPA starts ' ~ (lpa.document.primaryAttorneyDecisions.when == 'now' ?
-					'as soon as it\'s registered (with my consent)' :
-					'only if I don\'t have mental capacity'),
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
+                    'as soon as it\'s registered (with my consent)' :
+                    'only if I don\'t have mental capacity'),
+                'status' : 'Complete',
+                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            })
         }}
     {% endif %}
 
     {% if (item.routeName == 'lpa/how-primary-attorneys-make-decision') %}
         {{ macros.accordionBar({
-            	'desktop' : 'The attorneys will act ' ~ ( lpa.document.primaryAttorneyDecisions.how == 'jointly-attorney-severally' ?
-					'jointly and severally' :
-					((lpa.document.primaryAttorneyDecisions.how == 'jointly' ) ?
-						'jointly' :
-						'jointly for some decisions, and jointly and severally for other decisions')),
-            	'mobile' : 'The attorneys will act ' ~ ( lpa.document.primaryAttorneyDecisions.how == 'jointly-attorney-severally' ?
-					'jointly and severally' :
-					((lpa.document.primaryAttorneyDecisions.how == 'jointly' ) ?
-						'jointly' :
-						'jointly for some decisions, and jointly and severally for other decisions')),
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
+                'desktop' : 'The attorneys will act ' ~ ( lpa.document.primaryAttorneyDecisions.how == 'jointly-attorney-severally' ?
+                    'jointly and severally' :
+                    ((lpa.document.primaryAttorneyDecisions.how == 'jointly' ) ?
+                        'jointly' :
+                        'jointly for some decisions, and jointly and severally for other decisions')),
+                'mobile' : 'The attorneys will act ' ~ ( lpa.document.primaryAttorneyDecisions.how == 'jointly-attorney-severally' ?
+                    'jointly and severally' :
+                    ((lpa.document.primaryAttorneyDecisions.how == 'jointly' ) ?
+                        'jointly' :
+                        'jointly for some decisions, and jointly and severally for other decisions')),
+                'status' : 'Complete',
+                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            })
         }}
     {% endif %}
 
     {% if (item.routeName == 'lpa/replacement-attorney') %}
         {{ macros.accordionBar({
-            	'desktop' : lpa.document.replacementAttorneys|length == 0 ?
-					'There are no replacement attorneys' :
-					('The replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.replacementAttorneys)),
-            	'mobile' : lpa.document.replacementAttorneys|length == 0 ?
-					'There are no replacement attorneys' :
-					('The replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.replacementAttorneys)),
-        		'status' : lpa.document.replacementAttorneys|length ~ ' Replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's' : ''),
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'desktop' : lpa.document.replacementAttorneys|length == 0 ?
+                    'There are no replacement attorneys' :
+                    ('The replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.replacementAttorneys)),
+                'mobile' : lpa.document.replacementAttorneys|length == 0 ?
+                    'There are no replacement attorneys' :
+                    ('The replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.replacementAttorneys)),
+                'status' : lpa.document.replacementAttorneys|length ~ ' Replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's' : ''),
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
                 'cssClass': 'wide-label'
-        	})
+            })
         }}
     {% endif %}
 
     {% if (item.routeName == 'lpa/when-replacement-attorney-step-in') %}
         {{ macros.accordionBar({
-            	'desktop' : 'The replacement attorneys will step in ' ~
-					( lpa.document.replacementAttorneyDecisions.when == 'first' ?
-					'as soon as one of the original attorneys can no longer act' :
-					((lpa.document.replacementAttorneyDecisions.when == 'last' ) ?
-						'only when none of the original attorneys can act' :
-						'as per instructions')),
-            	'mobile' : 'The replacement attorneys will step in ' ~
-					( lpa.document.replacementAttorneyDecisions.when == 'first' ?
-					'as soon as one of the original attorneys can no longer act' :
-					((lpa.document.replacementAttorneyDecisions.when == 'last' ) ?
-						'only when none of the original attorneys can act' :
-						'as per instructions')),
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
+                'desktop' : 'The replacement attorneys will step in ' ~
+                    ( lpa.document.replacementAttorneyDecisions.when == 'first' ?
+                    'as soon as one of the original attorneys can no longer act' :
+                    ((lpa.document.replacementAttorneyDecisions.when == 'last' ) ?
+                        'only when none of the original attorneys can act' :
+                        'as per instructions')),
+                'mobile' : 'The replacement attorneys will step in ' ~
+                    ( lpa.document.replacementAttorneyDecisions.when == 'first' ?
+                    'as soon as one of the original attorneys can no longer act' :
+                    ((lpa.document.replacementAttorneyDecisions.when == 'last' ) ?
+                        'only when none of the original attorneys can act' :
+                        'as per instructions')),
+                'status' : 'Complete',
+                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            })
         }}
     {% endif %}
 
     {% if (item.routeName == 'lpa/how-replacement-attorneys-make-decision') %}
         {{ macros.accordionBar({
-            	'desktop' : 'The replacement attorneys will act ' ~
-					( lpa.document.replacementAttorneyDecisions.how == 'jointly-attorney-severally' ?
-					'jointly and severally' :
-					((lpa.document.replacementAttorneyDecisions.how == 'jointly' ) ?
-						'jointly' :
-						'jointly for some decisions, and jointly and severally for other decisions')),
-            	'mobile' : 'The replacement attorneys will act ' ~
-					( lpa.document.replacementAttorneyDecisions.how == 'jointly-attorney-severally' ?
-					'jointly and severally' :
-					((lpa.document.replacementAttorneyDecisions.how == 'jointly' ) ?
-						'jointly' :
-						'jointly for some decisions, and jointly and severally for other decisions')),
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
+                'desktop' : 'The replacement attorneys will act ' ~
+                    ( lpa.document.replacementAttorneyDecisions.how == 'jointly-attorney-severally' ?
+                    'jointly and severally' :
+                    ((lpa.document.replacementAttorneyDecisions.how == 'jointly' ) ?
+                        'jointly' :
+                        'jointly for some decisions, and jointly and severally for other decisions')),
+                'mobile' : 'The replacement attorneys will act ' ~
+                    ( lpa.document.replacementAttorneyDecisions.how == 'jointly-attorney-severally' ?
+                    'jointly and severally' :
+                    ((lpa.document.replacementAttorneyDecisions.how == 'jointly' ) ?
+                        'jointly' :
+                        'jointly for some decisions, and jointly and severally for other decisions')),
+                'status' : 'Complete',
+                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            })
         }}
     {% endif %}
 
     {% if (item.routeName == 'lpa/certificate-provider') %}
         {{ macros.accordionBar({
-            	'desktop' : 'The certificate provider is ' ~ lpa.document.certificateProvider.name,
-            	'mobile' : 'The certificate provider is ' ~ lpa.document.certificateProvider.name,
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
+                'desktop' : 'The certificate provider is ' ~ lpa.document.certificateProvider.name,
+                'mobile' : 'The certificate provider is ' ~ lpa.document.certificateProvider.name,
+                'status' : 'Complete',
+                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            })
         }}
     {% endif %}
 
     {% if (item.routeName == 'lpa/people-to-notify') %}
         {{ macros.accordionBar({
-            	'desktop' : lpa.document.peopleToNotify|length == 0 ?
-					'There are no people to notify' :
-					('The ' ~ (lpa.document.peopleToNotify|length != 1 ? 'people to notify are ' : 'person to notify is ') ~ concatNames(lpa.document.peopleToNotify)),
-            	'mobile' : lpa.document.peopleToNotify|length == 0 ?
-					'There are no people to notify' :
-					('The ' ~ (lpa.document.peopleToNotify|length != 1 ? 'people to notify are ' : 'person to notify is ') ~ concatNames(lpa.document.peopleToNotify)),
-        		'status' : lpa.document.peopleToNotify|length ~ (lpa.document.peopleToNotify|length != 1 ? ' people to notify' : ' person to notify'),
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'desktop' : lpa.document.peopleToNotify|length == 0 ?
+                    'There are no people to notify' :
+                    ('The ' ~ (lpa.document.peopleToNotify|length != 1 ? 'people to notify are ' : 'person to notify is ') ~ concatNames(lpa.document.peopleToNotify)),
+                'mobile' : lpa.document.peopleToNotify|length == 0 ?
+                    'There are no people to notify' :
+                    ('The ' ~ (lpa.document.peopleToNotify|length != 1 ? 'people to notify are ' : 'person to notify is ') ~ concatNames(lpa.document.peopleToNotify)),
+                'status' : lpa.document.peopleToNotify|length ~ (lpa.document.peopleToNotify|length != 1 ? ' people to notify' : ' person to notify'),
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
                 'cssClass': lpa.document.peopleToNotify|length == 0 ? '' : 'wide-label'
-        	})
+            })
         }}
     {% endif %}
 
     {% if (item.routeName == 'lpa/instructions') %}
         {{ macros.accordionBar({
-				'desktop' : 'Preferences and instructions',
-				'mobile' : 'Preferences and instructions',
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
+                'desktop' : 'Preferences and instructions',
+                'mobile' : 'Preferences and instructions',
+                'status' : 'Complete',
+                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            })
         }}
     {% endif %}
 
-	{% if (item.routeName == 'review-link') %}
-		{{ macros.accordionBar({
-			'desktop' : 'You can edit the LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}, {}) ~ '?return-route=' ~ routeName() ~ '">preview the LPA</a>',
-			'mobile' : 'You can edit the LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}) ~ '?return-route=' ~ routeName() ~ '">preview the LPA</a>',
+    {% if (item.routeName == 'review-link') %}
+        {{ macros.accordionBar({
+            'desktop' : 'You can edit the LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}, {}) ~ '?return-route=' ~ routeName() ~ '">preview the LPA</a>',
+            'mobile' : 'You can edit the LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}) ~ '?return-route=' ~ routeName() ~ '">preview the LPA</a>',
             'titleBoxCssClass': 'title-box--full',
             'current': true
-		})
-		}}
-	{% endif %}
+        })
+        }}
+    {% endif %}
 
     {% if (item.routeName == 'lpa/applicant') %}
         {{ macros.accordionBar({
@@ -192,57 +192,57 @@
         }}
     {% endif %}
 
-	{% if (item.routeName == 'lpa/correspondent') %}
-		{{ macros.accordionBar({
-			'desktop' : 'The LPA will be sent to ' ~ (lpa.document.correspondent.name is not empty ? lpa.document.correspondent.name : lpa.document.correspondent.company),
-			'mobile' : 'The LPA will be sent to ' ~ (lpa.document.correspondent.name is not empty ? lpa.document.correspondent.name : lpa.document.correspondent.company),
-			'status' : 'Complete',
-			'edit' : url(item.routeName, {'lpa-id': lpa.id})
-		})
-		}}
-	{% endif %}
+    {% if (item.routeName == 'lpa/correspondent') %}
+        {{ macros.accordionBar({
+            'desktop' : 'The LPA will be sent to ' ~ (lpa.document.correspondent.name is not empty ? lpa.document.correspondent.name : lpa.document.correspondent.company),
+            'mobile' : 'The LPA will be sent to ' ~ (lpa.document.correspondent.name is not empty ? lpa.document.correspondent.name : lpa.document.correspondent.company),
+            'status' : 'Complete',
+            'edit' : url(item.routeName, {'lpa-id': lpa.id})
+        })
+        }}
+    {% endif %}
 
     {% if (item.routeName == 'lpa/who-are-you') %}
         {{ macros.accordionBar({
-				'desktop' : ( lpa.whoAreYouAnswered == true ) ?
-					'Who was using the LPA service has been answered' :
-					'Who was using the LPA service has not been answered',
-				'mobile' : ( lpa.whoAreYouAnswered == true ) ?
-					'Who was using the LPA service has been answered' :
-					'Who was using the LPA service has not been answered',
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
+                'desktop' : ( lpa.whoAreYouAnswered == true ) ?
+                    'Who was using the LPA service has been answered' :
+                    'Who was using the LPA service has not been answered',
+                'mobile' : ( lpa.whoAreYouAnswered == true ) ?
+                    'Who was using the LPA service has been answered' :
+                    'Who was using the LPA service has not been answered',
+                'status' : 'Complete',
+                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            })
         }}
     {% endif %}
 
     {% if (item.routeName == 'lpa/repeat-application') %}
         {{ macros.accordionBar({
-				'desktop' : ( lpa.repeatCaseNumber is not empty ) ?
-					'This is a repeat application with case number: ' ~ lpa.repeatCaseNumber :
-					'This is not a repeat application',
-				'mobile' : ( lpa.repeatCaseNumber is not empty	 ) ?
-					'This is a repeat application with case number: ' ~ lpa.repeatCaseNumber :
-					'This is not a repeat application',
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
+                'desktop' : ( lpa.repeatCaseNumber is not empty ) ?
+                    'This is a repeat application with case number: ' ~ lpa.repeatCaseNumber :
+                    'This is not a repeat application',
+                'mobile' : ( lpa.repeatCaseNumber is not empty     ) ?
+                    'This is a repeat application with case number: ' ~ lpa.repeatCaseNumber :
+                    'This is not a repeat application',
+                'status' : 'Complete',
+                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            })
         }}
     {% endif %}
 
     {% if (item.routeName == 'lpa/fee-reduction') %}
         {{ macros.accordionBar({
-            	'desktop' : ( lpa.payment.reducedFeeReceivesBenefits == true  ? 'The donor currently claims an eligible benefit for a reduced fee' :
-							( lpa.payment.reducedFeeUniversalCredit == true  ? 'The donor receives Universal Credit' :
-							( lpa.payment.reducedFeeLowIncome == true  ? 'The donor currently has an income of less than £12,000 a year before tax ' :
-							'The donor is not applying for a reduced fee' ))),
-            	'mobile' : ( lpa.payment.reducedFeeReceivesBenefits == true  ? 'The donor currently claims an eligible benefit for a reduced fee' :
-							( lpa.payment.reducedFeeUniversalCredit == true  ? 'The donor receives Universal Credit' :
-							( lpa.payment.reducedFeeLowIncome == true  ? 'The donor currently has an income of less than £12,000 a year before tax ' :
-			'The donor is not applying for a reduced fee' ))),
-        		'status' : 'Complete',
-        		'edit' : url(item.routeName, {'lpa-id': lpa.id})
-        	})
+                'desktop' : ( lpa.payment.reducedFeeReceivesBenefits == true  ? 'The donor currently claims an eligible benefit for a reduced fee' :
+                            ( lpa.payment.reducedFeeUniversalCredit == true  ? 'The donor receives Universal Credit' :
+                            ( lpa.payment.reducedFeeLowIncome == true  ? 'The donor currently has an income of less than £12,000 a year before tax ' :
+                            'The donor is not applying for a reduced fee' ))),
+                'mobile' : ( lpa.payment.reducedFeeReceivesBenefits == true  ? 'The donor currently claims an eligible benefit for a reduced fee' :
+                            ( lpa.payment.reducedFeeUniversalCredit == true  ? 'The donor receives Universal Credit' :
+                            ( lpa.payment.reducedFeeLowIncome == true  ? 'The donor currently has an income of less than £12,000 a year before tax ' :
+            'The donor is not applying for a reduced fee' ))),
+                'status' : 'Complete',
+                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            })
         }}
     {% endif %}
 
