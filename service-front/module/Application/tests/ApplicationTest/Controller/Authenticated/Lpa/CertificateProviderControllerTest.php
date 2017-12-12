@@ -282,7 +282,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/edit');
         $this->form->shouldReceive('setExistingActorNamesData')->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with($this->lpa->document->certificateProvider->flatten());
+        $this->form->shouldReceive('bind')->withArgs([$this->lpa->document->certificateProvider->flatten()]);
         $this->url->shouldReceive('fromRoute')->withArgs([
             'lpa/certificate-provider',
             ['lpa-id' => $this->lpa->id]
@@ -366,7 +366,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
     {
         $this->controller->setLpa($this->lpa);
         $this->url->shouldReceive('fromRoute')
-            ->with('lpa/certificate-provider/delete', ['lpa-id' => $this->lpa->id])
+            ->withArgs(['lpa/certificate-provider/delete', ['lpa-id' => $this->lpa->id]])
             ->andReturn("lpa/{$this->lpa->id}/certificate-provider/delete")->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->url->shouldReceive('fromRoute')->withArgs([
@@ -392,7 +392,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
     {
         $this->controller->setLpa($this->lpa);
         $this->url->shouldReceive('fromRoute')
-            ->with('lpa/certificate-provider/delete', ['lpa-id' => $this->lpa->id])
+            ->withArgs(['lpa/certificate-provider/delete', ['lpa-id' => $this->lpa->id]])
             ->andReturn("lpa/{$this->lpa->id}/certificate-provider/delete")->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->url->shouldReceive('fromRoute')->withArgs([

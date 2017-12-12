@@ -94,7 +94,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with([
+        $this->form->shouldReceive('bind')->withArgs([[
             'contactInWelsh' => false,
             'correspondence' => [
                 'contactByEmail' => true,
@@ -103,7 +103,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
                 'phone-number'   => $this->lpa->document->correspondent->phone->number,
                 'contactByPost'  => false
             ]
-        ])->once();
+        ]])->once();
         $this->setMatchedRouteName($this->controller, 'lpa/correspondent');
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])
@@ -132,7 +132,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with([
+        $this->form->shouldReceive('bind')->withArgs([[
             'contactInWelsh' => false,
             'correspondence' => [
                 'contactByEmail' => true,
@@ -141,7 +141,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
                 'phone-number'   => null,
                 'contactByPost'  => false
             ]
-        ])->once();
+        ]])->once();
         $this->setMatchedRouteName($this->controller, 'lpa/correspondent');
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])
@@ -168,7 +168,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with([
+        $this->form->shouldReceive('bind')->withArgs([[
             'contactInWelsh' => false,
             'correspondence' => [
                 'contactByEmail' => true,
@@ -177,7 +177,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
                 'phone-number'   => null,
                 'contactByPost'  => false
             ]
-        ])->once();
+        ]])->once();
         $this->setMatchedRouteName($this->controller, 'lpa/correspondent');
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])
@@ -204,7 +204,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with([
+        $this->form->shouldReceive('bind')->withArgs([[
             'contactInWelsh' => false,
             'correspondence' => [
                 'contactByEmail' => false,
@@ -213,7 +213,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
                 'phone-number'   => null,
                 'contactByPost'  => false
             ]
-        ])->once();
+        ]])->once();
         $this->setMatchedRouteName($this->controller, 'lpa/correspondent');
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])
@@ -239,7 +239,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with([
+        $this->form->shouldReceive('bind')->withArgs([[
             'contactInWelsh' => false,
             'correspondence' => [
                 'contactByEmail' => true,
@@ -248,7 +248,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
                 'phone-number'   => $this->lpa->document->correspondent->phone->number,
                 'contactByPost'  => false
             ]
-        ])->once();
+        ]])->once();
         $this->setMatchedRouteName($this->controller, 'lpa/correspondent');
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])
@@ -268,7 +268,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with([
+        $this->form->shouldReceive('bind')->withArgs([[
             'contactInWelsh' => false,
             'correspondence' => [
                 'contactByEmail' => true,
@@ -277,7 +277,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
                 'phone-number'   => $this->lpa->document->correspondent->phone->number,
                 'contactByPost'  => false
             ]
-        ])->once();
+        ]])->once();
         $this->setMatchedRouteName($this->controller, 'lpa/correspondent');
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/correspondent/edit', ['lpa-id' => $this->lpa->id]])
