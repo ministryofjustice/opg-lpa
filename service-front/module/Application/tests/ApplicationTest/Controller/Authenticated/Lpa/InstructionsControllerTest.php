@@ -39,7 +39,9 @@ class InstructionsControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(InstructionsAndPreferencesForm::class);
         $this->lpa = FixturesData::getPfLpa();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\InstructionsAndPreferencesForm', ['lpa' => $this->lpa])->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\InstructionsAndPreferencesForm', ['lpa' => $this->lpa]])
+            ->andReturn($this->form);
     }
 
     /**
@@ -55,7 +57,7 @@ class InstructionsControllerTest extends AbstractControllerTest
     {
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with($this->lpa->document->flatten())->once();
+        $this->form->shouldReceive('bind')->withArgs([$this->lpa->document->flatten()])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

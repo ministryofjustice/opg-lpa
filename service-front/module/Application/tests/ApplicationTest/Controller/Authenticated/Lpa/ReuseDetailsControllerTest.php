@@ -97,7 +97,8 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
             ->with('lpa/reuse-details', ['lpa-id' => $this->lpa->id], ['query' => $queryParameters])
             ->andReturn('lpa/reuse-details?lpa-id=' . $this->lpa->id)->once();
 
-        $this->form->shouldReceive('setAttribute')->with('action', 'lpa/reuse-details?lpa-id=' . $this->lpa->id)->once();
+        $this->form->shouldReceive('setAttribute')
+            ->withArgs(['action', 'lpa/reuse-details?lpa-id=' . $this->lpa->id])->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -131,7 +132,8 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
             ->with('lpa/reuse-details', ['lpa-id' => $this->lpa->id], ['query' => $queryParameters])
             ->andReturn('lpa/reuse-details?lpa-id=' . $this->lpa->id)->once();
 
-        $this->form->shouldReceive('setAttribute')->with('action', 'lpa/reuse-details?lpa-id=' . $this->lpa->id)->once();
+        $this->form->shouldReceive('setAttribute')
+            ->withArgs(['action', 'lpa/reuse-details?lpa-id=' . $this->lpa->id])->once();
         $this->setPostInvalid($this->form);
 
         /** @var ViewModel $result */
@@ -160,16 +162,17 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
         $this->userDetailsSession->user = $this->user;
 
-        $this->formElementManager->shouldReceive('get')->with(
+        $this->formElementManager->shouldReceive('get')->withArgs([
             'Application\Form\Lpa\ReuseDetailsForm',
             ['actorReuseDetails' => $this->controller->testGetActorReuseDetails(false, false)]
-        )->andReturn($this->form);
+        ])->andReturn($this->form);
 
         $this->url->shouldReceive('fromRoute')
-            ->with('lpa/reuse-details', ['lpa-id' => $this->lpa->id], ['query' => $queryParameters])
+            ->withArgs(['lpa/reuse-details', ['lpa-id' => $this->lpa->id], ['query' => $queryParameters]])
             ->andReturn('lpa/reuse-details?lpa-id=' . $this->lpa->id)->once();
 
-        $this->form->shouldReceive('setAttribute')->with('action', 'lpa/reuse-details?lpa-id=' . $this->lpa->id)->once();
+        $this->form->shouldReceive('setAttribute')
+            ->withArgs(['action', 'lpa/reuse-details?lpa-id=' . $this->lpa->id])->once();
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData);
         $this->router->shouldReceive('match')->andReturn(null)->once();
@@ -198,21 +201,23 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
         $this->userDetailsSession->user = $this->user;
 
-        $this->formElementManager->shouldReceive('get')->with(
+        $this->formElementManager->shouldReceive('get')->withArgs([
             'Application\Form\Lpa\ReuseDetailsForm',
             ['actorReuseDetails' => $this->controller->testGetActorReuseDetails(false, false)]
-        )->andReturn($this->form);
+        ])->andReturn($this->form);
 
         $this->url->shouldReceive('fromRoute')
-            ->with('lpa/reuse-details', ['lpa-id' => $this->lpa->id], ['query' => $queryParameters])
+            ->withArgs(['lpa/reuse-details', ['lpa-id' => $this->lpa->id], ['query' => $queryParameters]])
             ->andReturn('lpa/reuse-details?lpa-id=' . $this->lpa->id)->once();
 
-        $this->form->shouldReceive('setAttribute')->with('action', 'lpa/reuse-details?lpa-id=' . $this->lpa->id)->once();
+        $this->form->shouldReceive('setAttribute')
+            ->withArgs(['action', 'lpa/reuse-details?lpa-id=' . $this->lpa->id])->once();
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData);
         $routeMatch = Mockery::mock(RouteMatch::class);
         $this->router->shouldReceive('match')->andReturn($routeMatch)->once();
-        $routeMatch->shouldReceive('getParam')->withArgs(['controller'])->andReturn('Authenticated\Lpa\PrimaryAttorneyController')->once();
+        $routeMatch->shouldReceive('getParam')
+            ->withArgs(['controller'])->andReturn('Authenticated\Lpa\PrimaryAttorneyController')->once();
         $routeMatch->shouldReceive('getParam')->withArgs(['action'])->andReturn('add')->once();
         $this->forward->shouldReceive('dispatch')->withArgs(['Authenticated\Lpa\PrimaryAttorneyController', [
             'action'            => 'add',
