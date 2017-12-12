@@ -29,12 +29,10 @@ class CertificateProviderController extends AbstractLpaActorController
 
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $nextRoute = $this->getFlowChecker()->nextRoute($currentRouteName);
-        $nextRouteOptions = $this->getFlowChecker()->getRouteOptions($nextRoute);
 
         return new ViewModel([
-            'nextRoute'        => $nextRoute,
-            'nextRouteOptions' => $nextRouteOptions,
-            'form'             => $form,
+            'nextRoute' => $nextRoute,
+            'form'      => $form,
         ]);
     }
 
@@ -60,8 +58,7 @@ class CertificateProviderController extends AbstractLpaActorController
 
         //  If a certificate provider has already been provided then redirect to the main certificate provider screen
         if ($lpa->document->certificateProvider instanceof CertificateProvider) {
-            $route = 'lpa/certificate-provider';
-            return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
+            return $this->redirect()->toRoute('lpa/certificate-provider', ['lpa-id' => $lpaId]);
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');

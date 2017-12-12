@@ -287,11 +287,6 @@ class FormFlowChecker extends StateChecker
         return false;
     }
 
-    public function getRouteOptions($route)
-    {
-        return [];
-    }
-
     private function isLpaAccessible()
     {
         if ($this->lpaHasDocument()) {

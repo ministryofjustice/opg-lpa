@@ -99,7 +99,8 @@ class AuthController extends AbstractBaseController {
                             if ($lpa instanceof Lpa) {
                                 $formFlowChecker = new FormFlowChecker($lpa);
                                 $destinationRoute = $formFlowChecker->backToForm();
-                                return $this->redirect()->toRoute($destinationRoute, ['lpa-id' => $lpa->id], $formFlowChecker->getRouteOptions($destinationRoute));
+
+                                return $this->redirect()->toRoute($destinationRoute, ['lpa-id' => $lpa->id]);
                             }
                         }
 
