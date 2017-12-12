@@ -42,14 +42,14 @@ class PostcodeControllerTest extends AbstractControllerTest
         $this->routeMatch = Mockery::mock(RouteMatch::class);
 
         $this->addressLookup = Mockery::mock(PostcodeInfo::class);
-        $this->serviceLocator->shouldReceive('get')->with('AddressLookupMoj')->andReturn($this->addressLookup);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['AddressLookupMoj'])->andReturn($this->addressLookup);
     }
 
     public function testIndexActionPostcodeNotFound()
     {
-        $this->params->shouldReceive('fromQuery')->with('postcode')->andReturn(null)->once();
+        $this->params->shouldReceive('fromQuery')->withArgs(['postcode'])->andReturn(null)->once();
         $this->event->shouldReceive('getRouteMatch')->andReturn($this->routeMatch)->once();
-        $this->routeMatch->shouldReceive('setParam')->with('action', 'not-found')->once();
+        $this->routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -71,8 +71,8 @@ class PostcodeControllerTest extends AbstractControllerTest
             ]
         ];
 
-        $this->params->shouldReceive('fromQuery')->with('postcode')->andReturn('SW1H 9AJ')->once();
-        $this->addressLookup->shouldReceive('lookupPostcode')->with('SW1H 9AJ')->andReturn([$address])->once();
+        $this->params->shouldReceive('fromQuery')->withArgs(['postcode'])->andReturn('SW1H 9AJ')->once();
+        $this->addressLookup->shouldReceive('lookupPostcode')->withArgs(['SW1H 9AJ'])->andReturn([$address])->once();
 
         /** @var JsonModel $result */
         $result = $this->controller->indexAction();

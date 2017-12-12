@@ -27,7 +27,7 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
         parent::controllerSetUp($this->controller);
 
         $this->aboutYouDetails = Mockery::mock(Details::class);
-        $this->serviceLocator->shouldReceive('get')->with('AboutYouDetails')->andReturn($this->aboutYouDetails);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['AboutYouDetails'])->andReturn($this->aboutYouDetails);
     }
 
     public function testIndexAction()
@@ -46,10 +46,12 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
 
         $this->storage->shouldReceive('clear')->once();
         $this->sessionManager->shouldReceive('initialise')->once();
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn('InvalidToken')->once();
-        $this->aboutYouDetails->shouldReceive('updateEmailUsingToken')->with('InvalidToken')->andReturn(false)->once();
-        $this->flashMessenger->shouldReceive('addErrorMessage')->with('There was an error updating your email address')->once();
-        $this->redirect->shouldReceive('toRoute')->with('login')->andReturn($response)->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('InvalidToken')->once();
+        $this->aboutYouDetails->shouldReceive('updateEmailUsingToken')
+            ->withArgs(['InvalidToken'])->andReturn(false)->once();
+        $this->flashMessenger->shouldReceive('addErrorMessage')
+            ->withArgs(['There was an error updating your email address'])->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['login'])->andReturn($response)->once();
 
         $result = $this->controller->verifyAction();
 
@@ -62,10 +64,12 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
 
         $this->storage->shouldReceive('clear')->once();
         $this->sessionManager->shouldReceive('initialise')->once();
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn('ValidToken')->once();
-        $this->aboutYouDetails->shouldReceive('updateEmailUsingToken')->with('ValidToken')->andReturn(true)->once();
-        $this->flashMessenger->shouldReceive('addSuccessMessage')->with('Your email address was successfully updated. Please login with your new address.')->once();
-        $this->redirect->shouldReceive('toRoute')->with('login')->andReturn($response)->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('ValidToken')->once();
+        $this->aboutYouDetails->shouldReceive('updateEmailUsingToken')
+            ->withArgs(['ValidToken'])->andReturn(true)->once();
+        $this->flashMessenger->shouldReceive('addSuccessMessage')
+            ->withArgs(['Your email address was successfully updated. Please login with your new address.'])->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['login'])->andReturn($response)->once();
 
         $result = $this->controller->verifyAction();
 

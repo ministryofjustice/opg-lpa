@@ -54,8 +54,10 @@ class DonorControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(DonorForm::class);
         $this->lpa = FixturesData::getPfLpa();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\DonorForm')->andReturn($this->form);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\DonorForm', ['lpa' => $this->lpa])->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\DonorForm'])->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\DonorForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
     /**
@@ -71,7 +73,8 @@ class DonorControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->donor = null;
         $this->controller->setLpa($this->lpa);
-        $this->url->shouldReceive('fromRoute')->with('lpa/donor/add', ['lpa-id' => $this->lpa->id])->andReturn('lpa/donor/add')->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/donor/add', ['lpa-id' => $this->lpa->id]])->andReturn('lpa/donor/add')->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -86,10 +89,16 @@ class DonorControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(Donor::class, $this->lpa->document->donor);
 
         $this->controller->setLpa($this->lpa);
-        $this->url->shouldReceive('fromRoute')->with('lpa/donor/add', ['lpa-id' => $this->lpa->id])->andReturn('lpa/donor/add')->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/donor/edit', ['lpa-id' => $this->lpa->id])->andReturn('lpa/donor/edit')->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/donor/add', ['lpa-id' => $this->lpa->id]])->andReturn('lpa/donor/add')->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/donor/edit', ['lpa-id' => $this->lpa->id]])->andReturn('lpa/donor/edit')->once();
         $this->setMatchedRouteName($this->controller, 'lpa/donor');
-        $this->url->shouldReceive('fromRoute')->with('lpa/when-lpa-starts', ['lpa-id' => $this->lpa->id], $this->getExpectedRouteOptions('lpa/when-lpa-starts'))->andReturn('lpa/when-lpa-starts')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs([
+            'lpa/when-lpa-starts',
+            ['lpa-id' => $this->lpa->id],
+            $this->getExpectedRouteOptions('lpa/when-lpa-starts')
+        ])->andReturn('lpa/when-lpa-starts')->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -141,8 +150,10 @@ class DonorControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->twice();
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/add');
-        $this->form->shouldReceive('setExistingActorNamesData')->withArgs([$this->controller->testGetActorsList()])->once();
-        $this->url->shouldReceive('fromRoute')->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/donor")->once();
+        $this->form->shouldReceive('setExistingActorNamesData')
+            ->withArgs([$this->controller->testGetActorsList()])->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/donor")->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->addAction();
@@ -162,8 +173,10 @@ class DonorControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->setPostInvalid($this->form, [], null, 2);
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/add');
-        $this->form->shouldReceive('setExistingActorNamesData')->withArgs([$this->controller->testGetActorsList()])->once();
-        $this->url->shouldReceive('fromRoute')->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/donor")->once();
+        $this->form->shouldReceive('setExistingActorNamesData')
+            ->withArgs([$this->controller->testGetActorsList()])->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/donor")->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->addAction();
@@ -187,14 +200,16 @@ class DonorControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->setPostValid($this->form, $this->postData, null, 2);
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/add');
-        $this->form->shouldReceive('setExistingActorNamesData')->withArgs([$this->controller->testGetActorsList()])->once();
+        $this->form->shouldReceive('setExistingActorNamesData')
+            ->withArgs([$this->controller->testGetActorsList()])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData);
-        $this->lpaApplicationService->shouldReceive('setDonor')/*->withArgs(function ($lpaId, $donor) {
-            return $lpaId === $this->lpa->id
-                && $donor->name == new LongName($this->postData['name'])
-                && $donor->email == new EmailAddress($this->postData['email'])
-                && $donor->dob == new Dob($this->postData['dob']);
-        })*/->andReturn(false)->once();
+        $this->lpaApplicationService->shouldReceive('setDonor')
+            ->withArgs(function ($lpaId, $donor) {
+                return $lpaId === $this->lpa->id
+                    && $donor->name == new LongName($this->postData['name'])
+                    && $donor->email == new EmailAddress($this->postData['email'])
+                    && $donor->dob == new Dob($this->postData['dob']);
+            })->andReturn(false)->once();
 
         $this->controller->addAction();
     }
@@ -208,14 +223,16 @@ class DonorControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
         $this->setPostValid($this->form, $this->postData, null, 2);
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/add');
-        $this->form->shouldReceive('setExistingActorNamesData')->withArgs([$this->controller->testGetActorsList()])->once();
+        $this->form->shouldReceive('setExistingActorNamesData')
+            ->withArgs([$this->controller->testGetActorsList()])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData);
-        $this->lpaApplicationService->shouldReceive('setDonor')/*->withArgs(function ($lpaId, $donor) {
-            return $lpaId === $this->lpa->id
-                && $donor->name == new LongName($this->postData['name'])
-                && $donor->email == new EmailAddress($this->postData['email'])
-                && $donor->dob == new Dob($this->postData['dob']);
-        })*/->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setDonor')
+            ->withArgs(function ($lpaId, $donor) {
+                return $lpaId === $this->lpa->id
+                    && $donor->name == new LongName($this->postData['name'])
+                    && $donor->email == new EmailAddress($this->postData['email'])
+                    && $donor->dob == new Dob($this->postData['dob']);
+            })->andReturn(true)->once();
 
         /** @var JsonModel $result */
         $result = $this->controller->addAction();
@@ -233,8 +250,10 @@ class DonorControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/edit');
-        $this->form->shouldReceive('setExistingActorNamesData')->withArgs([$this->controller->testGetActorsList()])->once();
-        $this->url->shouldReceive('fromRoute')->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/donor")->once();
+        $this->form->shouldReceive('setExistingActorNamesData')
+            ->withArgs([$this->controller->testGetActorsList()])->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/donor")->once();
         $this->setDonorBinding();
 
         /** @var ViewModel $result */
@@ -255,8 +274,10 @@ class DonorControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->setPostInvalid($this->form, $this->postData);
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/edit');
-        $this->form->shouldReceive('setExistingActorNamesData')->withArgs([$this->controller->testGetActorsList()])->once();
-        $this->url->shouldReceive('fromRoute')->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/donor")->once();
+        $this->form->shouldReceive('setExistingActorNamesData')
+            ->withArgs([$this->controller->testGetActorsList()])->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/donor")->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->editAction();
@@ -280,15 +301,16 @@ class DonorControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->setPostValid($this->form, $this->postData);
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/edit');
-        $this->form->shouldReceive('setExistingActorNamesData')->withArgs([$this->controller->testGetActorsList()])->once();
+        $this->form->shouldReceive('setExistingActorNamesData')
+            ->withArgs([$this->controller->testGetActorsList()])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData);
-        $this->lpaApplicationService->shouldReceive('setDonor')/*->withArgs(function ($lpaId, $donor) {
+        $this->lpaApplicationService->shouldReceive('setDonor')->withArgs(function ($lpaId, $donor) {
             return $lpaId === $this->lpa->id
                 && $donor->name == new LongName($this->postData['name'])
                 && $donor->email == new EmailAddress($this->postData['email'])
                 && $donor->dob == new Dob($this->postData['dob'])
                 && $donor->canSign === true;
-        })*/->andReturn(false)->once();
+        })->andReturn(false)->once();
 
         $this->controller->editAction();
     }
@@ -305,19 +327,21 @@ class DonorControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
         $this->setPostValid($this->form, $postData);
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/edit');
-        $this->form->shouldReceive('setExistingActorNamesData')->withArgs([$this->controller->testGetActorsList()])->once();
+        $this->form->shouldReceive('setExistingActorNamesData')
+            ->withArgs([$this->controller->testGetActorsList()])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData);
-        $this->lpaApplicationService->shouldReceive('setDonor')/*->withArgs(function ($lpaId, $donor) {
-            return $lpaId === $this->lpa->id
-                && $donor->name == new LongName($this->postData['name'])
-                && $donor->email == new EmailAddress($this->postData['email'])
-                && $donor->dob == new Dob($this->postData['dob'])
-                && $donor->canSign === false;
-        })*/->andReturn(true)->once();
-        $this->lpaApplicationService->shouldReceive('setCorrespondent')/*->withArgs(function ($lpaId, $correspondent) {
-            return $lpaId === $this->lpa->id
-                && $correspondent->name == new LongName($this->postData['name']); //Only changes name
-        })*/->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setDonor')
+            ->withArgs(function ($lpaId, $donor) {
+                return $lpaId === $this->lpa->id
+                    && $donor->name == new LongName($this->postData['name'])
+                    && $donor->email == new EmailAddress($this->postData['email'])
+                    && $donor->dob == new Dob($this->postData['dob'])
+                    && $donor->canSign === false;
+            })->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setCorrespondent')
+            ->withArgs(function ($lpaId, $correspondent) {
+                return $lpaId === $this->lpa->id && $correspondent->name == new LongName($this->postData['name']); //Only changes name
+            })->andReturn(true)->once();
 
         /** @var JsonModel $result */
         $result = $this->controller->editAction();

@@ -37,7 +37,7 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
         $this->userIdentity = new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime());
 
         $this->aboutYouDetails = Mockery::mock(Details::class);
-        $this->serviceLocator->shouldReceive('get')->with('AboutYouDetails')->andReturn($this->aboutYouDetails);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['AboutYouDetails'])->andReturn($this->aboutYouDetails);
     }
 
     public function testOnDispatchNotAuthenticated()
@@ -46,7 +46,8 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
         $event = new MvcEvent();
 
         $this->request->shouldReceive('getUri')->andReturn('http://localhost/home');
-        $this->redirect->shouldReceive('toRoute')->withArgs(['login', ['state'=>'timeout']])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['login', ['state'=>'timeout']])->andReturn($response)->once();
 
         $result = $this->controller->onDispatch($event);
 
@@ -61,8 +62,12 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
         $this->userIdentity = new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime('2014-01-01'));
         $this->controller->setUser($this->userIdentity);
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
-        $this->logger->shouldReceive('info')->withArgs(['Request to ApplicationTest\Controller\TestableAbstractAuthenticatedController', $this->userIdentity->toArray()])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard/terms-changed'])->andReturn($response)->once();
+        $this->logger->shouldReceive('info')->withArgs([
+            'Request to ApplicationTest\Controller\TestableAbstractAuthenticatedController',
+            $this->userIdentity->toArray()
+        ])->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['user/dashboard/terms-changed'])->andReturn($response)->once();
 
         $result = $this->controller->onDispatch($event);
 
@@ -77,14 +82,19 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
         $this->userIdentity = new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime('2014-01-01'));
         $this->controller->setUser($this->userIdentity);
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
-        $this->logger->shouldReceive('info')->withArgs(['Request to ApplicationTest\Controller\TestableAbstractAuthenticatedController', $this->userIdentity->toArray()])->once();
+        $this->logger->shouldReceive('info')->withArgs([
+            'Request to ApplicationTest\Controller\TestableAbstractAuthenticatedController',
+            $this->userIdentity->toArray()
+        ])->once();
 
         $this->sessionManager->shouldReceive('start')->once();
-        $this->storage->shouldReceive('offsetExists')->withArgs(['TermsAndConditionsCheck'])->andReturn(true)->atLeast(1);
+        $this->storage->shouldReceive('offsetExists')
+            ->withArgs(['TermsAndConditionsCheck'])->andReturn(true)->atLeast()->once();
         $seedId = new ArrayObject(['seen' => true]);
-        $this->storage->shouldReceive('offsetGet')->withArgs(['TermsAndConditionsCheck'])->andReturn($seedId)->atLeast(1);
-        $this->storage->shouldReceive('getMetadata')->withArgs(['TermsAndConditionsCheck'])->atLeast(1);
-        $this->storage->shouldReceive('getRequestAccessTime')->atLeast(1);
+        $this->storage->shouldReceive('offsetGet')
+            ->withArgs(['TermsAndConditionsCheck'])->andReturn($seedId)->atLeast()->once();
+        $this->storage->shouldReceive('getMetadata')->withArgs(['TermsAndConditionsCheck'])->atLeast()->once();
+        $this->storage->shouldReceive('getRequestAccessTime')->atLeast()->once();
 
         $this->aboutYouDetails->shouldReceive('load')->andReturn(new User())->once();
         $this->redirect->shouldReceive('toUrl')->withArgs(['/user/about-you/new'])->andReturn($response)->once();
@@ -103,13 +113,17 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
 
         $this->controller->setUser($this->userIdentity);
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
-        $this->logger->shouldReceive('info')->withArgs(['Request to ApplicationTest\Controller\TestableAbstractAuthenticatedController', $this->userIdentity->toArray()])->once();
+        $this->logger->shouldReceive('info')->withArgs([
+            'Request to ApplicationTest\Controller\TestableAbstractAuthenticatedController',
+            $this->userIdentity->toArray()
+        ])->once();
         $this->userDetailsSession->user = new InvalidUser(); //Definitely not a user
         $this->authenticationService->shouldReceive('clearIdentity')->once();
         $this->sessionManager->shouldReceive('destroy')->withArgs([[
             'clear_storage' => true
         ]])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['login', ['state'=>'timeout']])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['login', ['state'=>'timeout']])->andReturn($response)->once();
 
         $result = $this->controller->onDispatch($event);
 
@@ -123,7 +137,10 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
 
         $this->controller->setUser($this->userIdentity);
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
-        $this->logger->shouldReceive('info')->withArgs(['Request to ApplicationTest\Controller\TestableAbstractAuthenticatedController', $this->userIdentity->toArray()])->once();
+        $this->logger->shouldReceive('info')->withArgs([
+            'Request to ApplicationTest\Controller\TestableAbstractAuthenticatedController',
+            $this->userIdentity->toArray()
+        ])->once();
         $user = new User();
         $this->userDetailsSession->user = $user;
         $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
@@ -140,7 +157,10 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
 
         $this->controller->setUser($this->userIdentity);
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
-        $this->logger->shouldReceive('info')->withArgs(['Request to ApplicationTest\Controller\TestableAbstractAuthenticatedController', $this->userIdentity->toArray()])->once();
+        $this->logger->shouldReceive('info')->withArgs([
+            'Request to ApplicationTest\Controller\TestableAbstractAuthenticatedController',
+            $this->userIdentity->toArray()
+        ])->once();
         $this->userDetailsSession->user = new User();
         $this->aboutYouDetails->shouldReceive('load')->andReturn(FixturesData::getUser())->once();
         $routeMatch = Mockery::mock(RouteMatch::class);
@@ -177,11 +197,11 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
     public function testResetSessionCloneData()
     {
         $this->sessionManager->shouldReceive('start')->once();
-        $this->storage->shouldReceive('offsetExists')->withArgs(['clone'])->andReturn(true)->atLeast(1);
+        $this->storage->shouldReceive('offsetExists')->withArgs(['clone'])->andReturn(true)->atLeast()->once();
         $seedId = new ArrayObject(['12345' => '12345']);
-        $this->storage->shouldReceive('offsetGet')->withArgs(['clone'])->andReturn($seedId)->atLeast(1);
-        $this->storage->shouldReceive('getMetadata')->withArgs(['clone'])->atLeast(1);
-        $this->storage->shouldReceive('getRequestAccessTime')->atLeast(1);
+        $this->storage->shouldReceive('offsetGet')->withArgs(['clone'])->andReturn($seedId)->atLeast()->once();
+        $this->storage->shouldReceive('getMetadata')->withArgs(['clone'])->atLeast()->once();
+        $this->storage->shouldReceive('getRequestAccessTime')->atLeast()->once();
 
         Container::setDefaultManager($this->sessionManager);
         $result = $this->controller->testResetSessionCloneData('12345');

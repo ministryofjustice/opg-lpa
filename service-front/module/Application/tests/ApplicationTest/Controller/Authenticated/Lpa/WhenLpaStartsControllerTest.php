@@ -39,7 +39,8 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(WhenLpaStartsForm::class);
         $this->lpa = FixturesData::getPfLpa();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\WhenLpaStartsForm', ['lpa' => $this->lpa])->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\WhenLpaStartsForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
     /**
@@ -55,7 +56,8 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
     {
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with($this->lpa->document->primaryAttorneyDecisions->flatten())->once();
+        $this->form->shouldReceive('bind')
+            ->withArgs([$this->lpa->document->primaryAttorneyDecisions->flatten()])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -88,10 +90,11 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
-        $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')/*->withArgs(function ($lpaId, $primaryAttorneyDecisions) {
-            return $lpaId === $this->lpa->id
-                && $primaryAttorneyDecisions->when === $this->postData['when'];
-        })*/->andReturn(false)->once();
+        $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
+            ->withArgs(function ($lpaId, $primaryAttorneyDecisions) {
+                return $lpaId === $this->lpa->id
+                    && $primaryAttorneyDecisions->when === $this->postData['when'];
+            })->andReturn(false)->once();
 
         $this->controller->indexAction();
     }
@@ -103,10 +106,11 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
-        $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')/*->withArgs(function ($lpaId, $primaryAttorneyDecisions) {
-            return $lpaId === $this->lpa->id
-                && $primaryAttorneyDecisions->when === $this->postData['when'];
-        })*/->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
+            ->withArgs(function ($lpaId, $primaryAttorneyDecisions) {
+                return $lpaId === $this->lpa->id
+                    && $primaryAttorneyDecisions->when === $this->postData['when'];
+            })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/when-lpa-starts');
         $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);

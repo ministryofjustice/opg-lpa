@@ -36,10 +36,16 @@ class CompleteControllerTest extends AbstractControllerTest
     {
         $lpa = FixturesData::getPfLpa();
         $this->controller->setLpa($lpa);
-        $this->lpaApplicationService->shouldReceive('lockLpa')->with($lpa->id)->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp1'])->andReturn("lpa/{$lpa->id}/download/pdf/lp1")->once();
-        $this->url->shouldReceive('fromRoute')->with('user/dashboard/create-lpa', ['lpa-id' => $lpa->id])->andReturn('user/dashboard/create-lpa?seed=' . $lpa->id)->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/date-check/complete', ['lpa-id' => $lpa->id])->andReturn("lpa/{$lpa->id}/date-check/complete")->once();
+        $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$lpa->id])->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp1']])
+            ->andReturn("lpa/{$lpa->id}/download/pdf/lp1")->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['user/dashboard/create-lpa', ['lpa-id' => $lpa->id]])
+            ->andReturn('user/dashboard/create-lpa?seed=' . $lpa->id)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/date-check/complete', ['lpa-id' => $lpa->id]])
+            ->andReturn("lpa/{$lpa->id}/date-check/complete")->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -65,12 +71,22 @@ class CompleteControllerTest extends AbstractControllerTest
         $lpa = FixturesData::getHwLpa();
         $lpa->payment->reducedFeeUniversalCredit = true;
         $this->controller->setLpa($lpa);
-        $this->lpaApplicationService->shouldReceive('lockLpa')->with($lpa->id)->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp1'])->andReturn("lpa/{$lpa->id}/download/pdf/lp1")->once();
-        $this->url->shouldReceive('fromRoute')->with('user/dashboard/create-lpa', ['lpa-id' => $lpa->id])->andReturn('user/dashboard/create-lpa?seed=' . $lpa->id)->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/date-check/complete', ['lpa-id' => $lpa->id])->andReturn("lpa/{$lpa->id}/date-check/complete")->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp3'])->andReturn("lpa/{$lpa->id}/download/pdf/lp3")->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lpa120'])->andReturn("lpa/{$lpa->id}/download/pdf/lpa120")->once();
+        $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$lpa->id])->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp1']])
+            ->andReturn("lpa/{$lpa->id}/download/pdf/lp1")->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['user/dashboard/create-lpa', ['lpa-id' => $lpa->id]])
+            ->andReturn('user/dashboard/create-lpa?seed=' . $lpa->id)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/date-check/complete', ['lpa-id' => $lpa->id]])
+            ->andReturn("lpa/{$lpa->id}/date-check/complete")->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp3']])
+            ->andReturn("lpa/{$lpa->id}/download/pdf/lp3")->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lpa120']])
+            ->andReturn("lpa/{$lpa->id}/download/pdf/lpa120")->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->viewDocsAction();
