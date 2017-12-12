@@ -40,10 +40,11 @@ class SendgridControllerTest extends AbstractControllerTest
         parent::controllerSetUp($this->controller);
 
         $this->twigEmailRenderer = Mockery::mock(Twig_Environment::class);
-        $this->serviceLocator->shouldReceive('get')->with('TwigEmailRenderer')->andReturn($this->twigEmailRenderer);
+        $this->serviceLocator->shouldReceive('get')
+            ->withArgs(['TwigEmailRenderer'])->andReturn($this->twigEmailRenderer);
 
         $this->mailTransport = Mockery::mock(SendGrid::class);
-        $this->serviceLocator->shouldReceive('get')->with('MailTransport')->andReturn($this->mailTransport);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['MailTransport'])->andReturn($this->mailTransport);
     }
 
     public function testIndexAction()
@@ -58,11 +59,12 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function testBounceActionBlankFromAddress()
     {
-        $this->request->shouldReceive('getPost')->with('from')->andReturn(null)->once();
-        $this->request->shouldReceive('getPost')->with('to')->andReturn($this->postData['to'])->once();
-        $this->request->shouldReceive('getPost')->with('subject')->andReturn($this->postData['subject'])->once();
-        $this->request->shouldReceive('getPost')->with('spam_score')->andReturn($this->postData['spam_score'])->once();
-        $this->request->shouldReceive('getPost')->with('text')->andReturn($this->postData['text'])->once();
+        $this->request->shouldReceive('getPost')->withArgs(['from'])->andReturn(null)->once();
+        $this->request->shouldReceive('getPost')->withArgs(['to'])->andReturn($this->postData['to'])->once();
+        $this->request->shouldReceive('getPost')->withArgs(['subject'])->andReturn($this->postData['subject'])->once();
+        $this->request->shouldReceive('getPost')
+            ->withArgs(['spam_score'])->andReturn($this->postData['spam_score'])->once();
+        $this->request->shouldReceive('getPost')->withArgs(['text'])->andReturn($this->postData['text'])->once();
 
         $loggingData = [
             'from-address'          => '',
@@ -72,7 +74,7 @@ class SendgridControllerTest extends AbstractControllerTest
             'sent-from-windows-10'  => false,
         ];
 
-        $this->logger->shouldReceive('err')->with('Sender or recipient missing, or email sent to blackhole@lastingpowerofattorney.service.gov.uk - the message message will not be sent to SendGrid', $loggingData)->once();
+        $this->logger->shouldReceive('err')->withArgs(['Sender or recipient missing, or email sent to blackhole@lastingpowerofattorney.service.gov.uk - the message message will not be sent to SendGrid', $loggingData])->once();
 
         /** @var Response $result */
         $result = $this->controller->bounceAction();
@@ -84,13 +86,14 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function testBounceActionEmptyToken()
     {
-        $this->request->shouldReceive('getPost')->with('from')->andReturn($this->postData['from'])->once();
-        $this->request->shouldReceive('getPost')->with('to')->andReturn($this->postData['to'])->once();
-        $this->request->shouldReceive('getPost')->with('subject')->andReturn($this->postData['subject'])->once();
-        $this->request->shouldReceive('getPost')->with('spam_score')->andReturn($this->postData['spam_score'])->once();
-        $this->request->shouldReceive('getPost')->with('text')->andReturn($this->postData['text'])->once();
+        $this->request->shouldReceive('getPost')->withArgs(['from'])->andReturn($this->postData['from'])->once();
+        $this->request->shouldReceive('getPost')->withArgs(['to'])->andReturn($this->postData['to'])->once();
+        $this->request->shouldReceive('getPost')->withArgs(['subject'])->andReturn($this->postData['subject'])->once();
+        $this->request->shouldReceive('getPost')
+            ->withArgs(['spam_score'])->andReturn($this->postData['spam_score'])->once();
+        $this->request->shouldReceive('getPost')->withArgs(['text'])->andReturn($this->postData['text'])->once();
 
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn('')->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('')->once();
 
         $loggingData = [
             'from-address'          => $this->postData['from'],
@@ -101,7 +104,7 @@ class SendgridControllerTest extends AbstractControllerTest
             'token'                 => ''
         ];
 
-        $this->logger->shouldReceive('err')->with('Missing or invalid bounce token used', $loggingData)->once();
+        $this->logger->shouldReceive('err')->withArgs(['Missing or invalid bounce token used', $loggingData])->once();
 
         /** @var Response $result */
         $result = $this->controller->bounceAction();
@@ -113,16 +116,19 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function testBounceActionSendEmailLogOnly()
     {
-        $this->request->shouldReceive('getPost')->with('from')->andReturn('<' . $this->postData['from'] . '>')->once();
-        $this->request->shouldReceive('getPost')->with('to')->andReturn($this->postData['to'])->once();
-        $this->request->shouldReceive('getPost')->with('subject')->andReturn($this->postData['subject'])->once();
-        $this->request->shouldReceive('getPost')->with('spam_score')->andReturn($this->postData['spam_score'])->once();
-        $this->request->shouldReceive('getPost')->with('text')->andReturn($this->postData['text'])->once();
+        $this->request->shouldReceive('getPost')
+            ->withArgs(['from'])->andReturn('<' . $this->postData['from'] . '>')->once();
+        $this->request->shouldReceive('getPost')->withArgs(['to'])->andReturn($this->postData['to'])->once();
+        $this->request->shouldReceive('getPost')->withArgs(['subject'])->andReturn($this->postData['subject'])->once();
+        $this->request->shouldReceive('getPost')
+            ->withArgs(['spam_score'])->andReturn($this->postData['spam_score'])->once();
+        $this->request->shouldReceive('getPost')->withArgs(['text'])->andReturn($this->postData['text'])->once();
 
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn('ValidToken')->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('ValidToken')->once();
         $twigTemplate = Mockery::mock(Twig_Template::class);
-        $this->twigEmailRenderer->shouldReceive('loadTemplate')->with('bounce.twig')->andReturn($twigTemplate)->once();
-        $twigTemplate->shouldReceive('render')->with([])->andReturn('')->once();
+        $this->twigEmailRenderer->shouldReceive('loadTemplate')
+            ->withArgs(['bounce.twig'])->andReturn($twigTemplate)->once();
+        $twigTemplate->shouldReceive('render')->withArgs([[]])->andReturn('')->once();
         $this->mailTransport->shouldReceive('send')->never();
 
         $loggingData = [
@@ -133,7 +139,8 @@ class SendgridControllerTest extends AbstractControllerTest
             'sent-from-windows-10'  => false,
         ];
 
-        $this->logger->shouldReceive('info')->with('Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData)->once();
+        $this->logger->shouldReceive('info')
+            ->withArgs(['Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData])->once();
 
         /** @var Response $result */
         $result = $this->controller->bounceAction();
@@ -145,16 +152,19 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function testBounceActionSendEmailException()
     {
-        $this->request->shouldReceive('getPost')->with('from')->andReturn($this->postData['from'])->once();
-        $this->request->shouldReceive('getPost')->with('to')->andReturn($this->postData['to'])->once();
-        $this->request->shouldReceive('getPost')->with('subject')->andReturn($this->postData['subject'])->once();
-        $this->request->shouldReceive('getPost')->with('spam_score')->andReturn($this->postData['spam_score'])->once();
-        $this->request->shouldReceive('getPost')->with('text')->andReturn($this->postData['text'])->once();
+        $this->request->shouldReceive('getPost')->withArgs(['from'])->andReturn($this->postData['from'])->once();
+        $this->request->shouldReceive('getPost')->withArgs(['to'])->andReturn($this->postData['to'])->once();
+        $this->request->shouldReceive('getPost')->withArgs(['subject'])->andReturn($this->postData['subject'])->once();
+        $this->request->shouldReceive('getPost')
+            ->withArgs(['spam_score'])->andReturn($this->postData['spam_score'])->once();
+        $this->request->shouldReceive('getPost')->withArgs(['text'])->andReturn($this->postData['text'])->once();
 
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn('ValidToken')->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('ValidToken')->once();
         $twigTemplate = Mockery::mock(Twig_Template::class);
-        $this->twigEmailRenderer->shouldReceive('loadTemplate')->with('bounce.twig')->andReturn($twigTemplate)->once();
-        $twigTemplate->shouldReceive('render')->with([])->andReturn('<!-- SUBJECT: Subject from template -->')->once();
+        $this->twigEmailRenderer->shouldReceive('loadTemplate')
+            ->withArgs(['bounce.twig'])->andReturn($twigTemplate)->once();
+        $twigTemplate->shouldReceive('render')
+            ->withArgs([[]])->andReturn('<!-- SUBJECT: Subject from template -->')->once();
         $this->mailTransport->shouldReceive('send')->never();
 
         $loggingData = [
@@ -175,8 +185,11 @@ class SendgridControllerTest extends AbstractControllerTest
         ];
 
         $exception = new Exception('Unit Test Exception');
-        $this->logger->shouldReceive('info')->with('Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData)->andThrow($exception)->once();
-        $this->logger->shouldReceive('alert')->with("Failed sending email due to:\n" . $exception->getMessage(), $alertLoggingData)->once();
+        $this->logger->shouldReceive('info')
+            ->withArgs(['Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData])
+            ->andThrow($exception)->once();
+        $this->logger->shouldReceive('alert')
+            ->withArgs(["Failed sending email due to:\n" . $exception->getMessage(), $alertLoggingData])->once();
 
         $result = $this->controller->bounceAction();
 

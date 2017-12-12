@@ -37,7 +37,8 @@ class TypeControllerTest extends AbstractControllerTest
         parent::controllerSetUp($this->controller);
 
         $this->form = Mockery::mock(TypeForm::class);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\TypeForm')->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\TypeForm'])->andReturn($this->form);
     }
 
     public function testIndexActionGet()
@@ -80,8 +81,9 @@ class TypeControllerTest extends AbstractControllerTest
 
         $this->setPostValid($this->form, $this->postData);
         $this->lpaApplicationService->shouldReceive('createApplication')->andReturn(null)->once();
-        $this->flashMessenger->shouldReceive('addErrorMessage')->with('Error creating a new LPA. Please try again.')->once();
-        $this->redirect->shouldReceive('toRoute')->with('user/dashboard')->andReturn($response)->once();
+        $this->flashMessenger->shouldReceive('addErrorMessage')
+            ->withArgs(['Error creating a new LPA. Please try again.'])->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
 
         $result = $this->controller->indexAction();
 
@@ -98,7 +100,8 @@ class TypeControllerTest extends AbstractControllerTest
         $lpa = FixturesData::getHwLpa();
         $this->lpaApplicationService->shouldReceive('createApplication')->andReturn($lpa)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
-        $this->lpaApplicationService->shouldReceive('setType')->andReturn($lpa->id, $this->postData['type'])->andReturn(false)->once();
+        $this->lpaApplicationService->shouldReceive('setType')
+            ->andReturn($lpa->id, $this->postData['type'])->andReturn(false)->once();
 
         $this->controller->indexAction();
     }
@@ -114,7 +117,8 @@ class TypeControllerTest extends AbstractControllerTest
         $lpa->document->type = $this->postData['type'];
         $this->lpaApplicationService->shouldReceive('createApplication')->andReturn($lpa)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
-        $this->lpaApplicationService->shouldReceive('setType')->andReturn($lpa->id, $this->postData['type'])->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setType')
+            ->andReturn($lpa->id, $this->postData['type'])->andReturn(true)->once();
 
         $this->setMatchedRouteName($this->controller, 'lpa/form-type');
         $this->setRedirectToRoute('lpa/donor', $lpa, $response);
@@ -123,5 +127,4 @@ class TypeControllerTest extends AbstractControllerTest
 
         $this->assertEquals($response, $result);
     }
-
 }
