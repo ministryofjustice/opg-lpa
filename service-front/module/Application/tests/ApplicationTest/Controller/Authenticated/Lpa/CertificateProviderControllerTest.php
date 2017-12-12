@@ -42,8 +42,10 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(CertificateProviderForm::class);
         $this->lpa = FixturesData::getPfLpa();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\CertificateProviderForm')->andReturn($this->form);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\CertificateProviderForm', ['lpa' => $this->lpa])->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\CertificateProviderForm'])->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\CertificateProviderForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
     /**
@@ -59,7 +61,10 @@ class CertificateProviderControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->certificateProvider = null;
         $this->controller->setLpa($this->lpa);
-        $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider/add', ['lpa-id' => $this->lpa->id])->andReturn('lpa/certificate-provider/add')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs([
+            'lpa/certificate-provider/add',
+            ['lpa-id' => $this->lpa->id]
+        ])->andReturn('lpa/certificate-provider/add')->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -74,11 +79,24 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(CertificateProvider::class, $this->lpa->document->certificateProvider);
 
         $this->controller->setLpa($this->lpa);
-        $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider/edit', ['lpa-id' => $this->lpa->id])->andReturn('lpa/certificate-provider/edit')->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider/confirm-delete', ['lpa-id' => $this->lpa->id])->andReturn('lpa/certificate-provider/confirm-delete')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs([
+            'lpa/certificate-provider/edit',
+            ['lpa-id' => $this->lpa->id]
+        ])->andReturn('lpa/certificate-provider/edit')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs([
+            'lpa/certificate-provider/confirm-delete',
+            ['lpa-id' => $this->lpa->id]
+        ])->andReturn('lpa/certificate-provider/confirm-delete')->once();
         $this->setMatchedRouteName($this->controller, 'lpa/certificate-provider');
-        $this->url->shouldReceive('fromRoute')->with('lpa/people-to-notify', ['lpa-id' => $this->lpa->id], $this->getExpectedRouteOptions('lpa/people-to-notify'))->andReturn('lpa/certificate-provider/add')->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider/add', ['lpa-id' => $this->lpa->id])->andReturn('lpa/certificate-provider/add')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs([
+            'lpa/people-to-notify',
+            ['lpa-id' => $this->lpa->id],
+            $this->getExpectedRouteOptions('lpa/people-to-notify')
+        ])->andReturn('lpa/certificate-provider/add')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs([
+            'lpa/certificate-provider/add',
+            ['lpa-id' => $this->lpa->id]
+        ])->andReturn('lpa/certificate-provider/add')->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -146,7 +164,10 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->twice();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/add');
         $this->form->shouldReceive('setExistingActorNamesData')->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider', ['lpa-id' => $this->lpa->id])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
+        $this->url->shouldReceive('fromRoute')->withArgs([
+            'lpa/certificate-provider',
+            ['lpa-id' => $this->lpa->id]
+        ])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->addAction();
@@ -165,7 +186,10 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/add');
         $this->form->shouldReceive('setExistingActorNamesData')->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider', ['lpa-id' => $this->lpa->id])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
+        $this->url->shouldReceive('fromRoute')->withArgs([
+            'lpa/certificate-provider',
+            ['lpa-id' => $this->lpa->id]
+        ])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
         $this->setPostInvalid($this->form, [], null, 2);
 
         /** @var ViewModel $result */
@@ -235,7 +259,8 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/certificate-provider');
         $routeMatch = $this->setReuseDetails($this->controller, $this->form, $this->user, 'attorney');
         $this->setMatchedRouteName($this->controller, 'lpa/certificate-provider/add', $routeMatch);
-        $routeMatch->shouldReceive('getParam')->withArgs(['callingUrl'])->andReturn("http://localhost/lpa/{$this->lpa->id}/lpa/certificate-provider/add")->once();
+        $routeMatch->shouldReceive('getParam')->withArgs(['callingUrl'])
+            ->andReturn("http://localhost/lpa/{$this->lpa->id}/lpa/certificate-provider/add")->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->addAction();
@@ -243,7 +268,10 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/certificate-provider/form.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals("http://localhost/lpa/{$this->lpa->id}/lpa/certificate-provider/add", $result->backButtonUrl);
+        $this->assertEquals(
+            "http://localhost/lpa/{$this->lpa->id}/lpa/certificate-provider/add",
+            $result->backButtonUrl
+        );
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
@@ -255,7 +283,10 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('setExistingActorNamesData')->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')->with($this->lpa->document->certificateProvider->flatten());
-        $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider', ['lpa-id' => $this->lpa->id])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
+        $this->url->shouldReceive('fromRoute')->withArgs([
+            'lpa/certificate-provider',
+            ['lpa-id' => $this->lpa->id]
+        ])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->editAction();
@@ -273,7 +304,10 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/edit');
         $this->form->shouldReceive('setExistingActorNamesData')->once();
         $this->setPostInvalid($this->form);
-        $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider', ['lpa-id' => $this->lpa->id])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
+        $this->url->shouldReceive('fromRoute')->withArgs([
+            'lpa/certificate-provider',
+            ['lpa-id' => $this->lpa->id]
+        ])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->editAction();
@@ -335,7 +369,10 @@ class CertificateProviderControllerTest extends AbstractControllerTest
             ->with('lpa/certificate-provider/delete', ['lpa-id' => $this->lpa->id])
             ->andReturn("lpa/{$this->lpa->id}/certificate-provider/delete")->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider', ['lpa-id' => $this->lpa->id])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
+        $this->url->shouldReceive('fromRoute')->withArgs([
+            'lpa/certificate-provider',
+            ['lpa-id' => $this->lpa->id]
+        ])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->confirmDeleteAction();
@@ -343,8 +380,9 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider/delete", $result->getVariable('deleteRoute'));
-        $this->assertEquals($this->lpa->document->certificateProvider->name, $result->getVariable('certificateProviderName'));
-        $this->assertEquals($this->lpa->document->certificateProvider->address, $result->getVariable('certificateProviderAddress'));
+        $certificateProvider = $this->lpa->document->certificateProvider;
+        $this->assertEquals($certificateProvider->name, $result->getVariable('certificateProviderName'));
+        $this->assertEquals($certificateProvider->address, $result->getVariable('certificateProviderAddress'));
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider", $result->cancelUrl);
         $this->assertEquals(false, $result->terminate());
         $this->assertEquals(false, $result->isPopup);
@@ -357,7 +395,10 @@ class CertificateProviderControllerTest extends AbstractControllerTest
             ->with('lpa/certificate-provider/delete', ['lpa-id' => $this->lpa->id])
             ->andReturn("lpa/{$this->lpa->id}/certificate-provider/delete")->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
-        $this->url->shouldReceive('fromRoute')->with('lpa/certificate-provider', ['lpa-id' => $this->lpa->id])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
+        $this->url->shouldReceive('fromRoute')->withArgs([
+            'lpa/certificate-provider',
+            ['lpa-id' => $this->lpa->id]
+        ])->andReturn("lpa/{$this->lpa->id}/certificate-provider")->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->confirmDeleteAction();
@@ -365,8 +406,9 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider/delete", $result->getVariable('deleteRoute'));
-        $this->assertEquals($this->lpa->document->certificateProvider->name, $result->getVariable('certificateProviderName'));
-        $this->assertEquals($this->lpa->document->certificateProvider->address, $result->getVariable('certificateProviderAddress'));
+        $certificateProvider = $this->lpa->document->certificateProvider;
+        $this->assertEquals($certificateProvider->name, $result->getVariable('certificateProviderName'));
+        $this->assertEquals($certificateProvider->address, $result->getVariable('certificateProviderAddress'));
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider", $result->cancelUrl);
         $this->assertEquals(true, $result->terminate());
         $this->assertEquals(true, $result->isPopup);
@@ -390,7 +432,8 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->controller->setLpa($this->lpa);
         $this->lpaApplicationService->shouldReceive('deleteCertificateProvider')->andReturn(true);
-        $this->redirect->shouldReceive('toRoute')->with('lpa/certificate-provider', ['lpa-id' => $this->lpa->id])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['lpa/certificate-provider', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
 
         $result = $this->controller->deleteAction();
 

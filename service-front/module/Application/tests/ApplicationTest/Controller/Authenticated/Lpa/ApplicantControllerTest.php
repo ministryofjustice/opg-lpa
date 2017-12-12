@@ -37,7 +37,8 @@ class ApplicantControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(ApplicantForm::class);
         $this->lpa = FixturesData::getPfLpa();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\ApplicantForm', ['lpa' => $this->lpa])->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\ApplicantForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
     /**
@@ -53,7 +54,8 @@ class ApplicantControllerTest extends AbstractControllerTest
     {
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => $this->lpa->document->whoIsRegistering])->once();
+        $this->form->shouldReceive('bind')
+            ->withArgs([['whoIsRegistering' => $this->lpa->document->whoIsRegistering]])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -72,7 +74,7 @@ class ApplicantControllerTest extends AbstractControllerTest
 
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => '1,2'])->once();
+        $this->form->shouldReceive('bind')->withArgs([['whoIsRegistering' => '1,2']])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -91,7 +93,9 @@ class ApplicantControllerTest extends AbstractControllerTest
 
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('bind')->with(['whoIsRegistering' => '1,2,3', 'attorneyList' => $this->lpa->document->whoIsRegistering])->once();
+        $this->form->shouldReceive('bind')->withArgs([
+            ['whoIsRegistering' => '1,2,3', 'attorneyList' => $this->lpa->document->whoIsRegistering]
+        ])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -127,7 +131,10 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->setPostValid($this->form, $postData);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/applicant');
-        $this->redirect->shouldReceive('toRoute')->with('lpa/correspondent', ['lpa-id' => $this->lpa->id], $this->getExpectedRouteOptions('lpa/correspondent'))->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs([
+            'lpa/correspondent',
+            ['lpa-id' => $this->lpa->id
+            ], $this->getExpectedRouteOptions('lpa/correspondent')])->andReturn($response)->once();
 
         $result = $this->controller->indexAction();
 
@@ -147,7 +154,8 @@ class ApplicantControllerTest extends AbstractControllerTest
 
         $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $postData);
-        $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')->with($this->lpa->id, Correspondence::WHO_DONOR)->andReturn(false);
+        $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')
+            ->withArgs([$this->lpa->id, Correspondence::WHO_DONOR])->andReturn(false);
 
         $this->controller->indexAction();
     }
@@ -169,7 +177,8 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
-        $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')->with($this->lpa->id, [1])->andReturn(true);
+        $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')
+            ->withArgs([$this->lpa->id, [1]])->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/applicant');
         $this->setRedirectToRoute('lpa/correspondent', $this->lpa, $response);
@@ -196,7 +205,8 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
-        $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')->with($this->lpa->id, '1,2,3')->andReturn(true);
+        $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')
+            ->withArgs([$this->lpa->id, '1,2,3'])->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/applicant');
         $this->setRedirectToRoute('lpa/correspondent', $this->lpa, $response);
