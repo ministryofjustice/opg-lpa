@@ -48,7 +48,8 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(RepeatApplicationForm::class);
         $this->lpa = FixturesData::getPfLpa();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\RepeatApplicationForm', ['lpa' => $this->lpa])->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\RepeatApplicationForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
     /**
@@ -133,7 +134,8 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->setPostValid($this->form, $this->postDataNoRepeat);
         $this->form->shouldReceive('setValidationGroup')->withArgs(['isRepeatApplication'])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postDataNoRepeat)->once();
-        $this->lpaApplicationService->shouldReceive('deleteRepeatCaseNumber')->withArgs([$this->lpa->id])->andReturn(false)->once();
+        $this->lpaApplicationService->shouldReceive('deleteRepeatCaseNumber')
+            ->withArgs([$this->lpa->id])->andReturn(false)->once();
 
         $this->controller->indexAction();
     }
@@ -147,7 +149,8 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $this->postDataRepeat);
         $this->form->shouldReceive('getData')->andReturn($this->postDataRepeat)->times(3);
-        $this->lpaApplicationService->shouldReceive('setRepeatCaseNumber')->withArgs([$this->lpa->id, $this->postDataRepeat['repeatCaseNumber']])->andReturn(false)->once();
+        $this->lpaApplicationService->shouldReceive('setRepeatCaseNumber')
+            ->withArgs([$this->lpa->id, $this->postDataRepeat['repeatCaseNumber']])->andReturn(false)->once();
 
         $this->controller->indexAction();
     }
@@ -161,11 +164,12 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $this->postDataRepeat);
         $this->form->shouldReceive('getData')->andReturn($this->postDataRepeat)->times(4);
-        $this->lpaApplicationService->shouldReceive('setRepeatCaseNumber')->withArgs([$this->lpa->id, $this->postDataRepeat['repeatCaseNumber']])->andReturn(true)->once();
-        $this->lpaApplicationService->shouldReceive('setPayment')/*->withArgs(function ($lpaId, $payment) {
+        $this->lpaApplicationService->shouldReceive('setRepeatCaseNumber')
+            ->withArgs([$this->lpa->id, $this->postDataRepeat['repeatCaseNumber']])->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')->withArgs(function ($lpaId, $payment) {
             return $lpaId === $this->lpa->id
                 && $payment->amount === 41.0;
-        })*/->andReturn(false)->once();
+        })->andReturn(false)->once();
 
         $this->controller->indexAction();
     }
@@ -179,11 +183,12 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->setPostValid($this->form, $this->postDataNoRepeat);
         $this->form->shouldReceive('setValidationGroup')->withArgs(['isRepeatApplication'])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postDataNoRepeat)->once();
-        $this->lpaApplicationService->shouldReceive('deleteRepeatCaseNumber')->withArgs([$this->lpa->id])->andReturn(true)->once();
-        $this->lpaApplicationService->shouldReceive('setPayment')/*->withArgs(function ($lpaId, $payment) {
+        $this->lpaApplicationService->shouldReceive('deleteRepeatCaseNumber')
+            ->withArgs([$this->lpa->id])->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')->withArgs(function ($lpaId, $payment) {
             return $lpaId === $this->lpa->id
                 && $payment->amount === 82.0;
-        })*/->andReturn(true)->once();
+        })->andReturn(true)->once();
         $this->metadata->shouldReceive('setRepeatApplicationConfirmed')->withArgs([$this->lpa])->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/fee-reduction');

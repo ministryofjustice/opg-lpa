@@ -41,7 +41,8 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(FeeReductionForm::class);
         $this->lpa = FixturesData::getPfLpa();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\FeeReductionForm', ['lpa' => $this->lpa])->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\FeeReductionForm', ['lpa' => $this->lpa]])->andReturn($this->form);
 
         $this->options = [
             'value_options' => [
@@ -70,7 +71,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->lpa->payment = null;
         $this->controller->setLpa($this->lpa);
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
-        $this->form->shouldReceive('get')->with('reductionOptions')->andReturn($this->reductionOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -92,7 +93,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'reducedFeeReceivesBenefits']])->once();
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
-        $this->form->shouldReceive('get')->with('reductionOptions')->andReturn($this->reductionOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -113,7 +114,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'reducedFeeUniversalCredit']])->once();
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
-        $this->form->shouldReceive('get')->with('reductionOptions')->andReturn($this->reductionOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -134,7 +135,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'reducedFeeLowIncome']])->once();
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
-        $this->form->shouldReceive('get')->with('reductionOptions')->andReturn($this->reductionOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -158,7 +159,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'notApply']])->once();
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
-        $this->form->shouldReceive('get')->with('reductionOptions')->andReturn($this->reductionOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -175,7 +176,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->lpa->payment = null;
         $this->controller->setLpa($this->lpa);
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
-        $this->form->shouldReceive('get')->with('reductionOptions')->andReturn($this->reductionOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->setPostInvalid($this->form);
 
         /** @var ViewModel $result */
@@ -198,16 +199,17 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->lpa->payment = null;
         $this->controller->setLpa($this->lpa);
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
-        $this->form->shouldReceive('get')->with('reductionOptions')->andReturn($this->reductionOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
-        $this->lpaApplicationService->shouldReceive('setPayment')/*->withArgs(function ($lpaId, $payment) {
-            return $lpaId === $this->lpa->id
-                && $payment->reducedFeeReceivesBenefits == true
-                && $payment->reducedFeeAwardedDamages == true
-                && $payment->reducedFeeLowIncome == null
-                && $payment->reducedFeeUniversalCredit === null;
-        })*/->andReturn(false)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs(function ($lpaId, $payment) {
+                return $lpaId === $this->lpa->id
+                    && $payment->reducedFeeReceivesBenefits == true
+                    && $payment->reducedFeeAwardedDamages == true
+                    && $payment->reducedFeeLowIncome == null
+                    && $payment->reducedFeeUniversalCredit === null;
+            })->andReturn(false)->once();
 
         $this->controller->indexAction();
     }
@@ -220,19 +222,21 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'notApply']])->once();
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
-        $this->form->shouldReceive('get')->with('reductionOptions')->andReturn($this->reductionOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
-        $this->lpaApplicationService->shouldReceive('setPayment')/*->withArgs(function ($lpaId, $payment) {
-            return $lpaId === $this->lpa->id
-                && $payment->reducedFeeReceivesBenefits == false
-                && $payment->reducedFeeAwardedDamages == null
-                && $payment->reducedFeeLowIncome == false
-                && $payment->reducedFeeUniversalCredit === true;
-        })*/->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs(function ($lpaId, $payment) {
+                return $lpaId === $this->lpa->id
+                    && $payment->reducedFeeReceivesBenefits == false
+                    && $payment->reducedFeeAwardedDamages == null
+                    && $payment->reducedFeeLowIncome == false
+                    && $payment->reducedFeeUniversalCredit === true;
+            })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/fee-reduction');
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
 
         $result = $this->controller->indexAction();
 
@@ -247,19 +251,21 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'notApply']])->once();
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
-        $this->form->shouldReceive('get')->with('reductionOptions')->andReturn($this->reductionOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
-        $this->lpaApplicationService->shouldReceive('setPayment')/*->withArgs(function ($lpaId, $payment) {
-            return $lpaId === $this->lpa->id
-                && $payment->reducedFeeReceivesBenefits == false
-                && $payment->reducedFeeAwardedDamages == null
-                && $payment->reducedFeeLowIncome == true
-                && $payment->reducedFeeUniversalCredit === false;
-        })*/->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs(function ($lpaId, $payment) {
+                return $lpaId === $this->lpa->id
+                    && $payment->reducedFeeReceivesBenefits == false
+                    && $payment->reducedFeeAwardedDamages == null
+                    && $payment->reducedFeeLowIncome == true
+                    && $payment->reducedFeeUniversalCredit === false;
+            })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/fee-reduction');
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
 
         $result = $this->controller->indexAction();
 
@@ -274,19 +280,21 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->lpa->payment = null;
         $this->controller->setLpa($this->lpa);
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
-        $this->form->shouldReceive('get')->with('reductionOptions')->andReturn($this->reductionOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
-        $this->lpaApplicationService->shouldReceive('setPayment')/*->withArgs(function ($lpaId, $payment) {
-            return $lpaId === $this->lpa->id
-                && $payment->reducedFeeReceivesBenefits == null
-                && $payment->reducedFeeAwardedDamages == null
-                && $payment->reducedFeeLowIncome == null
-                && $payment->reducedFeeUniversalCredit === null;
-        })*/->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs(function ($lpaId, $payment) {
+                return $lpaId === $this->lpa->id
+                    && $payment->reducedFeeReceivesBenefits == null
+                    && $payment->reducedFeeAwardedDamages == null
+                    && $payment->reducedFeeLowIncome == null
+                    && $payment->reducedFeeUniversalCredit === null;
+            })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/fee-reduction');
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
 
         $result = $this->controller->indexAction();
 
