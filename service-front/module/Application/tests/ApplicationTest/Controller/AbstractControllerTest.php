@@ -180,35 +180,38 @@ abstract class AbstractControllerTest extends TestCase
         $this->logger = Mockery::mock(Logger::class);
         $this->logger->shouldReceive('setWriters')->passthru();
         $this->logger->setWriters(new SplPriorityQueue());
-        $this->serviceLocator->shouldReceive('get')->with('Logger')->andReturn($this->logger);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['Logger'])->andReturn($this->logger);
 
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
-        $this->serviceLocator->shouldReceive('get')->with('AuthenticationService')->andReturn($this->authenticationService);
+        $this->serviceLocator->shouldReceive('get')
+            ->withArgs(['AuthenticationService'])->andReturn($this->authenticationService);
 
         $this->pluginManager = Mockery::mock(PluginManager::class);
         $this->pluginManager->shouldReceive('setController');
 
         $this->redirect = Mockery::mock(Redirect::class);
-        $this->pluginManager->shouldReceive('get')->with('redirect', null)->andReturn($this->redirect);
+        $this->pluginManager->shouldReceive('get')->withArgs(['redirect', null])->andReturn($this->redirect);
 
         $this->params = Mockery::mock(Params::class);
         $this->params->shouldReceive('__invoke')->andReturn($this->params);
-        $this->pluginManager->shouldReceive('get')->with('params', null)->andReturn($this->params);
+        $this->pluginManager->shouldReceive('get')->withArgs(['params', null])->andReturn($this->params);
 
         $this->url = Mockery::mock(Url::class);
-        $this->pluginManager->shouldReceive('get')->with('url', null)->andReturn($this->url);
+        $this->pluginManager->shouldReceive('get')->withArgs(['url', null])->andReturn($this->url);
 
         $this->flashMessenger = Mockery::mock(FlashMessenger::class);
-        $this->pluginManager->shouldReceive('get')->with('flashMessenger', null)->andReturn($this->flashMessenger);
+        $this->pluginManager->shouldReceive('get')
+            ->withArgs(['flashMessenger', null])->andReturn($this->flashMessenger);
 
         $this->createHttpNotFoundModel = new CreateHttpNotFoundModel();
-        $this->pluginManager->shouldReceive('get')->with('createHttpNotFoundModel', null)->andReturn($this->createHttpNotFoundModel);
+        $this->pluginManager->shouldReceive('get')
+            ->withArgs(['createHttpNotFoundModel', null])->andReturn($this->createHttpNotFoundModel);
 
         $this->layout = Mockery::mock(Layout::class);
-        $this->pluginManager->shouldReceive('get')->with('layout', null)->andReturn($this->layout);
+        $this->pluginManager->shouldReceive('get')->withArgs(['layout', null])->andReturn($this->layout);
 
         $this->forward = Mockery::mock(Forward::class);
-        $this->pluginManager->shouldReceive('get')->with('forward', null)->andReturn($this->forward);
+        $this->pluginManager->shouldReceive('get')->withArgs(['forward', null])->andReturn($this->forward);
 
         $this->eventManager = Mockery::mock(EventManager::class);
         $this->eventManager->shouldReceive('setIdentifiers');
@@ -255,27 +258,31 @@ abstract class AbstractControllerTest extends TestCase
                 ],
             ]
         ];
-        $this->serviceLocator->shouldReceive('get')->with('config')->andReturn($this->config);
-        $this->serviceLocator->shouldReceive('get')->with('Config')->andReturn($this->config);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['config'])->andReturn($this->config);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['Config'])->andReturn($this->config);
 
         $this->formElementManager = Mockery::mock(AbstractPluginManager::class);
-        $this->serviceLocator->shouldReceive('get')->with('FormElementManager')->andReturn($this->formElementManager);
+        $this->serviceLocator->shouldReceive('get')
+            ->withArgs(['FormElementManager'])->andReturn($this->formElementManager);
 
         $this->storage = Mockery::mock(StorageInterface::class);
 
         $this->sessionManager = Mockery::mock(SessionManager::class);
-        $this->serviceLocator->shouldReceive('get')->with('SessionManager')->andReturn($this->sessionManager);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['SessionManager'])->andReturn($this->sessionManager);
         $this->sessionManager->shouldReceive('getStorage')->andReturn($this->storage);
 
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
-        $this->serviceLocator->shouldReceive('get')->with('LpaApplicationService')->andReturn($this->lpaApplicationService);
+        $this->serviceLocator->shouldReceive('get')
+            ->withArgs(['LpaApplicationService'])->andReturn($this->lpaApplicationService);
 
         $this->authenticationAdapter = Mockery::mock(LpaAuthAdapter::class);
-        $this->serviceLocator->shouldReceive('get')->with('AuthenticationAdapter')->andReturn($this->authenticationAdapter);
+        $this->serviceLocator->shouldReceive('get')
+            ->withArgs(['AuthenticationAdapter'])->andReturn($this->authenticationAdapter);
 
         $this->userDetailsSession = new ArrayObject();
         $this->userDetailsSession->user = $this->user;
-        $this->serviceLocator->shouldReceive('get')->with('UserDetailsSession')->andReturn($this->userDetailsSession);
+        $this->serviceLocator->shouldReceive('get')
+            ->withArgs(['UserDetailsSession'])->andReturn($this->userDetailsSession);
 
         $controller->setServiceLocator($this->serviceLocator);
         $controller->setPluginManager($this->pluginManager);
@@ -287,16 +294,16 @@ abstract class AbstractControllerTest extends TestCase
         $controller->dispatch($this->request);
 
         $this->apiClient = Mockery::mock(Client::class);
-        $this->serviceLocator->shouldReceive('get')->with('ApiClient')->andReturn($this->apiClient);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['ApiClient'])->andReturn($this->apiClient);
 
         $this->cache = Mockery::mock(StorageInterface::class);
-        $this->serviceLocator->shouldReceive('get')->with('Cache')->andReturn($this->cache);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['Cache'])->andReturn($this->cache);
 
         $this->metadata = Mockery::mock(Metadata::class);
-        $this->serviceLocator->shouldReceive('get')->with('Metadata')->andReturn($this->metadata);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['Metadata'])->andReturn($this->metadata);
 
         $this->router = Mockery::mock(ArrayObject::class);
-        $this->serviceLocator->shouldReceive('get')->with('Router')->andReturn($this->router);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['Router'])->andReturn($this->router);
     }
 
     /**
@@ -350,7 +357,8 @@ abstract class AbstractControllerTest extends TestCase
     public function setSeedLpa($lpa, $seedLpa)
     {
         $lpa->seed = $seedLpa->id;
-        $this->lpaApplicationService->shouldReceive('getSeedDetails')->with($lpa->id)->andReturn($this->getSeedData($seedLpa))->once();
+        $this->lpaApplicationService->shouldReceive('getSeedDetails')
+            ->withArgs([$lpa->id])->andReturn($this->getSeedData($seedLpa))->once();
 
         //Make sure the container hasn't cached the seed lpa
         $seedId = $lpa->seed;
@@ -400,12 +408,17 @@ abstract class AbstractControllerTest extends TestCase
 
         $this->request->shouldReceive('isPost')->andReturn(true)->times($expectedPostTimes);
         $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $form->shouldReceive('setData')->with($dataToSet)->once();
+        $form->shouldReceive('setData')->withArgs([$dataToSet])->once();
         $form->shouldReceive('isValid')->andReturn(false)->once();
     }
 
-    public function setPostValid($form, array $postData = [], $dataToSet = null, $expectedPostTimes = 1, $expectedGetPostTimes = 1)
-    {
+    public function setPostValid(
+        $form,
+        array $postData = [],
+        $dataToSet = null,
+        $expectedPostTimes = 1,
+        $expectedGetPostTimes = 1
+    ) {
         //  Post data is got from the form it will be a Parameters object
         $postData = (is_array($postData) ? new Parameters($postData) : $postData);
 
@@ -416,7 +429,7 @@ abstract class AbstractControllerTest extends TestCase
 
         $this->request->shouldReceive('isPost')->andReturn(true)->times($expectedPostTimes);
         $this->request->shouldReceive('getPost')->andReturn($postData)->times($expectedGetPostTimes);
-        $form->shouldReceive('setData')->with($dataToSet)->once();
+        $form->shouldReceive('setData')->withArgs([$dataToSet])->once();
         $form->shouldReceive('isValid')->andReturn(true)->once();
     }
 
@@ -511,7 +524,7 @@ abstract class AbstractControllerTest extends TestCase
         $url = $this->getLpaUrl($lpa, $route);
         $this->url->shouldReceive('fromRoute')->withArgs([$route, ['lpa-id' => $lpa->id]])
             ->andReturn($url)->times($expectedFromRouteTimes);
-        $form->shouldReceive('setAttribute')->with('action', $url)->once();
+        $form->shouldReceive('setAttribute')->withArgs(['action', $url])->once();
         return $url;
     }
 
@@ -520,7 +533,7 @@ abstract class AbstractControllerTest extends TestCase
         $url = $this->getLpaUrl($lpa, $route, ['idx' => $idx]);
         $this->url->shouldReceive('fromRoute')->withArgs([$route, ['lpa-id' => $lpa->id, 'idx' => $idx]])
             ->andReturn($url)->times($expectedFromRouteTimes);
-        $form->shouldReceive('setAttribute')->with('action', $url)->once();
+        $form->shouldReceive('setAttribute')->withArgs(['action', $url])->once();
         return $url;
     }
 
@@ -532,9 +545,10 @@ abstract class AbstractControllerTest extends TestCase
             $queryParameters = array_merge($queryParameters, $extraQueryParameters);
         }
         if (is_array($fragment)) {
-            $this->url->shouldReceive('fromRoute')->with($route, $queryParameters, $fragment)->andReturn($url)->once();
+            $this->url->shouldReceive('fromRoute')
+                ->withArgs([$route, $queryParameters, $fragment])->andReturn($url)->once();
         } else {
-            $this->url->shouldReceive('fromRoute')->with($route, $queryParameters)->andReturn($url)->once();
+            $this->url->shouldReceive('fromRoute')->withArgs([$route, $queryParameters])->andReturn($url)->once();
         }
         return $url;
     }

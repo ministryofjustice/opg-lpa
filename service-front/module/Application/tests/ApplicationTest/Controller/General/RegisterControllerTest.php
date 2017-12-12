@@ -50,7 +50,8 @@ class RegisterControllerTest extends AbstractControllerTest
         parent::controllerSetUp($this->controller);
 
         $this->form = Mockery::mock(Registration::class);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\User\Registration')->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\User\Registration'])->andReturn($this->form);
 
         $this->user = FixturesData::getUser();
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
@@ -62,7 +63,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->event->shouldReceive('getRouteMatch')->andReturn($this->routeMatch);
 
         $this->register = Mockery::mock(Register::class);
-        $this->serviceLocator->shouldReceive('get')->with('Register')->andReturn($this->register);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['Register'])->andReturn($this->register);
     }
 
     public function testIndexActionRefererGovUk()
@@ -71,8 +72,8 @@ class RegisterControllerTest extends AbstractControllerTest
         $referer = new Referer();
         $referer->setUri('http://www.gov.uk');
 
-        $this->request->shouldReceive('getHeader')->with('Referer')->andReturn($referer)->once();
-        $this->redirect->shouldReceive('toRoute')->with('home')->andReturn($response)->once();
+        $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['home'])->andReturn($response)->once();
 
         $result = $this->controller->indexAction();
 
@@ -85,10 +86,12 @@ class RegisterControllerTest extends AbstractControllerTest
 
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
-        $this->request->shouldReceive('getHeader')->with('Referer')->andReturn($referer)->once();
+        $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->twice();
-        $this->redirect->shouldReceive('toRoute')->with('user/dashboard')->andReturn($response)->once();
-        $this->logger->shouldReceive('info')->with('Authenticated user attempted to access registration page', $this->userIdentity->toArray())->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
+        $this->logger->shouldReceive('info')
+            ->withArgs(['Authenticated user attempted to access registration page', $this->userIdentity->toArray()])
+            ->once();
 
         $result = $this->controller->indexAction();
 
@@ -99,10 +102,10 @@ class RegisterControllerTest extends AbstractControllerTest
     {
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
-        $this->request->shouldReceive('getHeader')->with('Referer')->andReturn($referer)->once();
+        $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
-        $this->url->shouldReceive('fromRoute')->with('register')->andReturn('register')->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'register')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -117,10 +120,10 @@ class RegisterControllerTest extends AbstractControllerTest
     {
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
-        $this->request->shouldReceive('getHeader')->with('Referer')->andReturn($referer)->once();
+        $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
-        $this->url->shouldReceive('fromRoute')->with('register')->andReturn('register')->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'register')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
         $this->setPostInvalid($this->form, $this->postData);
 
         /** @var ViewModel $result */
@@ -135,10 +138,10 @@ class RegisterControllerTest extends AbstractControllerTest
     {
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
-        $this->request->shouldReceive('getHeader')->with('Referer')->andReturn($referer)->once();
+        $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
-        $this->url->shouldReceive('fromRoute')->with('register')->andReturn('register')->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'register')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->register->shouldReceive('registerAccount')->andReturn('Unit test error')->once();
@@ -158,19 +161,19 @@ class RegisterControllerTest extends AbstractControllerTest
 
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
-        $this->request->shouldReceive('getHeader')->with('Referer')->andReturn($referer)->once();
+        $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
-        $this->url->shouldReceive('fromRoute')->with('register')->andReturn('register')->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'register')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->register->shouldReceive('registerAccount')->andReturn(true);
 
-        $this->redirect->shouldReceive('toRoute')->with('register/email-sent', [], [
+        $this->redirect->shouldReceive('toRoute')->withArgs(['register/email-sent', [], [
             'query' => [
                 'email' => 'unit@test.com'
             ]
-        ])->andReturn($response)->once();
+        ]])->andReturn($response)->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -180,7 +183,7 @@ class RegisterControllerTest extends AbstractControllerTest
 
     public function testConfirmActionNoToken()
     {
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn(null)->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn(null)->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->confirmAction();
@@ -191,7 +194,7 @@ class RegisterControllerTest extends AbstractControllerTest
 
     public function testConfirmActionAccountDoesNotExist()
     {
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn('unitTest')->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('unitTest')->once();
         $this->authenticationService->shouldReceive('clearIdentity');
         $this->storage->shouldReceive('clear')->once();
         $this->sessionManager->shouldReceive('initialise')->once();
@@ -206,7 +209,7 @@ class RegisterControllerTest extends AbstractControllerTest
 
     public function testConfirmActionSuccess()
     {
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn('unitTest')->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('unitTest')->once();
         $this->authenticationService->shouldReceive('clearIdentity');
         $this->storage->shouldReceive('clear')->once();
         $this->sessionManager->shouldReceive('initialise')->once();

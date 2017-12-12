@@ -45,16 +45,18 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         parent::controllerSetUp($this->controller);
 
         $this->resetPasswordEmailForm = Mockery::mock(ConfirmEmail::class);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\User\ConfirmEmail')->andReturn($this->resetPasswordEmailForm);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\User\ConfirmEmail'])->andReturn($this->resetPasswordEmailForm);
 
         $this->setPasswordForm = Mockery::mock(SetPassword::class);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\User\SetPassword')->andReturn($this->setPasswordForm);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\User\SetPassword'])->andReturn($this->setPasswordForm);
 
         $this->user = FixturesData::getUser();
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
 
         $this->passwordReset = Mockery::mock(PasswordReset::class);
-        $this->serviceLocator->shouldReceive('get')->with('PasswordReset')->andReturn($this->passwordReset);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['PasswordReset'])->andReturn($this->passwordReset);
     }
 
     public function testIndexActionAlreadyLoggedIn()
@@ -62,7 +64,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $response = new Response();
 
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
-        $this->redirect->shouldReceive('toRoute')->with('user/dashboard')->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
 
         $result = $this->controller->indexAction();
 
@@ -73,8 +75,8 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
     {
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->url->shouldReceive('fromRoute')->with('forgot-password')->andReturn('forgot-password')->once();
-        $this->resetPasswordEmailForm->shouldReceive('setAttribute')->with('action', 'forgot-password')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['forgot-password'])->andReturn('forgot-password')->once();
+        $this->resetPasswordEmailForm->shouldReceive('setAttribute')->withArgs(['action', 'forgot-password'])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -88,8 +90,8 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
     public function testIndexActionFormInvalid()
     {
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
-        $this->url->shouldReceive('fromRoute')->with('forgot-password')->andReturn('forgot-password')->once();
-        $this->resetPasswordEmailForm->shouldReceive('setAttribute')->with('action', 'forgot-password')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['forgot-password'])->andReturn('forgot-password')->once();
+        $this->resetPasswordEmailForm->shouldReceive('setAttribute')->withArgs(['action', 'forgot-password'])->once();
         $this->setPostInvalid($this->resetPasswordEmailForm, $this->postData);
 
         /** @var ViewModel $result */
@@ -105,10 +107,10 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
     {
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->url->shouldReceive('fromRoute')->with('forgot-password')->andReturn('forgot-password')->once();
-        $this->resetPasswordEmailForm->shouldReceive('setAttribute')->with('action', 'forgot-password')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['forgot-password'])->andReturn('forgot-password')->once();
+        $this->resetPasswordEmailForm->shouldReceive('setAttribute')->withArgs(['action', 'forgot-password'])->once();
         $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->resetPasswordEmailForm->shouldReceive('setData')->with($this->postData)->once();
+        $this->resetPasswordEmailForm->shouldReceive('setData')->withArgs([$this->postData])->once();
         $this->resetPasswordEmailForm->shouldReceive('isValid')->andReturn(true)->once();
         $this->resetPasswordEmailForm->shouldReceive('getData')->andReturn($this->postData)->twice();
 
@@ -127,10 +129,10 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
     {
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->url->shouldReceive('fromRoute')->with('forgot-password')->andReturn('forgot-password')->once();
-        $this->resetPasswordEmailForm->shouldReceive('setAttribute')->with('action', 'forgot-password')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['forgot-password'])->andReturn('forgot-password')->once();
+        $this->resetPasswordEmailForm->shouldReceive('setAttribute')->withArgs(['action', 'forgot-password'])->once();
         $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->resetPasswordEmailForm->shouldReceive('setData')->with($this->postData)->once();
+        $this->resetPasswordEmailForm->shouldReceive('setData')->withArgs([$this->postData])->once();
         $this->resetPasswordEmailForm->shouldReceive('isValid')->andReturn(true)->once();
         $this->resetPasswordEmailForm->shouldReceive('getData')->andReturn($this->postData)->twice();
         $this->passwordReset->shouldReceive('requestPasswordResetEmail')->andReturn('account-not-activated');
@@ -146,7 +148,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testResetPasswordActionEmptyToken()
     {
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn(null)->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn(null)->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->resetPasswordAction();
@@ -159,9 +161,11 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn($this->postData['token'])->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn($this->postData['token'])->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
-        $this->redirect->shouldReceive('toRoute')->with('forgot-password/callback', ['token' => $this->postData['token']])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['forgot-password/callback', ['token' => $this->postData['token']]])
+            ->andReturn($response)->once();
         $this->storage->shouldReceive('clear')->once();
         $this->sessionManager->shouldReceive('initialise')->once();
 
@@ -172,11 +176,12 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testResetPasswordActionGet()
     {
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn($this->postData['token'])->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn($this->postData['token'])->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $url = 'forgot-password/callback?token=' . $this->postData['token'];
-        $this->url->shouldReceive('fromRoute')->with('forgot-password/callback', ['token' => $this->postData['token']])->andReturn($url)->once();
-        $this->setPasswordForm->shouldReceive('setAttribute')->with('action', $url)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['forgot-password/callback', ['token' => $this->postData['token']]])->andReturn($url)->once();
+        $this->setPasswordForm->shouldReceive('setAttribute')->withArgs(['action', $url])->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -190,11 +195,12 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testResetPasswordActionPostInvalid()
     {
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn($this->postData['token'])->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn($this->postData['token'])->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $url = 'forgot-password/callback?token=' . $this->postData['token'];
-        $this->url->shouldReceive('fromRoute')->with('forgot-password/callback', ['token' => $this->postData['token']])->andReturn($url)->once();
-        $this->setPasswordForm->shouldReceive('setAttribute')->with('action', $url)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['forgot-password/callback', ['token' => $this->postData['token']]])->andReturn($url)->once();
+        $this->setPasswordForm->shouldReceive('setAttribute')->withArgs(['action', $url])->once();
         $this->setPostInvalid($this->setPasswordForm, $this->postData);
 
         /** @var ViewModel $result */
@@ -208,18 +214,20 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testResetPasswordActionPostError()
     {
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn($this->postData['token'])->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn($this->postData['token'])->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $url = 'forgot-password/callback?token=' . $this->postData['token'];
-        $this->url->shouldReceive('fromRoute')->with('forgot-password/callback', ['token' => $this->postData['token']])->andReturn($url)->once();
-        $this->setPasswordForm->shouldReceive('setAttribute')->with('action', $url)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['forgot-password/callback', ['token' => $this->postData['token']]])->andReturn($url)->once();
+        $this->setPasswordForm->shouldReceive('setAttribute')->withArgs(['action', $url])->once();
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
         $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->setPasswordForm->shouldReceive('setData')->with($this->postData)->once();
+        $this->setPasswordForm->shouldReceive('setData')->withArgs([$this->postData])->once();
         $this->setPasswordForm->shouldReceive('isValid')->andReturn(true)->once();
         $this->setPasswordForm->shouldReceive('getData')->andReturn($this->postData)->once();
 
-        $this->passwordReset->shouldReceive('setNewPassword')->with($this->postData['token'], $this->postData['password'])->andReturn('Password change failed');
+        $this->passwordReset->shouldReceive('setNewPassword')
+            ->withArgs([$this->postData['token'], $this->postData['password']])->andReturn('Password change failed');
 
         /** @var ViewModel $result */
         $result = $this->controller->resetPasswordAction();
@@ -232,18 +240,20 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testResetPasswordActionPostInvalidToken()
     {
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn($this->postData['token'])->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn($this->postData['token'])->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $url = 'forgot-password/callback?token=' . $this->postData['token'];
-        $this->url->shouldReceive('fromRoute')->with('forgot-password/callback', ['token' => $this->postData['token']])->andReturn($url)->once();
-        $this->setPasswordForm->shouldReceive('setAttribute')->with('action', $url)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['forgot-password/callback', ['token' => $this->postData['token']]])->andReturn($url)->once();
+        $this->setPasswordForm->shouldReceive('setAttribute')->withArgs(['action', $url])->once();
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
         $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->setPasswordForm->shouldReceive('setData')->with($this->postData)->once();
+        $this->setPasswordForm->shouldReceive('setData')->withArgs([$this->postData])->once();
         $this->setPasswordForm->shouldReceive('isValid')->andReturn(true)->once();
         $this->setPasswordForm->shouldReceive('getData')->andReturn($this->postData)->once();
 
-        $this->passwordReset->shouldReceive('setNewPassword')->with($this->postData['token'], $this->postData['password'])->andReturn('invalid-token');
+        $this->passwordReset->shouldReceive('setNewPassword')
+            ->withArgs([$this->postData['token'], $this->postData['password']])->andReturn('invalid-token');
 
         /** @var ViewModel $result */
         $result = $this->controller->resetPasswordAction();
@@ -256,20 +266,22 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->params->shouldReceive('fromRoute')->with('token')->andReturn($this->postData['token'])->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn($this->postData['token'])->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $url = 'forgot-password/callback?token=' . $this->postData['token'];
-        $this->url->shouldReceive('fromRoute')->with('forgot-password/callback', ['token' => $this->postData['token']])->andReturn($url)->once();
-        $this->setPasswordForm->shouldReceive('setAttribute')->with('action', $url)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['forgot-password/callback', ['token' => $this->postData['token']]])->andReturn($url)->once();
+        $this->setPasswordForm->shouldReceive('setAttribute')->withArgs(['action', $url])->once();
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
         $this->request->shouldReceive('getPost')->andReturn($this->postData)->once();
-        $this->setPasswordForm->shouldReceive('setData')->with($this->postData)->once();
+        $this->setPasswordForm->shouldReceive('setData')->withArgs([$this->postData])->once();
         $this->setPasswordForm->shouldReceive('isValid')->andReturn(true)->once();
         $this->setPasswordForm->shouldReceive('getData')->andReturn($this->postData)->once();
 
-        $this->passwordReset->shouldReceive('setNewPassword')->with($this->postData['token'], $this->postData['password'])->andReturn(true);
-        $this->redirect->shouldReceive('toRoute')->with('login')->andReturn($response)->once();
-        $this->flashMessenger->shouldReceive('addSuccessMessage')->with('Password successfully reset')->once();
+        $this->passwordReset->shouldReceive('setNewPassword')
+            ->withArgs([$this->postData['token'], $this->postData['password']])->andReturn(true);
+        $this->redirect->shouldReceive('toRoute')->withArgs(['login'])->andReturn($response)->once();
+        $this->flashMessenger->shouldReceive('addSuccessMessage')->withArgs(['Password successfully reset'])->once();
 
         $result = $this->controller->resetPasswordAction();
 

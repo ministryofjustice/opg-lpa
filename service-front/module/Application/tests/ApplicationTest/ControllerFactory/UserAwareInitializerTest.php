@@ -27,7 +27,8 @@ class UserAwareInitializerTest extends TestCase
         $this->serviceLocator = Mockery::mock(ServiceLocatorInterface::class);
         $this->serviceLocator->shouldReceive('getServiceLocator')->andReturn($this->serviceLocator);
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
-        $this->serviceLocator->shouldReceive('get')->with('AuthenticationService')->andReturn($this->authenticationService);
+        $this->serviceLocator->shouldReceive('get')
+            ->withArgs(['AuthenticationService'])->andReturn($this->authenticationService);
     }
 
     public function testInitializeNotAbstractAuthenticatedController()

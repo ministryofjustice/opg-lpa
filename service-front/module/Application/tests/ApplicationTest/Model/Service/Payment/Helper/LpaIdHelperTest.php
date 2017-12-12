@@ -12,7 +12,7 @@ class PaymentTest extends AbstractHttpControllerTestCase
     /**
      * Prepares the environment before running a test.
      */
-    protected function setUp ()
+    protected function setUp()
     {
         parent::setUp();
     }
@@ -68,11 +68,11 @@ class PaymentTest extends AbstractHttpControllerTestCase
         
         $this->assertTrue(is_numeric($parts[1]));
     }
-    
+
     /**
      * Cleans up the environment after running a test.
      */
-    protected function tearDown ()
+    protected function tearDown()
     {
     }
 }
