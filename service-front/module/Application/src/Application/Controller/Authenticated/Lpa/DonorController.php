@@ -23,7 +23,7 @@ class DonorController extends AbstractLpaActorController
 
             //  Set the donor data in the view model
             $viewModel->editUrl = $this->url()->fromRoute('lpa/donor/edit', ['lpa-id' => $lpaId]);
-            $viewModel->nextUrl =  $this->url()->fromRoute($nextRoute, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($nextRoute));
+            $viewModel->nextUrl =  $this->url()->fromRoute($nextRoute, ['lpa-id' => $lpaId]);
         }
 
         return $viewModel;
@@ -51,8 +51,7 @@ class DonorController extends AbstractLpaActorController
 
         //  If a donor has already been provided then redirect to the main donor screen
         if ($lpa->document->donor instanceof Donor) {
-            $route = 'lpa/donor';
-            return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
+            return $this->redirect()->toRoute('lpa/donor', ['lpa-id' => $lpaId]);
         }
 
         $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');

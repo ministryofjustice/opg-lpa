@@ -64,8 +64,7 @@ class CheckoutController extends AbstractLpaController
 
     private function redirectToMoreInfoRequired()
     {
-        $route = 'lpa/more-info-required';
-        $this->redirect()->toRoute($route, ['lpa-id' => $this->getLpa()->id], $this->getFlowChecker()->getRouteOptions($route));
+        $this->redirect()->toRoute('lpa/more-info-required', ['lpa-id' => $this->getLpa()->id]);
 
         return $this->getResponse();
     }
