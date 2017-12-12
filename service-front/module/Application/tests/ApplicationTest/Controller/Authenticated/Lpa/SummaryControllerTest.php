@@ -34,7 +34,8 @@ class SummaryControllerTest extends AbstractControllerTest
      */
     public function testIndexActionNoLpa()
     {
-        $this->params->shouldReceive('fromQuery')->with('return-route', 'lpa/applicant')->andReturn('lpa/applicant')->once();
+        $this->params->shouldReceive('fromQuery')
+            ->withArgs(['return-route', 'lpa/applicant'])->andReturn('lpa/applicant')->once();
 
         $this->controller->indexAction();
     }
@@ -42,7 +43,8 @@ class SummaryControllerTest extends AbstractControllerTest
     public function testIndexAction()
     {
         $this->controller->setLpa($this->lpa);
-        $this->params->shouldReceive('fromQuery')->with('return-route', 'lpa/applicant')->andReturn('lpa/applicant')->once();
+        $this->params->shouldReceive('fromQuery')
+            ->withArgs(['return-route', 'lpa/applicant'])->andReturn('lpa/applicant')->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

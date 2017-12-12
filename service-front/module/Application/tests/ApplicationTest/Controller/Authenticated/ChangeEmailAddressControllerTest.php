@@ -35,10 +35,11 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
         parent::controllerSetUp($this->controller);
 
         $this->form = Mockery::mock(ChangeEmailAddress::class);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\User\ChangeEmailAddress')->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\User\ChangeEmailAddress'])->andReturn($this->form);
 
         $this->aboutYouDetails = Mockery::mock(Details::class);
-        $this->serviceLocator->shouldReceive('get')->with('AboutYouDetails')->andReturn($this->aboutYouDetails);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['AboutYouDetails'])->andReturn($this->aboutYouDetails);
 
         $this->user = FixturesData::getUser();
         $this->userDetailsSession->user = $this->user;
@@ -46,11 +47,12 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
-        $this->url->shouldReceive('fromRoute')->with('user/change-email-address')->andReturn('user/change-email-address')->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'user/change-email-address')->once();
-        $this->authenticationAdapter->shouldReceive('setEmail')->with($this->user->email->address)->once();
-        $this->authenticationService->shouldReceive('setAdapter')->with($this->authenticationAdapter)->once();
-        $this->form->shouldReceive('setAuthenticationService')->with($this->authenticationService)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['user/change-email-address'])->andReturn('user/change-email-address')->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', 'user/change-email-address'])->once();
+        $this->authenticationAdapter->shouldReceive('setEmail')->withArgs([$this->user->email->address])->once();
+        $this->authenticationService->shouldReceive('setAdapter')->withArgs([$this->authenticationAdapter])->once();
+        $this->form->shouldReceive('setAuthenticationService')->withArgs([$this->authenticationService])->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -65,11 +67,12 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
-        $this->url->shouldReceive('fromRoute')->with('user/change-email-address')->andReturn('user/change-email-address')->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'user/change-email-address')->once();
-        $this->authenticationAdapter->shouldReceive('setEmail')->with($this->user->email->address)->once();
-        $this->authenticationService->shouldReceive('setAdapter')->with($this->authenticationAdapter)->once();
-        $this->form->shouldReceive('setAuthenticationService')->with($this->authenticationService)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['user/change-email-address'])->andReturn('user/change-email-address')->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', 'user/change-email-address'])->once();
+        $this->authenticationAdapter->shouldReceive('setEmail')->withArgs([$this->user->email->address])->once();
+        $this->authenticationService->shouldReceive('setAdapter')->withArgs([$this->authenticationAdapter])->once();
+        $this->form->shouldReceive('setAuthenticationService')->withArgs([$this->authenticationService])->once();
         $this->setPostInvalid($this->form, $this->postData);
 
         /** @var ViewModel $result */
@@ -84,11 +87,12 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostValid()
     {
-        $this->url->shouldReceive('fromRoute')->with('user/change-email-address')->andReturn('user/change-email-address')->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'user/change-email-address')->once();
-        $this->authenticationAdapter->shouldReceive('setEmail')->with($this->user->email->address)->once();
-        $this->authenticationService->shouldReceive('setAdapter')->with($this->authenticationAdapter)->once();
-        $this->form->shouldReceive('setAuthenticationService')->with($this->authenticationService)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['user/change-email-address'])->andReturn('user/change-email-address')->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', 'user/change-email-address'])->once();
+        $this->authenticationAdapter->shouldReceive('setEmail')->withArgs([$this->user->email->address])->once();
+        $this->authenticationService->shouldReceive('setAdapter')->withArgs([$this->authenticationAdapter])->once();
+        $this->form->shouldReceive('setAuthenticationService')->withArgs([$this->authenticationService])->once();
         $this->setPostValid($this->form, $this->postData);
         $this->aboutYouDetails->shouldReceive('requestEmailUpdate')->once()->andReturn(true);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
@@ -103,11 +107,12 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostUpdateFailed()
     {
-        $this->url->shouldReceive('fromRoute')->with('user/change-email-address')->andReturn('user/change-email-address')->once();
-        $this->form->shouldReceive('setAttribute')->with('action', 'user/change-email-address')->once();
-        $this->authenticationAdapter->shouldReceive('setEmail')->with($this->user->email->address)->once();
-        $this->authenticationService->shouldReceive('setAdapter')->with($this->authenticationAdapter)->once();
-        $this->form->shouldReceive('setAuthenticationService')->with($this->authenticationService)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['user/change-email-address'])->andReturn('user/change-email-address')->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', 'user/change-email-address'])->once();
+        $this->authenticationAdapter->shouldReceive('setEmail')->withArgs([$this->user->email->address])->once();
+        $this->authenticationService->shouldReceive('setAdapter')->withArgs([$this->authenticationAdapter])->once();
+        $this->form->shouldReceive('setAuthenticationService')->withArgs([$this->authenticationService])->once();
         $this->setPostValid($this->form, $this->postData);
         $this->aboutYouDetails->shouldReceive('requestEmailUpdate')->andReturn(false)->once();
 

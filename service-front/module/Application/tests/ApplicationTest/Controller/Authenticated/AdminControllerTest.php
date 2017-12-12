@@ -44,10 +44,12 @@ class AdminControllerTest extends AbstractControllerTest
         parent::controllerSetUp($this->controller);
 
         $this->systemMessageForm = Mockery::mock(SystemMessageForm::class);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Admin\SystemMessageForm')->andReturn($this->systemMessageForm);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Admin\SystemMessageForm'])->andReturn($this->systemMessageForm);
 
         $this->paymentSwitchForm = Mockery::mock(PaymentSwitch::class);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Admin\PaymentSwitch')->andReturn($this->paymentSwitchForm);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Admin\PaymentSwitch'])->andReturn($this->paymentSwitchForm);
     }
 
     public function testIndexAction()
@@ -68,7 +70,7 @@ class AdminControllerTest extends AbstractControllerTest
         $this->user = FixturesData::getUser();
         $this->user->email = ['address' => ''];
         $this->userDetailsSession->user = $this->user;
-        $this->redirect->shouldReceive('toRoute')->with('home')->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['home'])->andReturn($response)->once();
 
         $result = $this->controller->onDispatch($event);
 
@@ -83,7 +85,7 @@ class AdminControllerTest extends AbstractControllerTest
         $this->user = FixturesData::getUser();
         $this->user->email = ['address' => 'notadmin@test.com'];
         $this->userDetailsSession->user = $this->user;
-        $this->redirect->shouldReceive('toRoute')->with('home')->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['home'])->andReturn($response)->once();
 
         $result = $this->controller->onDispatch($event);
 
@@ -103,9 +105,10 @@ class AdminControllerTest extends AbstractControllerTest
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
         $this->controller->setUser($this->userIdentity);
-        $this->logger->shouldReceive('info')->with('Request to ' . AdminController::class, $this->userIdentity->toArray())->once();
-        $routeMatch->shouldReceive('getParam')->with('action', 'not-found')->andReturn('not-found')->once();
-        $routeMatch->shouldReceive('setParam')->with('action', 'not-found')->once();
+        $this->logger->shouldReceive('info')
+            ->withArgs(['Request to ' . AdminController::class, $this->userIdentity->toArray()])->once();
+        $routeMatch->shouldReceive('getParam')->withArgs(['action', 'not-found'])->andReturn('not-found')->once();
+        $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->onDispatch($event);
@@ -118,9 +121,10 @@ class AdminControllerTest extends AbstractControllerTest
     {
         $messageElement = Mockery::mock(Element::class);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->systemMessageForm->shouldReceive('get')->with('message')->andReturn($messageElement)->once();
-        $this->cache->shouldReceive('getItem')->with('system-message')->andReturn('System unit test message')->once();
-        $messageElement->shouldReceive('setValue')->with('System unit test message')->once();
+        $this->systemMessageForm->shouldReceive('get')->withArgs(['message'])->andReturn($messageElement)->once();
+        $this->cache->shouldReceive('getItem')
+            ->withArgs(['system-message'])->andReturn('System unit test message')->once();
+        $messageElement->shouldReceive('setValue')->withArgs(['System unit test message'])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->systemMessageAction();
@@ -151,10 +155,10 @@ class AdminControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
         $this->request->shouldReceive('getPost')->andReturn($postData)->once();
-        $this->systemMessageForm->shouldReceive('setData')->with($postData)->once();
+        $this->systemMessageForm->shouldReceive('setData')->withArgs([$postData])->once();
         $this->systemMessageForm->shouldReceive('isValid')->andReturn(true)->once();
-        $this->cache->shouldReceive('removeItem')->with('system-message')->once();
-        $this->redirect->shouldReceive('toRoute')->with('home')->andReturn($response)->once();
+        $this->cache->shouldReceive('removeItem')->withArgs(['system-message'])->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['home'])->andReturn($response)->once();
 
         $result = $this->controller->systemMessageAction();
 
@@ -167,10 +171,11 @@ class AdminControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
         $this->request->shouldReceive('getPost')->andReturn($this->systemMessagePostData)->once();
-        $this->systemMessageForm->shouldReceive('setData')->with($this->systemMessagePostData)->once();
+        $this->systemMessageForm->shouldReceive('setData')->withArgs([$this->systemMessagePostData])->once();
         $this->systemMessageForm->shouldReceive('isValid')->andReturn(true)->once();
-        $this->cache->shouldReceive('setItem')->with('system-message', $this->systemMessagePostData['message'])->once();
-        $this->redirect->shouldReceive('toRoute')->with('home')->andReturn($response)->once();
+        $this->cache->shouldReceive('setItem')
+            ->withArgs(['system-message', $this->systemMessagePostData['message']])->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['home'])->andReturn($response)->once();
 
         $result = $this->controller->systemMessageAction();
 
@@ -181,9 +186,9 @@ class AdminControllerTest extends AbstractControllerTest
     {
         $percentageElement = Mockery::mock(Element::class);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->paymentSwitchForm->shouldReceive('get')->with('percentage')->andReturn($percentageElement)->once();
-        $this->cache->shouldReceive('getItem')->with('worldpay-percentage')->andReturn(100)->once();
-        $percentageElement->shouldReceive('setValue')->with(100)->once();
+        $this->paymentSwitchForm->shouldReceive('get')->withArgs(['percentage'])->andReturn($percentageElement)->once();
+        $this->cache->shouldReceive('getItem')->withArgs(['worldpay-percentage'])->andReturn(100)->once();
+        $percentageElement->shouldReceive('setValue')->withArgs([100])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->paymentSwitchAction();
@@ -198,9 +203,9 @@ class AdminControllerTest extends AbstractControllerTest
     {
         $percentageElement = Mockery::mock(Element::class);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->paymentSwitchForm->shouldReceive('get')->with('percentage')->andReturn($percentageElement)->once();
-        $this->cache->shouldReceive('getItem')->with('worldpay-percentage')->andReturn('50%')->once();
-        $percentageElement->shouldReceive('setValue')->with(0)->once();
+        $this->paymentSwitchForm->shouldReceive('get')->withArgs(['percentage'])->andReturn($percentageElement)->once();
+        $this->cache->shouldReceive('getItem')->withArgs(['worldpay-percentage'])->andReturn('50%')->once();
+        $percentageElement->shouldReceive('setValue')->withArgs([0])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->paymentSwitchAction();
@@ -228,10 +233,11 @@ class AdminControllerTest extends AbstractControllerTest
     {
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
         $this->request->shouldReceive('getPost')->andReturn($this->paymentSwitchPostData)->once();
-        $this->paymentSwitchForm->shouldReceive('setData')->with($this->paymentSwitchPostData)->once();
+        $this->paymentSwitchForm->shouldReceive('setData')->withArgs([$this->paymentSwitchPostData])->once();
         $this->paymentSwitchForm->shouldReceive('isValid')->andReturn(true)->once();
         $this->paymentSwitchForm->shouldReceive('getData')->andReturn($this->paymentSwitchPostData)->once();
-        $this->cache->shouldReceive('setItem')->with('worldpay-percentage', $this->paymentSwitchPostData['percentage'])->once();
+        $this->cache->shouldReceive('setItem')
+            ->withArgs(['worldpay-percentage', $this->paymentSwitchPostData['percentage']])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->paymentSwitchAction();
@@ -240,24 +246,5 @@ class AdminControllerTest extends AbstractControllerTest
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->paymentSwitchForm, $result->getVariable('form'));
         $this->assertEquals(true, $result->getVariable('save'));
-    }
-
-    private function getLpasPerUserStats()
-    {
-        $stats = [
-            'byLpaCount' => [1 => 2]
-        ];
-
-        return $stats;
-    }
-
-    private function getAuthStats()
-    {
-        return [
-            'total' => 1,
-            'activated' => 1,
-            'activated-this-month' => 1,
-            'deleted' => 1,
-        ];
     }
 }

@@ -42,7 +42,8 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         $event = new MvcEvent();
 
         $this->request->shouldReceive('getUri')->andReturn('http://localhost/home');
-        $this->redirect->shouldReceive('toRoute')->withArgs(['login', ['state'=>'timeout']])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['login', ['state'=>'timeout']])->andReturn($response)->once();
 
         $result = $this->controller->onDispatch($event);
 
@@ -77,7 +78,8 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn(null)->once();
         $flowChecker = Mockery::mock(FormFlowChecker::class);
         $this->controller->injectedFlowChecker = $flowChecker;
-        $flowChecker->shouldReceive('getNearestAccessibleRoute')->withArgs(['lpa/unknown', null])->andReturn(false)->once();
+        $flowChecker->shouldReceive('getNearestAccessibleRoute')
+            ->withArgs(['lpa/unknown', null])->andReturn(false)->once();
 
         $result = $this->controller->onDispatch($event);
 
@@ -98,9 +100,11 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn(null)->once();
         $flowChecker = Mockery::mock(FormFlowChecker::class);
         $this->controller->injectedFlowChecker = $flowChecker;
-        $flowChecker->shouldReceive('getNearestAccessibleRoute')->withArgs(['lpa/donor', null])->andReturn('lpa/checkout')->once();
+        $flowChecker->shouldReceive('getNearestAccessibleRoute')
+            ->withArgs(['lpa/donor', null])->andReturn('lpa/checkout')->once();
         $flowChecker->shouldReceive('getRouteOptions')->withArgs(['lpa/checkout'])->andReturn([])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
 
         $result = $this->controller->onDispatch($event);
 
@@ -120,9 +124,13 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         $routeMatch->shouldReceive('getParam')->withArgs(['pdf-type'])->andReturn('lp1')->once();
         $flowChecker = Mockery::mock(FormFlowChecker::class);
         $this->controller->injectedFlowChecker = $flowChecker;
-        $flowChecker->shouldReceive('getNearestAccessibleRoute')->withArgs(['lpa/download', 'lp1'])->andReturn('lpa/download')->once();
+        $flowChecker->shouldReceive('getNearestAccessibleRoute')
+            ->withArgs(['lpa/download', 'lp1'])->andReturn('lpa/download')->once();
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
-        $this->logger->shouldReceive('info')->withArgs(['Request to ApplicationTest\Controller\TestableAbstractLpaController', $this->userIdentity->toArray()])->once();
+        $this->logger->shouldReceive('info')->withArgs([
+            'Request to ApplicationTest\Controller\TestableAbstractLpaController',
+            $this->userIdentity->toArray()
+        ])->once();
         $this->userDetailsSession->user = $this->user;
         $routeMatch->shouldReceive('getParam')->withArgs(['action', 'not-found'])->andReturn('index')->once();
         $event->shouldReceive('setResult')/*->withArgs(function ($actionResponse) {

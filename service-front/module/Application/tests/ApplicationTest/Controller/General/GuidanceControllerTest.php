@@ -26,7 +26,7 @@ class GuidanceControllerTest extends AbstractControllerTest
         parent::controllerSetUp($this->controller);
 
         $this->guidanceService = Mockery::mock(Guidance::class);
-        $this->serviceLocator->shouldReceive('get')->with('Guidance')->andReturn($this->guidanceService);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['Guidance'])->andReturn($this->guidanceService);
     }
 
     public function testIndexActionIsXmlHttpRequestTrue()

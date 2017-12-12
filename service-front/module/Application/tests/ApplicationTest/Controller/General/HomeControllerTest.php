@@ -32,7 +32,9 @@ class HomeControllerTest extends AbstractControllerTest
 
     public function testRedirectAction()
     {
-        $this->redirect->shouldReceive('toUrl')->with('https://www.gov.uk/power-of-attorney/make-lasting-power')->andReturn('https://www.gov.uk/power-of-attorney/make-lasting-power')->once();
+        $this->redirect->shouldReceive('toUrl')
+            ->withArgs(['https://www.gov.uk/power-of-attorney/make-lasting-power'])
+            ->andReturn('https://www.gov.uk/power-of-attorney/make-lasting-power')->once();
 
         $result = $this->controller->redirectAction();
 

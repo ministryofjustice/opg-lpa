@@ -67,13 +67,13 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa = FixturesData::getHwLpa();
 
         $this->payment = Mockery::mock(Payment::class);
-        $this->serviceLocator->shouldReceive('get')->with('Payment')->andReturn($this->payment);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['Payment'])->andReturn($this->payment);
 
         $this->communication = Mockery::mock(Communication::class);
-        $this->serviceLocator->shouldReceive('get')->with('Communication')->andReturn($this->communication);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['Communication'])->andReturn($this->communication);
 
         $this->govPayClient = Mockery::mock(GovPayClient::class);
-        $this->serviceLocator->shouldReceive('get')->with('GovPayClient')->andReturn($this->govPayClient);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['GovPayClient'])->andReturn($this->govPayClient);
     }
 
     /**
@@ -91,9 +91,10 @@ class CheckoutControllerTest extends AbstractControllerTest
     {
         $this->controller->setUser($this->userIdentity);
         $this->controller->setLpa($this->lpa);
-        $this->cache->shouldReceive('getItem')->with('worldpay-percentage')->andReturn(100)->once();
+        $this->cache->shouldReceive('getItem')->withArgs(['worldpay-percentage'])->andReturn(100)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->twice();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->once();
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -125,9 +126,12 @@ class CheckoutControllerTest extends AbstractControllerTest
     {
         $this->controller->setUser($this->userIdentity);
         $this->controller->setLpa($this->lpa);
-        $this->cache->shouldReceive('getItem')->with('worldpay-percentage')->andReturn('')->once(); //Will default to zero so worldpay form shouldn't be retrieved
+        //Will default to zero so worldpay form shouldn't be retrieved
+        $this->cache->shouldReceive('getItem')
+            ->withArgs(['worldpay-percentage'])->andReturn('')->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->twice();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->never();
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->never();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -143,8 +147,9 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->method = null;
         $this->controller->setUser($this->userIdentity);
         $this->controller->setLpa($this->lpa);
-        $this->cache->shouldReceive('getItem')->with('worldpay-percentage')->andReturn(100)->once();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->once();
+        $this->cache->shouldReceive('getItem')->withArgs(['worldpay-percentage'])->andReturn(100)->once();
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->once();
         $this->setPostInvalid($this->form, [], null, 2);
 
         /** @var ViewModel $result */
@@ -168,10 +173,13 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->method = null;
         $this->controller->setUser($this->userIdentity);
         $this->controller->setLpa($this->lpa);
-        $this->cache->shouldReceive('getItem')->with('worldpay-percentage')->andReturn(100)->once();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->once();
+        $this->cache->shouldReceive('getItem')
+            ->withArgs(['worldpay-percentage'])->andReturn(100)->once();
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->once();
         $this->setPostValid($this->form, $postData, null, 2);
-        $this->lpaApplicationService->shouldReceive('setPayment')->with($this->lpa->id, $this->lpa->payment)->andReturn(false)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs([$this->lpa->id, $this->lpa->payment])->andReturn(false)->once();
 
         $this->controller->indexAction();
     }
@@ -188,28 +196,31 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->method = null;
         $this->controller->setUser($this->userIdentity);
         $this->controller->setLpa($this->lpa);
-        $this->cache->shouldReceive('getItem')->with('worldpay-percentage')->andReturn(100)->once();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->once();
+        $this->cache->shouldReceive('getItem')->withArgs(['worldpay-percentage'])->andReturn(100)->once();
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->once();
         $this->setPostValid($this->form, $postData, null, 2);
-        $this->lpaApplicationService->shouldReceive('setPayment')->with($this->lpa->id, $this->lpa->payment)->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs([$this->lpa->id, $this->lpa->payment])->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $options = [];
-        $this->payment->shouldReceive('getOptions')->with($this->lpa, $postData['email'])->andReturn($options)->once();
+        $this->payment->shouldReceive('getOptions')
+            ->withArgs([$this->lpa, $postData['email']])->andReturn($options)->once();
         $gateway = Mockery::mock(GatewayInterface::class);
         $this->payment->shouldReceive('getGateway')->andReturn($gateway)->once();
         $purchase = Mockery::mock(RequestInterface::class);
-        $gateway->shouldReceive('purchase')->with($options)->andReturn($purchase)->once();
+        $gateway->shouldReceive('purchase')->withArgs([$options])->andReturn($purchase)->once();
         $purchaseResponse = Mockery::mock(ResponseInterface::class);
         $purchase->shouldReceive('send')->andReturn($purchaseResponse)->once();
         $purchaseResponse->shouldReceive('getData')->andReturn(new ArrayObject())->once();
         $redirectUrl = '';
         foreach (['success', 'failure', 'cancel'] as $type) {
             $this->url->shouldReceive('fromRoute')
-                ->with('lpa/checkout/worldpay/return/' . $type, ['lpa-id' => $this->lpa->id])
+                ->withArgs(['lpa/checkout/worldpay/return/' . $type, ['lpa-id' => $this->lpa->id]])
                 ->andReturn("lpa/{$this->lpa->id}/checkout/worldpay/return/{$type}");
             $redirectUrl .= "&{$type}URL=http://lpa/{$this->lpa->id}/checkout/worldpay/return/{$type}";
         }
-        $this->redirect->shouldReceive('toUrl')->with($redirectUrl)->andReturn($response)->once();
+        $this->redirect->shouldReceive('toUrl')->withArgs([$redirectUrl])->andReturn($response)->once();
 
         $result = $this->controller->indexAction();
 
@@ -240,7 +251,8 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->method = null;
         $this->lpa->payment->amount = 82;
         $this->controller->setLpa($this->lpa);
-        $this->lpaApplicationService->shouldReceive('setPayment')->with($this->lpa->id, $this->lpa->payment)->andReturn(false)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs([$this->lpa->id, $this->lpa->payment])->andReturn(false)->once();
 
         $this->controller->chequeAction();
     }
@@ -254,7 +266,8 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->method = null;
         $this->lpa->payment->amount = 182;
         $this->controller->setLpa($this->lpa);
-        $this->lpaApplicationService->shouldReceive('setPayment')->with($this->lpa->id, $this->lpa->payment)->andReturn(false)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs([$this->lpa->id, $this->lpa->payment])->andReturn(false)->once();
 
         $this->controller->chequeAction();
     }
@@ -265,10 +278,13 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         $this->lpa->payment->method = null;
         $this->controller->setLpa($this->lpa);
-        $this->lpaApplicationService->shouldReceive('setPayment')->with($this->lpa->id, $this->lpa->payment)->andReturn(true)->twice();
-        $this->lpaApplicationService->shouldReceive('lockLpa')->with($this->lpa->id)->andReturn(true)->once();
-        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->with($this->lpa)->once();
-        $this->redirect->shouldReceive('toRoute')->with('lpa/complete', ['lpa-id' => $this->lpa->id])->andReturn($response)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs([$this->lpa->id, $this->lpa->payment])->andReturn(true)->twice();
+        $this->lpaApplicationService->shouldReceive('lockLpa')
+            ->withArgs([$this->lpa->id])->andReturn(true)->once();
+        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->withArgs([$this->lpa])->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['lpa/complete', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
 
         $result = $this->controller->chequeAction();
 
@@ -312,9 +328,10 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->completedAt = null;
 
         $this->controller->setLpa($this->lpa);
-        $this->lpaApplicationService->shouldReceive('lockLpa')->with($this->lpa->id)->andReturn(true)->once();
-        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->with($this->lpa)->once();
-        $this->redirect->shouldReceive('toRoute')->with('lpa/complete', ['lpa-id' => $this->lpa->id])->andReturn($response)->once();
+        $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa->id])->andReturn(true)->once();
+        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->withArgs([$this->lpa])->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['lpa/complete', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
 
         $result = $this->controller->confirmAction();
 
@@ -343,19 +360,22 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         $this->lpa->payment->method = null;
         $this->controller->setLpa($this->lpa);
-        $this->lpaApplicationService->shouldReceive('setPayment')->with($this->lpa->id, $this->lpa->payment)->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs([$this->lpa->id, $this->lpa->payment])->andReturn(true)->once();
         $responseUrl = "lpa/{$this->lpa->id}/checkout/pay/response";
-        $this->url->shouldReceive('fromRoute')->with('lpa/checkout/pay/response', ['lpa-id' => $this->lpa->id])->andReturn($responseUrl)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/checkout/pay/response', ['lpa-id' => $this->lpa->id]])->andReturn($responseUrl)->once();
         $payment = Mockery::mock(GovPayPayment::class);
-        $this->govPayClient->shouldReceive('createPayment')/*->withArgs(function ($amount, $reference, $description, $returnUrl) {
-            /** @var Uri $returnUrl */
-            /*return $amount === (int)($this->lpa->payment->amount * 100)
-                && strpos($reference, LpaIdHelper::padLpaId($this->lpa->id) . '-') === 0
-                && $description === "Health and welfare LPA for {$this->lpa->document->donor->name}"
-                && $returnUrl->getPath() === "/{$this->lpa->id}/checkout/pay/response";
-        })*/->andReturn($payment)->once();
+        $this->govPayClient->shouldReceive('createPayment')
+            ->withArgs(function ($amount, $reference, $description, $returnUrl) {
+                /** @var Uri $returnUrl */
+                return $amount === (int)($this->lpa->payment->amount * 100)
+                    && strpos($reference, LpaIdHelper::padLpaId($this->lpa->id) . '-') === 0
+                    && $description === "Health and welfare LPA for {$this->lpa->document->donor->name}"
+                    && $returnUrl->getPath() === "/{$this->lpa->id}/checkout/pay/response";
+            })->andReturn($payment)->once();
         $payment->payment_id = 'PAYMENT COMPLETE';
-        $this->lpaApplicationService->shouldReceive('updatePayment')->with($this->lpa)->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('updatePayment')->withArgs([$this->lpa])->andReturn(true)->once();
         $payment->shouldReceive('getPaymentPageUrl')->andReturn($responseUrl)->once();
         $this->redirect->shouldReceive('toUrl')->withArgs([$responseUrl])->andReturn($response)->once();
 
@@ -377,7 +397,8 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->method = null;
         $this->lpa->payment->gatewayReference = 'existing';
         $this->controller->setLpa($this->lpa);
-        $this->govPayClient->shouldReceive('getPayment')->withArgs([$this->lpa->payment->gatewayReference])->andReturn(null)->once();
+        $this->govPayClient->shouldReceive('getPayment')
+            ->withArgs([$this->lpa->payment->gatewayReference])->andReturn(null)->once();
 
         $this->controller->payAction();
     }
@@ -392,19 +413,21 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->gatewayReference = 'existing';
         $this->controller->setLpa($this->lpa);
         $payment = Mockery::mock(GovPayPayment::class);
-        $this->govPayClient->shouldReceive('getPayment')->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->twice();
+        $this->govPayClient->shouldReceive('getPayment')
+            ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->twice();
         $payment->shouldReceive('isSuccess')->andReturn(true)->twice();
         $payment->reference = 'existing';
         $payment->email = 'unit@TEST.com';
-        $this->lpaApplicationService->shouldReceive('updatePayment')/*->withArgs(function ($lpa) {
+        $this->lpaApplicationService->shouldReceive('updatePayment')->withArgs(function ($lpa) {
             return $lpa->payment->method === LpaPayment::PAYMENT_TYPE_CARD
                 && $lpa->payment->reference = 'existing'
                 && $lpa->payment->date instanceof DateTime
                 && $lpa->payment->email->address === 'unit@test.com';
-        })*/;
-        $this->lpaApplicationService->shouldReceive('lockLpa')->with($this->lpa->id)->andReturn(true)->once();
-        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->with($this->lpa)->once();
-        $this->redirect->shouldReceive('toRoute')->with('lpa/complete', ['lpa-id' => $this->lpa->id])->andReturn($response)->once();
+        });
+        $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa->id])->andReturn(true)->once();
+        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->withArgs([$this->lpa])->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['lpa/complete', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
 
         $result = $this->controller->payAction();
 
@@ -421,7 +444,8 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->gatewayReference = 'existing';
         $this->controller->setLpa($this->lpa);
         $payment = Mockery::mock(GovPayPayment::class);
-        $this->govPayClient->shouldReceive('getPayment')->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
+        $this->govPayClient->shouldReceive('getPayment')
+            ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
         $payment->shouldReceive('isSuccess')->andReturn(false)->once();
         $payment->shouldReceive('isFinished')->andReturn(false)->once();
         $payment->shouldReceive('getPaymentPageUrl')->andReturn('http://unit.test.com')->once();
@@ -442,22 +466,25 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->gatewayReference = 'existing';
         $this->controller->setLpa($this->lpa);
         $payment = Mockery::mock(GovPayPayment::class);
-        $this->govPayClient->shouldReceive('getPayment')->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
+        $this->govPayClient->shouldReceive('getPayment')
+            ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
         $payment->shouldReceive('isSuccess')->andReturn(false)->once();
         $payment->shouldReceive('isFinished')->andReturn(true)->once();
 
         $responseUrl = "lpa/{$this->lpa->id}/checkout/pay/response";
-        $this->url->shouldReceive('fromRoute')->with('lpa/checkout/pay/response', ['lpa-id' => $this->lpa->id])->andReturn($responseUrl)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/checkout/pay/response', ['lpa-id' => $this->lpa->id]])->andReturn($responseUrl)->once();
         $payment = Mockery::mock(GovPayPayment::class);
-        $this->govPayClient->shouldReceive('createPayment')/*->withArgs(function ($amount, $reference, $description, $returnUrl) {
-            /** @var Uri $returnUrl */
-            /*return $amount === (int)($this->lpa->payment->amount * 100)
-                && strpos($reference, LpaIdHelper::padLpaId($this->lpa->id) . '-') === 0
-                && $description === "Health and welfare LPA for {$this->lpa->document->donor->name}"
-                && $returnUrl->getPath() === "/{$this->lpa->id}/checkout/pay/response";
-        })*/->andReturn($payment)->once();
+        $this->govPayClient->shouldReceive('createPayment')
+            ->withArgs(function ($amount, $reference, $description, $returnUrl) {
+                /** @var Uri $returnUrl */
+                return $amount === (int)($this->lpa->payment->amount * 100)
+                    && strpos($reference, LpaIdHelper::padLpaId($this->lpa->id) . '-') === 0
+                    && $description === "Health and welfare LPA for {$this->lpa->document->donor->name}"
+                    && $returnUrl->getPath() === "/{$this->lpa->id}/checkout/pay/response";
+            })->andReturn($payment)->once();
         $payment->payment_id = 'PAYMENT COMPLETE';
-        $this->lpaApplicationService->shouldReceive('updatePayment')->with($this->lpa)->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('updatePayment')->withArgs([$this->lpa])->andReturn(true)->once();
         $payment->shouldReceive('getPaymentPageUrl')->andReturn($responseUrl)->once();
         $this->redirect->shouldReceive('toUrl')->withArgs([$responseUrl])->andReturn($response)->once();
 
@@ -483,7 +510,8 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->gatewayReference = 'unsuccessful';
         $this->controller->setLpa($this->lpa);
         $payment = Mockery::mock(GovPayPayment::class);
-        $this->govPayClient->shouldReceive('getPayment')->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
+        $this->govPayClient->shouldReceive('getPayment')
+            ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
         $payment->shouldReceive('isSuccess')->andReturn(false)->once();
         $payment->state = new ArrayObject();
         $payment->state->code = 'P0030';
@@ -500,7 +528,8 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->gatewayReference = 'unsuccessful';
         $this->controller->setLpa($this->lpa);
         $payment = Mockery::mock(GovPayPayment::class);
-        $this->govPayClient->shouldReceive('getPayment')->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
+        $this->govPayClient->shouldReceive('getPayment')
+            ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
         $payment->shouldReceive('isSuccess')->andReturn(false)->once();
         $payment->state = new ArrayObject();
         $payment->state->code = 'OTHER';
@@ -514,7 +543,8 @@ class CheckoutControllerTest extends AbstractControllerTest
 
     /**
      * @expectedException        Exception
-     * @expectedExceptionMessage Invalid success response from Worldpay. Expected paymentStatus parameter was not found. http://unit.test.com
+     * @expectedExceptionMessage Invalid success response from Worldpay.
+     * Expected paymentStatus parameter was not found. http://unit.test.com
      */
     public function testWorldpaySuccessActionMissingParameters()
     {
@@ -552,9 +582,10 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->payment->shouldReceive('verifyOrderKey')->withArgs([$params, $this->lpa->id])->once();
         $this->payment->shouldReceive('updateLpa')->withArgs([$params, $this->lpa])->once();
 
-        $this->lpaApplicationService->shouldReceive('lockLpa')->with($this->lpa->id)->andReturn(true)->once();
-        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->with($this->lpa)->once();
-        $this->redirect->shouldReceive('toRoute')->with('lpa/complete', ['lpa-id' => $this->lpa->id])->andReturn($response)->once();
+        $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa->id])->andReturn(true)->once();
+        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->withArgs([$this->lpa])->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['lpa/complete', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
 
         $result = $this->controller->worldpaySuccessAction();
 
@@ -572,7 +603,8 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         Calculator::calculate($this->lpa);
         $this->controller->setLpa($this->lpa);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->once();
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -594,27 +626,30 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         Calculator::calculate($this->lpa);
         $this->controller->setLpa($this->lpa);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->once();
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->once();
         $this->setPostValid($this->form, $postData);
-        $this->lpaApplicationService->shouldReceive('setPayment')->with($this->lpa->id, $this->lpa->payment)->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs([$this->lpa->id, $this->lpa->payment])->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $options = [];
-        $this->payment->shouldReceive('getOptions')->with($this->lpa, $postData['email'])->andReturn($options)->once();
+        $this->payment->shouldReceive('getOptions')
+            ->withArgs([$this->lpa, $postData['email']])->andReturn($options)->once();
         $gateway = Mockery::mock(GatewayInterface::class);
         $this->payment->shouldReceive('getGateway')->andReturn($gateway)->once();
         $purchase = Mockery::mock(RequestInterface::class);
-        $gateway->shouldReceive('purchase')->with($options)->andReturn($purchase)->once();
+        $gateway->shouldReceive('purchase')->withArgs([$options])->andReturn($purchase)->once();
         $purchaseResponse = Mockery::mock(ResponseInterface::class);
         $purchase->shouldReceive('send')->andReturn($purchaseResponse)->once();
         $purchaseResponse->shouldReceive('getData')->andReturn(new ArrayObject())->once();
         $redirectUrl = '';
         foreach (['success', 'failure', 'cancel'] as $type) {
             $this->url->shouldReceive('fromRoute')
-                ->with('lpa/checkout/worldpay/return/' . $type, ['lpa-id' => $this->lpa->id])
+                ->withArgs(['lpa/checkout/worldpay/return/' . $type, ['lpa-id' => $this->lpa->id]])
                 ->andReturn("lpa/{$this->lpa->id}/checkout/worldpay/return/{$type}");
             $redirectUrl .= "&{$type}URL=http://lpa/{$this->lpa->id}/checkout/worldpay/return/{$type}";
         }
-        $this->redirect->shouldReceive('toUrl')->with($redirectUrl)->andReturn($response)->once();
+        $this->redirect->shouldReceive('toUrl')->withArgs([$redirectUrl])->andReturn($response)->once();
 
         $result = $this->controller->worldpayCancelAction();
 
@@ -632,7 +667,8 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         Calculator::calculate($this->lpa);
         $this->controller->setLpa($this->lpa);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->once();
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -654,27 +690,30 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         Calculator::calculate($this->lpa);
         $this->controller->setLpa($this->lpa);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\PaymentForm')->andReturn($this->form)->once();
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->once();
         $this->setPostValid($this->form, $postData);
-        $this->lpaApplicationService->shouldReceive('setPayment')->with($this->lpa->id, $this->lpa->payment)->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs([$this->lpa->id, $this->lpa->payment])->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $options = [];
-        $this->payment->shouldReceive('getOptions')->with($this->lpa, $postData['email'])->andReturn($options)->once();
+        $this->payment->shouldReceive('getOptions')
+            ->withArgs([$this->lpa, $postData['email']])->andReturn($options)->once();
         $gateway = Mockery::mock(GatewayInterface::class);
         $this->payment->shouldReceive('getGateway')->andReturn($gateway)->once();
         $purchase = Mockery::mock(RequestInterface::class);
-        $gateway->shouldReceive('purchase')->with($options)->andReturn($purchase)->once();
+        $gateway->shouldReceive('purchase')->withArgs([$options])->andReturn($purchase)->once();
         $purchaseResponse = Mockery::mock(ResponseInterface::class);
         $purchase->shouldReceive('send')->andReturn($purchaseResponse)->once();
         $purchaseResponse->shouldReceive('getData')->andReturn(new ArrayObject())->once();
         $redirectUrl = '';
         foreach (['success', 'failure', 'cancel'] as $type) {
             $this->url->shouldReceive('fromRoute')
-                ->with('lpa/checkout/worldpay/return/' . $type, ['lpa-id' => $this->lpa->id])
+                ->withArgs(['lpa/checkout/worldpay/return/' . $type, ['lpa-id' => $this->lpa->id]])
                 ->andReturn("lpa/{$this->lpa->id}/checkout/worldpay/return/{$type}");
             $redirectUrl .= "&{$type}URL=http://lpa/{$this->lpa->id}/checkout/worldpay/return/{$type}";
         }
-        $this->redirect->shouldReceive('toUrl')->with($redirectUrl)->andReturn($response)->once();
+        $this->redirect->shouldReceive('toUrl')->withArgs([$redirectUrl])->andReturn($response)->once();
 
         $result = $this->controller->worldpayFailureAction();
 

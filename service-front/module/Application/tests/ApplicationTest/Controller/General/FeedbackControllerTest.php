@@ -39,10 +39,11 @@ class FeedbackControllerTest extends AbstractControllerTest
         parent::controllerSetUp($this->controller);
 
         $this->form = Mockery::mock(Feedback::class);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\General\FeedbackForm')->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\General\FeedbackForm'])->andReturn($this->form);
 
         $this->feedbackService = Mockery::mock(Feedback::class);
-        $this->serviceLocator->shouldReceive('get')->with('Feedback')->andReturn($this->feedbackService);
+        $this->serviceLocator->shouldReceive('get')->withArgs(['Feedback'])->andReturn($this->feedbackService);
 
         $_SERVER['HTTP_USER_AGENT'] = 'UnitTester';
     }
@@ -79,7 +80,7 @@ class FeedbackControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
         $this->feedbackService->shouldReceive('sendMail')->andReturn(true)->once();
-        $this->url->shouldReceive('fromRoute')->with('home')->andReturn('home')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['home'])->andReturn('home')->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -94,7 +95,7 @@ class FeedbackControllerTest extends AbstractControllerTest
         $referer = new Referer();
         $referer->setUri('https://localhost/lpa/3503563157/when-lpa-starts');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->request->shouldReceive('getHeader')->with('Referer')->andReturn($referer)->twice();
+        $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->twice();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -107,7 +108,7 @@ class FeedbackControllerTest extends AbstractControllerTest
     public function testSendFeedbackFormNoReferer()
     {
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->request->shouldReceive('getHeader')->with('Referer')->andReturn(false)->once();
+        $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn(false)->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();

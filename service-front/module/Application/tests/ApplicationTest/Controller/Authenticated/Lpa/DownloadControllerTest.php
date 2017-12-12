@@ -61,7 +61,8 @@ class DownloadControllerTest extends AbstractControllerTest
     {
         $pdfType = 'lp1';
         $this->setPdfType($this->lpa, $pdfType);
-        $this->lpaApplicationService->shouldReceive('getPdfDetails')->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'in-queue'])->once();
+        $this->lpaApplicationService->shouldReceive('getPdfDetails')
+            ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'in-queue'])->once();
         $this->layout->shouldReceive('__invoke')->withArgs(['layout/download.twig'])->once();
         $this->logger->shouldReceive('info')->withArgs(['PDF status is in-queue', ['lpaId' => $this->lpa->id]])->once();
 
@@ -76,7 +77,8 @@ class DownloadControllerTest extends AbstractControllerTest
 
         $pdfType = 'lp1';
         $this->setPdfType($this->lpa, $pdfType);
-        $this->lpaApplicationService->shouldReceive('getPdfDetails')->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
+        $this->lpaApplicationService->shouldReceive('getPdfDetails')
+            ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
         $this->layout->shouldReceive('__invoke')->withArgs(['layout/download.twig'])->once();
         $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download/file', [
@@ -96,7 +98,8 @@ class DownloadControllerTest extends AbstractControllerTest
 
         $pdfType = 'lp3';
         $this->setPdfType($this->lpa, $pdfType);
-        $this->lpaApplicationService->shouldReceive('getPdfDetails')->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
+        $this->lpaApplicationService->shouldReceive('getPdfDetails')
+            ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
         $this->layout->shouldReceive('__invoke')->withArgs(['layout/download.twig'])->once();
         $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download/file', [
@@ -118,7 +121,8 @@ class DownloadControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $routeMatch = $this->getRouteMatch($this->controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['pdf-type'])->andReturn($pdfType)->once();
-        $this->lpaApplicationService->shouldReceive('getPdfDetails')->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'in-queue'])->once();
+        $this->lpaApplicationService->shouldReceive('getPdfDetails')
+            ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'in-queue'])->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download', [
             'lpa-id'   => $this->lpa->id,
             'pdf-type' => $pdfType
@@ -138,14 +142,19 @@ class DownloadControllerTest extends AbstractControllerTest
         $this->controller->setLpa($this->lpa);
         $routeMatch = $this->getRouteMatch($this->controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['pdf-type'])->andReturn($pdfType)->once();
-        $this->lpaApplicationService->shouldReceive('getPdfDetails')->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
-        $this->lpaApplicationService->shouldReceive('getPdf')->withArgs([$this->lpa->id, $pdfType])->andReturn('PDF content')->once();
+        $this->lpaApplicationService->shouldReceive('getPdfDetails')
+            ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
+        $this->lpaApplicationService->shouldReceive('getPdf')
+            ->withArgs([$this->lpa->id, $pdfType])->andReturn('PDF content')->once();
         $response->shouldReceive('setContent')->withArgs(['PDF content'])->once();
         $headers = Mockery::mock(Headers::class);
         $response->shouldReceive('getHeaders')->andReturn($headers)->once();
         $headers->shouldReceive('clearHeaders')->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Type', 'application/pdf'])->andReturn($headers)->once();
-        $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Disposition', 'inline; filename="Lasting-Power-of-Attorney-LP1H.pdf"'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Content-Type', 'application/pdf'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Content-Disposition', 'inline; filename="Lasting-Power-of-Attorney-LP1H.pdf"'])
+            ->andReturn($headers)->once();
         $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Length', 11])->andReturn($headers)->once();
 
         $result = $this->controller->downloadAction();

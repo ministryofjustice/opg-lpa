@@ -38,10 +38,12 @@ class AboutYouControllerTest extends AbstractControllerTest
         parent::controllerSetUp($this->controller);
 
         $this->form = Mockery::mock(AboutYou::class);
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\User\AboutYou')->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\User\AboutYou'])->andReturn($this->form);
 
         $this->aboutYouDetails = Mockery::mock(Details::class);
-        $this->serviceLocator->shouldReceive('get')->with('AboutYouDetails')->andReturn($this->aboutYouDetails);
+        $this->serviceLocator->shouldReceive('get')
+            ->withArgs(['AboutYouDetails'])->andReturn($this->aboutYouDetails);
     }
 
     public function testIndexActionGet()
@@ -49,16 +51,16 @@ class AboutYouControllerTest extends AbstractControllerTest
         $user = $this->getUserDetails();
 
         //  Set up any route or request parameters
-        $this->params->shouldReceive('fromRoute')->with('new', null)->andReturn(null)->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['new', null])->andReturn(null)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         //  Set up helpers and services
-        $this->url->shouldReceive('fromRoute')->with('user/about-you', [])->andReturn('/user/about-you')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['user/about-you', []])->andReturn('/user/about-you')->once();
         $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
 
         //  Set up the form
-        $this->form->shouldReceive('setAttribute')->with('action', '/user/about-you')->once();
-        $this->form->shouldReceive('bind')->with($user->flatten())->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', '/user/about-you'])->once();
+        $this->form->shouldReceive('bind')->withArgs([$user->flatten()])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -73,15 +75,15 @@ class AboutYouControllerTest extends AbstractControllerTest
         $user = $this->getUserDetails();
 
         //  Set up any route or request parameters
-        $this->params->shouldReceive('fromRoute')->with('new', null)->andReturn(null)->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['new', null])->andReturn(null)->once();
 
         //  Set up helpers and service
-        $this->url->shouldReceive('fromRoute')->with('user/about-you', [])->andReturn('/user/about-you')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['user/about-you', []])->andReturn('/user/about-you')->once();
         $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
 
         //  Set up form
         $this->setPostInvalid($this->form, $this->postData, $this->getExpectedDataToSet($user));
-        $this->form->shouldReceive('setAttribute')->with('action', '/user/about-you')->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', '/user/about-you'])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -97,18 +99,19 @@ class AboutYouControllerTest extends AbstractControllerTest
         $user = $this->getUserDetails();
 
         //  Set up any route or request parameters
-        $this->params->shouldReceive('fromRoute')->with('new', null)->andReturn(null)->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['new', null])->andReturn(null)->once();
 
         //  Set up helpers and service
-        $this->url->shouldReceive('fromRoute')->with('user/about-you', [])->andReturn('/user/about-you')->once();
+        $this->url->shouldReceive('fromRoute')->withArgs(['user/about-you', []])->andReturn('/user/about-you')->once();
         $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
-        $this->aboutYouDetails->shouldReceive('updateAllDetails')->with($this->form)->once();
-        $this->flashMessenger->shouldReceive('addSuccessMessage')->with('Your details have been updated.')->once();
-        $this->redirect->shouldReceive('toRoute')->with('user/dashboard')->andReturn($response)->once();
+        $this->aboutYouDetails->shouldReceive('updateAllDetails')->withArgs([$this->form])->once();
+        $this->flashMessenger->shouldReceive('addSuccessMessage')
+            ->withArgs(['Your details have been updated.'])->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
 
         //  Set up form
         $this->setPostValid($this->form, $this->postData, $this->getExpectedDataToSet($user));
-        $this->form->shouldReceive('setAttribute')->with('action', '/user/about-you')->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', '/user/about-you'])->once();
 
         $result = $this->controller->indexAction();
 
@@ -120,18 +123,17 @@ class AboutYouControllerTest extends AbstractControllerTest
         $user = $this->getUserDetails(true);
 
         //  Set up any route or request parameters
-        $this->params->shouldReceive('fromRoute')->with('new', null)->andReturn('new')->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['new', null])->andReturn('new')->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         //  Set up helpers and service
-        $this->url->shouldReceive('fromRoute')->with('user/about-you', [
-            'new' => 'new',
-        ])->andReturn('/user/about-you/new')->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['user/about-you', ['new' => 'new']])->andReturn('/user/about-you/new')->once();
         $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
 
         //  Set up form
-        $this->form->shouldReceive('setAttribute')->with('action', '/user/about-you/new')->once();
-        $this->form->shouldReceive('bind')->with($user->flatten())->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', '/user/about-you/new'])->once();
+        $this->form->shouldReceive('bind')->withArgs([$user->flatten()])->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -147,19 +149,18 @@ class AboutYouControllerTest extends AbstractControllerTest
         $user = $this->getUserDetails(true);
 
         //  Set up any route or request parameters
-        $this->params->shouldReceive('fromRoute')->with('new', null)->andReturn('new')->once();
+        $this->params->shouldReceive('fromRoute')->withArgs(['new', null])->andReturn('new')->once();
 
 
         //  Set up helpers and service
-        $this->url->shouldReceive('fromRoute')->with('user/about-you', [
-            'new' => 'new',
-        ])->andReturn('/user/about-you/new')->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['user/about-you', ['new' => 'new']])->andReturn('/user/about-you/new')->once();
         $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
-        $this->aboutYouDetails->shouldReceive('updateAllDetails')->with($this->form)->once();
-        $this->redirect->shouldReceive('toRoute')->with('user/dashboard')->andReturn($response)->once();
+        $this->aboutYouDetails->shouldReceive('updateAllDetails')->withArgs([$this->form])->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
 
         //  Set up form
-        $this->form->shouldReceive('setAttribute')->with('action', '/user/about-you/new')->once();
+        $this->form->shouldReceive('setAttribute')->withArgs(['action', '/user/about-you/new'])->once();
         $this->setPostValid($this->form, $this->postData, $this->getExpectedDataToSet($user));
 
         /** @var ViewModel $result */

@@ -49,7 +49,8 @@ class WhoAreYouControllerTest extends AbstractControllerTest
 
         $this->form = Mockery::mock(WhoAreYouForm::class);
         $this->lpa = FixturesData::getPfLpa();
-        $this->formElementManager->shouldReceive('get')->with('Application\Form\Lpa\WhoAreYouForm')->andReturn($this->form);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\WhoAreYouForm'])->andReturn($this->form);
 
         $this->who = [
             'value_options' => [
@@ -108,8 +109,8 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->setMatchedRouteName($this->controller, 'lpa/who-are-you');
         $this->setFormAction($this->form, $this->lpa, 'lpa/who-are-you');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->form->shouldReceive('get')->with('who')->andReturn($this->whoOptions)->once();
-        $this->form->shouldReceive('get')->with('professional')->andReturn($this->professionalOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['who'])->andReturn($this->whoOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['professional'])->andReturn($this->professionalOptions)->once();
         $this->whoOptions->shouldReceive('getValue')->andReturn('')->times(6);
         $this->professionalOptions->shouldReceive('getValue')->andReturn('')->times(3);
 
@@ -130,8 +131,8 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->setMatchedRouteName($this->controller, 'lpa/who-are-you');
         $this->setFormAction($this->form, $this->lpa, 'lpa/who-are-you');
         $this->setPostInvalid($this->form);
-        $this->form->shouldReceive('get')->with('who')->andReturn($this->whoOptions)->once();
-        $this->form->shouldReceive('get')->with('professional')->andReturn($this->professionalOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['who'])->andReturn($this->whoOptions)->once();
+        $this->form->shouldReceive('get')->withArgs(['professional'])->andReturn($this->professionalOptions)->once();
         $this->whoOptions->shouldReceive('getValue')->andReturn('')->times(6);
         $this->professionalOptions->shouldReceive('getValue')->andReturn('')->times(3);
 
@@ -157,10 +158,11 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->setFormAction($this->form, $this->lpa, 'lpa/who-are-you');
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
-        $this->lpaApplicationService->shouldReceive('setWhoAreYou')/*->withArgs(function ($lpaId, $whoAreYou) {
-            return $lpaId === $this->lpa->id
-                && $whoAreYou->who === $this->postData['who'];
-        })*/->andReturn(false)->once();
+        $this->lpaApplicationService->shouldReceive('setWhoAreYou')
+            ->withArgs(function ($lpaId, $whoAreYou) {
+                return $lpaId === $this->lpa->id
+                    && $whoAreYou->who === $this->postData['who'];
+            })->andReturn(false)->once();
 
         $this->controller->indexAction();
     }
@@ -174,10 +176,11 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->setFormAction($this->form, $this->lpa, 'lpa/who-are-you');
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
-        $this->lpaApplicationService->shouldReceive('setWhoAreYou')/*->withArgs(function ($lpaId, $whoAreYou) {
-            return $lpaId === $this->lpa->id
-                && $whoAreYou->who === $this->postData['who'];
-        })*/->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('setWhoAreYou')
+            ->withArgs(function ($lpaId, $whoAreYou) {
+                return $lpaId === $this->lpa->id
+                    && $whoAreYou->who === $this->postData['who'];
+            })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/who-are-you', 2);
         $this->setRedirectToRoute('lpa/repeat-application', $this->lpa, $response);
