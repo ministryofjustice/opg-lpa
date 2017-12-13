@@ -5,6 +5,7 @@ namespace Application\Model\Service\Lpa;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use RuntimeException;
 
 /**
  * Used for setting metadata constants etc.
@@ -19,6 +20,8 @@ class Metadata implements ServiceLocatorAwareInterface
     const PEOPLE_TO_NOTIFY_CONFIRMED = 'people-to-notify-confirmed';
     const REPEAT_APPLICATION_CONFIRMED = 'repeat-application-confirmed';
     const APPLY_FOR_FEE_REDUCTION = 'apply-for-fee-reduction';
+    const INSTRUCTION_CONFIRMED = 'instruction-confirmed';
+    const ANALYTICS_RETURN_COUNT = 'analyticsReturnCount';
 
     use ServiceLocatorAwareTrait;
 
@@ -42,23 +45,45 @@ class Metadata implements ServiceLocatorAwareInterface
         return $this->setMetadataByKey($lpa, self::REPEAT_APPLICATION_CONFIRMED);
     }
 
-    public function setApplyForFeeReduction(Lpa $lpa, $applyOrNot)
+    public function setInstructionConfirmed(Lpa $lpa)
     {
-        $lpa->metadata[self::APPLY_FOR_FEE_REDUCTION] = $applyOrNot;
-
-        if (!$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata)) {
-            throw new \RuntimeException('API client failed to set metadata APPLY_FOR_FEE_REDUCTION for id: '.$lpa->id);
-        }
+        return $this->setMetadataByKey($lpa, self::INSTRUCTION_CONFIRMED);
     }
 
-    private function setMetadataByKey(Lpa $lpa, $key)
+    public function setAnalyticsReturnCount(Lpa $lpa, $returnCount)
     {
-        if (!array_key_exists($key, $lpa->metadata)) {
+        return $this->setMetadataByKey($lpa, self::ANALYTICS_RETURN_COUNT, $returnCount);
+    }
 
-            $lpa->metadata[$key] = true;
+    public function setApplyForFeeReduction(Lpa $lpa, $applyOrNot)
+    {
+        return $this->setMetadataByKey($lpa, self::APPLY_FOR_FEE_REDUCTION, $applyOrNot);
+    }
+
+    public function removeMetadata(Lpa $lpa, $key)
+    {
+        if (array_key_exists($key, $lpa->metadata)) {
+            //  Remove the value
+            unset($lpa->metadata[$key]);
 
             if (!$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata)) {
-                throw new \RuntimeException('API client failed to set metadata '.$key.' for id: '.$lpa->id.' in '.__METHOD__);
+                throw new RuntimeException(sprintf('API client failed to remove metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private function setMetadataByKey(Lpa $lpa, $key, $value = true)
+    {
+        if (!array_key_exists($key, $lpa->metadata) || $lpa->metadata[$key] !== $value) {
+            //  Update the value
+            $lpa->metadata[$key] = $value;
+
+            if (!$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata)) {
+                throw new RuntimeException(sprintf('API client failed to set metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
             }
 
             return true;

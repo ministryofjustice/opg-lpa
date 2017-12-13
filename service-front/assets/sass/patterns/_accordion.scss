@@ -3,129 +3,135 @@
 
 .accordion {
     @extend %contain-floats;
-}
 
-.accordion-header {
-    display: block;
-    padding: $gutter-half;
-    background-color: $turquoise;
-    color: $white;
+    > .incomplete {
+        color: $red;
 
-    @include media(mobile) {
-        padding-left: $gutter-half;
-    }
-}
-
-.accordion-info {
-    @extend %contain-floats;
-    margin-bottom: $gutter;
-    border-bottom: 1px solid $border-colour;
-}
-
-.accordion-summary {
-    position: relative;
-    margin-bottom: $gutter-half;
-    background-color: $highlight-colour;
-    overflow: hidden;
-
-    @include media(mobile) {
-        padding-left: $gutter-half;
+        .accordion-summary {
+            .label {
+                color: $red;
+                border-color: $red;
+            }
+        }
     }
 
-    .title {
-        display: inline-block;
+    .accordion-header {
+        display: block;
         padding: $gutter-half;
+        background-color: $turquoise;
+        color: $white;
 
         @include media(mobile) {
+            padding-left: $gutter-half;
+        }
+    }
+
+    .accordion-info {
+        @extend %contain-floats;
+        margin-bottom: $gutter;
+        border-bottom: 1px solid $border-colour;
+    }
+
+    .accordion-summary {
+        position: relative;
+        margin-bottom: $gutter-half;
+        background-color: $highlight-colour;
+        overflow: hidden;
+
+        @include media(mobile) {
+            padding-left: $gutter-half;
+        }
+
+        .title {
+            display: inline-block;
             padding: $gutter-half;
-        }
-    }
 
-    .label {
-        margin: 16px 22px 0 0;
-        padding: 2px 5px 0;
-        float: right;
-        border: 2px solid $turquoise;
-        border-radius: 5px;
-        color: $turquoise;
-        font-size: 13px;
-        font-weight: 700;
-        text-align: center;
-        text-transform: uppercase;
-
-        &.incomplete {
-            color: $red;
-            border-color: $red;
+            @include media(mobile) {
+                padding: $gutter-half;
+            }
         }
 
-        @include media(mobile) {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            margin: 0;
-        }
-    }
-
-    &.wide-label {
         .label {
-            @include media($max-width: 750px) {
-                width: 103px;
-                line-height: 1;
+            margin: 16px 22px 0 0;
+            padding: 2px 5px 0;
+            float: right;
+            border: 2px solid $turquoise;
+            border-radius: 5px;
+            color: $turquoise;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+
+            @include media(mobile) {
+                position: absolute;
+                top: 14px;
+                right: 14px;
+                margin: 0;
+            }
+        }
+
+        &.wide-label {
+            .label {
+                @include media($max-width: 750px) {
+                    width: 103px;
+                    line-height: 1;
+                }
+            }
+
+            .title-box {
+                @include media($min-width: 750px) {
+                    padding-right: 215px;
+                }
+            }
+        }
+
+        .link {
+            display: inline-block;
+            float: right;
+
+            @include media(mobile) {
+                padding-right: 130px;
+                float: left;
+            }
+        }
+
+        .link-edit {
+            display: block;
+            padding: $gutter-half $gutter;
+            float: right;
+
+            @include media(mobile) {
+                padding-left: 0;
             }
         }
 
         .title-box {
-            @include media($min-width: 750px) {
-                padding-right: 215px;
+            margin-right: 92px;
+            padding-right: 130px;
+            border-right: 6px solid $white;
+
+            &--full {
+                margin-right: 0;
+                padding-right: 0;
+                border-right: 0;
+            }
+        }
+
+        .label-and-edit-box {
+            position: absolute;
+            top: 0;
+            right: 0;
+
+            @include media(mobile) {
+                position: relative;
             }
         }
     }
 
-    .link {
-        display: inline-block;
-        float: right;
-
-        @include media(mobile) {
-            padding-right: 130px;
-            float: left;
-        }
-    }
-
-    .link-edit {
+    .accordion-current {
         display: block;
-        padding: $gutter-half $gutter;
-        float: right;
-
-        @include media(mobile) {
-            padding-left: 0;
-        }
+        padding-top: 20px;
+        margin-top: -20px;
     }
-
-    .title-box {
-        margin-right: 92px;
-        padding-right: 130px;
-        border-right: 6px solid $white;
-
-        &--full {
-            margin-right: 0;
-            padding-right: 0;
-            border-right: 0;
-        }
-    }
-
-    .label-and-edit-box {
-        position: absolute;
-        top: 0;
-        right: 0;
-
-        @include media(mobile) {
-            position: relative;
-        }
-    }
-}
-
-.accordion-current{
-    display:block;
-    padding-top:20px;
-    margin-top:-20px;
 }

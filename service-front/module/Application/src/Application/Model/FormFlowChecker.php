@@ -495,10 +495,10 @@ class FormFlowChecker extends StateChecker
     private function isCertificateProviderAccessible()
     {
         if ($this->lpaHasPrimaryAttorney() && (
-           ($this->lpaHasSinglePrimaryAttorney() && $this->lpaHasNoReplacementAttorney() && array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata))
+           ($this->lpaHasSinglePrimaryAttorney() && $this->lpaHasNoReplacementAttorney() && $this->metadataIsPresent(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED))
             || ($this->lpaHasSinglePrimaryAttorney() && $this->lpaHasSingleReplacementAttorney())
             || ($this->lpaHasSinglePrimaryAttorney() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
-            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaHowPrimaryAttorneysMakeDecisionHasValue() && $this->lpaHasNoReplacementAttorney() && array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata))
+            || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaHowPrimaryAttorneysMakeDecisionHasValue() && $this->lpaHasNoReplacementAttorney() && $this->metadataIsPresent(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED))
             || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionDepends() && $this->lpaHasMultipleReplacementAttorneys())
             || ($this->lpaHasMultiplePrimaryAttorneys() && ($this->lpaPrimaryAttorneysMakeDecisionJointly() || $this->lpaPrimaryAttorneysMakeDecisionDepends()) && $this->lpaHasSingleReplacementAttorney())
             || ($this->lpaHasMultiplePrimaryAttorneys() && $this->lpaPrimaryAttorneysMakeDecisionJointly() && $this->lpaHasMultipleReplacementAttorneys() && $this->lpaHowReplacementAttorneysMakeDecisionHasValue())
@@ -553,7 +553,7 @@ class FormFlowChecker extends StateChecker
 
     private function isPeopleToNotifyAccessible()
     {
-        if ($this->isCertificateProviderAccessible() === true && $this->lpaHasCertificateProvider()) {
+        if ($this->isCertificateProviderAccessible() === true && ($this->metadataIsPresent(Metadata::CERTIFICATE_PROVIDER_SKIPPED) || $this->lpaHasCertificateProvider())) {
             return true;
         }
 
@@ -603,7 +603,7 @@ class FormFlowChecker extends StateChecker
 
     private function isApplicantAccessible()
     {
-        if ($this->lpaHasCreated()) {
+        if ($this->metadataIsPresent(Metadata::CERTIFICATE_PROVIDER_SKIPPED) || $this->lpaHasCertificateProvider()) {
             return true;
         }
 
@@ -648,7 +648,7 @@ class FormFlowChecker extends StateChecker
 
     private function isFeeReductionAccessible()
     {
-        if ($this->isRepeatApplicationAccessible() === true && array_key_exists(Metadata::REPEAT_APPLICATION_CONFIRMED, $this->lpa->metadata)) {
+        if ($this->isRepeatApplicationAccessible() === true && $this->metadataIsPresent(Metadata::REPEAT_APPLICATION_CONFIRMED)) {
             return true;
         }
 
@@ -722,13 +722,13 @@ class FormFlowChecker extends StateChecker
     private function peopleToNotifyHasBeenConfirmed()
     {
         return ($this->lpaHasCertificateProvider() &&
-            count($this->lpa->document->peopleToNotify) > 0 || array_key_exists(Metadata::PEOPLE_TO_NOTIFY_CONFIRMED, $this->lpa->metadata));
+            count($this->lpa->document->peopleToNotify) > 0 || $this->metadataIsPresent(Metadata::PEOPLE_TO_NOTIFY_CONFIRMED));
     }
 
     protected function replacementAttorneyHasBeenConfirmed()
     {
         return ($this->lpaHasPrimaryAttorney() &&
-            count($this->lpa->document->replacementAttorneys) > 0 || array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->lpa->metadata));
+            count($this->lpa->document->replacementAttorneys) > 0 || $this->metadataIsPresent(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED));
     }
 
     protected function lpaHasSingleReplacementAttorney()
@@ -821,7 +821,7 @@ class FormFlowChecker extends StateChecker
 
     private function returnToCertificateProvider()
     {
-        return $this->lpaHasCertificateProvider();
+        return ($this->metadataIsPresent(Metadata::CERTIFICATE_PROVIDER_SKIPPED) || $this->lpaHasCertificateProvider());
     }
 
     private function returnToPeopleToNotify()
@@ -851,7 +851,7 @@ class FormFlowChecker extends StateChecker
 
     private function returnToRepeatApplication()
     {
-        return array_key_exists(Metadata::REPEAT_APPLICATION_CONFIRMED, $this->lpa->metadata);
+        return $this->metadataIsPresent(Metadata::REPEAT_APPLICATION_CONFIRMED);
     }
 
     private function returnToFeeReduction()
@@ -868,5 +868,10 @@ class FormFlowChecker extends StateChecker
     private function returnToViewDocs()
     {
         return $this->paymentResolved() && $this->lpa->completedAt !== null;
+    }
+
+    private function metadataIsPresent($metadataKey)
+    {
+        return array_key_exists($metadataKey, $this->lpa->metadata);
     }
 }

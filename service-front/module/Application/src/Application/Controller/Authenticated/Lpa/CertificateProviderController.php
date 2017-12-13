@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
+use Application\Model\Service\Lpa\Metadata;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Zend\View\Model\ViewModel;
 
@@ -76,6 +77,9 @@ class CertificateProviderController extends AbstractLpaActorController
                 if (!$this->getLpaApplicationService()->setCertificateProvider($lpaId, $cp)) {
                     throw new \RuntimeException('API client failed to save certificate provider for id: '.$lpaId);
                 }
+
+                //  Remove the skipped metadata tag if it was set
+                $this->getServiceLocator()->get('Metadata')->removeMetadata($this->getLpa(), Metadata::CERTIFICATE_PROVIDER_SKIPPED);
 
                 return $this->moveToNextRoute();
             }

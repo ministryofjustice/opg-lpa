@@ -11,8 +11,13 @@
     <div class="alert text push--top" role="alert">
         <i class="icon icon-important-small" role="presentation"></i>
         <div class="alert-message">
-            <p><strong class="bold-small">At the next stage your form(s) will be ready to download and sign with the information shown below.</strong></p>
-            <p><strong class="bold-small">You won't be able to change anything in the LPA once you have confirmed.</strong></p>
+            {% if (lpaIsCompleted) %}
+                <p><strong class="bold-small">At the next stage your form(s) will be ready to download and sign with the information shown below.</strong></p>
+                <p><strong class="bold-small">You won't be able to change anything in the LPA once you have confirmed.</strong></p>
+            {% else %}
+                <p><strong class="bold-small">You need to fill in some missing answers.</strong></p>
+                <p><strong class="bold-small">Please add the required information highlighted below.</strong></p>
+            {% endif %}
         </div>
     </div>
 
