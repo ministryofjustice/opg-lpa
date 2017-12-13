@@ -31,24 +31,10 @@ class StateChecker
      */
     protected $lpa;
 
-
-
     /**
      * @param Lpa $lpa LPA instance to apply checks to.
      */
     public function __construct(Lpa $lpa = null)
-    {
-        if ($lpa) {
-            $this->setLpa($lpa);
-        }
-    }
-
-    /**
-     * Sets the LPA instance to apply checks to.
-     *
-     * @param Lpa $lpa
-     */
-    public function setLpa(Lpa $lpa)
     {
         $this->lpa = $lpa;
     }
@@ -60,10 +46,6 @@ class StateChecker
      */
     public function getLpa()
     {
-        if (!$this->lpa instanceof Lpa) {
-            throw new InvalidArgumentException('No LPA has been set');
-        }
-
         return $this->lpa;
     }
 
@@ -86,8 +68,7 @@ class StateChecker
      */
     public function canGenerateLP3()
     {
-        $lpa = $this->getLpa();
-        return ($this->isStateCompleted() && count($lpa->document->peopleToNotify) > 0);
+        return ($this->isStateCompleted() && count($this->lpa->document->peopleToNotify) > 0);
     }
 
     /**
@@ -97,11 +78,7 @@ class StateChecker
      */
     public function canGenerateLPA120()
     {
-        if (!$this->isStateCompleted()) {
-            return false;
-        }
-
-        return $this->isEligibleForFeeReduction();
+        return ($this->isStateCompleted() && $this->isEligibleForFeeReduction());
     }
 
     // State Checks
@@ -113,8 +90,7 @@ class StateChecker
      */
     public function isStateStarted()
     {
-        $lpa = $this->getLpa();
-        return is_int($lpa->id);
+        return is_int($this->lpa->id);
     }
 
     /**
@@ -169,14 +145,13 @@ class StateChecker
      */
     public function isEligibleForFeeReduction()
     {
-        $lpa = $this->getLpa();
-        if (!$lpa->payment instanceof Payment) {
+        if (!$this->lpa->payment instanceof Payment) {
             return false;
         }
 
-        return (($lpa->payment->reducedFeeReceivesBenefits && $lpa->payment->reducedFeeAwardedDamages)
-                || $lpa->payment->reducedFeeUniversalCredit
-                || $lpa->payment->reducedFeeLowIncome);
+        return (($this->lpa->payment->reducedFeeReceivesBenefits && $this->lpa->payment->reducedFeeAwardedDamages)
+                || $this->lpa->payment->reducedFeeUniversalCredit
+                || $this->lpa->payment->reducedFeeLowIncome);
     }
 
     protected function isWhoAreYouAnswered()
@@ -191,9 +166,7 @@ class StateChecker
 
     protected function lpaHasApplicant()
     {
-        return ($this->lpaHasFinishedCreation()
-            && ($this->lpa->document->whoIsRegistering == 'donor' || (is_array($this->lpa->document->whoIsRegistering) && count($this->lpa->document->whoIsRegistering) > 0))
-        );
+        return ($this->lpa->document->whoIsRegistering == 'donor' || (is_array($this->lpa->document->whoIsRegistering) && count($this->lpa->document->whoIsRegistering) > 0));
     }
 
     /**
@@ -203,16 +176,9 @@ class StateChecker
      */
     protected function lpaHasFinishedCreation()
     {
-        // For an LPA instrument to be considered complete, the LPA must...
-
-        // Have a Certificate provider...
-        $complete = $this->lpaHasCertificateProvider();
-
-        // AND have > 0 Primary Attorneys
-        $complete = $complete && $this->lpaHasPrimaryAttorney();
-
-        // AND instructions or preferences to not be null (they can be blank)...
-        $complete = $complete && $this->hasInstructionOrPreference();
+        //  For an LPA instrument to be considered complete, the LPA must...
+        //  Have a Certificate provider, primary attorney(s) and instructions or preferences to not be null (they can be blank)...
+        $complete = $this->lpaHasCertificateProvider() && $this->lpaHasPrimaryAttorney() && $this->hasInstructionOrPreference();
 
         // AND if there is > 1 Primary Attorney
         if ($this->lpaHasMultiplePrimaryAttorneys()) {
