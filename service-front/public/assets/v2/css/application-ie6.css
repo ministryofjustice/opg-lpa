@@ -3180,6 +3180,9 @@ input[type=number] {
     font-weight: 700;
     text-align: center;
     text-transform: uppercase; }
+    .accordion-summary .label.incomplete {
+      color: #b10e1e;
+      border-color: #b10e1e; }
   .accordion-summary.wide-label .label {
     width: 103px;
     line-height: 1; }
