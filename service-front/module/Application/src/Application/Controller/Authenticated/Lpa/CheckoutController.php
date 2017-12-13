@@ -8,6 +8,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
+use Opg\Lpa\DataModel\Lpa\StateChecker;
 use Zend\Http\Response as HttpResponse;
 use Zend\View\Helper\ServerUrl;
 use Zend\View\Model\ViewModel;
@@ -34,8 +35,7 @@ class CheckoutController extends AbstractLpaController
 
         // If the user's segment falls at or below the set percentage.
         $useWorldPay = ($segment <= (int)$segmentsSentToWorldPay);
-
-        $paymentViewVars = array();
+        $worldPayForm = null;
 
         // Note: all POSTs are for WorldPay to this method.
         // This protects against the case where an admin changes the 'percentage' whilst a user is mid payment.
@@ -47,19 +47,22 @@ class CheckoutController extends AbstractLpaController
             if ($response instanceof HttpResponse) {
                 return $response;
             }
-
-            $paymentViewVars['worldpayForm'] = $worldPayForm;
         }
 
         $isRepeatApplication = ($this->getLpa()->repeatCaseNumber != null);
 
         $lowIncomeFee = Calculator::getLowIncomeFee($isRepeatApplication);
-        $paymentViewVars['lowIncomeFee'] = (floor($lowIncomeFee) == $lowIncomeFee ? $lowIncomeFee : money_format('%i', $lowIncomeFee));
+        $lowIncomeFee = (floor($lowIncomeFee) == $lowIncomeFee ? $lowIncomeFee : money_format('%i', $lowIncomeFee));
 
         $fullFee = Calculator::getFullFee($isRepeatApplication);
-        $paymentViewVars['fullFee'] = (floor($fullFee) == $fullFee  ? $fullFee : money_format('%i', $fullFee));
+        $fullFee = (floor($fullFee) == $fullFee  ? $fullFee : money_format('%i', $fullFee));
 
-        return new ViewModel($paymentViewVars);
+        return new ViewModel([
+            'worldPayForm'   => $worldPayForm,
+            'lowIncomeFee'   => $lowIncomeFee,
+            'fullFee'        => $fullFee,
+            'lpaIsCompleted' => $this->isLPAComplete(),
+        ]);
     }
 
     private function redirectToMoreInfoRequired()
@@ -133,10 +136,11 @@ class CheckoutController extends AbstractLpaController
     //------------------------------------------------------------------------------
     // GDS Pay
 
-
     private function isLPAComplete()
     {
-        return $this->getFlowChecker()->backToForm() == "lpa/checkout";
+        $stateChecker = new StateChecker($this->getLpa());
+
+        return ($stateChecker->isStateCreated() && $this->getFlowChecker()->backToForm() == "lpa/checkout");
     }
 
     public function payAction()

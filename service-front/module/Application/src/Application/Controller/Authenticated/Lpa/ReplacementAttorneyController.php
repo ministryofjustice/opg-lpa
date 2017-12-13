@@ -90,13 +90,14 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             if ($form->isValid()) {
                 // persist to the api
                 $attorney = new Human($form->getModelDataFromValidatedForm());
+
                 if (!$this->getLpaApplicationService()->addReplacementAttorney($lpaId, $attorney)) {
                     throw new \RuntimeException('API client failed to add a replacement attorney for id: '.$lpaId);
                 }
 
                 // set REPLACEMENT_ATTORNEYS_CONFIRMED flag in metadata
                 if (!array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $lpa->metadata)) {
-                        $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($lpa);
+                    $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($lpa);
                 }
 
                 $this->cleanUpReplacementAttorneyDecisions();
