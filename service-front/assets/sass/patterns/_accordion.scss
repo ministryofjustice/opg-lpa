@@ -53,6 +53,11 @@
         text-align: center;
         text-transform: uppercase;
 
+        &.incomplete {
+            color: $red;
+            border-color: $red;
+        }
+
         @include media(mobile) {
             position: absolute;
             top: 14px;

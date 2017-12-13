@@ -3791,6 +3791,9 @@ input[type=number] {
     font-weight: 700;
     text-align: center;
     text-transform: uppercase; }
+    .accordion-summary .label.incomplete {
+      color: #b10e1e;
+      border-color: #b10e1e; }
     @media (max-width: 640px) {
       .accordion-summary .label {
         position: absolute;
