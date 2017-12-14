@@ -12,13 +12,18 @@ use MongoDB\BSON\UTCDateTime as MongoDate;
 use MongoDB\Collection;
 use MongoDB\Driver\Command;
 use MongoDB\Driver\ReadPreference;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 /**
  * Generate LPA stats and saves the results back into MongoDB.
+ * To run, bash into apiv2, cd to app and run 'php public/index.php generate-stats'
  *
  * Class Stats
  * @package Application\Model\Service\System
@@ -72,6 +77,14 @@ class Stats implements ServiceLocatorAwareInterface
         } catch (Exception $ex) {
             $this->err("Failed to generate preferencesInstructions stats due to {$ex->getMessage()}", [$ex]);
             $stats['preferencesInstructions'] = ['generated' => false];
+        }
+
+        try {
+            $stats['options'] = $this->getOptionsStats();
+            $this->info("Successfully generated options stats");
+        } catch (Exception $ex) {
+            $this->err("Failed to generate options stats due to {$ex->getMessage()}", [$ex]);
+            $stats['options'] = ['generated' => false];
         }
 
         $stats['generated'] = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
@@ -558,6 +571,317 @@ class Stats implements ServiceLocatorAwareInterface
             'generated' => date('d/m/Y H:i:s', (new DateTime())->getTimestamp()),
             'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000),
             'by-month' => $preferencesInstructionsStats
+        ];
+    }
+
+    private function getOptionsStats()
+    {
+        $startGeneration = microtime(true);
+
+        $collection = $this->getCollection('lpa');
+
+        // Stats can (ideally) be processed on a secondary.
+        $readPreference = [
+            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
+        ];
+
+        $optionStats = [];
+
+        $start = new DateTime('first day of this month');
+        $start->setTime(0, 0, 0);
+
+        $end = new DateTime('last day of this month');
+        $end->setTime(23, 59, 59);
+
+        // Go back 4 months...
+        for ($i = 1; $i <= 4; $i++) {
+            $month = [];
+
+            // Create MongoDate date range
+            $dateRange = [
+                '$gte' => new MongoDate($start),
+                '$lte' => new MongoDate($end)
+            ];
+
+            $month['completed'] = $collection->count([
+                'completedAt' => $dateRange
+            ], $readPreference);
+
+            //https://opgtransform.atlassian.net/browse/LPA-2492
+            //db.getCollection('lpa').count({"document" : {$ne : null}, "document.type" : "health-and-welfare"})
+            //db.getCollection('lpa').count({"document" : {$ne : null}, "document.type" : "property-and-financial"})
+
+            $month['type'] = [
+                Document::LPA_TYPE_HW => $collection->count([
+                    'completedAt' => $dateRange,
+                    'document.type' => Document::LPA_TYPE_HW
+                ], $readPreference),
+                Document::LPA_TYPE_PF => $collection->count([
+                    'completedAt' => $dateRange,
+                    'document.type' => Document::LPA_TYPE_PF
+                ], $readPreference)
+            ];
+
+            //https://opgtransform.atlassian.net/browse/LPA-2493
+            //db.getCollection('lpa').count({"document.donor" : {$ne : null}, "document.donor.canSign" : true})
+            //db.getCollection('lpa').count({"document.donor" : {$ne : null}, "document.donor.canSign" : false})
+
+            $month['canSign'] = [
+                'true' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'document.donor.canSign' => true
+                ], $readPreference),
+                'false' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'document.donor.canSign' => false
+                ], $readPreference)
+            ];
+
+            //https://opgtransform.atlassian.net/browse/LPA-2495
+            //db.getCollection('lpa').count({"document.replacementAttorneys" : {$ne : null}, "document.replacementAttorneys" : { $gt: [] }})
+            //db.getCollection('lpa').count({"document.replacementAttorneys" : null})
+
+            $month['replacementAttorneys'] = [
+                'yes' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'document.replacementAttorneys' => [
+                        '$gt' => []
+                    ]
+                ], $readPreference),
+                'no' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'document.replacementAttorneys' => []
+                ], $readPreference),
+                'multiple' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'document.replacementAttorneys' => [
+                        '$ne' => null
+                    ],
+                    '$where' => 'this.document.replacementAttorneys.length > 1'
+                ], $readPreference)
+            ];
+
+            //https://opgtransform.atlassian.net/browse/LPA-2496
+            //db.getCollection('lpa').count({"document.peopleToNotify" : {$ne : null}, "document.peopleToNotify" : { $gt: [] }})
+            //db.getCollection('lpa').count({"document.peopleToNotify" : null})
+
+            $month['peopleToNotify'] = [
+                'yes' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'document.peopleToNotify' => [
+                        '$gt' => []
+                    ]
+                ], $readPreference),
+                'no' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'document.peopleToNotify' => []
+                ], $readPreference),
+                'multiple' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'document.peopleToNotify' => [
+                        '$ne' => null
+                    ],
+                    '$where' => 'this.document.peopleToNotify.length > 1'
+                ], $readPreference)
+            ];
+
+            //https://opgtransform.atlassian.net/browse/LPA-2497
+            //db.getCollection('lpa').count({"document.whoIsRegistering" : {$ne : null}, "document.whoIsRegistering" : "donor"})
+            //db.getCollection('lpa').count({"document.whoIsRegistering" : {$ne : null}, "document.whoIsRegistering" : { $gt: [] }}) //Attorney(s)
+
+            $month['whoIsRegistering'] = [
+                'donor' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'document.whoIsRegistering' => 'donor'
+                ], $readPreference),
+                'attorneys' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'document.whoIsRegistering' => [
+                        '$gt' => []
+                    ]
+                ], $readPreference)
+            ];
+
+            //https://opgtransform.atlassian.net/browse/LPA-2498
+            //db.getCollection('lpa').count({"repeatCaseNumber" : { $ne: null }})
+
+            $month['repeatCaseNumber'] = [
+                'yes' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'repeatCaseNumber' => [
+                        '$ne' => null
+                    ]
+                ], $readPreference),
+                'no' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'repeatCaseNumber' => null
+                ], $readPreference)
+            ];
+
+            //https://opgtransform.atlassian.net/browse/LPA-2499
+            //db.getCollection('lpa').count({"payment" : {$ne : null}, "payment.reducedFeeReceivesBenefits" : true, "payment.reducedFeeAwardedDamages" : true, "payment.reducedFeeLowIncome" : null, "payment.reducedFeeUniversalCredit" : null}) //reducedFeeReceivesBenefits
+            //db.getCollection('lpa').count({"payment" : {$ne : null}, "payment.reducedFeeReceivesBenefits" : false, "payment.reducedFeeAwardedDamages" : null, "payment.reducedFeeLowIncome" : false, "payment.reducedFeeUniversalCredit" : true}) //reducedFeeUniversalCredit
+            //db.getCollection('lpa').count({"payment" : {$ne : null}, "payment.reducedFeeReceivesBenefits" : false, "payment.reducedFeeAwardedDamages" : null, "payment.reducedFeeLowIncome" : true, "payment.reducedFeeUniversalCredit" : false}) //reducedFeeLowIncome
+            //db.getCollection('lpa').count({"payment" : {$ne : null}, "payment.reducedFeeReceivesBenefits" : null, "payment.reducedFeeAwardedDamages" : null, "payment.reducedFeeLowIncome" : null, "payment.reducedFeeUniversalCredit" : null}) //notApply
+
+            //https://opgtransform.atlassian.net/browse/LPA-2500
+            //db.getCollection('lpa').count({"payment" : {$ne : null}, "payment.method" : "card"})
+            //db.getCollection('lpa').count({"payment" : {$ne : null}, "payment.method" : "cheque"})
+
+            $month['payment'] = [
+                'reducedFeeReceivesBenefits' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'payment.reducedFeeReceivesBenefits' => true,
+                    'payment.reducedFeeAwardedDamages' => true,
+                    'payment.reducedFeeLowIncome' => null,
+                    'payment.reducedFeeUniversalCredit' => null,
+                ], $readPreference),
+                'reducedFeeUniversalCredit' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'payment.reducedFeeReceivesBenefits' => false,
+                    'payment.reducedFeeAwardedDamages' => null,
+                    'payment.reducedFeeLowIncome' => false,
+                    'payment.reducedFeeUniversalCredit' => true,
+                ], $readPreference),
+                'reducedFeeLowIncome' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'payment.reducedFeeReceivesBenefits' => false,
+                    'payment.reducedFeeAwardedDamages' => null,
+                    'payment.reducedFeeLowIncome' => true,
+                    'payment.reducedFeeUniversalCredit' => false,
+                ], $readPreference),
+                'notApply' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'payment.reducedFeeReceivesBenefits' => null,
+                    'payment.reducedFeeAwardedDamages' => null,
+                    'payment.reducedFeeLowIncome' => null,
+                    'payment.reducedFeeUniversalCredit' => null,
+                ], $readPreference),
+                Payment::PAYMENT_TYPE_CARD => $collection->count([
+                    'completedAt' => $dateRange,
+                    'payment.method' => Payment::PAYMENT_TYPE_CARD,
+                ], $readPreference),
+                Payment::PAYMENT_TYPE_CHEQUE => $collection->count([
+                    'completedAt' => $dateRange,
+                    'payment.method' => Payment::PAYMENT_TYPE_CHEQUE,
+                ], $readPreference)
+            ];
+
+            //https://opgtransform.atlassian.net/browse/LPA-2494
+            //db.getCollection('lpa').count({"document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.when" : "now"})
+            //db.getCollection('lpa').count({"document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.when" : "no-capacity"})
+
+            //https://opgtransform.atlassian.net/browse/LPA-2501
+            //db.getCollection('lpa').count({"document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.how" : "jointly-attorney-severally"})
+            //db.getCollection('lpa').count({"document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.how" : "jointly"})
+            //db.getCollection('lpa').count({"document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.how" : "depends"})
+            //db.getCollection('lpa').count({"document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.how" : null}) //Single attorney
+
+            //https://opgtransform.atlassian.net/browse/LPA-2504
+            //db.getCollection('lpa').count({"document" : {$ne : null}, "document.type" : "health-and-welfare", "document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.canSustainLife" : true})
+            //db.getCollection('lpa').count({"document" : {$ne : null}, "document.type" : "health-and-welfare", "document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.canSustainLife" : false})
+
+            $month['primaryAttorneys'] = [
+                'multiple' => $collection->count([
+                    'completedAt' => $dateRange,
+                    'document.primaryAttorneys' => [
+                        '$ne' => null
+                    ],
+                    '$where' => 'this.document.primaryAttorneys.length > 1'
+                ], $readPreference)
+            ];
+
+            $month['primaryAttorneyDecisions'] = [
+                'when' => [
+                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW => $collection->count([
+                        'completedAt' => $dateRange,
+                        'document.primaryAttorneyDecisions.when' => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW
+                    ], $readPreference),
+                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY => $collection->count([
+                        'completedAt' => $dateRange,
+                        'document.primaryAttorneyDecisions.when' => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY
+                    ], $readPreference)
+                ],
+                'how' => [
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY => $collection->count([
+                        'completedAt' => $dateRange,
+                        'document.primaryAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
+                    ], $readPreference),
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY => $collection->count([
+                        'completedAt' => $dateRange,
+                        'document.primaryAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY
+                    ], $readPreference),
+                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS => $collection->count([
+                        'completedAt' => $dateRange,
+                        'document.primaryAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS
+                    ], $readPreference)
+                ],
+                'canSustainLife' => [
+                    'true' => $collection->count([
+                        'completedAt' => $dateRange,
+                        'document.primaryAttorneyDecisions.canSustainLife' => true
+                    ], $readPreference),
+                    'false' => $collection->count([
+                        'completedAt' => $dateRange,
+                        'document.primaryAttorneyDecisions.canSustainLife' => false
+                    ], $readPreference)
+                ]
+            ];
+
+            //https://opgtransform.atlassian.net/browse/LPA-2502
+            //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.how" : "jointly-attorney-severally"})
+            //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.how" : "jointly"})
+            //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.how" : "depends"})
+            //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.how" : null}) //Single attorney
+
+            //https://opgtransform.atlassian.net/browse/LPA-2503
+            //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.when" : "first"})
+            //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.when" : "last"})
+            //db.getCollection('lpa').count({"document.replacementAttorneyDecisions" : {$ne : null}, "document.replacementAttorneyDecisions.when" : "depends"})
+
+            $month['replacementAttorneyDecisions'] = [
+                'when' => [
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST => $collection->count([
+                        'completedAt' => $dateRange,
+                        'document.replacementAttorneyDecisions.when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST
+                    ], $readPreference),
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST => $collection->count([
+                        'completedAt' => $dateRange,
+                        'document.replacementAttorneyDecisions.when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST
+                    ], $readPreference),
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS => $collection->count([
+                        'completedAt' => $dateRange,
+                        'document.replacementAttorneyDecisions.when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS
+                    ], $readPreference)
+                ],
+                'how' => [
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY => $collection->count([
+                        'completedAt' => $dateRange,
+                        'document.replacementAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
+                    ], $readPreference),
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY => $collection->count([
+                        'completedAt' => $dateRange,
+                        'document.replacementAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY
+                    ], $readPreference),
+                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS => $collection->count([
+                        'completedAt' => $dateRange,
+                        'document.replacementAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS
+                    ], $readPreference)
+                ]
+            ];
+
+            $optionStats[date('Y-m', $start->getTimestamp())] = $month;
+
+            $start->modify("first day of -1 month");
+            $end->modify("last day of -1 month");
+        }
+
+        ksort($optionStats);
+
+        return [
+            'generated' => date('d/m/Y H:i:s', (new DateTime())->getTimestamp()),
+            'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000),
+            'by-month' => $optionStats
         ];
     }
 
