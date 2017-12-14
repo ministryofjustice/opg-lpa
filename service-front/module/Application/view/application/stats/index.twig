@@ -367,13 +367,13 @@
 
     {% endif %}
 
-    {% if (radioButtons.generated == false) %}
+    {% if (options.generated == false) %}
         <p>Radio buttons failed to generate</p>
     {% else %}
 
         <h2 class="heading-medium">LPA options</h2>
 
-        <p>Generated {{ radioButtons.generated }} in {{ radioButtons.generationTimeInMs }}ms</p>
+        <p>Generated {{ options.generated }} in {{ options.generationTimeInMs }}ms</p>
 
         <h3 class="heading-small">Type</h3>
 
@@ -382,7 +382,7 @@
                 <thead>
                 <tr>
                     <th>Option</th>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <th class="numeric">{{ month }}</th>
                     {% endfor %}
                 </tr>
@@ -390,19 +390,19 @@
                 <tbody>
                 <tr>
                     <td>Completed LPAs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.completed }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Health and Welfare</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.type['health-and-welfare'] }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Property and Financial Affairs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.type['property-and-financial'] }}</td>
                     {% endfor %}
                 </tr>
@@ -417,7 +417,7 @@
                 <thead>
                 <tr>
                     <th>Option</th>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <th class="numeric">{{ month }}</th>
                     {% endfor %}
                 </tr>
@@ -425,19 +425,19 @@
                 <tbody>
                 <tr>
                     <td>Completed LPAs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.completed }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Yes</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.canSign.true }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>No</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.canSign.false }}</td>
                     {% endfor %}
                 </tr>
@@ -452,7 +452,7 @@
                 <thead>
                 <tr>
                     <th>Option</th>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <th class="numeric">{{ month }}</th>
                     {% endfor %}
                 </tr>
@@ -460,25 +460,25 @@
                 <tbody>
                 <tr>
                     <td>Completed LPAs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.completed }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Yes</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.replacementAttorneys.yes }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>No</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.replacementAttorneys.no }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Multiple</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.replacementAttorneys.multiple }}</td>
                     {% endfor %}
                 </tr>
@@ -493,7 +493,7 @@
                 <thead>
                 <tr>
                     <th>Option</th>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <th class="numeric">{{ month }}</th>
                     {% endfor %}
                 </tr>
@@ -501,25 +501,25 @@
                 <tbody>
                 <tr>
                     <td>Completed LPAs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.completed }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Yes</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.peopleToNotify.yes }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>No</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.peopleToNotify.no }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Multiple</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.peopleToNotify.multiple }}</td>
                     {% endfor %}
                 </tr>
@@ -534,7 +534,7 @@
                 <thead>
                 <tr>
                     <th>Option</th>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <th class="numeric">{{ month }}</th>
                     {% endfor %}
                 </tr>
@@ -542,19 +542,19 @@
                 <tbody>
                 <tr>
                     <td>Completed LPAs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.completed }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Donor</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.whoIsRegistering.donor }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Attorneys</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.whoIsRegistering.attorneys }}</td>
                     {% endfor %}
                 </tr>
@@ -569,7 +569,7 @@
                 <thead>
                 <tr>
                     <th>Option</th>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <th class="numeric">{{ month }}</th>
                     {% endfor %}
                 </tr>
@@ -577,19 +577,19 @@
                 <tbody>
                 <tr>
                     <td>Completed LPAs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.completed }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Yes</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.repeatCaseNumber.yes }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>No</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.repeatCaseNumber.no }}</td>
                     {% endfor %}
                 </tr>
@@ -604,7 +604,7 @@
                 <thead>
                 <tr>
                     <th>Option</th>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <th class="numeric">{{ month }}</th>
                     {% endfor %}
                 </tr>
@@ -612,43 +612,43 @@
                 <tbody>
                 <tr>
                     <td>Completed LPAs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.completed }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>By card</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.payment.card }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>By cheque</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.payment.cheque }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>No fee - benefits</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.payment.reducedFeeReceivesBenefits }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>No fee - Universal Credit</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.payment.reducedFeeUniversalCredit }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Reduced fee - low income</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.payment.reducedFeeLowIncome }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Full fee</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.payment.notApply }}</td>
                     {% endfor %}
                 </tr>
@@ -663,7 +663,7 @@
                 <thead>
                 <tr>
                     <th>Option</th>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <th class="numeric">{{ month }}</th>
                     {% endfor %}
                 </tr>
@@ -671,19 +671,19 @@
                 <tbody>
                 <tr>
                     <td>Completed LPAs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.completed }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>As soon as it's registered</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.primaryAttorneyDecisions.when['now'] }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Only if I don't have mental capacity</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.primaryAttorneyDecisions.when['no-capacity'] }}</td>
                     {% endfor %}
                 </tr>
@@ -698,7 +698,7 @@
                 <thead>
                 <tr>
                     <th>Option</th>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <th class="numeric">{{ month }}</th>
                     {% endfor %}
                 </tr>
@@ -706,31 +706,31 @@
                 <tbody>
                 <tr>
                     <td>Completed LPAs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.completed }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Multiple primary attorneys</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.primaryAttorneys.multiple }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Jointly and severally</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.primaryAttorneyDecisions.how['jointly-attorney-severally'] }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Jointly</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.primaryAttorneyDecisions.how['jointly'] }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Jointly for some decisions, jointly and severally for other decisions</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.primaryAttorneyDecisions.how['depends'] }}</td>
                     {% endfor %}
                 </tr>
@@ -745,7 +745,7 @@
                 <thead>
                 <tr>
                     <th>Option</th>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <th class="numeric">{{ month }}</th>
                     {% endfor %}
                 </tr>
@@ -753,25 +753,25 @@
                 <tbody>
                 <tr>
                     <td>Completed LPAs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.completed }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Health and welfare LPAs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.type['health-and-welfare'] }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Attorneys can make decisions about life-sustaining treatment</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.primaryAttorneyDecisions.canSustainLife.true }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Attorneys can't make decisions about life-sustaining treatment</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.primaryAttorneyDecisions.canSustainLife.false }}</td>
                     {% endfor %}
                 </tr>
@@ -786,7 +786,7 @@
                 <thead>
                 <tr>
                     <th>Option</th>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <th class="numeric">{{ month }}</th>
                     {% endfor %}
                 </tr>
@@ -794,31 +794,31 @@
                 <tbody>
                 <tr>
                     <td>Completed LPAs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.completed }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Have replacement attorneys</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.replacementAttorneys.yes }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>As soon as one of the original attorneys can no longer act</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.replacementAttorneyDecisions.when['first'] }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Only when none of the original attorneys can act</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.replacementAttorneyDecisions.when['last'] }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>In some other way...</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.replacementAttorneyDecisions.when['depends'] }}</td>
                     {% endfor %}
                 </tr>
@@ -833,7 +833,7 @@
                 <thead>
                 <tr>
                     <th>Option</th>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <th class="numeric">{{ month }}</th>
                     {% endfor %}
                 </tr>
@@ -841,31 +841,31 @@
                 <tbody>
                 <tr>
                     <td>Completed LPAs</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.completed }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Multiple replacement attorneys</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.replacementAttorneys.multiple }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Jointly and severally</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.replacementAttorneyDecisions.how['jointly-attorney-severally'] }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Jointly</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.replacementAttorneyDecisions.how['jointly'] }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Jointly for some decisions, jointly and severally for other decisions</td>
-                    {% for month,values in radioButtons['by-month'] %}
+                    {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.replacementAttorneyDecisions.how['depends'] }}</td>
                     {% endfor %}
                 </tr>
