@@ -585,7 +585,7 @@ class Stats implements ServiceLocatorAwareInterface
             'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
         ];
 
-        $radioButtonStats = [];
+        $optionStats = [];
 
         $start = new DateTime('first day of this month');
         $start->setTime(0, 0, 0);
@@ -870,18 +870,18 @@ class Stats implements ServiceLocatorAwareInterface
                 ]
             ];
 
-            $radioButtonStats[date('Y-m', $start->getTimestamp())] = $month;
+            $optionStats[date('Y-m', $start->getTimestamp())] = $month;
 
             $start->modify("first day of -1 month");
             $end->modify("last day of -1 month");
         }
 
-        ksort($radioButtonStats);
+        ksort($optionStats);
 
         return [
             'generated' => date('d/m/Y H:i:s', (new DateTime())->getTimestamp()),
             'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000),
-            'by-month' => $radioButtonStats
+            'by-month' => $optionStats
         ];
     }
 
