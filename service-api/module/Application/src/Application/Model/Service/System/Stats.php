@@ -80,11 +80,11 @@ class Stats implements ServiceLocatorAwareInterface
         }
 
         try {
-            $stats['radioButtons'] = $this->getRadioButtonsStats();
-            $this->info("Successfully generated radioButtons stats");
+            $stats['options'] = $this->getOptionsStats();
+            $this->info("Successfully generated options stats");
         } catch (Exception $ex) {
-            $this->err("Failed to generate radioButtons stats due to {$ex->getMessage()}", [$ex]);
-            $stats['radioButtons'] = ['generated' => false];
+            $this->err("Failed to generate options stats due to {$ex->getMessage()}", [$ex]);
+            $stats['options'] = ['generated' => false];
         }
 
         $stats['generated'] = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
@@ -574,7 +574,7 @@ class Stats implements ServiceLocatorAwareInterface
         ];
     }
 
-    private function getRadioButtonsStats()
+    private function getOptionsStats()
     {
         $startGeneration = microtime(true);
 
