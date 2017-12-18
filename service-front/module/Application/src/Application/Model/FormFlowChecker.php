@@ -603,7 +603,7 @@ class FormFlowChecker extends StateChecker
 
     private function isApplicantAccessible()
     {
-        if ($this->metadataIsPresent(Metadata::CERTIFICATE_PROVIDER_SKIPPED) || $this->lpaHasCertificateProvider()) {
+        if ($this->lpaHasCreated() && ($this->metadataIsPresent(Metadata::CERTIFICATE_PROVIDER_SKIPPED) || $this->lpaHasCertificateProvider())) {
             return true;
         }
 
