@@ -2,6 +2,7 @@
 
 namespace Opg\Lpa\DataModel\Lpa;
 
+use Application\Model\Service\Lpa\Metadata;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
@@ -166,7 +167,7 @@ class StateChecker
 
     protected function lpaHasApplicant()
     {
-        return ($this->lpa->document->whoIsRegistering == 'donor' || (is_array($this->lpa->document->whoIsRegistering) && count($this->lpa->document->whoIsRegistering) > 0));
+        return ($this->lpaHasDocument() && ($this->lpa->document->whoIsRegistering == 'donor' || (is_array($this->lpa->document->whoIsRegistering) && count($this->lpa->document->whoIsRegistering) > 0)));
     }
 
     /**
@@ -249,6 +250,11 @@ class StateChecker
     protected function lpaHasCertificateProvider()
     {
         return ($this->lpaHasPrimaryAttorney() && $this->lpa->document->certificateProvider instanceof CertificateProvider);
+    }
+
+    protected function lpaHasCertificateProviderSkipped()
+    {
+        return array_key_exists(Metadata::CERTIFICATE_PROVIDER_SKIPPED, $this->lpa->metadata);
     }
 
     protected function lpaHowReplacementAttorneysMakeDecisionHasValue()
