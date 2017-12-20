@@ -363,7 +363,27 @@ class AccordionBottomTest extends TestCase
 
         $helperReturns = $this->getAccordion('lpa/replacement-attorney')->__invoke($lpa)->bottom();
 
-        $this->assertEquals(array(), $helperReturns);
+        $this->assertEquals(
+                array(
+                    0 => array(
+                        'routeName' => 'lpa/how-replacement-attorneys-make-decision',
+                    ),
+                    1 => array(
+                        'routeName' => 'lpa/applicant',
+                    ),
+                    2 => array(
+                        'routeName' => 'lpa/correspondent',
+                    ),
+                    3 => array(
+                        'routeName' => 'lpa/who-are-you',
+                    ),
+                    4 => array(
+                        'routeName' => 'lpa/repeat-application',
+                    ),
+                    5 => array(
+                        'routeName' => 'lpa/fee-reduction',
+                    )
+                ), $helperReturns);
     }
 
     public function testReplacementAttorneyStepIn ()
