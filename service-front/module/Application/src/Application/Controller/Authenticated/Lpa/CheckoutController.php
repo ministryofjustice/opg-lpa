@@ -67,7 +67,9 @@ class CheckoutController extends AbstractLpaController
 
     private function redirectToMoreInfoRequired()
     {
-        $this->redirect()->toRoute('lpa/more-info-required', ['lpa-id' => $this->getLpa()->id]);
+        $route = 'lpa/more-info-required';
+
+        $this->redirect()->toRoute($route, ['lpa-id' => $this->getLpa()->id], $this->getFlowChecker()->getRouteOptions($route));
 
         return $this->getResponse();
     }
@@ -359,7 +361,7 @@ class CheckoutController extends AbstractLpaController
 
         // Shows cancel page
         return new ViewModel([
-            'worldpayForm' => $worldPayForm,
+            'worldPayForm' => $worldPayForm,
         ]);
     }
 
@@ -377,7 +379,7 @@ class CheckoutController extends AbstractLpaController
 
         // Shows failure page
         return new ViewModel([
-            'worldpayForm' => $worldPayForm,
+            'worldPayForm' => $worldPayForm,
         ]);
     }
 

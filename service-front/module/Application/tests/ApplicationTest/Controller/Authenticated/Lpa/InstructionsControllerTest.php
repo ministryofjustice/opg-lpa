@@ -150,8 +150,8 @@ class InstructionsControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/instructions');
         $this->setRedirectToRoute('lpa/applicant', $this->lpa, $response);
-        $this->lpaApplicationService->shouldReceive('setMetaData')
-            ->withArgs([$this->lpa->id, ['instruction-confirmed' => true]])->andReturn(true)->once();
+        $this->metadata->shouldReceive('setInstructionConfirmed')
+            ->withArgs([$this->lpa])->once();
 
         $result = $this->controller->indexAction();
 

@@ -64,7 +64,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
 
         // redirect to the calculated route if it is not equal to the current route
         if ($calculatedRoute != $currentRoute) {
-            return $this->redirect()->toRoute($calculatedRoute, ['lpa-id' => $lpa->id]);
+            return $this->redirect()->toRoute($calculatedRoute, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($calculatedRoute));
         }
 
         // inject lpa into view
@@ -98,14 +98,15 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         //  Get the current route and the LPA ID to move to the next route
         $nextRoute = $this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName());
 
-        return $this->redirect()->toRoute($nextRoute, ['lpa-id' => $this->getLpa()->id]);
+        return $this->redirect()->toRoute($nextRoute, ['lpa-id' => $this->getLpa()->id], $this->getFlowChecker()->getRouteOptions($nextRoute));
     }
 
     /**
      * removes replacement attorney decisions that no longer apply to this LPA.
      *
      */
-    protected function cleanUpReplacementAttorneyDecisions(){
+    protected function cleanUpReplacementAttorneyDecisions()
+    {
         $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int) $this->getLpa()->id);
         $RACleanupService = $this->getServiceLocator()->get('ReplacementAttorneyCleanup');
         $RACleanupService->cleanUp($lpa, $this->getLpaApplicationService());
