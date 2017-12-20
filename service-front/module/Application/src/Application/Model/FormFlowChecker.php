@@ -287,6 +287,11 @@ class FormFlowChecker extends StateChecker
         return false;
     }
 
+    public function getRouteOptions($route)
+    {
+        return [];
+    }
+
     private function isLpaAccessible()
     {
         if ($this->lpaHasDocument()) {
@@ -553,7 +558,7 @@ class FormFlowChecker extends StateChecker
 
     private function isPeopleToNotifyAccessible()
     {
-        if ($this->isCertificateProviderAccessible() === true && ($this->metadataIsPresent(Metadata::CERTIFICATE_PROVIDER_SKIPPED) || $this->lpaHasCertificateProvider())) {
+        if ($this->isCertificateProviderAccessible() === true && ($this->lpaHasCertificateProviderSkipped() || $this->lpaHasCertificateProvider())) {
             return true;
         }
 
@@ -603,7 +608,7 @@ class FormFlowChecker extends StateChecker
 
     private function isApplicantAccessible()
     {
-        if ($this->lpaHasCreated() && ($this->metadataIsPresent(Metadata::CERTIFICATE_PROVIDER_SKIPPED) || $this->lpaHasCertificateProvider())) {
+        if ($this->lpaHasCreated() && ($this->lpaHasCertificateProviderSkipped() || $this->lpaHasCertificateProvider())) {
             return true;
         }
 
@@ -821,7 +826,7 @@ class FormFlowChecker extends StateChecker
 
     private function returnToCertificateProvider()
     {
-        return ($this->metadataIsPresent(Metadata::CERTIFICATE_PROVIDER_SKIPPED) || $this->lpaHasCertificateProvider());
+        return ($this->lpaHasCertificateProviderSkipped() || $this->lpaHasCertificateProvider());
     }
 
     private function returnToPeopleToNotify()
