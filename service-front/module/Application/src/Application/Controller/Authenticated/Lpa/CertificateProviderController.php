@@ -3,8 +3,8 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
-use Application\Model\Service\Lpa\Metadata;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\ViewModel;
 
 class CertificateProviderController extends AbstractLpaActorController
@@ -81,7 +81,7 @@ class CertificateProviderController extends AbstractLpaActorController
                 }
 
                 //  Remove the skipped metadata tag if it was set
-                $this->getServiceLocator()->get('Metadata')->removeMetadata($this->getLpa(), Metadata::CERTIFICATE_PROVIDER_SKIPPED);
+                $this->getServiceLocator()->get('Metadata')->removeMetadata($this->getLpa(), Lpa::CERTIFICATE_PROVIDER_SKIPPED);
 
                 return $this->moveToNextRoute();
             }

@@ -15,49 +15,41 @@ use RuntimeException;
  */
 class Metadata implements ServiceLocatorAwareInterface
 {
-    const REPLACEMENT_ATTORNEYS_CONFIRMED = 'replacement-attorneys-confirmed';
-    const CERTIFICATE_PROVIDER_SKIPPED = 'certificate-provider-skipped';
-    const PEOPLE_TO_NOTIFY_CONFIRMED = 'people-to-notify-confirmed';
-    const REPEAT_APPLICATION_CONFIRMED = 'repeat-application-confirmed';
-    const APPLY_FOR_FEE_REDUCTION = 'apply-for-fee-reduction';
-    const INSTRUCTION_CONFIRMED = 'instruction-confirmed';
-    const ANALYTICS_RETURN_COUNT = 'analyticsReturnCount';
-
     use ServiceLocatorAwareTrait;
 
     public function setReplacementAttorneysConfirmed(Lpa $lpa)
     {
-        return $this->setMetadataByKey($lpa, self::REPLACEMENT_ATTORNEYS_CONFIRMED);
+        return $this->setMetadataByKey($lpa, Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED);
     }
 
     public function setCertificateProviderSkipped(Lpa $lpa)
     {
-        return $this->setMetadataByKey($lpa, self::CERTIFICATE_PROVIDER_SKIPPED);
+        return $this->setMetadataByKey($lpa, Lpa::CERTIFICATE_PROVIDER_SKIPPED);
     }
 
     public function setPeopleToNotifyConfirmed(Lpa $lpa)
     {
-        return $this->setMetadataByKey($lpa, self::PEOPLE_TO_NOTIFY_CONFIRMED);
+        return $this->setMetadataByKey($lpa, Lpa::PEOPLE_TO_NOTIFY_CONFIRMED);
     }
 
     public function setRepeatApplicationConfirmed(Lpa $lpa)
     {
-        return $this->setMetadataByKey($lpa, self::REPEAT_APPLICATION_CONFIRMED);
+        return $this->setMetadataByKey($lpa, Lpa::REPEAT_APPLICATION_CONFIRMED);
     }
 
     public function setInstructionConfirmed(Lpa $lpa)
     {
-        return $this->setMetadataByKey($lpa, self::INSTRUCTION_CONFIRMED);
+        return $this->setMetadataByKey($lpa, Lpa::INSTRUCTION_CONFIRMED);
     }
 
     public function setAnalyticsReturnCount(Lpa $lpa, $returnCount)
     {
-        return $this->setMetadataByKey($lpa, self::ANALYTICS_RETURN_COUNT, $returnCount);
+        return $this->setMetadataByKey($lpa, Lpa::ANALYTICS_RETURN_COUNT, $returnCount);
     }
 
     public function setApplyForFeeReduction(Lpa $lpa, $applyOrNot)
     {
-        return $this->setMetadataByKey($lpa, self::APPLY_FOR_FEE_REDUCTION, $applyOrNot);
+        return $this->setMetadataByKey($lpa, Lpa::APPLY_FOR_FEE_REDUCTION, $applyOrNot);
     }
 
     public function removeMetadata(Lpa $lpa, $key)

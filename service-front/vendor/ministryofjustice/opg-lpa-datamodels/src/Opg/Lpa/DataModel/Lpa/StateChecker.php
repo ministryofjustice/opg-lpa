@@ -2,7 +2,6 @@
 
 namespace Opg\Lpa\DataModel\Lpa;
 
-use Application\Model\Service\Lpa\Metadata;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
@@ -232,7 +231,7 @@ class StateChecker
 
     protected function hasInstructionOrPreference()
     {
-        return ($this->lpaHasCertificateProvider()
+        return (($this->lpaHasCertificateProviderSkipped() || $this->lpaHasCertificateProvider())
             && ($this->lpa->document->instruction !== null || $this->lpa->document->preference !== null));
     }
 
@@ -254,7 +253,7 @@ class StateChecker
 
     protected function lpaHasCertificateProviderSkipped()
     {
-        return array_key_exists(Metadata::CERTIFICATE_PROVIDER_SKIPPED, $this->lpa->metadata);
+        return array_key_exists(Lpa::CERTIFICATE_PROVIDER_SKIPPED, $this->lpa->metadata);
     }
 
     protected function lpaHowReplacementAttorneysMakeDecisionHasValue()
