@@ -608,7 +608,7 @@ class FormFlowChecker extends StateChecker
 
     private function isApplicantAccessible()
     {
-        if ($this->lpaHasCreated() && ($this->lpaHasCertificateProviderSkipped() || $this->lpaHasCertificateProvider())) {
+        if ($this->hasInstructionOrPreference()) {
             return true;
         }
 
