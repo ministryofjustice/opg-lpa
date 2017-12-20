@@ -5,7 +5,6 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 use Application\Controller\Authenticated\Lpa\RepeatApplicationController;
 use Application\Form\Lpa\RepeatApplicationForm;
 use Application\Model\Service\Authentication\Identity\User;
-use Application\Model\Service\Lpa\Metadata;
 use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
 use Mockery;
@@ -63,7 +62,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetNotRepeatApplication()
     {
-        unset($this->lpa->metadata[Metadata::REPEAT_APPLICATION_CONFIRMED]);
+        unset($this->lpa->metadata[Lpa::REPEAT_APPLICATION_CONFIRMED]);
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 

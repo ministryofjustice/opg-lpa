@@ -2,11 +2,9 @@
 
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
-use Application\Controller\Authenticated\Lpa\CertificateProviderController;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Form\Lpa\CertificateProviderForm;
 use Application\Model\Service\Authentication\Identity\User;
-use Application\Model\Service\Lpa\Metadata;
 use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
 use Mockery;
@@ -16,7 +14,6 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
-use Zend\Uri\Uri;
 use Zend\View\Model\ViewModel;
 
 class CertificateProviderControllerTest extends AbstractControllerTest
@@ -243,7 +240,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/add');
         $this->form->shouldReceive('setExistingActorNamesData')->once();
         $this->setPostValid($this->form, $postData, null, 2, 2);
-        $this->metadata->shouldReceive('removeMetadata')->withArgs([$this->lpa, Metadata::CERTIFICATE_PROVIDER_SKIPPED])->once();
+        $this->metadata->shouldReceive('removeMetadata')->withArgs([$this->lpa, Lpa::CERTIFICATE_PROVIDER_SKIPPED])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setCertificateProvider')->andReturn(true);
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/certificate-provider');

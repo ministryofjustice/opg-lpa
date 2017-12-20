@@ -3,10 +3,9 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
-use Application\Model\Service\Lpa\Metadata;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\ViewModel;
 
 class ReplacementAttorneyController extends AbstractLpaActorController
@@ -96,7 +95,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                 }
 
                 // set REPLACEMENT_ATTORNEYS_CONFIRMED flag in metadata
-                if (!array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $lpa->metadata)) {
+                if (!array_key_exists(Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED, $lpa->metadata)) {
                     $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($lpa);
                 }
 
@@ -289,7 +288,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                 }
 
                 // set REPLACEMENT_ATTORNEYS_CONFIRMED flag in metadata
-                if (!array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->getLpa()->metadata)) {
+                if (!array_key_exists(Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->getLpa()->metadata)) {
                     $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($this->getLpa());
                 }
 
