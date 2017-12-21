@@ -51,18 +51,18 @@
 
     {% include 'application/summary/partials/summary-table.twig' %}
 
-    <div class="appstatus" role="alert">
-        <h2 class="heading-xlarge">Confirm and
-            {% if lpa.payment.amount == 0 %}finish{% else %}pay{% endif %}
-        </h2>
-        {% if lpa.payment.amount is null %}
-            <h3 class="heading-medium">We'll contact you about the fee</h3>
-        {% else %}
-            <h3 class="heading-medium">Application fee: £{{ moneyFormat(lpa.payment.amount) }}</h3>
-        {% endif %}
-    </div>
-
     {% if (lpaIsCompleted) %}
+
+        <div class="appstatus" role="alert">
+            <h2 class="heading-xlarge">Confirm and
+                {% if lpa.payment.amount == 0 %}finish{% else %}pay{% endif %}
+            </h2>
+            {% if lpa.payment.amount is null %}
+                <h3 class="heading-medium">We'll contact you about the fee</h3>
+            {% else %}
+                <h3 class="heading-medium">Application fee: £{{ moneyFormat(lpa.payment.amount) }}</h3>
+            {% endif %}
+        </div>
 
         {% if lpa.payment.amount == 0 %}
 
