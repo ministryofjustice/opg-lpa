@@ -596,19 +596,6 @@ trait ClientV1Trait
     }
 
     /**
-     * Returns metadata of for give LPA id.
-     *
-     * NOTE: Careful with this! It is used by ClientV2ApiTrait but nowhere else
-     *
-     * @param string $lpaId
-     * @return array
-     */
-    public function getMetaData($lpaId)
-    {
-        return $this->getResource($lpaId, 'metadata', true);
-    }
-
-    /**
      * Return the API response for getting the resource of the given type
      *
      * If property not yet set, return null

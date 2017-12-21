@@ -101,7 +101,7 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->form, $result->getVariable('worldpayForm'));
+        $this->assertEquals($this->form, $result->getVariable('worldPayForm'));
         $this->assertEquals(41, $result->getVariable('lowIncomeFee'));
         $this->assertEquals(82, $result->getVariable('fullFee'));
     }
@@ -157,7 +157,7 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->form, $result->getVariable('worldpayForm'));
+        $this->assertEquals($this->form, $result->getVariable('worldPayForm'));
         $this->assertEquals(41, $result->getVariable('lowIncomeFee'));
         $this->assertEquals(82, $result->getVariable('fullFee'));
     }
@@ -612,7 +612,7 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->form, $result->getVariable('worldpayForm'));
+        $this->assertEquals($this->form, $result->getVariable('worldPayForm'));
     }
 
     public function testWorldpayCancelActionPostSuccess()
@@ -676,7 +676,7 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->form, $result->getVariable('worldpayForm'));
+        $this->assertEquals($this->form, $result->getVariable('worldPayForm'));
     }
 
     public function testWorldpayFailureActionPostSuccess()

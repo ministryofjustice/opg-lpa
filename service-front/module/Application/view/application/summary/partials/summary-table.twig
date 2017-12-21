@@ -206,20 +206,22 @@
 
         {% endif %}
 
-
         {# CERTIFICATE PROVIDER #}
-        {% if lpa.document.certificateProvider is defined %}
-
+        {% if ( lpa.document.certificateProvider ) %}
             <tr class="group-start">
                 <td class="table-summary-heading" colspan="3">
                     <h3 class="heading-small">Certificate provider</h3>
                 </td>
             </tr>
 
-            {{ macros.outputActor( lpa.document.certificateProvider, url('lpa/certificate-provider', {'lpa-id': lpa.id}) ) }}
-
+           {{ macros.outputActor( lpa.document.certificateProvider, url('lpa/certificate-provider', {'lpa-id': lpa.id}) ) }}
+        {% else %}
+            <tr class="group-single incomplete">
+                <td class="table-summary-title">Certificate provider</td>
+                <td class="table-summary-content incomplete">The certificate provider has not been nominated yet</td>
+                <td class="table-summary-action"><a href="{{ url('lpa/certificate-provider', {'lpa-id': lpa.id}) }}">Edit</a></td>
+            </tr>
         {% endif %}
-
 
         {# PEOPLE TO NOTIFY #}
         {% if lpa.document.peopleToNotify is defined and lpa.document.peopleToNotify|length > 0 %}

@@ -6,7 +6,6 @@ use Application\Form\Lpa\AttorneyForm;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Form\Lpa\TrustCorporationForm;
 use Application\Model\Service\Authentication\Identity\User;
-use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
@@ -341,7 +340,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        unset($this->lpa->metadata[Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED]);
+        unset($this->lpa->metadata[Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED]);
 
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
@@ -511,7 +510,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        unset($this->lpa->metadata[Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED]);
+        unset($this->lpa->metadata[Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED]);
 
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;

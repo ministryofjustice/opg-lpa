@@ -43,9 +43,7 @@ class InstructionsController extends AbstractLpaController
                     || !isset($lpa->metadata['instruction-confirmed'])
                     || $lpa->metadata['instruction-confirmed'] !== true) {
 
-                    $this->getLpaApplicationService()->setMetaData($lpaId, [
-                        'instruction-confirmed' => true
-                    ]);
+                    $this->getServiceLocator()->get('Metadata')->setInstructionConfirmed($this->getLpa());
                 }
 
                 return $this->moveToNextRoute();

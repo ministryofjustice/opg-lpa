@@ -19,27 +19,14 @@ class IndexController extends AbstractLpaController
         // We want to track the number of times an LPA has been 'worked on'.
         // Which is defined by the number of times this method is called, per LPA.
 
-        // Assume it's the first return...
-        $analyticsReturnCount = 0;
-
-        // but update the values if it's not the first time...
-        if (isset($lpa->metadata['analyticsReturnCount'])) {
-            $analyticsReturnCount = $lpa->metadata['analyticsReturnCount'];
-        }
-
-        //  Increment the analytics return count
+        //  Get the current count and increment by 1
+        $analyticsReturnCount = (isset($lpa->metadata['analyticsReturnCount']) ? $lpa->metadata['analyticsReturnCount'] : 0);
         $analyticsReturnCount++;
 
-        $this->getLpaApplicationService()->setMetaData($lpa->id, [
-            'analyticsReturnCount' => $analyticsReturnCount
-        ]);
+        $this->getServiceLocator()->get('Metadata')->setAnalyticsReturnCount($this->getLpa(), $analyticsReturnCount);
 
-        $formFlowChecker = $this->getFlowChecker();
         $destinationRoute = $this->getFlowChecker()->backToForm();
-        $options = $formFlowChecker->getRouteOptions($destinationRoute);
 
-        return $this->redirect()->toRoute($destinationRoute, [
-            'lpa-id' => $lpa->id
-        ], $options);
+        return $this->redirect()->toRoute($destinationRoute, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($destinationRoute));
     }
 }
