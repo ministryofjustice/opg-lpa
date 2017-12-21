@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b4666bf8e48f96ad2c88de5d14566680",
+    "content-hash": "2342adeac79cf9ce9c8d9df39ecefd23",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -523,16 +523,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "7.0.1",
+            "version": "8.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "334532a6996b9ff0524905173f599b42b014e031"
+                "reference": "d8d4109010f5cdc52ec4f171b45b75d65a28bfb9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/334532a6996b9ff0524905173f599b42b014e031",
-                "reference": "334532a6996b9ff0524905173f599b42b014e031",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/d8d4109010f5cdc52ec4f171b45b75d65a28bfb9",
+                "reference": "d8d4109010f5cdc52ec4f171b45b75d65a28bfb9",
                 "shasum": ""
             },
             "require": {
@@ -555,10 +555,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/7.0.1",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/8.0.0",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2017-12-05T09:39:46+00:00"
+            "time": "2017-12-21T10:53:49+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",

@@ -20,6 +20,17 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 class Lpa extends AbstractData
 {
     /**
+     * Metadata constants
+     */
+    const REPLACEMENT_ATTORNEYS_CONFIRMED = 'replacement-attorneys-confirmed';
+    const CERTIFICATE_PROVIDER_SKIPPED = 'certificate-provider-skipped';
+    const PEOPLE_TO_NOTIFY_CONFIRMED = 'people-to-notify-confirmed';
+    const REPEAT_APPLICATION_CONFIRMED = 'repeat-application-confirmed';
+    const APPLY_FOR_FEE_REDUCTION = 'apply-for-fee-reduction';
+    const INSTRUCTION_CONFIRMED = 'instruction-confirmed';
+    const ANALYTICS_RETURN_COUNT = 'analyticsReturnCount';
+
+    /**
      * @var int The LPA identifier.
      */
     protected $id;
