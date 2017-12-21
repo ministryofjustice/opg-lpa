@@ -13,23 +13,6 @@ use PHPUnit\Framework\TestCase;
 
 class StateCheckerTest extends TestCase
 {
-    public function testConstructor()
-    {
-        $lpa = FixturesData::getHwLpa();
-        $stateChecker = new StateChecker($lpa);
-        $this->assertTrue($lpa === $stateChecker->getLpa());
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage No LPA has been set
-     */
-    public function testConstructorNoLpa()
-    {
-        $stateChecker = new StateChecker(null);
-        $stateChecker->getLpa();
-    }
-
     public function testCanGenerateLP1()
     {
         $lpa = FixturesData::getHwLpa();

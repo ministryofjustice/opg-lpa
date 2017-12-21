@@ -52,6 +52,7 @@ class DonorController extends AbstractLpaActorController
         //  If a donor has already been provided then redirect to the main donor screen
         if ($lpa->document->donor instanceof Donor) {
             $route = 'lpa/donor';
+
             return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
         }
 

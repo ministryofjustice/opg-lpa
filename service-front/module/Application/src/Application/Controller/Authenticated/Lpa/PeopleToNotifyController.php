@@ -3,8 +3,8 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
-use Application\Model\Service\Lpa\Metadata;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\ViewModel;
 
 class PeopleToNotifyController extends AbstractLpaActorController
@@ -76,6 +76,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
         if (count($lpa->document->peopleToNotify) >= 5) {
             $route = 'lpa/people-to-notify';
+
             return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
         }
 
@@ -95,7 +96,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
                 }
 
                 // remove metadata flag value if exists
-                if (!array_key_exists(Metadata::PEOPLE_TO_NOTIFY_CONFIRMED, $lpa->metadata)) {
+                if (!array_key_exists(Lpa::PEOPLE_TO_NOTIFY_CONFIRMED, $lpa->metadata)) {
                         $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($lpa);
                 }
 
@@ -201,7 +202,6 @@ class PeopleToNotifyController extends AbstractLpaActorController
         return $viewModel;
     }
 
-
     public function deleteAction()
     {
         $lpa = $this->getLpa();
@@ -221,8 +221,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         }
 
         $route = 'lpa/people-to-notify';
-        return $this->redirect()->toRoute($route, [
-            'lpa-id' => $lpa->id
-        ], $this->getFlowChecker()->getRouteOptions($route));
+
+        return $this->redirect()->toRoute($route, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($route));
     }
 }

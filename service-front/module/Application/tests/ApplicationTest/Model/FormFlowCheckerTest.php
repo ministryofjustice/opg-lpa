@@ -3,7 +3,6 @@
 namespace ApplicationTest\Model;
 
 use Application\Model\FormFlowChecker;
-use Application\Model\Service\Lpa\Metadata;
 use ApplicationTest\Bootstrap;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
@@ -1644,7 +1643,7 @@ class FormFlowCheckerTest extends TestCase
     private function addReplacementAttorney($isHuman = true)
     {
         $this->lpa->document->replacementAttorneys[] = ($isHuman ? new Human() : new TrustCorporation());
-        $this->lpa->metadata[Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED] = 1;
+        $this->lpa->metadata[Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED] = 1;
 
         return $this;
     }
@@ -1695,7 +1694,7 @@ class FormFlowCheckerTest extends TestCase
     private function addPersonToNotify()
     {
         $this->lpa->document->peopleToNotify[] = new NotifiedPerson();
-        $this->lpa->metadata[Metadata::PEOPLE_TO_NOTIFY_CONFIRMED] = 1;
+        $this->lpa->metadata[Lpa::PEOPLE_TO_NOTIFY_CONFIRMED] = 1;
 
         return $this;
     }
@@ -1738,7 +1737,7 @@ class FormFlowCheckerTest extends TestCase
     private function setRepeatApplication()
     {
         $this->lpa->repeatCaseNumber = '123456';
-        $this->lpa->metadata[Metadata::REPEAT_APPLICATION_CONFIRMED] = 1;
+        $this->lpa->metadata[Lpa::REPEAT_APPLICATION_CONFIRMED] = 1;
 
         return $this;
     }

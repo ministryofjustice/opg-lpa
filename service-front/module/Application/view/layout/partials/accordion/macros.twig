@@ -4,32 +4,32 @@
     <li><a id="current" class="accordion-current"></a></li>
 {% endif %}
 
-<li class="section complete">
+<li class="section {{ data.status == 'Incomplete' ? 'incomplete' : 'complete' }}">
     <div class="accordion-summary {% if data.cssClass is defined %}{{ data.cssClass }}{% endif %}">
         <div class="title-box {% if data.titleBoxCssClass is defined %}{{ data.titleBoxCssClass }}{% endif %}">
-            <p class="title flush--ends tablet-and-up {% if data.titleCssClass is defined %}{{ data.titleCssClass }}{% endif %}">{{ data.desktop|raw }}</p>
+            <p class="title flush--ends tablet-and-up {% if data.titleCssClass is defined %}{{ data.titleCssClass }}{% endif %}">{{ data.text|raw }}</p>
         </div>
         {% if data.edit is defined %}
             <div class="label-and-edit-box">
-            <p class="link flush--ends">
-                <a href="{{ data.edit|raw }}" class="link-edit">
-                    {% if data.readOnly is defined and data.readOnly == true %}
-                        <span class="tablet-and-up">view</span>
-                    {% else %}
-                        <span class="tablet-and-up">edit</span>
-                    {% endif %}
-                    <span class="visually-hidden">: </span>
-                    <span class="mobile">{{ data.mobile|raw }}</span>
-                </a>
-            </p>
-            {% if data.status is defined %}
-                <span class="label">{{ data.status }}</span>
-            {% endif %}
-        </div>
+                <p class="link flush--ends">
+                    <a href="{{ data.edit|raw }}" class="link-edit">
+                        {% if data.readOnly is defined and data.readOnly == true %}
+                            <span class="tablet-and-up">view</span>
+                        {% else %}
+                            <span class="tablet-and-up">edit</span>
+                        {% endif %}
+                        <span class="visually-hidden">: </span>
+                        <span class="mobile">{{ data.text|raw }}</span>
+                    </a>
+                </p>
+                {% if data.status is defined %}
+                    <span class="label">{{ data.status }}</span>
+                {% endif %}
+            </div>
         {% else %}
             {# No edit link. This is currently only for the 'review your LPA' bar #}
             <div class="title-box {% if data.titleBoxCssClass is defined %}{{ data.titleBoxCssClass }}{% endif %} mobile">
-                <p class="title flush--ends hard--left">{{ data.mobile|raw }}</p>
+                <p class="title flush--ends hard--left">{{ data.text|raw }}</p>
             </div>
         {% endif %}
     </div>

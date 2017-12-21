@@ -3,7 +3,7 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Application\Model\Service\Lpa\Metadata;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Zend\View\Model\ViewModel;
@@ -71,7 +71,7 @@ class RepeatApplicationController extends AbstractLpaController
                 return $this->moveToNextRoute();
             }
         } else {
-            if (array_key_exists(Metadata::REPEAT_APPLICATION_CONFIRMED, $lpa->metadata)) {
+            if (array_key_exists(Lpa::REPEAT_APPLICATION_CONFIRMED, $lpa->metadata)) {
                 $form->bind([
                     'isRepeatApplication' => ($lpa->repeatCaseNumber === null)?'is-new':'is-repeat',
                     'repeatCaseNumber'    => $lpa->repeatCaseNumber,

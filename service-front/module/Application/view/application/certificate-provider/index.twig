@@ -68,23 +68,30 @@
             <p class="person-address flush--ends">{{ lpa.document.certificateProvider.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
-                    <a href="{{ editUrl }}" data-form="certificateprovider1" class="action-edit js-form-popup">View/edit details</a>
+                    <a href="{{ url('lpa/certificate-provider/edit', {'lpa-id': lpa.id}) }}" data-form="certificateprovider1" class="action-edit js-form-popup">View/edit details</a>
                 </li>
                 <li class="action-item">
-                    <a href="{{ confirmDeleteUrl }}" class="action-delete js-form-popup">Delete</a>
+                    <a href="{{ url('lpa/certificate-provider/confirm-delete', {'lpa-id': lpa.id}) }}" class="action-delete js-form-popup">Delete</a>
                 </li>
             </ul>
         </div>
 
         <div class="form-group">
-            <a href="{{ nextUrl }}" class="button">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
+            <a href="{{ url(nextRoute, {'lpa-id': lpa.id}) }}" class="button">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
 
     {% else %}
 
         <div class="form-group">
-            <a href="{{ addUrl }}" class="button js-form-popup">Add a certificate provider</a>
+            <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" class="button js-form-popup">Add a certificate provider</a>
         </div>
+
+        {# begin form #}
+        {{ form.prepare() ? '' }}
+        {{ form().openTag( form )|raw }}
+            {{ formElement(form.getCsrf) }}
+            <input type="submit" name="submit" class="button-input-to-link" value="Skip this question for now" />
+        {{ form().closeTag|raw }}
 
     {% endif %}
 

@@ -131,27 +131,15 @@ trait ClientV2ApiTrait
     /**
      * Sets the LPA's metadata
      *
-     * Setting metadata is a special case as we need to merge client side at present.
-     *
-     * NB: This is not a deep level merge.
-     *
      * @param string $lpaId
      * @param array $metadata
      * @return boolean
      */
     public function setMetaData($lpaId, array $metadata)
     {
-        $currentMetadata = $this->getMetaData($lpaId);
-
-        if (is_array($currentMetadata)) {
-            // Strip out the _links key
-            unset($currentMetadata['_links']);
-
-            // Merge new data into old
-            $metadata = array_merge($currentMetadata, $metadata);
-        }
-
-        $this->updateApplication($lpaId, ['metadata'=>$metadata]);
+        $this->updateApplication($lpaId, [
+            'metadata' => $metadata
+        ]);
 
         return true;
     }

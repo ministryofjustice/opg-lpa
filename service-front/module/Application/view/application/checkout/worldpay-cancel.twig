@@ -8,14 +8,14 @@
 
     {# worldpay #}
 
-        {% set worldpayForm = formErrorTextExchange(worldpayForm,  {
+        {% set worldPayForm = formErrorTextExchange(worldPayForm,  {
         'email' : {
         'Value is required and can\'t be empty' : 'Please enter an email address'
         }
         }) %}
 
         {# Set form fields variables #}
-        {% set email = worldpayForm.get('email') %}
+        {% set email = worldPayForm.get('email') %}
 
         {# form fields con  fig #}
         {{ email.setAttributes({
@@ -40,12 +40,12 @@
 
     {# -- Worldpay -- #}
     {# begin form #}
-    {{ worldpayForm.prepare() ? '' }}
-    {{ form().openTag( worldpayForm )|raw }}
-    {{ formElement(worldpayForm.getCsrf) }}
+    {{ worldPayForm.prepare() ? '' }}
+    {{ form().openTag( worldPayForm )|raw }}
+    {{ formElement(worldPayForm.getCsrf) }}
 
     {# Error summary #}
-    {{ macros.formErrorSummary(error,worldpayForm,'There was a problem submitting the form') }}
+    {{ macros.formErrorSummary(error,worldPayForm,'There was a problem submitting the form') }}
 
     <fieldset>
         <legend class="visually-hidden">Contact email</legend>

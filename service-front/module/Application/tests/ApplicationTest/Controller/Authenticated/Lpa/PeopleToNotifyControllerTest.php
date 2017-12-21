@@ -2,11 +2,9 @@
 
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
-use Application\Controller\Authenticated\Lpa\PeopleToNotifyController;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Form\Lpa\PeopleToNotifyForm;
 use Application\Model\Service\Authentication\Identity\User;
-use Application\Model\Service\Lpa\Metadata;
 use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
 use Mockery;
@@ -309,7 +307,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testAddActionPostMetadata()
     {
-        unset($this->lpa->metadata[Metadata::PEOPLE_TO_NOTIFY_CONFIRMED]);
+        unset($this->lpa->metadata[Lpa::PEOPLE_TO_NOTIFY_CONFIRMED]);
 
         $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;

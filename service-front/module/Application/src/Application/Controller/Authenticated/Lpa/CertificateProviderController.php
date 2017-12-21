@@ -4,28 +4,37 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\ViewModel;
 
 class CertificateProviderController extends AbstractLpaActorController
 {
     public function indexAction()
     {
-        $lpaId = $this->getLpa()->id;
+        $lpa = $this->getLpa();
 
-        $viewModel = new ViewModel();
+        //  Set hidden form for setting metadata to skip certificate provider if required
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+            'lpa' => $lpa
+        ]);
 
-        if ($this->getLpa()->document->certificateProvider instanceof CertificateProvider) {
-            $viewModel->editUrl = $this->url()->fromRoute('lpa/certificate-provider/edit', ['lpa-id' => $lpaId]);
-            $viewModel->confirmDeleteUrl = $this->url()->fromRoute('lpa/certificate-provider/confirm-delete', ['lpa-id' => $lpaId]);
+        if ($this->request->isPost()) {
+            $form->setData($this->request->getPost());
 
-            $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-            $nextRoute = $this->getFlowChecker()->nextRoute($currentRouteName);
-            $viewModel->nextUrl = $this->url()->fromRoute($nextRoute, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($nextRoute));
+            if ($form->isValid()) {
+                $this->getServiceLocator()->get('Metadata')->setCertificateProviderSkipped($this->getLpa());
+
+                return $this->moveToNextRoute();
+            }
         }
 
-        $viewModel->addUrl = $this->url()->fromRoute('lpa/certificate-provider/add', ['lpa-id' => $lpaId]);
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        $nextRoute = $this->getFlowChecker()->nextRoute($currentRouteName);
 
-        return $viewModel;
+        return new ViewModel([
+            'nextRoute' => $nextRoute,
+            'form'      => $form,
+        ]);
     }
 
     public function addAction()
@@ -51,6 +60,7 @@ class CertificateProviderController extends AbstractLpaActorController
         //  If a certificate provider has already been provided then redirect to the main certificate provider screen
         if ($lpa->document->certificateProvider instanceof CertificateProvider) {
             $route = 'lpa/certificate-provider';
+
             return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
         }
 
@@ -69,6 +79,9 @@ class CertificateProviderController extends AbstractLpaActorController
                 if (!$this->getLpaApplicationService()->setCertificateProvider($lpaId, $cp)) {
                     throw new \RuntimeException('API client failed to save certificate provider for id: '.$lpaId);
                 }
+
+                //  Remove the skipped metadata tag if it was set
+                $this->getServiceLocator()->get('Metadata')->removeMetadata($this->getLpa(), Lpa::CERTIFICATE_PROVIDER_SKIPPED);
 
                 return $this->moveToNextRoute();
             }

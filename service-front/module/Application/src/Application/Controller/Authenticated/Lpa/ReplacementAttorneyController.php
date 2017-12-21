@@ -3,10 +3,9 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
-use Application\Model\Service\Lpa\Metadata;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\ViewModel;
 
 class ReplacementAttorneyController extends AbstractLpaActorController
@@ -90,13 +89,14 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             if ($form->isValid()) {
                 // persist to the api
                 $attorney = new Human($form->getModelDataFromValidatedForm());
+
                 if (!$this->getLpaApplicationService()->addReplacementAttorney($lpaId, $attorney)) {
                     throw new \RuntimeException('API client failed to add a replacement attorney for id: '.$lpaId);
                 }
 
                 // set REPLACEMENT_ATTORNEYS_CONFIRMED flag in metadata
-                if (!array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $lpa->metadata)) {
-                        $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($lpa);
+                if (!array_key_exists(Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED, $lpa->metadata)) {
+                    $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($lpa);
                 }
 
                 $this->cleanUpReplacementAttorneyDecisions();
@@ -250,9 +250,8 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         }
 
         $route = 'lpa/replacement-attorney';
-        return $this->redirect()->toRoute($route, [
-            'lpa-id' => $lpa->id
-        ], $this->getFlowChecker()->getRouteOptions($route));
+
+        return $this->redirect()->toRoute($route, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($route));
     }
 
     public function addTrustAction()
@@ -270,6 +269,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         //  Redirect to human add attorney if trusts are not allowed
         if (!$this->allowTrust()) {
             $route = 'lpa/replacement-attorney/add';
+
             return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
         }
 
@@ -288,7 +288,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
                 }
 
                 // set REPLACEMENT_ATTORNEYS_CONFIRMED flag in metadata
-                if (!array_key_exists(Metadata::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->getLpa()->metadata)) {
+                if (!array_key_exists(Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->getLpa()->metadata)) {
                     $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($this->getLpa());
                 }
 
