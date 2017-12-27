@@ -49,7 +49,8 @@ class CheckoutController extends AbstractLpaController
             }
         }
 
-        $isRepeatApplication = ($this->getLpa()->repeatCaseNumber != null);
+        $lpa = $this->getLpa();
+        $isRepeatApplication = ($lpa->repeatCaseNumber != null);
 
         $lowIncomeFee = Calculator::getLowIncomeFee($isRepeatApplication);
         $lowIncomeFee = (floor($lowIncomeFee) == $lowIncomeFee ? $lowIncomeFee : money_format('%i', $lowIncomeFee));
@@ -57,7 +58,16 @@ class CheckoutController extends AbstractLpaController
         $fullFee = Calculator::getFullFee($isRepeatApplication);
         $fullFee = (floor($fullFee) == $fullFee  ? $fullFee : money_format('%i', $fullFee));
 
+        // set hidden form for confirming and paying by card.
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+            'lpa' => $lpa
+        ]);
+
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/checkout/pay', ['lpa-id' => $lpa->id]));
+        $form->get('submit')->setAttribute('value', 'Confirm and pay by card')->setAttribute('class', 'button js-single-use');
+
         return new ViewModel([
+            'form'           => $form,
             'worldPayForm'   => $worldPayForm,
             'lowIncomeFee'   => $lowIncomeFee,
             'fullFee'        => $fullFee,
