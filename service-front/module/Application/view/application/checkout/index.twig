@@ -108,6 +108,17 @@
 
             {% else %}
 
+                {# begin form #}
+                {{ form.prepare() ? '' }}
+                {{ form().openTag( form )|raw }}
+                {{ formElement(form.getCsrf) }}
+
+                <div class="form-group">
+                    {{ formElement(form.get('submit')) }}
+                </div>
+
+                {{ form().closeTag|raw }}
+
                 {# -- GDS Pay -- #}
                 <p class="divorced">
                     <a href="{{ url('lpa/checkout/pay', {'lpa-id': lpa.id}) }}" class="button">Confirm and pay by card</a>
