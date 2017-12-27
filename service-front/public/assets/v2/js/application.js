@@ -5378,19 +5378,31 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         bindEvents: function () {
             $('body')
-            // link click
+                // link click
                 .on('click.moj.Modules.SingleUse', this.settings.selector, this.btnClick)
+                // submit form
+                .on('submit.moj.Modules.SingleUse', this.settings.selector, this.submitForm);
         },
 
         btnClick: function (e) {
-            var source = $(e.target);
-            var href = source.attr('href');
+            if (e.target.tagName === 'A') {
+                var source = $(e.target);
+                var href = source.attr('href');
 
-            // set loading spinner (Disables element and removes href from link)
-            source.spinner();
+                // set loading spinner (Disables element and removes href from link)
+                source.spinner();
 
-            // Reset href to allow link to be clicked
-            source.attr('href', href);
+                // Reset href to allow link to be clicked
+                source.attr('href', href);
+            }
+        },
+
+        submitForm: function (e) {
+            if (e.target.tagName === 'FORM') {
+                var $form = $(e.target);
+
+                $form.find('input[type="submit"]').spinner();
+            }
         }
     };
 
