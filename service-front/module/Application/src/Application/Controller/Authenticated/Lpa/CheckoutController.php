@@ -49,7 +49,8 @@ class CheckoutController extends AbstractLpaController
             }
         }
 
-        $isRepeatApplication = ($this->getLpa()->repeatCaseNumber != null);
+        $lpa = $this->getLpa();
+        $isRepeatApplication = ($lpa->repeatCaseNumber != null);
 
         $lowIncomeFee = Calculator::getLowIncomeFee($isRepeatApplication);
         $lowIncomeFee = (floor($lowIncomeFee) == $lowIncomeFee ? $lowIncomeFee : money_format('%i', $lowIncomeFee));
@@ -57,7 +58,16 @@ class CheckoutController extends AbstractLpaController
         $fullFee = Calculator::getFullFee($isRepeatApplication);
         $fullFee = (floor($fullFee) == $fullFee  ? $fullFee : money_format('%i', $fullFee));
 
+        // set hidden form for confirming and paying by card.
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+            'lpa' => $lpa
+        ]);
+
+        $form->setAttribute('action', $this->url()->fromRoute('lpa/checkout/pay', ['lpa-id' => $lpa->id]))->setAttribute('class', 'js-single-use');
+        $form->get('submit')->setAttribute('value', 'Confirm and pay by card');
+
         return new ViewModel([
+            'form'           => $form,
             'worldPayForm'   => $worldPayForm,
             'lowIncomeFee'   => $lowIncomeFee,
             'fullFee'        => $fullFee,
@@ -152,6 +162,21 @@ class CheckoutController extends AbstractLpaController
         }
 
         $lpa = $this->getLpa();
+
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+            'lpa' => $lpa
+        ]);
+
+        // Confirm that pay by card form post was valid and redirect pack if not
+        if ($this->request->isPost()) {
+            $form->setData($this->request->getPost());
+
+            if (!$form->isValid()) {
+                return $this->redirect()->toRoute('lpa/checkout', [
+                    'lpa-id' => $this->getLpa()->id
+                ], $this->getFlowChecker()->getRouteOptions('lpa/checkout'));
+            }
+        }
 
         //  Verify that the payment amount associated with the LPA is corrected based on the fees right now
         $this->verifyLpaPaymentAmount($lpa);

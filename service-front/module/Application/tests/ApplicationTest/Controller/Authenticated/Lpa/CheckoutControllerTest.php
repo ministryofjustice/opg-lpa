@@ -3,6 +3,7 @@
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\CheckoutController;
+use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Form\Lpa\PaymentForm;
 use Application\Model\Service\Authentication\Identity\User;
 use Application\Model\Service\Lpa\Communication;
@@ -22,6 +23,7 @@ use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment as LpaPayment;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
+use Zend\Form\ElementInterface;
 use Zend\Http\Response;
 use Zend\Stdlib\ArrayObject;
 use Zend\View\Model\ViewModel;
@@ -54,6 +56,14 @@ class CheckoutControllerTest extends AbstractControllerTest
      * @var MockInterface|GovPayClient
      */
     private $govPayClient;
+    /**
+     * @var MockInterface|BlankMainFlowForm
+     */
+    private $blankMainFlowForm;
+    /**
+     * @var MockInterface|ElementInterface
+     */
+    private $submitButton;
 
     public function setUp()
     {
@@ -74,6 +84,9 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         $this->govPayClient = Mockery::mock(GovPayClient::class);
         $this->serviceLocator->shouldReceive('get')->withArgs(['GovPayClient'])->andReturn($this->govPayClient);
+
+        $this->blankMainFlowForm = Mockery::mock(BlankMainFlowForm::class);
+        $this->submitButton = Mockery::mock(ElementInterface::class);
     }
 
     /**
@@ -95,12 +108,14 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->twice();
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->once();
+        $this->setPayByCardExpectations();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->blankMainFlowForm, $result->getVariable('form'));
         $this->assertEquals($this->form, $result->getVariable('worldPayForm'));
         $this->assertEquals(41, $result->getVariable('lowIncomeFee'));
         $this->assertEquals(82, $result->getVariable('fullFee'));
@@ -132,12 +147,14 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->twice();
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->never();
+        $this->setPayByCardExpectations();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->blankMainFlowForm, $result->getVariable('form'));
         $this->assertEquals(41, $result->getVariable('lowIncomeFee'));
         $this->assertEquals(82, $result->getVariable('fullFee'));
     }
@@ -151,12 +168,14 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->once();
         $this->setPostInvalid($this->form, [], null, 2);
+        $this->setPayByCardExpectations();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->blankMainFlowForm, $result->getVariable('form'));
         $this->assertEquals($this->form, $result->getVariable('worldPayForm'));
         $this->assertEquals(41, $result->getVariable('lowIncomeFee'));
         $this->assertEquals(82, $result->getVariable('fullFee'));
@@ -360,6 +379,10 @@ class CheckoutControllerTest extends AbstractControllerTest
 
         $this->lpa->payment->method = null;
         $this->controller->setLpa($this->lpa);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->lpaApplicationService->shouldReceive('setPayment')
             ->withArgs([$this->lpa->id, $this->lpa->payment])->andReturn(true)->once();
         $responseUrl = "lpa/{$this->lpa->id}/checkout/pay/response";
@@ -397,6 +420,10 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->method = null;
         $this->lpa->payment->gatewayReference = 'existing';
         $this->controller->setLpa($this->lpa);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->govPayClient->shouldReceive('getPayment')
             ->withArgs([$this->lpa->payment->gatewayReference])->andReturn(null)->once();
 
@@ -412,6 +439,10 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->method = null;
         $this->lpa->payment->gatewayReference = 'existing';
         $this->controller->setLpa($this->lpa);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $payment = Mockery::mock(GovPayPayment::class);
         $this->govPayClient->shouldReceive('getPayment')
             ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->twice();
@@ -443,6 +474,10 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->method = null;
         $this->lpa->payment->gatewayReference = 'existing';
         $this->controller->setLpa($this->lpa);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $payment = Mockery::mock(GovPayPayment::class);
         $this->govPayClient->shouldReceive('getPayment')
             ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
@@ -465,6 +500,10 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->method = null;
         $this->lpa->payment->gatewayReference = 'existing';
         $this->controller->setLpa($this->lpa);
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $payment = Mockery::mock(GovPayPayment::class);
         $this->govPayClient->shouldReceive('getPayment')
             ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
@@ -725,5 +764,26 @@ class CheckoutControllerTest extends AbstractControllerTest
         $result = $this->controller->worldpayPendingAction();
 
         $this->assertNull($result);
+    }
+
+    private function setPayByCardExpectations()
+    {
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/checkout/pay', ['lpa-id' => $this->lpa->id]])
+            ->andReturn("lpa/{$this->lpa->id}/checkout/pay")->once();
+        $this->blankMainFlowForm->shouldReceive('setAttribute')
+            ->withArgs(['action', "lpa/{$this->lpa->id}/checkout/pay"])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->blankMainFlowForm->shouldReceive('setAttribute')
+            ->withArgs(['class', 'js-single-use'])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->blankMainFlowForm->shouldReceive('get')
+            ->withArgs(['submit'])->andReturn($this->submitButton)->once();
+        $this->submitButton->shouldReceive('setAttribute')
+            ->withArgs(['value', 'Confirm and pay by card'])
+            ->andReturn($this->submitButton)->once();
     }
 }
