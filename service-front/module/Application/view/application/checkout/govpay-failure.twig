@@ -15,7 +15,18 @@
     </div>
 
     <div class="text">
-        <p class="divorced"><a href="{{ url('lpa/checkout/pay', {'lpa-id': lpa.id}) }}" class="button">Retry online payment</a></p>
+        <p class="divorced">
+            {# begin form #}
+            {{ form.prepare() ? '' }}
+            {{ form().openTag( form )|raw }}
+            {{ formElement(form.getCsrf) }}
+
+            <div class="form-group">
+                {{ formElement(form.get('submit')) }}
+            </div>
+
+            {{ form().closeTag|raw }}
+        </p>
     </div>
 
 {% endblock %}
