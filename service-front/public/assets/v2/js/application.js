@@ -5387,13 +5387,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         btnClick: function (e) {
             if (e.target.tagName === 'A') {
                 var source = $(e.target);
-                var href = source.attr('href');
 
-                // set loading spinner (Disables element and removes href from link)
-                source.spinner();
-
-                // Reset href to allow link to be clicked
-                source.attr('href', href);
+                // Disable link
+                source.attr('disabled', 'disabled');
             }
         },
 
@@ -5401,7 +5397,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             if (e.target.tagName === 'FORM') {
                 var $form = $(e.target);
 
-                $form.find('input[type="submit"]').spinner();
+                // Disable submit button
+                $form.find('input[type="submit"]').attr('disabled', 'disabled');
             }
         }
     };
