@@ -108,21 +108,19 @@
 
             {% else %}
 
-                {# begin form #}
-                {{ form.prepare() ? '' }}
-                {{ form().openTag( form )|raw }}
-                {{ formElement(form.getCsrf) }}
-
-                <div class="form-group">
-                    {{ formElement(form.get('submit')) }}
-                </div>
-
-                {{ form().closeTag|raw }}
-
                 {# -- GDS Pay -- #}
                 <p class="divorced">
-                    <a href="{{ url('lpa/checkout/pay', {'lpa-id': lpa.id}) }}" class="button">Confirm and pay by card</a>
-                    <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">Confirm and pay by cheque</a>
+                    {# begin form #}
+                    {{ form.prepare() ? '' }}
+                    {{ form().openTag( form )|raw }}
+                    {{ formElement(form.getCsrf) }}
+
+                    <div class="form-group">
+                        {{ formElement(form.get('submit')) }}
+                        <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">Confirm and pay by cheque</a>
+                    </div>
+
+                    {{ form().closeTag|raw }}
                 </p>
 
             {% endif %}

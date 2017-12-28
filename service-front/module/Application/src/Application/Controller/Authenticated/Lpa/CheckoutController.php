@@ -163,6 +163,21 @@ class CheckoutController extends AbstractLpaController
 
         $lpa = $this->getLpa();
 
+        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+            'lpa' => $lpa
+        ]);
+
+        // Confirm that pay by card form post was valid and redirect pack if not
+        if ($this->request->isPost()) {
+            $form->setData($this->request->getPost());
+
+            if (!$form->isValid()) {
+                return $this->redirect()->toRoute('lpa/checkout', [
+                    'lpa-id' => $this->getLpa()->id
+                ], $this->getFlowChecker()->getRouteOptions('lpa/checkout'));
+            }
+        }
+
         //  Verify that the payment amount associated with the LPA is corrected based on the fees right now
         $this->verifyLpaPaymentAmount($lpa);
 
