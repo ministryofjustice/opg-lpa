@@ -295,7 +295,17 @@ class CheckoutController extends AbstractLpaController
 
         // If the payment was not successful...
         if (!$paymentResponse->isSuccess()) {
-            $viewModel = new ViewModel();
+            // set hidden form for confirming and paying by card.
+            $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+                'lpa' => $lpa
+            ]);
+
+            $form->setAttribute('action', $this->url()->fromRoute('lpa/checkout/pay', ['lpa-id' => $lpa->id]))->setAttribute('class', 'js-single-use');
+            $form->get('submit')->setAttribute('value', 'Retry online payment');
+
+            $viewModel = new ViewModel([
+                'form' => $form
+            ]);
 
             // If the user actively canceled it...
             if ($paymentResponse->state->code == 'P0030') {

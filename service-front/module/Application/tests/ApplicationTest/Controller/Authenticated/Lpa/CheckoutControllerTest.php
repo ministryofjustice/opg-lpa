@@ -108,7 +108,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->twice();
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->once();
-        $this->setPayByCardExpectations();
+        $this->setPayByCardExpectations('Confirm and pay by card');
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -147,7 +147,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->twice();
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->never();
-        $this->setPayByCardExpectations();
+        $this->setPayByCardExpectations('Confirm and pay by card');
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -168,7 +168,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\PaymentForm'])->andReturn($this->form)->once();
         $this->setPostInvalid($this->form, [], null, 2);
-        $this->setPayByCardExpectations();
+        $this->setPayByCardExpectations('Confirm and pay by card');
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -554,6 +554,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $payment->shouldReceive('isSuccess')->andReturn(false)->once();
         $payment->state = new ArrayObject();
         $payment->state->code = 'P0030';
+        $this->setPayByCardExpectations('Retry online payment');
 
         /** @var ViewModel $result */
         $result = $this->controller->payResponseAction();
@@ -572,6 +573,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $payment->shouldReceive('isSuccess')->andReturn(false)->once();
         $payment->state = new ArrayObject();
         $payment->state->code = 'OTHER';
+        $this->setPayByCardExpectations('Retry online payment');
 
         /** @var ViewModel $result */
         $result = $this->controller->payResponseAction();
@@ -766,7 +768,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->assertNull($result);
     }
 
-    private function setPayByCardExpectations()
+    private function setPayByCardExpectations($submitButtonValue)
     {
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
@@ -783,7 +785,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->blankMainFlowForm->shouldReceive('get')
             ->withArgs(['submit'])->andReturn($this->submitButton)->once();
         $this->submitButton->shouldReceive('setAttribute')
-            ->withArgs(['value', 'Confirm and pay by card'])
+            ->withArgs(['value', $submitButtonValue])
             ->andReturn($this->submitButton)->once();
     }
 }
