@@ -170,4 +170,194 @@ class Payment extends AbstractData
 
         return parent::map($property, $v);
     }
+
+    /**
+     * @return string
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    /**
+     * @param string $method
+     * @return $this
+     */
+    public function setMethod($method): Payment
+    {
+        $this->method = $method;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     * @return $this
+     */
+    public function setEmail($email): Payment
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    /**
+     * @param float|null $amount
+     * @return $this
+     */
+    public function setAmount($amount)
+    {
+        $this->amount = $amount;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReference()
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @param string $reference
+     * @return $this
+     */
+    public function setReference($reference): Payment
+    {
+        $this->reference = $reference;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGatewayReference()
+    {
+        return $this->gatewayReference;
+    }
+
+    /**
+     * @param string $gatewayReference
+     * @return $this
+     */
+    public function setGatewayReference($gatewayReference): Payment
+    {
+        $this->gatewayReference = $gatewayReference;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param DateTime $date
+     * @return $this
+     */
+    public function setDate($date): Payment
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReducedFeeReceivesBenefits()
+    {
+        return $this->reducedFeeReceivesBenefits;
+    }
+
+    /**
+     * @param bool $reducedFeeReceivesBenefits
+     * @return $this
+     */
+    public function setReducedFeeReceivesBenefits($reducedFeeReceivesBenefits): Payment
+    {
+        $this->reducedFeeReceivesBenefits = $reducedFeeReceivesBenefits;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReducedFeeAwardedDamages()
+    {
+        return $this->reducedFeeAwardedDamages;
+    }
+
+    /**
+     * @param bool $reducedFeeAwardedDamages
+     * @return $this
+     */
+    public function setReducedFeeAwardedDamages($reducedFeeAwardedDamages): Payment
+    {
+        $this->reducedFeeAwardedDamages = $reducedFeeAwardedDamages;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReducedFeeLowIncome()
+    {
+        return $this->reducedFeeLowIncome;
+    }
+
+    /**
+     * @param bool $reducedFeeLowIncome
+     * @return $this
+     */
+    public function setReducedFeeLowIncome($reducedFeeLowIncome): Payment
+    {
+        $this->reducedFeeLowIncome = $reducedFeeLowIncome;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReducedFeeUniversalCredit()
+    {
+        return $this->reducedFeeUniversalCredit;
+    }
+
+    /**
+     * @param bool $reducedFeeUniversalCredit
+     * @return $this
+     */
+    public function setReducedFeeUniversalCredit($reducedFeeUniversalCredit): Payment
+    {
+        $this->reducedFeeUniversalCredit = $reducedFeeUniversalCredit;
+
+        return $this;
+    }
 }

@@ -27,6 +27,7 @@ class UniqueIdInArrayValidator extends ConstraintValidator
                 continue;
             }
 
+            /** @var UniqueIdInArray $constraint */
             if (in_array($actor->id, $ids)) {
                 $this->context->buildViolation($constraint->notUnique)
                      ->setInvalidValue("Duplicate value: {$actor->id}")
