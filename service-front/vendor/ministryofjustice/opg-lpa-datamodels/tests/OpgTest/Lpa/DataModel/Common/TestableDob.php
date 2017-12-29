@@ -3,7 +3,6 @@
 namespace OpgTest\Lpa\DataModel\Common;
 
 use Opg\Lpa\DataModel\Common\Dob;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class TestableDob extends Dob
 {

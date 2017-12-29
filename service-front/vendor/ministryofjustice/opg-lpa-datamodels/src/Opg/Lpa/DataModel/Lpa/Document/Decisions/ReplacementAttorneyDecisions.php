@@ -41,4 +41,23 @@ class ReplacementAttorneyDecisions extends AbstractDecisions
             ]),
         ]);
     }
+
+    /**
+     * @return string
+     */
+    public function getWhenDetails()
+    {
+        return $this->whenDetails;
+    }
+
+    /**
+     * @param string $whenDetails
+     * @return $this
+     */
+    public function setWhenDetails($whenDetails): ReplacementAttorneyDecisions
+    {
+        $this->whenDetails = $whenDetails;
+
+        return $this;
+    }
 }

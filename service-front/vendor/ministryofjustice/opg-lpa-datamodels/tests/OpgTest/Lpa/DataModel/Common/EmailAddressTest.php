@@ -1,6 +1,6 @@
 <?php
 
-namespace OpgTest\Lpa\DataModel\Lpa\Elements;
+namespace OpgTest\Lpa\DataModel\Common;
 
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use OpgTest\Lpa\DataModel\FixturesData;
@@ -37,5 +37,14 @@ class EmailAddressTest extends TestCase
         $email = $donor->get('email');
 
         $this->assertEquals('92zx2n1nk@wx.co.uk', '' . $email);
+    }
+
+    public function testGetsAndSets()
+    {
+        $model = new EmailAddress();
+
+        $model->setAddress('test@test.com');
+
+        $this->assertEquals('test@test.com', $model->getAddress());
     }
 }

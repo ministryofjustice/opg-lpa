@@ -78,4 +78,61 @@ class NotifiedPerson extends AbstractData
 
         return parent::map($property, $v);
     }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     * @return $this
+     */
+    public function setId(int $id): NotifiedPerson
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return Name
+     */
+    public function getName(): Name
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param Name $name
+     * @return $this
+     */
+    public function setName(Name $name): NotifiedPerson
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Address
+     */
+    public function getAddress(): Address
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param Address $address
+     * @return $this
+     */
+    public function setAddress(Address $address): NotifiedPerson
+    {
+        $this->address = $address;
+
+        return $this;
+    }
 }

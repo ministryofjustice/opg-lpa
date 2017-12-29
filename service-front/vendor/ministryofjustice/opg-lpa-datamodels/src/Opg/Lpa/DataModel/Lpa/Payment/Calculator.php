@@ -16,27 +16,27 @@ class Calculator
      */
     public static function calculate(Lpa $lpa)
     {
-        if (!$lpa->payment instanceof Payment) {
+        if (!$lpa->getPayment() instanceof Payment) {
             return null;
         }
 
-        if ($lpa->payment->reducedFeeReceivesBenefits && $lpa->payment->reducedFeeAwardedDamages) {
+        if ($lpa->getPayment()->isReducedFeeReceivesBenefits() && $lpa->getPayment()->isReducedFeeAwardedDamages()) {
             $amount = self::getBenefitsFee();
         } else {
-            $isRepeatApplication = ($lpa->repeatCaseNumber != null);
+            $isRepeatApplication = ($lpa->getRepeatCaseNumber() != null);
 
-            if ($lpa->payment->reducedFeeUniversalCredit) {
+            if ($lpa->getPayment()->isReducedFeeUniversalCredit()) {
                 $amount = null;
-            } elseif ($lpa->payment->reducedFeeLowIncome) {
+            } elseif ($lpa->getPayment()->isReducedFeeLowIncome()) {
                 $amount = self::getLowIncomeFee($isRepeatApplication);
             } else {
                 $amount = self::getFullFee($isRepeatApplication);
             }
         }
 
-        $lpa->payment->amount = $amount;
+        $lpa->getPayment()->setAmount($amount);
 
-        return $lpa->payment;
+        return $lpa->getPayment();
     }
 
     public static function getFullFee($isRepeatApplication = false)

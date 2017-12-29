@@ -70,4 +70,42 @@ class Human extends AbstractAttorney
             'type' => 'human'
         ]);
     }
+
+    /**
+     * @return Name
+     */
+    public function getName(): Name
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param Name $name
+     * @return $this
+     */
+    public function setName(Name $name): Human
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Dob
+     */
+    public function getDob(): Dob
+    {
+        return $this->dob;
+    }
+
+    /**
+     * @param Dob $dob
+     * @return $this
+     */
+    public function setDob(Dob $dob): Human
+    {
+        $this->dob = $dob;
+
+        return $this;
+    }
 }

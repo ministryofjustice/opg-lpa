@@ -2,7 +2,9 @@
 
 namespace OpgTest\Lpa\DataModel\Lpa;
 
+use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
 use PHPUnit\Framework\TestCase;
@@ -116,5 +118,45 @@ class LpaTest extends TestCase
         $this->assertTrue($lpa->get('document') == $comparisonLpa->get('document'));
         $this->assertEquals($lpa->get('document'), $comparisonLpa->get('document'));
         $this->assertTrue($lpa->equalsIgnoreMetadata($comparisonLpa));
+    }
+
+    public function testGetsAndSets()
+    {
+        $model = new Lpa();
+
+        $now = new DateTime();
+        $payment = new Payment();
+        $document = new Document();
+        $metadata = [];
+
+        $model->setId(12345)
+            ->setStartedAt($now)
+            ->setCreatedAt($now)
+            ->setUpdatedAt($now)
+            ->setCompletedAt($now)
+            ->setLockedAt($now)
+            ->setUser('123abc')
+            ->setPayment($payment)
+            ->setWhoAreYouAnswered(true)
+            ->setLocked(true)
+            ->setSeed(54321)
+            ->setRepeatCaseNumber(11111)
+            ->setDocument($document)
+            ->setMetadata($metadata);
+
+        $this->assertEquals(12345, $model->getId());
+        $this->assertEquals($now, $model->getStartedAt());
+        $this->assertEquals($now, $model->getCreatedAt());
+        $this->assertEquals($now, $model->getUpdatedAt());
+        $this->assertEquals($now, $model->getCompletedAt());
+        $this->assertEquals($now, $model->getLockedAt());
+        $this->assertEquals('123abc', $model->getUser());
+        $this->assertEquals($payment, $model->getPayment());
+        $this->assertEquals(true, $model->isWhoAreYouAnswered());
+        $this->assertEquals(true, $model->isLocked());
+        $this->assertEquals(54321, $model->getSeed());
+        $this->assertEquals(11111, $model->getRepeatCaseNumber());
+        $this->assertEquals($document, $model->getDocument());
+        $this->assertEquals($metadata, $model->getMetadata());
     }
 }

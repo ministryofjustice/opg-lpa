@@ -2,6 +2,8 @@
 
 namespace OpgTest\Lpa\DataModel\Lpa\Document;
 
+use Opg\Lpa\DataModel\Common\Address;
+use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
@@ -57,5 +59,19 @@ class CertificateProviderTest extends TestCase
         TestHelper::assertNoDuplicateErrorMessages($errors, $this);
         $this->assertNotNull($errors['name']);
         $this->assertNotNull($errors['address']);
+    }
+
+    public function testGetsAndSets()
+    {
+        $model = new CertificateProvider();
+
+        $name = new Name();
+        $address = new Address();
+
+        $model->setName($name)
+            ->setAddress($address);
+
+        $this->assertEquals($name, $model->getName());
+        $this->assertEquals($address, $model->getAddress());
     }
 }

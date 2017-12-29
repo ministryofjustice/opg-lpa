@@ -62,4 +62,42 @@ class TrustCorporation extends AbstractAttorney
             'type' => 'trust'
         ]);
     }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function setName(string $name): TrustCorporation
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNumber(): string
+    {
+        return $this->number;
+    }
+
+    /**
+     * @param string $number
+     * @return $this
+     */
+    public function setNumber(string $number): TrustCorporation
+    {
+        $this->number = $number;
+
+        return $this;
+    }
 }

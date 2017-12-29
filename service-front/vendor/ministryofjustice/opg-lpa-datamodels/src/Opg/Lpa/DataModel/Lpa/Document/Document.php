@@ -121,37 +121,40 @@ class Document extends AbstractData
             new ValidConstraintSymfony,
         ]);
 
-        $metadata->addPropertyConstraint('whoIsRegistering', new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
-            if (is_null($value) || $value == 'donor') {
-                return;
-            }
-
-            $validAttorneyIds = array_map(function ($v) {
-                return $v->id;
-            }, $context->getObject()->primaryAttorneys);
-
-            // Strip out any rogue empty array elements.
-            $value = array_filter($value, function ($val) {
-                return !empty($val);
-            });
-
-            // If it's an array, ensure the IDs are valid primary attorney IDs.
-            if (is_array($value) && !empty($value)) {
-                foreach ($value as $attorneyId) {
-                    if (!in_array($attorneyId, $validAttorneyIds)) {
-                        $context->buildViolation('allowed-values:' . implode(',', $validAttorneyIds))
-                                ->setInvalidValue(implode(',', $value))
-                                ->addViolation();
-
-                        return;
-                    }
+        $metadata->addPropertyConstraint(
+            'whoIsRegistering',
+            new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
+                if (is_null($value) || $value == 'donor') {
+                    return;
                 }
 
-                return;
-            }
+                $validAttorneyIds = array_map(function ($v) {
+                    return $v->id;
+                }, $context->getObject()->primaryAttorneys);
 
-            $context->buildViolation('allowed-values:donor,Array')->addViolation();
-        }));
+                // Strip out any rogue empty array elements.
+                $value = array_filter($value, function ($val) {
+                    return !empty($val);
+                });
+
+                // If it's an array, ensure the IDs are valid primary attorney IDs.
+                if (is_array($value) && !empty($value)) {
+                    foreach ($value as $attorneyId) {
+                        if (!in_array($attorneyId, $validAttorneyIds)) {
+                            $context->buildViolation('allowed-values:' . implode(',', $validAttorneyIds))
+                                    ->setInvalidValue(implode(',', $value))
+                                    ->addViolation();
+
+                            return;
+                        }
+                    }
+
+                    return;
+                }
+
+                $context->buildViolation('allowed-values:donor,Array')->addViolation();
+            })
+        );
 
         $metadata->addPropertyConstraints('primaryAttorneyDecisions', [
             new Assert\Type([
@@ -175,30 +178,36 @@ class Document extends AbstractData
         ]);
 
         // instruction should be string, null or boolean false.
-        $metadata->addPropertyConstraint('instruction', new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
-            if (is_string($value) && strlen($value) > 10000) {
-                $context->buildViolation('must-be-less-than-or-equal:10000')->addViolation();
-            }
+        $metadata->addPropertyConstraint(
+            'instruction',
+            new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
+                if (is_string($value) && strlen($value) > 10000) {
+                    $context->buildViolation('must-be-less-than-or-equal:10000')->addViolation();
+                }
 
-            if (is_null($value) || is_string($value) || $value === false) {
-                return;
-            }
+                if (is_null($value) || is_string($value) || $value === false) {
+                    return;
+                }
 
-            $context->buildViolation('expected-type:string-or-bool=false')->addViolation();
-        }));
+                $context->buildViolation('expected-type:string-or-bool=false')->addViolation();
+            })
+        );
 
         // preference should be string, null or boolean false.
-        $metadata->addPropertyConstraint('preference', new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
-            if (is_string($value) && strlen($value) > 10000) {
-                $context->buildViolation('must-be-less-than-or-equal:10000')->addViolation();
-            }
+        $metadata->addPropertyConstraint(
+            'preference',
+            new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
+                if (is_string($value) && strlen($value) > 10000) {
+                    $context->buildViolation('must-be-less-than-or-equal:10000')->addViolation();
+                }
 
-            if (is_null($value) || is_string($value) || $value === false) {
-                return;
-            }
+                if (is_null($value) || is_string($value) || $value === false) {
+                    return;
+                }
 
-            $context->buildViolation('expected-type:string-or-bool=false')->addViolation();
-        }));
+                $context->buildViolation('expected-type:string-or-bool=false')->addViolation();
+            })
+        );
 
         $metadata->addPropertyConstraints('certificateProvider', [
             new Assert\Type([
@@ -286,9 +295,11 @@ class Document extends AbstractData
             case 'donor':
                 return (($v instanceof Donor || is_null($v)) ? $v : new Donor($v));
             case 'primaryAttorneyDecisions':
-                return (($v instanceof Decisions\PrimaryAttorneyDecisions || is_null($v)) ? $v : new Decisions\PrimaryAttorneyDecisions($v));
+                return (($v instanceof Decisions\PrimaryAttorneyDecisions || is_null($v)) ?
+                    $v : new Decisions\PrimaryAttorneyDecisions($v));
             case 'replacementAttorneyDecisions':
-                return (($v instanceof Decisions\ReplacementAttorneyDecisions || is_null($v)) ? $v : new Decisions\ReplacementAttorneyDecisions($v));
+                return (($v instanceof Decisions\ReplacementAttorneyDecisions || is_null($v)) ?
+                    $v : new Decisions\ReplacementAttorneyDecisions($v));
             case 'correspondent':
                 return (($v instanceof Correspondence || is_null($v)) ? $v : new Correspondence($v));
             case 'certificateProvider':
@@ -351,5 +362,233 @@ class Document extends AbstractData
         }
 
         return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     * @return $this
+     */
+    public function setType($type): Document
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return Donor
+     */
+    public function getDonor()
+    {
+        return $this->donor;
+    }
+
+    /**
+     * @param Donor $donor
+     * @return $this
+     */
+    public function setDonor($donor): Document
+    {
+        $this->donor = $donor;
+
+        return $this;
+    }
+
+    /**
+     * @return array|string
+     */
+    public function getWhoIsRegistering()
+    {
+        return $this->whoIsRegistering;
+    }
+
+    /**
+     * @param array|string $whoIsRegistering
+     * @return $this
+     */
+    public function setWhoIsRegistering($whoIsRegistering)
+    {
+        $this->whoIsRegistering = $whoIsRegistering;
+
+        return $this;
+    }
+
+    /**
+     * @return Decisions\PrimaryAttorneyDecisions
+     */
+    public function getPrimaryAttorneyDecisions()
+    {
+        return $this->primaryAttorneyDecisions;
+    }
+
+    /**
+     * @param Decisions\PrimaryAttorneyDecisions $primaryAttorneyDecisions
+     * @return $this
+     */
+    public function setPrimaryAttorneyDecisions($primaryAttorneyDecisions): Document
+    {
+        $this->primaryAttorneyDecisions = $primaryAttorneyDecisions;
+
+        return $this;
+    }
+
+    /**
+     * @return Decisions\ReplacementAttorneyDecisions
+     */
+    public function getReplacementAttorneyDecisions()
+    {
+        return $this->replacementAttorneyDecisions;
+    }
+
+    /**
+     * @param Decisions\ReplacementAttorneyDecisions $replacementAttorneyDecisions
+     * @return $this
+     */
+    public function setReplacementAttorneyDecisions($replacementAttorneyDecisions): Document
+    {
+        $this->replacementAttorneyDecisions = $replacementAttorneyDecisions;
+
+        return $this;
+    }
+
+    /**
+     * @return Correspondence
+     */
+    public function getCorrespondent()
+    {
+        return $this->correspondent;
+    }
+
+    /**
+     * @param Correspondence $correspondent
+     * @return $this
+     */
+    public function setCorrespondent($correspondent): Document
+    {
+        $this->correspondent = $correspondent;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInstruction()
+    {
+        return $this->instruction;
+    }
+
+    /**
+     * @param string $instruction
+     * @return $this
+     */
+    public function setInstruction($instruction): Document
+    {
+        $this->instruction = $instruction;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPreference()
+    {
+        return $this->preference;
+    }
+
+    /**
+     * @param string $preference
+     * @return $this
+     */
+    public function setPreference($preference): Document
+    {
+        $this->preference = $preference;
+
+        return $this;
+    }
+
+    /**
+     * @return CertificateProvider
+     */
+    public function getCertificateProvider()
+    {
+        return $this->certificateProvider;
+    }
+
+    /**
+     * @param CertificateProvider $certificateProvider
+     * @return $this
+     */
+    public function setCertificateProvider($certificateProvider): Document
+    {
+        $this->certificateProvider = $certificateProvider;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPrimaryAttorneys(): array
+    {
+        return $this->primaryAttorneys;
+    }
+
+    /**
+     * @param array $primaryAttorneys
+     * @return $this
+     */
+    public function setPrimaryAttorneys(array $primaryAttorneys): Document
+    {
+        $this->primaryAttorneys = $primaryAttorneys;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getReplacementAttorneys(): array
+    {
+        return $this->replacementAttorneys;
+    }
+
+    /**
+     * @param array $replacementAttorneys
+     * @return $this
+     */
+    public function setReplacementAttorneys(array $replacementAttorneys): Document
+    {
+        $this->replacementAttorneys = $replacementAttorneys;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPeopleToNotify(): array
+    {
+        return $this->peopleToNotify;
+    }
+
+    /**
+     * @param array $peopleToNotify
+     * @return $this
+     */
+    public function setPeopleToNotify(array $peopleToNotify): Document
+    {
+        $this->peopleToNotify = $peopleToNotify;
+
+        return $this;
     }
 }

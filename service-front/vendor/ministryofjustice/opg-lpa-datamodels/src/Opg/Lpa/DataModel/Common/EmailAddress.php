@@ -37,4 +37,23 @@ class EmailAddress extends AbstractData
     {
         return $this->address;
     }
+
+    /**
+     * @return string
+     */
+    public function getAddress(): string
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param string $address
+     * @return $this
+     */
+    public function setAddress(string $address): EmailAddress
+    {
+        $this->address = $address;
+
+        return $this;
+    }
 }

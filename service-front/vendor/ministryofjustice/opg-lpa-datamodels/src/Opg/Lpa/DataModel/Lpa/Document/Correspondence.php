@@ -179,4 +179,175 @@ class Correspondence extends AbstractData
 
         return parent::map($property, $v);
     }
+
+    /**
+     * @return string
+     */
+    public function getWho(): string
+    {
+        return $this->who;
+    }
+
+    /**
+     * @param string $who
+     * @return $this
+     */
+    public function setWho(string $who): Correspondence
+    {
+        $this->who = $who;
+
+        return $this;
+    }
+
+    /**
+     * @return LongName
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param LongName $name
+     * @return $this
+     */
+    public function setName($name): Correspondence
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCompany()
+    {
+        return $this->company;
+    }
+
+    /**
+     * @param string $company
+     * @return $this
+     */
+    public function setCompany($company): Correspondence
+    {
+        $this->company = $company;
+
+        return $this;
+    }
+
+    /**
+     * @return Address
+     */
+    public function getAddress(): Address
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param Address $address
+     * @return $this
+     */
+    public function setAddress(Address $address): Correspondence
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * @return EmailAddress
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param EmailAddress $email
+     * @return $this
+     */
+    public function setEmail($email): Correspondence
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return PhoneNumber
+     */
+    public function getPhone()
+    {
+        return $this->phone;
+    }
+
+    /**
+     * @param PhoneNumber $phone
+     * @return $this
+     */
+    public function setPhone($phone): Correspondence
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isContactByPost()
+    {
+        return $this->contactByPost;
+    }
+
+    /**
+     * @param bool $contactByPost
+     * @return $this
+     */
+    public function setContactByPost($contactByPost): Correspondence
+    {
+        $this->contactByPost = $contactByPost;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isContactInWelsh()
+    {
+        return $this->contactInWelsh;
+    }
+
+    /**
+     * @param bool $contactInWelsh
+     * @return $this
+     */
+    public function setContactInWelsh($contactInWelsh): Correspondence
+    {
+        $this->contactInWelsh = $contactInWelsh;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isContactDetailsEnteredManually()
+    {
+        return $this->contactDetailsEnteredManually;
+    }
+
+    /**
+     * @param bool $contactDetailsEnteredManually
+     * @return $this
+     */
+    public function setContactDetailsEnteredManually($contactDetailsEnteredManually): Correspondence
+    {
+        $this->contactDetailsEnteredManually = $contactDetailsEnteredManually;
+
+        return $this;
+    }
 }
