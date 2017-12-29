@@ -116,4 +116,61 @@ abstract class AbstractAttorney extends AbstractData
 
         return parent::map($property, $v);
     }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     * @return $this
+     */
+    public function setId(int $id): AbstractAttorney
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return Address
+     */
+    public function getAddress(): Address
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param Address $address
+     * @return $this
+     */
+    public function setAddress(Address $address): AbstractAttorney
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * @return EmailAddress
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param EmailAddress $email
+     * @return $this
+     */
+    public function setEmail($email): AbstractAttorney
+    {
+        $this->email = $email;
+
+        return $this;
+    }
 }

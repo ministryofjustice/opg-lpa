@@ -1,6 +1,6 @@
 <?php
 
-namespace OpgTest\Lpa\DataModel\Lpa\Elements;
+namespace OpgTest\Lpa\DataModel\Common;
 
 use Opg\Lpa\DataModel\Common\PhoneNumber;
 use OpgTest\Lpa\DataModel\TestHelper;
@@ -27,5 +27,14 @@ class PhoneNumberTest extends TestCase
         $this->assertEquals(1, count($errors));
         TestHelper::assertNoDuplicateErrorMessages($errors, $this);
         $this->assertNotNull($errors['number']);
+    }
+
+    public function testGetsAndSets()
+    {
+        $model = new PhoneNumber();
+
+        $model->setNumber('0123456789');
+
+        $this->assertEquals('0123456789', $model->getNumber());
     }
 }

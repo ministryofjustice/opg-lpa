@@ -3,7 +3,12 @@
 namespace OpgTest\Lpa\DataModel\Lpa\Document;
 
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
+use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
+use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
@@ -199,5 +204,51 @@ class DocumentTest extends TestCase
 
         $attorney = $document->getReplacementAttorneyById(-1);
         $this->assertNull($attorney);
+    }
+
+    public function testGetsAndSets()
+    {
+        $model = new Document();
+
+        $donor = new Donor();
+        $primaryAttorneyDecisions = new PrimaryAttorneyDecisions();
+        $replacementAttorneyDecisions = new ReplacementAttorneyDecisions();
+        $correspondent = new Correspondence();
+        $certificateProvider = new CertificateProvider();
+        $primaryAttorneys = [
+            new Human()
+        ];
+        $replacementAttorneys = [
+            new Human()
+        ];
+        $peopleToNotify = [
+            new Human()
+        ];
+
+        $model->setType(Document::LPA_TYPE_PF)
+            ->setDonor($donor)
+            ->setWhoIsRegistering('donor')
+            ->setPrimaryAttorneyDecisions($primaryAttorneyDecisions)
+            ->setReplacementAttorneyDecisions($replacementAttorneyDecisions)
+            ->setCorrespondent($correspondent)
+            ->setInstruction('instruction')
+            ->setPreference('preference')
+            ->setCertificateProvider($certificateProvider)
+            ->setPrimaryAttorneys($primaryAttorneys)
+            ->setReplacementAttorneys($replacementAttorneys)
+            ->setPeopleToNotify($peopleToNotify);
+
+        $this->assertEquals(Document::LPA_TYPE_PF, $model->getType());
+        $this->assertEquals($donor, $model->getDonor());
+        $this->assertEquals('donor', $model->getWhoIsRegistering());
+        $this->assertEquals($primaryAttorneyDecisions, $model->getPrimaryAttorneyDecisions());
+        $this->assertEquals($replacementAttorneyDecisions, $model->getReplacementAttorneyDecisions());
+        $this->assertEquals($correspondent, $model->getCorrespondent());
+        $this->assertEquals('instruction', $model->getInstruction());
+        $this->assertEquals('preference', $model->getPreference());
+        $this->assertEquals($certificateProvider, $model->getCertificateProvider());
+        $this->assertEquals($primaryAttorneys, $model->getPrimaryAttorneys());
+        $this->assertEquals($replacementAttorneys, $model->getReplacementAttorneys());
+        $this->assertEquals($peopleToNotify, $model->getPeopleToNotify());
     }
 }

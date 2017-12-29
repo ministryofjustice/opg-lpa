@@ -48,4 +48,17 @@ class WhoAreYouTest extends TestCase
         $this->assertNotNull($errors['subquestion']);
         $this->assertNotNull($errors['qualifier']);
     }
+
+    public function testGetsAndSets()
+    {
+        $model = new WhoAreYou();
+
+        $model->setWho('who')
+            ->setSubquestion('subquestion')
+            ->setQualifier('qualifier');
+
+        $this->assertEquals('who', $model->getWho());
+        $this->assertEquals('subquestion', $model->getSubquestion());
+        $this->assertEquals('qualifier', $model->getQualifier());
+    }
 }
