@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.2 - 2017-12-02
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#74](https://github.com/zendframework/zend-modulemanager/pull/74) Fixes
+  exception message in ConfigListener
+
 ## 2.8.1 - 2017-11-01
 
 ### Added
