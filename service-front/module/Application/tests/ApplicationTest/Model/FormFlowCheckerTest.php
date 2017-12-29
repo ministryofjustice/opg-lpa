@@ -120,9 +120,17 @@ class FormFlowCheckerTest extends TestCase
         //  Extract the LPA routes from the service manager
         $this->extractRoutes($allRoutes);
 
-        $this->lpa = new Lpa();
-        $this->lpa->id = 1234567890;
-        $this->lpa->document = new Document();
+        //  Create as is done in API
+
+        $this->lpa = new Lpa([
+            'id'                => 1234567890,
+            'startedAt'         => new DateTime(),
+            'updatedAt'         => new DateTime(),
+            'user'              => "8426351c938bf61759a57d0eb0823ebb",
+            'locked'            => false,
+            'whoAreYouAnswered' => false,
+            'document'          => new Document(),
+        ]);
 
         $this->checker = new FormFlowChecker($this->lpa);
     }
