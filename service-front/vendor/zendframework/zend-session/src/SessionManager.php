@@ -9,6 +9,7 @@
 
 namespace Zend\Session;
 
+use Traversable;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Stdlib\ArrayUtils;
@@ -126,13 +127,19 @@ class SessionManager extends AbstractManager
         $oldSessionData = [];
         if (isset($_SESSION)) {
             $oldSessionData = $_SESSION;
+
+            // convert session data to plain array that’ll be acceptable as
+            // ArrayUtils::merge parameter
+            if ($oldSessionData instanceof Storage\StorageInterface) {
+                $oldSessionData = $oldSessionData->toArray();
+            } elseif ($oldSessionData instanceof Traversable) {
+                $oldSessionData = iterator_to_array($oldSessionData);
+            }
         }
 
         session_start();
 
-        if ($oldSessionData instanceof \Traversable
-            || (! empty($oldSessionData) && is_array($oldSessionData))
-        ) {
+        if (! empty($oldSessionData) && is_array($oldSessionData)) {
             $_SESSION = ArrayUtils::merge($oldSessionData, $_SESSION, true);
         }
 
