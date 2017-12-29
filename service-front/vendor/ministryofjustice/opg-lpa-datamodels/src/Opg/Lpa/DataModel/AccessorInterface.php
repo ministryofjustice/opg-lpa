@@ -34,6 +34,7 @@ interface AccessorInterface
      * Sets a property's value, after validating it.
      *
      * @param string $property The property name to set.
+     * @param mixed $value The value to set property to.
      * @return AbstractData Returns $this to allow chaining.
      * @throws \InvalidArgumentException If the property name is invalid.
      */

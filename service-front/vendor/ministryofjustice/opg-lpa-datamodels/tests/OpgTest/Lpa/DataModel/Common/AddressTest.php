@@ -1,6 +1,6 @@
 <?php
 
-namespace OpgTest\Lpa\DataModel\Lpa\Elements;
+namespace OpgTest\Lpa\DataModel\Common;
 
 use Opg\Lpa\DataModel\Common\Address;
 use OpgTest\Lpa\DataModel\FixturesData;
@@ -57,5 +57,20 @@ class AddressTest extends TestCase
         $this->assertNotNull($errors['address2']);
         $this->assertNotNull($errors['address3']);
         $this->assertNotNull($errors['postcode']);
+    }
+
+    public function testGetsAndSets()
+    {
+        $model = new Address();
+
+        $model->setAddress1('address1')
+            ->setAddress2('address2')
+            ->setAddress3('address3')
+            ->setPostcode('postcode');
+
+        $this->assertEquals('address1', $model->getAddress1());
+        $this->assertEquals('address2', $model->getAddress2());
+        $this->assertEquals('address3', $model->getAddress3());
+        $this->assertEquals('postcode', $model->getPostcode());
     }
 }

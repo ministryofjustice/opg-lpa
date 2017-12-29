@@ -114,4 +114,23 @@ class Dob extends AbstractData
 
         return parent::map($property, $v);
     }
+
+    /**
+     * @return DateTime
+     */
+    public function getDate(): DateTime
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param DateTime $date
+     * @return $this
+     */
+    public function setDate(DateTime $date): Dob
+    {
+        $this->date = $date;
+
+        return $this;
+    }
 }
