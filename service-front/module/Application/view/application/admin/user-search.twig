@@ -4,22 +4,28 @@
     User search
 {% endblock %}
 
-{% set form = formErrorTextExchange(form, []) %}
-{% set message = form.get('message') %}
-
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
 
-{{ message.setAttributes({
-    id: 'message',
-    rows: 10,
-    cols: 67,
+{# Error messages #}
+{% set form = formErrorTextExchange(form, {
+    'email' : {
+        'cannot-be-empty' : 'Please enter a valid email address'
+    }
+}) %}
+
+{# Set form fields variables #}
+{% set email = form.get('email') %}
+
+{# form fields config #}
+{{ email.setAttributes({
+    id: 'email-address',
     class: 'form-control'
-}) ? ''}}
+}) ? '' }}
 
-
-{{ message.setOptions( { label: 'Message' }) ? '' }}
+{# form fields labels #}
+{{ email.setOptions({label:'Email address'}) ? '' }}
 
 {{ form.prepare() ? '' }}
 
@@ -28,18 +34,12 @@
     {{ formElement(form.getCsrf) }}
 
     <div class="text">
-        <p>System messages will be seen by all visitors to the LPA service. They should be used to inform users of scheduled periods of maintenance or changes to the LPA service.</p>
+        <p>Search for a user by email address. If found, the user's account status and other details will be displayed.</p>
     </div>
 
-    <fieldset>
-        <legend class="visually-hidden">Set the system message</legend>
+    {{ macros.formGroup(email) }}
 
-        {{ macros.formGroup(message) }}
-
-    </fieldset>
-
-
-	<input type="submit" class="button" value="Set system message">
+    <input type="submit" class="button" value="Search">
 
 {{ form().closeTag|raw }}
 

@@ -13,30 +13,24 @@ use Zend\Validator\StringLength;
  */
 class UserSearchForm extends AbstractCsrfForm
 {
-    private $maxMessageLength = 8000;
-
     public function init()
     {
         $this->setName('admin-user-search');
 
         $this->add([
-            'name' => 'message',
-            'type' => 'Textarea',
+            'name' => 'email',
+            'type' => 'Email',
         ]);
 
         //  Add data to the input filter
         $this->addToInputFilter([
-            'name'     => 'message',
-            'required' => false,
-            'validators' => [
+            'name'                   => 'email',
+            'break_chain_on_failure' => true,
+            'required'               => true,
+            'error_message'          => 'cannot-be-empty',
+            'filters'                => [
                 [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'max' => $this->maxMessageLength,
-                        'messages' => [
-                             StringLength::TOO_LONG => 'Please limit the message to ' . $this->maxMessageLength . ' chars.',
-                         ],
-                    ],
+                    'name' => 'StringToLower'
                 ],
             ],
         ]);
