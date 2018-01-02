@@ -5,6 +5,7 @@ namespace Application\Controller\Authenticated;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Form\Admin\PaymentSwitch;
 use Application\Form\Admin\SystemMessageForm;
+use Application\Model\Service\Admin\Admin as AdminService;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Model\ViewModel;
 
@@ -114,6 +115,17 @@ class AdminController extends AbstractAuthenticatedController
             $form->setData($post);
 
             if ($form->isValid()) {
+                $email = $post['email'];
+
+                /** @var AdminService $adminService */
+                $adminService = $this->getServiceLocator()->get('AdminService');
+
+                $result = $adminService->searchUsers($email);
+
+                if ($result === false) {
+                    // Set error message
+                }
+
                 /*if (empty($post['message'])) {
                     $this->cache()->removeItem('system-message');
                 } else {
