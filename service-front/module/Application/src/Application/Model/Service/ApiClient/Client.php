@@ -79,6 +79,11 @@ class Client
         return $headers;
     }
 
+    /**
+     * @param Uri $url
+     * @param array $query
+     * @return ResponseInterface
+     */
     private function httpGet(Uri $url, array $query = array())
     {
         foreach ($query as $name => $value) {
