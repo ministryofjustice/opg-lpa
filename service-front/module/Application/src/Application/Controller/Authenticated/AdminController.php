@@ -101,4 +101,31 @@ class AdminController extends AbstractAuthenticatedController
             'save' => $saved
         ]);
     }
+
+    public function userSearchAction()
+    {
+        $form = $this->getServiceLocator()
+                     ->get('FormElementManager')
+                     ->get('Application\Form\Admin\UserSearchForm');
+
+        if ($this->request->isPost()) {
+            $post = $this->request->getPost();
+
+            $form->setData($post);
+
+            if ($form->isValid()) {
+                /*if (empty($post['message'])) {
+                    $this->cache()->removeItem('system-message');
+                } else {
+                    $this->cache()->setItem('system-message', $post['message']);
+                }
+
+                return $this->redirect()->toRoute('home');*/
+            }
+        }
+
+        return new ViewModel([
+            'form' => $form
+        ]);
+    }
 }
