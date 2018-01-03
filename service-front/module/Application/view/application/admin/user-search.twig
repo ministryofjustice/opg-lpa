@@ -43,4 +43,11 @@
 
 {{ form().closeTag|raw }}
 
+{% if user is not empty and user != false %}
+    <h2 class="heading-medium">User details</h2>
+    <ul>
+        <li><strong>Account status: </strong>{{ user['status'] }}</li>
+    </ul>
+{% endif %}
+
 {% endblock %}
