@@ -46,16 +46,18 @@
 {% if user is not empty and user != false %}
     <h2 class="heading-medium">User details</h2>
     <ul>
-        {% if user.isActive is defined %}
-            <li>
-                <strong class="bold-small">Account status: </strong>
+        <li>
+            <strong class="bold-small">Account status: </strong>
+            {% if user.isActive is defined %}
                 {% if user.isActive == true %}
                     <span>Activated</span>
                 {% elseif user.isActive == false %}
                     <span>Not activated</span>
                 {% endif %}
-            </li>
-        {% endif %}
+            {% elseif user.isDeleted is defined and user.isDeleted == true %}
+                <span>Deleted</span>
+            {% endif %}
+        </li>
         {% if user.lastLoginAt is defined %}
             <li>
                 <strong class="bold-small">Last login time: </strong>
@@ -72,9 +74,20 @@
                 {{ user.failedLoginAttempts }}
             </li>
         {% endif %}
-        {% if user.isActive is defined %}
+        {% if user.isDeleted is defined and user.isDeleted == true %}
             <li>
-                <strong class="bold-small">Account deletion status: </strong>
+                <strong class="bold-small">Deleted on: </strong>
+                <span>{{ user.deletedAt|date('jS M Y \\a\\t g:i:s a') }}</span>
+            </li>
+            <li>
+                <strong class="bold-small">Due to: </strong>
+                {% if user.reason == 'expired' %}
+                    <span>Account expired</span>
+                {% elseif user.reason == 'unactivated' %}
+                    <span>User did not activate account</span>
+                {% elseif user.reason == 'user-initiated' %}
+                    <span>User manually deleted their account</span>
+                {% endif %}
             </li>
         {% endif %}
         {% if user.isActive is defined %}
