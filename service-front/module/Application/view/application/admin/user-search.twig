@@ -90,9 +90,10 @@
                 {% endif %}
             </li>
         {% endif %}
-        {% if user.isActive is defined %}
+        {% if user.numberOfLpas is defined %}
             <li>
                 <strong class="bold-small">Number of LPAs: </strong>
+                <span>{{ user.numberOfLpas }}</span>
             </li>
         {% endif %}
     </ul>
