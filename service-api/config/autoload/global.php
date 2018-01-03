@@ -12,6 +12,10 @@ return array(
         'endpoint' => getenv('OPG_LPA_API_ENDPOINTS_AUTH') ?: 'https://authv2/v1/authenticate',
     ],
 
+    'admin' => [
+        'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',',getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : array(),
+    ],
+
     'cron' => [
 
         'lock' => [
