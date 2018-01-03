@@ -46,7 +46,42 @@
 {% if user is not empty and user != false %}
     <h2 class="heading-medium">User details</h2>
     <ul>
-        <li><strong>Account status: </strong>{{ user['status'] }}</li>
+        {% if user.isActive is defined %}
+            <li>
+                <strong class="bold-small">Account status: </strong>
+                {% if user.isActive == true %}
+                    <span>Activated</span>
+                {% elseif user.isActive == false %}
+                    <span>Not activated</span>
+                {% endif %}
+            </li>
+        {% endif %}
+        {% if user.lastLoginAt is defined %}
+            <li>
+                <strong class="bold-small">Last login time: </strong>
+                {% if user.lastLoginAt == false %}
+                    <span>Never logged in</span>
+                {% else %}
+                    <span>{{ user.lastLoginAt|date('jS M Y \\a\\t g:i:s a') }}</span>
+                {% endif %}
+            </li>
+        {% endif %}
+        {% if user.failedLoginAttempts is defined %}
+            <li>
+                <strong class="bold-small">Number of failed login attempts: </strong>
+                {{ user.failedLoginAttempts }}
+            </li>
+        {% endif %}
+        {% if user.isActive is defined %}
+            <li>
+                <strong class="bold-small">Account deletion status: </strong>
+            </li>
+        {% endif %}
+        {% if user.isActive is defined %}
+            <li>
+                <strong class="bold-small">Number of LPAs: </strong>
+            </li>
+        {% endif %}
     </ul>
 {% endif %}
 
