@@ -31,6 +31,7 @@ class Admin
             $result = $this->parseDateTime($result, 'updatedAt');
             $result = $this->parseDateTime($result, 'createdAt');
             $result = $this->parseDateTime($result, 'activatedAt');
+            $result = $this->parseDateTime($result, 'deletedAt');
         }
 
         return $result;
