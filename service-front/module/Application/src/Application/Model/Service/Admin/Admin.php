@@ -3,6 +3,7 @@
 namespace Application\Model\Service\Admin;
 
 use Application\Model\Service\ApiClient\Client as ApiClient;
+use Application\Model\Service\ApiClient\Exception\ResponseException;
 use DateTime;
 use DateTimeZone;
 
@@ -32,6 +33,18 @@ class Admin
             $result = $this->parseDateTime($result, 'createdAt');
             $result = $this->parseDateTime($result, 'activatedAt');
             $result = $this->parseDateTime($result, 'deletedAt');
+
+            if (array_key_exists('userId', $result) && $result['isActive'] === true) {
+                try {
+                    $result['numberOfLpas'] = $this->client->getApplicationCount($result['userId']);
+                } catch (ResponseException $ex) {
+                    if ($ex->getCode() === 401) {
+                        $result['numberOfLpas'] = 0;
+                    } else {
+                        $result['numberOfLpas'] = 'Unknown';
+                    }
+                }
+            }
         }
 
         return $result;
