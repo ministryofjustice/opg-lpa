@@ -111,6 +111,8 @@ class AdminController extends AbstractAuthenticatedController
                      ->get('FormElementManager')
                      ->get('Application\Form\Admin\UserSearchForm');
 
+        $user = false;
+
         if ($this->request->isPost()) {
             $post = $this->request->getPost();
 
@@ -131,21 +133,14 @@ class AdminController extends AbstractAuthenticatedController
                     ]);
                     $form->setMessages($messages);
                 } else {
-                    
+                    $user = $result;
                 }
-
-                /*if (empty($post['message'])) {
-                    $this->cache()->removeItem('system-message');
-                } else {
-                    $this->cache()->setItem('system-message', $post['message']);
-                }
-
-                return $this->redirect()->toRoute('home');*/
             }
         }
 
         return new ViewModel([
-            'form' => $form
+            'form' => $form,
+            'user' => $user
         ]);
     }
 }
