@@ -5,7 +5,6 @@ namespace Application\Model\Rest\Users;
 use Application\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Library\Authentication\Identity\User as UserIdentity;
 use Application\Library\DateTime;
 use Application\Model\Rest\AbstractResource;
 use MongoDB\BSON\UTCDateTime;
@@ -64,11 +63,7 @@ class Resource extends AbstractResource
         }
 
         // The authentication service is the authoritative email address provider
-        $identity = $this->getAuthorizationService()->getIdentity();
-
-        if ($identity instanceof UserIdentity) {
-            $user->email = [ 'address' => $identity->email() ];
-        }
+        $user->email = [ 'address'=>$this->getAuthorizationService()->getIdentity()->email() ];
 
         //------------------------
 

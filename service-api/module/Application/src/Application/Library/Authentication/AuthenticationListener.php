@@ -1,11 +1,12 @@
 <?php
-
 namespace Application\Library\Authentication;
 
-use Zend\Authentication\Result as AuthenticationResult;
 use Zend\Mvc\MvcEvent;
+
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
+
+use Zend\Authentication\Result as AuthenticationResult;
 
 /**
  * Authenticate the user from a header token.
@@ -15,17 +16,15 @@ use ZF\ApiProblem\ApiProblemResponse;
  * Class AuthenticationListener
  * @package Application\Library\Authentication
  */
-class AuthenticationListener
-{
-    public function authenticate(MvcEvent $e)
-    {
-        $serviceManager = $e->getApplication()->getServiceManager();
+class AuthenticationListener {
 
-        $logger = $serviceManager->get('Logger');
+    public function authenticate( MvcEvent $e ){
 
-        $authService = $serviceManager->get('AuthenticationService');
+        $log = $e->getApplication()->getServiceManager()->get('Logger');
+        
+        $auth = $e->getApplication()->getServiceManager()->get('AuthenticationService');
 
-        $authConfig = $serviceManager->get('Config')['authentication'];
+        $config = $e->getApplication()->getServiceManager()->get('Config');
 
         /*
          * Do some authentication. Initially this will will just be via the token passed from front-2.
@@ -35,40 +34,49 @@ class AuthenticationListener
          * This will leave the standard 'Authorization' namespace free for when OAuth is done properly.
          */
         $token = $e->getRequest()->getHeader('Token');
-
+        
         if (!$token) {
-            //  Check to see if this is a request from the auth service to clean up data
-            $token = $e->getRequest()->getHeader('AuthCleanUpToken');
 
-            if ($token && trim($token->getFieldValue()) == $authConfig['clean-up-token']) {
-                //  Set identity as the auth service
-                $authService->getStorage()->write(new Identity\AuthService());
+            // No token; set Guest....
+            $auth->getStorage()->write( new Identity\Guest() );
+            
+            $log->info(
+                'No token, guest set in Authentication Listener'
+            );
 
-                $logger->info('Authentication success - auth service for clean up');
-            } else {
-                //  No token; set Guest....
-                $authService->getStorage()->write(new Identity\Guest());
-
-                $logger->info('No token, guest set in Authentication Listener');
-            }
         } else {
+
             $token = trim($token->getFieldValue());
+            
+            $log->info(
+                'Authentication attempt - token supplied'
+            );
 
-            $logger->info('Authentication attempt - token supplied');
+            $authAdapter = new Adapter\LpaAuth( $token, $config['authentication']['endpoint'] );
 
-            //  Attempt to authenticate - if successful the identity will be persisted for the request
-            $authAdapter = new Adapter\LpaAuth($token, $authConfig['endpoint']);
-            $result = $authService->authenticate($authAdapter);
+            // If successful, the identity will be persisted for the request.
+            $result = $auth->authenticate($authAdapter);
 
-            if (AuthenticationResult::SUCCESS !== $result->getCode()) {
-                $logger->info('Authentication failed');
+            if( AuthenticationResult::SUCCESS !== $result->getCode() ){
 
-                return new ApiProblemResponse(new ApiProblem(401, 'Invalid authentication token'));
+                $log->info(
+                    'Authentication failed'
+                );
+                
+                return new ApiProblemResponse( new ApiProblem( 401, 'Invalid authentication token' ) );
+
             } else {
-                $logger->info('Authentication success');
+
+                $log->info(
+                    'Authentication success'
+                );
 
                 // On SUCCESS, we don't return anything (as we're in a Listener).
+
             }
-        }
-    }
-}
+
+        } // if token
+
+    } // function
+
+} // class
