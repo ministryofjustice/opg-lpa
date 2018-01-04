@@ -187,11 +187,6 @@ return [
                     'children' => ['guest'],
                     'permissions' => [ 'authenticated', 'isAuthorizedToManageUser' ]
                 ],
-                'service' => [
-                    // An authenticated request from a service (e.g. auth service)
-                    'children' => ['guest'],
-                    'permissions' => [ 'authenticated', 'isAuthorizedToManageUser' ]
-                ],
                 'guest' => [
                     // An unauthenticated request.
                     'permissions' => ['stats']
