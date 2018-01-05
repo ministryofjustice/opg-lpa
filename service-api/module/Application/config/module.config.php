@@ -181,6 +181,7 @@ return [
                 'admin' => [
                     // An authenticated request with admin rights.
                     'children' => ['user'],
+                    'permissions' => [ 'admin' ]
                 ],
                 'user' => [
                     // An authenticated request.

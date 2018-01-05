@@ -123,7 +123,8 @@ class ResourceTest extends AbstractResourceTest
         $authorizationServiceMock = Mockery::mock(AuthorizationService::class);
         $authorizationServiceMock->shouldReceive('isGranted')->with('isAuthorizedToManageUser', $user->id)
             ->andReturn(false);
-        $authorizationServiceMock->shouldReceive('isGranted')->andReturn(true);
+        $authorizationServiceMock->shouldReceive('isGranted')->with('authenticated')->andReturn(true);
+        $authorizationServiceMock->shouldReceive('isGranted')->with('admin')->andReturn(false);
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder
             ->withUser($user)
@@ -132,6 +133,25 @@ class ResourceTest extends AbstractResourceTest
 
         $this->expectException(UnauthorizedException::class);
         $this->expectExceptionMessage('You do not have permission to access this resource');
+        $resource->fetch(1);
+
+        $resourceBuilder->verify();
+    }
+
+    public function testFetchMissingPermissionAdmin()
+    {
+        $user = FixturesData::getUser();
+        $authorizationServiceMock = Mockery::mock(AuthorizationService::class);
+        $authorizationServiceMock->shouldReceive('isGranted')->with('isAuthorizedToManageUser', $user->id)
+            ->andReturn(false);
+        $authorizationServiceMock->shouldReceive('isGranted')->with('authenticated')->andReturn(true);
+        $authorizationServiceMock->shouldReceive('isGranted')->with('admin')->andReturn(true);
+        $resourceBuilder = new ResourceBuilder();
+        $resource = $resourceBuilder
+            ->withUser($user)
+            ->withAuthorizationService($authorizationServiceMock)
+            ->build();
+
         $resource->fetch(1);
 
         $resourceBuilder->verify();

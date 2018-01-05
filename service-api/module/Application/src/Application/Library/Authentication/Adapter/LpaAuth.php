@@ -33,14 +33,22 @@ class LpaAuth implements AdapterInterface {
      */
     private $authEndpoint;
 
+    /**
+     * The administrator config for the API
+     *
+     * @var array
+     */
+    private $adminConfig;
+
     //-------------------------------
 
     /**
      * Sets username and password for authentication
      */
-    public function __construct( $token, $authEndpoint ){
+    public function __construct( $token, $authEndpoint, $adminConfig ){
         $this->token = $token;
         $this->authEndpoint = $authEndpoint;
+        $this->adminConfig = $adminConfig;
     }
 
     /**
@@ -70,7 +78,14 @@ class LpaAuth implements AdapterInterface {
                 $data = $response->json();
 
                 if( isset( $data['userId'] ) && isset( $data['username'] ) ){
-                    $result = new Result( Result::SUCCESS, new Identity\User( $data['userId'], $data['username'] ) );
+                    $user = new Identity\User($data['userId'], $data['username']);
+
+                    $isAdmin = in_array($data['username'], $this->adminConfig['accounts']);
+                    if ($isAdmin === true) {
+                        $user->setAsAdmin();
+                    }
+
+                    $result = new Result( Result::SUCCESS, $user);
                 }
 
             } // if

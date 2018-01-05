@@ -134,7 +134,8 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
             throw new UnauthorizedException('You need to be authenticated to access this resource');
         }
 
-        if (!$this->getAuthorizationService()->isGranted('isAuthorizedToManageUser', $userId)) {
+        if (!$this->getAuthorizationService()->isGranted('isAuthorizedToManageUser', $userId)
+            && !$this->getAuthorizationService()->isGranted('admin')) {
             throw new UnauthorizedException('You do not have permission to access this resource');
         }
     }
