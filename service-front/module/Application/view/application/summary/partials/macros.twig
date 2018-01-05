@@ -11,7 +11,7 @@
 
     {% set editLinkOutput = false %}
 
-    {% if data.name is defined %}
+    {% if data.name is defined and data.name is not empty %}
         <tr class="group-element">
             <th class="table-summary-title" scope="row">Name</th>
             <td class="table-summary-content">{{ data.name }}</td>

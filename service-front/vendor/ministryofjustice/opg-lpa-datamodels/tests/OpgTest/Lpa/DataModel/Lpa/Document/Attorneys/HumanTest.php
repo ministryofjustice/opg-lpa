@@ -2,6 +2,10 @@
 
 namespace OpgTest\Lpa\DataModel\Lpa\Document\Attorneys;
 
+use Opg\Lpa\DataModel\Common\Address;
+use Opg\Lpa\DataModel\Common\Dob;
+use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use OpgTest\Lpa\DataModel\FixturesData;
@@ -65,5 +69,27 @@ class HumanTest extends TestCase
         $this->assertNotNull($errors['address']);
         $this->assertNotNull($errors['name']);
         $this->assertNotNull($errors['dob']);
+    }
+
+    public function testGetsAndSets()
+    {
+        $model = new Human();
+
+        $address = new Address();
+        $email = new EmailAddress();
+        $name = new Name();
+        $dob = new Dob();
+
+        $model->setId(123)
+            ->setAddress($address)
+            ->setEmail($email)
+            ->setName($name)
+            ->setDob($dob);
+
+        $this->assertEquals(123, $model->getId());
+        $this->assertEquals($address, $model->getAddress());
+        $this->assertEquals($email, $model->getEmail());
+        $this->assertEquals($name, $model->getName());
+        $this->assertEquals($dob, $model->getDob());
     }
 }

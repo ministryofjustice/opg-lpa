@@ -2,6 +2,10 @@
 
 namespace OpgTest\Lpa\DataModel\Lpa\Document;
 
+use Opg\Lpa\DataModel\Common\Address;
+use Opg\Lpa\DataModel\Common\Dob;
+use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
@@ -62,5 +66,29 @@ class DonorTest extends TestCase
         $this->assertNotNull($errors['address']);
         $this->assertNotNull($errors['dob']);
         $this->assertNotNull($errors['canSign']);
+    }
+
+    public function testGetsAndSets()
+    {
+        $model = new Donor();
+
+        $name = new LongName();
+        $address = new Address();
+        $dob = new Dob();
+        $email = new EmailAddress();
+
+        $model->setName($name)
+            ->setOtherNames('Other Names')
+            ->setAddress($address)
+            ->setDob($dob)
+            ->setEmail($email)
+            ->setCanSign(true);
+
+        $this->assertEquals($name, $model->getName());
+        $this->assertEquals('Other Names', $model->getOtherNames());
+        $this->assertEquals($address, $model->getAddress());
+        $this->assertEquals($dob, $model->getDob());
+        $this->assertEquals($email, $model->getEmail());
+        $this->assertEquals(true, $model->isCanSign());
     }
 }

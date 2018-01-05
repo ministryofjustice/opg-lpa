@@ -4,7 +4,6 @@ namespace Opg\Lpa\DataModel\Validator\Constraints\Custom;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use DateTime;
 
 /**
@@ -21,6 +20,7 @@ class DateTimeUTCValidator extends ConstraintValidator
             return;
         }
 
+        /** @var DateTimeUTC $constraint */
         if (!$value instanceof DateTime) {
             $this->context->buildViolation($constraint->notDateTimeMessage)
                 ->setParameter('{{ value }}', $this->formatValue($value))

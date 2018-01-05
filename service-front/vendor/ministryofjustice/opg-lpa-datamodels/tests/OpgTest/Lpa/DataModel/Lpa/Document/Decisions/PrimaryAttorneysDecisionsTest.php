@@ -2,6 +2,7 @@
 
 namespace OpgTest\Lpa\DataModel\Lpa\Document\Decisions;
 
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
@@ -45,5 +46,20 @@ class PrimaryAttorneyDecisionsTest extends TestCase
         $this->assertEquals(1, count($errors));
         TestHelper::assertNoDuplicateErrorMessages($errors, $this);
         $this->assertNotNull($errors['when']);
+    }
+
+    public function testGetsAndSets()
+    {
+        $model = new PrimaryAttorneyDecisions();
+
+        $model->setHow(AbstractDecisions::LPA_DECISION_HOW_DEPENDS)
+            ->setWhen(PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY)
+            ->setHowDetails('details')
+            ->setCanSustainLife(true);
+
+        $this->assertEquals(AbstractDecisions::LPA_DECISION_HOW_DEPENDS, $model->getHow());
+        $this->assertEquals(PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY, $model->getWhen());
+        $this->assertEquals('details', $model->getHowDetails());
+        $this->assertEquals(true, $model->isCanSustainLife());
     }
 }

@@ -2,6 +2,10 @@
 
 namespace OpgTest\Lpa\DataModel\Lpa\Document;
 
+use Opg\Lpa\DataModel\Common\Address;
+use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\LongName;
+use Opg\Lpa\DataModel\Common\PhoneNumber;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
@@ -65,5 +69,35 @@ class CorrespondenceTest extends TestCase
         $this->assertNotNull($errors['name/company']);
         $this->assertNotNull($errors['who']);
         $this->assertNotNull($errors['address']);
+    }
+
+    public function testGetsAndSets()
+    {
+        $model = new Correspondence();
+
+        $name = new LongName();
+        $phone = new PhoneNumber();
+        $address = new Address();
+        $email = new EmailAddress();
+
+        $model->setWho(Correspondence::WHO_CERTIFICATE_PROVIDER)
+            ->setName($name)
+            ->setCompany('Test Company')
+            ->setAddress($address)
+            ->setEmail($email)
+            ->setPhone($phone)
+            ->setContactByPost(true)
+            ->setContactInWelsh(true)
+            ->setContactDetailsEnteredManually(true);
+
+        $this->assertEquals(Correspondence::WHO_CERTIFICATE_PROVIDER, $model->getWho());
+        $this->assertEquals($name, $model->getName());
+        $this->assertEquals('Test Company', $model->getCompany());
+        $this->assertEquals($address, $model->getAddress());
+        $this->assertEquals($email, $model->getEmail());
+        $this->assertEquals($phone, $model->getPhone());
+        $this->assertEquals(true, $model->isContactByPost());
+        $this->assertEquals(true, $model->isContactInWelsh());
+        $this->assertEquals(true, $model->isContactDetailsEnteredManually());
     }
 }

@@ -2,6 +2,7 @@
 
 namespace OpgTest\Lpa\DataModel\Lpa\Document\Decisions;
 
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
@@ -46,5 +47,20 @@ class ReplacementAttorneyDecisionsTest extends TestCase
         $this->assertEquals(1, count($errors));
         TestHelper::assertNoDuplicateErrorMessages($errors, $this);
         $this->assertNotNull($errors['when']);
+    }
+
+    public function testGetsAndSets()
+    {
+        $model = new ReplacementAttorneyDecisions();
+
+        $model->setHow(AbstractDecisions::LPA_DECISION_HOW_DEPENDS)
+            ->setWhen(ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS)
+            ->setHowDetails('details')
+            ->setWhenDetails('when details');
+
+        $this->assertEquals(AbstractDecisions::LPA_DECISION_HOW_DEPENDS, $model->getHow());
+        $this->assertEquals(ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS, $model->getWhen());
+        $this->assertEquals('details', $model->getHowDetails());
+        $this->assertEquals('when details', $model->getWhenDetails());
     }
 }

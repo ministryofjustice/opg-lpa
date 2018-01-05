@@ -128,4 +128,118 @@ class Donor extends AbstractData
 
         return parent::map($property, $v);
     }
+
+    /**
+     * @return LongName
+     */
+    public function getName(): LongName
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param LongName $name
+     * @return $this
+     */
+    public function setName(LongName $name): Donor
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOtherNames()
+    {
+        return $this->otherNames;
+    }
+
+    /**
+     * @param string $otherNames
+     * @return $this
+     */
+    public function setOtherNames($otherNames): Donor
+    {
+        $this->otherNames = $otherNames;
+
+        return $this;
+    }
+
+    /**
+     * @return Address
+     */
+    public function getAddress(): Address
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param Address $address
+     * @return $this
+     */
+    public function setAddress(Address $address): Donor
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * @return Dob
+     */
+    public function getDob(): Dob
+    {
+        return $this->dob;
+    }
+
+    /**
+     * @param Dob $dob
+     * @return $this
+     */
+    public function setDob(Dob $dob): Donor
+    {
+        $this->dob = $dob;
+
+        return $this;
+    }
+
+    /**
+     * @return EmailAddress
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param EmailAddress $email
+     * @return $this
+     */
+    public function setEmail($email): Donor
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCanSign(): bool
+    {
+        return $this->canSign;
+    }
+
+    /**
+     * @param bool $canSign
+     * @return $this
+     */
+    public function setCanSign(bool $canSign): Donor
+    {
+        $this->canSign = $canSign;
+
+        return $this;
+    }
 }

@@ -2,10 +2,10 @@
 
 namespace OpgTest\Lpa\DataModel\Common;
 
+use DateTime;
 use Opg\Lpa\DataModel\Common\Dob;
 use OpgTest\Lpa\DataModel\TestHelper;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class DobTest extends TestCase
 {
@@ -185,5 +185,16 @@ class DobTest extends TestCase
         TestHelper::assertNoDuplicateErrorMessages($errors, $this);
         $this->assertNotNull($errors['date']);
         $this->assertEquals('timezone-not-utc', $errors['date']['messages'][0]);
+    }
+
+    public function testGetsAndSets()
+    {
+        $model = new Dob();
+
+        $now = new DateTime();
+
+        $model->setDate($now);
+
+        $this->assertEquals($now, $model->getDate());
     }
 }

@@ -2,6 +2,85 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.3 - 2017-12-01
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#101](https://github.com/zendframework/zend-session/pull/101) fixes an issue
+  created with the 2.8.2 release with regards to setting a session save path for
+  non-files save handlers; prior to this patch, incorrect validations were run
+  on the path provided, leading to unexpected exceptions being raised.
+
+## 2.8.2 - 2017-11-29
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#85](https://github.com/zendframework/zend-session/pull/85) fixes an issue
+  with how the expiration seconds are handled when a long-running request
+  occurs. Previously, when called, it would use the value of
+  `$_SERVER['REQUEST_TIME']` to calculate the expiration time; this would cause
+  failures if the expiration seconds had been reached by the time the value was
+  set. It now correctly uses the current `time()`.
+
+- [#99](https://github.com/zendframework/zend-session/pull/99) fixes how
+  `Zend\Session\Config\SessionConfig` handles attaching save handlers to ensure
+  it will honor any handlers registered with the PHP engine (e.g., redis,
+  rediscluster, etc.).
+
+## 2.8.1 - 2017-11-28
+
+### Added
+
+- [#92](https://github.com/zendframework/zend-session/pull/92) adds PHP 7.2
+  support.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#57](https://github.com/zendframework/zend-session/pull/57) and
+  [#93](https://github.com/zendframework/zend-session/pull/93) provide a fix
+  for when data found in the session is a `Traversable`; such data is now cast
+  to an array before merging with new data.
+
 ## 2.8.0 - 2017-06-19
 
 ### Added

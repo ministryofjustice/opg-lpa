@@ -64,4 +64,42 @@ class CertificateProvider extends AbstractData
 
         return parent::map($property, $v);
     }
+
+    /**
+     * @return Name
+     */
+    public function getName(): Name
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param Name $name
+     * @return $this
+     */
+    public function setName(Name $name): CertificateProvider
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Address
+     */
+    public function getAddress(): Address
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param Address $address
+     * @return $this
+     */
+    public function setAddress(Address $address): CertificateProvider
+    {
+        $this->address = $address;
+
+        return $this;
+    }
 }

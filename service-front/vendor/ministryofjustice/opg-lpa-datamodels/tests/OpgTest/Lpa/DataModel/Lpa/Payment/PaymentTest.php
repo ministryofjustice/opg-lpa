@@ -2,6 +2,7 @@
 
 namespace OpgTest\Lpa\DataModel\Lpa\Payment;
 
+use DateTime;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use OpgTest\Lpa\DataModel\FixturesData;
 use OpgTest\Lpa\DataModel\TestHelper;
@@ -43,5 +44,34 @@ class PaymentTest extends TestCase
         $this->assertNotNull($errors['amount']);
         $this->assertNotNull($errors['reference']);
         $this->assertNotNull($errors['gatewayReference']);
+    }
+
+    public function testGetsAndSets()
+    {
+        $model = new Payment();
+
+        $now = new DateTime();
+
+        $model->setMethod(Payment::PAYMENT_TYPE_CARD)
+            ->setEmail('test@test.com')
+            ->setAmount(123)
+            ->setReference('REF123')
+            ->setGatewayReference('GREF123')
+            ->setDate($now)
+            ->setReducedFeeReceivesBenefits(true)
+            ->setReducedFeeAwardedDamages(true)
+            ->setReducedFeeLowIncome(true)
+            ->setReducedFeeUniversalCredit(true);
+
+        $this->assertEquals(Payment::PAYMENT_TYPE_CARD, $model->getMethod());
+        $this->assertEquals('test@test.com', $model->getEmail());
+        $this->assertEquals(123, $model->getAmount());
+        $this->assertEquals('REF123', $model->getReference());
+        $this->assertEquals('GREF123', $model->getGatewayReference());
+        $this->assertEquals($now, $model->getDate());
+        $this->assertEquals(true, $model->isReducedFeeReceivesBenefits());
+        $this->assertEquals(true, $model->isReducedFeeAwardedDamages());
+        $this->assertEquals(true, $model->isReducedFeeLowIncome());
+        $this->assertEquals(true, $model->isReducedFeeUniversalCredit());
     }
 }

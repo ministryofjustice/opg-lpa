@@ -9,8 +9,8 @@ namespace Opg\Lpa\DataModel\Validator\Constraints;
  * Class ValidatorPathTrait
  * @package Opg\Lpa\DataModel\Validator\Constraints
  */
-trait ValidatorPathTrait {
-
+trait ValidatorPathTrait
+{
     /**
      * Returns the name of the class that validates this constraint.
      *

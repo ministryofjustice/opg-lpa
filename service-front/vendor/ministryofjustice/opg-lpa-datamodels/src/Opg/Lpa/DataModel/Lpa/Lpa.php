@@ -264,7 +264,16 @@ class Lpa extends AbstractData
 
         // Include these top level fields...
         $data = array_intersect_key($data, array_flip([
-            'id', 'lockedAt', 'startedAt', 'updatedAt', 'createdAt', 'completedAt', 'user', 'locked', 'document', 'metadata'
+            'id',
+            'lockedAt',
+            'startedAt',
+            'updatedAt',
+            'createdAt',
+            'completedAt',
+            'user',
+            'locked',
+            'document',
+            'metadata'
         ]));
 
         // Include these document level fields...
@@ -281,7 +290,8 @@ class Lpa extends AbstractData
      * @param $comparisonLpa
      * @return bool
      */
-    public function equals($comparisonLpa){
+    public function equals($comparisonLpa)
+    {
         return $this == $comparisonLpa;
     }
 
@@ -291,7 +301,274 @@ class Lpa extends AbstractData
      * @param $comparisonLpa
      * @return bool
      */
-    public function equalsIgnoreMetadata($comparisonLpa){
+    public function equalsIgnoreMetadata($comparisonLpa)
+    {
         return $comparisonLpa !== null && $this->document == $comparisonLpa->document;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     * @return $this
+     */
+    public function setId($id): Lpa
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getStartedAt(): \DateTime
+    {
+        return $this->startedAt;
+    }
+
+    /**
+     * @param \DateTime $startedAt
+     * @return $this
+     */
+    public function setStartedAt(\DateTime $startedAt): Lpa
+    {
+        $this->startedAt = $startedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     * @return $this
+     */
+    public function setCreatedAt($createdAt): Lpa
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt(): \DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     * @return $this
+     */
+    public function setUpdatedAt(\DateTime $updatedAt): Lpa
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getCompletedAt()
+    {
+        return $this->completedAt;
+    }
+
+    /**
+     * @param \DateTime|null $completedAt
+     * @return $this
+     */
+    public function setCompletedAt($completedAt)
+    {
+        $this->completedAt = $completedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getLockedAt()
+    {
+        return $this->lockedAt;
+    }
+
+    /**
+     * @param \DateTime|null $lockedAt
+     * @return $this
+     */
+    public function setLockedAt($lockedAt)
+    {
+        $this->lockedAt = $lockedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUser(): string
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param string $user
+     * @return $this
+     */
+    public function setUser(string $user): Lpa
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Payment
+     */
+    public function getPayment()
+    {
+        return $this->payment;
+    }
+
+    /**
+     * @param Payment $payment
+     * @return $this
+     */
+    public function setPayment($payment): Lpa
+    {
+        $this->payment = $payment;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWhoAreYouAnswered(): bool
+    {
+        return $this->whoAreYouAnswered;
+    }
+
+    /**
+     * @param bool $whoAreYouAnswered
+     * @return $this
+     */
+    public function setWhoAreYouAnswered(bool $whoAreYouAnswered): Lpa
+    {
+        $this->whoAreYouAnswered = $whoAreYouAnswered;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLocked(): bool
+    {
+        return $this->locked;
+    }
+
+    /**
+     * @param bool $locked
+     * @return $this
+     */
+    public function setLocked(bool $locked): Lpa
+    {
+        $this->locked = $locked;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSeed()
+    {
+        return $this->seed;
+    }
+
+    /**
+     * @param int $seed
+     * @return $this
+     */
+    public function setSeed($seed): Lpa
+    {
+        $this->seed = $seed;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getRepeatCaseNumber()
+    {
+        return $this->repeatCaseNumber;
+    }
+
+    /**
+     * @param int|null $repeatCaseNumber
+     * @return $this
+     */
+    public function setRepeatCaseNumber($repeatCaseNumber)
+    {
+        $this->repeatCaseNumber = $repeatCaseNumber;
+
+        return $this;
+    }
+
+    /**
+     * @return Document
+     */
+    public function getDocument()
+    {
+        return $this->document;
+    }
+
+    /**
+     * @param Document $document
+     * @return $this
+     */
+    public function setDocument($document): Lpa
+    {
+        $this->document = $document;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetadata(): array
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * @param array $metadata
+     * @return $this
+     */
+    public function setMetadata(array $metadata): Lpa
+    {
+        $this->metadata = $metadata;
+
+        return $this;
     }
 }

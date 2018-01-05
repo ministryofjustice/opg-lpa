@@ -151,4 +151,137 @@ class User extends AbstractData
 
         return $data;
     }
+
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     * @return $this
+     */
+    public function setId(string $id): User
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getCreatedAt(): DateTime
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param DateTime $createdAt
+     * @return $this
+     */
+    public function setCreatedAt(DateTime $createdAt): User
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getUpdatedAt(): DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param DateTime $updatedAt
+     * @return $this
+     */
+    public function setUpdatedAt(DateTime $updatedAt): User
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Name
+     */
+    public function getName(): Name
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param Name $name
+     * @return $this
+     */
+    public function setName(Name $name): User
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Address
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param Address $address
+     * @return $this
+     */
+    public function setAddress($address): User
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * @return Dob
+     */
+    public function getDob()
+    {
+        return $this->dob;
+    }
+
+    /**
+     * @param Dob $dob
+     * @return $this
+     */
+    public function setDob($dob): User
+    {
+        $this->dob = $dob;
+
+        return $this;
+    }
+
+    /**
+     * @return EmailAddress
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param EmailAddress $email
+     * @return $this
+     */
+    public function setEmail($email): User
+    {
+        $this->email = $email;
+
+        return $this;
+    }
 }

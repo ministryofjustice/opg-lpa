@@ -99,6 +99,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * Sets a property's value, after validating it.
      *
      * @param string $property The property name to set.
+     * @param mixed $value The value to set property to.
      * @return AbstractData Returns $this to allow chaining.
      * @throws InvalidArgumentException If the property name is invalid.
      */
@@ -172,8 +173,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      */
     public function validate(array $properties = [], array $groups = [])
     {
-        $validator = Validation::createValidatorBuilder()->setApiVersion(Validation::API_VERSION_2_5)
-                                                         ->addMethodMapping('loadValidatorMetadata')
+        $validator = Validation::createValidatorBuilder()->addMethodMapping('loadValidatorMetadata')
                                                          ->getValidator();
 
         // Marge any other require groups in along with Default.
@@ -217,7 +217,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
                     }
                 } elseif (is_array($value)) {
                     $value = implode(', ', array_map(function ($v) {
-                        if(is_string($v)) {
+                        if (is_string($v)) {
                             return $v;
                         }
                         return get_class($v);
@@ -311,6 +311,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      *  will map to
      *  array[lpa-document-donor-name-title]
      *
+     * @param string $prefix
      * @return array
      */
     public function flatten($prefix = '')
@@ -321,6 +322,9 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     /**
      * Method for recursively walking over our array, flattening it.
      * To trigger it, call $this->flatten()
+     * @param $array
+     * @param $prefix
+     * @return array
      */
     private function flattenArray($array, $prefix)
     {
@@ -405,7 +409,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
      * @param $value mixed The value we've been passed.
      * @return mixed The potentially updated value.
      */
-    protected function map($property, $value)
+    protected function map(/** @noinspection PhpUnusedParameterInspection */$property, $value)
     {
         return $value;
     }
