@@ -49,6 +49,29 @@ trait ClientV2ApiTrait
     }
 
     /**
+     * Returns the LPA count for the supplied user id.
+     *
+     * @param string $userId
+     * @return Exception\ResponseException|int
+     */
+    public function getApplicationCount(string $userId)
+    {
+        //  Construct the path to the API and create a URL
+        $path = sprintf('/v2/users/%s/applications', $userId);
+        $url = new Uri($this->apiBaseUri . $path);
+
+        $response = $this->httpGet($url, ['page' => 1, 'perPage' => 1]);
+
+        if ($response->getStatusCode() != 200) {
+            return new Exception\ResponseException('unknown-error', $response->getStatusCode(), $response);
+        }
+
+        $body = json_decode($response->getBody(), true);
+
+        return $body['total'];
+    }
+
+    /**
      * Create a new LPA application.
      *
      * @return Response\Lpa|Exception\ResponseException

@@ -3,6 +3,7 @@
 namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
+use Application\Model\Service\Admin\Admin as AdminService;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\System\DynamoCronLock;
@@ -170,6 +171,11 @@ class Module{
                 // Authentication Adapter. Access via 'AuthenticationAdapter'
                 'LpaAuthAdapter' => function( ServiceLocatorInterface $sm ){
                     return new LpaAuthAdapter( $sm->get('ApiClient') );
+                },
+
+                // Admin service
+                'AdminService' => function (ServiceLocatorInterface $sm) {
+                    return new AdminService($sm->get('ApiClient'));
                 },
 
                 // Generate the session container for a user's personal details

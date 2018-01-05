@@ -79,10 +79,15 @@ class Client
         return $headers;
     }
 
+    /**
+     * @param Uri $url
+     * @param array $query
+     * @return ResponseInterface
+     */
     private function httpGet(Uri $url, array $query = array())
     {
         foreach ($query as $name => $value) {
-            $url = Uri::withQueryValue($url, $name, $value);
+            $url = Uri::withQueryValue($url, $name, urlencode($value));
         }
 
         $request = new Request('GET', $url, $this->buildHeaders(), '{}');
