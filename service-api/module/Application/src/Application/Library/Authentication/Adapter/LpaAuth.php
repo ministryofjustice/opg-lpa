@@ -80,13 +80,10 @@ class LpaAuth implements AdapterInterface {
                 if( isset( $data['userId'] ) && isset( $data['username'] ) ){
                     $user = new Identity\User($data['userId'], $data['username']);
 
-                    $adminAccounts = $this->adminConfig['accounts'];
-                    $isAdmin = in_array($data['username'], $adminAccounts);
+                    $isAdmin = in_array($data['username'], $this->adminConfig['accounts']);
                     if ($isAdmin === true) {
                         $user->setAsAdmin();
                     }
-
-                    $this->adminConfig['accounts'];
 
                     $result = new Result( Result::SUCCESS, $user);
                 }
