@@ -35,6 +35,8 @@
 
         ga('create', 'UA-33184303-1', { 'allowLinker': true });
 
+        ga('set', 'anonymizeIp', true);
+
         ga('send', 'pageview', {{ analyticsDimensions ? analyticsDimensions|json_encode|raw : '{}'}});
 
         GOVUK.performance.stageprompt.setupForGoogleAnalytics();
