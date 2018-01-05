@@ -33,4 +33,23 @@ class PhoneNumber extends AbstractData
             ]),
         ]);
     }
+
+    /**
+     * @return string
+     */
+    public function getNumber(): string
+    {
+        return $this->number;
+    }
+
+    /**
+     * @param string $number
+     * @return $this
+     */
+    public function setNumber(string $number): PhoneNumber
+    {
+        $this->number = $number;
+
+        return $this;
+    }
 }

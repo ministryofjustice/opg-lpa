@@ -35,4 +35,23 @@ class PrimaryAttorneyDecisions extends AbstractDecisions
             ]),
         ]);
     }
+
+    /**
+     * @return bool
+     */
+    public function isCanSustainLife()
+    {
+        return $this->canSustainLife;
+    }
+
+    /**
+     * @param bool $canSustainLife
+     * @return $this
+     */
+    public function setCanSustainLife($canSustainLife): PrimaryAttorneyDecisions
+    {
+        $this->canSustainLife = $canSustainLife;
+
+        return $this;
+    }
 }

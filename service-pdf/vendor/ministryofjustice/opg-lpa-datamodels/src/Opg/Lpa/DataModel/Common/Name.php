@@ -87,4 +87,61 @@ class Name extends AbstractData
 
         return $name;
     }
+
+    /**
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     * @return $this
+     */
+    public function setTitle(string $title): Name
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFirst(): string
+    {
+        return $this->first;
+    }
+
+    /**
+     * @param string $first
+     * @return $this
+     */
+    public function setFirst(string $first): Name
+    {
+        $this->first = $first;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLast(): string
+    {
+        return $this->last;
+    }
+
+    /**
+     * @param string $last
+     * @return $this
+     */
+    public function setLast(string $last): Name
+    {
+        $this->last = $last;
+
+        return $this;
+    }
 }
