@@ -56,4 +56,61 @@ abstract class AbstractDecisions extends AbstractData
             ]),
         ]);
     }
+
+    /**
+     * @return string
+     */
+    public function getHow()
+    {
+        return $this->how;
+    }
+
+    /**
+     * @param string $how
+     * @return $this
+     */
+    public function setHow($how): AbstractDecisions
+    {
+        $this->how = $how;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWhen()
+    {
+        return $this->when;
+    }
+
+    /**
+     * @param string $when
+     * @return $this
+     */
+    public function setWhen($when): AbstractDecisions
+    {
+        $this->when = $when;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHowDetails()
+    {
+        return $this->howDetails;
+    }
+
+    /**
+     * @param string $howDetails
+     * @return $this
+     */
+    public function setHowDetails($howDetails): AbstractDecisions
+    {
+        $this->howDetails = $howDetails;
+
+        return $this;
+    }
 }

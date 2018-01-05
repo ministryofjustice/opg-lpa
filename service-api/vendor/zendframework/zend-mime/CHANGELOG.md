@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.0 - 2017-11-28
+
+### Added
+
+- [#27](https://github.com/zendframework/zend-mime/pull/27) adds a fluent
+  interface to the various setters in `Zend\Mime\Message`.
+
+- [#28](https://github.com/zendframework/zend-mime/pull/28) adds support for PHP
+  versions 7.1 and 7.2.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#28](https://github.com/zendframework/zend-mime/pull/28) removes support for
+  PHP 5.5.
+
+- [#28](https://github.com/zendframework/zend-mime/pull/28) removes support for
+  HHVM.
+
+### Fixed
+
+- [#26](https://github.com/zendframework/zend-mime/pull/26) ensures commas
+  included within list data items are ASCII encoded, ensuring that the items
+  will split on commas correctly (instead of splitting within an item).
+
+- [#30](https://github.com/zendframework/zend-mime/pull/30) fixes how EOL
+  characters are detected, to ensure that mail using `\r\n` as an EOL sequence
+  (including mail emitted by Cyrus and Dovecot) will be properly parsed.
+
 ## 2.6.1 - 2017-01-16
 
 ### Added

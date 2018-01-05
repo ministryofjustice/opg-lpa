@@ -55,7 +55,7 @@ pipeline {
             steps {
                 echo 'PHPUnit'
                 sh '''
-                    docker run -i --rm --user `id -u` -v $(pwd):/app registry.service.opg.digital/opg-phpunit-1604 tests -c tests/phpunit.xml --log-junit unit_results.xml
+                    docker-compose run --rm --user `id -u` -w /app datamodels bash -c "vendor/phpunit/phpunit/phpunit -c tests/phpunit.xml --log-junit unit_results.xml"
                 '''
             }
             post {
