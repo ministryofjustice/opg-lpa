@@ -3,6 +3,7 @@
 namespace Application\Model\Service\ApiClient;
 
 use GuzzleHttp\Psr7\Uri;
+use Psr\Http\Message\ResponseInterface;
 
 trait ClientV2AuthTrait
 {
@@ -315,5 +316,25 @@ trait ClientV2AuthTrait
         }
 
         return new Exception\ResponseException('unknown-error', $response->getStatusCode(), $response);
+    }
+
+    /**
+     * @param string $email
+     * @return array|bool
+     */
+    public function searchUsers(string $email)
+    {
+        $url = new Uri($this->authBaseUri . '/v1/users/search');
+
+        /** @var ResponseInterface $response */
+        $response = $this->httpGet($url, ['email' => $email]);
+
+        if ($response->getStatusCode() == 200) {
+            $body = json_decode($response->getBody(), true);
+
+            return $body;
+        }
+
+        return false;
     }
 }

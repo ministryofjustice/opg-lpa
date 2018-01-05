@@ -5,6 +5,8 @@ namespace Application\Controller\Authenticated;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Form\Admin\PaymentSwitch;
 use Application\Form\Admin\SystemMessageForm;
+use Application\Form\Admin\UserSearchForm;
+use Application\Model\Service\Admin\Admin as AdminService;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Model\ViewModel;
 
@@ -99,6 +101,46 @@ class AdminController extends AbstractAuthenticatedController
         return new ViewModel([
             'form' => $form,
             'save' => $saved
+        ]);
+    }
+
+    public function userSearchAction()
+    {
+        /** @var UserSearchForm $form */
+        $form = $this->getServiceLocator()
+                     ->get('FormElementManager')
+                     ->get('Application\Form\Admin\UserSearchForm');
+
+        $user = false;
+
+        if ($this->request->isPost()) {
+            $post = $this->request->getPost();
+
+            $form->setData($post);
+
+            if ($form->isValid()) {
+                $email = $post['email'];
+
+                /** @var AdminService $adminService */
+                $adminService = $this->getServiceLocator()->get('AdminService');
+
+                $result = $adminService->searchUsers($email);
+
+                if ($result === false) {
+                    // Set error message
+                    $messages = array_merge($form->getMessages(), [
+                        'email' => ['No user found for email address']
+                    ]);
+                    $form->setMessages($messages);
+                } else {
+                    $user = $result;
+                }
+            }
+        }
+
+        return new ViewModel([
+            'form' => $form,
+            'user' => $user
         ]);
     }
 }

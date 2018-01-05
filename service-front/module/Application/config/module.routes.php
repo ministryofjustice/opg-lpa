@@ -303,6 +303,17 @@ return [
                 ],
             ],
 
+            'admin-user-search' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/admin/user',
+                    'defaults' => [
+                        'controller' => 'Authenticated\AdminController',
+                        'action'     => 'user-search',
+                    ],
+                ],
+            ],
+
             'postcode' => [
                 'type'    => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
