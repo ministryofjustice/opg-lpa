@@ -15,6 +15,7 @@ use Application\Model\Rest\UserConsumerInterface;
 use Application\Model\Service\System\DynamoCronLock;
 use Aws\DynamoDb\DynamoDbClient;
 use DynamoQueue\Queue\Client as DynamoQueue;
+use Opg\Lpa\Logger\Logger;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
 use Zend\Mvc\ModuleRouteListener;
@@ -166,17 +167,6 @@ class Module {
                 CollectionFactory::class . '-stats-who' => new CollectionFactory('whoAreYou'),
                 CollectionFactory::class . '-stats-lpas' => new CollectionFactory('lpaStats'),
 
-                // Logger
-                'Logger' => function ( $sm ) {
-                    $logger = new \Opg\Lpa\Logger\Logger();
-                    $logConfig = $sm->get('config')['log'];
-
-                    $logger->setFileLogPath($logConfig['path']);
-                    $logger->setSentryUri($logConfig['sentry-uri']);
-
-                    return $logger;
-                },
-
                 // Get Dynamo Queue Client
                 'DynamoQueueClient' => function ( $sm ) {
 
@@ -225,7 +215,7 @@ class Module {
             $response = new ApiProblemResponse($problem);
             $e->setResponse($response);
 
-            $logger = $e->getApplication()->getServiceManager()->get('Logger');
+            $logger = Logger::getInstance();
             $logger->err($exception->getMessage());
 
             return $response;

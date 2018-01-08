@@ -1,8 +1,8 @@
 <?php
+
 namespace Application\Model\Service\System;
 
 use Application\DataAccess\Mongo\CollectionFactory;
-use Application\Traits\LogTrait;
 use DateTime;
 use Exception;
 use MongoDB\BSON\Javascript as MongoCode;
@@ -18,6 +18,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
@@ -30,8 +31,8 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
  */
 class Stats implements ServiceLocatorAwareInterface
 {
+    use LoggerTrait;
     use ServiceLocatorAwareTrait;
-    use LogTrait;
 
     public function generate()
     {
@@ -41,49 +42,49 @@ class Stats implements ServiceLocatorAwareInterface
 
         try {
             $stats['lpas'] = $this->getLpaStats();
-            $this->info("Successfully generated lpas stats");
+            $this->getLogger()->info("Successfully generated lpas stats");
         } catch (Exception $ex) {
-            $this->err("Failed to generate lpas stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->err("Failed to generate lpas stats due to {$ex->getMessage()}", [$ex]);
             $stats['lpas'] = ['generated' => false];
         }
 
         try {
             $stats['lpasPerUser'] = $this->getLpasPerUser();
-            $this->info("Successfully generated lpasPerUser stats");
+            $this->getLogger()->info("Successfully generated lpasPerUser stats");
         } catch (Exception $ex) {
-            $this->err("Failed to generate lpasPerUser stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->err("Failed to generate lpasPerUser stats due to {$ex->getMessage()}", [$ex]);
             $stats['lpasPerUser'] = ['generated' => false];
         }
 
         try {
             $stats['who'] = $this->getWhoAreYou();
-            $this->info("Successfully generated who stats");
+            $this->getLogger()->info("Successfully generated who stats");
         } catch (Exception $ex) {
-            $this->err("Failed to generate who stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->err("Failed to generate who stats due to {$ex->getMessage()}", [$ex]);
             $stats['who'] = ['generated' => false];
         }
 
         try {
             $stats['correspondence'] = $this->getCorrespondenceStats();
-            $this->info("Successfully generated correspondence stats");
+            $this->getLogger()->info("Successfully generated correspondence stats");
         } catch (Exception $ex) {
-            $this->err("Failed to generate correspondence stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->err("Failed to generate correspondence stats due to {$ex->getMessage()}", [$ex]);
             $stats['correspondence'] = ['generated' => false];
         }
 
         try {
             $stats['preferencesInstructions'] = $this->getPreferencesInstructionsStats();
-            $this->info("Successfully generated preferencesInstructions stats");
+            $this->getLogger()->info("Successfully generated preferencesInstructions stats");
         } catch (Exception $ex) {
-            $this->err("Failed to generate preferencesInstructions stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->err("Failed to generate preferencesInstructions stats due to {$ex->getMessage()}", [$ex]);
             $stats['preferencesInstructions'] = ['generated' => false];
         }
 
         try {
             $stats['options'] = $this->getOptionsStats();
-            $this->info("Successfully generated options stats");
+            $this->getLogger()->info("Successfully generated options stats");
         } catch (Exception $ex) {
-            $this->err("Failed to generate options stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->err("Failed to generate options stats due to {$ex->getMessage()}", [$ex]);
             $stats['options'] = ['generated' => false];
         }
 

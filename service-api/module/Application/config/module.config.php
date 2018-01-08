@@ -204,9 +204,6 @@ return [
             'Application\Controller\Version1\Rest' => 'Application\Controller\Version1\RestController',
             'Application\Controller\Version2\Application' => 'Application\Controller\Version2\ApplicationController',
         ],
-        'factories' => [
-            //'Application\Controller\Version1\Rest' => 'Application\Factory\RestControllerFactory',
-        ],
     ], // controllers
 
 
@@ -241,7 +238,6 @@ return [
         ],
         'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-            'Zend\Log\LoggerAbstractServiceFactory',
         ],
         'aliases' => [
             'translator' => 'MvcTranslator',

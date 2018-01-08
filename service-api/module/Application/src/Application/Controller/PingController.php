@@ -1,14 +1,16 @@
 <?php
+
 namespace Application\Controller;
 
 use Application\DataAccess\Mongo\DatabaseFactory;
 use Application\DataAccess\Mongo\ManagerFactory;
+use GuzzleHttp\Client as GuzzleClient;
 use MongoDB\Database;
 use MongoDB\Driver\Command;
 use MongoDB\Driver\Manager;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
-use GuzzleHttp\Client as GuzzleClient;
 
 /**
  * Checks *this* API service is operating correctly. Includes:
@@ -18,7 +20,9 @@ use GuzzleHttp\Client as GuzzleClient;
  * Class PingController
  * @package Application\Controller
  */
-class PingController extends AbstractActionController {
+class PingController extends AbstractActionController
+{
+    use LoggerTrait;
 
     /**
      * Endpoint for the AWS ELB.
@@ -73,9 +77,9 @@ class PingController extends AbstractActionController {
 
         $result['auth'] = $this->auth();
 
-
         //----------------------------
         // Check DynamoDB
+
 
         $result['queue'] = [
             'ok' => false,
@@ -87,7 +91,6 @@ class PingController extends AbstractActionController {
         ];
 
         try {
-
             $dynamoQueue = $this->getServiceLocator()->get('DynamoQueueClient');
 
             $count = $dynamoQueue->countWaitingJobs();
@@ -112,12 +115,9 @@ class PingController extends AbstractActionController {
 
         // Is everything true?
         $result['ok'] = $result['queue']['ok'] && $result['database']['ok'];
-        
-        $this->getServiceLocator()->get('Logger')->info(
-            'PingController results',
-            $result
-        );
-        
+
+        $this->getLogger()->info('PingController results', $result);
+
         //---
 
         return new JsonModel($result);
