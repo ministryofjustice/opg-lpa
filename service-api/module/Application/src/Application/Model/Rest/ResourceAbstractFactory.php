@@ -7,6 +7,7 @@ use Application\DataAccess\UserDal;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Rest\Users\Entity as RouteUser;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\DataModel\User\User;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Exception;
@@ -103,21 +104,23 @@ class ResourceAbstractFactory implements AbstractFactoryInterface
             $userDal = $serviceLocator->get(UserDal::class);
             $user = $userDal->findById($userId);
 
-            $resource->setRouteUser(new RouteUser($user));
+            if ($user instanceof User) {
+                $resource->setRouteUser(new RouteUser($user));
 
-            //  If appropriate set the LPA from the route parameter
-            if ($resource instanceof LpaConsumerInterface) {
-                $lpaId = $serviceLocator->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpaId');
+                //  If appropriate set the LPA from the route parameter
+                if ($resource instanceof LpaConsumerInterface) {
+                    $lpaId = $serviceLocator->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpaId');
 
-                if (!is_numeric($lpaId)) {
-                    throw new ApiProblemException('LPA identifier missing from URL', 400);
+                    if (!is_numeric($lpaId)) {
+                        throw new ApiProblemException('LPA identifier missing from URL', 400);
+                    }
+
+                    $lpaData = $lpaCollection->findOne(['_id' => (int) $lpaId, 'user' => $userId]);
+
+                    $lpaData = ['id' => $lpaData['_id']] + $lpaData;
+
+                    $resource->setLpa(new Lpa($lpaData));
                 }
-
-                $lpaData = $lpaCollection->findOne(['_id' => (int) $lpaId, 'user' => $userId]);
-
-                $lpaData = ['id' => $lpaData['_id']] + $lpaData;
-
-                $resource->setLpa(new Lpa($lpaData));
             }
         }
 
