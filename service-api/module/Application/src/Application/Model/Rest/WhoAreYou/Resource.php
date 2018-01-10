@@ -109,9 +109,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        $collection = $this->getCollection('stats-who');
-
-        $collection->insertOne( $answer->toArray(new DateCallback()) );
+        $this->collection->insertOne( $answer->toArray(new DateCallback()) );
 
         //---
 

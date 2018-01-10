@@ -54,20 +54,38 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
      */
     private $s3Client;
 
+    /*
+     * @var array
+     */
+    private $pdfConfig = [];
+
     /**
-     * Used for the PDF queue.
      * @var DynamoQueue
      */
-    private $dynamoQueue;
+    private $dynamoQueueClient;
 
-    //--------------------------
-
-    public function getPdfTypes(){
-        return ['lpa120', 'lp3', 'lp1'];
+    /**
+     * @param array $config
+     */
+    public function setPdfConfig(array $config)
+    {
+        if (isset($config['pdf'])) {
+            $this->pdfConfig = $config['pdf'];
+        }
     }
 
-    //----------------------------------------------------------------------
+    /**
+     * @param DynamoQueue $dynamoQueueClient
+     */
+    public function setDynamoQueueClient(DynamoQueue $dynamoQueueClient)
+    {
+        $this->dynamoQueueClient = $dynamoQueueClient;
+    }
 
+    public function getPdfTypes()
+    {
+        return ['lpa120', 'lp3', 'lp1'];
+    }
 
     /**
      * Returns a configured instance of the AWS S3 client.
@@ -82,25 +100,9 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        $config = $this->getServiceLocator()->get('config')['pdf']['cache']['s3']['client'];
-
-        $this->s3Client = new S3Client( $config );
+        $this->s3Client = new S3Client($this->pdfConfig['cache']['s3']['client']);
 
         return $this->s3Client;
-
-    }
-
-    protected function getDynamoQueueClient(){
-
-        if( $this->dynamoQueue instanceof DynamoQueue ){
-            return $this->dynamoQueue;
-        }
-
-        //---
-
-        $this->dynamoQueue = $this->getServiceLocator()->get('DynamoQueueClient');
-
-        return $this->dynamoQueue;
 
     }
 
@@ -281,16 +283,16 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         //-------------------------------------------------
         // Check if the file already exists in the cache.
 
-        $bucketConfig = $this->getServiceLocator()->get('config')['pdf']['cache']['s3']['settings'];
+        $bucketConfig = $this->pdfConfig['cache']['s3']['settings'];
 
         try {
 
             $this->getS3Client()->headObject($bucketConfig + [
-                    'Key' => $ident,
+                'Key' => $ident,
             ]);
 
             // If it's in the cache, clean it out of the queue.
-            $this->getDynamoQueueClient()->deleteJob( $ident );
+            $this->dynamoQueueClient->deleteJob( $ident );
 
             // If we get here it exists in the bucket...
             return Entity::STATUS_READY;
@@ -305,7 +307,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         // Check for the job in the queue
 
         // Get the job's status in the queue.
-        $status = $this->getDynamoQueueClient()->checkStatus( $ident );
+        $status = $this->dynamoQueueClient->checkStatus( $ident );
 
 
         if( in_array( $status, [ DynamoQueueJob::STATE_WAITING, DynamoQueueJob::STATE_PROCESSING ] ) ){
@@ -320,7 +322,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
             //  - An error occurred.
 
             // For now we just remove the job from teh queue so it can be re-added.
-            $this->getDynamoQueueClient()->deleteJob( $ident );
+            $this->dynamoQueueClient->deleteJob( $ident );
 
         }
 
@@ -349,17 +351,17 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         //----------------------
         // Encrypt the message
 
-        $config = $this->getServiceLocator()->get('config')['pdf']['encryption'];
+        $encryptionKey = $this->pdfConfig['encryption']['keys']['queue'];
 
-        if( !is_string($config['keys']['queue']) || strlen($config['keys']['queue']) != 32 ){
+        if( !is_string($encryptionKey) || strlen($encryptionKey) != 32 ){
             throw new CryptInvalidArgumentException('Invalid encryption key');
         }
 
         // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
-        $blockCipher = BlockCipher::factory('mcrypt', $config['options']);
+        $blockCipher = BlockCipher::factory('mcrypt', $this->pdfConfig['encryption']['options']);
 
         // Set the secret key
-        $blockCipher->setKey( $config['keys']['queue'] );
+        $blockCipher->setKey($encryptionKey);
 
         // Encrypt the JSON...
         $encryptedMessage = $blockCipher->encrypt( $message );
@@ -367,7 +369,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         //----------------------
 
         // Add the message to the queue.
-        $this->getDynamoQueueClient()->enqueue( '\Opg\Lpa\Pdf\Worker\DynamoQueueWorker', $encryptedMessage, $ident );
+        $this->dynamoQueueClient->enqueue( '\Opg\Lpa\Pdf\Worker\DynamoQueueWorker', $encryptedMessage, $ident );
 
     } // function
 
@@ -377,12 +379,12 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        $bucketConfig = $this->getServiceLocator()->get('config')['pdf']['cache']['s3']['settings'];
+        $bucketConfig = $this->pdfConfig['cache']['s3']['settings'];
 
         try {
 
             $file = $this->getS3Client()->getObject($bucketConfig + [
-                    'Key' => $ident,
+                'Key' => $ident,
             ]);
 
 
@@ -399,17 +401,17 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         //-------------------------------------
         // Decrypt the PDF
 
-        $config = $this->getServiceLocator()->get('config')['pdf']['encryption'];
+        $encryptionKeysConfig = $this->pdfConfig['encryption']['keys']['document'];
 
-        if( !is_string($config['keys']['document']) || strlen($config['keys']['document']) != 32 ){
+        if( !is_string($encryptionKeysConfig) || strlen($encryptionKeysConfig) != 32 ){
             throw new CryptInvalidArgumentException('Invalid encryption key');
         }
 
         // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
-        $blockCipher = BlockCipher::factory('mcrypt', $config['options']);
+        $blockCipher = BlockCipher::factory('mcrypt', $this->pdfConfig['encryption']['options']);
 
         // Set the secret key
-        $blockCipher->setKey( $config['keys']['document'] );
+        $blockCipher->setKey($encryptionKeysConfig);
         $blockCipher->setBinaryOutput( true );
 
         // Encrypt the JSON...
@@ -427,17 +429,16 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
      * @param $type
      * @return string
      */
-    private function getPdfIdent( $type ){
-
-        $keys = $this->getServiceLocator()->get('config')['pdf']['encryption']['keys'];
-
+    private function getPdfIdent($type)
+    {
         $lpa = $this->getLpa();
 
         // $keys are included so a new ident is generated when encryption keys change.
-        $hash = hash( 'sha512', md5( $lpa->toJson() ) . $keys['document'] . $keys['queue'] );
+        $keys = $this->pdfConfig['encryption']['keys'];
 
-        return strtolower( "{$type}-{$hash}" );
+        $hash = hash('sha512', md5($lpa->toJson()) . $keys['document'] . $keys['queue']);
 
+        return strtolower("{$type}-{$hash}");
     } // function
 
 } // class

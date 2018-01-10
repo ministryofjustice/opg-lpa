@@ -5,12 +5,10 @@ namespace Application\Model\Service\System;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 class DynamoCronLock
 {
     use LoggerTrait;
-    use ServiceLocatorAwareTrait;
 
     /**
      * The AWS client
