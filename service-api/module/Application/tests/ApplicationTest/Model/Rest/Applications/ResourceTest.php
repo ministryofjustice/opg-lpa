@@ -9,46 +9,56 @@ use Application\Library\DateTime;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Applications\Collection;
 use Application\Model\Rest\Applications\Entity;
-use Application\Model\Rest\Applications\Resource;
 use Application\Model\Rest\Applications\Resource as ApplicationsResource;
 use Application\Model\Rest\Lock\LockedException;
 use ApplicationTest\AbstractResourceTest;
-use Mockery;
+use MongoDB\BSON\UTCDateTime;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
-use ZfcRbac\Service\AuthorizationService;
 
 class ResourceTest extends AbstractResourceTest
 {
+    /**
+     * @var TestableResource
+     */
+    private $resource;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->resource = new TestableResource($this->lpaCollection);
+
+        $this->resource->setLogger($this->logger);
+
+        $this->resource->setAuthorizationService($this->authorizationService);
+    }
+
     public function testGetIdentifier()
     {
-        $resource = new Resource();
-        $this->assertEquals('lpaId', $resource->getIdentifier());
+        $this->assertEquals('lpaId', $this->resource->getIdentifier());
     }
 
     public function testGetName()
     {
-        $resource = new Resource();
-        $this->assertEquals('applications', $resource->getName());
+        $this->assertEquals('applications', $this->resource->getName());
     }
 
     public function testGetRouteUserException()
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Route User not set');
-        $resource = new Resource();
-        $resource->getRouteUser();
+        $this->resource->getRouteUser();
     }
 
     public function testSetLpa()
     {
         $pfLpa = FixturesData::getPfLpa();
-        $resource = new Resource();
-        $resource->setLpa($pfLpa);
-        $lpa = $resource->getLpa();
+        $this->resource->setLpa($pfLpa);
+        $lpa = $this->resource->getLpa();
         $this->assertTrue($pfLpa === $lpa);
     }
 
@@ -56,86 +66,68 @@ class ResourceTest extends AbstractResourceTest
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('LPA not set');
-        $resource = new Resource();
-        $resource->getLpa();
+        $this->resource->getLpa();
     }
 
     public function testGetType()
     {
-        $resource = new Resource();
-        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $resource->getType());
+        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $this->resource->getType());
     }
 
     public function testFetchCheckAccess()
     {
-        /** @var ApplicationsResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->fetch(-1);
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->fetch(-1);
     }
 
     public function testFetchNotFound()
     {
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user);
 
-        $entity = $resource->fetch(-1);
+        $this->setFindNullLpaExpectation($user, -1);
+
+        $entity = $this->resource->fetch(-1);
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(404, $entity->status);
         $this->assertEquals('Document -1 not found for user e551d8b14c408f7efb7358fb258f1b12', $entity->detail);
-
-        $resourceBuilder->verify();
     }
 
     public function testFetchHwLpa()
     {
-        $lpa = FixturesData::getHwLpa();
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user);
 
-        $entity = $resource->fetch($lpa->id);
+        $lpa = FixturesData::getHwLpa();
+        $this->setFindOneLpaExpectation($user, $lpa);
+
+        $entity = $this->resource->fetch($lpa->id);
         $this->assertTrue($entity instanceof Entity);
         $this->assertEquals($lpa, $entity->getLpa());
-
-        $resourceBuilder->verify();
     }
 
     public function testFetchNotAuthenticated()
     {
-        $authorizationServiceMock = Mockery::mock(AuthorizationService::class);
-        $authorizationServiceMock->shouldReceive('isGranted')->andReturn(false);
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withAuthorizationService($authorizationServiceMock)
-            ->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user, false);
 
         $this->expectException(UnauthorizedException::class);
         $this->expectExceptionMessage('You need to be authenticated to access this resource');
-        $resource->fetch(1);
 
-        $resourceBuilder->verify();
+        $this->resource->fetch(1);
     }
 
     public function testFetchMissingPermission()
     {
         $user = FixturesData::getUser();
-        $authorizationServiceMock = Mockery::mock(AuthorizationService::class);
-        $authorizationServiceMock->shouldReceive('isGranted')->with('isAuthorizedToManageUser', $user->id)
-            ->andReturn(false);
-        $authorizationServiceMock->shouldReceive('isGranted')->with('authenticated')->andReturn(true);
-        $authorizationServiceMock->shouldReceive('isGranted')->with('admin')->andReturn(false);
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser($user)
-            ->withAuthorizationService($authorizationServiceMock)
-            ->build();
+        $this->setCheckAccessExpectations($this->resource, $user, true, false);
 
         $this->expectException(UnauthorizedException::class);
         $this->expectExceptionMessage('You do not have permission to access this resource');
-        $resource->fetch(1);
 
-        $resourceBuilder->verify();
+        $this->resource->fetch(1);
     }
 
     public function testFetchMissingPermissionAdmin()
@@ -159,23 +151,25 @@ class ResourceTest extends AbstractResourceTest
 
     public function testCreateCheckAccess()
     {
-        /** @var ApplicationsResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->create(null);
+        parent::setUpCheckAccessTest($this->resource);
+
+        $this->resource->create(null);
     }
 
     public function testCreateNullData()
     {
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withInsert(true)->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user);
+
+        $this->setCreateIdExpectations();
+
+        $this->setInsertOneExpectations($user);
 
         /* @var Entity */
-        $createdEntity = $resource->create(null);
+        $createdEntity = $this->resource->create(null);
 
         $this->assertNotNull($createdEntity);
         $this->assertGreaterThan(0, $createdEntity->lpaId());
-
-        $resourceBuilder->verify();
     }
 
     public function testCreateMalformedData()
@@ -183,55 +177,50 @@ class ResourceTest extends AbstractResourceTest
         //The bad id value on this user will fail validation
         $user = new User();
         $user->set('id', 3);
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser($user)->build();
+        $this->setCheckAccessExpectations($this->resource, $user);
+
+        $this->setCreateIdExpectations();
 
         //So we expect an exception and for no document to be inserted
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object was created');
 
-        $resource->create(null);
-
-        $resourceBuilder->verify();
+        $this->resource->create(null);
     }
 
     public function testCreateFullLpa()
     {
         $user = FixturesData::getUser();
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser($user)
-            ->withInsert(true)
-            ->build();
+        $this->setCheckAccessExpectations($this->resource, $user);
+
+        $this->setCreateIdExpectations();
+
+        $this->setInsertOneExpectations($user);
 
         $lpa = FixturesData::getHwLpa();
         /* @var Entity */
-        $createdEntity = $resource->create($lpa->toArray());
+        $createdEntity = $this->resource->create($lpa->toArray());
 
         $this->assertNotNull($createdEntity);
         //Id should be generated
         $this->assertNotEquals($lpa->id, $createdEntity->lpaId());
-        $this->assertGreaterThan(0, $createdEntity->lpaId());
-        //User should be reassigned to logged in user
-        $this->assertEquals($user->id, $createdEntity->userId());
-
-        $resourceBuilder->verify();
     }
 
     public function testCreateFilterIncomingData()
     {
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withInsert(true)
-            ->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user);
+
+        $this->setCreateIdExpectations();
+
+        $this->setInsertOneExpectations($user);
 
         $lpa = FixturesData::getHwLpa();
         $lpa->set('lockedAt', new DateTime());
         $lpa->set('locked', true);
 
         /* @var Entity */
-        $createdEntity = $resource->create($lpa->toArray());
+        $createdEntity = $this->resource->create($lpa->toArray());
         $createdLpa = $createdEntity->getLpa();
 
         //The following properties should be maintained
@@ -249,25 +238,22 @@ class ResourceTest extends AbstractResourceTest
         $this->assertNotEquals($lpa->get('whoAreYouAnswered'), $createdLpa->get('whoAreYouAnswered'));
         $this->assertNotEquals($lpa->get('locked'), $createdLpa->get('locked'));
         $this->assertNotEquals($lpa->get('seed'), $createdLpa->get('seed'));
-
-        $resourceBuilder->verify();
     }
 
     public function testPatchCheckAccess()
     {
-        /** @var ApplicationsResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->patch(null, -1);
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->patch(null, -1);
     }
 
     public function testPatchValidationError()
     {
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user, true, true, 2);
+
         $pfLpa = FixturesData::getPfLpa();
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa(FixturesData::getPfLpa())
-            ->build();
+        $this->setFindOneLpaExpectation($user, $pfLpa);
 
         //Make sure the LPA is invalid
         $lpa = new Lpa();
@@ -275,7 +261,7 @@ class ResourceTest extends AbstractResourceTest
         $lpa->document = new Document();
         $lpa->document->type = 'invalid';
 
-        $validationError = $resource->patch($lpa->toArray(), $lpa->id);
+        $validationError = $this->resource->patch($lpa->toArray(), $lpa->id);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(400, $validationError->status);
@@ -285,18 +271,16 @@ class ResourceTest extends AbstractResourceTest
         $validation = $validationError->validation;
         $this->assertEquals(1, count($validation));
         $this->assertTrue(array_key_exists('document.type', $validation));
-
-        $resourceBuilder->verify();
     }
 
     public function testUpdateLpaValidationError()
     {
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user);
+
         $pfLpa = FixturesData::getPfLpa();
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($pfLpa)
-            ->build();
+        $this->logger->shouldReceive('info')
+            ->withArgs(['Updating LPA', ['lpaid' => $pfLpa->id]])->once();
 
         //Make sure the LPA is invalid
         $lpa = new Lpa();
@@ -306,9 +290,7 @@ class ResourceTest extends AbstractResourceTest
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('LPA object is invalid');
-        $resource->testUpdateLpa($lpa);
-
-        $resourceBuilder->verify();
+        $this->resource->testUpdateLpa($lpa);
     }
 
     public function testPatchFullLpaNoChanges()
@@ -676,5 +658,31 @@ class ResourceTest extends AbstractResourceTest
         $this->assertEquals(0, $response->count());
 
         $resourceBuilder->verify();
+    }
+
+    private function setCreateIdExpectations()
+    {
+        $this->lpaCollection->shouldReceive('findOne')
+            ->withArgs(function ($filter, $options) {
+                return is_int($filter['_id']) && $filter['_id'] >= 1000000 && $filter['_id'] <= 99999999999
+                    && $options['_id'] === true;
+            })->once()->andReturn(null);
+    }
+
+    /**
+     * @param $user
+     */
+    private function setInsertOneExpectations($user)
+    {
+        $this->lpaCollection->shouldReceive('insertOne')
+            ->withArgs(function ($document) use ($user) {
+                return is_int($document['_id']) && $document['_id'] >= 1000000 && $document['_id'] <= 99999999999
+                    && $document['startedAt'] instanceof UTCDateTime
+                    && $document['updatedAt'] instanceof UTCDateTime
+                    && $document['user'] === $user->id
+                    && $document['locked'] === false
+                    && $document['whoAreYouAnswered'] === false
+                    && is_array($document['document']) && empty($document['document']) === false;
+            })->once()->andReturn(null);
     }
 }
