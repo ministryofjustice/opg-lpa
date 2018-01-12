@@ -476,7 +476,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                         ->setData('lpa-document-correspondent-name-last', $correspondent->name->last);
                 }
 
-                $this->setData('lpa-document-correspondent-company', (isset($correspondent->company) ? isset($correspondent->company) : ''));
+                $this->setData('lpa-document-correspondent-company', (isset($correspondent->company) ? $correspondent->company : ''));
 
                 //  If the correspondent is an attorney then strike through the address field
                 if ($correspondent->who == Correspondence::WHO_ATTORNEY) {
