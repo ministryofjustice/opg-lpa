@@ -25,11 +25,22 @@ use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgum
 
 class ResourceTest extends AbstractResourceTest
 {
+    /**
+     * @var PdfsResource
+     */
+    private $resource;
+
     private $config = array();
 
     public function setUp()
     {
         parent::setUp();
+
+        $this->resource = new PdfsResource($this->lpaCollection);
+
+        $this->resource->setLogger($this->logger);
+
+        $this->resource->setAuthorizationService($this->authorizationService);
 
         $this->config = [
             'pdf' => [
@@ -57,30 +68,28 @@ class ResourceTest extends AbstractResourceTest
                 ]
             ]
         ];
+
+        $this->resource->setPdfConfig($this->config);
     }
 
     public function testGetIdentifier()
     {
-        $resource = new Resource();
-        $this->assertEquals('resourceId', $resource->getIdentifier());
+        $this->assertEquals('resourceId', $this->resource->getIdentifier());
     }
 
     public function testGetName()
     {
-        $resource = new Resource();
-        $this->assertEquals('pdfs', $resource->getName());
+        $this->assertEquals('pdfs', $this->resource->getName());
     }
 
     public function testGetType()
     {
-        $resource = new Resource();
-        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $resource->getType());
+        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $this->resource->getType());
     }
 
     public function testGetPdfTypes()
     {
-        $resource = new Resource();
-        $this->assertEquals(['lpa120', 'lp3', 'lp1'], $resource->getPdfTypes());
+        $this->assertEquals(['lpa120', 'lp3', 'lp1'], $this->resource->getPdfTypes());
     }
 
     public function testGetS3Client()
@@ -96,25 +105,11 @@ class ResourceTest extends AbstractResourceTest
         $this->assertTrue($s3Client === $loadedS3Client);
     }
 
-    public function testGetDynamoQueueClient()
-    {
-        $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withDynamoQueueClient($dynamoQueueClient)->build();
-
-        //Lazy loading so first call will retrieve the client, second will return the same instance
-        $dynamoQueueClient = $resource->testableGetDynamoQueueClient();
-        $loadedDynamoQueueClient = $resource->testableGetDynamoQueueClient();
-
-        $this->assertTrue($dynamoQueueClient instanceof DynamoQueue);
-        $this->assertTrue($dynamoQueueClient === $loadedDynamoQueueClient);
-    }
-
     public function testFetchCheckAccess()
     {
-        /** @var PdfsResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->fetch(-1);
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->fetch(-1);
     }
 
     public function testFetchNotFound()
@@ -384,9 +379,9 @@ class ResourceTest extends AbstractResourceTest
 
     public function testFetchAllCheckAccess()
     {
-        /** @var PdfsResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->fetchAll();
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->fetchAll();
     }
 
     public function testFetchAll()

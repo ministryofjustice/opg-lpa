@@ -6,6 +6,7 @@ use Application\DataAccess\Mongo\CollectionFactory;
 use Application\DataAccess\Mongo\DateCallback;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Applications\Resource as ApplicationsResource;
+use Application\Model\Rest\Users\Entity as UserEntity;
 use Application\Library\Authentication\Identity\User as UserIdentity;
 use Mockery;
 use Mockery\MockInterface;
@@ -13,8 +14,8 @@ use MongoDB\Collection as MongoCollection;
 use MongoDB\UpdateResult;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
+use Opg\Lpa\Logger\Logger;
 use Traversable;
-use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZfcRbac\Service\AuthorizationService;
 
@@ -173,9 +174,10 @@ abstract class AbstractResourceBuilder
         Mockery::close();
     }
 
-    protected function buildMocks($addDefaults = true)
+    protected function buildMocks(string $resourceName, $addDefaults = true, $additionalConstructorArgument = null)
     {
-        $loggerMock = Mockery::mock(LoggerInterface::class);
+        /** @var MockInterface|Logger $loggerMock */
+        $loggerMock = Mockery::mock(Logger::class);
         $loggerMock->shouldReceive('info');
 
         $this->lpaCollection = $this->lpaCollection ?: Mockery::mock(MongoCollection::class);
@@ -197,29 +199,36 @@ abstract class AbstractResourceBuilder
             $this->authorizationService = Mockery::mock(AuthorizationService::class);
             $this->authorizationService->shouldReceive('isGranted')->andReturn(true);
             if ($this->user !== null) {
-                $identity = new UserIdentity($this->user->id, $this->user->email);
+                $identity = new UserIdentity($this->user->getId(), $this->user->getEmail());
                 $this->authorizationService->shouldReceive('getIdentity')->andReturn($identity);
             }
         }
 
+        /** @var AbstractResource $resource */
+        $resource = new $resourceName($this->lpaCollection, $additionalConstructorArgument);
+        $resource->setLogger($loggerMock);
+        $resource->setAuthorizationService($this->authorizationService);
+
         if ($this->user !== null) {
+            $resource->setRouteUser(new UserEntity($this->user));
+
             if ($this->lpa !== null) {
                 $resource->setLpa($this->lpa);
 
                 $this->lpaCollection->shouldReceive('findOne')
-                    ->withArgs([['_id' => (int)$this->lpa->id, 'user' => $this->user->id]])
+                    ->withArgs([['_id' => (int)$this->lpa->getId(), 'user' => $this->user->getId()]])
                     ->andReturn($this->lpa->toArray(new DateCallback()));
                 $this->lpaCollection->shouldReceive('findOne')
-                    ->withArgs([['_id' => $this->lpa->id]])
+                    ->withArgs([['_id' => $this->lpa->getId()]])
                     ->andReturn($this->lpa->toArray(new DateCallback()));
 
                 if ($this->locked) {
                     $this->lpaCollection->shouldReceive('count')
-                        ->withArgs([[ '_id'=>$this->lpa->id, 'locked'=>true ], [ '_id'=>true ]])
+                        ->withArgs([[ '_id'=>$this->lpa->getId(), 'locked'=>true ], [ '_id'=>true ]])
                         ->andReturn(1);
                 } else {
                     $this->lpaCollection->shouldReceive('count')
-                        ->withArgs([[ '_id'=>$this->lpa->id, 'locked'=>true ], [ '_id'=>true ]])
+                        ->withArgs([[ '_id'=>$this->lpa->getId(), 'locked'=>true ], [ '_id'=>true ]])
                         ->andReturn(0);
                 }
             }
@@ -241,6 +250,8 @@ abstract class AbstractResourceBuilder
             $updateResult->shouldReceive('getModifiedCount')->andReturn($this->updateNumberModified);
             $this->lpaCollection->shouldReceive('updateOne')->once()->andReturn($updateResult);
         }
+
+        return $resource;
     }
 
     /**

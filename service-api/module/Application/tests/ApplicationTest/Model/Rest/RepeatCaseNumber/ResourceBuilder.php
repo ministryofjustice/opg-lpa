@@ -13,8 +13,8 @@ class ResourceBuilder extends AbstractResourceBuilder
      */
     public function build()
     {
-        $resource = new RepeatCaseNumberResource();
-        parent::buildMocks($resource);
+        /** @var RepeatCaseNumberResource $resource */
+        $resource = parent::buildMocks(RepeatCaseNumberResource::class);
         return $resource;
     }
 }

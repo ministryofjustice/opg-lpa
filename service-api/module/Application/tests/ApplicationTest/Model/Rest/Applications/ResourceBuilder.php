@@ -18,8 +18,9 @@ class ResourceBuilder extends AbstractResourceBuilder
      */
     public function build()
     {
-        parent::buildMocks(false);
-        $resource = new TestableResource($this->lpaCollection);
+        /** @var TestableResource $resource */
+        $resource = parent::buildMocks(TestableResource::class, false);
+        //$resource = new TestableResource($this->lpaCollection);
 
         if ($this->user !== null) {
             if ($this->toDelete === null) {

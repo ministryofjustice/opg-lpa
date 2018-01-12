@@ -7,38 +7,50 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\WhoAreYou\Entity;
 use Application\Model\Rest\WhoAreYou\Resource as WhoAreYouResource;
-use Application\Model\Rest\WhoAreYou\Resource;
 use ApplicationTest\AbstractResourceTest;
 use Mockery;
+use MongoDB\Collection as MongoCollection;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use OpgTest\Lpa\DataModel\FixturesData;
-use PhlyMongo\MongoCollectionFactory;
 
 class ResourceTest extends AbstractResourceTest
 {
+    /**
+     * @var WhoAreYouResource
+     */
+    private $resource;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->resource = new WhoAreYouResource($this->lpaCollection);
+
+        $this->resource->setLogger($this->logger);
+
+        $this->resource->setAuthorizationService($this->authorizationService);
+    }
+
     public function testGetIdentifier()
     {
-        $resource = new Resource();
-        $this->assertEquals('lpaId', $resource->getIdentifier());
+        $this->assertEquals('lpaId', $this->resource->getIdentifier());
     }
 
     public function testGetName()
     {
-        $resource = new Resource();
-        $this->assertEquals('who-are-you', $resource->getName());
+        $this->assertEquals('who-are-you', $this->resource->getName());
     }
 
     public function testGetType()
     {
-        $resource = new Resource();
-        $this->assertEquals(AbstractResource::TYPE_SINGULAR, $resource->getType());
+        $this->assertEquals(AbstractResource::TYPE_SINGULAR, $this->resource->getType());
     }
 
     public function testFetchCheckAccess()
     {
-        /** @var WhoAreYouResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->fetch();
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->fetch();
     }
 
     public function testFetch()
@@ -53,9 +65,9 @@ class ResourceTest extends AbstractResourceTest
 
     public function testCreateCheckAccess()
     {
-        /** @var WhoAreYouResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->create(null);
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->create(null);
     }
 
     public function testCreateAlreadyAnswered()
@@ -120,7 +132,7 @@ class ResourceTest extends AbstractResourceTest
     {
         $lpa = FixturesData::getHwLpa();
         $lpa->whoAreYouAnswered = false;
-        $statsWhoCollection = Mockery::mock(MongoCollectionFactory::class);
+        $statsWhoCollection = Mockery::mock(MongoCollection::class);
         $statsWhoCollection->shouldReceive('insertOne')->once();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder
