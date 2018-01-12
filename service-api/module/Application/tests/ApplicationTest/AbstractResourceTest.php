@@ -56,6 +56,7 @@ abstract class AbstractResourceTest extends MockeryTestCase
         User $user,
         bool $isAuthenticated = true,
         bool $isAuthorizedToManageUser = true,
+        bool $isAdmin = false,
         int $times = 1
     ) {
         $userEntity = new UserEntity($user);
@@ -72,6 +73,12 @@ abstract class AbstractResourceTest extends MockeryTestCase
             $this->authorizationService->shouldReceive('isGranted')
                 ->withArgs(['isAuthorizedToManageUser', $userEntity->userId()])->times($times)
                 ->andReturn($isAuthorizedToManageUser);
+
+            if ($isAuthorizedToManageUser === false) {
+                $this->authorizationService->shouldReceive('isGranted')
+                    ->withArgs(['admin'])->times($times)
+                    ->andReturn($isAdmin);
+            }
         }
     }
 
@@ -82,7 +89,7 @@ abstract class AbstractResourceTest extends MockeryTestCase
     protected function setFindNullLpaExpectation(User $user, int $lpaId)
     {
         $this->lpaCollection->shouldReceive('findOne')
-            ->withArgs([['_id' => $lpaId, 'user' => $user->id]])->once()
+            ->withArgs([['_id' => $lpaId, 'user' => $user->getId()]])->once()
             ->andReturn(null);
     }
 
@@ -93,7 +100,7 @@ abstract class AbstractResourceTest extends MockeryTestCase
     protected function setFindOneLpaExpectation(User $user, Lpa $lpa)
     {
         $this->lpaCollection->shouldReceive('findOne')
-            ->withArgs([['_id' => $lpa->id, 'user' => $user->id]])->once()
+            ->withArgs([['_id' => $lpa->getId(), 'user' => $user->getId()]])->once()
             ->andReturn($lpa->toArray(new DateCallback()));
     }
 }

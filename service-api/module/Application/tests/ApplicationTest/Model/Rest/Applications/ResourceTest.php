@@ -2,17 +2,20 @@
 
 namespace ApplicationTest\Model\Rest\Applications;
 
+use Application\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\DateTime;
 use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\Applications\AbbreviatedEntity;
 use Application\Model\Rest\Applications\Collection;
 use Application\Model\Rest\Applications\Entity;
-use Application\Model\Rest\Applications\Resource as ApplicationsResource;
 use Application\Model\Rest\Lock\LockedException;
 use ApplicationTest\AbstractResourceTest;
+use Mockery;
 use MongoDB\BSON\UTCDateTime;
+use MongoDB\UpdateResult;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -91,8 +94,8 @@ class ResourceTest extends AbstractResourceTest
         $entity = $this->resource->fetch(-1);
 
         $this->assertTrue($entity instanceof ApiProblem);
-        $this->assertEquals(404, $entity->status);
-        $this->assertEquals('Document -1 not found for user e551d8b14c408f7efb7358fb258f1b12', $entity->detail);
+        $this->assertEquals(404, $entity->getStatus());
+        $this->assertEquals('Document -1 not found for user e551d8b14c408f7efb7358fb258f1b12', $entity->getDetail());
     }
 
     public function testFetchHwLpa()
@@ -103,7 +106,7 @@ class ResourceTest extends AbstractResourceTest
         $lpa = FixturesData::getHwLpa();
         $this->setFindOneLpaExpectation($user, $lpa);
 
-        $entity = $this->resource->fetch($lpa->id);
+        $entity = $this->resource->fetch($lpa->getId());
         $this->assertTrue($entity instanceof Entity);
         $this->assertEquals($lpa, $entity->getLpa());
     }
@@ -133,20 +136,14 @@ class ResourceTest extends AbstractResourceTest
     public function testFetchMissingPermissionAdmin()
     {
         $user = FixturesData::getUser();
-        $authorizationServiceMock = Mockery::mock(AuthorizationService::class);
-        $authorizationServiceMock->shouldReceive('isGranted')->with('isAuthorizedToManageUser', $user->id)
-            ->andReturn(false);
-        $authorizationServiceMock->shouldReceive('isGranted')->with('authenticated')->andReturn(true);
-        $authorizationServiceMock->shouldReceive('isGranted')->with('admin')->andReturn(true);
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser($user)
-            ->withAuthorizationService($authorizationServiceMock)
-            ->build();
+        $this->setCheckAccessExpectations($this->resource, $user, true, false, true);
 
-        $resource->fetch(1);
+        $lpa = FixturesData::getHwLpa();
+        $this->setFindOneLpaExpectation($user, $lpa);
 
-        $resourceBuilder->verify();
+        $entity = $this->resource->fetch($lpa->getId());
+        $this->assertTrue($entity instanceof Entity);
+        $this->assertEquals($lpa, $entity->getLpa());
     }
 
     public function testCreateCheckAccess()
@@ -203,7 +200,7 @@ class ResourceTest extends AbstractResourceTest
 
         $this->assertNotNull($createdEntity);
         //Id should be generated
-        $this->assertNotEquals($lpa->id, $createdEntity->lpaId());
+        $this->assertNotEquals($lpa->getId(), $createdEntity->lpaId());
     }
 
     public function testCreateFilterIncomingData()
@@ -250,24 +247,30 @@ class ResourceTest extends AbstractResourceTest
     public function testPatchValidationError()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->resource, $user, true, true, 2);
+        $this->setCheckAccessExpectations($this->resource, $user, true, true, false, 2);
 
         $pfLpa = FixturesData::getPfLpa();
         $this->setFindOneLpaExpectation($user, $pfLpa);
 
         //Make sure the LPA is invalid
         $lpa = new Lpa();
-        $lpa->id = $pfLpa->id;
-        $lpa->document = new Document();
-        $lpa->document->type = 'invalid';
+        $lpa->setId($pfLpa->getId());
+        $lpa->setDocument(new Document());
+        $lpa->getDocument()->setType('invalid');
 
-        $validationError = $this->resource->patch($lpa->toArray(), $lpa->id);
+        $validationError = $this->resource->patch($lpa->toArray(), $lpa->getId());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
-        $this->assertEquals(400, $validationError->status);
-        $this->assertEquals('Your request could not be processed due to validation error', $validationError->detail);
-        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->type);
-        $this->assertEquals('Bad Request', $validationError->title);
+        $this->assertEquals(400, $validationError->getStatus());
+        $this->assertEquals(
+            'Your request could not be processed due to validation error',
+            $validationError->getDetail()
+        );
+        $this->assertEquals(
+            'https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md',
+            $validationError->getType()
+        );
+        $this->assertEquals('Bad Request', $validationError->getTitle());
         $validation = $validationError->validation;
         $this->assertEquals(1, count($validation));
         $this->assertTrue(array_key_exists('document.type', $validation));
@@ -280,13 +283,13 @@ class ResourceTest extends AbstractResourceTest
 
         $pfLpa = FixturesData::getPfLpa();
         $this->logger->shouldReceive('info')
-            ->withArgs(['Updating LPA', ['lpaid' => $pfLpa->id]])->once();
+            ->withArgs(['Updating LPA', ['lpaid' => $pfLpa->getId()]])->once();
 
         //Make sure the LPA is invalid
         $lpa = new Lpa();
-        $lpa->id = $pfLpa->id;
-        $lpa->document = new Document();
-        $lpa->document->type = 'invalid';
+        $lpa->setId($pfLpa->getId());
+        $lpa->setDocument(new Document());
+        $lpa->getDocument()->setType('invalid');
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('LPA object is invalid');
@@ -295,174 +298,165 @@ class ResourceTest extends AbstractResourceTest
 
     public function testPatchFullLpaNoChanges()
     {
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa(FixturesData::getHwLpa())
-            ->withUpdateNumberModified(0)
-            ->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user, true, true, false, 3);
 
         $lpa = FixturesData::getHwLpa();
+        $this->setUpdateOneLpaExpectations($user, $lpa, $lpa, true, false, true, false, true, false, 0);
+
         /* @var Entity */
-        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
+        $patchedEntity = $this->resource->patch($lpa->toArray(), $lpa->getId());
 
         $this->assertNotNull($patchedEntity);
         //Id should be retained
-        $this->assertEquals($lpa->id, $patchedEntity->lpaId());
+        $this->assertEquals($lpa->getId(), $patchedEntity->lpaId());
         //User should not be reassigned to logged in user
-        $this->assertEquals($lpa->user, $patchedEntity->userId());
+        $this->assertEquals($lpa->getUser(), $patchedEntity->userId());
         //Updated date should not have changed as the LPA document hasn't changed
-        $this->assertEquals($lpa->updatedAt, $patchedEntity->getLpa()->updatedAt);
-
-        $resourceBuilder->verify();
+        $this->assertEquals($lpa->getUpdatedAt(), $patchedEntity->getLpa()->getUpdatedAt());
     }
 
     public function testPatchFullLpaChanges()
     {
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa(FixturesData::getHwLpa())
-            ->withUpdateNumberModified(1)
-            ->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user, true, true, false, 3);
 
         $lpa = FixturesData::getHwLpa();
-        $lpa->document->instruction = 'Changed';
+        $lpa->getDocument()->setInstruction('Changed');
+        $this->setUpdateOneLpaExpectations(
+            $user,
+            FixturesData::getHwLpa(),
+            $lpa,
+            true,
+            false,
+            true,
+            false,
+            true,
+            true,
+            1
+        );
+
         /* @var Entity */
-        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
+        $patchedEntity = $this->resource->patch($lpa->toArray(), $lpa->getId());
 
         $this->assertNotNull($patchedEntity);
         //Id should be retained
-        $this->assertEquals($lpa->id, $patchedEntity->lpaId());
+        $this->assertEquals($lpa->getId(), $patchedEntity->lpaId());
         //User should not be reassigned to logged in user
-        $this->assertEquals($lpa->user, $patchedEntity->userId());
+        $this->assertEquals($lpa->getUser(), $patchedEntity->userId());
         //Updated date should not have changed as the LPA document hasn't changed
-        $this->assertNotEquals($lpa->updatedAt, $patchedEntity->getLpa()->updatedAt);
-
-        $resourceBuilder->verify();
+        $this->assertNotEquals($lpa->getUpdatedAt(), $patchedEntity->getLpa()->getUpdatedAt());
     }
 
     public function testPatchLockedLpa()
     {
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa(FixturesData::getPfLpa())
-            ->withLocked(true)
-            ->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user, true, true, false, 3);
+
+        $lpa = FixturesData::getHwLpa();
+        $lpa->setLocked(true);
+        $this->setFindOneLpaExpectation($user, $lpa);
+
+        $this->logger->shouldReceive('info')
+            ->withArgs(['Updating LPA', ['lpaid' => $lpa->getId()]])->once();
+
+        $this->lpaCollection->shouldReceive('count')
+            ->withArgs([[ '_id'=>$lpa->getId(), 'locked'=>true ], [ '_id'=>true ]])->once()
+            ->andReturn(1);
 
         $this->expectException(LockedException::class);
         $this->expectExceptionMessage('LPA has already been locked.');
-        $lpa = FixturesData::getPfLpa();
-        $resource->patch($lpa->toArray(), $lpa->id);
-
-        $resourceBuilder->verify();
+        $this->resource->patch($lpa->toArray(), $lpa->getId());
     }
 
     public function testPatchSetCreatedDate()
     {
-        $lpa = FixturesData::getHwLpa();
-        $lpa->createdAt = null;
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
-            ->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user, true, true, false, 3);
 
-        $this->assertNull($lpa->createdAt);
+        $lpa = FixturesData::getHwLpa();
+        $lpa->setCreatedAt(null);
+        $this->setUpdateOneLpaExpectations($user, $lpa, $lpa, true, true, true, false, true, true, 1);
+
+        $this->assertNull($lpa->getCreatedAt());
 
         /* @var Entity */
-        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
+        $lpa->getDocument()->setInstruction('Changed');
+        $patchedEntity = $this->resource->patch($lpa->toArray(), $lpa->getId());
 
-        $this->assertNotNull($patchedEntity->getLpa()->createdAt);
-
-        $resourceBuilder->verify();
+        $this->assertNotNull($patchedEntity->getLpa()->getCreatedAt());
     }
 
     public function testPatchNotCreatedYet()
     {
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa(FixturesData::getHwLpa())
-            ->withUpdateNumberModified(1)
-            ->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user, true, true, false, 3);
 
         $lpa = FixturesData::getHwLpa();
-        //Remove primary attorneys so LPA is classed as not created
-        $lpa->document->certificateProvider = null;
+        $this->setUpdateOneLpaExpectations($user, $lpa, $lpa, false, false, false, false, true, true, 1);
+
         /* @var Entity */
-        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
+        //Remove primary attorneys so LPA is classed as not created
+        $lpa->getDocument()->setCertificateProvider(null);
+        $patchedEntity = $this->resource->patch($lpa->toArray(), $lpa->getId());
 
-        $this->assertNull($patchedEntity->getLpa()->createdAt);
-
-        $resourceBuilder->verify();
+        $this->assertNull($patchedEntity->getLpa()->getCreatedAt());
     }
 
     public function testPatchSetCompletedAtNotLocked()
     {
-        $lpa = FixturesData::getHwLpa();
-        $lpa->completedAt = null;
-        $lpa->locked = false;
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
-            ->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user, true, true, false, 3);
 
-        $this->assertNull($lpa->completedAt);
+        $lpa = FixturesData::getHwLpa();
+        $lpa->setCompletedAt(null);
+        $lpa->setLocked(false);
+        $this->setUpdateOneLpaExpectations($user, $lpa, $lpa, true, false, true, false, true, false, 1);
+
+        $this->assertNull($lpa->getCompletedAt());
 
         /* @var Entity */
-        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
+        $patchedEntity = $this->resource->patch($lpa->toArray(), $lpa->getId());
 
-        $this->assertNull($patchedEntity->getLpa()->completedAt);
-
-        $resourceBuilder->verify();
+        $this->assertNull($patchedEntity->getLpa()->getCompletedAt());
     }
 
     public function testPatchSetCompletedAtLocked()
     {
-        $lpa = FixturesData::getHwLpa();
-        $lpa->completedAt = null;
-        $lpa->locked = true;
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
-            ->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user, true, true, false, 3);
 
-        $this->assertNull($lpa->completedAt);
+        $lpa = FixturesData::getHwLpa();
+        $lpa->setCompletedAt(null);
+        $lpa->setLocked(true);
+        $this->setUpdateOneLpaExpectations($user, $lpa, $lpa, true, false, true, true, true, false, 1);
+
+        $this->assertNull($lpa->getCompletedAt());
 
         /* @var Entity */
-        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
+        $patchedEntity = $this->resource->patch($lpa->toArray(), $lpa->getId());
 
-        $this->assertNotNull($patchedEntity->getLpa()->completedAt);
-
-        $resourceBuilder->verify();
+        $this->assertNotNull($patchedEntity->getLpa()->getCompletedAt());
     }
 
     public function testPatchUpdateNumberModifiedError()
     {
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user, true, true, false, 3);
+
         $lpa = FixturesData::getHwLpa();
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa(FixturesData::getHwLpa())
-            ->withUpdateNumberModified(2)
-            ->build();
+        $this->setUpdateOneLpaExpectations($user, $lpa, $lpa, true, false, true, false, true, false, 2);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unable to update LPA. This might be because "updatedAt" has changed.');
-        $resource->patch($lpa->toArray(), $lpa->id);
-
-        $resourceBuilder->verify();
+        $this->resource->patch($lpa->toArray(), $lpa->getId());
     }
 
     public function testPatchFilterIncomingData()
     {
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user, true, true, false, 3);
+
         $lpa = FixturesData::getHwLpa();
         $lpa->set('startedAt', new DateTime());
         $lpa->set('createdAt', new DateTime());
@@ -473,15 +467,21 @@ class ResourceTest extends AbstractResourceTest
         $lpa->set('lockedAt', new DateTime());
         $lpa->set('locked', true);
         $lpa->set('seed', 'changed');
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa(FixturesData::getHwLpa())
-            ->withUpdateNumberModified(1)
-            ->build();
+        $this->setUpdateOneLpaExpectations(
+            $user,
+            FixturesData::getHwLpa(),
+            $lpa,
+            true,
+            false,
+            true,
+            false,
+            true,
+            false,
+            1
+        );
 
         /* @var Entity */
-        $patchedEntity = $resource->patch($lpa->toArray(), $lpa->id);
+        $patchedEntity = $this->resource->patch($lpa->toArray(), $lpa->getId());
         $patchedLpa = $patchedEntity->getLpa();
 
         //The following properties should be maintained
@@ -499,165 +499,180 @@ class ResourceTest extends AbstractResourceTest
         $this->assertNotEquals($lpa->get('whoAreYouAnswered'), $patchedLpa->get('whoAreYouAnswered'));
         $this->assertNotEquals($lpa->get('locked'), $patchedLpa->get('locked'));
         $this->assertNotEquals($lpa->get('seed'), $patchedLpa->get('seed'));
-
-        $resourceBuilder->verify();
     }
 
     public function testDeleteCheckAccess()
     {
-        /** @var ApplicationsResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->delete(-1);
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->delete(-1);
     }
 
     public function testDeleteNotFound()
     {
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user);
 
-        $response = $resource->delete(-1);
+        $this->setDeleteExpectations($user, -1, null);
+
+        $response = $this->resource->delete(-1);
 
         $this->assertTrue($response instanceof ApiProblem);
-        $this->assertEquals(404, $response->status);
-        $this->assertEquals('Document not found', $response->detail);
-
-        $resourceBuilder->verify();
+        $this->assertEquals(404, $response->getStatus());
+        $this->assertEquals('Document not found', $response->getDetail());
     }
 
     public function testDelete()
     {
-        $lpa = FixturesData::getPfLpa();
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withToDelete($lpa)->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user);
 
-        $response = $resource->delete($lpa->id);
+        $lpa = FixturesData::getPfLpa();
+        $this->setDeleteExpectations($user, $lpa->getId(), $lpa);
+
+        $response = $this->resource->delete($lpa->getId());
 
         $this->assertTrue($response);
-
-        $resourceBuilder->verify();
     }
 
     public function testDeleteAllCheckAccess()
     {
-        /** @var ApplicationsResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->deleteAll();
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->deleteAll();
     }
 
     public function testDeleteAll()
     {
-        $lpa = FixturesData::getPfLpa();
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withToDelete($lpa)->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user, true, true, false, 2);
 
-        $response = $resource->deleteAll();
+        $lpa = FixturesData::getPfLpa();
+        $this->setDeleteExpectations($user, $lpa->getId(), $lpa);
+
+        $this->lpaCollection->shouldReceive('find')
+            ->withArgs([['user' => $user->getId()], ['_id' => true]])->once()
+            ->andReturn([['_id' => $lpa->getId()]]);
+
+        $response = $this->resource->deleteAll();
 
         $this->assertTrue($response);
-
-        $resourceBuilder->verify();
     }
 
     public function testFetchAllCheckAccess()
     {
-        /** @var ApplicationsResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->fetchAll();
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->fetchAll();
     }
 
     public function testFetchAllNoRecords()
     {
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->build();
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user);
+
+        $this->setFetchAllExpectations(['user' => $user->getId()], []);
 
         /** @var Collection $response */
-        $response = $resource->fetchAll();
+        $response = $this->resource->fetchAll();
 
         $this->assertEquals(0, $response->count());
-
-        $resourceBuilder->verify();
     }
 
     public function testFetchAllOneRecord()
     {
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user);
+
         $lpas = [FixturesData::getHwLpa()];
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpas($lpas)->build();
+        $this->setFetchAllExpectations(['user' => $user->getId()], $lpas);
 
         /** @var Collection $response */
-        $response = $resource->fetchAll();
+        $response = $this->resource->fetchAll();
 
         $this->assertEquals(1, $response->count());
         $lpaCollection = $response->toArray();
         $this->assertEquals(1, $lpaCollection['count']);
-        $this->assertEquals(1, count($lpaCollection['items']));
-        $this->assertEquals($lpas[0], $lpaCollection['items'][0]->getLpa());
-
-        $resourceBuilder->verify();
+        /** @var AbbreviatedEntity[] $items */
+        $items = $lpaCollection['items'];
+        $this->assertEquals(1, count($items));
+        $this->assertEquals($lpas[0], $items[0]->getLpa());
     }
 
     public function testFetchAllSearchById()
     {
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user);
+
         $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpas($lpas)->build();
+        $this->setFetchAllExpectations(['user' => $user->getId(), '_id' => $lpas[1]->id], [$lpas[1]]);
 
         /** @var Collection $response */
-        $response = $resource->fetchAll(['search' => $lpas[1]->id]);
+        $response = $this->resource->fetchAll(['search' => $lpas[1]->id]);
 
         $this->assertEquals(1, $response->count());
         $lpaCollection = $response->toArray();
         $this->assertEquals(1, $lpaCollection['count']);
-        $this->assertEquals(1, count($lpaCollection['items']));
-        $this->assertEquals($lpas[1], $lpaCollection['items'][0]->getLpa());
-
-        $resourceBuilder->verify();
+        /** @var AbbreviatedEntity[] $items */
+        $items = $lpaCollection['items'];
+        $this->assertEquals(1, count($items));
+        $this->assertEquals($lpas[1], $items[0]->getLpa());
     }
 
     public function testFetchAllSearchByIdAndFilter()
     {
         $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user);
+
         $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser($user)->withLpas($lpas)->build();
+        $this->setFetchAllExpectations([
+            'search' => $lpas[1]->id,
+            'filter' => ['user' => 'missing'],
+            'user' => $user->getId(),
+            '_id' => $lpas[1]->id
+        ], []);
 
         /** @var Collection $response */
-        $response = $resource->fetchAll(['search' => $lpas[1]->id, 'filter' => ['user' => 'missing']]);
+        $response = $this->resource->fetchAll(['search' => $lpas[1]->id, 'filter' => ['user' => 'missing']]);
 
         $this->assertEquals(0, $response->count());
-
-        $resourceBuilder->verify();
     }
 
     public function testFetchAllSearchByReference()
     {
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user);
+
         $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpas($lpas)->build();
+        $this->setFetchAllExpectations(['user' => $user->getId(), '_id' => $lpas[0]->id], [$lpas[0]]);
 
         /** @var Collection $response */
-        $response = $resource->fetchAll(['search' => Formatter::id($lpas[0]->id)]);
+        $response = $this->resource->fetchAll(['search' => Formatter::id($lpas[0]->id)]);
 
         $this->assertEquals(1, $response->count());
         $lpaCollection = $response->toArray();
         $this->assertEquals(1, $lpaCollection['count']);
-        $this->assertEquals(1, count($lpaCollection['items']));
-        $this->assertEquals($lpas[0], $lpaCollection['items'][0]->getLpa());
-
-        $resourceBuilder->verify();
+        /** @var AbbreviatedEntity[] $items */
+        $items = $lpaCollection['items'];
+        $this->assertEquals(1, count($items));
+        $this->assertEquals($lpas[0], $items[0]->getLpa());
     }
 
     public function testFetchAllSearchByName()
     {
+        $user = FixturesData::getUser();
+        $this->setCheckAccessExpectations($this->resource, $user);
+
         $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpas($lpas)->build();
+        $this->setFetchAllExpectations([
+            'user' => $user->getId(),
+            '$text' => ['$search' => '"'.$lpas[0]->document->donor->name.'"']
+        ], []);
 
         /** @var Collection $response */
-        $response = $resource->fetchAll(['search' => $lpas[0]->document->donor->name]);
+        $response = $this->resource->fetchAll(['search' => $lpas[0]->document->donor->name]);
 
         $this->assertEquals(0, $response->count());
-
-        $resourceBuilder->verify();
     }
 
     private function setCreateIdExpectations()
@@ -670,19 +685,227 @@ class ResourceTest extends AbstractResourceTest
     }
 
     /**
-     * @param $user
+     * @param User $user
      */
-    private function setInsertOneExpectations($user)
+    private function setInsertOneExpectations(User $user)
     {
         $this->lpaCollection->shouldReceive('insertOne')
             ->withArgs(function ($document) use ($user) {
                 return is_int($document['_id']) && $document['_id'] >= 1000000 && $document['_id'] <= 99999999999
                     && $document['startedAt'] instanceof UTCDateTime
                     && $document['updatedAt'] instanceof UTCDateTime
-                    && $document['user'] === $user->id
+                    && $document['user'] === $user->getId()
                     && $document['locked'] === false
                     && $document['whoAreYouAnswered'] === false
                     && is_array($document['document']) && empty($document['document']) === false;
             })->once()->andReturn(null);
+    }
+
+    /**
+     * @param User $user
+     * @param Lpa $originalLpa
+     * @param Lpa $updatedLpa
+     * @param bool $isCreated
+     * @param bool $setCreatedAt
+     * @param bool $isCompleted
+     * @param bool $setCompletedAt
+     * @param bool $setSearchField
+     * @param bool $setUpdatedAt
+     * @param int $modifiedCount
+     */
+    private function setUpdateOneLpaExpectations(
+        User $user,
+        Lpa $originalLpa,
+        Lpa $updatedLpa,
+        bool $isCreated,
+        bool $setCreatedAt,
+        bool $isCompleted,
+        bool $setCompletedAt,
+        bool $setSearchField,
+        bool $setUpdatedAt,
+        int $modifiedCount
+    ) {
+        $this->setFindOneLpaExpectation($user, $originalLpa);
+
+        $this->logger->shouldReceive('info')
+            ->withArgs(['Updating LPA', ['lpaid' => $updatedLpa->getId()]])->once();
+
+        $this->lpaCollection->shouldReceive('count')
+            ->withArgs([[ '_id'=>$updatedLpa->getId(), 'locked'=>true ], [ '_id'=>true ]])->once()
+            ->andReturn(0);
+
+        if ($isCreated === true) {
+            $this->logger->shouldReceive('info')
+                ->withArgs(['LPA is created', ['lpaid' => $updatedLpa->getId()]])->once();
+
+            if ($setCreatedAt === true) {
+                $this->logger->shouldReceive('info')
+                    ->withArgs(['Setting created time for existing LPA', ['lpaid' => $updatedLpa->getId()]])->once();
+            }
+        } else {
+            $this->logger->shouldReceive('info')
+                ->withArgs(['LPA is not fully created', ['lpaid' => $updatedLpa->getId()]])->once();
+
+            $updatedLpa->setCreatedAt(null);
+        }
+
+        if ($isCompleted === true) {
+            $this->logger->shouldReceive('info')
+                ->withArgs(['LPA is complete', ['lpaid' => $updatedLpa->getId()]])->once();
+
+            if ($setCompletedAt) {
+                $this->logger->shouldReceive('info')
+                    ->withArgs(['Setting completed time for existing LPA', ['lpaid' => $updatedLpa->getId()]])->once();
+            }
+        } else {
+            $this->logger->shouldReceive('info')
+                ->withArgs(['LPA is not complete', ['lpaid' => $updatedLpa->getId()]])->once();
+
+            $updatedLpa->setCompletedAt(null);
+        }
+
+        $searchField = null;
+        if ($setSearchField === true) {
+            $searchField = $updatedLpa->getDocument()->getDonor()->getName();
+
+            $this->logger->shouldReceive('info')
+                ->withArgs(['Setting search field', [
+                    'lpaid' => $updatedLpa->getId(),
+                    'searchField' => $searchField
+                ]])->once();
+        }
+
+        if ($setUpdatedAt === true) {
+            $this->logger->shouldReceive('info')->withArgs(function ($message, $extra) use ($updatedLpa) {
+                return $message === 'Setting updated time'
+                    && $extra['lpaid'] === $updatedLpa->getId()
+                    && $extra['updatedAt'] > new DateTime('-1 minute');
+            })->once();
+        }
+
+        $this->lpaCollection->shouldReceive('findOne')
+            ->withArgs([['_id' => $originalLpa->getId()]])->once()
+            ->andReturn($originalLpa->toArray(new DateCallback()));
+
+        $updateResult = Mockery::mock(UpdateResult::class);
+        $updateResult->shouldReceive('getModifiedCount')
+            ->times($modifiedCount === 0 ? 1 : 2)->andReturn($modifiedCount);
+
+        if ($setCreatedAt === true || $setCompletedAt === true || $setUpdatedAt === true) {
+            $this->lpaCollection->shouldReceive('updateOne')
+                ->withArgs(function (
+                    $filter,
+                    $update,
+                    $options
+                ) use (
+                    $originalLpa,
+                    $updatedLpa,
+                    $searchField,
+                    $setCreatedAt,
+                    $setCompletedAt,
+                    $setUpdatedAt
+                ) {
+                    $set = $update['$set'];
+                    $updatedLpaArray = array_merge(
+                        $updatedLpa->toArray(new DateCallback()),
+                        ['search' => $searchField->__toString()]
+                    );
+
+                    if ($setCreatedAt) {
+                        unset($set['createdAt']);
+                        unset($updatedLpaArray['createdAt']);
+                    }
+
+                    if ($setCompletedAt) {
+                        unset($set['completedAt']);
+                        unset($updatedLpaArray['completedAt']);
+                    }
+
+                    if ($setUpdatedAt === true) {
+                        unset($set['updatedAt']);
+                        unset($updatedLpaArray['updatedAt']);
+                    }
+
+                    return $filter == [
+                            '_id' => $updatedLpa->getId(),
+                            'updatedAt' => new UTCDateTime($originalLpa->getUpdatedAt())
+                        ] && ($setCreatedAt === false
+                            || $update['$set']['createdAt'] > new UTCDateTime(new DateTime('-1 minute')))
+                        && ($setCompletedAt === false
+                            || $update['$set']['completedAt'] > new UTCDateTime(new DateTime('-1 minute')))
+                        && ($setUpdatedAt === false
+                            || $update['$set']['updatedAt'] > new UTCDateTime(new DateTime('-1 minute')))
+                        && $set == $updatedLpaArray
+                        && $options == ['upsert' => false, 'multiple' => false];
+                })->once()
+                ->andReturn($updateResult);
+        } else {
+            $this->lpaCollection->shouldReceive('updateOne')
+                ->withArgs([
+                    ['_id' => $updatedLpa->getId(), 'updatedAt' => new UTCDateTime($originalLpa->getUpdatedAt())],
+                    ['$set' => array_merge($originalLpa->toArray(new DateCallback()), ['search' => $searchField])],
+                    ['upsert' => false, 'multiple' => false]
+                ])->once()
+                ->andReturn($updateResult);
+        }
+
+        if ($modifiedCount === 0 || $modifiedCount === 1) {
+            if ($setUpdatedAt) {
+                $this->logger->shouldReceive('info')->withArgs(function ($message, $extra) use ($updatedLpa) {
+                    return $message === 'LPA updated successfully'
+                        && $extra['lpaid'] === $updatedLpa->getId()
+                        && $extra['updatedAt'] > new DateTime('-1 minute');
+                })->once();
+            } else {
+                $this->logger->shouldReceive('info')
+                    ->withArgs(['LPA updated successfully', [
+                        'lpaid' => $updatedLpa->getId(),
+                        'updatedAt' => $originalLpa->getUpdatedAt()
+                    ]])->once();
+            }
+        }
+    }
+
+    /**
+     * @param User $user
+     * @param int $lpaId
+     * @param Lpa $lpa
+     */
+    private function setDeleteExpectations(User $user, int $lpaId, $lpa)
+    {
+        $isLpa = ($lpa instanceof Lpa) === true;
+        $lpaFilter = ['_id' => $lpaId, 'user' => $user->getId()];
+        $this->lpaCollection->shouldReceive('findOne')
+            ->withArgs([$lpaFilter, ['projection' => ['_id' => true]]])->once()
+            ->andReturn($isLpa === false ? null : ['_id' => $lpa->getId()]);
+
+        if ($isLpa === true) {
+            $result['updatedAt'] = new UTCDateTime();
+
+            $this->lpaCollection->shouldReceive('replaceOne')
+                ->withArgs(function ($filter, $replacement) use ($lpaFilter) {
+                    return $filter == $lpaFilter
+                        && $replacement['updatedAt'] > new UTCDateTime(new DateTime('-1 minute'));
+                })->once();
+        }
+    }
+
+    /**
+     * @param [] $filter
+     * @param Lpa[] $lpas
+     */
+    private function setFetchAllExpectations($filter, array $lpas)
+    {
+        $lpasCount = count($lpas);
+
+        $this->lpaCollection->shouldReceive('count')
+            ->withArgs([$filter])->once()
+            ->andReturn($lpasCount);
+
+        if ($lpasCount > 0) {
+            $this->lpaCollection->shouldReceive('find')
+                ->withArgs([$filter, ['sort' => ['updatedAt' => -1], 'skip' => 0, 'limit' => 250]])
+                ->andReturn(new DummyLpaMongoCursor($lpas));
+        }
     }
 }

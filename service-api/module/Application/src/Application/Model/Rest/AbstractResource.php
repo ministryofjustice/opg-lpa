@@ -223,10 +223,10 @@ abstract class AbstractResource implements AuthorizationServiceAwareInterface
 
             // If we don't already have a complete date...
             if( !($lpa->completedAt instanceof \DateTime) ){
-                $this->getLogger()->info('Setting completed time for existing LPA', ['lpaid' => $lpa->id]);
 
                 // And the LPA is locked...
                 if( $lpa->locked === true ){
+                    $this->getLogger()->info('Setting completed time for existing LPA', ['lpaid' => $lpa->id]);
 
                     // Set teh date.
                     $lpa->completedAt = new DateTime();
