@@ -5,9 +5,9 @@ namespace ApplicationTest\Model\Rest\Users;
 use Application\DataAccess\Mongo\DateCallback;
 use Application\DataAccess\UserDal;
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Users\Entity;
-use Application\Model\Rest\Users\Resource;
 use Application\Model\Rest\Users\Resource as UsersResource;
 use Application\Model\Rest\Applications\Resource as ApplicationsResource;
 use ApplicationTest\AbstractResourceTest;
@@ -52,7 +52,12 @@ class ResourceTest extends AbstractResourceTest
 
     public function testFetchCheckAccess()
     {
-        $this->setUpCheckAccessTest($this->resource);
+        $this->authorizationService->shouldReceive('isGranted')
+            ->withArgs(['authenticated'])->times(1)
+            ->andReturn(false);
+
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You need to be authenticated to access this resource');
 
         $this->resource->fetch(-1);
     }
@@ -60,11 +65,14 @@ class ResourceTest extends AbstractResourceTest
     public function testFetchDoesNotExist()
     {
         $user = FixturesData::getUser();
-        $userCollection = Mockery::mock(UserDal::class);
-        $userCollection->shouldReceive('findOne')->andReturn(null)->twice();
+        $userCollection = Mockery::mock(MongoCollection::class);
+        $userCollection->shouldReceive('findOne')->andReturn(null)->once();
         $userCollection->shouldReceive('insertOne')->once();
+        $userDal = Mockery::mock(UserDal::class);
+        $userDal->shouldReceive('findById')->andReturn(null)->once();
+        $userDal->shouldReceive('injectEmailAddressFromIdentity')->andReturn($user->getEmail())->once();
         $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserDal($userCollection)->build();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->withUserDal($userDal)->build();
 
         $entity = $resource->fetch($user->id);
         $entityArray = $entity->toArray();
@@ -83,10 +91,11 @@ class ResourceTest extends AbstractResourceTest
     {
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollection::class);
-        $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $userCollection->shouldNotReceive('insertOne');
+        $userDal = Mockery::mock(UserDal::class);
+        $userDal->shouldReceive('findById')->andReturn($user)->once();
         $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->withUserDal($userDal)->build();
 
         $entity = $resource->fetch($user->id);
 
@@ -97,7 +106,12 @@ class ResourceTest extends AbstractResourceTest
 
     public function testUpdateCheckAccess()
     {
-        $this->setUpCheckAccessTest($this->resource);
+        $this->authorizationService->shouldReceive('isGranted')
+            ->withArgs(['authenticated'])->times(1)
+            ->andReturn(false);
+
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You need to be authenticated to access this resource');
 
         $this->resource->update(null, -1);
     }
@@ -193,7 +207,12 @@ class ResourceTest extends AbstractResourceTest
 
     public function testDeleteCheckAccess()
     {
-        $this->setUpCheckAccessTest($this->resource);
+        $this->authorizationService->shouldReceive('isGranted')
+            ->withArgs(['authenticated'])->times(1)
+            ->andReturn(false);
+
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You need to be authenticated to access this resource');
 
         $this->resource->delete(-1);
     }

@@ -18,9 +18,15 @@ class ResourceBuilder extends AbstractResourceBuilder
     public function build()
     {
         /** @var UsersResource $resource */
-        $resource = parent::buildMocks(UsersResource::class);
+        $resource = parent::buildMocks(UsersResource::class, true, $this->userCollection);
 
-        $resource->setUserDal($this->userDal);
+        if ($this->applicationsResource !== null) {
+            $resource->setApplicationsResource($this->applicationsResource);
+        }
+
+        if ($this->userDal !== null) {
+            $resource->setUserDal($this->userDal);
+        }
 
         return $resource;
     }
