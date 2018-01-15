@@ -13,8 +13,8 @@ class ResourceBuilder extends AbstractResourceBuilder
      */
     public function build()
     {
-        $resource = new NotifiedPeopleResource();
-        parent::buildMocks($resource);
+        /** @var NotifiedPeopleResource $resource */
+        $resource = parent::buildMocks(NotifiedPeopleResource::class);
         return $resource;
     }
 }

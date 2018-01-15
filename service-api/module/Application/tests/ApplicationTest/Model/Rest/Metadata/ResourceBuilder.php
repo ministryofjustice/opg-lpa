@@ -12,8 +12,8 @@ class ResourceBuilder extends AbstractResourceBuilder
      */
     public function build()
     {
-        $resource = new MetadataResource();
-        parent::buildMocks($resource);
+        /** @var MetadataResource $resource */
+        $resource = parent::buildMocks(MetadataResource::class);
         return $resource;
     }
 }

@@ -2,27 +2,19 @@
 
 namespace Application\Controller\Version2;
 
-use Zend\Mvc\MvcEvent;
-
-use Zend\Mvc\Controller\AbstractRestfulController;
-
-use Application\Model\Rest\EntityInterface;
-use Application\Model\Rest\CollectionInterface;
-
-use Application\Model\Rest\Lock\LockedException;
-
-use Zend\Http\Response as HttpResponse;
-
-use Application\Library\Http\Response\NoContent as NoContentResponse;
-
-use ZF\ApiProblem\ApiProblem;
-use ZF\ApiProblem\ApiProblemResponse;
-
 use Application\Library\Hal\Hal;
 use Application\Library\Hal\HalResponse;
-
-
+use Application\Library\Http\Response\NoContent as NoContentResponse;
+use Application\Model\Rest\Applications\Resource;
+use Application\Model\Rest\CollectionInterface;
+use Application\Model\Rest\EntityInterface;
+use Application\Model\Rest\Lock\LockedException;
+use Zend\Http\Response as HttpResponse;
+use Zend\Mvc\Controller\AbstractRestfulController;
+use Zend\Mvc\MvcEvent;
 use ZfcRbac\Exception\UnauthorizedException;
+use ZF\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblemResponse;
 
 class ApplicationController extends AbstractRestfulController
 {
@@ -34,13 +26,17 @@ class ApplicationController extends AbstractRestfulController
     protected $identifierName = 'lpaId';
 
     /**
-     * Get the applications resource
-     *
-     * @return array|object
+     * @var Resource
      */
-    private function getResource()
+    private $applicationsResource;
+
+    /**
+     * ApplicationController constructor
+     * @param Resource $applicationsResource
+     */
+    public function __construct(Resource $applicationsResource)
     {
-        return $this->getServiceLocator()->get('resource-applications');
+        $this->applicationsResource = $applicationsResource;
     }
 
     /**
@@ -94,7 +90,7 @@ class ApplicationController extends AbstractRestfulController
         unset($filteredQuery['perPage']);
 
         //  Get the collection (paginator) of applications with the query data
-        $collections = $this->getResource()->fetchAll($filteredQuery);
+        $collections = $this->applicationsResource->fetchAll($filteredQuery);
 
         if ($collections instanceof ApiProblem) {
             return $collections;
@@ -122,7 +118,7 @@ class ApplicationController extends AbstractRestfulController
      */
     public function get($id)
     {
-        $result = $this->getResource()->fetch($id);
+        $result = $this->applicationsResource->fetch($id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -150,7 +146,7 @@ class ApplicationController extends AbstractRestfulController
      */
     public function create($data)
     {
-        $result = $this->getResource()->create($data);
+        $result = $this->applicationsResource->create($data);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -176,7 +172,7 @@ class ApplicationController extends AbstractRestfulController
      */
     public function delete($id)
     {
-        $result = $this->getResource()->delete($id);
+        $result = $this->applicationsResource->delete($id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -196,7 +192,7 @@ class ApplicationController extends AbstractRestfulController
      */
     public function patch($id, $data)
     {
-        $result = $this->getResource()->patch($data, $id);
+        $result = $this->applicationsResource->patch($data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -243,7 +239,7 @@ class ApplicationController extends AbstractRestfulController
     private function getApplicationsLink($queryParams = [], $lpaId = null)
     {
         $routeParams = [
-            'userId' => $this->getResource()->getRouteUser()->userId(),
+            'userId' => $this->applicationsResource->getRouteUser()->userId(),
         ];
 
         //  If an LPA Id has been provided then add it to the params so that the link points to the specific LPA
@@ -267,7 +263,7 @@ class ApplicationController extends AbstractRestfulController
     private function addUserLinkToHal(Hal $hal)
     {
         $routeParams = [
-            'userId' => $this->getResource()->getRouteUser()->userId(),
+            'userId' => $this->applicationsResource->getRouteUser()->userId(),
         ];
 
         $userLink = $this->url()->fromRoute('api-v2/user', $routeParams);
@@ -295,7 +291,7 @@ class ApplicationController extends AbstractRestfulController
 
         //  Add the resources - generate a Hal object for each one
         foreach ($collectionItems as $collectionItem) {
-            $hal->addResource($this->getResource()->getName(), $this->generateHal($collectionItem));
+            $hal->addResource($this->applicationsResource->getName(), $this->generateHal($collectionItem));
         }
 
         //  Add a user link to the Hal

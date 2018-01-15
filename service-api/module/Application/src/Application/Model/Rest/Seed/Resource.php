@@ -5,6 +5,7 @@ namespace Application\Model\Rest\Seed;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Applications\Entity as ApplicationEntity;
+use Application\Model\Rest\Applications\Resource as ApplicationResource;
 use Application\Model\Rest\LpaConsumerInterface;
 use Application\Model\Rest\UserConsumerInterface;
 use RuntimeException;
@@ -33,6 +34,19 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
     protected $type = self::TYPE_SINGULAR;
 
     /**
+     * @var ApplicationResource
+     */
+    private $applicationsResource;
+
+    /**
+     * @param ApplicationResource $applicationsResource
+     */
+    public function setApplicationsResource(ApplicationResource $applicationsResource)
+    {
+        $this->applicationsResource = $applicationsResource;
+    }
+
+    /**
      * Fetch a resource
      *
      * @return Entity|ApiProblem
@@ -54,9 +68,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        $resource = $this->getServiceLocator()->get( 'resource-applications' );
-
-        $lpaEntity  = $resource->fetch( $lpa->seed );
+        $lpaEntity  = $this->applicationsResource->fetch( $lpa->seed );
 
         if( !($lpaEntity instanceof ApplicationEntity) ){
             return new ApiProblem( 404, 'Invalid LPA identifier to seed from' );
@@ -98,9 +110,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //---
 
-        $resource = $this->getServiceLocator()->get( 'resource-applications' );
-
-        $lpaEntity  = $resource->fetch( $data['seed'] );
+        $lpaEntity  = $this->applicationsResource->fetch( $data['seed'] );
 
         if( !($lpaEntity instanceof ApplicationEntity) ){
             return new ApiProblem( 400, 'Invalid LPA identifier to seed from' );

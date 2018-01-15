@@ -2,15 +2,17 @@
 
 namespace ApplicationTest\Model\Rest\Stats;
 
-use Application\DataAccess\Mongo\CollectionFactory;
 use Application\Model\Rest\Stats\Resource as StatsResource;
 use ApplicationTest\AbstractResourceBuilder;
 use Mockery;
-use MongoCollection;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Mockery\MockInterface;
+use MongoDB\Collection as MongoCollection;
 
 class ResourceBuilder extends AbstractResourceBuilder
 {
+    /**
+     * @var MockInterface|MongoCollection
+     */
     private $statsLpasCollection = null;
 
     /**
@@ -18,19 +20,9 @@ class ResourceBuilder extends AbstractResourceBuilder
      */
     public function build()
     {
-        $resource = new StatsResource();
-
         $this->lpaCollection = $this->lpaCollection ?: Mockery::mock(MongoCollection::class);
 
-        $this->serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
-        $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-lpa')->andReturn($this->lpaCollection);
-        $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-stats-who')->andReturn($this->statsWhoCollection);
-
-        if ($this->statsLpasCollection !== null) {
-            $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-stats-lpas')->andReturn($this->statsLpasCollection);
-        }
-
-        $resource->setServiceLocator($this->serviceLocatorMock);
+        $resource = new StatsResource($this->lpaCollection, $this->statsLpasCollection);
 
         return $resource;
     }

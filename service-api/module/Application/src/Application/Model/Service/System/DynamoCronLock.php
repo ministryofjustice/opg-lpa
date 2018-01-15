@@ -1,15 +1,14 @@
 <?php
+
 namespace Application\Model\Service\System;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
+use Opg\Lpa\Logger\LoggerTrait;
 
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-
-class DynamoCronLock implements ServiceLocatorAwareInterface {
-
-    use ServiceLocatorAwareTrait;
+class DynamoCronLock
+{
+    use LoggerTrait;
 
     /**
      * The AWS client
@@ -34,18 +33,17 @@ class DynamoCronLock implements ServiceLocatorAwareInterface {
 
     //---
 
-    public function __construct(array $config){
-
+    public function __construct(array $config)
+    {
         $this->client = new DynamoDbClient($config['client']);
 
         $this->tableName = $config['settings']['table_name'];
 
         $this->keyPrefix = ( isset($config['keyPrefix']) ) ? $config['keyPrefix'] : 'default';
-
     }
 
-    public function getLock( $name, $allowedSecondsSinceLastRun ){
-
+    public function getLock($name, $allowedSecondsSinceLastRun)
+    {
         // Current time in milliseconds
         $time = round(microtime(true) * 1000);
 
@@ -53,7 +51,6 @@ class DynamoCronLock implements ServiceLocatorAwareInterface {
         $takeLockIfOlderThan = $time - ( $allowedSecondsSinceLastRun * 1000 );
 
         try {
-
             $this->getClient()->updateItem([
                 'TableName' => $this->tableName,
                 'Key'       => [ 'id' => [ 'S' => "{$this->keyPrefix}/{$name}" ] ],
@@ -75,30 +72,20 @@ class DynamoCronLock implements ServiceLocatorAwareInterface {
             // Otherwise a ConditionalCheckFailedException is thrown.
 
             return true;
-
-        } catch( DynamoDbException $e ){
-
+        } catch (DynamoDbException $e) {
             // We expect a ConditionalCheckFailedException
             // Anything else is a 'real' exception.
-            if( $e->getAwsErrorCode() !== 'ConditionalCheckFailedException' ){
-
+            if ($e->getAwsErrorCode() !== 'ConditionalCheckFailedException') {
                 // Log the exception...
-                $this->getServiceLocator()->get('Logger')->alert(
-                    'Unexpected exception thrown whilst trying to secure a Dynamo Cron Lock',
-                    [ 'exception' => $e->getMessage() ]
-                );
-
+                $this->getLogger()->alert('Unexpected exception thrown whilst trying to secure a Dynamo Cron Lock', [ 'exception' => $e->getMessage() ]);
             }
-
-        } // try
+        }
 
         return false;
-
-    } // function
+    }
 
     protected function getClient()
     {
         return $this->client;
     }
-
-} // class
+}

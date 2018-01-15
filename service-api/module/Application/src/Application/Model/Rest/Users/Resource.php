@@ -3,10 +3,12 @@
 namespace Application\Model\Rest\Users;
 
 use Application\DataAccess\Mongo\DateCallback;
+use Application\DataAccess\UserDal;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
 use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\Applications\Resource as ApplicationResource;
 use MongoDB\BSON\UTCDateTime;
 use Opg\Lpa\DataModel\User\User;
 
@@ -34,50 +36,58 @@ class Resource extends AbstractResource
     protected $type = self::TYPE_COLLECTION;
 
     /**
+     * @var UserDal
+     */
+    private $userDal;
+
+    /**
+     * @var ApplicationResource
+     */
+    private $applicationsResource;
+
+    /**
+     * @param UserDal $userDal
+     */
+    public function setUserDal(UserDal $userDal)
+    {
+        $this->userDal = $userDal;
+    }
+
+    /**
+     * @param ApplicationResource $applicationsResource
+     */
+    public function setApplicationsResource(ApplicationResource $applicationsResource)
+    {
+        $this->applicationsResource = $applicationsResource;
+    }
+
+    /**
      * Fetch the user. If the user does not exist, create them.
      *
      * @param  mixed $id
      * @return Entity|ApiProblem
      * @throw UnauthorizedException If the current user is not authorized.
      */
-    public function fetch($id){
+    public function fetch($id)
+    {
+        $this->checkAccess($id);
 
-        $this->checkAccess( $id );
+        //  Get user using the DAL
+        $user = $this->userDal->findById($id);
 
-        //------------------------
-
-        $user = $this->getCollection( 'user' )->findOne( [ '_id' => $id ] );
-
-        //------------------------
-
-        // If the user doesn't exist, we create it.
-        // (the ID has already been validated with the authentication service)
-        if( !is_array($user) ){
-
-            // Create a new user...
-            $user = $this->save( $id );
-
-        } else {
-            $user = [ 'id' => $id ] + $user;
-            $user = new User( $user );
+        //  If there is no user create one now and ensure that the email address is correct
+        if (is_null($user)) {
+            $user = $this->save($id);
+            $this->userDal->injectEmailAddressFromIdentity($user);
         }
 
-        // The authentication service is the authoritative email address provider
-        $user->email = [ 'address'=>$this->getAuthorizationService()->getIdentity()->email() ];
-
-        //------------------------
-
-        $user = new Entity( $user );
+        $user = new Entity($user);
 
         // Set the user in the AbstractResource so it can be used for route generation.
-        $this->setRouteUser( $user );
-
-        //---
+        $this->setRouteUser($user);
 
         return $user;
-
-    } // function
-
+    }
 
     /**
      * Update a resource
@@ -86,31 +96,24 @@ class Resource extends AbstractResource
      * @param  mixed $data
      * @return ApiProblem|Entity
      */
-    public function update($data, $id){
+    public function update($data, $id)
+    {
+        $this->checkAccess($id);
 
-        $this->checkAccess( $id );
-
-        //---
-
-        $user = $this->save( $id, $data );
+        $user = $this->save($id, $data);
 
         // If it's not a user, it's a different kind of response, so return it.
-        if( !( $user instanceof User ) ){
+        if (!$user instanceof User) {
             return $user;
         }
 
-        //---
-
-        $user = new Entity( $user );
+        $user = new Entity($user);
 
         // Set the user in the AbstractResource so it can be used for route generation.
-        $this->setRouteUser( $user );
-
-        //---
+        $this->setRouteUser($user);
 
         return $user;
-
-    } // function
+    }
 
     /**
      * Deletes the user AND all the user's LPAs!!!
@@ -119,23 +122,18 @@ class Resource extends AbstractResource
      * @return ApiProblem|bool
      * @throw UnauthorizedException If the current user is not authorized.
      */
-    public function delete($id){
-
-        $this->checkAccess( $id );
-
-        //------------------------
+    public function delete($id)
+    {
+        $this->checkAccess($id);
 
         // Delete all applications for the user.
-        $this->getServiceLocator()->get('resource-applications')->deleteAll();
+        $this->applicationsResource->deleteAll();
 
         // Delete the user's About Me details.
-        $this->getCollection( 'user' )->deleteOne( [ '_id' => $id ] );
+        $this->collection->deleteOne(['_id' => $id]);
 
         return true;
-
-    } // function
-
-    //-----------------------------------------
+    }
 
     /**
      * Save the user to the database (or creates them if they don't exist)
@@ -144,30 +142,23 @@ class Resource extends AbstractResource
      * @param $data
      * @return ValidationApiProblem|array|null|User
      */
-    private function save( $id, $data = null ){
+    private function save($id, $data = null)
+    {
+        $this->checkAccess($id);
 
-        $this->checkAccess( $id );
-
-        //---
-
-        $collection = $this->getCollection( 'user' );
-
-        $user = $collection->findOne( [ '_id' => $id ] );
-
-        //---
+        $user = $this->collection->findOne(['_id' => $id]);
 
         // Ensure $data is an array.
-        if( !is_array($data) ){ $data = array(); }
+        if (!is_array($data)) {
+            $data = array();
+        }
 
         // Protect these values from the client setting them manually.
-        unset( $data['id'], $data['email'], $data['createdAt'], $data['updatedAt'] );
-
-        //---
+        unset($data['id'], $data['email'], $data['createdAt'], $data['updatedAt']);
 
         $new = false;
 
-        if( is_null($user) ){
-
+        if (is_null($user)) {
             $user = [
                 'id'        => $id,
                 'createdAt' => new DateTime(),
@@ -175,34 +166,24 @@ class Resource extends AbstractResource
             ];
 
             $new = true;
-
         } else {
             $user = [ 'id' => $user['_id'] ] + $user;
         }
 
-        //---
+        $data = array_merge($user, $data);
 
-        $data = array_merge( $user, $data );
-
-        //---
-
-        $user = new User( $data );
+        $user = new User($data);
 
         // Keep email up to date with what's in the authentication service.
         $user->email = [ 'address'=>$this->getAuthorizationService()->getIdentity()->email() ];
 
-        //-----------------------------------------
-
-        if ($new){
-
-            $collection->insertOne( $user->toArray(new DateCallback()) );
-
+        if ($new) {
+            $this->collection->insertOne($user->toArray(new DateCallback()));
         } else {
-
             $validation = $user->validate();
 
-            if( $validation->hasErrors() ){
-                return new ValidationApiProblem( $validation );
+            if ($validation->hasErrors()) {
+                return new ValidationApiProblem($validation);
             }
 
             $lastUpdated = new UTCDateTime($user->updatedAt);
@@ -212,7 +193,7 @@ class Resource extends AbstractResource
 
             // updatedAt is included in the query so that data isn't overwritten
             // if the User has changed since this process loaded it.
-            $result = $collection->updateOne(
+            $result = $this->collection->updateOne(
                 ['_id' => $user->id, 'updatedAt' => $lastUpdated],
                 ['$set' => $user->toArray(new DateCallback())],
                 ['upsert' => false, 'multiple' => false]
@@ -223,10 +204,7 @@ class Resource extends AbstractResource
             if ($result->getModifiedCount() !== 0 && $result->getModifiedCount() !== 1) {
                 throw new \RuntimeException('Unable to update User. This might be because "updatedAt" has changed.');
             }
-
-        } // if
-
-        //------------------------
+        }
 
         return $user;
 

@@ -15,12 +15,14 @@ class ResourceBuilder extends AbstractResourceBuilder
      */
     public function build()
     {
-        $resource = new PdfsResource();
-        parent::buildMocks($resource);
+        /** @var PdfsResource $resource */
+        $resource = parent::buildMocks(PdfsResource::class);
 
         if ($this->dynamoQueueClient !== null) {
-            $this->serviceLocatorMock->shouldReceive('get')->with('DynamoQueueClient')->andReturn($this->dynamoQueueClient);
+            $resource->setDynamoQueueClient($this->dynamoQueueClient);
         }
+
+        $resource->setPdfConfig($this->config);
 
         return $resource;
     }

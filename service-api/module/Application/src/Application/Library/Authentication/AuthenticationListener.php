@@ -1,6 +1,7 @@
 <?php
 namespace Application\Library\Authentication;
 
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\MvcEvent;
 
 use ZF\ApiProblem\ApiProblem;
@@ -16,12 +17,12 @@ use Zend\Authentication\Result as AuthenticationResult;
  * Class AuthenticationListener
  * @package Application\Library\Authentication
  */
-class AuthenticationListener {
+class AuthenticationListener
+{
+    use LoggerTrait;
 
-    public function authenticate( MvcEvent $e ){
-
-        $log = $e->getApplication()->getServiceManager()->get('Logger');
-        
+    public function authenticate(MvcEvent $e)
+    {
         $auth = $e->getApplication()->getServiceManager()->get('AuthenticationService');
 
         $config = $e->getApplication()->getServiceManager()->get('Config');
@@ -34,49 +35,31 @@ class AuthenticationListener {
          * This will leave the standard 'Authorization' namespace free for when OAuth is done properly.
          */
         $token = $e->getRequest()->getHeader('Token');
-        
+
         if (!$token) {
-
             // No token; set Guest....
-            $auth->getStorage()->write( new Identity\Guest() );
-            
-            $log->info(
-                'No token, guest set in Authentication Listener'
-            );
+            $auth->getStorage()->write(new Identity\Guest());
 
+            $this->getLogger()->info('No token, guest set in Authentication Listener');
         } else {
-
             $token = trim($token->getFieldValue());
-            
-            $log->info(
-                'Authentication attempt - token supplied'
-            );
 
-            $authAdapter = new Adapter\LpaAuth( $token, $config['authentication']['endpoint'], $config['admin'] );
+            $this->getLogger()->info('Authentication attempt - token supplied');
+
+            $authAdapter = new Adapter\LpaAuth($token, $config['authentication']['endpoint'], $config['admin']);
 
             // If successful, the identity will be persisted for the request.
             $result = $auth->authenticate($authAdapter);
 
-            if( AuthenticationResult::SUCCESS !== $result->getCode() ){
+            if (AuthenticationResult::SUCCESS !== $result->getCode()) {
+                $this->getLogger()->info('Authentication failed');
 
-                $log->info(
-                    'Authentication failed'
-                );
-                
-                return new ApiProblemResponse( new ApiProblem( 401, 'Invalid authentication token' ) );
-
+                return new ApiProblemResponse(new ApiProblem(401, 'Invalid authentication token'));
             } else {
-
-                $log->info(
-                    'Authentication success'
-                );
+                $this->getLogger()->info('Authentication success');
 
                 // On SUCCESS, we don't return anything (as we're in a Listener).
-
             }
-
-        } // if token
-
-    } // function
-
-} // class
+        }
+    }
+}

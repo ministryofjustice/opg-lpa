@@ -5,15 +5,17 @@ namespace ApplicationTest;
 use Application\DataAccess\Mongo\CollectionFactory;
 use Application\DataAccess\Mongo\DateCallback;
 use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\Applications\Resource as ApplicationsResource;
 use Application\Model\Rest\Users\Entity as UserEntity;
 use Application\Library\Authentication\Identity\User as UserIdentity;
 use Mockery;
 use Mockery\MockInterface;
 use MongoDB\Collection as MongoCollection;
+use MongoDB\UpdateResult;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
+use Opg\Lpa\Logger\Logger;
 use Traversable;
-use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZfcRbac\Service\AuthorizationService;
 
@@ -21,17 +23,50 @@ abstract class AbstractResourceBuilder
 {
     const LPA_COLLECTION_NAMESPACE = 'opglpa-api.lpa';
 
+    /**
+     * @var Lpa
+     */
     protected $lpa;
-    protected $user;
-    protected $authorizationService;
-    protected $lpaCollection = null;
-    protected $locked = false;
-    protected $updateNumberModified = null;
-    protected $config = array();
-    protected $applicationsResource = null;
-    protected $statsWhoCollection = null;
 
-    protected $serviceLocatorMock = null;
+    /**
+     * @var User
+     */
+    protected $user;
+
+    /**
+     * @var MockInterface|AuthorizationService
+     */
+    protected $authorizationService;
+
+    /**
+     * @var MockInterface|MongoCollection
+     */
+    protected $lpaCollection = null;
+
+    /**
+     * @var bool
+     */
+    protected $locked = false;
+
+    /**
+     * @var int
+     */
+    protected $updateNumberModified = null;
+
+    /**
+     * @var array
+     */
+    protected $config = array();
+
+    /**
+     * @var MockInterface|ApplicationsResource
+     */
+    protected $applicationsResource = null;
+
+    /**
+     * @var MockInterface|MongoCollection
+     */
+    protected $statsWhoCollection = null;
 
     /**
      * @return AbstractResource
@@ -134,35 +169,28 @@ abstract class AbstractResourceBuilder
         Mockery::close();
     }
 
-    protected function buildMocks(AbstractResource $resource, $addDefaults = true)
+    protected function buildMocks(string $resourceName, $addDefaults = true, $additionalConstructorArgument = null)
     {
-        $loggerMock = Mockery::mock(LoggerInterface::class);
+        /** @var MockInterface|Logger $loggerMock */
+        $loggerMock = Mockery::mock(Logger::class);
         $loggerMock->shouldReceive('info');
 
         $this->lpaCollection = $this->lpaCollection ?: Mockery::mock(MongoCollection::class);
         $this->statsWhoCollection = $this->statsWhoCollection ?: Mockery::mock(MongoCollection::class);
-        $this->mongodbManager = Mockery::mock();
-
-        $this->serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
-        $this->serviceLocatorMock->shouldReceive('get')->with('Logger')->andReturn($loggerMock);
-        $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-lpa')->andReturn($this->lpaCollection);
-        $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-stats-who')->andReturn($this->statsWhoCollection);
-        $this->serviceLocatorMock->shouldReceive('get')->with('config')->andReturn($this->config);
-        $this->serviceLocatorMock->shouldReceive('get')->with('resource-applications')->andReturn($this->applicationsResource);
-
-        $resource->setServiceLocator($this->serviceLocatorMock);
 
         if ($this->authorizationService === null) {
-            $authorizationServiceMock = Mockery::mock(AuthorizationService::class);
-            $authorizationServiceMock->shouldReceive('isGranted')->andReturn(true);
+            $this->authorizationService = Mockery::mock(AuthorizationService::class);
+            $this->authorizationService->shouldReceive('isGranted')->andReturn(true);
             if ($this->user !== null) {
-                $identity = new UserIdentity($this->user->id, $this->user->email);
-                $authorizationServiceMock->shouldReceive('getIdentity')->andReturn($identity);
+                $identity = new UserIdentity($this->user->getId(), $this->user->getEmail());
+                $this->authorizationService->shouldReceive('getIdentity')->andReturn($identity);
             }
-            $resource->setAuthorizationService($authorizationServiceMock);
-        } else {
-            $resource->setAuthorizationService($this->authorizationService);
         }
+
+        /** @var AbstractResource $resource */
+        $resource = new $resourceName($this->lpaCollection, $additionalConstructorArgument);
+        $resource->setLogger($loggerMock);
+        $resource->setAuthorizationService($this->authorizationService);
 
         if ($this->user !== null) {
             $resource->setRouteUser(new UserEntity($this->user));
@@ -171,19 +199,19 @@ abstract class AbstractResourceBuilder
                 $resource->setLpa($this->lpa);
 
                 $this->lpaCollection->shouldReceive('findOne')
-                    ->with(['_id' => (int)$this->lpa->id, 'user' => $this->user->id])
+                    ->withArgs([['_id' => (int)$this->lpa->getId(), 'user' => $this->user->getId()]])
                     ->andReturn($this->lpa->toArray(new DateCallback()));
                 $this->lpaCollection->shouldReceive('findOne')
-                    ->with(['_id' => $this->lpa->id])
+                    ->withArgs([['_id' => $this->lpa->getId()]])
                     ->andReturn($this->lpa->toArray(new DateCallback()));
 
                 if ($this->locked) {
                     $this->lpaCollection->shouldReceive('count')
-                        ->with([ '_id'=>$this->lpa->id, 'locked'=>true ], [ '_id'=>true ])
+                        ->withArgs([[ '_id'=>$this->lpa->getId(), 'locked'=>true ], [ '_id'=>true ]])
                         ->andReturn(1);
                 } else {
                     $this->lpaCollection->shouldReceive('count')
-                        ->with([ '_id'=>$this->lpa->id, 'locked'=>true ], [ '_id'=>true ])
+                        ->withArgs([[ '_id'=>$this->lpa->getId(), 'locked'=>true ], [ '_id'=>true ]])
                         ->andReturn(0);
                 }
             }

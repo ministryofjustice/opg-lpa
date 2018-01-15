@@ -12,29 +12,42 @@ use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
+    /**
+     * @var LockResource
+     */
+    private $resource;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->resource = new LockResource($this->lpaCollection);
+
+        $this->resource->setLogger($this->logger);
+
+        $this->resource->setAuthorizationService($this->authorizationService);
+    }
+
     public function testGetIdentifier()
     {
-        $resource = new Resource();
-        $this->assertEquals('lpaId', $resource->getIdentifier());
+        $this->assertEquals('lpaId', $this->resource->getIdentifier());
     }
 
     public function testGetName()
     {
-        $resource = new Resource();
-        $this->assertEquals('lock', $resource->getName());
+        $this->assertEquals('lock', $this->resource->getName());
     }
 
     public function testGetType()
     {
-        $resource = new Resource();
-        $this->assertEquals(AbstractResource::TYPE_SINGULAR, $resource->getType());
+        $this->assertEquals(AbstractResource::TYPE_SINGULAR, $this->resource->getType());
     }
 
     public function testFetchCheckAccess()
     {
-        /** @var LockResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->fetch();
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->fetch();
     }
 
     public function testFetchNull()
@@ -61,9 +74,9 @@ class ResourceTest extends AbstractResourceTest
 
     public function testCreateCheckAccess()
     {
-        /** @var LockResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->create(null);
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->create(null);
     }
 
     public function testCreateAlreadyLocked()

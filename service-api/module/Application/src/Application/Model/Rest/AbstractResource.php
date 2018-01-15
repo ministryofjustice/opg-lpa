@@ -2,33 +2,29 @@
 
 namespace Application\Model\Rest;
 
-use Application\DataAccess\Mongo\CollectionFactory;
 use Application\DataAccess\Mongo\DateCallback;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\DateTime;
 use Application\Library\Lpa\StateChecker;
 use Application\Model\Rest\Lock\LockedException;
 use Application\Model\Rest\Users\Entity as RouteUser;
-use Application\Traits\LogTrait;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use Opg\Lpa\Logger\LoggerTrait;
 use ZfcRbac\Service\AuthorizationServiceAwareInterface;
 use ZfcRbac\Service\AuthorizationServiceAwareTrait;
 use RuntimeException;
 
-abstract class AbstractResource implements ServiceLocatorAwareInterface, AuthorizationServiceAwareInterface
+abstract class AbstractResource implements AuthorizationServiceAwareInterface
 {
-    use LogTrait;
+    use LoggerTrait;
 
     const TYPE_SINGULAR = 'singular';
     const TYPE_COLLECTION = 'collections';
 
     //------------------------------------------
 
-    use ServiceLocatorAwareTrait;
     use AuthorizationServiceAwareTrait;
 
     //------------------------------------------
@@ -67,6 +63,27 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
      * @var RouteUser
      */
     protected $routeUser = null;
+
+    /**
+     * @var Collection
+     */
+    protected $lpaCollection = null;
+
+    /**
+     * @var Collection
+     */
+    protected $collection = null;
+
+    /**
+     * AbstractResource constructor
+     * @param Collection $lpaCollection
+     * @param Collection $collection
+     */
+    public function __construct(Collection $lpaCollection, Collection $collection = null)
+    {
+        $this->lpaCollection = $lpaCollection;
+        $this->collection = $collection;
+    }
 
     /**
      * @return mixed
@@ -127,7 +144,7 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
         if (is_null($userId) && $this->getRouteUser() != null) {
             $userId = $this->getRouteUser()->userId();
 
-            $this->info('Access allowed for user', ['userid' => $userId]);
+            $this->getLogger()->info('Access allowed for user', ['userid' => $userId]);
         }
 
         if (!$this->getAuthorizationService()->isGranted('authenticated')) {
@@ -143,23 +160,13 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
     //------------------------------------------
 
     /**
-     * @param $collection string Name of the requested collection.
-     * @return Collection
-     */
-    public function getCollection( $collection ){
-        return $this->getServiceLocator()->get( CollectionFactory::class . "-{$collection}" );
-    }
-
-    //------------------------------------------
-
-    /**
      * Helper method for saving an updated LPA.
      *
      * @param Lpa $lpa
      */
     protected function updateLpa( Lpa $lpa ){
 
-        $this->info('Updating LPA', ['lpaid' => $lpa->id]);
+        $this->getLogger()->info('Updating LPA', ['lpaid' => $lpa->id]);
 
         // Should already have been checked, but no harm checking again.
         $this->checkAccess();
@@ -173,12 +180,10 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
 
         //--------------------------------------------------------
 
-        $collection = $this->getCollection('lpa');
-
         //--------------------------------------------------------
         // Check LPA in database isn't locked...
 
-        $locked = $collection->count( [ '_id'=>$lpa->id, 'locked'=>true ], [ '_id'=>true ] ) > 0;
+        $locked = $this->lpaCollection->count( [ '_id'=>$lpa->id, 'locked'=>true ], [ '_id'=>true ] ) > 0;
 
         if( $locked === true ){
             throw new LockedException('LPA has already been locked.');
@@ -191,18 +196,18 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
 
         if( $isCreated ){
 
-            $this->info('LPA is created', ['lpaid' => $lpa->id]);
+            $this->getLogger()->info('LPA is created', ['lpaid' => $lpa->id]);
 
             if( !($lpa->createdAt instanceof \DateTime) ){
 
-                $this->info('Setting created time for existing LPA', ['lpaid' => $lpa->id]);
+                $this->getLogger()->info('Setting created time for existing LPA', ['lpaid' => $lpa->id]);
 
                 $lpa->createdAt = new DateTime();
             }
 
         } else {
 
-            $this->info('LPA is not fully created', ['lpaid' => $lpa->id]);
+            $this->getLogger()->info('LPA is not fully created', ['lpaid' => $lpa->id]);
 
             $lpa->createdAt = null;
         }
@@ -214,14 +219,14 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
 
         if( $isCompleted ){
 
-            $this->info('LPA is complete', ['lpaid' => $lpa->id]);
+            $this->getLogger()->info('LPA is complete', ['lpaid' => $lpa->id]);
 
             // If we don't already have a complete date...
             if( !($lpa->completedAt instanceof \DateTime) ){
-                $this->info('Setting completed time for existing LPA', ['lpaid' => $lpa->id]);
 
                 // And the LPA is locked...
                 if( $lpa->locked === true ){
+                    $this->getLogger()->info('Setting completed time for existing LPA', ['lpaid' => $lpa->id]);
 
                     // Set teh date.
                     $lpa->completedAt = new DateTime();
@@ -232,7 +237,7 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
 
         } else {
 
-            $this->info('LPA is not complete', ['lpaid' => $lpa->id]);
+            $this->getLogger()->info('LPA is not complete', ['lpaid' => $lpa->id]);
 
             $lpa->completedAt = null;
         }
@@ -246,11 +251,10 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
 
             $searchField = (string)$lpa->document->donor->name;
 
-            $this->info('Setting search field', [
-                    'lpaid' => $lpa->id,
-                    'searchField' => $searchField,
-                ]
-            );
+            $this->getLogger()->info('Setting search field', [
+                'lpaid' => $lpa->id,
+                'searchField' => $searchField,
+            ]);
         }
 
         //--------------------------------------------------------
@@ -258,7 +262,7 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
         $lastUpdated = new UTCDateTime($lpa->updatedAt);
 
         $existingLpa = new Lpa();
-        $existingLpaResult = $collection->findOne( [ '_id'=>$lpa->id ] );
+        $existingLpaResult = $this->lpaCollection->findOne( [ '_id'=>$lpa->id ] );
         if( !is_null($existingLpaResult) ){
             $existingLpaResult = [ 'id' => $existingLpaResult['_id'] ] + $existingLpaResult;
             $existingLpa = new Lpa( $existingLpaResult );
@@ -269,16 +273,15 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
             // Record the time we updated the document.
             $lpa->updatedAt = new DateTime();
 
-            $this->info('Setting updated time', [
-                    'lpaid' => $lpa->id,
-                    'updatedAt' => $lpa->updatedAt,
-                ]
-            );
+            $this->getLogger()->info('Setting updated time', [
+                'lpaid' => $lpa->id,
+                'updatedAt' => $lpa->updatedAt,
+            ]);
         }
 
         // updatedAt is included in the query so that data isn't overwritten
         // if the Document has changed since this process loaded it.
-        $result = $collection->updateOne(
+        $result = $this->lpaCollection->updateOne(
             [ '_id'=>$lpa->id, 'updatedAt'=>$lastUpdated ],
             ['$set' => array_merge($lpa->toArray(new DateCallback()), ['search' => $searchField])],
             [ 'upsert'=>false, 'multiple'=>false ]
@@ -290,11 +293,10 @@ abstract class AbstractResource implements ServiceLocatorAwareInterface, Authori
             throw new RuntimeException('Unable to update LPA. This might be because "updatedAt" has changed.');
         }
 
-        $this->info('LPA updated successfully', [
-               'lpaid' => $lpa->id,
-               'updatedAt' => $lpa->updatedAt,
-            ]
-        );
+        $this->getLogger()->info('LPA updated successfully', [
+           'lpaid' => $lpa->id,
+           'updatedAt' => $lpa->updatedAt,
+        ]);
 
     } // function
 

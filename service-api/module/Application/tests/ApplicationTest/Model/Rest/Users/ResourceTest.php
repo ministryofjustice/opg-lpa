@@ -3,54 +3,76 @@
 namespace ApplicationTest\Model\Rest\Users;
 
 use Application\DataAccess\Mongo\DateCallback;
+use Application\DataAccess\UserDal;
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Users\Entity;
-use Application\Model\Rest\Users\Resource;
 use Application\Model\Rest\Users\Resource as UsersResource;
 use Application\Model\Rest\Applications\Resource as ApplicationsResource;
 use ApplicationTest\AbstractResourceTest;
 use Mockery;
+use MongoDB\Collection as MongoCollection;
 use MongoDB\UpdateResult;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
-use PhlyMongo\MongoCollectionFactory;
 
 class ResourceTest extends AbstractResourceTest
 {
+    /**
+     * @var UsersResource
+     */
+    private $resource;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->resource = new UsersResource($this->lpaCollection);
+
+        $this->resource->setLogger($this->logger);
+
+        $this->resource->setAuthorizationService($this->authorizationService);
+    }
+
     public function testGetIdentifier()
     {
-        $resource = new Resource();
-        $this->assertEquals('userId', $resource->getIdentifier());
+        $this->assertEquals('userId', $this->resource->getIdentifier());
     }
 
     public function testGetName()
     {
-        $resource = new Resource();
-        $this->assertEquals('users', $resource->getName());
+        $this->assertEquals('users', $this->resource->getName());
     }
 
     public function testGetType()
     {
-        $resource = new Resource();
-        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $resource->getType());
+        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $this->resource->getType());
     }
 
     public function testFetchCheckAccess()
     {
-        /** @var UsersResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->fetch(-1);
+        $this->authorizationService->shouldReceive('isGranted')
+            ->withArgs(['authenticated'])->times(1)
+            ->andReturn(false);
+
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You need to be authenticated to access this resource');
+
+        $this->resource->fetch(-1);
     }
 
     public function testFetchDoesNotExist()
     {
         $user = FixturesData::getUser();
-        $userCollection = Mockery::mock(MongoCollectionFactory::class);
-        $userCollection->shouldReceive('findOne')->andReturn(null)->twice();
+        $userCollection = Mockery::mock(MongoCollection::class);
+        $userCollection->shouldReceive('findOne')->andReturn(null)->once();
         $userCollection->shouldReceive('insertOne')->once();
+        $userDal = Mockery::mock(UserDal::class);
+        $userDal->shouldReceive('findById')->andReturn(null)->once();
+        $userDal->shouldReceive('injectEmailAddressFromIdentity')->andReturn($user->getEmail())->once();
         $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->withUserDal($userDal)->build();
 
         $entity = $resource->fetch($user->id);
         $entityArray = $entity->toArray();
@@ -68,11 +90,12 @@ class ResourceTest extends AbstractResourceTest
     public function testFetch()
     {
         $user = FixturesData::getUser();
-        $userCollection = Mockery::mock(MongoCollectionFactory::class);
-        $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
+        $userCollection = Mockery::mock(MongoCollection::class);
         $userCollection->shouldNotReceive('insertOne');
+        $userDal = Mockery::mock(UserDal::class);
+        $userDal->shouldReceive('findById')->andReturn($user)->once();
         $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
+        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->withUserDal($userDal)->build();
 
         $entity = $resource->fetch($user->id);
 
@@ -83,15 +106,20 @@ class ResourceTest extends AbstractResourceTest
 
     public function testUpdateCheckAccess()
     {
-        /** @var UsersResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->update(null, -1);
+        $this->authorizationService->shouldReceive('isGranted')
+            ->withArgs(['authenticated'])->times(1)
+            ->andReturn(false);
+
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You need to be authenticated to access this resource');
+
+        $this->resource->update(null, -1);
     }
 
     public function testUpdateNotFound()
     {
         $user = FixturesData::getUser();
-        $userCollection = Mockery::mock(MongoCollectionFactory::class);
+        $userCollection = Mockery::mock(MongoCollection::class);
         $userCollection->shouldReceive('findOne')->andReturn(null)->once();
         $userCollection->shouldReceive('insertOne')->once();
         $resourceBuilder = new ResourceBuilder();
@@ -113,7 +141,7 @@ class ResourceTest extends AbstractResourceTest
     public function testUpdateValidationFailed()
     {
         $user = FixturesData::getUser();
-        $userCollection = Mockery::mock(MongoCollectionFactory::class);
+        $userCollection = Mockery::mock(MongoCollection::class);
         $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $userCollection->shouldNotReceive('updateOne');
         $resourceBuilder = new ResourceBuilder();
@@ -138,7 +166,7 @@ class ResourceTest extends AbstractResourceTest
     public function testUpdate()
     {
         $user = FixturesData::getUser();
-        $userCollection = Mockery::mock(MongoCollectionFactory::class);
+        $userCollection = Mockery::mock(MongoCollection::class);
         $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $updateResult = Mockery::mock(UpdateResult::class);
         $updateResult->shouldReceive('getModifiedCount')->andReturn(1);
@@ -160,7 +188,7 @@ class ResourceTest extends AbstractResourceTest
     public function testUpdateNumberModifiedError()
     {
         $user = FixturesData::getUser();
-        $userCollection = Mockery::mock(MongoCollectionFactory::class);
+        $userCollection = Mockery::mock(MongoCollection::class);
         $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $updateResult = Mockery::mock(UpdateResult::class);
         $updateResult->shouldReceive('getModifiedCount')->andReturn(2);
@@ -179,9 +207,14 @@ class ResourceTest extends AbstractResourceTest
 
     public function testDeleteCheckAccess()
     {
-        /** @var UsersResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->delete(-1);
+        $this->authorizationService->shouldReceive('isGranted')
+            ->withArgs(['authenticated'])->times(1)
+            ->andReturn(false);
+
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You need to be authenticated to access this resource');
+
+        $this->resource->delete(-1);
     }
 
     public function testDelete()
@@ -189,7 +222,7 @@ class ResourceTest extends AbstractResourceTest
         $user = FixturesData::getUser();
         $applicationsResource = Mockery::mock(ApplicationsResource::class);
         $applicationsResource->shouldReceive('deleteAll')->once();
-        $userCollection = Mockery::mock(MongoCollectionFactory::class);
+        $userCollection = Mockery::mock(MongoCollection::class);
         $userCollection->shouldReceive('deleteOne')->with([ '_id' => $user->id ])->once();
         $resourceBuilder = new ResourceBuilder();
         $resource = $resourceBuilder

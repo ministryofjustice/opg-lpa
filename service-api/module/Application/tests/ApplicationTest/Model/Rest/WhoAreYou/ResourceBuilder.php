@@ -12,8 +12,8 @@ class ResourceBuilder extends AbstractResourceBuilder
      */
     public function build()
     {
-        $resource = new WhoAreYouResource();
-        parent::buildMocks($resource);
+        /** @var WhoAreYouResource $resource */
+        $resource = parent::buildMocks(WhoAreYouResource::class, true, $this->statsWhoCollection);
         return $resource;
     }
 }

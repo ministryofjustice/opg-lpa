@@ -199,13 +199,12 @@ return [
     'controllers' => [
         'invokables' => [
             'Application\Controller\Index' => 'Application\Controller\IndexController',
-            'Application\Controller\Ping' => 'Application\Controller\PingController',
-            'Application\Controller\Console\GenerateStats' => 'Application\Controller\Console\GenerateStatsController',
             'Application\Controller\Version1\Rest' => 'Application\Controller\Version1\RestController',
-            'Application\Controller\Version2\Application' => 'Application\Controller\Version2\ApplicationController',
         ],
         'factories' => [
-            //'Application\Controller\Version1\Rest' => 'Application\Factory\RestControllerFactory',
+            'Application\Controller\Console\GenerateStats' => 'Application\Controller\Console\GenerateStatsControllerFactory',
+            'Application\Controller\Ping' => 'Application\Controller\PingControllerFactory',
+            'Application\Controller\Version2\Application' => 'Application\Controller\Version2\ApplicationControllerFactory',
         ],
     ], // controllers
 
@@ -214,7 +213,15 @@ return [
         'initializers' => [
             'ZfcRbac\Initializer\AuthorizationServiceInitializer',
         ],
-        'invokables' => [
+        'factories' => [
+            'StatsService' => 'Application\Model\Service\System\StatsFactory',
+            \Application\DataAccess\UserDal::class => \Application\DataAccess\UserDalFactory::class,
+        ],
+        'abstract_factories' => [
+            'Application\Model\Rest\ResourceAbstractFactory',
+            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
+        ],
+        'aliases' => [
             'resource-users'                            => 'Application\Model\Rest\Users\Resource',
             'resource-applications'                     => 'Application\Model\Rest\Applications\Resource',
             'resource-status'                           => 'Application\Model\Rest\Status\Resource',
@@ -238,12 +245,7 @@ return [
             'resource-pdfs'                             => 'Application\Model\Rest\Pdfs\Resource',
             'resource-metadata'                         => 'Application\Model\Rest\Metadata\Resource',
             'resource-stats'                            => 'Application\Model\Rest\Stats\Resource',
-        ],
-        'abstract_factories' => [
-            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-            'Zend\Log\LoggerAbstractServiceFactory',
-        ],
-        'aliases' => [
+
             'translator' => 'MvcTranslator',
             'AuthenticationService' => 'Zend\Authentication\AuthenticationService',
         ],

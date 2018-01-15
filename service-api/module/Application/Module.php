@@ -10,11 +10,10 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
-use Application\Model\Rest\LpaConsumerInterface;
-use Application\Model\Rest\UserConsumerInterface;
 use Application\Model\Service\System\DynamoCronLock;
 use Aws\DynamoDb\DynamoDbClient;
 use DynamoQueue\Queue\Client as DynamoQueue;
+use Opg\Lpa\Logger\Logger;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
 use Zend\Mvc\ModuleRouteListener;
@@ -93,66 +92,18 @@ class Module {
 
     public function getServiceConfig() {
         return [
-            'invokables' => [
-                'StatsService' => 'Application\Model\Service\System\Stats',
-            ],
-            'initializers' => [
-                'InjectResourceEntities' => function($object, $sm) {
-
-                    if ($object instanceof UserConsumerInterface) {
-
-                        $userId = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getParam('userId');
-
-                        if( !isset($userId) ){
-                            throw new ApiProblemException('User identifier missing from URL', 400);
-                        }
-
-                        $resource = $sm->get("resource-users");
-
-                        $user = $resource->fetch( $userId );
-
-                        $object->setRouteUser( $user );
-
-                    } // UserConsumerInterface
-
-                    if( $object instanceof LpaConsumerInterface ){
-
-                        $lpaId = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpaId');
-
-                        if( !isset($lpaId) ){
-                            throw new ApiProblemException('LPA identifier missing from URL', 400);
-                        }
-
-                        $resource = $sm->get("resource-applications");
-
-                        $lpa = $resource->fetch( $lpaId );
-
-                        if ($lpa instanceof ApiProblem) {
-                            throw new ApiProblemException('LPA Not Found', 404);
-                        }
-
-                        $object->setLpa( $lpa->getLpa() );
-
-                    } // LpaConsumerInterface
-
-                }, // InjectResourceEntities
-            ],
             'factories' => [
-
-                'Zend\Authentication\AuthenticationService' => function($sm) {
+                'Zend\Authentication\AuthenticationService' => function ($sm) {
                     // NonPersistent persists only for the life of the request...
-                    return new AuthenticationService( new NonPersistent() );
+                    return new AuthenticationService(new NonPersistent());
                 },
+                'DynamoCronLock' => function ($sm) {
+                    $config = $sm->get('config')['cron']['lock']['dynamodb'];
 
-                                'DynamoCronLock' => function ( $sm ) {
+                    $config['keyPrefix'] = $sm->get('config')['stack']['name'];
 
-                                     $config = $sm->get('config')['cron']['lock']['dynamodb'];
-
-                                    $config['keyPrefix'] = $sm->get('config')['stack']['name'];
-                                                     return new DynamoCronLock($config);
-                                                  },
-
-                //---------------------
+                    return new DynamoCronLock($config);
+                },
 
                 // Create an instance of the MongoClient...
                 ManagerFactory::class => ManagerFactory::class,
@@ -166,28 +117,14 @@ class Module {
                 CollectionFactory::class . '-stats-who' => new CollectionFactory('whoAreYou'),
                 CollectionFactory::class . '-stats-lpas' => new CollectionFactory('lpaStats'),
 
-                // Logger
-                'Logger' => function ( $sm ) {
-                    $logger = new \Opg\Lpa\Logger\Logger();
-                    $logConfig = $sm->get('config')['log'];
-
-                    $logger->setFileLogPath($logConfig['path']);
-                    $logger->setSentryUri($logConfig['sentry-uri']);
-
-                    return $logger;
-                },
-
                 // Get Dynamo Queue Client
-                'DynamoQueueClient' => function ( $sm ) {
-
+                'DynamoQueueClient' => function ($sm) {
                     $config = $sm->get('config')['pdf']['DynamoQueue'];
 
                     $dynamoDb = new DynamoDbClient($config['client']);
 
-                    return new DynamoQueue( $dynamoDb, $config['settings'] );
-
+                    return new DynamoQueue($dynamoDb, $config['settings']);
                 },
-
             ], // factories
         ];
     } // function
@@ -225,7 +162,7 @@ class Module {
             $response = new ApiProblemResponse($problem);
             $e->setResponse($response);
 
-            $logger = $e->getApplication()->getServiceManager()->get('Logger');
+            $logger = Logger::getInstance();
             $logger->err($exception->getMessage());
 
             return $response;

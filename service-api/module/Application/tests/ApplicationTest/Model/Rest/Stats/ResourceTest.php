@@ -8,28 +8,40 @@ use Application\Model\Rest\Stats\Resource;
 use ApplicationTest\AbstractResourceTest;
 use DateTime;
 use Mockery;
-use MongoCollection;
-use MongoDB\BSON\UTCDateTime as MongoDate;
+use MongoDB\Collection as MongoCollection;
 use MongoDB\Driver\ReadPreference;
 
 class ResourceTest extends AbstractResourceTest
 {
+    /**
+     * @var Resource
+     */
+    private $resource;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->resource = new Resource($this->lpaCollection);
+
+        $this->resource->setLogger($this->logger);
+
+        $this->resource->setAuthorizationService($this->authorizationService);
+    }
+
     public function testGetIdentifier()
     {
-        $resource = new Resource();
-        $this->assertEquals('type', $resource->getIdentifier());
+        $this->assertEquals('type', $this->resource->getIdentifier());
     }
 
     public function testGetName()
     {
-        $resource = new Resource();
-        $this->assertEquals('stats', $resource->getName());
+        $this->assertEquals('stats', $this->resource->getName());
     }
 
     public function testGetType()
     {
-        $resource = new Resource();
-        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $resource->getType());
+        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $this->resource->getType());
     }
 
     public function testFetch()

@@ -30,9 +30,4 @@ class TestableResource extends Resource
     {
         return parent::getS3Client();
     }
-
-    public function testableGetDynamoQueueClient()
-    {
-        return parent::getDynamoQueueClient();
-    }
 }

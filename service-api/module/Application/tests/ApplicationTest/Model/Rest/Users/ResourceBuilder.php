@@ -10,16 +10,22 @@ class ResourceBuilder extends AbstractResourceBuilder
 {
     private $userCollection = null;
 
+    private $userDal;
+
     /**
      * @return UsersResource
      */
     public function build()
     {
-        $resource = new UsersResource();
-        parent::buildMocks($resource);
+        /** @var UsersResource $resource */
+        $resource = parent::buildMocks(UsersResource::class, true, $this->userCollection);
 
-        if ($this->userCollection !== null) {
-            $this->serviceLocatorMock->shouldReceive('get')->with(CollectionFactory::class . '-user')->andReturn($this->userCollection);
+        if ($this->applicationsResource !== null) {
+            $resource->setApplicationsResource($this->applicationsResource);
+        }
+
+        if ($this->userDal !== null) {
+            $resource->setUserDal($this->userDal);
         }
 
         return $resource;
@@ -32,6 +38,12 @@ class ResourceBuilder extends AbstractResourceBuilder
     public function withUserCollection($userCollection)
     {
         $this->userCollection = $userCollection;
+        return $this;
+    }
+
+    public function withUserDal($userDal)
+    {
+        $this->userDal = $userDal;
         return $this;
     }
 }

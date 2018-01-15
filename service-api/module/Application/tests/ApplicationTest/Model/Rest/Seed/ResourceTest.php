@@ -13,29 +13,42 @@ use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
+    /**
+     * @var SeedResource
+     */
+    private $resource;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->resource = new SeedResource($this->lpaCollection);
+
+        $this->resource->setLogger($this->logger);
+
+        $this->resource->setAuthorizationService($this->authorizationService);
+    }
+
     public function testGetIdentifier()
     {
-        $resource = new Resource();
-        $this->assertEquals('lpaId', $resource->getIdentifier());
+        $this->assertEquals('lpaId', $this->resource->getIdentifier());
     }
 
     public function testGetName()
     {
-        $resource = new Resource();
-        $this->assertEquals('seed', $resource->getName());
+        $this->assertEquals('seed', $this->resource->getName());
     }
 
     public function testGetType()
     {
-        $resource = new Resource();
-        $this->assertEquals(AbstractResource::TYPE_SINGULAR, $resource->getType());
+        $this->assertEquals(AbstractResource::TYPE_SINGULAR, $this->resource->getType());
     }
 
     public function testFetchCheckAccess()
     {
-        /** @var SeedResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->fetch();
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->fetch();
     }
 
     public function testFetchNullSeed()
@@ -127,9 +140,9 @@ class ResourceTest extends AbstractResourceTest
 
     public function testUpdateCheckAccess()
     {
-        /** @var SeedResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->update(null, -1);
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->update(null, -1);
     }
 
     public function testUpdateValidationFailed()
@@ -253,9 +266,9 @@ class ResourceTest extends AbstractResourceTest
 
     public function testDeleteCheckAccess()
     {
-        /** @var SeedResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->delete();
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->delete();
     }
 
     public function testDeleteMalformedData()

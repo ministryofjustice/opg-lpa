@@ -20,7 +20,7 @@
         "nocarrier/hal": "0.9.10",
         "zfcampus/zf-api-problem": "1.0.*",
         "guzzlehttp/guzzle": "^5.1",
-        "ministryofjustice/opg-lpa-logger": "^2.0",
+        "ministryofjustice/opg-lpa-logger": "^3.0",
         "ministryofjustice/opg-lpa-datamodels": "^9.0",
         "zf-commons/zfc-rbac": "~2.4",
         "nsmithuk/zf-config-dump": "^1.0",

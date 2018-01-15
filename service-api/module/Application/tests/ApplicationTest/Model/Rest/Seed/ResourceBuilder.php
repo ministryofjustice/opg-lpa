@@ -12,8 +12,13 @@ class ResourceBuilder extends AbstractResourceBuilder
      */
     public function build()
     {
-        $resource = new SeedResource();
-        parent::buildMocks($resource);
+        /** @var SeedResource $resource */
+        $resource = parent::buildMocks(SeedResource::class);
+
+        if ($this->applicationsResource !== null) {
+            $resource->setApplicationsResource($this->applicationsResource);
+        }
+
         return $resource;
     }
 }

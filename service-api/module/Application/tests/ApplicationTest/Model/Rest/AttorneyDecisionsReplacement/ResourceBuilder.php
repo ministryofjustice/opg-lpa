@@ -12,8 +12,8 @@ class ResourceBuilder extends AbstractResourceBuilder
      */
     public function build()
     {
-        $resource = new AttorneyDecisionsReplacementResource();
-        parent::buildMocks($resource);
+        /** @var AttorneyDecisionsReplacementResource $resource */
+        $resource = parent::buildMocks(AttorneyDecisionsReplacementResource::class);
         return $resource;
     }
 }

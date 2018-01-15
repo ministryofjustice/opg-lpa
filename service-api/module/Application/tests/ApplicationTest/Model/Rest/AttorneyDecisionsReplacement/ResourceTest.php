@@ -13,29 +13,42 @@ use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
+    /**
+     * @var AttorneyDecisionsReplacementResource
+     */
+    private $resource;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->resource = new AttorneyDecisionsReplacementResource($this->lpaCollection);
+
+        $this->resource->setLogger($this->logger);
+
+        $this->resource->setAuthorizationService($this->authorizationService);
+    }
+
     public function testGetIdentifier()
     {
-        $resource = new Resource();
-        $this->assertEquals('lpaId', $resource->getIdentifier());
+        $this->assertEquals('lpaId', $this->resource->getIdentifier());
     }
 
     public function testGetName()
     {
-        $resource = new Resource();
-        $this->assertEquals('replacement-attorney-decisions', $resource->getName());
+        $this->assertEquals('replacement-attorney-decisions', $this->resource->getName());
     }
 
     public function testGetType()
     {
-        $resource = new Resource();
-        $this->assertEquals(AbstractResource::TYPE_SINGULAR, $resource->getType());
+        $this->assertEquals(AbstractResource::TYPE_SINGULAR, $this->resource->getType());
     }
 
     public function testFetchCheckAccess()
     {
-        /** @var AttorneyDecisionsReplacementResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->fetch();
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->fetch();
     }
 
     public function testFetch()
@@ -50,9 +63,9 @@ class ResourceTest extends AbstractResourceTest
 
     public function testUpdateCheckAccess()
     {
-        /** @var AttorneyDecisionsReplacementResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->update(null, -1);
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->update(null, -1);
     }
 
     public function testUpdateValidationFailed()
@@ -116,9 +129,9 @@ class ResourceTest extends AbstractResourceTest
 
     public function testPatchCheckAccess()
     {
-        /** @var AttorneyDecisionsReplacementResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->patch(null, -1);
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->patch(null, -1);
     }
 
     public function testPatchValidationFailed()
@@ -211,9 +224,9 @@ class ResourceTest extends AbstractResourceTest
 
     public function testDeleteCheckAccess()
     {
-        /** @var AttorneyDecisionsReplacementResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->delete();
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->delete();
     }
 
     public function testDeleteValidationFailed()

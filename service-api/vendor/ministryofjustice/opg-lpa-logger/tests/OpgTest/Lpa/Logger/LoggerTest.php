@@ -8,7 +8,7 @@ use PHPUnit_Framework_TestCase;
 
 class LoggerTest extends TestCase
 {
-    private $fileLogPath = 'testlog.log';
+    private $fileLogPath = '/tmp/testlog.log';
 
     /**
      * @var Logger
@@ -17,8 +17,7 @@ class LoggerTest extends TestCase
 
     public function setUp()
     {
-        $this->logger = new Logger();
-        $this->logger->setFileLogPath($this->fileLogPath);
+        $this->logger = new Logger($this->fileLogPath);
     }
 
     public function testInfo()

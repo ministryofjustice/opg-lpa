@@ -85,8 +85,6 @@ class Resource extends AbstractResource implements UserConsumerInterface
         //----------------------------
         // Generate an id for the LPA
 
-        $collection = $this->getCollection('lpa');
-
         $csprng = new Csprng();
 
         /*
@@ -98,7 +96,7 @@ class Resource extends AbstractResource implements UserConsumerInterface
             $id = $csprng->GetInt(1000000, 99999999999);
 
             // Check if the id already exists. We're looking for a value of null.
-            $exists = $collection->findOne( [ '_id'=>$id ], [ '_id'=>true ] );
+            $exists = $this->lpaCollection->findOne( [ '_id'=>$id ], [ '_id'=>true ] );
 
         } while( !is_null($exists) );
 
@@ -134,7 +132,7 @@ class Resource extends AbstractResource implements UserConsumerInterface
 
         }
 
-        $collection->insertOne( $lpa->toArray(new DateCallback()) );
+        $this->lpaCollection->insertOne( $lpa->toArray(new DateCallback()) );
 
         $entity = new Entity( $lpa );
 
@@ -190,7 +188,7 @@ class Resource extends AbstractResource implements UserConsumerInterface
 
         // Note: user has to match.
         $userId = $this->getRouteUser()->userId();
-        $result = $this->getCollection('lpa')->findOne( [ '_id'=>(int)$id, 'user'=> $userId] );
+        $result = $this->lpaCollection->findOne( [ '_id'=>(int)$id, 'user'=> $userId] );
 
         if( is_null($result) ){
             return new ApiProblem(
@@ -263,10 +261,7 @@ class Resource extends AbstractResource implements UserConsumerInterface
 
         //---
 
-        // Get the collection...
-        $collection = $this->getCollection('lpa');
-
-        $count = $collection->count($filter);
+        $count = $this->lpaCollection->count($filter);
 
         // If there are no records, just return an empty paginator...
         if( $count == 0 ){
@@ -276,12 +271,14 @@ class Resource extends AbstractResource implements UserConsumerInterface
         //---
 
         // Map the results into a Zend Paginator, lazely converting them to LPA instances as we go...
+        $lpaCollection = $this->lpaCollection;
+
         $callback = new PaginatorCallback(
-            function($offset, $itemCountPerPage) use ($collection, $filter){
+            function($offset, $itemCountPerPage) use ($lpaCollection, $filter){
                 // getItems callback
 
                 $options = ['sort' => ['updatedAt' => -1], 'skip' => $offset, 'limit' => $itemCountPerPage];
-                $cursor = $collection->find($filter, $options);
+                $cursor = $lpaCollection->find($filter, $options);
                 $lpas = $cursor->toArray();
 
                 // Convert the results to instances of the LPA object..
@@ -298,12 +295,7 @@ class Resource extends AbstractResource implements UserConsumerInterface
             }
         );
 
-        $collection = new Collection( $callback, $this->getRouteUser()->userId() );
-
-        //---
-
-        return $collection;
-
+        return new Collection( $callback, $this->getRouteUser()->userId() );
     } // function
 
 
@@ -320,10 +312,8 @@ class Resource extends AbstractResource implements UserConsumerInterface
 
         //------------------------
 
-        $collection = $this->getCollection('lpa');
-
         $filter = ['_id' => (int)$id, 'user' => $this->getRouteUser()->userId()];
-        $result = $collection->findOne( $filter, ['projection' => ['_id'=>true]]);
+        $result = $this->lpaCollection->findOne( $filter, ['projection' => ['_id'=>true]]);
 
         if( is_null($result) ){
             return new ApiProblem( 404, 'Document not found' );
@@ -338,7 +328,7 @@ class Resource extends AbstractResource implements UserConsumerInterface
 
         $result['updatedAt'] = new UTCDateTime();
 
-        $collection->replaceOne($filter, $result);
+        $this->lpaCollection->replaceOne($filter, $result);
 
         return true;
 
@@ -357,7 +347,7 @@ class Resource extends AbstractResource implements UserConsumerInterface
 
         $query = [ 'user'=>$this->getRouteUser()->userId() ];
 
-        $lpas = $this->getCollection('lpa')->find( $query, [ '_id' => true ] );
+        $lpas = $this->lpaCollection->find( $query, [ '_id' => true ] );
 
         foreach( $lpas as $lpa ){
             $this->delete( $lpa['_id'] );

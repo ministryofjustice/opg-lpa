@@ -13,8 +13,8 @@ class ResourceBuilder extends AbstractResourceBuilder
      */
     public function build()
     {
-        $resource = new LockResource();
-        parent::buildMocks($resource);
+        /** @var LockResource $resource */
+        $resource = parent::buildMocks(LockResource::class);
         return $resource;
     }
 }

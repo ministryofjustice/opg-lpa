@@ -87,13 +87,6 @@ return array(
 
     ],
 
-    'log' => [
-
-        'path' => getenv('OPG_LPA_COMMON_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-api2/application.log',
-        'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: null,
-
-    ], // log
-
     'pdf' => [
         
         'encryption' => [

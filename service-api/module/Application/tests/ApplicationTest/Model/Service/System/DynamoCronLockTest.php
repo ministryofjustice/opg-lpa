@@ -7,6 +7,7 @@ use Aws\Command;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Mockery;
+use Opg\Lpa\Logger\Logger;
 use PHPUnit\Framework\TestCase;
 use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -61,12 +62,10 @@ class DynamoCronLockTest extends TestCase
         $dynamoCronLock->mockClient = Mockery::mock(DynamoDbClient::class);
         $dynamoCronLock->mockClient->shouldReceive('updateItem')->andThrow(new DynamoDbException('Test', new Command('Test')))->once();
 
-        $loggerMock = Mockery::mock(LoggerInterface::class);
+        $loggerMock = Mockery::mock(Logger::class);
         $loggerMock->shouldReceive('alert')->once();
 
-        $serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
-        $serviceLocatorMock->shouldReceive('get')->with('Logger')->andReturn($loggerMock);
-        $dynamoCronLock->setServiceLocator($serviceLocatorMock);
+        $dynamoCronLock->setLogger($loggerMock);
 
         $lock = $dynamoCronLock->getLock('test', 1);
 
@@ -79,12 +78,10 @@ class DynamoCronLockTest extends TestCase
         $dynamoCronLock->mockClient = Mockery::mock(DynamoDbClient::class);
         $dynamoCronLock->mockClient->shouldReceive('updateItem')->andThrow(new DynamoDbException('Test', new Command('Test'), ['code' => 'ConditionalCheckFailedException']))->once();
 
-        $loggerMock = Mockery::mock(LoggerInterface::class);
+        $loggerMock = Mockery::mock(Logger::class);
         $loggerMock->shouldReceive('alert')->once();
 
-        $serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
-        $serviceLocatorMock->shouldReceive('get')->with('Logger')->andReturn($loggerMock);
-        $dynamoCronLock->setServiceLocator($serviceLocatorMock);
+        $dynamoCronLock->setLogger($loggerMock);
 
         $lock = $dynamoCronLock->getLock('test', 1);
 

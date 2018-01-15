@@ -1,10 +1,7 @@
 <?php
+
 namespace Application\Model\Service\System;
 
-use Application\DataAccess\Mongo\CollectionFactory;
-use Application\Traits\LogTrait;
-use DateTime;
-use Exception;
 use MongoDB\BSON\Javascript as MongoCode;
 use MongoDB\BSON\ObjectID as MongoId;
 use MongoDB\BSON\Regex;
@@ -18,8 +15,9 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Opg\Lpa\Logger\LoggerTrait;
+use DateTime;
+use Exception;
 
 /**
  * Generate LPA stats and saves the results back into MongoDB.
@@ -28,11 +26,42 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
  * Class Stats
  * @package Application\Model\Service\System
  */
-class Stats implements ServiceLocatorAwareInterface
+class Stats
 {
-    use ServiceLocatorAwareTrait;
-    use LogTrait;
+    use LoggerTrait;
 
+    /**
+     * @var Collection
+     */
+    private $lpaCollection;
+
+    /**
+     * @var Collection
+     */
+    private $statsLpaCollection;
+
+    /**
+     * @var Collection
+     */
+    private $statsWhoCollection;
+
+    /**
+     * Stats constructor
+     *
+     * @param Collection $lpaCollection
+     * @param Collection $statsLpaCollection
+     * @param Collection $statsWhoCollection
+     */
+    public function __construct(Collection $lpaCollection, Collection $statsLpaCollection, Collection $statsWhoCollection)
+    {
+        $this->lpaCollection = $lpaCollection;
+        $this->statsLpaCollection = $statsLpaCollection;
+        $this->statsWhoCollection = $statsWhoCollection;
+    }
+
+    /**
+     * @return bool
+     */
     public function generate()
     {
         $stats = [];
@@ -41,49 +70,49 @@ class Stats implements ServiceLocatorAwareInterface
 
         try {
             $stats['lpas'] = $this->getLpaStats();
-            $this->info("Successfully generated lpas stats");
+            $this->getLogger()->info("Successfully generated lpas stats");
         } catch (Exception $ex) {
-            $this->err("Failed to generate lpas stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->err("Failed to generate lpas stats due to {$ex->getMessage()}", [$ex]);
             $stats['lpas'] = ['generated' => false];
         }
 
         try {
             $stats['lpasPerUser'] = $this->getLpasPerUser();
-            $this->info("Successfully generated lpasPerUser stats");
+            $this->getLogger()->info("Successfully generated lpasPerUser stats");
         } catch (Exception $ex) {
-            $this->err("Failed to generate lpasPerUser stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->err("Failed to generate lpasPerUser stats due to {$ex->getMessage()}", [$ex]);
             $stats['lpasPerUser'] = ['generated' => false];
         }
 
         try {
             $stats['who'] = $this->getWhoAreYou();
-            $this->info("Successfully generated who stats");
+            $this->getLogger()->info("Successfully generated who stats");
         } catch (Exception $ex) {
-            $this->err("Failed to generate who stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->err("Failed to generate who stats due to {$ex->getMessage()}", [$ex]);
             $stats['who'] = ['generated' => false];
         }
 
         try {
             $stats['correspondence'] = $this->getCorrespondenceStats();
-            $this->info("Successfully generated correspondence stats");
+            $this->getLogger()->info("Successfully generated correspondence stats");
         } catch (Exception $ex) {
-            $this->err("Failed to generate correspondence stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->err("Failed to generate correspondence stats due to {$ex->getMessage()}", [$ex]);
             $stats['correspondence'] = ['generated' => false];
         }
 
         try {
             $stats['preferencesInstructions'] = $this->getPreferencesInstructionsStats();
-            $this->info("Successfully generated preferencesInstructions stats");
+            $this->getLogger()->info("Successfully generated preferencesInstructions stats");
         } catch (Exception $ex) {
-            $this->err("Failed to generate preferencesInstructions stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->err("Failed to generate preferencesInstructions stats due to {$ex->getMessage()}", [$ex]);
             $stats['preferencesInstructions'] = ['generated' => false];
         }
 
         try {
             $stats['options'] = $this->getOptionsStats();
-            $this->info("Successfully generated options stats");
+            $this->getLogger()->info("Successfully generated options stats");
         } catch (Exception $ex) {
-            $this->err("Failed to generate options stats due to {$ex->getMessage()}", [$ex]);
+            $this->getLogger()->err("Failed to generate options stats due to {$ex->getMessage()}", [$ex]);
             $stats['options'] = ['generated' => false];
         }
 
@@ -93,13 +122,11 @@ class Stats implements ServiceLocatorAwareInterface
         //---------------------------------------------------
         // Save the results
 
-        $collection = $this->getServiceLocator()->get(CollectionFactory::class . '-stats-lpas');
-
         // Empty the collection
-        $collection->deleteMany([]);
+        $this->statsLpaCollection->deleteMany([]);
 
         // Add the new data
-        $collection->insertOne($stats);
+        $this->statsLpaCollection->insertOne($stats);
 
         //---
 
@@ -117,8 +144,6 @@ class Stats implements ServiceLocatorAwareInterface
     private function getLpaStats()
     {
         $startGeneration = microtime(true);
-
-        $collection = $this->getCollection('lpa');
 
         // Stats can (ideally) be processed on a secondary.
         $readPreference = [
@@ -145,17 +170,17 @@ class Stats implements ServiceLocatorAwareInterface
             ];
 
             // Started if we have a startedAt, but no createdAt...
-            $month['started'] = $collection->count([
+            $month['started'] = $this->lpaCollection->count([
                 'startedAt' => $dateRange
             ], $readPreference);
 
             // Created if we have a createdAt, but no completedAt...
-            $month['created'] = $collection->count([
+            $month['created'] = $this->lpaCollection->count([
                 'createdAt' => $dateRange
             ], $readPreference);
 
             // Count all the LPAs that have a completedAt...
-            $month['completed'] = $collection->count([
+            $month['completed'] = $this->lpaCollection->count([
                 'completedAt' => $dateRange
             ], $readPreference);
 
@@ -172,7 +197,7 @@ class Stats implements ServiceLocatorAwareInterface
         $pf = [];
 
         // Started if we have a startedAt, but no createdAt...
-        $summary['started'] = $pf['started'] = $collection->count([
+        $summary['started'] = $pf['started'] = $this->lpaCollection->count([
             'startedAt' => [
                 '$ne' => null
             ],
@@ -181,7 +206,7 @@ class Stats implements ServiceLocatorAwareInterface
         ], $readPreference);
 
         // Created if we have a createdAt, but no completedAt...
-        $summary['created'] = $pf['created'] = $collection->count([
+        $summary['created'] = $pf['created'] = $this->lpaCollection->count([
             'createdAt' => [
                 '$ne' => null
             ],
@@ -190,7 +215,7 @@ class Stats implements ServiceLocatorAwareInterface
         ], $readPreference);
 
         // Count all the LPAs that have a completedAt...
-        $summary['completed'] = $pf['completed'] = $collection->count([
+        $summary['completed'] = $pf['completed'] = $this->lpaCollection->count([
             'completedAt' => [
                 '$ne' => null
             ],
@@ -200,7 +225,7 @@ class Stats implements ServiceLocatorAwareInterface
         $hw = [];
 
         // Started if we have a startedAt, but no createdAt...
-        $summary['started'] += $hw['started'] = $collection->count([
+        $summary['started'] += $hw['started'] = $this->lpaCollection->count([
             'startedAt' => [
                 '$ne' => null
             ],
@@ -209,7 +234,7 @@ class Stats implements ServiceLocatorAwareInterface
         ], $readPreference);
 
         // Created if we have a createdAt, but no completedAt...
-        $summary['created'] += $hw['created'] = $collection->count([
+        $summary['created'] += $hw['created'] = $this->lpaCollection->count([
             'createdAt' => [
                 '$ne' => null
             ],
@@ -218,7 +243,7 @@ class Stats implements ServiceLocatorAwareInterface
         ], $readPreference);
 
         // Count all the LPAs that have a completedAt...
-        $summary['completed'] += $hw['completed'] = $collection->count([
+        $summary['completed'] += $hw['completed'] = $this->lpaCollection->count([
             'completedAt' => [
                 '$ne' => null
             ],
@@ -226,7 +251,7 @@ class Stats implements ServiceLocatorAwareInterface
         ], $readPreference);
 
         // Deleted LPAs have no 'document'...
-        $summary['deleted'] = $collection->count([
+        $summary['deleted'] = $this->lpaCollection->count([
             'document' => [
                 '$exists' => false
             ]
@@ -257,8 +282,6 @@ class Stats implements ServiceLocatorAwareInterface
     {
         $startGeneration = microtime(true);
 
-        $collection = $this->getCollection('lpa');
-
         //------------------------------------
 
         // Returns the number of LPAs under each userId
@@ -277,10 +300,10 @@ class Stats implements ServiceLocatorAwareInterface
             }'
         );
 
-        $manager = $collection->getManager();
+        $manager = $this->lpaCollection->getManager();
 
         $command = new Command([
-            'mapreduce' => $collection->getCollectionName(),
+            'mapreduce' => $this->lpaCollection->getCollectionName(),
             'map' => $map,
             'reduce' => $reduce,
             'out' => ['inline'=>1],
@@ -289,7 +312,7 @@ class Stats implements ServiceLocatorAwareInterface
 
         // Stats can (ideally) be processed on a secondary.
         $document = $cursor = $manager->executeCommand(
-            $collection->getDatabaseName(),
+            $this->lpaCollection->getDatabaseName(),
             $command,
             new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
         )->toArray()[0];
@@ -376,8 +399,6 @@ class Stats implements ServiceLocatorAwareInterface
      */
     private function getWhoAreYouStatsForTimeRange($start, $end)
     {
-        $collection = $this->getCollection('stats-who');
-
         // Stats can (ideally) be processed on a secondary.
         $readPreference = [
             'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
@@ -404,7 +425,7 @@ class Stats implements ServiceLocatorAwareInterface
         foreach ($options as $topLevel => $details) {
             // Get the count for all top level...
             $result[$topLevel] = [
-                'count' => $collection->count([
+                'count' => $this->statsWhoCollection->count([
                     'who' => $topLevel,
                     '_id' => $range
                 ], $readPreference),
@@ -418,7 +439,7 @@ class Stats implements ServiceLocatorAwareInterface
                     continue;
                 }
 
-                $result[$topLevel]['subquestions'][$subquestion] = $collection->count([
+                $result[$topLevel]['subquestions'][$subquestion] = $this->statsWhoCollection->count([
                     'who' => $topLevel,
                     'subquestion' => $subquestion,
                     '_id' => $range
@@ -429,11 +450,12 @@ class Stats implements ServiceLocatorAwareInterface
         return $result;
     }
 
+    /**
+     * @return array
+     */
     private function getCorrespondenceStats()
     {
         $startGeneration = microtime(true);
-
-        $collection = $this->getCollection('lpa');
 
         // Stats can (ideally) be processed on a secondary.
         $readPreference = [
@@ -458,11 +480,11 @@ class Stats implements ServiceLocatorAwareInterface
                 '$lte' => new MongoDate($end)
             ];
 
-            $month['completed'] = $collection->count([
+            $month['completed'] = $this->lpaCollection->count([
                 'completedAt' => $dateRange
             ], $readPreference);
 
-            $month['contactByEmail'] = $collection->count([
+            $month['contactByEmail'] = $this->lpaCollection->count([
                 'completedAt' => $dateRange,
                 'document.correspondent' => [
                     '$ne' => null
@@ -471,7 +493,7 @@ class Stats implements ServiceLocatorAwareInterface
                 ]
             ], $readPreference);
 
-            $month['contactByPhone'] = $collection->count([
+            $month['contactByPhone'] = $this->lpaCollection->count([
                 'completedAt' => $dateRange,
                 'document.correspondent' => [
                     '$ne' => null
@@ -480,21 +502,21 @@ class Stats implements ServiceLocatorAwareInterface
                 ]
             ], $readPreference);
 
-            $month['contactByPost'] = $collection->count([
+            $month['contactByPost'] = $this->lpaCollection->count([
                 'completedAt' => $dateRange,
                 'document.correspondent' => [
                     '$ne' => null
                 ], 'document.correspondent.contactByPost' => true
             ], $readPreference);
 
-            $month['contactInEnglish'] = $collection->count([
+            $month['contactInEnglish'] = $this->lpaCollection->count([
                 'completedAt' => $dateRange,
                 'document.correspondent' => [
                     '$ne' => null
                 ], 'document.correspondent.contactInWelsh' => false
             ], $readPreference);
 
-            $month['contactInWelsh'] = $collection->count([
+            $month['contactInWelsh'] = $this->lpaCollection->count([
                 'completedAt' => $dateRange,
                 'document.correspondent' => [
                     '$ne' => null
@@ -516,11 +538,12 @@ class Stats implements ServiceLocatorAwareInterface
         ];
     }
 
+    /**
+     * @return array
+     */
     private function getPreferencesInstructionsStats()
     {
         $startGeneration = microtime(true);
-
-        $collection = $this->getCollection('lpa');
 
         // Stats can (ideally) be processed on a secondary.
         $readPreference = [
@@ -545,16 +568,16 @@ class Stats implements ServiceLocatorAwareInterface
                 '$lte' => new MongoDate($end)
             ];
 
-            $month['completed'] = $collection->count([
+            $month['completed'] = $this->lpaCollection->count([
                 'completedAt' => $dateRange
             ], $readPreference);
 
-            $month['preferencesStated'] = $collection->count([
+            $month['preferencesStated'] = $this->lpaCollection->count([
                 'completedAt' => $dateRange,
                 'document.preference' => new Regex('.+', '')
             ], $readPreference);
 
-            $month['instructionsStated'] = $collection->count([
+            $month['instructionsStated'] = $this->lpaCollection->count([
                 'completedAt' => $dateRange,
                 'document.instruction' => new Regex('.+', '')
             ], $readPreference);
@@ -574,11 +597,12 @@ class Stats implements ServiceLocatorAwareInterface
         ];
     }
 
+    /**
+     * @return array
+     */
     private function getOptionsStats()
     {
         $startGeneration = microtime(true);
-
-        $collection = $this->getCollection('lpa');
 
         // Stats can (ideally) be processed on a secondary.
         $readPreference = [
@@ -603,7 +627,7 @@ class Stats implements ServiceLocatorAwareInterface
                 '$lte' => new MongoDate($end)
             ];
 
-            $month['completed'] = $collection->count([
+            $month['completed'] = $this->lpaCollection->count([
                 'completedAt' => $dateRange
             ], $readPreference);
 
@@ -612,11 +636,11 @@ class Stats implements ServiceLocatorAwareInterface
             //db.getCollection('lpa').count({"document" : {$ne : null}, "document.type" : "property-and-financial"})
 
             $month['type'] = [
-                Document::LPA_TYPE_HW => $collection->count([
+                Document::LPA_TYPE_HW => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.type' => Document::LPA_TYPE_HW
                 ], $readPreference),
-                Document::LPA_TYPE_PF => $collection->count([
+                Document::LPA_TYPE_PF => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.type' => Document::LPA_TYPE_PF
                 ], $readPreference)
@@ -627,11 +651,11 @@ class Stats implements ServiceLocatorAwareInterface
             //db.getCollection('lpa').count({"document.donor" : {$ne : null}, "document.donor.canSign" : false})
 
             $month['canSign'] = [
-                'true' => $collection->count([
+                'true' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.donor.canSign' => true
                 ], $readPreference),
-                'false' => $collection->count([
+                'false' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.donor.canSign' => false
                 ], $readPreference)
@@ -642,17 +666,17 @@ class Stats implements ServiceLocatorAwareInterface
             //db.getCollection('lpa').count({"document.replacementAttorneys" : null})
 
             $month['replacementAttorneys'] = [
-                'yes' => $collection->count([
+                'yes' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.replacementAttorneys' => [
                         '$gt' => []
                     ]
                 ], $readPreference),
-                'no' => $collection->count([
+                'no' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.replacementAttorneys' => []
                 ], $readPreference),
-                'multiple' => $collection->count([
+                'multiple' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.replacementAttorneys' => [
                         '$ne' => null
@@ -666,17 +690,17 @@ class Stats implements ServiceLocatorAwareInterface
             //db.getCollection('lpa').count({"document.peopleToNotify" : null})
 
             $month['peopleToNotify'] = [
-                'yes' => $collection->count([
+                'yes' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.peopleToNotify' => [
                         '$gt' => []
                     ]
                 ], $readPreference),
-                'no' => $collection->count([
+                'no' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.peopleToNotify' => []
                 ], $readPreference),
-                'multiple' => $collection->count([
+                'multiple' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.peopleToNotify' => [
                         '$ne' => null
@@ -690,11 +714,11 @@ class Stats implements ServiceLocatorAwareInterface
             //db.getCollection('lpa').count({"document.whoIsRegistering" : {$ne : null}, "document.whoIsRegistering" : { $gt: [] }}) //Attorney(s)
 
             $month['whoIsRegistering'] = [
-                'donor' => $collection->count([
+                'donor' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.whoIsRegistering' => 'donor'
                 ], $readPreference),
-                'attorneys' => $collection->count([
+                'attorneys' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.whoIsRegistering' => [
                         '$gt' => []
@@ -706,13 +730,13 @@ class Stats implements ServiceLocatorAwareInterface
             //db.getCollection('lpa').count({"repeatCaseNumber" : { $ne: null }})
 
             $month['repeatCaseNumber'] = [
-                'yes' => $collection->count([
+                'yes' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'repeatCaseNumber' => [
                         '$ne' => null
                     ]
                 ], $readPreference),
-                'no' => $collection->count([
+                'no' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'repeatCaseNumber' => null
                 ], $readPreference)
@@ -729,39 +753,39 @@ class Stats implements ServiceLocatorAwareInterface
             //db.getCollection('lpa').count({"payment" : {$ne : null}, "payment.method" : "cheque"})
 
             $month['payment'] = [
-                'reducedFeeReceivesBenefits' => $collection->count([
+                'reducedFeeReceivesBenefits' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'payment.reducedFeeReceivesBenefits' => true,
                     'payment.reducedFeeAwardedDamages' => true,
                     'payment.reducedFeeLowIncome' => null,
                     'payment.reducedFeeUniversalCredit' => null,
                 ], $readPreference),
-                'reducedFeeUniversalCredit' => $collection->count([
+                'reducedFeeUniversalCredit' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'payment.reducedFeeReceivesBenefits' => false,
                     'payment.reducedFeeAwardedDamages' => null,
                     'payment.reducedFeeLowIncome' => false,
                     'payment.reducedFeeUniversalCredit' => true,
                 ], $readPreference),
-                'reducedFeeLowIncome' => $collection->count([
+                'reducedFeeLowIncome' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'payment.reducedFeeReceivesBenefits' => false,
                     'payment.reducedFeeAwardedDamages' => null,
                     'payment.reducedFeeLowIncome' => true,
                     'payment.reducedFeeUniversalCredit' => false,
                 ], $readPreference),
-                'notApply' => $collection->count([
+                'notApply' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'payment.reducedFeeReceivesBenefits' => null,
                     'payment.reducedFeeAwardedDamages' => null,
                     'payment.reducedFeeLowIncome' => null,
                     'payment.reducedFeeUniversalCredit' => null,
                 ], $readPreference),
-                Payment::PAYMENT_TYPE_CARD => $collection->count([
+                Payment::PAYMENT_TYPE_CARD => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'payment.method' => Payment::PAYMENT_TYPE_CARD,
                 ], $readPreference),
-                Payment::PAYMENT_TYPE_CHEQUE => $collection->count([
+                Payment::PAYMENT_TYPE_CHEQUE => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'payment.method' => Payment::PAYMENT_TYPE_CHEQUE,
                 ], $readPreference)
@@ -782,7 +806,7 @@ class Stats implements ServiceLocatorAwareInterface
             //db.getCollection('lpa').count({"document" : {$ne : null}, "document.type" : "health-and-welfare", "document.primaryAttorneyDecisions" : {$ne : null}, "document.primaryAttorneyDecisions.canSustainLife" : false})
 
             $month['primaryAttorneys'] = [
-                'multiple' => $collection->count([
+                'multiple' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.primaryAttorneys' => [
                         '$ne' => null
@@ -793,35 +817,35 @@ class Stats implements ServiceLocatorAwareInterface
 
             $month['primaryAttorneyDecisions'] = [
                 'when' => [
-                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW => $collection->count([
+                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW => $this->lpaCollection->count([
                         'completedAt' => $dateRange,
                         'document.primaryAttorneyDecisions.when' => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW
                     ], $readPreference),
-                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY => $collection->count([
+                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY => $this->lpaCollection->count([
                         'completedAt' => $dateRange,
                         'document.primaryAttorneyDecisions.when' => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY
                     ], $readPreference)
                 ],
                 'how' => [
-                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY => $collection->count([
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY => $this->lpaCollection->count([
                         'completedAt' => $dateRange,
                         'document.primaryAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
                     ], $readPreference),
-                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY => $collection->count([
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY => $this->lpaCollection->count([
                         'completedAt' => $dateRange,
                         'document.primaryAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY
                     ], $readPreference),
-                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS => $collection->count([
+                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS => $this->lpaCollection->count([
                         'completedAt' => $dateRange,
                         'document.primaryAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS
                     ], $readPreference)
                 ],
                 'canSustainLife' => [
-                    'true' => $collection->count([
+                    'true' => $this->lpaCollection->count([
                         'completedAt' => $dateRange,
                         'document.primaryAttorneyDecisions.canSustainLife' => true
                     ], $readPreference),
-                    'false' => $collection->count([
+                    'false' => $this->lpaCollection->count([
                         'completedAt' => $dateRange,
                         'document.primaryAttorneyDecisions.canSustainLife' => false
                     ], $readPreference)
@@ -841,29 +865,29 @@ class Stats implements ServiceLocatorAwareInterface
 
             $month['replacementAttorneyDecisions'] = [
                 'when' => [
-                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST => $collection->count([
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST => $this->lpaCollection->count([
                         'completedAt' => $dateRange,
                         'document.replacementAttorneyDecisions.when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST
                     ], $readPreference),
-                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST => $collection->count([
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST => $this->lpaCollection->count([
                         'completedAt' => $dateRange,
                         'document.replacementAttorneyDecisions.when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST
                     ], $readPreference),
-                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS => $collection->count([
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS => $this->lpaCollection->count([
                         'completedAt' => $dateRange,
                         'document.replacementAttorneyDecisions.when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS
                     ], $readPreference)
                 ],
                 'how' => [
-                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY => $collection->count([
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY => $this->lpaCollection->count([
                         'completedAt' => $dateRange,
                         'document.replacementAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
                     ], $readPreference),
-                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY => $collection->count([
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY => $this->lpaCollection->count([
                         'completedAt' => $dateRange,
                         'document.replacementAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY
                     ], $readPreference),
-                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS => $collection->count([
+                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS => $this->lpaCollection->count([
                         'completedAt' => $dateRange,
                         'document.replacementAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS
                     ], $readPreference)
@@ -884,15 +908,4 @@ class Stats implements ServiceLocatorAwareInterface
             'by-month' => $optionStats
         ];
     }
-
-    /**
-     * @param $collection string Name of the requested collection.
-     * @return Collection
-     */
-    private function getCollection($collection)
-    {
-        /** @var Collection $collection */
-        $collection = $this->getServiceLocator()->get(CollectionFactory::class . "-{$collection}");
-        return $collection;
-    }
-} // class
+}

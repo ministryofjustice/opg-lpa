@@ -41,7 +41,7 @@ class CollectionTest extends TestCase
     {
         $lpa = FixturesData::getHwLpa();
 
-        $resource = new Resource();
+        $resource = (new ResourceBuilder())->build();
         $data = array();
         foreach ($resource->getPdfTypes() as $type) {
             $data[$type] = array(

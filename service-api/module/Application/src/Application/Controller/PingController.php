@@ -1,14 +1,15 @@
 <?php
+
 namespace Application\Controller;
 
-use Application\DataAccess\Mongo\DatabaseFactory;
-use Application\DataAccess\Mongo\ManagerFactory;
+use DynamoQueue\Queue\Client as DynamoQueueClient;
+use GuzzleHttp\Client as GuzzleClient;
 use MongoDB\Database;
 use MongoDB\Driver\Command;
 use MongoDB\Driver\Manager;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
-use GuzzleHttp\Client as GuzzleClient;
 
 /**
  * Checks *this* API service is operating correctly. Includes:
@@ -18,7 +19,46 @@ use GuzzleHttp\Client as GuzzleClient;
  * Class PingController
  * @package Application\Controller
  */
-class PingController extends AbstractActionController {
+class PingController extends AbstractActionController
+{
+    use LoggerTrait;
+
+    /**
+     * @var DynamoQueueClient
+     */
+    private $dynamoQueueClient;
+
+    /**
+     * @var Manager
+     */
+    private $manager;
+
+    /**
+     * @var Database
+     */
+    private $database;
+
+    /**
+     * @var string
+     */
+    private $authPingEndPoint;
+
+    /**
+     * PingController constructor
+     *
+     * @param DynamoQueueClient $dynamoQueueClient
+     * @param Manager $manager
+     * @param Database $database
+     * @param $authPingEndPoint
+     */
+    public function __construct(DynamoQueueClient $dynamoQueueClient, Manager $manager, Database $database, $authPingEndPoint)
+    {
+        $this->dynamoQueueClient = $dynamoQueueClient;
+        $this->manager = $manager;
+        $this->database = $database;
+        $this->authPingEndPoint = $authPingEndPoint;
+    }
+
 
     /**
      * Endpoint for the AWS ELB.
@@ -73,9 +113,9 @@ class PingController extends AbstractActionController {
 
         $result['auth'] = $this->auth();
 
-
         //----------------------------
         // Check DynamoDB
+
 
         $result['queue'] = [
             'ok' => false,
@@ -87,10 +127,7 @@ class PingController extends AbstractActionController {
         ];
 
         try {
-
-            $dynamoQueue = $this->getServiceLocator()->get('DynamoQueueClient');
-
-            $count = $dynamoQueue->countWaitingJobs();
+            $count = $this->dynamoQueueClient->countWaitingJobs();
 
             if( !is_int($count) ){
                 throw new \Exception('Invalid count returned');
@@ -112,12 +149,9 @@ class PingController extends AbstractActionController {
 
         // Is everything true?
         $result['ok'] = $result['queue']['ok'] && $result['database']['ok'];
-        
-        $this->getServiceLocator()->get('Logger')->info(
-            'PingController results',
-            $result
-        );
-        
+
+        $this->getLogger()->info('PingController results', $result);
+
         //---
 
         return new JsonModel($result);
@@ -133,19 +167,14 @@ class PingController extends AbstractActionController {
      */
     private function canConnectToMongo(){
 
-        /** @var Manager $manager */
-        $manager = $this->getServiceLocator()->get(ManagerFactory::class);
-        /** @var Database $database */
-        $database = $this->getServiceLocator()->get(DatabaseFactory::class);
-
         $pingCommand = new Command(['ping' => 1]);
-        $manager->executeCommand($database->getDatabaseName(), $pingCommand);
+        $this->manager->executeCommand($this->database->getDatabaseName(), $pingCommand);
 
         //---
 
         $primaryFound = false;
 
-        foreach( $manager->getServers() as $server ){
+        foreach( $this->manager->getServers() as $server ){
 
             // If the connection is to primary, all is okay.
             if( $server->isPrimary() ){
@@ -171,14 +200,11 @@ class PingController extends AbstractActionController {
         $result = array( 'ok'=> false, 'details'=>array( '200'=>false ) );
 
         try {
-
-            $config = $this->getServiceLocator()->get('config')['authentication'];
-
             $client = new GuzzleClient();
             $client->setDefaultOption('exceptions', false);
 
             $response = $client->get(
-                $config['ping'],
+                $this->authPingEndPoint,
                 ['connect_timeout' => 5, 'timeout' => 10]
             );
 

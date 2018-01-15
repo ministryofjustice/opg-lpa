@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e9e32a288a0588ef581a43c258acc03b",
+    "content-hash": "b08c20989752d8e6ff6a6c16f30aa10d",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -587,16 +587,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
-            "version": "2.0.0",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
-                "reference": "7df59264aabd6e01aacedf55853156a70250c1cb"
+                "reference": "a6c718fa13aece6ec63c3054facd22c4913e61d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/7df59264aabd6e01aacedf55853156a70250c1cb",
-                "reference": "7df59264aabd6e01aacedf55853156a70250c1cb",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/a6c718fa13aece6ec63c3054facd22c4913e61d7",
+                "reference": "a6c718fa13aece6ec63c3054facd22c4913e61d7",
                 "shasum": ""
             },
             "require": {
@@ -619,10 +619,10 @@
             ],
             "description": "Common logger component for OPG LPA modules",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/2.0.0",
+                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/3.0.0",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
             },
-            "time": "2017-10-13T09:08:53+00:00"
+            "time": "2018-01-15T15:56:24+00:00"
         },
         {
             "name": "mongodb/mongodb",

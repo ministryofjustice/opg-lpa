@@ -15,29 +15,42 @@ use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
+    /**
+     * @var AttorneysReplacementResource
+     */
+    private $resource;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->resource = new AttorneysReplacementResource($this->lpaCollection);
+
+        $this->resource->setLogger($this->logger);
+
+        $this->resource->setAuthorizationService($this->authorizationService);
+    }
+
     public function testGetIdentifier()
     {
-        $resource = new Resource();
-        $this->assertEquals('resourceId', $resource->getIdentifier());
+        $this->assertEquals('resourceId', $this->resource->getIdentifier());
     }
 
     public function testGetName()
     {
-        $resource = new Resource();
-        $this->assertEquals('replacement-attorneys', $resource->getName());
+        $this->assertEquals('replacement-attorneys', $this->resource->getName());
     }
 
     public function testGetType()
     {
-        $resource = new Resource();
-        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $resource->getType());
+        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $this->resource->getType());
     }
 
     public function testCreateCheckAccess()
     {
-        /** @var AttorneysReplacementResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->create(null);
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->create(null);
     }
 
     public function testCreateInvalidType()
@@ -105,9 +118,9 @@ class ResourceTest extends AbstractResourceTest
 
     public function testFetchCheckAccess()
     {
-        /** @var AttorneysReplacementResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->fetch(-1);
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->fetch(-1);
     }
 
     public function testFetchNotFound()
@@ -140,9 +153,9 @@ class ResourceTest extends AbstractResourceTest
 
     public function testFetchAllCheckAccess()
     {
-        /** @var AttorneysReplacementResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->fetchAll();
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->fetchAll();
     }
 
     public function testFetchAllNull()
@@ -198,9 +211,9 @@ class ResourceTest extends AbstractResourceTest
 
     public function testUpdateCheckAccess()
     {
-        /** @var AttorneysReplacementResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->update(null, -1);
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->update(null, -1);
     }
 
     public function testUpdateNotFound()
@@ -284,9 +297,9 @@ class ResourceTest extends AbstractResourceTest
 
     public function testDeleteCheckAccess()
     {
-        /** @var AttorneysReplacementResource $resource */
-        $resource = parent::setUpCheckAccessTest(new ResourceBuilder());
-        $resource->delete(-1);
+        $this->setUpCheckAccessTest($this->resource);
+
+        $this->resource->delete(-1);
     }
 
     public function testDeleteNotFound()
