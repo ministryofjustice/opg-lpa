@@ -69,11 +69,6 @@ abstract class AbstractResourceBuilder
     protected $statsWhoCollection = null;
 
     /**
-     * @var MockInterface|ServiceLocatorInterface
-     */
-    protected $serviceLocatorMock = null;
-
-    /**
      * @return AbstractResource
      */
     abstract public function build();
@@ -182,18 +177,6 @@ abstract class AbstractResourceBuilder
 
         $this->lpaCollection = $this->lpaCollection ?: Mockery::mock(MongoCollection::class);
         $this->statsWhoCollection = $this->statsWhoCollection ?: Mockery::mock(MongoCollection::class);
-
-        $this->serviceLocatorMock = Mockery::mock(ServiceLocatorInterface::class);
-        $this->serviceLocatorMock->shouldReceive('get')
-            ->withArgs(['Logger'])->andReturn($loggerMock);
-        $this->serviceLocatorMock->shouldReceive('get')
-            ->withArgs([CollectionFactory::class . '-lpa'])->andReturn($this->lpaCollection);
-        $this->serviceLocatorMock->shouldReceive('get')
-            ->withArgs([CollectionFactory::class . '-stats-who'])->andReturn($this->statsWhoCollection);
-        $this->serviceLocatorMock->shouldReceive('get')
-            ->withArgs(['config'])->andReturn($this->config);
-        $this->serviceLocatorMock->shouldReceive('get')
-            ->withArgs(['resource-applications'])->andReturn($this->applicationsResource);
 
         if ($this->authorizationService === null) {
             $this->authorizationService = Mockery::mock(AuthorizationService::class);
