@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2ed77c0fc2e2ceea95c4645c8933daba",
+    "content-hash": "b08c20989752d8e6ff6a6c16f30aa10d",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -587,16 +587,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
-            "version": "dev-add_trait_in_prep_for_zf3_changes",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-logger.git",
-                "reference": "7e4310dfa89239ced664acf01dccd1f5de070822"
+                "reference": "a6c718fa13aece6ec63c3054facd22c4913e61d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/7e4310dfa89239ced664acf01dccd1f5de070822",
-                "reference": "7e4310dfa89239ced664acf01dccd1f5de070822",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/a6c718fa13aece6ec63c3054facd22c4913e61d7",
+                "reference": "a6c718fa13aece6ec63c3054facd22c4913e61d7",
                 "shasum": ""
             },
             "require": {
@@ -619,10 +619,10 @@
             ],
             "description": "Common logger component for OPG LPA modules",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/add_trait_in_prep_for_zf3_changes",
+                "source": "https://github.com/ministryofjustice/opg-lpa-logger/tree/3.0.0",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
             },
-            "time": "2018-01-08 11:42:06"
+            "time": "2018-01-15T15:56:24+00:00"
         },
         {
             "name": "mongodb/mongodb",
@@ -6397,9 +6397,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "ministryofjustice/opg-lpa-logger": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
