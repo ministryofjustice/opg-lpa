@@ -39,8 +39,8 @@
         "zendframework/zend-permissions-acl": "^2.6",
         "zendframework/zend-router": "^3.0.1",
         "zendframework/zend-serializer": "^2.6.1",
-        "zendframework/zend-session": "^2.6.2",
         "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3",
+        "zendframework/zend-session": "^2.8.1",
         "zendframework/zend-uri": "^2.5"
     },
     "suggest": {
@@ -61,15 +61,18 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
-        "sort-packages": "true"
+        "sort-packages": true
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.9-dev",
-            "dev-develop": "3.0-dev"
+            "dev-master": "2.10.x-dev",
+            "dev-develop": "2.11.x-dev"
         }
     },
     "autoload-dev": {
+        "files": [
+            "test/autoload.php"
+        ],
         "psr-4": {
             "ZendTest\\View\\": "test/"
         }
@@ -85,7 +88,6 @@
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
         "test": "phpunit --colors=always",
-        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
-        "upload-coverage": "coveralls -v"
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
     }
 }

@@ -15,7 +15,6 @@
     ],
     "require": {
         "php": "7.0.*",
-        "zendframework/zendframework": "^2.5",
         "aws/aws-sdk-php": "^3.0",
         "nocarrier/hal": "0.9.10",
         "zfcampus/zf-api-problem": "1.0.*",
