@@ -546,6 +546,4 @@ return array(
     'SebastianBergmann\\Version' => $vendorDir . '/sebastian/version/src/Version.php',
     'SessionHandlerInterface' => $vendorDir . '/symfony/polyfill-php54/Resources/stubs/SessionHandlerInterface.php',
     'Text_Template' => $vendorDir . '/phpunit/php-text-template/src/Template.php',
-    'ZF\\ApiProblem\\Module' => $vendorDir . '/zfcampus/zf-api-problem/Module.php',
-    'Zend\\I18n\\Translator\\Resources' => $vendorDir . '/zendframework/zend-i18n-resources/src/Resources.php',
 );

@@ -2,7 +2,30 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.7.7 - 2016-04-12
+## 3.1.0 - 2016-09-13
+
+### Added
+
+- [#63](https://github.com/zendframework/zend-stdlib/pull/63) adds a new
+  `Zend\Stdlib\ConsoleHelper` class, providing minimal support for writing
+  output to `STDOUT` and `STDERR`, with optional colorization, when the console
+  supports that feature.
+
+### Deprecated
+
+- [#38](https://github.com/zendframework/zend-stdlib/pull/38) deprecates
+  `Zend\Stdlib\JsonSerializable`, as all supported version of PHP now support
+  it.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 3.0.1 - 2016-04-12
 
 ### Added
 
@@ -19,14 +42,20 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Fixed
 
 - [#59](https://github.com/zendframework/zend-stdlib/pull/59) fixes a notice
-  when defining the Zend\Json\Json::GLOB_BRACE constant on systems using non-gcc
-  glob implementations.
+  when defining the `Zend\Json\Json::GLOB_BRACE` constant on systems using
+  non-gcc glob implementations.
 
-## 2.7.6 - 2016-02-19
+## 3.0.0 - 2016-02-03
 
 ### Added
 
-- Nothing.
+- [#51](https://github.com/zendframework/zend-stdlib/pull/51) adds PHP 7 as a
+  supported PHP version.
+- [#51](https://github.com/zendframework/zend-stdlib/pull/51) adds a migration
+  document from v2 to v3. Hint: if you use hydrators, you need to be using
+  zend-hydrator instead!
+- [#51](https://github.com/zendframework/zend-stdlib/pull/51) adds automated
+  documentation builds to gh-pages.
 
 ### Deprecated
 
@@ -34,36 +63,30 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- Nothing.
+- [#33](https://github.com/zendframework/zend-stdlib/pull/33) - removed
+  deprecated classes
+  - *All Hydrator classes* see #22.
+  - `Zend\Stdlib\CallbackHandler` see #35
+- [#37](https://github.com/zendframework/zend-stdlib/pull/37) - removed
+  deprecated classes and polyfills:
+  - `Zend\Stdlib\DateTime`; this had been deprecated since 2.5, and only
+    existed as a polyfill for the `createFromISO8601()` support, now standard
+    in all PHP versions we support.
+  - `Zend\Stdlib\Exception\InvalidCallbackException`, which was unused since #33.
+  - `Zend\Stdlib\Guard\GuardUtils`, which duplicated `Zend\Stdlib\Guard\AllGuardsTrait`
+    to allow usage with pre-PHP 5.4 versions.
+  - `src/compatibility/autoload.php`, which has been dprecated since 2.5.
+- [#37](https://github.com/zendframework/zend-stdlib/pull/37) - removed
+  unneeded dependencies:
+  - zend-config (used only in testing ArrayUtils, and the test was redundant)
+  - zend-serializer (no longer used)
+- [#51](https://github.com/zendframework/zend-stdlib/pull/51) removes the
+  documentation for hydrators, as those are part of the zend-hydrator
+  component.
 
 ### Fixed
 
-- [#56](https://github.com/zendframework/zend-stdlib/pull/56) updates the
-  `AggregateHydrator` implementation to add overrides for the `hydrate()` and
-  `extract()` methods; this was done to ensure they trigger zend-stdlib-specific
-  event classes (vs the zend-hydrator base classes), in order to ensure
-  backwards compatibility.
-
-## 2.7.5 - 2016-02-16
-
-### Added
-
 - Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- [#54](https://github.com/zendframework/zend-stdlib/pull/54) updates the
-  `HelperPluginManager` implementation to return zend-stdlib-specific instances
-  (instead of zend-hydrator instances), to ensure backwards compatibility when
-  typehinting against the zend-stdlib types.
 
 ## 2.7.4 - 2015-10-15
 
