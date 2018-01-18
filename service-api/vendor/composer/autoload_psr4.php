@@ -54,6 +54,7 @@ return array(
     'Zend\\Crypt\\' => array($vendorDir . '/zendframework/zend-crypt/src'),
     'Zend\\Console\\' => array($vendorDir . '/zendframework/zend-console/src'),
     'Zend\\Config\\' => array($vendorDir . '/zendframework/zend-config/src'),
+    'Zend\\ComponentInstaller\\' => array($vendorDir . '/zendframework/zend-component-installer/src'),
     'Zend\\Code\\' => array($vendorDir . '/zendframework/zend-code/src'),
     'Zend\\Captcha\\' => array($vendorDir . '/zendframework/zend-captcha/src'),
     'Zend\\Cache\\' => array($vendorDir . '/zendframework/zend-cache/src'),
