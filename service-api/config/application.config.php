@@ -8,8 +8,7 @@ return array(
         'Zend\Validator',
         'ZF\ApiProblem',
         'ZfcRbac',
-        'Application',
-        'ZFConfigDump'
+        'Application'
     ),
 
     // These are various options for the listeners attached to the ModuleManager
