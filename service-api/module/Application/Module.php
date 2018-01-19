@@ -55,7 +55,7 @@ class Module {
 
         return [
             'initializers' => [
-                'InitRestController' => function($controller, $sm) {
+                'InitRestController' => function($sm, $controller) {
                     if ($controller instanceof RestController) {
 
                         $locator = $sm->getServiceLocator();
