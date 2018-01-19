@@ -5,32 +5,37 @@ namespace Application\Controller;
 use Application\DataAccess\Mongo\DatabaseFactory;
 use Application\DataAccess\Mongo\ManagerFactory;
 use DynamoQueue\Queue\Client as DynamoQueueClient;
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
 use MongoDB\Database;
 use MongoDB\Driver\Manager;
-use Zend\Mvc\Controller\ControllerManager;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class PingControllerFactory implements FactoryInterface
 {
     /**
-     * Create ping controller
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return PingController
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var ControllerManager $serviceLocator */
-        $serviceLocator = $serviceLocator->getServiceLocator();
-
         /** @var DynamoQueueClient $dynamoQueueClient */
-        $dynamoQueueClient = $serviceLocator->get('DynamoQueueClient');
+        $dynamoQueueClient = $container->get('DynamoQueueClient');
         /** @var Manager $manager */
-        $manager = $serviceLocator->get(ManagerFactory::class);
+        $manager = $container->get(ManagerFactory::class);
         /** @var Database $database */
-        $database = $serviceLocator->get(DatabaseFactory::class);
-        $authPingEndPoint = $serviceLocator->get('config')['authentication']['ping'];
+        $database = $container->get(DatabaseFactory::class);
+        $authPingEndPoint = $container->get('config')['authentication']['ping'];
 
         return new PingController($dynamoQueueClient, $manager, $database, $authPingEndPoint);
     }

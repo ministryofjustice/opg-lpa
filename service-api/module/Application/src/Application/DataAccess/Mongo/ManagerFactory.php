@@ -2,21 +2,30 @@
 
 namespace Application\DataAccess\Mongo;
 
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
 use MongoDB\Driver\Manager;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class ManagerFactory implements FactoryInterface
 {
     /**
-     * Create MongoDB Manager
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return Manager
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = $serviceLocator->get('config')['db']['mongo']['default'];
+        $config = $container->get('config')['db']['mongo']['default'];
 
         // Split the array out into comma separated values.
         $uri = 'mongodb://' . implode(',', $config['hosts']) . '/' . $config['options']['db'];
