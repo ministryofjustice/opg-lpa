@@ -16,8 +16,7 @@
     "require": {
         "php": "7.0.*",
         "aws/aws-sdk-php": "^3.0",
-        "nocarrier/hal": "0.9.10",
-        "guzzlehttp/guzzle": "^5.1",
+        "guzzlehttp/guzzle": "^6.0",
         "ministryofjustice/opg-lpa-logger": "^3.0",
         "ministryofjustice/opg-lpa-datamodels": "^9.0",
         "nsmithuk/dynamo-queue-php": "^1.0",
