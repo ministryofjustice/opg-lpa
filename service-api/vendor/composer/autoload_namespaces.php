@@ -7,6 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'cli' => array($vendorDir . '/wp-cli/php-cli-tools/lib'),
+    'ZfcRbac\\' => array($vendorDir . '/zf-commons/zfc-rbac/src'),
+    'Rbac\\' => array($vendorDir . '/zfr/rbac/src'),
     'Raven_' => array($vendorDir . '/sentry/sentry/lib'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),

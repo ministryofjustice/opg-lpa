@@ -272,8 +272,19 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
                 0 => __DIR__ . '/..' . '/wp-cli/php-cli-tools/lib',
             ),
         ),
+        'Z' => 
+        array (
+            'ZfcRbac\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/zf-commons/zfc-rbac/src',
+            ),
+        ),
         'R' => 
         array (
+            'Rbac\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/zfr/rbac/src',
+            ),
             'Raven_' => 
             array (
                 0 => __DIR__ . '/..' . '/sentry/sentry/lib',
