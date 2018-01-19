@@ -48,6 +48,7 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
             'Zend\\Crypt\\' => 11,
             'Zend\\Config\\' => 12,
             'Zend\\ComponentInstaller\\' => 24,
+            'Zend\\Cache\\' => 11,
             'ZF\\ApiProblem\\' => 14,
         ),
         'W' => 
@@ -191,6 +192,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         'Zend\\ComponentInstaller\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-component-installer/src',
+        ),
+        'Zend\\Cache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-cache/src',
         ),
         'ZF\\ApiProblem\\' => 
         array (

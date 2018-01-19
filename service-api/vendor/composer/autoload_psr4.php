@@ -27,6 +27,7 @@ return array(
     'Zend\\Crypt\\' => array($vendorDir . '/zendframework/zend-crypt/src'),
     'Zend\\Config\\' => array($vendorDir . '/zendframework/zend-config/src'),
     'Zend\\ComponentInstaller\\' => array($vendorDir . '/zendframework/zend-component-installer/src'),
+    'Zend\\Cache\\' => array($vendorDir . '/zendframework/zend-cache/src'),
     'ZF\\ApiProblem\\' => array($vendorDir . '/zfcampus/zf-api-problem/src'),
     'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
     'Symfony\\Polyfill\\Php54\\' => array($vendorDir . '/symfony/polyfill-php54'),
