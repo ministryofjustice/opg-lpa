@@ -68,14 +68,14 @@ class LpaAuth implements AdapterInterface {
             $client = new GuzzleClient();
 
             $response = $client->post( $this->authEndpoint , [
-                'body' => [
+                'form_params' => [
                     'Token' => $this->token,
                 ]
             ]);
 
             if( $response->getStatusCode() == 200 ){
 
-                $data = $response->json();
+                $data = json_decode($response->getBody(), true);
 
                 if( isset( $data['userId'] ) && isset( $data['username'] ) ){
                     $user = new Identity\User($data['userId'], $data['username']);

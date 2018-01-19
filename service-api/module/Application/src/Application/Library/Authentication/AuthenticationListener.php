@@ -46,7 +46,7 @@ class AuthenticationListener
 
             $this->getLogger()->info('Authentication attempt - token supplied');
 
-            $authAdapter = new Adapter\LpaAuth($token, $config['authentication']['endpoint'], $config['admin']);
+            $authAdapter = new Adapter\LpaAuth($token, $config['authentication']['endpoint'], $config['admin']);
 
             // If successful, the identity will be persisted for the request.
             $result = $auth->authenticate($authAdapter);
