@@ -25,7 +25,8 @@
         "zendframework/zend-mvc": "^3.1",
         "zendframework/zend-paginator": "^2.8",
         "zf-commons/zfc-rbac": "^2.6",
-        "zfcampus/zf-api-problem": "^1.2"
+        "zfcampus/zf-api-problem": "^1.2",
+        "zendframework/zend-filter": "^2.7"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0",

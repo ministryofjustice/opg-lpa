@@ -40,6 +40,7 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
             'Zend\\Loader\\' => 12,
             'Zend\\Json\\' => 10,
             'Zend\\Http\\' => 10,
+            'Zend\\Filter\\' => 12,
             'Zend\\EventManager\\' => 18,
             'Zend\\Escaper\\' => 13,
             'Zend\\Config\\' => 12,
@@ -159,6 +160,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         'Zend\\Http\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-http/src',
+        ),
+        'Zend\\Filter\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-filter/src',
         ),
         'Zend\\EventManager\\' => 
         array (
