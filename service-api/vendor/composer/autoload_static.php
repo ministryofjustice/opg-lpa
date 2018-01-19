@@ -38,11 +38,13 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
             'Zend\\ModuleManager\\' => 19,
             'Zend\\Log\\' => 9,
             'Zend\\Loader\\' => 12,
+            'Zend\\Json\\' => 10,
             'Zend\\Http\\' => 10,
             'Zend\\EventManager\\' => 18,
             'Zend\\Escaper\\' => 13,
             'Zend\\Config\\' => 12,
             'Zend\\ComponentInstaller\\' => 24,
+            'ZF\\ApiProblem\\' => 14,
         ),
         'W' => 
         array (
@@ -150,6 +152,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-loader/src',
         ),
+        'Zend\\Json\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-json/src',
+        ),
         'Zend\\Http\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-http/src',
@@ -169,6 +175,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         'Zend\\ComponentInstaller\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-component-installer/src',
+        ),
+        'ZF\\ApiProblem\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zfcampus/zf-api-problem/src',
         ),
         'Webmozart\\Assert\\' => 
         array (
