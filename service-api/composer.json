@@ -31,7 +31,8 @@
         "zendframework/zend-cache": "^2.7",
         "zendframework/zend-authentication": "^2.5",
         "zendframework/zend-mvc-i18n": "^1.0",
-        "zendframework/zend-console": "^2.6"
+        "zendframework/zend-console": "^2.6",
+        "nocarrier/hal": "^0.9.12"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0",
