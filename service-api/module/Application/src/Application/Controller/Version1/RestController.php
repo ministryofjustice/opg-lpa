@@ -77,7 +77,7 @@ class RestController extends AbstractRestfulController
      * This override ensures a value of TRUE id always
      * returned if the resource is a singular.
      *
-     * @param  \Zend\Mvc\Router\RouteMatch $routeMatch
+     * @param  \Zend\Router\RouteMatch $routeMatch
      * @param  \Zend\Stdlib\RequestInterface $request
      * @return false|mixed
      */

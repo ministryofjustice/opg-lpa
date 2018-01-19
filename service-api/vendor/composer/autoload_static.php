@@ -35,12 +35,14 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
             'Zend\\ServiceManager\\' => 20,
             'Zend\\Router\\' => 12,
             'Zend\\Paginator\\' => 15,
+            'Zend\\Mvc\\I18n\\' => 14,
             'Zend\\Mvc\\' => 9,
             'Zend\\ModuleManager\\' => 19,
             'Zend\\Math\\' => 10,
             'Zend\\Log\\' => 9,
             'Zend\\Loader\\' => 12,
             'Zend\\Json\\' => 10,
+            'Zend\\I18n\\' => 10,
             'Zend\\Http\\' => 10,
             'Zend\\Filter\\' => 12,
             'Zend\\EventManager\\' => 18,
@@ -142,6 +144,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-paginator/src',
         ),
+        'Zend\\Mvc\\I18n\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-mvc-i18n/src',
+        ),
         'Zend\\Mvc\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-mvc/src',
@@ -165,6 +171,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         'Zend\\Json\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-json/src',
+        ),
+        'Zend\\I18n\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-i18n/src',
         ),
         'Zend\\Http\\' => 
         array (
