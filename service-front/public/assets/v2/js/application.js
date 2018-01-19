@@ -3004,6 +3004,401 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
   global.GOVUK = GOVUK
 })(window)
 ;
+;(function (global) {
+  'use strict'
+
+  var $ = global.jQuery
+  var GOVUK = global.GOVUK || {}
+
+  var GOVUKTracker = function (gifUrl) {
+    this.gifUrl = gifUrl
+    this.dimensions = []
+    if (global.ga) {
+      global.ga(function (tracker) {
+        this.gaClientId = tracker.get('clientId')
+      }.bind(this))
+    }
+  }
+
+  GOVUKTracker.load = function () {}
+
+  GOVUKTracker.prototype.trackPageview = function (path, title, options) {
+    var pageviewObject
+
+    if (typeof path === 'string') {
+      pageviewObject = { page: path }
+    }
+
+    if (typeof title === 'string') {
+      pageviewObject = pageviewObject || {}
+      pageviewObject.title = title
+    }
+
+    // Set an options object for the pageview (e.g. transport, sessionControl)
+    // https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#transport
+    if (typeof options === 'object') {
+      pageviewObject = $.extend(pageviewObject || {}, options)
+    }
+
+    if (!$.isEmptyObject(pageviewObject)) {
+      this.sendToTracker('pageview', pageviewObject)
+    } else {
+      this.sendToTracker('pageview')
+    }
+  }
+
+  // https://developers.google.com/analytics/devguides/collection/analyticsjs/events
+  GOVUKTracker.prototype.trackEvent = function (category, action, options) {
+    options = options || {}
+    var evt = {
+      eventCategory: category,
+      eventAction: action
+    }
+
+    if (options.label) {
+      evt.eventLabel = options.label
+      delete options.label
+    }
+
+    if (options.value) {
+      evt.eventValue = options.value.toString()
+      delete options.value
+    }
+
+    if (typeof options === 'object') {
+      $.extend(evt, options)
+    }
+
+    this.sendToTracker('event', evt)
+  }
+
+  GOVUKTracker.prototype.trackSocial = function (network, action, target) {
+    this.sendToTracker('social', {
+      'socialNetwork': network,
+      'socialAction': action,
+      'socialTarget': target
+    })
+  }
+
+  GOVUKTracker.prototype.addLinkedTrackerDomain = function () { /* noop */ }
+
+  GOVUKTracker.prototype.setDimension = function (index, value) {
+    this.dimensions['dimension' + index] = value
+  }
+
+  GOVUKTracker.prototype.payloadParams = function (type, payload) {
+    var data = $.extend({},
+      payload,
+      this.dimensions,
+      {
+        eventType: type,
+        referrer: global.document.referrer,
+        gaClientId: this.gaClientId,
+        windowWidth: global.innerWidth,
+        windowHeight: global.innerHeight,
+        screenWidth: global.screen.width,
+        screenHeight: global.screen.height,
+        colorDepth: global.screen.colorDepth
+      }
+    )
+
+    if (global.performance) {
+      data.navigationType = global.performance.navigation.type.toString()
+      data.redirectCount = global.performance.navigation.redirectCount.toString()
+
+      for (var k in global.performance.timing) {
+        var v = global.performance.timing[k]
+        if (typeof v === 'string' || typeof v === 'number') {
+          data['timing_' + k] = v.toString()
+        }
+      }
+    }
+
+    return data
+  }
+
+  GOVUKTracker.prototype.sendData = function (params) {
+    var url = this.gifUrl + '?' + $.param(params)
+    $.get(url)
+  }
+
+  GOVUKTracker.prototype.sendToTracker = function (type, payload) {
+    $(global.document).ready(function () {
+      this.sendData(this.payloadParams(type, payload))
+    }.bind(this))
+  }
+
+  GOVUK.GOVUKTracker = GOVUKTracker
+
+  global.GOVUK = GOVUK
+})(window)
+;
+;(function (global) {
+  'use strict'
+
+  var $ = global.jQuery
+  var GOVUK = global.GOVUK || {}
+
+  var GoogleAnalyticsUniversalTracker = function (trackingId, fieldsObject) {
+    function configureProfile () {
+      // https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#create
+      sendToGa('create', trackingId, fieldsObject)
+    }
+
+    function anonymizeIp () {
+      // https://developers.google.com/analytics/devguides/collection/analyticsjs/advanced#anonymizeip
+      sendToGa('set', 'anonymizeIp', true)
+    }
+
+    // Support legacy cookieDomain param
+    if (typeof fieldsObject === 'string') {
+      fieldsObject = { cookieDomain: fieldsObject }
+    }
+
+    configureProfile()
+    anonymizeIp()
+  }
+
+  GoogleAnalyticsUniversalTracker.load = function () {
+    /* eslint-disable */
+    (function (i, s, o, g, r, a, m) { i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                             m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(global, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga')
+    /* eslint-enable */
+  }
+
+  // https://developers.google.com/analytics/devguides/collection/analyticsjs/pages
+  GoogleAnalyticsUniversalTracker.prototype.trackPageview = function (path, title, options) {
+    var pageviewObject
+
+    if (typeof path === 'string') {
+      pageviewObject = { page: path }
+    }
+
+    if (typeof title === 'string') {
+      pageviewObject = pageviewObject || {}
+      pageviewObject.title = title
+    }
+
+    // Set an options object for the pageview (e.g. transport, sessionControl)
+    // https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#transport
+    if (typeof options === 'object') {
+      pageviewObject = $.extend(pageviewObject || {}, options)
+    }
+
+    if (!$.isEmptyObject(pageviewObject)) {
+      sendToGa('send', 'pageview', pageviewObject)
+    } else {
+      sendToGa('send', 'pageview')
+    }
+  }
+
+  // https://developers.google.com/analytics/devguides/collection/analyticsjs/events
+  GoogleAnalyticsUniversalTracker.prototype.trackEvent = function (category, action, options) {
+    options = options || {}
+    var value
+    var evt = {
+      hitType: 'event',
+      eventCategory: category,
+      eventAction: action
+    }
+
+    // Label is optional
+    if (typeof options.label === 'string') {
+      evt.eventLabel = options.label
+      delete options.label
+    }
+
+    // Value is optional, but when used must be an
+    // integer, otherwise the event will be invalid
+    // and not logged
+    if (options.value || options.value === 0) {
+      value = parseInt(options.value, 10)
+      if (typeof value === 'number' && !isNaN(value)) {
+        options.eventValue = value
+      }
+      delete options.value
+    }
+
+    // Prevents an event from affecting bounce rate
+    // https://developers.google.com/analytics/devguides/collection/analyticsjs/events#implementation
+    if (options.nonInteraction) {
+      options.nonInteraction = 1
+    }
+
+    if (typeof options === 'object') {
+      $.extend(evt, options)
+    }
+
+    sendToGa('send', evt)
+  }
+
+  /*
+    https://developers.google.com/analytics/devguides/collection/analyticsjs/social-interactions
+    network – The network on which the action occurs (e.g. Facebook, Twitter)
+    action – The type of action that happens (e.g. Like, Send, Tweet)
+    target – Specifies the target of a social interaction.
+             This value is typically a URL but can be any text.
+  */
+  GoogleAnalyticsUniversalTracker.prototype.trackSocial = function (network, action, target) {
+    sendToGa('send', {
+      'hitType': 'social',
+      'socialNetwork': network,
+      'socialAction': action,
+      'socialTarget': target
+    })
+  }
+
+  /*
+   https://developers.google.com/analytics/devguides/collection/analyticsjs/cross-domain
+   trackerId - the UA account code to track the domain against
+   name      - name for the tracker
+   domain    - the domain to track
+  */
+  GoogleAnalyticsUniversalTracker.prototype.addLinkedTrackerDomain = function (trackerId, name, domain) {
+    sendToGa('create',
+             trackerId,
+             'auto',
+             {'name': name})
+    // Load the plugin.
+    sendToGa('require', 'linker')
+    sendToGa(name + '.require', 'linker')
+
+    // Define which domains to autoLink.
+    sendToGa('linker:autoLink', [domain])
+    sendToGa(name + '.linker:autoLink', [domain])
+
+    sendToGa(name + '.set', 'anonymizeIp', true)
+    sendToGa(name + '.send', 'pageview')
+  }
+
+  // https://developers.google.com/analytics/devguides/collection/analyticsjs/custom-dims-mets
+  GoogleAnalyticsUniversalTracker.prototype.setDimension = function (index, value) {
+    sendToGa('set', 'dimension' + index, String(value))
+  }
+
+  function sendToGa () {
+    if (typeof global.ga === 'function') {
+      global.ga.apply(global, arguments)
+    }
+  }
+
+  GOVUK.GoogleAnalyticsUniversalTracker = GoogleAnalyticsUniversalTracker
+
+  global.GOVUK = GOVUK
+})(window)
+;
+;(function (global) {
+  'use strict'
+
+  var GOVUK = global.GOVUK || {}
+
+  // For usage and initialisation see:
+  // https://github.com/alphagov/govuk_frontend_toolkit/blob/master/docs/analytics.md#create-an-analytics-tracker
+
+  var Analytics = function (config) {
+    this.trackers = []
+    if (typeof config.universalId !== 'undefined') {
+      var universalId = config.universalId
+      delete config.universalId
+      this.trackers.push(new GOVUK.GoogleAnalyticsUniversalTracker(universalId, config))
+    }
+    if (typeof config.govukTrackerGifUrl !== 'undefined') {
+      var govukTrackerGifUrl = config.govukTrackerGifUrl
+      delete config.govukTrackerGifUrl
+      this.trackers.push(new GOVUK.GOVUKTracker(govukTrackerGifUrl))
+    }
+  }
+
+  Analytics.prototype.sendToTrackers = function (method, args) {
+    for (var i = 0, l = this.trackers.length; i < l; i++) {
+      var tracker = this.trackers[i]
+      var fn = tracker[method]
+
+      if (typeof fn === 'function') {
+        fn.apply(tracker, args)
+      }
+    }
+  }
+
+  Analytics.load = function () {
+    GOVUK.GoogleAnalyticsUniversalTracker.load()
+    GOVUK.GOVUKTracker.load()
+  }
+
+  Analytics.prototype.trackPageview = function (path, title, options) {
+    this.sendToTrackers('trackPageview', arguments)
+  }
+
+  /*
+    https://developers.google.com/analytics/devguides/collection/analyticsjs/events
+    options.label – Useful for categorizing events (eg nav buttons)
+    options.value – Values must be non-negative. Useful to pass counts
+    options.nonInteraction – Prevent event from impacting bounce rate
+  */
+  Analytics.prototype.trackEvent = function (category, action, options) {
+    this.sendToTrackers('trackEvent', arguments)
+  }
+
+  Analytics.prototype.trackShare = function (network) {
+    this.sendToTrackers('trackSocial', [network, 'share', global.location.pathname])
+  }
+
+  /*
+    The custom dimension index must be configured within the
+    Universal Analytics profile
+   */
+  Analytics.prototype.setDimension = function (index, value) {
+    this.sendToTrackers('setDimension', arguments)
+  }
+
+  /*
+   Add a beacon to track a page in another GA account on another domain.
+   */
+  Analytics.prototype.addLinkedTrackerDomain = function (trackerId, name, domain) {
+    this.sendToTrackers('addLinkedTrackerDomain', arguments)
+  }
+
+  GOVUK.Analytics = Analytics
+
+  global.GOVUK = GOVUK
+})(window)
+;
+;GOVUK.analyticsSetup = function(global) {
+  "use strict";
+
+  var $ = global.jQuery
+  var GOVUK = global.GOVUK || {}
+  var gaConfig = global.gaConfig || {}
+
+  // Load Google Analytics libraries
+  GOVUK.Analytics.load();
+
+  // Use document.domain in dev, preview and staging so that tracking works
+  // Otherwise explicitly set the domain as lastingpowerofattorney.service.justice.gov.uk.
+  var cookieDomain = (document.domain === 'lastingpowerofattorney.service.justice.gov.uk') ? '.lastingpowerofattorney.service.justice.gov.uk' : document.domain;
+
+  // Configure profiles and make interface public
+  // for custom dimensions, virtual pageviews and events
+  GOVUK.analytics = new GOVUK.Analytics({
+    universalId: gaConfig.universalId  || '',
+    cookieDomain: cookieDomain,
+    allowLinker: true,
+    allowAnchor: true
+  });
+
+  // Track initial pageview
+  if (typeof GOVUK.pageviewOptions !== 'undefined') {
+    GOVUK.analytics.trackPageview(null, null, GOVUK.pageviewOptions);
+  }
+  else {
+    GOVUK.analytics.trackPageview();
+  }
+
+};
+
+GOVUK.analyticsSetup(window);
 /**
  * JQuery Postcode Lookup plugin for OPG-LPA project
  * Relies on /postcode/lookup route
