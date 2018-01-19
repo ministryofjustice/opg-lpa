@@ -91,10 +91,16 @@ module.exports = function (grunt) {
           'assets/js/vendor/handlebars.js',
           'assets/js/vendor/lodash-2.4.1.min.js',
 
-          // GOVUK Scripts
+          // GOVUK Bower Scripts
           'assets/bower/stageprompt/script/stageprompt.js',
           'assets/bower/govuk_frontend_toolkit/javascripts/govuk/selection-buttons.js',
           'assets/bower/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
+          'assets/bower/govuk_frontend_toolkit/javascripts/govuk/analytics/govuk-tracker.js',
+          'assets/bower/govuk_frontend_toolkit/javascripts/govuk/analytics/google-analytics-universal-tracker.js',
+          'assets/bower/govuk_frontend_toolkit/javascripts/govuk/analytics/analytics.js',
+
+          // GOVUK init
+          'assets/js/govuk/analytics.js',
 
           // OPG Scripts
           'assets/js/opg/jquery-plugin-opg-hascrollbar.js',
