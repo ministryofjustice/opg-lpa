@@ -6,6 +6,8 @@
         "govuk_template": "git://github.com/alphagov/govuk_template.git#0.19.*",
         "govuk_elements": "git://github.com/alphagov/govuk_elements.git#2.2.*",
         "stageprompt": "git://github.com/alphagov/stageprompt.git#2.1.*",
-        "phantomcss": "git://github.com/Huddle/PhantomCSS.git#1.1.*"
+        "phantomcss": "git://github.com/Huddle/PhantomCSS.git#1.1.*",
+        "handlebars": "^4.0.11",
+        "lodash": "^4.17.4"
     }
 }
