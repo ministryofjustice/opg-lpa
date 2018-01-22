@@ -95,9 +95,12 @@ return [
     ],
 
     'blanks' => [
-        'applicant-signature-1' => ['x1' => 297, 'y1' => 509, 'x2' => 560, 'y2' => 382],
-        'applicant-signature-2' => ['x1' => 31,  'y1' => 379, 'x2' => 295, 'y2' => 252],
-        'applicant-signature-3' => ['x1' => 297, 'y1' => 379, 'x2' => 560, 'y2' => 252]
+        'applicant-signature-1-hw' => ['x1' => 297, 'y1' => 509, 'x2' => 560, 'y2' => 382],
+        'applicant-signature-2-hw' => ['x1' => 31,  'y1' => 379, 'x2' => 295, 'y2' => 252],
+        'applicant-signature-3-hw' => ['x1' => 297, 'y1' => 379, 'x2' => 560, 'y2' => 252],
+        'applicant-signature-1-pf' => ['x1' => 297, 'y1' => 509, 'x2' => 560, 'y2' => 382],
+        'applicant-signature-2-pf' => ['x1' => 31,  'y1' => 379, 'x2' => 295, 'y2' => 252],
+        'applicant-signature-3-pf' => ['x1' => 297, 'y1' => 379, 'x2' => 560, 'y2' => 252]
     ],
 
     'footer' => [

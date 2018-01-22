@@ -46,7 +46,7 @@ class Lp1h extends AbstractLp1
     /**
      * @return string
      */
-    protected function getStrikeThroughSuffix()
+    protected function getAreaReferenceSuffix()
     {
         return 'hw';
     }

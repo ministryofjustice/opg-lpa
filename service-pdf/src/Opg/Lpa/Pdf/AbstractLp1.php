@@ -174,7 +174,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
                 if ($strikeThroughPage == 2) {
                     //  Add the required strike through area prefix
-                    $strikeThroughArea .= '-' . $this->getStrikeThroughSuffix();
+                    $strikeThroughArea .= '-' . $this->getAreaReferenceSuffix();
                 }
 
                 $this->addStrikeThrough($strikeThroughArea, $strikeThroughPage);
@@ -227,7 +227,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 }
             } else {
                 //  Add a strike through on the appropriate page
-                $strikeThroughArea = 'replacementAttorney-' . $i . '-' . $this->getStrikeThroughSuffix();
+                $strikeThroughArea = 'replacementAttorney-' . $i . '-' . $this->getAreaReferenceSuffix();
                 $strikeThroughPage = 5 + floor($i/2);
 
                 $this->addStrikeThrough($strikeThroughArea, $strikeThroughPage);
@@ -372,7 +372,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         } else {
             //  Add a strike through on the appropriate page
             $pageNumber = 12 + $pageIteration;
-            $strikeThroughArea = 'attorney-signature-' . $this->getStrikeThroughSuffix();
+            $strikeThroughArea = 'attorney-signature-' . $this->getAreaReferenceSuffix();
             $pdf->addStrikeThrough($strikeThroughArea, $pageNumber);
         }
 
@@ -449,7 +449,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         //  Draw the strike throughs
         while ($strikeThroughIndex < self::MAX_APPLICANTS_SECTION_12) {
-            $areaReference = 'applicant-' . $strikeThroughIndex . '-' . $this->getStrikeThroughSuffix();
+            $areaReference = 'applicant-' . $strikeThroughIndex . '-' . $this->getAreaReferenceSuffix();
             $pdf->addStrikeThrough($areaReference, 17);
             $strikeThroughIndex++;
         }
@@ -587,7 +587,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         //  Draw the blanks
         while ($blankIndex < self::MAX_SIGNATURES_SECTION_15) {
-            $pdf->addBlank('applicant-signature-' . $blankIndex, 20);
+            $pdf->addBlank('applicant-signature-' . $blankIndex . '-' . $this->getAreaReferenceSuffix(), 20);
             $blankIndex++;
         }
     }
@@ -595,7 +595,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     /**
      * @return string
      */
-    abstract protected function getStrikeThroughSuffix();
+    abstract protected function getAreaReferenceSuffix();
 
     /**
      * @param Lpa $lpa

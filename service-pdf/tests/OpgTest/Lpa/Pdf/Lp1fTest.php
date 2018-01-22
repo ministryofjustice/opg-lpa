@@ -137,8 +137,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -452,8 +452,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -729,8 +729,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -1044,8 +1044,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -1266,9 +1266,9 @@ class Lp1fTest extends AbstractPdfTestClass
 
         $blankTargets = [
             19 => [
-                'applicant-signature-1',
-                'applicant-signature-2',
-                'applicant-signature-3',
+                'applicant-signature-1-pf',
+                'applicant-signature-2-pf',
+                'applicant-signature-3-pf',
             ],
         ];
 
@@ -1371,8 +1371,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -1576,9 +1576,9 @@ class Lp1fTest extends AbstractPdfTestClass
 
         $blankTargets = [
             19 => [
-                'applicant-signature-1',
-                'applicant-signature-2',
-                'applicant-signature-3',
+                'applicant-signature-1-pf',
+                'applicant-signature-2-pf',
+                'applicant-signature-3-pf',
             ],
         ];
 
@@ -1629,8 +1629,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -1807,7 +1807,7 @@ class Lp1fTest extends AbstractPdfTestClass
 
         $blankTargets = [
             19 => [
-                'applicant-signature-3',
+                'applicant-signature-3-pf',
             ],
         ];
 
@@ -1910,8 +1910,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -2189,8 +2189,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -2467,8 +2467,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -2679,7 +2679,7 @@ class Lp1fTest extends AbstractPdfTestClass
 
         $blankTargets = [
             19 => [
-                'applicant-signature-3',
+                'applicant-signature-3-pf',
             ],
         ];
 
@@ -2729,8 +2729,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -2929,8 +2929,8 @@ class Lp1fTest extends AbstractPdfTestClass
 
         $blankTargets = [
             19 => [
-                'applicant-signature-2',
-                'applicant-signature-3',
+                'applicant-signature-2-pf',
+                'applicant-signature-3-pf',
             ],
         ];
 
@@ -2980,8 +2980,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -3166,9 +3166,9 @@ class Lp1fTest extends AbstractPdfTestClass
 
         $blankTargets = [
             19 => [
-                'applicant-signature-1',
-                'applicant-signature-2',
-                'applicant-signature-3',
+                'applicant-signature-1-pf',
+                'applicant-signature-2-pf',
+                'applicant-signature-3-pf',
             ],
         ];
 
@@ -3218,8 +3218,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -3395,9 +3395,9 @@ class Lp1fTest extends AbstractPdfTestClass
 
         $blankTargets = [
             19 => [
-                'applicant-signature-1',
-                'applicant-signature-2',
-                'applicant-signature-3',
+                'applicant-signature-1-pf',
+                'applicant-signature-2-pf',
+                'applicant-signature-3-pf',
             ],
         ];
 
@@ -3459,8 +3459,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -3683,8 +3683,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -4001,8 +4001,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -4312,8 +4312,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -4625,8 +4625,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -4947,8 +4947,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -5267,8 +5267,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -5583,8 +5583,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -5912,8 +5912,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -6230,8 +6230,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -6461,9 +6461,9 @@ class Lp1fTest extends AbstractPdfTestClass
 
         $blankTargets = [
             19 => [
-                'applicant-signature-1',
-                'applicant-signature-2',
-                'applicant-signature-3',
+                'applicant-signature-1-pf',
+                'applicant-signature-2-pf',
+                'applicant-signature-3-pf',
             ],
         ];
 
@@ -6514,8 +6514,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -6767,8 +6767,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -7057,8 +7057,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -7361,8 +7361,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -7675,8 +7675,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -7990,8 +7990,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'blankTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
@@ -8308,8 +8308,8 @@ class Lp1fTest extends AbstractPdfTestClass
                     'templateFileName' => 'LP1F.pdf',
                     'strikeThroughTargets' => [
                         19 => [
-                            'applicant-signature-2',
-                            'applicant-signature-3',
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
                         ],
                     ],
                 ],
