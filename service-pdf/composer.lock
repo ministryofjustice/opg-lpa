@@ -527,12 +527,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "3c93f0419d7ff3cd26dc79fe26412dab1cbc7509"
+                "reference": "f862911c0d40bb604df74899b73c53bf07f3f98a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/3c93f0419d7ff3cd26dc79fe26412dab1cbc7509",
-                "reference": "3c93f0419d7ff3cd26dc79fe26412dab1cbc7509",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/f862911c0d40bb604df74899b73c53bf07f3f98a",
+                "reference": "f862911c0d40bb604df74899b73c53bf07f3f98a",
                 "shasum": ""
             },
             "require": {
@@ -558,7 +558,7 @@
                 "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/LPA-2596-editing_from_review_page",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2018-01-22 14:14:05"
+            "time": "2018-01-22 15:49:52"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
