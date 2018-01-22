@@ -5813,6 +5813,8 @@ class Lp1fTest extends AbstractPdfTestClass
 
         $strikeThroughs = [];
 
+        $blankTargets = [];
+
         $constituentPdfs = [
             'start' => [
                 $this->getFullTemplatePath('LP1F_CoversheetRegistration.pdf'),
@@ -8306,7 +8308,8 @@ class Lp1fTest extends AbstractPdfTestClass
             'end' => [
                 [
                     'templateFileName' => 'LP1F.pdf',
-                    'strikeThroughTargets' => [
+                    'strikeThroughTargets' => [],
+                    'blankTargets' => [
                         19 => [
                             'applicant-signature-2-pf',
                             'applicant-signature-3-pf',
@@ -8496,7 +8499,7 @@ class Lp1fTest extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
