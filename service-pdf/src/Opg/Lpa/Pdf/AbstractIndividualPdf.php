@@ -7,6 +7,7 @@ use Opg\Lpa\DataModel\Lpa\StateChecker;
 use mikehaertl\pdftk\Pdf as PdftkPdf;
 use ZendPdf\PdfDocument as ZendPdfDocument;
 use Exception;
+use ZendPdf\Resource\Image\Png;
 
 /**
  * Class AbstractIndividualPdf
@@ -32,6 +33,13 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      * @var array
      */
     private $strikeThroughTargets = [];
+
+    /**
+     * Area references that should have a blank drawn over them
+     *
+     * @var array
+     */
+    private $blankTargets = [];
 
     /**
      * @var array
@@ -130,38 +138,77 @@ abstract class AbstractIndividualPdf extends AbstractPdf
              ->flatten()
              ->saveAs($this->pdfFile);
 
-        //  Draw any strike throughs
-        if (!empty($this->strikeThroughTargets)) {
-            //  Check to see if drawing cross lines is disabled or not
+        //  Draw any strike throughs and/or blanks
+        if (!empty($this->strikeThroughTargets) || !empty($this->blankTargets)) {
+            //  Check to see if drawing cross lines and blanks is disabled or not
             $disableStrikeThroughLines = false;
+            $disableBlanks = false;
 
             if (isset($this->config['service']['disable_strike_through_lines'])) {
                 $disableStrikeThroughLines = (bool)$this->config['service']['disable_strike_through_lines'];
             }
 
-            if (!$disableStrikeThroughLines) {
-                // draw cross lines
-                $pdfForStrikeThroughs = ZendPdfDocument::load($this->pdfFile);
+            if (isset($this->config['service']['disable_blanks'])) {
+                $disableBlanks = (bool)$this->config['service']['disable_blanks'];
+            }
 
-                foreach ($this->strikeThroughTargets as $pageNo => $pageDrawingTargets) {
-                    $page = $pdfForStrikeThroughs->pages[$pageNo]->setLineWidth(10);
+            if (!$disableStrikeThroughLines || !$disableBlanks) {
+                //  Get the PDF to manipulate
+                $pdfForDrawings = ZendPdfDocument::load($this->pdfFile);
+                $changesMade = false;
 
-                    foreach ($pageDrawingTargets as $pageDrawingTarget) {
-                        //  Get the coordinates for this target from the config
-                        if (isset($this->config['strike_throughs'][$pageDrawingTarget])) {
-                            $targetStrikeThroughCoordinates = $this->config['strike_throughs'][$pageDrawingTarget];
+                if (!$disableStrikeThroughLines) {
+                    foreach ($this->strikeThroughTargets as $pageNo => $pageDrawingTargets) {
+                        $page = $pdfForDrawings->pages[$pageNo];
+                        $page->setLineWidth(10);
 
-                            $page->drawLine(
-                                $targetStrikeThroughCoordinates['bx'],
-                                $targetStrikeThroughCoordinates['by'],
-                                $targetStrikeThroughCoordinates['tx'],
-                                $targetStrikeThroughCoordinates['ty']
-                            );
+                        foreach ($pageDrawingTargets as $pageDrawingTarget) {
+                            //  Get the coordinates for this target from the config
+                            if (isset($this->config['strike_throughs'][$pageDrawingTarget])) {
+                                $targetStrikeThroughCoordinates = $this->config['strike_throughs'][$pageDrawingTarget];
+
+                                $page->drawLine(
+                                    $targetStrikeThroughCoordinates['bx'],
+                                    $targetStrikeThroughCoordinates['by'],
+                                    $targetStrikeThroughCoordinates['tx'],
+                                    $targetStrikeThroughCoordinates['ty']
+                                );
+
+                                $changesMade = true;
+                            }
                         }
                     }
                 }
 
-                $pdfForStrikeThroughs->save($this->pdfFile);
+                if (!$disableBlanks) {
+                    $blank = new Png($this->config['service']['assets']['source_template_path'] . '/blank.png');
+
+                    foreach ($this->blankTargets as $pageNo => $pageDrawingTargets) {
+                        $page = $pdfForDrawings->pages[$pageNo];
+
+                        foreach ($pageDrawingTargets as $pageDrawingTarget) {
+                            //  Get the coordinates for this target from the config
+                            if (isset($this->config['blanks'][$pageDrawingTarget])) {
+                                $blankCoordinates = $this->config['blanks'][$pageDrawingTarget];
+
+                                $page->drawImage(
+                                    $blank,
+                                    $blankCoordinates['x1'],
+                                    $blankCoordinates['y1'],
+                                    $blankCoordinates['x2'],
+                                    $blankCoordinates['y2']
+                                );
+
+                                $changesMade = true;
+                            }
+                        }
+                    }
+                }
+
+                //  If changes have been made save a copy now
+                if ($changesMade) {
+                    $pdfForDrawings->save($this->pdfFile);
+                }
             }
         }
 
@@ -231,15 +278,40 @@ abstract class AbstractIndividualPdf extends AbstractPdf
      */
     protected function addStrikeThrough($areaReference, $pageNumber = 1)
     {
+        return $this->addDrawingTarget($this->strikeThroughTargets, $areaReference, $pageNumber);
+    }
+
+    /**
+     * Draw a blank section on the specified page
+     *
+     * @param $areaReference
+     * @param int $pageNumber
+     * @return $this
+     */
+    protected function addBlank($areaReference, $pageNumber = 1)
+    {
+        return $this->addDrawingTarget($this->blankTargets, $areaReference, $pageNumber);
+    }
+
+    /**
+     * Add a drawing target (strike through or blank) to the specified page
+     *
+     * @param array $drawingTargets
+     * @param $areaReference
+     * @param int $pageNumber
+     * @return $this
+     */
+    private function addDrawingTarget(array &$drawingTargets, $areaReference, $pageNumber)
+    {
         //  Adjust the page number for zero based indexes
         $pageNumber--;
 
         //  If a section doesn't exist for this page create one now
-        if (!isset($this->strikeThroughTargets[$pageNumber])) {
-            $this->strikeThroughTargets[$pageNumber] = [];
+        if (!isset($drawingTargets[$pageNumber])) {
+            $drawingTargets[$pageNumber] = [];
         }
 
-        $this->strikeThroughTargets[$pageNumber][] = $areaReference;
+        $drawingTargets[$pageNumber][] = $areaReference;
 
         return $this;
     }

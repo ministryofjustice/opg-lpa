@@ -29,7 +29,9 @@ class Lp3Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5715';
         $templateFileName = 'LP3.pdf';
 
-        $strikeThroughs = [];
+        $strikeThroughTargets = [];
+
+        $blankTargets = [];
 
         $constituentPdfs = [
             3 => [
@@ -118,7 +120,7 @@ class Lp3Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -143,13 +145,15 @@ class Lp3Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5715';
         $templateFileName = 'LP3.pdf';
 
-        $strikeThroughs = [
+        $strikeThroughTargets = [
             2 => [
                 'lp3-primaryAttorney-1',
                 'lp3-primaryAttorney-2',
                 'lp3-primaryAttorney-3',
             ],
         ];
+
+        $blankTargets = [];
 
         $constituentPdfs = [
             3 => [
@@ -217,7 +221,7 @@ class Lp3Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -241,7 +245,9 @@ class Lp3Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5715';
         $templateFileName = 'LP3.pdf';
 
-        $strikeThroughs = [];
+        $strikeThroughTargets = [];
+
+        $blankTargets = [];
 
         $constituentPdfs = [
             3 => [
@@ -330,7 +336,7 @@ class Lp3Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -362,13 +368,15 @@ class Lp3Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5715';
         $templateFileName = 'LP3.pdf';
 
-        $strikeThroughs = [
+        $strikeThroughTargets = [
             2 => [
                 'lp3-primaryAttorney-1',
                 'lp3-primaryAttorney-2',
                 'lp3-primaryAttorney-3',
             ],
         ];
+
+        $blankTargets = [];
 
         $constituentPdfs = [
             3 => [
@@ -434,7 +442,7 @@ class Lp3Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -454,7 +462,9 @@ class Lp3Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5716';
         $templateFileName = 'LP3.pdf';
 
-        $strikeThroughs = [];
+        $strikeThroughTargets = [];
+
+        $blankTargets = [];
 
         $constituentPdfs = [
             3 => [
@@ -539,7 +549,7 @@ class Lp3Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -564,13 +574,15 @@ class Lp3Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5716';
         $templateFileName = 'LP3.pdf';
 
-        $strikeThroughs = [
+        $strikeThroughTargets = [
             2 => [
                 'lp3-primaryAttorney-1',
                 'lp3-primaryAttorney-2',
                 'lp3-primaryAttorney-3',
             ]
         ];
+
+        $blankTargets = [];
 
         $constituentPdfs = [];
 
@@ -607,7 +619,7 @@ class Lp3Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();
@@ -631,7 +643,9 @@ class Lp3Test extends AbstractPdfTestClass
         $formattedLpaRef = 'A510 7295 5716';
         $templateFileName = 'LP3.pdf';
 
-        $strikeThroughs = [];
+        $strikeThroughTargets = [];
+
+        $blankTargets = [];
 
         $constituentPdfs = [
             3 => [
@@ -716,7 +730,7 @@ class Lp3Test extends AbstractPdfTestClass
 
         $pageShift = 0;
 
-        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughTargets, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
 
         //  Test the generated filename created
         $pdfFile = $pdf->generate();

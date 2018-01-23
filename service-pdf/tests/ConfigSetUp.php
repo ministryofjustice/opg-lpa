@@ -14,6 +14,7 @@ class ConfigSetUp
 
         $serviceConfig = $config['service'];
         $serviceConfig['disable_strike_through_lines'] = true;
+        $serviceConfig['disable_blanks'] = true;
         $serviceConfig['assets']['template_path_on_ram_disk'] = __DIR__ . '/../assets/v2';
         $serviceConfig['assets']['intermediate_file_path'] = '/tmp';
 
