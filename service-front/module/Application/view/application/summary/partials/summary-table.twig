@@ -216,9 +216,9 @@
 
            {{ macros.outputActor( lpa.document.certificateProvider, url('lpa/certificate-provider', {'lpa-id': lpa.id}) ) }}
         {% else %}
-            <tr class="group-single incomplete">
+            <tr class="group-single">
                 <td class="table-summary-title">Certificate provider</td>
-                <td class="table-summary-content incomplete">The certificate provider has not been nominated yet</td>
+                <td class="table-summary-content incomplete">Who is the certificate provider?</td>
                 <td class="table-summary-action"><a href="{{ url('lpa/certificate-provider', {'lpa-id': lpa.id}) }}">Edit</a></td>
             </tr>
         {% endif %}

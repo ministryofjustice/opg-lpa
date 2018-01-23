@@ -15,6 +15,15 @@
         }
     }
 
+    .not-started {
+        .accordion-summary {
+            .label {
+                color: $grey-1;
+                border-color: $grey-1;
+            }
+        }
+    }
+
     .accordion-header {
         display: block;
         padding: $gutter-half;

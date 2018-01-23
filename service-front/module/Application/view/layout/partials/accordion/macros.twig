@@ -4,7 +4,7 @@
     <li><a id="current" class="accordion-current"></a></li>
 {% endif %}
 
-<li class="section {{ data.status == 'Incomplete' ? 'incomplete' : 'complete' }}">
+<li class="section {{ data.status == 'Incomplete' ? 'incomplete' : data.status == 'Not Started' ? 'not-started' : 'complete' }}">
     <div class="accordion-summary {% if data.cssClass is defined %}{{ data.cssClass }}{% endif %}">
         <div class="title-box {% if data.titleBoxCssClass is defined %}{{ data.titleBoxCssClass }}{% endif %}">
             <p class="title flush--ends tablet-and-up {% if data.titleCssClass is defined %}{{ data.titleCssClass }}{% endif %}">{{ data.text|raw }}</p>
