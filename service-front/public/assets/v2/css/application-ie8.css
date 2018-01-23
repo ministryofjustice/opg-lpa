@@ -3436,7 +3436,8 @@ input[type=number] {
 .content-body {
   min-height: 400px; }
 
-.current + .complete {
+.current + .complete,
+.current + .incomplete {
   margin-top: 30px;
   clear: left; }
 
