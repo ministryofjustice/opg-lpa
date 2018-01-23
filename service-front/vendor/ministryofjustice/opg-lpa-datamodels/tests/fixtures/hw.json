@@ -57,7 +57,7 @@
         },
         "replacementAttorneyDecisions" : {
             "whenDetails" : "They should step in this way",
-            "how" : null,
+            "how" : "jointly-attorney-severally",
             "when" : "depends",
             "howDetails" : null
         },
