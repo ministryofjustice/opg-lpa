@@ -848,6 +848,17 @@ class Stats
                 ]
             ];
 
+            $month['trust'] = [
+                'primaryAttorneys' => $this->lpaCollection->count([
+                    'completedAt' => $dateRange,
+                    'document.primaryAttorneys' => ['$elemMatch' => ['type' => 'trust']]
+                ], $readPreference),
+                'replacementAttorneys' => $this->lpaCollection->count([
+                    'completedAt' => $dateRange,
+                    'document.replacementAttorneys' => ['$elemMatch' => ['type' => 'trust']]
+                ], $readPreference)
+            ];
+
             $optionStats[date('Y-m', $start->getTimestamp())] = $month;
 
             $start->modify("first day of -1 month");
