@@ -322,7 +322,7 @@ class HeadMeta extends Placeholder\Container\AbstractStandalone
     /**
      * Determine if item is valid
      *
-     * @param  mixed $item
+     * @param  stdClass $item
      * @return bool
      */
     protected function isValid($item)
@@ -334,22 +334,27 @@ class HeadMeta extends Placeholder\Container\AbstractStandalone
             return false;
         }
 
+        $doctype = $this->view->plugin('doctype');
+        if ($item->type === 'charset' && $doctype->isXhtml()) {
+            return false;
+        }
+
         if (! isset($item->content)
-            && (! $this->view->plugin('doctype')->isHtml5()
-            || (! $this->view->plugin('doctype')->isHtml5() && $item->type !== 'charset'))
+            && (! $doctype->isHtml5()
+            || (! $doctype->isHtml5() && $item->type !== 'charset'))
         ) {
             return false;
         }
 
         // <meta itemprop= ... /> is only supported with doctype html
-        if (! $this->view->plugin('doctype')->isHtml5()
+        if (! $doctype->isHtml5()
             && $item->type === 'itemprop'
         ) {
             return false;
         }
 
         // <meta property= ... /> is only supported with doctype RDFa
-        if (! $this->view->plugin('doctype')->isRdfa()
+        if (! $doctype->isRdfa()
             && $item->type === 'property'
         ) {
             return false;
@@ -361,15 +366,15 @@ class HeadMeta extends Placeholder\Container\AbstractStandalone
     /**
      * Append
      *
-     * @param  string $value
-     * @return void
+     * @param  stdClass $value
+     * @return View\Helper\Placeholder\Container\AbstractContainer
      * @throws Exception\InvalidArgumentException
      */
     public function append($value)
     {
         if (! $this->isValid($value)) {
             throw new Exception\InvalidArgumentException(
-                'Invalid value passed to append; please use appendMeta()'
+                'Invalid value passed to append'
             );
         }
 
@@ -382,7 +387,6 @@ class HeadMeta extends Placeholder\Container\AbstractStandalone
      * @param  string|int $index
      * @param  string     $value
      * @throws Exception\InvalidArgumentException
-     * @return void
      */
     public function offsetSet($index, $value)
     {
@@ -400,7 +404,6 @@ class HeadMeta extends Placeholder\Container\AbstractStandalone
      *
      * @param  string|int $index
      * @throws Exception\InvalidArgumentException
-     * @return void
      */
     public function offsetUnset($index)
     {
@@ -414,15 +417,15 @@ class HeadMeta extends Placeholder\Container\AbstractStandalone
     /**
      * Prepend
      *
-     * @param  string $value
+     * @param  stdClass $value
      * @throws Exception\InvalidArgumentException
-     * @return void
+     * @return View\Helper\Placeholder\Container\AbstractContainer
      */
     public function prepend($value)
     {
         if (! $this->isValid($value)) {
             throw new Exception\InvalidArgumentException(
-                'Invalid value passed to prepend; please use prependMeta()'
+                'Invalid value passed to prepend'
             );
         }
 
@@ -432,14 +435,14 @@ class HeadMeta extends Placeholder\Container\AbstractStandalone
     /**
      * Set
      *
-     * @param  string $value
+     * @param  stdClass $value
      * @throws Exception\InvalidArgumentException
-     * @return void
+     * @return View\Helper\Placeholder\Container\AbstractContainer
      */
     public function set($value)
     {
         if (! $this->isValid($value)) {
-            throw new Exception\InvalidArgumentException('Invalid value passed to set; please use setMeta()');
+            throw new Exception\InvalidArgumentException('Invalid value passed to set');
         }
 
         $container = $this->getContainer();
@@ -458,6 +461,7 @@ class HeadMeta extends Placeholder\Container\AbstractStandalone
      * Not valid in a non-HTML5 doctype
      *
      * @param  string $charset
+     * @param  Exception\InvalidArgumentException
      * @return HeadMeta Provides a fluent interface
      */
     public function setCharset($charset)
@@ -467,6 +471,13 @@ class HeadMeta extends Placeholder\Container\AbstractStandalone
         $item->charset = $charset;
         $item->content = null;
         $item->modifiers = [];
+
+        if (! $this->isValid($item)) {
+            throw new Exception\InvalidArgumentException(
+                'XHTML* doctype has no attribute charset; please use appendHttpEquiv()'
+            );
+        }
+
         $this->set($item);
 
         return $this;

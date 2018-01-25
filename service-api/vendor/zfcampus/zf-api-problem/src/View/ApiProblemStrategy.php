@@ -32,14 +32,15 @@ class ApiProblemStrategy extends JsonStrategy
     /**
      * Detect if we should use the ApiProblemRenderer based on model type.
      *
-     * @param  ViewEvent $e
+     * @param ViewEvent $e
+     *
      * @return null|ApiProblemRenderer
      */
     public function selectRenderer(ViewEvent $e)
     {
         $model = $e->getModel();
 
-        if (!$model instanceof ApiProblemModel) {
+        if (! $model instanceof ApiProblemModel) {
             // unrecognized model; do nothing
             return;
         }
@@ -49,30 +50,30 @@ class ApiProblemStrategy extends JsonStrategy
     }
 
     /**
-     * Inject the response
+     * Inject the response.
      *
      * Injects the response with the rendered content, and sets the content
      * type based on the detection that occurred during renderer selection.
      *
-     * @param  ViewEvent $e
+     * @param ViewEvent $e
      */
     public function injectResponse(ViewEvent $e)
     {
         $result = $e->getResult();
-        if (!is_string($result)) {
+        if (! is_string($result)) {
             // We don't have a string, and thus, no JSON
             return;
         }
 
         $model = $e->getModel();
-        if (!$model instanceof ApiProblemModel) {
+        if (! $model instanceof ApiProblemModel) {
             // Model is not an ApiProblemModel; we cannot handle it here
             return;
         }
 
         $problem     = $model->getApiProblem();
         $statusCode  = $this->getStatusCodeFromApiProblem($problem);
-        $contentType = 'application/problem+json';
+        $contentType = ApiProblem::CONTENT_TYPE;
 
         // Populate response
         $response = $e->getResponse();
@@ -83,11 +84,12 @@ class ApiProblemStrategy extends JsonStrategy
     }
 
     /**
-     * Retrieve the HTTP status from an ApiProblem object
+     * Retrieve the HTTP status from an ApiProblem object.
      *
      * Ensures that the status falls within the acceptable range (100 - 599).
      *
-     * @param  ApiProblem $problem
+     * @param ApiProblem $problem
+     *
      * @return int
      */
     protected function getStatusCodeFromApiProblem(ApiProblem $problem)

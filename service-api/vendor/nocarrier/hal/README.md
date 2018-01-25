@@ -2,11 +2,11 @@ Nocarrier\Hal
 =============
 
 [![Build Status](https://secure.travis-ci.org/blongden/hal.png)](http://travis-ci.org/blongden/hal)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/blongden/hal/badges/quality-score.png?s=7979c06ed24c45ae5f6d762ad43dec9375306b11)](https://scrutinizer-ci.com/g/blongden/hal/)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/blongden/hal/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/blongden/hal/?branch=master)
 
 This is a library for creating documents in the [application/hal+json and application/hal+xml][1] hypermedia formats
 
-It requires PHP 5.3 or later.
+It requires PHP 5.4 or later.
 
 ```php
 <?php

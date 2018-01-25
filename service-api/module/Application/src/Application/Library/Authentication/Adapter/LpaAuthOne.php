@@ -50,7 +50,7 @@ class LpaAuthOne implements AdapterInterface {
 
             if( $response->getStatusCode() == 200 ){
 
-                $data = $response->json();
+                $data = json_decode($response->getBody(), true);
 
                 if( isset( $data['user_id'] ) && isset( $data['username'] ) ){
                     $result = new Result( Result::SUCCESS, new Identity\User( $data['user_id'], $data['username'] ) );

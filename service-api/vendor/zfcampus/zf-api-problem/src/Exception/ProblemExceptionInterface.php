@@ -7,7 +7,7 @@
 namespace ZF\ApiProblem\Exception;
 
 /**
- * Interface for exceptions that can provide additional API Problem details
+ * Interface for exceptions that can provide additional API Problem details.
  */
 interface ProblemExceptionInterface
 {

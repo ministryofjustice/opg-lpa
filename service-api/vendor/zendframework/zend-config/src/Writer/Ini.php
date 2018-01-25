@@ -1,10 +1,8 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-config for the canonical source repository
+ * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-config/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Config\Writer;
@@ -56,8 +54,8 @@ class Ini extends AbstractWriter
      * If set to true, the INI file is rendered without sections completely
      * into the global namespace of the INI file.
      *
-     * @param  bool $withoutSections
-     * @return Ini
+     * @param bool $withoutSections
+     * @return self
      */
     public function setRenderWithoutSectionsFlags($withoutSections)
     {
@@ -91,7 +89,7 @@ class Ini extends AbstractWriter
             $config = $this->sortRootElements($config);
 
             foreach ($config as $sectionName => $data) {
-                if (!is_array($data)) {
+                if (! is_array($data)) {
                     $iniString .= $sectionName
                                .  ' = '
                                .  $this->prepareValue($data)

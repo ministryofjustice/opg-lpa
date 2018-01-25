@@ -1,25 +1,36 @@
 <?php
 /**
  * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2014-2016 Zend Technologies USA Inc. (http://www.zend.com)
  */
 
 namespace ZF\ApiProblem;
 
+use Exception;
+use Throwable;
+use ZF\ApiProblem\Exception\InvalidArgumentException;
+use ZF\ApiProblem\Exception\ProblemExceptionInterface;
+
 /**
- * Object describing an API-Problem payload
+ * Object describing an API-Problem payload.
  */
 class ApiProblem
 {
     /**
-     * Additional details to include in report
+     * Content type for api problem response
+     */
+    const CONTENT_TYPE = 'application/problem+json';
+
+    /**
+     * Additional details to include in report.
      *
      * @var array
      */
-    protected $additionalDetails = array();
+    protected $additionalDetails = [];
 
     /**
-     * URL describing the problem type; defaults to HTTP status codes
+     * URL describing the problem type; defaults to HTTP status codes.
+     *
      * @var string
      */
     protected $type = 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html';
@@ -27,7 +38,7 @@ class ApiProblem
     /**
      * Description of the specific problem.
      *
-     * @var string|\Exception
+     * @var string|Exception|Throwable
      */
     protected $detail = '';
 
@@ -47,23 +58,23 @@ class ApiProblem
     protected $status;
 
     /**
-     * Normalized property names for overloading
+     * Normalized property names for overloading.
      *
      * @var array
      */
-    protected $normalizedProperties = array(
-        'type'   => 'type',
+    protected $normalizedProperties = [
+        'type' => 'type',
         'status' => 'status',
-        'title'  => 'title',
+        'title' => 'title',
         'detail' => 'detail',
-    );
+    ];
 
     /**
-     * Status titles for common problems
+     * Status titles for common problems.
      *
      * @var array
      */
-    protected $problemStatusTitles = array(
+    protected $problemStatusTitles = [
         // CLIENT ERROR
         400 => 'Bad Request',
         401 => 'Unauthorized',
@@ -103,7 +114,7 @@ class ApiProblem
         507 => 'Insufficient Storage',
         508 => 'Loop Detected',
         511 => 'Network Authentication Required',
-    );
+    ];
 
     /**
      * Title of the error.
@@ -113,7 +124,7 @@ class ApiProblem
     protected $title;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * Create an instance using the provided information. If nothing is
      * provided for the type field, the class default will be used;
@@ -121,14 +132,14 @@ class ApiProblem
      * from $problemStatusTitles as a result.
      *
      * @param int    $status
-     * @param string $detail
+     * @param string|Exception|Throwable $detail
      * @param string $type
      * @param string $title
      * @param array  $additional
      */
-    public function __construct($status, $detail, $type = null, $title = null, array $additional = array())
+    public function __construct($status, $detail, $type = null, $title = null, array $additional = [])
     {
-        if ($detail instanceof Exception\ProblemExceptionInterface) {
+        if ($detail instanceof ProblemExceptionInterface) {
             if (null === $type) {
                 $type = $detail->getType();
             }
@@ -140,9 +151,17 @@ class ApiProblem
             }
         }
 
+        // Ensure a valid HTTP status
+        if (! is_numeric($status)
+            || ($status < 100)
+            || ($status > 599)
+        ) {
+            $status = 500;
+        }
+
         $this->status = $status;
         $this->detail = $detail;
-        $this->title  = $title;
+        $this->title = $title;
 
         if (null !== $type) {
             $this->type = $type;
@@ -152,17 +171,18 @@ class ApiProblem
     }
 
     /**
-     * Retrieve properties
+     * Retrieve properties.
      *
-     * @param  string $name
+     * @param string $name
      * @return mixed
-     * @throws Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __get($name)
     {
         $normalized = strtolower($name);
         if (in_array($normalized, array_keys($this->normalizedProperties))) {
             $prop = $this->normalizedProperties[$normalized];
+
             return $this->{$prop};
         }
 
@@ -174,25 +194,25 @@ class ApiProblem
             return $this->additionalDetails[$normalized];
         }
 
-        throw new Exception\InvalidArgumentException(sprintf(
+        throw new InvalidArgumentException(sprintf(
             'Invalid property name "%s"',
             $name
         ));
     }
 
     /**
-     * Cast to an array
+     * Cast to an array.
      *
      * @return array
      */
     public function toArray()
     {
-        $problem = array(
-            'type'   => $this->type,
-            'title'  => $this->getTitle(),
+        $problem = [
+            'type' => $this->type,
+            'title' => $this->getTitle(),
             'status' => $this->getStatus(),
             'detail' => $this->getDetail(),
-        );
+        ];
         // Required fields should always overwrite additional fields
         return array_merge($this->additionalDetails, $problem);
     }
@@ -201,17 +221,18 @@ class ApiProblem
      * Set the flag indicating whether an exception detail should include a
      * stack trace and previous exception information.
      *
-     * @param  bool $flag
+     * @param bool $flag
      * @return ApiProblem
      */
     public function setDetailIncludesStackTrace($flag)
     {
         $this->detailIncludesStackTrace = (bool) $flag;
+
         return $this;
     }
 
     /**
-     * Retrieve the API-Problem detail
+     * Retrieve the API-Problem detail.
      *
      * If an exception was provided, creates the detail message from it;
      * otherwise, detail as provided is used.
@@ -220,7 +241,7 @@ class ApiProblem
      */
     protected function getDetail()
     {
-        if ($this->detail instanceof \Exception) {
+        if ($this->detail instanceof Throwable || $this->detail instanceof Exception) {
             return $this->createDetailFromException();
         }
 
@@ -228,7 +249,7 @@ class ApiProblem
     }
 
     /**
-     * Retrieve the API-Problem HTTP status code
+     * Retrieve the API-Problem HTTP status code.
      *
      * If an exception was provided, creates the status code from it;
      * otherwise, code as provided is used.
@@ -237,7 +258,7 @@ class ApiProblem
      */
     protected function getStatus()
     {
-        if ($this->detail instanceof \Exception) {
+        if ($this->detail instanceof Throwable || $this->detail instanceof Exception) {
             $this->status = $this->createStatusFromException();
         }
 
@@ -245,7 +266,7 @@ class ApiProblem
     }
 
     /**
-     * Retrieve the title
+     * Retrieve the title.
      *
      * If the default $type is used, and the $status is found in
      * $problemStatusTitles, then use the matching title.
@@ -270,7 +291,7 @@ class ApiProblem
             return $this->problemStatusTitles[$this->status];
         }
 
-        if ($this->detail instanceof \Exception) {
+        if ($this->detail instanceof Throwable || $this->detail instanceof Exception) {
             return get_class($this->detail);
         }
 
@@ -288,23 +309,24 @@ class ApiProblem
      */
     protected function createDetailFromException()
     {
+        /** @var Exception|Throwable $e */
         $e = $this->detail;
 
-        if (!$this->detailIncludesStackTrace) {
+        if (! $this->detailIncludesStackTrace) {
             return $e->getMessage();
         }
 
         $message = trim($e->getMessage());
         $this->additionalDetails['trace'] = $e->getTrace();
 
-        $previous = array();
+        $previous = [];
         $e = $e->getPrevious();
         while ($e) {
-            $previous[] = array(
-                'code'    => (int) $e->getCode(),
+            $previous[] = [
+                'code' => (int) $e->getCode(),
                 'message' => trim($e->getMessage()),
-                'trace'   => $e->getTrace(),
-            );
+                'trace' => $e->getTrace(),
+            ];
             $e = $e->getPrevious();
         }
         if (count($previous)) {
@@ -317,17 +339,18 @@ class ApiProblem
     /**
      * Create HTTP status from an exception.
      *
-     * @return string
+     * @return int
      */
     protected function createStatusFromException()
     {
-        $e      = $this->detail;
+        /** @var Exception|Throwable $e */
+        $e = $this->detail;
         $status = $e->getCode();
 
-        if (!empty($status)) {
+        if ($status) {
             return $status;
-        } else {
-            return 500;
         }
+
+        return 500;
     }
 }

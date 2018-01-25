@@ -11,32 +11,35 @@ use Zend\View\Renderer\JsonRenderer;
 class ApiProblemRenderer extends JsonRenderer
 {
     /**
-     * Whether or not to render exception stack traces in API-Problem payloads
+     * Whether or not to render exception stack traces in API-Problem payloads.
      *
      * @var bool
      */
     protected $displayExceptions = false;
 
     /**
-     * Set display_exceptions flag
+     * Set display_exceptions flag.
      *
-     * @param  bool $flag
+     * @param bool $flag
+     *
      * @return self
      */
     public function setDisplayExceptions($flag)
     {
         $this->displayExceptions = (bool) $flag;
+
         return $this;
     }
 
     /**
-     * @param  string|\Zend\View\Model\ModelInterface $nameOrModel
-     * @param  array|null $values
+     * @param string|\Zend\View\Model\ModelInterface $nameOrModel
+     * @param array|null                             $values
+     *
      * @return string
      */
     public function render($nameOrModel, $values = null)
     {
-        if (!$nameOrModel instanceof ApiProblemModel) {
+        if (! $nameOrModel instanceof ApiProblemModel) {
             return '';
         }
 

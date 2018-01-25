@@ -1,28 +1,27 @@
 <?php
 /**
  * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2014-2016 Zend Technologies USA Inc. (http://www.zend.com)
  */
 
 namespace ZF\ApiProblem\Factory;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 use ZF\ApiProblem\Listener\ApiProblemListener;
 
-class ApiProblemListenerFactory implements FactoryInterface
+class ApiProblemListenerFactory
 {
     /**
-     * {@inheritDoc}
+     * @param ContainerInterface $container
      * @return ApiProblemListener
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
         $filters = null;
-        $config  = array();
+        $config = [];
 
-        if ($serviceLocator->has('Config')) {
-            $config = $serviceLocator->get('Config');
+        if ($container->has('config')) {
+            $config = $container->get('config');
         }
 
         if (isset($config['zf-api-problem']['accept_filters'])) {

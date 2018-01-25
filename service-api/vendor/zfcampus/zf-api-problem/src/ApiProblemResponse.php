@@ -9,7 +9,7 @@ namespace ZF\ApiProblem;
 use Zend\Http\Response;
 
 /**
- * Represents an ApiProblem response payload
+ * Represents an ApiProblem response payload.
  */
 class ApiProblemResponse extends Response
 {
@@ -19,11 +19,11 @@ class ApiProblemResponse extends Response
     protected $apiProblem;
 
     /**
-     * Flags to use with json_encode
+     * Flags to use with json_encode.
      *
      * @var int
      */
-    protected $jsonFlags = 0;
+    protected $jsonFlags;
 
     /**
      * @param ApiProblem $apiProblem
@@ -34,9 +34,7 @@ class ApiProblemResponse extends Response
         $this->setCustomStatusCode($apiProblem->status);
         $this->setReasonPhrase($apiProblem->title);
 
-        if (defined('JSON_UNESCAPED_SLASHES')) {
-            $this->jsonFlags = constant('JSON_UNESCAPED_SLASHES');
-        }
+        $this->jsonFlags = JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR;
     }
 
     /**
@@ -48,7 +46,7 @@ class ApiProblemResponse extends Response
     }
 
     /**
-     * Retrieve the content
+     * Retrieve the content.
      *
      * Serializes the composed ApiProblem instance to JSON.
      *
@@ -60,7 +58,7 @@ class ApiProblemResponse extends Response
     }
 
     /**
-     * Retrieve headers
+     * Retrieve headers.
      *
      * Proxies to parent class, but then checks if we have an content-type
      * header; if not, sets it, with a value of "application/problem+json".
@@ -70,14 +68,15 @@ class ApiProblemResponse extends Response
     public function getHeaders()
     {
         $headers = parent::getHeaders();
-        if (!$headers->has('content-type')) {
-            $headers->addHeaderLine('content-type', 'application/problem+json');
+        if (! $headers->has('content-type')) {
+            $headers->addHeaderLine('content-type', ApiProblem::CONTENT_TYPE);
         }
+
         return $headers;
     }
 
     /**
-     * Override reason phrase handling
+     * Override reason phrase handling.
      *
      * If no corresponding reason phrase is available for the current status
      * code, return "Unknown Error".

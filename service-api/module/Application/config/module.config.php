@@ -6,7 +6,7 @@ return [
         'routes' => [
 
             'home' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
@@ -17,7 +17,7 @@ return [
             ], // home
 
             'ping' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route' => '/ping[/:action]',
                     'defaults' => [

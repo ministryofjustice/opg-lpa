@@ -6,10 +6,13 @@ use Application\DataAccess\Mongo\CollectionFactory;
 use Application\DataAccess\UserDal;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Rest\Users\Entity as RouteUser;
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
-use Zend\ServiceManager\AbstractFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\AbstractFactoryInterface;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Exception;
 
 /**
@@ -40,43 +43,45 @@ class ResourceAbstractFactory implements AbstractFactoryInterface
     ];
 
     /**
-     * Checks whether this abstract factory can create the requested resource
+     * Can the factory create an instance for the service?
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param $name
-     * @param $requestedName
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
      * @return bool
      */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function canCreate(ContainerInterface $container, $requestedName)
     {
         return (class_exists($requestedName)
             && is_subclass_of($requestedName, AbstractResource::class));
     }
 
     /**
-     * Creates the requested resource and injects any dependencies
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param $name
-     * @param $requestedName
-     * @return mixed
-     * @throws Exception
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        if (!$this->canCreateServiceWithName($serviceLocator, $name, $requestedName)) {
+        if (!$this->canCreate($container, $requestedName)) {
             throw new Exception(sprintf('Abstract factory %s can not create the requested service %s', get_class($this), $requestedName));
         }
 
-        $lpaCollection = $serviceLocator->get(CollectionFactory::class . '-lpa');
+        $lpaCollection = $container->get(CollectionFactory::class . '-lpa');
         $collection = null;
 
         if ($requestedName == Stats\Resource::class) {
-            $collection = $serviceLocator->get(CollectionFactory::class . '-stats-lpas');
+            $collection = $container->get(CollectionFactory::class . '-stats-lpas');
         } elseif ($requestedName == Users\Resource::class) {
-            $collection = $serviceLocator->get(CollectionFactory::class . '-user');
+            $collection = $container->get(CollectionFactory::class . '-user');
         } elseif ($requestedName == WhoAreYou\Resource::class) {
-            $collection = $serviceLocator->get(CollectionFactory::class . '-stats-who');
+            $collection = $container->get(CollectionFactory::class . '-stats-who');
         }
 
         $resource = new $requestedName($lpaCollection, $collection);
@@ -88,20 +93,20 @@ class ResourceAbstractFactory implements AbstractFactoryInterface
                     throw new Exception(sprintf('The setter method %s does not exist on the requested resource %s', $setterMethod, $requestedName));
                 }
 
-                $resource->$setterMethod($serviceLocator->get($additionalService));
+                $resource->$setterMethod($container->get($additionalService));
             }
         }
 
         //  If appropriate set the user from the route parameter
         if ($resource instanceof UserConsumerInterface) {
-            $userId = $serviceLocator->get('Application')->getMvcEvent()->getRouteMatch()->getParam('userId');
+            $userId = $container->get('Application')->getMvcEvent()->getRouteMatch()->getParam('userId');
 
             if (empty($userId)) {
                 throw new ApiProblemException('User identifier missing from URL', 400);
             }
 
             //  Get the user record using the DAL
-            $userDal = $serviceLocator->get(UserDal::class);
+            $userDal = $container->get(UserDal::class);
             $user = $userDal->findById($userId);
 
             if ($user instanceof User) {
@@ -109,7 +114,7 @@ class ResourceAbstractFactory implements AbstractFactoryInterface
 
                 //  If appropriate set the LPA from the route parameter
                 if ($resource instanceof LpaConsumerInterface) {
-                    $lpaId = $serviceLocator->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpaId');
+                    $lpaId = $container->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpaId');
 
                     if (!is_numeric($lpaId)) {
                         throw new ApiProblemException('LPA identifier missing from URL', 400);

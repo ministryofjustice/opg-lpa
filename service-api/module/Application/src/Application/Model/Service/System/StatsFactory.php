@@ -3,26 +3,35 @@
 namespace Application\Model\Service\System;
 
 use Application\DataAccess\Mongo\CollectionFactory;
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
 use MongoDB\Collection;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class StatsFactory implements FactoryInterface
 {
     /**
-     * Create Stats service
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return Stats
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         /** @var Collection $lpaCollection */
-        $lpaCollection = $serviceLocator->get(CollectionFactory::class . '-lpa');
+        $lpaCollection = $container->get(CollectionFactory::class . '-lpa');
         /** @var Collection $statsLpaCollection */
-        $statsLpaCollection = $serviceLocator->get(CollectionFactory::class . '-stats-lpas');
+        $statsLpaCollection = $container->get(CollectionFactory::class . '-stats-lpas');
         /** @var Collection $statsWhoCollection */
-        $statsWhoCollection = $serviceLocator->get(CollectionFactory::class . '-stats-who');
+        $statsWhoCollection = $container->get(CollectionFactory::class . '-stats-who');
 
         return new Stats($lpaCollection, $statsLpaCollection, $statsWhoCollection);
     }

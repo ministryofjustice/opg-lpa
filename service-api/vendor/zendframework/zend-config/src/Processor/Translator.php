@@ -1,10 +1,8 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-config for the canonical source repository
+ * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-config/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Config\Processor;
@@ -34,9 +32,9 @@ class Translator implements ProcessorInterface
      * Translator uses the supplied Zend\I18n\Translator\Translator to find
      * and translate language strings in config.
      *
-     * @param  ZendTranslator $translator
-     * @param  string $textDomain
-     * @param  string|null $locale
+     * @param ZendTranslator $translator
+     * @param string $textDomain
+     * @param string|null $locale
      */
     public function __construct(ZendTranslator $translator, $textDomain = 'default', $locale = null)
     {
@@ -46,8 +44,8 @@ class Translator implements ProcessorInterface
     }
 
     /**
-     * @param  ZendTranslator $translator
-     * @return Translator
+     * @param ZendTranslator $translator
+     * @return self
      */
     public function setTranslator(ZendTranslator $translator)
     {
@@ -64,8 +62,8 @@ class Translator implements ProcessorInterface
     }
 
     /**
-     * @param  string|null $locale
-     * @return Translator
+     * @param string|null $locale
+     * @return self
      */
     public function setLocale($locale)
     {
@@ -82,8 +80,8 @@ class Translator implements ProcessorInterface
     }
 
     /**
-     * @param  string $textDomain
-     * @return Translator
+     * @param string $textDomain
+     * @return self
      */
     public function setTextDomain($textDomain)
     {

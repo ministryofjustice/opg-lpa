@@ -1,10 +1,8 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-config for the canonical source repository
+ * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-config/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Config;
@@ -185,7 +183,7 @@ class Config implements Countable, Iterator, ArrayAccess
      */
     public function __unset($name)
     {
-        if (!$this->allowModifications) {
+        if (! $this->allowModifications) {
             throw new Exception\InvalidArgumentException('Config is read only');
         } elseif (isset($this->data[$name])) {
             unset($this->data[$name]);
@@ -324,7 +322,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * - Items in $merge with STRING keys will overwrite current values.
      *
      * @param  Config $merge
-     * @return Config
+     * @return self
      */
     public function merge(Config $merge)
     {
@@ -381,6 +379,6 @@ class Config implements Countable, Iterator, ArrayAccess
      */
     public function isReadOnly()
     {
-        return !$this->allowModifications;
+        return ! $this->allowModifications;
     }
 }

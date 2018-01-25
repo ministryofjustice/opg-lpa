@@ -201,7 +201,6 @@ class PingController extends AbstractActionController
 
         try {
             $client = new GuzzleClient();
-            $client->setDefaultOption('exceptions', false);
 
             $response = $client->get(
                 $this->authPingEndPoint,
@@ -217,7 +216,7 @@ class PingController extends AbstractActionController
 
             $result['details']['200'] = true;
 
-            $api = $response->json();
+            $api = json_decode($response->getBody(), true);
 
             $result['ok'] = $api['ok'];
             $result['details'] = $result['details'] + $api;
