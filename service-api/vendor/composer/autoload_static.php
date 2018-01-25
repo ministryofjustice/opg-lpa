@@ -32,11 +32,13 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
             'Zend\\View\\' => 10,
             'Zend\\Validator\\' => 15,
             'Zend\\Uri\\' => 9,
+            'Zend\\Text\\' => 10,
             'Zend\\Stdlib\\' => 12,
             'Zend\\ServiceManager\\' => 20,
             'Zend\\Router\\' => 12,
             'Zend\\Paginator\\' => 15,
             'Zend\\Mvc\\I18n\\' => 14,
+            'Zend\\Mvc\\Console\\' => 17,
             'Zend\\Mvc\\' => 9,
             'Zend\\ModuleManager\\' => 19,
             'Zend\\Math\\' => 10,
@@ -131,6 +133,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-uri/src',
         ),
+        'Zend\\Text\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-text/src',
+        ),
         'Zend\\Stdlib\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-stdlib/src',
@@ -150,6 +156,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         'Zend\\Mvc\\I18n\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-mvc-i18n/src',
+        ),
+        'Zend\\Mvc\\Console\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-mvc-console/src',
         ),
         'Zend\\Mvc\\' => 
         array (
