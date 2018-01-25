@@ -873,6 +873,41 @@
             </table>
         </div>
 
+        <h3 class="heading-small">Trust corporations</h3>
+
+        <div class="mobile-scroll">
+            <table>
+                <thead>
+                <tr>
+                    <th>Option</th>
+                    {% for month,values in options['by-month'] %}
+                        <th class="numeric">{{ month }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Completed LPAs</td>
+                    {% for month,values in options['by-month'] %}
+                        <td class="numeric">{{ values.completed }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>A primary attorney is a trust corporation</td>
+                    {% for month,values in options['by-month'] %}
+                        <td class="numeric">{{ values.trust.primaryAttorneys }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>A replacement attorney is a trust corporation</td>
+                    {% for month,values in options['by-month'] %}
+                        <td class="numeric">{{ values.trust.replacementAttorneys }}</td>
+                    {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
     {% endif %}
 
 {% endif %}
