@@ -19,6 +19,7 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         '6a47392539ca2329373e0d33e1dba053' => __DIR__ . '/..' . '/symfony/polyfill-intl-icu/bootstrap.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '3a37ebac017bc098e9a86b35401e7a68' => __DIR__ . '/..' . '/mongodb/mongodb/src/functions.php',
+        'a7549af15e67e114d3b908742f757aa9' => __DIR__ . '/../..' . '/module/Application/Module.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -107,6 +108,7 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         'A' => 
         array (
             'Aws\\' => 4,
+            'Application\\' => 12,
         ),
     );
 
@@ -312,6 +314,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         'Aws\\' => 
         array (
             0 => __DIR__ . '/..' . '/aws/aws-sdk-php/src',
+        ),
+        'Application\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/module/Application/src/Application',
         ),
     );
 
