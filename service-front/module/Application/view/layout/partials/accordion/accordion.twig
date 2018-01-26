@@ -108,8 +108,8 @@
 
     {% if (item.routeName == 'lpa/certificate-provider') %}
         {{ macros.accordionBar({
-                'text' : (lpa.document.certificateProvider ? 'The certificate provider is ' ~ lpa.document.certificateProvider.name : 'The certificate provider has not been nominated yet' ),
-                'status' : (lpa.document.certificateProvider ? 'Complete' : 'Incomplete'),
+                'text' : (lpa.document.certificateProvider ? 'The certificate provider is ' ~ lpa.document.certificateProvider.name : 'Certificate provider not added' ),
+                'status' : (lpa.document.certificateProvider ? 'Complete' : 'Not Started'),
                 'edit' : url(item.routeName, {'lpa-id': lpa.id})
             })
         }}

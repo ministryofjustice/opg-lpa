@@ -3,6 +3,7 @@
 namespace ApplicationTest\View\Helper;
 
 use Application\View\Helper\Accordion;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use PHPUnit\Framework\TestCase;
 
@@ -217,14 +218,8 @@ class AccordionTest extends TestCase
             'lpa/primary-attorney',
         ];
 
-        $expectedBottomRoutes = [
-            'lpa/how-replacement-attorneys-make-decision',
-            'lpa/applicant',
-            'lpa/correspondent',
-            'lpa/who-are-you',
-            'lpa/repeat-application',
-            'lpa/fee-reduction',
-        ];
+        //  Removing the primary attorney forces the user to confirm replacement attorneys and how they make decisions before they can continue so no bottom routes are accessible
+        $expectedBottomRoutes = [];
 
         $this->assertAccordionRoutes($lpa, 'lpa/replacement-attorney', $expectedTopRoutes, $expectedBottomRoutes);
     }

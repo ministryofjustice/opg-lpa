@@ -236,8 +236,8 @@ class StateChecker
     protected function hasInstructionOrPreference()
     {
         return ($this->peopleToNotifySatified()
-            && !is_null($this->lpa->getDocument()->getInstruction())
-            && !is_null($this->lpa->getDocument()->getPreference()));
+            && (!is_null($this->lpa->getDocument()->getInstruction())
+                || !is_null($this->lpa->getDocument()->getPreference())));
     }
 
     /**
