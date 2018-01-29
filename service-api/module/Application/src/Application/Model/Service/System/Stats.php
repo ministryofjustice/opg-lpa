@@ -436,21 +436,6 @@ class Stats
                     '_id' => $range
                 ], $readPreference),
             ];
-
-            // Count all the subquestion values
-            $result[$topLevel]['subquestions'] = [];
-
-            foreach ($details['subquestion'] as $subquestion) {
-                if (empty($subquestion)) {
-                    continue;
-                }
-
-                $result[$topLevel]['subquestions'][$subquestion] = $this->statsWhoCollection->count([
-                    'who' => $topLevel,
-                    'subquestion' => $subquestion,
-                    '_id' => $range
-                ], $readPreference);
-            }
         }
 
         return $result;
