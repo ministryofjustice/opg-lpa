@@ -258,6 +258,9 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
      */
     private function populatePageSeven(array $peopleToNotify)
     {
+        //  Ensure array has correct indexes
+        $peopleToNotify = array_values($peopleToNotify);
+
         for ($i = 0; $i < self::MAX_PEOPLE_TO_NOTIFY_SECTION_6; $i++) {
             //  If there is a person to notify for this index then render the details
             if (array_key_exists($i, $peopleToNotify)) {
@@ -705,7 +708,8 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             }
         }
 
-        return $attorneys;
+        //  Ensure array indexes are correct
+        return array_values($attorneys);
     }
 
     /**
