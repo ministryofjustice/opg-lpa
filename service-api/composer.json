@@ -18,7 +18,7 @@
         "aws/aws-sdk-php": "^3.0",
         "guzzlehttp/guzzle": "^6.0",
         "ministryofjustice/opg-lpa-logger": "^3.0",
-        "ministryofjustice/opg-lpa-datamodels": "^9.0",
+        "ministryofjustice/opg-lpa-datamodels": "dev-LPA-2543-who-list",
         "nsmithuk/dynamo-queue-php": "^1.0",
         "mongodb/mongodb": "^1.2",
         "zendframework/zend-component-installer": "^1.1",
