@@ -162,10 +162,24 @@
                         {% endfor %}
                     </tr>
                     <tr>
-                        <td>Professional</td>
-                        <td class="numeric">{{ who.all.professional.count }}</td>
+                        <td>Finance professional</td>
+                        <td class="numeric">{{ who.all.financeProfessional.count }}</td>
                         {% for month,values in who['by-month'] %}
-                            <td class="numeric">{{ values.professional.count }}</td>
+                            <td class="numeric">{{ values.financeProfessional.count }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Legal professional</td>
+                        <td class="numeric">{{ who.all.legalProfessional.count }}</td>
+                        {% for month,values in who['by-month'] %}
+                            <td class="numeric">{{ values.legalProfessional.count }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Estate planning professional</td>
+                        <td class="numeric">{{ who.all.estatePlanningProfessional.count }}</td>
+                        {% for month,values in who['by-month'] %}
+                            <td class="numeric">{{ values.estatePlanningProfessional.count }}</td>
                         {% endfor %}
                     </tr>
                     <tr>
@@ -176,6 +190,13 @@
                         {% endfor %}
                     </tr>
                     <tr>
+                        <td>Charity</td>
+                        <td class="numeric">{{ who.all.charity.count }}</td>
+                        {% for month,values in who['by-month'] %}
+                            <td class="numeric">{{ values.charity.count }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
                         <td>Another organisation</td>
                         <td class="numeric">{{ who.all.organisation.count }}</td>
                         {% for month,values in who['by-month'] %}
@@ -183,49 +204,17 @@
                         {% endfor %}
                     </tr>
                     <tr>
+                        <td>Other</td>
+                        <td class="numeric">{{ who.all.other.count }}</td>
+                        {% for month,values in who['by-month'] %}
+                            <td class="numeric">{{ values.other.count }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
                         <td>Not said</td>
                         <td class="numeric">{{ who.all.notSaid.count }}</td>
                         {% for month,values in who['by-month'] %}
                             <td class="numeric">{{ values.notSaid.count }}</td>
-                        {% endfor %}
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <h2 class="heading-medium">Professionals</h2>
-
-        <div class="mobile-scroll">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Type of user</th>
-                        <th class="numeric">All time</th>
-                        {% for month,values in who['by-month'] %}
-                            <th class="numeric">{{ month }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Solicitor</td>
-                        <td class="numeric">{{ who.all.professional.subquestions.solicitor }}</td>
-                        {% for month,values in who['by-month'] %}
-                            <td class="numeric">{{ values.professional.subquestions.solicitor }}</td>
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        <td>Will-writer</td>
-                        <td class="numeric">{{ who.all.professional.subquestions['will-writer'] }}</td>
-                        {% for month,values in who['by-month'] %}
-                            <td class="numeric">{{ values.professional.subquestions['will-writer'] }}</td>
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        <td>Other</td>
-                        <td class="numeric">{{ who.all.professional.subquestions.other }}</td>
-                        {% for month,values in who['by-month'] %}
-                            <td class="numeric">{{ values.professional.subquestions.other }}</td>
                         {% endfor %}
                     </tr>
                 </tbody>
