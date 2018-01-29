@@ -83,7 +83,7 @@ class WhoAreYouForm extends AbstractMainFlowForm
     /**
      * Convert form data to model-compatible input data format.
      *
-     * @param array $formData. e.g. ['who'=>'professional','professional'=>'solicitor', 'professional-other'=>null, 'digitalPartner'=>null, 'orgaisation'=>null]
+     * @param array $formData. e.g. ['who'=>'other', 'digitalPartner'=>null, 'other'=>null]
      *
      * @return array. e.g. ['who'=>'prefessional', 'subquestion'=>'solicitor', 'qualifier'=>null]
      */
@@ -96,7 +96,6 @@ class WhoAreYouForm extends AbstractMainFlowForm
             $who = $formData['who'];
 
             //  Set the default model data
-            $subQuestion = null;
             $qualifier = null;
 
             //  Set the model data accordingly
@@ -107,7 +106,6 @@ class WhoAreYouForm extends AbstractMainFlowForm
             //  Set the model data
             $modelData = [
                 'who'         => $who,
-                'subquestion' => $subQuestion,
                 'qualifier'   => $qualifier,
             ];
         }
