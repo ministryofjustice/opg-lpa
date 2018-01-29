@@ -9,41 +9,27 @@
     {% set form = formErrorTextExchange(form, {
             'who': {
                 'cannot-be-blank' : 'Please choose one of the options',
-            },
-            'professional': {
-                'allowed-values:solicitor,will-writer,other' : 'Please choose the type of professional'
             }
        })
     %}
 
     {# Set form fields variables #}
     {% set who = form.get('who') %}
-    {% set professional = form.get('professional') %}
-    {% set professionalOther = form.get('professional-other') %}
-    {% set organisation = form.get('organisation') %}
+    {% set other = form.get('other') %}
 
     {# form fields config #}
     {{ form.setAttributes({
         'id': 'WhoAreYou'
     }) ? '' }}
 
-    {{ professionalOther.setAttributes({
-        id: 'profession',
-        'class': 'form-control'
-    }) ? '' }}
-
-    {{ organisation.setAttributes({
-        id: 'organisation',
+    {{ other.setAttributes({
+        id: 'other',
         'class': 'form-control'
     }) ? '' }}
 
     {# form fields labels #}
-    {{ professionalOther.setOptions({
-        label:'Please tell us your profession'
-    }) ? '' }}
-
-    {{ organisation.setOptions({
-        label:'Which organisation helped?'
+    {{ other.setOptions({
+        label:"Who helped the donor or made the LPA on the donor's behalf?"
     }) ? '' }}
 {% endif %}
 
@@ -83,8 +69,6 @@
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
         <input type="hidden" name="who" value="">
-        <input type="hidden" name="professional" value="">
-        <input type="hidden" name="digitalPartner" value="">
 
         <fieldset>
             <legend class="visually-hidden">Who was using the LPA service</legend>
@@ -104,40 +88,23 @@
                 </label>
                 {{ formElementErrorsV2(whoOptions['friend-or-family']) }}
 
-                <label class="text block-label" data-target="professional-group" for="{{ whoOptions['professional'].getAttribute('id') }}">
-                    {{ formInput(whoOptions['professional']) }}
-                    {{ whoOptions['professional'].getOption('label')|raw }}
+                <label class="text block-label" for="{{ whoOptions['finance-professional'].getAttribute('id') }}">
+                    {{ formInput(whoOptions['finance-professional']) }}
+                    {{ whoOptions['finance-professional'].getOption('label')|raw }}
                 </label>
-                {{ formElementErrorsV2(whoOptions['professional']) }}
+                {{ formElementErrorsV2(whoOptions['finance-professional']) }}
 
-                    <div id="professional-group" class="form-group panel js-hidden {{ professional.getMessages|length >0 ? 'error'}}">
-                        {{ formElementErrorsV2(professional) }}
-                        <label class="text block-label" for="{{ professionalOptions['solicitor'].getAttribute('id') }}">
-                            {{ formInput(professionalOptions['solicitor']) }}
-                            {{ professionalOptions['solicitor'].getOption('label')|raw }}
-                        </label>
-                        {{ formElementErrorsV2(professionalOptions['solicitor']) }}
+                <label class="text block-label" for="{{ whoOptions['legal-professional'].getAttribute('id') }}">
+                    {{ formInput(whoOptions['legal-professional']) }}
+                    {{ whoOptions['legal-professional'].getOption('label')|raw }}
+                </label>
+                {{ formElementErrorsV2(whoOptions['legal-professional']) }}
 
-                        <label class="text block-label" for="{{ professionalOptions['will-writer'].getAttribute('id') }}">
-                            {{ formInput(professionalOptions['will-writer']) }}
-                            {{ professionalOptions['will-writer'].getOption('label')|raw }}
-                        </label>
-                        {{ formElementErrorsV2(professionalOptions['will-writer']) }}
-
-                        <label class="text block-label" data-target="professional-other-input" for="{{ professionalOptions['other'].getAttribute('id') }}">
-                            {{ formInput(professionalOptions['other']) }}
-                            {{ professionalOptions['other'].getOption('label')|raw }}
-                        </label>
-                        {{ formElementErrorsV2(professionalOptions['other']) }}
-
-                        <div class="panel panel-border-narrow js-hidden" id="professional-other-input">
-                            <label class="form-label" for="{{ professionalOther.getAttribute('id') }}">
-                                {{ professionalOther.getOption('label') }}
-                                {{ formElementErrorsV2(professionalOther) }}
-                            </label>
-                            {{ formText(professionalOther) }}
-                        </div>
-                    </div>
+                <label class="text block-label" for="{{ whoOptions['estate-planning-professional'].getAttribute('id') }}">
+                    {{ formInput(whoOptions['estate-planning-professional']) }}
+                    {{ whoOptions['estate-planning-professional'].getOption('label')|raw }}
+                </label>
+                {{ formElementErrorsV2(whoOptions['estate-planning-professional']) }}
 
                 <label class="text block-label" for="{{ whoOptions['digital-partner'].getAttribute('id') }}">
                     {{ formInput(whoOptions['digital-partner']) }}
@@ -145,18 +112,30 @@
                 </label>
                 {{ formElementErrorsV2(whoOptions['digital-partner']) }}
 
-                <label class="text block-label" data-target="organisation-input" for="{{ whoOptions['organisation'].getAttribute('id') }}">
+                <label class="text block-label" for="{{ whoOptions['charity'].getAttribute('id') }}">
+                    {{ formInput(whoOptions['charity']) }}
+                    {{ whoOptions['charity'].getOption('label')|raw }}
+                </label>
+                {{ formElementErrorsV2(whoOptions['charity']) }}
+
+                <label class="text block-label" for="{{ whoOptions['organisation'].getAttribute('id') }}">
                     {{ formInput(whoOptions['organisation']) }}
                     {{ whoOptions['organisation'].getOption('label')|raw }}
                 </label>
                 {{ formElementErrorsV2(whoOptions['organisation']) }}
 
-                <div class="panel panel-border-narrow js-hidden" id="organisation-input">
-                    <label class="form-label" for="{{ organisation.getAttribute('id') }}">
-                        {{ organisation.getOption('label') }}
-                        {{ formElementErrorsV2(organisation) }}
+                <label class="text block-label" data-target="other-input" for="{{ whoOptions['other'].getAttribute('id') }}">
+                    {{ formInput(whoOptions['other']) }}
+                    {{ whoOptions['other'].getOption('label')|raw }}
+                </label>
+                {{ formElementErrorsV2(whoOptions['other']) }}
+
+                <div class="panel panel-border-narrow js-hidden" id="other-input">
+                    <label class="form-label" for="{{ other.getAttribute('id') }}">
+                        {{ other.getOption('label') }}
+                        {{ formElementErrorsV2(other) }}
                     </label>
-                    {{ formText(organisation) }}
+                    {{ formText(other) }}
                 </div>
 
                 <label class="text block-label" for="{{ whoOptions['notSaid'].getAttribute('id') }}">
