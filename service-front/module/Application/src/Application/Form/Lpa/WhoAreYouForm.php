@@ -18,14 +18,26 @@ class WhoAreYouForm extends AbstractMainFlowForm
                     'friendOrFamily' => [
                         'value' => 'friendOrFamily',
                     ],
-                    'professional'   => [
-                        'value' => 'professional',
+                    'financeProfessional'   => [
+                        'value' => 'financeProfessional',
+                    ],
+                    'legalProfessional'   => [
+                        'value' => 'legalProfessional',
+                    ],
+                    'estatePlanningProfessional'   => [
+                        'value' => 'estatePlanningProfessional',
                     ],
                     'digitalPartner'      => [
                         'value' => 'digitalPartner',
                     ],
+                    'charity'  => [
+                        'value' => 'charity',
+                    ],
                     'organisation'  => [
                         'value' => 'organisation',
+                    ],
+                    'other'  => [
+                        'value' => 'other',
                     ],
                     'notSaid'  => [
                         'value' => 'notSaid'
@@ -33,26 +45,7 @@ class WhoAreYouForm extends AbstractMainFlowForm
                 ],
             ],
         ],
-        'professional' => [
-            'type' => 'Radio',
-            'options' => [
-                'value_options' => [
-                    'solicitor'      => [
-                        'value' => 'solicitor',
-                    ],
-                    'will-writer'      => [
-                        'value' => 'will-writer',
-                    ],
-                    'other'      => [
-                        'value' => 'other',
-                    ],
-                ],
-            ],
-        ],
-        'professional-other' => [
-            'type' => 'Text'
-        ],
-        'organisation' => [
+        'other' => [
             'type' => 'Text'
         ],
     ];
@@ -107,14 +100,8 @@ class WhoAreYouForm extends AbstractMainFlowForm
             $qualifier = null;
 
             //  Set the model data accordingly
-            if ($who == 'professional') {
-                $subQuestion = $formData['professional'];
-
-                if ($subQuestion == 'other') {
-                    $qualifier = $formData['professional-other'];
-                }
-            } elseif ($who == 'organisation') {
-                $qualifier = $formData['organisation'];
+            if ($who == 'other') {
+                $qualifier = $formData['other'];
             }
 
             //  Set the model data
@@ -139,18 +126,12 @@ class WhoAreYouForm extends AbstractMainFlowForm
         foreach ($validation as $validationErrorKey => $validationErrors) {
             if ($validationErrorKey == 'subquestion') {
                 switch ($context['who']) {
-                    case 'professional':
-                        $fieldName = 'professional';
-                        break;
-                    case 'organisation':
+                    case 'other':
                         break;
                     default:
                 }
             } elseif ($validationErrorKey == 'qualifier') {
                 switch ($context['who']) {
-                    case 'professional':
-                        $fieldName = 'professional-other';
-                        break;
                     case 'organisation':
                         $fieldName = 'organisation';
                         break;
