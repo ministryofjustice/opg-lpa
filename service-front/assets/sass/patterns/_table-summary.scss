@@ -12,8 +12,9 @@
             z-index: 3;
         }
 
-        &.incomplete td {
+        td.incomplete {
             color: $red;
+            font-weight: bold;
         }
     }
 
