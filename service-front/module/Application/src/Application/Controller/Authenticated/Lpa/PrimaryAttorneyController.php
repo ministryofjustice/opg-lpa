@@ -71,7 +71,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
         $lpaId = $this->getLpa()->id;
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\AttorneyForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/primary-attorney/add', ['lpa-id' => $lpaId]));
         $form->setExistingActorNamesData($this->getActorsList());
 
@@ -137,11 +137,11 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         }
 
         if ($attorney instanceof Human) {
-            $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
+            $form = $this->getFormElementManager()->get('Application\Form\Lpa\AttorneyForm');
             $form->setExistingActorNamesData($this->getActorsList($attorneyIdx));
             $viewModel->setTemplate('application/primary-attorney/person-form.twig');
         } else {
-            $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
+            $form = $this->getFormElementManager()->get('Application\Form\Lpa\TrustCorporationForm');
             $viewModel->setTemplate('application/primary-attorney/trust-form.twig');
         }
 
@@ -315,7 +315,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\TrustCorporationForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/primary-attorney/add-trust', ['lpa-id' => $lpaId]));
 
         if ($this->request->isPost() && !$this->reuseActorDetails($form)) {

@@ -22,7 +22,7 @@ class AboutYouController extends AbstractAuthenticatedController
         $isNew = !is_null($this->params()->fromRoute('new', null));
 
         //  Set up the about you form
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\AboutYou');
+        $form = $this->getFormElementManager()->get('Application\Form\User\AboutYou');
         $actionTarget = $this->url()->fromRoute('user/about-you', $isNew ? [
             'new' => 'new',
         ] : []);

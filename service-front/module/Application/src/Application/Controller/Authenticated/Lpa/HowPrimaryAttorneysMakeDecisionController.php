@@ -13,8 +13,7 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
     {
         $lpa = $this->getLpa();
 
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Lpa\HowAttorneysMakeDecisionForm', [
                          'lpa' => $lpa,
                      ]);

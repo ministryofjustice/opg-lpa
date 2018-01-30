@@ -6,10 +6,16 @@ use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Authentication\AuthenticationService;
 use Zend\Cache\Storage\StorageInterface;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\ServiceManager\AbstractPluginManager;
 
 abstract class AbstractBaseController extends AbstractActionController
 {
     use LoggerTrait;
+
+    /**
+     * @var AbstractPluginManager
+     */
+    private $formElementManager;
 
     /**
      * @var AuthenticationService
@@ -28,12 +34,14 @@ abstract class AbstractBaseController extends AbstractActionController
 
     /**§
      * AbstractBaseController constructor.
+     * @param AbstractPluginManager $formElementManager
      * @param AuthenticationService $authenticationService
      * @param array $config
      * @param StorageInterface $cache
      */
-    public function __construct(AuthenticationService $authenticationService, array $config, StorageInterface $cache)
+    public function __construct(AbstractPluginManager $formElementManager, AuthenticationService $authenticationService, array $config, StorageInterface $cache)
     {
+        $this->formElementManager = $formElementManager;
         $this->authenticationService = $authenticationService;
         $this->config = $config;
         $this->cache = $cache;
@@ -126,6 +134,14 @@ abstract class AbstractBaseController extends AbstractActionController
         return true;
 
     } // function
+
+    /**
+     * @return AbstractPluginManager
+     */
+    protected function getFormElementManager(): AbstractPluginManager
+    {
+        return $this->formElementManager;
+    }
 
     /**
      * @return AuthenticationService

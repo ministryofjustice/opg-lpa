@@ -44,7 +44,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             return $authenticated;
         }
 
-        $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
+        $identity = $this->getAuthenticationService()->getIdentity();
 
         $this->getLogger()->info('Request to ' . get_class($this), $identity->toArray());
 
@@ -91,7 +91,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             } catch (\Exception $ex) {
                 //  If seems there is a user associated with the session but it is not well formed
                 //  Therefore destroy the session and logout the user
-                $this->getServiceLocator()->get('AuthenticationService')->clearIdentity();
+                $this->getAuthenticationService()->clearIdentity();
                 $this->getServiceLocator()->get('SessionManager')->destroy([
                     'clear_storage' => true
                 ]);

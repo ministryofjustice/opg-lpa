@@ -12,7 +12,7 @@ class InstructionsController extends AbstractLpaController
     {
         $lpa = $this->getLpa();
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\InstructionsAndPreferencesForm', [
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\InstructionsAndPreferencesForm', [
             'lpa' => $lpa,
         ]);
 

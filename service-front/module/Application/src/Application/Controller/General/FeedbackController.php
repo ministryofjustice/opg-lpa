@@ -12,8 +12,7 @@ class FeedbackController extends AbstractBaseController
     {
         $container = new Container('feedback');
 
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\General\FeedbackForm');
 
         $request = $this->getRequest();

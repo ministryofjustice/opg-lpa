@@ -15,7 +15,7 @@ class NotificationsController extends AbstractBaseController {
 
     public function expiryNoticeAction(){
 
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->config();
 
         //---
 

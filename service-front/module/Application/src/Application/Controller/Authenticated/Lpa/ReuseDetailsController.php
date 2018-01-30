@@ -29,8 +29,7 @@ class ReuseDetailsController extends AbstractLpaActorController
 
         //  Generate the reuse details form
         $forCorrespondent = (strpos($callingUrl, 'correspondent') !== false);
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Lpa\ReuseDetailsForm', [
                          'actorReuseDetails' => $this->getActorReuseDetails((bool) $includeTrusts, $forCorrespondent),
                      ]);

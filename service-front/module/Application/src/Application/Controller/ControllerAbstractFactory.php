@@ -41,6 +41,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         }
 
         $service = new $requestedName(
+            $serviceLocator->get('FormElementManager'),
             $serviceLocator->get('AuthenticationService'),
             $serviceLocator->get('Config'),
             $serviceLocator->get('Cache')
