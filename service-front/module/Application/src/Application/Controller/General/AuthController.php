@@ -28,7 +28,7 @@ class AuthController extends AbstractBaseController {
 
         //-----------------------
 
-        $authenticationService = $this->getServiceLocator()->get('AuthenticationService');
+        $authenticationService = $this->getAuthenticationService();
 
         //---
 
@@ -194,7 +194,7 @@ class AuthController extends AbstractBaseController {
      */
     private function clearSession(){
 
-        $this->getServiceLocator()->get('AuthenticationService')->clearIdentity();
+        $this->getAuthenticationService()->clearIdentity();
         $this->getServiceLocator()->get('SessionManager')->destroy([ 'clear_storage'=>true ]);
 
     } // function

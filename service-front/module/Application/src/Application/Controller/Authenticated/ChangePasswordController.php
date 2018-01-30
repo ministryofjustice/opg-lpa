@@ -13,7 +13,7 @@ class ChangePasswordController extends AbstractAuthenticatedController
 
         //----------------------
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\ChangePassword');
+        $form = $this->getFormElementManager()->get('Application\Form\User\ChangePassword');
         $form->setAttribute( 'action', $this->url()->fromRoute('user/change-password') );
 
         $error = null;
@@ -23,7 +23,7 @@ class ChangePasswordController extends AbstractAuthenticatedController
         // This form needs to check the user's current password,
         // thus we pass it the Authentication Service
 
-        $authentication =   $this->getServiceLocator()->get('AuthenticationService');
+        $authentication =   $this->getAuthenticationService();
         $adapter =          $this->getServiceLocator()->get('AuthenticationAdapter');
 
         // Pass the user's current email address...

@@ -14,7 +14,7 @@ class CertificateProviderController extends AbstractLpaActorController
         $lpa = $this->getLpa();
 
         //  Set hidden form for setting metadata to skip certificate provider if required
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\BlankMainFlowForm', [
             'lpa' => $lpa
         ]);
 
@@ -64,7 +64,7 @@ class CertificateProviderController extends AbstractLpaActorController
             return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\CertificateProviderForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/certificate-provider/add', ['lpa-id' => $lpaId]));
         $form->setExistingActorNamesData($this->getActorsList());
 
@@ -110,7 +110,7 @@ class CertificateProviderController extends AbstractLpaActorController
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CertificateProviderForm');
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\CertificateProviderForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/certificate-provider/edit', ['lpa-id' => $lpaId]));
         $form->setExistingActorNamesData($this->getActorsList());
 

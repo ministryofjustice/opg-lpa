@@ -14,7 +14,7 @@ class FeeReductionController extends AbstractLpaController
     {
         $lpa = $this->getLpa();
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\FeeReductionForm', [
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\FeeReductionForm', [
             'lpa' => $lpa,
         ]);
 

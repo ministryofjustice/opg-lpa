@@ -32,17 +32,14 @@ class RegisterController extends AbstractBaseController
 
         if ($response instanceof HttpResponse) {
             //  The user is already logged in so log a message and then
-            $identity = $this->getServiceLocator()
-                             ->get('AuthenticationService')
-                             ->getIdentity();
+            $identity = $this->getAuthenticationService()->getIdentity();
 
             $this->getLogger()->info('Authenticated user attempted to access registration page', $identity->toArray());
 
             return $response;
         }
 
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\User\Registration');
         $form->setAttribute('action', $this->url()->fromRoute('register'));
 
@@ -101,7 +98,7 @@ class RegisterController extends AbstractBaseController
         }
 
         //  Set up a form so the resend can be triggered again easily from a link
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\ConfirmEmail');
+        $form = $this->getFormElementManager()->get('Application\Form\User\ConfirmEmail');
         $form->setAttribute('action', $this->url()->fromRoute('register/resend-email'));
 
         $form->populateValues([
@@ -128,7 +125,7 @@ class RegisterController extends AbstractBaseController
             return $check;
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\ConfirmEmail');
+        $form = $this->getFormElementManager()->get('Application\Form\User\ConfirmEmail');
         $form->setAttribute('action', $this->url()->fromRoute('register/resend-email'));
 
         $error = null;
@@ -175,9 +172,7 @@ class RegisterController extends AbstractBaseController
         }
 
         // Ensure they're not logged in whilst activating a new account.
-        $this->getServiceLocator()
-             ->get('AuthenticationService')
-             ->clearIdentity();
+        $this->getAuthenticationService()->clearIdentity();
 
         $session = $this->getServiceLocator()
                         ->get('SessionManager');

@@ -15,8 +15,7 @@ class ApplicantController extends AbstractLpaController
         $lpaId = $lpa->id;
         $lpaDocument = $lpa->document;
 
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Lpa\ApplicantForm', [
                          'lpa' => $lpa
                      ]);

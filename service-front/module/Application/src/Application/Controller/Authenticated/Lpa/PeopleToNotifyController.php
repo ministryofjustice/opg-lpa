@@ -14,7 +14,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         $lpa = $this->getLpa();
 
         // set hidden form for saving empty array to peopleToNotify.
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\BlankMainFlowForm', [
             'lpa' => $lpa
         ]);
 
@@ -80,7 +80,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
             return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\PeopleToNotifyForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/people-to-notify/add', ['lpa-id' => $lpaId]));
         $form->setExistingActorNamesData($this->getActorsList());
 
@@ -138,7 +138,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\PeopleToNotifyForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/people-to-notify/edit', ['lpa-id' => $lpaId, 'idx' => $personIdx]));
         $form->setExistingActorNamesData($this->getActorsList($personIdx));
 

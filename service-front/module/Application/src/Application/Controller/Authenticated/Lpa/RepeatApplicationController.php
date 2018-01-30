@@ -14,7 +14,7 @@ class RepeatApplicationController extends AbstractLpaController
     {
         $lpa = $this->getLpa();
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\RepeatApplicationForm', [
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\RepeatApplicationForm', [
             'lpa' => $lpa,
         ]);
 

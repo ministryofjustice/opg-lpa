@@ -12,8 +12,7 @@ class TypeController extends AbstractLpaController
 {
     public function indexAction()
     {
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Lpa\TypeForm');
 
         $isChangeAllowed = true;

@@ -50,7 +50,7 @@ class SendgridController extends AbstractBaseController
             return $this->getResponse();
         }
 
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->config();
         $emailConfig = $config['email'];
 
         $token = $this->params()->fromRoute('token');

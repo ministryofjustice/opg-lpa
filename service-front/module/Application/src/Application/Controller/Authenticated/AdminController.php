@@ -23,7 +23,7 @@ class AdminController extends AbstractAuthenticatedController
         $userEmail = (string)$this->getUserDetails()->email;
 
         if ($userEmail != '') {
-            $adminAccounts = $this->getServiceLocator()->get('config')['admin']['accounts'];
+            $adminAccounts = $this->config()['admin']['accounts'];
 
             $isAdmin = in_array($userEmail, $adminAccounts);
 
@@ -37,8 +37,7 @@ class AdminController extends AbstractAuthenticatedController
 
     public function systemMessageAction()
     {
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Admin\SystemMessageForm');
 
         if ($this->request->isPost()) {
@@ -68,8 +67,7 @@ class AdminController extends AbstractAuthenticatedController
 
     public function paymentSwitchAction()
     {
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Admin\PaymentSwitch');
 
         $saved = false;
@@ -107,8 +105,7 @@ class AdminController extends AbstractAuthenticatedController
     public function userSearchAction()
     {
         /** @var UserSearchForm $form */
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Admin\UserSearchForm');
 
         $user = false;

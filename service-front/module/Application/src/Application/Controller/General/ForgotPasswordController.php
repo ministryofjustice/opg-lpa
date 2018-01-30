@@ -21,7 +21,7 @@ class ForgotPasswordController extends AbstractBaseController
             return $check;
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\ConfirmEmail');
+        $form = $this->getFormElementManager()->get('Application\Form\User\ConfirmEmail');
         $form->setAttribute('action', $this->url()->fromRoute('forgot-password'));
 
         $error = null;
@@ -67,7 +67,7 @@ class ForgotPasswordController extends AbstractBaseController
             return (new ViewModel())->setTemplate('application/forgot-password/invalid-reset-token');
         }
 
-        $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
+        $identity = $this->getAuthenticationService()->getIdentity();
 
         // If there's currently a signed in user...
         if (!is_null($identity)) {
@@ -81,7 +81,7 @@ class ForgotPasswordController extends AbstractBaseController
         }
 
         // We have a valid reset token...
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\SetPassword');
+        $form = $this->getFormElementManager()->get('Application\Form\User\SetPassword');
         $form->setAttribute('action', $this->url()->fromRoute('forgot-password/callback', ['token' => $token]));
 
         $error = null;
