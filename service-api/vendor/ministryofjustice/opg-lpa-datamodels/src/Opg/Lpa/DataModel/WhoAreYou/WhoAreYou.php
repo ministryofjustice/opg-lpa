@@ -22,12 +22,7 @@ class WhoAreYou extends AbstractData
     protected $who;
 
     /**
-     * @var string|null Answer to the second level question.
-     */
-    protected $subquestion;
-
-    /**
-     * @var string|null Extra details explaining their sub-question answer.
+     * @var string|null Extra details explaining their answer.
      */
     protected $qualifier;
 
@@ -39,31 +34,6 @@ class WhoAreYou extends AbstractData
                 'choices' => array_keys(self::options())
             ]),
         ]);
-
-        $metadata->addPropertyConstraint(
-            'subquestion',
-            new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
-                $object = $context->getObject();
-                $options = $object::options();
-
-                // Don't validate if 'who' isn't set...
-                if (!is_string($object->who)) {
-                    return;
-                }
-
-                // Check this, but don't validate. It's validated above.
-                if (!isset($options[$object->who])) {
-                    return;
-                }
-
-                // Ensure the value is in the subquestion array...
-                if (!in_array($value, $options[$object->who]['subquestion'], true)) {
-                    $context->buildViolation(
-                        'allowed-values:' . implode(',', $options[$object->who]['subquestion'])
-                    )->addViolation();
-                }
-            })
-        );
 
         $metadata->addPropertyConstraint(
             'qualifier',
@@ -95,26 +65,6 @@ class WhoAreYou extends AbstractData
     public static function options()
     {
         return [
-            'professional' => [
-                'subquestion' => [
-                    'solicitor',
-                    'will-writer',
-                    'other'
-                ],
-                'qualifier' => true,
-            ],
-            'digitalPartner' => [
-                'subquestion' => [
-                    null
-                ],
-                'qualifier' => false,
-            ],
-            'organisation' => [
-                'subquestion' => [
-                    null
-                ],
-                'qualifier' => true,
-            ],
             'donor' => [
                 'subquestion' => [
                     null
@@ -126,6 +76,48 @@ class WhoAreYou extends AbstractData
                     null
                 ],
                 'qualifier' => false,
+            ],
+            'financeProfessional' => [
+                'subquestion' => [
+                    null
+                ],
+                'qualifier' => false,
+            ],
+            'legalProfessional' => [
+                'subquestion' => [
+                    null
+                ],
+                'qualifier' => false,
+            ],
+            'estatePlanningProfessional' => [
+                'subquestion' => [
+                    null
+                ],
+                'qualifier' => false,
+            ],
+            'digitalPartner' => [
+                'subquestion' => [
+                    null
+                ],
+                'qualifier' => false,
+            ],
+            'charity' => [
+                'subquestion' => [
+                    null
+                ],
+                'qualifier' => false,
+            ],
+            'organisation' => [
+                'subquestion' => [
+                    null
+                ],
+                'qualifier' => false,
+            ],
+            'other' => [
+                'subquestion' => [
+                    null
+                ],
+                'qualifier' => true,
             ],
             'notSaid' => [
                 'subquestion' => [
@@ -151,25 +143,6 @@ class WhoAreYou extends AbstractData
     public function setWho(string $who): WhoAreYou
     {
         $this->who = $who;
-
-        return $this;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getSubquestion()
-    {
-        return $this->subquestion;
-    }
-
-    /**
-     * @param null|string $subquestion
-     * @return $this
-     */
-    public function setSubquestion($subquestion)
-    {
-        $this->subquestion = $subquestion;
 
         return $this;
     }

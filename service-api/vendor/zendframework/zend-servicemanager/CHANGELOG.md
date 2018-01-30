@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 3.3.2 - 2018-01-29
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#243](https://github.com/zendframework/zend-servicemanager/pull/243) provides
+  a fix to the `ReflectionBasedAbstractFactory` to resolve type-hinted arguments
+  with default values to their default values if no matching type is found in
+  the container.
+
+- [#233](https://github.com/zendframework/zend-servicemanager/pull/233) fixes a
+  number of parameter annotations to reflect the actual types used.
+
 ## 3.3.1 - 2017-11-27
 
 ### Added

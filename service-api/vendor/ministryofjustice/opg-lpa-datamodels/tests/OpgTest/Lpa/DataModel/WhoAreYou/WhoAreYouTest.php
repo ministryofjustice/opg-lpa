@@ -37,15 +37,13 @@ class WhoAreYouTest extends TestCase
     {
         $whoAreYou = new WhoAreYou();
         $whoAreYou->set('who', 'donor');
-        $whoAreYou->set('subquestion', 'Incorrect');
         $whoAreYou->set('qualifier', true);
 
         $validatorResponse = $whoAreYou->validate();
         $this->assertTrue($validatorResponse->hasErrors());
         $errors = $validatorResponse->getArrayCopy();
-        $this->assertEquals(2, count($errors));
+        $this->assertEquals(1, count($errors));
         TestHelper::assertNoDuplicateErrorMessages($errors, $this);
-        $this->assertNotNull($errors['subquestion']);
         $this->assertNotNull($errors['qualifier']);
     }
 
@@ -54,11 +52,9 @@ class WhoAreYouTest extends TestCase
         $model = new WhoAreYou();
 
         $model->setWho('who')
-            ->setSubquestion('subquestion')
             ->setQualifier('qualifier');
 
         $this->assertEquals('who', $model->getWho());
-        $this->assertEquals('subquestion', $model->getSubquestion());
         $this->assertEquals('qualifier', $model->getQualifier());
     }
 }
