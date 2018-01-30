@@ -23312,7 +23312,7 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
           $select;
 
       //  If the current value isn't an option then exit and just display as text
-      if (!$.isArray(options) || !_.contains(options, value)) {
+      if (!$.isArray(options) || !_.includes(options, value)) {
         return;
       }
 
