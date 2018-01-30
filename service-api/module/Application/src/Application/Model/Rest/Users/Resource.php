@@ -6,6 +6,7 @@ use Application\DataAccess\Mongo\DateCallback;
 use Application\DataAccess\UserDal;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Library\Authentication\Identity\User as UserIdentity;
 use Application\Library\DateTime;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Applications\Resource as ApplicationResource;
@@ -175,7 +176,11 @@ class Resource extends AbstractResource
         $user = new User($data);
 
         // Keep email up to date with what's in the authentication service.
-        $user->email = [ 'address'=>$this->getAuthorizationService()->getIdentity()->email() ];
+        $identity = $this->getAuthorizationService()->getIdentity();
+
+        if ($identity instanceof UserIdentity) {
+            $user->email = [ 'address' => $identity->email() ];
+        }
 
         if ($new) {
             $this->collection->insertOne($user->toArray(new DateCallback()));

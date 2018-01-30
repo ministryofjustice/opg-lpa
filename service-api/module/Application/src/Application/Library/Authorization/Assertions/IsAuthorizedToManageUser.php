@@ -1,33 +1,39 @@
 <?php
+
 namespace Application\Library\Authorization\Assertions;
 
+use Application\Library\Authentication\Identity\AuthService;
 use ZfcRbac\Assertion\AssertionInterface;
 use ZfcRbac\Service\AuthorizationService;
 
 /**
- * At the moment there is a 1-to-1 map between authorized user and route user.
- * i.e. A user can only manage their own LPAs.
+ * The authorized user or another service can manage the user data and LPAs
  *
  * Class IsAuthorizedToManageUser
  * @package Application\Library\Authorization\Assertions
  */
-class IsAuthorizedToManageUser implements AssertionInterface {
-
-    public function assert(AuthorizationService $authorization, $routeUser = null ){
-
+class IsAuthorizedToManageUser implements AssertionInterface
+{
+    public function assert(AuthorizationService $authorization, $routeUser = null)
+    {
         // We can only authorize is there's a route user...
-        if( !is_string($routeUser) ){ return false; }
-
-        //---
+        if (!is_string($routeUser)) {
+            return false;
+        }
 
         $tokenUser = $authorization->getIdentity();
 
-        // We can only authorize if we can get the user's id from the Identity...
-        if( !is_callable( [ $tokenUser, 'id' ] ) ){ return false; }
+        //  If the token user is a service then allow it
+        if ($tokenUser instanceof AuthService) {
+            return true;
+        }
+
+        //  Otherwise we can only authorize if we can get the user's id from the Identity...
+        if (!is_callable([$tokenUser, 'id'])) {
+            return false;
+        }
 
         // Return true iff the id's match...
         return ($tokenUser->id() === $routeUser);
-
-    } // function
-
-} // class
+    }
+}
