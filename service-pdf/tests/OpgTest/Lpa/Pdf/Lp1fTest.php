@@ -8186,6 +8186,214 @@ class Lp1fTest extends AbstractPdfTestClass
         $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1f.pdf');
     }
 
+    public function testDeleteFirstPrimaryAndReplacementAttorney()
+    {
+        $lpa = $this->getLpa();
+
+        //  Adapt the LPA data as required
+        //  Replace primary and replacement attorneys and people to notify with only the second one. Simulates having two and deleting the first
+        //  Do not use array_splice or similar to ensure that the (incorrect) array indexes are maintainedr
+        $lpa->getDocument()->setPrimaryAttorneys(['1' => $lpa->getDocument()->getPrimaryAttorneys()[1]]);
+        $lpa->getDocument()->setWhoIsRegistering([$lpa->getDocument()->getWhoIsRegistering()[1]]);
+        $lpa->getDocument()->setReplacementAttorneys(['1' => $lpa->getDocument()->getReplacementAttorneys()[1]]);
+        $lpa->getDocument()->setPeopleToNotify(['1' => $lpa->getDocument()->getPeopleToNotify()[1]]);
+
+        $pdf = new Lp1f($lpa);
+
+        //  Set up the expected data for verification
+        $formattedLpaRef = 'A510 7295 5715';
+        $templateFileName = 'LP1F.pdf';
+
+        $strikeThroughs = [
+            1 => [
+                'primaryAttorney-1-pf',
+            ],
+            2 => [
+                'primaryAttorney-2',
+                'primaryAttorney-3',
+            ],
+            4 => [
+                'replacementAttorney-1-pf',
+            ],
+            6 => [
+                'people-to-notify-1',
+                'people-to-notify-2',
+                'people-to-notify-3',
+            ],
+            13 => [
+                'attorney-signature-pf',
+            ],
+            14 => [
+                'attorney-signature-pf'
+            ],
+            16 => [
+                'applicant-1-pf',
+                'applicant-2-pf',
+                'applicant-3-pf'
+            ],
+            17 => [
+                'correspondent-empty-name-address',
+            ],
+        ];
+
+        $blankTargets = [
+            19 => [
+                'applicant-signature-1-pf',
+                'applicant-signature-2-pf',
+                'applicant-signature-3-pf'
+            ]
+        ];
+
+        $constituentPdfs = [
+            'start' => [
+                $this->getFullTemplatePath('LP1F_CoversheetRegistration.pdf'),
+            ],
+            15 => [
+                [
+                    'templateFileName' => 'LPC_Continuation_Sheet_3.pdf',
+                    'constituentPdfs' => [
+                        'start' => [
+                            $this->getFullTemplatePath('blank.pdf'),
+                        ],
+                    ],
+                    'data' => [
+                        'cs3-donor-full-name' => "Mrs Nancy Garrison",
+                        'cs3-footer-right' => "LPC Continuation sheet 3 (07.15)",
+                    ],
+                ],
+                $this->getFullTemplatePath('blank.pdf'),
+            ],
+            17 => [
+                [
+                    'templateFileName' => 'LP1F.pdf',
+                    'strikeThroughTargets' => [
+                        16 => [
+                            'applicant-2-pf',
+                            'applicant-3-pf',
+                        ],
+                    ],
+                    'data' => [
+                        'applicant-0-name-last' => "Standard Trust",
+                        'applicant-1-name-title' => "Mr",
+                        'applicant-1-name-first' => "Elliot",
+                        'applicant-1-name-last' => "Sanders",
+                        'applicant-1-dob-date-day' => "10",
+                        'applicant-1-dob-date-month' => "10",
+                        'applicant-1-dob-date-year' => "1987",
+                        'who-is-applicant' => "attorney",
+                    ],
+                ],
+            ],
+            'end' => [
+                [
+                    'templateFileName' => 'LP1F.pdf',
+                    'blankTargets' => [
+                        19 => [
+                            'applicant-signature-2-pf',
+                            'applicant-signature-3-pf',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $data = [
+            'lpa-document-donor-name-title' => "Mrs",
+            'lpa-document-donor-name-first' => "Nancy",
+            'lpa-document-donor-name-last' => "Garrison",
+            'lpa-document-donor-otherNames' => "",
+            'lpa-document-donor-dob-date-day' => "11",
+            'lpa-document-donor-dob-date-month' => "01",
+            'lpa-document-donor-dob-date-year' => "1948",
+            'lpa-document-donor-address-address1' => "Bank End Farm House",
+            'lpa-document-donor-address-address2' => "Undercliff Drive",
+            'lpa-document-donor-address-address3' => "Ventnor, Isle of Wight",
+            'lpa-document-donor-address-postcode' => "PO38 1UL",
+            'lpa-document-donor-email-address' => "opglpademo+LouiseJames@gmail.com",
+            'how-attorneys-act' => 'only-one-attorney-appointed',
+            'lpa-document-peopleToNotify-0-name-title' => "Miss",
+            'lpa-document-peopleToNotify-0-name-first' => "Louie",
+            'lpa-document-peopleToNotify-0-name-last' => "Wade",
+            'lpa-document-peopleToNotify-0-address-address1' => "33 Lincoln Green Lane",
+            'lpa-document-peopleToNotify-0-address-address2' => "",
+            'lpa-document-peopleToNotify-0-address-address3' => "Cholderton, Oxfordshire",
+            'lpa-document-peopleToNotify-0-address-postcode' => "SP4 4DY",
+            'lpa-document-preference' => "\r\nLorem ipsum dolor sit amet, consectetur adipiscing elit.                            ",
+            'lpa-document-instruction' => "\r\nMaecenas posuere augue sed purus malesuada dapibus.                                 ",
+            'see_continuation_sheet_3' => "see continuation sheet 3",
+            'lpa-document-certificateProvider-name-title' => "Mr",
+            'lpa-document-certificateProvider-name-first' => "Reece",
+            'lpa-document-certificateProvider-name-last' => "Richards",
+            'lpa-document-certificateProvider-address-address1' => "11 Brookside",
+            'lpa-document-certificateProvider-address-address2' => "Cholsey",
+            'lpa-document-certificateProvider-address-address3' => "Wallingford, Oxfordshire",
+            'lpa-document-certificateProvider-address-postcode' => "OX10 9NN",
+            'who-is-applicant' => "attorney",
+            'applicant-0-name-title' => "Mr",
+            'applicant-0-name-first' => "David",
+            'applicant-0-name-last' => "Wheeler",
+            'applicant-0-dob-date-day' => "12",
+            'applicant-0-dob-date-month' => "03",
+            'applicant-0-dob-date-year' => "1972",
+            'who-is-correspondent' => "donor",
+            'correspondent-contact-by-post' => "On",
+            'correspondent-contact-by-phone' => "On",
+            'lpa-document-correspondent-phone-number' => "01234123456",
+            'correspondent-contact-by-email' => "On",
+            'lpa-document-correspondent-email-address' => "opglpademo+LouiseJames@gmail.com",
+            'correspondent-contact-in-welsh' => "On",
+            'is-repeat-application' => "On",
+            'repeat-application-case-number' => 12345678,
+            'pay-by' => "card",
+            'lpa-payment-phone-number' => "NOT REQUIRED.",
+            'apply-for-fee-reduction' => "On",
+            'lpa-payment-reference' => "ABCD-1234",
+            'lpa-payment-amount' => "£0.00",
+            'lpa-payment-date-day' => "26",
+            'lpa-payment-date-month' => "07",
+            'lpa-payment-date-year' => "2017",
+            'lpa-document-primaryAttorneys-0-name-title' => "Mr",
+            'lpa-document-primaryAttorneys-0-name-first' => "David",
+            'lpa-document-primaryAttorneys-0-name-last' => "Wheeler",
+            'lpa-document-primaryAttorneys-0-dob-date-day' => "12",
+            'lpa-document-primaryAttorneys-0-dob-date-month' => "03",
+            'lpa-document-primaryAttorneys-0-dob-date-year' => "1972",
+            'lpa-document-primaryAttorneys-0-address-address1' => "Brickhill Cottage",
+            'lpa-document-primaryAttorneys-0-address-address2' => "Birch Cross",
+            'lpa-document-primaryAttorneys-0-address-address3' => "Marchington, Uttoxeter, Staffordshire",
+            'lpa-document-primaryAttorneys-0-address-postcode' => "ST14 8NX",
+            'lpa-document-primaryAttorneys-0-email-address' => "\nopglpademo+DavidWheeler@gmail.com",
+            'lpa-document-replacementAttorneys-0-name-title' => "Mr",
+            'lpa-document-replacementAttorneys-0-name-first' => "Ewan",
+            'lpa-document-replacementAttorneys-0-name-last' => "Adams",
+            'lpa-document-replacementAttorneys-0-dob-date-day' => "12",
+            'lpa-document-replacementAttorneys-0-dob-date-month' => "03",
+            'lpa-document-replacementAttorneys-0-dob-date-year' => "1972",
+            'lpa-document-replacementAttorneys-0-address-address1' => "2 Westview",
+            'lpa-document-replacementAttorneys-0-address-address2' => "Staplehay",
+            'lpa-document-replacementAttorneys-0-address-address3' => "Trull, Taunton, Somerset",
+            'lpa-document-replacementAttorneys-0-address-postcode' => "TA3 7HF",
+            'when-attorneys-may-make-decisions' => "when-donor-lost-mental-capacity",
+            'signature-attorney-0-name-title' => "Mr",
+            'signature-attorney-0-name-first' => "David",
+            'signature-attorney-0-name-last' => "Wheeler",
+            'signature-attorney-1-name-title' => "Mr",
+            'signature-attorney-1-name-first' => "Ewan",
+            'signature-attorney-1-name-last' => "Adams",
+            'footer-instrument-right' => "LP1F Property and financial affairs (07.15)",
+            'footer-registration-right' => "LP1F Register your LPA (07.15)",
+        ];
+
+        $pageShift = 0;
+
+        $this->verifyExpectedPdfData($pdf, $templateFileName, $strikeThroughs, $blankTargets, $constituentPdfs, $data, $pageShift, $formattedLpaRef);
+
+        //  Test the generated filename created
+        $pdfFile = $pdf->generate();
+
+        $this->verifyTmpFileName($lpa, $pdfFile, 'Lp1f.pdf');
+    }
+
     public function testGenerateAdditionalPagesLongInstructionsAndPreferences()
     {
         $lpa = $this->getLpa();
