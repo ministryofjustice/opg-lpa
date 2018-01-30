@@ -4,6 +4,7 @@ namespace Application\Model\Service\User;
 
 use Application\Model\Service\Mail\Message as MailMessage;
 use Application\Model\Service\ApiClient\Exception\ResponseException;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
@@ -12,11 +13,12 @@ use Exception;
 
 class PasswordReset implements ServiceLocatorAwareInterface
 {
+    use LoggerTrait;
     use ServiceLocatorAwareTrait;
 
     public function requestPasswordResetEmail($email)
     {
-        $logger = $this->getServiceLocator()->get('Logger');
+        $logger = $this->getLogger();
         $logger->info('User requested password reset email');
 
         $client = $this->getServiceLocator()->get('ApiClient');
@@ -75,7 +77,7 @@ class PasswordReset implements ServiceLocatorAwareInterface
 
     public function setNewPassword($restToken, $password)
     {
-        $logger = $this->getServiceLocator()->get('Logger');
+        $logger = $this->getLogger();
         $logger->info('Setting new password following password reset');
 
         $client = $this->getServiceLocator()->get('ApiClient');
@@ -100,7 +102,7 @@ class PasswordReset implements ServiceLocatorAwareInterface
 
     private function sendResetEmail($email, $token)
     {
-        $logger = $this->getServiceLocator()->get('Logger');
+        $logger = $this->getLogger();
         $logger->info('Sending password reset email');
 
         $message = new MailMessage();

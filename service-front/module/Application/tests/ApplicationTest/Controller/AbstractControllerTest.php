@@ -23,7 +23,6 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\Logger;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_Error_Deprecated;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\ResponseCollection;
 use Zend\Http\Request;
@@ -169,18 +168,14 @@ abstract class AbstractControllerTest extends TestCase
      */
     public function controllerSetUp($controller)
     {
-        //Required to suppress the deprecated error received when calling getServiceLocator()
-        //Calling and using the service locator directly in code could be considered a IoC/DI anti pattern
-        //Ideally we would be injecting dependencies via constructor args or setters via the IoC container
-        //This work will be carried out as part of the upgrade to Zend 3
-        PHPUnit_Framework_Error_Deprecated::$enabled = false;
-
         $this->serviceLocator = Mockery::mock(ServiceLocatorInterface::class);
 
         $this->logger = Mockery::mock(Logger::class);
         $this->logger->shouldReceive('setWriters')->passthru();
         $this->logger->setWriters(new SplPriorityQueue());
-        $this->serviceLocator->shouldReceive('get')->withArgs(['Logger'])->andReturn($this->logger);
+        if (method_exists($controller, 'setLogger') === true) {
+            $controller->setLogger($this->logger);
+        }
 
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
         $this->serviceLocator->shouldReceive('get')

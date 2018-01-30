@@ -4,6 +4,7 @@ namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\Mail\Message as MailMessage;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
@@ -18,6 +19,7 @@ use Exception;
  */
 class Communication implements ServiceLocatorAwareInterface
 {
+    use LoggerTrait;
     use ServiceLocatorAwareTrait;
 
     public function sendRegistrationCompleteEmail(Lpa $lpa)
@@ -70,7 +72,7 @@ class Communication implements ServiceLocatorAwareInterface
         try {
             $this->getServiceLocator()->get('MailTransport')->send($message);
         } catch (Exception $e) {
-            $this->getServiceLocator()->get('Logger')->alert("Failed sending '".$subject."' email to ".$userSession->user->email->address." due to:\n".$e->getMessage());
+            $this->getLogger()->alert("Failed sending '".$subject."' email to ".$userSession->user->email->address." due to:\n".$e->getMessage());
 
             return "failed-sending-email";
         }
