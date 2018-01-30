@@ -7,8 +7,6 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Exception;
 
 /**
@@ -17,10 +15,9 @@ use Exception;
  * Class Communication
  * @package Application\Model\Service\Lpa
  */
-class Communication implements ServiceLocatorAwareInterface
+class Communication
 {
     use LoggerTrait;
-    use ServiceLocatorAwareTrait;
 
     public function sendRegistrationCompleteEmail(Lpa $lpa)
     {

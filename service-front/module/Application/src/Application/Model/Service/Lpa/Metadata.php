@@ -3,8 +3,6 @@
 namespace Application\Model\Service\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use RuntimeException;
 
 /**
@@ -13,10 +11,8 @@ use RuntimeException;
  * Class Metadata
  * @package Application\Model\Service\Lpa
  */
-class Metadata implements ServiceLocatorAwareInterface
+class Metadata
 {
-    use ServiceLocatorAwareTrait;
-
     public function setReplacementAttorneysConfirmed(Lpa $lpa)
     {
         return $this->setMetadataByKey($lpa, Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED);

@@ -3,13 +3,12 @@ namespace Application\Model\Service\Feedback;
 
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 
 use Application\Model\Service\Mail\Message as MailMessage;
 
-class Feedback implements ServiceLocatorAwareInterface
+class Feedback
 {
     use LoggerTrait;
     use ServiceLocatorAwareTrait;

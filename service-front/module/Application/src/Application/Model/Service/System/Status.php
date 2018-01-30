@@ -1,13 +1,9 @@
 <?php
+
 namespace Application\Model\Service\System;
 
 use Exception;
-
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-
 use Aws\DynamoDb\DynamoDbClient;
-
 use GuzzleHttp\Client as GuzzleClient;
 
 /**
@@ -16,10 +12,8 @@ use GuzzleHttp\Client as GuzzleClient;
  * Class Status
  * @package Application\Model\Service\System
  */
-class Status implements ServiceLocatorAwareInterface {
-
-    use ServiceLocatorAwareTrait;
-
+class Status
+{
     /**
      * Services:
      *  - API 2

@@ -3,16 +3,13 @@ namespace Application\Model\Service\Payment;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Omnipay\Omnipay;
 use Omnipay\Common\CreditCard;
 use Application\Model\Service\Payment\Helper\LpaIdHelper;
 
-class Payment implements ServiceLocatorAwareInterface
+class Payment
 {
     use LoggerTrait;
-    use ServiceLocatorAwareTrait;
 
     /**
      * Update the LPA with the successful payment information
