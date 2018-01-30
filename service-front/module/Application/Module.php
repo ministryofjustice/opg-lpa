@@ -8,7 +8,7 @@ use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
-use Opg\Lpa\Logger\Logger;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -16,7 +16,9 @@ use Zend\Session\Container;
 use Zend\Stdlib\ArrayUtils;
 use Zend\View\Model\ViewModel;
 
-class Module{
+class Module
+{
+    use LoggerTrait;
 
     public function onBootstrap(MvcEvent $e){
 
@@ -191,18 +193,6 @@ class Module{
                     );
                 },
 
-                // Logger
-                'Logger' => function ( ServiceLocatorInterface $sm ) {
-                    $logger = new Logger();
-                    $logConfig = $sm->get('config')['log'];
-
-                    $logger->setFileLogPath($logConfig['path']);
-                    $logger->setSentryUri($logConfig['sentry-uri']);
-
-                    return $logger;
-
-                },
-
                 'Cache' => function ( ServiceLocatorInterface $sm ) {
 
                     $config = $sm->get('config')['admin']['dynamodb'];
@@ -372,8 +362,7 @@ class Module{
         $exception = $e->getResult()->exception;
 
         if ($exception) {
-            $logger = $e->getApplication()->getServiceManager()->get('Logger');
-            $logger->err( $exception->getMessage().' in '.$exception->getFile().' on line '.$exception->getLine().' - '.$exception->getTraceAsString());
+            $this->getLogger()->err( $exception->getMessage().' in '.$exception->getFile().' on line '.$exception->getLine().' - '.$exception->getTraceAsString());
 
             $viewModel = new ViewModel();
             $viewModel->setTemplate('error/500');

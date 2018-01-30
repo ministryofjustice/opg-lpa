@@ -5,6 +5,7 @@ namespace Application\Model\Service\User;
 use Application\Form\AbstractCsrfForm;
 use Application\Model\Service\Mail\Message as MailMessage;
 use Application\Model\Service\ApiClient\Exception\ResponseException;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
@@ -14,6 +15,7 @@ use RuntimeException;
 
 class Details implements ServiceLocatorAwareInterface
 {
+    use LoggerTrait;
     use ServiceLocatorAwareTrait;
 
     public function load()
@@ -32,7 +34,7 @@ class Details implements ServiceLocatorAwareInterface
     public function updateAllDetails(AbstractCsrfForm $details)
     {
         $authenticationData = $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray();
-        $this->getServiceLocator()->get('Logger')->info('Updating user details', $authenticationData);
+        $this->getLogger()->info('Updating user details', $authenticationData);
 
         // Load the existing details...
         $client = $this->getServiceLocator()->get('ApiClient');
@@ -80,7 +82,7 @@ class Details implements ServiceLocatorAwareInterface
 
         $data = $details->getData();
 
-        $this->getServiceLocator()->get('Logger')->info('Requesting email update to new email: ' . $data['email'], $identityArray);
+        $this->getLogger()->info('Requesting email update to new email: ' . $data['email'], $identityArray);
 
         $client = $this->getServiceLocator()->get('ApiClient');
         $updateToken = $client->requestEmailUpdate(strtolower($data['email']));
@@ -105,7 +107,7 @@ class Details implements ServiceLocatorAwareInterface
 
     private function sendActivateNewEmailEmail($newEmailAddress, $token)
     {
-        $this->getServiceLocator()->get('Logger')->info('Sending new email verification email');
+        $this->getLogger()->info('Sending new email verification email');
 
         $message = new MailMessage();
 
@@ -150,7 +152,7 @@ class Details implements ServiceLocatorAwareInterface
 
     private function sendNotifyNewEmailEmail($oldEmailAddress, $newEmailAddress)
     {
-        $this->getServiceLocator()->get('Logger')->info('Sending new email confirmation email');
+        $this->getLogger()->info('Sending new email confirmation email');
 
         $message = new MailMessage();
 
@@ -195,7 +197,7 @@ class Details implements ServiceLocatorAwareInterface
 
     public function updateEmailUsingToken($emailUpdateToken)
     {
-        $this->getServiceLocator()->get('Logger')->info('Updating email using token');
+        $this->getLogger()->info('Updating email using token');
 
         $client = $this->getServiceLocator()->get('ApiClient');
 
@@ -214,7 +216,7 @@ class Details implements ServiceLocatorAwareInterface
     {
         $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
 
-        $this->getServiceLocator()->get('Logger')->info('Updating password', $identity->toArray());
+        $this->getLogger()->info('Updating password', $identity->toArray());
 
         $client = $this->getServiceLocator()->get('ApiClient');
 

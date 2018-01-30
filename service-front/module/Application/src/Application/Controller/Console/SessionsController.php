@@ -1,11 +1,14 @@
 <?php
 namespace Application\Controller\Console;
 
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 
 use Aws\DynamoDb\SessionHandler as DynamoDbSessionHandler;
 
-class SessionsController extends AbstractActionController {
+class SessionsController extends AbstractActionController
+{
+    use LoggerTrait;
 
     public function gcAction(){
 
@@ -20,7 +23,7 @@ class SessionsController extends AbstractActionController {
 
             echo "Got the cron lock; running Session Garbage Collection\n";
 
-            $this->getServiceLocator()->get('Logger')->info("This node got the cron lock for {$lockName}");
+            $this->getLogger()->info("This node got the cron lock for {$lockName}");
 
             //---
 
@@ -32,13 +35,13 @@ class SessionsController extends AbstractActionController {
 
             //---
 
-            $this->getServiceLocator()->get('Logger')->info("Finished running Session Garbage Collection");
+            $this->getLogger()->info("Finished running Session Garbage Collection");
 
         } else {
 
             echo "Did not get the session cron lock\n";
 
-            $this->getServiceLocator()->get('Logger')->info("This node did not get the cron lock for {$lockName}");
+            $this->getLogger()->info("This node did not get the cron lock for {$lockName}");
 
         }
 

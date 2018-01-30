@@ -1,15 +1,17 @@
 <?php
 namespace Application\Model\Service\Payment;
 
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Omnipay\Omnipay;
 use Omnipay\Common\CreditCard;
-use Zend\Session\Container;
 use Application\Model\Service\Payment\Helper\LpaIdHelper;
 
-class Payment implements ServiceLocatorAwareInterface {
-
+class Payment implements ServiceLocatorAwareInterface
+{
+    use LoggerTrait;
     use ServiceLocatorAwareTrait;
 
     /**
@@ -65,7 +67,7 @@ class Payment implements ServiceLocatorAwareInterface {
             );
         }
 
-        $this->getServiceLocator()->get('Logger')->info(
+        $this->getLogger()->info(
             'Order key verified',
             array_merge(
                 $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray(),
@@ -99,7 +101,7 @@ class Payment implements ServiceLocatorAwareInterface {
             );
         }
 
-        $this->getServiceLocator()->get('Logger')->info(
+        $this->getLogger()->info(
             'MAC string verified',
             array_merge(
                 $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray(),

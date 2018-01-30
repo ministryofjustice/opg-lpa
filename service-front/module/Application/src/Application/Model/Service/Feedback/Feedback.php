@@ -1,6 +1,7 @@
 <?php
 namespace Application\Model\Service\Feedback;
 
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\Mime\Message as MimeMessage;
@@ -10,14 +11,15 @@ use Application\Model\Service\Mail\Message as MailMessage;
 
 class Feedback implements ServiceLocatorAwareInterface
 {
+    use LoggerTrait;
     use ServiceLocatorAwareTrait;
     
     public function sendMail($data) {
         
         //-------------------------------
         // Send the email
-        
-        $this->getServiceLocator()->get('Logger')->info(
+
+        $this->getLogger()->info(
             'Sending feedback email',
             $data
         );
@@ -66,8 +68,8 @@ class Feedback implements ServiceLocatorAwareInterface
             $this->getServiceLocator()->get('MailTransport')->send($message);
         
         } catch ( \Exception $e ){
-        
-            $this->getServiceLocator()->get('Logger')->err(
+
+            $this->getLogger()->err(
                 'Failed to send feedback email',
                 $data
             );

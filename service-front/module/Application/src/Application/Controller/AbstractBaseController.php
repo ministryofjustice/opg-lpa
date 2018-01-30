@@ -2,10 +2,12 @@
 
 namespace Application\Controller;
 
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Controller\AbstractActionController;
-use Opg\Lpa\Logger\Logger;
 
-abstract class AbstractBaseController extends AbstractActionController {
+abstract class AbstractBaseController extends AbstractActionController
+{
+    use LoggerTrait;
 
     /**
      * Ensures cookies are enabled.
@@ -111,15 +113,6 @@ abstract class AbstractBaseController extends AbstractActionController {
      */
     protected function cache(){
         return $this->getServiceLocator()->get('Cache');
-    }
-    
-    /**
-     * Returns the logger.
-     *
-     * @return Logger
-     */
-    protected function log(){
-        return $this->getServiceLocator()->get('Logger');
     }
 
 } // class

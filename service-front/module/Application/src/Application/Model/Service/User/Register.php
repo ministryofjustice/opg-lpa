@@ -4,6 +4,7 @@ namespace Application\Model\Service\User;
 
 use Application\Model\Service\Mail\Message as MailMessage;
 use Application\Model\Service\ApiClient\Exception\ResponseException;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
@@ -12,6 +13,7 @@ use Exception;
 
 class Register implements ServiceLocatorAwareInterface
 {
+    use LoggerTrait;
     use ServiceLocatorAwareTrait;
 
     /**
@@ -23,7 +25,7 @@ class Register implements ServiceLocatorAwareInterface
      */
     public function registerAccount($email, $password)
     {
-        $logger = $this->getServiceLocator()->get('Logger');
+        $logger = $this->getLogger();
         $logger->info('Account registration attempt for ' . $email);
 
         $client = $this->getServiceLocator()->get('ApiClient');
@@ -103,7 +105,7 @@ class Register implements ServiceLocatorAwareInterface
 
         $message->setBody($body);
 
-        $logger = $this->getServiceLocator()->get('Logger');
+        $logger = $this->getLogger();
 
         try {
             $logger->info('Sending account activation email to ' . $email);
@@ -156,7 +158,7 @@ class Register implements ServiceLocatorAwareInterface
         $client = $this->getServiceLocator()->get('ApiClient');
         $result = $client->activateAccount($token);
 
-        $logger = $this->getServiceLocator()->get('Logger');
+        $logger = $this->getLogger();
 
         if ($result === true) {
             $logger->info('Account activation attempt with token was successful');
