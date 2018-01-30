@@ -10,7 +10,8 @@
 
 // Accordion layout
 .current {
-    + .complete {
+    + .complete,
+    + .incomplete {
         margin-top: $gutter;
         clear: left;
     }
