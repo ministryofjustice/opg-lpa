@@ -8,7 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     'ZfcTwig\\' => array($vendorDir . '/zf-commons/zfc-twig/src'),
     'ZendXml\\' => array($vendorDir . '/zendframework/zendxml/library'),
-    'ZFConfigDump\\' => array($vendorDir . '/nsmithuk/zf-config-dump/src'),
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'Smtpapi' => array($vendorDir . '/sendgrid/smtpapi/lib'),
     'SendGrid' => array($vendorDir . '/sendgrid/sendgrid/lib'),
