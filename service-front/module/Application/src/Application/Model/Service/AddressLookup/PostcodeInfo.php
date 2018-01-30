@@ -1,10 +1,7 @@
 <?php
+
 namespace Application\Model\Service\AddressLookup;
 
-use GuzzleHttp\Client as GuzzleClient;
-
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use MinistryOfJustice;
 use MinistryOfJustice\PostcodeInfo\Response\Address;
 
@@ -14,10 +11,8 @@ use MinistryOfJustice\PostcodeInfo\Response\Address;
  * Class PostcodeInfo
  * @package Application\Model\Service\AddressLookup
  */
-class PostcodeInfo implements ServiceLocatorAwareInterface {
-
-    use ServiceLocatorAwareTrait;
-    
+class PostcodeInfo
+{
     /**
      * Return a list of addresses for a given postcode.
      *

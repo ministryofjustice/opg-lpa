@@ -3,13 +3,9 @@
 namespace Application\Form;
 
 use Zend\Form\Form;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
-abstract class AbstractForm extends Form implements ServiceLocatorAwareInterface
+abstract class AbstractForm extends Form
 {
-    use ServiceLocatorAwareTrait;
-
     public function init()
     {
         $this->setAttribute('method', 'post');

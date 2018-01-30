@@ -3,11 +3,41 @@
 namespace Application\Controller;
 
 use Opg\Lpa\Logger\LoggerTrait;
+use Zend\Authentication\AuthenticationService;
+use Zend\Cache\Storage\StorageInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 
 abstract class AbstractBaseController extends AbstractActionController
 {
     use LoggerTrait;
+
+    /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
+
+    /**
+     * @var array
+     */
+    private $config;
+
+    /**
+     * @var StorageInterface
+     */
+    private $cache;
+
+    /**§
+     * AbstractBaseController constructor.
+     * @param AuthenticationService $authenticationService
+     * @param array $config
+     * @param StorageInterface $cache
+     */
+    public function __construct(AuthenticationService $authenticationService, array $config, StorageInterface $cache)
+    {
+        $this->authenticationService = $authenticationService;
+        $this->config = $config;
+        $this->cache = $cache;
+    }
 
     /**
      * Ensures cookies are enabled.
@@ -36,7 +66,7 @@ abstract class AbstractBaseController extends AbstractActionController
         //---
 
         // Get the cookie names used for the session
-        $sessionCookieName = $this->getServiceLocator()->get('Config')['session']['native_settings']['name'];
+        $sessionCookieName = $this->config['session']['native_settings']['name'];
 
         $cookies = $this->getRequest()->getCookie();
 
@@ -87,7 +117,7 @@ abstract class AbstractBaseController extends AbstractActionController
      */
     protected function preventAuthenticatedUser(){
 
-        $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
+        $identity = $this->getAuthenticationService()->getIdentity();
 
         if( !is_null($identity) ){
             return $this->redirect()->toRoute( 'user/dashboard' );
@@ -98,21 +128,31 @@ abstract class AbstractBaseController extends AbstractActionController
     } // function
 
     /**
+     * @return AuthenticationService
+     */
+    protected function getAuthenticationService(): AuthenticationService
+    {
+        return $this->authenticationService;
+    }
+
+    /**
      * Returns the global config.
      *
      * @return array
      */
-    protected function config(){
-        return $this->getServiceLocator()->get('Config');
+    protected function config(): array
+    {
+        return $this->config;
     }
     
     /**
      * Returns the cache object.
      *
-     * @return array
+     * @return StorageInterface
      */
-    protected function cache(){
-        return $this->getServiceLocator()->get('Cache');
+    protected function cache(): StorageInterface
+    {
+        return $this->cache;
     }
 
 } // class

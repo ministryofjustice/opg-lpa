@@ -2,13 +2,10 @@
 namespace Application\Model\Service\User;
 
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
-class Delete implements ServiceLocatorAwareInterface
+class Delete
 {
     use LoggerTrait;
-    use ServiceLocatorAwareTrait;
 
     //---
 

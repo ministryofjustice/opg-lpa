@@ -8,15 +8,12 @@ use Application\Model\Service\ApiClient\Exception\ResponseException;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Exception;
 use RuntimeException;
 
-class Details implements ServiceLocatorAwareInterface
+class Details
 {
     use LoggerTrait;
-    use ServiceLocatorAwareTrait;
 
     public function load()
     {
