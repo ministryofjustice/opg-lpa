@@ -32,7 +32,7 @@
         "aws/aws-sdk-php": "^3.0",
         "ministryofjustice/postcodeinfo-client-php": "^4.0",
         "ministryofjustice/opg-lpa-datamodels": "^9.2",
-        "ministryofjustice/opg-lpa-logger": "^2.0",
+        "ministryofjustice/opg-lpa-logger": "^3.0",
         "Netsensia/omnipay-worldpay-xml": "^1.0.1",
         "michelf/php-markdown": "1.5.0",
         "zf-commons/zfc-twig": "^1.2.2",
