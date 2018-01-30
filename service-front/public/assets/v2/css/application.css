@@ -3758,6 +3758,9 @@ input[type=number] {
   .accordion > .incomplete .accordion-summary .label {
     color: #b10e1e;
     border-color: #b10e1e; }
+.accordion .not-started .accordion-summary .label {
+  color: #6f777b;
+  border-color: #6f777b; }
 .accordion .accordion-header {
   display: block;
   padding: 15px;
@@ -4103,8 +4106,9 @@ input[type=number] {
       display: block;
       position: relative;
       z-index: 3; } }
-  .table-summary tr.incomplete td {
-    color: #b10e1e; }
+  .table-summary tr td.incomplete {
+    color: #b10e1e;
+    font-weight: bold; }
   .table-summary th,
   .table-summary td {
     vertical-align: top; }
@@ -4210,7 +4214,8 @@ input[type=number] {
   .content-body {
     min-height: 400px; } }
 
-.current + .complete {
+.current + .complete,
+.current + .incomplete {
   margin-top: 30px;
   clear: left; }
 
