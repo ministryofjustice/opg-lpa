@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "00140e5dc782f36262ea1e4e4e5a11f8",
+    "content-hash": "5b5a53607106f29b2f1e7c2880f2a516",
     "packages": [
         {
             "name": "alphagov/pay-integration-php",
@@ -1147,50 +1147,6 @@
                 "source": "https://github.com/chris-moreton/omnipay-worldpay-xml/tree/v1.1.1"
             },
             "time": "2015-11-18T11:06:24+00:00"
-        },
-        {
-            "name": "nsmithuk/zf-config-dump",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/NSmithUK/zf-config-dump.git",
-                "reference": "89a7061dc4deb2e9d270586fce6ac8c5894bc67e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/NSmithUK/zf-config-dump/zipball/89a7061dc4deb2e9d270586fce6ac8c5894bc67e",
-                "reference": "89a7061dc4deb2e9d270586fce6ac8c5894bc67e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4",
-                "symfony/var-dumper": "^3.0",
-                "zendframework/zendframework": "^2.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "ZFConfigDump\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Neil Smith",
-                    "email": "neil@nsmith.net"
-                }
-            ],
-            "description": "Dumps an application's config to the terminal",
-            "keywords": [
-                "cli",
-                "config",
-                "module",
-                "zf2"
-            ],
-            "time": "2016-04-12T13:21:43+00:00"
         },
         {
             "name": "omnipay/common",
@@ -3755,75 +3711,6 @@
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
             "time": "2017-12-04T12:15:49+00:00"
-        },
-        {
-            "name": "symfony/var-dumper",
-            "version": "v3.4.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "757074cf71b952ce9e75b557538948811c2bf006"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/757074cf71b952ce9e75b557538948811c2bf006",
-                "reference": "757074cf71b952ce9e75b557538948811c2bf006",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.5.9|>=7.0.8",
-                "symfony/polyfill-mbstring": "~1.0"
-            },
-            "conflict": {
-                "phpunit/phpunit": "<4.8.35|<5.4.3,>=5.0"
-            },
-            "require-dev": {
-                "ext-iconv": "*",
-                "twig/twig": "~1.34|~2.4"
-            },
-            "suggest": {
-                "ext-iconv": "To convert non-UTF-8 strings to UTF-8 (or symfony/polyfill-iconv in case ext-iconv cannot be used).",
-                "ext-intl": "To show region name in time zone dump",
-                "ext-symfony_debug": ""
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.4-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "Resources/functions/dump.php"
-                ],
-                "psr-4": {
-                    "Symfony\\Component\\VarDumper\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony mechanism for exploring and dumping PHP variables",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "debug",
-                "dump"
-            ],
-            "time": "2017-12-11T22:06:16+00:00"
         },
         {
             "name": "symfony/yaml",
