@@ -24,7 +24,7 @@ class ChangePasswordController extends AbstractAuthenticatedController
         // thus we pass it the Authentication Service
 
         $authentication =   $this->getAuthenticationService();
-        $adapter =          $this->getServiceLocator()->get('AuthenticationAdapter');
+        $adapter =          $this->getAuthenticationAdapter();
 
         // Pass the user's current email address...
         $adapter->setEmail( $currentAddress );
@@ -47,7 +47,7 @@ class ChangePasswordController extends AbstractAuthenticatedController
 
             if ($form->isValid()) {
 
-                $service = $this->getServiceLocator()->get('AboutYouDetails');
+                $service = $this->getAboutYouDetails();
 
                 $result = $service->updatePassword( $form );
 

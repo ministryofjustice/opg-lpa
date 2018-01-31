@@ -5,11 +5,18 @@ namespace Application\Controller\General;
 use Application\Controller\AbstractBaseController;
 use Application\Form\User\Login as LoginForm;
 use Application\Model\FormFlowChecker;
+use Application\Model\Service\Authentication\AuthenticationService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
 
-class AuthController extends AbstractBaseController {
+class AuthController extends AbstractBaseController
+{
+    /**
+     * @var AuthenticationService
+     */
+    private $authenticationAdapter;
 
     public function indexAction(){
 
@@ -56,7 +63,7 @@ class AuthController extends AbstractBaseController {
 
                 // Ensure no user is logged in and ALL session data is cleared then re-initialise it.
 
-                $session = $this->getServiceLocator()->get('SessionManager');
+                $session = $this->getSessionManager();
 
                 $session->getStorage()->clear();
                 $session->initialise();
@@ -66,7 +73,7 @@ class AuthController extends AbstractBaseController {
                 $email = $form->getData()['email'];
                 $password = $form->getData()['password'];
 
-                $authenticationAdapter = $this->getServiceLocator()->get('AuthenticationAdapter');
+                $authenticationAdapter = $this->authenticationAdapter;
 
                 // Pass the user's email address and password...
                 $authenticationAdapter->setEmail( $email )->setPassword( $password );
@@ -94,7 +101,7 @@ class AuthController extends AbstractBaseController {
 
                             //  Redirect to next page which needs filling out
                             $lpaId = $pathArray[2];
-                            $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int)$lpaId);
+                            $lpa = $this->getAuthenticationService()->getApplication((int)$lpaId);
 
                             if ($lpa instanceof Lpa) {
                                 $formFlowChecker = new FormFlowChecker($lpa);
@@ -155,7 +162,7 @@ class AuthController extends AbstractBaseController {
      */
     private function getLoginForm(){
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\Login');
+        $form = $this->getFormElementManager()->get('Application\Form\User\Login');
         $form->setAttribute( 'action', $this->url()->fromRoute('login') );
 
         return $form;
@@ -195,8 +202,12 @@ class AuthController extends AbstractBaseController {
     private function clearSession(){
 
         $this->getAuthenticationService()->clearIdentity();
-        $this->getServiceLocator()->get('SessionManager')->destroy([ 'clear_storage'=>true ]);
+        $this->getSessionManager()->destroy([ 'clear_storage'=>true ]);
 
     } // function
 
+    public function setAuthenticationAdapter(AdapterInterface $authenticationAdapter)
+    {
+        $this->authenticationAdapter = $authenticationAdapter;
+    }
 } // class

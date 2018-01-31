@@ -4,10 +4,16 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
 use Zend\Http\Request;
+use Zend\Mvc\Router\RouteStackInterface;
 use Zend\View\Model\ViewModel;
 
 class ReuseDetailsController extends AbstractLpaActorController
 {
+    /**
+     * @var RouteStackInterface
+     */
+    private $router;
+
     public function indexAction()
     {
         $viewModel = new ViewModel();
@@ -52,8 +58,7 @@ class ReuseDetailsController extends AbstractLpaActorController
                 //  Match the route using a request object
                 $request = new Request();
                 $request->setUri($returnURL);
-                $router = $this->getServiceLocator()->get('Router');
-                $routeMatch = $router->match($request);
+                $routeMatch = $this->router->match($request);
 
                 if ($routeMatch !== null) {
                     $controllerName = $routeMatch->getParam('controller');
@@ -82,5 +87,10 @@ class ReuseDetailsController extends AbstractLpaActorController
         $viewModel->actorName = $actorName;
 
         return $viewModel;
+    }
+
+    public function setRouter(RouteStackInterface $router)
+    {
+        $this->router = $router;
     }
 }

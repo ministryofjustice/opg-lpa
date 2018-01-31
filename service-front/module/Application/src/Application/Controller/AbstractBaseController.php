@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Model\Service\Session\SessionManager;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Authentication\AuthenticationService;
 use Zend\Cache\Storage\StorageInterface;
@@ -16,6 +17,11 @@ abstract class AbstractBaseController extends AbstractActionController
      * @var AbstractPluginManager
      */
     private $formElementManager;
+
+    /**
+     * @var SessionManager
+     */
+    private $sessionManager;
 
     /**
      * @var AuthenticationService
@@ -35,13 +41,20 @@ abstract class AbstractBaseController extends AbstractActionController
     /**§
      * AbstractBaseController constructor.
      * @param AbstractPluginManager $formElementManager
+     * @param SessionManager $sessionManager
      * @param AuthenticationService $authenticationService
      * @param array $config
      * @param StorageInterface $cache
      */
-    public function __construct(AbstractPluginManager $formElementManager, AuthenticationService $authenticationService, array $config, StorageInterface $cache)
-    {
+    public function __construct(
+        AbstractPluginManager $formElementManager,
+        SessionManager $sessionManager,
+        AuthenticationService $authenticationService,
+        array $config,
+        StorageInterface $cache
+    ) {
         $this->formElementManager = $formElementManager;
+        $this->sessionManager = $sessionManager;
         $this->authenticationService = $authenticationService;
         $this->config = $config;
         $this->cache = $cache;
@@ -141,6 +154,14 @@ abstract class AbstractBaseController extends AbstractActionController
     protected function getFormElementManager(): AbstractPluginManager
     {
         return $this->formElementManager;
+    }
+
+    /**
+     * @return SessionManager
+     */
+    protected function getSessionManager(): SessionManager
+    {
+        return $this->sessionManager;
     }
 
     /**

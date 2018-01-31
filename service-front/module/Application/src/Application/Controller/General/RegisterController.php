@@ -4,12 +4,18 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Form\Validator\EmailAddress;
+use Application\Model\Service\User\Register;
 use Zend\Http\Response as HttpResponse;
 use Zend\View\Model\ViewModel;
 use Exception;
 
 class RegisterController extends AbstractBaseController
 {
+    /**
+     * @var Register
+     */
+    private $registerService;
+
     /**
      * Register a new account.
      *
@@ -52,8 +58,7 @@ class RegisterController extends AbstractBaseController
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                $result = $this->getServiceLocator()
-                               ->get('Register')
+                $result = $this->registerService
                                ->registerAccount(
                                    $data['email'],
                                    $data['password']
@@ -138,7 +143,7 @@ class RegisterController extends AbstractBaseController
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                $result = $this->getServiceLocator()->get('Register')->resendActivateEmail($form->getData()['email']);
+                $result = $this->registerService->resendActivateEmail($form->getData()['email']);
 
                 //  We do not want to confirm or deny the existence of a registered user so do not check the result
                 return $this->redirect()->toRoute('register/email-sent', [], [
@@ -174,16 +179,13 @@ class RegisterController extends AbstractBaseController
         // Ensure they're not logged in whilst activating a new account.
         $this->getAuthenticationService()->clearIdentity();
 
-        $session = $this->getServiceLocator()
-                        ->get('SessionManager');
+        $session = $this->getSessionManager();
         $session->getStorage()->clear();
         $session->initialise();
 
         //  Returns true if the user account exists and the account was activated
         //  Returns false if the user account does not exist
-        $success = $this->getServiceLocator()
-                        ->get('Register')
-                        ->activateAccount($token);
+        $success = $this->registerService->activateAccount($token);
 
         $viewModel = new ViewModel();
 
@@ -192,5 +194,10 @@ class RegisterController extends AbstractBaseController
         }
 
         return $viewModel;
+    }
+
+    public function setRegisterService(Register $registerService)
+    {
+        $this->registerService = $registerService;
     }
 }

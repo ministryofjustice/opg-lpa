@@ -23,7 +23,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
             if ($form->isValid()) {
                 // set user has confirmed if there are people to notify
-                $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($this->getLpa());
+                $this->getMetadata()->setPeopleToNotifyConfirmed($this->getLpa());
 
                 return $this->moveToNextRoute();
             }
@@ -97,7 +97,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
                 // remove metadata flag value if exists
                 if (!array_key_exists(Lpa::PEOPLE_TO_NOTIFY_CONFIRMED, $lpa->metadata)) {
-                        $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($lpa);
+                        $this->getMetadata()->setPeopleToNotifyConfirmed($lpa);
                 }
 
                 return $this->moveToNextRoute();

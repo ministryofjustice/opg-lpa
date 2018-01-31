@@ -19,7 +19,7 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController
         // This form needs to check the user's current password,
         // thus we pass it the Authentication Service
         $authentication =   $this->getAuthenticationService();
-        $adapter =          $this->getServiceLocator()->get('AuthenticationAdapter');
+        $adapter =          $this->getAuthenticationAdapter();
 
         // Pass the user's current email address...
         $adapter->setEmail($currentAddress);
@@ -34,7 +34,7 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $service = $this->getServiceLocator()->get('AboutYouDetails');
+                $service = $this->getAboutYouDetails();
 
                 $result = $service->requestEmailUpdate($form, $currentAddress);
 

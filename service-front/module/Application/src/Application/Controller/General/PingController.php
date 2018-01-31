@@ -2,15 +2,21 @@
 
 namespace Application\Controller\General;
 
+use Application\Model\Service\System\Status;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
 
-class PingController extends AbstractBaseController {
+class PingController extends AbstractBaseController
+{
+    /**
+     * @var Status
+     */
+    private $statusService;
 
     public function indexAction(){
 
-        $result = $this->getServiceLocator()->get('SiteStatus')->check();
+        $result = $this->statusService->check();
 
         return new ViewModel( [ 'status'=>$result ] );
 
@@ -52,7 +58,7 @@ class PingController extends AbstractBaseController {
 
     public function jsonAction(){
 
-        $result = $this->getServiceLocator()->get('SiteStatus')->check();
+        $result = $this->statusService->check();
 
         $result['commit'] = ( is_readable('GITREF') ) ? trim(file_get_contents('GITREF')) : 'unknown';
 
@@ -73,7 +79,7 @@ class PingController extends AbstractBaseController {
 
         //---
 
-        $result = $this->getServiceLocator()->get('SiteStatus')->check();
+        $result = $this->statusService->check();
 
         if( $result['ok'] == true ){
             $xml->status = 'OK';
@@ -94,4 +100,8 @@ class PingController extends AbstractBaseController {
 
     }
 
+    public function setStatusService(Status $statusService)
+    {
+        $this->statusService = $statusService;
+    }
 } // class
