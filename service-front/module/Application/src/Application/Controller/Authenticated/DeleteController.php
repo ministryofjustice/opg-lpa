@@ -2,6 +2,7 @@
 
 namespace Application\Controller\Authenticated;
 
+use Application\Model\Service\User\Delete;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 
@@ -11,7 +12,12 @@ use Application\Controller\AbstractAuthenticatedController;
  * Class DeleteController
  * @package Application\Controller\Authenticated
  */
-class DeleteController extends AbstractAuthenticatedController {
+class DeleteController extends AbstractAuthenticatedController
+{
+    /**
+     * @var Delete
+     */
+    private $deleteUser;
 
     public function indexAction(){
 
@@ -22,7 +28,7 @@ class DeleteController extends AbstractAuthenticatedController {
     public function confirmAction(){
 
         // Delete all v2 LPAs, their v2 Personal details, and their Auth account.
-        if ($this->getServiceLocator()->get('DeleteUser')->delete()) {
+        if ($this->deleteUser->delete()) {
             // Redirect them to the deleted page.
             return $this->redirect()->toRoute( 'deleted' );
         } else {
@@ -44,5 +50,10 @@ class DeleteController extends AbstractAuthenticatedController {
         return parent::checkAuthenticated( false );
 
     } // function
+
+    public function setDeleteUser(Delete $deleteUser)
+    {
+        $this->deleteUser = $deleteUser;
+    }
 
 } // class

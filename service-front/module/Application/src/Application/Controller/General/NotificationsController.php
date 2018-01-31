@@ -1,17 +1,27 @@
 <?php
+
 namespace Application\Controller\General;
 
-use DateTime, DateTimeZone;
-
+use Application\Model\Service\Mail\Transport\SendGrid;
+use DateTime;
+use DateTimeZone;
 use Application\Controller\AbstractBaseController;
-
-use Zend\View\Model\ViewModel;
+use Twig_Environment;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
-
 use Application\Model\Service\Mail\Message as MessageService;
 
-class NotificationsController extends AbstractBaseController {
+class NotificationsController extends AbstractBaseController
+{
+    /**
+     * @var Twig_Environment
+     */
+    private $twigEmailRenderer;
+
+    /**
+     * @var SendGrid
+     */
+    private $mailTransport;
 
     public function expiryNoticeAction(){
 
@@ -97,7 +107,7 @@ class NotificationsController extends AbstractBaseController {
 
         //---
 
-        $template = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('account-deletion-notification.twig');
+        $template = $this->twigEmailRenderer->loadTemplate('account-deletion-notification.twig');
 
         $content = $template->render([
             'deletionDate' => $deletionDate
@@ -131,7 +141,7 @@ class NotificationsController extends AbstractBaseController {
 
         try {
 
-            $this->getServiceLocator()->get('MailTransport')->send($email);
+            $this->mailTransport->send($email);
 
             $response->setContent('Notification received');
 
@@ -148,4 +158,13 @@ class NotificationsController extends AbstractBaseController {
 
     } // function
 
+    public function setTwigEmailRenderer(Twig_Environment $twigEmailRenderer)
+    {
+        $this->twigEmailRenderer = $twigEmailRenderer;
+    }
+
+    public function setMailTransport(SendGrid $mailTransport)
+    {
+        $this->mailTransport = $mailTransport;
+    }
 } // class

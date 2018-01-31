@@ -22,7 +22,7 @@ class CertificateProviderController extends AbstractLpaActorController
             $form->setData($this->request->getPost());
 
             if ($form->isValid()) {
-                $this->getServiceLocator()->get('Metadata')->setCertificateProviderSkipped($this->getLpa());
+                $this->getMetadata()->setCertificateProviderSkipped($this->getLpa());
 
                 return $this->moveToNextRoute();
             }
@@ -81,7 +81,7 @@ class CertificateProviderController extends AbstractLpaActorController
                 }
 
                 //  Remove the skipped metadata tag if it was set
-                $this->getServiceLocator()->get('Metadata')->removeMetadata($this->getLpa(), Lpa::CERTIFICATE_PROVIDER_SKIPPED);
+                $this->getMetadata()->removeMetadata($this->getLpa(), Lpa::CERTIFICATE_PROVIDER_SKIPPED);
 
                 return $this->moveToNextRoute();
             }

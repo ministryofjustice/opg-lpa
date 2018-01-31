@@ -4,12 +4,18 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\Mail\Message as MessageService;
+use Twig_Environment;
 use Zend\Mime\Message;
 use Zend\Mime\Part;
 use Exception;
 
 class SendgridController extends AbstractBaseController
 {
+    /**
+     * @var Twig_Environment
+     */
+    private $twigEmailRenderer;
+
     /**
      * No reply email address to use
      *
@@ -82,8 +88,7 @@ class SendgridController extends AbstractBaseController
         $messageService->addTo($fromAddress);
 
         //  Set the subject in the message
-        $content = $this->getServiceLocator()
-                        ->get('TwigEmailRenderer')
+        $content = $this->twigEmailRenderer
                         ->loadTemplate('bounce.twig')
                         ->render([]);
 
@@ -129,5 +134,10 @@ class SendgridController extends AbstractBaseController
         $response->setStatusCode(200);
 
         return $response;
+    }
+
+    public function setTwigEmailRenderer(Twig_Environment $twigEmailRenderer)
+    {
+        $this->twigEmailRenderer = $twigEmailRenderer;
     }
 }

@@ -9,7 +9,7 @@ class StatsController extends AbstractBaseController
 {
     public function indexAction()
     {
-        $applicationService = $this->getServiceLocator()->get('LpaApplicationService');
+        $applicationService = $this->getAuthenticationService();
 
         // Get the user stats from auth service
         $userStats = $applicationService->getAuthStats();

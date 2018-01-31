@@ -66,7 +66,7 @@ class RepeatApplicationController extends AbstractLpaController
                 }
 
                 // set metadata
-                $this->getServiceLocator()->get('Metadata')->setRepeatApplicationConfirmed($lpa);
+                $this->getMetadata()->setRepeatApplicationConfirmed($lpa);
 
                 return $this->moveToNextRoute();
             }

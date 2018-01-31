@@ -30,7 +30,7 @@ class AboutYouController extends AbstractAuthenticatedController
         $form->setAttribute('action', $actionTarget);
 
         $request = $this->getRequest();
-        $aboutYouService = $this->getServiceLocator()->get('AboutYouDetails');
+        $aboutYouService = $this->getAboutYouDetails();
 
         //  Get any existing data for the user
         $userDetails = $aboutYouService->load();
@@ -49,7 +49,7 @@ class AboutYouController extends AbstractAuthenticatedController
 
                 // Clear the old details out the session.
                 // They will be reloaded the next time the the AbstractAuthenticatedController is called.
-                $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
+                $detailsContainer = $this->getUserDetailsSession();
                 unset($detailsContainer->user);
 
                 //  Saved successful so return to dashboard with message if required

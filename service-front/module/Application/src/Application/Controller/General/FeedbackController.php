@@ -3,11 +3,17 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
+use Application\Model\Service\Feedback\Feedback;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
 
 class FeedbackController extends AbstractBaseController
 {
+    /**
+     * @var Feedback
+     */
+    private $feedbackService;
+
     public function indexAction()
     {
         $container = new Container('feedback');
@@ -21,8 +27,7 @@ class FeedbackController extends AbstractBaseController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $feedbackService = $this->getServiceLocator()
-                                        ->get('Feedback');
+                $feedbackService = $this->feedbackService;
 
                 $data = $form->getData();
 
@@ -67,5 +72,10 @@ class FeedbackController extends AbstractBaseController
         return new ViewModel([
             'form' => $form
         ]);
+    }
+
+    public function setFeedbackService(Feedback $feedbackService)
+    {
+        $this->feedbackService = $feedbackService;
     }
 }

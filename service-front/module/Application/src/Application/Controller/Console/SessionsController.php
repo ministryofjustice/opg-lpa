@@ -1,6 +1,8 @@
 <?php
 namespace Application\Controller\Console;
 
+use Application\Model\Service\Session\SessionManager;
+use Application\Model\Service\System\DynamoCronLock;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 
@@ -10,9 +12,30 @@ class SessionsController extends AbstractActionController
 {
     use LoggerTrait;
 
+    /**
+     * @var DynamoCronLock
+     */
+    private $dynamoCronLock;
+
+    /**
+     * @var SessionManager
+     */
+    private $sessionManager;
+
+    /**
+     * SessionsController constructor.
+     * @param DynamoCronLock $dynamoCronLock
+     * @param SessionManager $sessionManager
+     */
+    public function __construct(DynamoCronLock $dynamoCronLock, SessionManager $sessionManager)
+    {
+        $this->dynamoCronLock = $dynamoCronLock;
+        $this->sessionManager = $sessionManager;
+    }
+
     public function gcAction(){
 
-        $cronLock = $this->getServiceLocator()->get('DynamoCronLock');
+        $cronLock = $this->dynamoCronLock;
 
         $lockName = 'SessionGarbageCollection';
 
@@ -27,7 +50,7 @@ class SessionsController extends AbstractActionController
 
             //---
 
-            $saveHandler = $this->getServiceLocator()->get('SessionManager')->getSaveHandler();
+            $saveHandler = $this->sessionManager->getSaveHandler();
 
             if( $saveHandler instanceof DynamoDbSessionHandler ){
                 $saveHandler->garbageCollect();

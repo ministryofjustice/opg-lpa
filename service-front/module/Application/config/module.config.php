@@ -18,6 +18,9 @@ return [
             'UserAwareInitializer' => 'Application\ControllerFactory\UserAwareInitializer',
             'LpaAwareInitializer' => 'Application\ControllerFactory\LpaAwareInitializer',
         ],
+        'factories' => [
+            'SessionsController' => 'Application\Controller\Console\SessionsControllerFactory',
+        ],
         'abstract_factories' => [
             'Application\ControllerFactory\ControllerAbstractFactory'
         ],
