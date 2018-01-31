@@ -113,6 +113,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      * @param $name
      * @param $requestedName
      * @return mixed
+     * @throws Exception
      */
     public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {

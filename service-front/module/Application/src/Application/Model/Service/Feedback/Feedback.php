@@ -1,6 +1,7 @@
 <?php
 namespace Application\Model\Service\Feedback;
 
+use Application\Model\Service\AbstractEmailService;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\Mime\Message as MimeMessage;
@@ -8,7 +9,7 @@ use Zend\Mime\Part as MimePart;
 
 use Application\Model\Service\Mail\Message as MailMessage;
 
-class Feedback
+class Feedback extends AbstractEmailService
 {
     use LoggerTrait;
     use ServiceLocatorAwareTrait;
@@ -25,11 +26,11 @@ class Feedback
         
         $message = new MailMessage();
         
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->getConfig();
         $message->addFrom($config['email']['sender']['feedback']['address'], $config['email']['sender']['feedback']['name']);
         
         $message->addTo( 
-            $this->getServiceLocator()->get('Config')['sendFeedbackEmailTo']
+            $this->getConfig()['sendFeedbackEmailTo']
         );
         
         
@@ -42,7 +43,7 @@ class Feedback
         $data['sentTime'] = date('Y/m/d H:i:s');
         //---
         
-        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('feedback.twig')->render($data);
+        $content = $this->getTwigEmailRenderer()->loadTemplate('feedback.twig')->render($data);
         
         if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
             $message->setSubject($matches[1]);
@@ -64,7 +65,7 @@ class Feedback
         
         try {
         
-            $this->getServiceLocator()->get('MailTransport')->send($message);
+            $this->getMailTransport()->send($message);
         
         } catch ( \Exception $e ){
 

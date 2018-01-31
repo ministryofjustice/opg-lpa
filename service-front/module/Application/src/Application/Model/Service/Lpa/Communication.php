@@ -2,12 +2,14 @@
 
 namespace Application\Model\Service\Lpa;
 
+use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\Message as MailMessage;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 use Exception;
+use Zend\Session\Container;
 
 /**
  * A model service class for sending emails on LPA creation and completion.
@@ -15,20 +17,25 @@ use Exception;
  * Class Communication
  * @package Application\Model\Service\Lpa
  */
-class Communication
+class Communication extends AbstractEmailService
 {
     use LoggerTrait;
+
+    /**
+     * @var Container
+     */
+    private $userDetailsSession;
 
     public function sendRegistrationCompleteEmail(Lpa $lpa)
     {
         // Send the email
         $message = new MailMessage();
 
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->getConfig();
 
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
-        $userSession = $this->getServiceLocator()->get('UserDetailsSession');
+        $userSession = $this->userDetailsSession;
 
         // Add the signed in user's email address.
         $message->addTo($userSession->user->email->address);
@@ -44,7 +51,7 @@ class Communication
 
         //---
 
-        $content = $this->getServiceLocator()->get('TwigEmailRenderer')->loadTemplate('lpa-registration.twig')->render([
+        $content = $this->getTwigEmailRenderer()->loadTemplate('lpa-registration.twig')->render([
             'lpa' => $lpa,
             'paymentAmount' => ($lpa->payment->amount > 0 ? money_format('%i', $lpa->payment->amount) : null),
             'isHealthAndWelfare' => ($lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW),
@@ -67,7 +74,7 @@ class Communication
         $message->setBody($body);
 
         try {
-            $this->getServiceLocator()->get('MailTransport')->send($message);
+            $this->getMailTransport()->send($message);
         } catch (Exception $e) {
             $this->getLogger()->alert("Failed sending '".$subject."' email to ".$userSession->user->email->address." due to:\n".$e->getMessage());
 
@@ -75,5 +82,10 @@ class Communication
         }
 
         return true;
+    }
+
+    public function setUserDetailsSession(Container $userDetailsSession)
+    {
+        $this->userDetailsSession = $userDetailsSession;
     }
 }

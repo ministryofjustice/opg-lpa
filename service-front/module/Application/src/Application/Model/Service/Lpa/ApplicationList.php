@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\Lpa;
 
+use Application\Model\Service\AbstractService;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Common\LongName;
 use DateTime;
@@ -12,7 +13,7 @@ use DateTime;
  * Class ApplicationList
  * @package Application\Model\Service\Lpa
  */
-class ApplicationList
+class ApplicationList extends AbstractService
 {
     /**
      * Get a summary of LPAs from the API utilising the search string if one was provided
@@ -38,7 +39,7 @@ class ApplicationList
             ]);
         }
 
-        $applicationsSummary = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList($queryParams);
+        $applicationsSummary = $this->getLpaApplicationService()->getApplicationList($queryParams);
 
         //  If there are LPAs returned, change them into standard class objects for use
         $lpas = [];

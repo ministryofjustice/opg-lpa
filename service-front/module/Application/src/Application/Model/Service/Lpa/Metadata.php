@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\Lpa;
 
+use Application\Model\Service\AbstractService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use RuntimeException;
 
@@ -11,7 +12,7 @@ use RuntimeException;
  * Class Metadata
  * @package Application\Model\Service\Lpa
  */
-class Metadata
+class Metadata extends AbstractService
 {
     public function setReplacementAttorneysConfirmed(Lpa $lpa)
     {
@@ -54,7 +55,7 @@ class Metadata
             //  Remove the value
             unset($lpa->metadata[$key]);
 
-            if (!$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata)) {
+            if (!$this->getLpaApplicationService()->setMetaData($lpa->id, $lpa->metadata)) {
                 throw new RuntimeException(sprintf('API client failed to remove metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
             }
 
@@ -70,7 +71,7 @@ class Metadata
             //  Update the value
             $lpa->metadata[$key] = $value;
 
-            if (!$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata)) {
+            if (!$this->getLpaApplicationService()->setMetaData($lpa->id, $lpa->metadata)) {
                 throw new RuntimeException(sprintf('API client failed to set metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
             }
 

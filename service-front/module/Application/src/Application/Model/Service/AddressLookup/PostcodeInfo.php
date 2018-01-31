@@ -2,7 +2,9 @@
 
 namespace Application\Model\Service\AddressLookup;
 
+use Application\Model\Service\AbstractService;
 use MinistryOfJustice;
+use MinistryOfJustice\PostcodeInfo\Client as PostcodeInfoClient;
 use MinistryOfJustice\PostcodeInfo\Response\Address;
 
 /**
@@ -11,8 +13,13 @@ use MinistryOfJustice\PostcodeInfo\Response\Address;
  * Class PostcodeInfo
  * @package Application\Model\Service\AddressLookup
  */
-class PostcodeInfo
+class PostcodeInfo extends AbstractService
 {
+    /**
+     * @var PostcodeInfoClient
+     */
+    private $postCodeInfoClient;
+
     /**
      * Return a list of addresses for a given postcode.
      *
@@ -22,7 +29,7 @@ class PostcodeInfo
     public function lookupPostcode( $postcode )
     {
 
-        $postcodeInfoClient = $this->getServiceLocator()->get('PostcodeInfoClient');
+        $postcodeInfoClient = $this->postCodeInfoClient;
         
         $addresses = $postcodeInfoClient->lookupPostcodeAddresses($postcode);
 
@@ -195,5 +202,10 @@ class PostcodeInfo
         
         return $array;
          
+    }
+
+    public function setPostcodeInfoClient(PostcodeInfoClient $postCodeInfoClient)
+    {
+        $this->postCodeInfoClient = $postCodeInfoClient;
     }
 } // class

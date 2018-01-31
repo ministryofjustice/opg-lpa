@@ -2,12 +2,13 @@
 
 namespace Application\Model\Service\Admin;
 
+use Application\Model\Service\AbstractService;
 use Application\Model\Service\ApiClient\Client as ApiClient;
 use Application\Model\Service\ApiClient\Exception\ResponseException;
 use DateTime;
 use DateTimeZone;
 
-class Admin
+class Admin extends AbstractService
 {
     private $client;
 
