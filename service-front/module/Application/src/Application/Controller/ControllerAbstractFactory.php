@@ -40,12 +40,45 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             ));
         }
 
-        $service = new $requestedName(
-            $serviceLocator->get('FormElementManager'),
-            $serviceLocator->get('AuthenticationService'),
-            $serviceLocator->get('Config'),
-            $serviceLocator->get('Cache')
-        );
+        $formElementManager = $serviceLocator->get('FormElementManager');
+        $authenticationService = $serviceLocator->get('AuthenticationService');
+        $config = $serviceLocator->get('Config');
+        $cache = $serviceLocator->get('Cache');
+
+        if (is_subclass_of($requestedName, AbstractAuthenticatedController::class)) {
+            $sessionManager = $serviceLocator->get('SessionManager');
+            $userDetailsSession = $serviceLocator->get('UserDetailsSession');
+            $lpaApplicationService = $serviceLocator->get('LpaApplicationService');
+            $aboutYouDetails = $serviceLocator->get('AboutYouDetails');
+
+            if (is_subclass_of($requestedName, AbstractLpaController::class)) {
+                $service = new $requestedName(
+                    $formElementManager,
+                    $authenticationService,
+                    $config,
+                    $cache,
+                    $sessionManager,
+                    $userDetailsSession,
+                    $lpaApplicationService,
+                    $aboutYouDetails,
+                    $serviceLocator->get('ApplicantCleanup'),
+                    $serviceLocator->get('ReplacementAttorneyCleanup')
+                );
+            } else {
+                $service = new $requestedName(
+                    $formElementManager,
+                    $authenticationService,
+                    $config,
+                    $cache,
+                    $sessionManager,
+                    $userDetailsSession,
+                    $lpaApplicationService,
+                    $aboutYouDetails
+                );
+            }
+        } else {
+            $service = new $requestedName($formElementManager, $authenticationService, $config, $cache);
+        }
 
         return $service;
     }
