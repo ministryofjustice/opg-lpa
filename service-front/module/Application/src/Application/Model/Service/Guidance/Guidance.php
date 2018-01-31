@@ -1,9 +1,10 @@
 <?php
 namespace Application\Model\Service\Guidance;
 
+use Application\Model\Service\AbstractService;
 use Michelf\Markdown;
 
-class Guidance
+class Guidance extends AbstractService
 {
     const GUIDANCE_MARKDOWN_FOLDER = 'content/guidance';
     const GUIDANCE_ROUTE = 'guide';

@@ -1,9 +1,10 @@
 <?php
 namespace Application\Model\Service\User;
 
+use Application\Model\Service\AbstractService;
 use Opg\Lpa\Logger\LoggerTrait;
 
-class Delete
+class Delete extends AbstractService
 {
     use LoggerTrait;
 
@@ -18,10 +19,10 @@ class Delete
 
         $this->getLogger()->info(
             'Deleting user and all their LPAs', 
-            $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
+            $this->getAuthenticationService()->getIdentity()->toArray()
         );
         
-        return $this->getServiceLocator()->get('ApiClient')->deleteUserAndAllTheirLpas();
+        return $this->getApiClient()->deleteUserAndAllTheirLpas();
 
     } // function
 

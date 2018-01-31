@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\User;
 
+use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\Message as MailMessage;
 use Application\Model\Service\ApiClient\Exception\ResponseException;
 use Opg\Lpa\Logger\LoggerTrait;
@@ -9,16 +10,21 @@ use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 use Exception;
 
-class PasswordReset
+class PasswordReset extends AbstractEmailService
 {
     use LoggerTrait;
+
+    /**
+     * @var Register
+     */
+    private $registerService;
 
     public function requestPasswordResetEmail($email)
     {
         $logger = $this->getLogger();
         $logger->info('User requested password reset email');
 
-        $client = $this->getServiceLocator()->get('ApiClient');
+        $client = $this->getApiClient();
         $resetToken = $client->requestPasswordReset(strtolower($email));
 
         //  A successful response is a string...
@@ -29,7 +35,7 @@ class PasswordReset
 
                     if (isset($body['activation_token'])) {
                         //  If they have not yet activated their account we re-send them the activation link via the register service
-                        $result = $this->getServiceLocator()->get('Register')->sendActivateEmail($email, $body['activation_token'], true);
+                        $result = $this->registerService->sendActivateEmail($email, $body['activation_token'], true);
 
                         return 'account-not-activated';
                     }
@@ -65,8 +71,7 @@ class PasswordReset
     public function isResetTokenValid($restToken)
     {
         // If we can exchange it for a string auth token, then it's valid.
-        $authToken = $this->getServiceLocator()
-                          ->get('ApiClient')
+        $authToken = $this->getApiClient()
                           ->requestPasswordResetAuthToken($restToken);
 
         return is_string($authToken);
@@ -77,7 +82,7 @@ class PasswordReset
         $logger = $this->getLogger();
         $logger->info('Setting new password following password reset');
 
-        $client = $this->getServiceLocator()->get('ApiClient');
+        $client = $this->getApiClient();
         $result = $client->updateAuthPasswordWithToken($restToken, $password);
 
         if ($result !== true) {
@@ -104,7 +109,7 @@ class PasswordReset
 
         $message = new MailMessage();
 
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->getConfig();
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
         $message->addTo($email);
@@ -114,9 +119,7 @@ class PasswordReset
         $message->addCategory('opg-lpa-passwordreset');
         $message->addCategory('opg-lpa-passwordreset-normal');
 
-        $content = $this->getServiceLocator()
-                        ->get('TwigEmailRenderer')
-                        ->loadTemplate('password-reset.twig')->render([
+        $content = $this->getTwigEmailRenderer()->loadTemplate('password-reset.twig')->render([
                             'token' => $token,
                         ]);
 
@@ -135,13 +138,16 @@ class PasswordReset
         $message->setBody($body);
 
         try {
-            $this->getServiceLocator()
-                 ->get('MailTransport')
-                 ->send($message);
+            $this->getMailTransport()->send($message);
         } catch (Exception $e) {
             return "failed-sending-email";
         }
 
         return true;
+    }
+
+    public function setRegisterService(Register $registerService)
+    {
+        $this->registerService = $registerService;
     }
 }

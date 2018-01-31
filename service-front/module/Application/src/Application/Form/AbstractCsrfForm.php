@@ -28,9 +28,7 @@ abstract class AbstractCsrfForm extends AbstractForm
         $csrfName = 'secret_' . md5(get_class($this));
         $csrf = new Csrf($csrfName);
 
-        $csrfSalt = $this->getServiceLocator()
-                         ->getServiceLocator()
-                         ->get('Config')['csrf']['salt'];
+        $csrfSalt = $this->getServiceLocator()->get('Config')['csrf']['salt'];
 
         $csrfValidator = new CsrfValidator([
             'name' => $csrf->getName(),

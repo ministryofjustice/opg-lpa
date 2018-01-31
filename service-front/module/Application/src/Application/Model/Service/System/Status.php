@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\System;
 
+use Application\Model\Service\AbstractService;
 use Exception;
 use Aws\DynamoDb\DynamoDbClient;
 use GuzzleHttp\Client as GuzzleClient;
@@ -12,7 +13,7 @@ use GuzzleHttp\Client as GuzzleClient;
  * Class Status
  * @package Application\Model\Service\System
  */
-class Status
+class Status extends AbstractService
 {
     /**
      * Services:
@@ -80,7 +81,7 @@ class Status
 
         try {
 
-            $config = $this->getServiceLocator()->get('Config')['session']['dynamodb'];
+            $config = $this->getConfig()['session']['dynamodb'];
 
             $client = new DynamoDbClient( $config['client'] );
 
@@ -106,7 +107,7 @@ class Status
 
         try {
 
-            $config = $this->getServiceLocator()->get('Config')['admin']['dynamodb'];
+            $config = $this->getConfig()['admin']['dynamodb'];
 
             $client = new DynamoDbClient( $config['client'] );
 
@@ -133,7 +134,7 @@ class Status
 
         try {
 
-            $config = $this->getServiceLocator()->get('Config')['cron']['lock']['dynamodb'];
+            $config = $this->getConfig()['cron']['lock']['dynamodb'];
 
             $client = new DynamoDbClient( $config['client'] );
 
@@ -174,7 +175,7 @@ class Status
 
         try {
 
-            $config = $this->getServiceLocator()->get('config')['api_client'];
+            $config = $this->getConfig()['api_client'];
 
             $client = new GuzzleClient();
             $client->setDefaultOption('exceptions', false);
@@ -212,7 +213,7 @@ class Status
 
         try {
 
-            $config = $this->getServiceLocator()->get('config')['api_client'];
+            $config = $this->getConfig()['api_client'];
 
             $client = new GuzzleClient();
             $client->setDefaultOption('exceptions', false);

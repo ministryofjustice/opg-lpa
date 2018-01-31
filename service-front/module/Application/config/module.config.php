@@ -28,6 +28,7 @@ return [
 
     'service_manager' => [
         'abstract_factories' => [
+            'Application\Model\Service\ServiceAbstractFactory',
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
         ],
