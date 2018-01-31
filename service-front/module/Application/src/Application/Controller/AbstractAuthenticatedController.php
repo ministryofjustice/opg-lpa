@@ -3,10 +3,17 @@
 namespace Application\Controller;
 
 use Application\Model\Service\Authentication\Identity\User as Identity;
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Model\Service\User\Details as AboutYouDetails;
 use Opg\Lpa\DataModel\User\User;
+use Zend\Authentication\AuthenticationService;
+use Zend\Cache\Storage\StorageInterface;
 use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\AbstractPluginManager;
+use Zend\Session\AbstractContainer;
 use Zend\Session\Container as SessionContainer;
 use Zend\Session\Container;
+use Zend\Session\SessionManager;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use DateTime;
@@ -26,6 +33,55 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
      */
     protected $excludeFromAboutYouCheck = false;
 
+    /**
+     * @var SessionManager
+     */
+    private $sessionManager;
+
+    /**
+     * @var AbstractContainer
+     */
+    private $userDetailsSession;
+
+    /**
+     * @var LpaApplicationService
+     */
+    private $lpaApplicationService;
+
+    /**
+     * @var AboutYouDetails
+     */
+    private $aboutYouDetails;
+
+    /**
+     * AbstractAuthenticatedController constructor.
+     * @param AbstractPluginManager $formElementManager
+     * @param AuthenticationService $authenticationService
+     * @param array $config
+     * @param StorageInterface $cache
+     * @param SessionManager $sessionManager
+     * @param AbstractContainer $userDetailsSession
+     * @param LpaApplicationService $lpaApplicationService
+     * @param AboutYouDetails $aboutYouDetails
+     */
+    public function __construct(
+        AbstractPluginManager $formElementManager,
+        AuthenticationService $authenticationService,
+        array $config,
+        StorageInterface $cache,
+        SessionManager $sessionManager,
+        AbstractContainer $userDetailsSession,
+        LpaApplicationService $lpaApplicationService,
+        AboutYouDetails $aboutYouDetails
+    ) {
+        parent::__construct($formElementManager, $authenticationService, $config, $cache);
+
+
+        $this->sessionManager = $sessionManager;
+        $this->userDetailsSession = $userDetailsSession;
+        $this->lpaApplicationService = $lpaApplicationService;
+        $this->aboutYouDetails = $aboutYouDetails;
+    }
 
     /**
      * Do some pre-dispatch checks...
@@ -80,7 +136,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         //----------------------------------------------------------------------
         // Load the user's details and ensure the required details are included
 
-        $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
+        $detailsContainer = $this->userDetailsSession;
 
         //  Check to see if the user object is present and well formed
         if (isset($detailsContainer->user)) {
@@ -92,7 +148,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
                 //  If seems there is a user associated with the session but it is not well formed
                 //  Therefore destroy the session and logout the user
                 $this->getAuthenticationService()->clearIdentity();
-                $this->getServiceLocator()->get('SessionManager')->destroy([
+                $this->sessionManager->destroy([
                     'clear_storage' => true
                 ]);
 
@@ -103,7 +159,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         }
 
         if (!isset($detailsContainer->user) || is_null($detailsContainer->user->name)) {
-            $userDetails = $this->getServiceLocator()->get('AboutYouDetails')->load();
+            $userDetails = $this->aboutYouDetails->load();
 
             // If the user details do not at least have a name
             // And we're not trying to set the details via the AboutYouController...
@@ -161,7 +217,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
      */
     public function getUserDetails(){
 
-        $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
+        $detailsContainer = $this->userDetailsSession;
 
         if( !isset($detailsContainer->user) ){
             return null;
@@ -174,10 +230,11 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     /**
      * Returns an instance of the LPA Application Service.
      *
-     * @return object
+     * @return LpaApplicationService
      */
-    protected function getLpaApplicationService(){
-        return $this->getServiceLocator()->get('LpaApplicationService');
+    protected function getLpaApplicationService(): LpaApplicationService
+    {
+        return $this->lpaApplicationService;
     }
 
 
