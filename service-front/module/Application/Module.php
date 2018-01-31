@@ -141,7 +141,7 @@ class Module
             ],
             'invokables' => [
                 'AuthenticationService'                 => 'Application\Model\Service\Authentication\AuthenticationService',
-                'PasswordReset'                         => 'Application\Model\Service\User\PasswordReset',
+                /*'PasswordReset'                         => 'Application\Model\Service\User\PasswordReset',
                 'Register'                              => 'Application\Model\Service\User\Register',
                 'AboutYouDetails'                       => 'Application\Model\Service\User\Details',
                 'DeleteUser'                            => 'Application\Model\Service\User\Delete',
@@ -153,7 +153,7 @@ class Module
                 'Metadata'                              => 'Application\Model\Service\Lpa\Metadata',
                 'Communication'                         => 'Application\Model\Service\Lpa\Communication',
                 'PostcodeInfo'                          => 'Application\Model\Service\AddressLookup\PostcodeInfo',
-                'SiteStatus'                            => 'Application\Model\Service\System\Status',
+                'SiteStatus'                            => 'Application\Model\Service\System\Status',*/
                 'ReplacementAttorneyCleanup'            => 'Application\Model\Service\Lpa\ReplacementAttorneyCleanup',
                 'ApplicantCleanup'                      => 'Application\Model\Service\Lpa\ApplicantCleanup',
             ],
