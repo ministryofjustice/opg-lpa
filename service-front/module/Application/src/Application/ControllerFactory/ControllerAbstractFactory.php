@@ -125,6 +125,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             ));
         }
 
+        $serviceLocator = $serviceLocator->getServiceLocator();
+
         $controllerName = $this->getControllerName($requestedName);
 
         $formElementManager = $serviceLocator->get('FormElementManager');
