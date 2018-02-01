@@ -3,20 +3,26 @@
 namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
+use Application\Form\AbstractCsrfForm;
+use Application\Form\Fieldset\Csrf;
+use Application\Form\Validator\Csrf as CsrfValidator;
 use Application\Model\Service\Admin\Admin as AdminService;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
 use Opg\Lpa\Logger\LoggerTrait;
+use Zend\Form\Form;
+use Zend\ModuleManager\Feature\FormElementProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayUtils;
 use Zend\View\Model\ViewModel;
 
-class Module
+class Module implements FormElementProviderInterface
 {
     use LoggerTrait;
 
@@ -377,4 +383,24 @@ class Module
 
     }
 
+    /**
+     * Expected to return \Zend\ServiceManager\Config object or array to
+     * seed such an object.
+     *
+     * @return array|\Zend\ServiceManager\Config
+     */
+    public function getFormElementConfig()
+    {
+        return [
+            'initializers' => [
+                'InitCsrfForm' => function($form, AbstractPluginManager $formElementManager) {
+                    if ($form instanceof AbstractCsrfForm) {
+                        $serviceLocator = $formElementManager->getServiceLocator();
+                        $config = $serviceLocator->get('Config');
+                        $form->setConfig($config);
+                    }
+                },
+            ],
+        ];
+    }
 } // class
