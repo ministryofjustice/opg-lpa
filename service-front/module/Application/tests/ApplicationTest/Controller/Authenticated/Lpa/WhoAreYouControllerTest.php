@@ -33,7 +33,6 @@ class WhoAreYouControllerTest extends AbstractControllerTest
      * @var MockInterface|Select
      */
     private $whoOptions;
-    private $professional;
     /**
      * @var MockInterface|Select
      */
@@ -56,9 +55,13 @@ class WhoAreYouControllerTest extends AbstractControllerTest
             'value_options' => [
                 'donor' => ['value' => 'donor'],
                 'friendOrFamily' => ['value' => 'friendOrFamily'],
-                'professional' => ['value' => 'professional'],
+                'financeProfessional' => ['value' => 'financeProfessional'],
+                'legalProfessional' => ['value' => 'legalProfessional'],
+                'estatePlanningProfessional' => ['value' => 'estatePlanningProfessional'],
                 'digitalPartner' => ['value' => 'digitalPartner'],
+                'charity' => ['value' => 'charity'],
                 'organisation' => ['value' => 'organisation'],
+                'other' => ['value' => 'other'],
                 'notSaid' => ['value' => 'notSaid']
             ]
         ];
@@ -66,16 +69,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->whoOptions = Mockery::mock(Select::class);
         $this->whoOptions->shouldReceive('getOptions')->andReturn($this->who);
 
-        $this->professional = [
-            'value_options' => [
-                'solicitor' => ['value' => 'solicitor'],
-                'will-writer' => ['value' => 'will-writer'],
-                'other' => ['value' => 'other']
-            ]
-        ];
-
         $this->professionalOptions = Mockery::mock(Select::class);
-        $this->professionalOptions->shouldReceive('getOptions')->andReturn($this->professional);
     }
 
     /**
@@ -110,9 +104,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->setFormAction($this->form, $this->lpa, 'lpa/who-are-you');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('get')->withArgs(['who'])->andReturn($this->whoOptions)->once();
-        $this->form->shouldReceive('get')->withArgs(['professional'])->andReturn($this->professionalOptions)->once();
-        $this->whoOptions->shouldReceive('getValue')->andReturn('')->times(6);
-        $this->professionalOptions->shouldReceive('getValue')->andReturn('')->times(3);
+        $this->whoOptions->shouldReceive('getValue')->andReturn('')->times(10);
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -120,8 +112,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals(6, count($result->getVariable('whoOptions')));
-        $this->assertEquals(3, count($result->getVariable('professionalOptions')));
+        $this->assertEquals(10, count($result->getVariable('whoOptions')));
     }
 
     public function testIndexActionPostInvalid()
@@ -132,9 +123,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->setFormAction($this->form, $this->lpa, 'lpa/who-are-you');
         $this->setPostInvalid($this->form);
         $this->form->shouldReceive('get')->withArgs(['who'])->andReturn($this->whoOptions)->once();
-        $this->form->shouldReceive('get')->withArgs(['professional'])->andReturn($this->professionalOptions)->once();
-        $this->whoOptions->shouldReceive('getValue')->andReturn('')->times(6);
-        $this->professionalOptions->shouldReceive('getValue')->andReturn('')->times(3);
+        $this->whoOptions->shouldReceive('getValue')->andReturn('')->times(10);
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -142,8 +131,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals(6, count($result->getVariable('whoOptions')));
-        $this->assertEquals(3, count($result->getVariable('professionalOptions')));
+        $this->assertEquals(10, count($result->getVariable('whoOptions')));
     }
 
     /**

@@ -45,7 +45,6 @@ class WhoAreYouController extends AbstractLpaController
         }
 
         $who            = $form->get('who');
-        $professional   = $form->get('professional');
 
         $whoOptions = [];
 
@@ -69,14 +68,34 @@ class WhoAreYouController extends AbstractLpaController
                 'checked' => (($who->getValue() == 'friendOrFamily')? 'checked':null),
         ]);
 
-        $whoOptions['professional'] = new Element('who', [
-                'label' => "A paid professional made the LPA on the donor's behalf",
+        $whoOptions['finance-professional'] = new Element('who', [
+                'label' => "A paid finance professional made the LPA on the donor's behalf",
         ]);
-        $whoOptions['professional']->setAttributes([
+        $whoOptions['finance-professional']->setAttributes([
                 'type' => 'radio',
-                'id' => 'who-professional',
-                'value' => $who->getOptions()['value_options']['professional']['value'],
-                'checked' => (($who->getValue() == 'professional')? 'checked':null),
+                'id' => 'who-finance-professional',
+                'value' => $who->getOptions()['value_options']['financeProfessional']['value'],
+                'checked' => (($who->getValue() == 'financeProfessional')? 'checked':null),
+        ]);
+
+        $whoOptions['legal-professional'] = new Element('who', [
+                'label' => "A paid legal professional made the LPA on the donor's behalf",
+        ]);
+        $whoOptions['legal-professional']->setAttributes([
+                'type' => 'radio',
+                'id' => 'who-legal-professional',
+                'value' => $who->getOptions()['value_options']['legalProfessional']['value'],
+                'checked' => (($who->getValue() == 'legalProfessional')? 'checked':null),
+        ]);
+
+        $whoOptions['estate-planning-professional'] = new Element('who', [
+                'label' => "A paid estate planning professional made the LPA on the donor's behalf",
+        ]);
+        $whoOptions['estate-planning-professional']->setAttributes([
+                'type' => 'radio',
+                'id' => 'who-estate-planning-professional',
+                'value' => $who->getOptions()['value_options']['estatePlanningProfessional']['value'],
+                'checked' => (($who->getValue() == 'estatePlanningProfessional')? 'checked':null),
         ]);
 
         $whoOptions['digital-partner'] = new Element('who', [
@@ -89,14 +108,34 @@ class WhoAreYouController extends AbstractLpaController
                 'checked' => (($who->getValue() == 'digitalPartner')? 'checked':null),
         ]);
 
+        $whoOptions['charity'] = new Element('who', [
+            'label' => "A Charity made the LPA on the donor's behalf",
+        ]);
+        $whoOptions['charity']->setAttributes([
+            'type' => 'radio',
+            'id' => 'who-charity',
+            'value' => $who->getOptions()['value_options']['charity']['value'],
+            'checked' => (($who->getValue() == 'charity')? 'checked':null),
+        ]);
+
         $whoOptions['organisation'] = new Element('who', [
-                'label' => "Another organisation, such as a charity, council or community group, helped the donor",
+                'label' => "Another organisation, such as a council or community group, helped the donor",
         ]);
         $whoOptions['organisation']->setAttributes([
                 'type' => 'radio',
                 'id' => 'who-organisation',
                 'value' => $who->getOptions()['value_options']['organisation']['value'],
                 'checked' => (($who->getValue() == 'organisation')? 'checked':null),
+        ]);
+
+        $whoOptions['other'] = new Element('who', [
+                'label' => "Other",
+        ]);
+        $whoOptions['other']->setAttributes([
+                'type' => 'radio',
+                'id' => 'who-other',
+                'value' => $who->getOptions()['value_options']['other']['value'],
+                'checked' => (($who->getValue() == 'other')? 'checked':null),
         ]);
 
         $whoOptions['notSaid'] = new Element('who', [
@@ -109,41 +148,9 @@ class WhoAreYouController extends AbstractLpaController
                 'checked' => (($who->getValue() == 'notSaid')? 'checked':null),
         ]);
 
-        $professionalOptions = [];
-        $professionalOptions['solicitor'] = new Element('professional', [
-                'label' => "Solicitor",
-        ]);
-        $professionalOptions['solicitor']->setAttributes([
-                'type' => 'radio',
-                'id' => 'professional-solicitor',
-                'value' => $professional->getOptions()['value_options']['solicitor']['value'],
-                'checked' => (($professional->getValue() == 'solicitor')? 'checked':null),
-        ]);
-
-        $professionalOptions['will-writer'] = new Element('professional', [
-                'label' => "Will-writer",
-        ]);
-        $professionalOptions['will-writer']->setAttributes([
-                'type' => 'radio',
-                'id' => 'professional-will-writer',
-                'value' => $professional->getOptions()['value_options']['will-writer']['value'],
-                'checked' => (($professional->getValue() == 'will-writer')? 'checked':null),
-        ]);
-
-        $professionalOptions['other'] = new Element('professional', [
-                'label' => "Other",
-        ]);
-        $professionalOptions['other']->setAttributes([
-                'type' => 'radio',
-                'id' => 'professional-other',
-                'value' => $professional->getOptions()['value_options']['other']['value'],
-                'checked' => (($professional->getValue() == 'other')? 'checked':null),
-        ]);
-
         return new ViewModel([
             'form'                => $form,
             'whoOptions'          => $whoOptions,
-            'professionalOptions' => $professionalOptions,
         ]);
     }
 }
