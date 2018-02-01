@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5b5a53607106f29b2f1e7c2880f2a516",
+    "content-hash": "a10b078f47c3aecb99d1f39972b01ef0",
     "packages": [
         {
             "name": "alphagov/pay-integration-php",
