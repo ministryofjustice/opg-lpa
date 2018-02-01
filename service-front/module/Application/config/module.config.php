@@ -49,6 +49,12 @@ return [
         ],
     ],
 
+    'form_elements' => [
+        'abstract_factories' => [
+            //'Application\Form\AbstractCsrfFormFactory',
+        ]
+    ],
+
     /*
     'translator' => [
         'locale' => 'en_US',
