@@ -4,7 +4,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Alphagov\Pay\Client as GovPayClient;
 use Application\Controller\AbstractLpaController;
-use Application\Model\Service\Payment as PaymentService;
+use Application\Model\Service\Payment\Payment as PaymentService;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Payment\Helper\LpaIdHelper;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -154,7 +154,7 @@ class CheckoutController extends AbstractLpaController
         //---
 
         // Send confirmation email.
-        $this->$this->communicationService->sendRegistrationCompleteEmail($lpa);
+        $this->communicationService->sendRegistrationCompleteEmail($lpa);
 
         //  Don't use the next route function here - just go directly to the completed view
         return $this->redirect()->toRoute('lpa/complete', [
@@ -387,7 +387,7 @@ class CheckoutController extends AbstractLpaController
 
         $paymentService = $this->paymentService;
 
-        $paymentService->verifyMacString($params, $this->getLpa()->id);
+        $paymentService->verifyMacString($params);
         $paymentService->verifyOrderKey($params, $this->getLpa()->id);
 
         // The above functions throw fatal exceptions if there are any issues.
