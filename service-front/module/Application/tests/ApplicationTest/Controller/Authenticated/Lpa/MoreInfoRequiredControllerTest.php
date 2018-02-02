@@ -22,8 +22,7 @@ class MoreInfoRequiredControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new MoreInfoRequiredController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(MoreInfoRequiredController::class);
 
         $this->lpa = FixturesData::getPfLpa();
     }

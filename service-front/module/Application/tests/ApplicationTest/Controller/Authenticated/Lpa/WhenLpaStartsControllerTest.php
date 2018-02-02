@@ -34,8 +34,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new WhenLpaStartsController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(WhenLpaStartsController::class);
 
         $this->form = Mockery::mock(WhenLpaStartsForm::class);
         $this->lpa = FixturesData::getPfLpa();

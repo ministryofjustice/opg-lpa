@@ -40,8 +40,7 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new AdminController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(AdminController::class);
 
         $this->systemMessageForm = Mockery::mock(SystemMessageForm::class);
         $this->formElementManager->shouldReceive('get')

@@ -37,8 +37,7 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
 
     public function setUp()
     {
-        $this->controller = new HowPrimaryAttorneysMakeDecisionController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(HowPrimaryAttorneysMakeDecisionController::class);
 
         $this->form = Mockery::mock(HowAttorneysMakeDecisionForm::class);
         $this->lpa = FixturesData::getPfLpa();
@@ -147,10 +146,6 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
             })->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('getApplication')
             ->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/how-primary-attorneys-make-decision');
         $this->setRedirectToRoute('lpa/replacement-attorney', $this->lpa, $response);

@@ -35,15 +35,14 @@ class FeedbackControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new FeedbackController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(FeedbackController::class);
 
         $this->form = Mockery::mock(Feedback::class);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\General\FeedbackForm'])->andReturn($this->form);
 
         $this->feedbackService = Mockery::mock(Feedback::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['Feedback'])->andReturn($this->feedbackService);
+        $this->controller->setFeedbackService($this->feedbackService);
 
         $_SERVER['HTTP_USER_AGENT'] = 'UnitTester';
     }

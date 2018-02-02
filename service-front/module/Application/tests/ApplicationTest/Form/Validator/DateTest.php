@@ -3,9 +3,10 @@
 namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Validator\Date;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PHPUnit\Framework\TestCase;
 
-class DateTest extends TestCase
+class DateTest extends MockeryTestCase
 {
     /**
      * @dataProvider getTestDates

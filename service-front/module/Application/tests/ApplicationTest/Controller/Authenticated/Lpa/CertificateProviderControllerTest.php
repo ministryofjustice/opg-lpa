@@ -37,8 +37,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new TestableCertificateProviderController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(TestableCertificateProviderController::class);
 
         $this->user = FixturesData::getUser();
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());

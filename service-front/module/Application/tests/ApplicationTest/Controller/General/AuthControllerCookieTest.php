@@ -26,8 +26,7 @@ class AuthControllerCookieTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new AuthController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(AuthController::class);
 
         $this->identity = Mockery::mock(User::class);
     }

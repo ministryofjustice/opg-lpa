@@ -3,6 +3,7 @@
 namespace ApplicationTest\View\Helper;
 
 use Application\View\Helper\Accordion;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use PHPUnit\Framework\TestCase;
@@ -10,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * AccordionTest
  */
-class AccordionTest extends TestCase
+class AccordionTest extends MockeryTestCase
 {
     public function testLpaType()
     {

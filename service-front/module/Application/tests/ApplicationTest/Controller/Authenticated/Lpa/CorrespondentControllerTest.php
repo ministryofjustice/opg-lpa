@@ -66,8 +66,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new TestableCorrespondentController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(TestableCorrespondentController::class);
 
         $this->user = FixturesData::getUser();
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());

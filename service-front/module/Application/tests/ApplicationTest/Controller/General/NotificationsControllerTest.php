@@ -38,8 +38,7 @@ class NotificationsControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new NotificationsController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(NotificationsController::class);
 
         $this->validToken = $token = Mockery::mock(HeaderInterface::class);
         $this->validToken->shouldReceive('getFieldValue')->andReturn('validAccountCleanupToken');
@@ -51,12 +50,10 @@ class NotificationsControllerTest extends AbstractControllerTest
         ];
 
         $this->twigEmailRenderer = Mockery::mock(Twig_Environment::class);
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['TwigEmailRenderer'])->andReturn($this->twigEmailRenderer);
+        $this->controller->setTwigEmailRenderer($this->twigEmailRenderer);
 
         $this->mailTransport = Mockery::mock(SendGrid::class);
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['MailTransport'])->andReturn($this->mailTransport);
+        $this->controller->setMailTransport($this->mailTransport);
     }
 
     public function testIndexAction()
