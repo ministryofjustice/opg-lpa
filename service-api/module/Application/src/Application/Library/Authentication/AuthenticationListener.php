@@ -1,13 +1,12 @@
 <?php
+
 namespace Application\Library\Authentication;
 
 use Opg\Lpa\Logger\LoggerTrait;
+use Zend\Authentication\Result as AuthenticationResult;
 use Zend\Mvc\MvcEvent;
-
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
-
-use Zend\Authentication\Result as AuthenticationResult;
 
 /**
  * Authenticate the user from a header token.
@@ -23,9 +22,12 @@ class AuthenticationListener
 
     public function authenticate(MvcEvent $e)
     {
-        $auth = $e->getApplication()->getServiceManager()->get('AuthenticationService');
+        $serviceManager = $e->getApplication()->getServiceManager();
 
-        $config = $e->getApplication()->getServiceManager()->get('Config');
+        $authService = $serviceManager->get('AuthenticationService');
+
+        $config = $serviceManager->get('Config');
+        $authConfig = $config['authentication'];
 
         /*
          * Do some authentication. Initially this will will just be via the token passed from front-2.
@@ -37,19 +39,28 @@ class AuthenticationListener
         $token = $e->getRequest()->getHeader('Token');
 
         if (!$token) {
-            // No token; set Guest....
-            $auth->getStorage()->write(new Identity\Guest());
+            //  Check to see if this is a request from the auth service to clean up data
+            $token = $e->getRequest()->getHeader('AuthCleanUpToken');
 
-            $this->getLogger()->info('No token, guest set in Authentication Listener');
+            if ($token && trim($token->getFieldValue()) == $authConfig['clean-up-token']) {
+                //  Set identity as the auth service
+                $authService->getStorage()->write(new Identity\AuthService());
+
+                $this->getLogger()->info('Authentication success - auth service for clean up');
+            } else {
+                //  No token; set Guest....
+                $authService->getStorage()->write(new Identity\Guest());
+
+                $this->getLogger()->info('No token, guest set in Authentication Listener');
+            }
         } else {
             $token = trim($token->getFieldValue());
 
             $this->getLogger()->info('Authentication attempt - token supplied');
 
-            $authAdapter = new Adapter\LpaAuth($token, $config['authentication']['endpoint'], $config['admin']);
-
-            // If successful, the identity will be persisted for the request.
-            $result = $auth->authenticate($authAdapter);
+            //  Attempt to authenticate - if successful the identity will be persisted for the request
+            $authAdapter = new Adapter\LpaAuth($token, $authConfig['endpoint'], $config['admin']);
+            $result = $authService->authenticate($authAdapter);
 
             if (AuthenticationResult::SUCCESS !== $result->getCode()) {
                 $this->getLogger()->info('Authentication failed');
@@ -57,8 +68,6 @@ class AuthenticationListener
                 return new ApiProblemResponse(new ApiProblem(401, 'Invalid authentication token'));
             } else {
                 $this->getLogger()->info('Authentication success');
-
-                // On SUCCESS, we don't return anything (as we're in a Listener).
             }
         }
     }

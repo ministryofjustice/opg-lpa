@@ -1,7 +1,20 @@
 <?php
+
 namespace Application\Library\Authentication\Identity;
 
-abstract class AbstractIdentity implements IdentityInterface {
+abstract class AbstractIdentity implements IdentityInterface
+{
+    protected $id = null;
 
+    protected $roles = [];
 
-} // abstract class
+    public function id()
+    {
+        return $this->id;
+    }
+
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+}

@@ -10,6 +10,7 @@ return array(
     'authentication' => [
         'ping' => getenv('OPG_LPA_API_ENDPOINTS_AUTH_PING') ?: 'https://authv2/ping',
         'endpoint' => getenv('OPG_LPA_API_ENDPOINTS_AUTH') ?: 'https://authv2/v1/authenticate',
+        'clean-up-token' => getenv('OPG_LPA_COMMON_AUTH_CLEANUP_TOKEN'),
     ],
 
     'admin' => [
@@ -88,7 +89,7 @@ return array(
     ],
 
     'pdf' => [
-        
+
         'encryption' => [
             // Keys MUST be a 32 character ASCII string
             'keys' => [
