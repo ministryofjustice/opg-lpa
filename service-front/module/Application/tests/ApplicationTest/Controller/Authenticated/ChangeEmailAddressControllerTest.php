@@ -21,25 +21,17 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
      * @var MockInterface|ChangeEmailAddress
      */
     private $form;
-    /**
-     * @var MockInterface|Details
-     */
-    private $aboutYouDetails;
     private $postData = [
         'email' => 'newunit@test.com'
     ];
 
     public function setUp()
     {
-        $this->controller = new ChangeEmailAddressController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(ChangeEmailAddressController::class);
 
         $this->form = Mockery::mock(ChangeEmailAddress::class);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\User\ChangeEmailAddress'])->andReturn($this->form);
-
-        $this->aboutYouDetails = Mockery::mock(Details::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['AboutYouDetails'])->andReturn($this->aboutYouDetails);
 
         $this->user = FixturesData::getUser();
         $this->userDetailsSession->user = $this->user;

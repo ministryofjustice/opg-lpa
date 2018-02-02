@@ -16,18 +16,11 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
      * @var VerifyEmailAddressController
      */
     private $controller;
-    /**
-     * @var MockInterface|Details
-     */
-    private $aboutYouDetails;
 
     public function setUp()
     {
-        $this->controller = new VerifyEmailAddressController();
-        parent::controllerSetUp($this->controller);
-
-        $this->aboutYouDetails = Mockery::mock(Details::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['AboutYouDetails'])->andReturn($this->aboutYouDetails);
+        $this->controller = parent::controllerSetUp(VerifyEmailAddressController::class);
+        $this->controller->setAboutYouDetails($this->aboutYouDetails);
     }
 
     public function testIndexAction()
@@ -44,7 +37,6 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->storage->shouldReceive('clear')->once();
         $this->sessionManager->shouldReceive('initialise')->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('InvalidToken')->once();
         $this->aboutYouDetails->shouldReceive('updateEmailUsingToken')
@@ -62,7 +54,6 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->storage->shouldReceive('clear')->once();
         $this->sessionManager->shouldReceive('initialise')->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('ValidToken')->once();
         $this->aboutYouDetails->shouldReceive('updateEmailUsingToken')

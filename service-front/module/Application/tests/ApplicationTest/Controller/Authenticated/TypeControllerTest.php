@@ -33,8 +33,7 @@ class TypeControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new TypeController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(TypeController::class);
 
         $this->form = Mockery::mock(TypeForm::class);
         $this->formElementManager->shouldReceive('get')

@@ -39,8 +39,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new RepeatApplicationController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(RepeatApplicationController::class);
 
         $this->user = FixturesData::getUser();
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());

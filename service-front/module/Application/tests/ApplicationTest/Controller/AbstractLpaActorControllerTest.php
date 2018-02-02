@@ -24,8 +24,7 @@ class AbstractLpaActorControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new TestableAbstractLpaActorController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(TestableAbstractLpaActorController::class);
 
         $this->user = FixturesData::getUser();
         $this->userIdentity = new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime());

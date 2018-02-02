@@ -4,6 +4,7 @@ namespace ApplicationTest\Model;
 
 use Application\Model\FormFlowChecker;
 use ApplicationTest\Bootstrap;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
@@ -27,7 +28,7 @@ use RuntimeException;
  * This set of unit tests with execute sequentially starting with a basic LPA datamodel - which will
  * check the correct position in the flow to return the user to
  */
-class FormFlowCheckerTest extends TestCase
+class FormFlowCheckerTest extends MockeryTestCase
 {
     /**
      * LPA document to test

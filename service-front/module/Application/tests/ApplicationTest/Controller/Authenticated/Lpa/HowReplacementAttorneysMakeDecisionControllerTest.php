@@ -35,8 +35,7 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
 
     public function setUp()
     {
-        $this->controller = new HowReplacementAttorneysMakeDecisionController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(HowReplacementAttorneysMakeDecisionController::class);
 
         $this->form = Mockery::mock(HowAttorneysMakeDecisionForm::class);
         $this->lpa = FixturesData::getPfLpa();

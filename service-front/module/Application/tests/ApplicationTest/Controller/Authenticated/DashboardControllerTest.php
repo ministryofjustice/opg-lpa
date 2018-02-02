@@ -30,11 +30,10 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new TestableDashboardController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(TestableDashboardController::class);
 
         $this->applicationList = Mockery::mock(ApplicationList::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['ApplicationList'])->andReturn($this->applicationList);
+        $this->controller->setApplicationList($this->applicationList);
 
         $this->user = FixturesData::getUser();
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
@@ -240,7 +239,7 @@ class DashboardControllerTest extends AbstractControllerTest
         $routeMatch = $this->getRouteMatch($this->controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $lpa = FixturesData::getPfLpa();
-        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
+        $this->authenticationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -260,7 +259,7 @@ class DashboardControllerTest extends AbstractControllerTest
         $this->controller->setEvent($event);
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $lpa = FixturesData::getPfLpa();
-        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
+        $this->authenticationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
 
         /** @var ViewModel $result */
@@ -285,12 +284,8 @@ class DashboardControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->storage->shouldReceive('offsetExists')->withArgs(['PreAuthRequest'])->andReturn(true)->never();
         $this->sessionManager->shouldReceive('start')->never();
         $preAuthRequest = new ArrayObject(['url' => 'https://localhost/user/about-you']);
-        $this->storage->shouldReceive('offsetGet')->withArgs(['PreAuthRequest'])->andReturn($preAuthRequest)->never();
-        $this->storage->shouldReceive('getMetadata')->withArgs(['PreAuthRequest'])->never();
-        $this->storage->shouldReceive('getRequestAccessTime')->never();
         $this->request->shouldReceive('getUri')->never();
 
         $this->redirect->shouldReceive('toRoute')

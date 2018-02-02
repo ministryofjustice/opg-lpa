@@ -23,8 +23,7 @@ class IndexControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new IndexController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(IndexController::class);
 
         $this->lpa = FixturesData::getPfLpa();
     }

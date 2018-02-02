@@ -36,8 +36,8 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new TestableReuseDetailsController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(TestableReuseDetailsController::class);
+        $this->controller->setRouter($this->router);
 
         $this->user = FixturesData::getUser();
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());

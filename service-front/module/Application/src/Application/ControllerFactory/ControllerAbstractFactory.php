@@ -19,6 +19,7 @@ use Application\Controller\General\NotificationsController;
 use Application\Controller\General\PingController;
 use Application\Controller\General\RegisterController;
 use Application\Controller\General\SendgridController;
+use Application\Controller\General\StatsController;
 use Application\Controller\General\VerifyEmailAddressController;
 use Exception;
 use RuntimeException;
@@ -88,6 +89,9 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         ],
         VerifyEmailAddressController::class => [
             'setAboutYouDetails' => 'AboutYouDetails'
+        ],
+        StatsController::class => [
+            'setLpaApplicationService' => 'LpaApplicationService'
         ],
     ];
 

@@ -4,11 +4,12 @@ namespace ApplicationTest\Model\Service\Lpa;
 
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use OpgTest\Lpa\DataModel\FixturesData;
 use PHPUnit\Framework\TestCase;
 
-class ApplicantCleanupTest extends TestCase
+class ApplicantCleanupTest extends MockeryTestCase
 {
     public function testCleanUpValid()
     {
