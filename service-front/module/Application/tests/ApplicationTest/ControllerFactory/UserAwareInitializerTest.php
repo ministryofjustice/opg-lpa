@@ -6,10 +6,10 @@ use Application\ControllerFactory\UserAwareInitializer;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User;
 use Mockery;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class UserAwareInitializerTest extends TestCase
+class UserAwareInitializerTest extends MockeryTestCase
 {
     /**
      * @var UserAwareInitializer
@@ -57,10 +57,5 @@ class UserAwareInitializerTest extends TestCase
         $instance->shouldReceive('setUser')->once();
         $result = $this->initializer->initialize($instance, $this->serviceLocator);
         $this->assertNull($result);
-    }
-
-    public function tearDown()
-    {
-        Mockery::close();
     }
 }

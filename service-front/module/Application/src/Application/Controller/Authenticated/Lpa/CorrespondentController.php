@@ -26,8 +26,7 @@ class CorrespondentController extends AbstractLpaActorController
     public function indexAction()
     {
         //  Set hidden form for saving applicant as the default correspondent
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Lpa\CorrespondenceForm', [
                          'lpa' => $this->getLpa()
                      ]);
@@ -211,7 +210,7 @@ class CorrespondentController extends AbstractLpaActorController
             }
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\CorrespondentForm');
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\CorrespondentForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/correspondent/edit', ['lpa-id' => $this->getLpa()->id]));
 
         if ($this->request->isPost()) {

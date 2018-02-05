@@ -38,8 +38,8 @@ class AuthControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new AuthController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(AuthController::class);
+        $this->controller->setAuthenticationAdapter($this->authenticationAdapter);
 
         $this->identity = Mockery::mock(User::class);
 
@@ -56,8 +56,6 @@ class AuthControllerTest extends AbstractControllerTest
         $this->authenticationService->shouldReceive('getIdentity')->andReturn(null);
 
         $this->url->shouldReceive('fromRoute')->withArgs(['login'])->andReturn('login');
-
-        $this->storage->shouldReceive('clear');
 
         $this->sessionManager->shouldReceive('initialise');
     }
@@ -181,7 +179,7 @@ class AuthControllerTest extends AbstractControllerTest
 
         $lpa = new Lpa();
         $lpa->id = 3503563157;
-        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpa->id])->andReturn($lpa);
+        $this->authenticationService->shouldReceive('getApplication')->withArgs([$lpa->id])->andReturn($lpa);
 
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/form-type', ['lpa-id' => $lpa->id], []])->andReturn($response)->once();
@@ -223,12 +221,6 @@ class AuthControllerTest extends AbstractControllerTest
     private function setPreAuthRequestUrl($url)
     {
         $this->sessionManager->shouldReceive('start')->once();
-        $this->storage->shouldReceive('offsetExists')
-            ->withArgs(['PreAuthRequest'])->andReturn(true)->atLeast()->once();
-        $preAuthRequest = new ArrayObject(['url' => $url]);
-        $this->storage->shouldReceive('offsetGet')
-            ->withArgs(['PreAuthRequest'])->andReturn($preAuthRequest)->atLeast()->once();
-        $this->storage->shouldReceive('getMetadata')->withArgs(['PreAuthRequest'])->atLeast()->once();
-        $this->storage->shouldReceive('getRequestAccessTime')->atLeast()->once();
+        $this->storage->offsetSet('PreAuthRequest', new ArrayObject(['url' => $url]));
     }
 }

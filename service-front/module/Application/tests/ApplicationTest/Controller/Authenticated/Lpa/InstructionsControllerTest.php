@@ -34,8 +34,7 @@ class InstructionsControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new InstructionsController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(InstructionsController::class);
 
         $this->form = Mockery::mock(InstructionsAndPreferencesForm::class);
         $this->lpa = FixturesData::getPfLpa();

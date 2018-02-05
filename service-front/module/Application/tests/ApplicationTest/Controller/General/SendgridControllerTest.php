@@ -36,15 +36,12 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new SendgridController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(SendgridController::class);
 
         $this->twigEmailRenderer = Mockery::mock(Twig_Environment::class);
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['TwigEmailRenderer'])->andReturn($this->twigEmailRenderer);
+        $this->controller->setTwigEmailRenderer($this->twigEmailRenderer);
 
         $this->mailTransport = Mockery::mock(SendGrid::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['MailTransport'])->andReturn($this->mailTransport);
     }
 
     public function testIndexAction()

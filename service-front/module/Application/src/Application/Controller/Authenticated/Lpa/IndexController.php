@@ -23,7 +23,7 @@ class IndexController extends AbstractLpaController
         $analyticsReturnCount = (isset($lpa->metadata['analyticsReturnCount']) ? $lpa->metadata['analyticsReturnCount'] : 0);
         $analyticsReturnCount++;
 
-        $this->getServiceLocator()->get('Metadata')->setAnalyticsReturnCount($this->getLpa(), $analyticsReturnCount);
+        $this->getMetadata()->setAnalyticsReturnCount($this->getLpa(), $analyticsReturnCount);
 
         $destinationRoute = $this->getFlowChecker()->backToForm();
 

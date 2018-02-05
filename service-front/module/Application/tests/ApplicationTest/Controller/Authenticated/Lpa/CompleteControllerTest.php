@@ -19,8 +19,7 @@ class CompleteControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new CompleteController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(CompleteController::class);
     }
 
     /**

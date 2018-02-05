@@ -33,16 +33,7 @@ trait FormTestSetupTrait
             ]
         ];
 
-        $sl = m::mock('Zend\ServiceManager\ServiceLocatorInterface');
-        $sl->shouldReceive('get')
-            ->withArgs(['Config'])
-            ->andReturn($config);
-
-        $fem = m::mock('Zend\Form\FormElementManager');
-        $fem->shouldReceive('getServiceLocator')
-            ->andReturn($sl);
-
-        $form->setServiceLocator($fem);
+        $form->setConfig($config);
         $form->init();
 
         $this->form = $form;

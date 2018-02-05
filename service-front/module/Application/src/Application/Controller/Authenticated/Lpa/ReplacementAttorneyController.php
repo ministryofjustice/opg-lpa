@@ -16,7 +16,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         $lpa = $this->getLpa();
 
         // set hidden form for saving empty array to replacement attorneys.
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\BlankMainFlowForm', [
             'lpa' => $lpa
         ]);
 
@@ -25,7 +25,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
             if ($form->isValid()) {
                 // set user has confirmed if there are replacement attorneys
-                $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($this->getLpa());
+                $this->getMetadata()->setReplacementAttorneysConfirmed($this->getLpa());
 
                 return $this->moveToNextRoute();
             }
@@ -78,7 +78,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\AttorneyForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/replacement-attorney/add', ['lpa-id' => $lpaId]));
         $form->setExistingActorNamesData($this->getActorsList());
 
@@ -96,7 +96,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
                 // set REPLACEMENT_ATTORNEYS_CONFIRMED flag in metadata
                 if (!array_key_exists(Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED, $lpa->metadata)) {
-                    $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($lpa);
+                    $this->getMetadata()->setReplacementAttorneysConfirmed($lpa);
                 }
 
                 $this->cleanUpReplacementAttorneyDecisions();
@@ -144,11 +144,11 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         }
 
         if ($attorney instanceof Human) {
-            $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\AttorneyForm');
+            $form = $this->getFormElementManager()->get('Application\Form\Lpa\AttorneyForm');
             $form->setExistingActorNamesData($this->getActorsList($attorneyIdx));
             $viewModel->setTemplate('application/replacement-attorney/person-form.twig');
         } else {
-            $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
+            $form = $this->getFormElementManager()->get('Application\Form\Lpa\TrustCorporationForm');
             $viewModel->setTemplate('application/replacement-attorney/trust-form.twig');
         }
 
@@ -273,7 +273,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\TrustCorporationForm');
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\TrustCorporationForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/replacement-attorney/add-trust', ['lpa-id' => $lpaId]));
 
         if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
@@ -289,7 +289,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
                 // set REPLACEMENT_ATTORNEYS_CONFIRMED flag in metadata
                 if (!array_key_exists(Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED, $this->getLpa()->metadata)) {
-                    $this->getServiceLocator()->get('Metadata')->setReplacementAttorneysConfirmed($this->getLpa());
+                    $this->getMetadata()->setReplacementAttorneysConfirmed($this->getLpa());
                 }
 
                 $this->cleanUpReplacementAttorneyDecisions();

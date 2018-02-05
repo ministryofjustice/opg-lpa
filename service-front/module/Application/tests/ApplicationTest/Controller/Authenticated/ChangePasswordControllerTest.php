@@ -22,25 +22,17 @@ class ChangePasswordControllerTest extends AbstractControllerTest
      * @var MockInterface|ChangePassword
      */
     private $form;
-    /**
-     * @var MockInterface|Details
-     */
-    private $aboutYouDetails;
     private $postData = [
 
     ];
 
     public function setUp()
     {
-        $this->controller = new ChangePasswordController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(ChangePasswordController::class);
 
         $this->form = Mockery::mock(ChangePassword::class);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\User\ChangePassword'])->andReturn($this->form);
-
-        $this->aboutYouDetails = Mockery::mock(Details::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['AboutYouDetails'])->andReturn($this->aboutYouDetails);
 
         $this->user = FixturesData::getUser();
         $this->userDetailsSession->user = $this->user;

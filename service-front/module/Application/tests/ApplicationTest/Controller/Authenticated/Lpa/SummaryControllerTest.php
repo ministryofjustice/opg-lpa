@@ -22,8 +22,7 @@ class SummaryControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new SummaryController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(SummaryController::class);
 
         $this->lpa = FixturesData::getPfLpa();
     }

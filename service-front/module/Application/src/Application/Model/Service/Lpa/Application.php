@@ -2,11 +2,12 @@
 
 namespace Application\Model\Service\Lpa;
 
+use Application\Model\Service\AbstractService;
 use Application\Model\Service\ApiClient\Client;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use InvalidArgumentException;
 
-class Application
+class Application extends AbstractService
 {
     /**
      * Client service from the api-client module

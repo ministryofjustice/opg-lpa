@@ -2,9 +2,8 @@
 
 namespace Application\Model\Service\Lpa;
 
+use Application\Model\Service\AbstractService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use RuntimeException;
 
 /**
@@ -13,10 +12,8 @@ use RuntimeException;
  * Class Metadata
  * @package Application\Model\Service\Lpa
  */
-class Metadata implements ServiceLocatorAwareInterface
+class Metadata extends AbstractService
 {
-    use ServiceLocatorAwareTrait;
-
     public function setReplacementAttorneysConfirmed(Lpa $lpa)
     {
         return $this->setMetadataByKey($lpa, Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED);
@@ -58,7 +55,7 @@ class Metadata implements ServiceLocatorAwareInterface
             //  Remove the value
             unset($lpa->metadata[$key]);
 
-            if (!$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata)) {
+            if (!$this->getLpaApplicationService()->setMetaData($lpa->id, $lpa->metadata)) {
                 throw new RuntimeException(sprintf('API client failed to remove metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
             }
 
@@ -74,7 +71,7 @@ class Metadata implements ServiceLocatorAwareInterface
             //  Update the value
             $lpa->metadata[$key] = $value;
 
-            if (!$this->getServiceLocator()->get('LpaApplicationService')->setMetaData($lpa->id, $lpa->metadata)) {
+            if (!$this->getLpaApplicationService()->setMetaData($lpa->id, $lpa->metadata)) {
                 throw new RuntimeException(sprintf('API client failed to set metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
             }
 

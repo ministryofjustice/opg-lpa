@@ -12,8 +12,7 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
     {
         $lpa = $this->getLpa();
 
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Lpa\WhenReplacementAttorneyStepInForm', [
                          'lpa' => $lpa,
                      ]);

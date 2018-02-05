@@ -1,12 +1,12 @@
 <?php
 namespace Application\Model\Service\User;
 
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Application\Model\Service\AbstractService;
+use Opg\Lpa\Logger\LoggerTrait;
 
-class Delete implements ServiceLocatorAwareInterface {
-
-    use ServiceLocatorAwareTrait;
+class Delete extends AbstractService
+{
+    use LoggerTrait;
 
     //---
 
@@ -17,12 +17,12 @@ class Delete implements ServiceLocatorAwareInterface {
      */
     public function delete(){
 
-        $this->getServiceLocator()->get('Logger')->info(
+        $this->getLogger()->info(
             'Deleting user and all their LPAs', 
-            $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray()
+            $this->getAuthenticationService()->getIdentity()->toArray()
         );
         
-        return $this->getServiceLocator()->get('ApiClient')->deleteUserAndAllTheirLpas();
+        return $this->getApiClient()->deleteUserAndAllTheirLpas();
 
     } // function
 

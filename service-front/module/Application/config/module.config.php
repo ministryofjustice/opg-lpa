@@ -18,6 +18,9 @@ return [
             'UserAwareInitializer' => 'Application\ControllerFactory\UserAwareInitializer',
             'LpaAwareInitializer' => 'Application\ControllerFactory\LpaAwareInitializer',
         ],
+        'factories' => [
+            'SessionsController' => 'Application\Controller\Console\SessionsControllerFactory',
+        ],
         'abstract_factories' => [
             'Application\ControllerFactory\ControllerAbstractFactory'
         ],
@@ -25,11 +28,24 @@ return [
 
     'service_manager' => [
         'abstract_factories' => [
+            'Application\Model\Service\ServiceAbstractFactory',
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
         ],
         'aliases' => [
-            //'translator' => 'MvcTranslator',
+            'PasswordReset'                         => 'Application\Model\Service\User\PasswordReset',
+            'Register'                              => 'Application\Model\Service\User\Register',
+            'AboutYouDetails'                       => 'Application\Model\Service\User\Details',
+            'DeleteUser'                            => 'Application\Model\Service\User\Delete',
+            'Payment'                               => 'Application\Model\Service\Payment\Payment',
+            'Feedback'                              => 'Application\Model\Service\Feedback\Feedback',
+            'Signatures'                            => 'Application\Model\Service\Feedback\Signatures',
+            'Guidance'                              => 'Application\Model\Service\Guidance\Guidance',
+            'ApplicationList'                       => 'Application\Model\Service\Lpa\ApplicationList',
+            'Metadata'                              => 'Application\Model\Service\Lpa\Metadata',
+            'Communication'                         => 'Application\Model\Service\Lpa\Communication',
+            'PostcodeInfo'                          => 'Application\Model\Service\AddressLookup\PostcodeInfo',
+            'SiteStatus'                            => 'Application\Model\Service\System\Status',
         ],
     ],
 

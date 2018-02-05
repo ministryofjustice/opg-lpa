@@ -32,8 +32,7 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new ApplicantController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(ApplicantController::class);
 
         $this->form = Mockery::mock(ApplicantForm::class);
         $this->lpa = FixturesData::getPfLpa();
