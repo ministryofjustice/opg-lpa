@@ -5,14 +5,12 @@ namespace Application;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Fieldset\Csrf;
-use Application\Form\Validator\Csrf as CsrfValidator;
 use Application\Model\Service\Admin\Admin as AdminService;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Form\Form;
 use Zend\ModuleManager\Feature\FormElementProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
@@ -147,19 +145,6 @@ class Module implements FormElementProviderInterface
             ],
             'invokables' => [
                 'AuthenticationService'                 => 'Application\Model\Service\Authentication\AuthenticationService',
-                /*'PasswordReset'                         => 'Application\Model\Service\User\PasswordReset',
-                'Register'                              => 'Application\Model\Service\User\Register',
-                'AboutYouDetails'                       => 'Application\Model\Service\User\Details',
-                'DeleteUser'                            => 'Application\Model\Service\User\Delete',
-                'Payment'                               => 'Application\Model\Service\Payment\Payment',
-                'Feedback'                              => 'Application\Model\Service\Feedback\Feedback',
-                'Signatures'                            => 'Application\Model\Service\Feedback\Signatures',
-                'Guidance'                              => 'Application\Model\Service\Guidance\Guidance',
-                'ApplicationList'                       => 'Application\Model\Service\Lpa\ApplicationList',
-                'Metadata'                              => 'Application\Model\Service\Lpa\Metadata',
-                'Communication'                         => 'Application\Model\Service\Lpa\Communication',
-                'PostcodeInfo'                          => 'Application\Model\Service\AddressLookup\PostcodeInfo',
-                'SiteStatus'                            => 'Application\Model\Service\System\Status',*/
                 'ReplacementAttorneyCleanup'            => 'Application\Model\Service\Lpa\ReplacementAttorneyCleanup',
                 'ApplicantCleanup'                      => 'Application\Model\Service\Lpa\ApplicantCleanup',
             ],
