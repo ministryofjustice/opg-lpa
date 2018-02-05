@@ -3,7 +3,7 @@
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\SendgridController;
-use Application\Model\Service\Mail\Transport\SendGrid;
+use Application\Model\Service\Mail\Transport\MailTransport;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Exception;
 use Mockery;
@@ -30,7 +30,7 @@ class SendgridControllerTest extends AbstractControllerTest
      */
     private $twigEmailRenderer;
     /**
-     * @var MockInterface|SendGrid
+     * @var MockInterface|MailTransport
      */
     private $mailTransport;
 
@@ -41,7 +41,7 @@ class SendgridControllerTest extends AbstractControllerTest
         $this->twigEmailRenderer = Mockery::mock(Twig_Environment::class);
         $this->controller->setTwigEmailRenderer($this->twigEmailRenderer);
 
-        $this->mailTransport = Mockery::mock(SendGrid::class);
+        $this->mailTransport = Mockery::mock(MailTransport::class);
     }
 
     public function testIndexAction()
