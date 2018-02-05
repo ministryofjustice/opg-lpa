@@ -7,37 +7,62 @@ use Html2Text\Html2Text;
 use Opg\Lpa\Logger\Logger;
 use SendGrid as SendGridClient;
 use SendGrid\Email as SendGridMessage;
+use Twig_Environment;
+use Zend\Mime;
 use Zend\Mail\Exception\InvalidArgumentException;
 use Zend\Mail\Header\GenericHeader;
 use Zend\Mail\Message as ZFMessage;
 use Zend\Mail\Transport\Exception\InvalidArgumentException as TransportInvalidArgumentException;
 use Zend\Mail\Transport\TransportInterface;
 use Zend\Mime\Message as MimeMessage;
+use DateTime;
 
 /**
  * Sends an email out via SendGrid's HTTP interface.
  *
- * Class SendGrid
+ * Class MailTransport
  * @package Application\Model\Mail\Transport
  */
-class SendGrid implements TransportInterface
+class MailTransport implements TransportInterface
 {
+
     /**
-     * SendGrid client object
+     * Mail client object
      *
      * @var SendGridClient
      */
     private $client;
 
     /**
+     * Email renderer for sending template content
+     *
+     * @var Twig_Environment
+     */
+    private $emailRenderer;
+
+    /**
      * @var Logger
      */
     private $logger;
 
-    public function __construct(SendGridClient $client, Logger $logger)
+    /**
+     * @var array
+     */
+    private $emailConfig;
+
+    /**
+     * MailTransport constructor
+     *
+     * @param SendGridClient $client
+     * @param Twig_Environment $emailRenderer
+     * @param Logger $logger
+     */
+    public function __construct(SendGridClient $client, Twig_Environment $emailRenderer, Logger $logger, array $emailConfig)
     {
         $this->client = $client;
+        $this->emailRenderer = $emailRenderer;
         $this->logger = $logger;
+        $this->emailConfig = $emailConfig;
     }
 
     /**
@@ -120,6 +145,7 @@ class SendGrid implements TransportInterface
             }
 
             //  If supported and required set send at
+//TODO - the presence of the § suggests that this send at functionality has never worked
             if ($message instanceof Message§) {
                 $sendAt = $message->getSendAt();
 
@@ -190,6 +216,77 @@ class SendGrid implements TransportInterface
 
             throw $iae;
         }
+    }
+
+    /**
+     * @param $to
+     * @param array $categories
+     * @param $subject
+     * @param $emailHtml
+     * @param DateTime|null $sendAt
+     */
+    public function sendMessage($to, array $categories, $subject, $emailHtml, DateTime $sendAt = null)
+    {
+
+//TODO - potentially fold this code into the "send" function above....
+
+        $email = new Message();
+
+        //to
+        $email->addTo($to);
+
+        //from
+        $from = $this->emailConfig['sender']['default']['address'];
+        $fromName = $this->emailConfig['sender']['default']['name'];
+        $email->addFrom($from, $fromName);
+
+        foreach ($categories as $category) {
+            $email->addCategory($category);
+        }
+
+        $email->setSubject($subject);
+
+        //  Set the HTML content as a mime message
+        $html = new Mime\Part($emailHtml);
+
+        $html->type = Mime\Mime::TYPE_HTML;
+
+        $mimeMessage = new Mime\Message();
+        $mimeMessage->setParts([$html]);
+
+        $email->setBody($mimeMessage);
+
+        if ($sendAt instanceof DateTime) {
+            //  If a send time has been provided apply it now
+            $email->setSendAt($sendAt->getTimestamp());
+        }
+
+        $this->send($email);
+    }
+
+    /**
+     * Create the content using the template and data and pass to send message function
+     *
+     * @param $to
+     * @param array $categories
+     * @param $subject
+     * @param $template
+     * @param $data
+     * @param DateTime|null $sendAt
+     */
+    public function sendMessageFromTemplate($to, array $categories, $subject, $template, $data, DateTime $sendAt = null)
+    {
+        //  Render the content as HTML
+        $template = $this->emailRenderer->loadTemplate($template);
+
+        $emailHtml = $template->render($data);
+
+        //  If the template has a preferred subject in the content use that instead
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $emailHtml, $matches) === 1) {
+            $subject = $matches[1];
+        }
+
+        $this->sendMessage($to, $categories, $subject, $emailHtml, $sendAt);
     }
 
     /**

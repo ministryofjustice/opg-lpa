@@ -138,7 +138,6 @@ class Module implements FormElementProviderInterface
                 'HttpClient' => false,
             ],
             'aliases' => [
-                'MailTransport' => 'SendGridTransport',
                 'AddressLookupMoj' => 'PostcodeInfo',
                 'AuthenticationAdapter' => 'LpaAuthAdapter',
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
@@ -153,8 +152,7 @@ class Module implements FormElementProviderInterface
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ApiClientFactory',
                 'PostcodeInfoClient'    => 'Application\Model\Service\AddressLookup\PostcodeInfoClientFactory',
 
-                // Access via 'MailTransport'
-                'SendGridTransport' => 'Application\Model\Service\Mail\Transport\SendGridFactory',
+                'MailTransport' => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
 
                 // LPA access service
                 'LpaApplicationService' => function( ServiceLocatorInterface $sm ){

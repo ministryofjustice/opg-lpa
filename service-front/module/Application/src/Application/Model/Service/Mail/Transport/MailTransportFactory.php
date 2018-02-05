@@ -7,9 +7,10 @@ use Zend\Mail\Transport\TransportInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use SendGrid as SendGridClient;
+use Twig_Environment;
 use RuntimeException;
 
-class SendGridFactory implements FactoryInterface
+class MailTransportFactory implements FactoryInterface
 {
     use LoggerTrait;
 
@@ -21,16 +22,18 @@ class SendGridFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $config = $serviceLocator->get('Config');
-        $sendGridConfig = $config['email']['sendgrid'];
+        $emailConfig = $serviceLocator->get('Config')['email'];
+        $sendGridConfig = $emailConfig['sendgrid'];
 
         if (!isset($sendGridConfig['user']) || !isset($sendGridConfig['key'])) {
             throw new RuntimeException('Sendgrid settings not found');
         }
 
-        //  Inject the SendGrid client and the logger into the service
         $client = new SendGridClient($sendGridConfig['user'], $sendGridConfig['key']);
 
-        return new SendGrid($client, $this->getLogger());
+        /** @var Twig_Environment $emailRenderer */
+        $emailRenderer = $serviceLocator->get('TwigEmailRenderer');
+
+        return new MailTransport($client, $emailRenderer, $this->getLogger(), $emailConfig);
     }
 }

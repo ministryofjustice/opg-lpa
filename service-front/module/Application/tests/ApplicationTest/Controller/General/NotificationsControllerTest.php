@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\NotificationsController;
 use Application\Model\Service\Mail\Message;
-use Application\Model\Service\Mail\Transport\SendGrid;
+use Application\Model\Service\Mail\Transport\MailTransport;
 use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
 use Exception;
@@ -32,7 +32,7 @@ class NotificationsControllerTest extends AbstractControllerTest
      */
     private $twigEmailRenderer;
     /**
-     * @var MockInterface|SendGrid
+     * @var MockInterface|MailTransport
      */
     private $mailTransport;
 
@@ -52,7 +52,7 @@ class NotificationsControllerTest extends AbstractControllerTest
         $this->twigEmailRenderer = Mockery::mock(Twig_Environment::class);
         $this->controller->setTwigEmailRenderer($this->twigEmailRenderer);
 
-        $this->mailTransport = Mockery::mock(SendGrid::class);
+        $this->mailTransport = Mockery::mock(MailTransport::class);
         $this->controller->setMailTransport($this->mailTransport);
     }
 
