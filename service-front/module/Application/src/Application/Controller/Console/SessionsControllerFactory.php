@@ -2,6 +2,8 @@
 
 namespace Application\Controller\Console;
 
+use Application\Model\Service\Session\SessionManager;
+use Application\Model\Service\System\DynamoCronLock;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -15,11 +17,11 @@ class SessionsControllerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var AccountCleanupService $accountCleanupService */
-        $accountCleanupService = $container->get('AccountCleanupService');
         /** @var DynamoCronLock $dynamoCronLock */
-        $dynamoCronLock = $container->get('DynamoCronLock');
+        $dynamoCronLock = $serviceLocator->get('DynamoCronLock');
+        /** @var SessionManager $sessionManager */
+        $sessionManager = $serviceLocator->get('SessionManager');
 
-        return new SessionsController($accountCleanupService, $dynamoCronLock, $container->get('config'));
+        return new SessionsController($dynamoCronLock, $sessionManager);
     }
 }
