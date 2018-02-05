@@ -22,7 +22,7 @@ class AboutYouController extends AbstractAuthenticatedController
         $isNew = !is_null($this->params()->fromRoute('new', null));
 
         //  Set up the about you form
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\AboutYou');
+        $form = $this->getFormElementManager()->get('Application\Form\User\AboutYou');
         $actionTarget = $this->url()->fromRoute('user/about-you', $isNew ? [
             'new' => 'new',
         ] : []);
@@ -30,7 +30,7 @@ class AboutYouController extends AbstractAuthenticatedController
         $form->setAttribute('action', $actionTarget);
 
         $request = $this->getRequest();
-        $aboutYouService = $this->getServiceLocator()->get('AboutYouDetails');
+        $aboutYouService = $this->getAboutYouDetails();
 
         //  Get any existing data for the user
         $userDetails = $aboutYouService->load();
@@ -49,7 +49,7 @@ class AboutYouController extends AbstractAuthenticatedController
 
                 // Clear the old details out the session.
                 // They will be reloaded the next time the the AbstractAuthenticatedController is called.
-                $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
+                $detailsContainer = $this->getUserDetailsSession();
                 unset($detailsContainer->user);
 
                 //  Saved successful so return to dashboard with message if required

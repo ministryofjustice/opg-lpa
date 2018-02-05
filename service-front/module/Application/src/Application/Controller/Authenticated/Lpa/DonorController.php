@@ -56,7 +56,7 @@ class DonorController extends AbstractLpaActorController
             return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\DonorForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/donor/add', ['lpa-id' => $lpaId]));
         $form->setExistingActorNamesData($this->getActorsList());
 
@@ -99,7 +99,7 @@ class DonorController extends AbstractLpaActorController
         $lpa = $this->getLpa();
         $lpaId = $lpa->id;
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DonorForm');
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\DonorForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/donor/edit', ['lpa-id' => $lpaId]));
         $form->setExistingActorNamesData($this->getActorsList());
 

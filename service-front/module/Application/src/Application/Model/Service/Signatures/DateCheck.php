@@ -2,17 +2,14 @@
 
 namespace Application\Model\Service\Signatures;
 
+use Application\Model\Service\AbstractService;
 use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Date\IDateService;
 use DateTime;
 use InvalidArgumentException;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
-class DateCheck implements ServiceLocatorAwareInterface
+class DateCheck extends AbstractService
 {
-    use ServiceLocatorAwareTrait;
-
     /**
      * Check that the donor, certificate provider, and attorneys
      * signed the LPA in the correct order

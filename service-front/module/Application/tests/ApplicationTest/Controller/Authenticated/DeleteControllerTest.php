@@ -24,8 +24,7 @@ class DeleteControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new TestableDeleteController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(TestableDeleteController::class);
     }
 
     public function testIndexAction()
@@ -39,7 +38,7 @@ class DeleteControllerTest extends AbstractControllerTest
     public function testConfirmActionFailed()
     {
         $this->delete = Mockery::mock(Delete::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['DeleteUser'])->andReturn($this->delete)->once();
+        $this->controller->setDeleteUser($this->delete);
         $this->delete->shouldReceive('delete')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -54,7 +53,7 @@ class DeleteControllerTest extends AbstractControllerTest
         $response = new Response();
 
         $this->delete = Mockery::mock(Delete::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['DeleteUser'])->andReturn($this->delete)->once();
+        $this->controller->setDeleteUser($this->delete);
         $this->delete->shouldReceive('delete')->andReturn(true)->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['deleted'])->andReturn($response)->once();
 
@@ -67,12 +66,8 @@ class DeleteControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->storage->shouldReceive('offsetExists')->withArgs(['PreAuthRequest'])->andReturn(true)->never();
         $this->sessionManager->shouldReceive('start')->never();
         $preAuthRequest = new ArrayObject(['url' => 'https://localhost/user/about-you']);
-        $this->storage->shouldReceive('offsetGet')->withArgs(['PreAuthRequest'])->andReturn($preAuthRequest)->never();
-        $this->storage->shouldReceive('getMetadata')->withArgs(['PreAuthRequest'])->never();
-        $this->storage->shouldReceive('getRequestAccessTime')->never();
         $this->request->shouldReceive('getUri')->never();
 
         $this->redirect->shouldReceive('toRoute')

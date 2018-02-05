@@ -3,22 +3,28 @@
 namespace Application\Model\Service\User;
 
 use Application\Form\AbstractCsrfForm;
+use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\Message as MailMessage;
 use Application\Model\Service\ApiClient\Exception\ResponseException;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Exception;
 use RuntimeException;
+use Zend\Session\Container;
 
-class Details implements ServiceLocatorAwareInterface
+class Details extends AbstractEmailService
 {
-    use ServiceLocatorAwareTrait;
+    use LoggerTrait;
+
+    /**
+     * @var Container
+     */
+    private $userDetailsSession;
 
     public function load()
     {
-        $client = $this->getServiceLocator()->get('ApiClient');
+        $client = $this->getApiClient();
 
         return $client->getAboutMe();
     }
@@ -31,11 +37,11 @@ class Details implements ServiceLocatorAwareInterface
      */
     public function updateAllDetails(AbstractCsrfForm $details)
     {
-        $authenticationData = $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray();
-        $this->getServiceLocator()->get('Logger')->info('Updating user details', $authenticationData);
+        $authenticationData = $this->getAuthenticationService()->getIdentity()->toArray();
+        $this->getLogger()->info('Updating user details', $authenticationData);
 
         // Load the existing details...
-        $client = $this->getServiceLocator()->get('ApiClient');
+        $client = $this->getApiClient();
         $userDetails = $client->getAboutMe();
 
         // Apply the new ones...
@@ -76,13 +82,13 @@ class Details implements ServiceLocatorAwareInterface
      */
     public function requestEmailUpdate(AbstractCsrfForm $details, $currentAddress)
     {
-        $identityArray = $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray();
+        $identityArray = $this->getAuthenticationService()->getIdentity()->toArray();
 
         $data = $details->getData();
 
-        $this->getServiceLocator()->get('Logger')->info('Requesting email update to new email: ' . $data['email'], $identityArray);
+        $this->getLogger()->info('Requesting email update to new email: ' . $data['email'], $identityArray);
 
-        $client = $this->getServiceLocator()->get('ApiClient');
+        $client = $this->getApiClient();
         $updateToken = $client->requestEmailUpdate(strtolower($data['email']));
 
         if (!is_string($updateToken)) {
@@ -105,11 +111,11 @@ class Details implements ServiceLocatorAwareInterface
 
     private function sendActivateNewEmailEmail($newEmailAddress, $token)
     {
-        $this->getServiceLocator()->get('Logger')->info('Sending new email verification email');
+        $this->getLogger()->info('Sending new email verification email');
 
         $message = new MailMessage();
 
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->getConfig();
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
         $message->addTo($newEmailAddress);
@@ -118,9 +124,7 @@ class Details implements ServiceLocatorAwareInterface
         $message->addCategory('opg-lpa');
         $message->addCategory('opg-lpa-newemail-verification');
 
-        $content = $this->getServiceLocator()
-                        ->get('TwigEmailRenderer')
-                        ->loadTemplate('new-email-verify.twig')
+        $content = $this->getTwigEmailRenderer()->loadTemplate('new-email-verify.twig')
                         ->render([
                             'token' => $token,
                         ]);
@@ -140,7 +144,7 @@ class Details implements ServiceLocatorAwareInterface
         $message->setBody($body);
 
         try {
-            $this->getServiceLocator()->get('MailTransport')->send($message);
+            $this->getMailTransport()->send($message);
         } catch (Exception $e) {
             return "failed-sending-email";
         }
@@ -150,11 +154,11 @@ class Details implements ServiceLocatorAwareInterface
 
     private function sendNotifyNewEmailEmail($oldEmailAddress, $newEmailAddress)
     {
-        $this->getServiceLocator()->get('Logger')->info('Sending new email confirmation email');
+        $this->getLogger()->info('Sending new email confirmation email');
 
         $message = new MailMessage();
 
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->getConfig();
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
         $message->addTo($oldEmailAddress);
@@ -163,9 +167,7 @@ class Details implements ServiceLocatorAwareInterface
         $message->addCategory('opg-lpa');
         $message->addCategory('opg-lpa-newemail-confirmation');
 
-        $content = $this->getServiceLocator()
-                        ->get('TwigEmailRenderer')
-                        ->loadTemplate('new-email-notify.twig')
+        $content = $this->getTwigEmailRenderer()->loadTemplate('new-email-notify.twig')
                         ->render([
                             'newEmailAddress' => $newEmailAddress,
                         ]);
@@ -185,7 +187,7 @@ class Details implements ServiceLocatorAwareInterface
         $message->setBody($body);
 
         try {
-            $this->getServiceLocator()->get('MailTransport')->send($message);
+            $this->getMailTransport()->send($message);
         } catch (Exception $e) {
             return "failed-sending-email";
         }
@@ -195,9 +197,9 @@ class Details implements ServiceLocatorAwareInterface
 
     public function updateEmailUsingToken($emailUpdateToken)
     {
-        $this->getServiceLocator()->get('Logger')->info('Updating email using token');
+        $this->getLogger()->info('Updating email using token');
 
-        $client = $this->getServiceLocator()->get('ApiClient');
+        $client = $this->getApiClient();
 
         $success = $client->updateAuthEmail($emailUpdateToken);
 
@@ -212,11 +214,11 @@ class Details implements ServiceLocatorAwareInterface
      */
     public function updatePassword(AbstractCsrfForm $details)
     {
-        $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
+        $identity = $this->getAuthenticationService()->getIdentity();
 
-        $this->getServiceLocator()->get('Logger')->info('Updating password', $identity->toArray());
+        $this->getLogger()->info('Updating password', $identity->toArray());
 
-        $client = $this->getServiceLocator()->get('ApiClient');
+        $client = $this->getApiClient();
 
         $data = $details->getData();
 
@@ -229,7 +231,7 @@ class Details implements ServiceLocatorAwareInterface
             return 'unknown-error';
         }
 
-        $userSession = $this->getServiceLocator()->get('UserDetailsSession');
+        $userSession = $this->userDetailsSession;
         $email = $userSession->user->email->address;
         $this->sendPasswordUpdatedEmail($email);
 
@@ -246,7 +248,7 @@ class Details implements ServiceLocatorAwareInterface
     {
         $message = new MailMessage();
 
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->getConfig();
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
         $message->addTo($email);
@@ -256,9 +258,7 @@ class Details implements ServiceLocatorAwareInterface
         $message->addCategory('opg-lpa-password');
         $message->addCategory('opg-lpa-password-changed');
 
-        $content = $this->getServiceLocator()
-                        ->get('TwigEmailRenderer')
-                        ->loadTemplate('password-changed.twig')
+        $content = $this->getTwigEmailRenderer()->loadTemplate('password-changed.twig')
                         ->render([
                             'email' => $email
                         ]);
@@ -278,11 +278,16 @@ class Details implements ServiceLocatorAwareInterface
         $message->setBody($body);
 
         try {
-            $this->getServiceLocator()->get('MailTransport')->send($message);
+            $this->getMailTransport()->send($message);
         } catch (Exception $e) {
             return "failed-sending-email";
         }
 
         return true;
+    }
+
+    public function setUserDetailsSession(Container $userDetailsSession)
+    {
+        $this->userDetailsSession = $userDetailsSession;
     }
 }

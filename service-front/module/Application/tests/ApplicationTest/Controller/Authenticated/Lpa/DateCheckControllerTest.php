@@ -39,8 +39,7 @@ class DateCheckControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new DateCheckController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(DateCheckController::class);
 
         $this->form = Mockery::mock(DateCheckForm::class);
         $this->lpa = FixturesData::getPfLpa();

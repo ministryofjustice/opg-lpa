@@ -1,10 +1,16 @@
 <?php
 namespace Application\Controller\Authenticated;
 
+use Application\Model\Service\AddressLookup\PostcodeInfo;
 use Zend\View\Model\JsonModel;
 use Application\Controller\AbstractAuthenticatedController;
 
-class PostcodeController extends AbstractAuthenticatedController {
+class PostcodeController extends AbstractAuthenticatedController
+{
+    /**
+     * @var PostcodeInfo
+     */
+    private $addressLookup;
 
     /**
      * Allow access to this controller before About You details are set.
@@ -23,9 +29,7 @@ class PostcodeController extends AbstractAuthenticatedController {
 
         //---
 
-        $service = $this->getServiceLocator()->get('AddressLookupMoj');
-
-        $result = $service->lookupPostcode( $postcode );
+        $result = $this->addressLookup->lookupPostcode($postcode);
 
         // Map the result to match the format from v1.
         $formattedData = array_map( function($addr) {
@@ -48,6 +52,11 @@ class PostcodeController extends AbstractAuthenticatedController {
             'postcodeService' => 'mojDs',
         ]);
 
+    }
+
+    public function setAddressLookup(PostcodeInfo $addressLookup)
+    {
+        $this->addressLookup = $addressLookup;
     }
 
 } // class

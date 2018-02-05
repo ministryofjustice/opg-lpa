@@ -1,16 +1,16 @@
 <?php
 namespace Application\Model\Service\Payment;
 
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Application\Model\Service\AbstractService;
+use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Logger\LoggerTrait;
 use Omnipay\Omnipay;
 use Omnipay\Common\CreditCard;
-use Zend\Session\Container;
 use Application\Model\Service\Payment\Helper\LpaIdHelper;
 
-class Payment implements ServiceLocatorAwareInterface {
-
-    use ServiceLocatorAwareTrait;
+class Payment extends AbstractService
+{
+    use LoggerTrait;
 
     /**
      * Update the LPA with the successful payment information
@@ -20,8 +20,8 @@ class Payment implements ServiceLocatorAwareInterface {
      */
     public function updateLpa($params, $lpa)
     {
-        $client = $this->getServiceLocator()->get('ApiClient');
-        $config = $this->getServiceLocator()->get('config')['worldpay'];
+        $client = $this->getApiClient();
+        $config = $this->getConfig()['worldpay'];
         $prefix = $config['administration_code'] . '^' . $config['merchant_code'] . '^';
 
         $payment = $lpa->payment;
@@ -47,7 +47,7 @@ class Payment implements ServiceLocatorAwareInterface {
      */
     public function verifyOrderKey($params, $lpaId)
     {
-        $config = $this->getServiceLocator()->get('config')['worldpay'];
+        $config = $this->getConfig()['worldpay'];
 
         $regexString = "/^" . $config['administration_code'] . '\^'. $config['merchant_code'] . '\^' . "(.+)-(.+)$/";
 
@@ -65,10 +65,10 @@ class Payment implements ServiceLocatorAwareInterface {
             );
         }
 
-        $this->getServiceLocator()->get('Logger')->info(
+        $this->getLogger()->info(
             'Order key verified',
             array_merge(
-                $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray(),
+                $this->getAuthenticationService()->getIdentity()->toArray(),
                 $params,
                 ['LPA ID' => $lpaId]
             )
@@ -82,7 +82,7 @@ class Payment implements ServiceLocatorAwareInterface {
      */
     public function verifyMacString($params)
     {
-        $config = $this->getServiceLocator()->get('config')['worldpay'];
+        $config = $this->getConfig()['worldpay'];
 
         $macString =
             $params['orderKey'] .
@@ -99,10 +99,10 @@ class Payment implements ServiceLocatorAwareInterface {
             );
         }
 
-        $this->getServiceLocator()->get('Logger')->info(
+        $this->getLogger()->info(
             'MAC string verified',
             array_merge(
-                $this->getServiceLocator()->get('AuthenticationService')->getIdentity()->toArray(),
+                $this->getAuthenticationService()->getIdentity()->toArray(),
                 $params
             )
         );
@@ -113,7 +113,7 @@ class Payment implements ServiceLocatorAwareInterface {
      */
     public function getGateway()
     {
-        $config = $this->getServiceLocator()->get('config')['worldpay'];
+        $config = $this->getConfig()['worldpay'];
 
         $gateway = Omnipay::create('WorldPayXML');
 
@@ -134,7 +134,7 @@ class Payment implements ServiceLocatorAwareInterface {
      */
     public function getOptions($lpa, $emailAddress)
     {
-        $config = $this->getServiceLocator()->get('config')['worldpay'];
+        $config = $this->getConfig()['worldpay'];
 
         $donorName = (string)$lpa->document->donor->name;
 

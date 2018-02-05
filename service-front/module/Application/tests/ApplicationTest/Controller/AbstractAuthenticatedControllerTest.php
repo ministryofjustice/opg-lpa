@@ -23,21 +23,13 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
      * @var TestableAbstractAuthenticatedController
      */
     private $controller;
-    /**
-     * @var MockInterface|Details
-     */
-    private $aboutYouDetails;
 
     public function setUp()
     {
-        $this->controller = new TestableAbstractAuthenticatedController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(TestableAbstractAuthenticatedController::class);
 
         $this->user = FixturesData::getUser();
         $this->userIdentity = new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime());
-
-        $this->aboutYouDetails = Mockery::mock(Details::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['AboutYouDetails'])->andReturn($this->aboutYouDetails);
     }
 
     public function testOnDispatchNotAuthenticated()
@@ -88,13 +80,7 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
         ])->once();
 
         $this->sessionManager->shouldReceive('start')->once();
-        $this->storage->shouldReceive('offsetExists')
-            ->withArgs(['TermsAndConditionsCheck'])->andReturn(true)->atLeast()->once();
-        $seedId = new ArrayObject(['seen' => true]);
-        $this->storage->shouldReceive('offsetGet')
-            ->withArgs(['TermsAndConditionsCheck'])->andReturn($seedId)->atLeast()->once();
-        $this->storage->shouldReceive('getMetadata')->withArgs(['TermsAndConditionsCheck'])->atLeast()->once();
-        $this->storage->shouldReceive('getRequestAccessTime')->atLeast()->once();
+        $this->storage->offsetSet('TermsAndConditionsCheck', new ArrayObject(['seen' => true]));
 
         $this->aboutYouDetails->shouldReceive('load')->andReturn(new User())->once();
         $this->redirect->shouldReceive('toUrl')->withArgs(['/user/about-you/new'])->andReturn($response)->once();
@@ -197,11 +183,7 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
     public function testResetSessionCloneData()
     {
         $this->sessionManager->shouldReceive('start')->once();
-        $this->storage->shouldReceive('offsetExists')->withArgs(['clone'])->andReturn(true)->atLeast()->once();
         $seedId = new ArrayObject(['12345' => '12345']);
-        $this->storage->shouldReceive('offsetGet')->withArgs(['clone'])->andReturn($seedId)->atLeast()->once();
-        $this->storage->shouldReceive('getMetadata')->withArgs(['clone'])->atLeast()->once();
-        $this->storage->shouldReceive('getRequestAccessTime')->atLeast()->once();
 
         Container::setDefaultManager($this->sessionManager);
         $result = $this->controller->testResetSessionCloneData('12345');

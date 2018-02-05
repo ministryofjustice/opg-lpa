@@ -2,16 +2,20 @@
 
 namespace Application\Controller\General;
 
+use Application\Model\Service\Guidance\Guidance;
 use Zend\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
 
 class GuidanceController extends AbstractBaseController
 {
+    /**
+     * @var Guidance
+     */
+    private $guidanceService;
+
     public function indexAction()
     {
-        $guidanceService = $this->getServiceLocator()->get('Guidance');
-
-        $model = new ViewModel($guidanceService->parseMarkdown());
+        $model = new ViewModel($this->guidanceService->parseMarkdown());
 
 
         if ($this->request->isXmlHttpRequest()) {
@@ -30,5 +34,10 @@ class GuidanceController extends AbstractBaseController
 
         return $model;
 
+    }
+
+    public function setGuidanceService(Guidance $guidanceService)
+    {
+        $this->guidanceService = $guidanceService;
     }
 }

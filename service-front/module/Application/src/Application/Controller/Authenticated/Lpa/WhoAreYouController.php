@@ -21,8 +21,7 @@ class WhoAreYouController extends AbstractLpaController
             return new ViewModel(['nextUrl' => $nextUrl]);
         }
 
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Lpa\WhoAreYouForm');
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, ['lpa-id' => $lpa->id]));
 

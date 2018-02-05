@@ -1,11 +1,10 @@
 <?php
+
 namespace Application\Model\Service\AddressLookup;
 
-use GuzzleHttp\Client as GuzzleClient;
-
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Application\Model\Service\AbstractService;
 use MinistryOfJustice;
+use MinistryOfJustice\PostcodeInfo\Client as PostcodeInfoClient;
 use MinistryOfJustice\PostcodeInfo\Response\Address;
 
 /**
@@ -14,10 +13,13 @@ use MinistryOfJustice\PostcodeInfo\Response\Address;
  * Class PostcodeInfo
  * @package Application\Model\Service\AddressLookup
  */
-class PostcodeInfo implements ServiceLocatorAwareInterface {
+class PostcodeInfo extends AbstractService
+{
+    /**
+     * @var PostcodeInfoClient
+     */
+    private $postCodeInfoClient;
 
-    use ServiceLocatorAwareTrait;
-    
     /**
      * Return a list of addresses for a given postcode.
      *
@@ -27,7 +29,7 @@ class PostcodeInfo implements ServiceLocatorAwareInterface {
     public function lookupPostcode( $postcode )
     {
 
-        $postcodeInfoClient = $this->getServiceLocator()->get('PostcodeInfoClient');
+        $postcodeInfoClient = $this->postCodeInfoClient;
         
         $addresses = $postcodeInfoClient->lookupPostcodeAddresses($postcode);
 
@@ -200,5 +202,10 @@ class PostcodeInfo implements ServiceLocatorAwareInterface {
         
         return $array;
          
+    }
+
+    public function setPostcodeInfoClient(PostcodeInfoClient $postCodeInfoClient)
+    {
+        $this->postCodeInfoClient = $postCodeInfoClient;
     }
 } // class

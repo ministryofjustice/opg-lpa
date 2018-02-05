@@ -3,20 +3,26 @@
 namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
+use Application\Form\AbstractCsrfForm;
+use Application\Form\Fieldset\Csrf;
 use Application\Model\Service\Admin\Admin as AdminService;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
-use Opg\Lpa\Logger\Logger;
+use Opg\Lpa\Logger\LoggerTrait;
+use Zend\ModuleManager\Feature\FormElementProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayUtils;
 use Zend\View\Model\ViewModel;
 
-class Module{
+class Module implements FormElementProviderInterface
+{
+    use LoggerTrait;
 
     public function onBootstrap(MvcEvent $e){
 
@@ -139,19 +145,6 @@ class Module{
             ],
             'invokables' => [
                 'AuthenticationService'                 => 'Application\Model\Service\Authentication\AuthenticationService',
-                'PasswordReset'                         => 'Application\Model\Service\User\PasswordReset',
-                'Register'                              => 'Application\Model\Service\User\Register',
-                'AboutYouDetails'                       => 'Application\Model\Service\User\Details',
-                'DeleteUser'                            => 'Application\Model\Service\User\Delete',
-                'Payment'                               => 'Application\Model\Service\Payment\Payment',
-                'Feedback'                              => 'Application\Model\Service\Feedback\Feedback',
-                'Signatures'                            => 'Application\Model\Service\Feedback\Signatures',
-                'Guidance'                              => 'Application\Model\Service\Guidance\Guidance',
-                'ApplicationList'                       => 'Application\Model\Service\Lpa\ApplicationList',
-                'Metadata'                              => 'Application\Model\Service\Lpa\Metadata',
-                'Communication'                         => 'Application\Model\Service\Lpa\Communication',
-                'PostcodeInfo'                          => 'Application\Model\Service\AddressLookup\PostcodeInfo',
-                'SiteStatus'                            => 'Application\Model\Service\System\Status',
                 'ReplacementAttorneyCleanup'            => 'Application\Model\Service\Lpa\ReplacementAttorneyCleanup',
                 'ApplicantCleanup'                      => 'Application\Model\Service\Lpa\ApplicantCleanup',
             ],
@@ -189,18 +182,6 @@ class Module{
                         new \GuzzleHttp\Client,
                         new \Http\Message\MessageFactory\GuzzleMessageFactory
                     );
-                },
-
-                // Logger
-                'Logger' => function ( ServiceLocatorInterface $sm ) {
-                    $logger = new Logger();
-                    $logConfig = $sm->get('config')['log'];
-
-                    $logger->setFileLogPath($logConfig['path']);
-                    $logger->setSentryUri($logConfig['sentry-uri']);
-
-                    return $logger;
-
                 },
 
                 'Cache' => function ( ServiceLocatorInterface $sm ) {
@@ -372,8 +353,7 @@ class Module{
         $exception = $e->getResult()->exception;
 
         if ($exception) {
-            $logger = $e->getApplication()->getServiceManager()->get('Logger');
-            $logger->err( $exception->getMessage().' in '.$exception->getFile().' on line '.$exception->getLine().' - '.$exception->getTraceAsString());
+            $this->getLogger()->err( $exception->getMessage().' in '.$exception->getFile().' on line '.$exception->getLine().' - '.$exception->getTraceAsString());
 
             $viewModel = new ViewModel();
             $viewModel->setTemplate('error/500');
@@ -388,4 +368,24 @@ class Module{
 
     }
 
+    /**
+     * Expected to return \Zend\ServiceManager\Config object or array to
+     * seed such an object.
+     *
+     * @return array|\Zend\ServiceManager\Config
+     */
+    public function getFormElementConfig()
+    {
+        return [
+            'initializers' => [
+                'InitCsrfForm' => function($form, AbstractPluginManager $formElementManager) {
+                    if ($form instanceof AbstractCsrfForm) {
+                        $serviceLocator = $formElementManager->getServiceLocator();
+                        $config = $serviceLocator->get('Config');
+                        $form->setConfig($config);
+                    }
+                },
+            ],
+        ];
+    }
 } // class

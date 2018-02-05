@@ -36,8 +36,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new FeeReductionController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(FeeReductionController::class);
 
         $this->form = Mockery::mock(FeeReductionForm::class);
         $this->lpa = FixturesData::getPfLpa();

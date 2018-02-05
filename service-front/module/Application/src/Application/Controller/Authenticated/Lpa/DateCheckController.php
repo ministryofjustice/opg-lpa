@@ -25,7 +25,7 @@ class DateCheckController extends AbstractLpaController
         }
 
         //  Create the date check form and set the action
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\DateCheckForm', [
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\DateCheckForm', [
             'lpa' => $lpa,
         ]);
         $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, [

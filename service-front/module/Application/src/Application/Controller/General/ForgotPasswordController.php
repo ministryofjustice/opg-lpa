@@ -3,10 +3,16 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
+use Application\Model\Service\User\PasswordReset;
 use Zend\View\Model\ViewModel;
 
 class ForgotPasswordController extends AbstractBaseController
 {
+    /**
+     * @var PasswordReset
+     */
+    private $passwordResetService;
+
     /**
      * GET: Display's the 'Enter your email address' form.
      * POST: Sends the password reset email.
@@ -21,7 +27,7 @@ class ForgotPasswordController extends AbstractBaseController
             return $check;
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\ConfirmEmail');
+        $form = $this->getFormElementManager()->get('Application\Form\User\ConfirmEmail');
         $form->setAttribute('action', $this->url()->fromRoute('forgot-password'));
 
         $error = null;
@@ -32,7 +38,7 @@ class ForgotPasswordController extends AbstractBaseController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $result = $this->getServiceLocator()->get('PasswordReset')->requestPasswordResetEmail($form->getData()['email']);
+                $result = $this->passwordResetService->requestPasswordResetEmail($form->getData()['email']);
 
                 //We do not want to confirm or deny the existence of a registered user so do not check the result.
                 //Exceptions would still be propagated
@@ -67,12 +73,12 @@ class ForgotPasswordController extends AbstractBaseController
             return (new ViewModel())->setTemplate('application/forgot-password/invalid-reset-token');
         }
 
-        $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
+        $identity = $this->getAuthenticationService()->getIdentity();
 
         // If there's currently a signed in user...
         if (!is_null($identity)) {
             /// Log them out...
-            $session = $this->getServiceLocator()->get('SessionManager');
+            $session = $this->getSessionManager();
             $session->getStorage()->clear();
             $session->initialise();
 
@@ -81,7 +87,7 @@ class ForgotPasswordController extends AbstractBaseController
         }
 
         // We have a valid reset token...
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\User\SetPassword');
+        $form = $this->getFormElementManager()->get('Application\Form\User\SetPassword');
         $form->setAttribute('action', $this->url()->fromRoute('forgot-password/callback', ['token' => $token]));
 
         $error = null;
@@ -92,7 +98,7 @@ class ForgotPasswordController extends AbstractBaseController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $result = $this->getServiceLocator()->get('PasswordReset')->setNewPassword($token, $form->getData()['password']);
+                $result = $this->passwordResetService->setNewPassword($token, $form->getData()['password']);
 
                 // if all good, direct them back to login.
                 if ($result === true) {
@@ -116,5 +122,10 @@ class ForgotPasswordController extends AbstractBaseController
                 compact('form', 'error')
             )
         );
+    }
+
+    public function setPasswordResetService(PasswordReset $passwordResetService)
+    {
+        $this->passwordResetService = $passwordResetService;
     }
 }

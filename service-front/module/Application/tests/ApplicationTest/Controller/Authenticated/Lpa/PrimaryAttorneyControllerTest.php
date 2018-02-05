@@ -72,8 +72,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new TestablePrimaryAttorneyController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(TestablePrimaryAttorneyController::class);
 
         $this->user = FixturesData::getUser();
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
@@ -296,10 +295,6 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
             })->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('getApplication')
             ->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/primary-attorney');
         $this->setRedirectToRoute('lpa/how-primary-attorneys-make-decision', $this->lpa, $response);
 
@@ -332,10 +327,6 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
             })->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('getApplication')
             ->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/primary-attorney');
         $this->setRedirectToRoute('lpa/how-primary-attorneys-make-decision', $this->lpa, $response);
 
@@ -475,10 +466,6 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
             })->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('getApplication')
             ->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/primary-attorney');
         $this->setRedirectToRoute('lpa/how-primary-attorneys-make-decision', $this->lpa, $response);
 
@@ -858,10 +845,6 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
             ->withArgs([$this->lpa->id, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('getApplication')
             ->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
         $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
 
         $result = $this->controller->deleteAction();
@@ -893,10 +876,6 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
             ->withArgs([$this->lpa->id, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('getApplication')
             ->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
         $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
 
         $result = $this->controller->deleteAction();
@@ -922,10 +901,6 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
             ->withArgs([$this->lpa->id, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('getApplication')
             ->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
         $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
 
         $result = $this->controller->deleteAction();
@@ -951,10 +926,6 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
             ->withArgs([$this->lpa->id, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('getApplication')
             ->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ReplacementAttorneyCleanup'])->andReturn(new ReplacementAttorneyCleanup())->once()->once();
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['ApplicantCleanup'])->andReturn(new ApplicantCleanup())->once()->once();
         $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
 
         $result = $this->controller->deleteAction();

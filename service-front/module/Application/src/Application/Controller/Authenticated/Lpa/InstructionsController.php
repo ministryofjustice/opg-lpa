@@ -12,7 +12,7 @@ class InstructionsController extends AbstractLpaController
     {
         $lpa = $this->getLpa();
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\InstructionsAndPreferencesForm', [
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\InstructionsAndPreferencesForm', [
             'lpa' => $lpa,
         ]);
 
@@ -43,7 +43,7 @@ class InstructionsController extends AbstractLpaController
                     || !isset($lpa->metadata['instruction-confirmed'])
                     || $lpa->metadata['instruction-confirmed'] !== true) {
 
-                    $this->getServiceLocator()->get('Metadata')->setInstructionConfirmed($this->getLpa());
+                    $this->getMetadata()->setInstructionConfirmed($this->getLpa());
                 }
 
                 return $this->moveToNextRoute();

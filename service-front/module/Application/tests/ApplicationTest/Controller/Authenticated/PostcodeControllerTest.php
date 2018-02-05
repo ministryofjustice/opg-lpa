@@ -33,8 +33,7 @@ class PostcodeControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new PostcodeController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(PostcodeController::class);
 
         $this->event = Mockery::mock(MvcEvent::class);
         $this->controller->setEvent($this->event);
@@ -42,7 +41,7 @@ class PostcodeControllerTest extends AbstractControllerTest
         $this->routeMatch = Mockery::mock(RouteMatch::class);
 
         $this->addressLookup = Mockery::mock(PostcodeInfo::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['AddressLookupMoj'])->andReturn($this->addressLookup);
+        $this->controller->setAddressLookup($this->addressLookup);
     }
 
     public function testIndexActionPostcodeNotFound()
