@@ -16,6 +16,7 @@ use Zend\Mail\Transport\Exception\InvalidArgumentException as TransportInvalidAr
 use Zend\Mail\Transport\TransportInterface;
 use Zend\Mime\Message as MimeMessage;
 use DateTime;
+use Exception;
 
 /**
  * Sends an email out via SendGrid's HTTP interface.
@@ -49,6 +50,117 @@ class MailTransport implements TransportInterface
      * @var array
      */
     private $emailConfig;
+
+    /**
+     * Email template references
+     */
+    const EMAIL_ACCOUNT_ACTIVATE = 1;
+    const EMAIL_ACCOUNT_ACTIVATE_RESET_PASSWORD = 2;
+    const EMAIL_DELETE_NOTIFICATION_1_WEEK = 3;
+    const EMAIL_DELETE_NOTIFICATION_1_MONTH = 4;
+    const EMAIL_FEEDBACK = 5;
+    const EMAIL_LPA_REGISTRATION = 6;
+    const EMAIL_NEW_EMAIL_ADDRESS_NOTIFY = 7;
+    const EMAIL_NEW_EMAIL_ADDRESS_VERIFY = 8;
+    const EMAIL_PASSWORD_CHANGED = 9;
+    const EMAIL_PASSWORD_RESET = 10;
+    const EMAIL_SENDGRID_BOUNCE = 11;
+
+    private $emailTemplatesConfig = [
+        self::EMAIL_ACCOUNT_ACTIVATE => [
+            'template' => 'registration.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-signup',
+            ],
+        ],
+        self::EMAIL_ACCOUNT_ACTIVATE_RESET_PASSWORD => [
+            'template' => 'password-reset-not-active.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-passwordreset',
+                'opg-lpa-passwordreset-activate',
+            ],
+        ],
+        self::EMAIL_DELETE_NOTIFICATION_1_WEEK => [
+            'template' => '',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-notification',
+                'opg-lpa-notification-1-week-notice',
+            ],
+        ],
+        self::EMAIL_DELETE_NOTIFICATION_1_MONTH => [
+            'template' => 'account-deletion-notification.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-notification',
+                'opg-lpa-notification-1-month-notice',
+            ],
+        ],
+        self::EMAIL_FEEDBACK => [
+            'template' => 'feedback.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-feedback',
+            ],
+        ],
+        self::EMAIL_LPA_REGISTRATION => [
+            'template' => 'lpa-registration.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-complete-registration',
+            ],
+        ],
+        self::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY => [
+            'template' => 'new-email-notify.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-newemail-confirmation',
+            ],
+        ],
+        self::EMAIL_NEW_EMAIL_ADDRESS_VERIFY => [
+            'template' => 'new-email-verify.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-newemail-verification',
+            ],
+        ],
+        self::EMAIL_PASSWORD_CHANGED => [
+            'template' => 'password-changed.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-password',
+                'opg-lpa-password-changed',
+            ],
+        ],
+        self::EMAIL_PASSWORD_RESET => [
+            'template' => 'password-reset.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-passwordreset',
+                'opg-lpa-passwordreset-normal',
+            ],
+        ],
+        self::EMAIL_SENDGRID_BOUNCE => [
+            'template' => 'bounce.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-autoresponse',
+            ],
+        ],
+    ];
 
     /**
      * MailTransport constructor
@@ -219,80 +331,91 @@ class MailTransport implements TransportInterface
     }
 
     /**
+     * Create the content for the email reference and data provided
+     *
      * @param $to
-     * @param array $categories
-     * @param $subject
-     * @param $emailHtml
+     * @param $emailRef
+     * @param array $data
      * @param DateTime|null $sendAt
+     * @throws Exception
      */
-    public function sendMessage($to, array $categories, $subject, $emailHtml, DateTime $sendAt = null)
+    public function sendMessageFromTemplate($to, $emailRef, array $data = [], DateTime $sendAt = null)
     {
+        //  Get the categories for this email template
+        if (!isset($this->emailTemplatesConfig[$emailRef])
+            || !isset($this->emailTemplatesConfig[$emailRef]['template'])
+            || !isset($this->emailTemplatesConfig[$emailRef]['categories'])) {
 
-//TODO - potentially fold this code into the "send" function above....
+            throw new Exception('Missing template config for ' . $emailRef);
+        }
 
-        $email = new Message();
+        //  Get the HTML content from the template and the data
+        $template = $this->emailRenderer->loadTemplate($this->emailTemplatesConfig[$emailRef]['template']);
+        $emailHtml = $template->render($data);
 
-        //  Add the to address/addresses
+
+        //  Construct the message to send
+        $message = new Message();
+
+
+        //  Add the TO address/addresses
         if (!is_array($to)) {
             $to = [$to];
         }
 
         foreach ($to as $toEmails) {
-            $email->addTo($toEmails);
+            $message->addTo($toEmails);
         }
 
-        //from
+
+        //  Set the FROM address - override where necessary for certain email types
         $from = $this->emailConfig['sender']['default']['address'];
         $fromName = $this->emailConfig['sender']['default']['name'];
-        $email->addFrom($from, $fromName);
 
-        foreach ($categories as $category) {
-            $email->addCategory($category);
+        if ($emailRef == self::EMAIL_FEEDBACK) {
+            $from = $this->emailConfig['sender']['feedback']['address'];
+            $fromName = $this->emailConfig['sender']['feedback']['name'];
+        } elseif ($emailRef == self::EMAIL_SENDGRID_BOUNCE) {
+            $from = 'blackhole@lastingpowerofattorney.service.gov.uk';
         }
 
-        $email->setSubject($subject);
+
+        $message->addFrom($from, $fromName);
+
+
+        //  Add the categories for this message
+        $categories = $this->emailTemplatesConfig[$emailRef]['categories'];
+
+        foreach ($categories as $category) {
+            $message->addCategory($category);
+        }
+
+
+        //  Get the subject from the template content and set it in the message
+//TODO - confirm this definitely works...
+        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $emailHtml, $matches) === 1) {
+            $message->setSubject($matches[1]);
+        } else {
+            throw new Exception('Email subject can not be retrieved from the email template content');
+        }
+
 
         //  Set the HTML content as a mime message
         $html = new Mime\Part($emailHtml);
-
         $html->type = Mime\Mime::TYPE_HTML;
-
         $mimeMessage = new Mime\Message();
         $mimeMessage->setParts([$html]);
 
-        $email->setBody($mimeMessage);
+        $message->setBody($mimeMessage);
 
+
+        //  If a send time has been passed then apply that now
         if ($sendAt instanceof DateTime) {
             //  If a send time has been provided apply it now
-            $email->setSendAt($sendAt->getTimestamp());
+            $message->setSendAt($sendAt->getTimestamp());
         }
 
-        $this->send($email);
-    }
-
-    /**
-     * Create the content using the template and data and pass to send message function
-     *
-     * @param $to
-     * @param array $categories
-     * @param $subject
-     * @param $template
-     * @param array $data
-     * @param DateTime|null $sendAt
-     */
-    public function sendMessageFromTemplate($to, array $categories, $subject, $template, array $data = [], DateTime $sendAt = null)
-    {
-        //  Render the content as HTML
-        $template = $this->emailRenderer->loadTemplate($template);
-
-        $emailHtml = $template->render($data);
-
-        //  If the template has a preferred subject in the content use that instead
-        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $emailHtml, $matches) === 1) {
-            $subject = $matches[1];
-        }
-
-        $this->sendMessage($to, $categories, $subject, $emailHtml, $sendAt);
+        $this->send($message);
     }
 
     /**

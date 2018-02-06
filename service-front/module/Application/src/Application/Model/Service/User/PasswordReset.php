@@ -4,6 +4,7 @@ namespace Application\Model\Service\User;
 
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\ApiClient\Exception\ResponseException;
+use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\Logger\LoggerTrait;
 use Exception;
 
@@ -104,19 +105,12 @@ class PasswordReset extends AbstractEmailService
         // Send the reset email
         $this->getLogger()->info('Sending password reset email');
 
-        $categories = [
-            'opg',
-            'opg-lpa',
-            'opg-lpa-passwordreset',
-            'opg-lpa-passwordreset-normal',
-        ];
-
         $data = [
             'token' => $token,
         ];
 
         try {
-            $this->getMailTransport()->sendMessageFromTemplate($email, $categories, 'Password reset request', 'password-reset.twig', $data);
+            $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_RESET, $data);
         } catch (Exception $e) {
             return "failed-sending-email";
         }

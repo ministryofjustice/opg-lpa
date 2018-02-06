@@ -3,6 +3,7 @@
 namespace Application\Model\Service\Feedback;
 
 use Application\Model\Service\AbstractEmailService;
+use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\Logger\LoggerTrait;
 use Exception;
 
@@ -16,18 +17,10 @@ class Feedback extends AbstractEmailService
 
         $to = $this->getConfig()['sendFeedbackEmailTo'];
 
-        $categories = [
-            'opg',
-            'opg-lpa',
-            'opg-lpa-feedback',
-        ];
-
         $data['sentTime'] = date('Y/m/d H:i:s');
 
-        $subject = 'LPA v2 User Feedback';
-
         try {
-            $this->getMailTransport()->sendMessageFromTemplate($to, $categories, $subject, 'feedback.twig', $data);
+            $this->getMailTransport()->sendMessageFromTemplate($to, MailTransport::EMAIL_FEEDBACK, $data);
         } catch (Exception $e) {
             $this->getLogger()->err('Failed to send feedback email', $data);
 

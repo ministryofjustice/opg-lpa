@@ -10,7 +10,6 @@ use DateTime;
 use Exception;
 use Mockery;
 use Mockery\MockInterface;
-use Twig_Environment;
 use Twig_Template;
 use Zend\Http\Header\HeaderInterface;
 use Zend\Http\Response;
@@ -27,10 +26,7 @@ class NotificationsControllerTest extends AbstractControllerTest
      * @var array
      */
     private $validPost;
-    /**
-     * @var MockInterface|Twig_Environment
-     */
-    private $twigEmailRenderer;
+
     /**
      * @var MockInterface|MailTransport
      */
@@ -48,9 +44,6 @@ class NotificationsControllerTest extends AbstractControllerTest
             'Type' => '1-week-notice',
             'Date' => (new DateTime('+49 hours'))->format(DateTime::ISO8601)
         ];
-
-        $this->twigEmailRenderer = Mockery::mock(Twig_Environment::class);
-        $this->controller->setTwigEmailRenderer($this->twigEmailRenderer);
 
         $this->mailTransport = Mockery::mock(MailTransport::class);
         $this->controller->setMailTransport($this->mailTransport);
@@ -145,8 +138,6 @@ class NotificationsControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('getHeader')->withArgs(['Token'])->andReturn($this->validToken)->once();
         $this->request->shouldReceive('getPost')->andReturn($validPost)->once();
         $twigTemplate = Mockery::mock(Twig_Template::class);
-        $this->twigEmailRenderer->shouldReceive('loadTemplate')
-            ->withArgs(['account-deletion-notification.twig'])->andReturn($twigTemplate)->once();
         $twigTemplate->shouldReceive('render')
             ->withArgs([['deletionDate' => new DateTime($validPost['Date'])]])->andReturn('')->once();
         $this->mailTransport->shouldReceive('send')->andThrow(new Exception('Unit test exception'))->once();
@@ -170,8 +161,6 @@ class NotificationsControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('getHeader')->withArgs(['Token'])->andReturn($this->validToken)->once();
         $this->request->shouldReceive('getPost')->andReturn($validPost)->once();
         $twigTemplate = Mockery::mock(Twig_Template::class);
-        $this->twigEmailRenderer->shouldReceive('loadTemplate')
-            ->withArgs(['account-deletion-notification.twig'])->andReturn($twigTemplate)->once();
         $twigTemplate->shouldReceive('render')
             ->withArgs([['deletionDate' => new DateTime($validPost['Date'])]])->andReturn('')->once();
         $this->mailTransport->shouldReceive('send')->withArgs([Mockery::on(function ($email) {
@@ -199,8 +188,6 @@ class NotificationsControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('getHeader')->withArgs(['Token'])->andReturn($this->validToken)->once();
         $this->request->shouldReceive('getPost')->andReturn($validPost)->once();
         $twigTemplate = Mockery::mock(Twig_Template::class);
-        $this->twigEmailRenderer->shouldReceive('loadTemplate')
-            ->withArgs(['account-deletion-notification.twig'])->andReturn($twigTemplate)->once();
         $twigTemplate->shouldReceive('render')
             ->withArgs([['deletionDate' => new DateTime($validPost['Date'])]])->andReturn('')->once();
         $this->mailTransport->shouldReceive('send')->withArgs([Mockery::on(function ($email) {
