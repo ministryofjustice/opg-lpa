@@ -3,11 +3,8 @@
 namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractEmailService;
-use Application\Model\Service\Mail\Message as MailMessage;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Mime\Message as MimeMessage;
-use Zend\Mime\Part as MimePart;
 use Exception;
 use Zend\Session\Container;
 
@@ -28,53 +25,35 @@ class Communication extends AbstractEmailService
 
     public function sendRegistrationCompleteEmail(Lpa $lpa)
     {
-        // Send the email
-        $message = new MailMessage();
-
-        $config = $this->getConfig();
-
-        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
-
         $userSession = $this->userDetailsSession;
 
         // Add the signed in user's email address.
-        $message->addTo($userSession->user->email->address);
+        $to = [
+            $userSession->user->email->address,
+        ];
 
         // If we have a separate payment address, send the email to that also.
         if (!empty($lpa->payment->email) && ((string)$lpa->payment->email != strtolower($userSession->user->email->address))) {
-            $message->addTo((string) $lpa->payment->email);
+            $to[] = (string) $lpa->payment->email;
         }
 
-        $message->addCategory('opg');
-        $message->addCategory('opg-lpa');
-        $message->addCategory('opg-lpa-complete-registration');
+        $categories = [
+            'opg',
+            'opg-lpa',
+            'opg-lpa-complete-registration',
+        ];
 
-        //---
-
-        $content = $this->getTwigEmailRenderer()->loadTemplate('lpa-registration.twig')->render([
+        $data = [
             'lpa' => $lpa,
             'paymentAmount' => ($lpa->payment->amount > 0 ? money_format('%i', $lpa->payment->amount) : null),
             'isHealthAndWelfare' => ($lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW),
-        ]);
+        ];
 
         //  Set the default subject
-        $message->setSubject('Lasting power of attorney for ' . $lpa->document->donor->name . ' is ready to register');
-
-        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
-            $subject = sprintf($matches[1], $lpa->document->donor->name);
-            $message->setSubject($subject);
-        }
-
-        $html = new MimePart($content);
-        $html->type = "text/html";
-
-        $body = new MimeMessage();
-        $body->setParts([$html]);
-
-        $message->setBody($body);
+        $subject = 'Lasting power of attorney for ' . $lpa->document->donor->name . ' is ready to register';
 
         try {
-            $this->getMailTransport()->send($message);
+            $this->getMailTransport()->sendMessageFromTemplate($to, $categories, $subject, 'lpa-registration.twig', $data);
         } catch (Exception $e) {
             $this->getLogger()->alert("Failed sending '".$subject."' email to ".$userSession->user->email->address." due to:\n".$e->getMessage());
 

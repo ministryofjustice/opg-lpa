@@ -232,8 +232,14 @@ class MailTransport implements TransportInterface
 
         $email = new Message();
 
-        //to
-        $email->addTo($to);
+        //  Add the to address/addresses
+        if (!is_array($to)) {
+            $to = [$to];
+        }
+
+        foreach ($to as $toEmails) {
+            $email->addTo($toEmails);
+        }
 
         //from
         $from = $this->emailConfig['sender']['default']['address'];
@@ -271,10 +277,10 @@ class MailTransport implements TransportInterface
      * @param array $categories
      * @param $subject
      * @param $template
-     * @param $data
+     * @param array $data
      * @param DateTime|null $sendAt
      */
-    public function sendMessageFromTemplate($to, array $categories, $subject, $template, $data, DateTime $sendAt = null)
+    public function sendMessageFromTemplate($to, array $categories, $subject, $template, array $data = [], DateTime $sendAt = null)
     {
         //  Render the content as HTML
         $template = $this->emailRenderer->loadTemplate($template);
