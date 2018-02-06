@@ -2,6 +2,12 @@
 
 {% block content %}
 
+{% if (notificationType == '1-month-notice') %}
+    <!-- SUBJECT: Do you still need your online lasting power of attorney account? -->
+{% elseif (notificationType == '1-week-notice') %}
+    <!-- SUBJECT: Final reminder: do you still need your online LPA account? -->
+{% endif %}
+
 <h1 style="font-size: 36px; line-height: 1.315; font-weight: 700; margin: 20px 0 26px 0; color: #0b0c0c">
     LPA account deletion
 </h1>

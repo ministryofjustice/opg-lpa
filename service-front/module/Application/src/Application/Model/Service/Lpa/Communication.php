@@ -3,6 +3,7 @@
 namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractEmailService;
+use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Logger\LoggerTrait;
 use Exception;
@@ -37,25 +38,16 @@ class Communication extends AbstractEmailService
             $to[] = (string) $lpa->payment->email;
         }
 
-        $categories = [
-            'opg',
-            'opg-lpa',
-            'opg-lpa-complete-registration',
-        ];
-
         $data = [
             'lpa' => $lpa,
             'paymentAmount' => ($lpa->payment->amount > 0 ? money_format('%i', $lpa->payment->amount) : null),
             'isHealthAndWelfare' => ($lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW),
         ];
 
-        //  Set the default subject
-        $subject = 'Lasting power of attorney for ' . $lpa->document->donor->name . ' is ready to register';
-
         try {
-            $this->getMailTransport()->sendMessageFromTemplate($to, $categories, $subject, 'lpa-registration.twig', $data);
+            $this->getMailTransport()->sendMessageFromTemplate($to, MailTransport::EMAIL_LPA_REGISTRATION, $data);
         } catch (Exception $e) {
-            $this->getLogger()->alert("Failed sending '".$subject."' email to ".$userSession->user->email->address." due to:\n".$e->getMessage());
+            $this->getLogger()->alert("Failed sending LPA registration email to ".$userSession->user->email->address." due to:\n".$e->getMessage());
 
             return "failed-sending-email";
         }

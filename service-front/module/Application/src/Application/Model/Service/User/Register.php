@@ -4,6 +4,7 @@ namespace Application\Model\Service\User;
 
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\ApiClient\Exception\ResponseException;
+use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\Logger\LoggerTrait;
 use Exception;
 
@@ -52,26 +53,11 @@ class Register extends AbstractEmailService
      */
     public function sendActivateEmail($email, $token, $fromResetRequest = false)
     {
-        $categories = [
-            'opg',
-            'opg-lpa',
-        ];
-
-        //  Change the last category depending on where this request came from
-        if ($fromResetRequest) {
-            $categories[] = 'opg-lpa-passwordreset';
-            $categories[] = 'opg-lpa-passwordreset-activate';
-        } else {
-            $categories[] = 'opg-lpa-signup';
-        }
-
-        $template = 'registration.twig';
-        $subject = 'Activate your lasting power of attorney account';
+        $emailRef = MailTransport::EMAIL_ACCOUNT_ACTIVATE;
 
         //  If this request came from the password reset tool then change some values
         if ($fromResetRequest) {
-            $template = 'password-reset-not-active.twig';
-            $subject = 'Password reset request';
+            $emailRef = MailTransport::EMAIL_ACCOUNT_ACTIVATE_RESET_PASSWORD;
         }
 
         $data = [
@@ -83,7 +69,7 @@ class Register extends AbstractEmailService
         try {
             $logger->info('Sending account activation email to ' . $email);
 
-            $this->getMailTransport()->sendMessageFromTemplate($email, $categories, $subject, $template, $data);
+            $this->getMailTransport()->sendMessageFromTemplate($email, $emailRef, $data);
         } catch (Exception $e) {
             $logger->err('Failed to send account activation email to ' . $email);
 

@@ -3,18 +3,15 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
-use Application\Model\Service\Mail\Message as MessageService;
-use Twig_Environment;
-use Zend\Mime\Message;
-use Zend\Mime\Part;
+use Application\Model\Service\Mail\Transport\MailTransport;
 use Exception;
 
 class SendgridController extends AbstractBaseController
 {
     /**
-     * @var Twig_Environment
+     * @var MailTransport
      */
-    private $twigEmailRenderer;
+    private $mailTransport;
 
     /**
      * No reply email address to use
@@ -56,12 +53,9 @@ class SendgridController extends AbstractBaseController
             return $this->getResponse();
         }
 
-        $config = $this->config();
-        $emailConfig = $config['email'];
-
         $token = $this->params()->fromRoute('token');
 
-        if (!$token || $token !== $emailConfig['sendgrid']['webhook']['token']) {
+        if (!$token || $token !== $this->config()['email']['sendgrid']['webhook']['token']) {
             //  Add some info to the logging data
             $loggingData['token'] = $token;
 
@@ -74,46 +68,10 @@ class SendgridController extends AbstractBaseController
             return $response;
         }
 
-        //  Log the attempt to compose the email
-        $messageService = new MessageService();
-        $messageService->addFrom($this->blackHoleAddress, $emailConfig['sender']['default']['name']);
-        $messageService->addCategory('opg');
-        $messageService->addCategory('opg-lpa');
-        $messageService->addCategory('opg-lpa-autoresponse');
-
-        if (preg_match('/\<(.*)\>$/', $fromAddress, $matches)) {
-            $fromAddress = $matches[1];
-        }
-
-        $messageService->addTo($fromAddress);
-
-        //  Set the subject in the message
-        $content = $this->twigEmailRenderer
-                        ->loadTemplate('bounce.twig')
-                        ->render([]);
-
-        $subject = 'This mailbox is not monitored';
-
-        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
-            $subject = $matches[1];
-        }
-
-        $messageService->setSubject($subject);
-
-        //  Set the content in a mime message
-        $mimeMessage = new Message();
-        $html = new Part($content);
-        $html->type = "text/html";
-        $mimeMessage->setParts([$html]);
-
-        $messageService->setBody($mimeMessage);
-
         try {
-//            $this->getServiceLocator()
-//                 ->get('MailTransport')
-//                 ->send($messageService);
-//
-//            echo 'Email sent';
+            $this->mailTransport->sendMessageFromTemplate($fromAddress, MailTransport::EMAIL_SENDGRID_BOUNCE);
+
+            echo 'Email sent';
 
             //  Unmonitored mailbox emails will not be sent temporarily while we monitor the usage (and abuse!) of this end point
             //  For now just log the data from the email
@@ -136,8 +94,8 @@ class SendgridController extends AbstractBaseController
         return $response;
     }
 
-    public function setTwigEmailRenderer(Twig_Environment $twigEmailRenderer)
+    public function setMailTransport(MailTransport $mailTransport)
     {
-        $this->twigEmailRenderer = $twigEmailRenderer;
+        $this->mailTransport = $mailTransport;
     }
 }

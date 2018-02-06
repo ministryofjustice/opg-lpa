@@ -5,6 +5,7 @@ namespace Application\Model\Service\User;
 use Application\Form\AbstractCsrfForm;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\ApiClient\Exception\ResponseException;
+use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\Logger\LoggerTrait;
 use Exception;
 use RuntimeException;
@@ -109,18 +110,12 @@ class Details extends AbstractEmailService
     {
         $this->getLogger()->info('Sending new email verification email');
 
-        $categories = [
-            'opg',
-            'opg-lpa',
-            'opg-lpa-newemail-verification',
-        ];
-
         $data = [
             'token' => $token,
         ];
 
         try {
-            $this->getMailTransport()->sendMessageFromTemplate($newEmailAddress, $categories, 'Please verify your new email address', 'new-email-verify.twig', $data);
+            $this->getMailTransport()->sendMessageFromTemplate($newEmailAddress, MailTransport::EMAIL_NEW_EMAIL_ADDRESS_VERIFY, $data);
         } catch (Exception $e) {
             return "failed-sending-email";
         }
@@ -132,18 +127,12 @@ class Details extends AbstractEmailService
     {
         $this->getLogger()->info('Sending new email confirmation email');
 
-        $categories = [
-            'opg',
-            'opg-lpa',
-            'opg-lpa-newemail-confirmation',
-        ];
-
         $data = [
             'newEmailAddress' => $newEmailAddress,
         ];
 
         try {
-            $this->getMailTransport()->sendMessageFromTemplate($oldEmailAddress, $categories, 'You asked us to change your email address', 'new-email-notify.twig', $data);
+            $this->getMailTransport()->sendMessageFromTemplate($oldEmailAddress, MailTransport::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY, $data);
         } catch (Exception $e) {
             return "failed-sending-email";
         }
@@ -198,19 +187,12 @@ class Details extends AbstractEmailService
 
     public function sendPasswordUpdatedEmail($email)
     {
-        $categories = [
-            'opg',
-            'opg-lpa',
-            'opg-lpa-password',
-            'opg-lpa-password-changed',
-        ];
-
         $data = [
             'email' => $email
         ];
 
         try {
-            $this->getMailTransport()->sendMessageFromTemplate($email, $categories, 'You have changed your LPA account password', 'password-changed.twig', $data);
+            $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_CHANGED, $data);
         } catch (Exception $e) {
             return "failed-sending-email";
         }

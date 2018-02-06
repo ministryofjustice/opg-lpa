@@ -25,10 +25,7 @@ class SendgridControllerTest extends AbstractControllerTest
         'spam_score' => 1,
         'text' => 'Text'
     ];
-    /**
-     * @var MockInterface|Twig_Environment
-     */
-    private $twigEmailRenderer;
+
     /**
      * @var MockInterface|MailTransport
      */
@@ -37,9 +34,6 @@ class SendgridControllerTest extends AbstractControllerTest
     public function setUp()
     {
         $this->controller = parent::controllerSetUp(SendgridController::class);
-
-        $this->twigEmailRenderer = Mockery::mock(Twig_Environment::class);
-        $this->controller->setTwigEmailRenderer($this->twigEmailRenderer);
 
         $this->mailTransport = Mockery::mock(MailTransport::class);
     }
@@ -123,8 +117,6 @@ class SendgridControllerTest extends AbstractControllerTest
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('ValidToken')->once();
         $twigTemplate = Mockery::mock(Twig_Template::class);
-        $this->twigEmailRenderer->shouldReceive('loadTemplate')
-            ->withArgs(['bounce.twig'])->andReturn($twigTemplate)->once();
         $twigTemplate->shouldReceive('render')->withArgs([[]])->andReturn('')->once();
         $this->mailTransport->shouldReceive('send')->never();
 
@@ -158,8 +150,6 @@ class SendgridControllerTest extends AbstractControllerTest
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('ValidToken')->once();
         $twigTemplate = Mockery::mock(Twig_Template::class);
-        $this->twigEmailRenderer->shouldReceive('loadTemplate')
-            ->withArgs(['bounce.twig'])->andReturn($twigTemplate)->once();
         $twigTemplate->shouldReceive('render')
             ->withArgs([[]])->andReturn('<!-- SUBJECT: Subject from template -->')->once();
         $this->mailTransport->shouldReceive('send')->never();
