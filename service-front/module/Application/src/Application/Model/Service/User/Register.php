@@ -3,11 +3,8 @@
 namespace Application\Model\Service\User;
 
 use Application\Model\Service\AbstractEmailService;
-use Application\Model\Service\Mail\Message as MailMessage;
 use Application\Model\Service\ApiClient\Exception\ResponseException;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Mime\Message as MimeMessage;
-use Zend\Mime\Part as MimePart;
 use Exception;
 
 class Register extends AbstractEmailService
@@ -55,58 +52,38 @@ class Register extends AbstractEmailService
      */
     public function sendActivateEmail($email, $token, $fromResetRequest = false)
     {
-        $message = new MailMessage();
-
-        $config = $this->getConfig();
-        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
-
-        $message->addTo($email);
-
-        $message->addCategory('opg');
-        $message->addCategory('opg-lpa');
+        $categories = [
+            'opg',
+            'opg-lpa',
+        ];
 
         //  Change the last category depending on where this request came from
         if ($fromResetRequest) {
-            $message->addCategory('opg-lpa-passwordreset');
-            $message->addCategory('opg-lpa-passwordreset-activate');
+            $categories[] = 'opg-lpa-passwordreset';
+            $categories[] = 'opg-lpa-passwordreset-activate';
         } else {
-            $message->addCategory('opg-lpa-signup');
+            $categories[] = 'opg-lpa-signup';
         }
 
         $template = 'registration.twig';
-        $defaultSubject = 'Activate your lasting power of attorney account';
+        $subject = 'Activate your lasting power of attorney account';
 
         //  If this request came from the password reset tool then change some values
         if ($fromResetRequest) {
             $template = 'password-reset-not-active.twig';
-            $defaultSubject = 'Password reset request';
+            $subject = 'Password reset request';
         }
 
-        $content = $this->getTwigEmailRenderer()->loadTemplate($template)
-            ->render([
-                'token' => $token,
-            ]);
-
-        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
-            $message->setSubject($matches[1]);
-        } else {
-            $message->setSubject($defaultSubject);
-        }
-
-        $html = new MimePart($content);
-        $html->type = "text/html";
-
-        $body = new MimeMessage();
-        $body->setParts([$html]);
-
-        $message->setBody($body);
+        $data = [
+            'token' => $token,
+        ];
 
         $logger = $this->getLogger();
 
         try {
             $logger->info('Sending account activation email to ' . $email);
 
-            $this->getMailTransport()->send($message);
+            $this->getMailTransport()->sendMessageFromTemplate($email, $categories, $subject, $template, $data);
         } catch (Exception $e) {
             $logger->err('Failed to send account activation email to ' . $email);
 
