@@ -4,9 +4,9 @@ namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\DonorForm;
 use ApplicationTest\Form\FormTestSetupTrait;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class DonorFormTest extends TestCase
+class DonorFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 

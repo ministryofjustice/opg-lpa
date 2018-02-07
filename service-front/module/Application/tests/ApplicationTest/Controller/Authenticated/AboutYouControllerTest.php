@@ -24,26 +24,17 @@ class AboutYouControllerTest extends AbstractControllerTest
      * @var MockInterface|AboutYou
      */
     private $form;
-    /**
-     * @var MockInterface|Details
-     */
-    private $aboutYouDetails;
     private $postData = [
 
     ];
 
     public function setUp()
     {
-        $this->controller = new AboutYouController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(AboutYouController::class);
 
         $this->form = Mockery::mock(AboutYou::class);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\User\AboutYou'])->andReturn($this->form);
-
-        $this->aboutYouDetails = Mockery::mock(Details::class);
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['AboutYouDetails'])->andReturn($this->aboutYouDetails);
     }
 
     public function testIndexActionGet()

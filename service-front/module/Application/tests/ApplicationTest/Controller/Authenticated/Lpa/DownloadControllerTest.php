@@ -24,8 +24,7 @@ class DownloadControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new DownloadController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(DownloadController::class);
 
         $this->lpa = FixturesData::getHwLpa();
     }

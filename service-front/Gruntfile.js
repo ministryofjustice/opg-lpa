@@ -87,11 +87,9 @@ module.exports = function (grunt) {
       },
       dist: {
         src: [
-          // Vendor Scripts
-          'assets/js/vendor/handlebars.js',
-          'assets/js/vendor/lodash-2.4.1.min.js',
-
-          // GOVUK Bower Scripts
+          // Bower Dependencies
+          'assets/bower/handlebars/handlebars.js',
+          'assets/bower/lodash/lodash.js',
           'assets/bower/stageprompt/script/stageprompt.js',
           'assets/bower/govuk_frontend_toolkit/javascripts/govuk/selection-buttons.js',
           'assets/bower/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',

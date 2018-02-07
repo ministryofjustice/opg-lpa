@@ -81,11 +81,10 @@ class PingControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new PingController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(PingController::class);
 
         $this->status = Mockery::mock(Status::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['SiteStatus'])->andReturn($this->status);
+        $this->controller->setStatusService($this->status);
     }
 
     public function testIndexAction()

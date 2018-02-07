@@ -9,7 +9,7 @@ class Sns extends AbstractWriter
     const SNS_IGNORE = 1;
     const SNS_MINOR = 2;
     const SNS_MAJOR = 3;
-    
+
     /**
      * Translates Zend Framework log levels to minor or major
      */
@@ -23,17 +23,17 @@ class Sns extends AbstractWriter
         'ALERT'     => self::SNS_MINOR,
         'EMERG'     => self::SNS_MAJOR,
     ];
-    
+
     /**
-     * @var Aws\Sns\SnsClient
+     * @var SnsClient
      */
     private $snsClient;
-    
+
     /**
      * @var array
      */
     private $endpoints;
-    
+
     /**
      * Constructor
      *
@@ -42,12 +42,12 @@ class Sns extends AbstractWriter
     public function __construct(array $config, array $endpoints, $options = null)
     {
         $this->snsClient = new SnsClient($config);
-        
+
         $this->endpoints = $endpoints;
-        
+
         parent::__construct($options);
     }
-    
+
     /**
      * Write a message to the log
      *
@@ -58,11 +58,11 @@ class Sns extends AbstractWriter
     {
         $extra = array();
         $extra['timestamp'] = $event['timestamp'];
-        
+
         $zendLogLevel = $event['priorityName'];
-        
+
         $snsLogLevel = $this->logLevels[$zendLogLevel];
-        
+
         if ($snsLogLevel != self::SNS_IGNORE) {
             $this->sendSnsNotification(
                 $this->endpoints[$snsLogLevel],
@@ -71,16 +71,16 @@ class Sns extends AbstractWriter
             );
         }
     }
-    
+
     /**
      * Send the SNS notification
-     * 
+     *
      * @param string $endpoint
      * @param array $event
      * @param string $zendLogLevel
      */
     private function sendSnsNotification($endpoint, $event, $zendLogLevel) {
-        
+
         $result = $this->snsClient->publish(array(
             'TopicArn' => $endpoint,
             'Message' => $event['message'],

@@ -2,9 +2,17 @@
 
 namespace Application\Controller;
 
+use Application\Model\Service\Authentication\Adapter\AdapterInterface;
 use Application\Model\Service\Authentication\Identity\User as Identity;
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Model\Service\Session\SessionManager;
+use Application\Model\Service\User\Details as AboutYouDetails;
 use Opg\Lpa\DataModel\User\User;
+use Zend\Authentication\AuthenticationService;
+use Zend\Cache\Storage\StorageInterface;
 use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\AbstractPluginManager;
+use Zend\Session\AbstractContainer;
 use Zend\Session\Container as SessionContainer;
 use Zend\Session\Container;
 use Zend\View\Model\JsonModel;
@@ -26,6 +34,55 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
      */
     protected $excludeFromAboutYouCheck = false;
 
+    /**
+     * @var AbstractContainer
+     */
+    private $userDetailsSession;
+
+    /**
+     * @var LpaApplicationService
+     */
+    private $lpaApplicationService;
+
+    /**
+     * @var AboutYouDetails
+     */
+    private $aboutYouDetails;
+    /**
+     * @var AdapterInterface
+     */
+    private $authenticationAdapter;
+
+    /**
+     * AbstractAuthenticatedController constructor.
+     * @param AbstractPluginManager $formElementManager
+     * @param SessionManager $sessionManager
+     * @param AuthenticationService $authenticationService
+     * @param array $config
+     * @param StorageInterface $cache
+     * @param AbstractContainer $userDetailsSession
+     * @param LpaApplicationService $lpaApplicationService
+     * @param AboutYouDetails $aboutYouDetails
+     * @param AdapterInterface $authenticationAdapter
+     */
+    public function __construct(
+        AbstractPluginManager $formElementManager,
+        SessionManager $sessionManager,
+        AuthenticationService $authenticationService,
+        array $config,
+        StorageInterface $cache,
+        AbstractContainer $userDetailsSession,
+        LpaApplicationService $lpaApplicationService,
+        AboutYouDetails $aboutYouDetails,
+        AdapterInterface $authenticationAdapter
+    ) {
+        parent::__construct($formElementManager, $sessionManager, $authenticationService, $config, $cache);
+
+        $this->userDetailsSession = $userDetailsSession;
+        $this->lpaApplicationService = $lpaApplicationService;
+        $this->aboutYouDetails = $aboutYouDetails;
+        $this->authenticationAdapter = $authenticationAdapter;
+    }
 
     /**
      * Do some pre-dispatch checks...
@@ -44,9 +101,9 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             return $authenticated;
         }
 
-        $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
+        $identity = $this->getAuthenticationService()->getIdentity();
 
-        $this->log()->info('Request to ' . get_class($this), $identity->toArray());
+        $this->getLogger()->info('Request to ' . get_class($this), $identity->toArray());
 
         //----------------------------------------------------------------------
         // Check if they've singed in since the T&C's changed...
@@ -80,7 +137,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         //----------------------------------------------------------------------
         // Load the user's details and ensure the required details are included
 
-        $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
+        $detailsContainer = $this->userDetailsSession;
 
         //  Check to see if the user object is present and well formed
         if (isset($detailsContainer->user)) {
@@ -91,8 +148,8 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             } catch (\Exception $ex) {
                 //  If seems there is a user associated with the session but it is not well formed
                 //  Therefore destroy the session and logout the user
-                $this->getServiceLocator()->get('AuthenticationService')->clearIdentity();
-                $this->getServiceLocator()->get('SessionManager')->destroy([
+                $this->getAuthenticationService()->clearIdentity();
+                $this->getSessionManager()->destroy([
                     'clear_storage' => true
                 ]);
 
@@ -103,7 +160,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         }
 
         if (!isset($detailsContainer->user) || is_null($detailsContainer->user->name)) {
-            $userDetails = $this->getServiceLocator()->get('AboutYouDetails')->load();
+            $userDetails = $this->aboutYouDetails->load();
 
             // If the user details do not at least have a name
             // And we're not trying to set the details via the AboutYouController...
@@ -161,7 +218,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
      */
     public function getUserDetails(){
 
-        $detailsContainer = $this->getServiceLocator()->get('UserDetailsSession');
+        $detailsContainer = $this->userDetailsSession;
 
         if( !isset($detailsContainer->user) ){
             return null;
@@ -172,14 +229,38 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     }
 
     /**
-     * Returns an instance of the LPA Application Service.
-     *
-     * @return object
+     * @return AbstractContainer
      */
-    protected function getLpaApplicationService(){
-        return $this->getServiceLocator()->get('LpaApplicationService');
+    protected function getUserDetailsSession(): AbstractContainer
+    {
+        return $this->userDetailsSession;
     }
 
+    /**
+     * Returns an instance of the LPA Application Service.
+     *
+     * @return LpaApplicationService
+     */
+    protected function getLpaApplicationService(): LpaApplicationService
+    {
+        return $this->lpaApplicationService;
+    }
+
+    /**
+     * @return AboutYouDetails
+     */
+    protected function getAboutYouDetails(): AboutYouDetails
+    {
+        return $this->aboutYouDetails;
+    }
+
+    /**
+     * @return AdapterInterface
+     */
+    protected function getAuthenticationAdapter(): AdapterInterface
+    {
+        return $this->authenticationAdapter;
+    }
 
     /**
      * Check there is a user authenticated.

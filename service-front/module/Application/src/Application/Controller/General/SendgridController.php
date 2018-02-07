@@ -4,12 +4,18 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\Mail\Message as MessageService;
+use Twig_Environment;
 use Zend\Mime\Message;
 use Zend\Mime\Part;
 use Exception;
 
 class SendgridController extends AbstractBaseController
 {
+    /**
+     * @var Twig_Environment
+     */
+    private $twigEmailRenderer;
+
     /**
      * No reply email address to use
      *
@@ -45,12 +51,12 @@ class SendgridController extends AbstractBaseController
 
         //  If there is no from email address, or the user has responded to the blackhole email address then do nothing
         if (!is_string($fromAddress) || !is_string($originalToAddress) || strpos(strtolower($originalToAddress), $this->blackHoleAddress) !== false) {
-            $this->log()->err('Sender or recipient missing, or email sent to ' . $this->blackHoleAddress . ' - the message message will not be sent to SendGrid', $loggingData);
+            $this->getLogger()->err('Sender or recipient missing, or email sent to ' . $this->blackHoleAddress . ' - the message message will not be sent to SendGrid', $loggingData);
 
             return $this->getResponse();
         }
 
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->config();
         $emailConfig = $config['email'];
 
         $token = $this->params()->fromRoute('token');
@@ -59,7 +65,7 @@ class SendgridController extends AbstractBaseController
             //  Add some info to the logging data
             $loggingData['token'] = $token;
 
-            $this->log()->err('Missing or invalid bounce token used', $loggingData);
+            $this->getLogger()->err('Missing or invalid bounce token used', $loggingData);
 
             $response = $this->getResponse();
             $response->setStatusCode(403);
@@ -82,8 +88,7 @@ class SendgridController extends AbstractBaseController
         $messageService->addTo($fromAddress);
 
         //  Set the subject in the message
-        $content = $this->getServiceLocator()
-                        ->get('TwigEmailRenderer')
+        $content = $this->twigEmailRenderer
                         ->loadTemplate('bounce.twig')
                         ->render([]);
 
@@ -112,7 +117,7 @@ class SendgridController extends AbstractBaseController
 
             //  Unmonitored mailbox emails will not be sent temporarily while we monitor the usage (and abuse!) of this end point
             //  For now just log the data from the email
-            $this->log()->info('Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData);
+            $this->getLogger()->info('Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData);
 
             echo 'Email not sent - data gathering';
         } catch (Exception $e) {
@@ -120,7 +125,7 @@ class SendgridController extends AbstractBaseController
             $loggingData['token'] = $token;
             $loggingData['subject'] = $subject;
 
-            $this->log()->alert("Failed sending email due to:\n" . $e->getMessage(), $loggingData);
+            $this->getLogger()->alert("Failed sending email due to:\n" . $e->getMessage(), $loggingData);
 
             return "failed-sending-email";
         }
@@ -129,5 +134,10 @@ class SendgridController extends AbstractBaseController
         $response->setStatusCode(200);
 
         return $response;
+    }
+
+    public function setTwigEmailRenderer(Twig_Environment $twigEmailRenderer)
+    {
+        $this->twigEmailRenderer = $twigEmailRenderer;
     }
 }

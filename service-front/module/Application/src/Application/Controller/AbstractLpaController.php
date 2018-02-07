@@ -3,9 +3,20 @@
 namespace Application\Controller;
 
 use Application\Model\FormFlowChecker;
+use Application\Model\Service\Authentication\Adapter\AdapterInterface;
+use Application\Model\Service\Lpa\ApplicantCleanup;
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Model\Service\Lpa\Metadata;
+use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
+use Application\Model\Service\Session\SessionManager;
+use Application\Model\Service\User\Details as AboutYouDetails;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Zend\Authentication\AuthenticationService;
+use Zend\Cache\Storage\StorageInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\Http\RouteMatch;
+use Zend\ServiceManager\AbstractPluginManager;
+use Zend\Session\AbstractContainer;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use RuntimeException;
@@ -21,6 +32,52 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
      * @var \Application\Model\FormFlowChecker
      */
     private $flowChecker;
+
+    /**
+     * @var ApplicantCleanup
+     */
+    private $applicantCleanup;
+
+    /**
+     * @var ReplacementAttorneyCleanup
+     */
+    private $replacementAttorneyCleanup;
+
+    /**
+     * @var Metadata
+     */
+    private $metadata;
+
+    public function __construct(
+        AbstractPluginManager $formElementManager,
+        SessionManager $sessionManager,
+        AuthenticationService $authenticationService,
+        array $config,
+        StorageInterface $cache,
+        AbstractContainer $userDetailsSession,
+        LpaApplicationService $lpaApplicationService,
+        AboutYouDetails $aboutYouDetails,
+        AdapterInterface $authenticationAdapter,
+        ApplicantCleanup $applicantCleanup,
+        ReplacementAttorneyCleanup $replacementAttorneyCleanup,
+        Metadata $metadata
+    ) {
+        parent::__construct(
+            $formElementManager,
+            $sessionManager,
+            $authenticationService,
+            $config,
+            $cache,
+            $userDetailsSession,
+            $lpaApplicationService,
+            $aboutYouDetails,
+            $authenticationAdapter
+        );
+
+        $this->applicantCleanup = $applicantCleanup;
+        $this->replacementAttorneyCleanup = $replacementAttorneyCleanup;
+        $this->metadata = $metadata;
+    }
 
     public function onDispatch(MvcEvent $e)
     {
@@ -107,9 +164,8 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
      */
     protected function cleanUpReplacementAttorneyDecisions()
     {
-        $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int) $this->getLpa()->id);
-        $RACleanupService = $this->getServiceLocator()->get('ReplacementAttorneyCleanup');
-        $RACleanupService->cleanUp($lpa, $this->getLpaApplicationService());
+        $lpa = $this->getLpaApplicationService()->getApplication((int) $this->getLpa()->id);
+        $this->replacementAttorneyCleanup->cleanUp($lpa, $this->getLpaApplicationService());
     }
 
     /**
@@ -118,9 +174,8 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
      */
     protected function cleanUpApplicant()
     {
-        $lpa = $this->getServiceLocator()->get('LpaApplicationService')->getApplication((int) $this->getLpa()->id);
-        $applicantCleanupService = $this->getServiceLocator()->get('ApplicantCleanup');
-        $applicantCleanupService->cleanUp($lpa, $this->getLpaApplicationService());
+        $lpa = $this->getLpaApplicationService()->getApplication((int) $this->getLpa()->id);
+        $this->applicantCleanup->cleanUp($lpa, $this->getLpaApplicationService());
     }
 
     /**
@@ -200,5 +255,13 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         }
 
         return $formData;
+    }
+
+    /**
+     * @return Metadata
+     */
+    protected function getMetadata(): Metadata
+    {
+        return $this->metadata;
     }
 }

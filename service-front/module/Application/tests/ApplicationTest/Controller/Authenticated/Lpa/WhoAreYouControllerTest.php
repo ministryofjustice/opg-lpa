@@ -43,8 +43,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new WhoAreYouController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(WhoAreYouController::class);
 
         $this->form = Mockery::mock(WhoAreYouForm::class);
         $this->lpa = FixturesData::getPfLpa();

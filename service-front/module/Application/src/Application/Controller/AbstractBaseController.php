@@ -2,10 +2,63 @@
 
 namespace Application\Controller;
 
+use Application\Model\Service\Session\SessionManager;
+use Opg\Lpa\Logger\LoggerTrait;
+use Zend\Authentication\AuthenticationService;
+use Zend\Cache\Storage\StorageInterface;
 use Zend\Mvc\Controller\AbstractActionController;
-use Opg\Lpa\Logger\Logger;
+use Zend\ServiceManager\AbstractPluginManager;
 
-abstract class AbstractBaseController extends AbstractActionController {
+abstract class AbstractBaseController extends AbstractActionController
+{
+    use LoggerTrait;
+
+    /**
+     * @var AbstractPluginManager
+     */
+    private $formElementManager;
+
+    /**
+     * @var SessionManager
+     */
+    private $sessionManager;
+
+    /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
+
+    /**
+     * @var array
+     */
+    private $config;
+
+    /**
+     * @var StorageInterface
+     */
+    private $cache;
+
+    /**§
+     * AbstractBaseController constructor.
+     * @param AbstractPluginManager $formElementManager
+     * @param SessionManager $sessionManager
+     * @param AuthenticationService $authenticationService
+     * @param array $config
+     * @param StorageInterface $cache
+     */
+    public function __construct(
+        AbstractPluginManager $formElementManager,
+        SessionManager $sessionManager,
+        AuthenticationService $authenticationService,
+        array $config,
+        StorageInterface $cache
+    ) {
+        $this->formElementManager = $formElementManager;
+        $this->sessionManager = $sessionManager;
+        $this->authenticationService = $authenticationService;
+        $this->config = $config;
+        $this->cache = $cache;
+    }
 
     /**
      * Ensures cookies are enabled.
@@ -34,7 +87,7 @@ abstract class AbstractBaseController extends AbstractActionController {
         //---
 
         // Get the cookie names used for the session
-        $sessionCookieName = $this->getServiceLocator()->get('Config')['session']['native_settings']['name'];
+        $sessionCookieName = $this->config['session']['native_settings']['name'];
 
         $cookies = $this->getRequest()->getCookie();
 
@@ -85,7 +138,7 @@ abstract class AbstractBaseController extends AbstractActionController {
      */
     protected function preventAuthenticatedUser(){
 
-        $identity = $this->getServiceLocator()->get('AuthenticationService')->getIdentity();
+        $identity = $this->getAuthenticationService()->getIdentity();
 
         if( !is_null($identity) ){
             return $this->redirect()->toRoute( 'user/dashboard' );
@@ -96,30 +149,47 @@ abstract class AbstractBaseController extends AbstractActionController {
     } // function
 
     /**
+     * @return AbstractPluginManager
+     */
+    protected function getFormElementManager(): AbstractPluginManager
+    {
+        return $this->formElementManager;
+    }
+
+    /**
+     * @return SessionManager
+     */
+    protected function getSessionManager(): SessionManager
+    {
+        return $this->sessionManager;
+    }
+
+    /**
+     * @return AuthenticationService
+     */
+    protected function getAuthenticationService(): AuthenticationService
+    {
+        return $this->authenticationService;
+    }
+
+    /**
      * Returns the global config.
      *
      * @return array
      */
-    protected function config(){
-        return $this->getServiceLocator()->get('Config');
+    protected function config(): array
+    {
+        return $this->config;
     }
     
     /**
      * Returns the cache object.
      *
-     * @return array
+     * @return StorageInterface
      */
-    protected function cache(){
-        return $this->getServiceLocator()->get('Cache');
-    }
-    
-    /**
-     * Returns the logger.
-     *
-     * @return Logger
-     */
-    protected function log(){
-        return $this->getServiceLocator()->get('Logger');
+    protected function cache(): StorageInterface
+    {
+        return $this->cache;
     }
 
 } // class

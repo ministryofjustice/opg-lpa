@@ -22,11 +22,10 @@ class GuidanceControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new GuidanceController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(GuidanceController::class);
 
         $this->guidanceService = Mockery::mock(Guidance::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['Guidance'])->andReturn($this->guidanceService);
+        $this->controller->setGuidanceService($this->guidanceService);
     }
 
     public function testIndexActionIsXmlHttpRequestTrue()

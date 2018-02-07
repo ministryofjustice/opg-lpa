@@ -8,15 +8,15 @@ use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class LpaAwareInitializerTest extends TestCase
+class LpaAwareInitializerTest extends MockeryTestCase
 {
     /**
      * @var LpaAwareInitializer
@@ -60,7 +60,7 @@ class LpaAwareInitializerTest extends TestCase
     public function testInitializeNoUser()
     {
         $this->authenticationService->shouldReceive('hasIdentity')->andReturn(false)->once();
-        $instance = new IndexController();
+        $instance = Mockery::mock(IndexController::class);
         $result = $this->initializer->initialize($instance, $this->serviceLocator);
         $this->assertNull($result);
     }
@@ -73,7 +73,7 @@ class LpaAwareInitializerTest extends TestCase
     {
         $this->authenticationService->shouldReceive('hasIdentity')->andReturn(true)->once();
         $this->routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn('invalid')->once();
-        $instance = new IndexController();
+        $instance = Mockery::mock(IndexController::class);
         $this->initializer->initialize($instance, $this->serviceLocator);
     }
 
@@ -82,7 +82,7 @@ class LpaAwareInitializerTest extends TestCase
         $this->authenticationService->shouldReceive('hasIdentity')->andReturn(true)->once();
         $this->routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn(null)->once();
-        $instance = new IndexController();
+        $instance = Mockery::mock(IndexController::class);
         $result = $this->initializer->initialize($instance, $this->serviceLocator);
         $this->assertNull($result);
     }
@@ -121,10 +121,5 @@ class LpaAwareInitializerTest extends TestCase
         $instance->shouldReceive('setLpa')->withArgs([$lpa])->once();
         $result = $this->initializer->initialize($instance, $this->serviceLocator);
         $this->assertNull($result);
-    }
-
-    public function tearDown()
-    {
-        Mockery::close();
     }
 }

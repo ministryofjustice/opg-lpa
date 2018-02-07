@@ -3,13 +3,11 @@ namespace Application\Model\Service\System;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
+use Opg\Lpa\Logger\LoggerTrait;
 
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-
-class DynamoCronLock implements ServiceLocatorAwareInterface {
-
-    use ServiceLocatorAwareTrait;
+class DynamoCronLock
+{
+    use LoggerTrait;
 
     /**
      * The AWS client
@@ -83,7 +81,7 @@ class DynamoCronLock implements ServiceLocatorAwareInterface {
             if( $e->getAwsErrorCode() !== 'ConditionalCheckFailedException' ){
 
                 // Log the exception...
-                $this->getServiceLocator()->get('Logger')->alert(
+                $this->getLogger()->alert(
                     'Unexpected exception thrown whilst trying to secure a Dynamo Cron Lock',
                     [ 'exception' => $e->getMessage() ]
                 );

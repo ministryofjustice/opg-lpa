@@ -4,10 +4,11 @@ namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Lpa\TypeForm;
 use ApplicationTest\Form\FormTestSetupTrait;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use PHPUnit\Framework\TestCase;
 
-class TypeFormTest extends TestCase
+class TypeFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
