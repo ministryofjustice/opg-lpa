@@ -3,14 +3,12 @@
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\NotificationsController;
-use Application\Model\Service\Mail\Message;
 use Application\Model\Service\Mail\Transport\MailTransport;
 use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
 use Exception;
 use Mockery;
 use Mockery\MockInterface;
-use Twig_Template;
 use Zend\Http\Header\HeaderInterface;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
@@ -137,13 +135,7 @@ class NotificationsControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('getHeader')->withArgs(['Token'])->andReturn($this->validToken)->once();
         $this->request->shouldReceive('getPost')->andReturn($validPost)->once();
-        $twigTemplate = Mockery::mock(Twig_Template::class);
-        $twigTemplate->shouldReceive('render')
-            ->withArgs([['deletionDate' => new DateTime($validPost['Date'])]])->andReturn('')->once();
-        $this->mailTransport->shouldReceive('send')->andThrow(new Exception('Unit test exception'))->once();
-        $this->logger->shouldReceive('alert')
-            ->withArgs(['Failed sending expiry notification email to unit@test.com due to: Unit test exception'])
-            ->once();
+        $this->mailTransport->shouldReceive('sendMessageFromTemplate')->andThrow(new Exception('Unit test exception'))->once();
 
         /** @var Response $result */
         $result = $this->controller->expiryNoticeAction();
@@ -160,16 +152,7 @@ class NotificationsControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('getHeader')->withArgs(['Token'])->andReturn($this->validToken)->once();
         $this->request->shouldReceive('getPost')->andReturn($validPost)->once();
-        $twigTemplate = Mockery::mock(Twig_Template::class);
-        $twigTemplate->shouldReceive('render')
-            ->withArgs([['deletionDate' => new DateTime($validPost['Date'])]])->andReturn('')->once();
-        $this->mailTransport->shouldReceive('send')->withArgs([Mockery::on(function ($email) {
-            /** @var Message $email */
-            if ($email->getSubject() === 'Final reminder: do you still need your online LPA account?') {
-                return true;
-            }
-            return false;
-        })])->once();
+        $this->mailTransport->shouldReceive('sendMessageFromTemplate')->once();
 
         /** @var Response $result */
         $result = $this->controller->expiryNoticeAction();
@@ -187,16 +170,7 @@ class NotificationsControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('getHeader')->withArgs(['Token'])->andReturn($this->validToken)->once();
         $this->request->shouldReceive('getPost')->andReturn($validPost)->once();
-        $twigTemplate = Mockery::mock(Twig_Template::class);
-        $twigTemplate->shouldReceive('render')
-            ->withArgs([['deletionDate' => new DateTime($validPost['Date'])]])->andReturn('')->once();
-        $this->mailTransport->shouldReceive('send')->withArgs([Mockery::on(function ($email) {
-            /** @var Message $email */
-            if ($email->getSubject() === 'Do you still need your online lasting power of attorney account?') {
-                return true;
-            }
-            return false;
-        })])->once();
+        $this->mailTransport->shouldReceive('sendMessageFromTemplate')->once();
 
         /** @var Response $result */
         $result = $this->controller->expiryNoticeAction();
