@@ -11,13 +11,17 @@ class Feedback extends AbstractEmailService
 {
     use LoggerTrait;
 
-    public function sendMail($data)
+    /**
+     * Send feedback data to the feedback inbox using a template
+     *
+     * @param array $data
+     * @return bool|string
+     */
+    public function sendMail(array $data)
     {
         $this->getLogger()->info('Sending feedback email', $data);
 
         $to = $this->getConfig()['sendFeedbackEmailTo'];
-
-        $data['sentTime'] = date('Y/m/d H:i:s');
 
         try {
             $this->getMailTransport()->sendMessageFromTemplate($to, MailTransport::EMAIL_FEEDBACK, $data);

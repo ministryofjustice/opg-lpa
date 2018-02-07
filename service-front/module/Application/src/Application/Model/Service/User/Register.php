@@ -53,12 +53,8 @@ class Register extends AbstractEmailService
      */
     public function sendActivateEmail($email, $token, $fromResetRequest = false)
     {
-        $emailRef = MailTransport::EMAIL_ACCOUNT_ACTIVATE;
-
-        //  If this request came from the password reset tool then change some values
-        if ($fromResetRequest) {
-            $emailRef = MailTransport::EMAIL_ACCOUNT_ACTIVATE_RESET_PASSWORD;
-        }
+        //  Determine which email to send
+        $emailRef = ($fromResetRequest ? MailTransport::EMAIL_ACCOUNT_ACTIVATE_PASSWORD_RESET : MailTransport::EMAIL_ACCOUNT_ACTIVATE);
 
         $data = [
             'token' => $token,

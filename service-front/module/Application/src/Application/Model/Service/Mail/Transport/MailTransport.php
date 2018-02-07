@@ -54,17 +54,17 @@ class MailTransport implements TransportInterface
     /**
      * Email template references
      */
-    const EMAIL_ACCOUNT_ACTIVATE = 1;
-    const EMAIL_ACCOUNT_ACTIVATE_RESET_PASSWORD = 2;
-    const EMAIL_DELETE_NOTIFICATION_1_WEEK = 3;
-    const EMAIL_DELETE_NOTIFICATION_1_MONTH = 4;
-    const EMAIL_FEEDBACK = 5;
-    const EMAIL_LPA_REGISTRATION = 6;
-    const EMAIL_NEW_EMAIL_ADDRESS_NOTIFY = 7;
-    const EMAIL_NEW_EMAIL_ADDRESS_VERIFY = 8;
-    const EMAIL_PASSWORD_CHANGED = 9;
-    const EMAIL_PASSWORD_RESET = 10;
-    const EMAIL_SENDGRID_BOUNCE = 11;
+    const EMAIL_ACCOUNT_ACTIVATE                = 'email-account-activate';
+    const EMAIL_ACCOUNT_ACTIVATE_PASSWORD_RESET = 'email-account-activate-reset-password';
+    const EMAIL_DELETE_NOTIFICATION_1_WEEK      = 'email-delete-notification-1-week';
+    const EMAIL_DELETE_NOTIFICATION_1_MONTH     = 'email-delete-notification-1-month';
+    const EMAIL_FEEDBACK                        = 'email-feedback';
+    const EMAIL_LPA_REGISTRATION                = 'email-lpa-registration';
+    const EMAIL_NEW_EMAIL_ADDRESS_NOTIFY        = 'email-new-email-address-notify';
+    const EMAIL_NEW_EMAIL_ADDRESS_VERIFY        = 'email-new-email-address-verify';
+    const EMAIL_PASSWORD_CHANGED                = 'email-password-changed';
+    const EMAIL_PASSWORD_RESET                  = 'email-password-reset';
+    const EMAIL_SENDGRID_BOUNCE                 = 'email-sendgrid-bounce';
 
     private $emailTemplatesConfig = [
         self::EMAIL_ACCOUNT_ACTIVATE => [
@@ -75,7 +75,7 @@ class MailTransport implements TransportInterface
                 'opg-lpa-signup',
             ],
         ],
-        self::EMAIL_ACCOUNT_ACTIVATE_RESET_PASSWORD => [
+        self::EMAIL_ACCOUNT_ACTIVATE_PASSWORD_RESET => [
             'template' => 'password-reset-not-active.twig',
             'categories' => [
                 'opg',
@@ -257,7 +257,6 @@ class MailTransport implements TransportInterface
             }
 
             //  If supported and required set send at
-//TODO - the presence of the § suggests that this send at functionality has never worked
             if ($message instanceof Message§) {
                 $sendAt = $message->getSendAt();
 
@@ -392,7 +391,6 @@ class MailTransport implements TransportInterface
 
 
         //  Get the subject from the template content and set it in the message
-//TODO - confirm this definitely works...
         if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $emailHtml, $matches) === 1) {
             $message->setSubject($matches[1]);
         } else {
