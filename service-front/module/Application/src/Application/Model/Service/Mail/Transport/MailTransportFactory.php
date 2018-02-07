@@ -2,7 +2,6 @@
 
 namespace Application\Model\Service\Mail\Transport;
 
-use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mail\Transport\TransportInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -12,8 +11,6 @@ use RuntimeException;
 
 class MailTransportFactory implements FactoryInterface
 {
-    use LoggerTrait;
-
     /**
      * Create service
      *
@@ -34,6 +31,6 @@ class MailTransportFactory implements FactoryInterface
         /** @var Twig_Environment $emailRenderer */
         $emailRenderer = $serviceLocator->get('TwigEmailRenderer');
 
-        return new MailTransport($client, $emailRenderer, $this->getLogger(), $emailConfig);
+        return new MailTransport($client, $emailRenderer, $emailConfig);
     }
 }

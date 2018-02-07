@@ -4,7 +4,7 @@ namespace Application\Model\Service\Mail\Transport;
 
 use Application\Model\Service\Mail\Message;
 use Html2Text\Html2Text;
-use Opg\Lpa\Logger\Logger;
+use Opg\Lpa\Logger\LoggerTrait;
 use SendGrid as SendGridClient;
 use SendGrid\Email as SendGridMessage;
 use Twig_Environment;
@@ -26,6 +26,7 @@ use Exception;
  */
 class MailTransport implements TransportInterface
 {
+    use LoggerTrait;
 
     /**
      * Mail client object
@@ -40,11 +41,6 @@ class MailTransport implements TransportInterface
      * @var Twig_Environment
      */
     private $emailRenderer;
-
-    /**
-     * @var Logger
-     */
-    private $logger;
 
     /**
      * @var array
@@ -167,13 +163,12 @@ class MailTransport implements TransportInterface
      *
      * @param SendGridClient $client
      * @param Twig_Environment $emailRenderer
-     * @param Logger $logger
+     * @param array $emailConfig
      */
-    public function __construct(SendGridClient $client, Twig_Environment $emailRenderer, Logger $logger, array $emailConfig)
+    public function __construct(SendGridClient $client, Twig_Environment $emailRenderer, array $emailConfig)
     {
         $this->client = $client;
         $this->emailRenderer = $emailRenderer;
-        $this->logger = $logger;
         $this->emailConfig = $emailConfig;
     }
 
@@ -216,7 +211,7 @@ class MailTransport implements TransportInterface
                   ->setFromName($from->getName());
 
             //  Log the attempt to send the message
-            $this->logger->info('Attempting to send email via SendGrid', [
+            $this->getLogger()->info('Attempting to send email via SendGrid', [
                 'from-address' => $email->getFrom(),
                 'to-address'   => $toEmails,
                 'categories'   => $categories
@@ -321,7 +316,7 @@ class MailTransport implements TransportInterface
             }
         } catch (InvalidArgumentException $iae) {
             //  Log an appropriate error message and rethrow the exception
-            $this->logger->err('SendGrid transport error: ' . $iae->getMessage(), [
+            $this->getLogger()->err('SendGrid transport error: ' . $iae->getMessage(), [
                 'categories' => $categories
             ]);
 
