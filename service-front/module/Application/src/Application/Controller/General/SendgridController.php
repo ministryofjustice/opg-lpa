@@ -83,7 +83,7 @@ class SendgridController extends AbstractBaseController
             $loggingData['token'] = $token;
             $loggingData['subject'] = $subject;
 
-            $this->getLogger()->alert("Failed sending email due to:\n" . $e->getMessage(), $loggingData);
+            $this->getLogger()->alert("Failed to send Sendgrid bounce email due to:\n" . $e->getMessage(), $loggingData);
 
             return "failed-sending-email";
         }

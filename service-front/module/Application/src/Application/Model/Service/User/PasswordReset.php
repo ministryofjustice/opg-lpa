@@ -102,9 +102,6 @@ class PasswordReset extends AbstractEmailService
 
     private function sendResetEmail($email, $token)
     {
-        // Send the reset email
-        $this->getLogger()->info('Sending password reset email');
-
         $data = [
             'token' => $token,
         ];

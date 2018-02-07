@@ -108,8 +108,6 @@ class Details extends AbstractEmailService
 
     private function sendActivateNewEmailEmail($newEmailAddress, $token)
     {
-        $this->getLogger()->info('Sending new email verification email');
-
         $data = [
             'token' => $token,
         ];
@@ -125,8 +123,6 @@ class Details extends AbstractEmailService
 
     private function sendNotifyNewEmailEmail($oldEmailAddress, $newEmailAddress)
     {
-        $this->getLogger()->info('Sending new email confirmation email');
-
         $data = [
             'newEmailAddress' => $newEmailAddress,
         ];
