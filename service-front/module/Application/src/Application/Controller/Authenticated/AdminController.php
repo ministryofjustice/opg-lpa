@@ -3,8 +3,6 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
-use Application\Form\Admin\PaymentSwitch;
-use Application\Form\Admin\SystemMessageForm;
 use Application\Form\Admin\UserSearchForm;
 use Application\Model\Service\Admin\Admin as AdminService;
 use Zend\Mvc\MvcEvent;
@@ -12,6 +10,11 @@ use Zend\View\Model\ViewModel;
 
 class AdminController extends AbstractAuthenticatedController
 {
+    /**
+     * @var AdminService
+     */
+    private $adminService;
+
     /**
      * Ensure user is allowed to access admin functions
      *
@@ -23,7 +26,7 @@ class AdminController extends AbstractAuthenticatedController
         $userEmail = (string)$this->getUserDetails()->email;
 
         if ($userEmail != '') {
-            $adminAccounts = $this->getServiceLocator()->get('config')['admin']['accounts'];
+            $adminAccounts = $this->config()['admin']['accounts'];
 
             $isAdmin = in_array($userEmail, $adminAccounts);
 
@@ -37,8 +40,7 @@ class AdminController extends AbstractAuthenticatedController
 
     public function systemMessageAction()
     {
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Admin\SystemMessageForm');
 
         if ($this->request->isPost()) {
@@ -68,8 +70,7 @@ class AdminController extends AbstractAuthenticatedController
 
     public function paymentSwitchAction()
     {
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Admin\PaymentSwitch');
 
         $saved = false;
@@ -107,8 +108,7 @@ class AdminController extends AbstractAuthenticatedController
     public function userSearchAction()
     {
         /** @var UserSearchForm $form */
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Admin\UserSearchForm');
 
         $user = false;
@@ -121,10 +121,7 @@ class AdminController extends AbstractAuthenticatedController
             if ($form->isValid()) {
                 $email = $post['email'];
 
-                /** @var AdminService $adminService */
-                $adminService = $this->getServiceLocator()->get('AdminService');
-
-                $result = $adminService->searchUsers($email);
+                $result = $this->adminService->searchUsers($email);
 
                 if ($result === false) {
                     // Set error message
@@ -142,5 +139,10 @@ class AdminController extends AbstractAuthenticatedController
             'form' => $form,
             'user' => $user
         ]);
+    }
+
+    public function setAdminService(AdminService $adminService)
+    {
+        $this->adminService = $adminService;
     }
 }

@@ -1,15 +1,41 @@
 <?php
 namespace Application\Controller\Console;
 
+use Application\Model\Service\Session\SessionManager;
+use Application\Model\Service\System\DynamoCronLock;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 
 use Aws\DynamoDb\SessionHandler as DynamoDbSessionHandler;
 
-class SessionsController extends AbstractActionController {
+class SessionsController extends AbstractActionController
+{
+    use LoggerTrait;
+
+    /**
+     * @var DynamoCronLock
+     */
+    private $dynamoCronLock;
+
+    /**
+     * @var SessionManager
+     */
+    private $sessionManager;
+
+    /**
+     * SessionsController constructor.
+     * @param DynamoCronLock $dynamoCronLock
+     * @param SessionManager $sessionManager
+     */
+    public function __construct(DynamoCronLock $dynamoCronLock, SessionManager $sessionManager)
+    {
+        $this->dynamoCronLock = $dynamoCronLock;
+        $this->sessionManager = $sessionManager;
+    }
 
     public function gcAction(){
 
-        $cronLock = $this->getServiceLocator()->get('DynamoCronLock');
+        $cronLock = $this->dynamoCronLock;
 
         $lockName = 'SessionGarbageCollection';
 
@@ -20,11 +46,11 @@ class SessionsController extends AbstractActionController {
 
             echo "Got the cron lock; running Session Garbage Collection\n";
 
-            $this->getServiceLocator()->get('Logger')->info("This node got the cron lock for {$lockName}");
+            $this->getLogger()->info("This node got the cron lock for {$lockName}");
 
             //---
 
-            $saveHandler = $this->getServiceLocator()->get('SessionManager')->getSaveHandler();
+            $saveHandler = $this->sessionManager->getSaveHandler();
 
             if( $saveHandler instanceof DynamoDbSessionHandler ){
                 $saveHandler->garbageCollect();
@@ -32,13 +58,13 @@ class SessionsController extends AbstractActionController {
 
             //---
 
-            $this->getServiceLocator()->get('Logger')->info("Finished running Session Garbage Collection");
+            $this->getLogger()->info("Finished running Session Garbage Collection");
 
         } else {
 
             echo "Did not get the session cron lock\n";
 
-            $this->getServiceLocator()->get('Logger')->info("This node did not get the cron lock for {$lockName}");
+            $this->getLogger()->info("This node did not get the cron lock for {$lockName}");
 
         }
 

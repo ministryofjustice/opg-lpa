@@ -41,8 +41,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new ForgotPasswordController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(ForgotPasswordController::class);
 
         $this->resetPasswordEmailForm = Mockery::mock(ConfirmEmail::class);
         $this->formElementManager->shouldReceive('get')
@@ -56,7 +55,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
 
         $this->passwordReset = Mockery::mock(PasswordReset::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['PasswordReset'])->andReturn($this->passwordReset);
+        $this->controller->setPasswordResetService($this->passwordReset);
     }
 
     public function testIndexActionAlreadyLoggedIn()
@@ -166,7 +165,6 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['forgot-password/callback', ['token' => $this->postData['token']]])
             ->andReturn($response)->once();
-        $this->storage->shouldReceive('clear')->once();
         $this->sessionManager->shouldReceive('initialise')->once();
 
         $result = $this->controller->resetPasswordAction();

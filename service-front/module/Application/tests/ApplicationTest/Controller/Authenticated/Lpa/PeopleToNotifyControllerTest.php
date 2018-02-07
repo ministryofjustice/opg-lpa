@@ -52,8 +52,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new TestablePeopleToNotifyController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(TestablePeopleToNotifyController::class);
 
         $this->user = FixturesData::getUser();
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());

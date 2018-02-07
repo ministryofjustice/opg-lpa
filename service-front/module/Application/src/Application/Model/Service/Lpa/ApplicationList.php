@@ -2,10 +2,9 @@
 
 namespace Application\Model\Service\Lpa;
 
+use Application\Model\Service\AbstractService;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Common\LongName;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use DateTime;
 
 /**
@@ -14,13 +13,8 @@ use DateTime;
  * Class ApplicationList
  * @package Application\Model\Service\Lpa
  */
-class ApplicationList implements ServiceLocatorAwareInterface
+class ApplicationList extends AbstractService
 {
-    /**
-     * Trait included to utilise the set and get functions required
-     */
-    use ServiceLocatorAwareTrait;
-
     /**
      * Get a summary of LPAs from the API utilising the search string if one was provided
      * If no page number if provided then get all summaries
@@ -45,7 +39,7 @@ class ApplicationList implements ServiceLocatorAwareInterface
             ]);
         }
 
-        $applicationsSummary = $this->getServiceLocator()->get('LpaApplicationService')->getApplicationList($queryParams);
+        $applicationsSummary = $this->getLpaApplicationService()->getApplicationList($queryParams);
 
         //  If there are LPAs returned, change them into standard class objects for use
         $lpas = [];

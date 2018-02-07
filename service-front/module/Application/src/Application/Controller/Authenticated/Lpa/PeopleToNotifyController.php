@@ -14,7 +14,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         $lpa = $this->getLpa();
 
         // set hidden form for saving empty array to peopleToNotify.
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\BlankMainFlowForm', [
             'lpa' => $lpa
         ]);
 
@@ -23,7 +23,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
             if ($form->isValid()) {
                 // set user has confirmed if there are people to notify
-                $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($this->getLpa());
+                $this->getMetadata()->setPeopleToNotifyConfirmed($this->getLpa());
 
                 return $this->moveToNextRoute();
             }
@@ -80,7 +80,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
             return $this->redirect()->toRoute($route, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($route));
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\PeopleToNotifyForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/people-to-notify/add', ['lpa-id' => $lpaId]));
         $form->setExistingActorNamesData($this->getActorsList());
 
@@ -97,7 +97,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
                 // remove metadata flag value if exists
                 if (!array_key_exists(Lpa::PEOPLE_TO_NOTIFY_CONFIRMED, $lpa->metadata)) {
-                        $this->getServiceLocator()->get('Metadata')->setPeopleToNotifyConfirmed($lpa);
+                        $this->getMetadata()->setPeopleToNotifyConfirmed($lpa);
                 }
 
                 return $this->moveToNextRoute();
@@ -138,7 +138,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
             return $this->notFoundAction();
         }
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PeopleToNotifyForm');
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\PeopleToNotifyForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/people-to-notify/edit', ['lpa-id' => $lpaId, 'idx' => $personIdx]));
         $form->setExistingActorNamesData($this->getActorsList($personIdx));
 

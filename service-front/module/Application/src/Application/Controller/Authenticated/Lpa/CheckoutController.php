@@ -2,7 +2,10 @@
 
 namespace Application\Controller\Authenticated\Lpa;
 
+use Alphagov\Pay\Client as GovPayClient;
 use Application\Controller\AbstractLpaController;
+use Application\Model\Service\Payment\Payment as PaymentService;
+use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Payment\Helper\LpaIdHelper;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Common\EmailAddress;
@@ -16,6 +19,21 @@ use RuntimeException;
 
 class CheckoutController extends AbstractLpaController
 {
+    /**
+     * @var Communication
+     */
+    private $communicationService;
+
+    /**
+     * @var GovPayClient
+     */
+    private $paymentClient;
+
+    /**
+     * @var PaymentService
+     */
+    private $paymentService;
+
     public function indexAction()
     {
         if ($this->request->isPost() && !$this->isLPAComplete()) {
@@ -40,7 +58,7 @@ class CheckoutController extends AbstractLpaController
         // Note: all POSTs are for WorldPay to this method.
         // This protects against the case where an admin changes the 'percentage' whilst a user is mid payment.
         if ($useWorldPay || $this->request->isPost()) {
-            $worldPayForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
+            $worldPayForm = $this->getFormElementManager()->get('Application\Form\Lpa\PaymentForm');
 
             $response = $this->processWorldPayForm($worldPayForm);
 
@@ -59,7 +77,7 @@ class CheckoutController extends AbstractLpaController
         $fullFee = (floor($fullFee) == $fullFee  ? $fullFee : money_format('%i', $fullFee));
 
         // set hidden form for confirming and paying by card.
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\BlankMainFlowForm', [
             'lpa' => $lpa
         ]);
 
@@ -136,8 +154,7 @@ class CheckoutController extends AbstractLpaController
         //---
 
         // Send confirmation email.
-        $this->getServiceLocator()->get('Communication')
-             ->sendRegistrationCompleteEmail($lpa);
+        $this->communicationService->sendRegistrationCompleteEmail($lpa);
 
         //  Don't use the next route function here - just go directly to the completed view
         return $this->redirect()->toRoute('lpa/complete', [
@@ -163,7 +180,7 @@ class CheckoutController extends AbstractLpaController
 
         $lpa = $this->getLpa();
 
-        $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+        $form = $this->getFormElementManager()->get('Application\Form\Lpa\BlankMainFlowForm', [
             'lpa' => $lpa
         ]);
 
@@ -181,7 +198,7 @@ class CheckoutController extends AbstractLpaController
         //  Verify that the payment amount associated with the LPA is corrected based on the fees right now
         $this->verifyLpaPaymentAmount($lpa);
 
-        $paymentClient = $this->getServiceLocator()->get('GovPayClient');
+        $paymentClient = $this->paymentClient;
 
         //----------------------------
         // Check for any existing payments in play
@@ -287,7 +304,7 @@ class CheckoutController extends AbstractLpaController
 
         //---
 
-        $paymentClient = $this->getServiceLocator()->get('GovPayClient');
+        $paymentClient = $this->paymentClient;
 
         $paymentResponse = $paymentClient->getPayment($lpa->payment->gatewayReference);
 
@@ -296,7 +313,7 @@ class CheckoutController extends AbstractLpaController
         // If the payment was not successful...
         if (!$paymentResponse->isSuccess()) {
             // set hidden form for confirming and paying by card.
-            $form = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\BlankMainFlowForm', [
+            $form = $this->getFormElementManager()->get('Application\Form\Lpa\BlankMainFlowForm', [
                 'lpa' => $lpa
             ]);
 
@@ -368,9 +385,9 @@ class CheckoutController extends AbstractLpaController
 
         //--------
 
-        $paymentService = $this->getServiceLocator()->get('Payment');
+        $paymentService = $this->paymentService;
 
-        $paymentService->verifyMacString($params, $this->getLpa()->id);
+        $paymentService->verifyMacString($params);
         $paymentService->verifyOrderKey($params, $this->getLpa()->id);
 
         // The above functions throw fatal exceptions if there are any issues.
@@ -384,7 +401,7 @@ class CheckoutController extends AbstractLpaController
 
     public function worldpayCancelAction()
     {
-        $worldPayForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
+        $worldPayForm = $this->getFormElementManager()->get('Application\Form\Lpa\PaymentForm');
 
         $response = $this->processWorldPayForm($worldPayForm);
 
@@ -402,7 +419,7 @@ class CheckoutController extends AbstractLpaController
 
     public function worldpayFailureAction()
     {
-        $worldPayForm = $this->getServiceLocator()->get('FormElementManager')->get('Application\Form\Lpa\PaymentForm');
+        $worldPayForm = $this->getFormElementManager()->get('Application\Form\Lpa\PaymentForm');
 
         $response = $this->processWorldPayForm($worldPayForm);
 
@@ -426,7 +443,7 @@ class CheckoutController extends AbstractLpaController
 
     private function getWorldpayRedirect($emailAddress)
     {
-        $paymentService = $this->getServiceLocator()->get('Payment');
+        $paymentService = $this->paymentService;
 
         $options = $paymentService->getOptions($this->getLpa(), $emailAddress);
 
@@ -478,5 +495,20 @@ class CheckoutController extends AbstractLpaController
                 return $this->getWorldpayRedirect($worldPayForm->getData()['email']);
             }
         }
+    }
+
+    public function setCommunicationService(Communication $communicationService)
+    {
+        $this->communicationService = $communicationService;
+    }
+
+    public function setPaymentClient(GovPayClient $paymentClient)
+    {
+        $this->paymentClient = $paymentClient;
+    }
+
+    public function setPaymentService(PaymentService $paymentService)
+    {
+        $this->paymentService = $paymentService;
     }
 }

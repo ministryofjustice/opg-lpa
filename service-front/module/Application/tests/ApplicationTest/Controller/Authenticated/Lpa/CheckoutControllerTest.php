@@ -67,8 +67,7 @@ class CheckoutControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new CheckoutController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(CheckoutController::class);
 
         $this->user = FixturesData::getUser();
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
@@ -77,13 +76,13 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa = FixturesData::getHwLpa();
 
         $this->payment = Mockery::mock(Payment::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['Payment'])->andReturn($this->payment);
+        $this->controller->setPaymentService($this->payment);
 
         $this->communication = Mockery::mock(Communication::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['Communication'])->andReturn($this->communication);
+        $this->controller->setCommunicationService($this->communication);
 
         $this->govPayClient = Mockery::mock(GovPayClient::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['GovPayClient'])->andReturn($this->govPayClient);
+        $this->controller->setPaymentClient($this->govPayClient);
 
         $this->blankMainFlowForm = Mockery::mock(BlankMainFlowForm::class);
         $this->submitButton = Mockery::mock(ElementInterface::class);
@@ -619,7 +618,7 @@ class CheckoutControllerTest extends AbstractControllerTest
             $params[$param] = 'value';
         }
         $this->controller->setLpa($this->lpa);
-        $this->payment->shouldReceive('verifyMacString')->withArgs([$params, $this->lpa->id])->once();
+        $this->payment->shouldReceive('verifyMacString')->withArgs([$params])->once();
         $this->payment->shouldReceive('verifyOrderKey')->withArgs([$params, $this->lpa->id])->once();
         $this->payment->shouldReceive('updateLpa')->withArgs([$params, $this->lpa])->once();
 

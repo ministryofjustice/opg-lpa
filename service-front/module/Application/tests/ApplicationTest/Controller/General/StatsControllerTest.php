@@ -15,8 +15,8 @@ class StatsControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new StatsController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(StatsController::class);
+        $this->controller->setLpaApplicationService($this->lpaApplicationService);
     }
 
     public function testIndexAction()

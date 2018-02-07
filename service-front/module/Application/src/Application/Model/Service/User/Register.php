@@ -2,17 +2,17 @@
 
 namespace Application\Model\Service\User;
 
+use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\Message as MailMessage;
 use Application\Model\Service\ApiClient\Exception\ResponseException;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Exception;
 
-class Register implements ServiceLocatorAwareInterface
+class Register extends AbstractEmailService
 {
-    use ServiceLocatorAwareTrait;
+    use LoggerTrait;
 
     /**
      * Register the user account and send the activate account email
@@ -23,10 +23,10 @@ class Register implements ServiceLocatorAwareInterface
      */
     public function registerAccount($email, $password)
     {
-        $logger = $this->getServiceLocator()->get('Logger');
+        $logger = $this->getLogger();
         $logger->info('Account registration attempt for ' . $email);
 
-        $client = $this->getServiceLocator()->get('ApiClient');
+        $client = $this->getApiClient();
         $activationToken = $client->registerAccount(strtolower($email), $password);
 
         // A successful response is a string...
@@ -57,7 +57,7 @@ class Register implements ServiceLocatorAwareInterface
     {
         $message = new MailMessage();
 
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->getConfig();
         $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
 
         $message->addTo($email);
@@ -82,9 +82,7 @@ class Register implements ServiceLocatorAwareInterface
             $defaultSubject = 'Password reset request';
         }
 
-        $content = $this->getServiceLocator()
-            ->get('TwigEmailRenderer')
-            ->loadTemplate($template)
+        $content = $this->getTwigEmailRenderer()->loadTemplate($template)
             ->render([
                 'token' => $token,
             ]);
@@ -103,12 +101,12 @@ class Register implements ServiceLocatorAwareInterface
 
         $message->setBody($body);
 
-        $logger = $this->getServiceLocator()->get('Logger');
+        $logger = $this->getLogger();
 
         try {
             $logger->info('Sending account activation email to ' . $email);
 
-            $this->getServiceLocator()->get('MailTransport')->send($message);
+            $this->getMailTransport()->send($message);
         } catch (Exception $e) {
             $logger->err('Failed to send account activation email to ' . $email);
 
@@ -127,7 +125,7 @@ class Register implements ServiceLocatorAwareInterface
     public function resendActivateEmail($email)
     {
         //  Trigger a request to reset the password in the API - this will return the activation token
-        $client = $this->getServiceLocator()->get('ApiClient');
+        $client = $this->getApiClient();
         $resetToken = $client->requestPasswordReset(strtolower($email));
 
         if ($resetToken instanceof ResponseException && $resetToken->getMessage() == 'account-not-activated') {
@@ -153,10 +151,10 @@ class Register implements ServiceLocatorAwareInterface
         //  This returns:
         //  TRUE - If the user account exists. The account has been activated.
         //  ResponseException - If the user account does not exist, or was already activated.
-        $client = $this->getServiceLocator()->get('ApiClient');
+        $client = $this->getApiClient();
         $result = $client->activateAccount($token);
 
-        $logger = $this->getServiceLocator()->get('Logger');
+        $logger = $this->getLogger();
 
         if ($result === true) {
             $logger->info('Account activation attempt with token was successful');

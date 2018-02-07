@@ -2,13 +2,19 @@
 
 namespace ApplicationTest\Controller;
 
+use Application\Controller\AbstractAuthenticatedController;
+use Application\Controller\AbstractBaseController;
+use Application\Controller\AbstractLpaController;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
+use Application\Model\Service\Lpa\ApplicantCleanup;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
+use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManager;
+use Application\Model\Service\User\Details;
 use ApplicationTest\Controller\Authenticated\Lpa\CertificateProviderControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\CorrespondentControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\DonorControllerTest;
@@ -16,14 +22,14 @@ use ApplicationTest\Controller\Authenticated\Lpa\PeopleToNotifyControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\PrimaryAttorneyControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\ReplacementAttorneyControllerTest;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\Logger;
-use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_Error_Deprecated;
+use Zend\Cache\Storage\Adapter\Memory;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\ResponseCollection;
 use Zend\Http\Request;
@@ -40,21 +46,18 @@ use Zend\Mvc\Controller\PluginManager;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
 use Zend\Mvc\Router\Http\RouteMatch as HttpRouteMatch;
+use Zend\Cache\Storage\StorageInterface;
+use Zend\Mvc\Router\RouteStackInterface;
 use Zend\ServiceManager\AbstractPluginManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Session\AbstractContainer;
 use Zend\Session\Container;
-use Zend\Session\Storage\StorageInterface;
+use Zend\Session\Storage\ArrayStorage;
 use Zend\Stdlib\ArrayObject;
 use Zend\Stdlib\Parameters;
-use Zend\Stdlib\SplPriorityQueue;
 use Zend\Uri\Uri;
 
-abstract class AbstractControllerTest extends TestCase
+abstract class AbstractControllerTest extends MockeryTestCase
 {
-    /**
-     * @var MockInterface|ServiceLocatorInterface
-     */
-    protected $serviceLocator;
     /**
      * @var MockInterface|Logger
      */
@@ -96,10 +99,6 @@ abstract class AbstractControllerTest extends TestCase
      */
     protected $forward;
     /**
-     * @var MockInterface|ResetSessionCloneData
-     */
-    protected $resetSessionCloneData;
-    /**
      * @var MockInterface|EventManager
      */
     protected $eventManager;
@@ -116,7 +115,7 @@ abstract class AbstractControllerTest extends TestCase
      */
     protected $formElementManager;
     /**
-     * @var MockInterface|StorageInterface
+     * @var StorageInterface|ArrayStorage
      */
     protected $storage;
     /**
@@ -132,7 +131,7 @@ abstract class AbstractControllerTest extends TestCase
      */
     protected $authenticationAdapter;
     /**
-     * @var ArrayObject
+     * @var AbstractContainer
      */
     protected $userDetailsSession;
     /**
@@ -160,31 +159,23 @@ abstract class AbstractControllerTest extends TestCase
      */
     protected $metadata;
     /**
-     * @var MockInterface
+     * @var MockInterface|RouteStackInterface
      */
     protected $router;
+    /**
+     * @var MockInterface|Details
+     */
+    protected $aboutYouDetails;
 
     /**
-     * @param AbstractController $controller
+     * @param string $controllerName the class of controller to create
+     * @return AbstractController
      */
-    public function controllerSetUp($controller)
+    public function controllerSetUp(string $controllerName)
     {
-        //Required to suppress the deprecated error received when calling getServiceLocator()
-        //Calling and using the service locator directly in code could be considered a IoC/DI anti pattern
-        //Ideally we would be injecting dependencies via constructor args or setters via the IoC container
-        //This work will be carried out as part of the upgrade to Zend 3
-        PHPUnit_Framework_Error_Deprecated::$enabled = false;
-
-        $this->serviceLocator = Mockery::mock(ServiceLocatorInterface::class);
-
         $this->logger = Mockery::mock(Logger::class);
-        $this->logger->shouldReceive('setWriters')->passthru();
-        $this->logger->setWriters(new SplPriorityQueue());
-        $this->serviceLocator->shouldReceive('get')->withArgs(['Logger'])->andReturn($this->logger);
 
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['AuthenticationService'])->andReturn($this->authenticationService);
 
         $this->pluginManager = Mockery::mock(PluginManager::class);
         $this->pluginManager->shouldReceive('setController');
@@ -258,52 +249,83 @@ abstract class AbstractControllerTest extends TestCase
                 ],
             ]
         ];
-        $this->serviceLocator->shouldReceive('get')->withArgs(['config'])->andReturn($this->config);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['Config'])->andReturn($this->config);
 
         $this->formElementManager = Mockery::mock(AbstractPluginManager::class);
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['FormElementManager'])->andReturn($this->formElementManager);
 
-        $this->storage = Mockery::mock(StorageInterface::class);
+        $this->storage = new ArrayStorage();
 
         $this->sessionManager = Mockery::mock(SessionManager::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['SessionManager'])->andReturn($this->sessionManager);
         $this->sessionManager->shouldReceive('getStorage')->andReturn($this->storage);
 
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['LpaApplicationService'])->andReturn($this->lpaApplicationService);
 
         $this->authenticationAdapter = Mockery::mock(LpaAuthAdapter::class);
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['AuthenticationAdapter'])->andReturn($this->authenticationAdapter);
 
-        $this->userDetailsSession = new ArrayObject();
+        $this->userDetailsSession = new Container();
         $this->userDetailsSession->user = $this->user;
-        $this->serviceLocator->shouldReceive('get')
-            ->withArgs(['UserDetailsSession'])->andReturn($this->userDetailsSession);
-
-        $controller->setServiceLocator($this->serviceLocator);
-        $controller->setPluginManager($this->pluginManager);
-        $controller->setEventManager($this->eventManager);
 
         $this->request = Mockery::mock(Request::class);
 
         $this->responseCollection->shouldReceive('stopped')->andReturn(false);
-        $controller->dispatch($this->request);
 
         $this->apiClient = Mockery::mock(Client::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['ApiClient'])->andReturn($this->apiClient);
 
         $this->cache = Mockery::mock(StorageInterface::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['Cache'])->andReturn($this->cache);
 
         $this->metadata = Mockery::mock(Metadata::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['Metadata'])->andReturn($this->metadata);
 
-        $this->router = Mockery::mock(ArrayObject::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['Router'])->andReturn($this->router);
+        $this->router = Mockery::mock(RouteStackInterface::class);
+
+        $this->aboutYouDetails = Mockery::mock(Details::class);
+
+        /** @var AbstractBaseController $controller */
+        if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
+            if (is_subclass_of($controllerName, AbstractLpaController::class)) {
+                $controller = new $controllerName(
+                    $this->formElementManager,
+                    $this->sessionManager,
+                    $this->authenticationService,
+                    $this->config,
+                    $this->cache,
+                    $this->userDetailsSession,
+                    $this->lpaApplicationService,
+                    $this->aboutYouDetails,
+                    $this->authenticationAdapter,
+                    new ApplicantCleanup(),
+                    new ReplacementAttorneyCleanup(),
+                    $this->metadata
+                );
+            } else {
+                $controller = new $controllerName(
+                    $this->formElementManager,
+                    $this->sessionManager,
+                    $this->authenticationService,
+                    $this->config,
+                    $this->cache,
+                    $this->userDetailsSession,
+                    $this->lpaApplicationService,
+                    $this->aboutYouDetails,
+                    $this->authenticationAdapter
+                );
+            }
+        } else {
+            $controller = new $controllerName(
+                $this->formElementManager,
+                $this->sessionManager,
+                $this->authenticationService,
+                $this->config,
+                $this->cache
+            );
+        }
+
+        $controller->setLogger($this->logger);
+
+        $controller->setPluginManager($this->pluginManager);
+        $controller->setEventManager($this->eventManager);
+
+        $controller->dispatch($this->request);
+
+        return $controller;
     }
 
     /**
@@ -333,8 +355,9 @@ abstract class AbstractControllerTest extends TestCase
     }
 
     /**
-     * @param AbstractController$controller
+     * @param AbstractController $controller
      * @param string $routeName
+     * @return MockInterface|null|RouteMatch
      */
     public function setMatchedRouteName($controller, $routeName, $routeMatch = null)
     {
@@ -344,8 +367,9 @@ abstract class AbstractControllerTest extends TestCase
     }
 
     /**
-     * @param AbstractController$controller
+     * @param AbstractController $controller
      * @param string $routeName
+     * @return MockInterface|RouteMatch
      */
     public function setMatchedRouteNameHttp($controller, $routeName, $expectedMatchedRouteNameTimes = 1)
     {
@@ -372,13 +396,13 @@ abstract class AbstractControllerTest extends TestCase
      */
     public function getSeedData($seedLpa)
     {
-        $result = array('seed' => $seedLpa->id);
+        $result = array('seed' => $seedLpa->getId());
 
-        if ($seedLpa->document == null) {
+        if ($seedLpa->getDocument() == null) {
             return $result;
         }
 
-        $document = $seedLpa->document->toArray();
+        $document = $seedLpa->getDocument()->toArray();
 
         $result = $result + array_intersect_key($document, array_flip([
                 'donor',
@@ -396,6 +420,12 @@ abstract class AbstractControllerTest extends TestCase
         return $result;
     }
 
+    /**
+     * @param MockInterface $form
+     * @param array $postData
+     * @param null $dataToSet
+     * @param int $expectedPostTimes
+     */
     public function setPostInvalid($form, array $postData = [], $dataToSet = null, $expectedPostTimes = 1)
     {
         //  Post data is got from the form it will be a Parameters object
@@ -412,6 +442,13 @@ abstract class AbstractControllerTest extends TestCase
         $form->shouldReceive('isValid')->andReturn(false)->once();
     }
 
+    /**
+     * @param MockInterface $form
+     * @param array $postData
+     * @param null $dataToSet
+     * @param int $expectedPostTimes
+     * @param int $expectedGetPostTimes
+     */
     public function setPostValid(
         $form,
         array $postData = [],
@@ -452,7 +489,7 @@ abstract class AbstractControllerTest extends TestCase
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
-        $url = str_replace('lpa/', "http://localhost/lpa/{$lpa->id}/", $lpaRoute);
+        $url = str_replace('lpa/', "http://localhost/lpa/{$lpa->getId()}/", $lpaRoute);
         $uri = new Uri($url);
 
         $includeTrusts = false;
@@ -481,7 +518,7 @@ abstract class AbstractControllerTest extends TestCase
             'actor-name'     => $actorName,
         ];
 
-        $reuseDetailsUrl = "lpa/{$lpa->id}/reuse-details?" . implode('&', array_map(function ($value, $key) {
+        $reuseDetailsUrl = "lpa/{$lpa->getId()}/reuse-details?" . implode('&', array_map(function ($value, $key) {
             $valueString = is_bool($value) ? $value === true ? '1' : '0' : $value;
             return "$key=$valueString";
         }, $queryParams, array_keys($queryParams)));
@@ -489,13 +526,20 @@ abstract class AbstractControllerTest extends TestCase
         $this->url->shouldReceive('fromRoute')
             ->withArgs([
                 'lpa/reuse-details',
-                ['lpa-id' => $lpa->id],
+                ['lpa-id' => $lpa->getId()],
                 ['query' => $queryParams]
             ])->andReturn($reuseDetailsUrl)->once();
 
         $this->redirect->shouldReceive('toUrl')->withArgs([$reuseDetailsUrl])->andReturn($response);
     }
 
+    /**
+     * @param MockInterface $controller
+     * @param MockInterface $form
+     * @param $user
+     * @param $who
+     * @return MockInterface|RouteMatch
+     */
     public function setReuseDetails($controller, $form, $user, $who)
     {
         $this->userDetailsSession->user = $user;
@@ -519,6 +563,13 @@ abstract class AbstractControllerTest extends TestCase
         return $routeMatch;
     }
 
+    /**
+     * @param MockInterface $form
+     * @param $lpa
+     * @param $route
+     * @param int $expectedFromRouteTimes
+     * @return mixed
+     */
     public function setFormAction($form, $lpa, $route, $expectedFromRouteTimes = 1)
     {
         $url = $this->getLpaUrl($lpa, $route);
@@ -528,6 +579,14 @@ abstract class AbstractControllerTest extends TestCase
         return $url;
     }
 
+    /**
+     * @param MockInterface $form
+     * @param $lpa
+     * @param $route
+     * @param $idx
+     * @param int $expectedFromRouteTimes
+     * @return mixed
+     */
     public function setFormActionIndex($form, $lpa, $route, $idx, $expectedFromRouteTimes = 1)
     {
         $url = $this->getLpaUrl($lpa, $route, ['idx' => $idx]);
@@ -562,7 +621,7 @@ abstract class AbstractControllerTest extends TestCase
         $flattenAttorneyData = $attorney->flatten();
 
         if ($attorney instanceof Human) {
-            $dob = $attorney->dob->date;
+            $dob = $attorney->getDob()->getDate();
             $flattenAttorneyData['dob-date'] = [
                 'day'   => $dob->format('d'),
                 'month' => $dob->format('m'),
@@ -578,12 +637,15 @@ abstract class AbstractControllerTest extends TestCase
         //Clear out Zend containers
         $preAuthRequest = new Container('PreAuthRequest');
         $preAuthRequest->url = null;
-        Mockery::close();
+
+        parent::tearDown();
     }
 
     /**
      * @param $lpa
      * @param $route
+     * @param null $queryParameters
+     * @param null $fragment
      * @return mixed
      */
     private function getLpaUrl($lpa, $route, $queryParameters = null, $fragment = null)

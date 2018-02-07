@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\Mail\Transport;
 
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mail\Transport\TransportInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -10,6 +11,8 @@ use RuntimeException;
 
 class SendGridFactory implements FactoryInterface
 {
+    use LoggerTrait;
+
     /**
      * Create service
      *
@@ -28,6 +31,6 @@ class SendGridFactory implements FactoryInterface
         //  Inject the SendGrid client and the logger into the service
         $client = new SendGridClient($sendGridConfig['user'], $sendGridConfig['key']);
 
-        return new SendGrid($client, $serviceLocator->get('Logger'));
+        return new SendGrid($client, $this->getLogger());
     }
 }

@@ -12,8 +12,7 @@ class TypeController extends AbstractAuthenticatedController
 {
     public function indexAction()
     {
-        $form = $this->getServiceLocator()
-                     ->get('FormElementManager')
+        $form = $this->getFormElementManager()
                      ->get('Application\Form\Lpa\TypeForm');
 
         if ($this->request->isPost()) {

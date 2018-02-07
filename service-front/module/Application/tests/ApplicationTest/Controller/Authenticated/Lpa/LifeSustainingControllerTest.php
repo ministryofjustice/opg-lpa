@@ -33,8 +33,7 @@ class LifeSustainingControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new LifeSustainingController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(LifeSustainingController::class);
 
         $this->form = Mockery::mock(LifeSustainingForm::class);
         $this->lpa = FixturesData::getHwLpa();

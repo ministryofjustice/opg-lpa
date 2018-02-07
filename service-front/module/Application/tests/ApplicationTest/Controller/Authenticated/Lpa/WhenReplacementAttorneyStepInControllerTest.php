@@ -42,8 +42,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new WhenReplacementAttorneyStepInController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(WhenReplacementAttorneyStepInController::class);
 
         $this->form = Mockery::mock(WhenReplacementAttorneyStepInForm::class);
         $this->lpa = FixturesData::getPfLpa();
@@ -123,8 +122,6 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
             })->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$this->lpa->id])
             ->andReturn($this->lpa)->once();
-        $this->serviceLocator->shouldReceive('get')->withArgs(['ReplacementAttorneyCleanup'])
-            ->andReturn(new ReplacementAttorneyCleanup())->once()->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/when-replacement-attorney-step-in');
         $this->setRedirectToRoute('lpa/how-replacement-attorneys-make-decision', $this->lpa, $response);
@@ -150,8 +147,6 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
             })->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$this->lpa->id])
             ->andReturn($this->lpa)->once();
-        $this->serviceLocator->shouldReceive('get')->withArgs(['ReplacementAttorneyCleanup'])
-            ->andReturn(new ReplacementAttorneyCleanup())->once()->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($this->controller, 'lpa/when-replacement-attorney-step-in');
         $this->setRedirectToRoute('lpa/certificate-provider', $this->lpa, $response);

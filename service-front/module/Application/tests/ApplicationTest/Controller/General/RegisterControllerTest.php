@@ -46,8 +46,7 @@ class RegisterControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = new RegisterController();
-        parent::controllerSetUp($this->controller);
+        $this->controller = parent::controllerSetUp(RegisterController::class);
 
         $this->form = Mockery::mock(Registration::class);
         $this->formElementManager->shouldReceive('get')
@@ -63,7 +62,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->event->shouldReceive('getRouteMatch')->andReturn($this->routeMatch);
 
         $this->register = Mockery::mock(Register::class);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['Register'])->andReturn($this->register);
+        $this->controller->setRegisterService($this->register);
     }
 
     public function testIndexActionRefererGovUk()
@@ -196,7 +195,6 @@ class RegisterControllerTest extends AbstractControllerTest
     {
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('unitTest')->once();
         $this->authenticationService->shouldReceive('clearIdentity');
-        $this->storage->shouldReceive('clear')->once();
         $this->sessionManager->shouldReceive('initialise')->once();
         $this->register->shouldReceive('activateAccount')->andReturn(false)->once();
 
@@ -211,7 +209,6 @@ class RegisterControllerTest extends AbstractControllerTest
     {
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('unitTest')->once();
         $this->authenticationService->shouldReceive('clearIdentity');
-        $this->storage->shouldReceive('clear')->once();
         $this->sessionManager->shouldReceive('initialise')->once();
         $this->register->shouldReceive('activateAccount')->andReturn(true)->once();
 
