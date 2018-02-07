@@ -5,7 +5,6 @@ namespace Application\Model\Service\Lpa;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\Logger\LoggerTrait;
 use Exception;
 use Zend\Session\Container;
 
@@ -17,8 +16,6 @@ use Zend\Session\Container;
  */
 class Communication extends AbstractEmailService
 {
-    use LoggerTrait;
-
     /**
      * @var Container
      */
@@ -47,8 +44,6 @@ class Communication extends AbstractEmailService
         try {
             $this->getMailTransport()->sendMessageFromTemplate($to, MailTransport::EMAIL_LPA_REGISTRATION, $data);
         } catch (Exception $e) {
-            $this->getLogger()->alert("Failed sending LPA registration email to ".$userSession->user->email->address." due to:\n".$e->getMessage());
-
             return "failed-sending-email";
         }
 

@@ -87,8 +87,6 @@ class NotificationsController extends AbstractBaseController
 
             $response->setContent('Notification received');
         } catch (Exception $e) {
-            $this->getLogger()->alert('Failed sending expiry notification email to ' . $posts['Username'] . ' due to: ' . $e->getMessage());
-
             $response->setStatusCode(500);
             $response->setContent('Error receiving notification');
         }

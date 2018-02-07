@@ -60,15 +60,9 @@ class Register extends AbstractEmailService
             'token' => $token,
         ];
 
-        $logger = $this->getLogger();
-
         try {
-            $logger->info('Sending account activation email to ' . $email);
-
             $this->getMailTransport()->sendMessageFromTemplate($email, $emailRef, $data);
         } catch (Exception $e) {
-            $logger->err('Failed to send account activation email to ' . $email);
-
             return "failed-sending-email";
         }
 

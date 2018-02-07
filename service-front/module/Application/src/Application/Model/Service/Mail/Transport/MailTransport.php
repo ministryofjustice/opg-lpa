@@ -335,80 +335,92 @@ class MailTransport implements TransportInterface
      */
     public function sendMessageFromTemplate($to, $emailRef, array $data = [], DateTime $sendAt = null)
     {
-        //  Get the categories for this email template
-        if (!isset($this->emailTemplatesConfig[$emailRef])
-            || !isset($this->emailTemplatesConfig[$emailRef]['template'])
-            || !isset($this->emailTemplatesConfig[$emailRef]['categories'])) {
+        try {
+            $this->getLogger()->info(sprintf('Sending %s email to %s', $emailRef, $to));
 
-            throw new Exception('Missing template config for ' . $emailRef);
+            //  Get the categories for this email template
+            if (!isset($this->emailTemplatesConfig[$emailRef])
+                || !isset($this->emailTemplatesConfig[$emailRef]['template'])
+                || !isset($this->emailTemplatesConfig[$emailRef]['categories'])) {
+
+                throw new Exception('Missing template config for ' . $emailRef);
+            }
+
+            //  Get the HTML content from the template and the data
+            $template = $this->emailRenderer->loadTemplate($this->emailTemplatesConfig[$emailRef]['template']);
+            $emailHtml = $template->render($data);
+
+
+            //  Construct the message to send
+            $message = new Message();
+
+
+            //  Add the TO address/addresses
+            if (!is_array($to)) {
+                $to = [$to];
+            }
+
+            foreach ($to as $toEmails) {
+                $message->addTo($toEmails);
+            }
+
+
+            //  Set the FROM address - override where necessary for certain email types
+            $from = $this->emailConfig['sender']['default']['address'];
+            $fromName = $this->emailConfig['sender']['default']['name'];
+
+            if ($emailRef == self::EMAIL_FEEDBACK) {
+                $from = $this->emailConfig['sender']['feedback']['address'];
+                $fromName = $this->emailConfig['sender']['feedback']['name'];
+            } elseif ($emailRef == self::EMAIL_SENDGRID_BOUNCE) {
+                $from = 'blackhole@lastingpowerofattorney.service.gov.uk';
+            }
+
+
+            $message->addFrom($from, $fromName);
+
+
+            //  Add the categories for this message
+            $categories = $this->emailTemplatesConfig[$emailRef]['categories'];
+
+            foreach ($categories as $category) {
+                $message->addCategory($category);
+            }
+
+
+            //  Get the subject from the template content and set it in the message
+            if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $emailHtml, $matches) === 1) {
+                $message->setSubject($matches[1]);
+            } else {
+                throw new Exception('Email subject can not be retrieved from the email template content');
+            }
+
+
+            //  Set the HTML content as a mime message
+            $html = new Mime\Part($emailHtml);
+            $html->type = Mime\Mime::TYPE_HTML;
+            $mimeMessage = new Mime\Message();
+            $mimeMessage->setParts([$html]);
+
+            $message->setBody($mimeMessage);
+
+
+            //  If a send time has been passed then apply that now
+            if ($sendAt instanceof DateTime) {
+                //  If a send time has been provided apply it now
+                $message->setSendAt($sendAt->getTimestamp());
+            }
+
+            $this->send($message);
+
+            //  Log a final OK message
+            $this->getLogger()->info(sprintf('%s email sent successfully to %s', $emailRef, $to));
+        } catch (Exception $e) {
+            //  Log the error with the data and rethrow
+            $this->getLogger()->err(sprintf("Failed to send %s email to %s due to:\n%s", $emailRef, $to, $e->getMessage()), $data);
+
+            throw $e;
         }
-
-        //  Get the HTML content from the template and the data
-        $template = $this->emailRenderer->loadTemplate($this->emailTemplatesConfig[$emailRef]['template']);
-        $emailHtml = $template->render($data);
-
-
-        //  Construct the message to send
-        $message = new Message();
-
-
-        //  Add the TO address/addresses
-        if (!is_array($to)) {
-            $to = [$to];
-        }
-
-        foreach ($to as $toEmails) {
-            $message->addTo($toEmails);
-        }
-
-
-        //  Set the FROM address - override where necessary for certain email types
-        $from = $this->emailConfig['sender']['default']['address'];
-        $fromName = $this->emailConfig['sender']['default']['name'];
-
-        if ($emailRef == self::EMAIL_FEEDBACK) {
-            $from = $this->emailConfig['sender']['feedback']['address'];
-            $fromName = $this->emailConfig['sender']['feedback']['name'];
-        } elseif ($emailRef == self::EMAIL_SENDGRID_BOUNCE) {
-            $from = 'blackhole@lastingpowerofattorney.service.gov.uk';
-        }
-
-
-        $message->addFrom($from, $fromName);
-
-
-        //  Add the categories for this message
-        $categories = $this->emailTemplatesConfig[$emailRef]['categories'];
-
-        foreach ($categories as $category) {
-            $message->addCategory($category);
-        }
-
-
-        //  Get the subject from the template content and set it in the message
-        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $emailHtml, $matches) === 1) {
-            $message->setSubject($matches[1]);
-        } else {
-            throw new Exception('Email subject can not be retrieved from the email template content');
-        }
-
-
-        //  Set the HTML content as a mime message
-        $html = new Mime\Part($emailHtml);
-        $html->type = Mime\Mime::TYPE_HTML;
-        $mimeMessage = new Mime\Message();
-        $mimeMessage->setParts([$html]);
-
-        $message->setBody($mimeMessage);
-
-
-        //  If a send time has been passed then apply that now
-        if ($sendAt instanceof DateTime) {
-            //  If a send time has been provided apply it now
-            $message->setSendAt($sendAt->getTimestamp());
-        }
-
-        $this->send($message);
     }
 
     /**
