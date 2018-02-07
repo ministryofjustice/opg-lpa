@@ -69,9 +69,9 @@ class SendgridController extends AbstractBaseController
         }
 
         try {
-            $this->mailTransport->sendMessageFromTemplate($fromAddress, MailTransport::EMAIL_SENDGRID_BOUNCE);
-
-            echo 'Email sent';
+//            $this->mailTransport->sendMessageFromTemplate($fromAddress, MailTransport::EMAIL_SENDGRID_BOUNCE);
+//
+//            echo 'Email sent';
 
             //  Unmonitored mailbox emails will not be sent temporarily while we monitor the usage (and abuse!) of this end point
             //  For now just log the data from the email
