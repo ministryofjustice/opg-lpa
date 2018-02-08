@@ -60,6 +60,7 @@ class MailTransport implements TransportInterface
     const EMAIL_NEW_EMAIL_ADDRESS_VERIFY        = 'email-new-email-address-verify';
     const EMAIL_PASSWORD_CHANGED                = 'email-password-changed';
     const EMAIL_PASSWORD_RESET                  = 'email-password-reset';
+    const EMAIL_PASSWORD_RESET_NO_ACCOUNT       = 'email-password-reset-no-account';
     const EMAIL_SENDGRID_BOUNCE                 = 'email-sendgrid-bounce';
 
     private $emailTemplatesConfig = [
@@ -146,6 +147,15 @@ class MailTransport implements TransportInterface
                 'opg-lpa',
                 'opg-lpa-passwordreset',
                 'opg-lpa-passwordreset-normal',
+            ],
+        ],
+        self::EMAIL_PASSWORD_RESET_NO_ACCOUNT => [
+            'template' => 'password-reset-no-account.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-passwordreset',
+                'opg-lpa-passwordreset-noaccount',
             ],
         ],
         self::EMAIL_SENDGRID_BOUNCE => [
