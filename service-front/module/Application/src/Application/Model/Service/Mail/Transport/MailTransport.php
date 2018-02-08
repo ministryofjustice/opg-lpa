@@ -81,7 +81,7 @@ class MailTransport implements TransportInterface
             ],
         ],
         self::EMAIL_DELETE_NOTIFICATION_1_WEEK => [
-            'template' => '',
+            'template' => 'account-deletion-notification.twig',
             'categories' => [
                 'opg',
                 'opg-lpa',
@@ -363,7 +363,6 @@ class MailTransport implements TransportInterface
             foreach ($to as $toEmails) {
                 $message->addTo($toEmails);
             }
-
 
             //  Set the FROM address - override where necessary for certain email types
             $from = $this->emailConfig['sender']['default']['address'];
