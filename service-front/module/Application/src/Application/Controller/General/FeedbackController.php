@@ -31,14 +31,11 @@ class FeedbackController extends AbstractBaseController
 
                 $data = $form->getData();
 
-                $result = $feedbackService->sendMail([
-                    'rating'    => $data['rating'],
-                    'details'   => $data['details'],
-                    'email'     => $data['email'],
-                    'phone'     => $data['phone'],
-                    'agent'     => $_SERVER['HTTP_USER_AGENT'],
-                    'fromPage'  => (is_string($container->feedbackLinkClickedFromPage) ? $container->feedbackLinkClickedFromPage : 'Unknown'),
-                ]);
+                //  Inject extra details into the data before passing to the feedback service to send in an email
+                $data['agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $data['fromPage'] = (is_string($container->feedbackLinkClickedFromPage) ? $container->feedbackLinkClickedFromPage : 'Unknown');
+
+                $result = $feedbackService->sendMail($data);
 
                 if ($result === true) {
                     //  Determine the return target to go to from the thank you page

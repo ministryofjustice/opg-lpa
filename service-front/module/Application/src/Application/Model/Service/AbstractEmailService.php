@@ -5,7 +5,7 @@ namespace Application\Model\Service;
 use Application\Model\Service\ApiClient\Client as ApiClient;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Mail\Transport\SendGrid;
+use Application\Model\Service\Mail\Transport\MailTransport;
 use Twig_Environment;
 
 abstract class AbstractEmailService extends AbstractService
@@ -16,7 +16,7 @@ abstract class AbstractEmailService extends AbstractService
     private $twigEmailRenderer;
 
     /**
-     * @var SendGrid
+     * @var MailTransport
      */
     private $mailTransport;
 
@@ -27,7 +27,7 @@ abstract class AbstractEmailService extends AbstractService
      * @param AuthenticationService $authenticationService
      * @param array $config
      * @param Twig_Environment $twigEmailRenderer
-     * @param SendGrid $mailTransport
+     * @param MailTransport $mailTransport
      */
     public function __construct(
         ApiClient $apiClient,
@@ -35,7 +35,7 @@ abstract class AbstractEmailService extends AbstractService
         AuthenticationService $authenticationService,
         array $config,
         Twig_Environment $twigEmailRenderer,
-        SendGrid $mailTransport
+        MailTransport $mailTransport
     ) {
         parent::__construct($apiClient, $lpaApplicationService, $authenticationService, $config);
         $this->twigEmailRenderer = $twigEmailRenderer;
@@ -51,9 +51,9 @@ abstract class AbstractEmailService extends AbstractService
     }
 
     /**
-     * @return SendGrid
+     * @return MailTransport
      */
-    public function getMailTransport(): SendGrid
+    public function getMailTransport(): MailTransport
     {
         return $this->mailTransport;
     }

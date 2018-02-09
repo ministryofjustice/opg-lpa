@@ -2,169 +2,100 @@
 
 namespace Application\Controller\General;
 
-use Application\Model\Service\Mail\Transport\SendGrid;
+use Application\Controller\AbstractBaseController;
+use Application\Model\Service\Mail\Transport\MailTransport;
 use DateTime;
 use DateTimeZone;
-use Application\Controller\AbstractBaseController;
-use Twig_Environment;
-use Zend\Mime\Message as MimeMessage;
-use Zend\Mime\Part as MimePart;
-use Application\Model\Service\Mail\Message as MessageService;
+use Exception;
 
 class NotificationsController extends AbstractBaseController
 {
     /**
-     * @var Twig_Environment
-     */
-    private $twigEmailRenderer;
-
-    /**
-     * @var SendGrid
+     * @var MailTransport
      */
     private $mailTransport;
 
-    public function expiryNoticeAction(){
-
-        $config = $this->config();
-
-        //---
-
+    public function expiryNoticeAction()
+    {
         $token = $this->request->getHeader('Token');
 
-        if( !$token || $token->getFieldValue() !== $config['account-cleanup']['notification']['token'] ){
-
+        if (!$token || $token->getFieldValue() !== $this->config()['account-cleanup']['notification']['token']) {
             $response = $this->getResponse();
             $response->setStatusCode(403);
             $response->setContent('Invalid Token');
+
             return $response;
-
         }
-
-        //---
 
         $posts = $this->request->getPost();
 
-        if( !isset($posts['Username']) || !isset($posts['Type']) || !isset($posts['Date']) ){
-
+        if (!isset($posts['Username']) || !isset($posts['Type']) || !isset($posts['Date'])) {
             $response = $this->getResponse();
             $response->setStatusCode(400);
             $response->setContent('Missing parameters');
-            return $response;
 
+            return $response;
         }
 
-        //---
+        $emailRef = '';
+        $notificationType = $posts['Type'];
 
-        $deletionDate = new DateTime( $posts['Date'] );
+        if ($notificationType == '1-week-notice') {
+            $emailRef = MailTransport::EMAIL_DELETE_NOTIFICATION_1_WEEK;
+        } elseif ($notificationType == '1-month-notice') {
+            $emailRef = MailTransport::EMAIL_DELETE_NOTIFICATION_1_MONTH;
+        } else {
+            $response = $this->getResponse();
+            $response->setStatusCode(400);
+            $response->setContent('Unknown type');
 
-        if( $deletionDate < (new DateTime('+48 hours')) ){
+            return $response;
+        }
 
+        $deletionDate = new DateTime($posts['Date']);
+
+        if ($deletionDate < new DateTime('+48 hours')) {
             $response = $this->getResponse();
             $response->setStatusCode(400);
             $response->setContent('Date must be at least 48 hours in the future.');
+
             return $response;
-
         }
 
-        //---
+        $to = $posts['Username'];
 
-        $email = new MessageService();
-
-        $email->addTo( $posts['Username'] );
-
-        //--
-
-        $email->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
-
-        //---
-
-        $email->addCategory('opg');
-        $email->addCategory('opg-lpa');
-        $email->addCategory('opg-lpa-notification');
-        $email->addCategory('opg-lpa-notification-'.$posts['Type']);
-
-        //--
-
-
-        switch($posts['Type']){
-            case '1-week-notice':
-
-                $email->setSubject( 'Final reminder: do you still need your online LPA account?' );
-
-                break;
-            case '1-month-notice':
-
-                $email->setSubject( 'Do you still need your online lasting power of attorney account?' );
-
-                break;
-            default:
-                $response = $this->getResponse();
-                $response->setStatusCode(400);
-                $response->setContent('Unknown type');
-                return $response;
-        }
-
-
-        //---
-
-        $template = $this->twigEmailRenderer->loadTemplate('account-deletion-notification.twig');
-
-        $content = $template->render([
-            'deletionDate' => $deletionDate
-        ]);
-
-        //---
-
-        $html = new MimePart( $content );
-        $html->type = "text/html";
-
-        $mimeMessage = new MimeMessage();
-        $mimeMessage->setParts([$html]);
-
-        $email->setBody($mimeMessage);
-
-        //---
+        $data = [
+            'deletionDate' => $deletionDate,
+            'notificationType' => $notificationType,
+        ];
 
         $sendAt = new DateTime('today 11am', new DateTimeZone('Europe/London'));
 
-        // If now is before the time above, defer delivery of the email until that time...
+        //  If the time above is after 11am today then send the email straight away
+        //  Otherwise defer delivery to that time
         if ($sendAt->getTimestamp() > time()) {
             //The call to time() above can't be mocked so ignoring this line until this code is refactored
-            // @codeCoverageIgnoreStart
-            $email->setSendAt($sendAt->getTimestamp());
+            //  @codeCoverageIgnoreStart
+            $sendAt = null;
         }
-        // @codeCoverageIgnoreEnd
-
-        //---
+        //  @codeCoverageIgnoreEnd
 
         $response = $this->getResponse();
 
         try {
-
-            $this->mailTransport->send($email);
+            $this->mailTransport->sendMessageFromTemplate($to, $emailRef, $data, $sendAt);
 
             $response->setContent('Notification received');
-
-        } catch ( \Exception $e ){
-
-            $this->getLogger()->alert("Failed sending expiry notification email to ".$posts['Username']." due to: ".$e->getMessage());
-
+        } catch (Exception $e) {
             $response->setStatusCode(500);
             $response->setContent('Error receiving notification');
-
         }
 
         return $response;
-
-    } // function
-
-    public function setTwigEmailRenderer(Twig_Environment $twigEmailRenderer)
-    {
-        $this->twigEmailRenderer = $twigEmailRenderer;
     }
 
-    public function setMailTransport(SendGrid $mailTransport)
+    public function setMailTransport(MailTransport $mailTransport)
     {
         $this->mailTransport = $mailTransport;
     }
-} // class
+}

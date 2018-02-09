@@ -75,8 +75,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setGuidanceService' => 'Guidance'
         ],
         NotificationsController::class => [
-            'setTwigEmailRenderer' => 'TwigEmailRenderer',
-            'setMailTransport'     => 'MailTransport'
+            'setMailTransport' => 'MailTransport'
         ],
         PingController::class => [
             'setStatusService' => 'SiteStatus'
@@ -85,7 +84,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setRegisterService' => 'Register'
         ],
         SendgridController::class => [
-            'setTwigEmailRenderer' => 'TwigEmailRenderer'
+            'setMailTransport' => 'MailTransport'
         ],
         VerifyEmailAddressController::class => [
             'setAboutYouDetails' => 'AboutYouDetails'
@@ -191,6 +190,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         //  If required load any additional services into the resource
         if (array_key_exists($controllerName, $this->additionalServices)
             && is_array($this->additionalServices[$controllerName])) {
+
             foreach ($this->additionalServices[$controllerName] as $setterMethod => $additionalService) {
                 if (!method_exists($controller, $setterMethod)) {
                     throw new Exception(sprintf(

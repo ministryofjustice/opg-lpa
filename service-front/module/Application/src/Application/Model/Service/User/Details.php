@@ -4,11 +4,9 @@ namespace Application\Model\Service\User;
 
 use Application\Form\AbstractCsrfForm;
 use Application\Model\Service\AbstractEmailService;
-use Application\Model\Service\Mail\Message as MailMessage;
 use Application\Model\Service\ApiClient\Exception\ResponseException;
+use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Mime\Message as MimeMessage;
-use Zend\Mime\Part as MimePart;
 use Exception;
 use RuntimeException;
 use Zend\Session\Container;
@@ -88,8 +86,7 @@ class Details extends AbstractEmailService
 
         $this->getLogger()->info('Requesting email update to new email: ' . $data['email'], $identityArray);
 
-        $client = $this->getApiClient();
-        $updateToken = $client->requestEmailUpdate(strtolower($data['email']));
+        $updateToken = $this->getApiClient()->requestEmailUpdate(strtolower($data['email']));
 
         if (!is_string($updateToken)) {
             if ($updateToken instanceof ResponseException) {
@@ -111,40 +108,12 @@ class Details extends AbstractEmailService
 
     private function sendActivateNewEmailEmail($newEmailAddress, $token)
     {
-        $this->getLogger()->info('Sending new email verification email');
-
-        $message = new MailMessage();
-
-        $config = $this->getConfig();
-        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
-
-        $message->addTo($newEmailAddress);
-
-        $message->addCategory('opg');
-        $message->addCategory('opg-lpa');
-        $message->addCategory('opg-lpa-newemail-verification');
-
-        $content = $this->getTwigEmailRenderer()->loadTemplate('new-email-verify.twig')
-                        ->render([
-                            'token' => $token,
-                        ]);
-
-        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
-            $message->setSubject($matches[1]);
-        } else {
-            $message->setSubject('Please verify your new email address');
-        }
-
-        $html = new MimePart($content);
-        $html->type = "text/html";
-
-        $body = new MimeMessage();
-        $body->setParts([$html]);
-
-        $message->setBody($body);
+        $data = [
+            'token' => $token,
+        ];
 
         try {
-            $this->getMailTransport()->send($message);
+            $this->getMailTransport()->sendMessageFromTemplate($newEmailAddress, MailTransport::EMAIL_NEW_EMAIL_ADDRESS_VERIFY, $data);
         } catch (Exception $e) {
             return "failed-sending-email";
         }
@@ -154,40 +123,12 @@ class Details extends AbstractEmailService
 
     private function sendNotifyNewEmailEmail($oldEmailAddress, $newEmailAddress)
     {
-        $this->getLogger()->info('Sending new email confirmation email');
-
-        $message = new MailMessage();
-
-        $config = $this->getConfig();
-        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
-
-        $message->addTo($oldEmailAddress);
-
-        $message->addCategory('opg');
-        $message->addCategory('opg-lpa');
-        $message->addCategory('opg-lpa-newemail-confirmation');
-
-        $content = $this->getTwigEmailRenderer()->loadTemplate('new-email-notify.twig')
-                        ->render([
-                            'newEmailAddress' => $newEmailAddress,
-                        ]);
-
-        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
-            $message->setSubject($matches[1]);
-        } else {
-            $message->setSubject('You asked us to change your email address');
-        }
-
-        $html = new MimePart($content);
-        $html->type = "text/html";
-
-        $body = new MimeMessage();
-        $body->setParts([$html]);
-
-        $message->setBody($body);
+        $data = [
+            'newEmailAddress' => $newEmailAddress,
+        ];
 
         try {
-            $this->getMailTransport()->send($message);
+            $this->getMailTransport()->sendMessageFromTemplate($oldEmailAddress, MailTransport::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY, $data);
         } catch (Exception $e) {
             return "failed-sending-email";
         }
@@ -199,9 +140,7 @@ class Details extends AbstractEmailService
     {
         $this->getLogger()->info('Updating email using token');
 
-        $client = $this->getApiClient();
-
-        $success = $client->updateAuthEmail($emailUpdateToken);
+        $success = $this->getApiClient()->updateAuthEmail($emailUpdateToken);
 
         return ($success === true);
     }
@@ -218,11 +157,9 @@ class Details extends AbstractEmailService
 
         $this->getLogger()->info('Updating password', $identity->toArray());
 
-        $client = $this->getApiClient();
-
         $data = $details->getData();
 
-        $result = $client->updateAuthPassword(
+        $result = $this->getApiClient()->updateAuthPassword(
             $data['password_current'],
             $data['password']
         );
@@ -246,39 +183,12 @@ class Details extends AbstractEmailService
 
     public function sendPasswordUpdatedEmail($email)
     {
-        $message = new MailMessage();
-
-        $config = $this->getConfig();
-        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
-
-        $message->addTo($email);
-
-        $message->addCategory('opg');
-        $message->addCategory('opg-lpa');
-        $message->addCategory('opg-lpa-password');
-        $message->addCategory('opg-lpa-password-changed');
-
-        $content = $this->getTwigEmailRenderer()->loadTemplate('password-changed.twig')
-                        ->render([
-                            'email' => $email
-                        ]);
-
-        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
-            $message->setSubject($matches[1]);
-        } else {
-            $message->setSubject('You have changed your LPA account password');
-        }
-
-        $html = new MimePart($content);
-        $html->type = "text/html";
-
-        $body = new MimeMessage();
-        $body->setParts([$html]);
-
-        $message->setBody($body);
+        $data = [
+            'email' => $email
+        ];
 
         try {
-            $this->getMailTransport()->send($message);
+            $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_CHANGED, $data);
         } catch (Exception $e) {
             return "failed-sending-email";
         }
