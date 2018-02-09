@@ -42,7 +42,13 @@ class PasswordReset extends AbstractEmailService
 
                 // 404 response means user not found...
                 if ($resetToken->getCode() == 404) {
-                    return "user-not-found";
+                    try {
+                        $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_RESET_NO_ACCOUNT);
+                    } catch (Exception $e) {
+                        return "failed-sending-email";
+                    }
+
+                    return true;
                 }
 
                 if ($resetToken->getDetail() != null) {
@@ -53,8 +59,16 @@ class PasswordReset extends AbstractEmailService
             return "unknown-error";
         }
 
-        // Send the email
-        $this->sendResetEmail($email, $resetToken);
+        // Send the password reset email
+        $data = [
+            'token' => $resetToken,
+        ];
+
+        try {
+            $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_RESET, $data);
+        } catch (Exception $e) {
+            return "failed-sending-email";
+        }
 
         $logger->info('Password reset email sent to ' . $email);
 
@@ -95,21 +109,6 @@ class PasswordReset extends AbstractEmailService
             }
 
             return "unknown-error";
-        }
-
-        return true;
-    }
-
-    private function sendResetEmail($email, $token)
-    {
-        $data = [
-            'token' => $token,
-        ];
-
-        try {
-            $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_RESET, $data);
-        } catch (Exception $e) {
-            return "failed-sending-email";
         }
 
         return true;
