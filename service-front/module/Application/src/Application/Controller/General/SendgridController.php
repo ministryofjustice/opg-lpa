@@ -69,12 +69,10 @@ class SendgridController extends AbstractBaseController
         }
 
         try {
-//            $this->mailTransport->sendMessageFromTemplate($fromAddress, MailTransport::EMAIL_SENDGRID_BOUNCE);
-//
-//            echo 'Email sent';
+            //  Unmonitored mailbox emails will not be sent temporarily while we monitor the usage (and abuse!) of this end point - for now just log the data from the email
+            //  $this->mailTransport->sendMessageFromTemplate($fromAddress, MailTransport::EMAIL_SENDGRID_BOUNCE);
+            //  echo 'Email sent';
 
-            //  Unmonitored mailbox emails will not be sent temporarily while we monitor the usage (and abuse!) of this end point
-            //  For now just log the data from the email
             $this->getLogger()->info('Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData);
 
             echo 'Email not sent - data gathering';
