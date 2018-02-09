@@ -3,6 +3,7 @@
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\RegisterController;
+use Application\Form\User\ConfirmEmail;
 use Application\Form\User\Registration;
 use Application\Model\Service\Authentication\Identity\User;
 use Application\Model\Service\User\Register;
@@ -168,16 +169,22 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->register->shouldReceive('registerAccount')->andReturn(true);
 
-        $this->redirect->shouldReceive('toRoute')->withArgs(['register/email-sent', [], [
-            'query' => [
-                'email' => 'unit@test.com'
-            ]
-        ]])->andReturn($response)->once();
+        //  Set up the confirm email form
+        $this->url->shouldReceive('fromRoute')->withArgs(['register/resend-email'])->andReturn('register/resend-email')->once();
+        $form = Mockery::mock(ConfirmEmail::class);
+        $form->shouldReceive('setAttribute')->withArgs(['action', 'register/resend-email'])->once();
+        $form->shouldReceive('populateValues')->withArgs([[
+            'email' => $this->postData['email'],
+            'email_confirm' => $this->postData['email'],
+        ]])->once();
+
+        $this->formElementManager->shouldReceive('get')
+             ->withArgs(['Application\Form\User\ConfirmEmail'])->andReturn($form);
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(ViewModel::class, $result);
     }
 
     public function testConfirmActionNoToken()

@@ -50,71 +50,41 @@ class RegisterController extends AbstractBaseController
         $form->setAttribute('action', $this->url()->fromRoute('register'));
 
         $viewModel = new ViewModel();
-        $viewModel->form = $form;
 
         if ($request->isPost()) {
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 $data = $form->getData();
+                $email = $data['email'];
+                $password = $data['password'];
 
                 $result = $this->registerService
-                               ->registerAccount(
-                                   $data['email'],
-                                   $data['password']
-                               );
+                               ->registerAccount($email, $password);
 
                 if ($result === true) {
-                    //  Redirect to email sent route
-                    return $this->redirect()->toRoute('register/email-sent', [], [
-                        'query' => [
-                            'email' => $data['email'],
-                        ],
+                    //  Change the view to be the email sent template with the email address and resend email form
+                    //  Set up a form so the resend can be triggered again easily from a link
+                    $form = $this->getFormElementManager()->get('Application\Form\User\ConfirmEmail');
+                    $form->setAttribute('action', $this->url()->fromRoute('register/resend-email'));
+
+                    $form->populateValues([
+                        'email'         => $email,
+                        'email_confirm' => $email,
                     ]);
+
+                    $viewModel->setTemplate('application/register/email-sent.twig');
+                    $viewModel->email = $email;
                 } else {
                     $viewModel->error = $result;
                 }
             }
         }
 
+        //  Set the form before returning the view model
+        $viewModel->form = $form;
+
         return $viewModel;
-    }
-
-    /**
-     * Display email sent page
-     *
-     * @return ViewModel
-     * @throws Exception
-     */
-    public function emailSentAction()
-    {
-        $check = $this->preventAuthenticatedUser();
-
-        if ($check !== true) {
-            return $check;
-        }
-
-        $email = $this->params()->fromQuery('email');
-
-        $emailValidator = new EmailAddress();
-
-        if (is_null($email) || !$emailValidator->isValid($email)) {
-            throw new Exception('Valid email address must be provided to view');
-        }
-
-        //  Set up a form so the resend can be triggered again easily from a link
-        $form = $this->getFormElementManager()->get('Application\Form\User\ConfirmEmail');
-        $form->setAttribute('action', $this->url()->fromRoute('register/resend-email'));
-
-        $form->populateValues([
-            'email'         => $email,
-            'email_confirm' => $email,
-        ]);
-
-        return  new ViewModel([
-            'email' => $email,
-            'form'  => $form,
-        ]);
     }
 
     /**
@@ -133,7 +103,7 @@ class RegisterController extends AbstractBaseController
         $form = $this->getFormElementManager()->get('Application\Form\User\ConfirmEmail');
         $form->setAttribute('action', $this->url()->fromRoute('register/resend-email'));
 
-        $error = null;
+        $viewModel = new ViewModel();
 
         $request = $this->getRequest();
 
@@ -141,24 +111,32 @@ class RegisterController extends AbstractBaseController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $data = $form->getData();
+                $email = $form->getData()['email'];
 
-                $result = $this->registerService->resendActivateEmail($form->getData()['email']);
+                $result = $this->registerService->resendActivateEmail($email);
 
-                //  We do not want to confirm or deny the existence of a registered user so do not check the result
-                return $this->redirect()->toRoute('register/email-sent', [], [
-                    'query' => [
-                        'email' => $data['email'],
-                    ],
-                ]);
+                if ($result === true) {
+                    //  Change the view to be the email sent template with the email address and resend email form
+                    //  Set up a form so the resend can be triggered again easily from a link
+                    $form = $this->getFormElementManager()->get('Application\Form\User\ConfirmEmail');
+                    $form->setAttribute('action', $this->url()->fromRoute('register/resend-email'));
+
+                    $form->populateValues([
+                        'email'         => $email,
+                        'email_confirm' => $email,
+                    ]);
+
+                    $viewModel->setTemplate('application/register/email-sent.twig');
+                    $viewModel->email = $email;
+                } else {
+                    $viewModel->error = $result;
+                }
             }
         }
 
-        return new ViewModel(
-            array_merge(
-                compact('form', 'error')
-            )
-        );
+        $viewModel->form = $form;
+
+        return $viewModel;
     }
 
     /**
