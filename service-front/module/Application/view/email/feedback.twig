@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<!-- SUBJECT: LPA v2 User Feedback. -->
+<!-- SUBJECT: LPA v2 User Feedback -->
 
 <h1 style="font-size: 36px; line-height: 1.315; font-weight: 700; margin: 20px 0 26px 0; color: #0b0c0c">
     LPA service feedback
@@ -10,7 +10,7 @@
 
 <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0; color: #0b0c0c">
 	<strong>Sent</strong><br>
-	{{ sentTime }}
+    {{ 'now'|date('Y/m/d H:i:s') }}
 </p>
 
 <p style="font-size: 19px; line-height: 1.315; margin: 0 0 20px 0; color: #0b0c0c">

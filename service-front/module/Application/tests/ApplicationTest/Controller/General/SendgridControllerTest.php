@@ -3,12 +3,11 @@
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\SendgridController;
-use Application\Model\Service\Mail\Transport\SendGrid;
+use Application\Model\Service\Mail\Transport\MailTransport;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Exception;
 use Mockery;
 use Mockery\MockInterface;
-use Twig_Environment;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
@@ -25,12 +24,9 @@ class SendgridControllerTest extends AbstractControllerTest
         'spam_score' => 1,
         'text' => 'Text'
     ];
+
     /**
-     * @var MockInterface|Twig_Environment
-     */
-    private $twigEmailRenderer;
-    /**
-     * @var MockInterface|SendGrid
+     * @var MockInterface|MailTransport
      */
     private $mailTransport;
 
@@ -38,10 +34,7 @@ class SendgridControllerTest extends AbstractControllerTest
     {
         $this->controller = parent::controllerSetUp(SendgridController::class);
 
-        $this->twigEmailRenderer = Mockery::mock(Twig_Environment::class);
-        $this->controller->setTwigEmailRenderer($this->twigEmailRenderer);
-
-        $this->mailTransport = Mockery::mock(SendGrid::class);
+        $this->mailTransport = Mockery::mock(MailTransport::class);
     }
 
     public function testIndexAction()
@@ -122,11 +115,7 @@ class SendgridControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('getPost')->withArgs(['text'])->andReturn($this->postData['text'])->once();
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('ValidToken')->once();
-        $twigTemplate = Mockery::mock(Twig_Template::class);
-        $this->twigEmailRenderer->shouldReceive('loadTemplate')
-            ->withArgs(['bounce.twig'])->andReturn($twigTemplate)->once();
-        $twigTemplate->shouldReceive('render')->withArgs([[]])->andReturn('')->once();
-        $this->mailTransport->shouldReceive('send')->never();
+        $this->mailTransport->shouldReceive('sendMessageFromTemplate')->never();
 
         $loggingData = [
             'from-address'          => '<' . $this->postData['from'] . '>',
@@ -157,12 +146,7 @@ class SendgridControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('getPost')->withArgs(['text'])->andReturn($this->postData['text'])->once();
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('ValidToken')->once();
-        $twigTemplate = Mockery::mock(Twig_Template::class);
-        $this->twigEmailRenderer->shouldReceive('loadTemplate')
-            ->withArgs(['bounce.twig'])->andReturn($twigTemplate)->once();
-        $twigTemplate->shouldReceive('render')
-            ->withArgs([[]])->andReturn('<!-- SUBJECT: Subject from template -->')->once();
-        $this->mailTransport->shouldReceive('send')->never();
+        $this->mailTransport->shouldReceive('sendMessageFromTemplate')->never();
 
         $loggingData = [
             'from-address'          => $this->postData['from'],
@@ -175,7 +159,7 @@ class SendgridControllerTest extends AbstractControllerTest
         $alertLoggingData = [
             'from-address'          => $this->postData['from'],
             'to-address'            => $this->postData['to'],
-            'subject'               => 'Subject from template',
+            'subject'               => $this->postData['subject'],
             'spam-score'            => $this->postData['spam_score'],
             'sent-from-windows-10'  => false,
             'token'                 => 'ValidToken'
@@ -186,7 +170,7 @@ class SendgridControllerTest extends AbstractControllerTest
             ->withArgs(['Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData])
             ->andThrow($exception)->once();
         $this->logger->shouldReceive('alert')
-            ->withArgs(["Failed sending email due to:\n" . $exception->getMessage(), $alertLoggingData])->once();
+            ->withArgs(["Failed to send Sendgrid bounce email due to:\n" . $exception->getMessage(), $alertLoggingData])->once();
 
         $result = $this->controller->bounceAction();
 

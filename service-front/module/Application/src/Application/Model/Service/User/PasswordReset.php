@@ -3,11 +3,9 @@
 namespace Application\Model\Service\User;
 
 use Application\Model\Service\AbstractEmailService;
-use Application\Model\Service\Mail\Message as MailMessage;
 use Application\Model\Service\ApiClient\Exception\ResponseException;
+use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Mime\Message as MimeMessage;
-use Zend\Mime\Part as MimePart;
 use Exception;
 
 class PasswordReset extends AbstractEmailService
@@ -22,6 +20,7 @@ class PasswordReset extends AbstractEmailService
     public function requestPasswordResetEmail($email)
     {
         $logger = $this->getLogger();
+
         $logger->info('User requested password reset email');
 
         $client = $this->getApiClient();
@@ -79,8 +78,7 @@ class PasswordReset extends AbstractEmailService
 
     public function setNewPassword($restToken, $password)
     {
-        $logger = $this->getLogger();
-        $logger->info('Setting new password following password reset');
+        $this->getLogger()->info('Setting new password following password reset');
 
         $client = $this->getApiClient();
         $result = $client->updateAuthPasswordWithToken($restToken, $password);
@@ -104,41 +102,12 @@ class PasswordReset extends AbstractEmailService
 
     private function sendResetEmail($email, $token)
     {
-        $logger = $this->getLogger();
-        $logger->info('Sending password reset email');
-
-        $message = new MailMessage();
-
-        $config = $this->getConfig();
-        $message->addFrom($config['email']['sender']['default']['address'], $config['email']['sender']['default']['name']);
-
-        $message->addTo($email);
-
-        $message->addCategory('opg');
-        $message->addCategory('opg-lpa');
-        $message->addCategory('opg-lpa-passwordreset');
-        $message->addCategory('opg-lpa-passwordreset-normal');
-
-        $content = $this->getTwigEmailRenderer()->loadTemplate('password-reset.twig')->render([
-                            'token' => $token,
-                        ]);
-
-        if (preg_match('/<!-- SUBJECT: (.*?) -->/m', $content, $matches) === 1) {
-            $message->setSubject($matches[1]);
-        } else {
-            $message->setSubject('Password reset request');
-        }
-
-        $html = new MimePart($content);
-        $html->type = "text/html";
-
-        $body = new MimeMessage();
-        $body->setParts([$html]);
-
-        $message->setBody($body);
+        $data = [
+            'token' => $token,
+        ];
 
         try {
-            $this->getMailTransport()->send($message);
+            $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_RESET, $data);
         } catch (Exception $e) {
             return "failed-sending-email";
         }
