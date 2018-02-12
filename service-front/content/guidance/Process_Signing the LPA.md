@@ -33,6 +33,6 @@ Witnesses must give their full name and address.
 ### Check your signing dates
 You can use this service to check your order of signing is correct before sending your LPA for registration. If you choose this option, you will be asked the dates that the donor, certificate providers and attorneys signed the LPA document.
 
-If you find that the dates are in the wrong order, then you need to print the document again and have the relevant people sign it in the correct order before you attempt to register the LPA. Do not use correction fluid.
+If you find that the LPA has been signed in the wrong order, you should print the document again and get the relevant people sign it in the right order before you send the LPA to be registered. [If you make a mistake](/help/#topic-about-this-service), don't use correction fluid (Tippex).
 
 If you send your LPA in with an incorrect signing order, you will have to complete some or all parts of it again and may incur additional fees.
