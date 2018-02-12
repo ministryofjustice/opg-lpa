@@ -1,17 +1,22 @@
-# How to preview the LPA before you finish it
+# Preview the LPA
 
-Before you finally confirm the details, **you can preview the partially completed LPA and download the PDF**
+Before you finally confirm the details, **you can preview the partially completed LPA and download the PDF.**
 
-At this stage:
+You can download the preview once you have:
 
-* sections 1 to 11 will be unmarked
-* sections 12 to 15 will have a watermark – you'll need to complete these sections online and reprint them
+* completed all sections up to and including the 'preferences and instructions' section
+* added a certificate provider
 
-When you're completing a new LPA, you can see a 'You can edit the LPA above or preview the LPA' link - you can find this above 'Who's applying to register the LPA?'.
+When you download the preview LPA, sections 12 to 15 will have a watermark on them.
 
-This link to edit or preview the LPA:
+Once you've finished your LPA and confirmed that you don't want to make any more changes, you'll be able to download and print the final version of the LPA.
 
-* takes you to a page where you can review and edit all completed details and download a preview of the LPA
-* stays on the page (above the latest question) until you've clicked to say you confirm the details
+The final version is the version that you should post to OPG for registration and this won't have any watermarks on it.
 
-If you're on the 'Final check' (confirm and pay) page, then click to edit the final question or any of the questions including and after 'Who's applying to register the LPA?', you will see the 'You can edit the LPA above or preview the LPA' link.
+## Preview from the ‘Create a lasting power of attorney’ page
+
+If you're on the 'Create a lasting power of attorney' page, the 'preview the LPA' link will appear when you're on the 'Who's applying to register the LPA?' question, or any question below that. You'll see the link just above the question. This link takes you to a page where you can review and edit the LPA and download a preview.
+
+## Preview from the 'Final check' page
+
+If you're on the 'Final check' page, click the 'edit' link next to 'Who's registering the LPA?', or any of the questions below that. This will take you back to the 'Create a lasting power of attorney' page, from where you'll be able to preview the LPA.
