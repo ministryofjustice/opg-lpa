@@ -6,6 +6,7 @@ use Application\Controller\AbstractBaseController;
 use Application\Form\User\Login as LoginForm;
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\Authentication\AuthenticationService;
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Session\Container;
@@ -17,6 +18,11 @@ class AuthController extends AbstractBaseController
      * @var AuthenticationService
      */
     private $authenticationAdapter;
+
+    /**
+     * @var LpaApplicationService
+     */
+    private $lpaApplicationService;
 
     public function indexAction(){
 
@@ -101,7 +107,7 @@ class AuthController extends AbstractBaseController
 
                             //  Redirect to next page which needs filling out
                             $lpaId = $pathArray[2];
-                            $lpa = $this->getAuthenticationService()->getApplication((int)$lpaId);
+                            $lpa = $this->getLpaApplicationService()->getApplication((int)$lpaId);
 
                             if ($lpa instanceof Lpa) {
                                 $formFlowChecker = new FormFlowChecker($lpa);
@@ -209,5 +215,10 @@ class AuthController extends AbstractBaseController
     public function setAuthenticationAdapter(AdapterInterface $authenticationAdapter)
     {
         $this->authenticationAdapter = $authenticationAdapter;
+    }
+
+    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService)
+    {
+        $this->lpaApplicationService = $lpaApplicationService;
     }
 } // class
