@@ -48,6 +48,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
      * @var AboutYouDetails
      */
     private $aboutYouDetails;
+
     /**
      * @var AdapterInterface
      */
