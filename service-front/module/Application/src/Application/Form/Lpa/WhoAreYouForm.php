@@ -91,7 +91,7 @@ class WhoAreYouForm extends AbstractMainFlowForm
     {
         $modelData = [];
 
-        if (array_key_exists($formData['who'], WhoAreYou::options())) {
+        if (array_key_exists('who', $formData) && array_key_exists($formData['who'], WhoAreYou::options())) {
             //  Get the form data
             $who = $formData['who'];
 

@@ -40,6 +40,7 @@ class AuthControllerTest extends AbstractControllerTest
     {
         $this->controller = parent::controllerSetUp(AuthController::class);
         $this->controller->setAuthenticationAdapter($this->authenticationAdapter);
+        $this->controller->setLpaApplicationService($this->lpaApplicationService);
 
         $this->identity = Mockery::mock(User::class);
 
@@ -179,7 +180,7 @@ class AuthControllerTest extends AbstractControllerTest
 
         $lpa = new Lpa();
         $lpa->id = 3503563157;
-        $this->authenticationService->shouldReceive('getApplication')->withArgs([$lpa->id])->andReturn($lpa);
+        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpa->id])->andReturn($lpa);
 
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/form-type', ['lpa-id' => $lpa->id], []])->andReturn($response)->once();
