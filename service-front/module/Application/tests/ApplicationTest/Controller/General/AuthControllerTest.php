@@ -179,7 +179,7 @@ class AuthControllerTest extends AbstractControllerTest
 
         $lpa = new Lpa();
         $lpa->id = 3503563157;
-        $this->authenticationService->shouldReceive('getApplication')->withArgs([$lpa->id])->andReturn($lpa);
+        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpa->id])->andReturn($lpa);
 
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/form-type', ['lpa-id' => $lpa->id], []])->andReturn($response)->once();
