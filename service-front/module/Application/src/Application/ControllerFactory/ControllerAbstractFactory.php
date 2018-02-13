@@ -63,7 +63,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setRouter' => 'Router'
         ],
         AuthController::class => [
-            'setAuthenticationAdapter' => 'AuthenticationAdapter'
+            'setAuthenticationAdapter' => 'AuthenticationAdapter',
+            'setLpaApplicationService' => 'LpaApplicationService'
         ],
         FeedbackController::class => [
             'setFeedbackService' => 'Feedback'
