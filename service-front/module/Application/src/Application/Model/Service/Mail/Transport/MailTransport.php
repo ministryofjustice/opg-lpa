@@ -345,8 +345,13 @@ class MailTransport implements TransportInterface
      */
     public function sendMessageFromTemplate($to, $emailRef, array $data = [], DateTime $sendAt = null)
     {
+        //  Ensure the TO address/addresses are an array
+        if (!is_array($to)) {
+            $to = [$to];
+        }
+
         try {
-            $this->getLogger()->info(sprintf('Sending %s email to %s', $emailRef, $to));
+            $this->getLogger()->info(sprintf('Sending %s email to %s', $emailRef, implode(',', $to)));
 
             //  Get the categories for this email template
             if (!isset($this->emailTemplatesConfig[$emailRef])
@@ -363,12 +368,6 @@ class MailTransport implements TransportInterface
 
             //  Construct the message to send
             $message = new Message();
-
-
-            //  Add the TO address/addresses
-            if (!is_array($to)) {
-                $to = [$to];
-            }
 
             foreach ($to as $toEmails) {
                 $message->addTo($toEmails);
@@ -423,10 +422,10 @@ class MailTransport implements TransportInterface
             $this->send($message);
 
             //  Log a final OK message
-            $this->getLogger()->info(sprintf('%s email sent successfully to %s', $emailRef, $to));
+            $this->getLogger()->info(sprintf('%s email sent successfully to %s', $emailRef, implode(',', $to)));
         } catch (Exception $e) {
             //  Log the error with the data and rethrow
-            $this->getLogger()->err(sprintf("Failed to send %s email to %s due to:\n%s", $emailRef, $to, $e->getMessage()), $data);
+            $this->getLogger()->err(sprintf("Failed to send %s email to %s due to:\n%s", $emailRef, implode(',', $to), $e->getMessage()), $data);
 
             throw $e;
         }
