@@ -168,7 +168,7 @@ class DashboardController extends AbstractAuthenticatedController
     {
         $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
 
-        $lpa = $this->getAuthenticationService()->getApplication($lpaId);
+        $lpa = $this->getLpaApplicationService()->getApplication($lpaId);
 
         $viewModel = new ViewModel([
             'lpaId' => $lpa->id,

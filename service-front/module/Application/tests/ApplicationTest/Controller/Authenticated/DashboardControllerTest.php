@@ -239,7 +239,7 @@ class DashboardControllerTest extends AbstractControllerTest
         $routeMatch = $this->getRouteMatch($this->controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $lpa = FixturesData::getPfLpa();
-        $this->authenticationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
+        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -259,7 +259,7 @@ class DashboardControllerTest extends AbstractControllerTest
         $this->controller->setEvent($event);
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $lpa = FixturesData::getPfLpa();
-        $this->authenticationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
+        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
 
         /** @var ViewModel $result */
