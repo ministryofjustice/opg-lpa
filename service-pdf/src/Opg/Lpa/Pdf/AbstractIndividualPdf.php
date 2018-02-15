@@ -270,6 +270,27 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     }
 
     /**
+     * Get the page shift that will be implemented before a specific page
+     *
+     * @param $originalPageNumber
+     * @return int
+     */
+    protected function getPageShiftBeforePage($originalPageNumber)
+    {
+        //  Add the total calculated page shift
+        $adjustedPageShift = $this->pageShift;
+
+        //  Now deduct any shifted pages AFTER the original page number
+        foreach ($this->constituentPdfs as $insertAfterPageNumber => $constituentPdfsToInsert) {
+            if ($insertAfterPageNumber == 'end' || (is_numeric($insertAfterPageNumber) && $insertAfterPageNumber >= $originalPageNumber)) {
+                $adjustedPageShift -= count($constituentPdfsToInsert);
+            }
+        }
+
+        return $adjustedPageShift;
+    }
+
+    /**
      * Add a strike through line to the specified page
      *
      * @param $areaReference
