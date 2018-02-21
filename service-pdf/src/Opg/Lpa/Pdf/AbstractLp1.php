@@ -2,6 +2,7 @@
 
 namespace Opg\Lpa\Pdf;
 
+use DateTime;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Common\PhoneNumber;
@@ -73,7 +74,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         //  If an LPA has been provided - check that it has been completed
         if ($lpa instanceof Lpa) {
             $stateChecker = new StateChecker($lpa);
-            $this->lpaIsComplete = $stateChecker->isStateCompleted();
+            $this->lpaIsComplete = $stateChecker->isStateCompleted() && $lpa->getCompletedAt() instanceof DateTime;
         }
 
         parent::__construct($lpa, $options);
