@@ -13,6 +13,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use Opg\Lpa\Logger\LoggerTrait;
@@ -841,6 +842,17 @@ class Stats
                 'replacementAttorneys' => $this->lpaCollection->count([
                     'completedAt' => $dateRange,
                     'document.replacementAttorneys' => ['$elemMatch' => ['type' => 'trust']]
+                ], $readPreference)
+            ];
+
+            $month['certificateProviderSkipped'] = [
+                'yes' => $this->lpaCollection->count([
+                    'completedAt' => $dateRange,
+                    'metadata.' . Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED => ['$exists' => true]
+                ], $readPreference),
+                'no' => $this->lpaCollection->count([
+                    'completedAt' => $dateRange,
+                    'metadata.' . Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED => ['$exists' => false]
                 ], $readPreference)
             ];
 
