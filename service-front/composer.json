@@ -31,7 +31,7 @@
         "sendgrid/sendgrid": "2.2.*",
         "aws/aws-sdk-php": "^3.0",
         "ministryofjustice/postcodeinfo-client-php": "^4.0",
-        "ministryofjustice/opg-lpa-datamodels": "^9.2",
+        "ministryofjustice/opg-lpa-datamodels": "^9.3",
         "ministryofjustice/opg-lpa-logger": "^3.0",
         "Netsensia/omnipay-worldpay-xml": "^1.0.1",
         "michelf/php-markdown": "1.5.0",
