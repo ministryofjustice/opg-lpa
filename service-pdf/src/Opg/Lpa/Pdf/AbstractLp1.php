@@ -766,7 +766,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 $barcodeOnlyPdf->save($barcodePdfFile);
 
                 //  Stamp the required page with the new barcode using the unshifted page number
-                $this->stampPageWith($barcodePdfFile, 19);
+                $this->stampPageWith($barcodePdfFile, 19, false);
 
                 //  Cleanup - remove tmp barcode file
                 unlink($barcodePdfFile);
@@ -789,42 +789,59 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
     }
 
     /**
-     * Apply the required stamp to the specified page by creating a new copy of the PDF
+     * Apply the required stamp to the specified page (and possibly any inserted pages) in by creating a new copy of the PDF
      *
      * @param $stampPdf
      * @param $pageNumber
+     * @param bool $stampInsertedPages
      */
-    private function stampPageWith($stampPdf, $pageNumber)
+    private function stampPageWith($stampPdf, $pageNumber, $stampInsertedPages = true)
     {
         //  Create a copy of the LPA PDF with the contents of the provided PDF stamped on the specified page
-        $tmpStampPdfName = $this->getIntermediatePdfFilePath('stamp.pdf');
-        $pdfStampedAllPages = new Pdftk($this->pdfFile);
-        $pdfStampedAllPages->stamp($stampPdf)
+        $tmpStampedPdfName = $this->getIntermediatePdfFilePath('stamp.pdf');
+        $stampedPdfAllPages = new Pdftk($this->pdfFile);
+        $stampedPdfAllPages->stamp($stampPdf)
                            ->flatten()
-                           ->saveAs($tmpStampPdfName);
+                           ->saveAs($tmpStampedPdfName);
 
         $newPdf = new Pdftk([
             'A' => $this->pdfFile,
-            'B' => $tmpStampPdfName
+            'B' => $tmpStampedPdfName
         ]);
 
-        //  Account for the page shift from previous PDF generation
-        $pageNumber = $pageNumber + $this->pageShift;
+        //  Adjust the page number to account for the page shift - but only for the pages before this one
+        $pageNumberShifted = $pageNumber + $this->getPageShiftBeforePage($pageNumber);
 
-        $newPdf->cat(1, $pageNumber - 1, 'A')
-               ->cat($pageNumber, null, 'B');
+        //  If we are going to stamp the inserted pages too then determine the end page to use in the stamped PDF
+        //  Initially set the end page to the same as the start page so only a single page will be inserted
+        $stampedPdfEndPage = $pageNumberShifted;
 
-        //  If the last page is being stamped then do not append any more pages
-        if (($pageNumber - $this->pageShift) < $this->numberOfPages) {
-            $newPdf->cat($pageNumber + 1, 'end', 'A');
+        if ($stampInsertedPages) {
+            //  Determine how many pages of the stamped PDF to use by inspecting the shifted position of the next page (if available)
+            $nextPage = $pageNumber + 1;
+
+            //  If the current page is the last page then set the number of pages to null so the code below knows to use all trailing pages to the end of the document
+            if ($nextPage > $this->numberOfPages) {
+                $stampedPdfEndPage = 'end';
+            } else {
+                $stampedPdfEndPage = $nextPage + $this->getPageShiftBeforePage($nextPage) - 1;
+            }
+        }
+
+        $newPdf->cat(1, $pageNumberShifted - 1, 'A')
+               ->cat($pageNumberShifted, $stampedPdfEndPage, 'B');
+
+        //  If the stamped end page is numeric then that means this was NOT the last page and therefore we need to append another unstamped part of the PDF
+        if (is_numeric($stampedPdfEndPage)) {
+            $newPdf->cat($stampedPdfEndPage + 1, 'end', 'A');
         }
 
         $newPdf->flatten()
                ->saveAs($this->pdfFile);
 
         //  Remove the temp PDF with all the pages stamped
-        if (file_exists($tmpStampPdfName)) {
-            unlink($tmpStampPdfName);
+        if (file_exists($tmpStampedPdfName)) {
+            unlink($tmpStampedPdfName);
         }
     }
 }
