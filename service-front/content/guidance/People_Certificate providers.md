@@ -1,55 +1,61 @@
 # Certificate providers
 
-A certificate provider is an impartial person who confirms that you understand what you're doing and that nobody is forcing you to make an LPA.
+An LPA must have a certificate provider. 
 
-You need a certificate provider to make your LPA valid.
+The certificate provider is an impartial person who confirms that the donor understands the LPA and that no one is forcing the donor to make the LPA. 
 
-## A certificate provider's role
-A certificate provider is a safeguard. They help to make sure that all's well when you make your LPA. They must confirm that:
+## The certificate provider's role
 
-* you understand the significance of the LPA
-* you have not been put under pressure to make it
+The certificate provider must discuss the LPA with the donor. It’s a good idea for this discussion to happen in private, without the attorneys or any one else present. 
+
+The certificate provider signs the LPA to ‘certify’ that they have discussed the LPA with the donor and that:
+
+* the donor understands the significance of their LPA
+* no one is putting the donor under pressure to make the LPA
 * there has been no fraud involved in making the LPA
 * there is no other reason for concern
 
-If possible, they should discuss your LPA with you in private, without attorneys or other people present, before they sign to 'certify' their part of the LPA.
-
+Remember that the donor must sign the LPA before the certificate provider. The certificate provider can witness the donor’s signature. 
+ 
 ## Who can be a certificate provider
-A certificate provider must be 18 or over and either:
 
-* someone who has known you well personally for at least 2 years, or
-* someone with the relevant professional skills and expertise to be able to confirm the things listed above
+The certificate provider must be 18 or over and either:
 
-'People to notify' can be certificate providers. See more about [people to notify](/help/#topic-people-to-notify).
+* someone who has known the donor well personally for at least 2 years
+* someone with the relevant professional skills and expertise, 
 
-### Someone who has known you well for at least 2 years
+### Someone who has known the donor well for at least 2 years
 
-If you want someone who has known you well for at least 2 years, you should ask a friend or neighbour, someone you know at a social or sports club, a work colleague, or similar.
+This could be one of the donor’s friends or neighbours, someone they know at a social or sports club, a work colleague, or similar.
 
-They must be more than an acquaintance. They have to know you well enough to have an honest conversation with you about making your LPA and about the things they have to confirm when they sign the LPA.
+The certificate provider must be more than an acquaintance. They have to know the donor well enough to have an honest conversation with them about the LPA and the authority the donor is giving to their attorneys. 
+
+'[People to notify](/help/#topic-people-to-notify)' can be certificate providers. 
 
 ### Someone with relevant professional skills
 
-If you want to choose someone with relevant professional skills, they must be one of the following:
+This must be one of the following:
 
-* a registered healthcare professional, such as your GP
+* a registered healthcare professional, such as the donor’s GP
 * a solicitor, barrister or advocate
 * a registered social worker
 * an independent mental capacity advocate (IMCA)
-* someone else with professional skills that enable them to judge whether you can make the decisions you need to make for your LPA
 
-If you choose a professional, ask what fee they charge. 
+Other professionals may have skills that allow them to judge whether the donor can make an LPA. Contact the Office of the Public Guardian if you’re not sure about your choice of certificate provider.
 
+If you choose a professional, they may charge you a fee.
 
-## People who can't be certificate providers
+## Who can't be a certificate provider
+
 The certificate provider must not be:
 
-* an attorney or replacement attorney for the LPA
-* an attorney or replacement attorney in any other LPA or enduring power of attorney (EPA) that you have already made
-* a member of your or your attorneys' families, including wives, husbands, civil partners, in-laws and step-relatives
-* an unmarried partner, boyfriend or girlfriend of yours or of any of your attorneys (whether or not they live at the same address)
-* your business partner or an attorney's business partner
-* your employee or an attorney's employee
-* an owner, manager, director or employee of a care home where you live, or a member of their family
-* anyone running or working for a trust corporation appointed as an attorney in this LPA
+* an attorney or replacement attorney for this or any other LPA or enduring power of attorney that the donor has made
+* a member of the donor’s family, or of an attorney’s or replacement attorney’s family – including husbands, wives, civil partners, in-laws and step-relations
+* an unmarried partner, boyfriend or girlfriend of the donor, an attorney or replacement attorney (whether or not they live at the same address)
+* the donor’s business partner, or an attorney’s or replacement attorney’s business partner
+* the donor’s employee, or an attorney’s or replacement attorney’s employee
+* an owner, manager, director or employee of a care home where the donor lives
+* anyone who has a family member that is an owner, manager, director or employee of a care home where the donor lives
+* anyone who runs or works for a trust corporation appointed as an attorney in this LPA
+* the donor
 * any other person the Court of Protection may consider is not sufficiently independent
