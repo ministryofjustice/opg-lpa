@@ -897,6 +897,41 @@
             </table>
         </div>
 
+        <h3 class="heading-small">Skipped certificate provider</h3>
+
+        <div class="mobile-scroll">
+            <table>
+                <thead>
+                <tr>
+                    <th>Option</th>
+                    {% for month,values in options['by-month'] %}
+                        <th class="numeric">{{ month }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Completed LPAs</td>
+                    {% for month,values in options['by-month'] %}
+                        <td class="numeric">{{ values.completed }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Yes</td>
+                    {% for month,values in options['by-month'] %}
+                        <td class="numeric">{{ values.certificateProviderSkipped.yes }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>No</td>
+                    {% for month,values in options['by-month'] %}
+                        <td class="numeric">{{ values.certificateProviderSkipped.no }}</td>
+                    {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
     {% endif %}
 
 {% endif %}

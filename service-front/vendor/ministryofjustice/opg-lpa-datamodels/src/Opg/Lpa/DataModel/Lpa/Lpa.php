@@ -24,6 +24,8 @@ class Lpa extends AbstractData
      */
     const REPLACEMENT_ATTORNEYS_CONFIRMED = 'replacement-attorneys-confirmed';
     const CERTIFICATE_PROVIDER_SKIPPED = 'certificate-provider-skipped';
+    // Used to record that the certificate provider was skipped during the creation of the LPA. For stats use
+    const CERTIFICATE_PROVIDER_WAS_SKIPPED = 'certificate-provider-was-skipped';
     const PEOPLE_TO_NOTIFY_CONFIRMED = 'people-to-notify-confirmed';
     const REPEAT_APPLICATION_CONFIRMED = 'repeat-application-confirmed';
     const APPLY_FOR_FEE_REDUCTION = 'apply-for-fee-reduction';
