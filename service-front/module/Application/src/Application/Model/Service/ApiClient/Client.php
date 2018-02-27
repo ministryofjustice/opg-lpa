@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\ApiClient;
 
+use Application\Model\Service\AuthClient\Client as AuthApiClient;
 use GuzzleHttp\Client as GuzzleHttpClient;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
@@ -14,17 +15,11 @@ class Client
 {
     use ClientV1Trait;
     use ClientV2ApiTrait;
-    use ClientV2AuthTrait;
 
     /**
      * The base URI for the API - from config
      */
     private $apiBaseUri;
-
-    /**
-     * The base URI for the auth server - from config
-     */
-    private $authBaseUri;
 
     /**
      * @var HttpClientInterface PSR-7 compatible HTTP Client
@@ -46,15 +41,20 @@ class Client
     private $token;
 
     /**
+     * @var AuthApiClient
+     */
+    private $authApiClient;
+
+    /**
      * Client constructor
      *
      * @param $apiBaseUri
-     * @param $authBaseUri
+     * @param AuthApiClient $authApiClient
      */
-    public function __construct($apiBaseUri, $authBaseUri)
+    public function __construct($apiBaseUri, AuthApiClient $authApiClient)
     {
         $this->apiBaseUri = $apiBaseUri;
-        $this->authBaseUri = $authBaseUri;
+        $this->authApiClient = $authApiClient;
     }
 
     // Internal API access methods
@@ -197,7 +197,7 @@ class Client
     public function getUserId()
     {
         if (is_null($this->userId)) {
-            $response = $this->getTokenInfo($this->getToken());
+            $response = $this->authApiClient->getTokenInfo($this->getToken());
 
             if ($response instanceof Response\ErrorInterface) {
                 if ($response instanceof \Exception) {

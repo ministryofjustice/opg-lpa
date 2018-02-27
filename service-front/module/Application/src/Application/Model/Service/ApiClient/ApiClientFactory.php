@@ -26,7 +26,9 @@ class ApiClientFactory implements FactoryInterface
     {
         $config = $container->get('config')['api_client'];
 
-        $client = new Client($config['api_uri'], $config['auth_uri']);
+        $authApiClient = $serviceLocator->get('AuthClient');
+
+        $client = new Client($config['api_uri'], $authApiClient);
 
         $auth = $container->get('AuthenticationService');
 

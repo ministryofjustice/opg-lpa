@@ -577,25 +577,6 @@ trait ClientV1Trait
     }
 
     /**
-     * Return user stats from the auth server
-     *
-     * @return bool|mixed
-     */
-    public function getAuthStats()
-    {
-        $response = $this->getClient()->get($this->authBaseUri . '/v1/stats');
-
-        $code = $response->getStatusCode();
-
-        if ($code != 200) {
-            $this->recordErrorResponseDetails($response);
-            return false;
-        }
-
-        return $response->json();
-    }
-
-    /**
      * Return the API response for getting the resource of the given type
      *
      * If property not yet set, return null
