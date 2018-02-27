@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\Authentication\Adapter;
 
-use Application\Model\Service\ApiClient\Client;
+use Application\Model\Service\AuthClient\Client;
 use Application\Model\Service\Authentication\Identity\User;
 use Zend\Authentication\Adapter\Exception\RuntimeException;
 use Zend\Authentication\Result;

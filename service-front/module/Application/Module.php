@@ -4,7 +4,6 @@ namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
-use Application\Form\Fieldset\Csrf;
 use Application\Model\Service\Admin\Admin as AdminService;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
@@ -110,7 +109,7 @@ class Module implements FormElementProviderInterface
         if ( ($identity = $auth->getIdentity()) != null ) {
 
             // Get the tokens details...
-            $info = $sm->get('ApiClient')->getTokenInfo( $identity->token() );
+            $info = $sm->get('AuthClient')->getTokenInfo( $identity->token() );
 
 
             if( is_array($info) && isset($info['expiresIn']) ){
@@ -150,6 +149,7 @@ class Module implements FormElementProviderInterface
             'factories' => [
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ApiClientFactory',
+                'AuthClient'            => 'Application\Model\Service\AuthClient\ClientFactory',
                 'PostcodeInfoClient'    => 'Application\Model\Service\AddressLookup\PostcodeInfoClientFactory',
 
                 'MailTransport' => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
@@ -161,7 +161,7 @@ class Module implements FormElementProviderInterface
 
                 // Authentication Adapter. Access via 'AuthenticationAdapter'
                 'LpaAuthAdapter' => function( ServiceLocatorInterface $sm ){
-                    return new LpaAuthAdapter( $sm->get('ApiClient') );
+                    return new LpaAuthAdapter( $sm->get('AuthClient') );
                 },
 
                 // Admin service
