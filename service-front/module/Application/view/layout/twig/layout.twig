@@ -125,9 +125,12 @@
         {% block divider %}
         <hr>
         {% endblock divider %}
+
+        {% if hideFeedbackLink is not defined %}
         <p>
             Your <a href="/send-feedback">feedback</a> will help us to improve
         </p>
+        {% endif %}
 
 
     </main>
