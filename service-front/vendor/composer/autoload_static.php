@@ -87,10 +87,6 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         array (
             'Webmozart\\Assert\\' => 17,
         ),
-        'T' => 
-        array (
-            'Twig\\' => 5,
-        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Php70\\' => 23,
@@ -383,10 +379,6 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
         ),
-        'Twig\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/twig/twig/src',
-        ),
         'Symfony\\Polyfill\\Php70\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php70',
@@ -533,20 +525,9 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
     public static $prefixesPsr0 = array (
         'Z' => 
         array (
-            'ZfcTwig\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/zf-commons/zfc-twig/src',
-            ),
             'ZendXml\\' => 
             array (
                 0 => __DIR__ . '/..' . '/zendframework/zendxml/library',
-            ),
-        ),
-        'T' => 
-        array (
-            'Twig_' => 
-            array (
-                0 => __DIR__ . '/..' . '/twig/twig/lib',
             ),
         ),
         'S' => 

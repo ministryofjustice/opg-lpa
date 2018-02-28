@@ -6,9 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'ZfcTwig\\' => array($vendorDir . '/zf-commons/zfc-twig/src'),
     'ZendXml\\' => array($vendorDir . '/zendframework/zendxml/library'),
-    'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'Smtpapi' => array($vendorDir . '/sendgrid/smtpapi/lib'),
     'SendGrid' => array($vendorDir . '/sendgrid/sendgrid/lib'),
     'Raven_' => array($vendorDir . '/sentry/sentry/lib'),
