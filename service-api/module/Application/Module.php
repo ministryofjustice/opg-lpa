@@ -60,21 +60,19 @@ class Module {
                 'InitRestController' => function($sm, $controller) {
                     if ($controller instanceof RestController) {
 
-                        $locator = $sm->getServiceLocator();
-
                         //--------------------------------------------------
                         // Inject the resource
 
                         // Get the resource name (form the URL)...
-                        $resource = $locator->get('Application')->getMvcEvent()->getRouteMatch()->getParam('resource');
+                        $resource = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getParam('resource');
 
                         // Check if the resource exists...
-                        if( !$locator->has("resource-{$resource}") ){
+                        if( !$sm->has("resource-{$resource}") ){
                             throw new ApiProblemException('Unknown resource type', 404);
                         }
 
                         // Get the resource...
-                        $resource = $locator->get("resource-{$resource}");
+                        $resource = $sm->get("resource-{$resource}");
 
                         // Inject it into the Controller...
                         $controller->setResource( $resource );
