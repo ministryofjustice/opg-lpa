@@ -11,7 +11,7 @@ use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
+use Zend\Router\RouteMatch;
 use Zend\View\Model\ViewModel;
 
 class AbstractLpaControllerTest extends AbstractControllerTest
@@ -146,7 +146,7 @@ class AbstractLpaControllerTest extends AbstractControllerTest
 
     /**
      * @expectedException        RuntimeException
-     * @expectedExceptionMessage RouteMatch must be an instance of Zend\Mvc\Router\Http\RouteMatch when using the moveToNextRoute function
+     * @expectedExceptionMessage RouteMatch must be an instance of Zend\Router\Http\RouteMatch when using the moveToNextRoute function
      */
     public function testMoveToNextRouteNotRouteMatch()
     {
