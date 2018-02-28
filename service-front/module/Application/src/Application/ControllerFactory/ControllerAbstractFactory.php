@@ -22,8 +22,11 @@ use Application\Controller\General\SendgridController;
 use Application\Controller\General\StatsController;
 use Application\Controller\General\VerifyEmailAddressController;
 use Exception;
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
 use RuntimeException;
-use Zend\ServiceManager\AbstractFactoryInterface;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Stdlib\DispatchableInterface as Dispatchable;
@@ -63,8 +66,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setRouter' => 'Router'
         ],
         AuthController::class => [
-            'setAuthenticationAdapter' => 'AuthenticationAdapter',
-            'setLpaApplicationService' => 'LpaApplicationService'
+            'setAuthenticationAdapter' => 'AuthenticationAdapter'
         ],
         FeedbackController::class => [
             'setFeedbackService' => 'Feedback'
@@ -76,7 +78,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setGuidanceService' => 'Guidance'
         ],
         NotificationsController::class => [
-            'setMailTransport' => 'MailTransport'
+            'setTwigEmailRenderer' => 'TwigEmailRenderer',
+            'setMailTransport'     => 'MailTransport'
         ],
         PingController::class => [
             'setStatusService' => 'SiteStatus'
@@ -85,7 +88,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setRegisterService' => 'Register'
         ],
         SendgridController::class => [
-            'setMailTransport' => 'MailTransport'
+            'setTwigEmailRenderer' => 'TwigEmailRenderer'
         ],
         VerifyEmailAddressController::class => [
             'setAboutYouDetails' => 'AboutYouDetails'
@@ -96,14 +99,13 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
     ];
 
     /**
-     * Checks whether this abstract factory can create the requested controller
+     * Can the factory create an instance for the service?
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param $name
-     * @param $requestedName
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
      * @return bool
      */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function canCreate(ContainerInterface $container, $requestedName)
     {
         $controllerName = $this->getControllerName($requestedName);
 
@@ -111,17 +113,20 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
     }
 
     /**
-     * Creates the requested controller
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param $name
-     * @param $requestedName
-     * @return mixed
-     * @throws Exception
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws Exception if any other error occurs
      */
-    public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        if (!$this->canCreateServiceWithName($serviceLocator, $name, $requestedName)) {
+        if (!$this->canCreate($container, $requestedName)) {
             throw new ServiceNotFoundException(sprintf(
                 'Abstract factory %s can not create the requested service %s',
                 get_class($this),
@@ -129,21 +134,19 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             ));
         }
 
-        $serviceLocator = $serviceLocator->getServiceLocator();
-
         $controllerName = $this->getControllerName($requestedName);
 
-        $formElementManager = $serviceLocator->get('FormElementManager');
-        $sessionManager = $serviceLocator->get('SessionManager');
-        $authenticationService = $serviceLocator->get('AuthenticationService');
-        $config = $serviceLocator->get('Config');
-        $cache = $serviceLocator->get('Cache');
+        $formElementManager = $container->get('FormElementManager');
+        $sessionManager = $container->get('SessionManager');
+        $authenticationService = $container->get('AuthenticationService');
+        $config = $container->get('Config');
+        $cache = $container->get('Cache');
 
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
-            $userDetailsSession = $serviceLocator->get('UserDetailsSession');
-            $lpaApplicationService = $serviceLocator->get('LpaApplicationService');
-            $aboutYouDetails = $serviceLocator->get('AboutYouDetails');
-            $authenticationAdapter = $serviceLocator->get('AuthenticationAdapter');
+            $userDetailsSession = $container->get('UserDetailsSession');
+            $lpaApplicationService = $container->get('LpaApplicationService');
+            $aboutYouDetails = $container->get('AboutYouDetails');
+            $authenticationAdapter = $container->get('AuthenticationAdapter');
 
             if (is_subclass_of($controllerName, AbstractLpaController::class)) {
                 $controller = new $controllerName(
@@ -156,9 +159,9 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $lpaApplicationService,
                     $aboutYouDetails,
                     $authenticationAdapter,
-                    $serviceLocator->get('ApplicantCleanup'),
-                    $serviceLocator->get('ReplacementAttorneyCleanup'),
-                    $serviceLocator->get('Metadata')
+                    $container->get('ApplicantCleanup'),
+                    $container->get('ReplacementAttorneyCleanup'),
+                    $container->get('Metadata')
                 );
             } else {
                 $controller = new $controllerName(
@@ -191,7 +194,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         //  If required load any additional services into the resource
         if (array_key_exists($controllerName, $this->additionalServices)
             && is_array($this->additionalServices[$controllerName])) {
-
             foreach ($this->additionalServices[$controllerName] as $setterMethod => $additionalService) {
                 if (!method_exists($controller, $setterMethod)) {
                     throw new Exception(sprintf(
@@ -201,7 +203,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     ));
                 }
 
-                $controller->$setterMethod($serviceLocator->get($additionalService));
+                $controller->$setterMethod($container->get($additionalService));
             }
         }
 

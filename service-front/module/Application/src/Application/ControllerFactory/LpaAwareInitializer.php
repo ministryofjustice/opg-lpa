@@ -3,26 +3,24 @@
 namespace Application\ControllerFactory;
 
 use Application\Controller\AbstractLpaController;
+use Interop\Container\ContainerInterface;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use RuntimeException;
-use Zend\ServiceManager\InitializerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Initializer\InitializerInterface;
 
 class LpaAwareInitializer implements InitializerInterface
 {
     /**
-     * Inject the current LPA into classes that extend AbstractLpaController
+     * Initialize the given instance
      *
-     * @param $instance
-     * @param ServiceLocatorInterface $controllerManager
-     * @return mixed
+     * @param  ContainerInterface $container
+     * @param  object $instance
+     * @return void
      */
-    public function initialize($instance, ServiceLocatorInterface $controllerManager)
+    public function __invoke(ContainerInterface $container, $instance)
     {
         if ($instance instanceof AbstractLpaController) {
-            $locator = $controllerManager->getServiceLocator();
-
-            $auth = $locator->get('AuthenticationService');
+            $auth = $container->get('AuthenticationService');
 
             // We don't do anything here without a user.
             if (!$auth->hasIdentity()) {
@@ -30,14 +28,14 @@ class LpaAwareInitializer implements InitializerInterface
             }
 
             // Find the LPA ID form the URL...
-            $lpaId = $locator->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpa-id');
+            $lpaId = $container->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpa-id');
 
             if (!is_numeric($lpaId)) {
                 throw new RuntimeException('Invalid LPA ID passed');
             }
 
             // Load the LPA...
-            $lpa = $locator->get('LpaApplicationService')->getApplication((int) $lpaId);
+            $lpa = $container->get('LpaApplicationService')->getApplication((int) $lpaId);
 
             // If it's an object, assume it's an LPA (if it's not it'll be picked up later)
             if ($lpa instanceof Lpa) {
