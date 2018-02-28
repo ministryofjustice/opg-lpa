@@ -2,6 +2,11 @@
 return array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
+        'Zend\Form',
+        'Zend\InputFilter',
+        'Zend\Filter',
+        'Zend\Hydrator',
+        'Zend\Cache',
         'Zend\Mvc\Plugin\FlashMessenger',
         'Zend\Session',
         'Zend\Router',

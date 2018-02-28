@@ -13,7 +13,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use RuntimeException;
 use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
+use Zend\Router\RouteMatch;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class LpaAwareInitializerTest extends MockeryTestCase

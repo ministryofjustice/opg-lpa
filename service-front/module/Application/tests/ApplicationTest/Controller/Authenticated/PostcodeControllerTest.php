@@ -8,7 +8,7 @@ use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
+use Zend\Router\RouteMatch;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
