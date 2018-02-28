@@ -1,30 +1,35 @@
 <?php
 namespace Application\Model\Service\AddressLookup;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use MinistryOfJustice\PostcodeInfo\Client as PostcodeInfoClient;
 
 class PostcodeInfoClientFactory implements FactoryInterface {
 
     /**
-     * Create and instance of the Postcode Info Client.
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return PostcodeInfoClient
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    public function createService(ServiceLocatorInterface $serviceLocator){
-
-        $config = $serviceLocator->get('config')['address']['postcode_info'];
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $config = $container->get('config')['address']['postcode_info'];
 
         return new PostcodeInfoClient([
-            'httpClient' => $serviceLocator->get('HttpClient'),
+            'httpClient' => $container->get('HttpClient'),
             'apiKey' => $config['token'],
             'baseUrl' => (isset($config['uri'])) ? rtrim($config['uri'], '/') : null
         ]);
-
-    } // function
-
-
+    }
 } // class
