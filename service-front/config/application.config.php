@@ -2,6 +2,7 @@
 return array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
+        'Zend\Mvc\Plugin\FlashMessenger',
         'Zend\Form',
         'Zend\InputFilter',
         'Zend\Filter',
@@ -10,8 +11,8 @@ return array(
         'Zend\Session',
         'Zend\Router',
         'Zend\Validator',
-        'Application',
-        'ZendTwig'
+        'ZfcTwig',
+        'Application'
     ),
     // These are various options for the listeners attached to the ModuleManager
     'module_listener_options' => array(
