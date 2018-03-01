@@ -30,6 +30,7 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         ),
         'Z' => 
         array (
+            'ZfcTwig\\' => 8,
             'Zend\\View\\' => 10,
             'Zend\\Validator\\' => 15,
             'Zend\\Uri\\' => 9,
@@ -37,6 +38,7 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Zend\\Session\\' => 13,
             'Zend\\ServiceManager\\' => 20,
             'Zend\\Router\\' => 12,
+            'Zend\\Mvc\\Plugin\\FlashMessenger\\' => 31,
             'Zend\\Mvc\\' => 9,
             'Zend\\ModuleManager\\' => 19,
             'Zend\\Math\\' => 10,
@@ -58,6 +60,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'W' => 
         array (
             'Webmozart\\Assert\\' => 17,
+        ),
+        'T' => 
+        array (
+            'Twig\\' => 5,
         ),
         'S' => 
         array (
@@ -138,6 +144,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
         ),
+        'ZfcTwig\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kokspflanze/zfc-twig/src/ZfcTwig',
+        ),
         'Zend\\View\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-view/src',
@@ -165,6 +175,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'Zend\\Router\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-router/src',
+        ),
+        'Zend\\Mvc\\Plugin\\FlashMessenger\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-mvc-plugin-flashmessenger/src',
         ),
         'Zend\\Mvc\\' => 
         array (
@@ -237,6 +251,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'Webmozart\\Assert\\' => 
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
+        ),
+        'Twig\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/twig/twig/src',
         ),
         'Symfony\\Polyfill\\Php70\\' => 
         array (
@@ -378,6 +396,13 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
     );
 
     public static $prefixesPsr0 = array (
+        'T' => 
+        array (
+            'Twig_' => 
+            array (
+                0 => __DIR__ . '/..' . '/twig/twig/lib',
+            ),
+        ),
         'S' => 
         array (
             'Smtpapi' => 

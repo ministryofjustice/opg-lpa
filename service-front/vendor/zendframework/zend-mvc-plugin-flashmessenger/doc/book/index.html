@@ -1,0 +1,202 @@
+<div class="container">
+  <div class="jumbotron">
+    <h1>zend-mvc-plugin-flashmessenger</h1>
+    
+    <p>Plugin for creating and exposing flash messages via zend-mvc controllers.</p>
+
+    <pre><code class="language-bash">$ composer require zendframework/zend-mvc-plugin-flashmessenger</code></pre>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h2 class="panel-title">Installation</h2>
+        </div>
+
+        <div class="panel-body">
+          <p>
+            Install via composer:
+          </p>
+
+          <pre><code class="lang-bash" data-trim>
+$ composer require zendframework/zend-mvc-plugin-flashmessenger
+          </code></pre>
+
+          <p>
+            If you are using the <a href="https://zendframework.github.io/zend-component-installer">zend-component-installer</a>,
+            you're done!
+          </p>
+
+          <p>
+            If not, you will need to add the component as a module to your
+            application. Add the entry <code>'Zend\Mvc\Plugin\FlashMessenger'</code> to
+            your list of modules in your application configuration (typically
+            one of <code>config/application.config.php</code> or
+            <code>config/modules.config.php</code>).
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-6">
+      <h2>Usage</h2>
+
+      <p>
+        The <code>FlashMessenger</code> is a plugin designed to create and
+        retrieve self-expiring, session-based messages. It exposes a number of
+        methods:
+      </p>
+
+      <ul>
+        <li>
+          <code>setSessionManager(Zend\Session\ManagerInterface $manager) : FlashMessenger</code>:
+          Allows you to specify an alternate session manager, if desired.
+        </li>
+
+        <li>
+          <code>getSessionManager() : Zend\Session\ManagerInterface</code>:
+          Allows you to retrieve the session manager registered.
+        </li>
+
+        <li>
+          <code>getContainer() : Zend\Session\Container</code>: Returns the
+          <code>Zend\Session\Container</code> instance in which the flash
+          messages are stored.
+        </li>
+
+        <li>
+          <code>setNamespace(string $namespace = 'default') : FlashMessenger</code>:
+          Allows you to specify a specific namespace in the container in which to store
+          or from which to retrieve flash messages.
+        </li>
+
+        <li>
+          <code>getNamespace() : string</code>: retrieves the name of the flash message namespace.
+        </li>
+
+        <li>
+          <code>addMessage(string $message) : FlashMessenger</code>: Allows you
+          to add a message to the current namespace of the session container.
+        </li>
+
+        <li>
+          <code>hasMessages() : bool</code>: Lets you determine if there are any
+          flash messages from the current namespace in the session container.
+        </li>
+
+        <li>
+          <code>getMessages() : array</code>: Retrieves the flash messages from
+          the current namespace of the session container
+        </li>
+
+        <li>
+          <code>clearMessages() : bool</code>: Clears all flash messages in
+          current namespace of the session container. Returns <code>true</code>
+          if messages were cleared, <code>false</code> if none existed.
+        </li>
+
+        <li>
+          <code>hasCurrentMessages() : bool</code>: Indicates whether any
+          messages were added during the current request.
+        </li>
+
+        <li>
+          <code>getCurrentMessages() : array</code>: Retrieves any messages
+          added during the current request.
+        </li>
+
+        <li>
+          <code>clearCurrentMessages() : bool</code>: Removes any messages added
+          during the current request. Returns <code>true</code> if current
+          messages were cleared, <code>false</code> if none existed.
+        </li>
+
+        <li>
+          <code>clearMessagesFromContainer() : bool</code>: Clear all messages
+          from the container.  Returns <code>true</code> if any messages were
+          cleared, <code>false</code> if none existed.
+        </li>
+      </ul>
+
+      <p>
+        This plugin also provides four meaningful namespaces, namely:
+        <code>INFO</code>, <code>ERROR</code>, <code>WARNING</code>, and
+        <code>SUCCESS</code>. The following functions are related to these
+        namespaces:
+      </p>
+
+      <ul>
+        <li>
+          <code>addInfoMessage(string $message): FlashMessenger</code>: Add a
+          message to "info" namespace.
+        </li>
+
+        <li>
+          <code>hasCurrentInfoMessages() : bool</code>: Check to see if messages
+          have been added to "info" namespace within this request.
+        </li>
+
+        <li>
+          <code>addWarningMessage(string $message) : FlashMessenger</code>: Add
+          a message to "warning" namespace.
+        </li>
+
+        <li>
+          <code>hasCurrentWarningMessages() : bool</code>: Check to see if
+          messages have been added to "warning" namespace within this request.
+        </li>
+
+        <li>
+          <code>addErrorMessage(string $message) : FlashMessenger</code>: Add a
+          message to "error" namespace.
+        </li>
+
+        <li>
+          <code>hasCurrentErrorMessages() : bool</code>: Check to see if
+          messages have been added to "error" namespace within this request.
+        </li>
+
+        <li>
+          <code>addSuccessMessage(string $message) : FlashMessenger</code>: Add
+          a message to "success" namespace.
+        </li>
+
+        <li>
+          <code>hasCurrentSuccessMessages() :bool</code>: Check to see if
+          messages have been added to "success" namespace within this request.
+        </li>
+      </ul>
+
+      <p>
+        Additionally, the <code>FlashMessenger</code> implements both
+        <code>IteratorAggregate</code> and <code>Countable</code>, allowing you
+        to iterate over and count the flash messages in the current namespace
+        within the session container.
+      </p>
+
+      <h3>Examples</h3>
+
+      <pre><code class="lang-php" data-trim>
+public function processAction()
+{
+    // ... do some work ...
+    $this->flashMessenger()->addMessage('You are now logged in.');
+    return $this->redirect()->toRoute('user-success');
+}
+
+public function successAction()
+{
+    $return = ['success' => true];
+    $flashMessenger = $this->flashMessenger();
+    if ($flashMessenger->hasMessages()) {
+        $return['messages'] = $flashMessenger->getMessages();
+    }
+    return $return;
+}
+      </code></pre>
+    </div>
+  </div>
+</div>

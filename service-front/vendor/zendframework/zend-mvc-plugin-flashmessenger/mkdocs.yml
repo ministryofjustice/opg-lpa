@@ -1,0 +1,8 @@
+docs_dir: doc/book
+site_dir: doc/html
+pages:
+    - index.md
+site_name: zend-mvc-plugin-flashmessenger
+site_description: 'zend-mvc-plugin-flashmessenger: Flash messages for zend-mvc controllers'
+repo_url: 'https://github.com/zendframework/zend-mvc-plugin-flashmessenger'
+copyright: 'Copyright (c) 2016 <a href="http://www.zend.com/">Zend Technologies USA Inc.</a>'
