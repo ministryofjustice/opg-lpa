@@ -1,82 +1,55 @@
 <?php
+/**
+  * This library allows you to quickly and easily send emails through SendGrid using PHP.
+  *
+  * @author    Elmer Thomas <dx@sendgrid.com>
+  * @copyright 2017 SendGrid
+  * @license   https://opensource.org/licenses/MIT The MIT License
+  * @version   GIT: <git_id>
+  * @link      http://packagist.org/packages/sendgrid/sendgrid
+  */
 
-class SendGrid {
-  const VERSION = '2.2.1';
+/**
+  * Interface to the SendGrid Web API
+  */
+class SendGrid
+{
+    const VERSION = '6.0.0';
 
-  protected $namespace  = 'SendGrid',
-            $headers    = array('Content-Type' => 'application/json'),
-            $options,
-            $web;
-  public    $api_user,
-            $api_key,
-            $url,
-            $version = self::VERSION;
+    /**
+     *
+     * @var string
+     */
+    protected $namespace = 'SendGrid';
 
-  
-  public function __construct($api_user, $api_key, $options=array()) {
-    $this->api_user = $api_user;
-    $this->api_key = $api_key;
+    /**
+     * @var \SendGrid\Client
+     */
+    public $client;
 
-    $options['turn_off_ssl_verification'] = (isset($options['turn_off_ssl_verification']) && $options['turn_off_ssl_verification'] == true);
-    $protocol = isset($options['protocol']) ? $options['protocol'] : 'https';
-    $host = isset($options['host']) ? $options['host'] : 'api.sendgrid.com';
-    $port = isset($options['port']) ? $options['port'] : '';
-    $endpoint = isset($options['endpoint']) ? $options['endpoint'] : '/api/mail.send.json';
+    /**
+     * @var string
+     */
+    public $version = self::VERSION;
 
-    $this->url = isset($options['url']) ? $options['url'] : $protocol . '://' . $host . ($port ? ':' . $port : '') . $endpoint;
+    /**
+      * Setup the HTTP Client
+      *
+      * @param string $apiKey  your SendGrid API Key.
+      * @param array  $options an array of options, currently only "host" and "curl" are implemented.
+      */
+    public function __construct($apiKey, $options = array())
+    {
+        $headers = array(
+            'Authorization: Bearer '.$apiKey,
+            'User-Agent: sendgrid/' . $this->version . ';php',
+            'Accept: application/json'
+            );
 
-    $this->options  = $options;
-  }
+        $host = isset($options['host']) ? $options['host'] : 'https://api.sendgrid.com';
 
-  public function send(SendGrid\Email $email) {
-    $form             = $email->toWebFormat();
-    $form['api_user'] = $this->api_user; 
-    $form['api_key']  = $this->api_key; 
+        $curlOptions = isset($options['curl']) ? $options['curl'] : null;
 
-    $response = $this->makeRequest($form);
-
-    return $response;
-  }
-
-  /**
-   * Makes the actual HTTP request to SendGrid
-   * @param $form array web ready version of SendGrid\Email
-   * @return stdClass parsed JSON returned from SendGrid
-   */
-  private function makeRequest($form) {
-    $ch = curl_init();
-
-    curl_setopt($ch, CURLOPT_URL, $this->url);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $form);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'sendgrid/' . $this->version . ';php');
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, !$this->options['turn_off_ssl_verification']);
-
-    $response = curl_exec($ch);
-
-    $error = curl_error($ch);
-    if ($error) {
-      throw new Exception($error);
+        $this->client = new \SendGrid\Client($host, $headers, '/v3', null, $curlOptions);
     }
-
-    curl_close($ch);
-
-    return json_decode($response);
-  }
-
-  public static function register_autoloader() {
-    spl_autoload_register(array('SendGrid', 'autoloader'));
-  }
-
-  public static function autoloader($class) {
-    // Check that the class starts with 'SendGrid'
-    if ($class == 'SendGrid' || stripos($class, 'SendGrid\\') === 0) {
-      $file = str_replace('\\', '/', $class);
-
-      if (file_exists(dirname(__FILE__) . '/' . $file . '.php')) {
-        require_once(dirname(__FILE__) . '/' . $file . '.php');
-      }
-    }
-  }
 }

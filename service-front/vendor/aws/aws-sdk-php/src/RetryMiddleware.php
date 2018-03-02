@@ -2,11 +2,11 @@
 namespace Aws;
 
 use Aws\Exception\AwsException;
-use Exception;
+use GuzzleHttp\Exception\ConnectException;
 use Psr\Http\Message\RequestInterface;
-use GuzzleHttp\Promise;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Promise\PromiseInterface;
-use GuzzleHttp\Psr7;
+use GuzzleHttp\Promise;
 
 /**
  * @internal Middleware that retries failures.
@@ -58,13 +58,18 @@ class RetryMiddleware
      */
     public static function createDefaultDecider($maxRetries = 3)
     {
+        $retryCurlErrors = [];
+        if (extension_loaded('curl')) {
+            $retryCurlErrors[CURLE_RECV_ERROR] = true;
+        }
+
         return function (
             $retries,
             CommandInterface $command,
             RequestInterface $request,
             ResultInterface $result = null,
             $error = null
-        ) use ($maxRetries) {
+        ) use ($maxRetries, $retryCurlErrors) {
             // Allow command-level options to override this value
             $maxRetries = null !== $command['@retries'] ?
                 $command['@retries']
@@ -72,19 +77,45 @@ class RetryMiddleware
 
             if ($retries >= $maxRetries) {
                 return false;
-            } elseif (!$error) {
+            }
+
+            if (!$error) {
                 return isset(self::$retryStatusCodes[$result['@metadata']['statusCode']]);
-            } elseif (!($error instanceof AwsException)) {
-                return false;
-            } elseif ($error->isConnectionError()) {
-                return true;
-            } elseif (isset(self::$retryCodes[$error->getAwsErrorCode()])) {
-                return true;
-            } elseif (isset(self::$retryStatusCodes[$error->getStatusCode()])) {
-                return true;
-            } else {
+            }
+
+            if (!($error instanceof AwsException)) {
                 return false;
             }
+
+            if ($error->isConnectionError()) {
+                return true;
+            }
+
+            if (isset(self::$retryCodes[$error->getAwsErrorCode()])) {
+                return true;
+            }
+
+            if (isset(self::$retryStatusCodes[$error->getStatusCode()])) {
+                return true;
+            }
+
+            if (count($retryCurlErrors)
+                && ($previous = $error->getPrevious())
+                && $previous instanceof ConnectException
+            ) {
+                if (method_exists($previous, 'getHandlerContext')) {
+                    return isset($retryCurlErrors[$previous->getHandlerContext()['errno']]);
+                }
+
+                $message = $previous->getMessage();
+                foreach (array_keys($retryCurlErrors) as $curlError) {
+                    if (strpos($message, 'cURL error ' . $curlError . ':') === 0) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         };
     }
 
@@ -134,7 +165,7 @@ class RetryMiddleware
 
             if ($value instanceof \Exception || $value instanceof \Throwable) {
                 if (!$decider($retries, $command, $request, null, $value)) {
-                    return \GuzzleHttp\Promise\rejection_for(
+                    return Promise\rejection_for(
                         $this->bindStatsToReturn($value, $requestStats)
                     );
                 }
