@@ -7,14 +7,11 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
-    'Smtpapi' => array($vendorDir . '/sendgrid/smtpapi/lib'),
-    'SendGrid' => array($vendorDir . '/sendgrid/sendgrid/lib'),
     'Raven_' => array($vendorDir . '/sentry/sentry/lib'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'Omnipay\\WorldPayXML\\' => array($vendorDir . '/netsensia/omnipay-worldpay-xml/src'),
     'Omnipay\\Common\\' => array($vendorDir . '/omnipay/common/src'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),
-    'Michelf' => array($vendorDir . '/michelf/php-markdown'),
     'Guzzle\\Tests' => array($vendorDir . '/guzzle/guzzle/tests'),
     'Guzzle' => array($vendorDir . '/guzzle/guzzle/src'),
     'Egulias\\' => array($vendorDir . '/egulias/email-validator/src'),

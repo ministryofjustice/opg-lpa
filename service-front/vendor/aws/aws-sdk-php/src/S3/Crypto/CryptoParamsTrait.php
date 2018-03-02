@@ -11,10 +11,10 @@ trait CryptoParamsTrait
     {
         if ($args['@MaterialsProvider'] instanceof MaterialsProvider) {
             return $args['@MaterialsProvider'];
-        } else {
-            throw new \InvalidArgumentException('An instance of MaterialsProvider'
-                . ' must be passed in the "MaterialsProvider" field.');
         }
+
+        throw new \InvalidArgumentException('An instance of MaterialsProvider'
+            . ' must be passed in the "MaterialsProvider" field.');
     }
 
     protected function getInstructionFileSuffix(array $args)
@@ -30,12 +30,12 @@ trait CryptoParamsTrait
     ) {
         if (isset($result['Metadata'][MetadataEnvelope::CONTENT_KEY_V2_HEADER])) {
             return new HeadersMetadataStrategy();
-        } else {
-            return new InstructionFileMetadataStrategy(
-                $this->client,
-                $instructionFileSuffix
-            );
         }
+
+        return new InstructionFileMetadataStrategy(
+            $this->client,
+            $instructionFileSuffix
+        );
     }
 
     protected function getMetadataStrategy(array $args, $instructionFileSuffix)
@@ -43,7 +43,9 @@ trait CryptoParamsTrait
         if (!empty($args['@MetadataStrategy'])) {
             if ($args['@MetadataStrategy'] instanceof MetadataStrategyInterface) {
                 return $args['@MetadataStrategy'];
-            } elseif (is_string($args['@MetadataStrategy'])) {
+            }
+
+            if (is_string($args['@MetadataStrategy'])) {
                 switch ($args['@MetadataStrategy']) {
                     case HeadersMetadataStrategy::class:
                         return new HeadersMetadataStrategy();

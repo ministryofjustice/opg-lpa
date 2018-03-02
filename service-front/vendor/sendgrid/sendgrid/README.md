@@ -1,709 +1,237 @@
-# SendGrid-php
+[![BuildStatus](https://travis-ci.org/sendgrid/sendgrid-php.svg?branch=master)](https://travis-ci.org/sendgrid/sendgrid-php)
 
-This library allows you to quickly and easily send emails through SendGrid using PHP.
+Please see our announcement regarding [breaking changes](https://github.com/sendgrid/sendgrid-php/issues/290). Your support is appreciated!
 
-WARNING: This module was recently upgraded from [1.1.7](https://github.com/sendgrid/sendgrid-php/tree/v1.1.7) to 2.X. There were API breaking changes for various method names. See [usage](https://github.com/sendgrid/sendgrid-php#usage) for up to date method names.
+**This library allows you to quickly and easily use the SendGrid Web API v3 via PHP.**
 
-Important: This library requires PHP 5.3 or higher.
+Version 5.X.X of this library provides full support for all SendGrid [Web API v3](https://sendgrid.com/docs/API_Reference/Web_API_v3/index.html) endpoints, including the new [v3 /mail/send](https://sendgrid.com/blog/introducing-v3mailsend-sendgrids-new-mail-endpoint).
 
-[![BuildStatus](https://travis-ci.org/sendgrid/sendgrid-php.png?branch=master)](https://travis-ci.org/sendgrid/sendgrid-php)
-[![Latest Stable Version](https://poser.pugx.org/sendgrid/sendgrid/version.png)](https://packagist.org/packages/sendgrid/sendgrid)
+This library represents the beginning of a new path for SendGrid. We want this library to be community driven and SendGrid led. We need your help to realize this goal. To help make sure we are building the right things in the right order, we ask that you create [issues](https://github.com/sendgrid/sendgrid-php/issues) and [pull requests](https://github.com/sendgrid/sendgrid-php/blob/master/CONTRIBUTING.md) or simply upvote or comment on existing issues or pull requests.
 
-```php
-$sendgrid = new SendGrid('username', 'password');
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ->setFrom('me@bar.com')
-    ->setSubject('Subject goes here')
-    ->setText('Hello World!')
-    ->setHtml('<strong>Hello World!</strong>')
-;
+Please browse the rest of this README for further detail.
 
-$sendgrid->send($email);
+We appreciate your continued support, thank you!
+
+# Table of Contents
+
+* [Installation](#installation)
+* [Quick Start](#quick_start)
+* [Usage](#usage)
+* [Use Cases](#use_cases)
+* [Announcements](#announcements)
+* [Roadmap](#roadmap)
+* [How to Contribute](#contribute)
+* [Troubleshooting](#troubleshooting)
+* [About](#about)
+
+<a name="installation"></a>
+# Installation
+
+## Prerequisites
+
+- PHP version 5.6 or 7.0
+- The SendGrid service, starting at the [free level](https://sendgrid.com/free?source=sendgrid-php)
+
+## Setup Environment Variables
+
+Update the development environment with your [SENDGRID_API_KEY](https://app.sendgrid.com/settings/api_keys), for example:
+
+```bash
+echo "export SENDGRID_API_KEY='YOUR_API_KEY'" > sendgrid.env
+echo "sendgrid.env" >> .gitignore
+source ./sendgrid.env
 ```
 
-## Installation
+## Install Package
 
-Add SendGrid to your `composer.json` file. If you are not using [Composer](http://getcomposer.org), you should be. It's an excellent way to manage dependencies in your PHP application. 
+Add SendGrid to your `composer.json` file. If you are not using [Composer](http://getcomposer.org), you should be. It's an excellent way to manage dependencies in your PHP application.
 
 ```json
-{  
+{
   "require": {
-    "sendgrid/sendgrid": "2.2.1"
+    "sendgrid/sendgrid": "~6.0"
   }
 }
 ```
 
-Then at the top of your PHP script require the autoloader:
+#### Alternative: Install package from zip
 
-```bash
+If you are not using Composer, simply download and install the **[latest packaged release of the library as a zip](https://github.com/sendgrid/sendgrid-php/archive/master.zip)**.
+
+[**⬇︎ Download Packaged Library ⬇︎**](https://github.com/sendgrid/sendgrid-php/archive/master.zip)
+
+Previous versions of the library can be found in the [version index](https://sendgrid-open-source.s3.amazonaws.com/index.html) or downloaded directly from GitHub.
+
+## Dependencies
+
+- The SendGrid Service, starting at the [free level](https://sendgrid.com/free?source=sendgrid-php)
+- [php-HTTP-Client](https://github.com/sendgrid/php-http-client)
+
+<a name="quick_start"></a>
+# Quick Start
+
+## Hello Email
+
+The following is the minimum needed code to send an email with the [/mail/send Helper](https://github.com/sendgrid/sendgrid-php/tree/master/lib/helpers/mail) ([here](https://github.com/sendgrid/sendgrid-php/blob/master/examples/helpers/mail/example.php#L22) is a full example):
+
+```php
+<?php
+// If you are using Composer (recommended)
 require 'vendor/autoload.php';
+
+// If you are not using Composer
+// require("path/to/sendgrid-php/sendgrid-php.php");
+
+$from = new SendGrid\Email("Example User", "test@example.com");
+$subject = "Sending with SendGrid is Fun";
+$to = new SendGrid\Email("Example User", "test@example.com");
+$content = new SendGrid\Content("text/plain", "and easy to do anywhere, even with PHP");
+$mail = new SendGrid\Mail($from, $subject, $to, $content);
+
+$apiKey = getenv('SENDGRID_API_KEY');
+$sg = new \SendGrid($apiKey);
+
+$response = $sg->client->mail()->send()->post($mail);
+echo $response->statusCode();
+print_r($response->headers());
+echo $response->body();
 ```
 
-#### Alternative: Install from zip
+The `SendGrid\Mail` constructor creates a [personalization object](https://sendgrid.com/docs/Classroom/Send/v3_Mail_Send/personalizations.html) for you. [Here](https://github.com/sendgrid/sendgrid-php/blob/master/examples/helpers/mail/example.php#L16) is an example of how to add to it.
 
-If you are not using Composer, simply download and install the **[latest packaged release of the library as a zip](https://sendgrid-open-source.s3.amazonaws.com/sendgrid-php/sendgrid-php.zip)**. 
+### Without Mail Helper Class
 
-[**⬇︎ Download Packaged Library ⬇︎**](https://sendgrid-open-source.s3.amazonaws.com/sendgrid-php/sendgrid-php.zip)
-
-Then require the library from package:
+The following is the minimum needed code to send an email without the /mail/send Helper ([here](https://github.com/sendgrid/sendgrid-php/blob/master/examples/mail/mail.php#L28) is a full example):
 
 ```php
-require("path/to/sendgrid-php/sendgrid-php.php");
+<?php
+// If you are using Composer (recommended)
+require 'vendor/autoload.php';
+
+// If you are not using Composer
+// require("path/to/sendgrid-php/sendgrid-php.php");
+
+$request_body = json_decode('{
+  "personalizations": [
+    {
+      "to": [
+        {
+          "email": "test@example.com"
+        }
+      ],
+      "subject": "Sending with SendGrid is Fun"
+    }
+  ],
+  "from": {
+    "email": "test@example.com"
+  },
+  "content": [
+    {
+      "type": "text/plain",
+      "value": "and easy to do anywhere, even with PHP"
+    }
+  ]
+}');
+
+$apiKey = getenv('SENDGRID_API_KEY');
+$sg = new \SendGrid($apiKey);
+
+$response = $sg->client->mail()->send()->post($request_body);
+echo $response->statusCode();
+echo $response->body();
+print_r($response->headers());
 ```
 
-Previous versions of the library can be found in the [version index](https://sendgrid-open-source.s3.amazonaws.com/index.html).
-
-## Example App
-
-There is a [sendgrid-php-example app](https://github.com/sendgrid/sendgrid-php-example) to help jumpstart your development.
-
-## Usage
-
-To begin using this library, initialize the SendGrid object with your SendGrid credentials.
+## General v3 Web API Usage (With Fluent Interface)
 
 ```php
-$sendgrid = new SendGrid('username', 'password');
+<?php
+// If you are using Composer (recommended)
+require 'vendor/autoload.php';
+
+// If you are not using Composer
+// require("path/to/sendgrid-php/sendgrid-php.php");
+
+$apiKey = getenv('SENDGRID_API_KEY');
+$sg = new \SendGrid($apiKey);
+
+$response = $sg->client->suppression()->bounces()->get();
+
+print $response->statusCode();
+print $response->headers();
+print $response->body();
 ```
 
-Create a new SendGrid Email object and add your message details.
+## General v3 Web API Usage (Without Fluent Interface)
 
 ```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ->addTo('bar@foo.com')
-    ->setFrom('me@bar.com')
-    ->setSubject('Subject goes here')
-    ->setText('Hello World!')
-    ->setHtml('<strong>Hello World!</strong>')
-;
+<?php
+// If you are using Composer (recommended)
+require 'vendor/autoload.php';
+
+// If you are not using Composer
+// require("path/to/sendgrid-php/sendgrid-php.php");
+
+$apiKey = getenv('SENDGRID_API_KEY');
+$sg = new \SendGrid($apiKey);
+
+$response = $sg->client->_("suppression/bounces")->get();
+
+print $response->statusCode();
+print $response->headers();
+print $response->body();
 ```
 
-Send it. 
+<a name="usage"></a>
+# Usage
 
-```php
-$sendgrid->send($email);
-```
+- [SendGrid Docs](https://sendgrid.com/docs/API_Reference/index.html)
+- [Library Usage
+    Documentation](https://github.com/sendgrid/sendgrid-php/tree/master/USAGE.md)
+- [Example Code](https://github.com/sendgrid/sendgrid-php/tree/master/examples)
+- [How-to: Migration from v2 to v3](https://sendgrid.com/docs/Classroom/Send/v3_Mail_Send/how_to_migrate_from_v2_to_v3_mail_send.html)
+- [v3 Web API Mail Send Helper](https://github.com/sendgrid/sendgrid-php/tree/master/lib/helpers/mail/README.md) - build a request object payload for a v3 /mail/send API call.
 
-#### addTo
+<a name="use_cases">
+# Use Cases
 
-You can add one or multiple TO addresses using `addTo`.
+[Examples of common API use cases](https://github.com/sendgrid/sendgrid-php/blob/master/USE_CASES.md), such as how to send an email with a transactional template.
 
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ->addTo('another@another.com')
-;
-$sendgrid->send($email);
-```
+<a name="announcements"></a>
+# Announcements
 
-#### setTos
+Please see our announcement regarding [breaking changes](https://github.com/sendgrid/sendgrid-php/issues/290). Your support is appreciated!
 
-If you prefer, you can add multiple TO addresses as an array using the `setTos` method. This will unset any previous `addTo`s you appended.
+All updates to this library is documented in our [CHANGELOG](https://github.com/sendgrid/sendgrid-php/blob/master/CHANGELOG.md) and [releases](https://github.com/sendgrid/sendgrid-php/releases)
 
-```php
-$email = new SendGrid\Email();
-$emails = array("foo@bar.com", "another@another.com", "other@other.com");
-$email->setTos($emails);
-$sendgrid->send($email);
-```
+<a name="roadmap"></a>
+# Roadmap
 
-#### setFrom
+If you are interested in the future direction of this project, please take a look at our open [issues](https://github.com/sendgrid/sendgrid-php/issues) and [pull requests](https://github.com/sendgrid/sendgrid-php/pulls). We would love to hear your feedback.
 
-```php
-$email = new SendGrid\Email();
-$email->setFrom('foo@bar.com');
-$sendgrid->send($email);
-```
+<a name="contribute"></a>
+# How to Contribute
 
-#### setFromName
+We encourage contribution to our libraries (you might even score some nifty swag), please see our [CONTRIBUTING](https://github.com/sendgrid/sendgrid-php/blob/master/CONTRIBUTING.md) guide for details.
 
-```php
-$email = new SendGrid\Email();
-$email
-    ->setFrom('foo@bar.com')
-    ->setFromName('Foo Bar')
-    ->setFrom('other@example.com')
-    ->setFromName('Other Guy')
-;
-$sendgrid->send($email);
-```
+Quick links:
 
-#### setReplyTo
+- [Feature Request](https://github.com/sendgrid/sendgrid-php/blob/master/CONTRIBUTING.md#feature_request)
+- [Bug Reports](https://github.com/sendgrid/sendgrid-php/blob/master/CONTRIBUTING.md#submit_a_bug_report)
+- [Sign the CLA to Create a Pull Request](https://github.com/sendgrid/sendgrid-php/blob/master/CONTRIBUTING.md#cla)
+- [Improvements to the Codebase](https://github.com/sendgrid/sendgrid-php/blob/master/CONTRIBUTING.md#improvements_to_the_codebase)
 
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ->setReplyTo('someone.else@example.com')
-    ->setFromName('John Doe')
-   ...
-;
-```
+<a name="troubleshooting"></a>
+# Troubleshooting
 
-### Cc
+Please see our [troubleshooting guide](https://github.com/sendgrid/sendgrid-php/blob/master/TROUBLESHOOTING.md) for common library issues.
 
-#### addCc
+<a name="about"></a>
+# About
 
-```php
-$email = new SendGrid\Email();
-$email->addCc('foo@bar.com');
-$sendgrid->send($email);
-```
+sendgrid-php is guided and supported by the SendGrid [Developer Experience Team](mailto:dx@sendgrid.com).
 
-#### setCc
+sendgrid-php is maintained and funded by SendGrid, Inc. The names and logos for sendgrid-php are trademarks of SendGrid, Inc.
 
-```php
-$email = new SendGrid\Email();
-$email->setCc('foo@bar.com');
-$sendgrid->send($email);
-```
+![SendGrid Logo](https://uiux.s3.amazonaws.com/2016-logos/email-logo%402x.png)
 
-#### setCcs
-
-```php
-$email = new SendGrid\Email();
-$emails = array("foo@bar.com", "another@another.com", "other@other.com");
-$email->setCcs($emails);
-$sendgrid->send($email);
-```
-
-#### removeCc
-
-```php
-$email->removeCc('foo@bar.com');
-```
-
-### Bcc
-
-Use multiple `addTo`s as a superior alternative to `setBcc`.
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ->addTo('someotheraddress@bar.com')
-    ->addTo('another@another.com')
-   ...
-;
-```
-
-But if you do still have a need for Bcc you can do the following:
-
-#### addBcc
-
-```php
-$email = new SendGrid\Email();
-$email->addBcc('foo@bar.com');
-$sendgrid->send($email);
-```
-
-#### setBcc
-
-```php
-$email = new SendGrid\Email();
-$email->setBcc('foo@bar.com');
-$sendgrid->send($email);
-```
-
-#### setBccs
-
-```php
-$email = new SendGrid\Email();
-$emails = array("foo@bar.com", "another@another.com", "other@other.com");
-$email->setBccs($emails);
-$sendgrid->send($email);
-```
-
-#### removeBcc
-
-```php
-$email->removeBcc('foo@bar.com');
-```
-
-#### setSubject
-
-```php
-$email = new SendGrid\Email();
-$email->setSubject('This is a subject');
-$sendgrid->send($email);
-```
-
-#### setText
-
-```php
-$email = new SendGrid\Email();
-$email->setText('This is some text');
-$sendgrid->send($email);
-```
-
-#### setHtml
-
-```php
-$email = new SendGrid\Email();
-$email->setHtml('<h1>This is an html email</h1>');
-$sendgrid->send($email);
-```
-
-#### setDate
-
-```php
-$email = new SendGrid\Email();
-$email->setDate('Wed, 17 Dec 2014 19:21:16 +0000');
-$sendgrid->send($email);
-```
-
-#### setSendAt
-
-```php
-$email = new SendGrid\Email();
-$email->setSendAt(1409348513);
-$sendgrid->send($email);
-```
-
-#### setSendEachAt
-
-```php
-$email = new SendGrid\Email();
-$email->setSendEachAt(array(1409348513, 1409348514, 1409348515));
-$sendgrid->send($email);
-```
-
-#### addSendEachAt
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addSendEachAt(1409348513)
-    ->addSendEachAt(1409348514)
-    ->addSendEachAt(1409348515)
-;
-$sendgrid->send($email);
-```
-
-### Categories ###
-
-Categories are used to group email statistics provided by SendGrid.
-
-To use a category, simply set the category name.  Note: there is a maximum of 10 categories per email.
-
-#### addCategory
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ...
-    ->addCategory("Category 1")
-    ->addCategory("Category 2")
-;
-```
-
-#### setCategory
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ...
-    ->setCategory("Category 1")
-;
-```
-
-#### setCategories
-
-```php
-$email = new SendGrid\Email();
-$categories = array("Category 1", "Category 2", "Category 3");
-$email->setCategories($categories);
-```
-
-#### removeCategory
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ...
-    ->removeCategory("Category 1")
-;
-```
-
-### Attachments ###
-
-Attachments are currently file based only, with future plans for an in memory implementation as well.
-
-File attachments are limited to 7 MB per file.
-
-#### addAttachment
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ...
-    ->addAttachment("../path/to/file.txt")
-;
-```
-
-#### setAttachment
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ...
-    ->setAttachment("../path/to/file.txt")
-;
-```
-
-#### setAttachments
-
-```php
-$email = new SendGrid\Email();
-$attachments = array("../path/to/file1.txt", "../path/to/file2.txt");
-$email
-    ->addTo('foo@bar.com')
-    ...
-    ->setAttachments($attachments)
-;
-```
-
-#### removeAttachment
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ...
-    ->addAttachment("../path/to/file.txt")
-    ->removeAttachment("../path/to/file.txt")
-;
-```
-
-You can tag files for use as inline HTML content. It will mark the file for inline disposition using the specified "cid".
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ->setHtml('<div>Our logo:<img src="cid:file-cid"></div>')
-    ->addAttachment("../path/to/file.txt", "super_file.txt", "file-cid")
-;
-```
-
-**Important Gotcha**: `setBcc` is not supported with attachments. This is by design. Instead use multiple `addTo`s. Each user will receive their own personalized email with that setup, and only see their own email.
-
-
-Standard `setBcc` will hide who the email is addressed to. If you use the multiple addTo, each user will receive a personalized email showing **only* their email. This is more friendly and more personal. Additionally, it is a good idea to use multiple `addTo`s because setBcc is not supported with attachments. This is by design.
-
-So just remember, when thinking 'bcc', instead use multiple `addTo`s.
-
-### Substitutions ###
-
-Substitutions can be used to customize multi-recipient emails, and tailor them for the user
-
-#### addSubstitution
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('john@somewhere.com')
-    ->addTo('harry@somewhere.com')
-    ->addTo('Bob@somewhere.com')
-       ...
-    ->setHtml('Hey %name%, we've seen that you've been gone for a while')
-    ->addSubstitution('%name%', array('John', 'Harry', 'Bob'))
-;
-```
-
-Substitutions can also be used to customize multi-recipient subjects.
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTos(array('john@somewhere.com', 'harry@somewhere.com', 'bob@somewhere.com'))
-    ->setSubject('%subject%')
-    ->addSubstitution(
-        '%subject%',
-        array('Subject to John', 'Subject to Harry', 'Subject to Bob')
-    )
-    ...
-;
-```
-
-#### setSubstitutions
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTos(array('john@somewhere.com', 'harry@somewhere.com', 'bob@somewhere.com'))
-    ->setSubject('%subject%')
-    ->setSubstitutions(array(
-        '%name%' => array('John', 'Harry', 'Bob'), 
-        '%subject%' => array('Subject to John', 'Subject to Harry', 'Subject to Bob')
-    ))
-    ...
-;
-```
-
-### Sections ###
-
-Sections can be used to further customize messages for the end users. A section is only useful in conjunction with a substitution value.
-
-#### addSection
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('john@somewhere.com')
-    ->addTo("harry@somewhere.com")
-    ->addTo("Bob@somewhere.com")
-    ...
-    ->setHtml("Hey %name%, you work at %place%")
-    ->addSubstitution("%name%", array("John", "Harry", "Bob"))
-    ->addSubstitution("%place%", array("%office%", "%office%", "%home%"))
-    ->addSection("%office%", "an office")
-    ->addSection("%home%", "your house")
-;
-```
-
-#### setSections
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('john@somewhere.com')
-    ->addTo("harry@somewhere.com")
-    ->addTo("Bob@somewhere.com")
-    ...
-    ->setHtml("Hey %name%, you work at %place%")
-    ->addSubstitution("%name%", array("John", "Harry", "Bob"))
-    ->addSubstitution("%place%", array("%office%", "%office%", "%home%"))
-    ->setSections(array("%office%" => "an office", "%home%" => "your house"))
-;
-```
-
-### Unique Arguments ###
-
-Unique Arguments are used for tracking purposes
-
-#### addUniqueArg / addUniqueArgument
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ...
-    ->addUniqueArg("Customer", "Someone")
-    ->addUniqueArg("location", "Somewhere")
-;
-```
-
-#### setUniqueArgs / setUniqueArguments
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ...
-    ->setUniqueArgs(array('cow' => 'chicken'))
-;
-```
-
-### Filter Settings ###
-
-Filter Settings are used to enable and disable apps, and to pass parameters to those apps.
-
-#### addFilter / addFilterSetting
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ...
-    addFilter("gravatar", "enable", 1)
-    ->addFilter("footer", "enable", 1)
-    ->addFilter("footer", "text/plain", "Here is a plain text footer")
-    ->addFilter(
-        "footer", 
-        "text/html", 
-        "<p style='color:red;'>Here is an HTML footer</p>"
-    )
-;
-```
-
-#### setFilters / setFilterSettings
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ...
-    setFilters(array("gravatar" => array("settings" => array("enable" => 1))))
-;
-```
-
-### Headers ###
-
-You can add standard email message headers as necessary.
-
-#### addHeader
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ...
-    ->addHeader('X-Sent-Using', 'SendGrid-API')
-    ->addHeader('X-Transport', 'web')
-;
-```
-
-#### setHeaders
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ...
-    ->setHeaders(array('X-Sent-Using' => 'SendGrid-API', 'X-Transport' => 'web'))
-;
-```
-
-#### removeHeader
-
-```php
-$email = new SendGrid\Email();
-$email
-    ->addTo('foo@bar.com')
-    ...
-    ->addHeader('X-Sent-Using', 'SendGrid-API')
-    ->addHeader('X-Transport', 'web')
-;
-$email->removeHeader('X-Transport');
-```
-
-### Options
-Options may be passed to the library when initializing the SendGrid object:
-
-```php
-$options = array(
-    'turn_off_ssl_verification' => false,
-    'protocol' => 'https',
-    'host' => 'api.sendgrid.com',
-    'endpoint' => '/api/mail.send.json',
-    'port' => null,
-    'url' => null,
-);
-$sendgrid = new SendGrid('username', 'password', $options);
-```
-
-#### Changing URL
-You may change the URL sendgrid-php uses to send email by supplying various parameters to `options`, all parameters are optional:
-
-```php
-$sendgrid = new SendGrid(
-    'username', 
-    'password', 
-    array(
-        'protocol' => 'http', 
-        'host' => 'sendgrid.org', 
-        'endpoint' => '/send', 
-        'port' => '80' 
-    )
-);
-```
-
-A full URL may also be provided:
-
-```php
-$sendgrid = new SendGrid(
-    'username', 
-    'password', 
-    array( 'url' => 'http://sendgrid.org:80/send')
-);
-```
-
-#### Ignoring SSL certificate verification
-
-You can optionally ignore verification of SSL certificate when using the Web API.
-
-```php
-$sendgrid = new SendGrid(
-    SENDGRID_USERNAME, 
-    SENDGRID_PASSWORD, 
-    array("turn_off_ssl_verification" => true)
-);
-```
-
-### Sending to 1,000s of emails in one batch
-
-Sometimes you might want to send 1,000s of emails in one request. You can do that. It is recommended you break each batch up in 1,000 increments. So if you need to send to 5,000 emails, then you'd break this into a loop of 1,000 emails at a time.
-
-```php
-$sendgrid = new SendGrid(SENDGRID_USERNAME, SENDGRID_PASSWORD);
-$email = new SendGrid\Email();
-
-$recipients = array(
-    "alpha@mailinator.com", 
-    "beta@mailinator.com", 
-    "zeta@mailinator.com"
-);
-$names = array("Alpha", "Beta", "Zeta");
-
-$email
-    ->setFrom("from@mailinator.com")
-    ->setSubject('[sendgrid-php-batch-email]')
-    ->setTos($recipients)
-    ->addSubstitution("%name%", $names)
-    ->setText("Hey %name, we have an email for you")
-    ->setHtml("<h1>Hey %name%, we have an email for you</h1>")
-;
-
-$result = $sendgrid->send($email);
-```
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
-
-## Running Tests
-
-The existing tests in the `test` directory can be run using [PHPUnit](https://github.com/sebastianbergmann/phpunit/) with the following command:
-
-````bash
-composer update --dev
-cd test
-../vendor/bin/phpunit
-```
-
-or if you already have PHPUnit installed globally.
-
-```bash
-cd test
-phpunit
-```
-
-## Releasing
-
-To release a new version of this library, update the version in all locations, tag the version, and then push the tag up. Packagist.org takes care of the rest.
-
-#### Testing uploading to Amazon S3
-
-If you want to test uploading the zipped file to Amazon S3 (SendGrid employees only), do the following.
-
-```
-export S3_SIGNATURE="secret_signature"
-export S3_POLICY="secret_policy"
-export S3_BUCKET="sendgrid-open-source"
-export S3_ACCESS_KEY="secret_access_key"
-./scripts/s3upload.sh
-```
