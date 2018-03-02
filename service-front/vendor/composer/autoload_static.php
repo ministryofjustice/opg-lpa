@@ -21,6 +21,7 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         '6a47392539ca2329373e0d33e1dba053' => __DIR__ . '/..' . '/symfony/polyfill-intl-icu/bootstrap.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '34901568a1e26d13dd475cb2c85e0284' => __DIR__ . '/..' . '/zendframework/zend-form/autoload/formElementManagerPolyfill.php',
+        'dc55c110342095dce21b6357af7bc409' => __DIR__ . '/..' . '/zendframework/zend-test/autoload/phpunit-class-aliases.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -34,6 +35,7 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Zend\\View\\' => 10,
             'Zend\\Validator\\' => 15,
             'Zend\\Uri\\' => 9,
+            'Zend\\Test\\' => 10,
             'Zend\\Stdlib\\' => 12,
             'Zend\\Session\\' => 13,
             'Zend\\ServiceManager\\' => 20,
@@ -56,6 +58,7 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Zend\\Filter\\' => 12,
             'Zend\\EventManager\\' => 18,
             'Zend\\Escaper\\' => 13,
+            'Zend\\Dom\\' => 9,
             'Zend\\Crypt\\' => 11,
             'Zend\\Console\\' => 13,
             'Zend\\Config\\' => 12,
@@ -166,6 +169,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-uri/src',
         ),
+        'Zend\\Test\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-test/src',
+        ),
         'Zend\\Stdlib\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-stdlib/src',
@@ -253,6 +260,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'Zend\\Escaper\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-escaper/src',
+        ),
+        'Zend\\Dom\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-dom/src',
         ),
         'Zend\\Crypt\\' => 
         array (

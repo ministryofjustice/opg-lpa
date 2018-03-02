@@ -96,6 +96,8 @@ class AdminControllerTest extends AbstractControllerTest
         $event = new MvcEvent();
         $routeMatch = $this->getRouteMatch($this->controller);
         $event->setRouteMatch($routeMatch);
+        $response = new Response();
+        $event->setResponse($response);
         $this->controller->setEvent($event);
 
         $this->user = FixturesData::getUser();

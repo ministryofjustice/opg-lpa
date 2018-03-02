@@ -20,4 +20,5 @@ return array(
     '6a47392539ca2329373e0d33e1dba053' => $vendorDir . '/symfony/polyfill-intl-icu/bootstrap.php',
     '6124b4c8570aa390c21fafd04a26c69f' => $vendorDir . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
     '34901568a1e26d13dd475cb2c85e0284' => $vendorDir . '/zendframework/zend-form/autoload/formElementManagerPolyfill.php',
+    'dc55c110342095dce21b6357af7bc409' => $vendorDir . '/zendframework/zend-test/autoload/phpunit-class-aliases.php',
 );

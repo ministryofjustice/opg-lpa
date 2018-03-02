@@ -158,7 +158,7 @@ class DonorControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/donor/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/donor/form.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals("lpa/{$this->lpa->id}/donor", $result->cancelUrl);
     }
@@ -181,7 +181,7 @@ class DonorControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/donor/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/donor/form.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals("lpa/{$this->lpa->id}/donor", $result->cancelUrl);
     }
@@ -259,7 +259,7 @@ class DonorControllerTest extends AbstractControllerTest
         $result = $this->controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/donor/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/donor/form.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals("lpa/{$this->lpa->id}/donor", $result->cancelUrl);
     }
@@ -282,7 +282,7 @@ class DonorControllerTest extends AbstractControllerTest
         $result = $this->controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/donor/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/donor/form.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals("lpa/{$this->lpa->id}/donor", $result->cancelUrl);
     }
