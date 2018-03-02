@@ -2,9 +2,11 @@
 
 namespace Application\Model\Service\Mail\Transport;
 
-use Zend\Mail\Transport\TransportInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use SendGrid as SendGridClient;
 use Twig_Environment;
 use RuntimeException;
@@ -12,14 +14,20 @@ use RuntimeException;
 class MailTransportFactory implements FactoryInterface
 {
     /**
-     * Create service
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return TransportInterface
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $emailConfig = $serviceLocator->get('Config')['email'];
+        $emailConfig = $container->get('Config')['email'];
         $sendGridConfig = $emailConfig['sendgrid'];
 
         if (!isset($sendGridConfig['user']) || !isset($sendGridConfig['key'])) {
@@ -29,7 +37,7 @@ class MailTransportFactory implements FactoryInterface
         $client = new SendGridClient($sendGridConfig['user'], $sendGridConfig['key']);
 
         /** @var Twig_Environment $emailRenderer */
-        $emailRenderer = $serviceLocator->get('TwigEmailRenderer');
+        $emailRenderer = $container->get('TwigEmailRenderer');
 
         return new MailTransport($client, $emailRenderer, $emailConfig);
     }

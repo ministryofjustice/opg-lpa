@@ -32,7 +32,7 @@ class DonorController extends AbstractLpaActorController
     public function addAction()
     {
         $viewModel = new ViewModel();
-        $viewModel->setTemplate('application/donor/form.twig');
+        $viewModel->setTemplate('application/authenticated/lpa/donor/form.twig');
 
         if ($this->isPopup()) {
             $viewModel->setTerminal(true);
@@ -89,7 +89,7 @@ class DonorController extends AbstractLpaActorController
     public function editAction()
     {
         $viewModel = new ViewModel();
-        $viewModel->setTemplate('application/donor/form.twig');
+        $viewModel->setTemplate('application/authenticated/lpa/donor/form.twig');
 
         if ($this->isPopup()) {
             $viewModel->setTerminal(true);

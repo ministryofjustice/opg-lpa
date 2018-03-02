@@ -176,7 +176,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/certificate-provider/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/certificate-provider/form.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider", $result->cancelUrl);
     }
@@ -199,7 +199,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/certificate-provider/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/certificate-provider/form.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider", $result->cancelUrl);
     }
@@ -269,7 +269,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/certificate-provider/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/certificate-provider/form.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(
             "http://localhost/lpa/{$this->lpa->id}/lpa/certificate-provider/add",
@@ -295,7 +295,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $result = $this->controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/certificate-provider/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/certificate-provider/form.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider", $result->cancelUrl);
     }
@@ -316,7 +316,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $result = $this->controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/certificate-provider/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/certificate-provider/form.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider", $result->cancelUrl);
     }

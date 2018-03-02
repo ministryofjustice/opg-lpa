@@ -73,7 +73,7 @@ class RegisterController extends AbstractBaseController
                         'email_confirm' => $email,
                     ]);
 
-                    $viewModel->setTemplate('application/register/email-sent.twig');
+                    $viewModel->setTemplate('application/general/register/email-sent.twig');
                     $viewModel->email = $email;
                 } else {
                     $viewModel->error = $result;
@@ -126,7 +126,7 @@ class RegisterController extends AbstractBaseController
                         'email_confirm' => $email,
                     ]);
 
-                    $viewModel->setTemplate('application/register/email-sent.twig');
+                    $viewModel->setTemplate('application/general/register/email-sent.twig');
                     $viewModel->email = $email;
                 } else {
                     $viewModel->error = $result;

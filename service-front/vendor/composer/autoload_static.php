@@ -42,9 +42,12 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Zend\\Mvc\\I18n\\' => 14,
             'Zend\\Mvc\\' => 9,
             'Zend\\ModuleManager\\' => 19,
+            'Zend\\Mime\\' => 10,
             'Zend\\Math\\' => 10,
+            'Zend\\Mail\\' => 10,
             'Zend\\Log\\' => 9,
             'Zend\\Loader\\' => 12,
+            'Zend\\Json\\' => 10,
             'Zend\\InputFilter\\' => 17,
             'Zend\\I18n\\' => 10,
             'Zend\\Hydrator\\' => 14,
@@ -54,6 +57,7 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Zend\\EventManager\\' => 18,
             'Zend\\Escaper\\' => 13,
             'Zend\\Crypt\\' => 11,
+            'Zend\\Console\\' => 13,
             'Zend\\Config\\' => 12,
             'Zend\\ComponentInstaller\\' => 24,
             'Zend\\Cache\\' => 11,
@@ -194,9 +198,17 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-modulemanager/src',
         ),
+        'Zend\\Mime\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-mime/src',
+        ),
         'Zend\\Math\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-math/src',
+        ),
+        'Zend\\Mail\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-mail/src',
         ),
         'Zend\\Log\\' => 
         array (
@@ -205,6 +217,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'Zend\\Loader\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-loader/src',
+        ),
+        'Zend\\Json\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-json/src',
         ),
         'Zend\\InputFilter\\' => 
         array (
@@ -241,6 +257,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'Zend\\Crypt\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-crypt/src',
+        ),
+        'Zend\\Console\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-console/src',
         ),
         'Zend\\Config\\' => 
         array (
