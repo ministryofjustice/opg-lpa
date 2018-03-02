@@ -39,12 +39,14 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Zend\\ServiceManager\\' => 20,
             'Zend\\Router\\' => 12,
             'Zend\\Mvc\\Plugin\\FlashMessenger\\' => 31,
+            'Zend\\Mvc\\I18n\\' => 14,
             'Zend\\Mvc\\' => 9,
             'Zend\\ModuleManager\\' => 19,
             'Zend\\Math\\' => 10,
             'Zend\\Log\\' => 9,
             'Zend\\Loader\\' => 12,
             'Zend\\InputFilter\\' => 17,
+            'Zend\\I18n\\' => 10,
             'Zend\\Hydrator\\' => 14,
             'Zend\\Http\\' => 10,
             'Zend\\Form\\' => 10,
@@ -180,6 +182,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-mvc-plugin-flashmessenger/src',
         ),
+        'Zend\\Mvc\\I18n\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-mvc-i18n/src',
+        ),
         'Zend\\Mvc\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-mvc/src',
@@ -203,6 +209,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'Zend\\InputFilter\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-inputfilter/src',
+        ),
+        'Zend\\I18n\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-i18n/src',
         ),
         'Zend\\Hydrator\\' => 
         array (
