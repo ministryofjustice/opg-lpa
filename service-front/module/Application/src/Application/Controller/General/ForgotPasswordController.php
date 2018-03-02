@@ -47,7 +47,7 @@ class ForgotPasswordController extends AbstractBaseController
                     'accountNotActivated' => ($result === 'account-not-activated'),
                 ];
 
-                return (new ViewModel($viewParams))->setTemplate('application/forgot-password/email-sent');
+                return (new ViewModel($viewParams))->setTemplate('application/general/forgot-password/email-sent');
             }
         }
 
@@ -70,7 +70,7 @@ class ForgotPasswordController extends AbstractBaseController
         $token = $this->params()->fromRoute('token');
 
         if (empty($token)) {
-            return (new ViewModel())->setTemplate('application/forgot-password/invalid-reset-token');
+            return (new ViewModel())->setTemplate('application/general/forgot-password/invalid-reset-token');
         }
 
         $identity = $this->getAuthenticationService()->getIdentity();
@@ -109,7 +109,7 @@ class ForgotPasswordController extends AbstractBaseController
                 }
 
                 if ($result == 'invalid-token') {
-                    return (new ViewModel())->setTemplate('application/forgot-password/invalid-reset-token');
+                    return (new ViewModel())->setTemplate('application/general/forgot-password/invalid-reset-token');
                 }
 
                 // else there was an error

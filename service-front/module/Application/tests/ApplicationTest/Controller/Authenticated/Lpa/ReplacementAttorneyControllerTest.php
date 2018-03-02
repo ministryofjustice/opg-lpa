@@ -208,7 +208,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
         $this->assertEquals('lpa/replacement-attorney/add-trust', $result->switchAttorneyTypeRoute);
@@ -230,7 +230,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
         $this->assertEquals(null, $result->switchAttorneyTypeRoute);
@@ -253,7 +253,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
         $this->assertEquals(null, $result->switchAttorneyTypeRoute);
@@ -273,7 +273,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
         $this->assertEquals('lpa/replacement-attorney/add-trust', $result->switchAttorneyTypeRoute);
@@ -383,7 +383,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals("http://localhost/lpa/{$this->lpa->id}/lpa/replacement-attorney/add", $result->backButtonUrl);
         $this->assertEquals($cancelUrl, $result->cancelUrl);
@@ -420,7 +420,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addTrustAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/trust-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/trust-form.twig', $result->getTemplate());
         $this->assertEquals($this->trustCorporationForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
         $this->assertEquals('lpa/replacement-attorney/add', $result->switchAttorneyTypeRoute);
@@ -439,7 +439,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addTrustAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/trust-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/trust-form.twig', $result->getTemplate());
         $this->assertEquals($this->trustCorporationForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
         $this->assertEquals('lpa/replacement-attorney/add', $result->switchAttorneyTypeRoute);
@@ -548,7 +548,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addTrustAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/trust-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/trust-form.twig', $result->getTemplate());
         $this->assertEquals($this->trustCorporationForm, $result->getVariable('form'));
         $this->assertEquals("http://localhost/lpa/{$this->lpa->id}/lpa/replacement-attorney/add", $result->backButtonUrl);
         $this->assertEquals($cancelUrl, $result->cancelUrl);
@@ -592,7 +592,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
@@ -616,7 +616,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/trust-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/trust-form.twig', $result->getTemplate());
         $this->assertEquals($this->trustCorporationForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
@@ -637,7 +637,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }

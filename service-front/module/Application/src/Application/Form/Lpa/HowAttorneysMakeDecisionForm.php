@@ -26,7 +26,7 @@ class HowAttorneysMakeDecisionForm extends AbstractMainFlowForm
         ],
         'howDetails' => [
             'required' => true,
-            'type'     => 'TextArea',
+            'type'     => 'Textarea',
         ],
     ];
 

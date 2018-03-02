@@ -232,7 +232,7 @@ class Module implements FormElementProviderInterface
 
                         $callable = [$renderer->plugin($name), '__invoke'];
                         $options  = ['is_safe' => ['html']];
-                        return new \Twig_SimpleFunction(null, $callable, $options);
+                        return new \Twig_SimpleFunction('email', $callable, $options);
                     });
 
                     return $env;

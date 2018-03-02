@@ -232,7 +232,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/people-to-notify/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/people-to-notify/form.twig', $result->getTemplate());
         $this->assertEquals($this->peopleToNotifyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
@@ -251,7 +251,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/people-to-notify/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/people-to-notify/form.twig', $result->getTemplate());
         $this->assertEquals($this->peopleToNotifyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
@@ -348,7 +348,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/people-to-notify/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/people-to-notify/form.twig', $result->getTemplate());
         $this->assertEquals($this->peopleToNotifyForm, $result->getVariable('form'));
         $this->assertEquals("http://localhost/lpa/{$this->lpa->id}/lpa/people-to-notify/add", $result->backButtonUrl);
         $this->assertEquals($cancelUrl, $result->cancelUrl);
@@ -391,7 +391,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $result = $this->controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/people-to-notify/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/people-to-notify/form.twig', $result->getTemplate());
         $this->assertEquals($this->peopleToNotifyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
@@ -412,7 +412,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $result = $this->controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/people-to-notify/form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/people-to-notify/form.twig', $result->getTemplate());
         $this->assertEquals($this->peopleToNotifyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }

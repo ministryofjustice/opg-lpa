@@ -78,7 +78,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setGuidanceService' => 'Guidance'
         ],
         NotificationsController::class => [
-            'setTwigEmailRenderer' => 'TwigEmailRenderer',
             'setMailTransport'     => 'MailTransport'
         ],
         PingController::class => [
@@ -88,7 +87,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setRegisterService' => 'Register'
         ],
         SendgridController::class => [
-            'setTwigEmailRenderer' => 'TwigEmailRenderer'
+            'setMailTransport' => 'MailTransport'
         ],
         VerifyEmailAddressController::class => [
             'setAboutYouDetails' => 'AboutYouDetails'

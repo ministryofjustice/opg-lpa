@@ -25,7 +25,7 @@ class WhenReplacementAttorneyStepInForm extends AbstractMainFlowForm
             ],
         ],
         'whenDetails' => [
-            'type'     => 'TextArea',
+            'type'     => 'Textarea',
             'required' => true,
         ],
     ];

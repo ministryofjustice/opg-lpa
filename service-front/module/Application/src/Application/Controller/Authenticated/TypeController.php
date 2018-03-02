@@ -52,7 +52,7 @@ class TypeController extends AbstractAuthenticatedController
             'analyticsDimensions' => $analyticsDimensions,
         ]);
 
-        $view->setTemplate('application/type/index');
+        $view->setTemplate('application/authenticated/lpa/type/index');
 
         return $view;
     }
