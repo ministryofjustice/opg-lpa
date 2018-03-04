@@ -4,10 +4,6 @@ The applicant is the person applying to register the LPA.
 
 Someone else, such as a solicitor, can help with an application. But the person who is applying must sign section 15 of the LPA.
 
-The Office of the Public Guardian (OPG) needs to know who is applying to register the LPA so that it can send the registered and stamped LPA to the right person.
-
-The [correspondent](/help/#topic-correspondent) will receive the stamped LPA once it has been registered.
-
 ## Who can apply to register an LPA
 Either you (the donor) or one or more of your attorneys, can apply to register your LPA. A donor and attorney can't apply to register an LPA together.
 
