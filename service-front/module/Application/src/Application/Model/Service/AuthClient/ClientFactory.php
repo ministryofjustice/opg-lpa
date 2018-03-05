@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\AuthClient;
 
+use Application\Model\Service\Authentication\AuthenticationService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -15,19 +16,20 @@ class ClientFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $config = $serviceLocator->get('config')['api_client'];
+        $httpClient = $serviceLocator->get('HttpClient');
 
-        $client = new Client($config['auth_uri']);
+        $baseAuthUri = $serviceLocator->get('config')['api_client']['auth_uri'];
 
-        $auth = $serviceLocator->get('AuthenticationService');
+        $token = null;
 
-        if ($auth->hasIdentity()) {
-            $identity = $auth->getIdentity();
+        /** @var AuthenticationService $authenticationService */
+        $authenticationService = $serviceLocator->get('AuthenticationService');
 
-            $client->setUserId($identity->id());
-            $client->setToken($identity->token());
+        if ($authenticationService->hasIdentity()) {
+            $identity = $authenticationService->getIdentity();
+            $token = $identity->token();
         }
 
-        return $client;
+        return new Client($httpClient, $baseAuthUri, $token);
     }
 }

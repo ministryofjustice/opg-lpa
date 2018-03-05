@@ -6,7 +6,7 @@ use Application\Model\Service\Authentication\Adapter\AdapterInterface;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManager;
-use Application\Model\Service\User\Details as AboutYouDetails;
+use Application\Model\Service\User\Details as UserService;
 use Opg\Lpa\DataModel\User\User;
 use Zend\Authentication\AuthenticationService;
 use Zend\Cache\Storage\StorageInterface;
@@ -45,9 +45,9 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     private $lpaApplicationService;
 
     /**
-     * @var AboutYouDetails
+     * @var UserService
      */
-    private $aboutYouDetails;
+    private $userService;
 
     /**
      * @var AdapterInterface
@@ -63,7 +63,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
      * @param StorageInterface $cache
      * @param AbstractContainer $userDetailsSession
      * @param LpaApplicationService $lpaApplicationService
-     * @param AboutYouDetails $aboutYouDetails
+     * @param UserService $userService
      * @param AdapterInterface $authenticationAdapter
      */
     public function __construct(
@@ -74,14 +74,14 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         StorageInterface $cache,
         AbstractContainer $userDetailsSession,
         LpaApplicationService $lpaApplicationService,
-        AboutYouDetails $aboutYouDetails,
+        UserService $userService,
         AdapterInterface $authenticationAdapter
     ) {
         parent::__construct($formElementManager, $sessionManager, $authenticationService, $config, $cache);
 
         $this->userDetailsSession = $userDetailsSession;
         $this->lpaApplicationService = $lpaApplicationService;
-        $this->aboutYouDetails = $aboutYouDetails;
+        $this->userService = $userService;
         $this->authenticationAdapter = $authenticationAdapter;
     }
 
@@ -161,7 +161,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         }
 
         if (!isset($detailsContainer->user) || is_null($detailsContainer->user->name)) {
-            $userDetails = $this->aboutYouDetails->load();
+            $userDetails = $this->userService->load();
 
             // If the user details do not at least have a name
             // And we're not trying to set the details via the AboutYouController...
@@ -248,11 +248,11 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     }
 
     /**
-     * @return AboutYouDetails
+     * @return UserService
      */
-    protected function getAboutYouDetails(): AboutYouDetails
+    protected function getUserService(): UserService
     {
-        return $this->aboutYouDetails;
+        return $this->userService;
     }
 
     /**

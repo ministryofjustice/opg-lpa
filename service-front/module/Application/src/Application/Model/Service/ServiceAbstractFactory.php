@@ -3,9 +3,12 @@
 namespace Application\Model\Service;
 
 use Application\Model\Service\AddressLookup\PostcodeInfo;
+use Application\Model\Service\ApiClient\ApiClientAwareInterface;
+use Application\Model\Service\ApiClient\Client as ApiClient;
+use Application\Model\Service\AuthClient\AuthClientAwareInterface;
+use Application\Model\Service\AuthClient\Client as AuthClient;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\User\Details;
-use Application\Model\Service\User\PasswordReset;
 use Exception;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -30,9 +33,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         ],
         Details::class => [
             'setUserDetailsSession' => 'UserDetailsSession'
-        ],
-        PasswordReset::class => [
-            'setRegisterService' => 'Register'
         ],
     ];
 
@@ -74,7 +74,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
 
         if (is_subclass_of($serviceName, AbstractEmailService::class)) {
             $service = new $serviceName(
-                $container->get('ApiClient'),
                 $container->get('LpaApplicationService'),
                 $container->get('AuthenticationService'),
                 $container->get('Config'),
@@ -83,11 +82,23 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             );
         } else {
             $service = new $serviceName(
-                $container->get('ApiClient'),
                 $container->get('LpaApplicationService'),
                 $container->get('AuthenticationService'),
                 $container->get('Config')
             );
+        }
+
+        //  Inject the API and/or Auth clients if necessary
+        if ($service instanceof ApiClientAwareInterface) {
+            /** @var ApiClient $apiClient */
+            $apiClient = $container->get('ApiClient');
+            $service->setApiClient($apiClient);
+        }
+
+        if ($service instanceof AuthClientAwareInterface) {
+            /** @var AuthClient $authClient */
+            $authClient = $container->get('AuthClient');
+            $service->setAuthClient($authClient);
         }
 
         //  If required load any additional services into the resource

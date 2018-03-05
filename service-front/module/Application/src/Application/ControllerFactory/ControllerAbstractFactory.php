@@ -51,9 +51,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         DashboardController::class => [
             'setApplicationList' => 'ApplicationList'
         ],
-        DeleteController::class => [
-            'setDeleteUser' => 'DeleteUser'
-        ],
         PostcodeController::class => [
             'setAddressLookup' => 'AddressLookupMoj'
         ],
@@ -72,7 +69,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setFeedbackService' => 'Feedback'
         ],
         ForgotPasswordController::class => [
-            'setPasswordResetService' => 'PasswordReset'
+            'setUserService' => 'UserService'
         ],
         GuidanceController::class => [
             'setGuidanceService' => 'Guidance'
@@ -84,16 +81,18 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setStatusService' => 'SiteStatus'
         ],
         RegisterController::class => [
-            'setRegisterService' => 'Register'
+            'setUserService' => 'UserService'
         ],
         SendgridController::class => [
             'setMailTransport' => 'MailTransport'
         ],
         VerifyEmailAddressController::class => [
-            'setAboutYouDetails' => 'AboutYouDetails'
+            'setUserService' => 'UserService'
         ],
         StatsController::class => [
-            'setLpaApplicationService' => 'LpaApplicationService'
+            //  TODO - Temporary solution until services can be injected
+            'setApiClient' => 'ApiClient',
+            'setAuthClient' => 'AuthClient'
         ],
     ];
 
@@ -144,7 +143,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
             $userDetailsSession = $container->get('UserDetailsSession');
             $lpaApplicationService = $container->get('LpaApplicationService');
-            $aboutYouDetails = $container->get('AboutYouDetails');
+            $userService = $container->get('UserService');
             $authenticationAdapter = $container->get('AuthenticationAdapter');
 
             if (is_subclass_of($controllerName, AbstractLpaController::class)) {
@@ -156,7 +155,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $cache,
                     $userDetailsSession,
                     $lpaApplicationService,
-                    $aboutYouDetails,
+                    $userService,
                     $authenticationAdapter,
                     $container->get('ApplicantCleanup'),
                     $container->get('ReplacementAttorneyCleanup'),
@@ -171,7 +170,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $cache,
                     $userDetailsSession,
                     $lpaApplicationService,
-                    $aboutYouDetails,
+                    $userService,
                     $authenticationAdapter
                 );
             }

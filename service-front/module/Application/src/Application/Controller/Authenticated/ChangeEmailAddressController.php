@@ -28,15 +28,17 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController
 
         $form->setAuthenticationService($authentication);
 
-        $request = $this->getRequest();
-
-        if ($request->isPost()) {
-            $form->setData($request->getPost());
+        if ($this->request->isPost()) {
+            $form->setData($this->request->getPost());
 
             if ($form->isValid()) {
-                $service = $this->getAboutYouDetails();
+                //  Get the user ID and email address
+                $userId = $this->getUser()->id();
+                $email = $form->getData()['email'];
 
-                $result = $service->requestEmailUpdate($form, $currentAddress);
+                $service = $this->getUserService();
+
+                $result = $service->requestEmailUpdate($userId, $email, $currentAddress);
 
                 if ($result === true) {
                     return (new ViewModel([

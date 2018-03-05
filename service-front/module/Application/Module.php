@@ -4,7 +4,6 @@ namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
-use Application\Model\Service\Admin\Admin as AdminService;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\System\DynamoCronLock;
@@ -109,7 +108,7 @@ class Module implements FormElementProviderInterface
         if ( ($identity = $auth->getIdentity()) != null ) {
 
             // Get the tokens details...
-            $info = $sm->get('AuthClient')->getTokenInfo( $identity->token() );
+            $info = $sm->get('UserService')->getTokenInfo($identity->token());
 
 
             if( is_array($info) && isset($info['expiresIn']) ){
@@ -142,9 +141,9 @@ class Module implements FormElementProviderInterface
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
             'invokables' => [
-                'AuthenticationService'                 => 'Application\Model\Service\Authentication\AuthenticationService',
-                'ReplacementAttorneyCleanup'            => 'Application\Model\Service\Lpa\ReplacementAttorneyCleanup',
-                'ApplicantCleanup'                      => 'Application\Model\Service\Lpa\ApplicantCleanup',
+                'AuthenticationService'         => 'Application\Model\Service\Authentication\AuthenticationService',
+                'ReplacementAttorneyCleanup'    => 'Application\Model\Service\Lpa\ReplacementAttorneyCleanup',
+                'ApplicantCleanup'              => 'Application\Model\Service\Lpa\ApplicantCleanup',
             ],
             'factories' => [
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
@@ -162,11 +161,6 @@ class Module implements FormElementProviderInterface
                 // Authentication Adapter. Access via 'AuthenticationAdapter'
                 'LpaAuthAdapter' => function( ServiceLocatorInterface $sm ){
                     return new LpaAuthAdapter( $sm->get('AuthClient') );
-                },
-
-                // Admin service
-                'AdminService' => function (ServiceLocatorInterface $sm) {
-                    return new AdminService($sm->get('ApiClient'));
                 },
 
                 // Generate the session container for a user's personal details

@@ -2,17 +2,11 @@
 
 namespace Application\Model\Service;
 
-use Application\Model\Service\ApiClient\Client as ApiClient;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 
 abstract class AbstractService
 {
-    /**
-     * @var ApiClient
-     */
-    private $apiClient;
-
     /**
      * @var LpaApplicationService
      */
@@ -30,29 +24,18 @@ abstract class AbstractService
 
     /**
      * AbstractService constructor.
-     * @param ApiClient $apiClient
      * @param LpaApplicationService $lpaApplicationService
      * @param AuthenticationService $authenticationService
      * @param array $config
      */
     public function __construct(
-        ApiClient $apiClient,
         LpaApplicationService $lpaApplicationService,
         AuthenticationService $authenticationService,
         array $config
     ) {
-        $this->apiClient = $apiClient;
         $this->lpaApplicationService = $lpaApplicationService;
         $this->authenticationService = $authenticationService;
         $this->config = $config;
-    }
-
-    /**
-     * @return ApiClient
-     */
-    protected function getApiClient(): ApiClient
-    {
-        return $this->apiClient;
     }
 
     /**

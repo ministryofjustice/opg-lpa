@@ -30,10 +30,10 @@ class AboutYouController extends AbstractAuthenticatedController
         $form->setAttribute('action', $actionTarget);
 
         $request = $this->getRequest();
-        $aboutYouService = $this->getAboutYouDetails();
+        $userService = $this->getUserService();
 
         //  Get any existing data for the user
-        $userDetails = $aboutYouService->load();
+        $userDetails = $userService->load();
         $userDetailsArr = $userDetails->flatten();
 
         if ($request->isPost()) {
@@ -45,7 +45,7 @@ class AboutYouController extends AbstractAuthenticatedController
             $form->setData(array_merge($data, $existingData));
 
             if ($form->isValid()) {
-                $aboutYouService->updateAllDetails($form);
+                $userService->updateAllDetails($form);
 
                 // Clear the old details out the session.
                 // They will be reloaded the next time the the AbstractAuthenticatedController is called.
