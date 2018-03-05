@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\ApiClient;
 
+use Application\Model\Service\AuthClient\Client as AuthApiClient;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
@@ -26,7 +27,8 @@ class ApiClientFactory implements FactoryInterface
     {
         $config = $container->get('config')['api_client'];
 
-        $authApiClient = $serviceLocator->get('AuthClient');
+        /** @var AuthApiClient $authApiClient */
+        $authApiClient = $container->get('AuthClient');
 
         $client = new Client($config['api_uri'], $authApiClient);
 

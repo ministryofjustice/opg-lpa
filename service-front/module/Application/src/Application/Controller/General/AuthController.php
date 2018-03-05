@@ -5,25 +5,21 @@ namespace Application\Controller\General;
 use Application\Controller\AbstractBaseController;
 use Application\Form\User\Login as LoginForm;
 use Application\Model\FormFlowChecker;
-use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
 
 class AuthController extends AbstractBaseController
 {
     /**
-     * @var AuthenticationService
-     */
-    private $authenticationAdapter;
-
-    /**
      * @var LpaApplicationService
      */
     private $lpaApplicationService;
 
+    /**
+     * @return bool|\Zend\Http\Response|ViewModel
+     */
     public function indexAction()
     {
         $check = $this->preventAuthenticatedUser();
@@ -32,33 +28,20 @@ class AuthController extends AbstractBaseController
             return $check;
         }
 
-        //---
-
         $check = $this->checkCookie('login');
 
         if ($check !== true) {
             return $check;
         }
 
-        //-----------------------
-
-        // Create an instance of the login form.
+        // Create an instance of the login form
         $form = $this->getLoginForm();
-
-        //-----------------------
-
-        //---
 
         $authError = null;
 
-        //---
+        if ($this->request->isPost()) {
+            $form->setData($this->request->getPost());
 
-        $request = $this->getRequest();
-
-        if ($request->isPost()) {
-            $form->setData($request->getPost());
-
-            // If the form is valid...
             if ($form->isValid()) {
                 // Check if we're going to redirect to a deep(er) link (before we kill the session)
                 $preAuthRequest = new Container('PreAuthRequest');
@@ -67,23 +50,20 @@ class AuthController extends AbstractBaseController
                     $nextUrl = $preAuthRequest->url;
                 }
 
-                //---
-
                 // Ensure no user is logged in and ALL session data is cleared then re-initialise it.
                 $session = $this->getSessionManager();
+
                 $session->getStorage()->clear();
                 $session->initialise();
-
-                //---
 
                 $email = $form->getData()['email'];
                 $password = $form->getData()['password'];
 
-                // Pass the user's email address and password...
-                $this->authenticationAdapter->setEmail($email)->setPassword($password);
-
-                // Perform the authentication..
-                $result = $this->getAuthenticationService()->authenticate($this->authenticationAdapter);
+                //  Perform the authentication with the user email and password
+                $result = $this->getAuthenticationService()
+                               ->setEmail($email)
+                               ->setPassword($password)
+                               ->authenticate();
 
                 // If all went well...
                 if ($result->isValid()) {
@@ -92,10 +72,10 @@ class AuthController extends AbstractBaseController
 
                     // is there a return url stored in the session?
                     if (isset($nextUrl)) {
-                        $pathArray = explode('/', parse_url($nextUrl, PHP_URL_PATH));
+                        $pathArray = explode("/", parse_url($nextUrl, PHP_URL_PATH));
 
                         //  Does that url refer to an LPA?
-                        if (count($pathArray) > 2 && $pathArray[1] == 'lpa' && is_numeric($pathArray[2])) {
+                        if (count($pathArray) > 2 && $pathArray[1] == "lpa" && is_numeric($pathArray[2])) {
                             //  It does but check if the requested URL is the date check page
                             if (isset($pathArray[3]) && $pathArray[3] == 'date-check') {
                                 return $this->redirect()->toUrl($nextUrl);
@@ -109,9 +89,7 @@ class AuthController extends AbstractBaseController
                                 $formFlowChecker = new FormFlowChecker($lpa);
                                 $destinationRoute = $formFlowChecker->backToForm();
 
-                                return $this->redirect()->toRoute($destinationRoute, [
-                                    'lpa-id' => $lpa->id
-                                ], $formFlowChecker->getRouteOptions($destinationRoute));
+                                return $this->redirect()->toRoute($destinationRoute, ['lpa-id' => $lpa->id], $formFlowChecker->getRouteOptions($destinationRoute));
                             }
                         }
 
@@ -119,53 +97,48 @@ class AuthController extends AbstractBaseController
                         return $this->redirect()->toUrl($nextUrl);
                     }
 
-                    //  If there was no nextUrl then just go to the dashboard
-
                     //  If necessary set a flash message showing that the user account will now remain active
                     if (in_array('inactivity-flags-cleared', $result->getMessages())) {
                         $this->flashMessenger()->addWarningMessage('Thanks for logging in. Your LPA account will stay open for another 9 months.');
                     }
 
+                    // Else Send them to the dashboard...
                     return $this->redirect()->toRoute('user/dashboard');
                 }
 
-                //  Authentication failed...
+                // else authentication failed...
 
-                //  Create a new instance of the login form as we'll need a new Csrf token
+                // Create a new instance of the login form as we'll need a new Csrf token
                 $form = $this->getLoginForm();
 
-                // Keep the entered email address.
+                // Keep the entered email address
                 $form->setData([
                     'email' => $email
                 ]);
 
-                //---
-
                 $authError = $result->getMessages();
 
-                // If there is a message, extract it (there will only ever be one).
+                //  If there is a message, extract it (there will only ever be one).
                 if (is_array($authError) && count($authError) > 0) {
                     $authError = array_pop($authError);
                 }
 
-                // Help mitigate brute force attacks.
+                //  Help mitigate brute force attacks
                 sleep(1);
             }
         }
 
-        //---
-
-        $isTimeout = ($this->params('state') == 'timeout');
+        $isTimeout = ( $this->params('state') == 'timeout' );
 
         return new ViewModel([
-            'form'      => $form,
+            'form' => $form,
             'authError' => $authError,
             'isTimeout' => $isTimeout
         ]);
     }
 
     /**
-     * Returns a new instance of the Login form.
+     * Returns a new instance of the login form.
      *
      * @return LoginForm
      */
@@ -173,6 +146,7 @@ class AuthController extends AbstractBaseController
     {
         $form = $this->getFormElementManager()->get('Application\Form\User\Login');
 
+        /** @var $form LoginForm */
         $form->setAttribute('action', $this->url()->fromRoute('login'));
 
         return $form;
@@ -208,16 +182,15 @@ class AuthController extends AbstractBaseController
     private function clearSession()
     {
         $this->getAuthenticationService()->clearIdentity();
+
         $this->getSessionManager()->destroy([
             'clear_storage' => true
         ]);
     }
 
-    public function setAuthenticationAdapter(AdapterInterface $authenticationAdapter)
-    {
-        $this->authenticationAdapter = $authenticationAdapter;
-    }
-
+    /**
+     * @param LpaApplicationService $lpaApplicationService
+     */
     public function setLpaApplicationService(LpaApplicationService $lpaApplicationService)
     {
         $this->lpaApplicationService = $lpaApplicationService;

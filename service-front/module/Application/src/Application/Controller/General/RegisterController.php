@@ -3,18 +3,16 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
-use Application\Form\Validator\EmailAddress;
-use Application\Model\Service\User\Register;
+use Application\Model\Service\User\Details as UserService;
 use Zend\Http\Response as HttpResponse;
 use Zend\View\Model\ViewModel;
-use Exception;
 
 class RegisterController extends AbstractBaseController
 {
     /**
-     * @var Register
+     * @var UserService
      */
-    private $registerService;
+    private $userService;
 
     /**
      * Register a new account.
@@ -59,8 +57,7 @@ class RegisterController extends AbstractBaseController
                 $email = $data['email'];
                 $password = $data['password'];
 
-                $result = $this->registerService
-                               ->registerAccount($email, $password);
+                $result = $this->userService->registerAccount($email, $password);
 
                 if ($result === true) {
                     //  Change the view to be the email sent template with the email address and resend email form
@@ -113,7 +110,7 @@ class RegisterController extends AbstractBaseController
             if ($form->isValid()) {
                 $email = $form->getData()['email'];
 
-                $result = $this->registerService->resendActivateEmail($email);
+                $result = $this->userService->resendActivateEmail($email);
 
                 if ($result === true) {
                     //  Change the view to be the email sent template with the email address and resend email form
@@ -163,7 +160,7 @@ class RegisterController extends AbstractBaseController
 
         //  Returns true if the user account exists and the account was activated
         //  Returns false if the user account does not exist
-        $success = $this->registerService->activateAccount($token);
+        $success = $this->userService->activateAccount($token);
 
         $viewModel = new ViewModel();
 
@@ -174,8 +171,8 @@ class RegisterController extends AbstractBaseController
         return $viewModel;
     }
 
-    public function setRegisterService(Register $registerService)
+    public function setUserService(UserService $userService)
     {
-        $this->registerService = $registerService;
+        $this->userService = $userService;
     }
 }

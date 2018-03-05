@@ -197,6 +197,7 @@ class Client
     public function getUserId()
     {
         if (is_null($this->userId)) {
+//TODO - this call now needs to be made on the user details service...
             $response = $this->authApiClient->getTokenInfo($this->getToken());
 
             if ($response instanceof Response\ErrorInterface) {
@@ -249,13 +250,5 @@ class Client
         }
 
         return $this->httpClient;
-    }
-
-    /**
-     * @param HttpClientInterface $client
-     */
-    final protected function setHttpClient(HttpClientInterface $client)
-    {
-        $this->httpClient = $client;
     }
 }

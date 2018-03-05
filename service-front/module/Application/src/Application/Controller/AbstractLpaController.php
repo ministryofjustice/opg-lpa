@@ -9,7 +9,7 @@ use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManager;
-use Application\Model\Service\User\Details as AboutYouDetails;
+use Application\Model\Service\User\Details as UserService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Authentication\AuthenticationService;
 use Zend\Cache\Storage\StorageInterface;
@@ -56,7 +56,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         StorageInterface $cache,
         AbstractContainer $userDetailsSession,
         LpaApplicationService $lpaApplicationService,
-        AboutYouDetails $aboutYouDetails,
+        UserService $userService,
         AdapterInterface $authenticationAdapter,
         ApplicantCleanup $applicantCleanup,
         ReplacementAttorneyCleanup $replacementAttorneyCleanup,
@@ -70,7 +70,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
             $cache,
             $userDetailsSession,
             $lpaApplicationService,
-            $aboutYouDetails,
+            $userService,
             $authenticationAdapter
         );
 

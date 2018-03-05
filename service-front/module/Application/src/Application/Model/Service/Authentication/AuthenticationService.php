@@ -1,7 +1,9 @@
 <?php
+
 namespace Application\Model\Service\Authentication;
 
 use Zend\Authentication\AuthenticationService as ZFAuthenticationService;
+use Zend\Authentication\Exception\RuntimeException;
 
 /**
  * Used to enforce the setAdapter method to take our own AdapterInterface.
@@ -9,8 +11,8 @@ use Zend\Authentication\AuthenticationService as ZFAuthenticationService;
  * Class AuthenticationService
  * @package Application\Model\Service\Authentication
  */
-class AuthenticationService extends ZFAuthenticationService {
-    
+class AuthenticationService extends ZFAuthenticationService
+{
     /**
      * Verify against the supplied adapter. On success this updates the persisted identity.
      * On failure it does not effect the existing identity.
@@ -25,9 +27,10 @@ class AuthenticationService extends ZFAuthenticationService {
     {
         if (!$adapter) {
             if (!$adapter = $this->getAdapter()) {
-                throw new \Zend\Authentication\Exception\RuntimeException('An adapter must be set or passed prior to calling verify()');
+                throw new RuntimeException('An adapter must be set or passed prior to calling verify()');
             }
         }
+
         $result = $adapter->authenticate();
 
         if ($result->isValid()) {
@@ -36,5 +39,4 @@ class AuthenticationService extends ZFAuthenticationService {
 
         return $result;
     }
-
-} // class
+}
