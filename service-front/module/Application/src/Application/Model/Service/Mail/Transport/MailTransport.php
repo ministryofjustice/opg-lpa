@@ -321,7 +321,7 @@ class MailTransport implements TransportInterface
             // Send message
             $result = $this->client->send($email);
 
-            if ($result->message != 'success') {
+            if ($result->code != 200) {
                 throw new TransportInvalidArgumentException("Email sending failed: {$result->message}");
             }
         } catch (InvalidArgumentException $iae) {

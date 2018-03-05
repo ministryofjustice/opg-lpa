@@ -7,6 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
+    'Smtpapi' => array($vendorDir . '/sendgrid/smtpapi/lib'),
+    'SendGrid' => array($vendorDir . '/sendgrid/sendgrid/lib'),
     'Raven_' => array($vendorDir . '/sentry/sentry/lib'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'Omnipay\\WorldPayXML\\' => array($vendorDir . '/netsensia/omnipay-worldpay-xml/src'),
