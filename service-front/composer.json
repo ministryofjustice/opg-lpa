@@ -27,7 +27,7 @@
         "php": "7.0.*",
         "guzzlehttp/guzzle": "^5.1",
         "guzzlehttp/psr7" : "^1.2",
-        "sendgrid/sendgrid": "^6.0",
+        "sendgrid/sendgrid": "^4.0",
         "aws/aws-sdk-php": "^3.0",
         "ministryofjustice/postcodeinfo-client-php": "^4.0",
         "ministryofjustice/opg-lpa-datamodels": "^9.3",

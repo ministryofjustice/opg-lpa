@@ -13,8 +13,8 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'b067bc7112e384b61c701452d53a14a8' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/JmesPath.php',
-        '3e2471375464aac821502deb0ac64275' => __DIR__ . '/..' . '/symfony/polyfill-php54/bootstrap.php',
         '8a9dc1de0ca7e01f3e08231539562f61' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/functions.php',
+        '3e2471375464aac821502deb0ac64275' => __DIR__ . '/..' . '/symfony/polyfill-php54/bootstrap.php',
         '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
         'ddc0a4d7e61c0286f0f8593b1903e894' => __DIR__ . '/..' . '/clue/stream-filter/src/functions.php',
         '8cff32064859f4559445b89279f3199c' => __DIR__ . '/..' . '/php-http/message/src/filters.php',
@@ -22,8 +22,6 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         '6a47392539ca2329373e0d33e1dba053' => __DIR__ . '/..' . '/symfony/polyfill-intl-icu/bootstrap.php',
         '34901568a1e26d13dd475cb2c85e0284' => __DIR__ . '/..' . '/zendframework/zend-form/autoload/formElementManagerPolyfill.php',
         'dc55c110342095dce21b6357af7bc409' => __DIR__ . '/..' . '/zendframework/zend-test/autoload/phpunit-class-aliases.php',
-        '3f8bdd3b35094c73a26f0106e3c0f8b2' => __DIR__ . '/..' . '/sendgrid/sendgrid/lib/SendGrid.php',
-        '9dda55337a76a24e949fbcc5d905a2c7' => __DIR__ . '/..' . '/sendgrid/sendgrid/lib/helpers/mail/Mail.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -86,7 +84,6 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Symfony\\Component\\Intl\\' => 23,
             'Symfony\\Component\\HttpFoundation\\' => 33,
             'Symfony\\Component\\EventDispatcher\\' => 34,
-            'SendGrid\\' => 9,
         ),
         'R' => 
         array (
@@ -333,10 +330,6 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
         ),
-        'SendGrid\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/sendgrid/php-http-client/lib',
-        ),
         'React\\Promise\\' => 
         array (
             0 => __DIR__ . '/..' . '/react/promise/src',
@@ -454,6 +447,17 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Twig_' => 
             array (
                 0 => __DIR__ . '/..' . '/twig/twig/lib',
+            ),
+        ),
+        'S' => 
+        array (
+            'Smtpapi' => 
+            array (
+                0 => __DIR__ . '/..' . '/sendgrid/smtpapi/lib',
+            ),
+            'SendGrid' => 
+            array (
+                0 => __DIR__ . '/..' . '/sendgrid/sendgrid/lib',
             ),
         ),
         'R' => 
