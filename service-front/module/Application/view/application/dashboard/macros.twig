@@ -6,83 +6,76 @@
 
     {{ macros.showTypeHeaderIfLpasExist(lpas, type, headingText) }}
 
-	<table id="savedforms" class="{{ shortList == true ? 'lpa-cards' : 'lpa-table' }}">
-    <thead>
-    <tr>
-        <th class="lpa-donor-header">Donor</th>
-        <th class="lpa-number-header">LPA number</th>
-        <th>LPA type</th>
-        <th>Progress</th>
-        <th>Last saved</th>
-        <th>&nbsp;</th>
-    </tr>
-    </thead>
-    <tbody>
+    <ul class="track-my-lpa">
 
-	{% for key,lpa in lpas %}
-	    {% if (type == 'all' or type == lpa.type) %}
+    {% for key,lpa in lpas %}
+        {% if (type == 'all' or type == lpa.type) %}
+            <li class="list-item list-item--v3 status-started">
 
-        <tr>
-            <td class="lpa-donor text">
-                <strong class="bold">
-                {% if lpa.donor|length > 0 %}
-                    {{ lpa.donor }}
-                {% else %}
-                    No donor added
-                {% endif %}
-                </strong>
-                {% if not shortList %}
-                    <div class="lpa-number-alt">{{ formatLpaId(lpa.id) }}</div>
-                {% endif %}
-            </td>
-            <td class="lpa-number">{{ formatLpaId(lpa.id) }}</td>
-            <td class="lpa-type">{{ lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : 'Not selected') }}</td>
-            <td class="lpa-progress">
-                <span class="progress {{ lpa.progress == 'Started' ? 'progress-started' : 'progress-completed' }}">{{ lpa.progress }}</span>
-            </td>
-            <td class="lpa-date">
-                <span>{{ lpa.updatedAt|date('d/m/y') }}</span>
-            </td>
-            <td class="lpa-actions">
-                <div class="lpa-cta">
+                <div class="info">
+                    <div class="main-info">
+                        <h1 class="list-item_title">
+                            {% if lpa.donor|length > 0 %}
+                                {{ lpa.donor }}
+                            {% else %}
+                                No donor added
+                            {% endif %}
+                        </h1>
+                        <span class="lpa-number">{{ formatLpaId(lpa.id) }}</span>
+                    </div>
+
+                    <div class="list-item_status">
+                        <span>
+                            {% if lpa.progress == 'Started' %}
+                                {% set statusClass = 'status-6' %}
+                            {% elseif lpa.progress == 'Created' %}
+                                {% set statusClass = 'status-5' %}
+                            {% elseif lpa.progress == 'Completed' %}
+                                {% set statusClass = 'status-4' %}
+                            {% endif %}
+                            <i class="icon {{ statusClass }}"></i>
+                            <br>
+                            {{ lpa.progress }}
+                        </span>
+                    </div>
+
+                    <div class="extra-info">
+                        <p>LPA type:</p>
+                        <p class="main-text">
+                            {{ lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : 'Not selected') }}
+                        </p>
+                    </div>
+
+                    <div class="extra-info">
+                        <p>Last saved:</p>
+                        <p class="main-text">{{ lpa.updatedAt|date('d/m/y') }}</p>
+                    </div>
+
+                </div>
+
+                <div class="list-item_cta">
                     <a class="button button-secondary" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
+                    <ul class="list-item_secondary_actions">
+                        {% if lpa.progress != 'Started' %}
+                            <li>
+                                <a href="/lpa/{{ lpa.id }}/date-check">Check <span class="extra-text">signing</span> dates</a>
+                            </li>
+                            <li>
+                                <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse <span class="extra-text">LPA</span> details</a>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}" class="js-form-popup">Delete</a>
+                        </li>
+                    </ul>
                 </div>
-                <div class="lpa-manage">
-                    {% if not shortList and lpa.progress != 'Started' %}
-                    <details>
-                        <summary>
-                            <span class="summary">Manage</span>
-                        </summary>
-                    {% endif %}
-                        <div>
-                            <ul>
-                                {% if lpa.progress != 'Started' %}
-                                    <li>
-                                        <a href="/lpa/{{ lpa.id }}/date-check">Check <span class="extra-text">signing</span> dates</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse <span class="extra-text">LPA</span> details</a>
-                                    </li>
-                                {% endif %}
-
-                                <li class="action-item last">
-                                    <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}" class="js-form-popup">Delete</a>
-                                </li>
-                            </ul>
-                        </div>
-                    {% if not shortList and lpa.progress != 'Started' %}
-                    </details>
-                    {% endif %}
-                </div>
-            </td>
-        </tr>
+            </li>
 
         {% endif %}
-
     {% endfor %}
 
-    </tbody>
-	</table>
+    </ul>
+
 {% endmacro %}
 
 {% macro showTypeHeaderIfLpasExist(lpas, type, headingText) %}
@@ -92,18 +85,7 @@
 	{% for key,lpa in lpas %}
 		{% if not found %}
     	    {% if (type == lpa.type) %}
-    	    	<h2 class="heading-large type-heading">
-                    {% if type == 'property-and-financial' %}
-                        <i class="icon icon-property"></i>
-                        <i class="icon icon-finance"></i>
-                    {% endif %}
-                    {% if type == 'health-and-welfare' %}
-                        <i class="icon icon-health"></i>
-                        <i class="icon icon-welfare"></i>
-                    {% endif %}
-                    {% if type == '' %}
-                        <i class="icon icon-question"></i>
-                    {% endif %}
+    	    	<h2 class="heading-large">
                     {{ headingText }}
                 </h2>
     	    	{% set found = true %}

@@ -102,8 +102,8 @@
 
     {% if shortList %}
         {{ macros.listLpas(lpas, true, '', 'No type selected') }}
-        {{ macros.listLpas(lpas, true, 'property-and-financial', 'Property and finance') }}
-        {{ macros.listLpas(lpas, true, 'health-and-welfare', 'Health and welfare') }}
+        {{ macros.listLpas(lpas, true, 'property-and-financial', 'Property and finance LPAs') }}
+        {{ macros.listLpas(lpas, true, 'health-and-welfare', 'Health and welfare LPAs') }}
     {% else %}
         {{ macros.listLpas(lpas, false, 'all', '') }}
     {% endif %}

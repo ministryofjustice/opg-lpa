@@ -1,510 +1,284 @@
 // =======================================================
-// LPA LIST - CARDS AND TABLE VIEWS
+// LPA CARDS
 
-// Headings
-.type-heading {
-    margin-bottom: $gutter;
-    padding-bottom: $gutter-half;
-    border-bottom: 1px solid $border-colour;
+.list-item--v3{
 
-    @include media(mobile) {
-        margin-bottom: $gutter-half;
-        padding-top: 6px;
-        padding-bottom: 12px;
-        border-top: 1px solid $border-colour;
+    @extend %contain-floats;
+
+    padding-right: 20px !important;
+
+    .info{
+        //float:left;
     }
 
-    @include media($max-width: 360px) {
-        padding: 8px 0 6px;
+    .main-info
+    ,.extra-info{
+        margin-bottom: 10px !important;
+
+        p{
+            float:none !important;
+        }
+
     }
 
-    .icon {
+    .extra-info{
+
+        float:left !important;
+        clear:left;
+        margin-left: 0 !important;
+        width:6.25em !important;
+
+        @media (min-width: 720px) {
+
+            float:right !important;
+            clear: none;
+            margin: 5px 0 0 1.5em !important;
+
+        }
+
+        p:first-of-type{
+            color: #0b0c0c !important;
+        }
+
+    }
+
+    .list-item_title {
+        font-size: 2.4rem;
+        font-weight: bold;
+        color: #0b0c0c;
+    }
+
+    .list-item_cta{
+
+        //float:left;
+        clear:left;
+
+    }
+
+    .list-item_secondary_actions {
+
+        display: inline-block;
+        margin: 10px 0 0 0;
+
+        @media (min-width: 640px) {
+            margin-left: 15px;
+        }
+
+        //@media (min-width: 740px) {
+        //    margin-left: 0;
+        //}
+
+        li{
+            padding:0;
+            border-radius: 0;
+
+            @media (min-width: 400px) {
+
+                display: inline-block;
+                border-right: 2px solid rgba($black,0.3);
+                margin-right: 10px;
+                padding-right: 10px;
+
+                &:last-of-type{
+                    border-right: 0;
+                    padding-right: 0;
+                }
+
+            }
+
+            @media (min-width: 740px) {
+                //font-size: .8em;
+                margin-right: 6px;
+                padding-right: 10px;
+            }
+
+            //@media (min-width: 850px) {
+            //    margin-right: 10px;
+            //    padding-right: 10px;
+            //    font-size: 1em;
+            //}
+        }
+
+        a {
+            color: #005ea5;
+
+            &:hover {
+                color: #2b8cc4;
+            }
+
+        }
+
+    }
+
+    .list-item_status{
+
+        float:right;
+        min-width: 75px;
+        margin-left: 10px;
+        text-align: right;
+        z-index: 1;
         position: relative;
-        top: 10px;
 
-        @include media(mobile) {
-            top: 5px;
-        }
-    }
-}
-
-// Table View
-.lpa-table {
-    .lpa-donor {
-        @include media($min-width: 750px) {
-            width: 30%;
-        }
-
-        @include media($min-width: 861px) {
-            width: 23%;
-        }
-
-        @include media($min-width: 950px) {
-            width: 24%;
-        }
-    }
-
-    .lpa-number {
-        display: table-cell;
-        color: $secondary-text-colour;
-
-        @include media($min-width: 861px) {
-            width: 150px;
-        }
-
-        @include media($max-width: 860px) {
-            display: none;
-        }
-
-        @include media($min-width: 950px) {
-            width: 135px;
-        }
-    }
-
-    .lpa-number-alt {
-        display: none;
-        color: $secondary-text-colour;
-
-        @include media($max-width: 860px) {
+        a, span{
+            padding: 10px;
             display: inline-block;
-        }
-    }
-
-    .lpa-donor-header {
-        &:after {
-            content: '';
-
-            @include media($max-width: 860px) {
-                content: ' / LPA number';
-            }
-        }
-    }
-
-    .lpa-number-header {
-        display: table-cell;
-
-        @include media($max-width: 860px) {
-            display: none;
-        }
-    }
-
-    .lpa-type {
-        color: $secondary-text-colour;
-
-        @include media($min-width: 861px) {
-            width: 70px;
+            color: #0b0c0c;
+            border-radius: 5px;
+            background: #dee0e2;
+            text-align: center;
+            min-width: 75px;
         }
 
-        @include media($min-width: 950px) {
-            width: 70px;
-        }
-    }
+        a {
+            text-decoration: none;
 
-    .lpa-progress {
-        @include media($min-width: 770px) {
-            width: 60px;
-        }
-
-        @include media($min-width: 861px) {
-            width: 70px;
-        }
-
-        @include media($min-width: 950px) {
-            width: 80px;
-        }
-
-        .progress-started {
-            color: $orange;
-        }
-
-        .progress-completed {
-            color: $green;
-        }
-    }
-
-    .lpa-date {
-        width: 80px;
-        color: $secondary-text-colour;
-    }
-
-    .lpa-actions {
-        width: 190px;
-
-        .button {
-            margin-top: 13px;
-            float: right;
-        }
-    }
-
-    .lpa-manage {
-        margin-top: 21px;
-        float: left;
-
-        ul > li:only-child {
-            @include media(tablet) {
-                padding-left: 24px;
+            &:hover{
+                border-radius: 5px;
+                box-shadow: 0 2px 0 rgba(11, 12, 12, 0.3);
+                background:#d0d3d6;
             }
         }
 
-        .extra-text {
-            @include media(tablet) {
-                display: none;
+        .icon {
+            width: 2.5em;
+            height: 2.5em;
+            margin: 0 0 0 0;
+
+            // &.status-1 {
+            //     background: url("../images/custom/waiting-v1.svg") 50% 50% no-repeat;
+            //     background-size: contain;
+            // }
+            // &.status-2 {
+            //     background: url("../images/custom/received-v1.svg") 50% 50% no-repeat;
+            //     background-size: contain;
+            // }
+            // &.status-3 {
+            //     background: url("../images/custom/checking-v1.svg") 50% 50% no-repeat;
+            //     background-size: contain;
+            // }
+            &.status-4 {
+                background: url("../images/custom/tick-v1.svg") 50% 50% no-repeat;
+                background-size: contain;
+            }
+            &.status-5 {
+                background: url("../images/custom/percentage-65-v1.svg") 50% 50% no-repeat;
+                background-size: contain;
+            }
+            &.status-6 {
+                background: url("../images/custom/percentage-25-v1.svg") 50% 50% no-repeat;
+                background-size: contain;
             }
         }
+
     }
 
-    td:nth-child(6) {
-        @include media($min-width: 641px) {
-            padding: 0;
-        }
+}
+
+.track-my-lpa {
+     li {
+          margin: 0 0 1em 0;
+          background: $highlight-colour;
+          position: relative;
+          border-radius: 5px;
+          // display: inline-block;
+          // width: 100%;
+          padding: 1em 11.5em 1em 1.5em;
+          &.status-1 {
+               border-left: 10px solid $purple;
+               .status {
+                    color: $white;
+                    background: $purple;
+               }
+          }
+          &.status-2 {
+               border-left: 10px solid $govuk-blue;
+               .status {
+                    color: $white;
+                    background: $govuk-blue;
+               }
+          }
+          &.status-3 {
+               border-left: 10px solid $light-blue;
+               .status {
+                    color: $white;
+                    background: $light-blue;
+               }
+          }
+          &.status-4 {
+               border-left: 10px solid $turquoise;
+               .status {
+                    color: $white;
+                    background: $turquoise;
+               }
+          }
+          &.status-started, &.status-created, &.status-ready {
+               border-left: 10px solid lighten($panel-colour,5%);
+               .status {
+                    color: $secondary-text-colour;
+                    background: lighten($panel-colour,5%);
+               }
+          }
+          .info {
+               .main-info {
+                    display: inline-block;
+                    width: auto;
+                    float: left;
+                    a {
+                         font-size: 2.4rem;
+                         font-weight: bold;
+                         &:hover {
+                              cursor: pointer;
+                         }
+                    }
+                    span {
+                         color: $secondary-text-colour;
+                         font-size: 1.6rem;
+                    }
+               }
+               .extra-info {
+                    float: right;
+                    width: 7.25em;
+                    margin: 0 0 0 1.5em;
+                    p {
+                         color: $secondary-text-colour;
+                         font-size: 1.6rem;
+                         width: auto;
+                         float: left;
+                         clear: both;
+                         margin: 0;
+                         &.main-text {
+                              font-size: 2.4rem;
+                              font-weight: bold;
+                              .icon {
+                                   width: 1.15em;
+                                   height: 1.15em;
+                                   margin: 0 0.15em -0.25em 0;
+                              }
+                         }
+                    }
+               }
+          }
+     }
+}
+
+ul.track-my-lpa li{
+    //background: red;
+    //box-shadow: 0px 4px 70px -18px #707070;
+
+    &.list-item--v3 {
+        border-bottom: 4px solid #dee0e2;
     }
 
-    .button {
-        @include media($min-width: 641px) {
-            margin-bottom: 14px;
-        }
+    &.list-item--v3.status-4,
+    &.list-item--v3.status-created,
+    &.list-item--v3.status-started,
+    &.list-item--v3.status-ready{
+        border-left: 10px solid #dee0e2;
     }
 }
 
-.lpa-actions {
-    padding-top: 12px;
+.supporting-info {
+    font-size: 16px;
+    color: #6F777B;
 }
 
-// Cards View
-.lpa-cards {
-    thead {
-        display: none;
-    }
-
-    tr {
-        @include box-sizing (border-box);
-        display: block;
-        position: relative;
-        width: 48.5%;
-        margin-bottom: $gutter;
-        padding: $gutter-half;
-        float: left;
-        border: 1px solid $border-colour;
-
-        @include media(mobile) {
-            width: 100%;
-        }
-
-        &:nth-child(2n-1) {
-            margin-right: 3%;
-        }
-
-        &.odd {
-            margin-right: 3%;
-        }
-    }
-
-    td {
-        display: block;
-        position: relative;
-        padding: 0;
-        border-bottom: 0;
-        font-size: 19px;
-    }
-
-    .lpa-donor {
-        box-sizing: border-box;
-        width: 100%;
-        float: left;
-        padding-right: 120px;
-
-        @include media($min-width: 870px) {
-            padding-right: 210px;
-        }
-    }
-
-    .lpa-number {
-        width: 100%;
-        float: left;
-        color: $secondary-text-colour;
-    }
-
-    .lpa-type {
-        display: none;
-    }
-
-    .lpa-progress,
-    .lpa-date {
-        position: absolute;
-        right: 0;
-        width: 128px;
-        padding: 0;
-        line-height: 1.31579em;
-
-        @include media($min-width: 870px) {
-            width: 210px;
-        }
-
-        @include media(mobile) {
-            position: static;
-        }
-
-        @include media($max-width: 380px) {
-            //width: 100px;
-        }
-
-        span {
-            display: block;
-            position: relative;
-            width: 100%;
-            text-align: left;
-
-            @include media(mobile) {
-                display: inline;
-                position: static;
-            }
-        }
-    }
-
-    .progress {
-        &:before {
-            color: $secondary-text-colour;
-            content: 'Status: ';
-
-            @include media($min-width: 641px) {
-                content: '';
-            }
-
-            @include media($min-width: 870px) {
-                content: 'Status: ';
-            }
-
-            @include media(mobile) {
-                content: '';
-            }
-        }
-
-        &.progress-started {
-            color: $orange;
-        }
-
-        &.progress-completed {
-            color: $green;
-        }
-    }
-
-    .lpa-date span {
-        top: 24px;
-        color: $secondary-text-colour;
-
-        &:before {
-            content: 'Last saved on: ';
-
-            @include media($min-width: 641px) {
-                content: '';
-            }
-
-            @include media($min-width: 870px) {
-                content: 'Last saved on: ';
-            }
-
-            @include media(mobile) {
-                content: '';
-            }
-        }
-    }
-
-    .lpa-actions {
-        position: relative;
-        width: 100%;
-        min-height: 80px;
-        float: left;
-    }
-
-    .button {
-        @include media(tablet) {
-            position: absolute;
-            bottom: 2px;
-
-            &:active {
-                top: inherit;
-            }
-        }
-    }
-
-    .lpa-cta {
-        width: 100%;
-        float: left;
-    }
-
-    .lpa-manage {
-        @include media(tablet) {
-            position: absolute;
-            right: 0;
-            bottom: 0;
-            width: 112px;
-            padding: 0;
-        }
-
-        @include media($min-width: 870px) {
-            width: 194px;
-        }
-
-        .extra-text {
-            @include media(tablet) {
-                display: none;
-            }
-
-            @include media($min-width: 870px) {
-                display: inline;
-            }
-        }
-    }
-}
-
-// Mobile View
-.lpa-table,
-.lpa-cards {
-    @include media(mobile) {
-        thead {
-            display: none;
-        }
-
-        tr {
-            display: block;
-            position: relative;
-            margin-bottom: $gutter-half;
-            padding: $gutter-half;
-            border: 1px solid $border-colour;
-            overflow: hidden;
-
-            &:last-child {
-                margin-bottom: 0;
-            }
-
-            &:after {
-                position: absolute;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-            }
-        }
-
-        td {
-            display: block;
-            position: relative;
-            padding: 0 0 6px;
-            border-bottom: 0;
-        }
-
-        .lpa-donor {
-            .heading-medium,
-            .heading-small {
-                padding-right: 90px;
-
-                @include media($max-width: 300px) {
-                    padding-right: 50px;
-                }
-            }
-        }
-
-        .lpa-number {
-            display: block;
-            margin-bottom: $gutter-half;
-            padding-top: 0;
-            color: $secondary-text-colour;
-            font-size: 16px;
-        }
-
-        .lpa-number-alt {
-            display: none;
-        }
-
-        .lpa-type {
-            color: $secondary-text-colour;
-            font-size: 16px;
-
-            &:before {
-                content: 'Type: ';
-            }
-        }
-
-        .lpa-progress {
-            width: 150px;
-            font-size: 16px;
-
-            &:before {
-                color: $secondary-text-colour;
-                content: 'Status: ';
-            }
-
-        }
-
-        .lpa-date {
-            display: block;
-            width: 100%;
-            color: $secondary-text-colour;
-            font-size: 16px;
-
-            &:before {
-                content: 'Last saved: ';
-
-                @include media($max-width: 320px) {
-                    content: '';
-                }
-            }
-        }
-
-        .lpa-actions {
-            position: static;
-            width: 70%;
-            min-height: 0;
-            padding-bottom: 0;
-        }
-
-        .lpa-cta {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-
-            .button {
-                display: block;
-                position: absolute;
-                right: 0;
-                width: 90px;
-                height: 100%;
-                margin-top: 0;
-                float: none;
-                border-left: 1px solid $border-colour;
-                background-image: url('../images/custom/arrow-in-circle.png');
-                background-repeat: no-repeat;
-                background-position: center;
-                text-indent: -9999px;
-                box-shadow: 0 0 0;
-                vertical-align: middle;
-
-                @include media($max-width: 300px) {
-                    width: 50px;
-                    background-size: 60%;
-                }
-            }
-        }
-
-        .lpa-manage {
-            position: relative;
-            margin-top: $gutter-half;
-            float: none;
-            font-size: 16px;
-
-            .summary:after {
-                content: ' this LPA';
-            }
-
-            li {
-                margin-bottom: 4px;
-            }
-
-            .last {
-                margin-bottom: 0;
-            }
-        }
-    }
-}
