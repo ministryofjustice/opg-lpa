@@ -3089,7 +3089,7 @@ input[type=number] {
         color: #2b8cc4; }
   .list-item--v3 .list-item_status {
     float: right;
-    min-width: 75px;
+    min-width: 95px;
     margin-left: 10px;
     text-align: right;
     z-index: 1;
@@ -3101,7 +3101,7 @@ input[type=number] {
       border-radius: 5px;
       background: #dee0e2;
       text-align: center;
-      min-width: 75px; }
+      min-width: 95px; }
     .list-item--v3 .list-item_status a, .list-item--v3 .list-item_status .button-input-to-link {
       text-decoration: none; }
       .list-item--v3 .list-item_status a:hover, .list-item--v3 .list-item_status .button-input-to-link:hover {
