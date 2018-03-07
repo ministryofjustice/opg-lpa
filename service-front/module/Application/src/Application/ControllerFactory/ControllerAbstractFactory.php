@@ -6,8 +6,6 @@ use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
 use Application\Controller\Authenticated\AdminController;
-use Application\Controller\Authenticated\DashboardController;
-use Application\Controller\Authenticated\DeleteController;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Controller\Authenticated\PostcodeController;
@@ -47,9 +45,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
     private $additionalServices = [
         AdminController::class => [
             'setAdminService' => 'AdminService'
-        ],
-        DashboardController::class => [
-            'setApplicationList' => 'ApplicationList'
         ],
         PostcodeController::class => [
             'setAddressLookup' => 'AddressLookupMoj'

@@ -5,7 +5,6 @@ namespace Application;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
 use Opg\Lpa\Logger\LoggerTrait;
@@ -22,8 +21,8 @@ class Module implements FormElementProviderInterface
 {
     use LoggerTrait;
 
-    public function onBootstrap(MvcEvent $e){
-
+    public function onBootstrap(MvcEvent $e)
+    {
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
@@ -47,33 +46,28 @@ class Module implements FormElementProviderInterface
 
         $request = $e->getApplication()->getServiceManager()->get('Request');
 
-        if( !($request instanceof \Zend\Console\Request) ){
-
+        if (!$request instanceof \Zend\Console\Request) {
             // Only bootstrap the session if it's *not* PHPUnit AND is not an excluded url.
-            if(
-                !strstr( $request->getServer('SCRIPT_NAME'), 'phpunit' ) &&
-                !in_array( $request->getUri()->getPath(), [
+            if (!strstr($request->getServer('SCRIPT_NAME'), 'phpunit') &&
+                !in_array($request->getUri()->getPath(), [
                     // URLs excluded from creating a session
                     '/ping/elb',
                     '/ping/json',
                     '/notifications/expiry-notice',
-                ]))
-            {
+                ])) {
                 $this->bootstrapSession($e);
                 $this->bootstrapIdentity($e);
             }
-
         }
-
-    } // function
+    }
 
     /**
      * Sets up and starts global sessions.
      *
      * @param MvcEvent $e
      */
-    private function bootstrapSession(MvcEvent $e){
-
+    private function bootstrapSession(MvcEvent $e)
+    {
         $session = $e->getApplication()->getServiceManager()->get('SessionManager');
 
         // Always starts the session.
@@ -85,8 +79,7 @@ class Module implements FormElementProviderInterface
         //---
 
         $session->initialise();
-
-    } // function
+    }
 
     /**
      *
@@ -98,39 +91,29 @@ class Module implements FormElementProviderInterface
      *
      * @param MvcEvent $e
      */
-    private function bootstrapIdentity(MvcEvent $e){
-
+    private function bootstrapIdentity(MvcEvent $e)
+    {
         $sm = $e->getApplication()->getServiceManager();
 
         $auth = $sm->get('AuthenticationService');
 
         // If we have an identity...
-        if ( ($identity = $auth->getIdentity()) != null ) {
-
+        if (($identity = $auth->getIdentity()) != null) {
             // Get the tokens details...
             $info = $sm->get('UserService')->getTokenInfo($identity->token());
 
-
-            if( is_array($info) && isset($info['expiresIn']) ){
-
+            if (is_array($info) && isset($info['expiresIn'])) {
                 // update the time the token expires in the session
-                $identity->tokenExpiresIn( $info['expiresIn'] );
-
+                $identity->tokenExpiresIn($info['expiresIn']);
             } else {
-
                 // else the user will need to re-login, so remove the current identity.
                 $auth->clearIdentity();
-
             }
-
         } // if we have an identity
+    }
 
-    } // function
-
-    //-------------------------------------------
-
-    public function getServiceConfig(){
-
+    public function getServiceConfig()
+    {
         return [
             'shared' => [
                 'HttpClient' => false,
@@ -147,37 +130,31 @@ class Module implements FormElementProviderInterface
             ],
             'factories' => [
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
-                'ApiClient'             => 'Application\Model\Service\ApiClient\ApiClientFactory',
+                'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
                 'AuthClient'            => 'Application\Model\Service\AuthClient\ClientFactory',
                 'PostcodeInfoClient'    => 'Application\Model\Service\AddressLookup\PostcodeInfoClientFactory',
 
                 'MailTransport' => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
 
-                // LPA access service
-                'LpaApplicationService' => function( ServiceLocatorInterface $sm ){
-                    return new LpaApplicationService( $sm->get('ApiClient') );
-                },
-
                 // Authentication Adapter. Access via 'AuthenticationAdapter'
-                'LpaAuthAdapter' => function( ServiceLocatorInterface $sm ){
-                    return new LpaAuthAdapter( $sm->get('AuthClient') );
+                'LpaAuthAdapter' => function (ServiceLocatorInterface $sm) {
+                    return new LpaAuthAdapter($sm->get('AuthClient'));
                 },
 
                 // Generate the session container for a user's personal details
-                'UserDetailsSession' => function(){
+                'UserDetailsSession' => function () {
                     return new Container('UserDetails');
                 },
 
                 // PSR-7 HTTP Client
-                'HttpClient' => function(){
+                'HttpClient' => function () {
                     return new \Http\Adapter\Guzzle5\Client(
                         new \GuzzleHttp\Client,
                         new \Http\Message\MessageFactory\GuzzleMessageFactory
                     );
                 },
 
-                'Cache' => function ( ServiceLocatorInterface $sm ) {
-
+                'Cache' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config')['admin']['dynamodb'];
 
                     $config['keyPrefix'] = $sm->get('config')['stack']['name'];
@@ -187,7 +164,7 @@ class Module implements FormElementProviderInterface
                     return $dynamoDbAdapter;
                 },
 
-                'DynamoCronLock' => function ( ServiceLocatorInterface $sm ) {
+                'DynamoCronLock' => function (ServiceLocatorInterface $sm) {
 
                     $config = $sm->get('config')['cron']['lock']['dynamodb'];
 
@@ -198,19 +175,16 @@ class Module implements FormElementProviderInterface
                     return $dynamoDbAdapter;
                 },
 
-                'GovPayClient' => function( ServiceLocatorInterface $sm ){
-
+                'GovPayClient' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config')['alphagov']['pay'];
 
                     return new GovPayClient([
                         'apiKey'        => $config['key'],
                         'httpClient'    => $sm->get('HttpClient'),
                     ]);
-
                 },
 
-                'TwigEmailRenderer' => function ( ServiceLocatorInterface $sm ) {
-
+                'TwigEmailRenderer' => function (ServiceLocatorInterface $sm) {
                     $loader = new \Twig_Loader_Filesystem('module/Application/view/email');
 
                     $env = new \Twig_Environment($loader);
@@ -230,42 +204,31 @@ class Module implements FormElementProviderInterface
                     });
 
                     return $env;
-
                 },
 
-                'TwigViewRenderer' => function ( ServiceLocatorInterface $sm ) {
-
+                'TwigViewRenderer' => function (ServiceLocatorInterface $sm) {
                     $loader = new \Twig_Loader_Filesystem('module/Application/view/application');
 
-                    $env = new \Twig_Environment($loader);
-
-                    return $env;
-
+                    return new \Twig_Environment($loader);
                 }
-
             ], // factories
         ];
+    }
 
-    } // function
-
-    //-------------------------------------------
-
-    public function getViewHelperConfig(){
-
+    public function getViewHelperConfig()
+    {
         return array(
             'factories' => array(
                 'StaticAssetPath' => function( $sm ){
                     $config = $sm->get('Config');
-                    return new \Application\View\Helper\StaticAssetPath( $config['version']['cache'] );
+                    return new \Application\View\Helper\StaticAssetPath($config['version']['cache']);
                 },
             ),
         );
+    }
 
-    } // function
-
-    //-------------------------------------------
-
-    public function getAutoloaderConfig(){
+    public function getAutoloaderConfig()
+    {
         return array(
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
@@ -275,24 +238,21 @@ class Module implements FormElementProviderInterface
         );
     }
 
-    public function getConfig(){
-
+    public function getConfig()
+    {
         $configFiles = [
             __DIR__ . '/config/module.config.php',
             __DIR__ . '/config/module.routes.php',
         ];
 
-        //---
-
         $config = array();
 
         // Merge all module config options
-        foreach($configFiles as $configFile) {
-            $config = ArrayUtils::merge( $config, include($configFile) );
+        foreach ($configFiles as $configFile) {
+            $config = ArrayUtils::merge($config, include($configFile));
         }
 
         return $config;
-
     }
 
     /**
@@ -329,23 +289,21 @@ class Module implements FormElementProviderInterface
                 // Use the Twig layout
                 $viewModel->setTemplate('layout/twig/layout');
             }
-
         }
-
     }
 
     /**
      * Use our logger to send this exception to its various destinations
      *
      * @param MvcEvent $e
+     * @return ViewModel
      */
     public function handleError(MvcEvent $e)
     {
-
         $exception = $e->getResult()->exception;
 
         if ($exception) {
-            $this->getLogger()->err( $exception->getMessage().' in '.$exception->getFile().' on line '.$exception->getLine().' - '.$exception->getTraceAsString());
+            $this->getLogger()->err($exception->getMessage().' in '.$exception->getFile().' on line '.$exception->getLine().' - '.$exception->getTraceAsString());
 
             $viewModel = new ViewModel();
             $viewModel->setTemplate('error/500');
@@ -357,7 +315,6 @@ class Module implements FormElementProviderInterface
 
             return $viewModel;
         }
-
     }
 
     /**
@@ -370,7 +327,7 @@ class Module implements FormElementProviderInterface
     {
         return [
             'initializers' => [
-                'InitCsrfForm' => function(ServiceManager $serviceManager, $form) {
+                'InitCsrfForm' => function (ServiceManager $serviceManager, $form) {
                     if ($form instanceof AbstractCsrfForm) {
                         $config = $serviceManager->get('Config');
                         $form->setConfig($config);
@@ -379,4 +336,4 @@ class Module implements FormElementProviderInterface
             ],
         ];
     }
-} // class
+}

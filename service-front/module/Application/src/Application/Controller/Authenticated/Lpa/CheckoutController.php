@@ -220,7 +220,7 @@ class CheckoutController extends AbstractLpaController
 
         $lpa->payment->gatewayReference = $payment->payment_id;
 
-        $this->getLpaApplicationService()->updatePayment($lpa);
+        $this->getLpaApplicationService()->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
         //---
 
@@ -310,7 +310,7 @@ class CheckoutController extends AbstractLpaController
         $lpa->payment->date = new \DateTime();
         $lpa->payment->email = new EmailAddress(['address'=>strtolower($paymentResponse->email)]);
 
-        $this->getLpaApplicationService()->updatePayment($lpa);
+        $this->getLpaApplicationService()->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
         //---
 

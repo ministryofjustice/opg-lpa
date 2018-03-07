@@ -5,6 +5,7 @@ namespace Application\Model\Service\Admin;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
+use Application\Model\Service\ApiClient\Exception\ResponseException;
 use Application\Model\Service\AuthClient\AuthClientAwareInterface;
 use Application\Model\Service\AuthClient\AuthClientTrait;
 use DateTime;
@@ -34,7 +35,17 @@ class Admin extends AbstractService implements ApiClientAwareInterface, AuthClie
                 $result = $this->parseDateTime($result, 'deletedAt');
 
                 if (array_key_exists('userId', $result) && $result['isActive'] === true) {
-                    $result['numberOfLpas'] = $this->apiClient->getApplicationCount($result['userId']);
+                    $response = $this->apiClient->httpGet(sprintf('/v2/users/%s/applications', $result['userId']), [
+                        'page' => 1,
+                        'perPage' => 1,
+                    ]);
+
+                    if ($response->getStatusCode() != 200) {
+                        return false;
+                    }
+
+                    $body = json_decode($response->getBody(), true);
+                    $result['numberOfLpas'] = $body['total'];
                 }
 
                 return $result;

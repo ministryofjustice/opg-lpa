@@ -27,54 +27,63 @@ class PostcodeInfo extends AbstractService
      */
     public function lookupPostcode($postcode)
     {
-        $addressObjs = $this->postCodeInfoClient->lookupPostcodeAddresses($postcode);
+        $addresses = $this->postCodeInfoClient->lookupPostcodeAddresses($postcode);
 
-        if (empty($addressObjs)) {
+        if (empty($addresses)) {
             return [];
         }
 
-        $addresses = [];
+        $addressArray = [];
 
-        foreach ($addressObjs as $addressObj) {
-            //  Get the address lines and add a description
-            $address = $this->getAddressLines($addressObj);
-            $address['description'] = $this->getDescription($address);
-
-            $addresses[] = $address;
+        foreach ($addresses as $address) {
+            $addressArray[] = [
+                'Id' => $address->uprn,
+                'Summary' => trim($this->getSummary($address)),
+                'Detail' => $this->getAddressLines($address),
+            ];
         }
 
-        return $addresses;
+        return $addressArray;
+
+        /**
+         * Example response format:
+
+            [0]=> array(3) {
+                ["Id"]=>
+                string(11) "51749629.00"
+                ["StreetAddress"]=>
+                string(29) "Apartment 201 8 Walworth Road"
+                ["Place"]=>
+                string(10) "London SE1"
+                ["Detail"]=> [
+                    'line1' => string
+                    'line2' => string
+                    'line3' => string
+                    'postcode' => string
+                ]
+            }
+            [1]=> array(3) {
+                ["Id"]=>
+                string(11) "51749630.00"
+                ["StreetAddress"]=>
+                string(29) "Apartment 202 8 Walworth Road"
+                ["Place"]=>
+                string(10) "London SE1"
+                ["Detail"]=> [
+                    'line1' => string
+                    'line2' => string
+                    'line3' => string
+                    'postcode' => string
+                ]
+            }
+         */
     }
 
-    /**
-     * Get the address in a standard format of...
-     *  [
-     *      'line1' => string
-     *      'line2' => string
-     *      'line3' => string
-     *      'postcode' => string
-     *  ]
-     *
-     * @param Address $address
-     * @return array
-     */
-    private function getAddressLines(Address $address)
+    public function getAddressLines(Address $address)
     {
-        //-----------------------------------------------------------------------
-        //  Get the address lines into an array but remove the postcode from the end of
-        //  it so we can parse the address into 3 lines below
-        //  We will re-add the postcode as a final step
-        $components = explode("\n", $address->formatted_address);
+        $components = $this->getAddressComponents($address);
 
-        // We expect the last element to be the postcode which we don't want
-        // We'll confirm that it is the postcode and then remove it from the array
-        $postcodeFromComponents = strtolower(str_replace(' ', '', $components[count($components)-1]));
-        $postcodeFromAddress = strtolower(str_replace(' ', '', $address->postcode));
-
-        if ($postcodeFromAddress == $postcodeFromComponents) {
-            array_pop($components);
-        }
-
+        $count = count($components);
 
         //-----------------------------------------------------------------------
         // Convert address to 3 lines plus a postcode
@@ -92,9 +101,11 @@ class PostcodeInfo extends AbstractService
              * i.e. Line 2 will always have the same or same + 1 number of fields then line 1.
              * And Line 3 will always have the same or same + 1 number of fields then line 2.
              */
+
             $numOnLine[1] = floor($count / 3);
 
             $numOnLine[2] = $numOnLine[1];
+
             if (($count % 3) == 2) {
                 $numOnLine[2]++;
             }
@@ -124,7 +135,7 @@ class PostcodeInfo extends AbstractService
             }
 
             $result["line{$i}"] = ltrim($result["line{$i}"], ', ');
-        } // for
+        }
 
         //---
 
@@ -132,21 +143,54 @@ class PostcodeInfo extends AbstractService
 
         //---
 
+        //---
+
         return $result;
     }
 
+    private function getSummary(Address $address)
+    {
+        $addressComponents = $this->getAddressComponents($address);
+
+        return implode(', ', $addressComponents);
+    }
+
     /**
-     * Get a single line address description (without postcode)
+     * Return an array of address elements from a string that is
+     * delimited by the \n character
      *
-     * @param array $address
-     * @return string
+     * We remove the postcode from the end of the array
+     *
+     * @param Address $address
+     * @return array
      */
     private function getDescription(array $address)
     {
-        unset($address['postcode']);
-        $address = array_filter($address);
+        $components = explode("\n", $address->formatted_address);
 
-        return trim(implode(', ', $address));
+        return $this->removePostcodeFromArray($components, $address->postcode);
+    }
+
+    /**
+     * Remove the postcode from the array, if it is the last element
+     *
+     * @param array $array
+     * @param string $postcode
+     *
+     * @return array
+     */
+    private function removePostcodeFromArray($array, $postcode)
+    {
+        // We expect the last element to be the postcode which we don't want
+        // We'll confirm that it is the postcode and then remove it from the array
+        $postcodeFromComponents = strtolower(str_replace(' ', '', $array[count($array)-1]));
+        $postcodeFromAddress = strtolower(str_replace(' ', '', $postcode));
+
+        if ($postcodeFromAddress == $postcodeFromComponents) {
+            array_pop($array);
+        }
+
+        return $array;
     }
 
     public function setPostcodeInfoClient(PostcodeInfoClient $postCodeInfoClient)

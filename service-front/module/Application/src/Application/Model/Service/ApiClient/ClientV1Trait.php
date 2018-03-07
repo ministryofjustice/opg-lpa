@@ -23,19 +23,64 @@ trait ClientV1Trait
      */
     private $guzzleClient;
 
-    /**
-     * The status code from the last API call
-     *
-     * @var number
-     */
-    private $lastStatusCode;
 
+
+//TODO - MOVED FROM API CLIENT INTO HERE WHILE REFACTORING...
     /**
-     * The content body from the last API call
-     *
      * @var string
      */
-    private $lastContent;
+    private $userId;
+
+    /**
+     * @var \Application\Model\Service\User\Details
+     */
+    private $userService;
+
+    /**
+     * @param string $userId
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+    }
+
+    /**
+     * @return Exception\ResponseException|Response\Error|array|bool|string
+     * @throws \Exception
+     */
+    public function getUserId()
+    {
+        if (is_null($this->userId)) {
+//TODO - this call now needs to be made on the user details service... refactor this, but injecting the user service into the API client is NOT the answer
+//instead inject the user service (if necessary) in the new location for this code after the refactor
+            $response = $this->userService->getTokenInfo($this->token);
+
+//  TODO - ErrorInterface interface hasn't existed for a while! Remove?
+            if ($response instanceof Response\ErrorInterface) {
+                if ($response instanceof \Exception) {
+                    throw $response;
+                }
+
+                return $response;
+            }
+
+            if (!is_array($response) || !isset($response['userId'])) {
+                return false;
+            }
+
+            $this->setUserId($response['userId']);
+        }
+
+        return $this->userId;
+    }
+
+    public function setUserService($userService)
+    {
+        $this->userService = $userService;
+    }
+//TODO - End MOVED FROM API CLIENT...
+
+
 
     /**
      * Returns the GuzzleClient.
@@ -52,27 +97,11 @@ trait ClientV1Trait
             $this->guzzleClient->setDefaultOption('allow_redirects', false);
         }
 
-        if ($this->getToken() != null) {
-            $this->guzzleClient->setDefaultOption('headers/Token', $this->getToken());
+        if (!is_null($this->token)) {
+            $this->guzzleClient->setDefaultOption('headers/Token', $this->token);
         }
 
         return $this->guzzleClient;
-    }
-
-    /**
-     * @return number
-     */
-    public function getLastStatusCode()
-    {
-        return $this->lastStatusCode;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastContent()
-    {
-        return $this->lastContent;
     }
 
     /**
@@ -113,13 +142,12 @@ trait ClientV1Trait
         $response = $this->getClient()->delete($this->getApiBaseUriForUser(), [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'Token' => $this->getToken(),
+                'Token' => $this->token,
             ],
             'body' => '{}',
         ]);
 
         if ($response->getStatusCode() != 204) {
-            $this->recordErrorResponseDetails($response);
             return false;
         }
 
@@ -142,7 +170,6 @@ trait ClientV1Trait
         ]);
 
         if ($response->getStatusCode() != 200) {
-            $this->recordErrorResponseDetails($response);
             return false;
         }
 
@@ -163,7 +190,6 @@ trait ClientV1Trait
         ]);
 
         if ($response->getStatusCode() != 200) {
-            $this->recordErrorResponseDetails($response);
             return false;
         }
 
@@ -325,14 +351,12 @@ trait ClientV1Trait
         $response = $this->getClient()->post($endpoint);
 
         if ($response->getStatusCode() != 201) {
-            $this->recordErrorResponseDetails($response);
             return false;
         }
 
         $json = $response->json();
 
         if (!isset($json['locked'])) {
-            $this->recordErrorResponseDetails($response);
             return false;
         }
 
@@ -549,7 +573,6 @@ trait ClientV1Trait
         $code = $response->getStatusCode();
 
         if ($code != 200) {
-            $this->recordErrorResponseDetails($response);
             return false;
         }
 
@@ -569,7 +592,6 @@ trait ClientV1Trait
         $code = $response->getStatusCode();
 
         if ($code != 200) {
-            $this->recordErrorResponseDetails($response);
             return false;
         }
 
@@ -602,7 +624,6 @@ trait ClientV1Trait
         }
 
         if ($code != 200) {
-            $this->recordErrorResponseDetails($response);
             return false;
         }
 
@@ -629,7 +650,6 @@ trait ClientV1Trait
             $json = $response->json();
 
             if (!isset($json['_links']) || !isset($json['count'])) {
-                $this->recordErrorResponseDetails($response);
                 return false;
             }
 
@@ -638,7 +658,6 @@ trait ClientV1Trait
             }
 
             if (!isset($json['_embedded'][$resourceType])) {
-                $this->recordErrorResponseDetails($response);
                 return false;
             }
 
@@ -687,31 +706,6 @@ trait ClientV1Trait
         ]);
 
         if (($response->getStatusCode() != 200) && ($response->getStatusCode() != 204)) {
-            $this->recordErrorResponseDetails($response);
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Patch the data for the given resource. i.e. PUT
-     *
-     * @param string $jsonBody
-     * @param $index number in series, if applicable
-     * @return boolean
-     */
-    private function updateResource($lpaId, $resourceType, $jsonBody, $index = null)
-    {
-        $endpoint = $this->getApiBaseUriForLpa($lpaId, $resourceType);
-
-        $response = $this->getClient()->patch($endpoint . (!is_null($index) ? '/' . $index : ''), [
-            'body' => $jsonBody,
-            'headers' => ['Content-Type' => 'application/json']
-        ]);
-
-        if ($response->getStatusCode() != 200) {
-            $this->recordErrorResponseDetails($response);
             return false;
         }
 
@@ -734,7 +728,6 @@ trait ClientV1Trait
         ]);
 
         if ($response->getStatusCode() != 201) {
-            $this->recordErrorResponseDetails($response);
             return false;
         }
 
@@ -757,33 +750,9 @@ trait ClientV1Trait
         ]);
 
         if ($response->getStatusCode() != 204) {
-            $this->recordErrorResponseDetails($response);
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * Log the response of the API call and set some internal member vars
-     * If content body is JSON, convert it to an array
-     *
-     * @param Response $response
-     * @return boolean
-     */
-    private function recordErrorResponseDetails(Response $response)
-    {
-        //  Note the last status code and response content
-        $this->lastStatusCode = $response->getStatusCode();
-
-        $responseBody = (string)$response->getBody();
-        $this->lastContent = $responseBody;
-
-        //  If the response body can be decoded to JSON then make that be the last response content
-        $jsonDecoded = json_decode($responseBody, true);
-
-        if (json_last_error() == JSON_ERROR_NONE) {
-            $this->lastContent = $jsonDecoded;
-        }
     }
 }

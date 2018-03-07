@@ -8,6 +8,7 @@ use Application\Model\Service\ApiClient\Client as ApiClient;
 use Application\Model\Service\AuthClient\AuthClientAwareInterface;
 use Application\Model\Service\AuthClient\Client as AuthClient;
 use Application\Model\Service\Lpa\Communication;
+use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\User\Details;
 use Exception;
 use Interop\Container\ContainerInterface;
@@ -25,14 +26,17 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $additionalServices = [
-        PostcodeInfo::class => [
-            'setPostcodeInfoClient' => 'PostcodeInfoClient'
-        ],
         Communication::class => [
             'setUserDetailsSession' => 'UserDetailsSession'
         ],
         Details::class => [
             'setUserDetailsSession' => 'UserDetailsSession'
+        ],
+        Metadata::class => [
+            'setLpaApplicationService' => 'LpaApplicationService',
+        ],
+        PostcodeInfo::class => [
+            'setPostcodeInfoClient' => 'PostcodeInfoClient'
         ],
     ];
 
@@ -74,7 +78,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
 
         if (is_subclass_of($serviceName, AbstractEmailService::class)) {
             $service = new $serviceName(
-                $container->get('LpaApplicationService'),
                 $container->get('AuthenticationService'),
                 $container->get('Config'),
                 $container->get('TwigEmailRenderer'),
@@ -82,7 +85,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             );
         } else {
             $service = new $serviceName(
-                $container->get('LpaApplicationService'),
                 $container->get('AuthenticationService'),
                 $container->get('Config')
             );

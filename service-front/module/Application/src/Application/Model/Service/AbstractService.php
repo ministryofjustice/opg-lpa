@@ -3,15 +3,9 @@
 namespace Application\Model\Service;
 
 use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
 
 abstract class AbstractService
 {
-    /**
-     * @var LpaApplicationService
-     */
-    private $lpaApplicationService;
-
     /**
      * @var AuthenticationService
      */
@@ -23,27 +17,15 @@ abstract class AbstractService
     private $config;
 
     /**
-     * AbstractService constructor.
-     * @param LpaApplicationService $lpaApplicationService
+     * AbstractService constructor
+     *
      * @param AuthenticationService $authenticationService
      * @param array $config
      */
-    public function __construct(
-        LpaApplicationService $lpaApplicationService,
-        AuthenticationService $authenticationService,
-        array $config
-    ) {
-        $this->lpaApplicationService = $lpaApplicationService;
+    public function __construct(AuthenticationService $authenticationService, array $config)
+    {
         $this->authenticationService = $authenticationService;
         $this->config = $config;
-    }
-
-    /**
-     * @return LpaApplicationService
-     */
-    public function getLpaApplicationService(): LpaApplicationService
-    {
-        return $this->lpaApplicationService;
     }
 
     /**
@@ -60,5 +42,13 @@ abstract class AbstractService
     public function getConfig(): array
     {
         return $this->config;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getUserId()
+    {
+        return $this->getAuthenticationService()->getIdentity()->id();
     }
 }
