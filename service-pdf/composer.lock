@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "dd23bc3037bedf1d553364cc08481ccc",
+    "content-hash": "2f0e5a253f3cc312adccb6863fa9616a",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -732,16 +732,16 @@
         },
         {
             "name": "nsmithuk/dynamo-queue-php",
-            "version": "v1.0.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NSmithUK/dynamo-queue-php.git",
-                "reference": "6630ac199e0efb96f15943a512394394d8fd5cd2"
+                "reference": "abc9e7e13389a6f2b2b12a430d5609c2eb99a1a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NSmithUK/dynamo-queue-php/zipball/6630ac199e0efb96f15943a512394394d8fd5cd2",
-                "reference": "6630ac199e0efb96f15943a512394394d8fd5cd2",
+                "url": "https://api.github.com/repos/NSmithUK/dynamo-queue-php/zipball/abc9e7e13389a6f2b2b12a430d5609c2eb99a1a0",
+                "reference": "abc9e7e13389a6f2b2b12a430d5609c2eb99a1a0",
                 "shasum": ""
             },
             "require": {
@@ -762,11 +762,14 @@
                     "DynamoQueueTests\\": "tests/DynamoQueue/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
-            "time": "2016-02-15T15:41:07+00:00"
+            "support": {
+                "source": "https://github.com/NSmithUK/dynamo-queue-php/tree/v1.1.0",
+                "issues": "https://github.com/NSmithUK/dynamo-queue-php/issues"
+            },
+            "time": "2018-03-07T14:08:37+00:00"
         },
         {
             "name": "psr/container",

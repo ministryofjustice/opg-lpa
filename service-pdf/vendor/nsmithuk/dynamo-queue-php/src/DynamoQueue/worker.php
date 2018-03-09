@@ -30,6 +30,11 @@ cli\Colors::enable();
 $strict = in_array('--strict', $_SERVER['argv']);
 $arguments = new cli\Arguments(compact('strict'));
 
+$arguments->addOption(array('endpoint'), [
+        'description' => '(Optional) The AWS region to use'
+    ]
+);
+
 $arguments->addOption(array('region'), [
         'description' => 'The AWS region to use'
     ]
@@ -92,6 +97,10 @@ $logger->pushHandler($stream);
 $settings = [
     'version' => '2012-08-10',
 ];
+
+if ($arguments['endpoint']) {
+    $settings['endpoint'] = trim($arguments['endpoint']);
+}
 
 if ($arguments['region']) {
     $settings['region'] = trim($arguments['region']);

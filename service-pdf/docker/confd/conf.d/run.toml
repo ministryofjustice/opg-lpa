@@ -2,6 +2,7 @@
 src = "run.tmpl"
 dest = "/etc/service/opg-lpa-pdf2/run"
 keys = [
+    "/opg/lpa/common/dynamodb/endpoint",
     "/opg/lpa/common/queue/dynamodb",
 ]
 owner = "root"
