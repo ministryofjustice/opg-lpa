@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -52,10 +52,17 @@ class RsaOptions extends AbstractOptions
     protected $binaryOutput = true;
 
     /**
+     * OPENSSL padding
+     *
+     * @var int|null
+     */
+    protected $opensslPadding;
+
+    /**
      * Set private key
      *
      * @param  Rsa\PrivateKey $key
-     * @return RsaOptions
+     * @return RsaOptions Provides a fluent interface
      */
     public function setPrivateKey(Rsa\PrivateKey $key)
     {
@@ -78,7 +85,7 @@ class RsaOptions extends AbstractOptions
      * Set public key
      *
      * @param  Rsa\PublicKey $key
-     * @return RsaOptions
+     * @return RsaOptions Provides a fluent interface
      */
     public function setPublicKey(Rsa\PublicKey $key)
     {
@@ -100,7 +107,7 @@ class RsaOptions extends AbstractOptions
      * Set pass phrase
      *
      * @param string $phrase
-     * @return RsaOptions
+     * @return RsaOptions Provides a fluent interface
      */
     public function setPassPhrase($phrase)
     {
@@ -122,7 +129,7 @@ class RsaOptions extends AbstractOptions
      * Set hash algorithm
      *
      * @param  string $hash
-     * @return RsaOptions
+     * @return RsaOptions Provides a fluent interface
      * @throws Rsa\Exception\RuntimeException
      * @throws Rsa\Exception\InvalidArgumentException
      */
@@ -162,7 +169,7 @@ class RsaOptions extends AbstractOptions
      * Enable/disable the binary output
      *
      * @param  bool $value
-     * @return RsaOptions
+     * @return RsaOptions Provides a fluent interface
      */
     public function setBinaryOutput($value)
     {
@@ -181,10 +188,32 @@ class RsaOptions extends AbstractOptions
     }
 
     /**
+     * Get the OPENSSL padding
+     *
+     * @return int|null
+     */
+    public function getOpensslPadding()
+    {
+        return $this->opensslPadding;
+    }
+
+    /**
+     * Set the OPENSSL padding
+     *
+     * @param int|null $opensslPadding
+     * @return RsaOptions Provides a fluent interface
+     */
+    public function setOpensslPadding($opensslPadding)
+    {
+        $this->opensslPadding = (int) $opensslPadding;
+        return $this;
+    }
+
+    /**
      * Generate new private/public key pair
      *
      * @param  array $opensslConfig
-     * @return RsaOptions
+     * @return RsaOptions Provides a fluent interface
      * @throws Rsa\Exception\RuntimeException
      */
     public function generateKeys(array $opensslConfig = [])

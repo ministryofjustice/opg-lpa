@@ -24,7 +24,7 @@ interface Twig_TokenParserInterface
     /**
      * Parses a token and returns a node.
      *
-     * @return Twig_NodeInterface
+     * @return Twig_Node A Twig_Node instance
      *
      * @throws Twig_Error_Syntax
      */

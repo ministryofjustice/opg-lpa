@@ -40,7 +40,7 @@ class CertificateProviderController extends AbstractLpaActorController
     public function addAction()
     {
         $viewModel = new ViewModel();
-        $viewModel->setTemplate('application/certificate-provider/form.twig');
+        $viewModel->setTemplate('application/authenticated/lpa/certificate-provider/form.twig');
 
         if ($this->isPopup()) {
             $viewModel->setTerminal(true);
@@ -100,7 +100,7 @@ class CertificateProviderController extends AbstractLpaActorController
     public function editAction()
     {
         $viewModel = new ViewModel();
-        $viewModel->setTemplate('application/certificate-provider/form.twig');
+        $viewModel->setTemplate('application/authenticated/lpa/certificate-provider/form.twig');
 
         if ($this->isPopup()) {
             $viewModel->setTerminal(true);

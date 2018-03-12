@@ -1,10 +1,8 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-config for the canonical source repository
+ * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-config/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Config\Reader;
@@ -49,13 +47,13 @@ class Yaml implements ReaderInterface
     /**
      * Set callback for decoding YAML
      *
-     * @param  string|callable $yamlDecoder the decoder to set
-     * @return Yaml
+     * @param string|callable $yamlDecoder the decoder to set
+     * @return self
      * @throws Exception\RuntimeException
      */
     public function setYamlDecoder($yamlDecoder)
     {
-        if (!is_callable($yamlDecoder)) {
+        if (! is_callable($yamlDecoder)) {
             throw new Exception\RuntimeException(
                 'Invalid parameter to setYamlDecoder() - must be callable'
             );
@@ -84,7 +82,7 @@ class Yaml implements ReaderInterface
      */
     public function fromFile($filename)
     {
-        if (!is_file($filename) || !is_readable($filename)) {
+        if (! is_file($filename) || ! is_readable($filename)) {
             throw new Exception\RuntimeException(sprintf(
                 "File '%s' doesn't exist or not readable",
                 $filename

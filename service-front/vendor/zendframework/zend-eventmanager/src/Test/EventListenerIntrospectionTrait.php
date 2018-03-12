@@ -9,9 +9,9 @@
 
 namespace Zend\EventManager\Test;
 
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
+use ReflectionProperty;
 use Zend\EventManager\EventManager;
-use Zend\Stdlib\PriorityQueue;
 
 /**
  * Trait providing utility methods and assertions for use in PHPUnit test cases.
@@ -38,7 +38,10 @@ trait EventListenerIntrospectionTrait
      */
     private function getEventsFromEventManager(EventManager $events)
     {
-        return $events->getEvents();
+        $r = new ReflectionProperty($events, 'events');
+        $r->setAccessible(true);
+        $listeners = $r->getValue($events);
+        return array_keys($listeners);
     }
 
     /**
@@ -61,7 +64,17 @@ trait EventListenerIntrospectionTrait
      */
     private function getListenersForEvent($event, EventManager $events, $withPriority = false)
     {
-        $listeners = $events->getListeners($event);
+        $r = new ReflectionProperty($events, 'events');
+        $r->setAccessible(true);
+        $internal = $r->getValue($events);
+
+        $listeners = [];
+        foreach (isset($internal[$event]) ? $internal[$event] : [] as $p => $listOfListeners) {
+            foreach ($listOfListeners as $l) {
+                $listeners[$p] = isset($listeners[$p]) ? array_merge($listeners[$p], $l) : $l;
+            }
+        }
+
         return $this->traverseListeners($listeners, $withPriority);
     }
 
@@ -118,18 +131,21 @@ trait EventListenerIntrospectionTrait
     /**
      * Generator for traversing listeners in priority order.
      *
-     * @param PriorityQueue $listeners
+     * @param array $listeners
      * @param bool $withPriority When true, yields priority as key.
      */
-    public function traverseListeners(PriorityQueue $queue, $withPriority = false)
+    public function traverseListeners(array $queue, $withPriority = false)
     {
-        foreach ($queue as $handler) {
-            $listener = $handler->getCallback();
-            if ($withPriority) {
-                $priority = (int) $handler->getMetadatum('priority');
-                yield $priority => $listener;
-            } else {
-                yield $listener;
+        krsort($queue, SORT_NUMERIC);
+
+        foreach ($queue as $priority => $listeners) {
+            $priority = (int) $priority;
+            foreach ($listeners as $listener) {
+                if ($withPriority) {
+                    yield $priority => $listener;
+                } else {
+                    yield $listener;
+                }
             }
         }
     }

@@ -2,6 +2,91 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.6 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.8.5 - 2018-02-22
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+
+- [#108](https://github.com/zendframework/zend-session/pull/108) fixes a dependency
+  conflict in `composer.json` which prevented `phpunit/phpunit` 6.5 or newer from 
+  being installed together with `zendframework/zend-session`.
+
+## 2.8.4 - 2018-01-31
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#107](https://github.com/zendframework/zend-session/pull/107) fixes an error
+  raised by `ini_set()` within `SessionConfig::setStorageOption()` that occurs
+  for certain INI values that cannot be set if the session is active. When this
+  situation occurs, the class performs a `session_write_close()`, sets the new
+  INI value, and then restarts the session. As such, we recommend that you
+  either set production INI values in your production `php.ini`, and/or always
+  pass your fully configured session manager to container instances you create.
+
+- [#105](https://github.com/zendframework/zend-session/pull/105) fixes an edge
+  case whereby if the special `__ZF` session value is a non-array value,
+  initializing the session would result in errors.
+
+- [#102](https://github.com/zendframework/zend-session/pull/102) fixes an issue
+  introduced with 2.8.0 with `AbstractContainer::offsetGet`. Starting in 2.8.0,
+  if the provided `$key` did not exist, the method would raise an error
+  regarding an invalid variable reference; this release provides a fix that
+  resolves that issue.
+
 ## 2.8.3 - 2017-12-01
 
 ### Added

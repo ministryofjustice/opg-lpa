@@ -84,14 +84,14 @@ standards checks, and provides configuration for our selected checks.
 To run checks only:
 
 ```console
-$ ./vendor/bin/phpcs
+$ composer cs-check
 ```
 
 `phpcs` also provides a tool that can automatically fix many CS issues,
 `phpcbf`:
 
 ```console
-$ ./vendor/bin/phpcbf
+$ composer cs-fix
 ```
 
 If you allow `phpcbf` to fix CS issues, please re-run the tests to ensure
@@ -227,3 +227,8 @@ repository, we suggest doing some cleanup of these branches.
    ```console
    $ git push {username} :<branchname>
    ```
+
+
+## Conduct
+
+Please see our [CONDUCT.md](CONDUCT.md) to understand expected behavior when interacting with others in the project.

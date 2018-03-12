@@ -7,8 +7,9 @@ use Application\Model\Service\AddressLookup\PostcodeInfo;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
+use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
+use Zend\Router\RouteMatch;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -48,6 +49,7 @@ class PostcodeControllerTest extends AbstractControllerTest
     {
         $this->params->shouldReceive('fromQuery')->withArgs(['postcode'])->andReturn(null)->once();
         $this->event->shouldReceive('getRouteMatch')->andReturn($this->routeMatch)->once();
+        $this->event->shouldReceive('getResponse')->andReturn(new Response())->once();
         $this->routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
 
         /** @var ViewModel $result */

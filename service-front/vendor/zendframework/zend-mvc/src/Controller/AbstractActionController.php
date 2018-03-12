@@ -9,10 +9,8 @@
 
 namespace Zend\Mvc\Controller;
 
-use Zend\Http\Response as HttpResponse;
 use Zend\Mvc\Exception;
 use Zend\Mvc\MvcEvent;
-use Zend\View\Model\ConsoleModel;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -40,19 +38,16 @@ abstract class AbstractActionController extends AbstractController
     /**
      * Action called if matched action does not exist
      *
-     * @return ViewModel|ConsoleModel
+     * @return ViewModel
      */
     public function notFoundAction()
     {
-        $response   = $this->response;
         $event      = $this->getEvent();
         $routeMatch = $event->getRouteMatch();
         $routeMatch->setParam('action', 'not-found');
 
-        if ($response instanceof HttpResponse) {
-            return $this->createHttpNotFoundModel($response);
-        }
-        return $this->createConsoleNotFoundModel($response);
+        $helper = $this->plugin('createHttpNotFoundModel');
+        return $helper($event->getResponse());
     }
 
     /**
@@ -60,13 +55,12 @@ abstract class AbstractActionController extends AbstractController
      *
      * @param  MvcEvent $e
      * @return mixed
-     *
-     * @throws Exception\DomainException If no RouteMatch was found within MvcEvent.
+     * @throws Exception\DomainException
      */
     public function onDispatch(MvcEvent $e)
     {
         $routeMatch = $e->getRouteMatch();
-        if (!$routeMatch) {
+        if (! $routeMatch) {
             /**
              * @todo Determine requirements for when route match is missing.
              *       Potentially allow pulling directly from request metadata?
@@ -77,7 +71,7 @@ abstract class AbstractActionController extends AbstractController
         $action = $routeMatch->getParam('action', 'not-found');
         $method = static::getMethodFromAction($action);
 
-        if (!method_exists($this, $method)) {
+        if (! method_exists($this, $method)) {
             $method = 'notFoundAction';
         }
 
@@ -86,27 +80,5 @@ abstract class AbstractActionController extends AbstractController
         $e->setResult($actionResponse);
 
         return $actionResponse;
-    }
-
-    /**
-     * @deprecated please use the {@see \Zend\Mvc\Controller\Plugin\CreateHttpNotFoundModel} plugin instead: this
-     *             method will be removed in release 2.5 or later.
-     *
-     * {@inheritDoc}
-     */
-    protected function createHttpNotFoundModel(HttpResponse $response)
-    {
-        return $this->__call('createHttpNotFoundModel', [$response]);
-    }
-
-    /**
-     * @deprecated please use the {@see \Zend\Mvc\Controller\Plugin\CreateConsoleNotFoundModel} plugin instead: this
-     *             method will be removed in release 2.5 or later.
-     *
-     * {@inheritDoc}
-     */
-    protected function createConsoleNotFoundModel($response)
-    {
-        return $this->__call('createConsoleNotFoundModel', [$response]);
     }
 }

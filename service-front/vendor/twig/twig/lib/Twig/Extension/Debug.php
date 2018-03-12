@@ -9,10 +9,7 @@
  * file that was distributed with this source code.
  */
 
-/**
- * @final
- */
-class Twig_Extension_Debug extends Twig_Extension
+final class Twig_Extension_Debug extends Twig_Extension
 {
     public function getFunctions()
     {
@@ -27,17 +24,12 @@ class Twig_Extension_Debug extends Twig_Extension
         ;
 
         return array(
-            new Twig_SimpleFunction('dump', 'twig_var_dump', array('is_safe' => $isDumpOutputHtmlSafe ? array('html') : array(), 'needs_context' => true, 'needs_environment' => true)),
+            new Twig_Function('dump', 'twig_var_dump', array('is_safe' => $isDumpOutputHtmlSafe ? array('html') : array(), 'needs_context' => true, 'needs_environment' => true)),
         );
-    }
-
-    public function getName()
-    {
-        return 'debug';
     }
 }
 
-function twig_var_dump(Twig_Environment $env, $context)
+function twig_var_dump(Twig_Environment $env, $context, ...$vars)
 {
     if (!$env->isDebug()) {
         return;
@@ -45,8 +37,7 @@ function twig_var_dump(Twig_Environment $env, $context)
 
     ob_start();
 
-    $count = func_num_args();
-    if (2 === $count) {
+    if (!$vars) {
         $vars = array();
         foreach ($context as $key => $value) {
             if (!$value instanceof Twig_Template) {
@@ -56,9 +47,7 @@ function twig_var_dump(Twig_Environment $env, $context)
 
         var_dump($vars);
     } else {
-        for ($i = 2; $i < $count; ++$i) {
-            var_dump(func_get_arg($i));
-        }
+        var_dump(...$vars);
     }
 
     return ob_get_clean();
