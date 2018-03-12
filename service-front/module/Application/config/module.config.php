@@ -14,10 +14,6 @@ return [
     /* ------------------------------------------------------------- */
 
     'controllers' => [
-        'initializers' => [
-            'UserAwareInitializer' => 'Application\ControllerFactory\UserAwareInitializer',
-            'LpaAwareInitializer' => 'Application\ControllerFactory\LpaAwareInitializer',
-        ],
         'factories' => [
             'SessionsController' => 'Application\Controller\Console\SessionsControllerFactory',
         ],
@@ -33,15 +29,17 @@ return [
             'Zend\Log\LoggerAbstractServiceFactory',
         ],
         'aliases' => [
-            'AdminService'      => 'Application\Model\Service\Admin\Admin',
-            'UserService'       => 'Application\Model\Service\User\Details',
-            'Feedback'          => 'Application\Model\Service\Feedback\Feedback',
-            'Guidance'          => 'Application\Model\Service\Guidance\Guidance',
-            'LpaApplicationService' => 'Application\Model\Service\Lpa\Application',
-            'Metadata'          => 'Application\Model\Service\Lpa\Metadata',
-            'Communication'     => 'Application\Model\Service\Lpa\Communication',
-            'PostcodeInfo'      => 'Application\Model\Service\AddressLookup\PostcodeInfo',
-            'SiteStatus'        => 'Application\Model\Service\System\Status',
+            'AdminService'                  => 'Application\Model\Service\Admin\Admin',
+            'ApplicantCleanup'              => 'Application\Model\Service\Lpa\ApplicantCleanup',
+            'Communication'                 => 'Application\Model\Service\Lpa\Communication',
+            'Feedback'                      => 'Application\Model\Service\Feedback\Feedback',
+            'Guidance'                      => 'Application\Model\Service\Guidance\Guidance',
+            'LpaApplicationService'         => 'Application\Model\Service\Lpa\Application',
+            'Metadata'                      => 'Application\Model\Service\Lpa\Metadata',
+            'PostcodeInfo'                  => 'Application\Model\Service\AddressLookup\PostcodeInfo',
+            'ReplacementAttorneyCleanup'    => 'Application\Model\Service\Lpa\ReplacementAttorneyCleanup',
+            'SiteStatus'                    => 'Application\Model\Service\System\Status',
+            'UserService'                   => 'Application\Model\Service\User\Details',
         ],
     ],
 

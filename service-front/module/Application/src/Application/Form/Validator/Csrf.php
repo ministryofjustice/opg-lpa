@@ -3,7 +3,7 @@
 namespace Application\Form\Validator;
 
 use Zend\Math\Rand;
-use Zend\Session\Container as SessionContainer;
+use Zend\Session\Container;
 use Zend\Validator\Csrf as ZFCsrfValidator;
 use RuntimeException;
 
@@ -66,7 +66,7 @@ class Csrf extends ZFCsrfValidator
             throw new RuntimeException('CSRF salt cannot be null or empty');
         }
 
-        $session = new SessionContainer('CsrfValidator');
+        $session = new Container('CsrfValidator');
 
         if (!isset($session->token)) {
             $session->token = hash('sha512', Rand::getBytes(128, true));

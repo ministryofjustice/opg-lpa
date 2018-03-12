@@ -14,11 +14,11 @@ class PostcodeController extends AbstractAuthenticatedController
     private $addressLookup;
 
     /**
-     * Allow access to this controller before About You details are set.
+     * Flag to indicate if complete user details are required when accessing this controller
      *
      * @var bool
      */
-    protected $excludeFromAboutYouCheck = true;
+    protected $requireCompleteUserDetails = false;
 
     public function indexAction()
     {

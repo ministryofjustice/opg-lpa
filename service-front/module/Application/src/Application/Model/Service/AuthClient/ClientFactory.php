@@ -2,10 +2,11 @@
 
 namespace Application\Model\Service\AuthClient;
 
-use Application\Model\Service\Authentication\AuthenticationService;
+use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Http\Client\HttpClient as HttpClientInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Session\Container;
 
 class ClientFactory implements FactoryInterface
 {
@@ -24,11 +25,11 @@ class ClientFactory implements FactoryInterface
 
         $token = null;
 
-        /** @var AuthenticationService $authenticationService */
-        $authenticationService = $serviceLocator->get('AuthenticationService');
+        /** @var Container $userDetailsSession */
+        $userDetailsSession = $serviceLocator->get('UserDetailsSession');
+        $identity = $userDetailsSession->identity;
 
-        if ($authenticationService->hasIdentity()) {
-            $identity = $authenticationService->getIdentity();
+        if ($identity instanceof UserIdentity) {
             $token = $identity->token();
         }
 

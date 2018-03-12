@@ -2,7 +2,6 @@
 
 namespace Application\Model\Service\User;
 
-use Application\Form\AbstractCsrfForm;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
@@ -28,27 +27,30 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
      */
     private $userDetailsSession;
 
-    public function load()
+    /**
+     * TODO - This is only called in the AbstractAuthenticatedController - can it be condensed down?
+     *
+     * @return mixed
+     */
+    public function getUserDetails()
     {
-        return $this->apiClient->getAboutMe();
+        return $this->apiClient->getAboutMe($this->getUserId());
     }
 
     /**
-     * Update the user's basic details.
+     * Update the user's basic details
      *
-     * @param AbstractCsrfForm $details
+     * @param array $data
      * @return mixed
      */
-    public function updateAllDetails(AbstractCsrfForm $details)
+    public function updateAllDetails(array $data)
     {
-        $authenticationData = $this->getAuthenticationService()->getIdentity()->toArray();
-        $this->getLogger()->info('Updating user details', $authenticationData);
+        $identity = $this->getAuthenticationService()->getIdentity();
 
-        // Load the existing details...
-        $userDetails = $this->apiClient->getAboutMe();
+        $this->getLogger()->info('Updating user details', $identity->toArray());
 
-        // Apply the new ones...
-        $data = $details->getData();
+        //  Load the existing details then add the updated data
+        $userDetails = $this->getUserDetails();
         $userDetails->populateWithFlatArray($data);
 
         // Check if the user has removed their address
@@ -226,11 +228,11 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
      * @param $userId
      * @return ApiResponseException|ApiRuntimeException|AuthResponseException|bool|\Exception
      */
-    public function delete($userId)
+    public function delete()
     {
         $this->getLogger()->info('Deleting user and all their LPAs', $this->getAuthenticationService()->getIdentity()->toArray());
 
-        $success = $this->apiClient->deleteAllLpas();
+        $success = $this->apiClient->deleteAllLpas($this->getUserId());
 
         if (!$success) {
             return new ApiRuntimeException('cannot-delete-lpas');
@@ -260,8 +262,6 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
         //  A successful response is a string...
         if (!is_string($resetToken)) {
             if ($resetToken instanceof AuthResponseException) {
-//TODO - refactor this to simplify
-
                 if ($resetToken->getMessage() == 'account-not-activated') {
                     $body = json_decode($resetToken->getResponse()->getBody(), true);
 

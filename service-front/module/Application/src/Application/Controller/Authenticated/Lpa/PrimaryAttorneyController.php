@@ -83,7 +83,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 // persist data
                 $attorney = new Human($form->getModelDataFromValidatedForm());
 
-                if (!$this->getLpaApplicationService()->addPrimaryAttorney($lpaId, $attorney)) {
+                if (!$this->getLpaApplicationService()->addPrimaryAttorney($this->getIdentity()->id(), $lpaId, $attorney)) {
                     throw new \RuntimeException('API client failed to add a primary attorney for id: '.$lpaId);
                 }
 
@@ -165,7 +165,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 $attorney->id = $attorneyId;
 
                 // persist to the api
-                if (!$this->getLpaApplicationService()->setPrimaryAttorney($lpaId, $attorney, $attorney->id)) {
+                if (!$this->getLpaApplicationService()->setPrimaryAttorney($this->getIdentity()->id(), $lpaId, $attorney, $attorney->id)) {
                     throw new \RuntimeException('API client failed to update a primary attorney ' . $attorneyIdx . ' for id: ' . $lpaId);
                 }
 
@@ -257,7 +257,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                     $primaryAttorneyDecisions->how = null;
                     $primaryAttorneyDecisions->howDetails = null;
 
-                    $this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa->id, $primaryAttorneyDecisions);
+                    $this->getLpaApplicationService()->setPrimaryAttorneyDecisions($this->getIdentity()->id(), $lpa->id, $primaryAttorneyDecisions);
                 }
             }
 
@@ -273,14 +273,14 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                             $whoIsRegistering = null;
                         }
 
-                        $this->getLpaApplicationService()->setWhoIsRegistering($lpa->id, $whoIsRegistering);
+                        $this->getLpaApplicationService()->setWhoIsRegistering($this->getIdentity()->id(), $lpa->id, $whoIsRegistering);
                         break;
                     }
                 }
             }
 
             // delete attorney
-            if (!$this->getLpaApplicationService()->deletePrimaryAttorney($lpa->id, $attorney->id)) {
+            if (!$this->getLpaApplicationService()->deletePrimaryAttorney($this->getIdentity()->id(), $lpa->id, $attorney->id)) {
                 throw new \RuntimeException('API client failed to delete a primary attorney ' . $attorneyIdx . ' for id: ' . $lpa->id);
             }
 
@@ -326,7 +326,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
                 // persist data
                 $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
 
-                if (!$this->getLpaApplicationService()->addPrimaryAttorney($lpaId, $attorney)) {
+                if (!$this->getLpaApplicationService()->addPrimaryAttorney($this->getIdentity()->id(), $lpaId, $attorney)) {
                     throw new \RuntimeException('API client failed to add a trust corporation attorney for id: ' . $lpaId);
                 }
 
@@ -361,14 +361,14 @@ class PrimaryAttorneyController extends AbstractLpaActorController
     {
         // set this attorney as applicant if primary attorney act jointly.
         if (($this->getLpa()->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) && is_array($this->getLpa()->document->whoIsRegistering)) {
-            $primaryAttorneys = $this->getLpaApplicationService()->getPrimaryAttorneys($this->getLpa()->id);
+            $primaryAttorneys = $this->getLpaApplicationService()->getPrimaryAttorneys($this->getIdentity()->id(), $this->getLpa()->id);
             $this->getLpa()->document->whoIsRegistering = [];
 
             foreach ($primaryAttorneys as $attorney) {
                 $this->getLpa()->document->whoIsRegistering[] = $attorney->id;
             }
 
-            $this->getLpaApplicationService()->setWhoIsRegistering($this->getLpa()->id, $this->getLpa()->document->whoIsRegistering);
+            $this->getLpaApplicationService()->setWhoIsRegistering($this->getIdentity()->id(), $this->getLpa()->id, $this->getLpa()->document->whoIsRegistering);
         }
     }
 }

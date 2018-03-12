@@ -170,7 +170,7 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
      */
     public function testGetUserNull()
     {
-        $this->controller->getUser();
+        $this->controller->getIdentity();
     }
 
     public function testGetUserDetailsNull()

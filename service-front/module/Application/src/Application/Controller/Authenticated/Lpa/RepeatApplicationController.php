@@ -40,7 +40,7 @@ class RepeatApplicationController extends AbstractLpaController
                 if ($form->getData()['isRepeatApplication'] == 'is-repeat') {
                     // set repeat case number only if case number changed or added
                     if ($form->getData()['repeatCaseNumber'] != $lpa->repeatCaseNumber) {
-                        if (!$lpaApplicationService->setRepeatCaseNumber($lpa->id, $form->getData()['repeatCaseNumber'])) {
+                        if (!$lpaApplicationService->setRepeatCaseNumber($this->getIdentity()->id(), $lpa->id, $form->getData()['repeatCaseNumber'])) {
                             throw new \RuntimeException('API client failed to set repeat case number for id: '.$lpaId);
                         }
                     }
@@ -49,7 +49,7 @@ class RepeatApplicationController extends AbstractLpaController
                 } else {
                     if ($lpa->repeatCaseNumber !== null) {
                         // delete case number if it has been set previousely.
-                        if (!$lpaApplicationService->deleteRepeatCaseNumber($lpa->id)) {
+                        if (!$lpaApplicationService->deleteRepeatCaseNumber($this->getIdentity()->id(), $lpa->id)) {
                             throw new \RuntimeException('API client failed to set repeat case number for id: '.$lpaId);
                         }
                     }
@@ -60,7 +60,7 @@ class RepeatApplicationController extends AbstractLpaController
                 if ($lpa->payment instanceof Payment && $lpa->repeatCaseNumber != $repeatCaseNumber) {
                     Calculator::calculate($lpa);
 
-                    if (!$lpaApplicationService->setPayment($lpa->id, $lpa->payment)) {
+                    if (!$lpaApplicationService->setPayment($this->getIdentity()->id(), $lpa->id, $lpa->payment)) {
                         throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in RepeatApplicationController');
                     }
                 }

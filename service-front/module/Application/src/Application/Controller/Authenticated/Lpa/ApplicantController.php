@@ -39,7 +39,7 @@ class ApplicantController extends AbstractLpaController
 
                 // save applicant if the value has changed
                 if ($applicants != $lpa->document->whoIsRegistering) {
-                    if (!$this->getLpaApplicationService()->setWhoIsRegistering($lpaId, $applicants)) {
+                    if (!$this->getLpaApplicationService()->setWhoIsRegistering($this->getIdentity()->id(), $lpaId, $applicants)) {
                         throw new \RuntimeException('API client failed to set applicant for id: ' . $lpaId);
                     }
                 }

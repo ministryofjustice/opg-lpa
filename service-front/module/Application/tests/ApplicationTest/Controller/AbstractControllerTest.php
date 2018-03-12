@@ -49,10 +49,8 @@ use Zend\Router\Http\RouteMatch as HttpRouteMatch;
 use Zend\Cache\Storage\StorageInterface;
 use Zend\Router\RouteStackInterface;
 use Zend\ServiceManager\AbstractPluginManager;
-use Zend\Session\AbstractContainer;
 use Zend\Session\Container;
 use Zend\Session\Storage\ArrayStorage;
-use Zend\Stdlib\ArrayObject;
 use Zend\Stdlib\Parameters;
 use Zend\Uri\Uri;
 
@@ -131,7 +129,7 @@ abstract class AbstractControllerTest extends MockeryTestCase
      */
     protected $authenticationAdapter;
     /**
-     * @var AbstractContainer
+     * @var Container
      */
     protected $userDetailsSession;
     /**
