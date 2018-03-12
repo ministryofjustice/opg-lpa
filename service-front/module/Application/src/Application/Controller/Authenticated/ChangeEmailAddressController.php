@@ -41,7 +41,7 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController
                 if ($result === true) {
                     return (new ViewModel([
                         'email' => $form->getData()['email']
-                    ]))->setTemplate('application/authenticated/change-email-address/email-sent');
+                    ]))->setTemplate('application/authenticated/change-email-address/email-sent.twig');
                 } else {
                     $error = $result;
                 }
