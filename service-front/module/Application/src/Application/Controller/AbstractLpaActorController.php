@@ -257,7 +257,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
     {
         //  Check that the current session user details have not already been used
         $currentUserDetailsUsedToBeAdded = true;
-        $userDetailsObj = $this->getUserDetails();
+        $userDetailsObj = $this->getUser();
 
         //  Check to see if the user details have already been used if necessary
         if ($checkIfAlreadyUsed) {
@@ -410,7 +410,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
             if (!$cloneContainer->offsetExists($seedId)) {
                 //  The data isn't in the session - get it now
-                $cloneContainer->$seedId = $this->getLpaApplicationService()->getSeedDetails($lpa->id);
+                $cloneContainer->$seedId = $this->getLpaApplicationService()->getSeedDetails($this->getIdentity()->id(), $lpa->id);
             }
 
             if (is_array($cloneContainer->$seedId)) {
@@ -512,7 +512,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                 || ($actor instanceof CertificateProvider && $correspondent->who == Correspondence::WHO_CERTIFICATE_PROVIDER)) {
 
                 if ($isDelete) {
-                    if (!$this->getLpaApplicationService()->deleteCorrespondent($this->getLpa()->id)) {
+                    if (!$this->getLpaApplicationService()->deleteCorrespondent($this->getIdentity()->id(), $this->getLpa()->id)) {
                         throw new \RuntimeException('API client failed to delete correspondent for id: ' . $this->getLpa()->id);
                     }
                 } else {
@@ -537,7 +537,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
                         $correspondent->address = $actor->address;
 
-                        if (!$this->getLpaApplicationService()->setCorrespondent($this->getLpa()->id, $correspondent)) {
+                        if (!$this->getLpaApplicationService()->setCorrespondent($this->getIdentity()->id(), $this->getLpa()->id, $correspondent)) {
                             throw new \RuntimeException('API client failed to update correspondent for id: ' . $this->getLpa()->id);
                         }
                     }

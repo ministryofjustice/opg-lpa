@@ -39,7 +39,6 @@ class AuthControllerTest extends AbstractControllerTest
     public function setUp()
     {
         $this->controller = parent::controllerSetUp(AuthController::class);
-        $this->controller->setAuthenticationAdapter($this->authenticationAdapter);
         $this->controller->setLpaApplicationService($this->lpaApplicationService);
 
         $this->identity = Mockery::mock(User::class);

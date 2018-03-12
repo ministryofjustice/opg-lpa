@@ -3,7 +3,7 @@
 namespace Application\Controller;
 
 use Application\Model\FormFlowChecker;
-use Application\Model\Service\Authentication\Adapter\AdapterInterface;
+use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\ApplicantCleanup;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
@@ -11,12 +11,11 @@ use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\User\Details as UserService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\Authentication\AuthenticationService;
 use Zend\Cache\Storage\StorageInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\Router\Http\RouteMatch;
 use Zend\ServiceManager\AbstractPluginManager;
-use Zend\Session\AbstractContainer;
+use Zend\Session\Container;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use RuntimeException;
@@ -48,16 +47,31 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
      */
     private $metadata;
 
+    /**
+     * AbstractLpaController constructor.
+     * @param AbstractPluginManager $lpaId
+     * @param AbstractPluginManager $formElementManager
+     * @param SessionManager $sessionManager
+     * @param AuthenticationService $authenticationService
+     * @param array $config
+     * @param StorageInterface $cache
+     * @param Container $userDetailsSession
+     * @param LpaApplicationService $lpaApplicationService
+     * @param UserService $userService
+     * @param ApplicantCleanup $applicantCleanup
+     * @param ReplacementAttorneyCleanup $replacementAttorneyCleanup
+     * @param Metadata $metadata
+     */
     public function __construct(
+        $lpaId,
         AbstractPluginManager $formElementManager,
         SessionManager $sessionManager,
         AuthenticationService $authenticationService,
         array $config,
         StorageInterface $cache,
-        AbstractContainer $userDetailsSession,
+        Container $userDetailsSession,
         LpaApplicationService $lpaApplicationService,
         UserService $userService,
-        AdapterInterface $authenticationAdapter,
         ApplicantCleanup $applicantCleanup,
         ReplacementAttorneyCleanup $replacementAttorneyCleanup,
         Metadata $metadata
@@ -70,10 +84,17 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
             $cache,
             $userDetailsSession,
             $lpaApplicationService,
-            $userService,
-            $authenticationAdapter
+            $userService
         );
 
+        //  Get the LPA and check that this user is allowed to access it
+        $lpa = $lpaApplicationService->getApplication((int) $lpaId);
+
+        if (!($lpa instanceof Lpa) || $this->getIdentity()->id() !== $lpa->user) {
+            throw new RuntimeException('Invalid LPA - not found or the current user can not access it');
+        }
+
+        $this->lpa = $lpa;
         $this->applicantCleanup = $applicantCleanup;
         $this->replacementAttorneyCleanup = $replacementAttorneyCleanup;
         $this->metadata = $metadata;
@@ -86,18 +107,8 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
             return $authenticated;
         }
 
-        //  Try to get the lpa for this controller - if we can't find one then redirect to the user dashboard
-        $lpa = null;
-
-        try {
-            $lpa = $this->getLpa();
-        } catch (RuntimeException $rte) {
-            //  There was a problem retrieving the LPA so redirect to the user dashboard
-            return $this->redirect()->toRoute('user/dashboard');
-        }
-
         # inject lpa into layout.
-        $this->layout()->lpa = $lpa;
+        $this->layout()->lpa = $this->lpa;
 
         /**
          * check the requested route and redirect user to the correct one if the requested route is not available.
@@ -121,14 +132,14 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
 
         // redirect to the calculated route if it is not equal to the current route
         if ($calculatedRoute != $currentRoute) {
-            return $this->redirect()->toRoute($calculatedRoute, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($calculatedRoute));
+            return $this->redirect()->toRoute($calculatedRoute, ['lpa-id' => $this->lpa->id], $this->getFlowChecker()->getRouteOptions($calculatedRoute));
         }
 
         // inject lpa into view
         $view = parent::onDispatch($e);
 
         if (($view instanceof ViewModel) && !($view instanceof JsonModel)) {
-            $view->setVariable('lpa', $lpa);
+            $view->setVariable('lpa', $this->lpa);
         }
 
         return $view;
@@ -149,13 +160,13 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         $routeMatch = $this->getEvent()->getRouteMatch();
 
         if (!$routeMatch instanceof RouteMatch) {
-            throw new \RuntimeException('RouteMatch must be an instance of Zend\Router\Http\RouteMatch when using the moveToNextRoute function');
+            throw new RuntimeException('RouteMatch must be an instance of Zend\Router\Http\RouteMatch when using the moveToNextRoute function');
         }
 
         //  Get the current route and the LPA ID to move to the next route
         $nextRoute = $this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName());
 
-        return $this->redirect()->toRoute($nextRoute, ['lpa-id' => $this->getLpa()->id], $this->getFlowChecker()->getRouteOptions($nextRoute));
+        return $this->redirect()->toRoute($nextRoute, ['lpa-id' => $this->lpa->id], $this->getFlowChecker()->getRouteOptions($nextRoute));
     }
 
     /**
@@ -164,8 +175,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
      */
     protected function cleanUpReplacementAttorneyDecisions()
     {
-        $lpa = $this->getLpaApplicationService()->getApplication((int) $this->getLpa()->id);
-        $this->replacementAttorneyCleanup->cleanUp($lpa, $this->getLpaApplicationService());
+        $this->replacementAttorneyCleanup->cleanUp($this->lpa);
     }
 
     /**
@@ -174,8 +184,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
      */
     protected function cleanUpApplicant()
     {
-        $lpa = $this->getLpaApplicationService()->getApplication((int) $this->getLpa()->id);
-        $this->applicantCleanup->cleanUp($lpa, $this->getLpaApplicationService());
+        $this->applicantCleanup->cleanUp($this->lpa);
     }
 
     /**
@@ -195,21 +204,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
      */
     public function getLpa()
     {
-        if (!( $this->lpa instanceof Lpa )) {
-            throw new RuntimeException('A LPA has not been set');
-        }
-
         return $this->lpa;
-    }
-
-    /**
-     * Sets the LPA currently referenced in to the URL
-     *
-     * @param Lpa $lpa
-     */
-    public function setLpa(Lpa $lpa)
-    {
-        $this->lpa = $lpa;
     }
 
     /**
@@ -218,7 +213,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     public function getFlowChecker()
     {
         if ($this->flowChecker == null) {
-            $formFlowChecker = new FormFlowChecker($this->getLpa());
+            $formFlowChecker = new FormFlowChecker($this->lpa);
             $this->flowChecker = $formFlowChecker;
         }
 

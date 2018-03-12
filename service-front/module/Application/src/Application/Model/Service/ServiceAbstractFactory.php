@@ -76,17 +76,20 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
 
         $serviceName = $requestedName;
 
+        $authenticationService = $container->get('AuthenticationService');
+        $config = $container->get('Config');
+
         if (is_subclass_of($serviceName, AbstractEmailService::class)) {
             $service = new $serviceName(
-                $container->get('AuthenticationService'),
-                $container->get('Config'),
+                $authenticationService,
+                $config,
                 $container->get('TwigEmailRenderer'),
                 $container->get('MailTransport')
             );
         } else {
             $service = new $serviceName(
-                $container->get('AuthenticationService'),
-                $container->get('Config')
+                $authenticationService,
+                $config
             );
         }
 

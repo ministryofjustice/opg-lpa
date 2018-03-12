@@ -5,6 +5,7 @@ namespace Application\ControllerFactory;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
+use Application\Controller\Authenticated\AboutYouController;
 use Application\Controller\Authenticated\AdminController;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
@@ -19,15 +20,13 @@ use Application\Controller\General\RegisterController;
 use Application\Controller\General\SendgridController;
 use Application\Controller\General\StatsController;
 use Application\Controller\General\VerifyEmailAddressController;
-use Exception;
 use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
-use RuntimeException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Stdlib\DispatchableInterface as Dispatchable;
+use Exception;
+use RuntimeException;
 
 /**
  * Creates a controller based on those requested without a specific entry in the controller service locator.
@@ -43,22 +42,18 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $additionalServices = [
+        AboutYouController::class => [
+            'setUserDetailsSession' => 'UserDetailsSession',
+        ],
         AdminController::class => [
             'setAdminService' => 'AdminService'
         ],
-        PostcodeController::class => [
-            'setAddressLookup' => 'AddressLookupMoj'
+        AuthController::class => [
+            'setLpaApplicationService' => 'LpaApplicationService'
         ],
         CheckoutController::class => [
             'setCommunicationService' => 'Communication',
             'setPaymentClient'        => 'GovPayClient'
-        ],
-        ReuseDetailsController::class => [
-            'setRouter' => 'Router'
-        ],
-        AuthController::class => [
-            'setAuthenticationAdapter' => 'AuthenticationAdapter',
-            'setLpaApplicationService' => 'LpaApplicationService'
         ],
         FeedbackController::class => [
             'setFeedbackService' => 'Feedback'
@@ -75,19 +70,23 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         PingController::class => [
             'setStatusService' => 'SiteStatus'
         ],
+        PostcodeController::class => [
+            'setAddressLookup' => 'AddressLookupMoj'
+        ],
         RegisterController::class => [
             'setUserService' => 'UserService'
+        ],
+        ReuseDetailsController::class => [
+            'setRouter' => 'Router'
         ],
         SendgridController::class => [
             'setMailTransport' => 'MailTransport'
         ],
+        StatsController::class => [
+            'setStatsService' => 'StatsService',
+        ],
         VerifyEmailAddressController::class => [
             'setUserService' => 'UserService'
-        ],
-        StatsController::class => [
-            //  TODO - Temporary solution until services can be injected
-            'setApiClient' => 'ApiClient',
-            'setAuthClient' => 'AuthClient'
         ],
     ];
 
@@ -139,10 +138,17 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             $userDetailsSession = $container->get('UserDetailsSession');
             $lpaApplicationService = $container->get('LpaApplicationService');
             $userService = $container->get('UserService');
-            $authenticationAdapter = $container->get('AuthenticationAdapter');
 
             if (is_subclass_of($controllerName, AbstractLpaController::class)) {
+                //  Get the LPA ID from the route params
+                $lpaId = $container->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpa-id');
+
+                if (!is_numeric($lpaId)) {
+                    throw new RuntimeException('Invalid LPA ID passed');
+                }
+
                 $controller = new $controllerName(
+                    $lpaId,
                     $formElementManager,
                     $sessionManager,
                     $authenticationService,
@@ -151,7 +157,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $userDetailsSession,
                     $lpaApplicationService,
                     $userService,
-                    $authenticationAdapter,
                     $container->get('ApplicantCleanup'),
                     $container->get('ReplacementAttorneyCleanup'),
                     $container->get('Metadata')
@@ -165,8 +170,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $cache,
                     $userDetailsSession,
                     $lpaApplicationService,
-                    $userService,
-                    $authenticationAdapter
+                    $userService
                 );
             }
         } else {

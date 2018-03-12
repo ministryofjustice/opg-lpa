@@ -9,22 +9,16 @@ class ChangePasswordController extends AbstractAuthenticatedController
 {
     public function indexAction()
     {
-        $currentAddress = (string)$this->getUserDetails()->email;
-
         $form = $this->getFormElementManager()->get('Application\Form\User\ChangePassword');
         $form->setAttribute('action', $this->url()->fromRoute('user/change-password'));
 
         $error = null;
 
-        // This form needs to check the user's current password,
-        // thus we pass it the Authentication Service
+        // This form needs to check the user's current password, thus we pass it the Authentication Service
         $authentication =   $this->getAuthenticationService();
-        $adapter =          $this->getAuthenticationAdapter();
 
-        // Pass the user's current email address...
-        $adapter->setEmail($currentAddress);
-
-        $authentication->setAdapter($adapter);
+        $currentAddress = (string)$this->getUser()->email;
+        $authentication->setEmail($currentAddress);
 
         $form->setAuthenticationService($authentication);
 
@@ -34,13 +28,11 @@ class ChangePasswordController extends AbstractAuthenticatedController
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                $userId = $this->getUser()->id();
                 $currentPassword = $data['password_current'];
                 $newPassword = $data['password'];
 
-                $service = $this->getUserService();
-
-                $result = $service->updatePassword($userId, $currentPassword, $newPassword);
+                $userService = $this->getUserService();
+                $result = $userService->updatePassword($this->getIdentity()->id(), $currentPassword, $newPassword);
 
                 if ($result === true) {
                     $this->flashMessenger()->addSuccessMessage('Your new password has been saved. Please remember to use this new password to sign in from now on.');

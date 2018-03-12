@@ -155,7 +155,7 @@ class FeeReductionController extends AbstractLpaController
                     // calculate payment amount and set payment in LPA
                     Calculator::calculate($lpa);
 
-                    if (!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
+                    if (!$this->getLpaApplicationService()->setPayment($this->getIdentity()->id(), $lpa->id, $lpa->payment)) {
                         throw new \RuntimeException('API client failed to set payment details for id: ' . $lpa->id . ' in FeeReductionController');
                     }
                 }

@@ -29,7 +29,7 @@ class TypeController extends AbstractAuthenticatedController
 
                 $lpaType = $form->getData()['type'];
 
-                if (!$this->getLpaApplicationService()->setType($lpa->id, $lpaType)) {
+                if (!$this->getLpaApplicationService()->setType($this->getIdentity()->id(), $lpa->id, $lpaType)) {
                     throw new RuntimeException('API client failed to set LPA type for id: ' . $lpa->id);
                 }
 

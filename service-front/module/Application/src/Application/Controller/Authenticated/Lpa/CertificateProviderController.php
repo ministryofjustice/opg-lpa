@@ -76,7 +76,7 @@ class CertificateProviderController extends AbstractLpaActorController
                 // persist data
                 $cp = new CertificateProvider($form->getModelDataFromValidatedForm());
 
-                if (!$this->getLpaApplicationService()->setCertificateProvider($lpaId, $cp)) {
+                if (!$this->getLpaApplicationService()->setCertificateProvider($this->getIdentity()->id(), $lpaId, $cp)) {
                     throw new \RuntimeException('API client failed to save certificate provider for id: '.$lpaId);
                 }
 
@@ -123,7 +123,7 @@ class CertificateProviderController extends AbstractLpaActorController
                 // persist data
                 $cp = new CertificateProvider($form->getModelDataFromValidatedForm());
 
-                if (!$this->getLpaApplicationService()->setCertificateProvider($lpaId, $cp)) {
+                if (!$this->getLpaApplicationService()->setCertificateProvider($this->getIdentity()->id(), $lpaId, $cp)) {
                     throw new \RuntimeException('API client failed to update certificate provider for id: '.$lpaId);
                 }
 
@@ -177,7 +177,7 @@ class CertificateProviderController extends AbstractLpaActorController
         $this->updateCorrespondentData($this->getLpa()->document->certificateProvider, true);
 
         // delete certificate provider
-        if (!$this->getLpaApplicationService()->deleteCertificateProvider($lpa->id)) {
+        if (!$this->getLpaApplicationService()->deleteCertificateProvider($this->getIdentity()->id(), $lpa->id)) {
             throw new \RuntimeException('API client failed to delete certificate provider for id: ' . $lpa->id);
         }
 

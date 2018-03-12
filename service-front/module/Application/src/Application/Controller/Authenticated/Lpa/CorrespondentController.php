@@ -90,7 +90,7 @@ class CorrespondentController extends AbstractLpaActorController
                     ];
                 }
 
-                if (!$this->getLpaApplicationService()->setCorrespondent($this->getLpa()->id, $correspondent)) {
+                if (!$this->getLpaApplicationService()->setCorrespondent($this->getIdentity()->id(), $this->getLpa()->id, $correspondent)) {
                     throw new \RuntimeException('API client failed to set correspondent for id: '.$this->getLpa()->id);
                 }
 
@@ -286,7 +286,7 @@ class CorrespondentController extends AbstractLpaActorController
         //  Create a new correspondence data model using the form data and any data to retain from a previous save
         $lpaCorrespondent = new Correspondence(array_merge($correspondentData, $existingDataToRetain));
 
-        if (!$this->getLpaApplicationService()->setCorrespondent($lpaId, $lpaCorrespondent)) {
+        if (!$this->getLpaApplicationService()->setCorrespondent($this->getIdentity()->id(), $lpaId, $lpaCorrespondent)) {
             throw new \RuntimeException('API client failed to update correspondent for id: '.$lpaId);
         }
 

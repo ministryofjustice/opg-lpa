@@ -96,10 +96,10 @@ class Module implements FormElementProviderInterface
         $sm = $e->getApplication()->getServiceManager();
 
         $auth = $sm->get('AuthenticationService');
+        $identity = $auth->getIdentity();
 
-        // If we have an identity...
-        if (($identity = $auth->getIdentity()) != null) {
-            // Get the tokens details...
+        //  If there is an identity (logged in user) then get the token details and check to see if it has expired
+        if (!is_null($identity)) {
             $info = $sm->get('UserService')->getTokenInfo($identity->token());
 
             if (is_array($info) && isset($info['expiresIn'])) {
@@ -109,7 +109,7 @@ class Module implements FormElementProviderInterface
                 // else the user will need to re-login, so remove the current identity.
                 $auth->clearIdentity();
             }
-        } // if we have an identity
+        }
     }
 
     public function getServiceConfig()
@@ -120,23 +120,17 @@ class Module implements FormElementProviderInterface
             ],
             'aliases' => [
                 'AddressLookupMoj' => 'PostcodeInfo',
-                'AuthenticationAdapter' => 'LpaAuthAdapter',
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
-            'invokables' => [
-                'AuthenticationService'         => 'Application\Model\Service\Authentication\AuthenticationService',
-                'ReplacementAttorneyCleanup'    => 'Application\Model\Service\Lpa\ReplacementAttorneyCleanup',
-                'ApplicantCleanup'              => 'Application\Model\Service\Lpa\ApplicantCleanup',
-            ],
             'factories' => [
-                'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
                 'AuthClient'            => 'Application\Model\Service\AuthClient\ClientFactory',
+                'AuthenticationService' => 'Application\Model\Service\Authentication\AuthenticationServiceFactory',
                 'PostcodeInfoClient'    => 'Application\Model\Service\AddressLookup\PostcodeInfoClientFactory',
+                'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
+                'MailTransport'         => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
 
-                'MailTransport' => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
-
-                // Authentication Adapter. Access via 'AuthenticationAdapter'
+                // Authentication Adapter
                 'LpaAuthAdapter' => function (ServiceLocatorInterface $sm) {
                     return new LpaAuthAdapter($sm->get('AuthClient'));
                 },

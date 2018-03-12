@@ -37,7 +37,7 @@ class DashboardController extends AbstractAuthenticatedController
             'freeText'              => $search,
             'isSearch'              => (is_string($search) && !empty($search)),
             'user'                  => [
-                'lastLogin' => $this->getUser()->lastLogin(),
+                'lastLogin' => $this->getIdentity()->lastLogin(),
             ],
         ]);
     }
@@ -130,7 +130,7 @@ class DashboardController extends AbstractAuthenticatedController
                 return $this->redirect()->toRoute('user/dashboard');
             }
 
-            $result = $this->getLpaApplicationService()->setSeed($lpa->id, (int) $seedId);
+            $result = $this->getLpaApplicationService()->setSeed($this->getIdentity()->id(), $lpa->id, (int) $seedId);
 
             $this->resetSessionCloneData($seedId);
 

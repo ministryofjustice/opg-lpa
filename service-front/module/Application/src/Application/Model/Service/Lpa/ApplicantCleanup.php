@@ -2,22 +2,27 @@
 
 namespace Application\Model\Service\Lpa;
 
+use Application\Model\Service\AbstractService;
+use Application\Model\Service\ApiClient\ApiClientAwareInterface;
+use Application\Model\Service\ApiClient\ApiClientTrait;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
-class ApplicantCleanup
+class ApplicantCleanup extends AbstractService implements ApiClientAwareInterface
 {
+    use ApiClientTrait;
+
     /**
      * Cleanup applicant data (whoIsRegistering) if invalid
      *
      * @param Lpa $lpa
-     * @param $client
      */
-    public function cleanUp(Lpa $lpa, $client)
+    public function cleanUp(Lpa $lpa)
     {
         $updatedApplicant = $this->getUpdatedApplicant($lpa);
+
         if ($updatedApplicant !== $lpa->document->whoIsRegistering) {
-            $client->setWhoIsRegistering($lpa->id, $updatedApplicant);
+            $this->apiClient->setWhoIsRegistering($this->getUserId(), $lpa->id, $updatedApplicant);
         }
     }
 
@@ -25,7 +30,7 @@ class ApplicantCleanup
      * @param Lpa $lpa
      * @return array|string
      */
-    protected function getUpdatedApplicant(Lpa $lpa)
+    private function getUpdatedApplicant(Lpa $lpa)
     {
         $updatedApplicant = $lpa->document->whoIsRegistering;
 
@@ -38,9 +43,11 @@ class ApplicantCleanup
             //If primary attorneys make decisions jointly, all must be applicants
             if ($primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY) {
                 $updatedApplicant = [];
+
                 foreach ($primaryAttorneys as $primaryAttorney) {
                     $updatedApplicant[] = $primaryAttorney->id;
                 }
+
                 return $updatedApplicant;
             }
 

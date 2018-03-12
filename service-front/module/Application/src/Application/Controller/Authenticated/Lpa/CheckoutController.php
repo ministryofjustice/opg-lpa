@@ -80,7 +80,7 @@ class CheckoutController extends AbstractLpaController
         //  Verify that the payment amount associated with the LPA is corrected based on the fees right now
         $this->verifyLpaPaymentAmount($lpa);
 
-        if (!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
+        if (!$this->getLpaApplicationService()->setPayment($this->getIdentity()->id(), $lpa->id, $lpa->payment)) {
             throw new RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
         }
 
@@ -114,7 +114,7 @@ class CheckoutController extends AbstractLpaController
         //---
 
         // Lock the LPA form future changes.
-        $this->getLpaApplicationService()->lockLpa($this->getLpa()->id);
+        $this->getLpaApplicationService()->lockLpa($this->getIdentity()->id(), $this->getLpa()->id);
 
         //---
 
@@ -250,7 +250,7 @@ class CheckoutController extends AbstractLpaController
                 $lpaPayment->gatewayReference = null;
 
                 //  Save the LPA to update the details
-                if (!$this->getLpaApplicationService()->setPayment($lpa->id, $lpaPayment)) {
+                if (!$this->getLpaApplicationService()->setPayment($this->getIdentity()->id(), $lpa->id, $lpaPayment)) {
                     throw new RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
                 }
             }
