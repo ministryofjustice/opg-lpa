@@ -239,7 +239,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
         }
 
         try {
-            $response = $this->authClient->httpDelete('/v1/users/' . $userId);
+            $response = $this->authClient->httpDelete('/v1/users/' . $this->getUserId());
 
             if ($response->getStatusCode() == 204) {
                 return true;
