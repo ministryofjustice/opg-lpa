@@ -1,0 +1,59 @@
+{% extends 'layout/twig/accordion-layout.twig' %}
+
+{% block content %}
+
+<li id="people-to-notify-section" class="section current">
+
+    <h2 class="heading-medium accordion-header flush--top">Who should be notified about your LPA?</h2>
+
+    <div class="accordion-info">
+        <div class="text">
+            <p>You can add up to 5 'people to notify' however, you don't have to include any for your LPA to be valid.</p>
+            <p>These people have a chance to raise any concerns before your LPA is registered.</p>
+            <p>You will be given the form to download and send to any 'people to notify' once you have finished your LPA.</p>
+            <p><a class="js-guidance" href="/guide#topic-people-to-notify" data-journey-click="stageprompt.lpa:help:people-to-notify">Find out more about 'people to notify'</a></p>
+        </div>
+    </div>
+
+    {% if (peopleToNotify) %}
+
+        <h3 class="heading-medium flush--top">
+            The {% if peopleToNotify|length > 1 %}people{% else %}person{% endif %} to notify
+        </h3>
+
+        <ul>
+            {% for person in peopleToNotify %}
+                {% include 'application/authenticated/lpa/people-to-notify/partials/people-to-notify.twig' with person %}
+            {% endfor %}
+        </ul>
+
+    {% endif %}
+
+    {% if peopleToNotify|length < 5 %}
+
+        <div class="{% if (peopleToNotify) %}action-item{% endif %} form-group">
+            <a href="{{ addRoute }}" class="{% if not (peopleToNotify) %}button{% endif %} js-form-popup" >
+                {% if (peopleToNotify) %}
+                    Add another 'person to notify'
+                {% else %}
+                    Add a 'person to notify'
+                {% endif %}
+            </a>
+        </div>
+
+    {% endif %}
+
+    {# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+        {{ formElement(form.getCsrf) }}
+
+        <div class="form-group">
+            {{ formElement(form.get('save')) }}
+        </div>
+
+    {{ form().closeTag|raw }}
+
+</li>
+
+{% endblock %}

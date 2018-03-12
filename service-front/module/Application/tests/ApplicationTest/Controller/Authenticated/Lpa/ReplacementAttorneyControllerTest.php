@@ -18,6 +18,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
+use Zend\Mvc\MvcEvent;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -208,7 +209,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
         $this->assertEquals('lpa/replacement-attorney/add-trust', $result->switchAttorneyTypeRoute);
@@ -230,7 +231,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
         $this->assertEquals(null, $result->switchAttorneyTypeRoute);
@@ -253,7 +254,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
         $this->assertEquals(null, $result->switchAttorneyTypeRoute);
@@ -273,7 +274,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
         $this->assertEquals('lpa/replacement-attorney/add-trust', $result->switchAttorneyTypeRoute);
@@ -383,7 +384,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals("http://localhost/lpa/{$this->lpa->id}/lpa/replacement-attorney/add", $result->backButtonUrl);
         $this->assertEquals($cancelUrl, $result->cancelUrl);
@@ -420,7 +421,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addTrustAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/trust-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/trust-form.twig', $result->getTemplate());
         $this->assertEquals($this->trustCorporationForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
         $this->assertEquals('lpa/replacement-attorney/add', $result->switchAttorneyTypeRoute);
@@ -439,7 +440,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addTrustAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/trust-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/trust-form.twig', $result->getTemplate());
         $this->assertEquals($this->trustCorporationForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
         $this->assertEquals('lpa/replacement-attorney/add', $result->switchAttorneyTypeRoute);
@@ -548,7 +549,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->addTrustAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/trust-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/trust-form.twig', $result->getTemplate());
         $this->assertEquals($this->trustCorporationForm, $result->getVariable('form'));
         $this->assertEquals("http://localhost/lpa/{$this->lpa->id}/lpa/replacement-attorney/add", $result->backButtonUrl);
         $this->assertEquals($cancelUrl, $result->cancelUrl);
@@ -557,13 +558,16 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testEditActionInvalidIndex()
     {
+        $event = new MvcEvent();
+        $routeMatch = $this->getRouteMatch($this->controller);
+        $event->setRouteMatch($routeMatch);
         $response = Mockery::mock(Response::class);
-        $this->controller->dispatch($this->request, $response);
+        $event->setResponse($response);
+        $this->controller->setEvent($event);
 
         $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn(-1)->once();
-        $routeMatch = $this->getHttpRouteMatch($this->controller);
         $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
         $response->shouldReceive('setStatusCode')->withArgs([404])->once();
 
@@ -592,7 +596,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
@@ -616,7 +620,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/trust-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/trust-form.twig', $result->getTemplate());
         $this->assertEquals($this->trustCorporationForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
@@ -637,7 +641,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $result = $this->controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/replacement-attorney/person-form.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/replacement-attorney/person-form.twig', $result->getTemplate());
         $this->assertEquals($this->replacementAttorneyForm, $result->getVariable('form'));
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
@@ -730,12 +734,15 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testConfirmDeleteActionInvalidIndex()
     {
+        $event = new MvcEvent();
+        $routeMatch = $this->getRouteMatch($this->controller);
+        $event->setRouteMatch($routeMatch);
         $response = Mockery::mock(Response::class);
-        $this->controller->dispatch($this->request, $response);
+        $event->setResponse($response);
+        $this->controller->setEvent($event);
 
         $this->controller->setLpa($this->lpa);
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn(-1)->once();
-        $routeMatch = $this->getHttpRouteMatch($this->controller);
         $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
         $response->shouldReceive('setStatusCode')->withArgs([404])->once();
 
@@ -816,11 +823,14 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testDeleteActionInvalidIndex()
     {
+        $event = new MvcEvent();
+        $routeMatch = $this->getRouteMatch($this->controller);
+        $event->setRouteMatch($routeMatch);
         $response = Mockery::mock(Response::class);
-        $this->controller->dispatch($this->request, $response);
+        $event->setResponse($response);
+        $this->controller->setEvent($event);
 
         $this->controller->setLpa($this->lpa);
-        $routeMatch = $this->getHttpRouteMatch($this->controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn(-1)->once();
         $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
         $response->shouldReceive('setStatusCode')->withArgs([404])->once();

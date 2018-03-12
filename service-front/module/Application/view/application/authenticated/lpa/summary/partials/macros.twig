@@ -1,0 +1,110 @@
+
+{% macro outputEditLink( editLink ) %}
+    <td class="table-summary-action"><a href="{{ editLink|raw }}">Edit</a></td>
+{% endmacro %}
+
+{% macro outputEmptyAction() %}
+    <td class="table-summary-action"></td>
+{% endmacro %}
+
+{% macro outputActor(data, editLink) %}
+
+    {% import _self as macros %}
+
+    {% set editLinkOutput = false %}
+
+    {% if data.name is defined and data.name is not empty %}
+        <tr class="group-element">
+            <th class="table-summary-title" scope="row">Name</th>
+            <td class="table-summary-content">{{ data.name }}</td>
+            {{ not editLinkOutput ? macros.outputEditLink(editLink) : macros.outputEmptyAction() }}
+            {% set editLinkOutput = true %}
+        </tr>
+    {% endif %}
+
+    {% if data.otherNames is defined and data.otherNames is not empty %}
+        <tr class="group-element">
+            <th class="table-summary-title" scope="row">Other Names</th>
+            <td class="table-summary-content">{{ data.otherNames }}</td>
+            <td class="table-summary-action"></td>
+        </tr>
+    {% endif %}
+
+    {% if data.number is defined and data.number is not empty %}
+        <tr class="group-element">
+            <th class="table-summary-title" scope="row">Company Number</th>
+            <td class="table-summary-content">{{ data.number }}</td>
+            {{ not editLinkOutput ? macros.outputEditLink(editLink) : macros.outputEmptyAction() }}
+            {% set editLinkOutput = true %}
+        </tr>
+    {% endif %}
+
+    {% if data.company is defined and data.company is not empty %}
+        <tr class="group-element">
+            <th class="table-summary-title" scope="row">Company Name</th>
+            <td class="table-summary-content">{{ data.company }}</td>
+            {{ not editLinkOutput ? macros.outputEditLink(editLink) : macros.outputEmptyAction() }}
+            {% set editLinkOutput = true %}
+        </tr>
+    {% endif %}
+
+    {% if data.dob is defined %}
+        <tr class="group-element">
+            <th class="table-summary-title" scope="row">Date of birth</th>
+            <td class="table-summary-content">{{ data.dob.date.format('j F Y') }}</td>
+            {{ not editLinkOutput ? macros.outputEditLink(editLink) : macros.outputEmptyAction() }}
+            {% set editLinkOutput = true %}
+        </tr>
+    {% endif %}
+
+    {% if data.email is defined and data.email is not empty %}
+        <tr class="group-element">
+            <th class="table-summary-title" scope="row">Email address</th>
+            <td class="table-summary-content">{{ data.email }}</td>
+            {{ not editLinkOutput ? macros.outputEditLink(editLink) : macros.outputEmptyAction() }}
+            {% set editLinkOutput = true %}
+        </tr>
+    {% endif %}
+
+    {% if data.phone is defined and data.phone is not empty %}
+        <tr class="group-element">
+            <th class="table-summary-title" scope="row">Phone number</th>
+            <td class="table-summary-content">{{ data.phone.number }}</td>
+            {{ not editLinkOutput ? macros.outputEditLink(editLink) : macros.outputEmptyAction() }}
+            {% set editLinkOutput = true %}
+        </tr>
+    {% endif %}
+
+    {% if data.address is defined %}
+        <tr class="{{ (data.canSign is defined) ? 'group-element' : 'group-end' }}">
+            <th class="table-summary-title" scope="row">Address</th>
+            <td class="table-summary-content">
+                <div itemprop="address" itemtype="http://schema.org/PostalAddress" itemscope="">
+                    {% if data.address.address1 is defined %}
+                        <div itemprop="streetAddress">{{ data.address.address1 }}</div>
+                    {% endif %}
+                    {% if data.address.address2 is defined %}
+                        <div itemprop="addressLocality">{{ data.address.address2 }}</div>
+                    {% endif %}
+                    {% if data.address.address3 is defined %}
+                        <div itemprop="addressRegion">{{ data.address.address3 }}</div>
+                    {% endif %}
+                    {% if data.address.postcode is defined %}
+                        <div itemprop="postalCode">{{ data.address.postcode }}</div>
+                    {% endif %}
+                </div>
+            </td>
+            {{ not editLinkOutput ? macros.outputEditLink(editLink) : macros.outputEmptyAction() }}
+            {% set editLinkOutput = true %}
+        </tr>
+    {% endif %}
+
+    {% if data.canSign is defined %}
+        <tr class="group-end">
+            <th class="table-summary-title" scope="row">The donor can physically sign or make a mark on the LPA</th>
+            <td class="table-summary-content">{{ data.canSign ? 'Yes' : 'No' }}</td>
+            <td class="table-summary-action"></td>
+        </tr>
+    {% endif %}
+
+{% endmacro %}

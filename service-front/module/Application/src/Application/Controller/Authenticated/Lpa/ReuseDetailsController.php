@@ -4,7 +4,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
 use Zend\Http\Request;
-use Zend\Mvc\Router\RouteStackInterface;
+use Zend\Router\RouteStackInterface;
 use Zend\View\Model\ViewModel;
 
 class ReuseDetailsController extends AbstractLpaActorController

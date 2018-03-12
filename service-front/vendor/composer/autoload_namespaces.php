@@ -6,8 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'ZfcTwig\\' => array($vendorDir . '/zf-commons/zfc-twig/src'),
-    'ZendXml\\' => array($vendorDir . '/zendframework/zendxml/library'),
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'Smtpapi' => array($vendorDir . '/sendgrid/smtpapi/lib'),
     'SendGrid' => array($vendorDir . '/sendgrid/sendgrid/lib'),
@@ -16,7 +14,6 @@ return array(
     'Omnipay\\WorldPayXML\\' => array($vendorDir . '/netsensia/omnipay-worldpay-xml/src'),
     'Omnipay\\Common\\' => array($vendorDir . '/omnipay/common/src'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),
-    'Michelf' => array($vendorDir . '/michelf/php-markdown'),
     'Guzzle\\Tests' => array($vendorDir . '/guzzle/guzzle/tests'),
     'Guzzle' => array($vendorDir . '/guzzle/guzzle/src'),
     'Egulias\\' => array($vendorDir . '/egulias/email-validator/src'),

@@ -14,8 +14,8 @@ use Opg\Lpa\Logger\LoggerTrait;
 use Zend\ModuleManager\Feature\FormElementProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\ServiceManager;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayUtils;
 use Zend\View\Model\ViewModel;
@@ -232,7 +232,7 @@ class Module implements FormElementProviderInterface
 
                         $callable = [$renderer->plugin($name), '__invoke'];
                         $options  = ['is_safe' => ['html']];
-                        return new \Twig_SimpleFunction(null, $callable, $options);
+                        return new \Twig_SimpleFunction('email', $callable, $options);
                     });
 
                     return $env;
@@ -260,8 +260,8 @@ class Module implements FormElementProviderInterface
 
         return array(
             'factories' => array(
-                'staticAssetPath' => function( $sm ){
-                    $config = $sm->getServiceLocator()->get('Config');
+                'StaticAssetPath' => function( $sm ){
+                    $config = $sm->get('Config');
                     return new \Application\View\Helper\StaticAssetPath( $config['version']['cache'] );
                 },
             ),
@@ -376,10 +376,9 @@ class Module implements FormElementProviderInterface
     {
         return [
             'initializers' => [
-                'InitCsrfForm' => function($form, AbstractPluginManager $formElementManager) {
+                'InitCsrfForm' => function(ServiceManager $serviceManager, $form) {
                     if ($form instanceof AbstractCsrfForm) {
-                        $serviceLocator = $formElementManager->getServiceLocator();
-                        $config = $serviceLocator->get('Config');
+                        $config = $serviceManager->get('Config');
                         $form->setConfig($config);
                     }
                 },

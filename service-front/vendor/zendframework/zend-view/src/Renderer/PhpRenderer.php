@@ -491,6 +491,7 @@ class PhpRenderer implements Renderer, TreeRendererInterface
         extract($__vars);
         unset($__vars); // remove $__vars from local scope
 
+        $this->__content = '';
         while ($this->__template = array_pop($this->__templates)) {
             $this->__file = $this->resolver($this->__template);
             if (! $this->__file) {
@@ -504,7 +505,10 @@ class PhpRenderer implements Renderer, TreeRendererInterface
                 ob_start();
                 $includeReturn = include $this->__file;
                 $this->__content = ob_get_clean();
-            } catch (\Exception $ex) {
+            } catch (\Throwable $ex) {
+                ob_end_clean();
+                throw $ex;
+            } catch (\Exception $ex) { // @TODO clean up once PHP 7 requirement is enforced
                 ob_end_clean();
                 throw $ex;
             }

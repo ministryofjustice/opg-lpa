@@ -14,7 +14,7 @@ use OpgTest\Lpa\DataModel\FixturesData;
 use Zend\Form\Element;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
+use Zend\Router\RouteMatch;
 use Zend\View\Model\ViewModel;
 
 class AdminControllerTest extends AbstractControllerTest
@@ -96,6 +96,8 @@ class AdminControllerTest extends AbstractControllerTest
         $event = new MvcEvent();
         $routeMatch = $this->getRouteMatch($this->controller);
         $event->setRouteMatch($routeMatch);
+        $response = new Response();
+        $event->setResponse($response);
         $this->controller->setEvent($event);
 
         $this->user = FixturesData::getUser();

@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.1 - 2018-01-22
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#160](https://github.com/zendframework/zend-inputfilter/pull/160) adds
+  zend-servicemanager as a direct requirement, rather than a suggestion. The
+  package has not worked without it since [#67](https://github.com/zendframework/zend-inputfilter/pull/67)
+  was merged for the 2.6.1 release.
+
+- [#161](https://github.com/zendframework/zend-inputfilter/pull/161) fixes an
+  issue whereby an input filter receiving a `null` value to `setData()` would
+  raise an exception, instead of being treated as an empty data set.
+
 ## 2.8.0 - 2017-12-04
 
 ### Added

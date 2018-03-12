@@ -559,7 +559,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $result = $this->controller->payResponseAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/checkout/govpay-cancel.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/checkout/govpay-cancel.twig', $result->getTemplate());
     }
 
     public function testPayResponseActionNotSuccessfulOther()
@@ -578,7 +578,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $result = $this->controller->payResponseAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/checkout/govpay-failure.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/checkout/govpay-failure.twig', $result->getTemplate());
     }
 
     /**

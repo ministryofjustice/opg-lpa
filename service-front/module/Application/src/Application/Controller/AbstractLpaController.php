@@ -14,7 +14,7 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Authentication\AuthenticationService;
 use Zend\Cache\Storage\StorageInterface;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\Http\RouteMatch;
+use Zend\Router\Http\RouteMatch;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\Session\AbstractContainer;
 use Zend\View\Model\JsonModel;
@@ -149,7 +149,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         $routeMatch = $this->getEvent()->getRouteMatch();
 
         if (!$routeMatch instanceof RouteMatch) {
-            throw new \RuntimeException('RouteMatch must be an instance of Zend\Mvc\Router\Http\RouteMatch when using the moveToNextRoute function');
+            throw new \RuntimeException('RouteMatch must be an instance of Zend\Router\Http\RouteMatch when using the moveToNextRoute function');
         }
 
         //  Get the current route and the LPA ID to move to the next route

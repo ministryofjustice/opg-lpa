@@ -12,7 +12,6 @@
 class CustomExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @requires PHP 5.3
      * @dataProvider provideInvalidExtensions
      */
     public function testGetInvalidOperators(Twig_ExtensionInterface $extension, $expectedExceptionMessage)
@@ -47,10 +46,6 @@ class InvalidOperatorExtension implements Twig_ExtensionInterface
         $this->operators = $operators;
     }
 
-    public function initRuntime(Twig_Environment $environment)
-    {
-    }
-
     public function getTokenParsers()
     {
         return array();
@@ -76,18 +71,8 @@ class InvalidOperatorExtension implements Twig_ExtensionInterface
         return array();
     }
 
-    public function getGlobals()
-    {
-        return array();
-    }
-
     public function getOperators()
     {
         return $this->operators;
-    }
-
-    public function getName()
-    {
-        return __CLASS__;
     }
 }

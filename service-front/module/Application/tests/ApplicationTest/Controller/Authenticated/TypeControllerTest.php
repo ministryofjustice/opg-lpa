@@ -14,7 +14,7 @@ use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
+use Zend\Router\RouteMatch;
 use Zend\View\Model\ViewModel;
 
 class TypeControllerTest extends AbstractControllerTest
@@ -48,7 +48,7 @@ class TypeControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/type/index', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/type/index', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
         $this->assertEquals([
@@ -65,7 +65,7 @@ class TypeControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/type/index', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/type/index', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
         $this->assertEquals([

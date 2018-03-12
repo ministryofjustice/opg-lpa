@@ -31,7 +31,7 @@ class CompleteController extends AbstractLpaController
         $viewParams['analyticsDimensions'] = $analyticsDimensions;
 
         $viewModel = new ViewModel($viewParams);
-        $viewModel->setTemplate('application/complete/complete.twig');
+        $viewModel->setTemplate('application/authenticated/lpa/complete/complete.twig');
 
         return $viewModel;
     }

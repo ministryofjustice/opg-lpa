@@ -326,10 +326,10 @@ class CheckoutController extends AbstractLpaController
 
             // If the user actively canceled it...
             if ($paymentResponse->state->code == 'P0030') {
-                $viewModel->setTemplate('application/checkout/govpay-cancel.twig');
+                $viewModel->setTemplate('application/authenticated/lpa/checkout/govpay-cancel.twig');
             } else {
                 // Else it failed for some other reason.
-                $viewModel->setTemplate('application/checkout/govpay-failure.twig');
+                $viewModel->setTemplate('application/authenticated/lpa/checkout/govpay-failure.twig');
             }
 
             return $viewModel;

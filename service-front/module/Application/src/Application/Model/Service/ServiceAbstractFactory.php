@@ -7,7 +7,10 @@ use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\User\Details;
 use Application\Model\Service\User\PasswordReset;
 use Exception;
-use Zend\ServiceManager\AbstractFactoryInterface;
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -34,30 +37,32 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
     ];
 
     /**
-     * Determine if we can create a service with name
+     * Can the factory create an instance for the service?
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param $name
-     * @param $requestedName
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
      * @return bool
      */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function canCreate(ContainerInterface $container, $requestedName)
     {
         return class_exists($requestedName) && is_subclass_of($requestedName, AbstractService::class);
     }
 
     /**
-     * Create service with name
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param $name
-     * @param $requestedName
-     * @return mixed
-     * @throws Exception
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws Exception if any other error occurs
      */
-    public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        if (!$this->canCreateServiceWithName($serviceLocator, $name, $requestedName)) {
+        if (!$this->canCreate($container, $requestedName)) {
             throw new ServiceNotFoundException(sprintf(
                 'Abstract factory %s can not create the requested service %s',
                 get_class($this),
@@ -69,19 +74,19 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
 
         if (is_subclass_of($serviceName, AbstractEmailService::class)) {
             $service = new $serviceName(
-                $serviceLocator->get('ApiClient'),
-                $serviceLocator->get('LpaApplicationService'),
-                $serviceLocator->get('AuthenticationService'),
-                $serviceLocator->get('Config'),
-                $serviceLocator->get('TwigEmailRenderer'),
-                $serviceLocator->get('MailTransport')
+                $container->get('ApiClient'),
+                $container->get('LpaApplicationService'),
+                $container->get('AuthenticationService'),
+                $container->get('Config'),
+                $container->get('TwigEmailRenderer'),
+                $container->get('MailTransport')
             );
         } else {
             $service = new $serviceName(
-                $serviceLocator->get('ApiClient'),
-                $serviceLocator->get('LpaApplicationService'),
-                $serviceLocator->get('AuthenticationService'),
-                $serviceLocator->get('Config')
+                $container->get('ApiClient'),
+                $container->get('LpaApplicationService'),
+                $container->get('AuthenticationService'),
+                $container->get('Config')
             );
         }
 
@@ -97,7 +102,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
                     ));
                 }
 
-                $service->$setterMethod($serviceLocator->get($additionalService));
+                $service->$setterMethod($container->get($additionalService));
             }
         }
 

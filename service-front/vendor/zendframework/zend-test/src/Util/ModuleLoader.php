@@ -25,13 +25,16 @@ class ModuleLoader
      */
     public function __construct(array $configuration)
     {
-        if (!isset($configuration['modules'])) {
+        if (! isset($configuration['modules'])) {
             $modules = $configuration;
             $configuration = [
                 'module_listener_options' => [
                     'module_paths' => [],
                 ],
-                'modules' => [],
+                'modules' => [
+                    'Zend\Router',
+                    'Zend\Validator',
+                ],
             ];
             foreach ($modules as $key => $module) {
                 if (is_numeric($key)) {

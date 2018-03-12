@@ -14,18 +14,13 @@
 		},
 		{
 			"name": "John Gruber",
-			"homepage": "http://daringfireball.net/"
+			"homepage": "https://daringfireball.net/"
 		}
 	],
 	"require": {
 		"php": ">=5.3.0"
 	},
 	"autoload": {
- 		"psr-0": { "Michelf": "" }
-	},
-	"extra": {
-		"branch-alias": {
-			"dev-lib": "1.4.x-dev"
-		}
+ 		"psr-4": { "Michelf\\": "Michelf/" }
 	}
 }

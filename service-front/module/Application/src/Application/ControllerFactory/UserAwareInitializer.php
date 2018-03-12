@@ -3,22 +3,22 @@
 namespace Application\ControllerFactory;
 
 use Application\Controller\AbstractAuthenticatedController;
-use Zend\ServiceManager\InitializerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Initializer\InitializerInterface;
 
 class UserAwareInitializer implements InitializerInterface
 {
     /**
-     * Inject the current user into classes that extend AbstractAuthenticatedController
+     * Initialize the given instance
      *
-     * @param $instance
-     * @param ServiceLocatorInterface $controllerManager
-     * @return mixed
+     * @param  ContainerInterface $container
+     * @param  object $instance
+     * @return void
      */
-    public function initialize($instance, ServiceLocatorInterface $controllerManager)
+    public function __invoke(ContainerInterface $container, $instance)
     {
         if ($instance instanceof AbstractAuthenticatedController) {
-            $auth = $controllerManager->getServiceLocator()->get('AuthenticationService');
+            $auth = $container->get('AuthenticationService');
 
             if ($auth->hasIdentity()) {
                 $instance->setUser($auth->getIdentity());
