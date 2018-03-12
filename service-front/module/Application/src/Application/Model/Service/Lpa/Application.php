@@ -46,9 +46,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function getApplication($lpaId)
     {
-        $path = sprintf('/v2/users/%s/applications/%d', $this->getUserId(), $lpaId);
-
-        $response = $this->apiClient->httpGet($path);
+        $response = $this->apiClient->httpGet(sprintf('/v2/users/%s/applications/%d', $this->getUserId(), $lpaId));
 
         return ($response->getStatusCode() == 200 ? LpaResponse::buildFromResponse($response) : false);
     }
@@ -189,10 +187,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
     {
         $applicationList = [];
 
-        //  Construct the path to the API and create a URL
-        $path = sprintf('/v2/users/%s/applications', $this->getUserId());
-
-        $response = $this->apiClient->httpGet($path, $query);
+        $response = $this->apiClient->httpGet(sprintf('/v2/users/%s/applications', $this->getUserId()), $query);
 
         if ($response->getStatusCode() != 200) {
             return new ResponseException('unknown-error', $response->getStatusCode(), $response);

@@ -410,7 +410,8 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
             if (!$cloneContainer->offsetExists($seedId)) {
                 //  The data isn't in the session - get it now
-                $cloneContainer->$seedId = $this->getLpaApplicationService()->getSeedDetails($this->getIdentity()->id(), $lpa->id);
+                $abc = $this->getLpaApplicationService()->getSeedDetails($this->getIdentity()->id(), $lpa->id);
+                $cloneContainer->$seedId = $abc;
             }
 
             if (is_array($cloneContainer->$seedId)) {
