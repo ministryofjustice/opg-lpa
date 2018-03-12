@@ -63,8 +63,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
         $path = sprintf('/v2/users/%s/applications', $this->getUserId());
 
         try {
-            //  TODO - Array with single empty element required? Or allow default to empty array?
-            $response = $this->apiClient->httpPost($path, ['']);
+            $response = $this->apiClient->httpPost($path);
 
             if ($response->getStatusCode() == 201) {
                 return LpaResponse::buildFromResponse($response);
