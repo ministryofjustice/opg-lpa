@@ -1,81 +1,74 @@
 {
     "name": "zendframework/zend-mvc",
-    "description": " ",
+    "description": "Zend Framework's event-driven MVC layer, including MVC Applications, Controllers, and Plugins",
     "license": "BSD-3-Clause",
     "keywords": [
-        "zf2",
+        "zf",
+        "zendframework",
         "mvc"
     ],
-    "homepage": "https://github.com/zendframework/zend-mvc",
+    "support": {
+        "docs": "https://docs.zendframework.com/zend-mvc/",
+        "issues": "https://github.com/zendframework/zend-mvc/issues",
+        "source": "https://github.com/zendframework/zend-mvc",
+        "rss": "https://github.com/zendframework/zend-mvc/releases.atom",
+        "slack": "https://zendframework-slack.herokuapp.com",
+        "forum": "https://discourse.zendframework.com/c/questions/components"
+    },
+    "require": {
+        "container-interop/container-interop": "^1.2",
+        "php": "^5.6 || ^7.0",
+        "zendframework/zend-eventmanager": "^3.2",
+        "zendframework/zend-http": "^2.7",
+        "zendframework/zend-modulemanager": "^2.8",
+        "zendframework/zend-router": "^3.0.2",
+        "zendframework/zend-servicemanager": "^3.3",
+        "zendframework/zend-stdlib": "^3.1",
+        "zendframework/zend-view": "^2.9"
+    },
+    "require-dev": {
+        "http-interop/http-middleware": "^0.4.1",
+        "phpunit/phpunit": "^6.4.4 || ^5.7.14",
+        "zendframework/zend-coding-standard": "~1.0.0",
+        "zendframework/zend-json": "^2.6.1 || ^3.0",
+        "zendframework/zend-psr7bridge": "^1.0",
+        "zendframework/zend-stratigility": "^2.0.1"
+    },
+    "suggest": {
+        "zendframework/zend-json": "(^2.6.1 || ^3.0) To auto-deserialize JSON body content in AbstractRestfulController extensions, when json_decode is unavailable",
+        "zendframework/zend-log": "^2.9.1  To provide log functionality via LogFilterManager, LogFormatterManager, and LogProcessorManager",
+        "zendframework/zend-mvc-console": "zend-mvc-console provides the ability to expose zend-mvc as a console application",
+        "zendframework/zend-mvc-i18n": "zend-mvc-i18n provides integration with zend-i18n, including a translation bridge and translatable route segments",
+        "zendframework/zend-mvc-plugin-fileprg": "To provide Post/Redirect/Get functionality around forms that container file uploads",
+        "zendframework/zend-mvc-plugin-flashmessenger": "To provide flash messaging capabilities between requests",
+        "zendframework/zend-mvc-plugin-identity": "To access the authenticated identity (per zend-authentication) in controllers",
+        "zendframework/zend-mvc-plugin-prg": "To provide Post/Redirect/Get functionality within controllers",
+        "zendframework/zend-paginator": "^2.7 To provide pagination functionality via PaginatorPluginManager",
+        "zendframework/zend-psr7bridge": "(^0.2) To consume PSR-7 middleware within the MVC workflow",
+        "zendframework/zend-servicemanager-di": "zend-servicemanager-di provides utilities for integrating zend-di and zend-servicemanager in your zend-mvc application",
+        "zendframework/zend-stratigility": "zend-stratigility is required to use middleware pipes in the MiddlewareListener",
+        "http-interop/http-middleware": "^0.4.1 to be used together with zend-stratigility"
+    },
     "autoload": {
         "psr-4": {
             "Zend\\Mvc\\": "src/"
         }
     },
-    "require": {
-        "php": "^5.5 || ^7.0",
-        "zendframework/zend-eventmanager": "^2.6.2 || ^3.0",
-        "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3",
-        "zendframework/zend-hydrator": "^1.1 || ^2.1",
-        "zendframework/zend-form": "^2.8.2",
-        "zendframework/zend-stdlib": "^2.7.5 || ^3.0",
-        "zendframework/zend-psr7bridge": "^0.2",
-        "container-interop/container-interop": "^1.1"
-    },
-    "require-dev": {
-        "zendframework/zend-authentication": "^2.5.3",
-        "zendframework/zend-cache": "^2.6.1",
-        "zendframework/zend-console": "^2.6",
-        "zendframework/zend-di": "^2.6",
-        "zendframework/zend-filter": "^2.6.1",
-        "zendframework/zend-http": "^2.5.4",
-        "zendframework/zend-i18n": "^2.6",
-        "zendframework/zend-inputfilter": "^2.6",
-        "zendframework/zend-json": "^2.6.1",
-        "zendframework/zend-log": "^2.7.1",
-        "zendframework/zend-modulemanager": "^2.7.1",
-        "zendframework/zend-session": "^2.6.2",
-        "zendframework/zend-serializer": "^2.6.1",
-        "zendframework/zend-text": "^2.6",
-        "zendframework/zend-uri": "^2.5",
-        "zendframework/zend-validator": "^2.6",
-        "zendframework/zend-view": "^2.6.3",
-        "friendsofphp/php-cs-fixer": "1.7.*",
-        "phpunit/PHPUnit": "^4.5",
-        "sebastian/version": "^1.0.4"
-    },
-    "replace": {
-        "zendframework/zend-router": "^2.0"
-    },
-    "suggest": {
-        "zendframework/zend-authentication": "Zend\\Authentication component for Identity plugin",
-        "zendframework/zend-config": "Zend\\Config component",
-        "zendframework/zend-console": "Zend\\Console component",
-        "zendframework/zend-di": "Zend\\Di component",
-        "zendframework/zend-filter": "Zend\\Filter component",
-        "zendframework/zend-http": "Zend\\Http component",
-        "zendframework/zend-i18n": "Zend\\I18n component for translatable segments",
-        "zendframework/zend-inputfilter": "Zend\\Inputfilter component",
-        "zendframework/zend-json": "Zend\\Json component",
-        "zendframework/zend-log": "Zend\\Log component",
-        "zendframework/zend-modulemanager": "Zend\\ModuleManager component",
-        "zendframework/zend-serializer": "Zend\\Serializer component",
-        "zendframework/zend-servicemanager-di": "^1.0.1, if using zend-servicemanager v3 and requiring the zend-di integration",
-        "zendframework/zend-session": "Zend\\Session component for FlashMessenger, PRG, and FPRG plugins",
-        "zendframework/zend-text": "Zend\\Text component",
-        "zendframework/zend-uri": "Zend\\Uri component",
-        "zendframework/zend-validator": "Zend\\Validator component",
-        "zendframework/zend-view": "Zend\\View component"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.7-dev",
-            "dev-develop": "3.0-dev"
-        }
-    },
     "autoload-dev": {
         "psr-4": {
             "ZendTest\\Mvc\\": "test/"
+        },
+        "files": [
+            "test/_autoload.php"
+        ]
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.1-dev",
+            "dev-develop": "3.2-dev"
         }
     },
     "scripts": {
@@ -83,10 +76,10 @@
             "@cs-check",
             "@test"
         ],
-        "upload-coverage": "coveralls -v",
-        "cs-check": "php-cs-fixer --version && php-cs-fixer fix -v --diff --dry-run",
-        "cs-fix": "php-cs-fixer fix -v",
-        "test": "phpunit",
-        "test-coverage": "phpunit --coverage-clover clover.xml"
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
+        "upload-coverage": "coveralls -v"
     }
 }

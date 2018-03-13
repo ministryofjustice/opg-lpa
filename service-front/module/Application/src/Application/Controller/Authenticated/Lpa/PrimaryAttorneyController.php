@@ -55,7 +55,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
     public function addAction()
     {
         $viewModel = new ViewModel();
-        $viewModel->setTemplate('application/primary-attorney/person-form.twig');
+        $viewModel->setTemplate('application/authenticated/lpa/primary-attorney/person-form.twig');
 
         if ($this->isPopup()) {
             $viewModel->setTerminal(true);
@@ -139,10 +139,10 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         if ($attorney instanceof Human) {
             $form = $this->getFormElementManager()->get('Application\Form\Lpa\AttorneyForm');
             $form->setExistingActorNamesData($this->getActorsList($attorneyIdx));
-            $viewModel->setTemplate('application/primary-attorney/person-form.twig');
+            $viewModel->setTemplate('application/authenticated/lpa/primary-attorney/person-form.twig');
         } else {
             $form = $this->getFormElementManager()->get('Application\Form\Lpa\TrustCorporationForm');
-            $viewModel->setTemplate('application/primary-attorney/trust-form.twig');
+            $viewModel->setTemplate('application/authenticated/lpa/primary-attorney/trust-form.twig');
         }
 
         $form->setAttribute('action', $this->url()->fromRoute('lpa/primary-attorney/edit', ['lpa-id' => $lpaId, 'idx' => $attorneyIdx]));
@@ -299,7 +299,7 @@ class PrimaryAttorneyController extends AbstractLpaActorController
     public function addTrustAction()
     {
         $viewModel = new ViewModel();
-        $viewModel->setTemplate('application/primary-attorney/trust-form.twig');
+        $viewModel->setTemplate('application/authenticated/lpa/primary-attorney/trust-form.twig');
 
         if ($this->isPopup()) {
             $viewModel->setTerminal(true);

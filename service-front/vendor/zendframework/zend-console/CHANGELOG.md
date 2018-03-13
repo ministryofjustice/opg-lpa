@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.0 - 2018-01-25
+
+### Added
+
+- [#32](https://github.com/zendframework/zend-console/pull/32) adds a new route
+  match type, the "catch-all". Such types are always optional (thus, appear in
+  `[]` sets), and are specified using `...` within: `command [...options]`.
+
+  Parameters matched this way will always be returned as an array of values.
+
+- [#39](https://github.com/zendframework/zend-console/pull/39) adds support for
+  PHP 7.2.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#39](https://github.com/zendframework/zend-console/pull/39) removes support
+  for PHP 5.5.
+
+- [#39](https://github.com/zendframework/zend-console/pull/39) removes support
+  for HHVM.
+
+### Fixed
+
+- [#19](https://github.com/zendframework/zend-console/pull/19) updated link
+  to the documentation in the [README](README.md)
+
 ## 2.6.0 - 2016-02-9
 
 ### Added

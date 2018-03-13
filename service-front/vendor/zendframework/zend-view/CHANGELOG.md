@@ -2,6 +2,73 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.10.0 - 2018-01-17
+
+### Added
+
+- [#135](https://github.com/zendframework/zend-view/pull/135) adds support
+  for PHP 7.2.
+
+- [#138](https://github.com/zendframework/zend-view/pull/138) adds support for
+  the HTML5 "as" attribute to the `HeadLink` helper. This can be used to help
+  prioritize resource loading.
+
+- [#139](https://github.com/zendframework/zend-view/pull/139) adds two new
+  methods to the `Zend\View\Helper\Gravatar` class: `setAttributes()` and
+  `getAttributes()`.
+
+### Changed
+
+- [#133](https://github.com/zendframework/zend-view/pull/133) modifies the
+  behavior the `placeholder()` helper to no longer render a prefix or postfix if
+  no items are available in the container.
+
+### Deprecated
+
+- [#139](https://github.com/zendframework/zend-view/pull/139) deprecates the
+  `Zend\View\Helper\Gravatar` methods `setAttribs()` and `getAttribs()` in favor
+  of the new methods `setAttributes()` and `getAttributes()`, respectively.
+
+### Removed
+
+- [#135](https://github.com/zendframework/zend-view/pull/135) removes support
+  for HHVM.
+
+### Fixed
+
+- Nothing.
+
+## 2.9.1 - 2018-01-17
+
+### Added
+
+- [#136](https://github.com/zendframework/zend-view/pull/136) updates the
+  `Navigation` helper class to document the various proxy methods it allows via
+  method overloading via `@method` annotations.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#123](https://github.com/zendframework/zend-view/pull/123) updates the
+  `HelperPluginManager` such that it no longer injects a translator in a helper
+  if one is already present.
+
+- [#125](https://github.com/zendframework/zend-view/pull/125) provides an update
+  to the `PhpRenderer:render()` method such that it will now catch not only
+  `Exception` instances, but also PHP 7 `Throwable` instances, and properly
+  cleanup the output buffers when it does.
+
+- [#121](https://github.com/zendframework/zend-view/pull/121) provides a fix to
+  ensure that content generated on a previous execution of `PhpRenderer::render()`
+  is never re-used.
+
 ## 2.9.0 - 2017-03-21
 
 ### Added

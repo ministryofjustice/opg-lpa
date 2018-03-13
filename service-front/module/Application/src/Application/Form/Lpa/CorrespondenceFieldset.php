@@ -3,7 +3,7 @@
 namespace Application\Form\Lpa;
 
 use Zend\Form\Fieldset;
-use Zend\Stdlib\Hydrator\ClassMethods as ClassMethodsHydrator;
+use Zend\Hydrator\ClassMethods as ClassMethodsHydrator;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 
 class CorrespondenceFieldset extends Fieldset

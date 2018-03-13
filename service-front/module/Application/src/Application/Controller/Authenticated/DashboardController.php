@@ -174,7 +174,7 @@ class DashboardController extends AbstractAuthenticatedController
             'lpaId' => $lpa->id,
         ]);
 
-        $viewModel->setTemplate('application/dashboard/confirm-delete.twig');
+        $viewModel->setTemplate('application/authenticated/dashboard/confirm-delete.twig');
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             $viewModel->setTerminal(true);

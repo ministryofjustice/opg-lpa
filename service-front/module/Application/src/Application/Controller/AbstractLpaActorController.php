@@ -14,7 +14,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Zend\Session\Container;
-use Zend\Mvc\Router;
+use Zend\Router;
 use Zend\View\Model\ViewModel;
 
 abstract class AbstractLpaActorController extends AbstractLpaController

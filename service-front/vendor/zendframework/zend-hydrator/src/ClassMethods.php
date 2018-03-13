@@ -38,6 +38,14 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
     protected $underscoreSeparatedKeys = true;
 
     /**
+     * Flag defining whether to check the setter method with method_exists to prevent the
+     * hydrator from calling __call during hydration
+     *
+     * @var bool
+     */
+    protected $methodExistsCheck = false;
+
+    /**
      * @var Filter\FilterInterface
      */
     private $callableMethodFilter;
@@ -46,10 +54,11 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
      * Define if extract values will use camel case or name with underscore
      * @param bool|array $underscoreSeparatedKeys
      */
-    public function __construct($underscoreSeparatedKeys = true)
+    public function __construct($underscoreSeparatedKeys = true, $methodExistsCheck = false)
     {
         parent::__construct();
         $this->setUnderscoreSeparatedKeys($underscoreSeparatedKeys);
+        $this->setMethodExistsCheck($methodExistsCheck);
 
         $this->callableMethodFilter = new Filter\OptionalParametersFilter();
 
@@ -72,13 +81,16 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
-        } elseif (!is_array($options)) {
+        } elseif (! is_array($options)) {
             throw new Exception\InvalidArgumentException(
                 'The options parameter must be an array or a Traversable'
             );
         }
         if (isset($options['underscoreSeparatedKeys'])) {
             $this->setUnderscoreSeparatedKeys($options['underscoreSeparatedKeys']);
+        }
+        if (isset($options['methodExistsCheck'])) {
+            $this->setMethodExistsCheck($options['methodExistsCheck']);
         }
 
         return $this;
@@ -110,6 +122,25 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
     }
 
     /**
+     * @param  bool      $methodExistsCheck
+     * @return ClassMethods
+     */
+    public function setMethodExistsCheck($methodExistsCheck)
+    {
+        $this->methodExistsCheck = (bool) $methodExistsCheck;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getMethodExistsCheck()
+    {
+        return $this->methodExistsCheck;
+    }
+
+    /**
      * Extract values from an object with class methods
      *
      * Extracts the getter/setter of the given $object.
@@ -120,7 +151,7 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
      */
     public function extract($object)
     {
-        if (!is_object($object)) {
+        if (! is_object($object)) {
             throw new Exception\BadMethodCallException(sprintf(
                 '%s expects the provided $object to be a PHP object)',
                 __METHOD__
@@ -158,7 +189,7 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
 
                 if (strpos($method, 'get') === 0) {
                     $attribute = substr($method, 3);
-                    if (!property_exists($object, $attribute)) {
+                    if (! property_exists($object, $attribute)) {
                         $attribute = lcfirst($attribute);
                     }
                 }
@@ -190,7 +221,7 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
      */
     public function hydrate(array $data, $object)
     {
-        if (!is_object($object)) {
+        if (! is_object($object)) {
             throw new Exception\BadMethodCallException(sprintf(
                 '%s expects the provided $object to be a PHP object)',
                 __METHOD__
@@ -206,6 +237,7 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
                 $setterName = 'set' . ucfirst($this->hydrateName($property, $data));
 
                 $this->hydrationMethodsCache[$propertyFqn] = is_callable([$object, $setterName])
+                    && (! $this->methodExistsCheck || method_exists($object, $setterName))
                     ? $setterName
                     : false;
             }

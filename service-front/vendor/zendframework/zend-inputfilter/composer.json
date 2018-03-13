@@ -12,8 +12,8 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.8-dev",
-            "dev-develop": "2.9-dev"
+            "dev-master": "2.8.x-dev",
+            "dev-develop": "2.9.x-dev"
         },
         "zf": {
             "component": "Zend\\InputFilter",
@@ -32,15 +32,12 @@
         "php": "^5.6 || ^7.0",
         "zendframework/zend-filter": "^2.6",
         "zendframework/zend-stdlib": "^2.7 || ^3.0",
-        "zendframework/zend-validator": "^2.10.1"
+        "zendframework/zend-validator": "^2.10.1",
+        "zendframework/zend-servicemanager": "^2.7.10 || ^3.3.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.7.23 || ^6.4.3",
-        "zendframework/zend-coding-standard": "~1.0.0",
-        "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3"
-    },
-    "suggest": {
-        "zendframework/zend-servicemanager": "To support plugin manager support"
+        "zendframework/zend-coding-standard": "~1.0.0"
     },
     "autoload": {
         "psr-4": {
@@ -60,7 +57,6 @@
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
         "test": "phpunit --colors=always",
-        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
-        "upload-coverage": "coveralls -v"
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
     }
 }

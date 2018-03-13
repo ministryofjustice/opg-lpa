@@ -49,7 +49,7 @@ class FeedbackController extends AbstractBaseController
                         'returnTarget' => $returnTarget,
                     ]);
 
-                    $successView->setTemplate('application/feedback/thankyou');
+                    $successView->setTemplate('application/general/feedback/thankyou.twig');
 
                     return $successView;
                 } else {

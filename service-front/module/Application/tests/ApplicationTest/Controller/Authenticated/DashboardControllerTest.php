@@ -12,7 +12,7 @@ use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
+use Zend\Router\RouteMatch;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayObject;
 use Zend\View\Model\ViewModel;
@@ -246,7 +246,7 @@ class DashboardControllerTest extends AbstractControllerTest
         $result = $this->controller->confirmDeleteLpaAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/dashboard/confirm-delete.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/dashboard/confirm-delete.twig', $result->getTemplate());
         $this->assertEquals($lpa->id, $result->getVariable('lpaId'));
         $this->assertEquals($lpa->document->donor->name, $result->getVariable('donorName'));
     }
@@ -266,7 +266,7 @@ class DashboardControllerTest extends AbstractControllerTest
         $result = $this->controller->confirmDeleteLpaAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/dashboard/confirm-delete.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/dashboard/confirm-delete.twig', $result->getTemplate());
         $this->assertEquals($lpa->id, $result->getVariable('lpaId'));
         $this->assertEquals($lpa->document->donor->name, $result->getVariable('donorName'));
     }

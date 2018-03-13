@@ -114,8 +114,7 @@ class FormFlowCheckerTest extends MockeryTestCase
 
     protected function setUp()
     {
-        $serviceManager = Bootstrap::getServiceManager();
-        $config = $serviceManager->get('Config');
+        $config = require __DIR__ . '/../../../config/module.routes.php';
         $allRoutes = $config['router']['routes'];
 
         //  Extract the LPA routes from the service manager

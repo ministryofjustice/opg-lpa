@@ -7,13 +7,14 @@ use Application\ControllerFactory\LpaAwareInitializer;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use RuntimeException;
 use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
+use Zend\Router\RouteMatch;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class LpaAwareInitializerTest extends MockeryTestCase
@@ -23,9 +24,9 @@ class LpaAwareInitializerTest extends MockeryTestCase
      */
     private $initializer;
     /**
-     * @var ServiceLocatorInterface
+     * @var ContainerInterface
      */
-    private $serviceLocator;
+    private $container;
     private $authenticationService;
     private $application;
     private $mvcEvent;
@@ -35,25 +36,24 @@ class LpaAwareInitializerTest extends MockeryTestCase
     public function setUp()
     {
         $this->initializer = new LpaAwareInitializer();
-        $this->serviceLocator = Mockery::mock(ServiceLocatorInterface::class);
-        $this->serviceLocator->shouldReceive('getServiceLocator')->andReturn($this->serviceLocator);
+        $this->container = Mockery::mock(ContainerInterface::class);
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
-        $this->serviceLocator->shouldReceive('get')
+        $this->container->shouldReceive('get')
             ->withArgs(['AuthenticationService'])->andReturn($this->authenticationService);
         $this->application = Mockery::mock(Application::class);
         $this->mvcEvent = Mockery::mock(MvcEvent::class);
         $this->routeMatch = Mockery::mock(RouteMatch::class);
         $this->mvcEvent->shouldReceive('getRouteMatch')->andReturn($this->routeMatch);
         $this->application->shouldReceive('getMvcEvent')->andReturn($this->mvcEvent);
-        $this->serviceLocator->shouldReceive('get')->withArgs(['Application'])->andReturn($this->application);
+        $this->container->shouldReceive('get')->withArgs(['Application'])->andReturn($this->application);
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
-        $this->serviceLocator->shouldReceive('get')
+        $this->container->shouldReceive('get')
             ->withArgs(['LpaApplicationService'])->andReturn($this->lpaApplicationService);
     }
 
     public function testInitializeNotAbstractLpaController()
     {
-        $result = $this->initializer->initialize('Test', $this->serviceLocator);
+        $result = $this->initializer->__invoke($this->container, 'Test');
         $this->assertNull($result);
     }
 
@@ -61,7 +61,7 @@ class LpaAwareInitializerTest extends MockeryTestCase
     {
         $this->authenticationService->shouldReceive('hasIdentity')->andReturn(false)->once();
         $instance = Mockery::mock(IndexController::class);
-        $result = $this->initializer->initialize($instance, $this->serviceLocator);
+        $result = $this->initializer->__invoke($this->container, $instance);
         $this->assertNull($result);
     }
 
@@ -74,7 +74,7 @@ class LpaAwareInitializerTest extends MockeryTestCase
         $this->authenticationService->shouldReceive('hasIdentity')->andReturn(true)->once();
         $this->routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn('invalid')->once();
         $instance = Mockery::mock(IndexController::class);
-        $this->initializer->initialize($instance, $this->serviceLocator);
+        $this->initializer->__invoke($this->container, $instance);
     }
 
     public function testInitializeLpaNull()
@@ -83,7 +83,7 @@ class LpaAwareInitializerTest extends MockeryTestCase
         $this->routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn(null)->once();
         $instance = Mockery::mock(IndexController::class);
-        $result = $this->initializer->initialize($instance, $this->serviceLocator);
+        $result = $this->initializer->__invoke($this->container, $instance);
         $this->assertNull($result);
     }
 
@@ -103,7 +103,7 @@ class LpaAwareInitializerTest extends MockeryTestCase
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($identity)->once();
         $instance = Mockery::mock(IndexController::class);
         $instance->shouldReceive('setLpa')->never();
-        $result = $this->initializer->initialize($instance, $this->serviceLocator);
+        $result = $this->initializer->__invoke($this->container, $instance);
         $this->assertNull($result);
     }
 
@@ -119,7 +119,7 @@ class LpaAwareInitializerTest extends MockeryTestCase
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($identity)->once();
         $instance = Mockery::mock(IndexController::class);
         $instance->shouldReceive('setLpa')->withArgs([$lpa])->once();
-        $result = $this->initializer->initialize($instance, $this->serviceLocator);
+        $result = $this->initializer->__invoke($this->container, $instance);
         $this->assertNull($result);
     }
 }

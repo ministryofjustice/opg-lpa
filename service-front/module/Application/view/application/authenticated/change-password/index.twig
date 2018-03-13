@@ -1,0 +1,87 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block errorSummary %}
+    {% include 'application/authenticated/change-password/partials/index-error-summary.twig' %}
+{% endblock %}
+
+{% block pageTitle %}
+    Change your password
+{% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Set form fields variables #}
+{% set password = form.get('password_current') %}
+{% set new_password = form.get('password') %}
+{% set new_password_confirm = form.get('password_confirm') %}
+{% set skip_confirm_password = form.get('skip_confirm_password') %}
+
+{# form fields config #}
+{{ password.setAttributes({
+    id: 'password_current',
+    class: 'form-control'
+}) ? ''}}
+
+{{ new_password.setAttributes({
+    id: 'password',
+    class: 'form-control'
+}) ? ''}}
+
+{{ new_password_confirm.setAttributes({
+    id: 'password_confirm',
+    class: 'form-control'
+}) ? ''}}
+
+{{ skip_confirm_password.setAttributes({
+    id: 'js-skipConfirmPassword'
+}) ? ''}}
+
+
+{# form fields labels #}
+{{ password.setOptions({ label: 'Your current password' }) ? '' }}
+{{ new_password.setOptions({ label: 'New password' }) ? '' }}
+{{ new_password_confirm.setOptions({ label: 'Confirm new password' }) ? '' }}
+
+{# begin form #}
+{{ form.prepare() ? '' }}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.getCsrf) }}
+
+    <fieldset>
+        <legend class="visually-hidden">Change password</legend>
+
+        <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ password.getAttribute('id') }}">
+                {{ password.getOption('label') }}
+                {{ formElementErrorsV2(password) }}
+            </label>
+            {{ formElement(password) }}
+            <div>
+                <a href="#" class="hidden js-showHidePassword" data-for="password_current">Show password</a>
+            </div>
+        </div>
+
+        <div class="form-group {{ new_password.getMessages|length >0 ? 'error'}}">
+            <label class="form-label" for="{{ new_password.getAttribute('id') }}">
+                {{ new_password.getOption('label') }}
+                {{ formElementErrorsV2(new_password) }}
+            </label>
+            {{ formElement(new_password) }}
+            <div>
+                <a href="#" class="hidden js-showHidePassword" data-for="password" data-alsoHideConfirm="true">Show password</a>
+            </div>
+            {{ formElement(skip_confirm_password) }}
+        </div>
+        {{ macros.formGroup(new_password_confirm) }}
+
+        <div class="form-group">
+            <input type="submit" name="submit" id="signin-form-submit" class="button" value="Save new password">
+        </div>
+
+    </fieldset>
+
+{{ form().closeTag|raw }}
+
+{% endblock content %}
