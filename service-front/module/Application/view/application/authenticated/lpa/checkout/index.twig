@@ -71,10 +71,10 @@
         {% else %}
 
             <details>
-                <summary aria-controls="details-content-0" aria-expanded="false">
+                <summary data-journey-click="stageprompt.lpa:help.inline:register/checkout: Why are you asking me to pay now?">
                     <span class="summary">Why are you asking me to pay now?</span>
                 </summary>
-                <div class="panel panel-border-narrow text" id="details-content-0" aria-hidden="true">
+                <div class="panel panel-border-narrow text">
                     <p>The LPA fee covers the cost of processing your application, not just registering the LPA.</p>
                     <p>If you pay online and change your mind about registering the LPA before you post it to OPG, we will refund the money to your payment card. If you are an attorney, you could pay the fee now and reclaim it from the donor’s funds.</p>
                 </div>
@@ -128,7 +128,7 @@
         {% endif %}
 
         <p class="divorced">
-            <a href="/user/dashboard">Save for later</a>
+            <a href="/user/dashboard" data-journey-click="stageprompt.lpa:link.save:register/checkout: Save for later">Save for later</a>
         </p>
 
     {% else %}
@@ -141,7 +141,7 @@
         </div>
 
         <a class="button" disabled="disabled">Confirm</a>
-        <a href="/user/dashboard" class="button-link">Save for later</a>
+        <a href="/user/dashboard" class="button-link" data-journey-click="stageprompt.lpa:link.save:register/checkout: Save for later">Save for later</a>
 
     {% endif %}
 
