@@ -13,38 +13,22 @@
 /**
  * Represents a token stream.
  *
- * @final
- *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Twig_TokenStream
+final class Twig_TokenStream
 {
-    protected $tokens;
-    protected $current = 0;
-    protected $filename;
-
+    private $tokens;
+    private $current = 0;
     private $source;
 
     /**
      * @param array       $tokens An array of tokens
-     * @param string|null $name   The name of the template which tokens are associated with
-     * @param string|null $source The source code associated with the tokens
+     * @param Twig_Source $source
      */
-    public function __construct(array $tokens, $name = null, $source = null)
+    public function __construct(array $tokens, Twig_Source $source = null)
     {
-        if (!$name instanceof Twig_Source) {
-            if (null !== $name || null !== $source) {
-                @trigger_error(sprintf('Passing a string as the $name argument of %s() is deprecated since version 1.27. Pass a Twig_Source instance instead.', __METHOD__), E_USER_DEPRECATED);
-            }
-            $this->source = new Twig_Source($source, $name);
-        } else {
-            $this->source = $name;
-        }
-
         $this->tokens = $tokens;
-
-        // deprecated, not used anymore, to be removed in 2.0
-        $this->filename = $this->source->getName();
+        $this->source = $source ?: new Twig_Source('', '');
     }
 
     public function __toString()
@@ -148,36 +132,6 @@ class Twig_TokenStream
     public function getCurrent()
     {
         return $this->tokens[$this->current];
-    }
-
-    /**
-     * Gets the name associated with this stream (null if not defined).
-     *
-     * @return string|null
-     *
-     * @deprecated since 1.27 (to be removed in 2.0)
-     */
-    public function getFilename()
-    {
-        @trigger_error(sprintf('The %s() method is deprecated since version 1.27 and will be removed in 2.0. Use getSourceContext() instead.', __METHOD__), E_USER_DEPRECATED);
-
-        return $this->source->getName();
-    }
-
-    /**
-     * Gets the source code associated with this stream.
-     *
-     * @return string
-     *
-     * @internal Don't use this as it might be empty depending on the environment configuration
-     *
-     * @deprecated since 1.27 (to be removed in 2.0)
-     */
-    public function getSource()
-    {
-        @trigger_error(sprintf('The %s() method is deprecated since version 1.27 and will be removed in 2.0. Use getSourceContext() instead.', __METHOD__), E_USER_DEPRECATED);
-
-        return $this->source->getCode();
     }
 
     /**

@@ -9,14 +9,11 @@
  * file that was distributed with this source code.
  */
 
-/**
- * @final
- */
-class Twig_Extension_Sandbox extends Twig_Extension
+final class Twig_Extension_Sandbox extends Twig_Extension
 {
-    protected $sandboxedGlobally;
-    protected $sandboxed;
-    protected $policy;
+    private $sandboxedGlobally;
+    private $sandboxed;
+    private $policy;
 
     public function __construct(Twig_Sandbox_SecurityPolicyInterface $policy, $sandboxed = false)
     {
@@ -92,11 +89,6 @@ class Twig_Extension_Sandbox extends Twig_Extension
         }
 
         return $obj;
-    }
-
-    public function getName()
-    {
-        return 'sandbox';
     }
 }
 

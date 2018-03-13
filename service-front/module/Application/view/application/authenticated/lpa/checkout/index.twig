@@ -1,0 +1,148 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block pageTitle %}
+    Final check: LPA details
+{% endblock %}
+
+{% block content %}
+
+    <p class="text">Check all the details on this page are correct and everyone has agreed to be part of this lasting power of attorney before continuing.</p>
+
+    {% if (lpaIsCompleted) %}
+
+        <div class="alert text push--top" role="alert">
+            <i class="icon icon-important-small" role="presentation"></i>
+            <div class="alert-message">
+                <p><strong class="bold-small">At the next stage your form(s) will be ready to download and sign with the information shown below.</strong></p>
+                <p><strong class="bold-small">You won't be able to change anything in the LPA once you have confirmed.</strong></p>
+            </div>
+        </div>
+
+    {% endif %}
+
+    {% if worldPayForm is not null %}
+        {# worldpay #}
+
+            {% set worldPayForm = formErrorTextExchange(worldPayForm,  {
+            'email' : {
+            'Value is required and can\'t be empty' : 'Please enter an email address'
+            }
+            }) %}
+
+            {# Set form fields variables #}
+            {% set email = worldPayForm.get('email') %}
+
+            {# form fields config #}
+            {{ email.setAttributes({
+                id:'email',
+                class: 'form-control'
+            }) ? '' }}
+
+            {# form fields labels #}
+            {{ email.setOptions( {
+                label: 'Email address'
+            } ) ? '' }}
+
+        {# /worldpay #}
+    {% endif %}
+
+    {% import "application/macros.twig" as macros %}
+
+    {% include 'application/authenticated/lpa/summary/partials/summary-table.twig' %}
+
+    {% if (lpaIsCompleted) %}
+
+        <div class="appstatus" role="alert">
+            <h2 class="heading-xlarge">Confirm and
+                {% if lpa.payment.amount == 0 %}finish{% else %}pay{% endif %}
+            </h2>
+            {% if lpa.payment.amount is null %}
+                <h3 class="heading-medium">We'll contact you about the fee</h3>
+            {% else %}
+                <h3 class="heading-medium">Application fee: £{{ moneyFormat(lpa.payment.amount) }}</h3>
+            {% endif %}
+        </div>
+
+        {% if lpa.payment.amount == 0 %}
+
+            {# -- Nothing to pay -- #}
+            <p class="divorced"><a href="{{ url('lpa/checkout/confirm', {'lpa-id': lpa.id}) }}" class="button">Confirm and finish</a></p>
+
+        {% else %}
+
+            <details>
+                <summary aria-controls="details-content-0" aria-expanded="false">
+                    <span class="summary">Why are you asking me to pay now?</span>
+                </summary>
+                <div class="panel panel-border-narrow text" id="details-content-0" aria-hidden="true">
+                    <p>The LPA fee covers the cost of processing your application, not just registering the LPA.</p>
+                    <p>If you pay online and change your mind about registering the LPA before you post it to OPG, we will refund the money to your payment card. If you are an attorney, you could pay the fee now and reclaim it from the donor’s funds.</p>
+                </div>
+            </details>
+
+            {% if worldPayForm is not null %}
+
+                {# -- Worldpay -- #}
+                {# begin form #}
+                {{ worldPayForm.prepare() ? '' }}
+                {{ form().openTag( worldPayForm )|raw }}
+                {{ formElement(worldPayForm.getCsrf) }}
+
+                {# Error summary #}
+                {{ macros.formErrorSummary(error,worldPayForm,'There was a problem submitting the form') }}
+
+                <fieldset>
+                    <legend class="visually-hidden">Contact email</legend>
+
+                    <h2 class="heading-medium flush--top text">Enter a contact email for correspondence regarding this payment.</h2>
+
+                    {{ macros.formGroup(email) }}
+
+                </fieldset>
+
+                <input type="submit" name="save" value="Confirm and pay online" class="button">
+                <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">Confirm and pay by cheque</a>
+
+                {{ form().closeTag|raw }}
+
+            {% else %}
+
+                {# -- GDS Pay -- #}
+                <p class="divorced">
+                    {# begin form #}
+                    {{ form.prepare() ? '' }}
+                    {{ form().openTag( form )|raw }}
+                    {{ formElement(form.getCsrf) }}
+
+                    <div class="form-group">
+                        {{ formElement(form.get('submit')) }}
+                        <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">Confirm and pay by cheque</a>
+                    </div>
+
+                    {{ form().closeTag|raw }}
+                </p>
+
+            {% endif %}
+
+
+        {% endif %}
+
+        <p class="divorced">
+            <a href="/user/dashboard">Save for later</a>
+        </p>
+
+    {% else %}
+
+        <div class="alert text push--top" role="alert">
+            <i class="icon icon-important-small" role="presentation"></i>
+            <div class="alert-message">
+                <p><strong class="bold-small">When you have chosen a certificate provider, you'll be able to continue.</strong></p>
+            </div>
+        </div>
+
+        <a class="button" disabled="disabled">Confirm</a>
+        <a href="/user/dashboard" class="button-link">Save for later</a>
+
+    {% endif %}
+
+{% endblock %}

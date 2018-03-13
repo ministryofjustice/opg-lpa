@@ -14,28 +14,25 @@ abstract class Twig_Node_Expression_Call extends Twig_Node_Expression
 
     protected function compileCallable(Twig_Compiler $compiler)
     {
+        $callable = $this->getAttribute('callable');
+
         $closingParenthesis = false;
-        if ($this->hasAttribute('callable') && $callable = $this->getAttribute('callable')) {
-            if (is_string($callable) && false === strpos($callable, '::')) {
-                $compiler->raw($callable);
-            } else {
-                list($r, $callable) = $this->reflectCallable($callable);
-                if ($r instanceof ReflectionMethod && is_string($callable[0])) {
-                    if ($r->isStatic()) {
-                        $compiler->raw(sprintf('%s::%s', $callable[0], $callable[1]));
-                    } else {
-                        $compiler->raw(sprintf('$this->env->getRuntime(\'%s\')->%s', $callable[0], $callable[1]));
-                    }
-                } elseif ($r instanceof ReflectionMethod && $callable[0] instanceof Twig_ExtensionInterface) {
-                    $compiler->raw(sprintf('$this->env->getExtension(\'%s\')->%s', get_class($callable[0]), $callable[1]));
-                } else {
-                    $type = ucfirst($this->getAttribute('type'));
-                    $compiler->raw(sprintf('call_user_func_array($this->env->get%s(\'%s\')->getCallable(), array', $type, $this->getAttribute('name')));
-                    $closingParenthesis = true;
-                }
-            }
+        if (is_string($callable) && false === strpos($callable, '::')) {
+            $compiler->raw($callable);
         } else {
-            $compiler->raw($this->getAttribute('thing')->compile());
+            list($r, $callable) = $this->reflectCallable($callable);
+            if ($r instanceof ReflectionMethod && is_string($callable[0])) {
+                if ($r->isStatic()) {
+                    $compiler->raw(sprintf('%s::%s', $callable[0], $callable[1]));
+                } else {
+                    $compiler->raw(sprintf('$this->env->getRuntime(\'%s\')->%s', $callable[0], $callable[1]));
+                }
+            } elseif ($r instanceof ReflectionMethod && $callable[0] instanceof Twig_ExtensionInterface) {
+                $compiler->raw(sprintf('$this->env->getExtension(\'%s\')->%s', get_class($callable[0]), $callable[1]));
+            } else {
+                $closingParenthesis = true;
+                $compiler->raw(sprintf('call_user_func_array($this->env->get%s(\'%s\')->getCallable(), array', ucfirst($this->getAttribute('type')), $this->getAttribute('name')));
+            }
         }
 
         $this->compileArguments($compiler);
@@ -83,10 +80,8 @@ abstract class Twig_Node_Expression_Call extends Twig_Node_Expression
         }
 
         if ($this->hasNode('arguments')) {
-            $callable = $this->hasAttribute('callable') ? $this->getAttribute('callable') : null;
-
+            $callable = $this->getAttribute('callable');
             $arguments = $this->getArguments($callable, $this->getNode('arguments'));
-
             foreach ($arguments as $node) {
                 if (!$first) {
                     $compiler->raw(', ');
@@ -99,7 +94,7 @@ abstract class Twig_Node_Expression_Call extends Twig_Node_Expression
         $compiler->raw(')');
     }
 
-    protected function getArguments($callable, $arguments)
+    protected function getArguments($callable = null, $arguments)
     {
         $callType = $this->getAttribute('type');
         $callName = $this->getAttribute('name');

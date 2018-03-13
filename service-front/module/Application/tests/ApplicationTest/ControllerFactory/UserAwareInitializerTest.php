@@ -5,6 +5,7 @@ namespace Application\Controller;
 use Application\ControllerFactory\UserAwareInitializer;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User;
+use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -16,18 +17,17 @@ class UserAwareInitializerTest extends MockeryTestCase
      */
     private $initializer;
     /**
-     * @var ServiceLocatorInterface
+     * @var ContainerInterface
      */
-    private $serviceLocator;
+    private $container;
     private $authenticationService;
 
     public function setUp()
     {
         $this->initializer = new UserAwareInitializer();
-        $this->serviceLocator = Mockery::mock(ServiceLocatorInterface::class);
-        $this->serviceLocator->shouldReceive('getServiceLocator')->andReturn($this->serviceLocator);
+        $this->container = Mockery::mock(ContainerInterface::class);
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
-        $this->serviceLocator->shouldReceive('get')
+        $this->container->shouldReceive('get')
             ->withArgs(['AuthenticationService'])->andReturn($this->authenticationService);
     }
 
@@ -35,7 +35,7 @@ class UserAwareInitializerTest extends MockeryTestCase
     {
         $instance = Mockery::mock();
         $instance->shouldReceive('setUser')->never();
-        $result = $this->initializer->initialize($instance, $this->serviceLocator);
+        $result = $this->initializer->__invoke($this->container, $instance);
         $this->assertNull($result);
     }
 
@@ -44,7 +44,7 @@ class UserAwareInitializerTest extends MockeryTestCase
         $this->authenticationService->shouldReceive('hasIdentity')->andReturn(false)->once();
         $instance = Mockery::mock(AbstractAuthenticatedController::class);
         $instance->shouldReceive('setUser')->never();
-        $result = $this->initializer->initialize($instance, $this->serviceLocator);
+        $result = $this->initializer->__invoke($this->container, $instance);
         $this->assertNull($result);
     }
 
@@ -55,7 +55,7 @@ class UserAwareInitializerTest extends MockeryTestCase
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($identity)->once();
         $instance = Mockery::mock(AbstractAuthenticatedController::class);
         $instance->shouldReceive('setUser')->once();
-        $result = $this->initializer->initialize($instance, $this->serviceLocator);
+        $result = $this->initializer->__invoke($this->container, $instance);
         $this->assertNull($result);
     }
 }

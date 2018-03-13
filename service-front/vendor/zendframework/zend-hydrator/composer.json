@@ -13,17 +13,17 @@
         }
     },
     "require": {
-        "php": "^5.5 || ^7.0",
-        "zendframework/zend-stdlib": "^2.7 || ^3.0"
+        "php": "^5.6 || ^7.0",
+        "zendframework/zend-stdlib": "^3.0"
     },
     "require-dev": {
-        "zendframework/zend-eventmanager": "^2.6.2 || ^3.0",
+        "zendframework/zend-eventmanager": "^3.0",
         "zendframework/zend-inputfilter": "^2.6",
         "zendframework/zend-serializer": "^2.6.1",
         "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3",
         "zendframework/zend-filter": "^2.6",
-        "phpunit/PHPUnit": "~4.0",
-        "squizlabs/php_codesniffer": "^2.0@dev"
+        "phpunit/phpunit": "^5.7.21 || ^6.3",
+        "zendframework/zend-coding-standard": "~1.0.0"
     },
     "suggest": {
         "zendframework/zend-eventmanager": "^2.6.2 || ^3.0, to support aggregate hydrator usage",
@@ -37,13 +37,28 @@
         "branch-alias": {
             "dev-release-1.0": "1.0-dev",
             "dev-release-1.1": "1.1-dev",
-            "dev-master": "2.0-dev",
-            "dev-develop": "2.1-dev"
+            "dev-master": "2.3-dev",
+            "dev-develop": "2.4-dev"
+        },
+        "zf": {
+            "component": "Zend\\Hydrator",
+            "config-provider": "Zend\\Hydrator\\ConfigProvider"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "ZendTest\\Hydrator\\": "test/"
         }
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
+        "upload-coverage": "coveralls -v"
     }
 }

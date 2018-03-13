@@ -11,8 +11,7 @@ namespace Zend\Mvc\Service;
 
 use Interop\Container\ContainerInterface;
 use Zend\Mvc\View\Http\DefaultRenderingStrategy;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\View\View;
 
 class HttpDefaultRenderingStrategyFactory implements FactoryInterface
@@ -36,24 +35,11 @@ class HttpDefaultRenderingStrategyFactory implements FactoryInterface
     }
 
     /**
-     * Create and return DefaultRendererStrategy instance
-     *
-     * For use with zend-servicemanager v2; proxies to __invoke().
-     *
-     * @param ServiceLocatorInterface $container
-     * @return DefaultRendererStrategy
-     */
-    public function createService(ServiceLocatorInterface $container)
-    {
-        return $this($container, DefaultRendererStrategy::class);
-    }
-
-    /**
      * Inject layout template.
      *
      * Uses layout template from configuration; if none available, defaults to "layout/layout".
      *
-     * @param DefaultRendererStrategy $strategy
+     * @param DefaultRenderingStrategy $strategy
      * @param array $config
      */
     private function injectLayoutTemplate(DefaultRenderingStrategy $strategy, array $config)

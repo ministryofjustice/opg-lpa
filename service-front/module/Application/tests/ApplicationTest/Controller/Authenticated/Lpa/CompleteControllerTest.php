@@ -50,7 +50,7 @@ class CompleteControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/complete/complete.twig', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/complete/complete.twig', $result->getTemplate());
         $this->assertEquals("lpa/{$lpa->id}/download/pdf/lp1", $result->getVariable('lp1Url'));
         $this->assertEquals('user/dashboard/create-lpa?seed=' . $lpa->id, $result->getVariable('cloneUrl'));
         $this->assertEquals("lpa/{$lpa->id}/date-check/complete", $result->getVariable('dateCheckUrl'));

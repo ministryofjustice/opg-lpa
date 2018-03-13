@@ -32,7 +32,7 @@ class ArraySerializable extends AbstractHydrator
         $filter = $this->getFilter();
 
         foreach ($data as $name => $value) {
-            if (!$filter->filter($name)) {
+            if (! $filter->filter($name)) {
                 unset($data[$name]);
                 continue;
             }
@@ -68,14 +68,23 @@ class ArraySerializable extends AbstractHydrator
         }
 
         if (is_callable([$object, 'exchangeArray'])) {
+            // Ensure any previously populated values not in the replacement
+            // remain following population.
+            if (is_callable([$object, 'getArrayCopy'])) {
+                $original = $object->getArrayCopy($object);
+                $replacement = array_merge($original, $replacement);
+            }
             $object->exchangeArray($replacement);
-        } elseif (is_callable([$object, 'populate'])) {
-            $object->populate($replacement);
-        } else {
-            throw new Exception\BadMethodCallException(
-                sprintf('%s expects the provided object to implement exchangeArray() or populate()', __METHOD__)
-            );
+            return $object;
         }
-        return $object;
+
+        if (is_callable([$object, 'populate'])) {
+            $object->populate($replacement);
+            return $object;
+        }
+
+        throw new Exception\BadMethodCallException(
+            sprintf('%s expects the provided object to implement exchangeArray() or populate()', __METHOD__)
+        );
     }
 }

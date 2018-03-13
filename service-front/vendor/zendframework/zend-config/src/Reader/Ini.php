@@ -1,10 +1,8 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-config for the canonical source repository
+ * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-config/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Config\Reader;
@@ -62,7 +60,7 @@ class Ini implements ReaderInterface
      */
     public function fromFile($filename)
     {
-        if (!is_file($filename) || !is_readable($filename)) {
+        if (! is_file($filename) || ! is_readable($filename)) {
             throw new Exception\RuntimeException(sprintf(
                 "File '%s' doesn't exist or not readable",
                 $filename
@@ -193,15 +191,15 @@ class Ini implements ReaderInterface
         if (strpos($key, $this->nestSeparator) !== false) {
             $pieces = explode($this->nestSeparator, $key, 2);
 
-            if (!strlen($pieces[0]) || !strlen($pieces[1])) {
+            if (! strlen($pieces[0]) || ! strlen($pieces[1])) {
                 throw new Exception\RuntimeException(sprintf('Invalid key "%s"', $key));
-            } elseif (!isset($config[$pieces[0]])) {
-                if ($pieces[0] === '0' && !empty($config)) {
+            } elseif (! isset($config[$pieces[0]])) {
+                if ($pieces[0] === '0' && ! empty($config)) {
                     $config = [$pieces[0] => $config];
                 } else {
                     $config[$pieces[0]] = [];
                 }
-            } elseif (!is_array($config[$pieces[0]])) {
+            } elseif (! is_array($config[$pieces[0]])) {
                 throw new Exception\RuntimeException(
                     sprintf('Cannot create sub-key for "%s", as key already exists', $pieces[0])
                 );

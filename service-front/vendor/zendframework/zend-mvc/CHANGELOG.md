@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.7.13 - 2017-12-14
+## 3.1.1 - 2017-11-24
 
 ### Added
 
@@ -18,15 +18,51 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Updates the `Zend\Mvc\Controller\PluginManager::get()` signature to match
-  that of `Zend\ServiceManager\AbstractPluginManager::get()`, and thus ensure
-  compatibility when running under PHP 7.2.
+- [#247](https://github.com/zendframework/zend-mvc/pull/247) fixes bug in
+  controller plugin Forward, introduced in 2.1.0, where problem listeners were
+  not detached for forwarded controller dispatch
 
-- [#234](https://github.com/zendframework/zend-mvc/pull/234) fixes docblock
-  annotations in `AbstractActionController::indexAction` and `notFoundAction` to
-  indicate they return a `ViewModel|ConsoleModel` and not `array`.
+## 3.1.0 - 2017-05-01
 
-## 2.7.12 - 2017-04-27
+### Added
+
+- [#217](https://github.com/zendframework/zend-mvc/pull/217) adds support for
+  middleware _pipelines_ when using the `MiddlewareListener`. You can now
+  specify an _array` of middleware for the `middleware` attached to a route, and
+  it will be marshaled into a `Zend\Stratigility\MiddlewarePipe` instance, using
+  the same rules as if you specified a single middleware.
+
+- [#236](https://github.com/zendframework/zend-mvc/pull/236) adds the ability to
+  attach dispatch listeners to middleware when using the `MiddlewareListener`.
+  Attach shared events to the class identifier `Zend\Mvc\Controller\MiddlewareController`.
+  This feature helps ensure that listeners that should run for every controller
+  (e.g., authentication or authorization listeners) will run even for
+  middleware.
+
+- [#231](https://github.com/zendframework/zend-mvc/pull/231) adds a
+  `composer.json` suggestion for zendframework/zend-paginator.
+
+- [#232](https://github.com/zendframework/zend-mvc/pull/232) adds a
+  `composer.json` suggestion for zendframework/zend-log.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#211](https://github.com/zendframework/zend-mvc/pull/211) Removed unused
+  zend-servicemanager v2 and zend-eventmanager v2 compatibility code since
+  zend-mvc requires v3 of those components.
+
+### Fixed
+
+- [#237](https://github.com/zendframework/zend-mvc/pull/237) fixes the return
+  annotations for `HttpDefaultRenderingStrategyFactory::createService` and
+  `injectLayoutTemplate()` to be `HttpDefaultRenderingStrategy` and not
+  `HttpDefaultRendererStrategy`.
+
+## 3.0.4 - 2016-12-20
 
 ### Added
 
@@ -42,21 +78,18 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- [#235](https://github.com/zendframework/zend-mvc/pull/235) fixes
-  `FormAnnotationBuilderFactory::injectFactory()` to pass the correct
-  arguments to the plugin manager's `injectFactory()` initializer when running
-  under zend-servicemanager v2.
+- [#210](https://github.com/zendframework/zend-mvc/pull/210) copies the 
+  `RouteMatch` and its parameters to the PSR-7 `ServerRequest` object so that
+  they are available to middleware.
 
-## 2.7.11 - 2017-04-27
+## 3.0.3 - 2016-08-29
 
 ### Added
 
-- [#233](https://github.com/zendframework/zend-mvc/pull/233) adds a `replace`
-  entry to the `composer.json` indicating the package replaces
-  zendframework/zend-router. This is done to prevent errors from installing both
-  zend-mvc v2 with zend-router, which could lead to subtle errors when checking
-  exceptions, locating route types, etc. Users should upgrade to zend-mvc v3 if
-  they wish to use the standalone zend-router package.
+- [#198](https://github.com/zendframework/zend-mvc/pull/198) adds a factory for
+  the `SendResponseListener`, to ensure that it is injected with an event
+  manager instance from the outset; this fixes issues with delegator factories
+  that registered listeners with it in previous versions.
 
 ### Deprecated
 
@@ -64,20 +97,114 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- [#229](https://github.com/zendframework/zend-mvc/pull/229) removes the
-  zend-version package from the `require-dev` and `suggest` sections of
-  `composer.json`, and updates the `RouteNotFoundStrategy::getConsoleBanner()`
-  method to no longer use the version constant. Since zend-version has had no
-  real meaning since the 2.5 release, this removes ambiguity for end-users.
+- Nothing.
 
 ### Fixed
 
-- [#223](https://github.com/zendframework/zend-mvc/pull/223) fixes how the
-  `FormAnnotationBuilderFactory` injects the builder with the
-  `FormElementManager` service such that it will work with the latest zend-form
-  releases.
+- [#184](https://github.com/zendframework/zend-mvc/pull/184) provides a
+  performance optimization for `DELETE` requests to `AbstractRestfulController`
+  instances.
+- [#187](https://github.com/zendframework/zend-mvc/pull/187) removes a typehint
+  for `Exception` from an argument in
+  `DispatchListener::marshalControllerNotFoundEvent()`, allowing it to be used
+  with PHP 7 `Throwable` instances.
 
-## 2.7.10 - 2016-06-13
+## 3.0.2 - 2016-06-30
+
+### Added
+
+- [#163](https://github.com/zendframework/zend-mvc/pull/163) adds support to the
+  `AcceptableViewModelSelector` plugin for controller maps in the `view_manager`
+  configuration in the format:
+
+  ```php
+  [
+      'ControllerClassName' => 'view/name',
+  ]
+  ```
+
+  This fixes an issue observed when running with Apigility.
+
+- [#163](https://github.com/zendframework/zend-mvc/pull/163) adds support to the
+  `InjectTemplateListener` for specifying whether or not to prefer the
+  controller matched during routing via routing configuration:
+
+  ```php
+  'route-name' => [
+      /* ... */
+      'options' => [
+          /* ... */
+          'defaults' => [
+              /* ... */
+              'prefer_route_match_controller' => true,
+          ],
+      ],
+  ],
+  ```
+
+  This allows actions that might otherwise skip injection of the template
+  to force the injection.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#161](https://github.com/zendframework/zend-mvc/pull/161) fixes the
+  `DispatchListener::marshalBadControllerEvent()` method to allow either
+  `Throwable` or `Exception` types for the `$exception` argument.
+
+## 3.0.1 - 2016-06-23
+
+### Added
+
+- [#165](https://github.com/zendframework/zend-mvc/pull/165) adds a new
+  controller factory, `LazyControllerAbstractFactory`, that provides a
+  Reflection-based approach to instantiating controllers. You may register it
+  either as an abstract factory or as a named factory in your controller
+  configuration:
+
+  ```php
+  'controllers' => [
+      'abstract_factories' => [
+          'Zend\Mvc\Controller\LazyControllerAbstractFactory`,
+      ],
+      'factories' => [
+          'MyModule\Controller\FooController' => 'Zend\Mvc\Controller\LazyControllerAbstractFactory`,
+      ],
+  ],
+  ```
+
+  The factory uses the typehints to lookup services in the container, using
+  aliases for well-known services such as the `FilterManager`,
+  `ValidatorManager`, etc. If an `array` typehint is used with a `$config`
+  parameter, the `config` service is injected; otherwise, an empty array is
+  provided. For all other types, a null value is injected.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 3.0.0 - 2016-05-31
+
+New major version! Please see:
+
+- [doc/book/migration/to-v3-0.md](doc/book/migration/to-v3-0.md)
+
+for full details on how to migrate your v2 application.
 
 ### Added
 
@@ -89,57 +216,140 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- [#159](https://github.com/zendframework/zend-mvc/pull/159) removes the
-  dependency on zend-servicemanager-di.
+- [#99](https://github.com/zendframework/zend-mvc/pull/99) removes all router
+  functionality (everything in the `Zend\Mvc\Router` namespace. This
+  functionality is now provided by the [zend-router](https://zendframework.github.io/zend-router/)
+  component, which becomes a requirement of zend-mvc. The removal also includes
+  all service factories related to routing, as they are provided by zend-router.
+- [#99](https://github.com/zendframework/zend-mvc/pull/99) removes all
+  console-related functionality, including the `AbstractConsoleController`, the
+  `CreateConsoleNotFoundModel` controller plugin, the `ConsoleResponseSender`,
+  and all classes under the `Zend\Mvc\View\Console` namespace; these are now
+  provided by the [zend-mvc-console](https://zendframework.github.io/zend-mvc-console/)
+  component. (That component also includes console-specific routes, which were
+  removed from zend-router.) All service factories related to console
+  functionality are also now provided by zend-mvc-console.
+- [#104](https://github.com/zendframework/zend-mvc/pull/104) removes the `prg()`
+  plugin. It can now be installed separately via the
+  zendframework/zend-mvc-plugin-prg package.
+- [#108](https://github.com/zendframework/zend-mvc/pull/108) removes the
+  `fileprg()`, `flashMessenger()`, and `identity()` plugins. These can be
+  installed via, respectively, the zendframework/zend-mvc-plugin-fileprg,
+  zendframework/zend-mvc-plugin-flashmessenger, and
+  zendframework/zend-mvc-plugin-identity packages.
+- [#110](https://github.com/zendframework/zend-mvc/pull/110) removes the
+  internationalization functionality from the component, including factories for
+  the translator and translator loader manager. This functionality is
+  now provided by the [zend-i18n](https://zendframework.github.io/zend-i18n/)
+  and [zend-mvc-i18n](https://zendframework.github.io/zend-mvc-i18n/) packages;
+  installing `zendframework/zend-mvc-i18n` will restore i18n functionality in
+  your application.
+- [#115](https://github.com/zendframework/zend-mvc/pull/115) removes the
+  requirement for zend-filter in the `InjectTemplateListener` by inlining the
+  logic from `Zend\Filter\Word\CamelCaseToDash`.
+- [#116](https://github.com/zendframework/zend-mvc/pull/116) removes the
+  functionality related to integrating zend-servicemanager and zend-di. If you
+  used this functionality previously, it is now available via a separate
+  package, [zend-servicemanager-di](https://zendframework.github.io/zend-servicemanager-di/]).
+- [#117](https://github.com/zendframework/zend-mvc/pull/117) removes the
+  functionality related to exposing and configuring the zend-filter
+  `FilterPluginManager`. That functionality is now exposed directly by the
+  zend-filter component.
+- [#118](https://github.com/zendframework/zend-mvc/pull/118) removes the
+  functionality related to exposing and configuring the zend-validator
+  `ValidatorPluginManager`. That functionality is now exposed directly by the
+  zend-validator component.
+- [#119](https://github.com/zendframework/zend-mvc/pull/119) removes the
+  functionality related to exposing and configuring the zend-serializer
+  `SerializerAdapterManager`. That functionality is now exposed directly by the
+  zend-serializer component.
+- [#120](https://github.com/zendframework/zend-mvc/pull/120) removes the
+  functionality related to exposing and configuring the zend-hydrator
+  `HydratorManager`. That functionality is now exposed directly by the
+  zend-hydrator component.
+- [#54](https://github.com/zendframework/zend-mvc/pull/54) removes the
+  `$configuration` argument (first required argument) from the
+  `Zend\Mvc\Application` constructor. If you were directly instantiating an
+  `Application` instance previously (whether in your bootstrap, a factory, or
+  tests), you will need to update how you instantiate the instance. (The
+  argument was removed as the value was never used.)
+- [#121](https://github.com/zendframework/zend-mvc/pull/121) removes the
+  functionality related to exposing and configuring the zend-log
+  `ProcessorPluginManager` and `WriterPluginManager`. That functionality is now
+  exposed directly by the zend-log component (with the addition of exposing the
+  `FilterPluginManager` and `FormatterPluginManager` as well).
+- [#123](https://github.com/zendframework/zend-mvc/pull/123) removes the
+  functionality related to exposing and configuring the zend-inputfilter
+  `InputFilterManager`. That functionality is now exposed directly by the
+  zend-inputfilter component.
+- [#124](https://github.com/zendframework/zend-mvc/pull/124) removes the
+  functionality related to exposing and configuring zend-form, including the
+  `FormElementManager`, `FormAnnotationBuilder`, and the
+  `FormAbstractServiceFactory`. The functionality is now exposed directly by the
+  zend-form component.
+- [#125](https://github.com/zendframework/zend-mvc/pull/125) removes the
+  functionality from the `ViewHelperManager` factory for fetching configuration
+  classes from other components and using them to configure the instance. In all
+  cases, this is now done by the components themselves.
+- [#128](https://github.com/zendframework/zend-mvc/pull/128) removes the
+  `ControllerLoaderFactory`, and the `ControllerLoader` service alias; use
+  `ControllerManagerFactory` and `ControllerManager`, respectively, instead.
+- [#128](https://github.com/zendframework/zend-mvc/pull/128) removes
+  `Zend\Mvc\View\SendResponseListener`; use `Zend\Mvc\SendResponseListener`
+  instead.
+- [#128](https://github.com/zendframework/zend-mvc/pull/128) removes
+  `Application::send()`, which has been a no-op since 2.2.
+- [#128](https://github.com/zendframework/zend-mvc/pull/128) removes
+  `DispatchListener::marshallControllerNotFoundEvent()`, which has proxied to
+  `marshalControllerNotFoundEvent()` since 2.2.
+- [#128](https://github.com/zendframework/zend-mvc/pull/128) removes
+  the `ServiceLocatorAwareInterface` implementation
+  (`setServiceLocator()`/`getServiceLocator()` methods) from
+  `AbstractController`. You will need to inject your dependencies specifically
+  going forward.
+- [#128](https://github.com/zendframework/zend-mvc/pull/128) removes
+  the `ServiceLocatorAwareInterface` initializers defined in
+  `Zend\Mvc\Service\ServiceManagerConfig` and
+  `Zend\Mvc\Controller\ControllerManager`. You will need to inject your
+  dependencies specifically going forward.
+- [#139](https://github.com/zendframework/zend-mvc/pull/139) removes support for
+  pseudo-module template resolution using the `__NAMESPACE__` routing
+  configuration option, as it often led to conflicts when multiple modules
+  shared a common top-level namespace. Auto-resolution now always takes into
+  account the full namespace (minus the `Controller` segment).
 
 ### Fixed
 
-- [#159](https://github.com/zendframework/zend-mvc/pull/159) fixes issues with
-  regards to conflicts between zend-servicemanager v2 and
-  zend-servicemanager-di by re-instating code removed from various
-  servicemanager/DI-related factories in 2.7.9. Two factories,
-  `Zend\Mvc\Service\DiAbstractServiceFactoryFactory` and
-  `Zend\Mvc\Service\DiServiceInitializerFactory`, now raise exceptions if they
-  detect they are running under zend-servicemanager v3, and prompt the developer
-  to install zend-servicemanager-di.
-
-## 2.7.9 - 2016-06-11
-
-### Added
-
-- [#149](https://github.com/zendframework/zend-mvc/pull/149) and
-  [#158](https://github.com/zendframework/zend-mvc/pull/158) add a dependency
-  on zendframework/zend-servicemanager-di in order to provide both backwards and
-  forwards compatibility for the DI/ServiceManager integration.
-
-### Deprecated
-
-- [#158](https://github.com/zendframework/zend-mvc/pull/158) deprecates each of
-  the following classes, which now have equivalents in the
-  zend-servicemanager-di package (which is required by zend-mvc v2, but optional
-  starting with zend-mvc v3):
-  - `Zend\Mvc\Service\DiAbstractServiceFactoryFactory`
-  - `Zend\Mvc\Service\DiFactory`
-  - `Zend\Mvc\Service\DiServiceInitializerFactory`
-  - `Zend\Mvc\Service\DiStrictAbstractServiceFactory`
-  - `Zend\Mvc\Service\DiStrictAbstractServiceFactoryFactory`
-- [#152](https://github.com/zendframework/zend-mvc/pull/152) formally marks the
-  `ControllerLoaderFactory` as deprecated via annotation (though it has been
-  noted as such in the documentation for several years). Use
-  `Zend\Mvc\Service\ControllerManagerFactory` instead.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- [#149](https://github.com/zendframework/zend-mvc/pull/149) and
-  [#158](https://github.com/zendframework/zend-mvc/pull/158) fix an "undefined
-  variable" issue with `Zend\Mvc\Service\DiAbstractServiceFactoryFactory`.
-- [#153](https://github.com/zendframework/zend-mvc/pull/153) removes the
-  typehint from the `$exception` argument of `DispatchListener::marshalBadControllerEvent()`,
-  fixing an issue when PHP 7 Error types are caught and passed to the method.
+- [#113](https://github.com/zendframework/zend-mvc/pull/113) updates
+  `AbstractRestfulController` to make usage of zend-json for deserializing JSON
+  requests optional. `json_decode()` is now used by default, falling back to
+  `Zend\Json\Json::decode()` if it is available. If neither are available, an
+  exception is now thrown.
+- [#115](https://github.com/zendframework/zend-mvc/pull/115) and
+  [#128](https://github.com/zendframework/zend-mvc/pull/128) update the
+  dependency list, per https://github.com/zendframework/maintainers/wiki/zend-mvc-v3-refactor:-reduce-components#required-components,
+  to do the following:
+  - Makes the following components required:
+    - zend-http
+    - zend-modulemanager
+    - zend-router
+    - zend-view
+  - Makes the following components optional:
+    - zend-json
+    - zend-psr7bridge
+  - And pares the suggestion list down to:
+    - zend-mvc-console
+    - zend-mvc-i18n
+    - zend-mvc-plugin-fileprg
+    - zend-mvc-plugin-flashmessenger
+    - zend-mvc-plugin-identity
+    - zend-mvc-plugin-prg
+    - zend-servicemanager-di
+- [#128](https://github.com/zendframework/zend-mvc/pull/128) bumps the minimum
+  supported version of zend-eventmanager, zend-servicemanager, and zend-stdlib
+  to their v3 releases.
+- [#128](https://github.com/zendframework/zend-mvc/pull/128) bumps the minimum
+  supported PHP version to 5.6.
 
 ## 2.7.8 - 2016-05-31
 

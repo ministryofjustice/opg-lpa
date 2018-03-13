@@ -1,14 +1,14 @@
 <?php
 namespace Application\Model\Service\Session;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
-
 use Zend\Session\Exception\RuntimeException;
-
 use Aws\DynamoDb\DynamoDbClient;
 
 /**
@@ -20,14 +20,20 @@ use Aws\DynamoDb\DynamoDbClient;
 class SessionFactory implements FactoryInterface {
 
     /**
-     * Create service
+     * Create an object
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return SessionManager
+     * @param  ContainerInterface $container
+     * @param  string $requestedName
+     * @param  null|array $options
+     * @return object
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     *     creating a service.
+     * @throws ContainerException if any other error occurs
      */
-    public function createService(ServiceLocatorInterface $serviceLocator){
-
-        $config = $serviceLocator->get('Config');
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $config = $container->get('Config');
 
         if( !isset( $config['session'] ) ){
             throw new RuntimeException('Session configuration setting not found');
@@ -50,12 +56,12 @@ class SessionFactory implements FactoryInterface {
         // Set the cookie domain
 
         // Only if it's not a Console request.
-        if( !( $serviceLocator->get('Request') instanceof \Zend\Console\Request ) ){
+        if( !( $container->get('Request') instanceof \Zend\Console\Request ) ){
 
             // This is requirement of the GDS service checker
 
             // Get the hostname of the current request
-            $hostname = $serviceLocator->get('Request')->getUri()->getHost();
+            $hostname = $container->get('Request')->getUri()->getHost();
 
             // and set it as the domain cookie.
             ini_set( 'session.cookie_domain', $hostname );
@@ -128,7 +134,5 @@ class SessionFactory implements FactoryInterface {
         $manager->setSaveHandler($saveHandler);
 
         return $manager;
-        
-    } // function
-
+    }
 } // class

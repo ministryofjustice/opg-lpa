@@ -14,7 +14,7 @@ use Zend\Mvc\Controller\ControllerManager;
 use Zend\Mvc\Exception;
 use Zend\Mvc\InjectApplicationEventInterface;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
+use Zend\Router\RouteMatch;
 use Zend\Stdlib\CallbackHandler;
 
 class Forward extends AbstractPlugin
@@ -132,7 +132,9 @@ class Forward extends AbstractPlugin
         }
 
         if ($this->numNestedForwards > $this->maxNestedForwards) {
-            throw new Exception\DomainException("Circular forwarding detected: greater than $this->maxNestedForwards nested forwards");
+            throw new Exception\DomainException(
+                "Circular forwarding detected: greater than $this->maxNestedForwards nested forwards"
+            );
         }
         $this->numNestedForwards++;
 
@@ -162,10 +164,10 @@ class Forward extends AbstractPlugin
         // Convert the problem list from two-dimensional array to more convenient id => event => class format:
         $formattedProblems = [];
         foreach ($this->getListenersToDetach() as $current) {
-            if (!isset($formattedProblems[$current['id']])) {
+            if (! isset($formattedProblems[$current['id']])) {
                 $formattedProblems[$current['id']] = [];
             }
-            if (!isset($formattedProblems[$current['id']][$current['event']])) {
+            if (! isset($formattedProblems[$current['id']][$current['event']])) {
                 $formattedProblems[$current['id']][$current['event']] = [];
             }
             $formattedProblems[$current['id']][$current['event']][] = $current['class'];
@@ -180,19 +182,8 @@ class Forward extends AbstractPlugin
                 $results[$id][$eventName] = [];
                 $events = $this->getSharedListenersById($id, $eventName, $sharedEvents);
                 foreach ($events as $priority => $currentPriorityEvents) {
-                    // v2 fix
-                    if (!is_array($currentPriorityEvents)) {
-                        $currentPriorityEvents = [$currentPriorityEvents];
-                    }
-                    // v3
                     foreach ($currentPriorityEvents as $currentEvent) {
                         $currentCallback = $currentEvent;
-
-                        // zend-eventmanager v2 compatibility:
-                        if ($currentCallback instanceof CallbackHandler) {
-                            $currentCallback = $currentEvent->getCallback();
-                            $priority = $currentEvent->getMetadatum('priority');
-                        }
 
                         // If we have an array, grab the object
                         if (is_array($currentCallback)) {
@@ -200,15 +191,12 @@ class Forward extends AbstractPlugin
                         }
 
                         // This routine is only valid for object callbacks
-                        if (!is_object($currentCallback)) {
+                        if (! is_object($currentCallback)) {
                             continue;
                         }
 
                         foreach ($classArray as $class) {
                             if ($currentCallback instanceof $class) {
-                                // Pass $currentEvent; when using zend-eventmanager v2,
-                                // this is the CallbackHandler, while in v3 it's
-                                // the actual listener.
                                 $this->detachSharedListener($id, $currentEvent, $sharedEvents);
                                 $results[$id][$eventName][$priority] = $currentEvent;
                             }
@@ -235,12 +223,6 @@ class Forward extends AbstractPlugin
                 foreach ($callbacks as $priority => $current) {
                     $callback = $current;
 
-                    // zend-eventmanager v2 compatibility:
-                    if ($current instanceof CallbackHandler) {
-                        $callback = $current->getCallback();
-                        $priority = $current->getMetadatum('priority');
-                    }
-
                     $sharedEvents->attach($id, $eventName, $callback, $priority);
                 }
             }
@@ -260,7 +242,7 @@ class Forward extends AbstractPlugin
         }
 
         $controller = $this->getController();
-        if (!$controller instanceof InjectApplicationEventInterface) {
+        if (! $controller instanceof InjectApplicationEventInterface) {
             throw new Exception\DomainException(sprintf(
                 'Forward plugin requires a controller that implements InjectApplicationEventInterface; received %s',
                 (is_object($controller) ? get_class($controller) : var_export($controller, 1))
@@ -268,7 +250,7 @@ class Forward extends AbstractPlugin
         }
 
         $event = $controller->getEvent();
-        if (!$event instanceof MvcEvent) {
+        if (! $event instanceof MvcEvent) {
             $params = [];
             if ($event) {
                 $params = $event->getParams();
@@ -293,12 +275,6 @@ class Forward extends AbstractPlugin
      */
     private function getSharedListenersById($id, $event, SharedEvents $sharedEvents)
     {
-        if (method_exists($sharedEvents, 'attachAggregate')) {
-            // v2
-            return $sharedEvents->getListeners($id, $event) ?: [];
-        }
-
-        // v3
         return $sharedEvents->getListeners([$id], $event);
     }
 
@@ -314,13 +290,6 @@ class Forward extends AbstractPlugin
      */
     private function detachSharedListener($id, $listener, SharedEvents $sharedEvents)
     {
-        if (method_exists($sharedEvents, 'attachAggregate')) {
-            // v2
-            $sharedEvents->detach($id, $listener);
-            return;
-        }
-
-        // v3
         $sharedEvents->detach($listener, $id);
     }
 }

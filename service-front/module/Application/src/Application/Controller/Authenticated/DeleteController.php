@@ -33,7 +33,7 @@ class DeleteController extends AbstractAuthenticatedController
             return $this->redirect()->toRoute( 'deleted' );
         } else {
             $view = new ViewModel();
-            $view->setTemplate('error/500');
+            $view->setTemplate('error/500.twig');
             return $view;
         }
 

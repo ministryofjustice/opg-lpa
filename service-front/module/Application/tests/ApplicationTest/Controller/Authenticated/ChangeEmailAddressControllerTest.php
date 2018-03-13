@@ -93,7 +93,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/change-email-address/email-sent', $result->getTemplate());
+        $this->assertEquals('application/authenticated/change-email-address/email-sent', $result->getTemplate());
         $this->assertEquals($this->postData['email'], $result->getVariable('email'));
     }
 

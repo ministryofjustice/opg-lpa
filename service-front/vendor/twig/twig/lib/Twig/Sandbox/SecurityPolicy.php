@@ -12,17 +12,15 @@
 /**
  * Represents a security policy which need to be enforced when sandbox mode is enabled.
  *
- * @final
- *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Twig_Sandbox_SecurityPolicy implements Twig_Sandbox_SecurityPolicyInterface
+final class Twig_Sandbox_SecurityPolicy implements Twig_Sandbox_SecurityPolicyInterface
 {
-    protected $allowedTags;
-    protected $allowedFilters;
-    protected $allowedMethods;
-    protected $allowedProperties;
-    protected $allowedFunctions;
+    private $allowedTags;
+    private $allowedFilters;
+    private $allowedMethods;
+    private $allowedProperties;
+    private $allowedFunctions;
 
     public function __construct(array $allowedTags = array(), array $allowedFilters = array(), array $allowedMethods = array(), array $allowedProperties = array(), array $allowedFunctions = array())
     {
@@ -84,7 +82,7 @@ class Twig_Sandbox_SecurityPolicy implements Twig_Sandbox_SecurityPolicyInterfac
 
     public function checkMethodAllowed($obj, $method)
     {
-        if ($obj instanceof Twig_TemplateInterface || $obj instanceof Twig_Markup) {
+        if ($obj instanceof Twig_Template || $obj instanceof Twig_Markup) {
             return true;
         }
 

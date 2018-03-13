@@ -9,7 +9,7 @@ return [
             // ========================== General ==========================
 
             'index-redirect' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
@@ -20,7 +20,7 @@ return [
             ], // index-redirect
 
             'home' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/home',
                     'defaults' => [
@@ -31,7 +31,7 @@ return [
             ], // home
 
             'terms' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/terms-and-conditions',
                     'defaults' => [
@@ -42,7 +42,7 @@ return [
             ], // terms
 
             'contact' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/contact',
                     'defaults' => [
@@ -79,7 +79,7 @@ return [
             ], // forgot-password
 
             'send-feedback' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/send-feedback',
                     'defaults' => [
@@ -90,7 +90,7 @@ return [
             ], // send-feedback
 
             'sendgrid-bounce' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/email/bounce/:token',
                     'constraints' => [
@@ -104,7 +104,7 @@ return [
             ], // sendgrid-bounce
 
             'notifications' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/notifications',
                     'defaults' => [
@@ -126,7 +126,7 @@ return [
             ], // notifications
 
             'guidance' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/guide[/:section]',
                     'defaults' => [
@@ -138,7 +138,7 @@ return [
             ], // guidance
 
             'enable-cookie' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/enable-cookie',
                     'defaults' => [
@@ -149,7 +149,7 @@ return [
             ], // enable-cookie
 
             'login' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/login[/:state]',
                     'defaults' => [
@@ -226,7 +226,7 @@ return [
             ], // register
 
             'stats' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/stats',
                     'defaults' => [
@@ -237,7 +237,7 @@ return [
             ], // stats
 
             'ping' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/ping',
                     'defaults' => [
@@ -281,7 +281,7 @@ return [
             // Signed in User routes
 
             'admin-system-message' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/admin/system-message',
                     'defaults' => [
@@ -292,7 +292,7 @@ return [
             ],
 
             'admin-payment-switch' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/admin/payment',
                     'defaults' => [
@@ -303,7 +303,7 @@ return [
             ],
 
             'admin-user-search' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/admin/user',
                     'defaults' => [
@@ -314,7 +314,7 @@ return [
             ],
 
             'postcode' => [
-                'type'    => 'Zend\Mvc\Router\Http\Literal',
+                'type'    => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/address-lookup',
                     'defaults' => [
@@ -325,7 +325,7 @@ return [
             ],
 
             'user' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' => 'Zend\Router\Http\Literal',
                 'options' => [
                     'route'    => '/user',
                     'defaults' => [
@@ -471,7 +471,7 @@ return [
             // Untyped LPA Route (Type form, no LPA ID)
 
             'lpa-type-no-id' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/lpa/type',
                     'defaults' => [
@@ -485,7 +485,7 @@ return [
             // LPA Routes
 
             'lpa' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/lpa/:lpa-id',
                     'constraints' => [
