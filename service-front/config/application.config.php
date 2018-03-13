@@ -14,8 +14,9 @@ return array(
         'Zend\Session',
         'Zend\Router',
         'Zend\Validator',
-        'ZfcTwig',
-        'Application'
+        'Application',
+        //ZfcTwig MUST be the last module!
+        'ZfcTwig'
     ),
     // These are various options for the listeners attached to the ModuleManager
     'module_listener_options' => array(
