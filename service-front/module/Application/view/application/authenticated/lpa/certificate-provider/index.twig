@@ -34,10 +34,10 @@
 
             <div class="form-group">
                 <details role="group">
-                    <summary role="button" aria-controls="details-content-0" aria-expanded="false">
+                    <summary role="button" data-journey-click="stageprompt.lpa:help.inline:create/certificate-provider: Who can’t be the certificate provider?">
                         <span class="summary">Who can’t be the certificate provider?</span>
                     </summary>
-                    <div class="panel" id="details-content-0" aria-hidden="true">
+                    <div class="panel">
                         <p>The certificate provider can’t be:</p>
                         <ul class="list list-bullet">
                             <li>any attorney or replacement attorney for this or any other LPA or enduring power of attorney that the donor has made</li>
@@ -89,7 +89,7 @@
 
         <div class="form-group">
             <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" class="button js-form-popup">Add a certificate provider</a>
-            <input type="submit" name="submit" class="button-link button-input-to-link" value="Skip this question for now" />
+            <input type="submit" name="submit" class="button-link button-input-to-link" value="Skip this question for now" data-journey-click="stageprompt.lpa:link.skip:create/certificate-provider: Skip this question for now" />
         </div>
 
         {{ form().closeTag|raw }}
