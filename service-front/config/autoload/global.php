@@ -36,6 +36,7 @@ return array(
 
         'dynamodb' => [
             'client' => [
+                'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                 'version' => '2012-08-10',
                 'region' => 'eu-west-1',
                 'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
@@ -59,6 +60,7 @@ return array(
 
             'dynamodb' => [
                 'client' => [
+                    'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                     'version' => '2012-08-10',
                     'region' => 'eu-west-1',
                     'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
@@ -108,6 +110,7 @@ return array(
 
         'dynamodb' => [
             'client' => [
+                'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                 'version' => '2012-08-10',
                 'region' => 'eu-west-1',
                 'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
