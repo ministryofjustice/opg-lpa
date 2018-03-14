@@ -8,7 +8,7 @@
 
 {% block content %}
 
-{% set shortList = lpaTotalCount <= 20 and isSearch == false %}
+{% set shortList = lpaTotalCount <= 6 and isSearch == false %}
 
 <div class="grid-row">
     <div class="column-two-thirds">
@@ -30,19 +30,19 @@
             <div class="panel-heading heading-medium">Create another LPA</div>
             <div class="panel-body">
                 <p><a id="create-new-lpa" class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a></p>
-                <p class="bold-xsmall">{{ shortList ? 'Or select an LPA below whose details you want to reuse' : 'Or select \'Manage\' below to reuse details of an existing LPA' }}</p>
+                <p class="bold-xsmall">Or reuse the details of an LPA below</p>
             </div>
         </div>
     </div>
 </div>
 
 {% if shortList %}
-{# With less than 20 LPAs, no search is displayed #}
+{# With less than 6 LPAs, no search is displayed #}
     {% if lpaTotalCount == 0 %}
         <h2 class="heading-large flush--ends">You have no LPAs</h2>
     {% endif %}
 {% else %}
-{# Over 20 LPAs and search is presented #}
+{# Over 6 LPAs and search is presented #}
 <div class="dashboard-search">
     <div class="grid-row">
         <div class="column-one-half tablet-and-up">
@@ -102,8 +102,8 @@
 
     {% if shortList %}
         {{ macros.listLpas(lpas, true, '', 'No type selected') }}
-        {{ macros.listLpas(lpas, true, 'property-and-financial', 'Property and finance') }}
-        {{ macros.listLpas(lpas, true, 'health-and-welfare', 'Health and welfare') }}
+        {{ macros.listLpas(lpas, true, 'property-and-financial', 'Property and finance LPAs') }}
+        {{ macros.listLpas(lpas, true, 'health-and-welfare', 'Health and welfare LPAs') }}
     {% else %}
         {{ macros.listLpas(lpas, false, 'all', '') }}
     {% endif %}
