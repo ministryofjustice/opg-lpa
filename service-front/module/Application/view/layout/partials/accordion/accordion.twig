@@ -17,7 +17,8 @@
         {{ macros.accordionBar({
                 'text' : 'The donor is ' ~ lpa.document.donor.name,
                 'status' : 'Complete',
-                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -28,7 +29,8 @@
                     'Option A - The attorneys can make decisions about life-sustaining treatment' :
                     'Option B - The attorneys can\'t make decisions about life-sustaining treatment',
                 'status' : 'Complete',
-                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -37,7 +39,8 @@
         {{ macros.accordionBar({
                 'text' : 'The attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.primaryAttorneys),
                 'status' : lpa.document.primaryAttorneys|length ~ ' Attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's' : ''),
-                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -48,7 +51,8 @@
                     'as soon as it\'s registered (with my consent)' :
                     'only if I don\'t have mental capacity'),
                 'status' : 'Complete',
-                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -61,7 +65,8 @@
                         'jointly' :
                         'jointly for some decisions, and jointly and severally for other decisions')),
                 'status' : 'Complete',
-                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -73,7 +78,8 @@
                     ('The replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.replacementAttorneys)),
                 'status' : lpa.document.replacementAttorneys|length ~ ' Replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's' : ''),
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'cssClass': 'wide-label'
+                'cssClass': 'wide-label',
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -87,7 +93,8 @@
                         'only when none of the original attorneys can act' :
                         'as per instructions')),
                 'status' : 'Complete',
-                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -101,7 +108,8 @@
                         'jointly' :
                         'jointly for some decisions, and jointly and severally for other decisions')),
                 'status' : 'Complete',
-                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -110,7 +118,8 @@
         {{ macros.accordionBar({
                 'text' : (lpa.document.certificateProvider ? 'The certificate provider is ' ~ lpa.document.certificateProvider.name : 'Certificate provider not added' ),
                 'status' : (lpa.document.certificateProvider ? 'Complete' : 'Not Started'),
-                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -122,7 +131,8 @@
                     ('The ' ~ (lpa.document.peopleToNotify|length != 1 ? 'people to notify are ' : 'person to notify is ') ~ concatNames(lpa.document.peopleToNotify)),
                 'status' : lpa.document.peopleToNotify|length ~ (lpa.document.peopleToNotify|length != 1 ? ' people to notify' : ' person to notify'),
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'cssClass': lpa.document.peopleToNotify|length == 0 ? '' : 'wide-label'
+                'cssClass': lpa.document.peopleToNotify|length == 0 ? '' : 'wide-label',
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -131,14 +141,15 @@
         {{ macros.accordionBar({
                 'text' : 'Preferences and instructions',
                 'status' : 'Complete',
-                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
 
     {% if (item.routeName == 'review-link') %}
         {{ macros.accordionBar({
-            'text' : 'You can edit the LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}) ~ '?return-route=' ~ routeName() ~ '">preview the LPA</a>',
+            'text' : 'You can edit the LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}) ~ '?return-route=' ~ routeName() ~ '" data-journey-click="accordion:link.preview:Links to lpa/summary">preview the LPA</a>',
             'titleBoxCssClass': 'title-box--full',
             'current': true
         })
@@ -149,7 +160,8 @@
         {{ macros.accordionBar({
             'text' : 'The LPA will be registered by ' ~ applicantNames( lpa ),
             'status' : 'Complete',
-            'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+            'journeyClick': 'Links to ' ~ item.routeName
         })
         }}
     {% endif %}
@@ -160,7 +172,8 @@
         {{ macros.accordionBar({
             'text' : 'The LPA will be sent to ' ~ (lpa.document.correspondent.name is not empty ? lpa.document.correspondent.name : lpa.document.correspondent.company),
             'status' : 'Complete',
-            'edit' : url(item.routeName, {'lpa-id': lpa.id})
+            'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+            'journeyClick': 'Links to ' ~ item.routeName
         })
         }}
     {% endif %}
@@ -171,7 +184,8 @@
                     'Who was using the LPA service has been answered' :
                     'Who was using the LPA service has not been answered',
                 'status' : 'Complete',
-                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -182,7 +196,8 @@
                     'This is a repeat application with case number: ' ~ lpa.repeatCaseNumber :
                     'This is not a repeat application',
                 'status' : 'Complete',
-                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -194,7 +209,8 @@
                             ( lpa.payment.reducedFeeLowIncome == true  ? 'The donor currently has an income of less than £12,000 a year before tax ' :
                             'The donor is not applying for a reduced fee' ))),
                 'status' : 'Complete',
-                'edit' : url(item.routeName, {'lpa-id': lpa.id})
+                'edit' : url(item.routeName, {'lpa-id': lpa.id}),
+                'journeyClick': 'Links to ' ~ item.routeName
             })
         }}
     {% endif %}
