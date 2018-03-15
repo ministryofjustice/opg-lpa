@@ -399,7 +399,7 @@ return [
                                 'options' => [
                                     'route'    => '/page/:page',
                                     'constraints' => [
-                                        'page' => '[1-9]+',
+                                        'page' => '[1-9]+[0-9]*',
                                     ],
                                     'defaults' => [
                                         'page' => 1
