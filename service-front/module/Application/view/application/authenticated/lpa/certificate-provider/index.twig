@@ -34,7 +34,7 @@
 
             <div class="form-group">
                 <details role="group">
-                    <summary role="button" data-journey-click="stageprompt.lpa:help.inline:create/certificate-provider: Who can’t be the certificate provider?">
+                    <summary role="button" data-journey-click="page:link.reveal:help: Who can’t be the certificate provider?">
                         <span class="summary">Who can’t be the certificate provider?</span>
                     </summary>
                     <div class="panel">
@@ -54,7 +54,7 @@
             </div>
 
             <p>
-                <a class="js-guidance" href="/guide#topic-certificate-providers" data-journey-click="stageprompt.lpa:help:certificate-providers">Find out more about certificate providers</a>
+                <a class="js-guidance" href="/guide#topic-certificate-providers" data-journey-click="page:link:help: Find out more about certificate providers">Find out more about certificate providers</a>
             </p>
         </div>
     </div>
@@ -89,7 +89,7 @@
 
         <div class="form-group">
             <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" class="button js-form-popup">Add a certificate provider</a>
-            <input type="submit" name="submit" class="button-link button-input-to-link" value="Skip this question for now" data-journey-click="stageprompt.lpa:link.skip:create/certificate-provider: Skip this question for now" />
+            <input type="submit" name="submit" class="button-link button-input-to-link" value="Skip this question for now" data-journey-click="page:link:skip: Skip this question for now" />
         </div>
 
         {{ form().closeTag|raw }}
