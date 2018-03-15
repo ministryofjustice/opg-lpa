@@ -4,9 +4,9 @@ namespace Application\Model\Service\Admin;
 
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\ApiClient\Client as ApiClient;
-use Application\Model\Service\ApiClient\Exception\ResponseException;
 use DateTime;
 use DateTimeZone;
+use Exception;
 
 class Admin extends AbstractService
 {
@@ -28,6 +28,7 @@ class Admin extends AbstractService
     {
         $result = $this->client->searchUsers($email);
 
+
         if ($result !== false) {
             $result = $this->parseDateTime($result, 'lastLoginAt');
             $result = $this->parseDateTime($result, 'updatedAt');
@@ -36,7 +37,13 @@ class Admin extends AbstractService
             $result = $this->parseDateTime($result, 'deletedAt');
 
             if (array_key_exists('userId', $result) && $result['isActive'] === true) {
-                $result['numberOfLpas'] = $this->client->getApplicationCount($result['userId']);
+                $numberOfLpas = 0;
+
+                try {
+                    $numberOfLpas = $this->client->getApplicationCount($result['userId']);
+                } catch (Exception $ignore) {}
+
+                $result['numberOfLpas'] = $numberOfLpas;
             }
         }
 
