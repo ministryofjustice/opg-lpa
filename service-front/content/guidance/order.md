@@ -26,8 +26,8 @@
 	* People_People to be told.md
 * Preferences and instructions
 	* Decisions_Preferences and instructions.md
-* How to preview the LPA
-	* Process_How to preview the LPA.md
+* How to view a draft of the LPA
+	* Process_How to view a draft of the LPA.md
 * Signing the LPA
 	* Process_Signing the LPA.md
 * Registering the LPA
