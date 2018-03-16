@@ -18,7 +18,7 @@
                 'text' : 'The donor is ' ~ lpa.document.donor.name,
                 'status' : 'Complete',
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -30,7 +30,7 @@
                     'Option B - The attorneys can\'t make decisions about life-sustaining treatment',
                 'status' : 'Complete',
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -40,7 +40,7 @@
                 'text' : 'The attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's are ' : ' is ') ~ concatNames(lpa.document.primaryAttorneys),
                 'status' : lpa.document.primaryAttorneys|length ~ ' Attorney' ~ (lpa.document.primaryAttorneys|length != 1 ? 's' : ''),
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -52,7 +52,7 @@
                     'only if I don\'t have mental capacity'),
                 'status' : 'Complete',
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -66,7 +66,7 @@
                         'jointly for some decisions, and jointly and severally for other decisions')),
                 'status' : 'Complete',
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -79,7 +79,7 @@
                 'status' : lpa.document.replacementAttorneys|length ~ ' Replacement attorney' ~ (lpa.document.replacementAttorneys|length != 1 ? 's' : ''),
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
                 'cssClass': 'wide-label',
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -94,7 +94,7 @@
                         'as per instructions')),
                 'status' : 'Complete',
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -109,7 +109,7 @@
                         'jointly for some decisions, and jointly and severally for other decisions')),
                 'status' : 'Complete',
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -119,7 +119,7 @@
                 'text' : (lpa.document.certificateProvider ? 'The certificate provider is ' ~ lpa.document.certificateProvider.name : 'Certificate provider not added' ),
                 'status' : (lpa.document.certificateProvider ? 'Complete' : 'Not Started'),
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -132,7 +132,7 @@
                 'status' : lpa.document.peopleToNotify|length ~ (lpa.document.peopleToNotify|length != 1 ? ' people to notify' : ' person to notify'),
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
                 'cssClass': lpa.document.peopleToNotify|length == 0 ? '' : 'wide-label',
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -142,7 +142,7 @@
                 'text' : 'Preferences and instructions',
                 'status' : 'Complete',
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -161,7 +161,7 @@
             'text' : 'The LPA will be registered by ' ~ applicantNames( lpa ),
             'status' : 'Complete',
             'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-            'journeyClick': 'Links to ' ~ item.routeName
+            'journeyClick': 'navigation: Links to ' ~ item.routeName
         })
         }}
     {% endif %}
@@ -173,7 +173,7 @@
             'text' : 'The LPA will be sent to ' ~ (lpa.document.correspondent.name is not empty ? lpa.document.correspondent.name : lpa.document.correspondent.company),
             'status' : 'Complete',
             'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-            'journeyClick': 'Links to ' ~ item.routeName
+            'journeyClick': 'navigation: Links to ' ~ item.routeName
         })
         }}
     {% endif %}
@@ -185,7 +185,7 @@
                     'Who was using the LPA service has not been answered',
                 'status' : 'Complete',
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -197,7 +197,7 @@
                     'This is not a repeat application',
                 'status' : 'Complete',
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
@@ -210,7 +210,7 @@
                             'The donor is not applying for a reduced fee' ))),
                 'status' : 'Complete',
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
-                'journeyClick': 'Links to ' ~ item.routeName
+                'journeyClick': 'navigation: Links to ' ~ item.routeName
             })
         }}
     {% endif %}
