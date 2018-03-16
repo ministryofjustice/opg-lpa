@@ -42,7 +42,7 @@
 
             <p>You've entered all the essential information needed for your {{ lpaType }} LPA.</p>
 
-            <p>The optional section below lets you add <a class="js-guidance" href="/guide#topic-preferences-and-instructions" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">preferences or instructions</a> for your attorneys. You don't have to put anything there, but you can state things that the attorneys must or mustn't do or give guidance that you'd like them to follow.</p>
+            <p>The optional section below lets you add <a class="js-guidance" href="/guide#topic-preferences-and-instructions" data-journey-click="page:link:help: lets you add -preferences or instructions- for your attorneys">preferences or instructions</a> for your attorneys. You don't have to put anything there, but you can state things that the attorneys must or mustn't do or give guidance that you'd like them to follow.</p>
 
             <p>
                 {% if isPfLpa %}
@@ -62,12 +62,12 @@
 
         <details{{ instructions.getValue() or preferences.getValue() ? ' open' : '' }} class="form-group">
 
-            <summary data-journey-click="stageprompt.lpa:help.inline:create/instructions: Add extra preferences or instructions for the attorneys? (optional)" role="button" aria-expanded="false">Add extra preferences or instructions for the attorneys? (optional)</summary>
+            <summary data-journey-click="page:link.reveal:Add extra preferences or instructions for the attorneys? (optional)" role="button" aria-expanded="false">Add extra preferences or instructions for the attorneys? (optional)</summary>
 
             <div>
 
                 <div class="form-group text flush--bottom">
-                    <p>If you'd like to add anything here, please <a class="js-guidance" href="/guide#topic-preferences-and-instructions" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">read our help topic on preferences and instructions</a>. It contains useful examples and can help you avoid mistakes.</p>
+                    <p>If you'd like to add anything here, please <a class="js-guidance" href="/guide#topic-preferences-and-instructions" data-journey-click="page:link:help: read our help topic on preferences and instructions">read our help topic on preferences and instructions</a>. It contains useful examples and can help you avoid mistakes.</p>
                 </div>
 
                 <fieldset>
@@ -76,7 +76,7 @@
                     <div class="form-group {{ preferences.getMessages|length >0 ? 'error'}}">
                         <label class="form-label text" for="{{ preferences.getAttribute('id') }}">
                             {{ preferences.getOption('label') }}<br>
-                            <span class="form-hint">These are things you would like attorneys to think about when making decisions. Use words like 'prefer' or 'would like'. <a href="/guide#topic-preferences-and-instructions" class="js-guidance" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">Not sure what to put?</a><br></span>
+                            <span class="form-hint">These are things you would like attorneys to think about when making decisions. Use words like 'prefer' or 'would like'. <a href="/guide#topic-preferences-and-instructions" class="js-guidance" data-journey-click="page:link:help: Not sure what to put? (Preferences)">Not sure what to put?</a><br></span>
                             {{ formElementErrorsV2(preferences) }}
                         </label>
                         {{ formElement(preferences) }}
@@ -85,7 +85,7 @@
                     <div class="form-group {{ instructions.getMessages|length >0 ? 'error'}} flush--bottom">
                         <label class="form-label text" for="{{ instructions.getAttribute('id') }}">
                             {{ instructions.getOption('label') }}<br>
-                            <span class="form-hint">These are things that the attorneys MUST or MUST NOT do. Use words like 'must' or 'have to'. <a href="/guide#topic-preferences-and-instructions" class="js-guidance" data-journey-click="stageprompt.lpa:help:restrictions-and-guidance">Not sure what to put?</a><br></span>
+                            <span class="form-hint">These are things that the attorneys MUST or MUST NOT do. Use words like 'must' or 'have to'. <a href="/guide#topic-preferences-and-instructions" class="js-guidance" data-journey-click="page:link:help: Not sure what to put? (Instructions)">Not sure what to put?</a><br></span>
                             {{ formElementErrorsV2(instructions) }}
                         </label>
                         {{ formElement(instructions) }}
