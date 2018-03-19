@@ -26,7 +26,7 @@
                 </td>
             </tr>
 
-            {{ macros.outputActor( lpa.document.donor, url('lpa/donor', {'lpa-id': lpa.id}) ) }}
+            {{ macros.outputActor( lpa.document.donor, url('lpa/donor', {'lpa-id': lpa.id}), 'Donor' ) }}
 
         {% endif %}
 
@@ -37,7 +37,7 @@
                 <td class="table-summary-content">
                     {{ lpa.document.primaryAttorneyDecisions.canSustainLife ? 'Option A - The attorneys can make decisions' : 'Option B - The attorneys cannot make decisions' }}
                 </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/life-sustaining', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/life-sustaining', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: Life-sustaining treatment">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -48,7 +48,7 @@
                 <td class="table-summary-content">
                     {{ lpa.document.primaryAttorneyDecisions.when == 'now' ? 'As soon as it\'s registered (with my consent)' : 'Only if I don\'t have mental capacity' }}
                 </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/when-lpa-starts', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/when-lpa-starts', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: When LPA starts">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -69,7 +69,7 @@
                     </td>
                 </tr>
 
-                {{ macros.outputActor( attorney, url('lpa/primary-attorney', {'lpa-id': lpa.id}) ) }}
+                {{ macros.outputActor( attorney, url('lpa/primary-attorney', {'lpa-id': lpa.id}), 'Primary attorney' ) }}
 
             {% endfor %}
 
@@ -94,7 +94,7 @@
                     'jointly' :
                     'jointly for some decisions, and jointly and severally for other decisions')) }}
                 </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/how-primary-attorneys-make-decision', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/how-primary-attorneys-make-decision', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: How primary attorneys make decisions">Edit</a></td>
             </tr>
 
 
@@ -128,14 +128,14 @@
                     </td>
                 </tr>
 
-                {{ macros.outputActor( attorney, url('lpa/replacement-attorney', {'lpa-id': lpa.id}) ) }}
+                {{ macros.outputActor( attorney, url('lpa/replacement-attorney', {'lpa-id': lpa.id}), 'Replacement attorney' ) }}
 
             {% endfor %}
         {% else %}
             <tr class="group-single">
                 <td class="table-summary-title">Replacement attorney</td>
                 <td class="table-summary-content">No replacement attorneys</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/replacement-attorney', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/replacement-attorney', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: Replacement attorney">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -162,7 +162,7 @@
                                 'only when none of the original attorneys can act' :
                                 'as per instructions')) }}
                     </td>
-                    <td class="table-summary-action"><a href="{{ url('lpa/when-replacement-attorney-step-in', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                    <td class="table-summary-action"><a href="{{ url('lpa/when-replacement-attorney-step-in', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: When replacement attorneys step in">Edit</a></td>
                 </tr>
             {% endif %}
 
@@ -189,7 +189,7 @@
                         'jointly' :
                         'jointly for some decisions, and jointly and severally for other decisions')) }}
                     </td>
-                    <td class="table-summary-action"><a href="{{ url('lpa/how-replacement-attorneys-make-decision', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                    <td class="table-summary-action"><a href="{{ url('lpa/how-replacement-attorneys-make-decision', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: How replacement attorneys make decision">Edit</a></td>
                 </tr>
             {% endif %}
 
@@ -214,12 +214,12 @@
                 </td>
             </tr>
 
-           {{ macros.outputActor( lpa.document.certificateProvider, url('lpa/certificate-provider', {'lpa-id': lpa.id}) ) }}
+           {{ macros.outputActor( lpa.document.certificateProvider, url('lpa/certificate-provider', {'lpa-id': lpa.id}), 'Certificate provider' ) }}
         {% else %}
             <tr class="group-single">
                 <td class="table-summary-title">Certificate provider</td>
                 <td class="table-summary-content incomplete">Who is the certificate provider?</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/certificate-provider', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/certificate-provider', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: Certificate provider">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -240,7 +240,7 @@
                     </td>
                 </tr>
 
-                {{ macros.outputActor( actor, url('lpa/people-to-notify', {'lpa-id': lpa.id}) ) }}
+                {{ macros.outputActor( actor, url('lpa/people-to-notify', {'lpa-id': lpa.id}), 'People to notify' ) }}
 
             {% endfor %}
 
@@ -248,7 +248,7 @@
             <tr class="group-single">
                 <td class="table-summary-title">Person to notify</td>
                 <td class="table-summary-content">No people to notify</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/people-to-notify', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/people-to-notify', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: People to notify">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -257,14 +257,14 @@
             <tr class="group-single">
                 <th class="table-summary-title" scope="row">Preferences</th>
                 <td class="table-summary-content">{{ lpa.document.preference }}</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: Preferences">Edit</a></td>
             </tr>
 
         {% else %}
             <tr class="group-single">
                 <td class="table-summary-title">Preferences</td>
                 <td class="table-summary-content">No preferences</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: Preferences">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -273,14 +273,14 @@
             <tr class="group-single">
                 <th class="table-summary-title" scope="row">Instructions</th>
                 <td class="table-summary-content">{{ lpa.document.instruction }}</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: Instructions">Edit</a></td>
             </tr>
 
         {% else %}
             <tr class="group-single">
                 <td class="table-summary-title">Instructions</td>
                 <td class="table-summary-content">No instructions</td>
-                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/instructions', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: Instructions">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -295,11 +295,11 @@
                         {{ applicantNames( lpa ) }}
                     {% endif %}
                 </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/applicant', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/applicant', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: Applicant">Edit</a></td>
             </tr>
         {% endif %}
 
-        {# Correspondence #}
+        {# Correspondent #}
         {% if lpa.document.correspondent is defined %}
 
             <tr class="group-start">
@@ -308,11 +308,11 @@
                 </td>
             </tr>
 
-            {{ macros.outputActor( lpa.document.correspondent, url('lpa/correspondent', {'lpa-id': lpa.id}) ) }}
+            {{ macros.outputActor( lpa.document.correspondent, url('lpa/correspondent', {'lpa-id': lpa.id}), 'Correspondent' ) }}
 
         {% endif %}
 
-        {# Reapeat Applicaiton. Correspondent is checked as we only show this post-then #}
+        {# Repeat Applicaiton. Correspondent is checked as we only show this post-then #}
         {% if lpa.metadata['repeat-application-confirmed'] is defined %}
             <tr class="group-single">
                 <th class="table-summary-title" scope="row">Repeat application</th>
@@ -320,7 +320,7 @@
                     {{ lpa.repeatCaseNumber is not empty ? 'This is a repeat application with case number ' ~ lpa.repeatCaseNumber
                     : "This is not a repeat application" }}
                 </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/repeat-application', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/repeat-application', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: Repeat application">Edit</a></td>
             </tr>
         {% endif %}
 
@@ -340,7 +340,7 @@
                         Application fee: £{{ fullFee }} as you aren’t claiming a reduction
                     {% endif %}
                 </td>
-                <td class="table-summary-action"><a href="{{ url('lpa/fee-reduction', {'lpa-id': lpa.id}) }}">Edit</a></td>
+                <td class="table-summary-action"><a href="{{ url('lpa/fee-reduction', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: Fee reduction">Edit</a></td>
             </tr>
         {% endif %}
 
