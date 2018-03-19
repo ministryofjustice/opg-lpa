@@ -60,7 +60,7 @@ class Guidance extends AbstractService
 
         $html .= preg_replace(
                     '/<a href="\/help\/#topic-(.+)">(.+)<\/a>/',
-                    '<a href="/' . self::GUIDANCE_ROUTE . '#topic-${1}" class="js-guidance" data-journey="page:help:${1}">${2}</a>',
+                    '<a href="/' . self::GUIDANCE_ROUTE . '#topic-${1}" class="js-guidance" data-journey-click="guidance:link:help: ${1}">${2}</a>',
                     $md
                  );
 
