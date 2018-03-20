@@ -21,6 +21,9 @@
     allowAnchor: true
   });
 
+  // Activate any event plugins eg. print intent, error tracking
+  GOVUK.analyticsPlugins.formErrorTracker();
+
   // Track initial pageview
   if (typeof GOVUK.pageviewOptions !== 'undefined') {
     GOVUK.analytics.trackPageview(null, null, GOVUK.pageviewOptions);
