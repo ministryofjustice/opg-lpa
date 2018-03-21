@@ -48,7 +48,7 @@ class TypeControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/authenticated/lpa/type/index', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/type/index.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
         $this->assertEquals([
@@ -65,7 +65,7 @@ class TypeControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/authenticated/lpa/type/index', $result->getTemplate());
+        $this->assertEquals('application/authenticated/lpa/type/index.twig', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(true, $result->getVariable('isChangeAllowed'));
         $this->assertEquals([
