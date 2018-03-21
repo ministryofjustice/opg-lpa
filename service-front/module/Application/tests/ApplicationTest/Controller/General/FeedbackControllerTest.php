@@ -85,7 +85,7 @@ class FeedbackControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/general/feedback/thankyou', $result->getTemplate());
+        $this->assertEquals('application/general/feedback/thankyou.twig', $result->getTemplate());
         $this->assertEquals(false, $result->getVariable('strictVars'));
     }
 
