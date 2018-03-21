@@ -119,7 +119,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/general/forgot-password/email-sent', $result->getTemplate());
+        $this->assertEquals('application/general/forgot-password/email-sent.twig', $result->getTemplate());
         $this->assertEquals($this->postData['email'], $result->getVariable('email'));
         $this->assertEquals(false, $result->getVariable('accountNotActivated'));
     }
@@ -140,7 +140,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $result = $this->controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/general/forgot-password/email-sent', $result->getTemplate());
+        $this->assertEquals('application/general/forgot-password/email-sent.twig', $result->getTemplate());
         $this->assertEquals($this->postData['email'], $result->getVariable('email'));
         $this->assertEquals(true, $result->getVariable('accountNotActivated'));
     }
@@ -153,7 +153,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $result = $this->controller->resetPasswordAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/general/forgot-password/invalid-reset-token', $result->getTemplate());
+        $this->assertEquals('application/general/forgot-password/invalid-reset-token.twig', $result->getTemplate());
     }
 
     public function testResetPasswordActionAlreadyLoggedIn()
@@ -257,7 +257,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $result = $this->controller->resetPasswordAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/general/forgot-password/invalid-reset-token', $result->getTemplate());
+        $this->assertEquals('application/general/forgot-password/invalid-reset-token.twig', $result->getTemplate());
     }
 
     public function testResetPasswordActionPostSuccess()
