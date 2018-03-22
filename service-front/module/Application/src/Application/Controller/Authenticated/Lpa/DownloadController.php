@@ -73,6 +73,11 @@ class DownloadController extends AbstractLpaController
         $headers->clearHeaders()
                 ->addHeaderLine('Content-Type', 'application/pdf')
                 ->addHeaderLine('Content-Disposition', 'attachment; filename="' . $this->getFilename($pdfType) .'"')
+                ->addHeaderLine('Content-Transfer-Encoding', 'Binary')
+                ->addHeaderLine('Content-Description', 'File Transfer')
+                ->addHeaderLine('Pragma', 'public')
+                ->addHeaderLine('Expires', '0')
+                ->addHeaderLine('Cache-Control', 'must-revalidate')
                 ->addHeaderLine('Content-Length', strlen($fileContents));
 
         return $this->response;
