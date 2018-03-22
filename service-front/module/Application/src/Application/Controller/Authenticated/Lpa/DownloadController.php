@@ -72,13 +72,20 @@ class DownloadController extends AbstractLpaController
         $headers = $response->getHeaders();
         $headers->clearHeaders()
                 ->addHeaderLine('Content-Type', 'application/pdf')
-                ->addHeaderLine('Content-Disposition', 'attachment; filename="' . $this->getFilename($pdfType) .'"')
                 ->addHeaderLine('Content-Transfer-Encoding', 'Binary')
                 ->addHeaderLine('Content-Description', 'File Transfer')
                 ->addHeaderLine('Pragma', 'public')
                 ->addHeaderLine('Expires', '0')
                 ->addHeaderLine('Cache-Control', 'must-revalidate')
                 ->addHeaderLine('Content-Length', strlen($fileContents));
+
+        $userAgent = $this->getRequest()->getHeaders()->get('User-Agent')->getFieldValue();
+        if (stripos($userAgent, 'edge/') !== false) {
+            //Microsoft edge. Send the file as an attachment
+            $headers->addHeaderLine('Content-Disposition', 'attachment; filename="' . $this->getFilename($pdfType) .'"');
+        } else {
+            $headers->addHeaderLine('Content-Disposition', 'inline; filename="' . $this->getFilename($pdfType) .'"');
+        }
 
         return $this->response;
     }
