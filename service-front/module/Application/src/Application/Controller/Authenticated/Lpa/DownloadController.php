@@ -72,7 +72,7 @@ class DownloadController extends AbstractLpaController
         $headers = $response->getHeaders();
         $headers->clearHeaders()
                 ->addHeaderLine('Content-Type', 'application/pdf')
-                ->addHeaderLine('Content-Disposition', 'inline; filename="' . $this->getFilename($pdfType) .'"')
+                ->addHeaderLine('Content-Disposition', 'attachment; filename="' . $this->getFilename($pdfType) .'"')
                 ->addHeaderLine('Content-Length', strlen($fileContents));
 
         return $this->response;
