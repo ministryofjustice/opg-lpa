@@ -291,17 +291,6 @@ return [
                 ],
             ],
 
-            'admin-payment-switch' => [
-                'type' => 'Zend\Router\Http\Literal',
-                'options' => [
-                    'route'    => '/admin/payment',
-                    'defaults' => [
-                        'controller' => 'Authenticated\AdminController',
-                        'action'     => 'payment-switch',
-                    ],
-                ],
-            ],
-
             'admin-user-search' => [
                 'type' => 'Zend\Router\Http\Literal',
                 'options' => [
