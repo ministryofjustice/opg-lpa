@@ -16,6 +16,8 @@ use RuntimeException;
  */
 class Entity extends Hal
 {
+    //  TODO - TO BE REMOVED!
+
     protected $entity;
 
     private $linksSet = false;

@@ -88,7 +88,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $document = $lpa->document;
 
-        $document->whoIsRegistering = (isset($data['who'])) ? $data['who'] : null;
+        $document->whoIsRegistering = (isset($data['whoIsRegistering'])) ? $data['whoIsRegistering'] : null;
 
         //---
 

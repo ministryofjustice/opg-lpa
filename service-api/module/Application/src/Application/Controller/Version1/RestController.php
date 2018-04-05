@@ -148,19 +148,6 @@ class RestController extends AbstractRestfulController
     }
 
     /**
-     * Delete the entire resource collection
-     *
-     * Not marked as abstract, as that would introduce a BC break
-     * (introduced in 2.1.0); instead, raises an exception if not implemented.
-     *
-     * @return mixed
-     */
-    public function deleteList($data)
-    {
-        return new ApiProblem(405, 'The DELETE method has not been defined on this collection');
-    }
-
-    /**
      * Return single resource
      *
      * @param  mixed $id
@@ -234,36 +221,6 @@ class RestController extends AbstractRestfulController
     }
 
     /**
-     * Retrieve HEAD metadata for the resource
-     *
-     * Not marked as abstract, as that would introduce a BC break
-     * (introduced in 2.1.0); instead, raises an exception if not implemented.
-     *
-     * @param  null|mixed $id
-     * @return mixed
-     */
-    public function head($id = null)
-    {
-        return new ApiProblem(405, 'The HEAD method has not been defined');
-    }
-
-    /**
-     * Respond to the OPTIONS method
-     *
-     * Typically, set the Allow header with allowed HTTP methods, and
-     * return the response.
-     *
-     * Not marked as abstract, as that would introduce a BC break
-     * (introduced in 2.1.0); instead, raises an exception if not implemented.
-     *
-     * @return mixed
-     */
-    public function options()
-    {
-        return new ApiProblem(405, 'The OPTIONS method has not been defined');
-    }
-
-    /**
      * Respond to the PATCH method
      *
      * Not marked as abstract, as that would introduce a BC break
@@ -301,34 +258,6 @@ class RestController extends AbstractRestfulController
     }
 
     /**
-     * Replace an entire resource collection
-     *
-     * Not marked as abstract, as that would introduce a BC break
-     * (introduced in 2.1.0); instead, raises an exception if not implemented.
-     *
-     * @param  mixed $data
-     * @return mixed
-     */
-    public function replaceList($data)
-    {
-        return new ApiProblem(405, 'The PUT method has not been defined on this collection');
-    }
-
-    /**
-     * Modify a resource collection without completely replacing it
-     *
-     * Not marked as abstract, as that would introduce a BC break
-     * (introduced in 2.2.0); instead, raises an exception if not implemented.
-     *
-     * @param  mixed $data
-     * @return mixed
-     */
-    public function patchList($data)
-    {
-        return new ApiProblem(405, 'The PATCH method has not been defined on this collection');
-    }
-
-    /**
      * Update an existing resource
      *
      * @param  mixed $id
@@ -360,16 +289,6 @@ class RestController extends AbstractRestfulController
         }
 
         return new ApiProblem(500, 'Unable to process request');
-    }
-
-    /**
-     * Basic functionality for when a page is not available
-     *
-     * @return ApiProblem
-     */
-    public function notFoundAction()
-    {
-        return new ApiProblem(404, 'Page not found');
     }
 
     /**

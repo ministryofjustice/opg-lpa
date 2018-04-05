@@ -13,6 +13,9 @@ use Zend\Http\Response;
  */
 class HalResponse extends Response
 {
+
+    //  TODO - TO BE DELETED!
+
     /**
      * @var Hal The Hal document.
      */

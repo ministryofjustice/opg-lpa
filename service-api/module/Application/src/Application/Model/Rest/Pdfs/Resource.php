@@ -92,9 +92,9 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
      *
      * @return S3Client
      */
-    protected function getS3Client(){
-
-        if( $this->s3Client instanceof S3Client ){
+    protected function getS3Client()
+    {
+        if ($this->s3Client instanceof S3Client) {
             return $this->s3Client;
         }
 
@@ -103,7 +103,6 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $this->s3Client = new S3Client($this->pdfConfig['cache']['s3']['client']);
 
         return $this->s3Client;
-
     }
 
     //----------------------------------------------------------------------
@@ -115,8 +114,8 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
      * @return Entity|ApiProblem
      * @throw UnauthorizedException If the current user is not authorized.
      */
-    public function fetch($id){
-
+    public function fetch($id)
+    {
         $this->checkAccess();
 
         //---
@@ -127,28 +126,24 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $validation = $lpa->validate();
 
-        if( $validation->hasErrors() ){
-            return new ValidationApiProblem( $validation );
+        if ($validation->hasErrors()) {
+            return new ValidationApiProblem($validation);
         }
 
         //---
 
-        if( in_array( $id, $this->getPdfTypes() ) ){
+        if (in_array($id, $this->getPdfTypes())) {
+            $details = $this->getPdfDetails($id);
 
-            $details = $this->getPdfDetails( $id );
-
-            if( $details['status'] == Entity::STATUS_NOT_QUEUED ){
+            if ($details['status'] == Entity::STATUS_NOT_QUEUED) {
                 // Then add the LPA to the PDF queue.
-
-                $this->addLpaToQueue( $id );
+                $this->addLpaToQueue($id);
 
                 $details['status'] = Entity::STATUS_IN_QUEUE;
-
             }
 
             // Then assume they're asking for info about a PDF...
-            return new Entity( $details, $lpa );
-
+            return new Entity($details, $lpa);
         }
 
         //--------------------------------------------------------
@@ -157,29 +152,25 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         // They want to download the file.
 
         // Create array including '.pdf'...
-        $typesWithExtention = array_map( function($v){
+        $typesWithExtention = array_map(function ($v) {
             return "{$v}.pdf";
-        }, $this->getPdfTypes() );
+        }, $this->getPdfTypes());
 
 
-        if( in_array( $id, $typesWithExtention ) ){
-
+        if (in_array($id, $typesWithExtention)) {
             // Then they're trying to download the PDF...
+            $type = rtrim($id, '.pdf');
 
-            $type = rtrim( $id, '.pdf' );
+            $file = $this->getPdfFile($type);
 
-            $file = $this->getPdfFile( $type );
-
-            if( $file !== false ){
-                return new FileResponse( $file, FileResponse::TYPE_PDF );
+            if ($file !== false) {
+                return new FileResponse($file, FileResponse::TYPE_PDF);
             }
-
         } // if
 
         //---
 
-        return new ApiProblem( 404, 'Document not found' );
-
+        return new ApiProblem(404, 'Document not found');
     }
 
     /**
@@ -189,8 +180,8 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
      * @return Collection
      * @throw UnauthorizedException If the current user is not authorized.
      */
-    public function fetchAll($params = array()){
-
+    public function fetchAll($params = array())
+    {
         $this->checkAccess();
 
         //---
@@ -201,58 +192,53 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $data = array();
 
-        foreach( $this->getPdfTypes() as $type) {
-
-            $data[$type] = $this->getPdfDetails( $type );
-
+        foreach ($this->getPdfTypes() as $type) {
+            $data[$type] = $this->getPdfDetails($type);
         } // foreach
 
         //---
 
-        $collection = new Collection( new PaginatorArrayAdapter( $data ), $lpa );
+        $collection = new Collection(new PaginatorArrayAdapter($data), $lpa);
 
         // Always return all attorneys on one page.
-        $collection->setItemCountPerPage( count($data) );
+        $collection->setItemCountPerPage(count($data));
 
         //---
 
         return $collection;
-
     }
 
     //----------------------------------------------------------------------
 
-    private function getPdfDetails( $type ){
-
+    private function getPdfDetails($type)
+    {
         $lpa = $this->getLpa();
 
         //---
 
         // Check if we can generate this document type.
+        $state = new StateChecker($lpa);
 
-        $state = new StateChecker( $lpa );
-
-        switch ($type){
+        switch ($type) {
             case 'lp1':
-                $complete = $state->canGenerateLP1(); break;
+                $complete = $state->canGenerateLP1();
+                break;
             case 'lp3':
-                $complete = $state->canGenerateLP3(); break;
+                $complete = $state->canGenerateLP3();
+                break;
             case 'lpa120':
-                $complete = $state->canGenerateLPA120(); break;
+                $complete = $state->canGenerateLPA120();
+                break;
         }
 
         //---
 
         // If the LPA is complete, we check to see the status...
-        if( $complete ){
-
-            $status = $this->getPdfStatus( $type );
-
+        if ($complete) {
+            $status = $this->getPdfStatus($type);
         } else {
-
             // Otherwise the status is 'not available'...
             $status = Entity::STATUS_NOT_AVAILABLE;
-
         }
 
         //---
@@ -262,8 +248,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
             'complete' => $complete,
             'status' => $status,
         );
-
-    } // function
+    }
 
     /**
      * This checks the status of the PDF document that represents the LPA (and form type).
@@ -276,9 +261,9 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
      * @param $type
      * @return string
      */
-    private function getPdfStatus( $type ){
-
-        $ident = $this->getPdfIdent( $type );
+    private function getPdfStatus($type)
+    {
+        $ident = $this->getPdfIdent($type);
 
         //-------------------------------------------------
         // Check if the file already exists in the cache.
@@ -286,74 +271,63 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $bucketConfig = $this->pdfConfig['cache']['s3']['settings'];
 
         try {
-
             $this->getS3Client()->headObject($bucketConfig + [
                 'Key' => $ident,
             ]);
 
             // If it's in the cache, clean it out of the queue.
-            $this->dynamoQueueClient->deleteJob( $ident );
+            $this->dynamoQueueClient->deleteJob($ident);
 
             // If we get here it exists in the bucket...
             return Entity::STATUS_READY;
-
-        } catch( \Aws\S3\Exception\S3Exception $e ){
+        } catch (\Aws\S3\Exception\S3Exception $e) {
             // If it doesn't exist in the bucket we get this exception.
             // We just carry on below.
         }
-
 
         //-------------------------------------------------
         // Check for the job in the queue
 
         // Get the job's status in the queue.
-        $status = $this->dynamoQueueClient->checkStatus( $ident );
+        $status = $this->dynamoQueueClient->checkStatus($ident);
 
-
-        if( in_array( $status, [ DynamoQueueJob::STATE_WAITING, DynamoQueueJob::STATE_PROCESSING ] ) ){
+        if (in_array($status, [DynamoQueueJob::STATE_WAITING, DynamoQueueJob::STATE_PROCESSING])) {
             // Then the job is in the queue...
             return Entity::STATUS_IN_QUEUE;
         }
 
-        if( in_array( $status, [ DynamoQueueJob::STATE_DONE, DynamoQueueJob::STATE_ERROR ] ) ){
-
+        if (in_array($status, [ DynamoQueueJob::STATE_DONE, DynamoQueueJob::STATE_ERROR])) {
             // If we get here something strange has happened because:
             //  - The PDF should have been in the cache; or
             //  - An error occurred.
 
             // For now we just remove the job from teh queue so it can be re-added.
-            $this->dynamoQueueClient->deleteJob( $ident );
-
+            $this->dynamoQueueClient->deleteJob($ident);
         }
 
         // else it's not in the queue.
         return Entity::STATUS_NOT_QUEUED;
+    }
 
-    } // function
-
-    private function addLpaToQueue( $type ){
-
+    private function addLpaToQueue($type)
+    {
         $lpa = $this->getLpa();
 
-        $ident = $this->getPdfIdent( $type );
+        $ident = $this->getPdfIdent($type);
 
-        //----------------------
         // Setup the message
-
         $message = json_encode([
             'lpa' => $lpa->toArray(),
             'type' => strtoupper($type), // The type of document we want generating
         ]);
 
-        // Compress the message.
-        $message = (new Compress( self::COMPRESSION_ADAPTER ))->filter( $message );
+        // Compress the message
+        $message = (new Compress(self::COMPRESSION_ADAPTER))->filter($message);
 
-        //----------------------
         // Encrypt the message
-
         $encryptionKey = $this->pdfConfig['encryption']['keys']['queue'];
 
-        if( !is_string($encryptionKey) || strlen($encryptionKey) != 32 ){
+        if (!is_string($encryptionKey) || strlen($encryptionKey) != 32) {
             throw new CryptInvalidArgumentException('Invalid encryption key');
         }
 
@@ -364,34 +338,24 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $blockCipher->setKey($encryptionKey);
 
         // Encrypt the JSON...
-        $encryptedMessage = $blockCipher->encrypt( $message );
+        $encryptedMessage = $blockCipher->encrypt($message);
 
-        //----------------------
+        // Add the message to the queue
+        $this->dynamoQueueClient->enqueue('\Opg\Lpa\Pdf\Worker\DynamoQueueWorker', $encryptedMessage, $ident);
+    }
 
-        // Add the message to the queue.
-        $this->dynamoQueueClient->enqueue( '\Opg\Lpa\Pdf\Worker\DynamoQueueWorker', $encryptedMessage, $ident );
-
-    } // function
-
-    public function getPdfFile( $type ){
-
-        $ident = $this->getPdfIdent( $type );
-
-        //---
+    public function getPdfFile($type)
+    {
+        $ident = $this->getPdfIdent($type);
 
         $bucketConfig = $this->pdfConfig['cache']['s3']['settings'];
 
         try {
-
             $file = $this->getS3Client()->getObject($bucketConfig + [
                 'Key' => $ident,
             ]);
-
-
-        } catch( \Aws\S3\Exception\S3Exception $e ){
-
+        } catch (\Aws\S3\Exception\S3Exception $e) {
             return false;
-
         }
 
         //---
@@ -400,10 +364,9 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         //-------------------------------------
         // Decrypt the PDF
-
         $encryptionKeysConfig = $this->pdfConfig['encryption']['keys']['document'];
 
-        if( !is_string($encryptionKeysConfig) || strlen($encryptionKeysConfig) != 32 ){
+        if (!is_string($encryptionKeysConfig) || strlen($encryptionKeysConfig) != 32) {
             throw new CryptInvalidArgumentException('Invalid encryption key');
         }
 
@@ -412,16 +375,13 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         // Set the secret key
         $blockCipher->setKey($encryptionKeysConfig);
-        $blockCipher->setBinaryOutput( true );
+        $blockCipher->setBinaryOutput(true);
 
         // Encrypt the JSON...
-        $file = $blockCipher->decrypt( $file );
-
-        //---
+        $file = $blockCipher->decrypt($file);
 
         return $file;
-
-    } // function
+    }
 
     /**
      * Generates a unique identifier the represents the LPA data and type of form ( lp1, lp3, etc. ).
@@ -439,6 +399,5 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         $hash = hash('sha512', md5($lpa->toJson()) . $keys['document'] . $keys['queue']);
 
         return strtolower("{$type}-{$hash}");
-    } // function
-
-} // class
+    }
+}

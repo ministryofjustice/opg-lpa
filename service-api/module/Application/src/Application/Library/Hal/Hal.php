@@ -7,6 +7,9 @@ use Nocarrier\Hal as NocarrierHal;
 
 class Hal extends NocarrierHal
 {
+    //  TODO - TO BE REMOVED!
+
+
     /**
      * Returns the Hal encoded content as either JSON or XML.
      *

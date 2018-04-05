@@ -24,8 +24,8 @@ class Module {
 
     const VERSION = '3.0.3-dev';
 
-    public function onBootstrap(MvcEvent $e){
-
+    public function onBootstrap(MvcEvent $e)
+    {
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
@@ -34,55 +34,41 @@ class Module {
 
         $request = $e->getApplication()->getServiceManager()->get('Request');
 
-        if( !($request instanceof \Zend\Console\Request) ) {
-
+        if (!($request instanceof \Zend\Console\Request)) {
             // Setup authentication listener...
             $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener, 'authenticate'], 500);
 
             // Register error handler for dispatch and render errors
             $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
             $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
-
         }
+    }
 
-    } // function
-
-    public function getControllerConfig(){
-
-        /*
-         * ------------------------------------------------------------------
-         * Setup the REST Controller
-         *
-         */
-
+    public function getControllerConfig()
+    {
+        //  Setup the REST Controller
         return [
             'initializers' => [
-                'InitRestController' => function($sm, $controller) {
+                'InitRestController' => function ($sm, $controller) {
                     if ($controller instanceof RestController) {
+                        //  Get the resource name (form the URL) and inject into the controller
+                        $resourceName = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getParam('resource');
 
-                        //--------------------------------------------------
-                        // Inject the resource
-
-                        // Get the resource name (form the URL)...
-                        $resource = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getParam('resource');
-
-                        // Check if the resource exists...
-                        if( !$sm->has("resource-{$resource}") ){
+                        //  Check if the resource exists
+                        if (!$sm->has("resource-{$resourceName}")) {
                             throw new ApiProblemException('Unknown resource type', 404);
                         }
 
-                        // Get the resource...
-                        $resource = $sm->get("resource-{$resource}");
+                        //  Get the resource...
+                        $resource = $sm->get("resource-{$resourceName}");
 
                         // Inject it into the Controller...
-                        $controller->setResource( $resource );
-
+                        $controller->setResource($resource);
                     }
-                }, // InitRestController
-            ], // initializers
+                },
+            ],
         ];
-
-    } // function
+    }
 
     /*
      * ------------------------------------------------------------------
@@ -90,7 +76,8 @@ class Module {
      *
      */
 
-    public function getServiceConfig() {
+    public function getServiceConfig()
+    {
         return [
             'factories' => [
                 'Zend\Authentication\AuthenticationService' => function ($sm) {
@@ -129,7 +116,8 @@ class Module {
         ];
     } // function
 
-    public function getConfig(){
+    public function getConfig()
+    {
         return include __DIR__ . '/config/module.config.php';
     }
 
@@ -138,6 +126,7 @@ class Module {
      * Listen for and catch ApiProblemExceptions. Convert them to a standard ApiProblemResponse.
      *
      * @param MvcEvent $e
+     * @return ApiProblemResponse
      */
     public function handleError(MvcEvent $e)
     {
@@ -145,8 +134,7 @@ class Module {
         $exception = $e->getParam('exception');
 
         if ($exception instanceof ApiProblemExceptionInterface) {
-
-            $problem = new ApiProblem( $exception->getCode(), $exception->getMessage() );
+            $problem = new ApiProblem($exception->getCode(), $exception->getMessage());
 
             $e->stopPropagation();
             $response = new ApiProblemResponse($problem);
@@ -156,8 +144,6 @@ class Module {
             $logger->err($exception->getMessage());
 
             return $response;
-
         }
     }
-
-} // class
+}

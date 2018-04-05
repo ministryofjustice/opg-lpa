@@ -88,8 +88,6 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $lpa->document->primaryAttorneys[] = $attorney;
 
-        //---
-
         $this->updateLpa( $lpa );
 
         return new Entity( $attorney, $lpa );

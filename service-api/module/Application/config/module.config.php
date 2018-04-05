@@ -117,6 +117,7 @@ return [
                 'may_terminate' => true,
                 'child_routes' => [
 
+                    //  TODO - Is this used yet?
                     'stats' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -135,12 +136,12 @@ return [
                     'user' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/users/:userId',
+                            'route'       => '/users/:userId',
                             'constraints' => [
-                                'userId' => '[a-f0-9]+',
+                                'userId'  => '[a-f0-9]+',
                             ],
                             'defaults' => [
-                                'controller'    => 'Users',
+                                'controller' => 'User',
                             ],
                         ],
                         'may_terminate' => true,
@@ -149,13 +150,12 @@ return [
                             'applications' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/applications[/:lpaId]',
+                                    'route'       => '/applications[/:lpaId]',
                                     'constraints' => [
-                                        'lpaId'     => '[0-9]+',
+                                        'lpaId'   => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'controller'    => 'Application',
-                                        'resource'      => 'applications'
+                                        'controller' => 'Application',
                                     ],
                                 ],
                             ], // applications
@@ -203,13 +203,14 @@ return [
 
     'controllers' => [
         'invokables' => [
-            'Application\Controller\Index' => 'Application\Controller\IndexController',
-            'Application\Controller\Version1\Rest' => 'Application\Controller\Version1\RestController',
+            'Application\Controller\Index'          => 'Application\Controller\IndexController',
+            'Application\Controller\Version1\Rest'  => 'Application\Controller\Version1\RestController',
         ],
         'factories' => [
-            'Application\Controller\Console\GenerateStats' => 'Application\Controller\Console\GenerateStatsControllerFactory',
-            'Application\Controller\Ping' => 'Application\Controller\PingControllerFactory',
-            'Application\Controller\Version2\Application' => 'Application\Controller\Version2\ApplicationControllerFactory',
+            'Application\Controller\Console\GenerateStats'  => 'Application\Controller\Console\GenerateStatsControllerFactory',
+            'Application\Controller\Ping'                   => 'Application\Controller\PingControllerFactory',
+            'Application\Controller\Version2\Application'   => 'Application\Controller\Version2\ApplicationControllerFactory',
+            'Application\Controller\Version2\User'          => 'Application\Controller\Version2\UserControllerFactory',
         ],
     ], // controllers
 

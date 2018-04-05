@@ -7,6 +7,8 @@ use RuntimeException;
 
 class Collection extends Hal
 {
+    //  TODO - TO BE REMOVED!
+
     protected $collection;
 
     protected $collectionName;
