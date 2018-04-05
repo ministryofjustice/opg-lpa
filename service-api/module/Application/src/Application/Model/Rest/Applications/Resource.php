@@ -215,88 +215,81 @@ class Resource extends AbstractResource implements UserConsumerInterface
      * @return Collection
      * @throw UnauthorizedException If the current user is not authorized.
      */
-    public function fetchAll($params = array()){
-
+    public function fetchAll($params = [])
+    {
         $this->checkAccess();
 
-        //------------------------
+        $filter = [
+            'user' => $this->getRouteUser()->userId()
+        ];
 
-        $filter = [ 'user'=>$this->getRouteUser()->userId() ];
-
-        // Merge in any filter requirements...
-        if( isset($params['filter']) && is_array($params['filter']) ){
-            $filter = array_merge( $params, $filter );
+        //  Merge in any filter requirements...
+        if (isset($params['filter']) && is_array($params['filter'])) {
+            $filter = array_merge($params, $filter);
         }
 
-        //---
-
-        // If we have a search query...
-        if( isset($params['search']) && strlen(trim($params['search'])) > 0 ) {
-
+        //  If we have a search query...
+        if (isset($params['search']) && strlen(trim($params['search'])) > 0) {
             $search = trim($params['search']);
 
             // If the string is numeric, assume it's an LPA id.
-            if( is_numeric($search) ) {
-
+            if (is_numeric($search)) {
                 $filter['_id'] = (int)$search;
-
             } else {
-
                 // If it starts with an A and everything that follows after is numeric...
-                if( substr(strtoupper($search),0,1) == 'A' && is_numeric( $ident = preg_replace('/\s+/', '', substr($search, 1)) ) ) {
-
+                if (substr(strtoupper($search), 0, 1) == 'A' && is_numeric($ident = preg_replace('/\s+/', '', substr($search, 1)))) {
                     // Assume it's an LPA id.
                     $filter['_id'] = (int)$ident;
-
                 } else {
-
                     // Otherwise assume it's a name.
-                    $filter[ '$text' ] = [ '$search' => '"'.trim($params['search']).'"' ];
-
-                } // if
-
-            } // if
-
-        } // if search
-
-        //---
+                    $filter['$text'] = [
+                        '$search' => '"' . trim($params['search']) . '"',
+                    ];
+                }
+            }
+        }
 
         $count = $this->lpaCollection->count($filter);
 
         // If there are no records, just return an empty paginator...
-        if( $count == 0 ){
-            return new Collection( new PaginatorNull, $this->getRouteUser()->userId() );
+        if ($count == 0) {
+            return new Collection(new PaginatorNull, $this->getRouteUser()->userId());
         }
-
-        //---
 
         // Map the results into a Zend Paginator, lazely converting them to LPA instances as we go...
         $lpaCollection = $this->lpaCollection;
 
         $callback = new PaginatorCallback(
-            function($offset, $itemCountPerPage) use ($lpaCollection, $filter){
+            function ($offset, $itemCountPerPage) use ($lpaCollection, $filter) {
                 // getItems callback
+                $options = [
+                    'sort' => [
+                        'updatedAt' => -1
+                    ],
+                    'skip' => $offset,
+                    'limit' => $itemCountPerPage
+                ];
 
-                $options = ['sort' => ['updatedAt' => -1], 'skip' => $offset, 'limit' => $itemCountPerPage];
                 $cursor = $lpaCollection->find($filter, $options);
                 $lpas = $cursor->toArray();
 
                 // Convert the results to instances of the LPA object..
-                $items = array_map( function($lpa){
+                $items = array_map(function ($lpa) {
                     $lpa = [ 'id' => $lpa['_id'] ] + $lpa;
-                    return new Lpa( $lpa );
+
+                    return new Lpa($lpa);
                 }, $lpas);
 
                 return $items;
             },
-            function() use ($count){
+            function () use ($count) {
                 // count callback
                 return $count;
             }
         );
 
-        return new Collection( $callback, $this->getRouteUser()->userId() );
-    } // function
+        return new Collection($callback, $this->getRouteUser()->userId());
+    }
 
 
     /**
