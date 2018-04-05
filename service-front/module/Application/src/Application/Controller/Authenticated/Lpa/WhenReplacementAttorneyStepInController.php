@@ -47,7 +47,7 @@ class WhenReplacementAttorneyStepInController extends AbstractLpaController
                     $replacementAttorneyDecisions->whenDetails = $whenDetails;
 
                     // persist data
-                    if (!$this->getLpaApplicationService()->setReplacementAttorneyDecisions($this->getIdentity()->id(), $lpa->id, $replacementAttorneyDecisions)) {
+                    if (!$this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpa, $replacementAttorneyDecisions)) {
                         throw new \RuntimeException('API client failed to set replacement step in decisions for id: ' . $lpa->id);
                     }
                 }

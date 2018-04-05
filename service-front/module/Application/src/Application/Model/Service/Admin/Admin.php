@@ -5,7 +5,6 @@ namespace Application\Model\Service\Admin;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
-use Application\Model\Service\ApiClient\Exception\ResponseException;
 use Application\Model\Service\AuthClient\AuthClientAwareInterface;
 use Application\Model\Service\AuthClient\AuthClientTrait;
 use DateTime;

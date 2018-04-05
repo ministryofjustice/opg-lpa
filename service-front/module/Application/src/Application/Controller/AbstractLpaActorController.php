@@ -410,8 +410,8 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
             if (!$cloneContainer->offsetExists($seedId)) {
                 //  The data isn't in the session - get it now
-                $abc = $this->getLpaApplicationService()->getSeedDetails($this->getIdentity()->id(), $lpa->id);
-                $cloneContainer->$seedId = $abc;
+                $seedActors = $this->getLpaApplicationService()->getSeedDetails($lpa->id);
+                $cloneContainer->$seedId = $seedActors;
             }
 
             if (is_array($cloneContainer->$seedId)) {
@@ -504,7 +504,8 @@ abstract class AbstractLpaActorController extends AbstractLpaController
      */
     protected function updateCorrespondentData(AbstractData $actor, $isDelete = false)
     {
-        $correspondent = $this->getLpa()->document->correspondent;
+        $lpa = $this->getLpa();
+        $correspondent = $lpa->document->correspondent;
 
         if ($correspondent instanceof Correspondence) {
             //  Only allow the data to be updated if the actor type is correct
@@ -513,8 +514,8 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                 || ($actor instanceof CertificateProvider && $correspondent->who == Correspondence::WHO_CERTIFICATE_PROVIDER)) {
 
                 if ($isDelete) {
-                    if (!$this->getLpaApplicationService()->deleteCorrespondent($this->getIdentity()->id(), $this->getLpa()->id)) {
-                        throw new \RuntimeException('API client failed to delete correspondent for id: ' . $this->getLpa()->id);
+                    if (!$this->getLpaApplicationService()->deleteCorrespondent($lpa)) {
+                        throw new \RuntimeException('API client failed to delete correspondent for id: ' . $lpa->id);
                     }
                 } else {
                     //  Get the correct name to compare (for a trust that will be the company name)
@@ -538,8 +539,8 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
                         $correspondent->address = $actor->address;
 
-                        if (!$this->getLpaApplicationService()->setCorrespondent($this->getIdentity()->id(), $this->getLpa()->id, $correspondent)) {
-                            throw new \RuntimeException('API client failed to update correspondent for id: ' . $this->getLpa()->id);
+                        if (!$this->getLpaApplicationService()->setCorrespondent($lpa, $correspondent)) {
+                            throw new \RuntimeException('API client failed to update correspondent for id: ' . $lpa->id);
                         }
                     }
                 }

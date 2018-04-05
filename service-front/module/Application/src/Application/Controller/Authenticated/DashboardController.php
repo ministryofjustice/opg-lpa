@@ -130,7 +130,7 @@ class DashboardController extends AbstractAuthenticatedController
                 return $this->redirect()->toRoute('user/dashboard');
             }
 
-            $result = $this->getLpaApplicationService()->setSeed($this->getIdentity()->id(), $lpa->id, (int) $seedId);
+            $result = $this->getLpaApplicationService()->setSeed($lpa, (int) $seedId);
 
             $this->resetSessionCloneData($seedId);
 

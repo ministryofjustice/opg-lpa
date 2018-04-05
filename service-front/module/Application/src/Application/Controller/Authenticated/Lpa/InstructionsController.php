@@ -27,14 +27,15 @@ class InstructionsController extends AbstractLpaController
                 $lpaId = $lpa->id;
 
                 // persist data if it has changed
+
                 if (is_null($lpa->document->instruction) || $data['instruction'] != $lpa->document->instruction) {
-                    if (!$this->getLpaApplicationService()->setInstructions($this->getIdentity()->id(), $lpaId, $data['instruction'])) {
+                    if (!$this->getLpaApplicationService()->setInstructions($lpa, $data['instruction'])) {
                         throw new \RuntimeException('API client failed to set LPA instructions for id: ' . $lpaId);
                     }
                 }
 
                 if (is_null($lpa->document->preference) || $data['preference'] != $lpa->document->preference) {
-                    if (!$this->getLpaApplicationService()->setPreferences($this->getIdentity()->id(), $lpaId, $data['preference'])) {
+                    if (!$this->getLpaApplicationService()->setPreferences($lpa, $data['preference'])) {
                         throw new \RuntimeException('API client failed to set LPA preferences for id: ' . $lpaId);
                     }
                 }

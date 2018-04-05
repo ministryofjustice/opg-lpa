@@ -4,7 +4,6 @@ namespace Application\Controller;
 
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Lpa\ApplicantCleanup;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
@@ -33,11 +32,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     private $flowChecker;
 
     /**
-     * @var ApplicantCleanup
-     */
-    private $applicantCleanup;
-
-    /**
      * @var ReplacementAttorneyCleanup
      */
     private $replacementAttorneyCleanup;
@@ -58,7 +52,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
      * @param Container $userDetailsSession
      * @param LpaApplicationService $lpaApplicationService
      * @param UserService $userService
-     * @param ApplicantCleanup $applicantCleanup
      * @param ReplacementAttorneyCleanup $replacementAttorneyCleanup
      * @param Metadata $metadata
      */
@@ -72,7 +65,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         Container $userDetailsSession,
         LpaApplicationService $lpaApplicationService,
         UserService $userService,
-        ApplicantCleanup $applicantCleanup,
         ReplacementAttorneyCleanup $replacementAttorneyCleanup,
         Metadata $metadata
     ) {
@@ -95,7 +87,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         }
 
         $this->lpa = $lpa;
-        $this->applicantCleanup = $applicantCleanup;
         $this->replacementAttorneyCleanup = $replacementAttorneyCleanup;
         $this->metadata = $metadata;
     }
@@ -176,15 +167,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     protected function cleanUpReplacementAttorneyDecisions()
     {
         $this->replacementAttorneyCleanup->cleanUp($this->lpa);
-    }
-
-    /**
-     * removes replacement attorney decisions that no longer apply to this LPA.
-     *
-     */
-    protected function cleanUpApplicant()
-    {
-        $this->applicantCleanup->cleanUp($this->lpa);
     }
 
     /**

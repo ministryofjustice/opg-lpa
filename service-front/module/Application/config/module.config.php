@@ -30,7 +30,7 @@ return [
         ],
         'aliases' => [
             'AdminService'                  => 'Application\Model\Service\Admin\Admin',
-            'ApplicantCleanup'              => 'Application\Model\Service\Lpa\ApplicantCleanup',
+            'ApplicantService'              => 'Application\Model\Service\Lpa\Applicant',
             'Communication'                 => 'Application\Model\Service\Lpa\Communication',
             'Feedback'                      => 'Application\Model\Service\Feedback\Feedback',
             'Guidance'                      => 'Application\Model\Service\Guidance\Guidance',

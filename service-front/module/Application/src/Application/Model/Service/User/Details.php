@@ -11,6 +11,7 @@ use Application\Model\Service\AuthClient\AuthClientAwareInterface;
 use Application\Model\Service\AuthClient\AuthClientTrait;
 use Application\Model\Service\AuthClient\Exception\ResponseException as AuthResponseException;
 use Application\Model\Service\Mail\Transport\MailTransport;
+use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Session\Container;
 use Exception;
@@ -28,13 +29,17 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
     private $userDetailsSession;
 
     /**
-     * TODO - This is only called in the AbstractAuthenticatedController - can it be condensed down?
-     *
-     * @return mixed
+     * @return bool|User
      */
     public function getUserDetails()
     {
-        return $this->apiClient->getAboutMe($this->getUserId());
+        $response = $this->apiClient->httpGet('/v2/users/' . $this->getUserId());
+
+        if ($response->getStatusCode() == 200) {
+            return new User(json_decode($response->getBody(), true));
+        }
+
+        return false;
     }
 
     /**
@@ -69,9 +74,9 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
             throw new RuntimeException('Unable to save details');
         }
 
-        $result = $this->apiClient->setAboutMe($userDetails);
+        $response = $this->apiClient->httpPut('/v2/users/' . $this->getUserId(), $userDetails->toArray());
 
-        if ($result !== true) {
+        if ($response->getStatusCode() != 200) {
             throw new RuntimeException('Unable to save details');
         }
 
@@ -223,18 +228,18 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
     }
 
     /**
-     * Deletes a user. i.e. all their LPAs, and their
+     * Deletes a user and their LPAs
      *
-     * @param $userId
-     * @return ApiResponseException|ApiRuntimeException|AuthResponseException|bool|\Exception
+     * @return ApiResponseException|ApiRuntimeException|AuthResponseException|bool|Exception
      */
     public function delete()
     {
         $this->getLogger()->info('Deleting user and all their LPAs', $this->getAuthenticationService()->getIdentity()->toArray());
 
-        $success = $this->apiClient->deleteAllLpas($this->getUserId());
+        //  The API to delete the user will delete their associated LPAs too
+        $response = $this->apiClient->httpDelete('/v2/users/' . $this->getUserId());
 
-        if (!$success) {
+        if ($response->getStatusCode() != 204) {
             return new ApiRuntimeException('cannot-delete-lpas');
         }
 

@@ -91,7 +91,8 @@ class PeopleToNotifyController extends AbstractLpaActorController
             if ($form->isValid()) {
                 // persist data
                 $np = new NotifiedPerson($form->getModelDataFromValidatedForm());
-                if (!$this->getLpaApplicationService()->addNotifiedPerson($this->getIdentity()->id(), $lpaId, $np)) {
+
+                if (!$this->getLpaApplicationService()->addNotifiedPerson($lpa, $np)) {
                     throw new \RuntimeException('API client failed to add a notified person for id: '.$lpaId);
                 }
 
@@ -151,7 +152,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
                 $notifiedPerson->populate($form->getModelDataFromValidatedForm());
 
                 // persist to the api
-                if (!$this->getLpaApplicationService()->setNotifiedPerson($this->getIdentity()->id(), $lpaId, $notifiedPerson, $notifiedPerson->id)) {
+                if (!$this->getLpaApplicationService()->setNotifiedPerson($lpa, $notifiedPerson, $notifiedPerson->id)) {
                     throw new \RuntimeException('API client failed to update notified person ' . $personIdx . ' for id: ' . $lpaId);
                 }
 
@@ -212,7 +213,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
             // persist data to the api
             $personToNotifyId = $lpa->document->peopleToNotify[$personIdx]->id;
 
-            if (!$this->getLpaApplicationService()->deleteNotifiedPerson($this->getIdentity()->id(), $lpa->id, $personToNotifyId)) {
+            if (!$this->getLpaApplicationService()->deleteNotifiedPerson($lpa, $personToNotifyId)) {
                 throw new \RuntimeException('API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpa->id);
             }
         } else {
