@@ -240,10 +240,11 @@ class Resource extends AbstractResource implements UserConsumerInterface
                 if (substr(strtoupper($search), 0, 1) == 'A' && is_numeric($ident = preg_replace('/\s+/', '', substr($search, 1)))) {
                     // Assume it's an LPA id.
                     $filter['_id'] = (int)$ident;
-                } else {
-                    // Otherwise assume it's a name.
-                    $filter['$text'] = [
-                        '$search' => '"' . trim($params['search']) . '"',
+                } elseif (strlen($search) >= 3) {
+                    // Otherwise assume it's a name, and only search if 3 chars or longer
+                    $filter['search'] = [
+                        '$regex' => '.*' . $search . '.*',
+                        '$options' => 'i',
                     ];
                 }
             }
