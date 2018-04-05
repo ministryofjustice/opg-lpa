@@ -20,32 +20,6 @@
 
     {% endif %}
 
-    {% if worldPayForm is not null %}
-        {# worldpay #}
-
-            {% set worldPayForm = formErrorTextExchange(worldPayForm,  {
-            'email' : {
-            'Value is required and can\'t be empty' : 'Please enter an email address'
-            }
-            }) %}
-
-            {# Set form fields variables #}
-            {% set email = worldPayForm.get('email') %}
-
-            {# form fields config #}
-            {{ email.setAttributes({
-                id:'email',
-                class: 'form-control'
-            }) ? '' }}
-
-            {# form fields labels #}
-            {{ email.setOptions( {
-                label: 'Email address'
-            } ) ? '' }}
-
-        {# /worldpay #}
-    {% endif %}
-
     {% import "application/macros.twig" as macros %}
 
     {% include 'application/authenticated/lpa/summary/partials/summary-table.twig' %}
@@ -80,50 +54,20 @@
                 </div>
             </details>
 
-            {% if worldPayForm is not null %}
-
-                {# -- Worldpay -- #}
+            {# -- GDS Pay -- #}
+            <p class="divorced">
                 {# begin form #}
-                {{ worldPayForm.prepare() ? '' }}
-                {{ form().openTag( worldPayForm )|raw }}
-                {{ formElement(worldPayForm.getCsrf) }}
+                {{ form.prepare() ? '' }}
+                {{ form().openTag( form )|raw }}
+                {{ formElement(form.getCsrf) }}
 
-                {# Error summary #}
-                {{ macros.formErrorSummary(error,worldPayForm,'There was a problem submitting the form') }}
-
-                <fieldset>
-                    <legend class="visually-hidden">Contact email</legend>
-
-                    <h2 class="heading-medium flush--top text">Enter a contact email for correspondence regarding this payment.</h2>
-
-                    {{ macros.formGroup(email) }}
-
-                </fieldset>
-
-                <input type="submit" name="save" value="Confirm and pay online" class="button">
+            <div class="form-group">
+                {{ formElement(form.get('submit')) }}
                 <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">Confirm and pay by cheque</a>
+            </div>
 
-                {{ form().closeTag|raw }}
-
-            {% else %}
-
-                {# -- GDS Pay -- #}
-                <p class="divorced">
-                    {# begin form #}
-                    {{ form.prepare() ? '' }}
-                    {{ form().openTag( form )|raw }}
-                    {{ formElement(form.getCsrf) }}
-
-                    <div class="form-group">
-                        {{ formElement(form.get('submit')) }}
-                        <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">Confirm and pay by cheque</a>
-                    </div>
-
-                    {{ form().closeTag|raw }}
-                </p>
-
-            {% endif %}
-
+            {{ form().closeTag|raw }}
+            </p>
 
         {% endif %}
 

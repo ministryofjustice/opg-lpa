@@ -59,14 +59,14 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         ],
         CheckoutController::class => [
             'setCommunicationService' => 'Communication',
-            'setPaymentClient'        => 'GovPayClient',
-            'setPaymentService'       => 'Payment'
+            'setPaymentClient'        => 'GovPayClient'
         ],
         ReuseDetailsController::class => [
             'setRouter' => 'Router'
         ],
         AuthController::class => [
-            'setAuthenticationAdapter' => 'AuthenticationAdapter'
+            'setAuthenticationAdapter' => 'AuthenticationAdapter',
+            'setLpaApplicationService' => 'LpaApplicationService'
         ],
         FeedbackController::class => [
             'setFeedbackService' => 'Feedback'

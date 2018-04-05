@@ -78,7 +78,6 @@ paths.checkout_pay = '/lpa/\\d+/checkout/pay';
 paths.checkout_pay_return = '/lpa/\\d+/checkout/pay/response';
 paths.checkout_cheque = '/lpa/\\d+/checkout/cheque';
 paths.checkout_confirm = '/lpa/\\d+/checkout/confirm';
-paths.checkout_worldpay_cancel = '/lpa/\\d+/checkout/worldpay/return/cancel';
 paths.complete = '/lpa/\\d+/complete';
 paths.view_docs = '/lpa/\\d+/view-docs';
 paths.download = '/lpa/\\d+/download';

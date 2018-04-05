@@ -60,11 +60,6 @@ class FormFlowChecker extends StateChecker
         'lpa/checkout/pay'                              => 'isPaymentAccessible',
         'lpa/checkout/pay/response'                     => 'isPaymentAccessible',
         'lpa/checkout/confirm'                          => 'isPaymentAccessible',
-        'lpa/checkout/worldpay'                         => 'isPaymentAccessible',
-        'lpa/checkout/worldpay/return'                  => 'isPaymentAccessible',
-        'lpa/checkout/worldpay/return/success'          => 'isOnlinePaymentSuccessAccessible',
-        'lpa/checkout/worldpay/return/failure'          => 'isOnlinePaymentFailureAccessible',
-        'lpa/checkout/worldpay/return/cancel'           => 'isOnlinePaymentCancelAccessible',
         'lpa/complete'                                  => 'isCompleteAccessible',
         'lpa/more-info-required'                        => 'isMoreInfoRequiredAccessible',
         'lpa/date-check'                                => 'isApplicantAccessible',
@@ -129,7 +124,6 @@ class FormFlowChecker extends StateChecker
         'lpa/checkout/cheque'                           => 'lpa/complete',
         'lpa/checkout/confirm'                          => 'lpa/complete',
         'lpa/checkout/pay/response'                     => 'lpa/complete',
-        'lpa/checkout/worldpay/return/success'          => 'lpa/complete',
     ];
 
     private $returnFunctionMap = [

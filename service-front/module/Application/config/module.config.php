@@ -37,7 +37,6 @@ return [
             'Register'                              => 'Application\Model\Service\User\Register',
             'AboutYouDetails'                       => 'Application\Model\Service\User\Details',
             'DeleteUser'                            => 'Application\Model\Service\User\Delete',
-            'Payment'                               => 'Application\Model\Service\Payment\Payment',
             'Feedback'                              => 'Application\Model\Service\Feedback\Feedback',
             'Signatures'                            => 'Application\Model\Service\Feedback\Signatures',
             'Guidance'                              => 'Application\Model\Service\Guidance\Guidance',

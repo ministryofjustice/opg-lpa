@@ -45,7 +45,7 @@ class DeleteControllerTest extends AbstractControllerTest
         $result = $this->controller->confirmAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('error/500', $result->getTemplate());
+        $this->assertEquals('error/500.twig', $result->getTemplate());
     }
 
     public function testConfirmAction()
