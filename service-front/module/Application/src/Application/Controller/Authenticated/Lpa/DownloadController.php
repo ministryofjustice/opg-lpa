@@ -32,7 +32,7 @@ class DownloadController extends AbstractLpaController
         $this->layout('layout/download.twig');
 
         $details = $this->getLpaApplicationService()
-                        ->getPdfDetails($this->getIdentity()->id(), $this->getLpa()->id, $pdfType);
+                        ->getPdfDetails($this->getLpa()->id, $pdfType);
 
         $this->getLogger()->info('PDF status is ' . $details['status'], [
             'lpaId' => $this->getLpa()->id
@@ -54,7 +54,8 @@ class DownloadController extends AbstractLpaController
     {
         $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
 
-        $details = $this->getLpaApplicationService()->getPdfDetails($this->getIdentity()->id(), $this->getLpa()->id, $pdfType);
+        $details = $this->getLpaApplicationService()
+                        ->getPdfDetails($this->getLpa()->id, $pdfType);
 
         if ($details['status'] !== 'ready') {
             // If the PDF is not ready, direct the user back to index.

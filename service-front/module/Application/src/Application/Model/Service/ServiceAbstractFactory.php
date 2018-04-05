@@ -7,16 +7,16 @@ use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\Client as ApiClient;
 use Application\Model\Service\AuthClient\AuthClientAwareInterface;
 use Application\Model\Service\AuthClient\Client as AuthClient;
+use Application\Model\Service\Lpa\Applicant;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Lpa\Metadata;
+use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\User\Details;
 use Exception;
 use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ServiceAbstractFactory implements AbstractFactoryInterface
 {
@@ -26,6 +26,9 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $additionalServices = [
+        Applicant::class => [
+            'setLpaApplicationService' => 'LpaApplicationService',
+        ],
         Communication::class => [
             'setUserDetailsSession' => 'UserDetailsSession'
         ],
@@ -37,6 +40,9 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         ],
         PostcodeInfo::class => [
             'setPostcodeInfoClient' => 'PostcodeInfoClient'
+        ],
+        ReplacementAttorneyCleanup::class => [
+            'setLpaApplicationService' => 'LpaApplicationService',
         ],
     ];
 

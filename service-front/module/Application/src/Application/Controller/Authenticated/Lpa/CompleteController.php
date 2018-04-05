@@ -51,7 +51,7 @@ class CompleteController extends AbstractLpaController
         $lpa = $this->getLpa();
 
         if ($lpa->locked !== true) {
-            $this->getLpaApplicationService()->lockLpa($this->getIdentity()->id(), $this->getLpa()->id);
+            $this->getLpaApplicationService()->lockLpa($lpa);
         }
     }
 

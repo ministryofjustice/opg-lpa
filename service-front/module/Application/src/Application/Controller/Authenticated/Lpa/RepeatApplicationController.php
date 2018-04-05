@@ -31,26 +31,25 @@ class RepeatApplicationController extends AbstractLpaController
             }
 
             if ($form->isValid()) {
-                $lpaId = $lpa->id;
+                $formData = $form->getData();
+
                 $repeatCaseNumber = $lpa->repeatCaseNumber;
 
-                $lpaApplicationService = $this->getLpaApplicationService();
-
                 // persist data
-                if ($form->getData()['isRepeatApplication'] == 'is-repeat') {
+                if ($formData['isRepeatApplication'] == 'is-repeat') {
                     // set repeat case number only if case number changed or added
-                    if ($form->getData()['repeatCaseNumber'] != $lpa->repeatCaseNumber) {
-                        if (!$lpaApplicationService->setRepeatCaseNumber($this->getIdentity()->id(), $lpa->id, $form->getData()['repeatCaseNumber'])) {
-                            throw new \RuntimeException('API client failed to set repeat case number for id: '.$lpaId);
+                    if ($formData['repeatCaseNumber'] != $lpa->repeatCaseNumber) {
+                        if (!$this->getLpaApplicationService()->setRepeatCaseNumber($lpa, $formData['repeatCaseNumber'])) {
+                            throw new \RuntimeException('API client failed to set repeat case number for id: ' . $lpa->id);
                         }
                     }
 
-                    $lpa->repeatCaseNumber = $form->getData()['repeatCaseNumber'];
+                    $lpa->repeatCaseNumber = $formData['repeatCaseNumber'];
                 } else {
                     if ($lpa->repeatCaseNumber !== null) {
                         // delete case number if it has been set previousely.
-                        if (!$lpaApplicationService->deleteRepeatCaseNumber($this->getIdentity()->id(), $lpa->id)) {
-                            throw new \RuntimeException('API client failed to set repeat case number for id: '.$lpaId);
+                        if (!$this->getLpaApplicationService()->deleteRepeatCaseNumber($this->getIdentity()->id(), $lpa->id)) {
+                            throw new \RuntimeException('API client failed to set repeat case number for id: ' . $lpa->id);
                         }
                     }
 
@@ -60,7 +59,7 @@ class RepeatApplicationController extends AbstractLpaController
                 if ($lpa->payment instanceof Payment && $lpa->repeatCaseNumber != $repeatCaseNumber) {
                     Calculator::calculate($lpa);
 
-                    if (!$lpaApplicationService->setPayment($this->getIdentity()->id(), $lpa->id, $lpa->payment)) {
+                    if (!$this->getLpaApplicationService()->setPayment($lpa, $lpa->payment)) {
                         throw new \RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in RepeatApplicationController');
                     }
                 }

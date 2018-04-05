@@ -8,6 +8,8 @@ use Application\Controller\AbstractLpaController;
 use Application\Controller\Authenticated\AboutYouController;
 use Application\Controller\Authenticated\AdminController;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
+use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
+use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Controller\Authenticated\PostcodeController;
 use Application\Controller\General\AuthController;
@@ -64,6 +66,9 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         GuidanceController::class => [
             'setGuidanceService' => 'Guidance'
         ],
+        HowPrimaryAttorneysMakeDecisionController::class => [
+            'setApplicantService' => 'ApplicantService',
+        ],
         NotificationsController::class => [
             'setMailTransport'     => 'MailTransport'
         ],
@@ -72,6 +77,9 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         ],
         PostcodeController::class => [
             'setAddressLookup' => 'AddressLookupMoj'
+        ],
+        PrimaryAttorneyController::class => [
+            'setApplicantService' => 'ApplicantService',
         ],
         RegisterController::class => [
             'setUserService' => 'UserService'
@@ -157,7 +165,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $userDetailsSession,
                     $lpaApplicationService,
                     $userService,
-                    $container->get('ApplicantCleanup'),
                     $container->get('ReplacementAttorneyCleanup'),
                     $container->get('Metadata')
                 );

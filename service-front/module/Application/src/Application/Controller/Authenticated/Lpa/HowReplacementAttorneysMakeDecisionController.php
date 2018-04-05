@@ -48,7 +48,7 @@ class HowReplacementAttorneysMakeDecisionController extends AbstractLpaControlle
                     $replacementAttorneyDecisions->howDetails = $howDetails;
 
                     // persist data
-                    if (!$this->getLpaApplicationService()->setReplacementAttorneyDecisions($this->getIdentity()->id(), $lpa->id, $replacementAttorneyDecisions)) {
+                    if (!$this->getLpaApplicationService()->setReplacementAttorneyDecisions($lpa, $replacementAttorneyDecisions)) {
                         throw new RuntimeException('API client failed to set replacement attorney decisions for id: ' . $lpa->id);
                     }
                 }

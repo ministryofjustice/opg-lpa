@@ -3,15 +3,17 @@
 namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractService;
-use Application\Model\Service\ApiClient\ApiClientAwareInterface;
-use Application\Model\Service\ApiClient\ApiClientTrait;
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
-class ReplacementAttorneyCleanup extends AbstractService implements ApiClientAwareInterface
+class ReplacementAttorneyCleanup extends AbstractService
 {
-    use ApiClientTrait;
+    /**
+     * @var LpaApplicationService
+     */
+    private $lpaApplicationService;
 
     /**
      * Cleanup data to to with how the Replacement Attorneys should act
@@ -23,11 +25,17 @@ class ReplacementAttorneyCleanup extends AbstractService implements ApiClientAwa
         $stateChecker = new StateChecker($lpa);
 
         if ($this->whenDecisionsInvalid($lpa, $stateChecker)) {
-            $this->removeWhenDecisions($lpa);
+            $lpa->document->replacementAttorneyDecisions->when = null;
+            $lpa->document->replacementAttorneyDecisions->whenDetails = null;
+
+            $this->lpaApplicationService->setReplacementAttorneyDecisions($lpa, $lpa->document->replacementAttorneyDecisions);
         }
 
         if ($this->howDecisionsInvalid($lpa, $stateChecker)) {
-            $this->removeHowDecisions($lpa);
+            $lpa->document->replacementAttorneyDecisions->how = null;
+            $lpa->document->replacementAttorneyDecisions->howDetails = null;
+
+            $this->lpaApplicationService->setReplacementAttorneyDecisions($lpa, $lpa->document->replacementAttorneyDecisions);
         }
     }
 
@@ -51,18 +59,8 @@ class ReplacementAttorneyCleanup extends AbstractService implements ApiClientAwa
                return true;
             }
         }
+
         return false;
-    }
-
-    /**
-     * @param Lpa $lpa
-     */
-    private function removeWhenDecisions(Lpa $lpa)
-    {
-        $lpa->document->replacementAttorneyDecisions->when = null;
-        $lpa->document->replacementAttorneyDecisions->whenDetails = null;
-
-        $this->apiClient->setReplacementAttorneyDecisions($this->getUserId(), $lpa->id, $lpa->document->replacementAttorneyDecisions);
     }
 
     /**
@@ -85,20 +83,16 @@ class ReplacementAttorneyCleanup extends AbstractService implements ApiClientAwa
             if (!(count($lpa->document->primaryAttorneys) == 1) &&
                 !($stateChecker->lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct()) &&
                 !($stateChecker->lpaPrimaryAttorneysMakeDecisionJointly())) {
+
                 return true;
             }
         }
+
         return false;
     }
 
-    /**
-     * @param Lpa $lpa
-     */
-    private function removeHowDecisions(Lpa $lpa)
+    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService)
     {
-        $lpa->document->replacementAttorneyDecisions->how = null;
-        $lpa->document->replacementAttorneyDecisions->howDetails = null;
-
-        $this->apiClient->setReplacementAttorneyDecisions($this->getUserId(), $lpa->id, $lpa->document->replacementAttorneyDecisions);
+        $this->lpaApplicationService = $lpaApplicationService;
     }
 }
