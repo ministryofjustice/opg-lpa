@@ -108,7 +108,6 @@ class FormFlowCheckerTest extends MockeryTestCase
         'lpa/checkout/cheque'                           => 'lpa/complete',
         'lpa/checkout/confirm'                          => 'lpa/complete',
         'lpa/checkout/pay/response'                     => 'lpa/complete',
-        'lpa/checkout/worldpay/return/success'          => 'lpa/complete',
 
     ];
 
@@ -1035,8 +1034,6 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/checkout/pay',
             'lpa/checkout/pay/response',
             'lpa/checkout/confirm',
-            'lpa/checkout/worldpay',
-            'lpa/checkout/worldpay/return',
         ];
 
         $this->runAssertions('lpa/checkout', $permittedRoutes);
@@ -1116,11 +1113,6 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/checkout/pay',
             'lpa/checkout/pay/response',
             'lpa/checkout/confirm',
-            'lpa/checkout/worldpay',
-            'lpa/checkout/worldpay/return',
-            'lpa/checkout/worldpay/return/success',
-            'lpa/checkout/worldpay/return/failure',
-            'lpa/checkout/worldpay/return/cancel',
             'lpa/view-docs',
         ];
 

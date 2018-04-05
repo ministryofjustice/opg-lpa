@@ -68,43 +68,6 @@ class AdminController extends AbstractAuthenticatedController
         ]);
     }
 
-    public function paymentSwitchAction()
-    {
-        $form = $this->getFormElementManager()
-                     ->get('Application\Form\Admin\PaymentSwitch');
-
-        $saved = false;
-
-        if ($this->request->isPost()) {
-            $post = $this->request->getPost();
-
-            $form->setData($post);
-
-            if ($form->isValid()) {
-                $percentage = $form->getData()['percentage'];
-
-                $this->cache()->setItem('worldpay-percentage', $percentage);
-
-                $saved = true;
-            }
-        } else {
-            $element = $form->get('percentage');
-            $percentage = $this->cache()->getItem('worldpay-percentage');
-
-            if (!is_numeric($percentage)) {
-                // Default to 0
-                $percentage = 0;
-            }
-
-            $element->setValue($percentage);
-        }
-
-        return new ViewModel([
-            'form' => $form,
-            'save' => $saved
-        ]);
-    }
-
     public function userSearchAction()
     {
         /** @var UserSearchForm $form */

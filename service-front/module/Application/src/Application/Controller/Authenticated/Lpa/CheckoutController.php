@@ -4,7 +4,6 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Alphagov\Pay\Client as GovPayClient;
 use Application\Controller\AbstractLpaController;
-use Application\Model\Service\Payment\Payment as PaymentService;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Payment\Helper\LpaIdHelper;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -12,7 +11,6 @@ use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
-use Zend\Http\Response as HttpResponse;
 use Zend\View\Helper\ServerUrl;
 use Zend\View\Model\ViewModel;
 use RuntimeException;
@@ -29,42 +27,10 @@ class CheckoutController extends AbstractLpaController
      */
     private $paymentClient;
 
-    /**
-     * @var PaymentService
-     */
-    private $paymentService;
-
     public function indexAction()
     {
         if ($this->request->isPost() && !$this->isLPAComplete()) {
             return $this->redirectToMoreInfoRequired();
-        }
-
-        //  Determine what percentage of users to send directly to WorldPay
-        $segmentsSentToWorldPay = $this->cache()->getItem('worldpay-percentage');
-
-        // Sanity checks...
-        if (!is_numeric($segmentsSentToWorldPay) || $segmentsSentToWorldPay < 0 || $segmentsSentToWorldPay > 100) {
-            $segmentsSentToWorldPay = 0;
-        }
-
-        // Take the user's id and puts them into a segment between 1 and 100.
-        $segment = (abs(crc32($this->getUser()->id())) % 100) + 1;
-
-        // If the user's segment falls at or below the set percentage.
-        $useWorldPay = ($segment <= (int)$segmentsSentToWorldPay);
-        $worldPayForm = null;
-
-        // Note: all POSTs are for WorldPay to this method.
-        // This protects against the case where an admin changes the 'percentage' whilst a user is mid payment.
-        if ($useWorldPay || $this->request->isPost()) {
-            $worldPayForm = $this->getFormElementManager()->get('Application\Form\Lpa\PaymentForm');
-
-            $response = $this->processWorldPayForm($worldPayForm);
-
-            if ($response instanceof HttpResponse) {
-                return $response;
-            }
         }
 
         $lpa = $this->getLpa();
@@ -86,7 +52,6 @@ class CheckoutController extends AbstractLpaController
 
         return new ViewModel([
             'form'           => $form,
-            'worldPayForm'   => $worldPayForm,
             'lowIncomeFee'   => $lowIncomeFee,
             'fullFee'        => $fullFee,
             'lpaIsCompleted' => $this->isLPAComplete(),
@@ -352,151 +317,6 @@ class CheckoutController extends AbstractLpaController
         return $this->finishCheckout();
     }
 
-    //------------------------------------------------------------------------------
-    // WorldPay
-
-    public function worldpaySuccessAction()
-    {
-        $params = [
-            'paymentStatus' => null,
-            'orderKey' => null,
-            'paymentAmount' => null,
-            'paymentCurrency' => null,
-            'mac' => null
-        ];
-
-        foreach ($params as $key => &$value) {
-            if ($this->request->getQuery($key) == null) {
-                throw new \Exception(
-                    'Invalid success response from Worldpay. ' .
-                    'Expected ' . $key . ' parameter was not found. ' .
-                    $_SERVER["REQUEST_URI"]
-                );
-            }
-            $value = $this->request->getQuery($key);
-        }
-
-        if ($params['paymentStatus'] != 'AUTHORISED') {
-            throw new \Exception(
-                'Invalid success response from Worldpay. ' .
-                'paymentStatus was ' . $params['paymentStatus'] . ' (expected AUTHORISED)'
-            );
-        }
-
-        //--------
-
-        $paymentService = $this->paymentService;
-
-        $paymentService->verifyMacString($params);
-        $paymentService->verifyOrderKey($params, $this->getLpa()->id);
-
-        // The above functions throw fatal exceptions if there are any issues.
-
-        $paymentService->updateLpa($params, $this->getLpa());
-
-        //---
-
-        return $this->finishCheckout();
-    }
-
-    public function worldpayCancelAction()
-    {
-        $worldPayForm = $this->getFormElementManager()->get('Application\Form\Lpa\PaymentForm');
-
-        $response = $this->processWorldPayForm($worldPayForm);
-
-        if ($response instanceof HttpResponse) {
-            return $response;
-        }
-
-        //---
-
-        // Shows cancel page
-        return new ViewModel([
-            'worldPayForm' => $worldPayForm,
-        ]);
-    }
-
-    public function worldpayFailureAction()
-    {
-        $worldPayForm = $this->getFormElementManager()->get('Application\Form\Lpa\PaymentForm');
-
-        $response = $this->processWorldPayForm($worldPayForm);
-
-        if ($response instanceof HttpResponse) {
-            return $response;
-        }
-
-        //---
-
-        // Shows failure page
-        return new ViewModel([
-            'worldPayForm' => $worldPayForm,
-        ]);
-    }
-
-    public function worldpayPendingAction()
-    {
-    }
-
-    //---
-
-    private function getWorldpayRedirect($emailAddress)
-    {
-        $paymentService = $this->paymentService;
-
-        $options = $paymentService->getOptions($this->getLpa(), $emailAddress);
-
-        $response = $paymentService
-            ->getGateway()
-            ->purchase($options)
-            ->send();
-
-        $redirectUrl = $response->getData()->reference;
-
-        foreach (['success', 'failure', 'cancel'] as $type) {
-            $redirectUrl .= "&{$type}URL=" . $this->getWorldpayRedirectCallbackEndpoint($type);
-        }
-
-        $this->redirect()->toUrl($redirectUrl);
-
-        return $this->getResponse();
-    }
-
-    private function getWorldpayRedirectCallbackEndpoint($type)
-    {
-        $baseUri = (new ServerUrl())->__invoke(false);
-
-        return $baseUri . $this->url()->fromRoute(
-            'lpa/checkout/worldpay/return/' . $type,
-            ['lpa-id' => $this->getLpa()->id]
-        );
-    }
-
-    //-------------------------------------
-
-    private function processWorldPayForm($worldPayForm)
-    {
-        // If POST, it's a worldpay payment...
-        if ($this->request->isPost()) {
-            $worldPayForm->setData($this->request->getPost());
-
-            if ($worldPayForm->isValid()) {
-                $lpa = $this->getLpa();
-
-                $lpa->payment->method = Payment::PAYMENT_TYPE_CARD;
-
-                if (!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
-                    throw new RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
-                }
-
-                //---
-
-                return $this->getWorldpayRedirect($worldPayForm->getData()['email']);
-            }
-        }
-    }
-
     public function setCommunicationService(Communication $communicationService)
     {
         $this->communicationService = $communicationService;
@@ -505,10 +325,5 @@ class CheckoutController extends AbstractLpaController
     public function setPaymentClient(GovPayClient $paymentClient)
     {
         $this->paymentClient = $paymentClient;
-    }
-
-    public function setPaymentService(PaymentService $paymentService)
-    {
-        $this->paymentService = $paymentService;
     }
 }

@@ -119,14 +119,4 @@ return array(
         'sentry-uri' => getenv('OPG_LPA_FRONT_SENTRY_API_URI') ? getenv('OPG_LPA_FRONT_SENTRY_API_URI') : null,
     ], // log
 
-    'worldpay' => [
-        'url' => getenv('OPG_LPA_FRONT_WORLDPAY_URL') ? getenv('OPG_LPA_FRONT_WORLDPAY_URL') : null,
-        'merchant_code' => getenv('OPG_LPA_FRONT_WORLDPAY_MERCHANT_CODE') ? getenv('OPG_LPA_FRONT_WORLDPAY_MERCHANT_CODE') : null,
-        'xml_password' => getenv('OPG_LPA_FRONT_WORLDPAY_XML_PASSWORD') ? getenv('OPG_LPA_FRONT_WORLDPAY_XML_PASSWORD') : null,
-        'administration_code' => getenv('OPG_LPA_FRONT_WORLDPAY_ADMINISTRATION_CODE') ? getenv('OPG_LPA_FRONT_WORLDPAY_ADMINISTRATION_CODE') : null,
-        'installation_id' => getenv('OPG_LPA_FRONT_WORLDPAY_INSTALLATION_ID') ? getenv('OPG_LPA_FRONT_WORLDPAY_INSTALLATION_ID') : null,
-        'mac_secret' => getenv('OPG_LPA_FRONT_WORLDPAY_MAC_SECRET') ? getenv('OPG_LPA_FRONT_WORLDPAY_MAC_SECRET') : null,
-        'api_token_secret' => getenv('OPG_LPA_FRONT_WORLDPAY_API_TOKEN_SECRET') ? getenv('OPG_LPA_FRONT_WORLDPAY_API_TOKEN_SECRET') : null,
-    ], // worldpay
-
 );

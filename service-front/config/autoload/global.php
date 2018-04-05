@@ -197,23 +197,6 @@ return array(
 
     ],
 
-    'worldpay' => [
-
-        'test_mode' => ( strtolower(getenv('OPG_LPA_FRONT_WORLDPAY_TEST_MODE')) === 'true' ),
-        'currency' => 'GBP',
-        'cart_id' => 'LPAv2',
-        'log' => false,
-
-        'url' => getenv('OPG_LPA_FRONT_WORLDPAY_URL') ?: null,
-        'merchant_code' => getenv('OPG_LPA_FRONT_WORLDPAY_MERCHANT_CODE') ?: null,
-        'xml_password' => getenv('OPG_LPA_FRONT_WORLDPAY_XML_PASSWORD') ?: null,
-        'administration_code' => getenv('OPG_LPA_FRONT_WORLDPAY_ADMINISTRATION_CODE') ?: null,
-        'installation_id' => getenv('OPG_LPA_FRONT_WORLDPAY_INSTALLATION_ID') ?: null,
-        'mac_secret' => getenv('OPG_LPA_FRONT_WORLDPAY_MAC_SECRET') ?: null,
-        'api_token_secret' => getenv('OPG_LPA_FRONT_WORLDPAY_API_TOKEN_SECRET') ?: null,
-
-    ], // worldpay
-
     'log' => [
         'path' => getenv('OPG_LPA_COMMON_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-front2/application.log',
         'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: null,

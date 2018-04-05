@@ -17,10 +17,6 @@
         {
             "type": "vcs",
             "url": "https://github.com/ministryofjustice/opg-lpa-logger"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/Netsensia/omnipay-worldpay-xml"
         }
     ],
     "require": {
@@ -32,7 +28,6 @@
         "ministryofjustice/postcodeinfo-client-php": "^4.0",
         "ministryofjustice/opg-lpa-datamodels": "^9.3",
         "ministryofjustice/opg-lpa-logger": "^3.0",
-        "Netsensia/omnipay-worldpay-xml": "^1.0.1",
         "michelf/php-markdown": "^1.8",
         "alphagov/pay-integration-php": "^1.0.0",
         "php-http/client-implementation": "^1.0",

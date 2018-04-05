@@ -8,6 +8,8 @@ use Mockery;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
+use Zend\Http\Header\HeaderInterface;
+use Zend\Http\Headers;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
@@ -154,7 +156,17 @@ class DownloadControllerTest extends AbstractControllerTest
         $headers->shouldReceive('addHeaderLine')
             ->withArgs(['Content-Disposition', 'inline; filename="Lasting-Power-of-Attorney-LP1H.pdf"'])
             ->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Transfer-Encoding', 'Binary'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Description', 'File Transfer'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')->withArgs(['Pragma', 'public'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')->withArgs(['Expires', '0'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')->withArgs(['Cache-Control', 'must-revalidate'])->andReturn($headers)->once();
         $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Length', 11])->andReturn($headers)->once();
+
+        $userAgentHeader = Mockery::mock(HeaderInterface::class);
+        $userAgentHeader->shouldReceive('getFieldValue')->andReturn('');
+        $headers->shouldReceive('get')->andReturn($userAgentHeader);
+        $this->request->shouldReceive('getHeaders')->andReturn($headers);
 
         $result = $this->controller->downloadAction();
 

@@ -52,20 +52,20 @@ class PaymentTest extends AbstractHttpControllerTestCase
         
         $this->assertTrue($exceptionThrown);
     }
-    
-    public function testConstructWorldPayId()
+
+    public function testConstructPaymentTransactionId()
     {
         $id = LpaIdHelper::constructPaymentTransactionId('123');
-        
+
         $parts = explode('-', $id);
-        
+
         $this->assertTrue(count($parts) == 2);
-        
+
         $this->assertEquals(
             '00000000123',
             $parts[0]
         );
-        
+
         $this->assertTrue(is_numeric($parts[1]));
     }
 
