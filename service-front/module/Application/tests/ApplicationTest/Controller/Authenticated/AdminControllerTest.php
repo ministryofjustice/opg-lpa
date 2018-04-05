@@ -3,7 +3,6 @@
 namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\AdminController;
-use Application\Form\Admin\PaymentSwitch;
 use Application\Form\Admin\SystemMessageForm;
 use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
@@ -14,7 +13,6 @@ use OpgTest\Lpa\DataModel\FixturesData;
 use Zend\Form\Element;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
-use Zend\Router\RouteMatch;
 use Zend\View\Model\ViewModel;
 
 class AdminControllerTest extends AbstractControllerTest
@@ -30,13 +28,6 @@ class AdminControllerTest extends AbstractControllerTest
     private $systemMessagePostData = [
         'message' => 'New system unit test message'
     ];
-    /**
-     * @var MockInterface|PaymentSwitch
-     */
-    private $paymentSwitchForm;
-    private $paymentSwitchPostData = [
-        'percentage' => 50
-    ];
 
     public function setUp()
     {
@@ -45,10 +36,6 @@ class AdminControllerTest extends AbstractControllerTest
         $this->systemMessageForm = Mockery::mock(SystemMessageForm::class);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Admin\SystemMessageForm'])->andReturn($this->systemMessageForm);
-
-        $this->paymentSwitchForm = Mockery::mock(PaymentSwitch::class);
-        $this->formElementManager->shouldReceive('get')
-            ->withArgs(['Application\Form\Admin\PaymentSwitch'])->andReturn($this->paymentSwitchForm);
     }
 
     public function testIndexAction()
@@ -181,71 +168,5 @@ class AdminControllerTest extends AbstractControllerTest
         $result = $this->controller->systemMessageAction();
 
         $this->assertEquals($response, $result);
-    }
-
-    public function testPaymentSwitchActionGet()
-    {
-        $percentageElement = Mockery::mock(Element::class);
-        $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->paymentSwitchForm->shouldReceive('get')->withArgs(['percentage'])->andReturn($percentageElement)->once();
-        $this->cache->shouldReceive('getItem')->withArgs(['worldpay-percentage'])->andReturn(100)->once();
-        $percentageElement->shouldReceive('setValue')->withArgs([100])->once();
-
-        /** @var ViewModel $result */
-        $result = $this->controller->paymentSwitchAction();
-
-        $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->paymentSwitchForm, $result->getVariable('form'));
-        $this->assertEquals(false, $result->getVariable('save'));
-    }
-
-    public function testPaymentSwitchActionGetPercentageNonNumeric()
-    {
-        $percentageElement = Mockery::mock(Element::class);
-        $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->paymentSwitchForm->shouldReceive('get')->withArgs(['percentage'])->andReturn($percentageElement)->once();
-        $this->cache->shouldReceive('getItem')->withArgs(['worldpay-percentage'])->andReturn('50%')->once();
-        $percentageElement->shouldReceive('setValue')->withArgs([0])->once();
-
-        /** @var ViewModel $result */
-        $result = $this->controller->paymentSwitchAction();
-
-        $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->paymentSwitchForm, $result->getVariable('form'));
-        $this->assertEquals(false, $result->getVariable('save'));
-    }
-
-    public function testPaymentSwitchActionPostInvalid()
-    {
-        $this->setPostInvalid($this->paymentSwitchForm, $this->paymentSwitchPostData);
-
-        /** @var ViewModel $result */
-        $result = $this->controller->paymentSwitchAction();
-
-        $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->paymentSwitchForm, $result->getVariable('form'));
-        $this->assertEquals(false, $result->getVariable('save'));
-    }
-
-    public function testPaymentSwitchActionPostPercentage()
-    {
-        $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->request->shouldReceive('getPost')->andReturn($this->paymentSwitchPostData)->once();
-        $this->paymentSwitchForm->shouldReceive('setData')->withArgs([$this->paymentSwitchPostData])->once();
-        $this->paymentSwitchForm->shouldReceive('isValid')->andReturn(true)->once();
-        $this->paymentSwitchForm->shouldReceive('getData')->andReturn($this->paymentSwitchPostData)->once();
-        $this->cache->shouldReceive('setItem')
-            ->withArgs(['worldpay-percentage', $this->paymentSwitchPostData['percentage']])->once();
-
-        /** @var ViewModel $result */
-        $result = $this->controller->paymentSwitchAction();
-
-        $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals($this->paymentSwitchForm, $result->getVariable('form'));
-        $this->assertEquals(true, $result->getVariable('save'));
     }
 }
