@@ -3901,6 +3901,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
 
 @media (min-width: 769px) {
   .date-check-dates {
+    width: auto;
     position: absolute;
     top: -25px;
     right: 0px; }
