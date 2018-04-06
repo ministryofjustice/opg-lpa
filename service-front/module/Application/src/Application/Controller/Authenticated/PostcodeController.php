@@ -1,9 +1,10 @@
 <?php
+
 namespace Application\Controller\Authenticated;
 
+use Application\Controller\AbstractAuthenticatedController;
 use Application\Model\Service\AddressLookup\PostcodeInfo;
 use Zend\View\Model\JsonModel;
-use Application\Controller\AbstractAuthenticatedController;
 
 class PostcodeController extends AbstractAuthenticatedController
 {
@@ -19,44 +20,25 @@ class PostcodeController extends AbstractAuthenticatedController
      */
     protected $excludeFromAboutYouCheck = true;
 
-    public function indexAction(){
-
+    public function indexAction()
+    {
         $postcode = $this->params()->fromQuery('postcode');
 
-        if( empty($postcode) ){
+        if (empty($postcode)) {
             return $this->notFoundAction();
         }
 
-        //---
+        $addresses = $this->addressLookup->lookupPostcode($postcode);
 
-        $result = $this->addressLookup->lookupPostcode($postcode);
-
-        // Map the result to match the format from v1.
-        $formattedData = array_map( function($addr) {
-
-            return [
-                'id' => $addr['Id'],
-                'description' => $addr['Summary'],
-                'line1' => $addr['Detail']['line1'],
-                'line2' => $addr['Detail']['line2'],
-                'line3' => $addr['Detail']['line3'],
-                'postcode' => $addr['Detail']['postcode'],
-            ];
-
-        }, $result );
-
-        return new JsonModel( [
-            'isPostcodeValid'=>true,
-            'success'=> ( count($formattedData) > 0 ),
-            'addresses' => $formattedData,
-            'postcodeService' => 'mojDs',
+        return new JsonModel([
+            'isPostcodeValid' => true,
+            'success'         => (count($addresses) > 0),
+            'addresses'       => $addresses,
         ]);
-
     }
 
     public function setAddressLookup(PostcodeInfo $addressLookup)
     {
         $this->addressLookup = $addressLookup;
     }
-
-} // class
+}
