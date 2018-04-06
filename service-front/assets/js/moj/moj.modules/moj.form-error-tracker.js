@@ -31,34 +31,31 @@
 
       window.optionsGlobal = options
 
-      GOVUK.analytics.trackEvent('Error-field', questionText, options)
+      GOVUK.analytics.trackEvent('form error', questionText, options)
     }
 
     function getQuestionText(error) {
-      console.log(error);
       var $error = $(error)
       var errorID = $error.attr('href')
 
       var $element = $(errorID)
-      console.log($element);
-      var isLegend = $element.is("legend")
-      console.log(isLegend);
-      var isInput = $element.is("input")
-      console.log(isInput);
-
       var elementID = $element.prop('id')
 
       var nodeName = document.getElementById(elementID).nodeName.toLowerCase()
       var questionText
       var legendText
 
-      if (nodeName === 'input') {
+      if (nodeName === 'input' || nodeName === 'textarea') {
         questionText = $.trim($('label[for="' + elementID + '"] .question-text').text())
         legendText = $.trim($element.closest('fieldset').find('legend').text())
         questionText = legendText.length > 0 ? legendText + ': ' + questionText : questionText
       }
-      else if (nodeName === 'legend') {
-        questionText = $element.text()
+      else if (nodeName === 'fieldset') {
+        legendText = $.trim($element.find('legend').text())
+        questionText = legendText
+      }
+      else {
+        questionText = ''
       }
 
       return questionText
