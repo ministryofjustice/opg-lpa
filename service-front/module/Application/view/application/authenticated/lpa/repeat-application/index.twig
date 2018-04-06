@@ -56,7 +56,7 @@
 }) ? ''}}
 
 {{ repeatCaseNumber.setAttributes({
-    id: 'case-number',
+    id: 'repeatCaseNumber',
     class: 'form-control'
 }) ? '' }}
 
@@ -88,7 +88,7 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
-        <fieldset class="inline">
+        <fieldset id="isRepeatApplication" class="inline">
             <legend class="visually-hidden">Is this a repeat application?</legend>
 
             <div class="form-group {{ isRepeatApplication.getMessages|length > 0 ? 'error'}}">
