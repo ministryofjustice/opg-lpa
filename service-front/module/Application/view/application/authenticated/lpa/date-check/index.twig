@@ -170,7 +170,8 @@
 
                     <p>This person signed Section 5 of the LPA on</p>
 
-                    <div id="{{ donorLifeSustainingElement.getAttribute('id') }}" class="date-check-dates">
+                    <fieldset id="{{ donorLifeSustainingElement.getAttribute('id') }}" class="date-check-dates">
+                        <legend class="visually-hidden">Check signature dates for donor</legend>
                         <div class="form-group form-group-day {{ donorLifeSustainingElement.getMessages|length >0 ? 'error'}}">
                             <label class="form-label" for="{{ donorLifeSustainingElementDay.getAttribute('id') }}">Day</label>
                             {{ formElement(donorLifeSustainingElementDay) }}
@@ -185,7 +186,7 @@
                             <label class="form-label" for="{{ donorLifeSustainingElementYear.getAttribute('id') }}">Year</label>
                             {{ formElement(donorLifeSustainingElementYear) }}
                         </div>
-                    </div>
+                    </fieldset>
 
                 </div>
 
@@ -201,7 +202,8 @@
 
                 <p>This person signed Section 9 of the LPA on</p>
 
-                <div id="{{ donorElement.getAttribute('id') }}" class="date-check-dates">
+                <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates">
+                    <legend class="visually-hidden">Check signature dates for donor</legend>
                     <div class="form-group form-group-day {{ donorElement.getMessages|length >0 ? 'error'}}">
                         <label class="form-label" for="{{ donorElementDay.getAttribute('id') }}">Day</label>
                         {{ formElement(donorElementDay) }}
@@ -216,7 +218,7 @@
                         <label class="form-label" for="{{ donorElementYear.getAttribute('id') }}">Year</label>
                         {{ formElement(donorElementYear) }}
                     </div>
-                </div>
+                </fieldset>
 
             </div>
 
@@ -238,7 +240,8 @@
 
                 <p>This person signed Section 10 of the LPA on</p>
 
-                <div id="{{ certificateProviderElement.getAttribute('id') }}" class="date-check-dates">
+                <fieldset id="{{ certificateProviderElement.getAttribute('id') }}" class="date-check-dates">
+                    <legend class="visually-hidden">Check signature dates for certificate provider</legend>
                     <div class="form-group form-group-day {{ certificateProviderElement.getMessages|length >0 ? 'error'}}">
                         <label class="form-label" for="{{ certificateProviderElementDay.getAttribute('id') }}">Day</label>
                         {{ formElement(certificateProviderElementDay) }}
@@ -253,7 +256,7 @@
                         <label class="form-label" for="{{ certificateProviderElementYear.getAttribute('id') }}">Year</label>
                         {{ formElement(certificateProviderElementYear) }}
                     </div>
-                </div>
+                </fieldset>
             </div>
         </div>
     </div>
@@ -292,7 +295,8 @@
                         {% endif %}
                     </p>
 
-                    <div id="{{ element.getAttribute('id') }}" class="date-check-dates">
+                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates">
+                        <legend class="visually-hidden">Check signature dates for primary attorney</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'error'}}">
                             <label class="form-label" for="{{ elementDay.getAttribute('id') }}">Day</label>
                             {{ formElement(elementDay) }}
@@ -307,7 +311,7 @@
                             <label class="form-label" for="{{ elementYear.getAttribute('id') }}">Year</label>
                             {{ formElement(elementYear) }}
                         </div>
-                    </div>
+                    </fieldset>
                 </div>
             </div>
         </div>
@@ -348,7 +352,8 @@
                         {% endif %}
                     </p>
 
-                    <div id="{{ element.getAttribute('id') }}" class="date-check-dates">
+                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates">
+                        <legend class="visually-hidden">Check signature dates for replacement attorney</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'error'}}">
                             <label class="form-label" for="{{ elementDay.getAttribute('id') }}">Day</label>
                             {{ formElement(elementDay) }}
@@ -363,7 +368,7 @@
                             <label class="form-label" for="{{ elementYear.getAttribute('id') }}">Year</label>
                             {{ formElement(elementYear) }}
                         </div>
-                    </div>
+                    </fieldset>
                 </div>
             </div>
         </div>
@@ -404,7 +409,8 @@
                         {% endif %}
                     </p>
 
-                    <div id="{{ element.getAttribute('id') }}" class="date-check-dates">
+                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates">
+                        <legend class="visually-hidden">Check signature dates for applicant</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'error'}}">
                             <label class="form-label" for="{{ elementDay.getAttribute('id') }}">Day</label>
                             {{ formElement(elementDay) }}
@@ -419,7 +425,7 @@
                             <label class="form-label" for="{{ elementYear.getAttribute('id') }}">Year</label>
                             {{ formElement(elementYear) }}
                         </div>
-                    </div>
+                    </fieldset>
                 </div>
             </div>
         </div>

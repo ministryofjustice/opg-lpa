@@ -97,8 +97,6 @@ module.exports = function (grunt) {
           'assets/bower/govuk_frontend_toolkit/javascripts/govuk/analytics/google-analytics-universal-tracker.js',
           'assets/bower/govuk_frontend_toolkit/javascripts/govuk/analytics/analytics.js',
 
-          // GOVUK init
-          'assets/js/govuk/analytics.js',
 
           // OPG Scripts
           'assets/js/opg/jquery-plugin-opg-hascrollbar.js',
@@ -130,6 +128,10 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.who-are-you.js',
           'assets/js/moj/moj.modules/moj.polyfill.js',
           'assets/js/moj/moj.modules/moj.single-use.js',
+          'assets/js/moj/moj.modules/moj.form-error-tracker.js',
+
+          // GOVUK init
+          'assets/js/govuk/analytics.js',
 
           // Init Script
           'assets/js/main.js',

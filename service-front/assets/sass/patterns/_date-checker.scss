@@ -5,6 +5,7 @@
 
 @include media(desktop) {
     .date-check-dates{
+        width: auto;
         position: absolute;
         top: -25px;
         right: 0px;
