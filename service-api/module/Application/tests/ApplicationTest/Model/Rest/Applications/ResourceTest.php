@@ -666,7 +666,10 @@ class ResourceTest extends AbstractResourceTest
         $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
         $this->setFetchAllExpectations([
             'user' => $user->getId(),
-            '$text' => ['$search' => '"'.$lpas[0]->document->donor->name.'"']
+            'search' => [
+                '$regex' => '.*' . $lpas[0]->document->donor->name . '.*',
+                '$options' => 'i',
+            ],
         ], []);
 
         /** @var Collection $response */
