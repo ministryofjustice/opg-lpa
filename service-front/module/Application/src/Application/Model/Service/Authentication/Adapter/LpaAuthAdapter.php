@@ -82,6 +82,13 @@ class LpaAuthAdapter implements AdapterInterface
         $lastLogin = new DateTime($response->getLastLogin());
         $identity = new User($response->getUserId(), $response->getToken(), $response->getExpiresIn(), $lastLogin);
 
-        return new Result(Result::SUCCESS, $identity);
+        $messages = [];
+
+        //  If inactivity flags were cleared during this authentication then put a message in the result
+        if ($response->getInactivityFlagsCleared()) {
+            $messages[] = 'inactivity-flags-cleared';
+        }
+
+        return new Result(Result::SUCCESS, $identity, $messages);
     }
 }
