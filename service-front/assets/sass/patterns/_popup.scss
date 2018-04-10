@@ -122,3 +122,8 @@
         }
     }
 }
+
+// IE specific fix for popup scrollbars. From https://github.com/twbs/bootstrap/issues/21780
+@-ms-viewport {
+    width: auto;
+}
