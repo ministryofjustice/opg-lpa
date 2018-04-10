@@ -23771,13 +23771,9 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
 (function () {
   'use strict';
 
-  // will be populated with either "mojDs" or "postcodeAnywhere" following
-  // initial call to F/E postcode endpoint
-  var postcodeService = null;
-
   // Define the class
   var PostcodeLookup = function (el) {
-      _.bindAll(this, 'searchClicked', 'toggleClicked', 'changeClicked', 'resultsChanged', 'queryEnter', 'postcodeSuccess', 'postcodeError', 'addressSuccess', 'populateFields');
+      _.bindAll(this, 'searchClicked', 'toggleClicked', 'changeClicked', 'resultsChanged', 'queryEnter', 'postcodeSuccess', 'postcodeError');
       this.cacheEls(el);
       this.bindEvents();
       this.init();
@@ -23786,7 +23782,6 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
   PostcodeLookup.prototype = {
     settings: {
       postcodeSearchUrl: '/address-lookup',
-      addressSearchUrl: '/address-lookup',
       // used to populate fields
       // key is the key name sent in response and value is name of app's field
       fieldMappings: {
@@ -23882,17 +23877,12 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
       var $el = $(e.target),
       val = $el.val();
 
-      if (postcodeService === 'mojDs') {
-          var $selectedOption = $el.find(':selected');
+      var $selectedOption = $el.find(':selected');
 
-	      $('[name*="' + this.settings.fieldMappings.line1 + '"]').val($selectedOption.data('line1'));
-	      $('[name*="' + this.settings.fieldMappings.line2 + '"]').val($selectedOption.data('line2'));
-	      $('[name*="' + this.settings.fieldMappings.line3 + '"]').val($selectedOption.data('line3'));
-	      $('[name*="' + this.settings.fieldMappings.postcode + '"]').val($selectedOption.data('postcode')).change();
-      } else {
-    	  $el.spinner();
-          this.findAddress(val);
-      }
+      $('[name*="' + this.settings.fieldMappings.line1 + '"]').val($selectedOption.data('line1'));
+      $('[name*="' + this.settings.fieldMappings.line2 + '"]').val($selectedOption.data('line2'));
+      $('[name*="' + this.settings.fieldMappings.line3 + '"]').val($selectedOption.data('line3'));
+      $('[name*="' + this.settings.fieldMappings.postcode + '"]').val($selectedOption.data('postcode')).change();
 
       this.toggleAddress();
     },
@@ -23951,8 +23941,6 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
       } else {
         // successful
 
-        postcodeService = response.postcodeService;
-
         if (this.$wrap.find('.js-PostcodeLookup__search-results').length > 0) {
           this.$wrap.find('.js-PostcodeLookup__search-results').parent().replaceWith(this.resultTpl({results: response.addresses}));
         } else {
@@ -23963,36 +23951,10 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
       this.$wrap.find('.js-PostcodeLookup__search-btn').spinner('off');
     },
 
-    findAddress: function (query) {
-        $.ajax({
-          url: this.settings.addressSearchUrl,
-          data: {addressid: parseInt($.trim(query), 10)},
-          dataType: 'json',
-          timeout: 10000,
-          cache: true,
-          success: this.addressSuccess
-        });
-      },
-
-    addressSuccess: function (response) {
-      this.populateFields(response);
-    },
-
-    populateFields: function (data) {
-      _.each(this.settings.fieldMappings, function (value, key) {
-        if (value !== null) {
-          this.$postalFields.find('[name*="' + value + '"]').val(data[key]).change();
-        }
-      }, this);
-      this.toggleAddress();
-      // remove result list
-      this.$wrap.find('.js-PostcodeLookup__search-results').spinner('off');
-    },
-
     toggleAddress: function () {
         var $search = this.$wrap.find('.js-PostcodeLookup__query'),
           $pcode = this.$wrap.find('[name*="' + this.settings.fieldMappings.postcode + '"]');
-        // popuplate postcode field
+        // populate postcode field
         if ($search.val() !== '' && $pcode.val() === '') {
           $pcode.val($search.val()).change();
         }

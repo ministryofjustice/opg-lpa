@@ -62,14 +62,11 @@ class PostcodeControllerTest extends AbstractControllerTest
     public function testIndexActionSinglePostcode()
     {
         $address = [
-            'Id' => 123,
-            'Summary' => 'Ministry of Justice',
-            'Detail' => [
-                'line1' => '102 Petty France',
-                'line2' => 'Westminster',
-                'line3' => 'London',
-                'postcode' => 'SW1H 9AJ'
-            ]
+            'line1' => '102 Petty France',
+            'line2' => 'Westminster',
+            'line3' => 'London',
+            'postcode' => 'SW1H 9AJ',
+            'description' => 'Ministry of Justice',
         ];
 
         $this->params->shouldReceive('fromQuery')->withArgs(['postcode'])->andReturn('SW1H 9AJ')->once();
@@ -82,13 +79,12 @@ class PostcodeControllerTest extends AbstractControllerTest
         $this->assertEquals(true, $result->getVariable('isPostcodeValid'));
         $this->assertEquals(true, $result->getVariable('success'));
         $this->assertEquals([[
-            'id' => $address['Id'],
-            'description' => $address['Summary'],
-            'line1' => $address['Detail']['line1'],
-            'line2' => $address['Detail']['line2'],
-            'line3' => $address['Detail']['line3'],
-            'postcode' => $address['Detail']['postcode'],
+//            'id' => $address['Id'],
+            'description' => $address['description'],
+            'line1' => $address['line1'],
+            'line2' => $address['line2'],
+            'line3' => $address['line3'],
+            'postcode' => $address['postcode'],
         ]], $result->getVariable('addresses'));
-        $this->assertEquals('mojDs', $result->getVariable('postcodeService'));
     }
 }
