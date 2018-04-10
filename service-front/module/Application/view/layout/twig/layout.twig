@@ -10,7 +10,7 @@
         (function(){if(navigator.userAgent.match(/IEMobile\/10\.0/)){var d=document,c="appendChild",a=d.createElement("style");a[c](d.createTextNode("@-ms-viewport{width:auto!important}"));d.getElementsByTagName("head")[0][c](a);}})();
     </script>
 
-    <link href="{{ StaticAssetPath( '/assets/v2/css/govuk-template-print.css', { 'minify':true } ) }}" media="print" rel="stylesheet" />
+    <link href="{{ StaticAssetPath( '/assets/v2/css/govuk-template-print.css', { 'minify':true } ) }}" media="print" rel="stylesheet" type="text/css" />
 
     <!--[if IE 8]>
     <script type="text/javascript">
@@ -49,11 +49,9 @@
     <!--[if IE 6]><link href="{{ StaticAssetPath( '/assets/v2/css/application-ie6.css', { 'minify':true } ) }}" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
     <!--[if IE 7]><link href="{{ StaticAssetPath( '/assets/v2/css/application-ie7.css', { 'minify':true } ) }}" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
     <!--[if IE 8]><link href="{{ StaticAssetPath( '/assets/v2/css/application-ie8.css', { 'minify':true } ) }}" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
+
     <!-- LPA Print styles -->
-    {#
-    Govuk Elements doesn't come with any print styles, so I'm leaving this out for now.
-    <link href="/assets/v1/css/print.css" media="print" rel="stylesheet" type="text/css" />
-    #}
+    <link href="{{ StaticAssetPath( '/assets/v2/css/print.css', { 'minify':true } ) }}" media="all" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -123,11 +121,11 @@
         </div>
 
         {% block divider %}
-        <hr>
+        <hr class="no-print">
         {% endblock divider %}
 
         {% if hideFeedbackLink is not defined %}
-        <p>
+        <p class="no-print">
             Your <a href="/send-feedback">feedback</a> will help us to improve
         </p>
         {% endif %}
