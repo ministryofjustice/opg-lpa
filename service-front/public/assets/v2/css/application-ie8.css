@@ -2513,6 +2513,8 @@ input[type=number] {
   .button-input-to-link + .spinner {
     margin-bottom: -3px; }
 
+@-ms-viewport {
+  width: auto; }
 .help-header {
   display: none;
   position: relative;
