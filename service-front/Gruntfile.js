@@ -34,7 +34,8 @@ module.exports = function (grunt) {
           'public/assets/v2/css/application-ie8.css': 'assets/sass/application-ie8.scss',
           'public/assets/v2/css/application-ie7.css': 'assets/sass/application-ie7.scss',
           'public/assets/v2/css/application-ie6.css': 'assets/sass/application-ie6.scss',
-          'public/assets/v2/css/govuk-template-print.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template-print.scss'
+          'public/assets/v2/css/govuk-template-print.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template-print.scss',
+          'public/assets/v2/css/print.css': 'assets/sass/print.scss'
         }
       }
     },
@@ -116,6 +117,7 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.form-popup.js',
           'assets/js/moj/moj.modules/moj.title-switch.js',
           'assets/js/moj/moj.modules/moj.postcode-lookup.js',
+          'assets/js/moj/moj.modules/moj.print-link.js',
           'assets/js/moj/moj.modules/moj.person-form.js',
           'assets/js/moj/moj.modules/moj.validation.js',
           'assets/js/moj/moj.modules/moj.user-timeout.js',
