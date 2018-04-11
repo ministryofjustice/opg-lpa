@@ -62,7 +62,7 @@ class Client
         }
 
         if (!in_array($response->getStatusCode(), [200, 404])) {    // TODO - Why is 404 ok??
-            throw $this->createErrorException($response);
+            $this->createErrorException($response);
         }
 
         return $response;
@@ -89,7 +89,7 @@ class Client
         }
 
         if (!in_array($response->getStatusCode(), [200, 201, 204])) {
-            throw $this->createErrorException($response);
+            $this->createErrorException($response);
         }
 
         return $response;
@@ -115,7 +115,7 @@ class Client
         }
 
         if (!in_array($response->getStatusCode(), [200, 204])) {
-            throw $this->createErrorException($response);
+            $this->createErrorException($response);
         }
 
         return $response;
@@ -141,7 +141,7 @@ class Client
         }
 
         if ($response->getStatusCode() != 200) {
-            throw $this->createErrorException($response);
+            $this->createErrorException($response);
         }
 
         return $response;
@@ -166,7 +166,7 @@ class Client
         }
 
         if ($response->getStatusCode() != 204) {
-            throw $this->createErrorException($response);
+            $this->createErrorException($response);
         }
 
         return $response;
@@ -196,8 +196,7 @@ class Client
      * Called with a response from the API when the response code was unsuccessful. i.e. not 20X.
      *
      * @param ResponseInterface $response
-     *
-     * @return Exception\ResponseException
+     * @throws Exception\ResponseException
      */
     protected function createErrorException(ResponseInterface $response)
     {
@@ -206,6 +205,6 @@ class Client
         $message = "HTTP:{$response->getStatusCode()} - ";
         $message .= (is_array($body) ? print_r($body, true) : 'Unexpected response from server');
 
-        return new Exception\ResponseException($message, $response->getStatusCode(), $response);
+        throw new Exception\ResponseException($message, $response->getStatusCode(), $response);
     }
 }
