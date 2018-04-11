@@ -4,15 +4,10 @@ namespace Application\Controller\Version2;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-use Application\Model\Rest\Users\Resource;
 use Application\Model\Rest\EntityInterface;
-use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\Mvc\MvcEvent;
-use ZfcRbac\Exception\UnauthorizedException;
 use ZF\ApiProblem\ApiProblem;
-use ZF\ApiProblem\ApiProblemResponse;
 
-class UserController extends AbstractRestfulController
+class UserController extends AbstractController
 {
     /**
      * Name of the identifier used in the routes to this RESTful controller
@@ -22,41 +17,6 @@ class UserController extends AbstractRestfulController
     protected $identifierName = 'userId';
 
     /**
-     * @var Resource
-     */
-    private $usersResource;
-
-    /**
-     * UserController constructor
-     * @param Resource $usersResource
-     */
-    public function __construct(Resource $usersResource)
-    {
-        $this->usersResource = $usersResource;
-    }
-
-    /**
-     * Execute the request
-     *
-     * @param MvcEvent $event
-     * @return mixed|ApiProblem|ApiProblemResponse
-     */
-    public function onDispatch(MvcEvent $event)
-    {
-        try {
-            $return = parent::onDispatch($event);
-        } catch (UnauthorizedException $e) {
-            $return = new ApiProblem(401, 'Access Denied');
-        }
-
-        if ($return instanceof ApiProblem) {
-            return new ApiProblemResponse($return);
-        }
-
-        return $return;
-    }
-
-    /**
      * Get a specific user by ID
      *
      * @param mixed $id
@@ -64,7 +24,7 @@ class UserController extends AbstractRestfulController
      */
     public function get($id)
     {
-        $user = $this->usersResource->fetch($id);
+        $user = $this->resource->fetch($id);
 
         if ($user instanceof ApiProblem) {
             return $user;
@@ -90,7 +50,7 @@ class UserController extends AbstractRestfulController
      */
     public function delete($id)
     {
-        $result = $this->usersResource->delete($id);
+        $result = $this->resource->delete($id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -111,7 +71,7 @@ class UserController extends AbstractRestfulController
      */
     public function update($id, $data)
     {
-        $user = $this->usersResource->update($data, $id);
+        $user = $this->resource->update($data, $id);
 
         if ($user instanceof ApiProblem) {
             return $user;

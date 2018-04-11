@@ -1,11 +1,8 @@
 <?php
+
 namespace Application\Model\Rest;
 
-interface EntityInterface extends RouteProviderInterface {
-
-    /**
-     * @return array The Entity's data as an array.
-     */
+interface EntityInterface extends RouteProviderInterface
+{
     public function toArray();
-
-} // interface
+}

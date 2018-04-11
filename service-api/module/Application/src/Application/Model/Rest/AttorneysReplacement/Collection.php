@@ -1,11 +1,10 @@
 <?php
+
 namespace Application\Model\Rest\AttorneysReplacement;
 
 use Application\Model\Rest\CollectionInterface;
-
-use Zend\Paginator\Paginator;
-
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Zend\Paginator\Paginator;
 
 class Collection extends Paginator implements CollectionInterface {
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\Model\Rest;
 
 /**
@@ -7,21 +8,11 @@ namespace Application\Model\Rest;
  * Interface RouteProviderInterface
  * @package Application\Model\Rest
  */
-interface RouteProviderInterface {
-
-    /**
-     * @return int The ID of the current user in the route.
-     */
+interface RouteProviderInterface
+{
     public function userId();
 
-    /**
-     * @return int The ID of the current LPA to use in the route.
-     */
     public function lpaId();
 
-    /**
-     * @return int The ID of the current resource (sub-lpa).
-     */
     public function resourceId();
-
-} // interface
+}

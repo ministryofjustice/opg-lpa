@@ -1,18 +1,18 @@
 <?php
+
 namespace Application\Model\Rest\Applications;
 
 use Application\Model\Rest\EntityInterface;
-
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
-class Entity implements EntityInterface {
-
+class Entity implements EntityInterface
+{
     protected $lpa;
 
-    public function __construct( Lpa $lpa )
+    public function __construct(Lpa $lpa)
     {
         $this->lpa = $lpa;
-    } // function
+    }
 
     public function userId()
     {
@@ -48,5 +48,4 @@ class Entity implements EntityInterface {
     {
         return $this->lpa !== null && $this->lpa->equalsIgnoreMetadata($comparisonEntity->lpa);
     }
-
-} // class
+}

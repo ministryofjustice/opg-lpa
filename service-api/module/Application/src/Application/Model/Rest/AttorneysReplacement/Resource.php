@@ -120,46 +120,6 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
     }
 
     /**
-     * Fetch all or a subset of resources
-     *
-     * @param  array $params
-     * @return Collection
-     * @throw UnauthorizedException If the current user is not authorized.
-     */
-    public function fetchAll($params = array()){
-
-        $this->checkAccess();
-
-        //---
-
-        $lpa = $this->getLpa();
-
-        if( !is_array( $lpa->document->replacementAttorneys ) ){
-            return null;
-        }
-
-        $count = count($lpa->document->replacementAttorneys);
-
-        // If there are no records, just return an empty paginator...
-        if( $count == 0 ){
-            return new Collection( new PaginatorNull, $lpa );
-        }
-
-        //---
-
-        $collection = new Collection( new PaginatorArrayAdapter( $lpa->document->replacementAttorneys ), $lpa );
-
-        // Always return all attorneys on one page.
-        $collection->setItemCountPerPage($count);
-
-        //---
-
-        return $collection;
-
-
-    }
-
-    /**
      * Update a resource
      *
      * @param  mixed $id

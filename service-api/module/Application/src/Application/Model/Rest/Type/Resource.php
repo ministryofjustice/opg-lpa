@@ -70,6 +70,7 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
 
         $document->type = (isset($data['type'])) ? $data['type'] : null;
 
+
         //---
 
         $validation = $document->validate();

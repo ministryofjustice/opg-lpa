@@ -173,41 +173,6 @@ class Resource extends AbstractResource implements UserConsumerInterface, LpaCon
         return new ApiProblem(404, 'Document not found');
     }
 
-    /**
-     * Fetch all or a subset of resources
-     *
-     * @param  array $params
-     * @return Collection
-     * @throw UnauthorizedException If the current user is not authorized.
-     */
-    public function fetchAll($params = array())
-    {
-        $this->checkAccess();
-
-        //---
-
-        $lpa = $this->getLpa();
-
-        //---
-
-        $data = array();
-
-        foreach ($this->getPdfTypes() as $type) {
-            $data[$type] = $this->getPdfDetails($type);
-        } // foreach
-
-        //---
-
-        $collection = new Collection(new PaginatorArrayAdapter($data), $lpa);
-
-        // Always return all attorneys on one page.
-        $collection->setItemCountPerPage(count($data));
-
-        //---
-
-        return $collection;
-    }
-
     //----------------------------------------------------------------------
 
     private function getPdfDetails($type)

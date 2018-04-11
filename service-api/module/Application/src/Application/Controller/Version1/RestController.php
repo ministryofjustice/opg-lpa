@@ -2,9 +2,7 @@
 
 namespace Application\Controller\Version1;
 
-use RuntimeException;
-
-use Application\Library\Hal;
+use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\EntityInterface;
@@ -16,6 +14,7 @@ use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 use ZfcRbac\Exception\UnauthorizedException;
+use RuntimeException;
 
 class RestController extends AbstractRestfulController
 {
@@ -57,10 +56,6 @@ class RestController extends AbstractRestfulController
             $return = new ApiProblem(403, 'LPA has been locked');
         }
 
-        if ($return instanceof Hal\Hal) {
-            return new Hal\HalResponse($return, 'json');
-        }
-
         if ($return instanceof ApiProblem) {
             return new ApiProblemResponse($return);
         }
@@ -96,8 +91,8 @@ class RestController extends AbstractRestfulController
     /**
      * Create a new resource
      *
-     * @param  mixed $data
-     * @return mixed
+     * @param mixed $data
+     * @return JsonResponse|ApiProblem
      */
     public function create($data)
     {
@@ -110,15 +105,7 @@ class RestController extends AbstractRestfulController
         if ($result instanceof ApiProblem) {
             return $result;
         } elseif ($result instanceof EntityInterface) {
-            $hal = new Hal\Entity($result);
-
-            $hal->setLinks([$this, 'generateRoute']);
-
-            $response = new Hal\HalResponse($hal, 'json');
-            $response->setStatusCode(201);
-            $response->getHeaders()->addHeaderLine('Location', $hal->getUri());
-
-            return $response;
+            return new JsonResponse($result->toArray(), 201);
         }
 
         return new ApiProblem(500, 'Unable to process request');
@@ -127,8 +114,8 @@ class RestController extends AbstractRestfulController
     /**
      * Delete an existing resource
      *
-     * @param  mixed $id
-     * @return mixed
+     * @param mixed $id
+     * @return NoContentResponse|ApiProblem
      */
     public function delete($id)
     {
@@ -151,7 +138,7 @@ class RestController extends AbstractRestfulController
      * Return single resource
      *
      * @param  mixed $id
-     * @return mixed
+     * @return JsonResponse|NoContentResponse|ApiProblem
      */
     public function get($id)
     {
@@ -164,60 +151,18 @@ class RestController extends AbstractRestfulController
         if ($result instanceof ApiProblem) {
             return $result;
         } elseif ($result instanceof EntityInterface) {
-            if (count($result->toArray()) == 0) {
+            $resultData = $result->toArray();
+
+            if (count($resultData) == 0) {
                 return new NoContentResponse();
             }
 
-            $hal = new Hal\Entity($result);
-
-            $hal->setLinks([$this, 'generateRoute']);
-
-            $response = new Hal\HalResponse($hal, 'json');
-
-            return $response;
+            return new JsonResponse($resultData);
         } elseif ($result instanceof HttpResponse) {
             return $result;
         }
 
         return new ApiProblem(500, 'Unable to process request');
-    }
-
-    /**
-     * Return list of resources
-     *
-     * @return mixed
-     */
-    public function getList()
-    {
-        if (!is_callable([$this->getResource(), 'fetchAll'])) {
-            return new ApiProblem(405, 'The GET method has not been defined on this collection');
-        }
-
-        $query = $this->params()->fromQuery();
-
-        if (isset($query['page']) && is_numeric($query['page'])) {
-            $page = (int)$query['page'];
-        } else {
-            $page = 1;
-        }
-
-        unset($query['page']);
-
-        $collections = $this->getResource()->fetchAll($query);
-
-        if ($collections instanceof ApiProblem) {
-            return $collections;
-        } elseif ($collections === null) {
-            return new NoContentResponse();
-        }
-
-        $collections->setCurrentPageNumber($page);
-
-        $hal = new Hal\Collection($collections, $this->getResource()->getName());
-
-        $hal->setLinks([$this, 'generateRoute']);
-
-        return new Hal\HalResponse($hal, 'json');
     }
 
     /**
@@ -241,17 +186,13 @@ class RestController extends AbstractRestfulController
         if ($result instanceof ApiProblem) {
             return $result;
         } elseif ($result instanceof EntityInterface) {
-            if (count($result->toArray()) == 0) {
+            $resultData = $result->toArray();
+
+            if (count($resultData) == 0) {
                 return new NoContentResponse();
             }
 
-            $hal = new Hal\Entity($result);
-
-            $hal->setLinks([$this, 'generateRoute']);
-
-            $response = new Hal\HalResponse($hal, 'json');
-
-            return $response;
+            return new JsonResponse($resultData);
         }
 
         return new ApiProblem(500, 'Unable to process request');
@@ -275,17 +216,13 @@ class RestController extends AbstractRestfulController
         if ($result instanceof ApiProblem) {
             return $result;
         } elseif ($result instanceof EntityInterface) {
-            if (count($result->toArray()) == 0) {
+            $resultData = $result->toArray();
+
+            if (count($resultData) == 0) {
                 return new NoContentResponse();
             }
 
-            $hal = new Hal\Entity($result);
-
-            $hal->setLinks([$this, 'generateRoute']);
-
-            $response = new Hal\HalResponse($hal, 'json');
-
-            return $response;
+            return new JsonResponse($resultData);
         }
 
         return new ApiProblem(500, 'Unable to process request');

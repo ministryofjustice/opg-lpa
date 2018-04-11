@@ -4,62 +4,12 @@ namespace Application\Controller\Version2;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-use Application\Model\Rest\Applications\Resource;
 use Application\Model\Rest\EntityInterface;
-use Application\Model\Rest\Lock\LockedException;
-use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\Mvc\MvcEvent;
 use Zend\Paginator\Paginator;
-use ZfcRbac\Exception\UnauthorizedException;
 use ZF\ApiProblem\ApiProblem;
-use ZF\ApiProblem\ApiProblemResponse;
 
-class ApplicationController extends AbstractRestfulController
+class ApplicationController extends AbstractController
 {
-    /**
-     * Name of the identifier used in the routes to this RESTful controller
-     *
-     * @var string
-     */
-    protected $identifierName = 'lpaId';
-
-    /**
-     * @var Resource
-     */
-    private $applicationsResource;
-
-    /**
-     * ApplicationController constructor
-     * @param Resource $applicationsResource
-     */
-    public function __construct(Resource $applicationsResource)
-    {
-        $this->applicationsResource = $applicationsResource;
-    }
-
-    /**
-     * Execute the request
-     *
-     * @param MvcEvent $event
-     * @return mixed|ApiProblem|ApiProblemResponse
-     */
-    public function onDispatch(MvcEvent $event)
-    {
-        try {
-            $return = parent::onDispatch($event);
-        } catch (UnauthorizedException $e) {
-            $return = new ApiProblem(401, 'Access Denied');
-        } catch (LockedException $e) {
-            $return = new ApiProblem(403, 'LPA has been locked');
-        }
-
-        if ($return instanceof ApiProblem) {
-            return new ApiProblemResponse($return);
-        }
-
-        return $return;
-    }
-
     /**
      * Get a specific application by ID
      *
@@ -68,7 +18,7 @@ class ApplicationController extends AbstractRestfulController
      */
     public function get($id)
     {
-        $application = $this->applicationsResource->fetch($id);
+        $application = $this->resource->fetch($id);
 
         if ($application instanceof ApiProblem) {
             return $application;
@@ -110,7 +60,7 @@ class ApplicationController extends AbstractRestfulController
         unset($filteredQuery['perPage']);
 
         //  Get the collection of applications with the query data
-        $applications = $this->applicationsResource->fetchAll($filteredQuery);
+        $applications = $this->resource->fetchAll($filteredQuery);
 
         if ($applications instanceof ApiProblem) {
             return $applications;
@@ -139,7 +89,7 @@ class ApplicationController extends AbstractRestfulController
      */
     public function create($data)
     {
-        $application = $this->applicationsResource->create($data);
+        $application = $this->resource->create($data);
 
         if ($application instanceof ApiProblem) {
             return $application;
@@ -159,7 +109,7 @@ class ApplicationController extends AbstractRestfulController
      */
     public function delete($id)
     {
-        $application = $this->applicationsResource->delete($id);
+        $application = $this->resource->delete($id);
 
         if ($application instanceof ApiProblem) {
             return $application;
@@ -180,7 +130,7 @@ class ApplicationController extends AbstractRestfulController
      */
     public function patch($id, $data)
     {
-        $application = $this->applicationsResource->patch($data, $id);
+        $application = $this->resource->patch($data, $id);
 
         if ($application instanceof ApiProblem) {
             return $application;
