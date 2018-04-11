@@ -141,7 +141,7 @@ return [
                                 'userId'  => '[a-f0-9]+',
                             ],
                             'defaults' => [
-                                'controller' => 'User',
+                                'controller' => 'UserController',
                             ],
                         ],
                         'may_terminate' => true,
@@ -155,7 +155,7 @@ return [
                                         'lpaId'   => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'controller' => 'Application',
+                                        'controller' => 'ApplicationController',
                                     ],
                                 ],
                             ], // applications
@@ -209,8 +209,9 @@ return [
         'factories' => [
             'Application\Controller\Console\GenerateStats'  => 'Application\Controller\Console\GenerateStatsControllerFactory',
             'Application\Controller\Ping'                   => 'Application\Controller\PingControllerFactory',
-            'Application\Controller\Version2\Application'   => 'Application\Controller\Version2\ApplicationControllerFactory',
-            'Application\Controller\Version2\User'          => 'Application\Controller\Version2\UserControllerFactory',
+        ],
+        'abstract_factories' => [
+            'Application\Controller\ControllerAbstractFactory'
         ],
     ], // controllers
 
