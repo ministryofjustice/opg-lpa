@@ -21,6 +21,7 @@ use Opg\Lpa\DataModel\Common\LongName;
 use DateTime;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
+use ArrayObject;
 
 class Application extends AbstractService implements ApiClientAwareInterface
 {
@@ -134,83 +135,51 @@ class Application extends AbstractService implements ApiClientAwareInterface
             ]);
         }
 
-        $applicationsSummary = $this->getApplicationList($queryParams);
-
-        //  If there are LPAs returned, change them into standard class objects for use
-        $lpas = [];
-
-        if (isset($applicationsSummary['applications']) && is_array($applicationsSummary['applications'])) {
-            foreach ($applicationsSummary['applications'] as $application) {
-                //  Get the Donor name
-                $donorName = '';
-
-                if ($application->document->donor instanceof Donor && $application->document->donor->name instanceof LongName) {
-                    $donorName = (string) $application->document->donor->name;
-                }
-
-                //  Get the progress string
-                $progress = 'Started';
-
-                if ($application->completedAt instanceof DateTime) {
-                    $progress = 'Completed';
-                } elseif ($application->createdAt instanceof DateTime) {
-                    $progress = 'Created';
-                }
-
-                //  Create a record for the returned LPA
-                $lpa = new \stdClass();
-
-                $lpa->id = $application->id;
-                $lpa->version = 2;
-                $lpa->donor = $donorName;
-                $lpa->type = $application->document->type;
-                $lpa->updatedAt = $application->updatedAt;
-                $lpa->progress = $progress;
-
-                $lpas[] = $lpa;
-            }
-
-            //  Swap the stdClass LPAs in
-            $applicationsSummary['applications'] = $lpas;
-        }
-
-        return $applicationsSummary;
-    }
-
-    /**
-     * Returns all LPAs for the user
-     *
-     * TODO - Fold this logic into the getLpaSummaries function above as it's the only place it used
-     *
-     * @param array $query
-     * @return ResponseException|array
-     */
-    private function getApplicationList(array $query = [])
-    {
-        $applicationList = [];
-
-        $response = $this->apiClient->httpGet(sprintf('/v2/users/%s/applications', $this->getUserId()), $query);
+        //  Get the response and check it's contents
+        $response = $this->apiClient->httpGet(sprintf('/v2/users/%s/applications', $this->getUserId()), $queryParams);
 
         if ($response->getStatusCode() != 200) {
-            return new ResponseException('unknown-error', $response->getStatusCode(), $response);
+            throw new ResponseException('unknown-error', $response->getStatusCode(), $response);
         }
 
-        $body = json_decode($response->getBody(), true);
+        $result = json_decode($response->getBody(), true);
 
-        if (!isset($body['applications']) || !isset($body['total'])) {
-            return new ResponseException('missing-fields', $response->getStatusCode(), $response);
+        if (!isset($result['applications'])) {
+            throw new ResponseException('missing-fields', $response->getStatusCode(), $response);
         }
 
-        //  If there are applications present then process them
-        foreach ($body['applications'] as $application) {
-            $applicationList[] = new Lpa($application);
+        //  Loop through the applications in the result, enhance the data and set it in an array object
+        foreach ($result['applications'] as $applicationIdx => $applicationData) {
+            $lpa = new Lpa($applicationData);
+
+            //  Get the Donor name
+            $donorName = '';
+
+            if ($lpa->document->donor instanceof Donor && $lpa->document->donor->name instanceof LongName) {
+                $donorName = (string) $lpa->document->donor->name;
+            }
+
+            //  Get the progress string
+            $progress = 'Started';
+
+            if ($lpa->completedAt instanceof DateTime) {
+                $progress = 'Completed';
+            } elseif ($lpa->createdAt instanceof DateTime) {
+                $progress = 'Created';
+            }
+
+            //  Create a record for the returned LPA in an array object
+            $result['applications'][$applicationIdx] = new ArrayObject([
+                'id'        => $lpa->id,
+                'version'   => 2,
+                'donor'     => $donorName,
+                'type'      => $lpa->document->type,
+                'updatedAt' => $lpa->updatedAt,
+                'progress'  => $progress,
+            ]);
         }
 
-        //  Return a summary of the application list
-        return [
-            'applications' => $applicationList,
-            'total'        => $body['total'],
-        ];
+        return $result;
     }
 
     /**
@@ -341,7 +310,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
         ]);
 
         if (is_array($responseData)) {
-            $lpa->document->type = $lpaType;
+            $lpa->document->type = $responseData['type'];
 
             return true;
         }
@@ -541,7 +510,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
         ]);
 
         if (is_array($responseData)) {
-            $lpa->document->preference = $preferences;
+            $lpa->document->preference = $responseData['preference'];
 
             return true;
         }
@@ -563,7 +532,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
         ]);
 
         if (is_array($responseData)) {
-            $lpa->document->instruction = $instructions;
+            $lpa->document->instruction = $responseData['instruction'];
 
             return true;
         }
@@ -585,7 +554,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
         ]);
 
         if (is_array($responseData)) {
-            $lpa->document->whoIsRegistering = $whoIsRegistering;
+            $lpa->document->whoIsRegistering = $responseData['whoIsRegistering'];
 
             return true;
         }
@@ -627,7 +596,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
         ]);
 
         if (is_array($responseData)) {
-            $lpa->repeatCaseNumber = $repeatCaseNumber;
+            $lpa->repeatCaseNumber = $responseData['repeatCaseNumber'];
 
             return true;
         }
@@ -669,7 +638,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
         ]);
 
         if (is_array($responseData)) {
-            $lpa->seed = $seedId;
+            $lpa->seed = $responseData['seed'];
 
             return true;
         }
