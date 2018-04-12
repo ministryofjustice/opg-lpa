@@ -49,7 +49,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
     /**
      * Create a new LPA application
      *
-     * @return LpaResponse|ResponseException
+     * @return ResponseException|\Exception|static
      */
     public function createApplication()
     {

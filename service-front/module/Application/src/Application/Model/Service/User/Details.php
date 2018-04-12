@@ -6,7 +6,6 @@ use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
 use Application\Model\Service\ApiClient\Exception\ResponseException as ApiResponseException;
-use Application\Model\Service\ApiClient\Exception\RuntimeException as ApiRuntimeException;
 use Application\Model\Service\AuthClient\AuthClientAwareInterface;
 use Application\Model\Service\AuthClient\AuthClientTrait;
 use Application\Model\Service\AuthClient\Exception\ResponseException as AuthResponseException;
@@ -230,7 +229,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
     /**
      * Deletes a user and their LPAs
      *
-     * @return ApiResponseException|ApiRuntimeException|AuthResponseException|bool|Exception
+     * @return ApiResponseException|AuthResponseException|bool|Exception
      */
     public function delete()
     {
@@ -240,7 +239,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
         $response = $this->apiClient->httpDelete('/v2/users/' . $this->getUserId());
 
         if ($response->getStatusCode() != 204) {
-            return new ApiRuntimeException('cannot-delete-lpas');
+            return false;
         }
 
         try {

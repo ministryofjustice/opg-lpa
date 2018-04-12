@@ -75,11 +75,7 @@ class Client
 
         $request = new Request('GET', $url, $this->buildHeaders(), '{}');
 
-        try {
-            $response = $this->httpClient->sendRequest($request);
-        } catch (\RuntimeException $e) {
-            throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
-        }
+        $response = $this->httpClient->sendRequest($request);
 
         if (!in_array($response->getStatusCode(), [200, 404])) {
             throw $this->createErrorException($response);
@@ -102,11 +98,7 @@ class Client
         $body = (!empty($payload) ? json_encode($payload) : null);
         $request = new Request('POST', $url, $this->buildHeaders(), $body);
 
-        try {
-            $response = $this->httpClient->sendRequest($request);
-        } catch (\RuntimeException $e) {
-            throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
-        }
+        $response = $this->httpClient->sendRequest($request);
 
         if (!in_array($response->getStatusCode(), [200, 201, 204])) {
             throw $this->createErrorException($response);
@@ -127,11 +119,7 @@ class Client
 
         $request = new Request('DELETE', $url, $this->buildHeaders(), '{}');
 
-        try {
-            $response = $this->httpClient->sendRequest($request);
-        } catch (\RuntimeException $e) {
-            throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
-        }
+        $response = $this->httpClient->sendRequest($request);
 
         if (!in_array($response->getStatusCode(), [204])) {
             throw $this->createErrorException($response);

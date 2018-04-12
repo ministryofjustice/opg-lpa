@@ -4,7 +4,7 @@ namespace Application\Model\Service\AuthClient\Exception;
 
 use Psr\Http\Message\ResponseInterface;
 
-class ResponseException extends RuntimeException
+class ResponseException extends \RuntimeException
 {
     private $response;
 
