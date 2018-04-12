@@ -2,10 +2,10 @@
 
 namespace Application\Model\Rest\Stats;
 
-use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\AbstractOLDResource;
 use MongoDB\Driver\ReadPreference;
 
-class Resource extends AbstractResource
+class Resource extends AbstractOLDResource
 {
     /**
      * Resource name

@@ -3,17 +3,10 @@
 namespace Application\Model\Rest\Status;
 
 use Application\Library\Lpa\StateChecker;
-use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\AbstractOLDResource;
 use Application\Model\Rest\LpaConsumerInterface;
-use Application\Model\Rest\UserConsumerInterface;
 
-/**
- * Status Resource
- *
- * Class Resource
- * @package Application\Model\Rest\Status
- */
-class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface
+class Resource extends AbstractOLDResource implements LpaConsumerInterface
 {
     /**
      * Resource name

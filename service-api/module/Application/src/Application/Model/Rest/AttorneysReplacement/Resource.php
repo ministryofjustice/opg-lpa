@@ -4,15 +4,12 @@ namespace Application\Model\Rest\AttorneysReplacement;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\AbstractOLDResource;
 use Application\Model\Rest\LpaConsumerInterface;
-use Application\Model\Rest\UserConsumerInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
-use Zend\Paginator\Adapter\NullFill as PaginatorNull;
-use Zend\Paginator\Adapter\ArrayAdapter as PaginatorArrayAdapter;
 use RuntimeException;
 
-class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface
+class Resource extends AbstractOLDResource implements LpaConsumerInterface
 {
     /**
      * Resource name

@@ -58,14 +58,12 @@ class ResourceAbstractFactory implements AbstractFactoryInterface
     /**
      * Create an object
      *
-     * @param  ContainerInterface $container
-     * @param  string $requestedName
-     * @param  null|array $options
-     * @return object
-     * @throws ServiceNotFoundException if unable to resolve the service.
-     * @throws ServiceNotCreatedException if an exception is raised when
-     *     creating a service.
-     * @throws ContainerException if any other error occurs
+     * @param ContainerInterface $container
+     * @param string $requestedName
+     * @param array|null $options
+     * @return mixed
+     * @throws ApiProblemException
+     * @throws Exception
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -84,7 +82,33 @@ class ResourceAbstractFactory implements AbstractFactoryInterface
             $collection = $container->get(CollectionFactory::class . '-stats-who');
         }
 
-        $resource = new $requestedName($lpaCollection, $collection);
+        //  Get the route user
+        $userId = $container->get('Application')->getMvcEvent()->getRouteMatch()->getParam('userId');
+
+        if (empty($userId)) {
+            throw new ApiProblemException('User identifier missing from URL', 400);
+        }
+
+        //  Get the user record using the DAL
+        $userDal = $container->get(UserDal::class);
+        $user = $userDal->findById($userId);
+
+        $resource = new $requestedName(new RouteUser($user), $lpaCollection, $collection);
+
+        //  If appropriate set the LPA from the route parameter
+        if ($resource instanceof LpaConsumerInterface) {
+            $lpaId = $container->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpaId');
+
+            if (!is_numeric($lpaId)) {
+                throw new ApiProblemException('LPA identifier missing from URL', 400);
+            }
+
+            $lpaData = $lpaCollection->findOne(['_id' => (int) $lpaId, 'user' => $userId]);
+
+            $lpaData = ['id' => $lpaData['_id']] + $lpaData;
+
+            $resource->setLpa(new Lpa($lpaData));
+        }
 
         //  If required load any additional services into the resource
         if (array_key_exists($requestedName, $this->additionalServices) && is_array($this->additionalServices[$requestedName])) {
@@ -94,38 +118,6 @@ class ResourceAbstractFactory implements AbstractFactoryInterface
                 }
 
                 $resource->$setterMethod($container->get($additionalService));
-            }
-        }
-
-        //  If appropriate set the user from the route parameter
-        if ($resource instanceof UserConsumerInterface) {
-            $userId = $container->get('Application')->getMvcEvent()->getRouteMatch()->getParam('userId');
-
-            if (empty($userId)) {
-                throw new ApiProblemException('User identifier missing from URL', 400);
-            }
-
-            //  Get the user record using the DAL
-            $userDal = $container->get(UserDal::class);
-            $user = $userDal->findById($userId);
-
-            if ($user instanceof User) {
-                $resource->setRouteUser(new RouteUser($user));
-
-                //  If appropriate set the LPA from the route parameter
-                if ($resource instanceof LpaConsumerInterface) {
-                    $lpaId = $container->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpaId');
-
-                    if (!is_numeric($lpaId)) {
-                        throw new ApiProblemException('LPA identifier missing from URL', 400);
-                    }
-
-                    $lpaData = $lpaCollection->findOne(['_id' => (int) $lpaId, 'user' => $userId]);
-
-                    $lpaData = ['id' => $lpaData['_id']] + $lpaData;
-
-                    $resource->setLpa(new Lpa($lpaData));
-                }
             }
         }
 

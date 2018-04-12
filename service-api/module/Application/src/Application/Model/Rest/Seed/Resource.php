@@ -3,14 +3,13 @@
 namespace Application\Model\Rest\Seed;
 
 use Application\Library\ApiProblem\ApiProblem;
-use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\AbstractOLDResource;
 use Application\Model\Rest\Applications\Entity as ApplicationEntity;
 use Application\Model\Rest\Applications\Resource as ApplicationResource;
 use Application\Model\Rest\LpaConsumerInterface;
-use Application\Model\Rest\UserConsumerInterface;
 use RuntimeException;
 
-class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface
+class Resource extends AbstractOLDResource implements LpaConsumerInterface
 {
     /**
      * Resource name

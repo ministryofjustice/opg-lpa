@@ -6,18 +6,16 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Http\Response\File as FileResponse;
 use Application\Library\Lpa\StateChecker;
-use Application\Model\Rest\AbstractResource;
+use Application\Model\Rest\AbstractOLDResource;
 use Application\Model\Rest\LpaConsumerInterface;
-use Application\Model\Rest\UserConsumerInterface;
 use Aws\S3\S3Client;
 use DynamoQueue\Queue\Client as DynamoQueue;
 use DynamoQueue\Queue\Job\Job as DynamoQueueJob;
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
 use Zend\Filter\Compress;
-use Zend\Paginator\Adapter\ArrayAdapter as PaginatorArrayAdapter;
 
-class Resource extends AbstractResource implements UserConsumerInterface, LpaConsumerInterface
+class Resource extends AbstractOLDResource implements LpaConsumerInterface
 {
     /**
      * Resource name

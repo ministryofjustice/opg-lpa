@@ -8,7 +8,6 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
 use Application\Library\Random\Csprng;
 use Application\Model\Rest\AbstractResource;
-use Application\Model\Rest\UserConsumerInterface;
 use MongoDB\BSON\UTCDateTime;
 use Opg\Lpa\DataModel\Lpa\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -22,205 +21,145 @@ use RuntimeException;
  * Class Resource
  * @package Application\Model\Rest\Applications
  */
-class Resource extends AbstractResource implements UserConsumerInterface
+class Resource extends AbstractResource
 {
     /**
-     * Resource name
-     *
-     * @var string
+     * @param $data
+     * @return Entity
      */
-    protected $name = 'applications';
-
-    /**
-     * Resource identifier
-     *
-     * @var string
-     */
-    protected $identifier = 'lpaId';
-
-    /**
-     * Resource type
-     *
-     * @var string
-     */
-    protected $type = self::TYPE_COLLECTION;
-
-    /**
-     * Filters out all top level keys that the user cannot directly set.
-     *
-     * @param array $data
-     * @return mixed
-     */
-    private function filterIncomingData( array $data ){
-
-        return array_intersect_key( $data, array_flip([
-            'document',
-            'metadata',
-            'payment',
-            'repeatCaseNumber'
-        ]));
-
-    }
-
-    //-------------------------------------------
-
-    /**
-     * Create a new LPA.
-     *
-     * @param  mixed $data
-     * @return Entity|ApiProblem
-     * @throw UnauthorizedException If the current user is not authorized.
-     */
-    public function create($data){
-
+    public function create($data)
+    {
         $this->checkAccess();
 
-        //------------------------
-
         // If no data was passed, represent with an empty array.
-        if( is_null($data) ){
+        if (is_null($data)) {
             $data = array();
         }
 
-        //----------------------------
         // Generate an id for the LPA
-
         $csprng = new Csprng();
 
-        /*
-         * Generate a random 11-digit number to use as the LPA id.
-         * This loops until we find one that's 'free'.
-         */
+        //  Generate a random 11-digit number to use as the LPA id - this loops until we find one that's 'free'.
         do {
-
             $id = $csprng->GetInt(1000000, 99999999999);
 
             // Check if the id already exists. We're looking for a value of null.
-            $exists = $this->lpaCollection->findOne( [ '_id'=>$id ], [ '_id'=>true ] );
-
-        } while( !is_null($exists) );
-
-        //----------------------------
+            $exists = $this->lpaCollection->findOne([
+                '_id' => $id
+            ], [
+                '_id' => true
+            ]);
+        } while (!is_null($exists));
 
         $lpa = new Lpa([
             'id'                => $id,
             'startedAt'         => new DateTime(),
             'updatedAt'         => new DateTime(),
-            'user'              => $this->getRouteUser()->userId(),
+            'user'              => $this->routeUser->userId(),
             'locked'            => false,
             'whoAreYouAnswered' => false,
             'document'          => new Document\Document(),
         ]);
 
-        //---
+        $data = $this->filterIncomingData($data);
 
-        $data = $this->filterIncomingData( $data );
-
-        if( !empty($data) ){
-            $lpa->populate( $data );
+        if (!empty($data)) {
+            $lpa->populate($data);
         }
 
-        //---
-
-        if( $lpa->validate()->hasErrors() ){
-
-            /*
-             * This is not based on user input (we already validated the Document above),
-             * thus if we have errors here it is our fault!
-             */
+        if ($lpa->validate()->hasErrors()) {
+            //  This is not based on user input (we already validated the Document above),
+            //  thus if we have errors here it is our fault!
             throw new RuntimeException('A malformed LPA object was created');
-
         }
 
-        $this->lpaCollection->insertOne( $lpa->toArray(new DateCallback()) );
+        $this->lpaCollection->insertOne($lpa->toArray(new DateCallback()));
 
-        $entity = new Entity( $lpa );
+        $entity = new Entity($lpa);
 
         return $entity;
-
-    } // function
-
-
-    public function patch($data, $id){
-
-        $this->checkAccess();
-
-        //------------------------
-
-        $lpa = $this->fetch( $id )->getLpa();
-
-        //---
-
-        $data = $this->filterIncomingData( $data );
-
-        if( !empty($data) ){
-            $lpa->populate( $data );
-        }
-
-        //---
-
-        $validation = $lpa->validate();
-
-        if( $validation->hasErrors() ){
-            return new ValidationApiProblem( $validation );
-        }
-
-        //---
-
-        $this->updateLpa( $lpa );
-
-        return new Entity( $lpa );
-
     }
 
     /**
-     * Fetch a resource
-     *
-     * @param  mixed $id
-     * @return Entity|ApiProblem
-     * @throw UnauthorizedException If the current user is not authorized.
+     * @param array $data
+     * @return array
      */
-    public function fetch($id){
-
-        $this->checkAccess();
-
-        //------------------------
-
-        // Note: user has to match.
-        $userId = $this->getRouteUser()->userId();
-        $result = $this->lpaCollection->findOne( [ '_id'=>(int)$id, 'user'=> $userId] );
-
-        if( is_null($result) ){
-            return new ApiProblem(
-                404,
-                'Document ' . $id . ' not found for user ' . $this->getRouteUser()->userId()
-            );
-        }
-
-        $result = [ 'id' => $result['_id'] ] + $result;
-
-        $lpa = new Lpa( $result );
-
-        $entity = new Entity( $lpa );
-
-        return $entity;
-
-    } // function
-
+    private function filterIncomingData(array $data)
+    {
+        return array_intersect_key($data, array_flip([
+            'document',
+            'metadata',
+            'payment',
+            'repeatCaseNumber'
+        ]));
+    }
 
     /**
-     * Fetch all or a subset of resources
-     *
-     * @param  array $params
+     * @param $data
+     * @param $id
+     * @return ValidationApiProblem|Entity
+     */
+    public function patch($data, $id)
+    {
+        $this->checkAccess();
+
+        $lpa = $this->fetch($id)->getLpa();
+
+        $data = $this->filterIncomingData($data);
+
+        if (!empty($data)) {
+            $lpa->populate($data);
+        }
+
+        $validation = $lpa->validate();
+
+        if ($validation->hasErrors()) {
+            return new ValidationApiProblem($validation);
+        }
+
+        $this->updateLpa($lpa);
+
+        return new Entity($lpa);
+    }
+
+    /**
+     * @param $id
+     * @return ApiProblem|Entity
+     */
+    public function fetch($id)
+    {
+        $this->checkAccess();
+
+        // Note: user has to match
+        $userId = $this->routeUser->userId();
+        $result = $this->lpaCollection->findOne([
+            '_id' => (int) $id,
+            'user' => $userId
+        ]);
+
+        if (is_null($result)) {
+            return new ApiProblem(404, 'Document ' . $id . ' not found for user ' . $this->routeUser->userId());
+        }
+
+        $result = ['id' => $result['_id']] + $result;
+
+        $lpa = new Lpa($result);
+
+        $entity = new Entity($lpa);
+
+        return $entity;
+    }
+
+    /**
+     * @param array $params
      * @return Collection
-     * @throw UnauthorizedException If the current user is not authorized.
      */
     public function fetchAll($params = [])
     {
         $this->checkAccess();
 
         $filter = [
-            'user' => $this->getRouteUser()->userId()
+            'user' => $this->routeUser->userId()
         ];
 
         //  Merge in any filter requirements...
@@ -254,7 +193,7 @@ class Resource extends AbstractResource implements UserConsumerInterface
 
         // If there are no records, just return an empty paginator...
         if ($count == 0) {
-            return new Collection(new PaginatorNull, $this->getRouteUser()->userId());
+            return new Collection(new PaginatorNull, $this->routeUser->userId());
         }
 
         // Map the results into a Zend Paginator, lazely converting them to LPA instances as we go...
@@ -289,66 +228,52 @@ class Resource extends AbstractResource implements UserConsumerInterface
             }
         );
 
-        return new Collection($callback, $this->getRouteUser()->userId());
+        return new Collection($callback, $this->routeUser->userId());
     }
 
-
     /**
-     * Delete a resource
-     *
-     * @param  mixed $id
+     * @param $id
      * @return ApiProblem|bool
-     * @throw UnauthorizedException If the current user is not authorized.
      */
-    public function delete($id){
-
+    public function delete($id)
+    {
         $this->checkAccess();
 
-        //------------------------
+        $filter = [
+            '_id' => (int) $id,
+            'user' => $this->routeUser->userId(),
+        ];
 
-        $filter = ['_id' => (int)$id, 'user' => $this->getRouteUser()->userId()];
-        $result = $this->lpaCollection->findOne( $filter, ['projection' => ['_id'=>true]]);
+        $result = $this->lpaCollection->findOne($filter, ['projection' => ['_id' => true]]);
 
-        if( is_null($result) ){
-            return new ApiProblem( 404, 'Document not found' );
+        if (is_null($result)) {
+            return new ApiProblem(404, 'Document not found');
         }
 
-        //---
-
-        /*
-         * We don't want to remove the document entirely as we need to make sure the same ID isn't reassigned.
-         * So we just strip the document down to '_id' and 'updatedAt'.
-         */
-
+        //  We don't want to remove the document entirely as we need to make sure the same ID isn't reassigned.
+        //  So we just strip the document down to '_id' and 'updatedAt'.
         $result['updatedAt'] = new UTCDateTime();
 
         $this->lpaCollection->replaceOne($filter, $result);
 
         return true;
-
-    } // function
+    }
 
     /**
-     * Deletes all applications for the current user.
-     *
      * @return bool
      */
-    public function deleteAll(){
-
+    public function deleteAll()
+    {
         $this->checkAccess();
 
-        //------------------------
+        $query = ['user' => $this->routeUser->userId()];
 
-        $query = [ 'user'=>$this->getRouteUser()->userId() ];
+        $lpas = $this->lpaCollection->find($query, ['_id' => true]);
 
-        $lpas = $this->lpaCollection->find( $query, [ '_id' => true ] );
-
-        foreach( $lpas as $lpa ){
-            $this->delete( $lpa['_id'] );
+        foreach ($lpas as $lpa) {
+            $this->delete($lpa['_id']);
         }
 
         return true;
-
-    } // function
-
-} // class
+    }
+}

@@ -4,6 +4,10 @@ namespace Application\Controller;
 
 use Application\Controller\Version2\AbstractController;
 use Application\Controller\Version2\ApplicationController;
+use Application\Controller\Version2\DonorController;
+use Application\Controller\Version2\PrimaryAttorneyDecisionsController;
+use Application\Controller\Version2\ReplacementAttorneyDecisionsController;
+use Application\Controller\Version2\TypeController;
 use Application\Controller\Version2\UserController;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
@@ -25,8 +29,12 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $resourceMappings = [
-        ApplicationController::class => 'resource-applications',
-        UserController::class        => 'resource-users',
+        ApplicationController::class                    => 'resource-applications',
+        DonorController::class                          => 'resource-donor',
+        PrimaryAttorneyDecisionsController::class       => 'resource-primary-attorney-decisions',
+        ReplacementAttorneyDecisionsController::class   => 'resource-replacement-attorney-decisions',
+        TypeController::class                           => 'resource-type',
+        UserController::class                           => 'resource-users',
     ];
 
     /**

@@ -69,20 +69,6 @@ return [
                         'may_terminate' => true,
                         'child_routes' => [
 
-                            'level-1' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/applications[/:lpaId]',
-                                    'constraints' => [
-                                        'lpaId'     => '[0-9]+',
-                                    ],
-                                    'defaults' => [
-                                        'controller'    => 'Rest',
-                                        'resource'      => 'applications'
-                                    ],
-                                ],
-                            ], // level-1
-
                             'level-2' => [
                                 'type'    => 'Segment',
                                 'options' => [
@@ -117,7 +103,7 @@ return [
                 'may_terminate' => true,
                 'child_routes' => [
 
-                    //  TODO - Is this used yet?
+                    //  TODO - Is this used yet? Doesn't look like it from the front API calls
                     'stats' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -158,6 +144,47 @@ return [
                                         'controller' => 'ApplicationController',
                                     ],
                                 ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+
+                                    'donor' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/donor',
+                                            'defaults' => [
+                                                'controller' => 'DonorController',
+                                            ],
+                                        ],
+                                    ],
+                                    'primary-attorney-decisions' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/primary-attorney-decisions',
+                                            'defaults' => [
+                                                'controller' => 'PrimaryAttorneyDecisionsController',
+                                            ],
+                                        ],
+                                    ],
+                                    'replacement-attorney-decisions' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/replacement-attorney-decisions',
+                                            'defaults' => [
+                                                'controller' => 'ReplacementAttorneyDecisionsController',
+                                            ],
+                                        ],
+                                    ],
+                                    'type' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/type',
+                                            'defaults' => [
+                                                'controller' => 'TypeController',
+                                            ],
+                                        ],
+                                    ],
+
+                                ], // child_routes
                             ], // applications
 
                         ], // child_routes

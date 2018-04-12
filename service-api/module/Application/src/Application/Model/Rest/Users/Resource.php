@@ -4,7 +4,6 @@ namespace Application\Model\Rest\Users;
 
 use Application\DataAccess\Mongo\DateCallback;
 use Application\DataAccess\UserDal;
-use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Authentication\Identity\User as UserIdentity;
 use Application\Library\DateTime;
@@ -16,27 +15,6 @@ use Opg\Lpa\DataModel\User\User;
 class Resource extends AbstractResource
 {
     /**
-     * Resource name
-     *
-     * @var string
-     */
-    protected $name = 'users';
-
-    /**
-     * Resource identifier
-     *
-     * @var string
-     */
-    protected $identifier = 'userId';
-
-    /**
-     * Resource type
-     *
-     * @var string
-     */
-    protected $type = self::TYPE_COLLECTION;
-
-    /**
      * @var UserDal
      */
     private $userDal;
@@ -47,27 +25,8 @@ class Resource extends AbstractResource
     private $applicationsResource;
 
     /**
-     * @param UserDal $userDal
-     */
-    public function setUserDal(UserDal $userDal)
-    {
-        $this->userDal = $userDal;
-    }
-
-    /**
-     * @param ApplicationResource $applicationsResource
-     */
-    public function setApplicationsResource(ApplicationResource $applicationsResource)
-    {
-        $this->applicationsResource = $applicationsResource;
-    }
-
-    /**
-     * Fetch the user. If the user does not exist, create them.
-     *
-     * @param  mixed $id
-     * @return Entity|ApiProblem
-     * @throw UnauthorizedException If the current user is not authorized.
+     * @param $id
+     * @return ValidationApiProblem|Entity|array|null|object|User
      */
     public function fetch($id)
     {
@@ -82,20 +41,16 @@ class Resource extends AbstractResource
             $this->userDal->injectEmailAddressFromIdentity($user);
         }
 
-        $user = new Entity($user);
-
         // Set the user in the AbstractResource so it can be used for route generation.
-        $this->setRouteUser($user);
+        $this->routeUser = new Entity($user);
 
-        return $user;
+        return $this->routeUser;
     }
 
     /**
-     * Update a resource
-     *
-     * @param  mixed $id
-     * @param  mixed $data
-     * @return ApiProblem|Entity
+     * @param $data
+     * @param $id
+     * @return ValidationApiProblem|Entity|array|null|object|User
      */
     public function update($data, $id)
     {
@@ -108,20 +63,15 @@ class Resource extends AbstractResource
             return $user;
         }
 
-        $user = new Entity($user);
-
         // Set the user in the AbstractResource so it can be used for route generation.
-        $this->setRouteUser($user);
+        $this->routeUser = new Entity($user);
 
-        return $user;
+        return $this->routeUser;
     }
 
     /**
-     * Deletes the user AND all the user's LPAs!!!
-     *
-     * @param  mixed $id
-     * @return ApiProblem|bool
-     * @throw UnauthorizedException If the current user is not authorized.
+     * @param $id
+     * @return bool
      */
     public function delete($id)
     {
@@ -137,11 +87,9 @@ class Resource extends AbstractResource
     }
 
     /**
-     * Save the user to the database (or creates them if they don't exist)
-     *
      * @param $id
-     * @param $data
-     * @return ValidationApiProblem|array|null|User
+     * @param null $data
+     * @return ValidationApiProblem|array|null|object|User
      */
     private function save($id, $data = null)
     {
@@ -212,7 +160,21 @@ class Resource extends AbstractResource
         }
 
         return $user;
+    }
 
-    } // function
+    /**
+     * @param UserDal $userDal
+     */
+    public function setUserDal(UserDal $userDal)
+    {
+        $this->userDal = $userDal;
+    }
 
-} // class
+    /**
+     * @param ApplicationResource $applicationsResource
+     */
+    public function setApplicationsResource(ApplicationResource $applicationsResource)
+    {
+        $this->applicationsResource = $applicationsResource;
+    }
+}
