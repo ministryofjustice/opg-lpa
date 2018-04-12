@@ -455,7 +455,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setCertificateProvider(Lpa $lpa, CertificateProvider $certificateProvider)
     {
-        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/certificate-provider', $this->getUserId(), $lpa->id), $certificateProvider->toArray());
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/certificate-provider', $this->getUserId(), $lpa->id), $certificateProvider->toArray());
 
         if (is_array($responseData)) {
             $lpa->document->certificateProvider = new CertificateProvider($responseData);
@@ -505,7 +505,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setPreferences(Lpa $lpa, $preferences)
     {
-        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/preference', $this->getUserId(), $lpa->id), [
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/preference', $this->getUserId(), $lpa->id), [
             'preference' => $preferences,
         ]);
 
@@ -527,7 +527,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setInstructions(Lpa $lpa, $instructions)
     {
-        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/instruction', $this->getUserId(), $lpa->id), [
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/instruction', $this->getUserId(), $lpa->id), [
             'instruction' => $instructions,
         ]);
 
@@ -549,7 +549,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setWhoIsRegistering(Lpa $lpa, $whoIsRegistering)
     {
-        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/who-is-registering', $this->getUserId(), $lpa->id), [
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/who-is-registering', $this->getUserId(), $lpa->id), [
             'whoIsRegistering' => $whoIsRegistering,
         ]);
 
@@ -571,7 +571,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setCorrespondent(Lpa $lpa, Correspondence $correspondent)
     {
-        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/correspondent', $this->getUserId(), $lpa->id), $correspondent->toArray());
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/correspondent', $this->getUserId(), $lpa->id), $correspondent->toArray());
 
         if (is_array($responseData)) {
             $lpa->document->correspondent = new Correspondence($responseData);
@@ -706,7 +706,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deleteCertificateProvider(Lpa $lpa)
     {
-        $target = sprintf('/v1/users/%s/applications/%s/certificate-provider', $this->getUserId(), $lpa->id);
+        $target = sprintf('/v2/users/%s/applications/%s/certificate-provider', $this->getUserId(), $lpa->id);
 
         if ($this->executeDelete($target)) {
             $lpa->document->certificateProvider = null;
@@ -751,7 +751,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deleteCorrespondent(Lpa $lpa)
     {
-        $target = sprintf('/v1/users/%s/applications/%s/correspondent', $this->getUserId(), $lpa->id);
+        $target = sprintf('/v2/users/%s/applications/%s/correspondent', $this->getUserId(), $lpa->id);
 
         if ($this->executeDelete($target)) {
             $lpa->document->correspondent = null;
