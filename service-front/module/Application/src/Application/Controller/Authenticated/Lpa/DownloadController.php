@@ -59,7 +59,8 @@ class DownloadController extends AbstractLpaController
             ]);
         }
 
-        $fileContents = $this->getLpaApplicationService()->getPdf($lpa->id, $pdfType);
+        //  Get the file contents by requesting the PDF again but with the .pdf file extension
+        $fileContents = $this->getLpaApplicationService()->getPdf($lpa->id, $pdfType . '.pdf');
 
         $response = $this->getResponse();
         $response->setContent($fileContents);
@@ -95,7 +96,7 @@ class DownloadController extends AbstractLpaController
     private function pdfIsReady($lpaId, $pdfType)
     {
         $details = $this->getLpaApplicationService()
-                        ->getPdfDetails($lpaId, $pdfType);
+                        ->getPdf($lpaId, $pdfType);
 
         $this->getLogger()->info('PDF status is ' . $details['status'], [
             'lpaId' => $lpaId,
