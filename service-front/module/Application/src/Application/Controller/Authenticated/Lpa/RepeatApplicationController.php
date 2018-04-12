@@ -48,7 +48,7 @@ class RepeatApplicationController extends AbstractLpaController
                 } else {
                     if ($lpa->repeatCaseNumber !== null) {
                         // delete case number if it has been set previousely.
-                        if (!$this->getLpaApplicationService()->deleteRepeatCaseNumber($this->getIdentity()->id(), $lpa->id)) {
+                        if (!$this->getLpaApplicationService()->deleteRepeatCaseNumber($lpa)) {
                             throw new \RuntimeException('API client failed to set repeat case number for id: ' . $lpa->id);
                         }
                     }
