@@ -2,124 +2,65 @@
 
 namespace Application\Model\Rest\CertificateProvider;
 
-use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Model\Rest\AbstractOLDResource;
+use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\LpaConsumerInterface;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use RuntimeException;
 
-class Resource extends AbstractOLDResource implements LpaConsumerInterface
+class Resource extends AbstractResource implements LpaConsumerInterface
 {
     /**
-     * Resource name
-     *
-     * @var string
+     * @param $data
+     * @param $id
+     * @return ValidationApiProblem|Entity
      */
-    protected $name = 'certificate-provider';
-
-    /**
-     * Resource identifier
-     *
-     * @var string
-     */
-    protected $identifier = 'lpaId';
-
-    /**
-     * Resource type
-     *
-     * @var string
-     */
-    protected $type = self::TYPE_SINGULAR;
-
-    /**
-     * Update a resource
-     *
-     * @param  mixed $id
-     * @param  mixed $data
-     * @return ApiProblem|Entity
-     */
-    public function update($data, $id){
-
+    public function update($data, $id)
+    {
         $this->checkAccess();
-
-        //---
 
         $lpa = $this->getLpa();
 
-        $document = $lpa->document;
+        $lpa->document->certificateProvider = new CertificateProvider($data);
 
-        $document->certificateProvider = new CertificateProvider( $data );
+        $validation = $lpa->document->certificateProvider->validate();
 
-        //---
-
-        $validation = $document->certificateProvider->validate();
-
-        if( $validation->hasErrors() ){
-            return new ValidationApiProblem( $validation );
+        if ($validation->hasErrors()) {
+            return new ValidationApiProblem($validation);
         }
 
-        //---
-
-        if( $lpa->validate()->hasErrors() ){
-
-            /*
-             * This is not based on user input (we already validated the Document above),
-             * thus if we have errors here it is our fault!
-             */
+        if ($lpa->validate()->hasErrors()) {
             throw new RuntimeException('A malformed LPA object');
-
         }
 
-        $this->updateLpa( $lpa );
+        $this->updateLpa($lpa);
 
-        return new Entity( $lpa->document->certificateProvider, $lpa );
-
-    } // function
+        return new Entity($lpa->document->certificateProvider, $lpa);
+    }
 
     /**
-     * Delete a resource
-     *
-     * @param  mixed $id
-     * @return ApiProblem|bool
-     * @throw UnauthorizedException If the current user is not authorized.
+     * @return ValidationApiProblem|bool
      */
-    public function delete(){
-
+    public function delete()
+    {
         $this->checkAccess();
-
-        //------------------------
 
         $lpa = $this->getLpa();
 
-        $document = $lpa->document;
+        $lpa->document->certificateProvider = null;
 
-        $document->certificateProvider = null;
+        $validation = $lpa->document->validate();
 
-        //---
-
-        $validation = $document->validate();
-
-        if( $validation->hasErrors() ){
-            return new ValidationApiProblem( $validation );
+        if ($validation->hasErrors()) {
+            return new ValidationApiProblem($validation);
         }
 
-        //---
-
-        if( $lpa->validate()->hasErrors() ){
-
-            /*
-             * This is not based on user input (we already validated the Document above),
-             * thus if we have errors here it is our fault!
-             */
+        if ($lpa->validate()->hasErrors()) {
             throw new RuntimeException('A malformed LPA object');
-
         }
 
-        $this->updateLpa( $lpa );
+        $this->updateLpa($lpa);
 
         return true;
-
-    } // function
-
-} // class
+    }
+}

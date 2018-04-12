@@ -1,50 +1,54 @@
 <?php
+
 namespace Application\Model\Rest\Seed;
 
 use Application\Model\Rest\EntityInterface;
-
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
-class Entity implements EntityInterface {
-
+class Entity implements EntityInterface
+{
     protected $lpa;
     protected $seed;
 
-    public function __construct( Lpa $seed = null, Lpa $lpa ){
-
+    public function __construct(Lpa $seed = null, Lpa $lpa)
+    {
         $this->lpa = $lpa;
         $this->seed = $seed;
-
     }
 
-    public function userId(){
+    public function userId()
+    {
         return $this->lpa->user;
     }
 
-    public function lpaId(){
+    public function lpaId()
+    {
         return $this->lpa->id;
     }
 
-    public function resourceId(){
+    public function resourceId()
+    {
         return null;
     }
 
-    public function toArray(){
-
-        if( is_null($this->seed) ){
-            return array();
+    public function toArray()
+    {
+        if (is_null($this->seed)) {
+            return [];
         }
 
-        $result = array( 'seed'=>$this->seed->id );
+        $result = [
+            'seed' => $this->seed->id,
+        ];
 
-        if( $this->seed->document == null ){
+        if ($this->seed->document == null) {
             return $result;
         }
 
         $document = $this->seed->document->toArray();
 
         // Extract the following fields to return from the seed document.
-        $result = $result + array_intersect_key( $document, array_flip([
+        $result = $result + array_intersect_key($document, array_flip([
             'donor',
             'correspondent',
             'certificateProvider',
@@ -53,18 +57,11 @@ class Entity implements EntityInterface {
             'peopleToNotify'
         ]));
 
-        //---
-
         // Strip out null values and empty arrays...
-        $result = array_filter( $result, function($v){
+        $result = array_filter($result, function ($v) {
             return !empty($v);
         });
 
-        //---
-
         return $result;
-
-    } // function
-
-} // class
-
+    }
+}

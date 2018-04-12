@@ -31,6 +31,7 @@ class ReplacementAttorneyController extends AbstractController
         // If we get here...
         return new ApiProblem(500, 'Unable to process request');
     }
+
     /**
      * @param mixed $id
      * @param mixed $data

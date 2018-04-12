@@ -7,31 +7,8 @@ use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Rest\EntityInterface;
 use ZF\ApiProblem\ApiProblem;
 
-class PrimaryAttorneyController extends AbstractController
+class CertificateProviderController extends AbstractController
 {
-    /**
-     * @var string
-     */
-    protected $identifierName = 'primaryAttorneyId';
-
-    /**
-     * @param mixed $data
-     * @return JsonResponse|ApiProblem
-     */
-    public function create($data)
-    {
-        $result = $this->resource->create($data);
-
-        if ($result instanceof ApiProblem) {
-            return $result;
-        } elseif ($result instanceof EntityInterface) {
-            return new JsonResponse($result->toArray(), 201);
-        }
-
-        // If we get here...
-        return new ApiProblem(500, 'Unable to process request');
-    }
-
     /**
      * @param mixed $id
      * @param mixed $data

@@ -4,8 +4,11 @@ namespace Application\Controller;
 
 use Application\Controller\Version2\AbstractController;
 use Application\Controller\Version2\ApplicationController;
+use Application\Controller\Version2\CertificateProviderController;
 use Application\Controller\Version2\DonorController;
+use Application\Controller\Version2\InstructionController;
 use Application\Controller\Version2\NotifiedPeopleController;
+use Application\Controller\Version2\PreferenceController;
 use Application\Controller\Version2\PrimaryAttorneyController;
 use Application\Controller\Version2\PrimaryAttorneyDecisionsController;
 use Application\Controller\Version2\ReplacementAttorneyController;
@@ -33,8 +36,11 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      */
     private $resourceMappings = [
         ApplicationController::class                    => 'resource-applications',
+        CertificateProviderController::class            => 'resource-certificate-provider',
         DonorController::class                          => 'resource-donor',
+        InstructionController::class                    => 'resource-instruction',
         NotifiedPeopleController::class                 => 'resource-notified-people',
+        PreferenceController::class                     => 'resource-preference',
         PrimaryAttorneyController::class                => 'resource-primary-attorneys',
         PrimaryAttorneyDecisionsController::class       => 'resource-primary-attorney-decisions',
         ReplacementAttorneyController::class            => 'resource-replacement-attorneys',

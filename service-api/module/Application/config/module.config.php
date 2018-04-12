@@ -147,12 +147,30 @@ return [
                                 'may_terminate' => true,
                                 'child_routes' => [
 
+                                    'certificate-provider' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/certificate-provider',
+                                            'defaults' => [
+                                                'controller' => 'CertificateProviderController',
+                                            ],
+                                        ],
+                                    ],
                                     'donor' => [
                                         'type'    => 'Literal',
                                         'options' => [
                                             'route'       => '/donor',
                                             'defaults' => [
                                                 'controller' => 'DonorController',
+                                            ],
+                                        ],
+                                    ],
+                                    'instruction' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/instruction',
+                                            'defaults' => [
+                                                'controller' => 'InstructionController',
                                             ],
                                         ],
                                     ],
@@ -165,6 +183,15 @@ return [
                                             ],
                                             'defaults' => [
                                                 'controller' => 'NotifiedPeopleController',
+                                            ],
+                                        ],
+                                    ],
+                                    'preference' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/preference',
+                                            'defaults' => [
+                                                'controller' => 'PreferenceController',
                                             ],
                                         ],
                                     ],

@@ -47,14 +47,12 @@ class Resource extends AbstractOLDResource implements LpaConsumerInterface
 
         $lpa = $this->getLpa();
 
-        $document = $lpa->document;
-
-        $document->correspondent = (isset($data['correspondent'])) ? new Correspondence($data['correspondent']) : null;
-        $document->correspondent = new Correspondence($data);
+        $lpa->document->correspondent = (isset($data['correspondent'])) ? new Correspondence($data['correspondent']) : null;
+        $lpa->document->correspondent = new Correspondence($data);
 
         //---
 
-        $validation = $document->correspondent->validate();
+        $validation = $lpa->document->correspondent->validate();
 
         if( $validation->hasErrors() ){
             return new ValidationApiProblem( $validation );
@@ -63,11 +61,6 @@ class Resource extends AbstractOLDResource implements LpaConsumerInterface
         //---
 
         if( $lpa->validate()->hasErrors() ){
-
-            /*
-             * This is not based on user input (we already validated the Document above),
-             * thus if we have errors here it is our fault!
-             */
             throw new RuntimeException('A malformed LPA object');
 
         }
@@ -93,13 +86,11 @@ class Resource extends AbstractOLDResource implements LpaConsumerInterface
 
         $lpa = $this->getLpa();
 
-        $document = $lpa->document;
-
-        $document->correspondent = null;
+        $lpa->document->correspondent = null;
 
         //---
 
-        $validation = $document->validate();
+        $validation = $lpa->document->validate();
 
         if( $validation->hasErrors() ){
             return new ValidationApiProblem( $validation );
@@ -108,11 +99,6 @@ class Resource extends AbstractOLDResource implements LpaConsumerInterface
         //---
 
         if( $lpa->validate()->hasErrors() ){
-
-            /*
-             * This is not based on user input (we already validated the Document above),
-             * thus if we have errors here it is our fault!
-             */
             throw new RuntimeException('A malformed LPA object');
 
         }

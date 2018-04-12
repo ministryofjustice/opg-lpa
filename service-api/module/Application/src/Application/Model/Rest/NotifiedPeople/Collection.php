@@ -1,44 +1,47 @@
 <?php
+
 namespace Application\Model\Rest\NotifiedPeople;
 
 use Application\Model\Rest\CollectionInterface;
-
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Paginator\Paginator;
 
-use Opg\Lpa\DataModel\Lpa\Lpa;
-
-class Collection extends Paginator implements CollectionInterface {
-
+class Collection extends Paginator implements CollectionInterface
+{
     protected $lpa;
 
-    public function __construct($adapter, Lpa $lpa){
-        parent::__construct( $adapter );
+    public function __construct($adapter, Lpa $lpa)
+    {
+        parent::__construct($adapter);
 
         $this->lpa = $lpa;
     }
 
-    public function userId(){
+    public function userId()
+    {
         return $this->lpa->user;
     }
 
-    public function lpaId(){
+    public function lpaId()
+    {
         return $this->lpa->id;
     }
 
-    public function resourceId(){
+    public function resourceId()
+    {
         return null;
     }
 
-    public function toArray(){
-
+    public function toArray()
+    {
         $lpa = $this->lpa;
 
-        $items = iterator_to_array($this->getItemsByPage( $this->getCurrentPageNumber() ));
+        $items = iterator_to_array($this->getItemsByPage($this->getCurrentPageNumber()));
 
         // Map the embedded items to Entities...
-        $items = array_map( function($i) use( $lpa ){
-            return new Entity( $i, $lpa );
-        }, $items );
+        $items = array_map(function ($i) use ($lpa) {
+            return new Entity($i, $lpa);
+        }, $items);
 
         return [
             'count' => count($items),
@@ -46,7 +49,5 @@ class Collection extends Paginator implements CollectionInterface {
             'pages' => $this->count(),
             'items' => $items,
         ];
-
-    } // function
-
-} // class
+    }
+}

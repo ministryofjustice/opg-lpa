@@ -131,11 +131,6 @@ class Resource extends AbstractOLDResource implements LpaConsumerInterface
         //---
 
         if( $lpa->validate()->hasErrors() ){
-
-            /*
-             * This is not based on user input (we already validated the Document above),
-             * thus if we have errors here it is our fault!
-             */
             throw new RuntimeException('A malformed LPA object');
 
         }
@@ -165,11 +160,6 @@ class Resource extends AbstractOLDResource implements LpaConsumerInterface
         //---
 
         if( $lpa->validate()->hasErrors() ){
-
-            /*
-             * This is not based on user input (we already validated the Document above),
-             * thus if we have errors here it is our fault!
-             */
             throw new RuntimeException('A malformed LPA object');
 
         }

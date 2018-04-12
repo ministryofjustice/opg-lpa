@@ -7,38 +7,38 @@ use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Application\Model\Rest\EntityInterface;
 
-class Entity implements EntityInterface {
-
+class Entity implements EntityInterface
+{
     protected $lpa;
     protected $provider;
 
-    public function __construct( CertificateProvider $provider = null, Lpa $lpa ){
-
+    public function __construct(CertificateProvider $provider = null, Lpa $lpa)
+    {
         $this->lpa = $lpa;
         $this->provider = $provider;
-
     }
 
-    public function userId(){
+    public function userId()
+    {
         return $this->lpa->user;
     }
 
-    public function lpaId(){
+    public function lpaId()
+    {
         return $this->lpa->id;
     }
 
-    public function resourceId(){
+    public function resourceId()
+    {
         return null;
     }
 
-    public function toArray(){
-
-        if( $this->provider instanceof LpaAccessorInterface ){
+    public function toArray()
+    {
+        if ($this->provider instanceof LpaAccessorInterface) {
             return $this->provider->toArray();
-        } else {
-            return array();
         }
 
+        return [];
     }
-
-} // class
+}
