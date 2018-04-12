@@ -33,14 +33,7 @@ class DownloadController extends AbstractLpaController
 
         $this->layout('layout/download.twig');
 
-        $details = $this->getLpaApplicationService()
-                        ->getPdfDetails($lpa->id, $pdfType);
-
-        $this->getLogger()->info('PDF status is ' . $details['status'], [
-            'lpaId' => $lpa->id
-        ]);
-
-        if ($details['status'] === 'ready') {
+        if ($this->pdfIsReady($lpa->id, $pdfType)) {
             //  Redirect to download action
             return $this->redirect()->toRoute('lpa/download/file', [
                 'lpa-id'       => $lpa->id,
@@ -58,10 +51,7 @@ class DownloadController extends AbstractLpaController
 
         $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
 
-        $details = $this->getLpaApplicationService()
-                        ->getPdfDetails($lpa->id, $pdfType);
-
-        if ($details['status'] !== 'ready') {
+        if (!$this->pdfIsReady($lpa->id, $pdfType)) {
             // If the PDF is not ready, direct the user back to index.
             return $this->redirect()->toRoute('lpa/download', [
                 'lpa-id'   => $lpa->id,
@@ -69,7 +59,7 @@ class DownloadController extends AbstractLpaController
             ]);
         }
 
-        $fileContents = $this->getLpaApplicationService()->getPdf($lpa, $pdfType);
+        $fileContents = $this->getLpaApplicationService()->getPdf($lpa->id, $pdfType);
 
         $response = $this->getResponse();
         $response->setContent($fileContents);
@@ -93,6 +83,25 @@ class DownloadController extends AbstractLpaController
         }
 
         return $this->response;
+    }
+
+    /**
+     * Check to see if the PDF is ready to retrieve
+     *
+     * @param $lpaId
+     * @param $pdfType
+     * @return bool
+     */
+    private function pdfIsReady($lpaId, $pdfType)
+    {
+        $details = $this->getLpaApplicationService()
+                        ->getPdfDetails($lpaId, $pdfType);
+
+        $this->getLogger()->info('PDF status is ' . $details['status'], [
+            'lpaId' => $lpaId,
+        ]);
+
+        return ($details['status'] === 'ready');
     }
 
     /**
