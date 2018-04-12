@@ -400,7 +400,6 @@ return [
             'resource-donor'                            => 'Application\Model\Rest\Donor\Resource',
             'resource-instruction'                      => 'Application\Model\Rest\Instruction\Resource',
             'resource-lock'                             => 'Application\Model\Rest\Lock\Resource',
-            'resource-metadata'                         => 'Application\Model\Rest\Metadata\Resource',
             'resource-notified-people'                  => 'Application\Model\Rest\NotifiedPeople\Resource',
             'resource-payment'                          => 'Application\Model\Rest\Payment\Resource',
             'resource-pdfs'                             => 'Application\Model\Rest\Pdfs\Resource',
