@@ -202,7 +202,21 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function getPdfDetails($lpaId, $pdfName)
     {
-        return $this->executeGet(sprintf('/v1/users/%s/applications/%s/pdfs/%s', $this->getUserId(), $lpaId, $pdfName));
+        return $this->executeGet(sprintf('/v2/users/%s/applications/%s/pdfs/%s', $this->getUserId(), $lpaId, $pdfName));
+    }
+
+    /**
+     * Returns the PDF body for the specified PDF type
+     *
+     * TODO - Combine this with the above function? They are essentially the same...
+     *
+     * @param $lpaId
+     * @param $pdfType
+     * @return bool|mixed
+     */
+    public function getPdf($lpaId, $pdfType)
+    {
+        return $this->executeGet(sprintf('/v2/users/%s/applications/%s/pdfs/%s.pdf', $this->getUserId(), $lpaId, $pdfType));
     }
 
     /**
@@ -795,27 +809,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
             $lpa->locked = true;
 
             return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns the PDF body for the specified PDF type
-     *
-     * @param Lpa $lpa
-     * @param $pdfName
-     * @return bool|mixed
-     */
-    public function getPdf(Lpa $lpa, $pdfName)
-    {
-        //  Make the resource type equal to the type of PDF we want to return
-        $resourceType = 'pdfs/' . $pdfName . '.pdf';
-
-        $response = $this->apiClient->httpPost(sprintf('/v1/users/%s/applications/%s/%s', $this->getUserId(), $lpa->id, $resourceType));
-
-        if ($response->getStatusCode() == 200) {
-            return json_decode($response->getBody(), true);
         }
 
         return false;
