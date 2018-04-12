@@ -2,11 +2,12 @@
 
 namespace Application\Model\Rest\Stats;
 
-use Application\Model\Rest\AbstractOLDResource;
+use Application\Model\Rest\AbstractResource;
 use MongoDB\Driver\ReadPreference;
 
-class Resource extends AbstractOLDResource
+class Resource extends AbstractResource
 {
+    //  TODO - FROM OLD ABSTRACT - REMOVE
     /**
      * Resource name
      *
@@ -26,7 +27,27 @@ class Resource extends AbstractOLDResource
      *
      * @var string
      */
+    const TYPE_COLLECTION = 'collections';
     protected $type = self::TYPE_COLLECTION;
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+    //  TODO - END FROM OLD ABSTRACT - REMOVE
 
     public function fetch($type)
     {
