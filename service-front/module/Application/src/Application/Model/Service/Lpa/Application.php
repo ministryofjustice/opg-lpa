@@ -190,25 +190,11 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function getSeedDetails($lpaId)
     {
-        return $this->executeGet(sprintf('/v1/users/%s/applications/%s/seed', $this->getUserId(), $lpaId));
+        return $this->executeGet(sprintf('/v2/users/%s/applications/%s/seed', $this->getUserId(), $lpaId));
     }
 
     /**
-     * Returns the PDF details for the specified PDF type
-     *
-     * @param $lpaId
-     * @param $pdfName
-     * @return mixed
-     */
-    public function getPdfDetails($lpaId, $pdfName)
-    {
-        return $this->executeGet(sprintf('/v2/users/%s/applications/%s/pdfs/%s', $this->getUserId(), $lpaId, $pdfName));
-    }
-
-    /**
-     * Returns the PDF body for the specified PDF type
-     *
-     * TODO - Combine this with the above function? They are essentially the same...
+     * Returns the PDF details (or body if the type ends with .pdf) for the specified PDF type
      *
      * @param $lpaId
      * @param $pdfType
@@ -216,7 +202,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function getPdf($lpaId, $pdfType)
     {
-        return $this->executeGet(sprintf('/v2/users/%s/applications/%s/pdfs/%s.pdf', $this->getUserId(), $lpaId, $pdfType));
+        return $this->executeGet(sprintf('/v2/users/%s/applications/%s/pdfs/%s', $this->getUserId(), $lpaId, $pdfType));
     }
 
     /**
@@ -647,7 +633,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setSeed(Lpa $lpa, $seedId)
     {
-        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/seed', $this->getUserId(), $lpa->id), [
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/seed', $this->getUserId(), $lpa->id), [
             'seed' => $seedId,
         ]);
 
