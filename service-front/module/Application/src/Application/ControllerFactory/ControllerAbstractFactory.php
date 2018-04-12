@@ -215,13 +215,13 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
     }
 
     /**
-     * Appends the namespace to the requested controller.
+     * Prepends the namespace to the requested controller.
      *
      * @param $requestedName
      * @return string
      */
     private function getControllerName($requestedName)
     {
-        return'Application\Controller\\' . $requestedName;
+        return 'Application\Controller\\' . $requestedName;
     }
 }

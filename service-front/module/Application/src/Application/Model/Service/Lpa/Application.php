@@ -190,7 +190,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function getSeedDetails($lpaId)
     {
-        return $this->getResource($lpaId, 'seed');
+        return $this->executeGet(sprintf('/v1/users/%s/applications/%s/seed', $this->getUserId(), $lpaId));
     }
 
     /**
@@ -202,7 +202,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function getPdfDetails($lpaId, $pdfName)
     {
-        return $this->getResource($lpaId, 'pdfs/' . $pdfName);
+        return $this->executeGet(sprintf('/v1/users/%s/applications/%s/pdfs/%s', $this->getUserId(), $lpaId, $pdfName));
     }
 
     /**
@@ -214,7 +214,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function addPrimaryAttorney(Lpa $lpa, AbstractAttorney $primaryAttorney)
     {
-        $responseData = $this->addResource($lpa->id, 'primary-attorneys', $primaryAttorney->toArray());
+        $responseData = $this->executePost(sprintf('/v1/users/%s/applications/%s/primary-attorneys', $this->getUserId(), $lpa->id), $primaryAttorney->toArray());
 
         if (is_array($responseData)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -239,7 +239,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function addReplacementAttorney(Lpa $lpa, AbstractAttorney $replacementAttorney)
     {
-        $responseData = $this->addResource($lpa->id, 'replacement-attorneys', $replacementAttorney->toArray());
+        $responseData = $this->executePost(sprintf('/v1/users/%s/applications/%s/replacement-attorneys', $this->getUserId(), $lpa->id), $replacementAttorney->toArray());
 
         if (is_array($responseData)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -264,7 +264,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function addNotifiedPerson(Lpa $lpa, NotifiedPerson $notifiedPerson)
     {
-        $responseData = $this->addResource($lpa->id, 'notified-people', $notifiedPerson->toArray());
+        $responseData = $this->executePost(sprintf('/v1/users/%s/applications/%s/notified-people', $this->getUserId(), $lpa->id), $notifiedPerson->toArray());
 
         if (is_array($responseData)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -285,7 +285,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setWhoAreYou(Lpa $lpa, WhoAreYou $whoAreYou)
     {
-        $responseData = $this->addResource($lpa->id, 'who-are-you', $whoAreYou->toArray());
+        $responseData = $this->executePost(sprintf('/v1/users/%s/applications/%s/who-are-you', $this->getUserId(), $lpa->id), $whoAreYou->toArray());
 
         if (is_array($responseData)) {
             $lpa->whoAreYouAnswered = true;
@@ -305,7 +305,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setType(Lpa $lpa, $lpaType)
     {
-        $responseData = $this->setResource($lpa->id, 'type', [
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/type', $this->getUserId(), $lpa->id), [
             'type' => $lpaType,
         ]);
 
@@ -327,7 +327,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setDonor(Lpa $lpa, Donor $donor)
     {
-        $responseData = $this->setResource($lpa->id, 'donor', $donor->toArray());
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/donor', $this->getUserId(), $lpa->id), $donor->toArray());
 
         if (is_array($responseData)) {
             $lpa->document->donor = new Donor($responseData);
@@ -347,7 +347,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setPrimaryAttorneyDecisions(Lpa $lpa, PrimaryAttorneyDecisions $primaryAttorneyDecisions)
     {
-        $responseData = $this->setResource($lpa->id, 'primary-attorney-decisions', $primaryAttorneyDecisions->toArray());
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/primary-attorney-decisions', $this->getUserId(), $lpa->id), $primaryAttorneyDecisions->toArray());
 
         if (is_array($responseData)) {
             $lpa->document->primaryAttorneyDecisions = new PrimaryAttorneyDecisions($responseData);
@@ -368,7 +368,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setPrimaryAttorney(Lpa $lpa, AbstractAttorney $primaryAttorney, $primaryAttorneyId)
     {
-        $responseData = $this->setResource($lpa->id, 'primary-attorneys', $primaryAttorney->toArray(), $primaryAttorneyId);
+        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/primary-attorneys/%s', $this->getUserId(), $lpa->id, $primaryAttorneyId), $primaryAttorney->toArray());
 
         if (is_array($responseData)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -402,7 +402,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setReplacementAttorney(Lpa $lpa, AbstractAttorney $replacementAttorney, $replacementAttorneyId)
     {
-        $responseData = $this->setResource($lpa->id, 'replacement-attorneys', $replacementAttorney->toArray(), $replacementAttorneyId);
+        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/replacement-attorneys/%s', $this->getUserId(), $lpa->id, $replacementAttorneyId), $replacementAttorney->toArray());
 
         if (is_array($responseData)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -435,7 +435,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setReplacementAttorneyDecisions(Lpa $lpa, ReplacementAttorneyDecisions $replacementAttorneyDecisions)
     {
-        $responseData = $this->setResource($lpa->id, 'replacement-attorney-decisions', $replacementAttorneyDecisions->toArray());
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/replacement-attorney-decisions', $this->getUserId(), $lpa->id), $replacementAttorneyDecisions->toArray());
 
         if (is_array($responseData)) {
             $lpa->document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions($responseData);
@@ -455,7 +455,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setCertificateProvider(Lpa $lpa, CertificateProvider $certificateProvider)
     {
-        $responseData = $this->setResource($lpa->id, 'certificate-provider', $certificateProvider->toArray());
+        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/certificate-provider', $this->getUserId(), $lpa->id), $certificateProvider->toArray());
 
         if (is_array($responseData)) {
             $lpa->document->certificateProvider = new CertificateProvider($responseData);
@@ -476,7 +476,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setNotifiedPerson(Lpa $lpa, NotifiedPerson $notifiedPerson, $notifiedPersonId)
     {
-        $responseData = $this->setResource($lpa->id, 'notified-people', $notifiedPerson->toArray(), $notifiedPersonId);
+        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/notified-people/%s', $this->getUserId(), $lpa->id, $notifiedPersonId), $notifiedPerson->toArray());
 
         if (is_array($responseData)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -505,7 +505,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setPreferences(Lpa $lpa, $preferences)
     {
-        $responseData = $this->setResource($lpa->id, 'preference', [
+        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/preference', $this->getUserId(), $lpa->id), [
             'preference' => $preferences,
         ]);
 
@@ -527,7 +527,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setInstructions(Lpa $lpa, $instructions)
     {
-        $responseData = $this->setResource($lpa->id, 'instruction', [
+        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/instruction', $this->getUserId(), $lpa->id), [
             'instruction' => $instructions,
         ]);
 
@@ -549,7 +549,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setWhoIsRegistering(Lpa $lpa, $whoIsRegistering)
     {
-        $responseData = $this->setResource($lpa->id, 'who-is-registering', [
+        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/who-is-registering', $this->getUserId(), $lpa->id), [
             'whoIsRegistering' => $whoIsRegistering,
         ]);
 
@@ -571,7 +571,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setCorrespondent(Lpa $lpa, Correspondence $correspondent)
     {
-        $responseData = $this->setResource($lpa->id, 'correspondent', $correspondent->toArray());
+        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/correspondent', $this->getUserId(), $lpa->id), $correspondent->toArray());
 
         if (is_array($responseData)) {
             $lpa->document->correspondent = new Correspondence($responseData);
@@ -591,7 +591,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setRepeatCaseNumber(Lpa $lpa, $repeatCaseNumber)
     {
-        $responseData = $this->setResource($lpa->id, 'repeat-case-number', [
+        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/repeat-case-number', $this->getUserId(), $lpa->id), [
             'repeatCaseNumber' => $repeatCaseNumber,
         ]);
 
@@ -613,7 +613,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setPayment(Lpa $lpa, Payment $payment)
     {
-        $responseData = $this->setResource($lpa->id, 'payment', $payment->toArray());
+        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/payment', $this->getUserId(), $lpa->id), $payment->toArray());
 
         if (is_array($responseData)) {
             $lpa->payment = new Payment($responseData);
@@ -633,7 +633,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setSeed(Lpa $lpa, $seedId)
     {
-        $responseData = $this->setResource($lpa->id, 'seed', [
+        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/seed', $this->getUserId(), $lpa->id), [
             'seed' => $seedId,
         ]);
 
@@ -655,7 +655,9 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deletePrimaryAttorney(Lpa $lpa, $primaryAttorneyId)
     {
-        if ($this->deleteResource($lpa->id, 'primary-attorneys', $primaryAttorneyId)) {
+        $target = sprintf('/v1/users/%s/applications/%s/primary-attorneys/%s', $this->getUserId(), $lpa->id, $primaryAttorneyId);
+
+        if ($this->executeDelete($target)) {
             //  Remove the deleted attorney
             foreach ($lpa->document->primaryAttorneys as $idx => $primaryAttorney) {
                 if ($primaryAttorney->id == $primaryAttorneyId) {
@@ -679,7 +681,9 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deleteReplacementAttorney(Lpa $lpa, $replacementAttorneyId)
     {
-        if ($this->deleteResource($lpa->id, 'replacement-attorneys', $replacementAttorneyId)) {
+        $target = sprintf('/v1/users/%s/applications/%s/replacement-attorneys/%s', $this->getUserId(), $lpa->id, $replacementAttorneyId);
+
+        if ($this->executeDelete($target)) {
             //  Remove the deleted attorney
             foreach ($lpa->document->replacementAttorneys as $idx => $replacementAttorney) {
                 if ($replacementAttorney->id == $replacementAttorneyId) {
@@ -702,7 +706,9 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deleteCertificateProvider(Lpa $lpa)
     {
-        if ($this->deleteResource($lpa->id, 'certificate-provider')) {
+        $target = sprintf('/v1/users/%s/applications/%s/certificate-provider', $this->getUserId(), $lpa->id);
+
+        if ($this->executeDelete($target)) {
             $lpa->document->certificateProvider = null;
 
             return true;
@@ -720,7 +726,9 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deleteNotifiedPerson(Lpa $lpa, $notifiedPersonId)
     {
-        if ($this->deleteResource($lpa->id, 'notified-people', $notifiedPersonId)) {
+        $target = sprintf('/v1/users/%s/applications/%s/notified-people/%s', $this->getUserId(), $lpa->id, $notifiedPersonId);
+
+        if ($this->executeDelete($target)) {
             //  Remove the deleted person to notify
             foreach ($lpa->document->peopleToNotify as $idx => $personToNotify) {
                 if ($personToNotify->id == $notifiedPersonId) {
@@ -743,7 +751,9 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deleteCorrespondent(Lpa $lpa)
     {
-        if ($this->deleteResource($lpa->id, 'correspondent')) {
+        $target = sprintf('/v1/users/%s/applications/%s/correspondent', $this->getUserId(), $lpa->id);
+
+        if ($this->executeDelete($target)) {
             $lpa->document->correspondent = null;
 
             return true;
@@ -755,13 +765,20 @@ class Application extends AbstractService implements ApiClientAwareInterface
     /**
      * Deletes the repeat case number
      *
-     * @param $userId
-     * @param $lpaId
+     * @param Lpa $lpa
      * @return bool
      */
-    public function deleteRepeatCaseNumber($userId, $lpaId)
+    public function deleteRepeatCaseNumber(Lpa $lpa)
     {
-        return $this->deleteResource($userId, $lpaId, 'repeat-case-number');
+        $target = sprintf('/v1/users/%s/applications/%s/repeat-case-number', $this->getUserId(), $lpa->id);
+
+        if ($this->executeDelete($target)) {
+            $lpa->repeatCaseNumber = null;
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -809,18 +826,12 @@ class Application extends AbstractService implements ApiClientAwareInterface
     }
 
     /**
-     * Return the API response for getting the resource of the given type
-     *
-     * If property not yet set, return null
-     * If error, return false
-     *
-     * @param $lpaId
-     * @param $resourceType
+     * @param $target
      * @return bool|mixed|null
      */
-    private function getResource($lpaId, $resourceType)
+    private function executeGet($target)
     {
-        $response = $this->apiClient->httpGet(sprintf('/v1/users/%s/applications/%s/%s', $this->getUserId(), $lpaId, $resourceType));
+        $response = $this->apiClient->httpGet($target);
 
         if ($response->getStatusCode() == 204) {
             return null;
@@ -834,17 +845,14 @@ class Application extends AbstractService implements ApiClientAwareInterface
     }
 
     /**
-     * Add data for the given resource with a post
-     *
-     * @param $lpaId
-     * @param $resourceType
+     * @param $target
      * @param $jsonBody
-     * @return bool
+     * @return bool|mixed
      */
-    private function addResource($lpaId, $resourceType, $jsonBody)
+    private function executePost($target, $jsonBody)
     {
         try {
-            $response = $this->apiClient->httpPost(sprintf('/v1/users/%s/applications/%s/%s', $this->getUserId(), $lpaId, $resourceType), $jsonBody);
+            $response = $this->apiClient->httpPost($target, $jsonBody);
 
             if ($response->getStatusCode() == 201) {
                 return json_decode($response->getBody(), true);
@@ -855,23 +863,13 @@ class Application extends AbstractService implements ApiClientAwareInterface
     }
 
     /**
-     * Set the data for the given resource. i.e. PUT
-     *
-     * @param $lpaId
-     * @param $resourceType
+     * @param $target
      * @param $jsonBody
-     * @param null $index
      * @return bool|mixed
      */
-    private function setResource($lpaId, $resourceType, $jsonBody, $index = null)
+    private function executePut($target, $jsonBody)
     {
         try {
-            $target = sprintf('/v1/users/%s/applications/%s/%s', $this->getUserId(), $lpaId, $resourceType);
-
-            if (!is_null($index)) {
-                $target .= '/' . $index;
-            }
-
             $response = $this->apiClient->httpPut($target, $jsonBody);
 
             if (in_array($response->getStatusCode(), [200, 201])) {
@@ -883,22 +881,12 @@ class Application extends AbstractService implements ApiClientAwareInterface
     }
 
     /**
-     * Delete the resource type from the LPA. i.e. DELETE
-     *
-     * @param $lpaId
-     * @param $resourceType
-     * @param null $index
+     * @param $target
      * @return bool
      */
-    private function deleteResource($lpaId, $resourceType, $index = null)
+    private function executeDelete($target)
     {
         try {
-            $target = sprintf('/v1/users/%s/applications/%s/%s', $this->getUserId(), $lpaId, $resourceType);
-
-            if (!is_null($index)) {
-                $target .= '/' . $index;
-            }
-
             $response = $this->apiClient->httpDelete($target);
 
             if ($response->getStatusCode() == 204) {
