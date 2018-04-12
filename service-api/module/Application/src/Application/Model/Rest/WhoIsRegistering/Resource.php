@@ -32,45 +32,6 @@ class Resource extends AbstractOLDResource implements LpaConsumerInterface
     protected $type = self::TYPE_SINGULAR;
 
     /**
-     * Fetch a resource
-     *
-     * @return Entity|ApiProblem
-     * @throw UnauthorizedException If the current user is not authorized.
-     */
-    public function fetch(){
-
-        $this->checkAccess();
-
-        //---
-
-        $lpa = $this->getLpa();
-
-        if( is_array($lpa->document->whoIsRegistering) ){
-
-            // If we have an array of attorney IDs, map them to the actual attorney instances.
-
-            $who = array_map(function($id) use ($lpa){
-
-                foreach( $lpa->document->primaryAttorneys as $attorney ){
-                    if( $id == $attorney->id ){
-                        return $attorney;
-                    }
-                }
-
-                // if we get here, an attorney for this ID could not be found.
-                return new ApiProblem( 500, 'Invalid attorney ID listed' );
-
-            }, $lpa->document->whoIsRegistering);
-
-        } else {
-            $who = $lpa->document->whoIsRegistering;
-        }
-
-        return new Entity( $who, $lpa );
-
-    } // function
-
-    /**
      * Update a resource
      *
      * @param  mixed $id

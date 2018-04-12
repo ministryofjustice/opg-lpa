@@ -32,25 +32,6 @@ class Resource extends AbstractOLDResource implements LpaConsumerInterface
     protected $type = self::TYPE_SINGULAR;
 
     /**
-     * Fetch a resource
-     *
-     * @param  mixed $id
-     * @return Entity|ApiProblem
-     * @throw UnauthorizedException If the current user is not authorized.
-     */
-    public function fetch(){
-
-        $this->checkAccess();
-
-        //---
-
-        $lpa = $this->getLpa();
-
-        return new Entity( $lpa->document->instruction, $lpa );
-
-    }
-
-    /**
      * Update a resource
      *
      * @param  mixed $id

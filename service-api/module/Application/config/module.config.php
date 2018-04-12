@@ -156,12 +156,48 @@ return [
                                             ],
                                         ],
                                     ],
+                                    'notified-people' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/notified-people[/:notifiedPersonId]',
+                                            'constraints' => [
+                                                'notifiedPersonId' => '[0-9]+',
+                                            ],
+                                            'defaults' => [
+                                                'controller' => 'NotifiedPeopleController',
+                                            ],
+                                        ],
+                                    ],
+                                    'primary-attorneys' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/primary-attorneys[/:primaryAttorneyId]',
+                                            'constraints' => [
+                                                'primaryAttorneyId' => '[0-9]+',
+                                            ],
+                                            'defaults' => [
+                                                'controller' => 'PrimaryAttorneyController',
+                                            ],
+                                        ],
+                                    ],
                                     'primary-attorney-decisions' => [
                                         'type'    => 'Literal',
                                         'options' => [
                                             'route'       => '/primary-attorney-decisions',
                                             'defaults' => [
                                                 'controller' => 'PrimaryAttorneyDecisionsController',
+                                            ],
+                                        ],
+                                    ],
+                                    'replacement-attorneys' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/replacement-attorneys[/:replacementAttorneyId]',
+                                            'constraints' => [
+                                                'replacementAttorneyId' => '[0-9]+',
+                                            ],
+                                            'defaults' => [
+                                                'controller' => 'ReplacementAttorneyController',
                                             ],
                                         ],
                                     ],

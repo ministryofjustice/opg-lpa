@@ -4,211 +4,123 @@ namespace Application\Model\Rest\AttorneysPrimary;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Model\Rest\AbstractOLDResource;
+use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\LpaConsumerInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 use RuntimeException;
 
-class Resource extends AbstractOLDResource implements LpaConsumerInterface
+class Resource extends AbstractResource implements LpaConsumerInterface
 {
     /**
-     * Resource name
-     *
-     * @var string
+     * @param $data
+     * @return ValidationApiProblem|Entity
      */
-    protected $name = 'primary-attorneys';
-
-    /**
-     * Resource identifier
-     *
-     * @var string
-     */
-    protected $identifier = 'resourceId';
-
-    /**
-     * Resource type
-     *
-     * @var string
-     */
-    protected $type = self::TYPE_COLLECTION;
-
-    /**
-     * Create a new Attorney.
-     *
-     * @param  mixed $data
-     * @return Entity|ApiProblem
-     * @throw UnauthorizedException If the current user is not authorized.
-     */
-    public function create($data){
-
+    public function create($data)
+    {
         $this->checkAccess();
-
-        //---
 
         $lpa = $this->getLpa();
 
-        //---
-
-        switch($data['type']){
+        switch ($data['type']) {
             case 'trust':
-                $attorney = new Attorneys\TrustCorporation( $data );
+                $attorney = new Attorneys\TrustCorporation($data);
                 break;
             case 'human':
-                $attorney = new Attorneys\Human( $data );
+                $attorney = new Attorneys\Human($data);
                 break;
             default:
                 // TODO - return a ValidationApiProblem?
                 throw new RuntimeException('Invalid type passed');
         }
 
-        /**
-         * If the client has not passed an id, set it to max(current ids) + 1.
-         * The array is seeded with 0, meaning if this is the first attorney the id will be 1.
-         */
-        if( is_null($attorney->id) ){
+        //  If the client has not passed an id, set it to max(current ids) + 1 - The array is seeded with 0, meaning if this is the first attorney the id will be 1.
+        if (is_null($attorney->id)) {
+            $ids = array(0);
 
-            $ids = array( 0 );
-            foreach( $lpa->document->primaryAttorneys as $a ){ $ids[] = $a->id; }
-            $attorney->id = (int)max( $ids ) + 1;
+            foreach ($lpa->document->primaryAttorneys as $a) {
+                $ids[] = $a->id;
+            }
 
-        } // if
-
-        //---
+            $attorney->id = (int) max($ids) + 1;
+        }
 
         $validation = $attorney->validateForApi();
 
-        if( $validation->hasErrors() ){
-            return new ValidationApiProblem( $validation );
+        if ($validation->hasErrors()) {
+            return new ValidationApiProblem($validation);
         }
-
-        //---
 
         $lpa->document->primaryAttorneys[] = $attorney;
 
-        $this->updateLpa( $lpa );
+        $this->updateLpa($lpa);
 
-        return new Entity( $attorney, $lpa );
-
+        return new Entity($attorney, $lpa);
     }
 
     /**
-     * Fetch a resource
-     *
-     * @param  mixed $id
-     * @return Entity|ApiProblem
-     * @throw UnauthorizedException If the current user is not authorized.
+     * @param $data
+     * @param $id
+     * @return ApiProblem|ValidationApiProblem|Entity
      */
-    public function fetch($id){
-
+    public function update($data, $id)
+    {
         $this->checkAccess();
-
-        //---
 
         $lpa = $this->getLpa();
 
-        foreach( $lpa->document->primaryAttorneys as $attorney ){
-            if( $attorney->id == (int)$id ){
-                return new Entity( $attorney, $lpa );
-            }
-        }
-
-        return new ApiProblem( 404, 'Document not found' );
-
-    }
-
-    /**
-     * Update a resource
-     *
-     * @param  mixed $id
-     * @param  mixed $data
-     * @return ApiProblem|Entity
-     */
-    public function update($data, $id){
-
-        $this->checkAccess();
-
-        //---
-
-        $lpa = $this->getLpa();
-        $document = $lpa->document;
-
-        foreach( $document->primaryAttorneys as $key=>$attorney ) {
-
-            if ($attorney->id == (int)$id) {
-
-                switch($data['type']){
+        foreach ($lpa->document->primaryAttorneys as $key => $attorney) {
+            if ($attorney->id == (int) $id) {
+                switch ($data['type']) {
                     case 'trust':
-                        $attorney = new Attorneys\TrustCorporation( $data );
+                        $attorney = new Attorneys\TrustCorporation($data);
                         break;
                     case 'human':
-                        $attorney = new Attorneys\Human( $data );
+                        $attorney = new Attorneys\Human($data);
                         break;
                     default:
                         // TODO - return a ValidationApiProblem?
                         throw new RuntimeException('Invalid type passed');
                 }
 
-                $attorney->id = (int)$id;
-
-                //---
+                $attorney->id = (int) $id;
 
                 $validation = $attorney->validateForApi();
 
-                if( $validation->hasErrors() ){
-                    return new ValidationApiProblem( $validation );
+                if ($validation->hasErrors()) {
+                    return new ValidationApiProblem($validation);
                 }
 
-                //---
+                $lpa->document->primaryAttorneys[$key] = $attorney;
 
-                $document->primaryAttorneys[$key] = $attorney;
+                $this->updateLpa($lpa);
 
-                $this->updateLpa( $lpa );
+                return new Entity($attorney, $lpa);
+            }
+        }
 
-                return new Entity( $attorney, $lpa );
-
-            } // if
-
-        } // foreach
-
-        return new ApiProblem( 404, 'Document not found' );
-
-    } // function
+        return new ApiProblem(404, 'Document not found');
+    }
 
     /**
-     * Delete a resource
-     *
-     * @param  mixed $id
+     * @param $id
      * @return ApiProblem|bool
-     * @throw UnauthorizedException If the current user is not authorized.
      */
-    public function delete($id){
-
+    public function delete($id)
+    {
         $this->checkAccess();
 
-        //---
-
         $lpa = $this->getLpa();
-        $document = $lpa->document;
 
-        foreach( $document->primaryAttorneys as $key=>$attorney ){
+        foreach ($lpa->document->primaryAttorneys as $key => $attorney) {
+            if ($attorney->id == (int) $id) {
+                unset($lpa->document->primaryAttorneys[$key]);
 
-            if( $attorney->id == (int)$id ){
-
-                // Remove the entry...
-                unset( $document->primaryAttorneys[$key] );
-
-                //---
-
-                $this->updateLpa( $lpa );
+                $this->updateLpa($lpa);
 
                 return true;
+            }
+        }
 
-            } // if
-
-        } // foreach
-
-        return new ApiProblem( 404, 'Document not found' );
-
-    } // function
-
-} // class
+        return new ApiProblem(404, 'Document not found');
+    }
+}

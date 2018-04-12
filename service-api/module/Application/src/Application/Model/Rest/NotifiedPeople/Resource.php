@@ -81,31 +81,6 @@ class Resource extends AbstractOLDResource implements LpaConsumerInterface
     }
 
     /**
-     * Fetch a resource
-     *
-     * @param  mixed $id
-     * @return Entity|ApiProblem
-     * @throw UnauthorizedException If the current user is not authorized.
-     */
-    public function fetch($id){
-
-        $this->checkAccess();
-
-        //---
-
-        $lpa = $this->getLpa();
-
-        foreach( $lpa->document->peopleToNotify as $person ){
-            if( $person->id == (int)$id ){
-                return new Entity( $person, $lpa );
-            }
-        }
-
-        return new ApiProblem( 404, 'Document not found' );
-
-    }
-
-    /**
      * Update a resource
      *
      * @param  mixed $id
