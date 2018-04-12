@@ -214,7 +214,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function addPrimaryAttorney(Lpa $lpa, AbstractAttorney $primaryAttorney)
     {
-        $responseData = $this->executePost(sprintf('/v1/users/%s/applications/%s/primary-attorneys', $this->getUserId(), $lpa->id), $primaryAttorney->toArray());
+        $responseData = $this->executePost(sprintf('/v2/users/%s/applications/%s/primary-attorneys', $this->getUserId(), $lpa->id), $primaryAttorney->toArray());
 
         if (is_array($responseData)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -239,7 +239,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function addReplacementAttorney(Lpa $lpa, AbstractAttorney $replacementAttorney)
     {
-        $responseData = $this->executePost(sprintf('/v1/users/%s/applications/%s/replacement-attorneys', $this->getUserId(), $lpa->id), $replacementAttorney->toArray());
+        $responseData = $this->executePost(sprintf('/v2/users/%s/applications/%s/replacement-attorneys', $this->getUserId(), $lpa->id), $replacementAttorney->toArray());
 
         if (is_array($responseData)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -264,7 +264,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function addNotifiedPerson(Lpa $lpa, NotifiedPerson $notifiedPerson)
     {
-        $responseData = $this->executePost(sprintf('/v1/users/%s/applications/%s/notified-people', $this->getUserId(), $lpa->id), $notifiedPerson->toArray());
+        $responseData = $this->executePost(sprintf('/v2/users/%s/applications/%s/notified-people', $this->getUserId(), $lpa->id), $notifiedPerson->toArray());
 
         if (is_array($responseData)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -368,7 +368,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setPrimaryAttorney(Lpa $lpa, AbstractAttorney $primaryAttorney, $primaryAttorneyId)
     {
-        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/primary-attorneys/%s', $this->getUserId(), $lpa->id, $primaryAttorneyId), $primaryAttorney->toArray());
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/primary-attorneys/%s', $this->getUserId(), $lpa->id, $primaryAttorneyId), $primaryAttorney->toArray());
 
         if (is_array($responseData)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -402,7 +402,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setReplacementAttorney(Lpa $lpa, AbstractAttorney $replacementAttorney, $replacementAttorneyId)
     {
-        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/replacement-attorneys/%s', $this->getUserId(), $lpa->id, $replacementAttorneyId), $replacementAttorney->toArray());
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/replacement-attorneys/%s', $this->getUserId(), $lpa->id, $replacementAttorneyId), $replacementAttorney->toArray());
 
         if (is_array($responseData)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -476,7 +476,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setNotifiedPerson(Lpa $lpa, NotifiedPerson $notifiedPerson, $notifiedPersonId)
     {
-        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/notified-people/%s', $this->getUserId(), $lpa->id, $notifiedPersonId), $notifiedPerson->toArray());
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/notified-people/%s', $this->getUserId(), $lpa->id, $notifiedPersonId), $notifiedPerson->toArray());
 
         if (is_array($responseData)) {
             //  Marshall the data into the required data object and set it in the LPA
@@ -655,7 +655,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deletePrimaryAttorney(Lpa $lpa, $primaryAttorneyId)
     {
-        $target = sprintf('/v1/users/%s/applications/%s/primary-attorneys/%s', $this->getUserId(), $lpa->id, $primaryAttorneyId);
+        $target = sprintf('/v2/users/%s/applications/%s/primary-attorneys/%s', $this->getUserId(), $lpa->id, $primaryAttorneyId);
 
         if ($this->executeDelete($target)) {
             //  Remove the deleted attorney
@@ -681,7 +681,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deleteReplacementAttorney(Lpa $lpa, $replacementAttorneyId)
     {
-        $target = sprintf('/v1/users/%s/applications/%s/replacement-attorneys/%s', $this->getUserId(), $lpa->id, $replacementAttorneyId);
+        $target = sprintf('/v2/users/%s/applications/%s/replacement-attorneys/%s', $this->getUserId(), $lpa->id, $replacementAttorneyId);
 
         if ($this->executeDelete($target)) {
             //  Remove the deleted attorney
@@ -726,7 +726,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deleteNotifiedPerson(Lpa $lpa, $notifiedPersonId)
     {
-        $target = sprintf('/v1/users/%s/applications/%s/notified-people/%s', $this->getUserId(), $lpa->id, $notifiedPersonId);
+        $target = sprintf('/v2/users/%s/applications/%s/notified-people/%s', $this->getUserId(), $lpa->id, $notifiedPersonId);
 
         if ($this->executeDelete($target)) {
             //  Remove the deleted person to notify
