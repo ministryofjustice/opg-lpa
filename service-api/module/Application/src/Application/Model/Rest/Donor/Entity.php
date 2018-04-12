@@ -37,8 +37,8 @@ class Entity implements EntityInterface
     {
         if ($this->donor instanceof LpaAccessorInterface) {
             return $this->donor->toArray();
-        } else {
-            return array();
         }
+
+        return [];
     }
 }

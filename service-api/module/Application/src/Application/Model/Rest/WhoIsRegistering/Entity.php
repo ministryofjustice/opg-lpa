@@ -34,7 +34,7 @@ class Entity implements EntityInterface
 
     public function toArray()
     {
-        $who = array();
+        $who = [];
 
         if (is_string($this->who)) {
             $who = [

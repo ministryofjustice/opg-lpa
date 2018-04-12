@@ -33,7 +33,7 @@ class Resource extends AbstractResource
 
         // If no data was passed, represent with an empty array.
         if (is_null($data)) {
-            $data = array();
+            $data = [];
         }
 
         // Generate an id for the LPA

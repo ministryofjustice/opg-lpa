@@ -120,11 +120,11 @@ class Resource extends AbstractResource implements LpaConsumerInterface
             $status = Entity::STATUS_NOT_AVAILABLE;
         }
 
-        return array(
+        return [
             'type' => $type,
             'complete' => $complete,
             'status' => $status,
-        );
+        ];
     }
 
     /**

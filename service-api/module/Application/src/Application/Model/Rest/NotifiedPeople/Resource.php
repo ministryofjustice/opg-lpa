@@ -24,7 +24,7 @@ class Resource extends AbstractResource implements LpaConsumerInterface
 
         //  If the client has not passed an id, set it to max(current ids) + 1 - The array is seeded with 0, meaning if this is the first attorney the id will be 1.
         if (is_null($person->id)) {
-            $ids = array(0);
+            $ids = [0];
             foreach ($lpa->document->peopleToNotify as $a) {
                 $ids[] = $a->id;
             }

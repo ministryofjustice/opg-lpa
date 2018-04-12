@@ -349,7 +349,7 @@ class Stats
 
                 return $carry;
             },
-            array()
+            []
         );
 
         //---

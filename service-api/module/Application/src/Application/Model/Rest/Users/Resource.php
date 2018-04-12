@@ -99,7 +99,7 @@ class Resource extends AbstractResource
 
         // Ensure $data is an array.
         if (!is_array($data)) {
-            $data = array();
+            $data = [];
         }
 
         // Protect these values from the client setting them manually.
