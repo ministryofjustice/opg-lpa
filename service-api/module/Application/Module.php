@@ -12,6 +12,7 @@ use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Model\Service\System\DynamoCronLock;
 use Aws\DynamoDb\DynamoDbClient;
+use Aws\S3\S3Client;
 use DynamoQueue\Queue\Client as DynamoQueue;
 use Opg\Lpa\Logger\Logger;
 use Zend\Authentication\AuthenticationService;
@@ -106,12 +107,20 @@ class Module {
 
                 // Get Dynamo Queue Client
                 'DynamoQueueClient' => function ($sm) {
-                    $config = $sm->get('config')['pdf']['DynamoQueue'];
+                    $config = $sm->get('config');
+                    $dynamoConfig = $config['pdf']['DynamoQueue'];
 
-                    $dynamoDb = new DynamoDbClient($config['client']);
+                    $dynamoDb = new DynamoDbClient($dynamoConfig['client']);
 
-                    return new DynamoQueue($dynamoDb, $config['settings']);
+                    return new DynamoQueue($dynamoDb, $dynamoConfig['settings']);
                 },
+                // Get S3Client Client
+                'S3Client' => function ($sm) {
+                    $config = $sm->get('config');
+
+                    return new S3Client($config['pdf']['cache']['s3']['client']);
+                },
+
             ], // factories
         ];
     } // function

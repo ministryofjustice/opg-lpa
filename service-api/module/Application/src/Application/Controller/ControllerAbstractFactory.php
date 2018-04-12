@@ -11,6 +11,7 @@ use Application\Controller\Version2\InstructionController;
 use Application\Controller\Version2\LockController;
 use Application\Controller\Version2\NotifiedPeopleController;
 use Application\Controller\Version2\PaymentController;
+use Application\Controller\Version2\PdfController;
 use Application\Controller\Version2\PreferenceController;
 use Application\Controller\Version2\PrimaryAttorneyController;
 use Application\Controller\Version2\PrimaryAttorneyDecisionsController;
@@ -49,6 +50,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         LockController::class                           => 'resource-lock',
         NotifiedPeopleController::class                 => 'resource-notified-people',
         PaymentController::class                        => 'resource-payment',
+        PdfController::class                            => 'resource-pdfs',
         PreferenceController::class                     => 'resource-preference',
         PrimaryAttorneyController::class                => 'resource-primary-attorneys',
         PrimaryAttorneyDecisionsController::class       => 'resource-primary-attorney-decisions',

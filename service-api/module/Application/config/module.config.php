@@ -207,9 +207,21 @@ return [
                                     'payment' => [
                                         'type'    => 'Literal',
                                         'options' => [
-                                            'route'       => '/payment',
+                                            'route'    => '/payment',
                                             'defaults' => [
                                                 'controller' => 'PaymentController',
+                                            ],
+                                        ],
+                                    ],
+                                    'pdfs' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/pdfs/:pdfType',
+                                            'constraints' => [
+                                                'pdfType' => '[a-z0-9][a-z0-9.]*',
+                                            ],
+                                            'defaults' => [
+                                                'controller' => 'PdfController',
                                             ],
                                         ],
                                     ],

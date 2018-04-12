@@ -32,6 +32,7 @@ class ResourceAbstractFactory implements AbstractFactoryInterface
         Pdfs\Resource::class => [
             'setPdfConfig'         => 'config',
             'setDynamoQueueClient' => 'DynamoQueueClient',
+            'setS3Client'          => 'S3Client',
         ],
         Seed\Resource::class => [
             'setApplicationsResource' => 'resource-applications',
