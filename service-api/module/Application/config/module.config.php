@@ -183,6 +183,15 @@ return [
                                             ],
                                         ],
                                     ],
+                                    'lock' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/lock',
+                                            'defaults' => [
+                                                'controller' => 'LockController',
+                                            ],
+                                        ],
+                                    ],
                                     'notified-people' => [
                                         'type'    => 'Segment',
                                         'options' => [

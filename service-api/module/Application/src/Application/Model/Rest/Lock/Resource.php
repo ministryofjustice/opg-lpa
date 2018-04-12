@@ -4,72 +4,35 @@ namespace Application\Model\Rest\Lock;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\DateTime;
-use Application\Model\Rest\AbstractOLDResource;
+use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\LpaConsumerInterface;
 use RuntimeException;
 
-class Resource extends AbstractOLDResource implements LpaConsumerInterface
+class Resource extends AbstractResource implements LpaConsumerInterface
 {
     /**
-     * Resource name
-     *
-     * @var string
+     * @param $data
+     * @return ApiProblem|Entity
      */
-    protected $name = 'lock';
-
-    /**
-     * Resource identifier
-     *
-     * @var string
-     */
-    protected $identifier = 'lpaId';
-
-    /**
-     * Resource type
-     *
-     * @var string
-     */
-    protected $type = self::TYPE_SINGULAR;
-
-    /**
-     * Locks a LPA.
-     *
-     * @param  mixed $data
-     * @return Entity|ApiProblem
-     * @throw UnauthorizedException If the current user is not authorized.
-     */
-    public function create($data){
-
+    public function create($data)
+    {
         $this->checkAccess();
-
-        //---
 
         $lpa = $this->getLpa();
 
-        if( $lpa->locked === true ){
-            return new ApiProblem( 403, 'LPA already locked' );
+        if ($lpa->locked === true) {
+            return new ApiProblem(403, 'LPA already locked');
         }
-
-        //---
 
         $lpa->locked = true;
         $lpa->lockedAt = new DateTime();
 
-        //---
-
-        if( $lpa->validate()->hasErrors() ){
+        if ($lpa->validate()->hasErrors()) {
             throw new RuntimeException('A malformed LPA object was created');
-
         }
 
-        //---
+        $this->updateLpa($lpa);
 
-        $this->updateLpa( $lpa );
-
-        //---
-
-        return new Entity( $lpa->locked, $lpa );
-
-    } // function
-
-} // class
+        return new Entity($lpa->locked, $lpa);
+    }
+}

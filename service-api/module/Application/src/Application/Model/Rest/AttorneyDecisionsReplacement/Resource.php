@@ -3,12 +3,12 @@
 namespace Application\Model\Rest\AttorneyDecisionsReplacement;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Model\Rest\AbstractOLDResource;
+use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\LpaConsumerInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use RuntimeException;
 
-class Resource extends AbstractOLDResource implements LpaConsumerInterface
+class Resource extends AbstractResource implements LpaConsumerInterface
 {
     /**
      * @param $data

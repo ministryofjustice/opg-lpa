@@ -8,6 +8,7 @@ use Application\Controller\Version2\CertificateProviderController;
 use Application\Controller\Version2\CorrespondentController;
 use Application\Controller\Version2\DonorController;
 use Application\Controller\Version2\InstructionController;
+use Application\Controller\Version2\LockController;
 use Application\Controller\Version2\NotifiedPeopleController;
 use Application\Controller\Version2\PaymentController;
 use Application\Controller\Version2\PreferenceController;
@@ -45,6 +46,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         CorrespondentController::class                  => 'resource-correspondent',
         DonorController::class                          => 'resource-donor',
         InstructionController::class                    => 'resource-instruction',
+        LockController::class                           => 'resource-lock',
         NotifiedPeopleController::class                 => 'resource-notified-people',
         PaymentController::class                        => 'resource-payment',
         PreferenceController::class                     => 'resource-preference',
