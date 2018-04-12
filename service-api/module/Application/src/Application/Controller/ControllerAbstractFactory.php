@@ -9,13 +9,16 @@ use Application\Controller\Version2\CorrespondentController;
 use Application\Controller\Version2\DonorController;
 use Application\Controller\Version2\InstructionController;
 use Application\Controller\Version2\NotifiedPeopleController;
+use Application\Controller\Version2\PaymentController;
 use Application\Controller\Version2\PreferenceController;
 use Application\Controller\Version2\PrimaryAttorneyController;
 use Application\Controller\Version2\PrimaryAttorneyDecisionsController;
+use Application\Controller\Version2\RepeatCaseNumberController;
 use Application\Controller\Version2\ReplacementAttorneyController;
 use Application\Controller\Version2\ReplacementAttorneyDecisionsController;
 use Application\Controller\Version2\TypeController;
 use Application\Controller\Version2\UserController;
+use Application\Controller\Version2\WhoAreYouController;
 use Application\Controller\Version2\WhoIsRegisteringController;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
@@ -43,13 +46,16 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         DonorController::class                          => 'resource-donor',
         InstructionController::class                    => 'resource-instruction',
         NotifiedPeopleController::class                 => 'resource-notified-people',
+        PaymentController::class                        => 'resource-payment',
         PreferenceController::class                     => 'resource-preference',
         PrimaryAttorneyController::class                => 'resource-primary-attorneys',
         PrimaryAttorneyDecisionsController::class       => 'resource-primary-attorney-decisions',
+        RepeatCaseNumberController::class               => 'resource-repeat-case-number',
         ReplacementAttorneyController::class            => 'resource-replacement-attorneys',
         ReplacementAttorneyDecisionsController::class   => 'resource-replacement-attorney-decisions',
         TypeController::class                           => 'resource-type',
         UserController::class                           => 'resource-users',
+        WhoAreYouController::class                      => 'resource-who-are-you',
         WhoIsRegisteringController::class               => 'resource-who-is-registering',
     ];
 

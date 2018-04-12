@@ -5,89 +5,46 @@ namespace Application\Model\Rest\WhoAreYou;
 use Application\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Model\Rest\AbstractOLDResource;
+use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\LpaConsumerInterface;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use RuntimeException;
 
-class Resource extends AbstractOLDResource implements LpaConsumerInterface
+class Resource extends AbstractResource implements LpaConsumerInterface
 {
     /**
-     * Resource name
-     *
-     * @var string
+     * @param $data
+     * @return ApiProblem|ValidationApiProblem|Entity
      */
-    protected $name = 'who-are-you';
-
-    /**
-     * Resource identifier
-     *
-     * @var string
-     */
-    protected $identifier = 'lpaId';
-
-    /**
-     * Resource type
-     *
-     * @var string
-     */
-    protected $type = self::TYPE_SINGULAR;
-
-    /**
-     * Adds a Who Are You answer.
-     *
-     * @param  mixed $data
-     * @return Entity|ApiProblem
-     * @throw UnauthorizedException If the current user is not authorized.
-     */
-    public function create($data){
-
+    public function create($data)
+    {
         $this->checkAccess();
-
-        //---
 
         $lpa = $this->getLpa();
 
-        if( $lpa->whoAreYouAnswered === true ){
-            return new ApiProblem( 403, 'Question already answered' );
+        if ($lpa->whoAreYouAnswered === true) {
+            return new ApiProblem(403, 'Question already answered');
         }
-
-        //---
 
         $answer = new WhoAreYou($data);
 
         $validation = $answer->validate();
 
-        if( $validation->hasErrors() ){
-            return new ValidationApiProblem( $validation );
+        if ($validation->hasErrors()) {
+            return new ValidationApiProblem($validation);
         }
-
-        //---
 
         $lpa->whoAreYouAnswered = true;
 
-        //---
-
-        if( $lpa->validate()->hasErrors() ){
+        if ($lpa->validate()->hasErrors()) {
             throw new RuntimeException('A malformed LPA object was created');
-
         }
 
-        //---
+        // We update the LPA first as there's a chance a RuntimeException will be thrown if there's an 'updatedAt' mismatch.
+        $this->updateLpa($lpa);
 
-        // We update the LPA first as there's a chance a RuntimeException will be thrown
-        // if there's an 'updatedAt' mismatch.
+        $this->collection->insertOne($answer->toArray(new DateCallback()));
 
-        $this->updateLpa( $lpa );
-
-        //---
-
-        $this->collection->insertOne( $answer->toArray(new DateCallback()) );
-
-        //---
-
-        return new Entity( $lpa->whoAreYouAnswered, $lpa );
-
-    } // function
-
-} // class
+        return new Entity($lpa->whoAreYouAnswered, $lpa);
+    }
+}

@@ -2,101 +2,59 @@
 
 namespace Application\Model\Rest\RepeatCaseNumber;
 
-use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Model\Rest\AbstractOLDResource;
+use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\LpaConsumerInterface;
 
-class Resource extends AbstractOLDResource implements LpaConsumerInterface
+class Resource extends AbstractResource implements LpaConsumerInterface
 {
     /**
-     * Resource name
-     *
-     * @var string
+     * @param $data
+     * @param $id
+     * @return ValidationApiProblem|Entity
      */
-    protected $name = 'repeat-case-number';
-
-    /**
-     * Resource identifier
-     *
-     * @var string
-     */
-    protected $identifier = 'lpaId';
-
-    /**
-     * Resource type
-     *
-     * @var string
-     */
-    protected $type = self::TYPE_SINGULAR;
-
-    /**
-     * Update a resource
-     *
-     * @param  mixed $id
-     * @param  mixed $data
-     * @return ApiProblem|Entity
-     */
-    public function update($data, $id){
-
+    public function update($data, $id)
+    {
         $this->checkAccess();
-
-        //---
 
         $lpa = $this->getLpa();
 
-        $lpa->repeatCaseNumber = (isset($data['repeatCaseNumber'])) ? $data['repeatCaseNumber'] : null;
+        $lpa->repeatCaseNumber = (isset($data['repeatCaseNumber']) ? $data['repeatCaseNumber'] : null);
 
-        if( !is_int($lpa->repeatCaseNumber) && is_numeric($lpa->repeatCaseNumber) ){
-            $lpa->repeatCaseNumber = (int)$lpa->repeatCaseNumber;
+        if (!is_int($lpa->repeatCaseNumber) && is_numeric($lpa->repeatCaseNumber)) {
+            $lpa->repeatCaseNumber = (int) $lpa->repeatCaseNumber;
         }
-
-        //---
 
         $validation = $lpa->validateForApi();
 
-        if( $validation->hasErrors() ){
-            return new ValidationApiProblem( $validation );
+        if ($validation->hasErrors()) {
+            return new ValidationApiProblem($validation);
         }
 
-        //---
+        $this->updateLpa($lpa);
 
-        $this->updateLpa( $lpa );
-
-        return new Entity( $lpa->repeatCaseNumber, $lpa );
-
-    } // function
+        return new Entity($lpa->repeatCaseNumber, $lpa);
+    }
 
     /**
-     * Delete a resource
-     *
-     * @return ApiProblem|bool
-     * @throw UnauthorizedException If the current user is not authorized.
+     * @return ValidationApiProblem|bool
      */
-    public function delete(){
-
+    public function delete()
+    {
         $this->checkAccess();
-
-        //------------------------
 
         $lpa = $this->getLpa();
 
         $lpa->repeatCaseNumber = null;
 
-        //---
-
         $validation = $lpa->validateForApi();
 
-        if( $validation->hasErrors() ){
-            return new ValidationApiProblem( $validation );
+        if ($validation->hasErrors()) {
+            return new ValidationApiProblem($validation);
         }
 
-        //---
-
-        $this->updateLpa( $lpa );
+        $this->updateLpa($lpa);
 
         return true;
-
-    } // function
-
-} // class
+    }
+}

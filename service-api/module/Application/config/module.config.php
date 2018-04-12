@@ -195,6 +195,15 @@ return [
                                             ],
                                         ],
                                     ],
+                                    'payment' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/payment',
+                                            'defaults' => [
+                                                'controller' => 'PaymentController',
+                                            ],
+                                        ],
+                                    ],
                                     'preference' => [
                                         'type'    => 'Literal',
                                         'options' => [
@@ -225,6 +234,15 @@ return [
                                             ],
                                         ],
                                     ],
+                                    'repeat-case-number' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/repeat-case-number',
+                                            'defaults' => [
+                                                'controller' => 'RepeatCaseNumberController',
+                                            ],
+                                        ],
+                                    ],
                                     'replacement-attorneys' => [
                                         'type'    => 'Segment',
                                         'options' => [
@@ -252,6 +270,15 @@ return [
                                             'route'       => '/type',
                                             'defaults' => [
                                                 'controller' => 'TypeController',
+                                            ],
+                                        ],
+                                    ],
+                                    'who-are-you' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/who-are-you',
+                                            'defaults' => [
+                                                'controller' => 'WhoAreYouController',
                                             ],
                                         ],
                                     ],
