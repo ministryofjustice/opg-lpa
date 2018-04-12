@@ -285,6 +285,15 @@ return [
                                             ],
                                         ],
                                     ],
+                                    'seed' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/seed',
+                                            'defaults' => [
+                                                'controller' => 'SeedController',
+                                            ],
+                                        ],
+                                    ],
                                     'type' => [
                                         'type'    => 'Literal',
                                         'options' => [
