@@ -285,7 +285,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setWhoAreYou(Lpa $lpa, WhoAreYou $whoAreYou)
     {
-        $responseData = $this->executePost(sprintf('/v1/users/%s/applications/%s/who-are-you', $this->getUserId(), $lpa->id), $whoAreYou->toArray());
+        $responseData = $this->executePost(sprintf('/v2/users/%s/applications/%s/who-are-you', $this->getUserId(), $lpa->id), $whoAreYou->toArray());
 
         if (is_array($responseData)) {
             $lpa->whoAreYouAnswered = true;
@@ -591,7 +591,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setRepeatCaseNumber(Lpa $lpa, $repeatCaseNumber)
     {
-        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/repeat-case-number', $this->getUserId(), $lpa->id), [
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/repeat-case-number', $this->getUserId(), $lpa->id), [
             'repeatCaseNumber' => $repeatCaseNumber,
         ]);
 
@@ -613,7 +613,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function setPayment(Lpa $lpa, Payment $payment)
     {
-        $responseData = $this->executePut(sprintf('/v1/users/%s/applications/%s/payment', $this->getUserId(), $lpa->id), $payment->toArray());
+        $responseData = $this->executePut(sprintf('/v2/users/%s/applications/%s/payment', $this->getUserId(), $lpa->id), $payment->toArray());
 
         if (is_array($responseData)) {
             $lpa->payment = new Payment($responseData);
@@ -770,7 +770,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deleteRepeatCaseNumber(Lpa $lpa)
     {
-        $target = sprintf('/v1/users/%s/applications/%s/repeat-case-number', $this->getUserId(), $lpa->id);
+        $target = sprintf('/v2/users/%s/applications/%s/repeat-case-number', $this->getUserId(), $lpa->id);
 
         if ($this->executeDelete($target)) {
             $lpa->repeatCaseNumber = null;
