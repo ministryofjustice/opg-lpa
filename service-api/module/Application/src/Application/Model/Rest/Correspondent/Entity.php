@@ -3,10 +3,9 @@
 namespace Application\Model\Rest\Correspondent;
 
 use Application\Model\Rest\EntityInterface;
-
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\AccessorInterface as LpaAccessorInterface;
+use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 
 class Entity implements EntityInterface
 {

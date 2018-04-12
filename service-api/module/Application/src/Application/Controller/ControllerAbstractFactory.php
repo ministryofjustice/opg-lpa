@@ -5,6 +5,7 @@ namespace Application\Controller;
 use Application\Controller\Version2\AbstractController;
 use Application\Controller\Version2\ApplicationController;
 use Application\Controller\Version2\CertificateProviderController;
+use Application\Controller\Version2\CorrespondentController;
 use Application\Controller\Version2\DonorController;
 use Application\Controller\Version2\InstructionController;
 use Application\Controller\Version2\NotifiedPeopleController;
@@ -15,6 +16,7 @@ use Application\Controller\Version2\ReplacementAttorneyController;
 use Application\Controller\Version2\ReplacementAttorneyDecisionsController;
 use Application\Controller\Version2\TypeController;
 use Application\Controller\Version2\UserController;
+use Application\Controller\Version2\WhoIsRegisteringController;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
@@ -37,6 +39,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
     private $resourceMappings = [
         ApplicationController::class                    => 'resource-applications',
         CertificateProviderController::class            => 'resource-certificate-provider',
+        CorrespondentController::class                  => 'resource-correspondent',
         DonorController::class                          => 'resource-donor',
         InstructionController::class                    => 'resource-instruction',
         NotifiedPeopleController::class                 => 'resource-notified-people',
@@ -47,6 +50,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         ReplacementAttorneyDecisionsController::class   => 'resource-replacement-attorney-decisions',
         TypeController::class                           => 'resource-type',
         UserController::class                           => 'resource-users',
+        WhoIsRegisteringController::class               => 'resource-who-is-registering',
     ];
 
     /**

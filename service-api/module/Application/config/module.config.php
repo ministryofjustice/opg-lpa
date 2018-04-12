@@ -156,6 +156,15 @@ return [
                                             ],
                                         ],
                                     ],
+                                    'correspondent' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/correspondent',
+                                            'defaults' => [
+                                                'controller' => 'CorrespondentController',
+                                            ],
+                                        ],
+                                    ],
                                     'donor' => [
                                         'type'    => 'Literal',
                                         'options' => [
@@ -243,6 +252,15 @@ return [
                                             'route'       => '/type',
                                             'defaults' => [
                                                 'controller' => 'TypeController',
+                                            ],
+                                        ],
+                                    ],
+                                    'who-is-registering' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/who-is-registering',
+                                            'defaults' => [
+                                                'controller' => 'WhoIsRegisteringController',
                                             ],
                                         ],
                                     ],
