@@ -789,17 +789,13 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function lockLpa(Lpa $lpa)
     {
-        try {
-            $response = $this->apiClient->httpPost(sprintf('/v1/users/%s/applications/%s/%s', $this->getUserId(), $lpa->id, 'lock'));
+        $responseData = $this->executePost(sprintf('/v2/users/%s/applications/%s/lock', $this->getUserId(), $lpa->id));
 
-            if ($response->getStatusCode() == 201) {
-                $responseData = json_decode($response->getBody(), true);
+        if (is_array($responseData)) {
+            $lpa->locked = true;
 
-                if (isset($responseData['locked'])) {
-                    return $responseData['locked'];
-                }
-            }
-        } catch (ResponseException $ignore) {}
+            return true;
+        }
 
         return false;
     }
@@ -849,7 +845,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      * @param $jsonBody
      * @return bool|mixed
      */
-    private function executePost($target, $jsonBody)
+    private function executePost($target, $jsonBody = [])
     {
         try {
             $response = $this->apiClient->httpPost($target, $jsonBody);
