@@ -57,7 +57,8 @@ class Client
 
         $response = $this->httpClient->sendRequest($request);
 
-        if (!in_array($response->getStatusCode(), [200, 404])) {    // TODO - Why is 404 ok??
+        //  TODO - Confirm why 404 is permitted here before trying to remove it - it has been allowed already for some time
+        if (!in_array($response->getStatusCode(), [200, 404])) {
             $this->createErrorException($response);
         }
 
