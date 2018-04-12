@@ -11,10 +11,6 @@ use RuntimeException;
 
 class Resource extends AbstractResource implements LpaConsumerInterface
 {
-
-
-    use LoggerTrait;
-
     /**
      * @param $data
      * @param $id
