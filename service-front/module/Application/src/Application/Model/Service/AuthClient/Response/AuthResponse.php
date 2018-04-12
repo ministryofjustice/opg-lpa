@@ -16,8 +16,6 @@ class AuthResponse
 {
     private $response;
 
-    //---------------------
-
     public static function buildFromResponse(ResponseInterface $response)
     {
         $body = json_decode($response->getBody(), true);
@@ -28,9 +26,7 @@ class AuthResponse
         }
 
         $authResponse = new static();
-
         $authResponse->exchangeArray($body);
-
         $authResponse->setResponse($response);
 
         return $authResponse;
@@ -87,6 +83,13 @@ class AuthResponse
      * @var number Timestamp
      */
     private $lastLogin;
+
+    /**
+     * Boolean value representing whether inactivity flags were cleared during the authentication
+     *
+     * @var boolean
+     */
+    private $inactivityFlagsCleared;
 
     /**
      * The error description, if any
@@ -192,6 +195,22 @@ class AuthResponse
     }
 
     /**
+     * @return boolean $inactivityFlagsCleared
+     */
+    public function getInactivityFlagsCleared()
+    {
+        return $this->inactivityFlagsCleared;
+    }
+
+    /**
+     * @param boolean $inactivityFlagsCleared
+     */
+    public function setInactivityFlagsCleared($inactivityFlagsCleared)
+    {
+        $this->inactivityFlagsCleared = $inactivityFlagsCleared;
+    }
+
+    /**
      * @return string $errorDescription
      */
     public function getErrorDescription()
@@ -208,7 +227,6 @@ class AuthResponse
         $this->errorDescription = $errorDescription;
         return $this;
     }
-
     public function isAuthenticated()
     {
         return !empty($this->userId) && !empty($this->token) && empty($this->errorDescription);
@@ -228,6 +246,7 @@ class AuthResponse
             'expires_in' => $this->expiresIn,
             'expires_at' => $this->expiresAt,
             'username' => $this->username,
+            'inactivityFlagsCleared' => $this->inactivityFlagsCleared,
         ];
     }
 
@@ -244,6 +263,7 @@ class AuthResponse
         $this->username = isset($array['username']) ? $array['username'] : null;
         $this->expiresIn = isset($array['expiresIn']) ? $array['expiresIn'] : null;
         $this->expiresAt = isset($array['expiresAt']) ? $array['expiresAt'] : null;
+        $this->inactivityFlagsCleared = isset($array['inactivityFlagsCleared']) ? $array['inactivityFlagsCleared'] : null;
     }
 
     /**
