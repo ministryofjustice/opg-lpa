@@ -55,7 +55,7 @@ class Resource extends AbstractResource
             'id'                => $id,
             'startedAt'         => new DateTime(),
             'updatedAt'         => new DateTime(),
-            'user'              => $this->routeUser->userId(),
+            'user'              => $this->routeUserId,
             'locked'            => false,
             'whoAreYouAnswered' => false,
             'document'          => new Document\Document(),
@@ -129,14 +129,14 @@ class Resource extends AbstractResource
         $this->checkAccess();
 
         // Note: user has to match
-        $userId = $this->routeUser->userId();
+        $userId = $this->routeUserId;
         $result = $this->lpaCollection->findOne([
             '_id' => (int) $id,
             'user' => $userId
         ]);
 
         if (is_null($result)) {
-            return new ApiProblem(404, 'Document ' . $id . ' not found for user ' . $this->routeUser->userId());
+            return new ApiProblem(404, 'Document ' . $id . ' not found for user ' . $this->routeUserId);
         }
 
         $result = ['id' => $result['_id']] + $result;
@@ -157,7 +157,7 @@ class Resource extends AbstractResource
         $this->checkAccess();
 
         $filter = [
-            'user' => $this->routeUser->userId()
+            'user' => $this->routeUserId
         ];
 
         //  Merge in any filter requirements...
@@ -191,7 +191,7 @@ class Resource extends AbstractResource
 
         // If there are no records, just return an empty paginator...
         if ($count == 0) {
-            return new Collection(new PaginatorNull, $this->routeUser->userId());
+            return new Collection(new PaginatorNull, $this->routeUserId);
         }
 
         // Map the results into a Zend Paginator, lazely converting them to LPA instances as we go...
@@ -226,7 +226,7 @@ class Resource extends AbstractResource
             }
         );
 
-        return new Collection($callback, $this->routeUser->userId());
+        return new Collection($callback, $this->routeUserId);
     }
 
     /**
@@ -239,7 +239,7 @@ class Resource extends AbstractResource
 
         $filter = [
             '_id' => (int) $id,
-            'user' => $this->routeUser->userId(),
+            'user' => $this->routeUserId,
         ];
 
         $result = $this->lpaCollection->findOne($filter, ['projection' => ['_id' => true]]);
@@ -264,7 +264,7 @@ class Resource extends AbstractResource
     {
         $this->checkAccess();
 
-        $query = ['user' => $this->routeUser->userId()];
+        $query = ['user' => $this->routeUserId];
 
         $lpas = $this->lpaCollection->find($query, ['_id' => true]);
 

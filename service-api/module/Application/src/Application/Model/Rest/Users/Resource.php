@@ -41,10 +41,7 @@ class Resource extends AbstractResource
             $this->userDal->injectEmailAddressFromIdentity($user);
         }
 
-        // Set the user in the AbstractResource so it can be used for route generation.
-        $this->routeUser = new Entity($user);
-
-        return $this->routeUser;
+        return new Entity($user);
     }
 
     /**
@@ -63,10 +60,7 @@ class Resource extends AbstractResource
             return $user;
         }
 
-        // Set the user in the AbstractResource so it can be used for route generation.
-        $this->routeUser = new Entity($user);
-
-        return $this->routeUser;
+        return new Entity($user);
     }
 
     /**

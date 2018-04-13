@@ -7,7 +7,6 @@ use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\DateTime;
 use Application\Library\Lpa\StateChecker;
 use Application\Model\Rest\Lock\LockedException;
-use Application\Model\Rest\Users\Entity as RouteUser;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -27,9 +26,9 @@ abstract class AbstractResource implements AuthorizationServiceAwareInterface
     protected $lpa = null;
 
     /**
-     * @var RouteUser
+     * @var string
      */
-    protected $routeUser = null;
+    protected $routeUserId = null;
 
     /**
      * @var Collection
@@ -44,13 +43,13 @@ abstract class AbstractResource implements AuthorizationServiceAwareInterface
     /**
      * AbstractResource constructor
      *
-     * @param RouteUser $routeUser
+     * @param string $routeUserId
      * @param Collection $lpaCollection
      * @param Collection|null $collection
      */
-    public function __construct(RouteUser $routeUser, Collection $lpaCollection, Collection $collection = null)
+    public function __construct($routeUserId, Collection $lpaCollection, Collection $collection = null)
     {
-        $this->routeUser = $routeUser;
+        $this->routeUserId = $routeUserId;
         $this->lpaCollection = $lpaCollection;
         $this->collection = $collection;
     }
@@ -74,10 +73,8 @@ abstract class AbstractResource implements AuthorizationServiceAwareInterface
 
     public function checkAccess($userId = null)
     {
-        if (is_null($userId) && $this->routeUser != null) {
-            $userId = $this->routeUser->userId();
-
-            $this->getLogger()->info('Access allowed for user', ['userid' => $userId]);
+        if (is_null($userId) && $this->routeUserId != null) {
+            $userId = $this->routeUserId;
         }
 
         if (!$this->getAuthorizationService()->isGranted('authenticated')) {
@@ -86,6 +83,7 @@ abstract class AbstractResource implements AuthorizationServiceAwareInterface
 
         if (!$this->getAuthorizationService()->isGranted('isAuthorizedToManageUser', $userId)
             && !$this->getAuthorizationService()->isGranted('admin')) {
+
             throw new UnauthorizedException('You do not have permission to access this resource');
         }
     }

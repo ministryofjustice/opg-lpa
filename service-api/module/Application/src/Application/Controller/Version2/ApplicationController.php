@@ -4,6 +4,7 @@ namespace Application\Controller\Version2;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
+use Application\Model\Rest\Applications\Collection;
 use Application\Model\Rest\EntityInterface;
 use Zend\Paginator\Paginator;
 use ZF\ApiProblem\ApiProblem;
@@ -65,7 +66,7 @@ class ApplicationController extends AbstractController
         }
 
         //  The applications collection was a success - it will be a paginator
-        /** @var Paginator $result */
+        /** @var Collection $result */
 
         //  Set the page number and per page count (if valid)
         $result->setCurrentPageNumber($page);

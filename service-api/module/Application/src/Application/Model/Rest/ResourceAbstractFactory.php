@@ -5,14 +5,9 @@ namespace Application\Model\Rest;
 use Application\DataAccess\Mongo\CollectionFactory;
 use Application\DataAccess\UserDal;
 use Application\Library\ApiProblem\ApiProblemException;
-use Application\Model\Rest\Users\Entity as RouteUser;
 use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\User\User;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Exception;
 
 /**
@@ -90,11 +85,7 @@ class ResourceAbstractFactory implements AbstractFactoryInterface
             throw new ApiProblemException('User identifier missing from URL', 400);
         }
 
-        //  Get the user record using the DAL
-        $userDal = $container->get(UserDal::class);
-        $user = $userDal->findById($userId);
-
-        $resource = new $requestedName(new RouteUser($user), $lpaCollection, $collection);
+        $resource = new $requestedName($userId, $lpaCollection, $collection);
 
         //  If appropriate set the LPA from the route parameter
         if ($resource instanceof LpaConsumerInterface) {
