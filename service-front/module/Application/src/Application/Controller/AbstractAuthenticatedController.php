@@ -83,13 +83,14 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             throw new RuntimeException('A valid Identity has not been set');
         }
 
+        //  Try to get the identity
         $this->identity = $authenticationService->getIdentity();
 
         //  Try to get the user details for this identity - look in the session first
         $user = $userDetailsSession->user;
 
         if (!$user instanceof User) {
-            $user = $this->userService->getUserDetails($this->identity->id());
+            $user = $this->userService->getUserDetails();
             $userDetailsSession->user = $user;
         }
 
