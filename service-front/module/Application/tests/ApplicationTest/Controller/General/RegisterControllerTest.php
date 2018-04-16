@@ -6,6 +6,7 @@ use Application\Controller\General\RegisterController;
 use Application\Form\User\ConfirmEmail;
 use Application\Form\User\Registration;
 use Application\Model\Service\Authentication\Identity\User;
+use Application\Model\Service\User\Details;
 use Application\Model\Service\User\Register;
 use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
@@ -40,10 +41,6 @@ class RegisterControllerTest extends AbstractControllerTest
         'email' => 'unit@test.com',
         'password' => 'password'
     ];
-    /**
-     * @var MockInterface|Register
-     */
-    private $register;
 
     public function setUp()
     {
@@ -62,8 +59,8 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->routeMatch = Mockery::mock(RouteMatch::class);
         $this->event->shouldReceive('getRouteMatch')->andReturn($this->routeMatch);
 
-        $this->register = Mockery::mock(Register::class);
-        $this->controller->setRegisterService($this->register);
+        $this->userDetails = Mockery::mock(Details::class);
+        $this->controller->setUserService($this->userDetails);
     }
 
     public function testIndexActionRefererGovUk()
@@ -144,7 +141,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
-        $this->register->shouldReceive('registerAccount')->andReturn('Unit test error')->once();
+        $this->userDetails->shouldReceive('registerAccount')->andReturn('Unit test error')->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -167,7 +164,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
-        $this->register->shouldReceive('registerAccount')->andReturn(true);
+        $this->userDetails->shouldReceive('registerAccount')->andReturn(true);
 
         //  Set up the confirm email form
         $this->url->shouldReceive('fromRoute')->withArgs(['register/resend-email'])->andReturn('register/resend-email')->once();
@@ -203,7 +200,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('unitTest')->once();
         $this->authenticationService->shouldReceive('clearIdentity');
         $this->sessionManager->shouldReceive('initialise')->once();
-        $this->register->shouldReceive('activateAccount')->andReturn(false)->once();
+        $this->userDetails->shouldReceive('activateAccount')->andReturn(false)->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->confirmAction();
@@ -217,7 +214,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('unitTest')->once();
         $this->authenticationService->shouldReceive('clearIdentity');
         $this->sessionManager->shouldReceive('initialise')->once();
-        $this->register->shouldReceive('activateAccount')->andReturn(true)->once();
+        $this->userDetails->shouldReceive('activateAccount')->andReturn(true)->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->confirmAction();
