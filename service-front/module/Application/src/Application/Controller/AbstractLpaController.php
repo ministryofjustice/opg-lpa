@@ -43,7 +43,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
 
     /**
      * AbstractLpaController constructor.
-     * @param AbstractPluginManager $lpaId
+     * @param string $lpaId
      * @param AbstractPluginManager $formElementManager
      * @param SessionManager $sessionManager
      * @param AuthenticationService $authenticationService

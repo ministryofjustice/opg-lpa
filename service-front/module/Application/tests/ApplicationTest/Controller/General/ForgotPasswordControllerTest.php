@@ -6,7 +6,7 @@ use Application\Controller\General\ForgotPasswordController;
 use Application\Form\User\ConfirmEmail;
 use Application\Form\User\SetPassword;
 use Application\Model\Service\Authentication\Identity\User;
-use Application\Model\Service\User\PasswordReset;
+use Application\Model\Service\User\Details;
 use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
 use Mockery;
@@ -29,10 +29,6 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
      * @var MockInterface|SetPassword
      */
     private $setPasswordForm;
-    /**
-     * @var MockInterface|PasswordReset
-     */
-    private $passwordReset;
     private $postData = [
         'token' => 'unitTest',
         'email' => 'unit@test.com',
@@ -54,8 +50,8 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->user = FixturesData::getUser();
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
 
-        $this->passwordReset = Mockery::mock(PasswordReset::class);
-        $this->controller->setPasswordResetService($this->passwordReset);
+        $this->userDetails = Mockery::mock(Details::class);
+        $this->controller->setUserService($this->userDetails);
     }
 
     public function testIndexActionAlreadyLoggedIn()
@@ -113,7 +109,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->resetPasswordEmailForm->shouldReceive('isValid')->andReturn(true)->once();
         $this->resetPasswordEmailForm->shouldReceive('getData')->andReturn($this->postData)->twice();
 
-        $this->passwordReset->shouldReceive('requestPasswordResetEmail')->andReturn('Password reset failed');
+        $this->userDetails->shouldReceive('requestPasswordResetEmail')->andReturn('Password reset failed');
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -134,7 +130,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->resetPasswordEmailForm->shouldReceive('setData')->withArgs([$this->postData])->once();
         $this->resetPasswordEmailForm->shouldReceive('isValid')->andReturn(true)->once();
         $this->resetPasswordEmailForm->shouldReceive('getData')->andReturn($this->postData)->twice();
-        $this->passwordReset->shouldReceive('requestPasswordResetEmail')->andReturn('account-not-activated');
+        $this->userDetails->shouldReceive('requestPasswordResetEmail')->andReturn('account-not-activated');
 
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
@@ -224,7 +220,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->setPasswordForm->shouldReceive('isValid')->andReturn(true)->once();
         $this->setPasswordForm->shouldReceive('getData')->andReturn($this->postData)->once();
 
-        $this->passwordReset->shouldReceive('setNewPassword')
+        $this->userDetails->shouldReceive('setNewPassword')
             ->withArgs([$this->postData['token'], $this->postData['password']])->andReturn('Password change failed');
 
         /** @var ViewModel $result */
@@ -250,7 +246,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->setPasswordForm->shouldReceive('isValid')->andReturn(true)->once();
         $this->setPasswordForm->shouldReceive('getData')->andReturn($this->postData)->once();
 
-        $this->passwordReset->shouldReceive('setNewPassword')
+        $this->userDetails->shouldReceive('setNewPassword')
             ->withArgs([$this->postData['token'], $this->postData['password']])->andReturn('invalid-token');
 
         /** @var ViewModel $result */
@@ -276,7 +272,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->setPasswordForm->shouldReceive('isValid')->andReturn(true)->once();
         $this->setPasswordForm->shouldReceive('getData')->andReturn($this->postData)->once();
 
-        $this->passwordReset->shouldReceive('setNewPassword')
+        $this->userDetails->shouldReceive('setNewPassword')
             ->withArgs([$this->postData['token'], $this->postData['password']])->andReturn(true);
         $this->redirect->shouldReceive('toRoute')->withArgs(['login'])->andReturn($response)->once();
         $this->flashMessenger->shouldReceive('addSuccessMessage')->withArgs(['Password successfully reset'])->once();

@@ -20,7 +20,7 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
     public function setUp()
     {
         $this->controller = parent::controllerSetUp(VerifyEmailAddressController::class);
-        $this->controller->setAboutYouDetails($this->aboutYouDetails);
+        $this->controller->setUserService($this->userDetails);
     }
 
     public function testIndexAction()
@@ -39,7 +39,7 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
 
         $this->sessionManager->shouldReceive('initialise')->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('InvalidToken')->once();
-        $this->aboutYouDetails->shouldReceive('updateEmailUsingToken')
+        $this->userDetails->shouldReceive('updateEmailUsingToken')
             ->withArgs(['InvalidToken'])->andReturn(false)->once();
         $this->flashMessenger->shouldReceive('addErrorMessage')
             ->withArgs(['There was an error updating your email address'])->once();
@@ -56,7 +56,7 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
 
         $this->sessionManager->shouldReceive('initialise')->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('ValidToken')->once();
-        $this->aboutYouDetails->shouldReceive('updateEmailUsingToken')
+        $this->userDetails->shouldReceive('updateEmailUsingToken')
             ->withArgs(['ValidToken'])->andReturn(true)->once();
         $this->flashMessenger->shouldReceive('addSuccessMessage')
             ->withArgs(['Your email address was successfully updated. Please login with your new address.'])->once();

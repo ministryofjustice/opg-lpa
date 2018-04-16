@@ -9,7 +9,6 @@ use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
-use Application\Model\Service\Lpa\ApplicantCleanup;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
@@ -24,6 +23,7 @@ use ApplicationTest\Controller\Authenticated\Lpa\ReplacementAttorneyControllerTe
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -53,6 +53,7 @@ use Zend\Session\Container;
 use Zend\Session\Storage\ArrayStorage;
 use Zend\Stdlib\Parameters;
 use Zend\Uri\Uri;
+use DateTime;
 
 abstract class AbstractControllerTest extends MockeryTestCase
 {
@@ -141,6 +142,10 @@ abstract class AbstractControllerTest extends MockeryTestCase
      */
     protected $userIdentity = null;
     /**
+     * @var MockInterface|ReplacementAttorneyCleanup
+     */
+    protected $replacementAttorneyCleanup;
+    /**
      * @var MockInterface|Request
      */
     protected $request;
@@ -163,7 +168,7 @@ abstract class AbstractControllerTest extends MockeryTestCase
     /**
      * @var MockInterface|Details
      */
-    protected $aboutYouDetails;
+    protected $userDetails;
 
     /**
      * @param string $controllerName the class of controller to create
@@ -259,8 +264,11 @@ abstract class AbstractControllerTest extends MockeryTestCase
 
         $this->authenticationAdapter = Mockery::mock(LpaAuthAdapter::class);
 
+        $this->user = $this->getUserDetails();
         $this->userDetailsSession = new Container();
         $this->userDetailsSession->user = $this->user;
+
+        $this->replacementAttorneyCleanup = Mockery::mock(ReplacementAttorneyCleanup::class);
 
         $this->request = Mockery::mock(Request::class);
 
@@ -274,7 +282,7 @@ abstract class AbstractControllerTest extends MockeryTestCase
 
         $this->router = Mockery::mock(RouteStackInterface::class);
 
-        $this->aboutYouDetails = Mockery::mock(Details::class);
+        $this->userDetails = Mockery::mock(Details::class);
 
         /** @var AbstractBaseController $controller */
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
@@ -287,10 +295,8 @@ abstract class AbstractControllerTest extends MockeryTestCase
                     $this->cache,
                     $this->userDetailsSession,
                     $this->lpaApplicationService,
-                    $this->aboutYouDetails,
-                    $this->authenticationAdapter,
-                    new ApplicantCleanup(),
-                    new ReplacementAttorneyCleanup(),
+                    $this->userDetails,
+                    $this->replacementAttorneyCleanup,
                     $this->metadata
                 );
             } else {
@@ -302,8 +308,7 @@ abstract class AbstractControllerTest extends MockeryTestCase
                     $this->cache,
                     $this->userDetailsSession,
                     $this->lpaApplicationService,
-                    $this->aboutYouDetails,
-                    $this->authenticationAdapter
+                    $this->userDetails
                 );
             }
         } else {
@@ -668,5 +673,33 @@ abstract class AbstractControllerTest extends MockeryTestCase
     public function getExpectedRouteOptions($route)
     {
         return [];
+    }
+
+    /**
+     * Get sample user details
+     *
+     * @param bool $newDetails
+     * @return User
+     */
+    private function getUserDetails($newDetails = false)
+    {
+        $user = new User();
+
+        if (!$newDetails) {
+            //  Just set a name for the user details to be considered existing
+            $user->id = 123;
+
+            $user->createdAt = new DateTime();
+
+            $user->updatedAt = new DateTime();
+
+            $user->name = new Name([
+                'title' => 'Mrs',
+                'first' => 'New',
+                'last'  => 'User',
+            ]);
+        }
+
+        return $user;
     }
 }

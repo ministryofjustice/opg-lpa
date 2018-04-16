@@ -4,14 +4,12 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\AuthController;
 use Application\Form\User\Login;
-use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Authentication\Result;
-use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayObject;
@@ -40,8 +38,6 @@ class AuthControllerTest extends AbstractControllerTest
     {
         $this->controller = parent::controllerSetUp(AuthController::class);
         $this->controller->setLpaApplicationService($this->lpaApplicationService);
-
-        $this->identity = Mockery::mock(User::class);
 
         $this->request->shouldReceive('getMethod')->andReturn('POST');
         $this->request->shouldReceive('isPost')->andReturn(true);
@@ -81,13 +77,17 @@ class AuthControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
 
-        $this->authenticationAdapter->shouldReceive('setEmail')
-            ->withArgs([$this->postData['email']])->andReturn($this->authenticationAdapter)->once();
-        $this->authenticationAdapter->shouldReceive('setPassword')
-            ->withArgs([$this->postData['password']])->once();
-
+        $this->authenticationService->shouldReceive('setEmail')
+            ->withArgs([$this->postData['email']])
+            ->andReturn($this->authenticationService)
+            ->once();
+        $this->authenticationService->shouldReceive('setPassword')
+            ->withArgs([$this->postData['password']])
+            ->andReturn($this->authenticationService)
+            ->once();
         $this->authenticationService->shouldReceive('authenticate')
-            ->withArgs([$this->authenticationAdapter])->andReturn($authenticationResult)->once();
+            ->andReturn($authenticationResult)
+            ->once();
 
         $this->form->shouldReceive('setData')->withArgs([['email' => $this->postData['email']]])->once();
 
@@ -109,13 +109,16 @@ class AuthControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
 
-        $this->authenticationAdapter->shouldReceive('setEmail')
-            ->withArgs([$this->postData['email']])->andReturn($this->authenticationAdapter)->once();
-        $this->authenticationAdapter->shouldReceive('setPassword')
-            ->withArgs([$this->postData['password']])->once();
-
+        $this->authenticationService->shouldReceive('setEmail')
+            ->withArgs([$this->postData['email']])
+            ->andReturn($this->authenticationService)
+            ->once();
+        $this->authenticationService->shouldReceive('setPassword')
+            ->withArgs([$this->postData['password']])
+            ->andReturn($this->authenticationService)
+            ->once();
         $this->authenticationService->shouldReceive('authenticate')
-            ->withArgs([$this->authenticationAdapter])->andReturn($authenticationResult)->once();
+            ->andReturn($authenticationResult)->once();
 
         $this->sessionManager->shouldReceive('regenerateId')->withArgs([true])->once();
 
@@ -136,13 +139,16 @@ class AuthControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
 
-        $this->authenticationAdapter->shouldReceive('setEmail')
-            ->withArgs([$this->postData['email']])->andReturn($this->authenticationAdapter)->once();
-        $this->authenticationAdapter->shouldReceive('setPassword')
-            ->withArgs([$this->postData['password']])->once();
-
+        $this->authenticationService->shouldReceive('setEmail')
+            ->withArgs([$this->postData['email']])
+            ->andReturn($this->authenticationService)
+            ->once();
+        $this->authenticationService->shouldReceive('setPassword')
+            ->withArgs([$this->postData['password']])
+            ->andReturn($this->authenticationService)
+            ->once();
         $this->authenticationService->shouldReceive('authenticate')
-            ->withArgs([$this->authenticationAdapter])->andReturn($authenticationResult)->once();
+            ->andReturn($authenticationResult)->once();
 
         $this->sessionManager->shouldReceive('regenerateId')->withArgs([true])->once();
 
@@ -167,13 +173,16 @@ class AuthControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
 
-        $this->authenticationAdapter->shouldReceive('setEmail')
-            ->withArgs([$this->postData['email']])->andReturn($this->authenticationAdapter)->once();
-        $this->authenticationAdapter->shouldReceive('setPassword')
-            ->withArgs([$this->postData['password']])->once();
-
+        $this->authenticationService->shouldReceive('setEmail')
+            ->withArgs([$this->postData['email']])
+            ->andReturn($this->authenticationService)
+            ->once();
+        $this->authenticationService->shouldReceive('setPassword')
+            ->withArgs([$this->postData['password']])
+            ->andReturn($this->authenticationService)
+            ->once();
         $this->authenticationService->shouldReceive('authenticate')
-            ->withArgs([$this->authenticationAdapter])->andReturn($authenticationResult)->once();
+            ->andReturn($authenticationResult)->once();
 
         $this->sessionManager->shouldReceive('regenerateId')->withArgs([true])->once();
 

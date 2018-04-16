@@ -82,7 +82,7 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
         $this->sessionManager->shouldReceive('start')->once();
         $this->storage->offsetSet('TermsAndConditionsCheck', new ArrayObject(['seen' => true]));
 
-        $this->aboutYouDetails->shouldReceive('load')->andReturn(new User())->once();
+        $this->userDetails->shouldReceive('load')->andReturn(new User())->once();
         $this->redirect->shouldReceive('toUrl')->withArgs(['/user/about-you/new'])->andReturn($response)->once();
 
         Container::setDefaultManager($this->sessionManager);
@@ -129,7 +129,7 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
         ])->once();
         $user = new User();
         $this->userDetailsSession->user = $user;
-        $this->aboutYouDetails->shouldReceive('load')->andReturn($user)->once();
+        $this->userDetails->shouldReceive('load')->andReturn($user)->once();
         $this->redirect->shouldReceive('toUrl')->withArgs(['/user/about-you/new'])->andReturn($response)->once();
 
         $result = $this->controller->onDispatch($event);
@@ -148,7 +148,7 @@ class AbstractAuthenticatedControllerTest extends AbstractControllerTest
             $this->userIdentity->toArray()
         ])->once();
         $this->userDetailsSession->user = new User();
-        $this->aboutYouDetails->shouldReceive('load')->andReturn(FixturesData::getUser())->once();
+        $this->userDetails->shouldReceive('load')->andReturn(FixturesData::getUser())->once();
         $routeMatch = Mockery::mock(RouteMatch::class);
         $event->shouldReceive('getRouteMatch')->andReturn($routeMatch)->once();
         $routeMatch->shouldReceive('getParam')->withArgs(['action', 'not-found'])->andReturn('index')->once();
