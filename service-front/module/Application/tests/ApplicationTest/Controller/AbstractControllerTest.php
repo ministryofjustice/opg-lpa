@@ -174,7 +174,7 @@ abstract class AbstractControllerTest extends MockeryTestCase
      * @param string $controllerName the class of controller to create
      * @return AbstractController
      */
-    public function controllerSetUp(string $controllerName)
+    public function controllerSetUp(string $controllerName, $setUpIdentity = true)
     {
         $this->logger = Mockery::mock(Logger::class);
 
@@ -262,11 +262,16 @@ abstract class AbstractControllerTest extends MockeryTestCase
 
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
 
-        $this->authenticationAdapter = Mockery::mock(LpaAuthAdapter::class);
-
         $this->user = $this->getUserDetails();
         $this->userDetailsSession = new Container();
         $this->userDetailsSession->user = $this->user;
+
+        if ($setUpIdentity) {
+            $this->userIdentity = new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime());
+        }
+
+        $this->authenticationService->shouldReceive('hasIdentity')->andReturn(!is_null($this->userIdentity));
+        $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity);
 
         $this->replacementAttorneyCleanup = Mockery::mock(ReplacementAttorneyCleanup::class);
 

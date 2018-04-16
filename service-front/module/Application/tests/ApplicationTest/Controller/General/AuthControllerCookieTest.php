@@ -4,12 +4,9 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\AuthController;
 use Application\Form\User\Login;
-use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
-use Mockery\MockInterface;
 use Zend\Http\Header\Cookie;
-use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
@@ -19,23 +16,13 @@ class AuthControllerCookieTest extends AbstractControllerTest
      * @var AuthController
      */
     private $controller;
-    /**
-     * @var User
-     */
-    private $identity;
-
-    public function setUp()
-    {
-        $this->controller = parent::controllerSetUp(AuthController::class);
-
-        $this->identity = Mockery::mock(User::class);
-    }
 
     public function testIndexActionAlreadySignedIn()
     {
+        $this->controller = parent::controllerSetUp(AuthController::class);
+
         $response = new Response();
 
-        $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->identity)->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
 
         $result = $this->controller->indexAction();
@@ -45,9 +32,10 @@ class AuthControllerCookieTest extends AbstractControllerTest
 
     public function testIndexActionCheckCookieFails()
     {
+        $this->controller = parent::controllerSetUp(AuthController::class, false);
+
         $response = new Response();
 
-        $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $this->request->shouldReceive('getMethod')->andReturn('GET');
         $this->request->shouldReceive('getCookie')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->withArgs(['cookie'])->andReturn(1)->once();
@@ -60,9 +48,10 @@ class AuthControllerCookieTest extends AbstractControllerTest
 
     public function testIndexActionCheckCookieRedirect()
     {
+        $this->controller = parent::controllerSetUp(AuthController::class, false);
+
         $response = new Response();
 
-        $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $this->request->shouldReceive('getMethod')->andReturn('GET');
         $this->request->shouldReceive('getCookie')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->withArgs(['cookie'])->andReturn(null)->once();
@@ -76,10 +65,11 @@ class AuthControllerCookieTest extends AbstractControllerTest
 
     public function testIndexActionCheckCookieExistsFalse()
     {
+        $this->controller = parent::controllerSetUp(AuthController::class, false);
+
         $cookie = Mockery::mock(Cookie::class);
         $response = new Response();
 
-        $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $this->params->shouldReceive('fromQuery')->withArgs(['cookie'])->andReturn(null)->once();
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['login', array(), ['query' => ['cookie' => '1']]])->andReturn($response)->once();
@@ -96,10 +86,11 @@ class AuthControllerCookieTest extends AbstractControllerTest
 
     public function testIndexActionCheckCookieExists()
     {
+        $this->controller = parent::controllerSetUp(AuthController::class, false);
+
         $cookie = Mockery::mock(Cookie::class);
         $loginForm = new Login();
 
-        $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $this->url->shouldReceive('fromRoute')->withArgs(['login'])->andReturn('login')->once();
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\User\Login'])->andReturn($loginForm)->once();
@@ -122,9 +113,10 @@ class AuthControllerCookieTest extends AbstractControllerTest
 
     public function testIndexActionCheckCookiePost()
     {
+        $this->controller = parent::controllerSetUp(AuthController::class, false);
+
         $loginForm = new Login();
 
-        $this->authenticationService->shouldReceive('getIdentity')->andReturn(null)->once();
         $this->url->shouldReceive('fromRoute')->withArgs(['login'])->andReturn('login')->once();
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\User\Login'])->andReturn($loginForm)->once();
