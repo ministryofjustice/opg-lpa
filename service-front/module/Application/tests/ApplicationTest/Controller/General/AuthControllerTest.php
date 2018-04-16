@@ -4,7 +4,6 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\AuthController;
 use Application\Form\User\Login;
-use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
@@ -22,10 +21,6 @@ class AuthControllerTest extends AbstractControllerTest
      */
     private $controller;
     /**
-     * @var User
-     */
-    private $identity;
-    /**
      * @var MockInterface|Login
      */
     private $form;
@@ -36,7 +31,7 @@ class AuthControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(AuthController::class);
+        $this->controller = parent::controllerSetUp(AuthController::class, false);
         $this->controller->setLpaApplicationService($this->lpaApplicationService);
 
         $this->request->shouldReceive('getMethod')->andReturn('POST');
@@ -48,8 +43,6 @@ class AuthControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('setData')->withArgs([$this->postData]);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\User\Login'])->andReturn($this->form);
-
-        $this->authenticationService->shouldReceive('getIdentity')->andReturn(null);
 
         $this->url->shouldReceive('fromRoute')->withArgs(['login'])->andReturn('login');
 

@@ -3,10 +3,7 @@
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\VerifyEmailAddressController;
-use Application\Model\Service\User\Details;
 use ApplicationTest\Controller\AbstractControllerTest;
-use Mockery;
-use Mockery\MockInterface;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
