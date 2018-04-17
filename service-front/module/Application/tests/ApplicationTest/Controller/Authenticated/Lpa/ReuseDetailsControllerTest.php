@@ -2,14 +2,12 @@
 
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
-use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Form\Lpa\ReuseDetailsForm;
 use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
@@ -26,10 +24,6 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
      * @var MockInterface|ReuseDetailsForm
      */
     private $form;
-    /**
-     * @var Lpa
-     */
-    private $lpa;
     private $postData = [
         'reuse-details' => 1
     ];
@@ -43,7 +37,6 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
 
         $this->form = Mockery::mock(ReuseDetailsForm::class);
-        $this->lpa = FixturesData::getPfLpa();
     }
 
     /**
@@ -69,7 +62,7 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
             'include-trusts' => null,
             'actor-name' => '',
         ];
-        $this->controller->setLpa($this->lpa);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
 
@@ -83,7 +76,7 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
             'include-trusts' => '0',
             'actor-name' => 'Donor',
         ];
-        $this->controller->setLpa($this->lpa);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
         $this->userDetailsSession->user = $this->user;
@@ -118,7 +111,7 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
             'include-trusts' => '0',
             'actor-name' => 'Donor',
         ];
-        $this->controller->setLpa($this->lpa);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
         $this->userDetailsSession->user = $this->user;
@@ -157,7 +150,7 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
             'include-trusts' => '0',
             'actor-name' => 'Donor',
         ];
-        $this->controller->setLpa($this->lpa);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
         $this->userDetailsSession->user = $this->user;
@@ -196,7 +189,7 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
             'include-trusts' => '0',
             'actor-name' => 'Donor',
         ];
-        $this->controller->setLpa($this->lpa);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
         $this->userDetailsSession->user = $this->user;

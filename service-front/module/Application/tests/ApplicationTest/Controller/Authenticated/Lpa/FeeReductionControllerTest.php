@@ -7,8 +7,6 @@ use Application\Form\Lpa\FeeReductionForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Form\Element\Select;
 use Zend\Http\Response;
@@ -24,10 +22,6 @@ class FeeReductionControllerTest extends AbstractControllerTest
      * @var MockInterface|FeeReductionForm
      */
     private $form;
-    /**
-     * @var Lpa
-     */
-    private $lpa;
     private $options;
     /**
      * @var MockInterface|Select
@@ -39,7 +33,6 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->controller = parent::controllerSetUp(FeeReductionController::class);
 
         $this->form = Mockery::mock(FeeReductionForm::class);
-        $this->lpa = FixturesData::getPfLpa();
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\FeeReductionForm', ['lpa' => $this->lpa]])->andReturn($this->form);
 
@@ -56,19 +49,10 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->reductionOptions->shouldReceive('getOptions')->andReturn($this->options);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage A LPA has not been set
-     */
-    public function testIndexActionNoLpa()
-    {
-        $this->controller->indexAction();
-    }
-
     public function testIndexActionGetNoPayment()
     {
         $this->lpa->payment = null;
-        $this->controller->setLpa($this->lpa);
+
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
         $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -89,7 +73,6 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->lpa->payment->reducedFeeReceivesBenefits = true;
         $this->lpa->payment->reducedFeeAwardedDamages = true;
 
-        $this->controller->setLpa($this->lpa);
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'reducedFeeReceivesBenefits']])->once();
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
         $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
@@ -110,7 +93,6 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
         $this->lpa->payment->reducedFeeUniversalCredit = true;
 
-        $this->controller->setLpa($this->lpa);
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'reducedFeeUniversalCredit']])->once();
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
         $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
@@ -131,7 +113,6 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
         $this->lpa->payment->reducedFeeLowIncome = true;
 
-        $this->controller->setLpa($this->lpa);
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'reducedFeeLowIncome']])->once();
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
         $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
@@ -155,7 +136,6 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->lpa->payment->reducedFeeUniversalCredit = false;
         $this->lpa->payment->reducedFeeLowIncome = false;
 
-        $this->controller->setLpa($this->lpa);
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'notApply']])->once();
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
         $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
@@ -173,7 +153,6 @@ class FeeReductionControllerTest extends AbstractControllerTest
     public function testIndexActionPostInvalid()
     {
         $this->lpa->payment = null;
-        $this->controller->setLpa($this->lpa);
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
         $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->setPostInvalid($this->form);
@@ -196,14 +175,13 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $postData = ['reductionOptions' => 'reducedFeeReceivesBenefits'];
 
         $this->lpa->payment = null;
-        $this->controller->setLpa($this->lpa);
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
         $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setPayment')
-            ->withArgs(function ($lpaId, $payment) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $payment) {
+                return $lpa->id === $this->lpa->id
                     && $payment->reducedFeeReceivesBenefits == true
                     && $payment->reducedFeeAwardedDamages == true
                     && $payment->reducedFeeLowIncome == null
@@ -218,15 +196,14 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $response = new Response();
         $postData = ['reductionOptions' => 'reducedFeeUniversalCredit'];
 
-        $this->controller->setLpa($this->lpa);
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'notApply']])->once();
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
         $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setPayment')
-            ->withArgs(function ($lpaId, $payment) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $payment) {
+                return $lpa->id === $this->lpa->id
                     && $payment->reducedFeeReceivesBenefits == false
                     && $payment->reducedFeeAwardedDamages == null
                     && $payment->reducedFeeLowIncome == false
@@ -247,15 +224,14 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $response = new Response();
         $postData = ['reductionOptions' => 'reducedFeeLowIncome'];
 
-        $this->controller->setLpa($this->lpa);
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'notApply']])->once();
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
         $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setPayment')
-            ->withArgs(function ($lpaId, $payment) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $payment) {
+                return $lpa->id === $this->lpa->id
                     && $payment->reducedFeeReceivesBenefits == false
                     && $payment->reducedFeeAwardedDamages == null
                     && $payment->reducedFeeLowIncome == true
@@ -277,14 +253,13 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $postData = ['reductionOptions' => 'notApply'];
 
         $this->lpa->payment = null;
-        $this->controller->setLpa($this->lpa);
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
         $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setPayment')
-            ->withArgs(function ($lpaId, $payment) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $payment) {
+                return $lpa->id === $this->lpa->id
                     && $payment->reducedFeeReceivesBenefits == null
                     && $payment->reducedFeeAwardedDamages == null
                     && $payment->reducedFeeLowIncome == null

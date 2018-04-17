@@ -11,6 +11,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Common\Address;
 use Opg\Lpa\DataModel\Common\Name;
+use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
@@ -33,10 +34,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
      * @var MockInterface|PeopleToNotifyForm
      */
     private $peopleToNotifyForm;
-    /**
-     * @var Lpa
-     */
-    private $lpa;
     private $postData = [
         'name' => [
             'title' => 'Miss',
@@ -58,8 +55,22 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->user = FixturesData::getUser();
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
 
-        $this->lpa = FixturesData::getHwLpa();
-        $this->lpa->seed = null;
+        $this->lpa->document->peopleToNotify = [
+            new NotifiedPerson([
+                "id" => 1,
+                "name" => [
+                    "title" => "Miss",
+                    "first" => "Elizabeth",
+                    "last" => "Stout",
+                ],
+                "address" => [
+                    "address1" => "747 Station Road",
+                    "address2" => "Clayton le Moors",
+                    "address3" => "Lancashire, England",
+                    "postcode" => "WN8A 8AQ",
+                ],
+            ]),
+        ];
 
         $this->blankMainFlowForm = Mockery::mock(BlankMainFlowForm::class);
         $this->formElementManager->shouldReceive('get')
@@ -71,19 +82,10 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
             ->withArgs(['Application\Form\Lpa\PeopleToNotifyForm'])->andReturn($this->peopleToNotifyForm);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage A LPA has not been set
-     */
-    public function testIndexActionNoLpa()
-    {
-        $this->controller->indexAction();
-    }
-
     public function testIndexActionGetNoPeopleToNotify()
     {
         $this->lpa->document->peopleToNotify = [];
-        $this->controller->setLpa($this->lpa);
+
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->setMatchedRouteName($this->controller, 'lpa/people-to-notify');
         $this->url->shouldReceive('fromRoute')
@@ -101,9 +103,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetMultiplePeopleToNotify()
     {
-        $this->assertGreaterThan(0, count($this->lpa->document->peopleToNotify));
-
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->setMatchedRouteName($this->controller, 'lpa/people-to-notify');
 
@@ -128,7 +127,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
             $this->lpa->document->peopleToNotify[] = FixturesData::getNotifiedPerson();
         }
 
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->setMatchedRouteName($this->controller, 'lpa/people-to-notify');
 
@@ -150,7 +148,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     public function testIndexActionPostInvalid()
     {
         $this->lpa->document->peopleToNotify = [];
-        $this->controller->setLpa($this->lpa);
+
         $this->setPostInvalid($this->blankMainFlowForm);
         $this->setMatchedRouteName($this->controller, 'lpa/people-to-notify');
         $this->url->shouldReceive('fromRoute')
@@ -171,7 +169,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $response = new Response();
 
         $this->lpa->document->peopleToNotify = [];
-        $this->controller->setLpa($this->lpa);
+
         $this->setPostValid($this->blankMainFlowForm);
         $this->metadata->shouldReceive('setPeopleToNotifyConfirmed')->withArgs([$this->lpa])->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -189,7 +187,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
         $this->setSeedLpa($this->lpa, FixturesData::getHwLpa());
 
-        $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
 
@@ -208,7 +205,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
         $response = new Response();
 
-        $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -221,7 +217,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testAddActionGet()
     {
-        $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->twice();
@@ -240,7 +235,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testAddActionPostInvalid()
     {
-        $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setPostInvalid($this->peopleToNotifyForm, [], null, 2);
@@ -259,11 +253,10 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     /**
      * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to add a notified person for id: 5531003156
+     * @expectedExceptionMessage API client failed to add a notified person for id: 91333263035
      */
     public function testAddActionPostFailed()
     {
-        $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setPostValid($this->peopleToNotifyForm, $this->postData, null, 2);
@@ -271,8 +264,8 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('addNotifiedPerson')
-            ->withArgs(function ($lpaId, $notifiedPerson) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $notifiedPerson) {
+                return $lpa->id === $this->lpa->id
                     && $notifiedPerson->name == new Name($this->postData['name'])
                     && $notifiedPerson->address == new Address($this->postData['address']);
             })->andReturn(false)->once();
@@ -284,7 +277,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
         $this->setPostValid($this->peopleToNotifyForm, $this->postData, null, 2, 2);
@@ -292,8 +284,8 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('addNotifiedPerson')
-            ->withArgs(function ($lpaId, $notifiedPerson) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $notifiedPerson) {
+                return $lpa->id === $this->lpa->id
                     && $notifiedPerson->name == new Name($this->postData['name'])
                     && $notifiedPerson->address == new Address($this->postData['address']);
             })->andReturn(true)->once();
@@ -309,7 +301,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     {
         unset($this->lpa->metadata[Lpa::PEOPLE_TO_NOTIFY_CONFIRMED]);
 
-        $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
         $this->setPostValid($this->peopleToNotifyForm, $this->postData, null, 2, 1);
@@ -317,8 +308,8 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('addNotifiedPerson')
-            ->withArgs(function ($lpaId, $notifiedPerson) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $notifiedPerson) {
+                return $lpa->id === $this->lpa->id
                     && $notifiedPerson->name == new Name($this->postData['name'])
                     && $notifiedPerson->address == new Address($this->postData['address']);
             })->andReturn(true)->once();
@@ -334,7 +325,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     public function testAddActionPostReuseDetails()
     {
         $this->setSeedLpa($this->lpa, FixturesData::getPfLpa());
-        $this->controller->setLpa($this->lpa);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->request->shouldReceive('isPost')->andReturn(true)->twice();
         $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add', 2);
@@ -364,7 +355,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $event->setResponse($response);
         $this->controller->setEvent($event);
 
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn(-1)->once();
         $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
@@ -380,7 +370,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     public function testEditActionGet()
     {
         $idx = 0;
-        $this->controller->setLpa($this->lpa);
+
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
@@ -403,7 +393,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     public function testEditActionPostInvalid()
     {
         $idx = 0;
-        $this->controller->setLpa($this->lpa);
+
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
@@ -423,12 +413,12 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     /**
      * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to update notified person 0 for id: 5531003156
+     * @expectedExceptionMessage API client failed to update notified person 0 for id: 91333263035
      */
     public function testEditActionPostFailed()
     {
         $idx = 0;
-        $this->controller->setLpa($this->lpa);
+
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
@@ -437,8 +427,8 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setNotifiedPerson')
-            ->withArgs(function ($lpaId, $notifiedPerson) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $notifiedPerson) {
+                return $lpa->id === $this->lpa->id
                     && $notifiedPerson->name == new Name($this->postData['name'])
                     && $notifiedPerson->address == new Address($this->postData['address']);
             })->andReturn(false)->once();
@@ -449,7 +439,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     public function testEditActionPostSuccess()
     {
         $idx = 0;
-        $this->controller->setLpa($this->lpa);
+
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
@@ -458,8 +448,8 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setNotifiedPerson')
-            ->withArgs(function ($lpaId, $notifiedPerson) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $notifiedPerson) {
+                return $lpa->id === $this->lpa->id
                     && $notifiedPerson->name == new Name($this->postData['name'])
                     && $notifiedPerson->address == new Address($this->postData['address']);
             })->andReturn(true)->once();
@@ -480,7 +470,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $event->setResponse($response);
         $this->controller->setEvent($event);
 
-        $this->controller->setLpa($this->lpa);
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn(-1)->once();
         $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
         $response->shouldReceive('setStatusCode')->withArgs([404])->once();
@@ -495,7 +484,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     public function testConfirmDeleteActionGetJs()
     {
         $idx = 0;
-        $this->controller->setLpa($this->lpa);
+
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $deleteRoute = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify/delete', ['idx' => $idx]);
@@ -516,7 +505,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     public function testConfirmDeleteActionGetNoJs()
     {
         $idx = 0;
-        $this->controller->setLpa($this->lpa);
+
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $deleteRoute = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify/delete', ['idx' => $idx]);
@@ -543,7 +532,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $event->setResponse($response);
         $this->controller->setEvent($event);
 
-        $this->controller->setLpa($this->lpa);
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn(-1)->once();
         $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
         $response->shouldReceive('setStatusCode')->withArgs([404])->once();
@@ -557,16 +545,16 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     /**
      * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to delete notified person 0 for id: 5531003156
+     * @expectedExceptionMessage API client failed to delete notified person 0 for id: 91333263035
      */
     public function testDeleteActionFailed()
     {
         $idx = 0;
-        $this->controller->setLpa($this->lpa);
+
         $routeMatch = $this->getHttpRouteMatch($this->controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn($idx)->once();
         $this->lpaApplicationService->shouldReceive('deleteNotifiedPerson')
-            ->withArgs([$this->lpa->id, $this->lpa->document->peopleToNotify[$idx]->id])->andReturn(false)->once();
+            ->withArgs([$this->lpa, $this->lpa->document->peopleToNotify[$idx]->id])->andReturn(false)->once();
 
         $this->controller->deleteAction();
     }
@@ -576,11 +564,11 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $response = new Response();
 
         $idx = 0;
-        $this->controller->setLpa($this->lpa);
+
         $routeMatch = $this->getHttpRouteMatch($this->controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn($idx)->once();
         $this->lpaApplicationService->shouldReceive('deleteNotifiedPerson')
-            ->withArgs([$this->lpa->id, $this->lpa->document->peopleToNotify[$idx]->id])->andReturn(true)->once();
+            ->withArgs([$this->lpa, $this->lpa->document->peopleToNotify[$idx]->id])->andReturn(true)->once();
         $this->setRedirectToRoute('lpa/people-to-notify', $this->lpa, $response);
 
         $result = $this->controller->deleteAction();

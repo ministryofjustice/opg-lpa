@@ -119,12 +119,14 @@ class CertificateProviderController extends AbstractLpaActorController
 
             if ($form->isValid()) {
                 // persist data
-                if (!$this->getLpaApplicationService()->setCertificateProvider($lpa, new CertificateProvider($form->getModelDataFromValidatedForm()))) {
+                $certificateProvider = new CertificateProvider($form->getModelDataFromValidatedForm());
+
+                if (!$this->getLpaApplicationService()->setCertificateProvider($lpa, $certificateProvider)) {
                     throw new \RuntimeException('API client failed to update certificate provider for id: '.$lpaId);
                 }
 
                 //  Attempt to update the LPA correspondent too
-                $this->updateCorrespondentData($cp);
+                $this->updateCorrespondentData($certificateProvider);
 
                 return $this->moveToNextRoute();
             }

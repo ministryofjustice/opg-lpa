@@ -2,7 +2,6 @@
 
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
-use Application\Controller\Authenticated\Lpa\CorrespondentController;
 use Application\Form\Lpa\CorrespondentForm;
 use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
@@ -12,13 +11,10 @@ use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Common\PhoneNumber;
-use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
-use Zend\Uri\Uri;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -32,10 +28,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
      * @var MockInterface|CorrespondentForm
      */
     private $form;
-    /**
-     * @var Lpa
-     */
-    private $lpa;
     private $postDataNoContact = [
         'contactInWelsh' => false,
         'correspondence' => [
@@ -72,25 +64,14 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
 
         $this->form = Mockery::mock(CorrespondentForm::class);
-        $this->lpa = FixturesData::getPfLpa();
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\CorrespondentForm'])->andReturn($this->form);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\CorrespondenceForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage A LPA has not been set
-     */
-    public function testIndexActionNoLpa()
-    {
-        $this->controller->indexAction();
-    }
-
     public function testIndexActionGet()
     {
-        $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')->withArgs([[
@@ -128,7 +109,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $trust = FixturesData::getAttorneyTrust(4);
         $this->lpa->document->primaryAttorneys[] = $trust;
         $this->lpa->document->whoIsRegistering = [4];
-        $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')->withArgs([[
@@ -164,7 +144,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->correspondent = null;
         $this->lpa->document->whoIsRegistering = Correspondence::WHO_DONOR;
-        $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')->withArgs([[
@@ -200,7 +179,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->correspondent = null;
         $this->lpa->document->whoIsRegistering = [1];
-        $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')->withArgs([[
@@ -235,7 +213,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
     public function testIndexActionGetCorrespondentCompany()
     {
         $this->lpa->document->correspondent->company = 'A Company Ltd.';
-        $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')->withArgs([[
@@ -264,7 +241,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
     public function testIndexActionGetCorrespondentOther()
     {
         $this->lpa->document->correspondent->who = Correspondence::WHO_OTHER;
-        $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')->withArgs([[
@@ -292,7 +268,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
-        $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->setPostInvalid($this->form);
         $this->setMatchedRouteName($this->controller, 'lpa/correspondent');
@@ -320,13 +295,12 @@ class CorrespondentControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostFailure()
     {
-        $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->setPostValid($this->form, $this->postDataNoContact);
         $this->form->shouldReceive('getData')->andReturn($this->postDataNoContact)->once();
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpaId, $correspondent) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $correspondent) {
+                return $lpa->id === $this->lpa->id
                     && $correspondent->contactInWelsh === false
                     && $correspondent->contactByPost === false;
             })->andReturn(false)->once();
@@ -340,13 +314,12 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
         $this->lpa->document->correspondent = null;
         $this->lpa->document->whoIsRegistering = Correspondence::WHO_DONOR;
-        $this->controller->setLpa($this->lpa);
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
         $this->setPostValid($this->form, $this->postDataContact);
         $this->form->shouldReceive('getData')->andReturn($this->postDataContact)->once();
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpaId, $correspondent) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $correspondent) {
+                return $lpa->id === $this->lpa->id
                     && $correspondent->contactInWelsh === false
                     && $correspondent->contactByPost === true
                     && $correspondent->email->address === 'unit@test.com'
@@ -363,7 +336,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testEditActionGet()
     {
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')
             ->withArgs(['reuse-details'])->andReturn('existing-correspondent')->once();
@@ -386,7 +358,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testEditActionPostInvalid()
     {
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')
             ->withArgs(['reuse-details'])->andReturn('existing-correspondent')->once();
@@ -412,7 +383,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
      */
     public function testEditActionPostFailed()
     {
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')
             ->withArgs(['reuse-details'])->andReturn('existing-correspondent')->once();
@@ -420,8 +390,8 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataCorrespondence)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent/edit');
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpaId, $correspondent) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $correspondent) {
+                return $lpa->id === $this->lpa->id
                     && $correspondent->name == new LongName($this->postDataCorrespondence['name'])
                     && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
                     && $correspondent->phone == new PhoneNumber($this->postDataCorrespondence['phone']);
@@ -432,7 +402,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testEditActionPostSuccess()
     {
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
         $this->params->shouldReceive('fromQuery')
             ->withArgs(['reuse-details'])->andReturn('existing-correspondent')->once();
@@ -440,8 +409,8 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataCorrespondence)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent/edit');
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpaId, $correspondent) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $correspondent) {
+                return $lpa->id === $this->lpa->id
                     && $correspondent->name == new LongName($this->postDataCorrespondence['name'])
                     && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
                     && $correspondent->phone == new PhoneNumber($this->postDataCorrespondence['phone']);
@@ -458,7 +427,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
         $this->params->shouldReceive('fromQuery')
             ->withArgs(['reuse-details'])->andReturn('existing-correspondent')->once();
@@ -466,8 +434,8 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataCorrespondence)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent/edit');
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpaId, $correspondent) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $correspondent) {
+                return $lpa->id === $this->lpa->id
                     && $correspondent->name == new LongName($this->postDataCorrespondence['name'])
                     && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
                     && $correspondent->phone == new PhoneNumber($this->postDataCorrespondence['phone']);
@@ -483,7 +451,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn(null)->once();
         $this->setRedirectToReuseDetails($this->user, $this->lpa, 'lpa/correspondent', $response);
@@ -495,7 +462,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testEditActionPostReuseDonorDetailsFormEditable()
     {
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->request->shouldReceive('isPost')->andReturn(true)->twice();
         $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn(1)->once();
@@ -529,7 +495,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
         $this->request->shouldReceive('isPost')->andReturn(true)->twice();
         $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn(1)->once();
@@ -540,8 +505,8 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postDataCorrespondence)->once();
         $this->lpaApplicationService->shouldReceive('setCorrespondent')
-            ->withArgs(function ($lpaId, $correspondent) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $correspondent) {
+                return $lpa->id === $this->lpa->id
                     && $correspondent->name == new LongName($this->postDataCorrespondence['name'])
                     && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
                     && $correspondent->phone == new PhoneNumber($this->postDataCorrespondence['phone']);

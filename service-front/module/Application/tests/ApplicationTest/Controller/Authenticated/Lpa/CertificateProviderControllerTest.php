@@ -30,10 +30,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
      * @var MockInterface|CertificateProviderForm
      */
     private $form;
-    /**
-     * @var Lpa
-     */
-    private $lpa;
 
     public function setUp()
     {
@@ -41,8 +37,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->user = FixturesData::getUser();
         $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
-
-        $this->lpa = FixturesData::getPfLpa();
 
         $this->form = Mockery::mock(CertificateProviderForm::class);
 
@@ -56,20 +50,9 @@ class CertificateProviderControllerTest extends AbstractControllerTest
             ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])->andReturn($this->blankMainFlowForm);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage A LPA has not been set
-     */
-    public function testIndexActionNoLpa()
-    {
-        $this->controller->indexAction();
-    }
-
     public function testIndexActionNoCertificateProvider()
     {
         $this->lpa->document->certificateProvider = null;
-
-        $this->controller->setLpa($this->lpa);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
@@ -86,8 +69,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
     public function testIndexActionCertificateProvider()
     {
         $this->assertInstanceOf(CertificateProvider::class, $this->lpa->document->certificateProvider);
-
-        $this->controller->setLpa($this->lpa);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
@@ -106,7 +87,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -125,7 +105,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->setSeedLpa($this->lpa, FixturesData::getHwLpa());
 
-        $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -141,7 +120,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
@@ -158,7 +136,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->certificateProvider = null;
 
-        $this->controller->setLpa($this->lpa);
         $this->userDetailsSession->user = $this->user;
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -184,7 +161,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
     public function testAddActionPostInvalid()
     {
         $this->lpa->document->certificateProvider = null;
-        $this->controller->setLpa($this->lpa);
+
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/add');
@@ -213,7 +190,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $postData = [];
 
         $this->lpa->document->certificateProvider = null;
-        $this->controller->setLpa($this->lpa);
+
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/add');
@@ -233,7 +210,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $postData = [];
 
         $this->lpa->document->certificateProvider = null;
-        $this->controller->setLpa($this->lpa);
+
         $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/add');
@@ -254,7 +231,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->certificateProvider = null;
         $this->setSeedLpa($this->lpa, FixturesData::getPfLpa());
-        $this->controller->setLpa($this->lpa);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->request->shouldReceive('isPost')->andReturn(true)->twice();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/add', 2);
@@ -280,7 +257,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
     public function testEditActionGet()
     {
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/edit');
         $this->form->shouldReceive('setExistingActorNamesData')->once();
@@ -302,7 +278,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
     public function testEditActionPostInvalid()
     {
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/edit');
         $this->form->shouldReceive('setExistingActorNamesData')->once();
@@ -329,7 +304,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
     {
         $postData = [];
 
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/edit');
         $this->form->shouldReceive('setExistingActorNamesData')->once();
@@ -348,7 +322,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $postData = [];
 
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/edit');
         $this->form->shouldReceive('setExistingActorNamesData')->once();
@@ -367,7 +340,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
     public function testConfirmDeleteAction()
     {
-        $this->controller->setLpa($this->lpa);
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/certificate-provider/delete', ['lpa-id' => $this->lpa->id]])
             ->andReturn("lpa/{$this->lpa->id}/certificate-provider/delete")->once();
@@ -393,7 +365,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
     public function testConfirmDeleteActionJs()
     {
-        $this->controller->setLpa($this->lpa);
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/certificate-provider/delete', ['lpa-id' => $this->lpa->id]])
             ->andReturn("lpa/{$this->lpa->id}/certificate-provider/delete")->once();
@@ -423,7 +394,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
      */
     public function testDeleteActionException()
     {
-        $this->controller->setLpa($this->lpa);
         $this->lpaApplicationService->shouldReceive('deleteCertificateProvider')->andReturn(false);
 
         $this->controller->deleteAction();
@@ -433,7 +403,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
     {
         $response = new Response();
 
-        $this->controller->setLpa($this->lpa);
         $this->lpaApplicationService->shouldReceive('deleteCertificateProvider')->andReturn(true);
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/certificate-provider', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
