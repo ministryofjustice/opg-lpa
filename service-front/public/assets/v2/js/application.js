@@ -23616,6 +23616,8 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
             moj.Events.trigger('Validation.renderFieldSummary', {form: $form, name: name, errors: errors});
           });
           moj.Events.trigger('Validation.renderSummary', {form: $form, data: data});
+          // Track form errors
+          moj.Events.trigger('formErrorTracker.checkErrors', {wrap: '#popup'});
           // show error summary
         } else if (response.success === undefined) {
           // repopulate popup
@@ -23631,6 +23633,8 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
           if ($form.serialize().indexOf('reuse-details') !== -1) {
             moj.Events.trigger('FormPopup.checkReusedDetails');
           }
+          // Track form errors
+          moj.Events.trigger('formErrorTracker.checkErrors', {wrap: '#popup'});
         } else {
           window.location.reload();
         }
@@ -24980,6 +24984,8 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
 
     init: function () {
       this.checkErrors();
+      // Make available within popups by adding to the Events object
+      moj.Events.on('formErrorTracker.checkErrors', this.checkErrors);
     },
 
     checkErrors: function(){
@@ -24987,7 +24993,7 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
 
       var errors = $('.error-summary-list li a')
       for (var i = 0; i < errors.length; i++) {
-        this.trackError(errors[i])
+        moj.Modules.formErrorTracker.trackError(errors[i])
       }
     },
 
@@ -25019,7 +25025,7 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
       var legendText
 
       // If the error is on an input or textarea
-      if (nodeName === 'input' || nodeName === 'textarea') {
+      if (nodeName === 'input' || nodeName === 'textarea' || nodeName === 'select') {
         // Get the label
         questionText = $.trim($('label[for="' + elementID + '"]')[0].childNodes[0].nodeValue)
         // Get the legend for that label/input

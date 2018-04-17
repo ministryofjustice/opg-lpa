@@ -8,6 +8,8 @@
 
     init: function () {
       this.checkErrors();
+      // Make available within popups by adding to the Events object
+      moj.Events.on('formErrorTracker.checkErrors', this.checkErrors);
     },
 
     checkErrors: function(){
@@ -15,7 +17,7 @@
 
       var errors = $('.error-summary-list li a')
       for (var i = 0; i < errors.length; i++) {
-        this.trackError(errors[i])
+        moj.Modules.formErrorTracker.trackError(errors[i])
       }
     },
 
@@ -47,7 +49,7 @@
       var legendText
 
       // If the error is on an input or textarea
-      if (nodeName === 'input' || nodeName === 'textarea') {
+      if (nodeName === 'input' || nodeName === 'textarea' || nodeName === 'select') {
         // Get the label
         questionText = $.trim($('label[for="' + elementID + '"]')[0].childNodes[0].nodeValue)
         // Get the legend for that label/input
