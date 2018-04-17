@@ -2,7 +2,6 @@
 
 namespace ApplicationTest\Model\Rest\Stats;
 
-use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Stats\Entity;
 use Application\Model\Rest\Stats\Resource;
 use ApplicationTest\AbstractResourceTest;
@@ -10,6 +9,7 @@ use DateTime;
 use Mockery;
 use MongoDB\Collection as MongoCollection;
 use MongoDB\Driver\ReadPreference;
+use OpgTest\Lpa\DataModel\FixturesData;
 
 class ResourceTest extends AbstractResourceTest
 {
@@ -22,26 +22,11 @@ class ResourceTest extends AbstractResourceTest
     {
         parent::setUp();
 
-        $this->resource = new Resource($this->lpaCollection);
+        $this->resource = new Resource(FixturesData::getUser()->getId(), $this->lpaCollection);
 
         $this->resource->setLogger($this->logger);
 
         $this->resource->setAuthorizationService($this->authorizationService);
-    }
-
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('type', $this->resource->getIdentifier());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('stats', $this->resource->getName());
-    }
-
-    public function testGetType()
-    {
-        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $this->resource->getType());
     }
 
     public function testFetch()

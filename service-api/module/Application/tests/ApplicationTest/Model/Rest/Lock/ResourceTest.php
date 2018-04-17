@@ -3,9 +3,7 @@
 namespace ApplicationTest\Model\Rest\Lock;
 
 use Application\Library\ApiProblem\ApiProblem;
-use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Lock\Entity;
-use Application\Model\Rest\Lock\Resource;
 use Application\Model\Rest\Lock\Resource as LockResource;
 use ApplicationTest\AbstractResourceTest;
 use OpgTest\Lpa\DataModel\FixturesData;
@@ -21,55 +19,11 @@ class ResourceTest extends AbstractResourceTest
     {
         parent::setUp();
 
-        $this->resource = new LockResource($this->lpaCollection);
+        $this->resource = new LockResource(FixturesData::getUser()->getId(), $this->lpaCollection);
 
         $this->resource->setLogger($this->logger);
 
         $this->resource->setAuthorizationService($this->authorizationService);
-    }
-
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('lpaId', $this->resource->getIdentifier());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('lock', $this->resource->getName());
-    }
-
-    public function testGetType()
-    {
-        $this->assertEquals(AbstractResource::TYPE_SINGULAR, $this->resource->getType());
-    }
-
-    public function testFetchCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->resource);
-
-        $this->resource->fetch();
-    }
-
-    public function testFetchNull()
-    {
-        $lpa = FixturesData::getPfLpa();
-        $lpa->locked = null;
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
-        $entity = $resource->fetch();
-        $this->assertEquals(new Entity(false, $lpa), $entity);
-        $resourceBuilder->verify();
-    }
-
-    public function testFetch()
-    {
-        $lpa = FixturesData::getHwLpa();
-        $lpa->locked = true;
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
-        $entity = $resource->fetch();
-        $this->assertEquals(new Entity(true, $lpa), $entity);
-        $resourceBuilder->verify();
     }
 
     public function testCreateCheckAccess()

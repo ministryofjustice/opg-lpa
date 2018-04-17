@@ -4,7 +4,6 @@ namespace ApplicationTest\Model\Rest\WhoAreYou;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\WhoAreYou\Entity;
 use Application\Model\Rest\WhoAreYou\Resource as WhoAreYouResource;
 use ApplicationTest\AbstractResourceTest;
@@ -24,43 +23,11 @@ class ResourceTest extends AbstractResourceTest
     {
         parent::setUp();
 
-        $this->resource = new WhoAreYouResource($this->lpaCollection);
+        $this->resource = new WhoAreYouResource(FixturesData::getUser()->getId(), $this->lpaCollection);
 
         $this->resource->setLogger($this->logger);
 
         $this->resource->setAuthorizationService($this->authorizationService);
-    }
-
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('lpaId', $this->resource->getIdentifier());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('who-are-you', $this->resource->getName());
-    }
-
-    public function testGetType()
-    {
-        $this->assertEquals(AbstractResource::TYPE_SINGULAR, $this->resource->getType());
-    }
-
-    public function testFetchCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->resource);
-
-        $this->resource->fetch();
-    }
-
-    public function testFetch()
-    {
-        $lpa = FixturesData::getPfLpa();
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
-        $entity = $resource->fetch();
-        $this->assertEquals(new Entity($lpa->whoAreYouAnswered, $lpa), $entity);
-        $resourceBuilder->verify();
     }
 
     public function testCreateCheckAccess()

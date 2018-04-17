@@ -188,13 +188,11 @@ abstract class AbstractResourceBuilder
         }
 
         /** @var AbstractResource $resource */
-        $resource = new $resourceName($this->lpaCollection, $additionalConstructorArgument);
+        $resource = new $resourceName($this->user->getId(), $this->lpaCollection, $additionalConstructorArgument);
         $resource->setLogger($loggerMock);
         $resource->setAuthorizationService($this->authorizationService);
 
         if ($this->user !== null) {
-            $resource->setRouteUser(new UserEntity($this->user));
-
             if ($this->lpa !== null) {
                 $resource->setLpa($this->lpa);
 

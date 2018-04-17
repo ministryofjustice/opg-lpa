@@ -3,10 +3,8 @@
 namespace ApplicationTest\Model\Rest\Seed;
 
 use Application\Library\ApiProblem\ApiProblem;
-use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Seed\Entity;
 use Application\Model\Rest\Seed\Resource as SeedResource;
-use Application\Model\Rest\Seed\Resource;
 use ApplicationTest\AbstractResourceTest;
 use ApplicationTest\Model\Rest\Applications\ResourceBuilder as ApplicationsResourceBuilder;
 use OpgTest\Lpa\DataModel\FixturesData;
@@ -22,26 +20,11 @@ class ResourceTest extends AbstractResourceTest
     {
         parent::setUp();
 
-        $this->resource = new SeedResource($this->lpaCollection);
+        $this->resource = new SeedResource(FixturesData::getUser()->getId(), $this->lpaCollection);
 
         $this->resource->setLogger($this->logger);
 
         $this->resource->setAuthorizationService($this->authorizationService);
-    }
-
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('lpaId', $this->resource->getIdentifier());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('seed', $this->resource->getName());
-    }
-
-    public function testGetType()
-    {
-        $this->assertEquals(AbstractResource::TYPE_SINGULAR, $this->resource->getType());
     }
 
     public function testFetchCheckAccess()
@@ -260,48 +243,6 @@ class ResourceTest extends AbstractResourceTest
 
         $this->assertEquals(new Entity($seedLpa, $lpa), $entity);
         $this->assertEquals($seedLpa->id, $lpa->seed);
-
-        $resourceBuilder->verify();
-    }
-
-    public function testDeleteCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->resource);
-
-        $this->resource->delete();
-    }
-
-    public function testDeleteMalformedData()
-    {
-        //The bad id value on this user will fail validation
-        $lpa = FixturesData::getHwLpa();
-        $lpa->user = 3;
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
-
-        //So we expect an exception and for no document to be updated
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('A malformed LPA object');
-
-        $resource->delete();
-
-        $resourceBuilder->verify();
-    }
-
-    public function testDelete()
-    {
-        $lpa = FixturesData::getHwLpa();
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
-            ->build();
-
-        $response = $resource->delete();
-
-        $this->assertTrue($response);
-        $this->assertNull($lpa->seed);
 
         $resourceBuilder->verify();
     }

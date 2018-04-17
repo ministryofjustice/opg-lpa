@@ -3,10 +3,8 @@
 namespace ApplicationTest\Model\Rest\CertificateProvider;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\CertificateProvider\Entity;
 use Application\Model\Rest\CertificateProvider\Resource as CertificateProviderResource;
-use Application\Model\Rest\CertificateProvider\Resource;
 use ApplicationTest\AbstractResourceTest;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use OpgTest\Lpa\DataModel\FixturesData;
@@ -22,43 +20,11 @@ class ResourceTest extends AbstractResourceTest
     {
         parent::setUp();
 
-        $this->resource = new CertificateProviderResource($this->lpaCollection);
+        $this->resource = new CertificateProviderResource(FixturesData::getUser()->getId(), $this->lpaCollection);
 
         $this->resource->setLogger($this->logger);
 
         $this->resource->setAuthorizationService($this->authorizationService);
-    }
-
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('lpaId', $this->resource->getIdentifier());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('certificate-provider', $this->resource->getName());
-    }
-
-    public function testGetType()
-    {
-        $this->assertEquals(AbstractResource::TYPE_SINGULAR, $this->resource->getType());
-    }
-
-    public function testFetchCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->resource);
-
-        $this->resource->fetch();
-    }
-
-    public function testFetch()
-    {
-        $lpa = FixturesData::getPfLpa();
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
-        $entity = $resource->fetch();
-        $this->assertEquals(new Entity($lpa->document->certificateProvider, $lpa), $entity);
-        $resourceBuilder->verify();
     }
 
     public function testUpdateCheckAccess()

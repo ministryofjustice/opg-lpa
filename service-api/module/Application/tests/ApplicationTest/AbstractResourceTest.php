@@ -59,17 +59,13 @@ abstract class AbstractResourceTest extends MockeryTestCase
         bool $isAdmin = false,
         int $times = 1
     ) {
-        $userEntity = new UserEntity($user);
-        $resource->setRouteUser($userEntity);
-
-        $this->logger->shouldReceive('info')
-            ->withArgs(['Access allowed for user', ['userid' => $userEntity->userId()]])->times($times);
-
         $this->authorizationService->shouldReceive('isGranted')
             ->withArgs(['authenticated'])->times($times)
             ->andReturn($isAuthenticated);
 
         if ($isAuthenticated === true) {
+            $userEntity = new UserEntity($user);
+
             $this->authorizationService->shouldReceive('isGranted')
                 ->withArgs(['isAuthorizedToManageUser', $userEntity->userId()])->times($times)
                 ->andReturn($isAuthorizedToManageUser);

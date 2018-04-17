@@ -3,7 +3,6 @@
 namespace ApplicationTest\Model\Rest\Payment;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Payment\Entity;
 use Application\Model\Rest\Payment\Resource as PaymentResource;
 use ApplicationTest\AbstractResourceTest;
@@ -21,43 +20,11 @@ class ResourceTest extends AbstractResourceTest
     {
         parent::setUp();
 
-        $this->resource = new PaymentResource($this->lpaCollection);
+        $this->resource = new PaymentResource(FixturesData::getUser()->getId(), $this->lpaCollection);
 
         $this->resource->setLogger($this->logger);
 
         $this->resource->setAuthorizationService($this->authorizationService);
-    }
-
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('lpaId', $this->resource->getIdentifier());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('payment', $this->resource->getName());
-    }
-
-    public function testGetType()
-    {
-        $this->assertEquals(AbstractResource::TYPE_SINGULAR, $this->resource->getType());
-    }
-
-    public function testFetchCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->resource);
-
-        $this->resource->fetch();
-    }
-
-    public function testFetch()
-    {
-        $lpa = FixturesData::getPfLpa();
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
-        $entity = $resource->fetch();
-        $this->assertEquals(new Entity($lpa->payment, $lpa), $entity);
-        $resourceBuilder->verify();
     }
 
     public function testUpdateCheckAccess()
@@ -123,48 +90,6 @@ class ResourceTest extends AbstractResourceTest
         $entity = $resource->update($payment->toArray(), -1); //Id is ignored
 
         $this->assertEquals(new Entity($payment, $lpa), $entity);
-
-        $resourceBuilder->verify();
-    }
-
-    public function testDeleteCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->resource);
-
-        $this->resource->delete();
-    }
-
-    public function testDeleteMalformedData()
-    {
-        //The bad id value on this user will fail validation
-        $lpa = FixturesData::getHwLpa();
-        $lpa->user = 3;
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
-
-        //So we expect an exception and for no document to be updated
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('A malformed LPA object');
-
-        $resource->delete(); //Id is ignored
-
-        $resourceBuilder->verify();
-    }
-
-    public function testDelete()
-    {
-        $lpa = FixturesData::getHwLpa();
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
-            ->build();
-
-        $response = $resource->delete(); //Id is ignored
-
-        $this->assertTrue($response);
-        $this->assertNull($lpa->payment);
 
         $resourceBuilder->verify();
     }

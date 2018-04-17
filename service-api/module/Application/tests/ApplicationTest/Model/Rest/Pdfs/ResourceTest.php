@@ -5,11 +5,8 @@ namespace ApplicationTest\Model\Rest\Pdfs;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Http\Response\File as FileResponse;
-use Application\Model\Rest\AbstractResource;
-use Application\Model\Rest\Pdfs\Collection;
 use Application\Model\Rest\Pdfs\Entity;
 use Application\Model\Rest\Pdfs\Resource as PdfsResource;
-use Application\Model\Rest\Pdfs\Resource;
 use ApplicationTest\AbstractResourceTest;
 use Aws\Command;
 use Aws\Result;
@@ -17,7 +14,6 @@ use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use DynamoQueue\Queue\Client as DynamoQueue;
 use DynamoQueue\Queue\Job\Job as DynamoQueueJob;
-use GuzzleHttp\Stream\StreamInterface as GuzzleStreamInterface;
 use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
 use Zend\Crypt\BlockCipher;
@@ -36,7 +32,7 @@ class ResourceTest extends AbstractResourceTest
     {
         parent::setUp();
 
-        $this->resource = new PdfsResource($this->lpaCollection);
+        $this->resource = new PdfsResource(FixturesData::getUser()->getId(), $this->lpaCollection);
 
         $this->resource->setLogger($this->logger);
 
@@ -70,39 +66,6 @@ class ResourceTest extends AbstractResourceTest
         ];
 
         $this->resource->setPdfConfig($this->config);
-    }
-
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('resourceId', $this->resource->getIdentifier());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('pdfs', $this->resource->getName());
-    }
-
-    public function testGetType()
-    {
-        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $this->resource->getType());
-    }
-
-    public function testGetPdfTypes()
-    {
-        $this->assertEquals(['lpa120', 'lp3', 'lp1'], $this->resource->getPdfTypes());
-    }
-
-    public function testGetS3Client()
-    {
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder->withConfig($this->config)->build();
-
-        //Lazy loading so first call will retrieve the client, second will return the same instance
-        $s3Client = $resource->testableGetS3Client();
-        $loadedS3Client = $resource->testableGetS3Client();
-
-        $this->assertTrue($s3Client instanceof S3Client);
-        $this->assertTrue($s3Client === $loadedS3Client);
     }
 
     public function testFetchCheckAccess()

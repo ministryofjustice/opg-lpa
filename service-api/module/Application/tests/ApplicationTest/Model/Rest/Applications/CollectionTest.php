@@ -24,19 +24,15 @@ class CollectionTest extends TestCase
 
     public function testToArray()
     {
-        $lpaArray = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
+        $lpa1 = FixturesData::getHwLpa();
+        $lpa2 = FixturesData::getPfLpa();
+        $lpaArray = [$lpa1, $lpa2];
         $collection = new Collection(new ArrayAdapter($lpaArray), 1);
 
         $array = $collection->toArray();
 
-        $this->assertEquals(count($lpaArray), $array['count']);
         $this->assertEquals(count($lpaArray), $array['total']);
-        $this->assertEquals(1, $array['pages']);
-        $this->assertTrue($array['items'][0] instanceof AbbreviatedEntity);
-        $this->assertTrue($array['items'][1] instanceof AbbreviatedEntity);
-        /* @var $items AbbreviatedEntity[] */
-        $items = $array['items'];
-        $this->assertEquals($lpaArray[0], $items[0]->getLpa());
-        $this->assertEquals($lpaArray[1], $items[1]->getLpa());
+        $this->assertEquals($array['applications'][0], (new AbbreviatedEntity($lpa1))->toArray());
+        $this->assertEquals($array['applications'][1], (new AbbreviatedEntity($lpa2))->toArray());
     }
 }

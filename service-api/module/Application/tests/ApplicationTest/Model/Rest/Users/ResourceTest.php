@@ -6,7 +6,6 @@ use Application\DataAccess\Mongo\DateCallback;
 use Application\DataAccess\UserDal;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Authorization\UnauthorizedException;
-use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Users\Entity;
 use Application\Model\Rest\Users\Resource as UsersResource;
 use Application\Model\Rest\Applications\Resource as ApplicationsResource;
@@ -28,26 +27,11 @@ class ResourceTest extends AbstractResourceTest
     {
         parent::setUp();
 
-        $this->resource = new UsersResource($this->lpaCollection);
+        $this->resource = new UsersResource(FixturesData::getUser()->getId(), $this->lpaCollection);
 
         $this->resource->setLogger($this->logger);
 
         $this->resource->setAuthorizationService($this->authorizationService);
-    }
-
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('userId', $this->resource->getIdentifier());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('users', $this->resource->getName());
-    }
-
-    public function testGetType()
-    {
-        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $this->resource->getType());
     }
 
     public function testFetchCheckAccess()

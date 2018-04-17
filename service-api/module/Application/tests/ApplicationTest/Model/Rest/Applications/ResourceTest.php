@@ -7,7 +7,6 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\DateTime;
-use Application\Model\Rest\AbstractResource;
 use Application\Model\Rest\Applications\AbbreviatedEntity;
 use Application\Model\Rest\Applications\Collection;
 use Application\Model\Rest\Applications\Entity;
@@ -33,21 +32,11 @@ class ResourceTest extends AbstractResourceTest
     {
         parent::setUp();
 
-        $this->resource = new TestableResource($this->lpaCollection);
+        $this->resource = new TestableResource(FixturesData::getUser()->getId(), $this->lpaCollection);
 
         $this->resource->setLogger($this->logger);
 
         $this->resource->setAuthorizationService($this->authorizationService);
-    }
-
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('lpaId', $this->resource->getIdentifier());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('applications', $this->resource->getName());
     }
 
     public function testGetRouteUserException()
@@ -70,11 +59,6 @@ class ResourceTest extends AbstractResourceTest
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('LPA not set');
         $this->resource->getLpa();
-    }
-
-    public function testGetType()
-    {
-        $this->assertEquals(AbstractResource::TYPE_COLLECTION, $this->resource->getType());
     }
 
     public function testFetchCheckAccess()
