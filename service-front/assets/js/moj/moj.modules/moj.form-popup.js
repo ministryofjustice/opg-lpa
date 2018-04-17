@@ -164,6 +164,8 @@
             moj.Events.trigger('Validation.renderFieldSummary', {form: $form, name: name, errors: errors});
           });
           moj.Events.trigger('Validation.renderSummary', {form: $form, data: data});
+          // Track form errors
+          moj.Events.trigger('formErrorTracker.checkErrors', {wrap: '#popup'});
           // show error summary
         } else if (response.success === undefined) {
           // repopulate popup
@@ -179,6 +181,8 @@
           if ($form.serialize().indexOf('reuse-details') !== -1) {
             moj.Events.trigger('FormPopup.checkReusedDetails');
           }
+          // Track form errors
+          moj.Events.trigger('formErrorTracker.checkErrors', {wrap: '#popup'});
         } else {
           window.location.reload();
         }
