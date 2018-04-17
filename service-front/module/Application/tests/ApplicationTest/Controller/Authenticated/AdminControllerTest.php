@@ -36,6 +36,9 @@ class AdminControllerTest extends AbstractControllerTest
         $this->systemMessageForm = Mockery::mock(SystemMessageForm::class);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Admin\SystemMessageForm'])->andReturn($this->systemMessageForm);
+
+        //  By default set up the user as admin
+        $this->user->email->address = 'admin@test.com';
     }
 
     public function testIndexAction()
@@ -50,12 +53,11 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testOnDispatchEmptyEmail()
     {
+        $this->user->email->address = '';
+
         $response = new Response();
         $event = new MvcEvent();
 
-        $this->user = FixturesData::getUser();
-        $this->user->email = ['address' => ''];
-        $this->userDetailsSession->user = $this->user;
         $this->redirect->shouldReceive('toRoute')->withArgs(['home'])->andReturn($response)->once();
 
         $result = $this->controller->onDispatch($event);
@@ -65,12 +67,11 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testOnDispatchUserNotAdmin()
     {
+        $this->user->email->address = 'unit@test.com';
+
         $response = new Response();
         $event = new MvcEvent();
 
-        $this->user = FixturesData::getUser();
-        $this->user->email = ['address' => 'notadmin@test.com'];
-        $this->userDetailsSession->user = $this->user;
         $this->redirect->shouldReceive('toRoute')->withArgs(['home'])->andReturn($response)->once();
 
         $result = $this->controller->onDispatch($event);
@@ -87,12 +88,6 @@ class AdminControllerTest extends AbstractControllerTest
         $event->setResponse($response);
         $this->controller->setEvent($event);
 
-        $this->user = FixturesData::getUser();
-        $this->user->email = ['address' => 'admin@test.com'];
-        $this->userDetailsSession->user = $this->user;
-        $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
-        $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
-        $this->controller->setUser($this->userIdentity);
         $this->logger->shouldReceive('info')
             ->withArgs(['Request to ' . AdminController::class, $this->userIdentity->toArray()])->once();
         $routeMatch->shouldReceive('getParam')->withArgs(['action', 'not-found'])->andReturn('not-found')->once();
