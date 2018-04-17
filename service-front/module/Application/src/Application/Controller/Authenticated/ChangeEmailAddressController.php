@@ -9,7 +9,6 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController
 {
     public function indexAction()
     {
-
         $form = $this->getFormElementManager()->get('Application\Form\User\ChangeEmailAddress');
         $form->setAttribute('action', $this->url()->fromRoute('user/change-email-address'));
 
