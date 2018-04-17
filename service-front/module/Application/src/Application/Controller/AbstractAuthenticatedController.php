@@ -78,23 +78,20 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         $this->lpaApplicationService = $lpaApplicationService;
         $this->userService = $userService;
 
-        //  Get the user identity - throw an exception isn't one
-        if (!$authenticationService->hasIdentity()) {
-            throw new RuntimeException('A valid Identity has not been set');
+        //  If there is a user identity set up the user - if this is missing the request will be bounced in the onDispatch function
+        if ($authenticationService->hasIdentity()) {
+            $this->identity = $authenticationService->getIdentity();
+
+            //  Try to get the user details for this identity - look in the session first
+            $user = $userDetailsSession->user;
+
+            if (!$user instanceof User) {
+                $user = $this->userService->getUserDetails();
+                $userDetailsSession->user = $user;
+            }
+
+            $this->user = $user;
         }
-
-        //  Try to get the identity
-        $this->identity = $authenticationService->getIdentity();
-
-        //  Try to get the user details for this identity - look in the session first
-        $user = $userDetailsSession->user;
-
-        if (!$user instanceof User) {
-            $user = $this->userService->getUserDetails();
-            $userDetailsSession->user = $user;
-        }
-
-        $this->user = $user;
     }
 
     /**
@@ -110,7 +107,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         //----------------------------------------------------------------------
         // Check we have a user set, thus ensuring an authenticated user
 
-        if ($authenticated = $this->checkAuthenticated() !== true) {
+        if (($authenticated = $this->checkAuthenticated()) !== true) {
             return $authenticated;
         }
 

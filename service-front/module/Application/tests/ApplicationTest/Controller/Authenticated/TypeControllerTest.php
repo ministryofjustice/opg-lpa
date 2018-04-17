@@ -13,8 +13,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
-use Zend\Mvc\MvcEvent;
-use Zend\Router\RouteMatch;
 use Zend\View\Model\ViewModel;
 
 class TypeControllerTest extends AbstractControllerTest

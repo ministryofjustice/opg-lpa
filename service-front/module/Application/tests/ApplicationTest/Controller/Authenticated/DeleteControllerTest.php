@@ -2,10 +2,7 @@
 
 namespace ApplicationTest\Controller\Authenticated;
 
-use Application\Model\Service\User\Delete;
 use ApplicationTest\Controller\AbstractControllerTest;
-use Mockery;
-use Mockery\MockInterface;
 use Zend\Http\Response;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayObject;
@@ -17,18 +14,19 @@ class DeleteControllerTest extends AbstractControllerTest
      * @var TestableDeleteController
      */
     private $controller;
-    /**
-     * @var MockInterface|Delete
-     */
-    private $delete;
 
-    public function setUp()
+    /**
+     * @param bool $setUpIdentity
+     */
+    public function setUpController($setUpIdentity = true)
     {
-        $this->controller = parent::controllerSetUp(TestableDeleteController::class);
+        $this->controller = parent::controllerSetUp(TestableDeleteController::class, $setUpIdentity);
     }
 
     public function testIndexAction()
     {
+        $this->setUpController();
+
         /** @var ViewModel $result */
         $result = $this->controller->indexAction();
 
@@ -37,9 +35,9 @@ class DeleteControllerTest extends AbstractControllerTest
 
     public function testConfirmActionFailed()
     {
-        $this->delete = Mockery::mock(Delete::class);
-        $this->controller->setDeleteUser($this->delete);
-        $this->delete->shouldReceive('delete')->andReturn(false)->once();
+        $this->setUpController();
+
+        $this->userDetails->shouldReceive('delete')->andReturn(false)->once();
 
         /** @var ViewModel $result */
         $result = $this->controller->confirmAction();
@@ -50,11 +48,11 @@ class DeleteControllerTest extends AbstractControllerTest
 
     public function testConfirmAction()
     {
+        $this->setUpController();
+
         $response = new Response();
 
-        $this->delete = Mockery::mock(Delete::class);
-        $this->controller->setDeleteUser($this->delete);
-        $this->delete->shouldReceive('delete')->andReturn(true)->once();
+        $this->userDetails->shouldReceive('delete')->andReturn(true)->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['deleted'])->andReturn($response)->once();
 
         $result = $this->controller->confirmAction();
@@ -64,6 +62,8 @@ class DeleteControllerTest extends AbstractControllerTest
 
     public function testCheckAuthenticated()
     {
+        $this->setUpController(false);
+
         $response = new Response();
 
         $this->sessionManager->shouldReceive('start')->never();

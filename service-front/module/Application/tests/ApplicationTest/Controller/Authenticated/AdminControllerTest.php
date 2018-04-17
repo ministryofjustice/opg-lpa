@@ -4,12 +4,9 @@ namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\AdminController;
 use Application\Form\Admin\SystemMessageForm;
-use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
-use DateTime;
 use Mockery;
 use Mockery\MockInterface;
-use OpgTest\Lpa\DataModel\FixturesData;
 use Zend\Form\Element;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
