@@ -1,26 +1,29 @@
-// Error tracking module for Google Analytics
+// Analytics form error tracking module for LPA
+// Dependencies: moj, jQuery
 
-;(function (global) {
-  'use strict'
+(function () {
+  'use strict';
 
-  var $ = global.jQuery
-  var GOVUK = global.GOVUK || {}
+  moj.Modules.formErrorTracker = {
 
-  GOVUK.analyticsPlugins = GOVUK.analyticsPlugins || {}
-  GOVUK.analyticsPlugins.formErrorTracker = function () {
+    init: function () {
+      this.checkErrors();
+    },
 
-    var errorSummarySelector = '.error-summary-list a'
+    checkErrors: function(){
+      var errorSummarySelector = '.error-summary-list a'
 
-    var errors = $('.error-summary-list li a')
-    for (var i = 0; i < errors.length; i++) {
-      trackError(errors[i])
-    }
+      var errors = $('.error-summary-list li a')
+      for (var i = 0; i < errors.length; i++) {
+        this.trackError(errors[i])
+      }
+    },
 
-    function trackError(error) {
+    trackError: function(error) {
       var $error = $(error)
       var errorText = $.trim($error.text())
       var errorID = $error.attr('href')
-      var questionText = getQuestionText(error)
+      var questionText = this.getQuestionText(error)
 
       var actionLabel = errorID + ' - ' + errorText
 
@@ -29,12 +32,10 @@
         label: actionLabel
       }
 
-      window.optionsGlobal = options
-
       GOVUK.analytics.trackEvent('form error', questionText, options)
-    }
+    },
 
-    function getQuestionText(error) {
+    getQuestionText: function(error) {
       var $error = $(error)
       var errorID = $error.attr('href')
 
@@ -66,7 +67,5 @@
 
       return questionText
     }
-  }
-
-  global.GOVUK = GOVUK
-})(window)
+  };
+})();

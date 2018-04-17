@@ -130,10 +130,8 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.who-are-you.js',
           'assets/js/moj/moj.modules/moj.polyfill.js',
           'assets/js/moj/moj.modules/moj.single-use.js',
+          'assets/js/moj/moj.modules/moj.analytics.js',
           'assets/js/moj/moj.modules/moj.form-error-tracker.js',
-
-          // GOVUK init
-          'assets/js/govuk/analytics.js',
 
           // Init Script
           'assets/js/main.js',
