@@ -23,6 +23,7 @@ use ApplicationTest\Controller\Authenticated\Lpa\ReplacementAttorneyControllerTe
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
@@ -297,13 +298,11 @@ abstract class AbstractControllerTest extends MockeryTestCase
             $this->userDetailsSession = new Container();
             $this->userDetailsSession->user = $this->user;
 
-            $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$this->lpa->id])->andReturn($this->lpa)->once();
-
-            $this->replacementAttorneyCleanup = Mockery::mock(ReplacementAttorneyCleanup::class);
-
-            $this->metadata = Mockery::mock(Metadata::class);
-
             if (is_subclass_of($controllerName, AbstractLpaController::class)) {
+                $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$this->lpa->id])->andReturn($this->lpa)->once();
+                $this->replacementAttorneyCleanup = Mockery::mock(ReplacementAttorneyCleanup::class);
+                $this->metadata = Mockery::mock(Metadata::class);
+
                 $controller = new $controllerName(
                     $this->lpa->id,
                     $this->formElementManager,
@@ -719,6 +718,10 @@ abstract class AbstractControllerTest extends MockeryTestCase
                 'title' => 'Mrs',
                 'first' => 'New',
                 'last'  => 'User',
+            ]);
+
+            $user->email = new EmailAddress([
+                'address' => 'unit@test.com',
             ]);
         }
 
