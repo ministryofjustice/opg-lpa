@@ -177,18 +177,13 @@ abstract class AbstractControllerTest extends MockeryTestCase
     protected $userDetails;
 
     /**
-     * @param string $controllerName
-     * @param bool $setUpIdentity
-     * @param Lpa|null $lpa
-     * @return AbstractBaseController
+     * Set up the services in default configuration - these can be adapted in the subclasses before getting the controller to test
      */
-    public function controllerSetUp(string $controllerName, $setUpIdentity = true, Lpa $lpa = null)
+    public function setUp()
     {
-        $this->lpa = ($lpa instanceof Lpa ? $lpa : FixturesData::getPfLpa());
+        $this->lpa = FixturesData::getPfLpa();
 
         $this->logger = Mockery::mock(Logger::class);
-
-        $this->authenticationService = Mockery::mock(AuthenticationService::class);
 
         $this->pluginManager = Mockery::mock(PluginManager::class);
         $this->pluginManager->shouldReceive('setController');
@@ -233,13 +228,9 @@ abstract class AbstractControllerTest extends MockeryTestCase
 
         $this->user = $this->getUserDetails();
 
-        if ($setUpIdentity) {
-            $this->userIdentity = new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime());
-        }
+        $this->setIdentity(new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime('today midnight')));
 
-        $this->authenticationService->shouldReceive('hasIdentity')->andReturn(!is_null($this->userIdentity));
-        $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity);
-
+        //  Config array merged so it can be updated in calling test class if required
         $this->config = [
             'version' => [
                 'tag' => '1.2.3.4-test',
@@ -292,19 +283,50 @@ abstract class AbstractControllerTest extends MockeryTestCase
         $this->apiClient = Mockery::mock(Client::class);
 
         $this->router = Mockery::mock(RouteStackInterface::class);
+    }
 
+    /**
+     * Set up the identity and the authentication service responses
+     *
+     * @param UserIdentity|null $identity
+     */
+    protected function setIdentity(UserIdentity $identity = null)
+    {
+        $this->userIdentity = $identity;
+
+        //  Mock or remock the authentication service
+        $this->authenticationService = Mockery::mock(AuthenticationService::class);
+
+        $this->authenticationService->shouldReceive('hasIdentity')->andReturn(!is_null($this->userIdentity));
+        $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity);
+    }
+
+    /**
+     * @param string $controllerName
+     * @return AbstractBaseController
+     */
+    protected function getController(string $controllerName)
+    {
         /** @var AbstractBaseController $controller */
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
             $this->userDetailsSession = new Container();
             $this->userDetailsSession->user = $this->user;
 
             if (is_subclass_of($controllerName, AbstractLpaController::class)) {
-                $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$this->lpa->id])->andReturn($this->lpa)->once();
+                $lpaId = null;
+
+                if ($this->lpa instanceof Lpa) {
+                    $lpaId = $this->lpa->id;
+                    $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpaId])->andReturn($this->lpa)->once();
+                } else {
+                    $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpaId])->andReturn(false)->once();
+                }
+
                 $this->replacementAttorneyCleanup = Mockery::mock(ReplacementAttorneyCleanup::class);
                 $this->metadata = Mockery::mock(Metadata::class);
 
                 $controller = new $controllerName(
-                    $this->lpa->id,
+                    $lpaId,
                     $this->formElementManager,
                     $this->sessionManager,
                     $this->authenticationService,
