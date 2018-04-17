@@ -8,8 +8,6 @@ use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
@@ -24,10 +22,6 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
      * @var MockInterface|HowAttorneysMakeDecisionForm
      */
     private $form;
-    /**
-     * @var Lpa
-     */
-    private $lpa;
     private $postData = [
         'how' => null,
         'howDetails' => null
@@ -38,24 +32,13 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
         $this->controller = parent::controllerSetUp(HowReplacementAttorneysMakeDecisionController::class);
 
         $this->form = Mockery::mock(HowAttorneysMakeDecisionForm::class);
-        $this->lpa = FixturesData::getPfLpa();
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\HowAttorneysMakeDecisionForm', ['lpa' => $this->lpa]])
             ->andReturn($this->form);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage A LPA has not been set
-     */
-    public function testIndexActionNoLpa()
-    {
-        $this->controller->indexAction();
-    }
-
     public function testIndexActionGet()
     {
-        $this->controller->setLpa($this->lpa);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')
             ->withArgs([$this->lpa->document->replacementAttorneyDecisions->flatten()])->once();
@@ -70,7 +53,6 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
 
     public function testIndexActionPostInvalid()
     {
-        $this->controller->setLpa($this->lpa);
         $this->setPostInvalid($this->form, $this->postData);
         $this->form->shouldReceive('setValidationGroup')->withArgs(['how'])->once();
 
@@ -86,7 +68,6 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
     {
         $response = new Response();
 
-        $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('setValidationGroup')->withArgs(['how'])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
@@ -110,13 +91,12 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
         $postData = $this->postData;
         $postData['how'] = AbstractDecisions::LPA_DECISION_HOW_JOINTLY;
 
-        $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('setValidationGroup')->withArgs(['how'])->once();
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setReplacementAttorneyDecisions')
-            ->withArgs(function ($lpaId, $replacementAttorneyDecisions) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $replacementAttorneyDecisions) {
+                return $lpa->id === $this->lpa->id
                     && $replacementAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY
                     && $replacementAttorneyDecisions->howDetails == null;
             })->andReturn(false)->once();
@@ -135,12 +115,11 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
         $postData['howDetails'] = 'Details';
 
         $this->lpa->document->replacementAttorneyDecisions = null;
-        $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->twice();
         $this->lpaApplicationService->shouldReceive('setReplacementAttorneyDecisions')
-            ->withArgs(function ($lpaId, $replacementAttorneyDecisions) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $replacementAttorneyDecisions) {
+                return $lpa->id === $this->lpa->id
                     && $replacementAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_DEPENDS
                     && $replacementAttorneyDecisions->howDetails == 'Details';
             })->andReturn(true)->once();

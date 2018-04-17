@@ -4,9 +4,6 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\SummaryController;
 use ApplicationTest\Controller\AbstractControllerTest;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
-use RuntimeException;
 use Zend\View\Model\ViewModel;
 
 class SummaryControllerTest extends AbstractControllerTest
@@ -15,33 +12,14 @@ class SummaryControllerTest extends AbstractControllerTest
      * @var SummaryController
      */
     private $controller;
-    /**
-     * @var Lpa
-     */
-    private $lpa;
 
     public function setUp()
     {
         $this->controller = parent::controllerSetUp(SummaryController::class);
-
-        $this->lpa = FixturesData::getPfLpa();
-    }
-
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage A LPA has not been set
-     */
-    public function testIndexActionNoLpa()
-    {
-        $this->params->shouldReceive('fromQuery')
-            ->withArgs(['return-route', 'lpa/applicant'])->andReturn('lpa/applicant')->once();
-
-        $this->controller->indexAction();
     }
 
     public function testIndexAction()
     {
-        $this->controller->setLpa($this->lpa);
         $this->params->shouldReceive('fromQuery')
             ->withArgs(['return-route', 'lpa/applicant'])->andReturn('lpa/applicant')->once();
 

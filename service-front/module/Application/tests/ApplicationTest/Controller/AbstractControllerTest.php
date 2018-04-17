@@ -29,6 +29,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\Logger;
+use OpgTest\Lpa\DataModel\FixturesData;
 use Zend\Cache\Storage\Adapter\Memory;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\ResponseCollection;
@@ -61,6 +62,10 @@ abstract class AbstractControllerTest extends MockeryTestCase
      * @var MockInterface|Logger
      */
     protected $logger;
+    /**
+     * @var Lpa
+     */
+    protected $lpa;
     /**
      * @var MockInterface|AuthenticationService
      */
@@ -171,11 +176,15 @@ abstract class AbstractControllerTest extends MockeryTestCase
     protected $userDetails;
 
     /**
-     * @param string $controllerName the class of controller to create
-     * @return AbstractController
+     * @param string $controllerName
+     * @param bool $setUpIdentity
+     * @param Lpa|null $lpa
+     * @return AbstractBaseController
      */
-    public function controllerSetUp(string $controllerName, $setUpIdentity = true)
+    public function controllerSetUp(string $controllerName, $setUpIdentity = true, Lpa $lpa = null)
     {
+        $this->lpa = ($lpa instanceof Lpa ? $lpa : FixturesData::getPfLpa());
+
         $this->logger = Mockery::mock(Logger::class);
 
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
@@ -213,6 +222,22 @@ abstract class AbstractControllerTest extends MockeryTestCase
 
         $this->responseCollection = Mockery::mock(ResponseCollection::class);
         $this->eventManager->shouldReceive('triggerEventUntil')->andReturn($this->responseCollection);
+
+        $this->formElementManager = Mockery::mock(AbstractPluginManager::class);
+
+        $this->storage = new ArrayStorage();
+
+        $this->sessionManager = Mockery::mock(SessionManager::class);
+        $this->sessionManager->shouldReceive('getStorage')->andReturn($this->storage);
+
+        $this->user = $this->getUserDetails();
+
+        if ($setUpIdentity) {
+            $this->userIdentity = new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime());
+        }
+
+        $this->authenticationService->shouldReceive('hasIdentity')->andReturn(!is_null($this->userIdentity));
+        $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity);
 
         $this->config = [
             'version' => [
@@ -253,27 +278,11 @@ abstract class AbstractControllerTest extends MockeryTestCase
             ]
         ];
 
-        $this->formElementManager = Mockery::mock(AbstractPluginManager::class);
-
-        $this->storage = new ArrayStorage();
-
-        $this->sessionManager = Mockery::mock(SessionManager::class);
-        $this->sessionManager->shouldReceive('getStorage')->andReturn($this->storage);
+        $this->cache = Mockery::mock(StorageInterface::class);
 
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
 
-        $this->user = $this->getUserDetails();
-        $this->userDetailsSession = new Container();
-        $this->userDetailsSession->user = $this->user;
-
-        if ($setUpIdentity) {
-            $this->userIdentity = new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime());
-        }
-
-        $this->authenticationService->shouldReceive('hasIdentity')->andReturn(!is_null($this->userIdentity));
-        $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity);
-
-        $this->replacementAttorneyCleanup = Mockery::mock(ReplacementAttorneyCleanup::class);
+        $this->userDetails = Mockery::mock(Details::class);
 
         $this->request = Mockery::mock(Request::class);
 
@@ -281,18 +290,22 @@ abstract class AbstractControllerTest extends MockeryTestCase
 
         $this->apiClient = Mockery::mock(Client::class);
 
-        $this->cache = Mockery::mock(StorageInterface::class);
-
-        $this->metadata = Mockery::mock(Metadata::class);
-
         $this->router = Mockery::mock(RouteStackInterface::class);
-
-        $this->userDetails = Mockery::mock(Details::class);
 
         /** @var AbstractBaseController $controller */
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
+            $this->userDetailsSession = new Container();
+            $this->userDetailsSession->user = $this->user;
+
+            $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$this->lpa->id])->andReturn($this->lpa)->once();
+
+            $this->replacementAttorneyCleanup = Mockery::mock(ReplacementAttorneyCleanup::class);
+
+            $this->metadata = Mockery::mock(Metadata::class);
+
             if (is_subclass_of($controllerName, AbstractLpaController::class)) {
                 $controller = new $controllerName(
+                    $this->lpa->id,
                     $this->formElementManager,
                     $this->sessionManager,
                     $this->authenticationService,
@@ -608,15 +621,18 @@ abstract class AbstractControllerTest extends MockeryTestCase
     {
         $url = $this->getLpaUrl($lpa, $route, $extraQueryParameters, $fragment);
         $queryParameters = ['lpa-id' => $lpa->id];
+
         if (is_array($extraQueryParameters)) {
             $queryParameters = array_merge($queryParameters, $extraQueryParameters);
         }
+
         if (is_array($fragment)) {
             $this->url->shouldReceive('fromRoute')
                 ->withArgs([$route, $queryParameters, $fragment])->andReturn($url)->once();
         } else {
             $this->url->shouldReceive('fromRoute')->withArgs([$route, $queryParameters])->andReturn($url)->once();
         }
+
         return $url;
     }
 
@@ -692,7 +708,8 @@ abstract class AbstractControllerTest extends MockeryTestCase
 
         if (!$newDetails) {
             //  Just set a name for the user details to be considered existing
-            $user->id = 123;
+            //  But user the user ID from the LPA fixture data
+            $user->id = $this->lpa->user;
 
             $user->createdAt = new DateTime();
 
