@@ -13,10 +13,6 @@ use Zend\View\Model\ViewModel;
 class ChangePasswordControllerTest extends AbstractControllerTest
 {
     /**
-     * @var ChangePasswordController
-     */
-    private $controller;
-    /**
      * @var MockInterface|ChangePassword
      */
     private $form;
@@ -27,7 +23,7 @@ class ChangePasswordControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(ChangePasswordController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(ChangePassword::class);
         $this->formElementManager->shouldReceive('get')
@@ -39,13 +35,15 @@ class ChangePasswordControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        $controller = $this->getController(ChangePasswordController::class);
+
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['user/change-password'])->andReturn('user/change-password')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'user/change-password'])->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -56,13 +54,15 @@ class ChangePasswordControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        $controller = $this->getController(ChangePasswordController::class);
+
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['user/change-password'])->andReturn('user/change-password')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'user/change-password'])->once();
         $this->setPostInvalid($this->form, $this->postData);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -73,6 +73,8 @@ class ChangePasswordControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostValid()
     {
+        $controller = $this->getController(ChangePasswordController::class);
+
         $response = new Response();
 
         $this->url->shouldReceive('fromRoute')
@@ -90,13 +92,15 @@ class ChangePasswordControllerTest extends AbstractControllerTest
         ])->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['user/about-you'])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionUpdateFails()
     {
+        $controller = $this->getController(ChangePasswordController::class);
+
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['user/change-password'])->andReturn('user/change-password')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'user/change-password'])->once();
@@ -107,7 +111,7 @@ class ChangePasswordControllerTest extends AbstractControllerTest
             ->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());

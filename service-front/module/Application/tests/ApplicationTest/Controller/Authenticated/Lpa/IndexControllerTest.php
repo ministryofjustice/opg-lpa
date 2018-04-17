@@ -9,18 +9,10 @@ use Zend\Http\Response;
 
 class IndexControllerTest extends AbstractControllerTest
 {
-    /**
-     * @var IndexController
-     */
-    private $controller;
-
-    public function setUp()
-    {
-        $this->controller = parent::controllerSetUp(IndexController::class);
-    }
-
     public function testIndexActionNoSeed()
     {
+        $controller = $this->getController(IndexController::class);
+
         $response = new Response();
 
         $this->lpa->document->type = null;
@@ -30,13 +22,15 @@ class IndexControllerTest extends AbstractControllerTest
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/form-type', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionSeed()
     {
+        $controller = $this->getController(IndexController::class);
+
         $response = new Response();
 
         $seedLpa = FixturesData::getHwLpa();
@@ -47,7 +41,7 @@ class IndexControllerTest extends AbstractControllerTest
 
         $this->setRedirectToRoute('lpa/view-docs', $this->lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }

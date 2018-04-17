@@ -14,10 +14,6 @@ use Zend\View\Model\ViewModel;
 class AboutYouControllerTest extends AbstractControllerTest
 {
     /**
-     * @var AboutYouController
-     */
-    private $controller;
-    /**
      * @var MockInterface|AboutYou
      */
     private $form;
@@ -25,7 +21,7 @@ class AboutYouControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(AboutYouController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(AboutYou::class);
         $this->formElementManager->shouldReceive('get')
@@ -34,6 +30,8 @@ class AboutYouControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        $controller = $this->getController(AboutYouController::class);
+
         //  Set up any route or request parameters
         $this->params->shouldReceive('fromRoute')->withArgs(['new', null])->andReturn(null)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -46,7 +44,7 @@ class AboutYouControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('bind')->withArgs([$this->user->flatten()])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -55,6 +53,8 @@ class AboutYouControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        $controller = $this->getController(AboutYouController::class);
+
         //  Set up any route or request parameters
         $this->params->shouldReceive('fromRoute')->withArgs(['new', null])->andReturn(null)->once();
 
@@ -66,7 +66,7 @@ class AboutYouControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('setAttribute')->withArgs(['action', '/user/about-you'])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -75,6 +75,8 @@ class AboutYouControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostValid()
     {
+        $controller = $this->getController(AboutYouController::class);
+
         $response = new Response();
 
         //  Set up any route or request parameters
@@ -92,13 +94,15 @@ class AboutYouControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('setAttribute')->withArgs(['action', '/user/about-you'])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(Response::class, $result);
     }
 
     public function testNewActionGet()
     {
+        $controller = $this->getController(AboutYouController::class);
+
         //  Set up any route or request parameters
         $this->params->shouldReceive('fromRoute')->withArgs(['new', null])->andReturn('new')->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -112,7 +116,7 @@ class AboutYouControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('bind')->withArgs([$this->user->flatten()])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -121,6 +125,8 @@ class AboutYouControllerTest extends AbstractControllerTest
 
     public function testNewActionPostValid()
     {
+        $controller = $this->getController(AboutYouController::class);
+
         $response = new Response();
 
         //  Set up any route or request parameters
@@ -138,7 +144,7 @@ class AboutYouControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }

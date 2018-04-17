@@ -12,27 +12,23 @@ use Zend\View\Model\ViewModel;
 
 class AuthControllerCookieTest extends AbstractControllerTest
 {
-    /**
-     * @var AuthController
-     */
-    private $controller;
-
     public function testIndexActionAlreadySignedIn()
     {
-        $this->controller = parent::controllerSetUp(AuthController::class);
+        $controller = $this->getController(AuthController::class);
 
         $response = new Response();
 
         $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionCheckCookieFails()
     {
-        $this->controller = parent::controllerSetUp(AuthController::class, false);
+        $this->setIdentity(null);
+        $controller = $this->getController(AuthController::class);
 
         $response = new Response();
 
@@ -41,14 +37,15 @@ class AuthControllerCookieTest extends AbstractControllerTest
         $this->params->shouldReceive('fromQuery')->withArgs(['cookie'])->andReturn(1)->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['enable-cookie'])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionCheckCookieRedirect()
     {
-        $this->controller = parent::controllerSetUp(AuthController::class, false);
+        $this->setIdentity(null);
+        $controller = $this->getController(AuthController::class);
 
         $response = new Response();
 
@@ -58,14 +55,15 @@ class AuthControllerCookieTest extends AbstractControllerTest
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['login', array(), ['query' => ['cookie' => '1']]])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionCheckCookieExistsFalse()
     {
-        $this->controller = parent::controllerSetUp(AuthController::class, false);
+        $this->setIdentity(null);
+        $controller = $this->getController(AuthController::class);
 
         $cookie = Mockery::mock(Cookie::class);
         $response = new Response();
@@ -79,14 +77,15 @@ class AuthControllerCookieTest extends AbstractControllerTest
         $this->request->shouldReceive('getMethod')->andReturn('GET')->once();
         $this->request->shouldReceive('getCookie')->andReturn($cookie)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionCheckCookieExists()
     {
-        $this->controller = parent::controllerSetUp(AuthController::class, false);
+        $this->setIdentity(null);
+        $controller = $this->getController(AuthController::class);
 
         $cookie = Mockery::mock(Cookie::class);
         $loginForm = new Login();
@@ -102,7 +101,7 @@ class AuthControllerCookieTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -113,7 +112,8 @@ class AuthControllerCookieTest extends AbstractControllerTest
 
     public function testIndexActionCheckCookiePost()
     {
-        $this->controller = parent::controllerSetUp(AuthController::class, false);
+        $this->setIdentity(null);
+        $controller = $this->getController(AuthController::class);
 
         $loginForm = new Login();
 
@@ -125,7 +125,7 @@ class AuthControllerCookieTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());

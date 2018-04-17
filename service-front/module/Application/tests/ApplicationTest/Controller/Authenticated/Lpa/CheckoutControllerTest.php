@@ -23,10 +23,6 @@ use Alphagov\Pay\Response\Payment as GovPayPayment;
 class CheckoutControllerTest extends AbstractControllerTest
 {
     /**
-     * @var CheckoutController
-     */
-    private $controller;
-    /**
      * @var MockInterface|Communication
      */
     private $communication;
@@ -45,28 +41,34 @@ class CheckoutControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(CheckoutController::class);
-
-        $this->user = FixturesData::getUser();
-        $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
-
-        $this->communication = Mockery::mock(Communication::class);
-        $this->controller->setCommunicationService($this->communication);
-
-        $this->govPayClient = Mockery::mock(GovPayClient::class);
-        $this->controller->setPaymentClient($this->govPayClient);
+        parent::setUp();
 
         $this->blankMainFlowForm = Mockery::mock(BlankMainFlowForm::class);
         $this->submitButton = Mockery::mock(ElementInterface::class);
     }
 
+    protected function getController(string $controllerName)
+    {
+        $controller = parent::getController($controllerName);
+
+        $this->communication = Mockery::mock(Communication::class);
+        $controller->setCommunicationService($this->communication);
+
+        $this->govPayClient = Mockery::mock(GovPayClient::class);
+        $controller->setPaymentClient($this->govPayClient);
+
+        return $controller;
+    }
+
     public function testIndexActionGet()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->setPayByCardExpectations('Confirm and pay by card');
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -77,25 +79,29 @@ class CheckoutControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostIncompleteLpa()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $response = new Response();
-        $this->controller->dispatch($this->request, $response);
+        $controller->dispatch($this->request, $response);
 
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
         $this->setRedirectToRoute('lpa/more-info-required', $this->lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testChequeActionIncompleteLpa()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $response = new Response();
-        $this->controller->dispatch($this->request, $response);
+        $controller->dispatch($this->request, $response);
 
         $this->setRedirectToRoute('lpa/more-info-required', $this->lpa, $response);
 
-        $result = $this->controller->chequeAction();
+        $result = $controller->chequeAction();
 
         $this->assertEquals($response, $result);
     }
@@ -106,12 +112,14 @@ class CheckoutControllerTest extends AbstractControllerTest
      */
     public function testChequeActionFailed()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $this->lpa->payment->method = null;
         $this->lpa->payment->amount = 82;
         $this->lpaApplicationService->shouldReceive('setPayment')
             ->withArgs([$this->lpa, $this->lpa->payment])->andReturn(false)->once();
 
-        $this->controller->chequeAction();
+        $controller->chequeAction();
     }
 
     /**
@@ -120,16 +128,20 @@ class CheckoutControllerTest extends AbstractControllerTest
      */
     public function testChequeActionIncorrectAmountFailed()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $this->lpa->payment->method = null;
         $this->lpa->payment->amount = 182;
         $this->lpaApplicationService->shouldReceive('setPayment')
             ->withArgs([$this->lpa, $this->lpa->payment])->andReturn(false)->once();
 
-        $this->controller->chequeAction();
+        $controller->chequeAction();
     }
 
     public function testChequeActionSuccess()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $response = new Response();
 
         $this->lpa->payment->method = null;
@@ -141,19 +153,21 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/complete', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
 
-        $result = $this->controller->chequeAction();
+        $result = $controller->chequeAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testConfirmActionIncompleteLpa()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $response = new Response();
-        $this->controller->dispatch($this->request, $response);
+        $controller->dispatch($this->request, $response);
 
         $this->setRedirectToRoute('lpa/more-info-required', $this->lpa, $response);
 
-        $result = $this->controller->confirmAction();
+        $result = $controller->confirmAction();
 
         $this->assertEquals($response, $result);
     }
@@ -164,14 +178,18 @@ class CheckoutControllerTest extends AbstractControllerTest
      */
     public function testConfirmActionInvalidAmount()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $this->lpa->payment->method = null;
         $this->lpa->payment->amount = 82;
 
-        $this->controller->confirmAction();
+        $controller->confirmAction();
     }
 
     public function testConfirmActionSuccess()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $response = new Response();
 
         $this->lpa->payment->amount = 0;
@@ -183,27 +201,31 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/complete', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
 
-        $result = $this->controller->confirmAction();
+        $result = $controller->confirmAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testPayActionIncompleteLpa()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $response = new Response();
-        $this->controller->dispatch($this->request, $response);
+        $controller->dispatch($this->request, $response);
 
         $this->setRedirectToRoute('lpa/more-info-required', $this->lpa, $response);
 
-        $result = $this->controller->payAction();
+        $result = $controller->payAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testPayActionNoExistingPayment()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $response = new Response();
-        $this->controller->dispatch($this->request, $response);
+        $controller->dispatch($this->request, $response);
 
         $this->lpa->payment->method = null;
         $this->formElementManager->shouldReceive('get')
@@ -224,7 +246,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $payment->shouldReceive('getPaymentPageUrl')->andReturn($responseUrl)->once();
         $this->redirect->shouldReceive('toUrl')->withArgs([$responseUrl])->andReturn($response)->once();
 
-        $result = $this->controller->payAction();
+        $result = $controller->payAction();
 
         $this->assertEquals($response, $result);
     }
@@ -235,8 +257,10 @@ class CheckoutControllerTest extends AbstractControllerTest
      */
     public function testPayActionExistingPaymentNull()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $response = new Response();
-        $this->controller->dispatch($this->request, $response);
+        $controller->dispatch($this->request, $response);
 
         Calculator::calculate($this->lpa);
         $this->lpa->payment->method = null;
@@ -248,13 +272,15 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->govPayClient->shouldReceive('getPayment')
             ->withArgs([$this->lpa->payment->gatewayReference])->andReturn(null)->once();
 
-        $this->controller->payAction();
+        $controller->payAction();
     }
 
     public function testPayActionExistingPaymentSuccessful()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $response = new Response();
-        $this->controller->dispatch($this->request, $response);
+        $controller->dispatch($this->request, $response);
 
         Calculator::calculate($this->lpa);
         $this->lpa->payment->method = null;
@@ -275,15 +301,17 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/complete', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
 
-        $result = $this->controller->payAction();
+        $result = $controller->payAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testPayActionExistingPaymentNotFinished()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $response = new Response();
-        $this->controller->dispatch($this->request, $response);
+        $controller->dispatch($this->request, $response);
 
         Calculator::calculate($this->lpa);
         $this->lpa->payment->method = null;
@@ -300,15 +328,17 @@ class CheckoutControllerTest extends AbstractControllerTest
         $payment->shouldReceive('getPaymentPageUrl')->andReturn('http://unit.test.com')->once();
         $this->redirect->shouldReceive('toUrl')->withArgs(['http://unit.test.com'])->andReturn($response)->once();
 
-        $result = $this->controller->payAction();
+        $result = $controller->payAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testPayActionExistingPaymentFinishedNotSuccessful()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $response = new Response();
-        $this->controller->dispatch($this->request, $response);
+        $controller->dispatch($this->request, $response);
 
         Calculator::calculate($this->lpa);
         $this->lpa->payment->method = null;
@@ -333,7 +363,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $payment->shouldReceive('getPaymentPageUrl')->andReturn($responseUrl)->once();
         $this->redirect->shouldReceive('toUrl')->withArgs([$responseUrl])->andReturn($response)->once();
 
-        $result = $this->controller->payAction();
+        $result = $controller->payAction();
 
         $this->assertEquals($response, $result);
     }
@@ -344,13 +374,17 @@ class CheckoutControllerTest extends AbstractControllerTest
      */
     public function testPayResponseActionNoGatewayReference()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $this->lpa->payment->gatewayReference = null;
 
-        $this->controller->payResponseAction();
+        $controller->payResponseAction();
     }
 
     public function testPayResponseActionNotSuccessfulCancelled()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $this->lpa->payment->gatewayReference = 'unsuccessful';
         $payment = Mockery::mock(GovPayPayment::class);
         $this->govPayClient->shouldReceive('getPayment')
@@ -361,7 +395,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->setPayByCardExpectations('Retry online payment');
 
         /** @var ViewModel $result */
-        $result = $this->controller->payResponseAction();
+        $result = $controller->payResponseAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/lpa/checkout/govpay-cancel.twig', $result->getTemplate());
@@ -369,6 +403,8 @@ class CheckoutControllerTest extends AbstractControllerTest
 
     public function testPayResponseActionNotSuccessfulOther()
     {
+        $controller = $this->getController(CheckoutController::class);
+
         $this->lpa->payment->gatewayReference = 'unsuccessful';
         $payment = Mockery::mock(GovPayPayment::class);
         $this->govPayClient->shouldReceive('getPayment')
@@ -379,7 +415,7 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->setPayByCardExpectations('Retry online payment');
 
         /** @var ViewModel $result */
-        $result = $this->controller->payResponseAction();
+        $result = $controller->payResponseAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/lpa/checkout/govpay-failure.twig', $result->getTemplate());

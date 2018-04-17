@@ -10,37 +10,24 @@ use Zend\View\Model\ViewModel;
 
 class DeleteControllerTest extends AbstractControllerTest
 {
-    /**
-     * @var TestableDeleteController
-     */
-    private $controller;
-
-    /**
-     * @param bool $setUpIdentity
-     */
-    public function setUpController($setUpIdentity = true)
-    {
-        $this->controller = parent::controllerSetUp(TestableDeleteController::class, $setUpIdentity);
-    }
-
     public function testIndexAction()
     {
-        $this->setUpController();
+        $controller = $this->getController(TestableDeleteController::class);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
     }
 
     public function testConfirmActionFailed()
     {
-        $this->setUpController();
+        $controller = $this->getController(TestableDeleteController::class);
 
         $this->userDetails->shouldReceive('delete')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->confirmAction();
+        $result = $controller->confirmAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('error/500.twig', $result->getTemplate());
@@ -48,21 +35,22 @@ class DeleteControllerTest extends AbstractControllerTest
 
     public function testConfirmAction()
     {
-        $this->setUpController();
+        $controller = $this->getController(TestableDeleteController::class);
 
         $response = new Response();
 
         $this->userDetails->shouldReceive('delete')->andReturn(true)->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['deleted'])->andReturn($response)->once();
 
-        $result = $this->controller->confirmAction();
+        $result = $controller->confirmAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testCheckAuthenticated()
     {
-        $this->setUpController(false);
+        $this->setIdentity(null);
+        $controller = $this->getController(TestableDeleteController::class);
 
         $response = new Response();
 
@@ -74,7 +62,7 @@ class DeleteControllerTest extends AbstractControllerTest
             ->withArgs(['login', [ 'state'=>'timeout' ]])->andReturn($response)->once();
 
         Container::setDefaultManager($this->sessionManager);
-        $result = $this->controller->testCheckAuthenticated(true);
+        $result = $controller->testCheckAuthenticated(true);
         Container::setDefaultManager(null);
 
         $this->assertEquals($response, $result);

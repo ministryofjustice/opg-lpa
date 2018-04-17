@@ -14,10 +14,6 @@ use Zend\View\Model\ViewModel;
 class PingControllerTest extends AbstractControllerTest
 {
     /**
-     * @var PingController
-     */
-    private $controller;
-    /**
      * @var MockInterface|Status
      */
     private $status;
@@ -79,20 +75,24 @@ class PingControllerTest extends AbstractControllerTest
         'iterations' => 6,
     );
 
-    public function setUp()
+    protected function getController(string $controllerName)
     {
-        $this->controller = parent::controllerSetUp(PingController::class);
+        $controller = parent::getController($controllerName);
 
         $this->status = Mockery::mock(Status::class);
-        $this->controller->setStatusService($this->status);
+        $controller->setStatusService($this->status);
+
+        return $controller;
     }
 
     public function testIndexAction()
     {
+        $controller = $this->getController(PingController::class);
+
         $this->status->shouldReceive('check')->andReturn($this->checkResultOk)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -101,10 +101,12 @@ class PingControllerTest extends AbstractControllerTest
 
     public function testJsonAction()
     {
+        $controller = $this->getController(PingController::class);
+
         $this->status->shouldReceive('check')->andReturn($this->checkResultOk)->once();
 
         /** @var JsonModel $result */
-        $result = $this->controller->jsonAction();
+        $result = $controller->jsonAction();
 
         $this->assertInstanceOf(JsonModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -114,10 +116,12 @@ class PingControllerTest extends AbstractControllerTest
 
     public function testPingdomActionOk()
     {
+        $controller = $this->getController(PingController::class);
+
         $this->status->shouldReceive('check')->andReturn($this->checkResultOk)->once();
 
         /** @var Response $result */
-        $result = $this->controller->pingdomAction();
+        $result = $controller->pingdomAction();
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(200, $result->getStatusCode());
@@ -126,12 +130,14 @@ class PingControllerTest extends AbstractControllerTest
 
     public function testPingdomActionError()
     {
+        $controller = $this->getController(PingController::class);
+
         $checkResultError = $this->checkResultOk;
         $checkResultError['ok'] = false;
         $this->status->shouldReceive('check')->andReturn($checkResultError)->once();
 
         /** @var Response $result */
-        $result = $this->controller->pingdomAction();
+        $result = $controller->pingdomAction();
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(500, $result->getStatusCode());

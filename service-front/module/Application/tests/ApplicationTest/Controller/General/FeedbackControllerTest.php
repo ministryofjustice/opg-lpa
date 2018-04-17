@@ -15,10 +15,6 @@ use Zend\View\Model\ViewModel;
 class FeedbackControllerTest extends AbstractControllerTest
 {
     /**
-     * @var FeedbackController
-     */
-    private $controller;
-    /**
      * @var MockInterface|FeedbackForm
      */
     private $form;
@@ -35,24 +31,33 @@ class FeedbackControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(FeedbackController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(Feedback::class);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\General\FeedbackForm'])->andReturn($this->form);
 
-        $this->feedbackService = Mockery::mock(Feedback::class);
-        $this->controller->setFeedbackService($this->feedbackService);
-
         $_SERVER['HTTP_USER_AGENT'] = 'UnitTester';
+    }
+
+    protected function getController(string $controllerName)
+    {
+        $controller = parent::getController($controllerName);
+
+        $this->feedbackService = Mockery::mock(Feedback::class);
+        $controller->setFeedbackService($this->feedbackService);
+
+        return $controller;
     }
 
     public function testSendFeedbackFormInvalid()
     {
+        $controller = $this->getController(FeedbackController::class);
+
         $this->setPostInvalid($this->form, $this->postData);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -65,16 +70,20 @@ class FeedbackControllerTest extends AbstractControllerTest
      */
     public function testSendFeedbackFail()
     {
+        $controller = $this->getController(FeedbackController::class);
+
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
         $this->feedbackService->shouldReceive('sendMail')->andReturn(false)->once();
 
-        $this->controller->indexAction();
+        $controller->indexAction();
     }
 
     public function testSendFeedbackSuccess()
     {
+        $controller = $this->getController(FeedbackController::class);
+
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
@@ -82,7 +91,7 @@ class FeedbackControllerTest extends AbstractControllerTest
         $this->url->shouldReceive('fromRoute')->withArgs(['home'])->andReturn('home')->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/general/feedback/thankyou.twig', $result->getTemplate());
@@ -91,13 +100,15 @@ class FeedbackControllerTest extends AbstractControllerTest
 
     public function testSendFeedbackFormGetReferer()
     {
+        $controller = $this->getController(FeedbackController::class);
+
         $referer = new Referer();
         $referer->setUri('https://localhost/lpa/3503563157/when-lpa-starts');
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->twice();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -106,11 +117,13 @@ class FeedbackControllerTest extends AbstractControllerTest
 
     public function testSendFeedbackFormNoReferer()
     {
+        $controller = $this->getController(FeedbackController::class);
+
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());

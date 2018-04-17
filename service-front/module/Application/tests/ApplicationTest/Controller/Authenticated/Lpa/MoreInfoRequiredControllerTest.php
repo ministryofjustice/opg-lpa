@@ -8,20 +8,12 @@ use Zend\View\Model\ViewModel;
 
 class MoreInfoRequiredControllerTest extends AbstractControllerTest
 {
-    /**
-     * @var MoreInfoRequiredController
-     */
-    private $controller;
-
-    public function setUp()
-    {
-        $this->controller = parent::controllerSetUp(MoreInfoRequiredController::class);
-    }
-
     public function testIndexAction()
     {
+        $controller = $this->getController(MoreInfoRequiredController::class);
+
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());

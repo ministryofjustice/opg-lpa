@@ -16,17 +16,13 @@ use Zend\View\Model\ViewModel;
 class ApplicantControllerTest extends AbstractControllerTest
 {
     /**
-     * @var ApplicantController
-     */
-    private $controller;
-    /**
      * @var MockInterface|ApplicantForm
      */
     private $form;
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(ApplicantController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(ApplicantForm::class);
         $this->formElementManager->shouldReceive('get')
@@ -35,12 +31,14 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        $controller = $this->getController(ApplicantController::class);
+
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')
             ->withArgs([['whoIsRegistering' => $this->lpa->document->whoIsRegistering]])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -49,6 +47,8 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetMultiplePrimaryAttorneysJointly()
     {
+        $controller = $this->getController(ApplicantController::class);
+
         //Verify there is more than one primary attorney
         $this->assertGreaterThan(1, count($this->lpa->document->primaryAttorneys));
         $this->lpa->document->whoIsRegistering = [1, 2];
@@ -58,7 +58,7 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('bind')->withArgs([['whoIsRegistering' => '1,2']])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -67,6 +67,8 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetMultiplePrimaryAttorneysJointlyAndSeverally()
     {
+        $controller = $this->getController(ApplicantController::class);
+
         //Verify there is more than one primary attorney
         $this->assertGreaterThan(1, count($this->lpa->document->primaryAttorneys));
         $this->lpa->document->whoIsRegistering = [1, 2];
@@ -78,7 +80,7 @@ class ApplicantControllerTest extends AbstractControllerTest
         ])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -87,10 +89,12 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        $controller = $this->getController(ApplicantController::class);
+
         $this->setPostInvalid($this->form);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -99,6 +103,8 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostDonorRegisteringValueNotChanged()
     {
+        $controller = $this->getController(ApplicantController::class);
+
         $response = new Response();
 
         $postData = [
@@ -108,13 +114,13 @@ class ApplicantControllerTest extends AbstractControllerTest
 
         $this->setPostValid($this->form, $postData);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/applicant');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/applicant');
         $this->redirect->shouldReceive('toRoute')->withArgs([
             'lpa/correspondent',
             ['lpa-id' => $this->lpa->id
             ], $this->getExpectedRouteOptions('lpa/correspondent')])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
@@ -125,6 +131,8 @@ class ApplicantControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostDonorRegisteringValueChangedException()
     {
+        $controller = $this->getController(ApplicantController::class);
+
         $postData = [
             'whoIsRegistering' => Correspondence::WHO_DONOR
         ];
@@ -134,11 +142,13 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')
             ->withArgs([$this->lpa, Correspondence::WHO_DONOR])->andReturn(false);
 
-        $this->controller->indexAction();
+        $controller->indexAction();
     }
 
     public function testIndexActionPostAttorneyRegisteringJointlyChangedSuccessful()
     {
+        $controller = $this->getController(ApplicantController::class);
+
         //Verify there is more than one primary attorney
         $this->assertGreaterThan(1, count($this->lpa->document->primaryAttorneys));
 
@@ -156,16 +166,18 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')
             ->withArgs([$this->lpa, [1]])->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/applicant');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/applicant');
         $this->setRedirectToRoute('lpa/correspondent', $this->lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionPostAttorneyRegisteringJointlyAndSeverallyChangedSuccessful()
     {
+        $controller = $this->getController(ApplicantController::class);
+
         //Verify there is more than one primary attorney
         $this->assertGreaterThan(1, count($this->lpa->document->primaryAttorneys));
 
@@ -183,10 +195,10 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')
             ->withArgs([$this->lpa, '1,2,3'])->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/applicant');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/applicant');
         $this->setRedirectToRoute('lpa/correspondent', $this->lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
