@@ -23,11 +23,6 @@
 {% set reuseDetails = form.get('reuse-details') %}
 {% set submit = form.get('submit') %}
 
-{# form fields config #}
-{{ reuseDetails.setAttributes({
-    id: 'reuse-details',
-}) ? '' }}
-
 {{ submit.setAttributes({
     value: 'Continue',
     class: 'button flush--left reuse-details-button',
@@ -46,9 +41,9 @@
     {{ form().openTag(form)|raw }}
         {{ formElement(form.getCsrf) }}
 
-        <fieldset class="reuse-details-container">
+        <fieldset id="reuse-details" class="reuse-details-container">
 
-            <h2 class="heading-medium">Which details would you like to reuse?</h2>
+            <legend class="heading-medium">Which details would you like to reuse?</legend>
 
             <div class="form-group">
                 {{ formElement(reuseDetails) }}
