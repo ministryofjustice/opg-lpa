@@ -384,8 +384,8 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
         if ($correspondent instanceof Correspondence && $correspondent->who == Correspondence::WHO_ATTORNEY) {
             //  Compare the appropriate name and address
-            $nameToCompare = ($attorney instanceof TrustCorporation ? $correspondent->company : $correspondent->name);
-            return ($attorney->name == new Name($nameToCompare->flatten()) && $correspondent->address == $attorney->address);
+            $nameToCompare = ($attorney instanceof TrustCorporation ? $correspondent->company : new Name($correspondent->name->flatten()));
+            return ($attorney->name == $nameToCompare && $correspondent->address == $attorney->address);
         }
 
         return false;
