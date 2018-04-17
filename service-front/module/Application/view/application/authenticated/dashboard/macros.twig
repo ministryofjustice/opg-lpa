@@ -58,14 +58,14 @@
                     <ul class="list-item_secondary_actions">
                         {% if lpa.progress != 'Started' %}
                             <li>
-                                <a href="/lpa/{{ lpa.id }}/date-check">Check <span class="extra-text">signing</span> dates</a>
+                                <a href="/lpa/{{ lpa.id }}/date-check" data-journey-click="page:link:navigation: Check signing dates">Check <span class="extra-text">signing</span> dates</a>
                             </li>
                             <li>
-                                <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}">Reuse <span class="extra-text">LPA</span> details</a>
+                                <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}" data-journey-click="page:link:reuse: Reuse LPA details">Reuse <span class="extra-text">LPA</span> details</a>
                             </li>
                         {% endif %}
                         <li>
-                            <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}" class="js-form-popup">Delete</a>
+                            <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}" class="js-form-popup" data-journey-click="page:link:delete: Delete">Delete</a>
                         </li>
                     </ul>
                 </div>
