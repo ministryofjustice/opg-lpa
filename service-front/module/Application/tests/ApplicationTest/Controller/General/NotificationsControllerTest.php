@@ -15,10 +15,6 @@ use Zend\View\Model\ViewModel;
 
 class NotificationsControllerTest extends AbstractControllerTest
 {
-    /**
-     * @var NotificationsController
-     */
-    private $controller;
     private $validToken;
     /**
      * @var array
@@ -32,7 +28,7 @@ class NotificationsControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(NotificationsController::class);
+        parent::setUp();
 
         $this->validToken = $token = Mockery::mock(HeaderInterface::class);
         $this->validToken->shouldReceive('getFieldValue')->andReturn('validAccountCleanupToken');
@@ -42,15 +38,24 @@ class NotificationsControllerTest extends AbstractControllerTest
             'Type' => '1-week-notice',
             'Date' => (new DateTime('+49 hours'))->format(DateTime::ISO8601)
         ];
+    }
+
+    protected function getController(string $controllerName)
+    {
+        $controller = parent::getController($controllerName);
 
         $this->mailTransport = Mockery::mock(MailTransport::class);
-        $this->controller->setMailTransport($this->mailTransport);
+        $controller->setMailTransport($this->mailTransport);
+
+        return $controller;
     }
 
     public function testIndexAction()
     {
+        $controller = $this->getController(NotificationsController::class);
+
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -59,10 +64,12 @@ class NotificationsControllerTest extends AbstractControllerTest
 
     public function testExpiryNoticeActionNoToken()
     {
+        $controller = $this->getController(NotificationsController::class);
+
         $this->request->shouldReceive('getHeader')->withArgs(['Token'])->andReturn(null)->once();
 
         /** @var Response $result */
-        $result = $this->controller->expiryNoticeAction();
+        $result = $controller->expiryNoticeAction();
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(403, $result->getStatusCode());
@@ -71,12 +78,14 @@ class NotificationsControllerTest extends AbstractControllerTest
 
     public function testExpiryNoticeActionInvalidToken()
     {
+        $controller = $this->getController(NotificationsController::class);
+
         $token = Mockery::mock(HeaderInterface::class);
         $token->shouldReceive('getFieldValue')->andReturn('InvalidToken');
         $this->request->shouldReceive('getHeader')->withArgs(['Token'])->andReturn($token)->once();
 
         /** @var Response $result */
-        $result = $this->controller->expiryNoticeAction();
+        $result = $controller->expiryNoticeAction();
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(403, $result->getStatusCode());
@@ -85,11 +94,13 @@ class NotificationsControllerTest extends AbstractControllerTest
 
     public function testExpiryNoticeActionMissingParameters()
     {
+        $controller = $this->getController(NotificationsController::class);
+
         $this->request->shouldReceive('getHeader')->withArgs(['Token'])->andReturn($this->validToken)->once();
         $this->request->shouldReceive('getPost')->once();
 
         /** @var Response $result */
-        $result = $this->controller->expiryNoticeAction();
+        $result = $controller->expiryNoticeAction();
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(400, $result->getStatusCode());
@@ -98,6 +109,8 @@ class NotificationsControllerTest extends AbstractControllerTest
 
     public function testExpiryNoticeActionDateTooSoon()
     {
+        $controller = $this->getController(NotificationsController::class);
+
         $invalidDate = $this->validPost;
         $invalidDate['Date'] = (new DateTime('+47 hours'))->format(DateTime::ISO8601);
 
@@ -105,7 +118,7 @@ class NotificationsControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('getPost')->andReturn($invalidDate)->once();
 
         /** @var Response $result */
-        $result = $this->controller->expiryNoticeAction();
+        $result = $controller->expiryNoticeAction();
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(400, $result->getStatusCode());
@@ -114,6 +127,8 @@ class NotificationsControllerTest extends AbstractControllerTest
 
     public function testExpiryNoticeActionInvalidType()
     {
+        $controller = $this->getController(NotificationsController::class);
+
         $invalidType = $this->validPost;
         $invalidType['Type'] = 'Invalid';
 
@@ -121,7 +136,7 @@ class NotificationsControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('getPost')->andReturn($invalidType)->once();
 
         /** @var Response $result */
-        $result = $this->controller->expiryNoticeAction();
+        $result = $controller->expiryNoticeAction();
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(400, $result->getStatusCode());
@@ -130,6 +145,8 @@ class NotificationsControllerTest extends AbstractControllerTest
 
     public function testExpiryNoticeActionOneWeekNoticeSendException()
     {
+        $controller = $this->getController(NotificationsController::class);
+
         $validPost = $this->validPost;
         $validPost['Type'] = '1-week-notice';
 
@@ -138,7 +155,7 @@ class NotificationsControllerTest extends AbstractControllerTest
         $this->mailTransport->shouldReceive('sendMessageFromTemplate')->andThrow(new Exception('Unit test exception'))->once();
 
         /** @var Response $result */
-        $result = $this->controller->expiryNoticeAction();
+        $result = $controller->expiryNoticeAction();
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(500, $result->getStatusCode());
@@ -147,6 +164,8 @@ class NotificationsControllerTest extends AbstractControllerTest
 
     public function testExpiryNoticeActionOneWeekNoticeSuccess()
     {
+        $controller = $this->getController(NotificationsController::class);
+
         $validPost = $this->validPost;
         $validPost['Type'] = '1-week-notice';
 
@@ -155,7 +174,7 @@ class NotificationsControllerTest extends AbstractControllerTest
         $this->mailTransport->shouldReceive('sendMessageFromTemplate')->once();
 
         /** @var Response $result */
-        $result = $this->controller->expiryNoticeAction();
+        $result = $controller->expiryNoticeAction();
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(200, $result->getStatusCode());
@@ -164,6 +183,8 @@ class NotificationsControllerTest extends AbstractControllerTest
 
     public function testExpiryNoticeActionOneMonthNoticeSuccess()
     {
+        $controller = $this->getController(NotificationsController::class);
+
         $validPost = $this->validPost;
         $validPost['Type'] = '1-month-notice';
         $email = null;
@@ -173,7 +194,7 @@ class NotificationsControllerTest extends AbstractControllerTest
         $this->mailTransport->shouldReceive('sendMessageFromTemplate')->once();
 
         /** @var Response $result */
-        $result = $this->controller->expiryNoticeAction();
+        $result = $controller->expiryNoticeAction();
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(200, $result->getStatusCode());

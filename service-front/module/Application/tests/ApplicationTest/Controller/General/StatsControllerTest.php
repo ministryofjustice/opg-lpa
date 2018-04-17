@@ -12,29 +12,34 @@ use Zend\View\Model\ViewModel;
 class StatsControllerTest extends AbstractControllerTest
 {
     /**
-     * @var StatsController
-     */
-    private $controller;
-    /**
      * @var MockInterface|StatsService
      */
     private $statsService;
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(StatsController::class);
+        parent::setUp();
 
         $this->statsService = Mockery::mock(StatsService::class);
         $this->statsService->shouldReceive('getAuthStats')->andReturn($this->getAuthStats())->once();
         $this->statsService->shouldReceive('getApiStats')->andReturn($this->getApiStats())->once();
+    }
 
-        $this->controller->setStatsService($this->statsService);
+    protected function getController(string $controllerName)
+    {
+        $controller = parent::getController($controllerName);
+
+        $controller->setStatsService($this->statsService);
+
+        return $controller;
     }
 
     public function testIndexAction()
     {
+        $controller = $this->getController(StatsController::class);
+
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());

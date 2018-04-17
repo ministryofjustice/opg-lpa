@@ -14,10 +14,6 @@ use Zend\View\Model\ViewModel;
 class LifeSustainingControllerTest extends AbstractControllerTest
 {
     /**
-     * @var LifeSustainingController
-     */
-    private $controller;
-    /**
      * @var MockInterface|LifeSustainingForm
      */
     private $form;
@@ -27,7 +23,7 @@ class LifeSustainingControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(LifeSustainingController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(LifeSustainingForm::class);
         $this->formElementManager->shouldReceive('get')
@@ -36,12 +32,14 @@ class LifeSustainingControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        $controller = $this->getController(LifeSustainingController::class);
+
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')
             ->withArgs([$this->lpa->document->primaryAttorneyDecisions->flatten()])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -50,10 +48,12 @@ class LifeSustainingControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        $controller = $this->getController(LifeSustainingController::class);
+
         $this->setPostInvalid($this->form);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -66,6 +66,8 @@ class LifeSustainingControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostFailed()
     {
+        $controller = $this->getController(LifeSustainingController::class);
+
         $this->lpa->document->primaryAttorneyDecisions->canSustainLife = false;
 
         $this->setPostValid($this->form, $this->postData);
@@ -73,11 +75,13 @@ class LifeSustainingControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
             ->withArgs([$this->lpa, $this->lpa->document->primaryAttorneyDecisions])->andReturn(false)->once();
 
-        $this->controller->indexAction();
+        $controller->indexAction();
     }
 
     public function testIndexActionPostSuccess()
     {
+        $controller = $this->getController(LifeSustainingController::class);
+
         $response = new Response();
 
         $this->lpa->document->primaryAttorneyDecisions = null;
@@ -90,10 +94,10 @@ class LifeSustainingControllerTest extends AbstractControllerTest
                         && $primaryAttorneyDecisions->canSustainLife === true;
             })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/life-sustaining');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/life-sustaining');
         $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }

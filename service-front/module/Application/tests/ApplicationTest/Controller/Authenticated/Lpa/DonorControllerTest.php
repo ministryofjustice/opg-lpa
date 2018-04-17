@@ -22,10 +22,6 @@ use Zend\View\Model\ViewModel;
 class DonorControllerTest extends AbstractControllerTest
 {
     /**
-     * @var TestableDonorController
-     */
-    private $controller;
-    /**
      * @var MockInterface|DonorForm
      */
     private $form;
@@ -42,10 +38,7 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(TestableDonorController::class);
-
-        $this->user = FixturesData::getUser();
-        $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
+        parent::setUp();
 
         $this->form = Mockery::mock(DonorForm::class);
         $this->formElementManager->shouldReceive('get')
@@ -56,13 +49,15 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testIndexActionNoDonor()
     {
+        $controller = $this->getController(TestableDonorController::class);
+
         $this->lpa->document->donor = null;
 
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/donor/add', ['lpa-id' => $this->lpa->id]])->andReturn('lpa/donor/add')->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -71,13 +66,15 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testIndexActionDonor()
     {
+        $controller = $this->getController(TestableDonorController::class);
+
         $this->assertInstanceOf(Donor::class, $this->lpa->document->donor);
 
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/donor/add', ['lpa-id' => $this->lpa->id]])->andReturn('lpa/donor/add')->once();
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/donor/edit', ['lpa-id' => $this->lpa->id]])->andReturn('lpa/donor/edit')->once();
-        $this->setMatchedRouteName($this->controller, 'lpa/donor');
+        $this->setMatchedRouteName($controller, 'lpa/donor');
         $this->url->shouldReceive('fromRoute')->withArgs([
             'lpa/when-lpa-starts',
             ['lpa-id' => $this->lpa->id],
@@ -85,7 +82,7 @@ class DonorControllerTest extends AbstractControllerTest
         ])->andReturn('lpa/when-lpa-starts')->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -96,48 +93,52 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testAddActionGetReuseDetails()
     {
+        $controller = $this->getController(TestableDonorController::class);
+
         $response = new Response();
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setSeedLpa($this->lpa, FixturesData::getHwLpa());
         $this->setRedirectToReuseDetails($this->user, $this->lpa, 'lpa/donor/add', $response);
 
-        $result = $this->controller->addAction();
+        $result = $controller->addAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testAddActionGetDonorAlreadyProvided()
     {
+        $controller = $this->getController(TestableDonorController::class);
+
         $this->assertNotNull($this->lpa->document->donor);
 
         $response = new Response();
 
-        $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->setRedirectToRoute('lpa/donor', $this->lpa, $response);
 
-        $result = $this->controller->addAction();
+        $result = $controller->addAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testAddActionGetNoDonor()
     {
+        $controller = $this->getController(TestableDonorController::class);
+
         $this->lpa->document->donor = null;
 
-        $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->twice();
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/add');
         $this->form->shouldReceive('setExistingActorNamesData')
-            ->withArgs([$this->controller->testGetActorsList()])->once();
+            ->withArgs([$controller->testGetActorsList()])->once();
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/donor")->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->addAction();
+        $result = $controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/lpa/donor/form.twig', $result->getTemplate());
@@ -147,19 +148,20 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testAddActionPostInvalid()
     {
+        $controller = $this->getController(TestableDonorController::class);
+
         $this->lpa->document->donor = null;
 
-        $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->setPostInvalid($this->form, [], null, 2);
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/add');
         $this->form->shouldReceive('setExistingActorNamesData')
-            ->withArgs([$this->controller->testGetActorsList()])->once();
+            ->withArgs([$controller->testGetActorsList()])->once();
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/donor")->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->addAction();
+        $result = $controller->addAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/lpa/donor/form.twig', $result->getTemplate());
@@ -173,14 +175,15 @@ class DonorControllerTest extends AbstractControllerTest
      */
     public function testAddActionPostFailed()
     {
+        $controller = $this->getController(TestableDonorController::class);
+
         $this->lpa->document->donor = null;
 
-        $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->setPostValid($this->form, $this->postData, null, 2);
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/add');
         $this->form->shouldReceive('setExistingActorNamesData')
-            ->withArgs([$this->controller->testGetActorsList()])->once();
+            ->withArgs([$controller->testGetActorsList()])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData);
         $this->lpaApplicationService->shouldReceive('setDonor')
             ->withArgs(function ($lpa, $donor) {
@@ -190,19 +193,20 @@ class DonorControllerTest extends AbstractControllerTest
                     && $donor->dob == new Dob($this->postData['dob']);
             })->andReturn(false)->once();
 
-        $this->controller->addAction();
+        $controller->addAction();
     }
 
     public function testAddActionPostSuccess()
     {
+        $controller = $this->getController(TestableDonorController::class);
+
         $this->lpa->document->donor = null;
 
-        $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
         $this->setPostValid($this->form, $this->postData, null, 2);
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/add');
         $this->form->shouldReceive('setExistingActorNamesData')
-            ->withArgs([$this->controller->testGetActorsList()])->once();
+            ->withArgs([$controller->testGetActorsList()])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData);
         $this->lpaApplicationService->shouldReceive('setDonor')
             ->withArgs(function ($lpa, $donor) {
@@ -213,7 +217,7 @@ class DonorControllerTest extends AbstractControllerTest
             })->andReturn(true)->once();
 
         /** @var JsonModel $result */
-        $result = $this->controller->addAction();
+        $result = $controller->addAction();
 
         $this->assertInstanceOf(JsonModel::class, $result);
         $this->assertEquals(true, $result->getVariable('success'));
@@ -221,20 +225,21 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testEditActionGet()
     {
+        $controller = $this->getController(TestableDonorController::class);
+
         $this->assertNotNull($this->lpa->document->donor);
 
-        $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/edit');
         $this->form->shouldReceive('setExistingActorNamesData')
-            ->withArgs([$this->controller->testGetActorsList()])->once();
+            ->withArgs([$controller->testGetActorsList()])->once();
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/donor")->once();
         $this->setDonorBinding();
 
         /** @var ViewModel $result */
-        $result = $this->controller->editAction();
+        $result = $controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/lpa/donor/form.twig', $result->getTemplate());
@@ -244,19 +249,20 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testEditActionPostInvalid()
     {
+        $controller = $this->getController(TestableDonorController::class);
+
         $this->assertNotNull($this->lpa->document->donor);
 
-        $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->setPostInvalid($this->form, $this->postData);
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/edit');
         $this->form->shouldReceive('setExistingActorNamesData')
-            ->withArgs([$this->controller->testGetActorsList()])->once();
+            ->withArgs([$controller->testGetActorsList()])->once();
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])->andReturn("lpa/{$this->lpa->id}/donor")->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->editAction();
+        $result = $controller->editAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/lpa/donor/form.twig', $result->getTemplate());
@@ -270,14 +276,15 @@ class DonorControllerTest extends AbstractControllerTest
      */
     public function testEditActionPostFailed()
     {
+        $controller = $this->getController(TestableDonorController::class);
+
         $this->assertNotNull($this->lpa->document->donor);
 
-        $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->setPostValid($this->form, $this->postData);
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/edit');
         $this->form->shouldReceive('setExistingActorNamesData')
-            ->withArgs([$this->controller->testGetActorsList()])->once();
+            ->withArgs([$controller->testGetActorsList()])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData);
         $this->lpaApplicationService->shouldReceive('setDonor')->withArgs(function ($lpa, $donor) {
             return $lpa->id === $this->lpa->id
@@ -287,22 +294,23 @@ class DonorControllerTest extends AbstractControllerTest
                 && $donor->canSign === true;
         })->andReturn(false)->once();
 
-        $this->controller->editAction();
+        $controller->editAction();
     }
 
     public function testEditActionPostSuccess()
     {
+        $controller = $this->getController(TestableDonorController::class);
+
         $this->assertNotNull($this->lpa->document->donor);
 
         $postData = $this->postData;
         $postData['canSign'] = false;
 
-        $this->userDetailsSession->user = $this->user;
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
         $this->setPostValid($this->form, $postData);
         $this->setFormAction($this->form, $this->lpa, 'lpa/donor/edit');
         $this->form->shouldReceive('setExistingActorNamesData')
-            ->withArgs([$this->controller->testGetActorsList()])->once();
+            ->withArgs([$controller->testGetActorsList()])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData);
         $this->lpaApplicationService->shouldReceive('setDonor')
             ->withArgs(function ($lpa, $donor) {
@@ -319,7 +327,7 @@ class DonorControllerTest extends AbstractControllerTest
             })->andReturn(true)->once();
 
         /** @var JsonModel $result */
-        $result = $this->controller->editAction();
+        $result = $controller->editAction();
 
         $this->assertInstanceOf(JsonModel::class, $result);
         $this->assertEquals(true, $result->getVariable('success'));

@@ -8,23 +8,15 @@ use Zend\View\Model\ViewModel;
 
 class SummaryControllerTest extends AbstractControllerTest
 {
-    /**
-     * @var SummaryController
-     */
-    private $controller;
-
-    public function setUp()
-    {
-        $this->controller = parent::controllerSetUp(SummaryController::class);
-    }
-
     public function testIndexAction()
     {
+        $controller = $this->getController(SummaryController::class);
+
         $this->params->shouldReceive('fromQuery')
             ->withArgs(['return-route', 'lpa/applicant'])->andReturn('lpa/applicant')->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());

@@ -8,20 +8,12 @@ use Zend\View\Model\ViewModel;
 
 class HomeControllerTest extends AbstractControllerTest
 {
-    /**
-     * @var HomeController
-     */
-    private $controller;
-
-    public function setUp()
-    {
-        $this->controller = parent::controllerSetUp(HomeController::class);
-    }
-
     public function testIndexAction()
     {
+        $controller = $this->getController(HomeController::class);
+
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -31,19 +23,23 @@ class HomeControllerTest extends AbstractControllerTest
 
     public function testRedirectAction()
     {
+        $controller = $this->getController(HomeController::class);
+
         $this->redirect->shouldReceive('toUrl')
             ->withArgs(['https://www.gov.uk/power-of-attorney/make-lasting-power'])
             ->andReturn('https://www.gov.uk/power-of-attorney/make-lasting-power')->once();
 
-        $result = $this->controller->redirectAction();
+        $result = $controller->redirectAction();
 
         $this->assertEquals('https://www.gov.uk/power-of-attorney/make-lasting-power', $result);
     }
 
     public function testCookieAction()
     {
+        $controller = $this->getController(HomeController::class);
+
         /** @var ViewModel $result */
-        $result = $this->controller->enableCookieAction();
+        $result = $controller->enableCookieAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -51,8 +47,10 @@ class HomeControllerTest extends AbstractControllerTest
 
     public function testTermsAction()
     {
+        $controller = $this->getController(HomeController::class);
+
         /** @var ViewModel $result */
-        $result = $this->controller->termsAction();
+        $result = $controller->termsAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -60,8 +58,10 @@ class HomeControllerTest extends AbstractControllerTest
 
     public function testContactAction()
     {
+        $controller = $this->getController(HomeController::class);
+
         /** @var ViewModel $result */
-        $result = $this->controller->contactAction();
+        $result = $controller->contactAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());

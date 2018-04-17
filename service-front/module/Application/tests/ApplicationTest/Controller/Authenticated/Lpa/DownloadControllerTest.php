@@ -13,23 +13,15 @@ use Zend\View\Model\ViewModel;
 
 class DownloadControllerTest extends AbstractControllerTest
 {
-    /**
-     * @var DownloadController
-     */
-    private $controller;
-
-    public function setUp()
-    {
-        $this->controller = parent::controllerSetUp(DownloadController::class);
-    }
-
     public function testIndexActionNoPdfAvailable()
     {
-        $this->setPdfType($this->lpa, 'lpa120');
+        $controller = $this->getController(DownloadController::class);
+
+        $this->setPdfType($controller, $this->lpa, 'lpa120');
         $this->logger->shouldReceive('info')->withArgs(['PDF not available', ['lpaId' => $this->lpa->id]])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -37,24 +29,28 @@ class DownloadControllerTest extends AbstractControllerTest
 
     public function testIndexActionInQueue()
     {
+        $controller = $this->getController(DownloadController::class);
+
         $pdfType = 'lp1';
-        $this->setPdfType($this->lpa, $pdfType);
+        $this->setPdfType($controller, $this->lpa, $pdfType);
         $this->lpaApplicationService->shouldReceive('getPdf')
             ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'in-queue'])->once();
         $this->layout->shouldReceive('__invoke')->withArgs(['layout/download.twig'])->once();
         $this->logger->shouldReceive('info')->withArgs(['PDF status is in-queue', ['lpaId' => $this->lpa->id]])->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertFalse($result);
     }
 
     public function testIndexActionLp1Ready()
     {
+        $controller = $this->getController(DownloadController::class);
+
         $response = new Response();
 
         $pdfType = 'lp1';
-        $this->setPdfType($this->lpa, $pdfType);
+        $this->setPdfType($controller, $this->lpa, $pdfType);
         $this->lpaApplicationService->shouldReceive('getPdf')
             ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
         $this->layout->shouldReceive('__invoke')->withArgs(['layout/download.twig'])->once();
@@ -65,13 +61,15 @@ class DownloadControllerTest extends AbstractControllerTest
             'pdf-filename' => 'Lasting-Power-of-Attorney-LP1F.pdf',
         ]])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionLp3Ready()
     {
+        $controller = $this->getController(DownloadController::class);
+
         $this->lpa->document->peopleToNotify = [
             new NotifiedPerson(),
         ];
@@ -79,7 +77,7 @@ class DownloadControllerTest extends AbstractControllerTest
         $response = new Response();
 
         $pdfType = 'lp3';
-        $this->setPdfType($this->lpa, $pdfType);
+        $this->setPdfType($controller, $this->lpa, $pdfType);
         $this->lpaApplicationService->shouldReceive('getPdf')
             ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
         $this->layout->shouldReceive('__invoke')->withArgs(['layout/download.twig'])->once();
@@ -90,17 +88,19 @@ class DownloadControllerTest extends AbstractControllerTest
             'pdf-filename' => 'Lasting-Power-of-Attorney-LP3.pdf',
         ]])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testDownloadActionInQueue()
     {
+        $controller = $this->getController(DownloadController::class);
+
         $response = new Response();
 
         $pdfType = 'lp1';
-        $routeMatch = $this->getRouteMatch($this->controller);
+        $routeMatch = $this->getRouteMatch($controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['pdf-type'])->andReturn($pdfType)->once();
         $this->lpaApplicationService->shouldReceive('getPdf')
             ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'in-queue'])->once();
@@ -111,18 +111,20 @@ class DownloadControllerTest extends AbstractControllerTest
 
         $this->logger->shouldReceive('info')->withArgs(['PDF status is in-queue', ['lpaId' => $this->lpa->id]])->once();
 
-        $result = $this->controller->downloadAction();
+        $result = $controller->downloadAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testDownloadActionReady()
     {
+        $controller = $this->getController(DownloadController::class);
+
         $response = Mockery::mock(Response::class);
-        $this->controller->dispatch($this->request, $response);
+        $controller->dispatch($this->request, $response);
 
         $pdfType = 'lp1';
-        $routeMatch = $this->getRouteMatch($this->controller);
+        $routeMatch = $this->getRouteMatch($controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['pdf-type'])->andReturn($pdfType)->once();
         $this->lpaApplicationService->shouldReceive('getPdf')
             ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
@@ -151,14 +153,14 @@ class DownloadControllerTest extends AbstractControllerTest
 
         $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
 
-        $result = $this->controller->downloadAction();
+        $result = $controller->downloadAction();
 
         $this->assertEquals($response, $result);
     }
 
-    private function setPdfType($lpa, $pdfType)
+    private function setPdfType($controller, $lpa, $pdfType)
     {
-        $routeMatch = $this->getRouteMatch($this->controller);
+        $routeMatch = $this->getRouteMatch($controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['pdf-type'])->andReturn($pdfType)->once();
         $this->logger->shouldReceive('info')->withArgs(["PDF type is $pdfType", ['lpaId' => $lpa->id]])->once();
     }

@@ -15,10 +15,6 @@ use Zend\View\Model\ViewModel;
 class FeeReductionControllerTest extends AbstractControllerTest
 {
     /**
-     * @var FeeReductionController
-     */
-    private $controller;
-    /**
      * @var MockInterface|FeeReductionForm
      */
     private $form;
@@ -30,7 +26,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(FeeReductionController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(FeeReductionForm::class);
         $this->formElementManager->shouldReceive('get')
@@ -51,6 +47,8 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetNoPayment()
     {
+        $controller = $this->getController(FeeReductionController::class);
+
         $this->lpa->payment = null;
 
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
@@ -58,7 +56,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -68,6 +66,8 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetExistingPaymentReducedFeeReceivesBenefits()
     {
+        $controller = $this->getController(FeeReductionController::class);
+
         $this->assertNotNull($this->lpa->payment);
 
         $this->lpa->payment->reducedFeeReceivesBenefits = true;
@@ -79,7 +79,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -89,6 +89,8 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetExistingPaymentReducedFeeUniversalCredit()
     {
+        $controller = $this->getController(FeeReductionController::class);
+
         $this->assertNotNull($this->lpa->payment);
 
         $this->lpa->payment->reducedFeeUniversalCredit = true;
@@ -99,7 +101,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -109,6 +111,8 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetExistingPaymentReducedFeeLowIncome()
     {
+        $controller = $this->getController(FeeReductionController::class);
+
         $this->assertNotNull($this->lpa->payment);
 
         $this->lpa->payment->reducedFeeLowIncome = true;
@@ -119,7 +123,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -129,6 +133,8 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetExistingPaymentReducedFeeNotApply()
     {
+        $controller = $this->getController(FeeReductionController::class);
+
         $this->assertNotNull($this->lpa->payment);
 
         $this->lpa->payment->reducedFeeReceivesBenefits = false;
@@ -142,7 +148,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -152,13 +158,15 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        $controller = $this->getController(FeeReductionController::class);
+
         $this->lpa->payment = null;
         $this->reductionOptions->shouldReceive('getValue')->andReturn('')->times(4);
         $this->form->shouldReceive('get')->withArgs(['reductionOptions'])->andReturn($this->reductionOptions)->once();
         $this->setPostInvalid($this->form);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -172,6 +180,8 @@ class FeeReductionControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostFailed()
     {
+        $controller = $this->getController(FeeReductionController::class);
+
         $postData = ['reductionOptions' => 'reducedFeeReceivesBenefits'];
 
         $this->lpa->payment = null;
@@ -188,11 +198,13 @@ class FeeReductionControllerTest extends AbstractControllerTest
                     && $payment->reducedFeeUniversalCredit === null;
             })->andReturn(false)->once();
 
-        $this->controller->indexAction();
+        $controller->indexAction();
     }
 
     public function testIndexActionSuccessReducedFeeUniversalCredit()
     {
+        $controller = $this->getController(FeeReductionController::class);
+
         $response = new Response();
         $postData = ['reductionOptions' => 'reducedFeeUniversalCredit'];
 
@@ -210,17 +222,19 @@ class FeeReductionControllerTest extends AbstractControllerTest
                     && $payment->reducedFeeUniversalCredit === true;
             })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/fee-reduction');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/fee-reduction');
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionSuccessReducedFeeLowIncome()
     {
+        $controller = $this->getController(FeeReductionController::class);
+
         $response = new Response();
         $postData = ['reductionOptions' => 'reducedFeeLowIncome'];
 
@@ -238,17 +252,19 @@ class FeeReductionControllerTest extends AbstractControllerTest
                     && $payment->reducedFeeUniversalCredit === false;
             })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/fee-reduction');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/fee-reduction');
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionSuccessNotApply()
     {
+        $controller = $this->getController(FeeReductionController::class);
+
         $response = new Response();
         $postData = ['reductionOptions' => 'notApply'];
 
@@ -266,11 +282,11 @@ class FeeReductionControllerTest extends AbstractControllerTest
                     && $payment->reducedFeeUniversalCredit === null;
             })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/fee-reduction');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/fee-reduction');
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }

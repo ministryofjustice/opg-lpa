@@ -12,10 +12,6 @@ use Zend\View\Model\ViewModel;
 class ChangeEmailAddressControllerTest extends AbstractControllerTest
 {
     /**
-     * @var ChangeEmailAddressController
-     */
-    private $controller;
-    /**
      * @var MockInterface|ChangeEmailAddress
      */
     private $form;
@@ -25,7 +21,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(ChangeEmailAddressController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(ChangeEmailAddress::class);
         $this->formElementManager->shouldReceive('get')
@@ -37,13 +33,15 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        $controller = $this->getController(ChangeEmailAddressController::class);
+
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['user/change-email-address'])->andReturn('user/change-email-address')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'user/change-email-address'])->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -54,13 +52,15 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        $controller = $this->getController(ChangeEmailAddressController::class);
+
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['user/change-email-address'])->andReturn('user/change-email-address')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'user/change-email-address'])->once();
         $this->setPostInvalid($this->form, $this->postData);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -71,6 +71,8 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostValid()
     {
+        $controller = $this->getController(ChangeEmailAddressController::class);
+
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['user/change-email-address'])->andReturn('user/change-email-address')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'user/change-email-address'])->once();
@@ -79,7 +81,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/change-email-address/email-sent.twig', $result->getTemplate());
@@ -88,6 +90,8 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostUpdateFailed()
     {
+        $controller = $this->getController(ChangeEmailAddressController::class);
+
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['user/change-email-address'])->andReturn('user/change-email-address')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'user/change-email-address'])->once();
@@ -96,7 +100,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
         $this->userDetails->shouldReceive('requestEmailUpdate')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());

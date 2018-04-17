@@ -16,10 +16,6 @@ use Zend\View\Model\ViewModel;
 class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTest
 {
     /**
-     * @var HowPrimaryAttorneysMakeDecisionController
-     */
-    private $controller;
-    /**
      * @var MockInterface|HowAttorneysMakeDecisionForm
      */
     private $form;
@@ -34,26 +30,35 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(HowPrimaryAttorneysMakeDecisionController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(HowAttorneysMakeDecisionForm::class);
 
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\HowAttorneysMakeDecisionForm', ['lpa' => $this->lpa]])
             ->andReturn($this->form);
+    }
+
+    protected function getController(string $controllerName)
+    {
+        $controller = parent::getController($controllerName);
 
         $this->applicantService = Mockery::mock(Applicant::class);
-        $this->controller->setApplicantService($this->applicantService);
+        $controller->setApplicantService($this->applicantService);
+
+        return $controller;
     }
 
     public function testIndexActionGet()
     {
+        $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
+
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')
             ->withArgs([$this->lpa->document->primaryAttorneyDecisions->flatten()])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -62,11 +67,13 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
 
     public function testIndexActionPostInvalid()
     {
+        $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
+
         $this->setPostInvalid($this->form, $this->postData);
         $this->form->shouldReceive('setValidationGroup')->withArgs(['how'])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -75,16 +82,18 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
 
     public function testIndexActionPostNotChanged()
     {
+        $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
+
         $response = new Response();
 
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('setValidationGroup')->withArgs(['how'])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/how-primary-attorneys-make-decision');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/how-primary-attorneys-make-decision');
         $this->setRedirectToRoute('lpa/replacement-attorney', $this->lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
@@ -95,6 +104,8 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
      */
     public function testIndexActionPostFailed()
     {
+        $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
+
         $response = new Response();
 
         $postData = $this->postData;
@@ -110,13 +121,15 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
                     && $primaryAttorneyDecisions->howDetails == null;
             })->andReturn(false)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionPostSuccess()
     {
+        $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
+
         $response = new Response();
 
         $postData = $this->postData;
@@ -133,10 +146,10 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
         $this->replacementAttorneyCleanup->shouldReceive('cleanUp')->andReturn(true);
         $this->applicantService->shouldReceive('cleanUp')->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/how-primary-attorneys-make-decision');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/how-primary-attorneys-make-decision');
         $this->setRedirectToRoute('lpa/replacement-attorney', $this->lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }

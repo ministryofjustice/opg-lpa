@@ -9,18 +9,10 @@ use Zend\View\Model\ViewModel;
 
 class CompleteControllerTest extends AbstractControllerTest
 {
-    /**
-     * @var CompleteController
-     */
-    private $controller;
-
-    public function setUp()
-    {
-        $this->controller = parent::controllerSetUp(CompleteController::class);
-    }
-
     public function testIndexActionGetNotLocked()
     {
+        $controller = $this->getController(CompleteController::class);
+
         $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa])->once();
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['lpa/download', ['lpa-id' => $this->lpa->id, 'pdf-type' => 'lp1']])
@@ -33,7 +25,7 @@ class CompleteControllerTest extends AbstractControllerTest
             ->andReturn("lpa/{$this->lpa->id}/date-check/complete")->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/lpa/complete/complete.twig', $result->getTemplate());
@@ -53,6 +45,8 @@ class CompleteControllerTest extends AbstractControllerTest
 
     public function testViewDocsActionPeopleToNotifyFeeReduction()
     {
+        $controller = $this->getController(CompleteController::class);
+
         $this->lpa->payment->reducedFeeUniversalCredit = true;
 
         $this->lpa->document->peopleToNotify = [
@@ -77,7 +71,7 @@ class CompleteControllerTest extends AbstractControllerTest
             ->andReturn("lpa/{$this->lpa->id}/download/pdf/lpa120")->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->viewDocsAction();
+        $result = $controller->viewDocsAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());

@@ -15,10 +15,6 @@ use Zend\View\Model\ViewModel;
 class ForgotPasswordControllerTest extends AbstractControllerTest
 {
     /**
-     * @var ForgotPasswordController
-     */
-    private $controller;
-    /**
      * @var MockInterface|ConfirmEmail
      */
     private $resetPasswordEmailForm;
@@ -32,9 +28,9 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         'password' => 'newPassword'
     ];
 
-    public function setUpController($setUpIdentity = true)
+    public function setUp()
     {
-        $this->controller = parent::controllerSetUp(ForgotPasswordController::class, $setUpIdentity);
+        parent::setUp();
 
         $this->resetPasswordEmailForm = Mockery::mock(ConfirmEmail::class);
         $this->formElementManager->shouldReceive('get')
@@ -45,32 +41,41 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
             ->withArgs(['Application\Form\User\SetPassword'])->andReturn($this->setPasswordForm);
 
         $this->userDetails = Mockery::mock(Details::class);
-        $this->controller->setUserService($this->userDetails);
+    }
+
+    protected function getController(string $controllerName)
+    {
+        $controller = parent::getController($controllerName);
+
+        $controller->setUserService($this->userDetails);
+
+        return $controller;
     }
 
     public function testIndexActionAlreadyLoggedIn()
     {
-        $this->setUpController();
+        $controller = $this->getController(ForgotPasswordController::class);
 
         $response = new Response();
 
         $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionGet()
     {
-        $this->setUpController(false);
+        $this->setIdentity(null);
+        $controller = $this->getController(ForgotPasswordController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->url->shouldReceive('fromRoute')->withArgs(['forgot-password'])->andReturn('forgot-password')->once();
         $this->resetPasswordEmailForm->shouldReceive('setAttribute')->withArgs(['action', 'forgot-password'])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -80,14 +85,15 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testIndexActionFormInvalid()
     {
-        $this->setUpController(false);
+        $this->setIdentity(null);
+        $controller = $this->getController(ForgotPasswordController::class);
 
         $this->url->shouldReceive('fromRoute')->withArgs(['forgot-password'])->andReturn('forgot-password')->once();
         $this->resetPasswordEmailForm->shouldReceive('setAttribute')->withArgs(['action', 'forgot-password'])->once();
         $this->setPostInvalid($this->resetPasswordEmailForm, $this->postData);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -97,7 +103,8 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostError()
     {
-        $this->setUpController(false);
+        $this->setIdentity(null);
+        $controller = $this->getController(ForgotPasswordController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
         $this->url->shouldReceive('fromRoute')->withArgs(['forgot-password'])->andReturn('forgot-password')->once();
@@ -110,7 +117,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->userDetails->shouldReceive('requestPasswordResetEmail')->andReturn('Password reset failed');
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/general/forgot-password/email-sent.twig', $result->getTemplate());
@@ -120,7 +127,8 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostAccountNotActivated()
     {
-        $this->setUpController(null);
+        $this->setIdentity(null);
+        $controller = $this->getController(ForgotPasswordController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
         $this->url->shouldReceive('fromRoute')->withArgs(['forgot-password'])->andReturn('forgot-password')->once();
@@ -132,7 +140,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->userDetails->shouldReceive('requestPasswordResetEmail')->andReturn('account-not-activated');
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/general/forgot-password/email-sent.twig', $result->getTemplate());
@@ -142,12 +150,12 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testResetPasswordActionEmptyToken()
     {
-        $this->setUpController();
+        $controller = $this->getController(ForgotPasswordController::class);
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn(null)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->resetPasswordAction();
+        $result = $controller->resetPasswordAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/general/forgot-password/invalid-reset-token.twig', $result->getTemplate());
@@ -155,7 +163,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testResetPasswordActionAlreadyLoggedIn()
     {
-        $this->setUpController();
+        $controller = $this->getController(ForgotPasswordController::class);
 
         $response = new Response();
 
@@ -165,14 +173,15 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
             ->andReturn($response)->once();
         $this->sessionManager->shouldReceive('initialise')->once();
 
-        $result = $this->controller->resetPasswordAction();
+        $result = $controller->resetPasswordAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testResetPasswordActionGet()
     {
-        $this->setUpController(false);
+        $this->setIdentity(null);
+        $controller = $this->getController(ForgotPasswordController::class);
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn($this->postData['token'])->once();
         $url = 'forgot-password/callback?token=' . $this->postData['token'];
@@ -182,7 +191,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->resetPasswordAction();
+        $result = $controller->resetPasswordAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -192,7 +201,8 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testResetPasswordActionPostInvalid()
     {
-        $this->setUpController(false);
+        $this->setIdentity(null);
+        $controller = $this->getController(ForgotPasswordController::class);
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn($this->postData['token'])->once();
         $url = 'forgot-password/callback?token=' . $this->postData['token'];
@@ -202,7 +212,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->setPostInvalid($this->setPasswordForm, $this->postData);
 
         /** @var ViewModel $result */
-        $result = $this->controller->resetPasswordAction();
+        $result = $controller->resetPasswordAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -212,7 +222,8 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testResetPasswordActionPostError()
     {
-        $this->setUpController(false);
+        $this->setIdentity(null);
+        $controller = $this->getController(ForgotPasswordController::class);
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn($this->postData['token'])->once();
         $url = 'forgot-password/callback?token=' . $this->postData['token'];
@@ -229,7 +240,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
             ->withArgs([$this->postData['token'], $this->postData['password']])->andReturn('Password change failed');
 
         /** @var ViewModel $result */
-        $result = $this->controller->resetPasswordAction();
+        $result = $controller->resetPasswordAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -239,7 +250,8 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testResetPasswordActionPostInvalidToken()
     {
-        $this->setUpController(false);
+        $this->setIdentity(null);
+        $controller = $this->getController(ForgotPasswordController::class);
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn($this->postData['token'])->once();
         $url = 'forgot-password/callback?token=' . $this->postData['token'];
@@ -256,7 +268,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
             ->withArgs([$this->postData['token'], $this->postData['password']])->andReturn('invalid-token');
 
         /** @var ViewModel $result */
-        $result = $this->controller->resetPasswordAction();
+        $result = $controller->resetPasswordAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/general/forgot-password/invalid-reset-token.twig', $result->getTemplate());
@@ -264,7 +276,8 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     public function testResetPasswordActionPostSuccess()
     {
-        $this->setUpController(false);
+        $this->setIdentity(null);
+        $controller = $this->getController(ForgotPasswordController::class);
 
         $response = new Response();
 
@@ -284,7 +297,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         $this->redirect->shouldReceive('toRoute')->withArgs(['login'])->andReturn($response)->once();
         $this->flashMessenger->shouldReceive('addSuccessMessage')->withArgs(['Password successfully reset'])->once();
 
-        $result = $this->controller->resetPasswordAction();
+        $result = $controller->resetPasswordAction();
 
         $this->assertEquals($response, $result);
     }

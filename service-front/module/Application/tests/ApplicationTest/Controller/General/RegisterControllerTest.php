@@ -19,10 +19,6 @@ use Zend\View\Model\ViewModel;
 class RegisterControllerTest extends AbstractControllerTest
 {
     /**
-     * @var RegisterController
-     */
-    private $controller;
-    /**
      * @var MockInterface|Registration
      */
     private $form;
@@ -39,27 +35,33 @@ class RegisterControllerTest extends AbstractControllerTest
         'password' => 'password'
     ];
 
-    public function setUpController($setUpIdentity = true)
+    public function setUp()
     {
-        $this->controller = parent::controllerSetUp(RegisterController::class, $setUpIdentity);
+        parent::setUp();
 
         $this->form = Mockery::mock(Registration::class);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\User\Registration'])->andReturn($this->form);
+    }
 
-        $this->event = Mockery::mock(MvcEvent::class);
-        $this->controller->setEvent($this->event);
+    protected function getController(string $controllerName)
+    {
+        $controller = parent::getController($controllerName);
 
         $this->routeMatch = Mockery::mock(RouteMatch::class);
+        $this->event = Mockery::mock(MvcEvent::class);
         $this->event->shouldReceive('getRouteMatch')->andReturn($this->routeMatch);
+        $controller->setEvent($this->event);
 
         $this->userDetails = Mockery::mock(Details::class);
-        $this->controller->setUserService($this->userDetails);
+        $controller->setUserService($this->userDetails);
+
+        return $controller;
     }
 
     public function testIndexActionRefererGovUk()
     {
-        $this->setUpController();
+        $controller = $this->getController(RegisterController::class);
 
         $response = new Response();
         $referer = new Referer();
@@ -68,14 +70,14 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['home'])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionAlreadyLoggedIn()
     {
-        $this->setUpController();
+        $controller = $this->getController(RegisterController::class);
 
         $response = new Response();
 
@@ -87,14 +89,15 @@ class RegisterControllerTest extends AbstractControllerTest
             ->withArgs(['Authenticated user attempted to access registration page', $this->userIdentity->toArray()])
             ->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionGet()
     {
-        $this->setUpController(false);
+        $this->setIdentity(null);
+        $controller = $this->getController(RegisterController::class);
 
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
@@ -104,7 +107,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -113,7 +116,8 @@ class RegisterControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
-        $this->setUpController(false);
+        $this->setIdentity(null);
+        $controller = $this->getController(RegisterController::class);
 
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
@@ -123,7 +127,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->setPostInvalid($this->form, $this->postData);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -132,7 +136,8 @@ class RegisterControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostError()
     {
-        $this->setUpController(false);
+        $this->setIdentity(null);
+        $controller = $this->getController(RegisterController::class);
 
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
@@ -144,7 +149,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->userDetails->shouldReceive('registerAccount')->andReturn('Unit test error')->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -154,7 +159,8 @@ class RegisterControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostSuccess()
     {
-        $this->setUpController(false);
+        $this->setIdentity(null);
+        $controller = $this->getController(RegisterController::class);
 
         $response = new Response();
 
@@ -180,19 +186,19 @@ class RegisterControllerTest extends AbstractControllerTest
              ->withArgs(['Application\Form\User\ConfirmEmail'])->andReturn($form);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
     }
 
     public function testConfirmActionNoToken()
     {
-        $this->setUpController();
+        $controller = $this->getController(RegisterController::class);
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn(null)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->confirmAction();
+        $result = $controller->confirmAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('invalid-token', $result->getVariable('error'));
@@ -200,7 +206,7 @@ class RegisterControllerTest extends AbstractControllerTest
 
     public function testConfirmActionAccountDoesNotExist()
     {
-        $this->setUpController();
+        $controller = $this->getController(RegisterController::class);
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('unitTest')->once();
         $this->authenticationService->shouldReceive('clearIdentity');
@@ -208,7 +214,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->userDetails->shouldReceive('activateAccount')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->confirmAction();
+        $result = $controller->confirmAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('account-missing', $result->getVariable('error'));
@@ -216,7 +222,7 @@ class RegisterControllerTest extends AbstractControllerTest
 
     public function testConfirmActionSuccess()
     {
-        $this->setUpController();
+        $controller = $this->getController(RegisterController::class);
 
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn('unitTest')->once();
         $this->authenticationService->shouldReceive('clearIdentity');
@@ -224,7 +230,7 @@ class RegisterControllerTest extends AbstractControllerTest
         $this->userDetails->shouldReceive('activateAccount')->andReturn(true)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->confirmAction();
+        $result = $controller->confirmAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
     }

@@ -15,10 +15,6 @@ use Zend\View\Model\ViewModel;
 class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
 {
     /**
-     * @var WhenReplacementAttorneyStepInController
-     */
-    private $controller;
-    /**
      * @var MockInterface|WhenReplacementAttorneyStepInForm
      */
     private $form;
@@ -35,7 +31,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(WhenReplacementAttorneyStepInController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(WhenReplacementAttorneyStepInForm::class);
         $this->formElementManager->shouldReceive('get')
@@ -45,12 +41,14 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        $controller = $this->getController(WhenReplacementAttorneyStepInController::class);
+
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')
             ->withArgs([$this->lpa->document->replacementAttorneyDecisions->flatten()])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -59,10 +57,12 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        $controller = $this->getController(WhenReplacementAttorneyStepInController::class);
+
         $this->setPostInvalid($this->form, $this->postDataDepends);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -75,6 +75,8 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostFailed()
     {
+        $controller = $this->getController(WhenReplacementAttorneyStepInController::class);
+
         $this->setPostValid($this->form, $this->postDataLast);
         $this->form->shouldReceive('setValidationGroup')->withArgs(['when'])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postDataLast)->once();
@@ -84,11 +86,13 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
                     && $replacementAttorneyDecisions->when === $this->postDataLast['when'];
             })->andReturn(false)->once();
 
-        $this->controller->indexAction();
+        $controller->indexAction();
     }
 
     public function testIndexActionPostSuccess()
     {
+        $controller = $this->getController(WhenReplacementAttorneyStepInController::class);
+
         $response = new Response();
 
         $this->setPostValid($this->form, $this->postDataLast);
@@ -101,16 +105,18 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
             })->andReturn(true)->once();
         $this->replacementAttorneyCleanup->shouldReceive('cleanUp')->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/when-replacement-attorney-step-in');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/when-replacement-attorney-step-in');
         $this->setRedirectToRoute('lpa/how-replacement-attorneys-make-decision', $this->lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionPostSuccessDepends()
     {
+        $controller = $this->getController(WhenReplacementAttorneyStepInController::class);
+
         $response = new Response();
 
         $this->lpa->document->replacementAttorneyDecisions = null;
@@ -124,10 +130,10 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
             })->andReturn(true)->once();
         $this->replacementAttorneyCleanup->shouldReceive('cleanUp')->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/when-replacement-attorney-step-in');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/when-replacement-attorney-step-in');
         $this->setRedirectToRoute('lpa/certificate-provider', $this->lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }

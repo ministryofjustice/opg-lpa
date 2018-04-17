@@ -14,10 +14,6 @@ use Zend\View\Model\ViewModel;
 class InstructionsControllerTest extends AbstractControllerTest
 {
     /**
-     * @var InstructionsController
-     */
-    private $controller;
-    /**
      * @var MockInterface|InstructionsAndPreferencesForm
      */
     private $form;
@@ -28,7 +24,7 @@ class InstructionsControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(InstructionsController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(InstructionsAndPreferencesForm::class);
         $this->formElementManager->shouldReceive('get')
@@ -38,11 +34,13 @@ class InstructionsControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        $controller = $this->getController(InstructionsController::class);
+
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')->withArgs([$this->lpa->document->flatten()])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -52,10 +50,12 @@ class InstructionsControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        $controller = $this->getController(InstructionsController::class);
+
         $this->setPostInvalid($this->form);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -69,12 +69,14 @@ class InstructionsControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostInstructionsFailed()
     {
+        $controller = $this->getController(InstructionsController::class);
+
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setInstructions')
             ->withArgs([$this->lpa, $this->postData['instruction']])->andReturn(false)->once();
 
-         $this->controller->indexAction();
+         $controller->indexAction();
     }
 
     /**
@@ -83,6 +85,8 @@ class InstructionsControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostPreferencesFailed()
     {
+        $controller = $this->getController(InstructionsController::class);
+
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setInstructions')
@@ -90,11 +94,13 @@ class InstructionsControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setPreferences')
             ->withArgs([$this->lpa, $this->postData['preference']])->andReturn(false)->once();
 
-        $this->controller->indexAction();
+        $controller->indexAction();
     }
 
     public function testIndexActionPostSuccess()
     {
+        $controller = $this->getController(InstructionsController::class);
+
         $response = new Response();
 
         $this->setPostValid($this->form, $this->postData);
@@ -104,16 +110,18 @@ class InstructionsControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setPreferences')
             ->withArgs([$this->lpa, $this->postData['preference']])->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/instructions');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/instructions');
         $this->setRedirectToRoute('lpa/applicant', $this->lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionPostMetadata()
     {
+        $controller = $this->getController(InstructionsController::class);
+
         $response = new Response();
 
         $this->lpa->metadata['instruction-confirmed'] = false;
@@ -125,12 +133,12 @@ class InstructionsControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setPreferences')
             ->withArgs([$this->lpa, $this->postData['preference']])->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/instructions');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/instructions');
         $this->setRedirectToRoute('lpa/applicant', $this->lpa, $response);
         $this->metadata->shouldReceive('setInstructionConfirmed')
             ->withArgs([$this->lpa])->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }

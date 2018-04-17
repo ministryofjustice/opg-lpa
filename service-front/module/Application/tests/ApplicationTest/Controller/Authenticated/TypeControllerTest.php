@@ -18,10 +18,6 @@ use Zend\View\Model\ViewModel;
 class TypeControllerTest extends AbstractControllerTest
 {
     /**
-     * @var TypeController
-     */
-    private $controller;
-    /**
      * @var MockInterface|TypeForm
      */
     private $form;
@@ -31,7 +27,7 @@ class TypeControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(TypeController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(TypeForm::class);
         $this->formElementManager->shouldReceive('get')
@@ -40,10 +36,12 @@ class TypeControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        $controller = $this->getController(TypeController::class);
+
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/lpa/type/index.twig', $result->getTemplate());
@@ -57,10 +55,12 @@ class TypeControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        $controller = $this->getController(TypeController::class);
+
         $this->setPostInvalid($this->form, $this->postData);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/lpa/type/index.twig', $result->getTemplate());
@@ -74,6 +74,8 @@ class TypeControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostCreationError()
     {
+        $controller = $this->getController(TypeController::class);
+
         $response = new Response();
 
         $this->setPostValid($this->form, $this->postData);
@@ -82,7 +84,7 @@ class TypeControllerTest extends AbstractControllerTest
             ->withArgs(['Error creating a new LPA. Please try again.'])->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
@@ -93,6 +95,8 @@ class TypeControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostSetTypeException()
     {
+        $controller = $this->getController(TypeController::class);
+
         $this->setPostValid($this->form, $this->postData);
         $lpa = FixturesData::getHwLpa();
         $this->lpaApplicationService->shouldReceive('createApplication')->andReturn($lpa)->once();
@@ -100,11 +104,13 @@ class TypeControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setType')
             ->andReturn($lpa->id, $this->postData['type'])->andReturn(false)->once();
 
-        $this->controller->indexAction();
+        $controller->indexAction();
     }
 
     public function testIndexAction()
     {
+        $controller = $this->getController(TypeController::class);
+
         $response = new Response();
 
         $this->setPostValid($this->form, $this->postData);
@@ -117,10 +123,10 @@ class TypeControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setType')
             ->andReturn($lpa->id, $this->postData['type'])->andReturn(true)->once();
 
-        $this->setMatchedRouteName($this->controller, 'lpa/form-type');
+        $this->setMatchedRouteName($controller, 'lpa/form-type');
         $this->setRedirectToRoute('lpa/donor', $lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
