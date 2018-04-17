@@ -24930,29 +24930,72 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
     moj.Modules.SingleUse = new SingleUse();
 }());
 ;
-// Error tracking module for Google Analytics
+// Analytics module for LPA
+// Dependencies: moj, jQuery
 
-;(function (global) {
-  'use strict'
+(function () {
+  'use strict';
 
-  var $ = global.jQuery
-  var GOVUK = global.GOVUK || {}
+  moj.Modules.Analytics = {
 
-  GOVUK.analyticsPlugins = GOVUK.analyticsPlugins || {}
-  GOVUK.analyticsPlugins.formErrorTracker = function () {
+    init: function () {
+      GOVUK.Analytics.load();
+      this.setup();
+    },
 
-    var errorSummarySelector = '.error-summary-list a'
+    setup: function() {
+      // Use document.domain in dev, preview and staging so that tracking works
+      // Otherwise explicitly set the domain as lastingpowerofattorney.service.justice.gov.uk.
+      var cookieDomain = (document.domain === 'lastingpowerofattorney.service.justice.gov.uk') ? '.lastingpowerofattorney.service.justice.gov.uk' : document.domain;
 
-    var errors = $('.error-summary-list li a')
-    for (var i = 0; i < errors.length; i++) {
-      trackError(errors[i])
+      // Configure profiles and make interface public
+      // for custom dimensions, virtual pageviews and events
+      GOVUK.analytics = new GOVUK.Analytics({
+        universalId: gaConfig.universalId  || '',
+        cookieDomain: cookieDomain,
+        allowLinker: true,
+        allowAnchor: true
+      });
+
+      // Activate any event plugins eg. print intent, error tracking
+      //GOVUK.analyticsPlugins.formErrorTracker();
+
+      // Track initial pageview
+      if (typeof GOVUK.pageviewOptions !== 'undefined') {
+        GOVUK.analytics.trackPageview(null, null, GOVUK.pageviewOptions);
+      }
+      else {
+        GOVUK.analytics.trackPageview();
+      }
     }
+  };
+})();;
+// Analytics form error tracking module for LPA
+// Dependencies: moj, jQuery
 
-    function trackError(error) {
+(function () {
+  'use strict';
+
+  moj.Modules.formErrorTracker = {
+
+    init: function () {
+      this.checkErrors();
+    },
+
+    checkErrors: function(){
+      var errorSummarySelector = '.error-summary-list a'
+
+      var errors = $('.error-summary-list li a')
+      for (var i = 0; i < errors.length; i++) {
+        this.trackError(errors[i])
+      }
+    },
+
+    trackError: function(error) {
       var $error = $(error)
       var errorText = $.trim($error.text())
       var errorID = $error.attr('href')
-      var questionText = getQuestionText(error)
+      var questionText = this.getQuestionText(error)
 
       var actionLabel = errorID + ' - ' + errorText
 
@@ -24961,12 +25004,10 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
         label: actionLabel
       }
 
-      window.optionsGlobal = options
-
       GOVUK.analytics.trackEvent('form error', questionText, options)
-    }
+    },
 
-    function getQuestionText(error) {
+    getQuestionText: function(error) {
       var $error = $(error)
       var errorID = $error.attr('href')
 
@@ -24998,48 +25039,8 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
 
       return questionText
     }
-  }
-
-  global.GOVUK = GOVUK
-})(window)
-;
-;GOVUK.analyticsSetup = function(global) {
-  "use strict";
-
-  var $ = global.jQuery
-  var GOVUK = global.GOVUK || {}
-  var gaConfig = global.gaConfig || {}
-
-  // Load Google Analytics libraries
-  GOVUK.Analytics.load();
-
-  // Use document.domain in dev, preview and staging so that tracking works
-  // Otherwise explicitly set the domain as lastingpowerofattorney.service.justice.gov.uk.
-  var cookieDomain = (document.domain === 'lastingpowerofattorney.service.justice.gov.uk') ? '.lastingpowerofattorney.service.justice.gov.uk' : document.domain;
-
-  // Configure profiles and make interface public
-  // for custom dimensions, virtual pageviews and events
-  GOVUK.analytics = new GOVUK.Analytics({
-    universalId: gaConfig.universalId  || '',
-    cookieDomain: cookieDomain,
-    allowLinker: true,
-    allowAnchor: true
-  });
-
-  // Activate any event plugins eg. print intent, error tracking
-  GOVUK.analyticsPlugins.formErrorTracker();
-
-  // Track initial pageview
-  if (typeof GOVUK.pageviewOptions !== 'undefined') {
-    GOVUK.analytics.trackPageview(null, null, GOVUK.pageviewOptions);
-  }
-  else {
-    GOVUK.analytics.trackPageview();
-  }
-
-};
-
-GOVUK.analyticsSetup(window);
+  };
+})();;
 // ====================================================================================
 // INITITALISE ALL MOJ MODULES
 ;$(moj.init);
