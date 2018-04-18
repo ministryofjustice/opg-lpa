@@ -60,7 +60,7 @@ class DownloadController extends AbstractLpaController
         }
 
         //  Get the file contents by requesting the PDF again but with the .pdf file extension
-        $fileContents = $this->getLpaApplicationService()->getPdf($lpa->id, $pdfType . '.pdf');
+        $fileContents = $this->getLpaApplicationService()->getPdfContents($lpa->id, $pdfType);
 
         $response = $this->getResponse();
         $response->setContent($fileContents);

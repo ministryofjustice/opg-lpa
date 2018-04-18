@@ -194,7 +194,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
     }
 
     /**
-     * Returns the PDF details (or body if the type ends with .pdf) for the specified PDF type
+     * Returns the PDF details for the specified PDF type
      *
      * @param $lpaId
      * @param $pdfType
@@ -203,6 +203,28 @@ class Application extends AbstractService implements ApiClientAwareInterface
     public function getPdf($lpaId, $pdfType)
     {
         return $this->executeGet(sprintf('/v2/users/%s/applications/%s/pdfs/%s', $this->getUserId(), $lpaId, $pdfType));
+    }
+
+    /**
+     * Returns the PDF contents as application/pdf mime type for the specified PDF type
+     *
+     * @param $lpaId
+     * @param $pdfType
+     * @return bool|null|\Psr\Http\Message\StreamInterface
+     */
+    public function getPdfContents($lpaId, $pdfType)
+    {
+        $response = $this->apiClient->httpGet(sprintf('/v2/users/%s/applications/%s/pdfs/%s.pdf', $this->getUserId(), $lpaId, $pdfType));
+
+        if ($response->getStatusCode() == 204) {
+            return null;
+        }
+
+        if ($response->getStatusCode() == 200) {
+            return $response->getBody();
+        }
+
+        return false;
     }
 
     /**
