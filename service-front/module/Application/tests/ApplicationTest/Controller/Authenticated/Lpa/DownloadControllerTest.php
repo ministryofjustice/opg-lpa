@@ -128,8 +128,8 @@ class DownloadControllerTest extends AbstractControllerTest
         $routeMatch->shouldReceive('getParam')->withArgs(['pdf-type'])->andReturn($pdfType)->once();
         $this->lpaApplicationService->shouldReceive('getPdf')
             ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
-        $this->lpaApplicationService->shouldReceive('getPdf')
-            ->withArgs([$this->lpa->id, $pdfType . '.pdf'])->andReturn('PDF content')->once();
+        $this->lpaApplicationService->shouldReceive('getPdfContents')
+            ->withArgs([$this->lpa->id, $pdfType])->andReturn('PDF content')->once();
         $response->shouldReceive('setContent')->withArgs(['PDF content'])->once();
         $headers = Mockery::mock(Headers::class);
         $response->shouldReceive('getHeaders')->andReturn($headers)->once();
