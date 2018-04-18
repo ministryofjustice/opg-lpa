@@ -27,6 +27,7 @@ class StatsControllerTest extends AbstractControllerTest
 
     protected function getController(string $controllerName)
     {
+        /** @var StatsController $controller */
         $controller = parent::getController($controllerName);
 
         $controller->setStatsService($this->statsService);
@@ -36,6 +37,7 @@ class StatsControllerTest extends AbstractControllerTest
 
     public function testIndexAction()
     {
+        /** @var StatsController $controller */
         $controller = $this->getController(StatsController::class);
 
         /** @var ViewModel $result */

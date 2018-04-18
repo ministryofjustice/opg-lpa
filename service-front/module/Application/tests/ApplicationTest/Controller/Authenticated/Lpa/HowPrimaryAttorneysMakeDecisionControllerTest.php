@@ -41,6 +41,7 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
 
     protected function getController(string $controllerName)
     {
+        /** @var HowPrimaryAttorneysMakeDecisionController $controller */
         $controller = parent::getController($controllerName);
 
         $this->applicantService = Mockery::mock(Applicant::class);

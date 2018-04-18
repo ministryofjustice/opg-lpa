@@ -10,6 +10,7 @@ class SummaryControllerTest extends AbstractControllerTest
 {
     public function testIndexAction()
     {
+        /** @var SummaryController $controller */
         $controller = $this->getController(SummaryController::class);
 
         $this->params->shouldReceive('fromQuery')

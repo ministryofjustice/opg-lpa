@@ -11,6 +11,7 @@ class CompleteControllerTest extends AbstractControllerTest
 {
     public function testIndexActionGetNotLocked()
     {
+        /** @var CompleteController $controller */
         $controller = $this->getController(CompleteController::class);
 
         $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa])->once();
@@ -45,6 +46,7 @@ class CompleteControllerTest extends AbstractControllerTest
 
     public function testViewDocsActionPeopleToNotifyFeeReduction()
     {
+        /** @var CompleteController $controller */
         $controller = $this->getController(CompleteController::class);
 
         $this->lpa->payment->reducedFeeUniversalCredit = true;

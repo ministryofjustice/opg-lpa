@@ -30,6 +30,7 @@ class AboutYouControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        /** @var AboutYouController $controller */
         $controller = $this->getController(AboutYouController::class);
 
         //  Set up any route or request parameters
@@ -53,6 +54,7 @@ class AboutYouControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        /** @var AboutYouController $controller */
         $controller = $this->getController(AboutYouController::class);
 
         //  Set up any route or request parameters
@@ -75,6 +77,7 @@ class AboutYouControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostValid()
     {
+        /** @var AboutYouController $controller */
         $controller = $this->getController(AboutYouController::class);
 
         $response = new Response();
@@ -101,6 +104,7 @@ class AboutYouControllerTest extends AbstractControllerTest
 
     public function testNewActionGet()
     {
+        /** @var AboutYouController $controller */
         $controller = $this->getController(AboutYouController::class);
 
         //  Set up any route or request parameters
@@ -125,6 +129,7 @@ class AboutYouControllerTest extends AbstractControllerTest
 
     public function testNewActionPostValid()
     {
+        /** @var AboutYouController $controller */
         $controller = $this->getController(AboutYouController::class);
 
         $response = new Response();

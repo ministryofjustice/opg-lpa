@@ -33,6 +33,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        /** @var ChangeEmailAddressController $controller */
         $controller = $this->getController(ChangeEmailAddressController::class);
 
         $this->url->shouldReceive('fromRoute')
@@ -52,6 +53,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        /** @var ChangeEmailAddressController $controller */
         $controller = $this->getController(ChangeEmailAddressController::class);
 
         $this->url->shouldReceive('fromRoute')
@@ -71,6 +73,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostValid()
     {
+        /** @var ChangeEmailAddressController $controller */
         $controller = $this->getController(ChangeEmailAddressController::class);
 
         $this->url->shouldReceive('fromRoute')
@@ -90,6 +93,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostUpdateFailed()
     {
+        /** @var ChangeEmailAddressController $controller */
         $controller = $this->getController(ChangeEmailAddressController::class);
 
         $this->url->shouldReceive('fromRoute')

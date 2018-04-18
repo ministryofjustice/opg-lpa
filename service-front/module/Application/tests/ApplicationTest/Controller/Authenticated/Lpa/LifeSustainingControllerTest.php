@@ -32,6 +32,7 @@ class LifeSustainingControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        /** @var LifeSustainingController $controller */
         $controller = $this->getController(LifeSustainingController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -48,6 +49,7 @@ class LifeSustainingControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        /** @var LifeSustainingController $controller */
         $controller = $this->getController(LifeSustainingController::class);
 
         $this->setPostInvalid($this->form);
@@ -66,6 +68,7 @@ class LifeSustainingControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostFailed()
     {
+        /** @var LifeSustainingController $controller */
         $controller = $this->getController(LifeSustainingController::class);
 
         $this->lpa->document->primaryAttorneyDecisions->canSustainLife = false;
@@ -80,6 +83,7 @@ class LifeSustainingControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostSuccess()
     {
+        /** @var LifeSustainingController $controller */
         $controller = $this->getController(LifeSustainingController::class);
 
         $response = new Response();

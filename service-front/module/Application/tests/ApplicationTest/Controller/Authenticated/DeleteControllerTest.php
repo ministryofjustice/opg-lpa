@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Controller\Authenticated;
 
+use Application\Controller\Authenticated\DeleteController;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Zend\Http\Response;
 use Zend\Session\Container;
@@ -12,6 +13,7 @@ class DeleteControllerTest extends AbstractControllerTest
 {
     public function testIndexAction()
     {
+        /** @var DeleteController $controller */
         $controller = $this->getController(TestableDeleteController::class);
 
         /** @var ViewModel $result */
@@ -22,6 +24,7 @@ class DeleteControllerTest extends AbstractControllerTest
 
     public function testConfirmActionFailed()
     {
+        /** @var DeleteController $controller */
         $controller = $this->getController(TestableDeleteController::class);
 
         $this->userDetails->shouldReceive('delete')->andReturn(false)->once();
@@ -35,6 +38,7 @@ class DeleteControllerTest extends AbstractControllerTest
 
     public function testConfirmAction()
     {
+        /** @var DeleteController $controller */
         $controller = $this->getController(TestableDeleteController::class);
 
         $response = new Response();
@@ -49,6 +53,7 @@ class DeleteControllerTest extends AbstractControllerTest
 
     public function testCheckAuthenticated()
     {
+        /** @var DeleteController $controller */
         $this->setIdentity(null);
         $controller = $this->getController(TestableDeleteController::class);
 

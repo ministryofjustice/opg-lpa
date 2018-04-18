@@ -36,6 +36,7 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testIndexAction()
     {
+        /** @var AdminController $controller */
         $controller = $this->getController(AdminController::class);
 
         /** @var ViewModel $result */
@@ -50,6 +51,7 @@ class AdminControllerTest extends AbstractControllerTest
     {
         $this->user->email->address = '';
 
+        /** @var AdminController $controller */
         $controller = $this->getController(AdminController::class);
 
         $response = new Response();
@@ -66,6 +68,7 @@ class AdminControllerTest extends AbstractControllerTest
     {
         $this->user->email->address = 'unit@test.com';
 
+        /** @var AdminController $controller */
         $controller = $this->getController(AdminController::class);
 
         $response = new Response();
@@ -80,6 +83,7 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testOnDispatchUserIsAdminPageNotFound()
     {
+        /** @var AdminController $controller */
         $controller = $this->getController(AdminController::class);
 
         $event = new MvcEvent();
@@ -103,6 +107,7 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testSystemMessageActionGet()
     {
+        /** @var AdminController $controller */
         $controller = $this->getController(AdminController::class);
 
         $messageElement = Mockery::mock(Element::class);
@@ -122,6 +127,7 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testSystemMessageActionPostInvalid()
     {
+        /** @var AdminController $controller */
         $controller = $this->getController(AdminController::class);
 
         $this->setPostInvalid($this->systemMessageForm, $this->systemMessagePostData);
@@ -136,6 +142,7 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testSystemMessageActionPostEmptyMessage()
     {
+        /** @var AdminController $controller */
         $controller = $this->getController(AdminController::class);
 
         $response = new Response();
@@ -157,6 +164,7 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testSystemMessageActionPostMessage()
     {
+        /** @var AdminController $controller */
         $controller = $this->getController(AdminController::class);
 
         $response = new Response();

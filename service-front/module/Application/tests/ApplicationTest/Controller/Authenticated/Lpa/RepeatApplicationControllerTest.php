@@ -4,13 +4,10 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\RepeatApplicationController;
 use Application\Form\Lpa\RepeatApplicationForm;
-use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
-use DateTime;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
@@ -42,6 +39,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
     {
         unset($this->lpa->metadata[Lpa::REPEAT_APPLICATION_CONFIRMED]);
 
+        /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -57,6 +55,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -76,6 +75,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostNoRepeatInvalid()
     {
+        /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
 
         $this->setPostInvalid($this->form, $this->postDataNoRepeat);
@@ -92,6 +92,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostRepeatInvalid()
     {
+        /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
 
         $this->setPostInvalid($this->form, $this->postDataRepeat);
@@ -113,6 +114,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
     {
         $this->lpa->repeatCaseNumber = 12345;
 
+        /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
 
         $this->setPostValid($this->form, $this->postDataNoRepeat);
@@ -130,6 +132,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostRepeatFailed()
     {
+        /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
 
         $this->setPostValid($this->form, $this->postDataRepeat);
@@ -146,6 +149,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostRepeatSetPaymentFailed()
     {
+        /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
 
         $this->setPostValid($this->form, $this->postDataRepeat);
@@ -165,6 +169,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
     {
         $this->lpa->repeatCaseNumber = 12345;
 
+        /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
 
         $response = new Response();

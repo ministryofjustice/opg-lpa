@@ -2,12 +2,11 @@
 
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
+use Application\Controller\Authenticated\Lpa\ReplacementAttorneyController;
 use Application\Form\Lpa\AttorneyForm;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Form\Lpa\TrustCorporationForm;
-use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
-use DateTime;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Common\Address;
@@ -86,6 +85,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->replacementAttorneys = [];
 
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -105,6 +105,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetMultipleReplacementAttorney()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -125,6 +126,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->setPostInvalid($this->blankMainFlowForm);
@@ -145,6 +147,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostSuccess()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $response = new Response();
@@ -162,6 +165,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testAddActionGetReuseDetails()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $response = new Response();
@@ -179,6 +183,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testAddActionGet()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
@@ -201,6 +206,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->replacementAttorneys[] = FixturesData::getAttorneyTrust();
 
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
@@ -224,6 +230,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->lpa = FixturesData::getHwLpa();
         $this->lpa->seed = null;
 
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
@@ -244,6 +251,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testAddActionPostInvalid()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -268,6 +276,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
      */
     public function testAddActionPostFailed()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -289,6 +298,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testAddActionPostSuccess()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $response = new Response();
@@ -319,6 +329,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
     {
         unset($this->lpa->metadata[Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED]);
 
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $response = new Response();
@@ -348,6 +359,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testAddActionPostReuseDetails()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->setSeedLpa($this->lpa, FixturesData::getPfLpa());
@@ -380,6 +392,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
         $response = new Response();
 
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -392,6 +405,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testAddTrustActionGet()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
@@ -411,6 +425,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testAddTrustActionPostInvalid()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -434,6 +449,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
      */
     public function testAddTrustActionPostFailed()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -455,6 +471,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testAddTrustActionPostSuccess()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $response = new Response();
@@ -485,6 +502,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
     {
         unset($this->lpa->metadata[Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED]);
 
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $response = new Response();
@@ -514,6 +532,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testAddTrustActionPostReuseDetails()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $this->setSeedLpa($this->lpa, FixturesData::getPfLpa());
@@ -540,6 +559,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testEditActionInvalidIndex()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $event = new MvcEvent();
@@ -563,6 +583,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testEditActionGet()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $idx = 0;
@@ -589,6 +610,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->replacementAttorneys[] = FixturesData::getAttorneyTrust();
 
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $idx = count($this->lpa->document->replacementAttorneys) - 1;
@@ -611,6 +633,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testEditActionPostInvalid()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $idx = 0;
@@ -637,6 +660,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
      */
     public function testEditActionPostFailed()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $idx = 0;
@@ -662,6 +686,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testEditActionPostSuccess()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $idx = 0;
@@ -693,6 +718,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->replacementAttorneys[] = FixturesData::getAttorneyTrust();
 
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $idx = count($this->lpa->document->replacementAttorneys) - 1;
@@ -722,6 +748,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testConfirmDeleteActionInvalidIndex()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $event = new MvcEvent();
@@ -744,6 +771,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testConfirmDeleteActionGetJs()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $idx = 0;
@@ -768,6 +796,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testConfirmDeleteActionGetNoJs()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $idx = 0;
@@ -794,6 +823,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->replacementAttorneys[] = FixturesData::getAttorneyTrust();
 
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $idx = count($this->lpa->document->replacementAttorneys) - 1;
@@ -817,6 +847,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testDeleteActionInvalidIndex()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $event = new MvcEvent();
@@ -843,6 +874,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
      */
     public function testDeleteActionFailed()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $idx = 0;
@@ -858,6 +890,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
 
     public function testDeleteActionSuccess()
     {
+        /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
         $response = new Response();

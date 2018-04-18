@@ -35,6 +35,7 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
 
     public function testIndexActionGet()
     {
+        /** @var HowReplacementAttorneysMakeDecisionController $controller */
         $controller = $this->getController(HowReplacementAttorneysMakeDecisionController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -51,6 +52,7 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
 
     public function testIndexActionPostInvalid()
     {
+        /** @var HowReplacementAttorneysMakeDecisionController $controller */
         $controller = $this->getController(HowReplacementAttorneysMakeDecisionController::class);
 
         $this->setPostInvalid($this->form, $this->postData);
@@ -66,6 +68,7 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
 
     public function testIndexActionPostNotChanged()
     {
+        /** @var HowReplacementAttorneysMakeDecisionController $controller */
         $controller = $this->getController(HowReplacementAttorneysMakeDecisionController::class);
 
         $response = new Response();
@@ -88,6 +91,7 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
      */
     public function testIndexActionPostFailed()
     {
+        /** @var HowReplacementAttorneysMakeDecisionController $controller */
         $controller = $this->getController(HowReplacementAttorneysMakeDecisionController::class);
 
         $response = new Response();
@@ -112,6 +116,7 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
 
     public function testIndexActionPostSuccess()
     {
+        /** @var HowReplacementAttorneysMakeDecisionController $controller */
         $controller = $this->getController(HowReplacementAttorneysMakeDecisionController::class);
 
         $response = new Response();

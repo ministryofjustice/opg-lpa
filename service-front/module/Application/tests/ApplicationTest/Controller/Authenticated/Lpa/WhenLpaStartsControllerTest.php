@@ -33,6 +33,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        /** @var WhenLpaStartsController $controller */
         $controller = $this->getController(WhenLpaStartsController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -49,6 +50,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        /** @var WhenLpaStartsController $controller */
         $controller = $this->getController(WhenLpaStartsController::class);
 
         $this->setPostInvalid($this->form);
@@ -67,6 +69,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostFailed()
     {
+        /** @var WhenLpaStartsController $controller */
         $controller = $this->getController(WhenLpaStartsController::class);
 
         $this->lpa->document->primaryAttorneyDecisions = null;
@@ -83,6 +86,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostSuccess()
     {
+        /** @var WhenLpaStartsController $controller */
         $controller = $this->getController(WhenLpaStartsController::class);
 
         $response = new Response();

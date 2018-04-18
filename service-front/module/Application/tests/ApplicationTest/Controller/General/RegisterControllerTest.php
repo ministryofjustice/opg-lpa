@@ -46,6 +46,7 @@ class RegisterControllerTest extends AbstractControllerTest
 
     protected function getController(string $controllerName)
     {
+        /** @var RegisterController $controller */
         $controller = parent::getController($controllerName);
 
         $this->routeMatch = Mockery::mock(RouteMatch::class);

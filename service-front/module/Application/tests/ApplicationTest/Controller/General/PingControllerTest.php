@@ -77,6 +77,7 @@ class PingControllerTest extends AbstractControllerTest
 
     protected function getController(string $controllerName)
     {
+        /** @var PingController $controller */
         $controller = parent::getController($controllerName);
 
         $this->status = Mockery::mock(Status::class);

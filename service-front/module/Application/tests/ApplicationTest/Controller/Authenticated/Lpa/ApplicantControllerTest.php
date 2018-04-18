@@ -31,6 +31,7 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -47,6 +48,7 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetMultiplePrimaryAttorneysJointly()
     {
+        /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
 
         //Verify there is more than one primary attorney
@@ -67,6 +69,7 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetMultiplePrimaryAttorneysJointlyAndSeverally()
     {
+        /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
 
         //Verify there is more than one primary attorney
@@ -89,6 +92,7 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
 
         $this->setPostInvalid($this->form);
@@ -103,6 +107,7 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostDonorRegisteringValueNotChanged()
     {
+        /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
 
         $response = new Response();
@@ -131,6 +136,7 @@ class ApplicantControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostDonorRegisteringValueChangedException()
     {
+        /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
 
         $postData = [
@@ -147,6 +153,7 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostAttorneyRegisteringJointlyChangedSuccessful()
     {
+        /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
 
         //Verify there is more than one primary attorney
@@ -176,6 +183,7 @@ class ApplicantControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostAttorneyRegisteringJointlyAndSeverallyChangedSuccessful()
     {
+        /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
 
         //Verify there is more than one primary attorney

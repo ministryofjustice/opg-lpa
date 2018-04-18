@@ -2,12 +2,11 @@
 
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
+use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
 use Application\Form\Lpa\AttorneyForm;
 use Application\Form\Lpa\TrustCorporationForm;
-use Application\Model\Service\Authentication\Identity\User;
 use Application\Model\Service\Lpa\Applicant;
 use ApplicationTest\Controller\AbstractControllerTest;
-use DateTime;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Common\Address;
@@ -16,7 +15,6 @@ use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
@@ -82,6 +80,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
 
     protected function getController(string $controllerName)
     {
+        /** @var PrimaryAttorneyController $controller */
         $controller = parent::getController($controllerName);
 
         $this->applicantService = Mockery::mock(Applicant::class);

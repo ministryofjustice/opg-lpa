@@ -10,6 +10,7 @@ class MoreInfoRequiredControllerTest extends AbstractControllerTest
 {
     public function testIndexAction()
     {
+        /** @var MoreInfoRequiredController $controller */
         $controller = $this->getController(MoreInfoRequiredController::class);
 
         /** @var ViewModel $result */

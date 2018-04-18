@@ -65,6 +65,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
     {
         $this->lpa->whoAreYouAnswered = true;
 
+        /** @var WhoAreYouController $controller */
         $controller = $this->getController(WhoAreYouController::class);
 
         $this->setMatchedRouteName($controller, 'lpa/who-are-you');
@@ -82,6 +83,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
     {
         $this->lpa->whoAreYouAnswered = false;
 
+        /** @var WhoAreYouController $controller */
         $controller = $this->getController(WhoAreYouController::class);
 
         $this->setMatchedRouteName($controller, 'lpa/who-are-you');
@@ -103,6 +105,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
     {
         $this->lpa->whoAreYouAnswered = false;
 
+        /** @var WhoAreYouController $controller */
         $controller = $this->getController(WhoAreYouController::class);
 
         $this->setMatchedRouteName($controller, 'lpa/who-are-you');
@@ -128,6 +131,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
     {
         $this->lpa->whoAreYouAnswered = false;
 
+        /** @var WhoAreYouController $controller */
         $controller = $this->getController(WhoAreYouController::class);
 
         $this->setMatchedRouteName($controller, 'lpa/who-are-you');
@@ -143,6 +147,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
     {
         $this->lpa->whoAreYouAnswered = false;
 
+        /** @var WhoAreYouController $controller */
         $controller = $this->getController(WhoAreYouController::class);
 
         $response = new Response();

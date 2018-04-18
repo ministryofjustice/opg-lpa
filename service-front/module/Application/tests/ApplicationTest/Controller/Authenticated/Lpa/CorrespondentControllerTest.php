@@ -2,10 +2,9 @@
 
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
+use Application\Controller\Authenticated\Lpa\CorrespondentController;
 use Application\Form\Lpa\CorrespondentForm;
-use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
-use DateTime;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Common\EmailAddress;
@@ -65,6 +64,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
@@ -100,6 +100,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetCorrespondentTrustCorporation()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $this->lpa->document->correspondent = null;
@@ -139,6 +140,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetNoCorrespondentDonor()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $this->lpa->document->correspondent = null;
@@ -176,6 +178,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetNoCorrespondentAttorney()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $this->lpa->document->correspondent = null;
@@ -213,6 +216,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetCorrespondentCompany()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $this->lpa->document->correspondent->company = 'A Company Ltd.';
@@ -243,6 +247,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetCorrespondentOther()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $this->lpa->document->correspondent->who = Correspondence::WHO_OTHER;
@@ -273,6 +278,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
@@ -302,6 +308,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostFailure()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
@@ -319,6 +326,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostSuccess()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $response = new Response();
@@ -347,6 +355,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testEditActionGet()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -371,6 +380,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testEditActionPostInvalid()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -398,6 +408,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
      */
     public function testEditActionPostFailed()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -419,6 +430,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testEditActionPostSuccess()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
@@ -444,6 +456,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testEditActionPostSuccessNoJs()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $response = new Response();
@@ -470,6 +483,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testEditActionGetReuseDetailsNull()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $response = new Response();
@@ -485,6 +499,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testEditActionPostReuseDonorDetailsFormEditable()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -518,6 +533,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
 
     public function testEditActionPostReuseDonorDetailsFormNotEditable()
     {
+        /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
         $response = new Response();

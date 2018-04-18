@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Controller\Authenticated;
 
+use Application\Controller\Authenticated\DashboardController;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
@@ -17,6 +18,7 @@ class DashboardControllerTest extends AbstractControllerTest
 {
     public function testIndexActionZeroLpas()
     {
+        /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
         $response = new Response();
@@ -39,6 +41,7 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testIndexAction()
     {
+        /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
         $lpasSummary = [
@@ -74,6 +77,7 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testIndexActionMultiplePages()
     {
+        /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
         $lpasSummary = [
@@ -114,6 +118,7 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testIndexActionLastPage()
     {
+        /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
         $lpasSummary = [
@@ -154,6 +159,7 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testCreateActionSeedLpaFailed()
     {
+        /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
         $response = new Response();
@@ -171,6 +177,7 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testCreateActionSeedLpaPartialSuccess()
     {
+        /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
         $response = new Response();
@@ -195,6 +202,7 @@ class DashboardControllerTest extends AbstractControllerTest
      */
     public function testDeleteActionException()
     {
+        /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
         $routeMatch = $this->getRouteMatch($controller);
@@ -206,6 +214,7 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testDeleteActionSuccess()
     {
+        /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
         $response = new Response();
@@ -225,6 +234,7 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testConfirmDeleteLpaActionNonJs()
     {
+        /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
         $routeMatch = $this->getRouteMatch($controller);
@@ -244,6 +254,7 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testConfirmDeleteLpaActionJs()
     {
+        /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
         $event = new MvcEvent();
@@ -266,6 +277,7 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testTermsAction()
     {
+        /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
         /** @var ViewModel $result */
@@ -278,6 +290,7 @@ class DashboardControllerTest extends AbstractControllerTest
     public function testCheckAuthenticated()
     {
         $this->setIdentity(null);
+        /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
         $response = new Response();

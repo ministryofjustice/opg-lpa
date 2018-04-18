@@ -30,6 +30,7 @@ class PostcodeControllerTest extends AbstractControllerTest
 
     protected function getController(string $controllerName)
     {
+        /** @var PostcodeController $controller */
         $controller = parent::getController($controllerName);
 
         $this->event = Mockery::mock(MvcEvent::class);
@@ -81,7 +82,6 @@ class PostcodeControllerTest extends AbstractControllerTest
         $this->assertEquals(true, $result->getVariable('isPostcodeValid'));
         $this->assertEquals(true, $result->getVariable('success'));
         $this->assertEquals([[
-//            'id' => $address['Id'],
             'description' => $address['description'],
             'line1' => $address['line1'],
             'line2' => $address['line2'],

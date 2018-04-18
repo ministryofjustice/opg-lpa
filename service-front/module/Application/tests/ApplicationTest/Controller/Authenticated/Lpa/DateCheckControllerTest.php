@@ -37,6 +37,7 @@ class DateCheckControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
 
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
@@ -56,6 +57,7 @@ class DateCheckControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
 
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
@@ -75,6 +77,7 @@ class DateCheckControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalidDates()
     {
+        /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
 
         //Donor must be the first to sign
@@ -101,6 +104,7 @@ class DateCheckControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostValidDates()
     {
+        /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
 
         $response = new Response();
@@ -127,6 +131,7 @@ class DateCheckControllerTest extends AbstractControllerTest
 
     public function testValidActionNoReturnRoute()
     {
+        /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
 
         $this->params->shouldReceive('fromQuery')->withArgs(['return-route', null])->andReturn(null)->once();
@@ -141,6 +146,7 @@ class DateCheckControllerTest extends AbstractControllerTest
 
     public function testValidActionReturnRoute()
     {
+        /** @var DateCheckController $controller */
         $controller = $this->getController(DateCheckController::class);
 
         $this->params->shouldReceive('fromQuery')->withArgs(['return-route', null])->andReturn('lpa/complete')->once();

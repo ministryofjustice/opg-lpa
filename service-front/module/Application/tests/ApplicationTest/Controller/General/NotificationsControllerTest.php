@@ -42,6 +42,7 @@ class NotificationsControllerTest extends AbstractControllerTest
 
     protected function getController(string $controllerName)
     {
+        /** @var NotificationsController $controller */
         $controller = parent::getController($controllerName);
 
         $this->mailTransport = Mockery::mock(MailTransport::class);
