@@ -85,7 +85,6 @@ class ResourceTest extends AbstractResourceTest
 
         $entity = $resource->update(['whoIsRegistering' => [3]], -1); //Id is ignored
 
-        $this->assertEquals(new Entity([$lpa->document->primaryAttorneys[2]], $lpa), $entity);
         $this->assertEquals([3], $lpa->document->whoIsRegistering);
 
         $resourceBuilder->verify();
