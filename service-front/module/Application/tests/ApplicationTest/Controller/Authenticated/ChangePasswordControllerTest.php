@@ -35,6 +35,7 @@ class ChangePasswordControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        /** @var ChangePasswordController $controller */
         $controller = $this->getController(ChangePasswordController::class);
 
         $this->url->shouldReceive('fromRoute')
@@ -54,6 +55,7 @@ class ChangePasswordControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        /** @var ChangePasswordController $controller */
         $controller = $this->getController(ChangePasswordController::class);
 
         $this->url->shouldReceive('fromRoute')
@@ -73,6 +75,7 @@ class ChangePasswordControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostValid()
     {
+        /** @var ChangePasswordController $controller */
         $controller = $this->getController(ChangePasswordController::class);
 
         $response = new Response();
@@ -99,6 +102,7 @@ class ChangePasswordControllerTest extends AbstractControllerTest
 
     public function testIndexActionUpdateFails()
     {
+        /** @var ChangePasswordController $controller */
         $controller = $this->getController(ChangePasswordController::class);
 
         $this->url->shouldReceive('fromRoute')

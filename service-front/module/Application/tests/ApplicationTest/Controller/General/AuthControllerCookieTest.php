@@ -14,6 +14,7 @@ class AuthControllerCookieTest extends AbstractControllerTest
 {
     public function testIndexActionAlreadySignedIn()
     {
+        /** @var AuthController $controller */
         $controller = $this->getController(AuthController::class);
 
         $response = new Response();
@@ -28,6 +29,8 @@ class AuthControllerCookieTest extends AbstractControllerTest
     public function testIndexActionCheckCookieFails()
     {
         $this->setIdentity(null);
+
+        /** @var AuthController $controller */
         $controller = $this->getController(AuthController::class);
 
         $response = new Response();
@@ -45,6 +48,8 @@ class AuthControllerCookieTest extends AbstractControllerTest
     public function testIndexActionCheckCookieRedirect()
     {
         $this->setIdentity(null);
+
+        /** @var AuthController $controller */
         $controller = $this->getController(AuthController::class);
 
         $response = new Response();
@@ -63,6 +68,8 @@ class AuthControllerCookieTest extends AbstractControllerTest
     public function testIndexActionCheckCookieExistsFalse()
     {
         $this->setIdentity(null);
+
+        /** @var AuthController $controller */
         $controller = $this->getController(AuthController::class);
 
         $cookie = Mockery::mock(Cookie::class);
@@ -85,6 +92,8 @@ class AuthControllerCookieTest extends AbstractControllerTest
     public function testIndexActionCheckCookieExists()
     {
         $this->setIdentity(null);
+
+        /** @var AuthController $controller */
         $controller = $this->getController(AuthController::class);
 
         $cookie = Mockery::mock(Cookie::class);
@@ -113,6 +122,8 @@ class AuthControllerCookieTest extends AbstractControllerTest
     public function testIndexActionCheckCookiePost()
     {
         $this->setIdentity(null);
+
+        /** @var AuthController $controller */
         $controller = $this->getController(AuthController::class);
 
         $loginForm = new Login();

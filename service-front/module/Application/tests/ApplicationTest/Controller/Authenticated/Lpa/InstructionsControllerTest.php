@@ -34,6 +34,7 @@ class InstructionsControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -50,6 +51,7 @@ class InstructionsControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
 
         $this->setPostInvalid($this->form);
@@ -69,6 +71,7 @@ class InstructionsControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostInstructionsFailed()
     {
+        /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
 
         $this->setPostValid($this->form, $this->postData);
@@ -85,6 +88,7 @@ class InstructionsControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostPreferencesFailed()
     {
+        /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
 
         $this->setPostValid($this->form, $this->postData);
@@ -99,6 +103,7 @@ class InstructionsControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostSuccess()
     {
+        /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
 
         $response = new Response();
@@ -120,6 +125,7 @@ class InstructionsControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostMetadata()
     {
+        /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
 
         $response = new Response();

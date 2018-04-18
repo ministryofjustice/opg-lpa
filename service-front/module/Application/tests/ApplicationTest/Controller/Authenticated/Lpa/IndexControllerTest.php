@@ -11,6 +11,7 @@ class IndexControllerTest extends AbstractControllerTest
 {
     public function testIndexActionNoSeed()
     {
+        /** @var IndexController $controller */
         $controller = $this->getController(IndexController::class);
 
         $response = new Response();
@@ -29,6 +30,7 @@ class IndexControllerTest extends AbstractControllerTest
 
     public function testIndexActionSeed()
     {
+        /** @var IndexController $controller */
         $controller = $this->getController(IndexController::class);
 
         $response = new Response();

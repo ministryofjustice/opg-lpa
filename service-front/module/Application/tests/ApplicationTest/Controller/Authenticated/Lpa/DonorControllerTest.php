@@ -2,17 +2,15 @@
 
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
+use Application\Controller\Authenticated\Lpa\DonorController;
 use Application\Form\Lpa\DonorForm;
-use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
-use DateTime;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Common\Dob;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
@@ -49,6 +47,7 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testIndexActionNoDonor()
     {
+        /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
 
         $this->lpa->document->donor = null;
@@ -66,6 +65,7 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testIndexActionDonor()
     {
+        /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
 
         $this->assertInstanceOf(Donor::class, $this->lpa->document->donor);
@@ -93,6 +93,7 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testAddActionGetReuseDetails()
     {
+        /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
 
         $response = new Response();
@@ -108,6 +109,7 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testAddActionGetDonorAlreadyProvided()
     {
+        /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
 
         $this->assertNotNull($this->lpa->document->donor);
@@ -125,6 +127,7 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testAddActionGetNoDonor()
     {
+        /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
 
         $this->lpa->document->donor = null;
@@ -148,6 +151,7 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testAddActionPostInvalid()
     {
+        /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
 
         $this->lpa->document->donor = null;
@@ -175,6 +179,7 @@ class DonorControllerTest extends AbstractControllerTest
      */
     public function testAddActionPostFailed()
     {
+        /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
 
         $this->lpa->document->donor = null;
@@ -198,6 +203,7 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testAddActionPostSuccess()
     {
+        /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
 
         $this->lpa->document->donor = null;
@@ -225,6 +231,7 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testEditActionGet()
     {
+        /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
 
         $this->assertNotNull($this->lpa->document->donor);
@@ -249,6 +256,7 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testEditActionPostInvalid()
     {
+        /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
 
         $this->assertNotNull($this->lpa->document->donor);
@@ -276,6 +284,7 @@ class DonorControllerTest extends AbstractControllerTest
      */
     public function testEditActionPostFailed()
     {
+        /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
 
         $this->assertNotNull($this->lpa->document->donor);
@@ -299,6 +308,7 @@ class DonorControllerTest extends AbstractControllerTest
 
     public function testEditActionPostSuccess()
     {
+        /** @var DonorController $controller */
         $controller = $this->getController(TestableDonorController::class);
 
         $this->assertNotNull($this->lpa->document->donor);

@@ -45,6 +45,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
 
     protected function getController(string $controllerName)
     {
+        /** @var ForgotPasswordController $controller */
         $controller = parent::getController($controllerName);
 
         $controller->setUserService($this->userDetails);

@@ -47,6 +47,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetNoPayment()
     {
+        /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
 
         $this->lpa->payment = null;
@@ -66,6 +67,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetExistingPaymentReducedFeeReceivesBenefits()
     {
+        /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
 
         $this->assertNotNull($this->lpa->payment);
@@ -89,6 +91,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetExistingPaymentReducedFeeUniversalCredit()
     {
+        /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
 
         $this->assertNotNull($this->lpa->payment);
@@ -111,6 +114,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetExistingPaymentReducedFeeLowIncome()
     {
+        /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
 
         $this->assertNotNull($this->lpa->payment);
@@ -133,6 +137,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetExistingPaymentReducedFeeNotApply()
     {
+        /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
 
         $this->assertNotNull($this->lpa->payment);
@@ -158,6 +163,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
 
         $this->lpa->payment = null;
@@ -180,6 +186,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostFailed()
     {
+        /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
 
         $postData = ['reductionOptions' => 'reducedFeeReceivesBenefits'];
@@ -203,6 +210,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionSuccessReducedFeeUniversalCredit()
     {
+        /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
 
         $response = new Response();
@@ -233,6 +241,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionSuccessReducedFeeLowIncome()
     {
+        /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
 
         $response = new Response();
@@ -263,6 +272,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
 
     public function testIndexActionSuccessNotApply()
     {
+        /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
 
         $response = new Response();

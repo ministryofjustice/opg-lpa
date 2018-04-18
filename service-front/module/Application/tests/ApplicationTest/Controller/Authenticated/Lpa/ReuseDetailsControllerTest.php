@@ -2,13 +2,11 @@
 
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
+use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Form\Lpa\ReuseDetailsForm;
-use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
-use DateTime;
 use Mockery;
 use Mockery\MockInterface;
-use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
 use Zend\Router\RouteMatch;
@@ -33,6 +31,7 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
 
     protected function getController(string $controllerName)
     {
+        /** @var ReuseDetailsController $controller */
         $controller = parent::getController($controllerName);
 
         $controller->setRouter($this->router);

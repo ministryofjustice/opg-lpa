@@ -42,6 +42,7 @@ class FeedbackControllerTest extends AbstractControllerTest
 
     protected function getController(string $controllerName)
     {
+        /** @var FeedbackController $controller */
         $controller = parent::getController($controllerName);
 
         $this->feedbackService = Mockery::mock(Feedback::class);

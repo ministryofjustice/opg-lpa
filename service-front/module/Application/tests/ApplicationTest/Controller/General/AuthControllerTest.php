@@ -48,6 +48,7 @@ class AuthControllerTest extends AbstractControllerTest
 
     protected function getController(string $controllerName)
     {
+        /** @var AuthController $controller */
         $controller = parent::getController($controllerName);
 
         $controller->setLpaApplicationService($this->lpaApplicationService);

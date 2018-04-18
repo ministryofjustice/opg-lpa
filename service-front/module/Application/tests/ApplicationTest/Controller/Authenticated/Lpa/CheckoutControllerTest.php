@@ -4,14 +4,11 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\CheckoutController;
 use Application\Form\Lpa\BlankMainFlowForm;
-use Application\Model\Service\Authentication\Identity\User;
 use Application\Model\Service\Lpa\Communication;
 use ApplicationTest\Controller\AbstractControllerTest;
-use DateTime;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
-use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Form\ElementInterface;
 use Zend\Http\Response;
@@ -47,6 +44,10 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->submitButton = Mockery::mock(ElementInterface::class);
     }
 
+    /**
+     * @param string $controllerName
+     * @return CheckoutController
+     */
     protected function getController(string $controllerName)
     {
         $controller = parent::getController($controllerName);

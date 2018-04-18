@@ -35,6 +35,7 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function testIndexAction()
     {
+        /** @var SendgridController $controller */
         $controller = $this->getController(SendgridController::class);
 
         /** @var ViewModel $result */
@@ -47,6 +48,7 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function testBounceActionBlankFromAddress()
     {
+        /** @var SendgridController $controller */
         $controller = $this->getController(SendgridController::class);
 
         $this->request->shouldReceive('getPost')->withArgs(['from'])->andReturn(null)->once();
@@ -76,6 +78,7 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function testBounceActionEmptyToken()
     {
+        /** @var SendgridController $controller */
         $controller = $this->getController(SendgridController::class);
 
         $this->request->shouldReceive('getPost')->withArgs(['from'])->andReturn($this->postData['from'])->once();
@@ -108,6 +111,7 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function testBounceActionSendEmailLogOnly()
     {
+        /** @var SendgridController $controller */
         $controller = $this->getController(SendgridController::class);
 
         $this->request->shouldReceive('getPost')
@@ -142,6 +146,7 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function testBounceActionSendEmailException()
     {
+        /** @var SendgridController $controller */
         $controller = $this->getController(SendgridController::class);
 
         $this->request->shouldReceive('getPost')->withArgs(['from'])->andReturn($this->postData['from'])->once();

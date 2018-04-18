@@ -15,6 +15,7 @@ class DownloadControllerTest extends AbstractControllerTest
 {
     public function testIndexActionNoPdfAvailable()
     {
+        /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
 
         $this->setPdfType($controller, $this->lpa, 'lpa120');
@@ -29,6 +30,7 @@ class DownloadControllerTest extends AbstractControllerTest
 
     public function testIndexActionInQueue()
     {
+        /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
 
         $pdfType = 'lp1';
@@ -45,6 +47,7 @@ class DownloadControllerTest extends AbstractControllerTest
 
     public function testIndexActionLp1Ready()
     {
+        /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
 
         $response = new Response();
@@ -68,6 +71,7 @@ class DownloadControllerTest extends AbstractControllerTest
 
     public function testIndexActionLp3Ready()
     {
+        /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
 
         $this->lpa->document->peopleToNotify = [
@@ -95,6 +99,7 @@ class DownloadControllerTest extends AbstractControllerTest
 
     public function testDownloadActionInQueue()
     {
+        /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
 
         $response = new Response();
@@ -118,6 +123,7 @@ class DownloadControllerTest extends AbstractControllerTest
 
     public function testDownloadActionReady()
     {
+        /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
 
         $response = Mockery::mock(Response::class);

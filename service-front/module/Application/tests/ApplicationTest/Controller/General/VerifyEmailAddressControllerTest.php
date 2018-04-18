@@ -11,6 +11,7 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
 {
     protected function getController(string $controllerName)
     {
+        /** @var VerifyEmailAddressController $controller */
         $controller = parent::getController($controllerName);
 
         $controller->setUserService($this->userDetails);
@@ -20,6 +21,7 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
 
     public function testIndexAction()
     {
+        /** @var VerifyEmailAddressController $controller */
         $controller = $this->getController(VerifyEmailAddressController::class);
 
         /** @var ViewModel $result */
@@ -32,6 +34,7 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
 
     public function testVerifyActionInvalidToken()
     {
+        /** @var VerifyEmailAddressController $controller */
         $controller = $this->getController(VerifyEmailAddressController::class);
 
         $response = new Response();
@@ -51,6 +54,7 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTest
 
     public function testVerifyActionValidToken()
     {
+        /** @var VerifyEmailAddressController $controller */
         $controller = $this->getController(VerifyEmailAddressController::class);
 
         $response = new Response();

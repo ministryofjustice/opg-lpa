@@ -18,6 +18,7 @@ class GuidanceControllerTest extends AbstractControllerTest
 
     protected function getController(string $controllerName)
     {
+        /** @var GuidanceController $controller */
         $controller = parent::getController(GuidanceController::class);
 
         $this->guidanceService = Mockery::mock(Guidance::class);

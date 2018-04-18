@@ -36,6 +36,7 @@ class TypeControllerTest extends AbstractControllerTest
 
     public function testIndexActionGet()
     {
+        /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -55,6 +56,7 @@ class TypeControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
 
         $this->setPostInvalid($this->form, $this->postData);
@@ -74,6 +76,7 @@ class TypeControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostCreationError()
     {
+        /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
 
         $response = new Response();
@@ -95,6 +98,7 @@ class TypeControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostSetTypeException()
     {
+        /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
 
         $this->setPostValid($this->form, $this->postData);
@@ -109,6 +113,7 @@ class TypeControllerTest extends AbstractControllerTest
 
     public function testIndexAction()
     {
+        /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
 
         $response = new Response();

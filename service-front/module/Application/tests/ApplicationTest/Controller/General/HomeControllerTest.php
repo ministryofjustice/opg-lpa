@@ -10,6 +10,7 @@ class HomeControllerTest extends AbstractControllerTest
 {
     public function testIndexAction()
     {
+        /** @var HomeController $controller */
         $controller = $this->getController(HomeController::class);
 
         /** @var ViewModel $result */
@@ -23,6 +24,7 @@ class HomeControllerTest extends AbstractControllerTest
 
     public function testRedirectAction()
     {
+        /** @var HomeController $controller */
         $controller = $this->getController(HomeController::class);
 
         $this->redirect->shouldReceive('toUrl')
@@ -36,6 +38,7 @@ class HomeControllerTest extends AbstractControllerTest
 
     public function testCookieAction()
     {
+        /** @var HomeController $controller */
         $controller = $this->getController(HomeController::class);
 
         /** @var ViewModel $result */
@@ -47,6 +50,7 @@ class HomeControllerTest extends AbstractControllerTest
 
     public function testTermsAction()
     {
+        /** @var HomeController $controller */
         $controller = $this->getController(HomeController::class);
 
         /** @var ViewModel $result */
@@ -58,6 +62,7 @@ class HomeControllerTest extends AbstractControllerTest
 
     public function testContactAction()
     {
+        /** @var HomeController $controller */
         $controller = $this->getController(HomeController::class);
 
         /** @var ViewModel $result */

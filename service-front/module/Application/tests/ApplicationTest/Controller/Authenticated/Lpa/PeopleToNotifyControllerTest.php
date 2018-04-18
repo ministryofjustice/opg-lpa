@@ -2,11 +2,10 @@
 
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
+use Application\Controller\Authenticated\Lpa\PeopleToNotifyController;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Form\Lpa\PeopleToNotifyForm;
-use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
-use DateTime;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Common\Address;
@@ -79,6 +78,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->peopleToNotify = [];
 
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -98,6 +98,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetMultiplePeopleToNotify()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -124,6 +125,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
             $this->lpa->document->peopleToNotify[] = FixturesData::getNotifiedPerson();
         }
 
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
@@ -148,6 +150,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->peopleToNotify = [];
 
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $this->setPostInvalid($this->blankMainFlowForm);
@@ -169,6 +172,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     {
         $this->lpa->document->peopleToNotify = [];
 
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $response = new Response();
@@ -186,6 +190,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testAddActionGetReuseDetails()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $response = new Response();
@@ -207,6 +212,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
             $this->lpa->document->peopleToNotify[] = FixturesData::getNotifiedPerson();
         }
 
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $response = new Response();
@@ -222,6 +228,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testAddActionGet()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
@@ -241,6 +248,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testAddActionPostInvalid()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -264,6 +272,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
      */
     public function testAddActionPostFailed()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
@@ -283,6 +292,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testAddActionPostSuccess()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $response = new Response();
@@ -310,6 +320,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
     {
         unset($this->lpa->metadata[Lpa::PEOPLE_TO_NOTIFY_CONFIRMED]);
 
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
@@ -334,6 +345,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testAddActionPostReuseDetails()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $this->setSeedLpa($this->lpa, FixturesData::getPfLpa());
@@ -360,6 +372,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testEditActionInvalidIndex()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $event = new MvcEvent();
@@ -383,6 +396,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testEditActionGet()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $idx = 0;
@@ -407,6 +421,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testEditActionPostInvalid()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $idx = 0;
@@ -433,6 +448,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
      */
     public function testEditActionPostFailed()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $idx = 0;
@@ -455,6 +471,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testEditActionPostSuccess()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $idx = 0;
@@ -481,6 +498,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testConfirmDeleteActionInvalidIndex()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $event = new MvcEvent();
@@ -503,6 +521,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testConfirmDeleteActionGetJs()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $idx = 0;
@@ -526,6 +545,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testConfirmDeleteActionGetNoJs()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $idx = 0;
@@ -549,6 +569,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testDeleteActionInvalidIndex()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $event = new MvcEvent();
@@ -575,6 +596,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
      */
     public function testDeleteActionFailed()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $idx = 0;
@@ -589,6 +611,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
 
     public function testDeleteActionSuccess()
     {
+        /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
         $response = new Response();
