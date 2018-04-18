@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Model\Rest\Pdfs;
 
-use ApplicationTest\Model\Rest\Pdfs\TestableResource as PdfsResource;
+use Application\Model\Rest\Pdfs\Resource as PdfsResource;
 use ApplicationTest\AbstractResourceBuilder;
 use Mockery\MockInterface;
 

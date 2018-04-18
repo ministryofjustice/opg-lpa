@@ -339,43 +339,4 @@ class ResourceTest extends AbstractResourceTest
 
         $resourceBuilder->verify();
     }
-
-    public function testFetchAllCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->resource);
-
-        $this->resource->fetchAll();
-    }
-
-    public function testFetchAll()
-    {
-        $lpa = FixturesData::getHwLpa();
-        $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
-        $dynamoQueueClient->shouldReceive('deleteJob')->twice();
-        $resourceBuilder = new ResourceBuilder();
-        $resource = $resourceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withConfig($this->config)
-            ->withDynamoQueueClient($dynamoQueueClient)
-            ->build();
-
-        $mockS3Client = Mockery::mock(S3Client::class);
-        $mockS3Client->shouldReceive('headObject')->twice();
-        $resource->setS3Client($mockS3Client);
-
-        $collection = $resource->fetchAll();
-
-        $this->assertTrue($collection instanceof Collection);
-        $array = $collection->toArray();
-        $this->assertEquals(3, $array['count']);
-        $this->assertEquals(3, $array['total']);
-        $this->assertEquals(1, $array['pages']);
-        $items = $array['items'];
-        $this->assertArrayHasKey('lpa120', $items);
-        $this->assertArrayHasKey('lp1', $items);
-        $this->assertArrayHasKey('lp3', $items);
-
-        $resourceBuilder->verify();
-    }
 }

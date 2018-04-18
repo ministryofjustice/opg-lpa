@@ -39,13 +39,6 @@ class ResourceTest extends AbstractResourceTest
         $this->resource->setAuthorizationService($this->authorizationService);
     }
 
-    public function testGetRouteUserException()
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Route User not set');
-        $this->resource->getRouteUser();
-    }
-
     public function testSetLpa()
     {
         $pfLpa = FixturesData::getPfLpa();
@@ -155,9 +148,7 @@ class ResourceTest extends AbstractResourceTest
 
     public function testCreateMalformedData()
     {
-        //The bad id value on this user will fail validation
-        $user = new User();
-        $user->set('id', 3);
+        $user = FixturesData::getUser();
         $this->setCheckAccessExpectations($this->resource, $user);
 
         $this->setCreateIdExpectations();
@@ -166,7 +157,11 @@ class ResourceTest extends AbstractResourceTest
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object was created');
 
-        $this->resource->create(null);
+        $this->resource->create([
+            'document' => [
+                'type' => 'blah',
+            ],
+        ]);
     }
 
     public function testCreateFullLpa()
@@ -576,11 +571,13 @@ class ResourceTest extends AbstractResourceTest
 
         $this->assertEquals(1, $response->count());
         $lpaCollection = $response->toArray();
-        $this->assertEquals(1, $lpaCollection['count']);
-        /** @var AbbreviatedEntity[] $items */
-        $items = $lpaCollection['items'];
-        $this->assertEquals(1, count($items));
-        $this->assertEquals($lpas[0], $items[0]->getLpa());
+
+        $this->assertEquals(1, $lpaCollection['total']);
+        $applications = $lpaCollection['applications'];
+        $this->assertEquals(1, count($applications));
+
+        $abbreviatedLpa = new AbbreviatedEntity($lpas[0]);
+        $this->assertEquals($abbreviatedLpa->toArray(), $applications[0]);
     }
 
     public function testFetchAllSearchById()
@@ -596,11 +593,13 @@ class ResourceTest extends AbstractResourceTest
 
         $this->assertEquals(1, $response->count());
         $lpaCollection = $response->toArray();
-        $this->assertEquals(1, $lpaCollection['count']);
-        /** @var AbbreviatedEntity[] $items */
-        $items = $lpaCollection['items'];
-        $this->assertEquals(1, count($items));
-        $this->assertEquals($lpas[1], $items[0]->getLpa());
+
+        $this->assertEquals(1, $lpaCollection['total']);
+        $applications = $lpaCollection['applications'];
+        $this->assertEquals(1, count($applications));
+
+        $abbreviatedLpa = new AbbreviatedEntity($lpas[1]);
+        $this->assertEquals($abbreviatedLpa->toArray(), $applications[0]);
     }
 
     public function testFetchAllSearchByIdAndFilter()
@@ -635,11 +634,13 @@ class ResourceTest extends AbstractResourceTest
 
         $this->assertEquals(1, $response->count());
         $lpaCollection = $response->toArray();
-        $this->assertEquals(1, $lpaCollection['count']);
-        /** @var AbbreviatedEntity[] $items */
-        $items = $lpaCollection['items'];
-        $this->assertEquals(1, count($items));
-        $this->assertEquals($lpas[0], $items[0]->getLpa());
+
+        $this->assertEquals(1, $lpaCollection['total']);
+        $applications = $lpaCollection['applications'];
+        $this->assertEquals(1, count($applications));
+
+        $abbreviatedLpa = new AbbreviatedEntity($lpas[0]);
+        $this->assertEquals($abbreviatedLpa->toArray(), $applications[0]);
     }
 
     public function testFetchAllSearchByName()
@@ -891,7 +892,7 @@ class ResourceTest extends AbstractResourceTest
 
         if ($lpasCount > 0) {
             $this->lpaCollection->shouldReceive('find')
-                ->withArgs([$filter, ['sort' => ['updatedAt' => -1], 'skip' => 0, 'limit' => 250]])
+                ->withArgs([$filter, ['sort' => ['updatedAt' => -1], 'skip' => 0, 'limit' => 10]])
                 ->andReturn(new DummyLpaMongoCursor($lpas));
         }
     }
