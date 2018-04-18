@@ -313,13 +313,15 @@ abstract class AbstractControllerTest extends MockeryTestCase
             $this->userDetailsSession->user = $this->user;
 
             if (is_subclass_of($controllerName, AbstractLpaController::class)) {
-                $lpaId = null;
+                $lpaId = ($this->lpa instanceof Lpa ? $this->lpa->id : null);
 
-                if ($this->lpa instanceof Lpa) {
-                    $lpaId = $this->lpa->id;
-                    $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpaId])->andReturn($this->lpa)->once();
-                } else {
-                    $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpaId])->andReturn(false)->once();
+                //  If there is no identity then the getApplication call will not be made in the abstract contructor
+                if (!is_null($this->userIdentity)) {
+                    if ($this->lpa instanceof Lpa) {
+                        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpaId])->andReturn($this->lpa)->once();
+                    } else {
+                        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpaId])->andReturn(false)->once();
+                    }
                 }
 
                 $this->replacementAttorneyCleanup = Mockery::mock(ReplacementAttorneyCleanup::class);
