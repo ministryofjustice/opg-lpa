@@ -371,23 +371,4 @@ class PrimaryAttorneyController extends AbstractLpaActorController
             $this->getLpaApplicationService()->setWhoIsRegistering($this->getLpa()->id, $this->getLpa()->document->whoIsRegistering);
         }
     }
-
-    /**
-     * Simple method to return a boolean indicating if the provided attorney is also set as the correspondent for this LPA
-     *
-     * @param AbstractAttorney $attorney
-     * @return bool
-     */
-    private function attorneyIsCorrespondent(AbstractAttorney $attorney)
-    {
-        $correspondent = $this->getLpa()->document->correspondent;
-
-        if ($correspondent instanceof Correspondence && $correspondent->who == Correspondence::WHO_ATTORNEY) {
-            //  Compare the appropriate name and address
-            $nameToCompare = ($attorney instanceof TrustCorporation ? $correspondent->company : new Name($correspondent->name->flatten()));
-            return ($attorney->name == $nameToCompare && $correspondent->address == $attorney->address);
-        }
-
-        return false;
-    }
 }
