@@ -236,10 +236,15 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         $attorneyIdx = $this->getEvent()->getRouteMatch()->getParam('idx');
 
         if (array_key_exists($attorneyIdx, $lpa->document->replacementAttorneys)) {
-            // persist data to the api
-            $replacementAttorneyId = $lpa->document->replacementAttorneys[$attorneyIdx]->id;
+            $attorney = $lpa->document->replacementAttorneys[$attorneyIdx];
 
-            if (!$this->getLpaApplicationService()->deleteReplacementAttorney($lpa->id, $replacementAttorneyId)) {
+            //  If this attorney is set as the correspondent then delete those details too
+            if ($this->attorneyIsCorrespondent($attorney)) {
+                $this->updateCorrespondentData($attorney, true);
+            }
+
+            // delete attorney
+            if (!$this->getLpaApplicationService()->deleteReplacementAttorney($lpa->id, $attorney->id)) {
                 throw new \RuntimeException('API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpa->id);
             }
 

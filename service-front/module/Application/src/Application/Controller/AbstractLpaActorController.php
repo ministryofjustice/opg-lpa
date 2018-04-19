@@ -9,6 +9,8 @@ use Opg\Lpa\DataModel\Common\Dob;
 use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
@@ -177,7 +179,11 @@ abstract class AbstractLpaActorController extends AbstractLpaController
             $actorReuseDetails[] = $this->getReuseDetailsForActor($lpaDocument->donor->toArray(), Correspondence::WHO_DONOR, '(donor)');
 
             foreach ($lpaDocument->primaryAttorneys as $attorney) {
-                $actorReuseDetails[] = $this->getReuseDetailsForActor($attorney->toArray(), Correspondence::WHO_ATTORNEY, '(attorney)');
+                $actorReuseDetails[] = $this->getReuseDetailsForActor($attorney->toArray(), Correspondence::WHO_ATTORNEY, '(primary attorney)');
+            }
+
+            foreach ($lpaDocument->getReplacementAttorneys() as $attorney) {
+                $actorReuseDetails[] = $this->getReuseDetailsForActor($attorney->toArray(), Correspondence::WHO_ATTORNEY, '(replacement attorney)');
             }
 
             if ($lpaDocument->certificateProvider instanceof CertificateProvider) {
@@ -538,5 +544,24 @@ abstract class AbstractLpaActorController extends AbstractLpaController
                 }
             }
         }
+    }
+
+    /**
+     * Simple method to return a boolean indicating if the provided attorney is also set as the correspondent for this LPA
+     *
+     * @param AbstractAttorney $attorney
+     * @return bool
+     */
+    protected function attorneyIsCorrespondent(AbstractAttorney $attorney)
+    {
+        $correspondent = $this->getLpa()->getDocument()->getCorrespondent();
+
+        if ($correspondent instanceof Correspondence && $correspondent->getWho() == Correspondence::WHO_ATTORNEY) {
+            //  Compare the appropriate name and address
+            $nameToCompare = ($attorney instanceof TrustCorporation ? $correspondent->getCompany() : new Name($correspondent->getName()->flatten()));
+            return ($attorney->getName() == $nameToCompare && $correspondent->getAddress() == $attorney->getAddress());
+        }
+
+        return false;
     }
 }
