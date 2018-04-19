@@ -27,7 +27,7 @@ class Stats extends AbstractService implements ApiClientAwareInterface, AuthClie
      */
     public function getApiStats()
     {
-        return $this->parseResponse($this->apiClient->httpGet('/v1/stats/all'));
+        return $this->parseResponse($this->apiClient->httpGet('/v2/stats/all'));
     }
 
     /**
