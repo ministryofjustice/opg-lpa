@@ -39,6 +39,7 @@ return [
             'PostcodeInfo'                  => 'Application\Model\Service\AddressLookup\PostcodeInfo',
             'ReplacementAttorneyCleanup'    => 'Application\Model\Service\Lpa\ReplacementAttorneyCleanup',
             'SiteStatus'                    => 'Application\Model\Service\System\Status',
+            'StatsService'                  => 'Application\Model\Service\Stats\Stats',
             'UserService'                   => 'Application\Model\Service\User\Details',
         ],
     ],
