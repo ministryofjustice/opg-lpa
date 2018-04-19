@@ -332,26 +332,6 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         return $viewModel;
     }
 
-    /**
-     * Reset whoIsRegistering value by collecting all primary attorneys ids.
-     * This is due to new attorney has been added, therefore if applicant are attorneys and
-     * they act jointly, applicants need to be updated.
-     */
-    protected function resetApplicants()
-    {
-        // set this attorney as applicant if primary attorney act jointly.
-        if (($this->getLpa()->document->primaryAttorneyDecisions->how == PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY) && is_array($this->getLpa()->document->whoIsRegistering)) {
-            $primaryAttorneys = $this->getLpaApplicationService()->getPrimaryAttorneys($this->getIdentity()->id(), $this->getLpa()->id);
-            $this->getLpa()->document->whoIsRegistering = [];
-
-            foreach ($primaryAttorneys as $attorney) {
-                $this->getLpa()->document->whoIsRegistering[] = $attorney->id;
-            }
-
-            $this->getLpaApplicationService()->setWhoIsRegistering($this->getIdentity()->id(), $this->getLpa()->id, $this->getLpa()->document->whoIsRegistering);
-        }
-    }
-
     public function setApplicantService(ApplicantService $applicantService)
     {
         $this->applicantService = $applicantService;
