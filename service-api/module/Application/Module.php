@@ -2,7 +2,6 @@
 
 namespace Application;
 
-use Application\Controller\Version1\RestController;
 use Application\DataAccess\Mongo\CollectionFactory;
 use Application\DataAccess\Mongo\DatabaseFactory;
 use Application\DataAccess\Mongo\ManagerFactory;
@@ -21,8 +20,8 @@ use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblemResponse;
 
-class Module {
-
+class Module
+{
     const VERSION = '3.0.3-dev';
 
     public function onBootstrap(MvcEvent $e)
@@ -43,32 +42,6 @@ class Module {
             $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
             $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
         }
-    }
-
-    public function getControllerConfig()
-    {
-        //  Setup the REST Controller
-        return [
-            'initializers' => [
-                'InitRestController' => function ($sm, $controller) {
-                    if ($controller instanceof RestController) {
-                        //  Get the resource name (form the URL) and inject into the controller
-                        $resourceName = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getParam('resource');
-
-                        //  Check if the resource exists
-                        if (!$sm->has("resource-{$resourceName}")) {
-                            throw new ApiProblemException('Unknown resource type', 404);
-                        }
-
-                        //  Get the resource...
-                        $resource = $sm->get("resource-{$resourceName}");
-
-                        // Inject it into the Controller...
-                        $controller->setResource($resource);
-                    }
-                },
-            ],
-        ];
     }
 
     /*

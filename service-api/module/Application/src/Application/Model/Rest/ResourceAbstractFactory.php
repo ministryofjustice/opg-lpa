@@ -70,9 +70,7 @@ class ResourceAbstractFactory implements AbstractFactoryInterface
         $lpaCollection = $container->get(CollectionFactory::class . '-lpa');
         $collection = null;
 
-        if ($requestedName == Stats\Resource::class) {
-            $collection = $container->get(CollectionFactory::class . '-stats-lpas');
-        } elseif ($requestedName == Users\Resource::class) {
+        if ($requestedName == Users\Resource::class) {
             $collection = $container->get(CollectionFactory::class . '-user');
         } elseif ($requestedName == WhoAreYou\Resource::class) {
             $collection = $container->get(CollectionFactory::class . '-stats-who');

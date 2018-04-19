@@ -2,52 +2,25 @@
 
 namespace Application\Model\Rest\Stats;
 
-use Application\Model\Rest\AbstractResource;
+use MongoDB\Collection;
 use MongoDB\Driver\ReadPreference;
 
-class Resource extends AbstractResource
+class Resource
 {
-    //  TODO - FROM OLD ABSTRACT - REMOVE
     /**
-     * Resource name
+     * @var Collection
+     */
+    protected $collection = null;
+
+    /**
+     * AbstractResource constructor
      *
-     * @var string
+     * @param Collection $collection
      */
-    protected $name = 'stats';
-
-    /**
-     * Resource identifier
-     *
-     * @var string
-     */
-    protected $identifier = 'type';
-
-    /**
-     * Resource type
-     *
-     * @var string
-     */
-    const TYPE_COLLECTION = 'collections';
-    protected $type = self::TYPE_COLLECTION;
-
-    /**
-     * @return mixed
-     */
-    public function getName()
+    public function __construct(Collection $collection)
     {
-        return $this->name;
+        $this->collection = $collection;
     }
-
-    public function getIdentifier()
-    {
-        return $this->identifier;
-    }
-
-    public function getType()
-    {
-        return $this->type;
-    }
-    //  TODO - END FROM OLD ABSTRACT - REMOVE
 
     public function fetch($type)
     {

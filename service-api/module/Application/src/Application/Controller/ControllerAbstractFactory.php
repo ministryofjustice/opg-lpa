@@ -19,6 +19,7 @@ use Application\Controller\Version2\RepeatCaseNumberController;
 use Application\Controller\Version2\ReplacementAttorneyController;
 use Application\Controller\Version2\ReplacementAttorneyDecisionsController;
 use Application\Controller\Version2\SeedController;
+use Application\Controller\Version2\StatsController;
 use Application\Controller\Version2\TypeController;
 use Application\Controller\Version2\UserController;
 use Application\Controller\Version2\WhoAreYouController;
@@ -59,6 +60,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         ReplacementAttorneyController::class            => 'resource-replacement-attorneys',
         ReplacementAttorneyDecisionsController::class   => 'resource-replacement-attorney-decisions',
         SeedController::class                           => 'resource-seed',
+        StatsController::class                          => 'resource-stats',
         TypeController::class                           => 'resource-type',
         UserController::class                           => 'resource-users',
         WhoAreYouController::class                      => 'resource-who-are-you',

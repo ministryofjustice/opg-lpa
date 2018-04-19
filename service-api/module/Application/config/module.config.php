@@ -27,71 +27,6 @@ return [
                 ],
             ], // ping
 
-            'api-v1' => [
-                'type'    => 'Segment',
-                'options' => [
-                    'route'    => '/v1',
-                    'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller\Version1',
-                        'controller'    => 'Rest',
-                    ],
-                ],
-                'may_terminate' => true,
-                'child_routes' => [
-
-                    'stats' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/stats/:type',
-                            'constraints' => [
-                                'userId' => '[a-f0-9]+',
-                                'type' => '[a-z0-9][a-z0-9-]*',
-                            ],
-                            'defaults' => [
-                                'controller'    => 'Rest',
-                                'resource'      => 'stats'
-                            ],
-                        ],
-                    ], // stats
-
-                    'user' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/users/:userId',
-                            'constraints' => [
-                                'userId' => '[a-f0-9]+',
-                            ],
-                            'defaults' => [
-                                'controller'    => 'Rest',
-                                'resource'      => 'users'
-                            ],
-                        ],
-                        'may_terminate' => true,
-                        'child_routes' => [
-
-                            'level-2' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/applications/:lpaId/:resource[/:resourceId]',
-                                    'constraints' => [
-                                        'lpaId'      => '[0-9]+',
-                                        'resource'   => '[a-z][a-z-]*',
-                                        'resourceId' => '[a-z0-9][a-z0-9.]*',
-                                    ],
-                                    'defaults' => [
-                                        'controller'    => 'Rest',
-                                    ],
-                                ],
-                            ], // level-2
-
-                        ], // child_routes
-
-                    ], // user
-
-                ], // child_routes
-
-            ], // api-v1
-
             'api-v2' => [
                 'type'    => 'Segment',
                 'options' => [
@@ -103,18 +38,15 @@ return [
                 'may_terminate' => true,
                 'child_routes' => [
 
-                    //  TODO - Is this used yet? Doesn't look like it from the front API calls
                     'stats' => [
                         'type'    => 'Segment',
                         'options' => [
                             'route'    => '/stats/:type',
                             'constraints' => [
-                                'userId' => '[a-f0-9]+',
                                 'type' => '[a-z0-9][a-z0-9-]*',
                             ],
                             'defaults' => [
-                                'controller'    => 'Stats',
-                                'resource'      => 'stats'
+                                'controller' => 'StatsController',
                             ],
                         ],
                     ], // stats
@@ -368,8 +300,7 @@ return [
 
     'controllers' => [
         'invokables' => [
-            'Application\Controller\Index'          => 'Application\Controller\IndexController',
-            'Application\Controller\Version1\Rest'  => 'Application\Controller\Version1\RestController',
+            'Application\Controller\Index' => 'Application\Controller\IndexController',
         ],
         'factories' => [
             'Application\Controller\Console\GenerateStats'  => 'Application\Controller\Console\GenerateStatsControllerFactory',
@@ -388,6 +319,7 @@ return [
         'factories' => [
             'StatsService' => 'Application\Model\Service\System\StatsFactory',
             \Application\DataAccess\UserDal::class => \Application\DataAccess\UserDalFactory::class,
+            Application\Model\Rest\Stats\Resource::class => Application\Model\Rest\Stats\ResourceFactory::class,
         ],
         'abstract_factories' => [
             'Application\Model\Rest\ResourceAbstractFactory',
