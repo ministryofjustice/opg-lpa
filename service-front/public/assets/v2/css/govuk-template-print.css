@@ -15,7 +15,7 @@ body {
   font-weight: 400;
   text-transform: none;
   font-size: 11pt;
-  line-height: 1.4285714286;
+  line-height: 1.42857;
   margin: 0;
   padding: 0;
   width: 100%; }
@@ -46,7 +46,7 @@ select {
     font-weight: 700;
     text-transform: none;
     font-size: 18pt;
-    line-height: 1.0416666667;
+    line-height: 1.04167;
     font-size: 28pt;
     /* `bold-80` can be used instead when govuk_frontend_toolkit gem is >= 4.18.2,
        see https://github.com/alphagov/govuk_frontend_toolkit/pull/328 */
