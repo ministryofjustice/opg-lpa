@@ -77,5 +77,6 @@ return array(
     'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
     'Clue\\StreamFilter\\' => array($vendorDir . '/clue/stream-filter/src'),
     'Aws\\' => array($vendorDir . '/aws/aws-sdk-php/src'),
+    'Application\\' => array($baseDir . '/module/Application/src'),
     'Alphagov\\Pay\\' => array($vendorDir . '/alphagov/pay-integration-php/src'),
 );
