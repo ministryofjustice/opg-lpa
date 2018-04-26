@@ -2,28 +2,8 @@
 
 namespace Application\Controller;
 
-use Application\Controller\Version2\AbstractController;
-use Application\Controller\Version2\ApplicationController;
-use Application\Controller\Version2\CertificateProviderController;
-use Application\Controller\Version2\CorrespondentController;
-use Application\Controller\Version2\DonorController;
-use Application\Controller\Version2\InstructionController;
-use Application\Controller\Version2\LockController;
-use Application\Controller\Version2\NotifiedPeopleController;
-use Application\Controller\Version2\PaymentController;
-use Application\Controller\Version2\PdfController;
-use Application\Controller\Version2\PreferenceController;
-use Application\Controller\Version2\PrimaryAttorneyController;
-use Application\Controller\Version2\PrimaryAttorneyDecisionsController;
-use Application\Controller\Version2\RepeatCaseNumberController;
-use Application\Controller\Version2\ReplacementAttorneyController;
-use Application\Controller\Version2\ReplacementAttorneyDecisionsController;
-use Application\Controller\Version2\SeedController;
-use Application\Controller\Version2\StatsController;
-use Application\Controller\Version2\TypeController;
-use Application\Controller\Version2\UserController;
-use Application\Controller\Version2\WhoAreYouController;
-use Application\Controller\Version2\WhoIsRegisteringController;
+use Application\Controller\Version2;
+use Application\Model\Service;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
@@ -43,28 +23,28 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
     /**
      * @var array
      */
-    private $resourceMappings = [
-        ApplicationController::class                    => 'resource-applications',
-        CertificateProviderController::class            => 'resource-certificate-provider',
-        CorrespondentController::class                  => 'resource-correspondent',
-        DonorController::class                          => 'resource-donor',
-        InstructionController::class                    => 'resource-instruction',
-        LockController::class                           => 'resource-lock',
-        NotifiedPeopleController::class                 => 'resource-notified-people',
-        PaymentController::class                        => 'resource-payment',
-        PdfController::class                            => 'resource-pdfs',
-        PreferenceController::class                     => 'resource-preference',
-        PrimaryAttorneyController::class                => 'resource-primary-attorneys',
-        PrimaryAttorneyDecisionsController::class       => 'resource-primary-attorney-decisions',
-        RepeatCaseNumberController::class               => 'resource-repeat-case-number',
-        ReplacementAttorneyController::class            => 'resource-replacement-attorneys',
-        ReplacementAttorneyDecisionsController::class   => 'resource-replacement-attorney-decisions',
-        SeedController::class                           => 'resource-seed',
-        StatsController::class                          => 'resource-stats',
-        TypeController::class                           => 'resource-type',
-        UserController::class                           => 'resource-users',
-        WhoAreYouController::class                      => 'resource-who-are-you',
-        WhoIsRegisteringController::class               => 'resource-who-is-registering',
+    private $serviceMappings = [
+        Version2\ApplicationController::class                   => Service\Applications\Service::class,
+        Version2\CertificateProviderController::class           => Service\CertificateProvider\Service::class,
+        Version2\CorrespondentController::class                 => Service\Correspondent\Service::class,
+        Version2\DonorController::class                         => Service\Donor\Service::class,
+        Version2\InstructionController::class                   => Service\Instruction\Service::class,
+        Version2\LockController::class                          => Service\Lock\Service::class,
+        Version2\NotifiedPeopleController::class                => Service\NotifiedPeople\Service::class,
+        Version2\PaymentController::class                       => Service\Payment\Service::class,
+        Version2\PdfController::class                           => Service\Pdfs\Service::class,
+        Version2\PreferenceController::class                    => Service\Preference\Service::class,
+        Version2\PrimaryAttorneyController::class               => Service\AttorneysPrimary\Service::class,
+        Version2\PrimaryAttorneyDecisionsController::class      => Service\AttorneyDecisionsPrimary\Service::class,
+        Version2\RepeatCaseNumberController::class              => Service\RepeatCaseNumber\Service::class,
+        Version2\ReplacementAttorneyController::class           => Service\AttorneysReplacement\Service::class,
+        Version2\ReplacementAttorneyDecisionsController::class  => Service\AttorneyDecisionsReplacement\Service::class,
+        Version2\SeedController::class                          => Service\Seed\Service::class,
+        Version2\StatsController::class                         => Service\Stats\Service::class,
+        Version2\TypeController::class                          => Service\Type\Service::class,
+        Version2\UserController::class                          => Service\Users\Service::class,
+        Version2\WhoAreYouController::class                     => Service\WhoAreYou\Service::class,
+        Version2\WhoIsRegisteringController::class              => Service\WhoIsRegistering\Service::class,
     ];
 
     /**
@@ -76,7 +56,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      */
     public function canCreate(ContainerInterface $container, $requestedName)
     {
-        return (class_exists($requestedName) && is_subclass_of($requestedName, AbstractController::class));
+        return (class_exists($requestedName) && is_subclass_of($requestedName, Version2\AbstractController::class));
     }
 
     /**
@@ -101,10 +81,10 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             ));
         }
 
-        //  Create the controller injecting the appropriate resource
-        $resource = $container->get($this->resourceMappings[$requestedName]);
+        //  Create the controller injecting the appropriate service
+        $service = $container->get($this->serviceMappings[$requestedName]);
 
-        $controller = new $requestedName($resource);
+        $controller = new $requestedName($service);
 
         // Ensure it's Dispatchable...
         if (($controller instanceof Dispatchable) === false) {

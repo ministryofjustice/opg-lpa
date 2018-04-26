@@ -4,8 +4,8 @@ namespace Application\Controller\Version2;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-use Application\Model\Rest\EntityInterface;
-use Application\Model\Rest\Stats\Resource;
+use Application\Model\Service\EntityInterface;
+use Application\Model\Service\Stats\Service;
 use ZF\ApiProblem\ApiProblem;
 
 class StatsController extends AbstractController
@@ -18,11 +18,11 @@ class StatsController extends AbstractController
     protected $identifierName = 'type';
 
     /**
-     * @param Resource $resource
+     * @param Service $service
      */
-    public function __construct(Resource $resource)
+    public function __construct(Service $service)
     {
-        $this->resource = $resource;
+        $this->service = $service;
     }
 
     /**
@@ -31,7 +31,7 @@ class StatsController extends AbstractController
      */
     public function get($id)
     {
-        $result = $this->resource->fetch($id);
+        $result = $this->service->fetch($id);
 
         if ($result instanceof ApiProblem) {
             return $result;

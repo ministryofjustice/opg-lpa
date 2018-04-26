@@ -2,15 +2,15 @@
 
 namespace Application\Controller\Version2;
 
-use Application\Model\Rest\AbstractResource;
-use Application\Model\Rest\Lock\LockedException;
+use Application\Model\Service\AbstractService;
+use Application\Model\Service\Lock\LockedException;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Mvc\MvcEvent;
 use ZfcRbac\Exception\UnauthorizedException;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 
-class AbstractController extends AbstractRestfulController
+abstract class AbstractController extends AbstractRestfulController
 {
     /**
      * Name of the identifier used in the routes to this RESTful controller - by default this is the LPA ID
@@ -20,16 +20,16 @@ class AbstractController extends AbstractRestfulController
     protected $identifierName = 'lpaId';
 
     /**
-     * @var AbstractResource
+     * @var AbstractService
      */
-    protected $resource;
+    protected $service;
 
     /**
-     * @param AbstractResource $resource
+     * @param AbstractService $service
      */
-    public function __construct(AbstractResource $resource)
+    public function __construct(AbstractService $service)
     {
-        $this->resource = $resource;
+        $this->service = $service;
     }
 
     /**

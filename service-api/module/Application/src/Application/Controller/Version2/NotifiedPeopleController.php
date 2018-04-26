@@ -4,7 +4,7 @@ namespace Application\Controller\Version2;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-use Application\Model\Rest\EntityInterface;
+use Application\Model\Service\EntityInterface;
 use ZF\ApiProblem\ApiProblem;
 
 class NotifiedPeopleController extends AbstractController
@@ -20,7 +20,7 @@ class NotifiedPeopleController extends AbstractController
      */
     public function create($data)
     {
-        $result = $this->resource->create($data);
+        $result = $this->service->create($data);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -31,6 +31,7 @@ class NotifiedPeopleController extends AbstractController
         // If we get here...
         return new ApiProblem(500, 'Unable to process request');
     }
+
     /**
      * @param mixed $id
      * @param mixed $data
@@ -38,7 +39,7 @@ class NotifiedPeopleController extends AbstractController
      */
     public function update($id, $data)
     {
-        $result = $this->resource->update($data, $id);
+        $result = $this->service->update($data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -56,7 +57,7 @@ class NotifiedPeopleController extends AbstractController
      */
     public function delete($id)
     {
-        $result = $this->resource->delete($id);
+        $result = $this->service->delete($id);
 
         if ($result instanceof ApiProblem) {
             return $result;

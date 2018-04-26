@@ -4,7 +4,7 @@ namespace Application\Controller\Version2;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-use Application\Model\Rest\EntityInterface;
+use Application\Model\Service\EntityInterface;
 use ZF\ApiProblem\ApiProblem;
 
 class SeedController extends AbstractController
@@ -15,7 +15,7 @@ class SeedController extends AbstractController
      */
     public function get($id)
     {
-        $result = $this->resource->fetch($id);
+        $result = $this->service->fetch($id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -40,7 +40,7 @@ class SeedController extends AbstractController
      */
     public function update($id, $data)
     {
-        $result = $this->resource->update($data, $id);
+        $result = $this->service->update($data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;

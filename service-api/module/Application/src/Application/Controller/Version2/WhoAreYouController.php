@@ -3,7 +3,7 @@
 namespace Application\Controller\Version2;
 
 use Application\Library\Http\Response\Json as JsonResponse;
-use Application\Model\Rest\EntityInterface;
+use Application\Model\Service\EntityInterface;
 use ZF\ApiProblem\ApiProblem;
 
 class WhoAreYouController extends AbstractController
@@ -14,7 +14,7 @@ class WhoAreYouController extends AbstractController
      */
     public function create($data)
     {
-        $result = $this->resource->create($data);
+        $result = $this->service->create($data);
 
         if ($result instanceof ApiProblem) {
             return $result;

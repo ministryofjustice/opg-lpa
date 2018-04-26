@@ -5,7 +5,7 @@ namespace Application\Controller\Version2;
 use Application\Library\Http\Response\File as FileResponse;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-use Application\Model\Rest\EntityInterface;
+use Application\Model\Service\EntityInterface;
 use ZF\ApiProblem\ApiProblem;
 
 class PdfController extends AbstractController
@@ -21,7 +21,7 @@ class PdfController extends AbstractController
      */
     public function get($id)
     {
-        $result = $this->resource->fetch($id);
+        $result = $this->service->fetch($id);
 
         if ($result instanceof ApiProblem) {
             return $result;

@@ -4,8 +4,8 @@ namespace Application\Controller\Version2;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-use Application\Model\Rest\Applications\Collection;
-use Application\Model\Rest\EntityInterface;
+use Application\Model\Service\Applications\Collection;
+use Application\Model\Service\EntityInterface;
 use Zend\Paginator\Paginator;
 use ZF\ApiProblem\ApiProblem;
 
@@ -17,7 +17,7 @@ class ApplicationController extends AbstractController
      */
     public function get($id)
     {
-        $result = $this->resource->fetch($id);
+        $result = $this->service->fetch($id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -57,7 +57,7 @@ class ApplicationController extends AbstractController
         unset($filteredQuery['perPage']);
 
         //  Get the collection of applications with the query data
-        $result = $this->resource->fetchAll($filteredQuery);
+        $result = $this->service->fetchAll($filteredQuery);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -84,7 +84,7 @@ class ApplicationController extends AbstractController
      */
     public function create($data)
     {
-        $result = $this->resource->create($data);
+        $result = $this->service->create($data);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -103,7 +103,7 @@ class ApplicationController extends AbstractController
      */
     public function patch($id, $data)
     {
-        $result = $this->resource->patch($data, $id);
+        $result = $this->service->patch($data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -121,7 +121,7 @@ class ApplicationController extends AbstractController
      */
     public function delete($id)
     {
-        $result = $this->resource->delete($id);
+        $result = $this->service->delete($id);
 
         if ($result instanceof ApiProblem) {
             return $result;

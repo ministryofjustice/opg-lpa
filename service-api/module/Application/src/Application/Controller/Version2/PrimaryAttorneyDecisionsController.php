@@ -3,7 +3,7 @@
 namespace Application\Controller\Version2;
 
 use Application\Library\Http\Response\Json as JsonResponse;
-use Application\Model\Rest\EntityInterface;
+use Application\Model\Service\EntityInterface;
 use ZF\ApiProblem\ApiProblem;
 
 class PrimaryAttorneyDecisionsController extends AbstractController
@@ -15,7 +15,7 @@ class PrimaryAttorneyDecisionsController extends AbstractController
      */
     public function update($id, $data)
     {
-        $result = $this->resource->update($data, $id);
+        $result = $this->service->update($data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;
