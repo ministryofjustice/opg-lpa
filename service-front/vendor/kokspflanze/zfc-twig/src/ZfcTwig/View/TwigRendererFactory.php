@@ -3,6 +3,8 @@
 namespace ZfcTwig\View;
 
 use Interop\Container\ContainerInterface;
+use Twig\Environment;
+use Twig\Loader\ChainLoader;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\View\View;
 use ZfcTwig\ModuleOptions;
@@ -22,8 +24,8 @@ class TwigRendererFactory implements FactoryInterface
 
         $renderer = new TwigRenderer(
             $container->get(View::class),
-            $container->get('Twig_Loader_Chain'),
-            $container->get('Twig_Environment'),
+            $container->get(ChainLoader::class),
+            $container->get(Environment::class),
             $container->get(TwigResolver::class)
         );
 

@@ -1,7 +1,7 @@
 # zend-crypt
 
 [![Build Status](https://secure.travis-ci.org/zendframework/zend-crypt.svg?branch=master)](https://secure.travis-ci.org/zendframework/zend-crypt)
-[![Coverage Status](https://coveralls.io/repos/zendframework/zend-crypt/badge.svg?branch=master)](https://coveralls.io/r/zendframework/zend-crypt?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/zendframework/zend-crypt/badge.svg?branch=master)](https://coveralls.io/github/zendframework/zend-crypt?branch=master)
 
 `Zend\Crypt` provides support of some cryptographic tools.
 Some of the available features are:
@@ -22,4 +22,4 @@ and authenticate sensitive data in PHP.
 
 
 - File issues at https://github.com/zendframework/zend-crypt/issues
-- Documentation is at http://framework.zend.com/manual/current/en/index.html#zend-crypt
+- Documentation is at https://docs.zendframework.com/zend-crypt

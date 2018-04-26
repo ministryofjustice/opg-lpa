@@ -2,7 +2,7 @@
 
 namespace ZfcTwig\Twig;
 
-use \Twig_Function;
+use Twig\TwigFunction;
 use Zend\View\Helper\HelperInterface;
 
 /**
@@ -10,7 +10,7 @@ use Zend\View\Helper\HelperInterface;
  *
 * @package ZfcTwig\Twig
 */
-class FallbackFunction extends Twig_Function
+class FallbackFunction extends TwigFunction
 {
     /**
      * @var HelperInterface

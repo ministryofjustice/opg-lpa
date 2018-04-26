@@ -9,8 +9,8 @@
 
 namespace Zend\Dom\Document;
 
-use Zend\Dom\DOMXPath;
 use Zend\Dom\Document;
+use Zend\Dom\DOMXPath;
 
 /**
  * Query object executable in a Zend\Dom\Document
@@ -33,8 +33,12 @@ class Query
      * @param  \DOMNode  $contextNode
      * @return NodeList
      */
-    public static function execute($expression, Document $document, $type = self::TYPE_XPATH, \DOMNode $contextNode = null)
-    {
+    public static function execute(
+        $expression,
+        Document $document,
+        $type = self::TYPE_XPATH,
+        \DOMNode $contextNode = null
+    ) {
         // Expression check
         if ($type === static::TYPE_CSS) {
             $expression = static::cssToXpath($expression);
@@ -48,7 +52,11 @@ class Query
 
         if ($xpathPhpfunctions = $document->getXpathPhpFunctions()) {
             $xpath->registerNamespace('php', 'http://php.net/xpath');
-            ($xpathPhpfunctions === true) ? $xpath->registerPHPFunctions() : $xpath->registerPHPFunctions($xpathPhpfunctions);
+            if ($xpathPhpfunctions === true) {
+                $xpath->registerPhpFunctions();
+            } else {
+                $xpath->registerPhpFunctions($xpathPhpfunctions);
+            }
         }
 
         $nodeList = $xpath->queryWithErrorException($expression, $contextNode);
@@ -78,9 +86,24 @@ class Query
             return implode('|', $expressions);
         }
 
+        do {
+            $placeholder = '{' . uniqid(mt_rand(), true) . '}';
+        } while (strpos($path, $placeholder) !== false);
+
+        // Arbitrary attribute value contains whitespace
+        $path = preg_replace_callback(
+            '/\[\S+?([\'"])((?!\1|\\\1).*?)\1\]/',
+            function ($matches) use ($placeholder) {
+                return str_replace($matches[2], preg_replace('/\s+/', $placeholder, $matches[2]), $matches[0]);
+            },
+            $path
+        );
+
         $paths    = ['//'];
-        $path     = preg_replace('|\s+>\s+|', '>', $path);
+        $path     = preg_replace('|\s*>\s*|', '>', $path);
         $segments = preg_split('/\s+/', $path);
+        $segments = str_replace($placeholder, ' ', $segments);
+
         foreach ($segments as $key => $segment) {
             $pathSegment = static::_tokenize($segment);
             if (0 == $key) {
@@ -109,6 +132,7 @@ class Query
         return implode('|', $paths);
     }
 
+    // @codingStandardsIgnoreStart
     /**
      * Tokenize CSS expressions to XPath
      *
@@ -117,6 +141,7 @@ class Query
      */
     protected static function _tokenize($expression)
     {
+        // @codingStandardsIgnoreEnd
         // Child selectors
         $expression = str_replace('>', '/', $expression);
 
@@ -126,29 +151,29 @@ class Query
 
         // arbitrary attribute strict equality
         $expression = preg_replace_callback(
-            '|\[@?([a-z0-9_-]+)=[\'"]([^\'"]+)[\'"]\]|i',
+            '/\[@?([a-z0-9_-]+)=([\'"])((?!\2|\\\2).*?)\2\]/i',
             function ($matches) {
-                return '[@' . strtolower($matches[1]) . "='" . $matches[2] . "']";
+                return sprintf("[@%s='%s']", strtolower($matches[1]), str_replace("'", "\\'", $matches[3]));
             },
             $expression
         );
 
         // arbitrary attribute contains full word
         $expression = preg_replace_callback(
-            '|\[([a-z0-9_-]+)~=[\'"]([^\'"]+)[\'"]\]|i',
+            '/\[([a-z0-9_-]+)~=([\'"])((?!\2|\\\2).*?)\2\]/i',
             function ($matches) {
                 return "[contains(concat(' ', normalize-space(@" . strtolower($matches[1]) . "), ' '), ' "
-                     . $matches[2] . " ')]";
+                     . $matches[3] . " ')]";
             },
             $expression
         );
 
         // arbitrary attribute contains specified content
         $expression = preg_replace_callback(
-            '|\[([a-z0-9_-]+)\*=[\'"]([^\'"]+)[\'"]\]|i',
+            '/\[([a-z0-9_-]+)\*=([\'"])((?!\2|\\\2).*?)\2\]/i',
             function ($matches) {
                 return "[contains(@" . strtolower($matches[1]) . ", '"
-                     . $matches[2] . "')]";
+                     . $matches[3] . "')]";
             },
             $expression
         );

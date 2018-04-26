@@ -4,7 +4,7 @@ namespace ZfcTwig\Twig;
 
 use Interop\Container\ContainerInterface;
 use RuntimeException;
-use Twig_Environment;
+use Twig\Environment;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use ZfcTwig\ModuleOptions;
 
@@ -14,7 +14,7 @@ class EnvironmentFactory implements FactoryInterface
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param array|null $options
-     * @return Twig_Environment
+     * @return Environment
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -31,7 +31,7 @@ class EnvironmentFactory implements FactoryInterface
             );
         }
 
-        /** @var Twig_Environment $env */
+        /** @var Environment $env */
         $env = new $envClass($container->get($options->getEnvironmentLoader()), $options->getEnvironmentOptions());
 
         if ($options->getEnableFallbackFunctions()) {

@@ -3,6 +3,7 @@
 namespace ZfcTwig;
 
 use InvalidArgumentException;
+use Twig\Environment;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
@@ -21,7 +22,7 @@ class Module implements
         /** @var \Zend\Mvc\MvcEvent $e*/
         $application    = $e->getApplication();
         $serviceManager = $application->getServiceManager();
-        $environment    = $serviceManager->get('Twig_Environment');
+        $environment    = $serviceManager->get(Environment::class);
 
         /** @var ModuleOptions $options */
         $options = $serviceManager->get(ModuleOptions::class);

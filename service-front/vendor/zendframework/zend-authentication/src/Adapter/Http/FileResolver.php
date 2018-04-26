@@ -1,10 +1,8 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-authentication for the canonical source repository
+ * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-authentication/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Authentication\Adapter\Http;
@@ -30,7 +28,7 @@ class FileResolver implements ResolverInterface
      */
     public function __construct($path = '')
     {
-        if (!empty($path)) {
+        if (! empty($path)) {
             $this->setFile($path);
         }
     }
@@ -39,12 +37,12 @@ class FileResolver implements ResolverInterface
      * Set the path to the credentials file
      *
      * @param  string $path
-     * @return FileResolver Provides a fluent interface
+     * @return self Provides a fluent interface
      * @throws Exception\InvalidArgumentException if path is not readable
      */
     public function setFile($path)
     {
-        if (empty($path) || !is_readable($path)) {
+        if (empty($path) || ! is_readable($path)) {
             throw new Exception\InvalidArgumentException('Path not readable: ' . $path);
         }
         $this->file = $path;
@@ -87,14 +85,14 @@ class FileResolver implements ResolverInterface
     {
         if (empty($username)) {
             throw new Exception\InvalidArgumentException('Username is required');
-        } elseif (!ctype_print($username) || strpos($username, ':') !== false) {
+        } elseif (! ctype_print($username) || strpos($username, ':') !== false) {
             throw new Exception\InvalidArgumentException(
                 'Username must consist only of printable characters, excluding the colon'
             );
         }
         if (empty($realm)) {
             throw new Exception\InvalidArgumentException('Realm is required');
-        } elseif (!ctype_print($realm) || strpos($realm, ':') !== false) {
+        } elseif (! ctype_print($realm) || strpos($realm, ':') !== false) {
             throw new Exception\InvalidArgumentException(
                 'Realm must consist only of printable characters, excluding the colon.'
             );
@@ -104,13 +102,13 @@ class FileResolver implements ResolverInterface
         ErrorHandler::start(E_WARNING);
         $fp     = fopen($this->file, 'r');
         $error = ErrorHandler::stop();
-        if (!$fp) {
+        if (! $fp) {
             throw new Exception\RuntimeException('Unable to open password file: ' . $this->file, 0, $error);
         }
 
         // No real validation is done on the contents of the password file. The
         // assumption is that we trust the administrators to keep it secure.
-        while (($line = fgetcsv($fp, 512, ':')) !== false) {
+        while (($line = fgetcsv($fp, 512, ':', '"')) !== false) {
             if ($line[0] == $username && $line[1] == $realm) {
                 $password = $line[2];
                 fclose($fp);

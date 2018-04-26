@@ -2,9 +2,8 @@
 
 namespace ZfcTwigTest\View;
 
-use Twig_Environment;
-use Twig_Loader_Array;
-use Twig_Loader_Chain;
+use Twig\Environment;
+use Twig\Loader;
 use Zend\View\Model\ModelInterface;
 use Zend\View\View;
 use ZfcTwig\View\TwigRenderer;
@@ -20,9 +19,9 @@ class TwigRendererTest extends TestCase
     {
         parent::setUp();
 
-        $chain = new Twig_Loader_Chain();
-        $chain->addLoader(new Twig_Loader_Array(['key1' => 'var1 {{ foobar }}']));
-        $environment = new Twig_Environment($chain);
+        $chain = new Loader\ChainLoader();
+        $chain->addLoader(new Loader\ArrayLoader(['key1' => 'var1 {{ foobar }}']));
+        $environment = new Environment($chain);
         $this->renderer = new TwigRenderer(new View, $chain, $environment, new TwigResolver($environment));
     }
 

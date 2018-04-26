@@ -4,7 +4,7 @@ namespace ZfcTwig\Twig;
 
 use Interop\Container\ContainerInterface;
 use InvalidArgumentException;
-use Twig_Loader_Chain;
+use Twig\Loader;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use ZfcTwig\ModuleOptions;
 
@@ -14,7 +14,7 @@ class ChainLoaderFactory implements FactoryInterface
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param array|null $options
-     * @return Twig_Loader_Chain
+     * @return Loader\ChainLoader
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -22,7 +22,7 @@ class ChainLoaderFactory implements FactoryInterface
         $options = $container->get(ModuleOptions::class);
 
         // Setup loader
-        $chain = new Twig_Loader_Chain();
+        $chain = new Loader\ChainLoader();
 
         foreach ($options->getLoaderChain() as $loader) {
             if (!is_string($loader) || !$container->has($loader)) {

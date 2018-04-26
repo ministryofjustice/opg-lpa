@@ -2,8 +2,8 @@
 
 namespace ZfcTwig\View;
 
-use Twig_Environment;
-use Twig_Loader_Chain;
+use Twig\Environment;
+use Twig\Loader;
 use Zend\View\Exception;
 use Zend\View\HelperPluginManager;
 use Zend\View\Model\ModelInterface;
@@ -20,7 +20,7 @@ class TwigRenderer implements RendererInterface, TreeRendererInterface
     protected $canRenderTrees = true;
 
     /**
-     * @var Twig_Environment
+     * @var Environment
      */
     protected $environment;
 
@@ -35,7 +35,7 @@ class TwigRenderer implements RendererInterface, TreeRendererInterface
     protected $zendHelperPluginManager;
 
     /**
-     * @var Twig_Loader_Chain
+     * @var Loader\ChainLoader
      */
     protected $loader;
 
@@ -56,14 +56,14 @@ class TwigRenderer implements RendererInterface, TreeRendererInterface
 
     /**
      * @param View $view
-     * @param \Twig_Loader_Chain $loader
-     * @param Twig_Environment $environment
+     * @param Loader\ChainLoader $loader
+     * @param Environment $environment
      * @param TwigResolver $resolver
      */
     public function __construct(
         View $view,
-        Twig_Loader_Chain $loader,
-        Twig_Environment $environment,
+        Loader\ChainLoader $loader,
+        Environment $environment,
         TwigResolver $resolver
     ) {
         $this->environment = $environment;
@@ -152,7 +152,7 @@ class TwigRenderer implements RendererInterface, TreeRendererInterface
      * phplib, etc, return the template engine object. Useful for calling
      * methods on these objects, such as for setting filters, modifiers, etc.
      *
-     * @return Twig_Environment
+     * @return Environment
      */
     public function getEngine()
     {
@@ -265,7 +265,7 @@ class TwigRenderer implements RendererInterface, TreeRendererInterface
             }
         }
 
-        /** @var $template \Twig_Template */
+        /** @var $template \Twig\Template */
         $template = $this->resolver->resolve($nameOrModel, $this);
         return $template->render((array) $values);
     }

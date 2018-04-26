@@ -23,13 +23,12 @@
     ],
     "require": {
         "php": "^7.0",
-        "twig/twig": "^2.0",
+        "twig/twig": "^2.4.2",
         "zendframework/zend-mvc": "^3.0",
         "zendframework/zend-view": "^2.7",
         "zendframework/zend-servicemanager": "^3.0",
         "zendframework/zend-mvc-plugin-flashmessenger": "^1.0"
     },
-
     "autoload": {
         "psr-4": {
             "ZfcTwig\\": "src/ZfcTwig"
@@ -43,8 +42,7 @@
     "require-dev": {
         "zendframework/zend-navigation": "^2.7",
         "zendframework/zend-modulemanager": "^2.7",
-        "phpunit/phpunit": "^6.0.2",
-        "friendsofphp/php-cs-fixer": "^1.11"
+        "phpunit/phpunit": "^6.5 || ^7.0.3"
     },
     "replace": {
         "zf-commons/zfc-twig": "self.version"
@@ -55,8 +53,11 @@
         },
         "branch-alias": {
             "dev-release/1.4": "1.4-dev",
-            "dev-master": "2.1-dev",
-            "dev-develop": "2.2-dev"
+            "dev-master": "2.2-dev",
+            "dev-develop": "2.3-dev"
         }
+    },
+    "scripts": {
+        "test": "phpunit --colors=always --configuration tests/phpunit.xml"
     }
 }
