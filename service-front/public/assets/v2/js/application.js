@@ -23958,10 +23958,12 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
   };
 }());
 ;
-// Fees module for LPA
+// Print link module for LPA
 // Dependencies: moj, jQuery
 
 (function() {
+    'use strict';
+
     moj.Modules.PrintLink = {
 
         init: function () {
@@ -23969,20 +23971,10 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
         },
 
         hookupPrintLinks: function() {
-            $('a.print').on('click', this.handleClick);
-        },
-
-        handleClick: function(event) {
-            var isInPageLink =
-                location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') &&
-                location.hostname == this.hostname;
-
-            if (isInPageLink) {
-                GOVUK.analytics.trackEvent('Print-page', 'User requested to print page', { transport: 'beacon' });
-
+            $('.js-print').on('click', function(){
                 window.print();
-                return false
-            }
+                return false;
+            });
         }
     };
 
@@ -24960,9 +24952,6 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
         allowLinker: true,
         allowAnchor: true
       });
-
-      // Activate any event plugins eg. print intent, error tracking
-      //GOVUK.analyticsPlugins.formErrorTracker();
 
       // Track initial pageview
       if (typeof GOVUK.pageviewOptions !== 'undefined') {
