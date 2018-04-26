@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.10.0 - 2018-04-09
+
+### Added
+
+- [#58](https://github.com/zendframework/zend-log/pull/58) adds the class
+  `Zend\Log\Formatter\Json`, which will format log lines as individual JSON
+  objects.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.9.3 - 2018-04-09
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#79](https://github.com/zendframework/zend-log/pull/79) and
+  [#86](https://github.com/zendframework/zend-log/pull/86) provide fixes to
+  ensure the `FingersCrossed`, `Mongo`, and `MongoDB` writers work under PHP
+  7.2.
+
 ## 2.9.2 - 2017-05-17
 
 ### Added
@@ -317,9 +358,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- [#43](https://github.com/zendframework/zend-diactoros/pull/43) removed both
-  `ServerRequestFactory::marshalUri()` and `ServerRequestFactory::marshalHostAndPort()`,
-  which were deprecated prior to the 1.0 release.
+- Nothing.
 
 ### Fixed
 

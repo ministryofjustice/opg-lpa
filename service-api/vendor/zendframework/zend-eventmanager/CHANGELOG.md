@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 3.2.1 - 2018-04-25
+
+### Added
+
+- [#66](https://github.com/zendframework/zend-eventmanager/pull/66) adds support for PHP 7.2.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 3.2.0 - 2017-07-11
 
 ### Added

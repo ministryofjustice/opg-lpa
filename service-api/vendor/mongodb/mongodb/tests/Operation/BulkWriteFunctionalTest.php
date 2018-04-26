@@ -1,22 +1,25 @@
 <?php
 
-namespace MongoDB\Tests\Collection;
+namespace MongoDB\Tests\Operation;
 
 use MongoDB\BulkWriteResult;
+use MongoDB\Collection;
 use MongoDB\Driver\BulkWrite as Bulk;
 use MongoDB\Driver\WriteConcern;
 use MongoDB\Model\BSONDocument;
 use MongoDB\Operation\BulkWrite;
+use MongoDB\Tests\CommandObserver;
+use stdClass;
 
 class BulkWriteFunctionalTest extends FunctionalTestCase
 {
-    private $omitModifiedCount;
+    private $collection;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->omitModifiedCount = version_compare($this->getServerVersion(), '2.6.0', '<');
+        $this->collection = new Collection($this->manager, $this->getDatabaseName(), $this->getCollectionName());
     }
 
     public function testInserts()
@@ -67,7 +70,7 @@ class BulkWriteFunctionalTest extends FunctionalTestCase
 
         $this->assertInstanceOf('MongoDB\BulkWriteResult', $result);
         $this->assertSame(5, $result->getMatchedCount());
-        $this->omitModifiedCount or $this->assertSame(5, $result->getModifiedCount());
+        $this->assertSame(5, $result->getModifiedCount());
         $this->assertSame(2, $result->getUpsertedCount());
 
         $upsertedIds = $result->getUpsertedIds();
@@ -129,7 +132,7 @@ class BulkWriteFunctionalTest extends FunctionalTestCase
         $this->assertSame([2 => 4], $result->getInsertedIds());
 
         $this->assertSame(3, $result->getMatchedCount());
-        $this->omitModifiedCount or $this->assertSame(3, $result->getModifiedCount());
+        $this->assertSame(3, $result->getModifiedCount());
         $this->assertSame(1, $result->getUpsertedCount());
         $this->assertSame([4 => 4], $result->getUpsertedIds());
 
@@ -283,6 +286,29 @@ class BulkWriteFunctionalTest extends FunctionalTestCase
         new BulkWrite($this->getDatabaseName(), $this->getCollectionName(), [
             ['replaceOne' => [['_id' => 1], ['$inc' => ['x' => 1]]]],
         ]);
+    }
+
+    public function testSessionOption()
+    {
+        if (version_compare($this->getServerVersion(), '3.6.0', '<')) {
+            $this->markTestSkipped('Sessions are not supported');
+        }
+
+        (new CommandObserver)->observe(
+            function() {
+                $operation = new BulkWrite(
+                    $this->getDatabaseName(),
+                    $this->getCollectionName(),
+                    [['insertOne' => [['_id' => 1]]]],
+                    ['session' => $this->createSession()]
+                );
+
+                $operation->execute($this->getPrimaryServer());
+            },
+            function(stdClass $command) {
+                $this->assertObjectHasAttribute('lsid', $command);
+            }
+        );
     }
 
     /**
