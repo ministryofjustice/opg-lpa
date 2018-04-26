@@ -1,5 +1,6 @@
 <?php
 
+use Twig\Environment;
 use Zend\Navigation\View\HelperConfig;
 use ZfcTwig\Twig;
 use ZfcTwig\View;
@@ -16,7 +17,7 @@ return [
         /**
          * Optional class name override for instantiating the Twig Environment in the factory.
          */
-        'environment_class' => Twig_Environment::class,
+        'environment_class' => Environment::class,
 
         /**
          * Options that are passed directly to the Twig_Environment.

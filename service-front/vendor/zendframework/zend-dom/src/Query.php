@@ -10,6 +10,7 @@
 namespace Zend\Dom;
 
 use DOMDocument;
+use DOMNode;
 
 /**
  * Query DOM structures based on CSS selectors and/or XPath
@@ -257,14 +258,14 @@ class Query
                 break;
         }
         $errors = libxml_get_errors();
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             $this->documentErrors = $errors;
             libxml_clear_errors();
         }
         libxml_disable_entity_loader(false);
         libxml_use_internal_errors(false);
 
-        if (!$success) {
+        if (! $success) {
             throw new Exception\RuntimeException(sprintf('Error parsing document (type == %s)', $type));
         }
 
@@ -312,8 +313,8 @@ class Query
         if ($this->xpathPhpFunctions) {
             $xpath->registerNamespace("php", "http://php.net/xpath");
             ($this->xpathPhpFunctions === true) ?
-                $xpath->registerPHPFunctions()
-                : $xpath->registerPHPFunctions($this->xpathPhpFunctions);
+                $xpath->registerPhpFunctions()
+                : $xpath->registerPhpFunctions($this->xpathPhpFunctions);
         }
         $xpathQuery = (string) $xpathQuery;
 

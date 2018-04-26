@@ -2,23 +2,23 @@
 
 namespace ZfcTwig\View;
 
-use Twig_Environment;
+use Twig\Environment;
 use Zend\View\Resolver\ResolverInterface;
 use Zend\View\Renderer\RendererInterface as Renderer;
 
 class TwigResolver implements ResolverInterface
 {
     /**
-     * @var Twig_Environment
+     * @var Environment
      */
     protected $environment;
 
     /**
      * Constructor.
      *
-     * @param Twig_Environment $environment
+     * @param Environment $environment
      */
-    public function __construct(Twig_Environment $environment)
+    public function __construct(Environment $environment)
     {
         $this->environment = $environment;
     }

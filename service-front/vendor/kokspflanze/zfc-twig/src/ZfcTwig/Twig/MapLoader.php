@@ -2,13 +2,11 @@
 
 namespace ZfcTwig\Twig;
 
-use Twig_Error_Loader;
-use Twig_ExistsLoaderInterface;
-use Twig_LoaderInterface;
-use Twig_Source;
-use Twig_SourceContextLoaderInterface;
+use Twig\Error;
+use Twig\Loader;
+use Twig\Source;
 
-class MapLoader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface, Twig_SourceContextLoaderInterface
+class MapLoader implements Loader\ExistsLoaderInterface, Loader\SourceContextLoaderInterface
 {
     /**
      * Array of templates to filenames.
@@ -21,13 +19,13 @@ class MapLoader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface, Twi
      *
      * @param string $name
      * @param string $path
-     * @throws \Twig_Error_Loader
+     * @throws Error\LoaderError
      * @return MapLoader
      */
     public function add($name, $path)
     {
         if ($this->exists($name)) {
-            throw new Twig_Error_Loader(sprintf(
+            throw new Error\LoaderError(sprintf(
                 'Name "%s" already exists in map',
                 $name
             ));
@@ -50,18 +48,18 @@ class MapLoader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface, Twi
     public function getSourceContext($name)
     {
         if (!$this->exists($name)) {
-            throw new Twig_Error_Loader(sprintf(
+            throw new Error\LoaderError(sprintf(
                 'Unable to find template "%s" from template map',
                 $name
             ));
         }
         if(!file_exists($this->map[$name])) {
-            throw new Twig_Error_Loader(sprintf(
+            throw new Error\LoaderError(sprintf(
                 'Unable to open file "%s" from template map',
                 $this->map[$name]
             ));
         }
-        return new Twig_Source(file_get_contents($this->map[$name]), $name, $this->map[$name]);
+        return new Source(file_get_contents($this->map[$name]), $name, $this->map[$name]);
     }
 
     /**
