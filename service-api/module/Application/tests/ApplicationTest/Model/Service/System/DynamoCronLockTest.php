@@ -63,7 +63,7 @@ class DynamoCronLockTest extends TestCase
         $dynamoCronLock->mockClient->shouldReceive('updateItem')->andThrow(new DynamoDbException('Test', new Command('Test')))->once();
 
         $loggerMock = Mockery::mock(Logger::class);
-        $loggerMock->shouldReceive('alert')->once();
+        $loggerMock->shouldReceive('alert');
 
         $dynamoCronLock->setLogger($loggerMock);
 
@@ -79,7 +79,7 @@ class DynamoCronLockTest extends TestCase
         $dynamoCronLock->mockClient->shouldReceive('updateItem')->andThrow(new DynamoDbException('Test', new Command('Test'), ['code' => 'ConditionalCheckFailedException']))->once();
 
         $loggerMock = Mockery::mock(Logger::class);
-        $loggerMock->shouldReceive('alert')->once();
+        $loggerMock->shouldReceive('alert');
 
         $dynamoCronLock->setLogger($loggerMock);
 
