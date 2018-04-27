@@ -5,6 +5,7 @@ namespace Application\Controller\Version2;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\Applications\Collection;
+use Application\Model\Service\Applications\Service;
 use Application\Model\Service\EntityInterface;
 use Zend\Paginator\Paginator;
 use ZF\ApiProblem\ApiProblem;
@@ -12,12 +13,22 @@ use ZF\ApiProblem\ApiProblem;
 class ApplicationController extends AbstractController
 {
     /**
+     * Get the service to use
+     *
+     * @return Service
+     */
+    protected function getService()
+    {
+        return $this->service;
+    }
+
+    /**
      * @param mixed $id
      * @return JsonResponse|NoContentResponse|ApiProblem
      */
     public function get($id)
     {
-        $result = $this->service->fetch($id);
+        $result = $this->getService()->fetch($id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -57,7 +68,7 @@ class ApplicationController extends AbstractController
         unset($filteredQuery['perPage']);
 
         //  Get the collection of applications with the query data
-        $result = $this->service->fetchAll($filteredQuery);
+        $result = $this->getService()->fetchAll($filteredQuery);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -84,7 +95,7 @@ class ApplicationController extends AbstractController
      */
     public function create($data)
     {
-        $result = $this->service->create($data);
+        $result = $this->getService()->create($data);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -103,7 +114,7 @@ class ApplicationController extends AbstractController
      */
     public function patch($id, $data)
     {
-        $result = $this->service->patch($data, $id);
+        $result = $this->getService()->patch($data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -121,7 +132,7 @@ class ApplicationController extends AbstractController
      */
     public function delete($id)
     {
-        $result = $this->service->delete($id);
+        $result = $this->getService()->delete($id);
 
         if ($result instanceof ApiProblem) {
             return $result;

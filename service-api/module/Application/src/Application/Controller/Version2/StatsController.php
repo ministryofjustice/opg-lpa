@@ -26,12 +26,22 @@ class StatsController extends AbstractController
     }
 
     /**
+     * Get the service to use
+     *
+     * @return Service
+     */
+    protected function getService()
+    {
+        return $this->service;
+    }
+
+    /**
      * @param mixed $id
      * @return JsonResponse|NoContentResponse|ApiProblem
      */
     public function get($id)
     {
-        $result = $this->service->fetch($id);
+        $result = $this->getService()->fetch($id);
 
         if ($result instanceof ApiProblem) {
             return $result;

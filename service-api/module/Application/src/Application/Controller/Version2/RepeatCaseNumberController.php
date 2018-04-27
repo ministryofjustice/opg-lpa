@@ -5,10 +5,21 @@ namespace Application\Controller\Version2;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\EntityInterface;
+use Application\Model\Service\RepeatCaseNumber\Service;
 use ZF\ApiProblem\ApiProblem;
 
 class RepeatCaseNumberController extends AbstractController
 {
+    /**
+     * Get the service to use
+     *
+     * @return Service
+     */
+    protected function getService()
+    {
+        return $this->service;
+    }
+
     /**
      * @param mixed $id
      * @param mixed $data
@@ -16,7 +27,7 @@ class RepeatCaseNumberController extends AbstractController
      */
     public function update($id, $data)
     {
-        $result = $this->service->update($data, $id);
+        $result = $this->getService()->update($data);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -34,7 +45,7 @@ class RepeatCaseNumberController extends AbstractController
      */
     public function delete($id)
     {
-        $result = $this->service->delete($id);
+        $result = $this->getService()->delete();
 
         if ($result instanceof ApiProblem) {
             return $result;

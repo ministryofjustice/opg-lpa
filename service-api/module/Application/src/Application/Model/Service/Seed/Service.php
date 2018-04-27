@@ -48,11 +48,10 @@ class Service extends AbstractService implements LpaConsumerInterface
     }
 
     /**
-     * @param  mixed $id
-     * @param  mixed $data
+     * @param  $data
      * @return ApiProblem|Entity
      */
-    public function update($data, $id)
+    public function update($data)
     {
         $this->checkAccess();
 

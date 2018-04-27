@@ -25,7 +25,7 @@ class Service extends AbstractService implements LpaConsumerInterface
     const STATUS_IN_QUEUE        = 'in-queue';       // The LPA is in the PDF queue.
     const STATUS_READY           = 'ready';          // THe PDF is available for immediate download.
 
-    /*
+    /**
      * @var array
      */
     private $pdfConfig = [];

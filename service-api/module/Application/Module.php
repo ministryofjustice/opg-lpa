@@ -6,7 +6,6 @@ use Application\DataAccess\Mongo\CollectionFactory;
 use Application\DataAccess\Mongo\DatabaseFactory;
 use Application\DataAccess\Mongo\ManagerFactory;
 use Application\Library\ApiProblem\ApiProblem;
-use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Model\Service\System\DynamoCronLock;

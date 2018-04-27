@@ -3,11 +3,22 @@
 namespace Application\Controller\Version2;
 
 use Application\Library\Http\Response\Json as JsonResponse;
+use Application\Model\Service\AttorneyDecisionsPrimary\Service;
 use Application\Model\Service\EntityInterface;
 use ZF\ApiProblem\ApiProblem;
 
 class PrimaryAttorneyDecisionsController extends AbstractController
 {
+    /**
+     * Get the service to use
+     *
+     * @return Service
+     */
+    protected function getService()
+    {
+        return $this->service;
+    }
+
     /**
      * @param mixed $id
      * @param mixed $data
@@ -15,7 +26,7 @@ class PrimaryAttorneyDecisionsController extends AbstractController
      */
     public function update($id, $data)
     {
-        $result = $this->service->update($data, $id);
+        $result = $this->getService()->update($data);
 
         if ($result instanceof ApiProblem) {
             return $result;

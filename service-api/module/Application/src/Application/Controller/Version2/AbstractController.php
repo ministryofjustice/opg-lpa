@@ -20,7 +20,7 @@ abstract class AbstractController extends AbstractRestfulController
     protected $identifierName = 'lpaId';
 
     /**
-     * @var AbstractService
+     * @var mixed
      */
     protected $service;
 
@@ -31,6 +31,14 @@ abstract class AbstractController extends AbstractRestfulController
     {
         $this->service = $service;
     }
+
+    /**
+     * Get the service to use
+     * Abstract function here so that this can be implemented in the subclass controllers and type hint appropriately
+     *
+     * @return AbstractService
+     */
+    abstract protected function getService();
 
     /**
      * Execute the request

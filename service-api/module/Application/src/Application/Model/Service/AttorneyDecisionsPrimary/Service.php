@@ -13,10 +13,9 @@ class Service extends AbstractService implements LpaConsumerInterface
 {
     /**
      * @param $data
-     * @param $id
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function update($data, $id)
+    public function update($data)
     {
         $this->checkAccess();
 

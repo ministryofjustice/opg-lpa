@@ -4,6 +4,7 @@ namespace Application\Controller\Version2;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
+use Application\Model\Service\AttorneysReplacement\Service;
 use Application\Model\Service\EntityInterface;
 use ZF\ApiProblem\ApiProblem;
 
@@ -15,12 +16,22 @@ class ReplacementAttorneyController extends AbstractController
     protected $identifierName = 'replacementAttorneyId';
 
     /**
+     * Get the service to use
+     *
+     * @return Service
+     */
+    protected function getService()
+    {
+        return $this->service;
+    }
+
+    /**
      * @param mixed $data
      * @return JsonResponse|ApiProblem
      */
     public function create($data)
     {
-        $result = $this->service->create($data);
+        $result = $this->getService()->create($data);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -39,7 +50,7 @@ class ReplacementAttorneyController extends AbstractController
      */
     public function update($id, $data)
     {
-        $result = $this->service->update($data, $id);
+        $result = $this->getService()->update($data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -57,7 +68,7 @@ class ReplacementAttorneyController extends AbstractController
      */
     public function delete($id)
     {
-        $result = $this->service->delete($id);
+        $result = $this->getService()->delete($id);
 
         if ($result instanceof ApiProblem) {
             return $result;

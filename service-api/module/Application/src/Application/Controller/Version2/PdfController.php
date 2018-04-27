@@ -5,7 +5,7 @@ namespace Application\Controller\Version2;
 use Application\Library\Http\Response\File as FileResponse;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-use Application\Model\Service\EntityInterface;
+use Application\Model\Service\Pdfs\Service;
 use ZF\ApiProblem\ApiProblem;
 
 class PdfController extends AbstractController
@@ -16,23 +16,31 @@ class PdfController extends AbstractController
     protected $identifierName = 'pdfType';
 
     /**
+     * Get the service to use
+     *
+     * @return Service
+     */
+    protected function getService()
+    {
+        return $this->service;
+    }
+
+    /**
      * @param mixed $id
      * @return JsonResponse|NoContentResponse|ApiProblem
      */
     public function get($id)
     {
-        $result = $this->service->fetch($id);
+        $result = $this->getService()->fetch($id);
 
         if ($result instanceof ApiProblem) {
             return $result;
-        } elseif ($result instanceof EntityInterface) {
-            $resultData = $result->toArray();
-
-            if (empty($resultData)) {
+        } elseif (is_array($result)) {
+            if (empty($result)) {
                 return new NoContentResponse();
             }
 
-            return new JsonResponse($resultData);
+            return new JsonResponse($result);
         } elseif ($result instanceof FileResponse) {
             //  Just return the file if it present
             return $result;

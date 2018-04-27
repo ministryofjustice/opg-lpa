@@ -5,10 +5,21 @@ namespace Application\Controller\Version2;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\EntityInterface;
+use Application\Model\Service\NotifiedPeople\Service;
 use ZF\ApiProblem\ApiProblem;
 
 class NotifiedPeopleController extends AbstractController
 {
+    /**
+     * Get the service to use
+     *
+     * @return Service
+     */
+    protected function getService()
+    {
+        return $this->service;
+    }
+
     /**
      * @var string
      */
@@ -20,7 +31,7 @@ class NotifiedPeopleController extends AbstractController
      */
     public function create($data)
     {
-        $result = $this->service->create($data);
+        $result = $this->getService()->create($data);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -39,7 +50,7 @@ class NotifiedPeopleController extends AbstractController
      */
     public function update($id, $data)
     {
-        $result = $this->service->update($data, $id);
+        $result = $this->getService()->update($data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -57,7 +68,7 @@ class NotifiedPeopleController extends AbstractController
      */
     public function delete($id)
     {
-        $result = $this->service->delete($id);
+        $result = $this->getService()->delete($id);
 
         if ($result instanceof ApiProblem) {
             return $result;

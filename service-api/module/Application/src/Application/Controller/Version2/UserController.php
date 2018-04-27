@@ -5,6 +5,7 @@ namespace Application\Controller\Version2;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\EntityInterface;
+use Application\Model\Service\Users\Service;
 use ZF\ApiProblem\ApiProblem;
 
 class UserController extends AbstractController
@@ -17,12 +18,22 @@ class UserController extends AbstractController
     protected $identifierName = 'userId';
 
     /**
+     * Get the service to use
+     *
+     * @return Service
+     */
+    protected function getService()
+    {
+        return $this->service;
+    }
+
+    /**
      * @param mixed $id
      * @return JsonResponse|NoContentResponse|ApiProblem
      */
     public function get($id)
     {
-        $result = $this->service->fetch($id);
+        $result = $this->getService()->fetch($id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -47,7 +58,7 @@ class UserController extends AbstractController
      */
     public function update($id, $data)
     {
-        $result = $this->service->update($data, $id);
+        $result = $this->getService()->update($data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -65,7 +76,7 @@ class UserController extends AbstractController
      */
     public function delete($id)
     {
-        $result = $this->service->delete($id);
+        $result = $this->getService()->delete($id);
 
         if ($result instanceof ApiProblem) {
             return $result;

@@ -11,10 +11,9 @@ use RuntimeException;
 class Service extends AbstractService implements LpaConsumerInterface
 {
     /**
-     * @param $data
      * @return ApiProblem|Entity
      */
-    public function create($data)
+    public function create()
     {
         $this->checkAccess();
 
