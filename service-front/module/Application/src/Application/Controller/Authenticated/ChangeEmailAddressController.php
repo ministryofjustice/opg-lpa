@@ -17,8 +17,8 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController
         // This form needs to check the user's current password, thus we pass it the Authentication Service
         $authentication = $this->getAuthenticationService();
 
-        $currentAddress = (string)$this->getUser()->email;
-        $authentication->setEmail($currentAddress);
+        $currentEmailAddress = (string)$this->getUser()->email;
+        $authentication->setEmail($currentEmailAddress);
 
         $form->setAuthenticationService($authentication);
 
@@ -27,15 +27,14 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController
 
             if ($form->isValid()) {
                 //  Get the user ID and email address
-                $userId = $this->getIdentity()->id();
-                $email = $form->getData()['email'];
+                $newEmailAddress = $form->getData()['email'];
 
                 $userService = $this->getUserService();
-                $result = $userService->requestEmailUpdate($userId, $email, $currentAddress);
+                $result = $userService->requestEmailUpdate($newEmailAddress, $currentEmailAddress);
 
                 if ($result === true) {
                     return (new ViewModel([
-                        'email' => $email
+                        'email' => $newEmailAddress
                     ]))->setTemplate('application/authenticated/change-email-address/email-sent.twig');
                 } else {
                     $error = $result;
@@ -43,6 +42,6 @@ class ChangeEmailAddressController extends AbstractAuthenticatedController
             }
         }
 
-        return new ViewModel(compact('form', 'error', 'currentAddress'));
+        return new ViewModel(compact('form', 'error', 'currentEmailAddress'));
     }
 }

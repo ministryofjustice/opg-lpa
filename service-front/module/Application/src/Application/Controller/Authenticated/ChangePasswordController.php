@@ -32,7 +32,7 @@ class ChangePasswordController extends AbstractAuthenticatedController
                 $newPassword = $data['password'];
 
                 $userService = $this->getUserService();
-                $result = $userService->updatePassword($this->getIdentity()->id(), $currentPassword, $newPassword);
+                $result = $userService->updatePassword($currentPassword, $newPassword);
 
                 if ($result === true) {
                     $this->flashMessenger()->addSuccessMessage('Your new password has been saved. Please remember to use this new password to sign in from now on.');

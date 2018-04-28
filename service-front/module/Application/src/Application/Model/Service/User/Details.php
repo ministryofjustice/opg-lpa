@@ -85,19 +85,18 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
     /**
      * Update the user's email address.
      *
-     * @param int $userId
      * @param string $email
      * @param string $currentAddress
      * @return bool|string
      */
-    public function requestEmailUpdate($userId, $email, $currentAddress)
+    public function requestEmailUpdate($email, $currentAddress)
     {
         $identityArray = $this->getAuthenticationService()->getIdentity()->toArray();
 
         $this->getLogger()->info('Requesting email update to new email: ' . $email, $identityArray);
 
         try {
-            $response = $this->authClient->httpGet(sprintf('/v1/users/%s/email/%s', $userId, strtolower($email)));
+            $response = $this->authClient->httpGet(sprintf('/v1/users/%s/email/%s', $this->getUserId(), strtolower($email)));
 
             if ($response->getStatusCode() == 200) {
                 $body = json_decode($response->getBody(), true);
@@ -155,19 +154,18 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
     /**
      * Update the user's password
      *
-     * @param $userId
      * @param $currentPassword
      * @param $newPassword
      * @return bool|string
      */
-    public function updatePassword($userId, $currentPassword, $newPassword)
+    public function updatePassword($currentPassword, $newPassword)
     {
         $identity = $this->getAuthenticationService()->getIdentity();
 
         $this->getLogger()->info('Updating password', $identity->toArray());
 
         try {
-            $response = $this->authClient->httpPost(sprintf('/v1/users/%s/password', $userId), [
+            $response = $this->authClient->httpPost(sprintf('/v1/users/%s/password', $this->getUserId()), [
                 'CurrentPassword' => $currentPassword,
                 'NewPassword' => $newPassword,
             ]);
