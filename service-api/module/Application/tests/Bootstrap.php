@@ -2,6 +2,8 @@
 
 date_default_timezone_set('UTC');
 
+error_reporting(E_ALL & ~ (E_DEPRECATED|E_USER_DEPRECATED));
+
 /**
  * Simple autoloader function to dynamically load
  * the required files as they are instantiated

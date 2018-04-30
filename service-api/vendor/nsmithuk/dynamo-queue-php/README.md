@@ -21,7 +21,7 @@ Simplest is to add the following to `composer.json`:
 ```javascript
 {
     "require": {
-        "NSmithUK/dynamo-queue-php": "dev-master"
+        "nsmithuk/dynamo-queue-php": "^1.0"
     }
 }
 ```

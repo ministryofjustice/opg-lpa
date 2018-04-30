@@ -5,11 +5,17 @@ namespace MongoDB\Tests;
 use MongoDB\Driver\ReadConcern;
 use MongoDB\Driver\ReadPreference;
 use MongoDB\Driver\WriteConcern;
+use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
 use stdClass;
 
-abstract class TestCase extends \PHPUnit_Framework_TestCase
+abstract class TestCase extends BaseTestCase
 {
+    public function provideInvalidArrayValues()
+    {
+        return $this->wrapValuesForDataProvider($this->getInvalidArrayValues());
+    }
+
     public function provideInvalidDocumentValues()
     {
         return $this->wrapValuesForDataProvider($this->getInvalidDocumentValues());
@@ -95,6 +101,16 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected function getInvalidReadPreferenceValues()
     {
         return [123, 3.14, 'foo', true, [], new stdClass, new ReadConcern, new WriteConcern(1)];
+    }
+
+    /**
+     * Return a list of invalid Session values.
+     *
+     * @return array
+     */
+    protected function getInvalidSessionValues()
+    {
+        return [123, 3.14, 'foo', true, [], new stdClass, new ReadConcern, new ReadPreference(ReadPreference::RP_PRIMARY), new WriteConcern(1)];
     }
 
     /**

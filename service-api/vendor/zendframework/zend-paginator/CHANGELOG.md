@@ -2,12 +2,37 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.1 - 2018-01-30
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#45](https://github.com/zendframework/zend-paginator/pull/45) fixes an error
+  in the `DbSelectFactory` whereby it ignored the fourth option passed via
+  `$options`, which can be used to specify a zend-db `Select` instance for
+  purposes of counting the rows that will be returned.
+
 ## 2.8.0 - 2017-11-01
 
 ### Added
 
 - [#20](https://github.com/zendframework/zend-paginator/pull/20) adds
-  and publishes the documentation to https://zendframework.github.io/zend-paginator/
+  and publishes the documentation to https://docs.zendframework.com/zend-paginator/
 
 - [#38](https://github.com/zendframework/zend-paginator/pull/38) adds support
   for PHP 7.1.

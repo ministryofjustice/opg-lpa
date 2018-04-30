@@ -8,6 +8,12 @@ source:
 ---
 source:
   file: apiargs-MongoDBCollection-common-option.yaml
+  ref: arrayFilters
+post: |
+  .. versionadded:: 1.3
+---
+source:
+  file: apiargs-MongoDBCollection-common-option.yaml
   ref: collation
 ---
 source:
@@ -30,6 +36,12 @@ description: |
 interface: phpmethod
 operation: ~
 optional: true
+---
+source:
+  file: apiargs-common-option.yaml
+  ref: session
+post: |
+  .. versionadded:: 1.3
 ---
 source:
   file: apiargs-MongoDBCollection-common-option.yaml
