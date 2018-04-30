@@ -2,15 +2,15 @@
 
 namespace ZfcTwig\Twig;
 
-use Twig_Error_Loader;
-use Twig_Loader_Filesystem;
+use Twig\Error;
+use Twig\Loader;
 
 /**
  * Class StackLoader
  *
  * @package ZfcTwig\Twig
  */
-class StackLoader extends Twig_Loader_Filesystem
+class StackLoader extends Loader\FilesystemLoader
 {
     /**
      * Default suffix to use
@@ -48,6 +48,7 @@ class StackLoader extends Twig_Loader_Filesystem
 
     /**
      * {@inheritDoc}
+     * @throws Error\LoaderError
      */
     protected function findTemplate($name, $throw = true)
     {
@@ -64,7 +65,7 @@ class StackLoader extends Twig_Loader_Filesystem
             if (!$throw) {
                 return false;
             }
-            throw new Twig_Error_Loader($this->errorCache[$name]);
+            throw new Error\LoaderError($this->errorCache[$name]);
         }
 
         // Ensure we have the expected file extension
@@ -87,7 +88,7 @@ class StackLoader extends Twig_Loader_Filesystem
                     return false;
                 }
 
-                throw new Twig_Error_Loader($this->errorCache[$name]);
+                throw new Error\LoaderError($this->errorCache[$name]);
             }
 
             $namespace = substr($name, 1, $pos - 1);
@@ -101,7 +102,7 @@ class StackLoader extends Twig_Loader_Filesystem
             if (!$throw) {
                 return false;
             }
-            throw new Twig_Error_Loader($this->errorCache[$name]);
+            throw new Error\LoaderError($this->errorCache[$name]);
         }
 
         foreach ($this->paths[$namespace] as $path) {
@@ -123,17 +124,17 @@ class StackLoader extends Twig_Loader_Filesystem
             return false;
         }
 
-        throw new Twig_Error_Loader($this->errorCache[$name]);
+        throw new Error\LoaderError($this->errorCache[$name]);
     }
 
     /**
      * @param string $name
-     * @throws Twig_Error_Loader
+     * @throws Error\LoaderError
      */
     private function validateName($name)
     {
         if (false !== strpos($name, "\0")) {
-            throw new Twig_Error_Loader('A template name cannot contain NUL bytes.');
+            throw new Error\LoaderError('A template name cannot contain NUL bytes.');
         }
 
         $name = ltrim($name, '/');
@@ -147,7 +148,12 @@ class StackLoader extends Twig_Loader_Filesystem
             }
 
             if ($level < 0) {
-                throw new Twig_Error_Loader(sprintf('Looks like you try to load a template outside configured directories (%s).', $name));
+                throw new Error\LoaderError(
+                    sprintf(
+                        'Looks like you try to load a template outside configured directories (%s).',
+                        $name
+                    )
+                );
             }
         }
     }

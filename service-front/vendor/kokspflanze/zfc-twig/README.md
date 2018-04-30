@@ -44,7 +44,7 @@ return [
 
 ### Configuring Twig loaders
 
-By default, ZfcTwig uses a Twig_Loader_Chain so that loaders can be chained together. A convenient default is setup using
+By default, `ZfcTwig` uses a `Twig\Loader\ChainLoader` so that loaders can be chained together. A convenient default is setup using
 a [filesystem loader](https://github.com/kokspflanze/ZfcTwig/blob/master/config/module.config.php#L31) with the path set to
 `module/Application/view` which should work out of the box for most instances. If you wish to add additional loaders
 to the chain you can register them by adding the service manager alias to the `loaders` configuration key.
@@ -65,7 +65,7 @@ public function getServiceConfiguration()
     return [
         'factories' => [
             'MyTwigFilesystemLoader' => function($sm) {
-                return new \Twig_Loader_Filesystem('my/custom/twig/path');
+                return new \Twig\Loader\FilesystemLoader('my/custom/twig/path');
             }
         ]
     ];
