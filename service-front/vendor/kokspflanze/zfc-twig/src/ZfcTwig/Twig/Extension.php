@@ -2,10 +2,10 @@
 
 namespace ZfcTwig\Twig;
 
-use Twig_Extension;
+use Twig\Extension\AbstractExtension;
 use ZfcTwig\View\TwigRenderer;
 
-class Extension extends Twig_Extension
+class Extension extends AbstractExtension
 {
     /**
      * @var TwigRenderer

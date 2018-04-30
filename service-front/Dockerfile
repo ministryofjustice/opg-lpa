@@ -1,4 +1,4 @@
-FROM registry.service.opg.digital/opg-php-fpm-1604
+FROM registry.service.opg.digital/opg-php-fpm-71-ppa-1604
 
 RUN groupadd webservice && \
     groupadd supervisor
@@ -14,7 +14,6 @@ RUN mkdir -p /srv/opg-lpa-front2/application && \
     ln -s /app /srv/opg-lpa-front2/application/current
 
 ADD docker/confd /etc/confd
-ADD docker/my_init/* /etc/my_init.d/
 ADD docker/certificates/* /usr/local/share/ca-certificates/
 
 ADD docker/bin/update-ca-certificates /usr/sbin/update-ca-certificates

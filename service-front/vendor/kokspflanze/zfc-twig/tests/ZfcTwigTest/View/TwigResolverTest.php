@@ -3,10 +3,9 @@
 namespace ZfcTwigTest\View;
 
 use PHPUnit\Framework\TestCase;
-use Twig_Environment;
-use Twig_Loader_Array;
-use Twig_Loader_Chain;
-use Twig_Template;
+use Twig\Environment;
+use Twig\Loader;
+use Twig\Template;
 use ZfcTwig\View\TwigResolver;
 
 class TwigResolverTest extends TestCase
@@ -18,15 +17,15 @@ class TwigResolverTest extends TestCase
     {
         parent::setUp();
 
-        $chain = new Twig_Loader_Chain();
-        $chain->addLoader(new Twig_Loader_Array(['key1' => 'var1']));
-        $environment = new Twig_Environment($chain);
+        $chain = new Loader\ChainLoader();
+        $chain->addLoader(new Loader\ArrayLoader(['key1' => 'var1']));
+        $environment = new Environment($chain);
         $this->resolver = new TwigResolver($environment);
     }
 
     public function testResolve()
     {
-        $this->assertInstanceOf(Twig_Template::class, $this->resolver->resolve('key1'));
+        $this->assertInstanceOf(Template::class, $this->resolver->resolve('key1'));
     }
 
     /**
@@ -35,6 +34,6 @@ class TwigResolverTest extends TestCase
      */
     public function testResolveError()
     {
-        $this->assertInstanceOf(Twig_Template::class, $this->resolver->resolve('key2'));
+        $this->assertInstanceOf(Template::class, $this->resolver->resolve('key2'));
     }
 }

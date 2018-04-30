@@ -13,7 +13,7 @@ class MapLoaderFactory implements FactoryInterface
      * @param string $requestedName
      * @param array|null $options
      * @return MapLoader
-     * @throws \Twig_Error_Loader
+     * @throws \Twig\Error\LoaderError
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
