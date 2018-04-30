@@ -32,7 +32,7 @@ return [
 
     'log' => [
         'path' => getenv('OPG_LPA_COMMON_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-pdf2/application.log',
-        'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: null,
+        'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: '',
     ],
 
     'pdf' => [
