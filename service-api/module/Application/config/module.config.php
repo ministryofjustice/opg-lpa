@@ -27,85 +27,6 @@ return [
                 ],
             ], // ping
 
-            'api-v1' => [
-                'type'    => 'Segment',
-                'options' => [
-                    'route'    => '/v1',
-                    'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller\Version1',
-                        'controller'    => 'Rest',
-                    ],
-                ],
-                'may_terminate' => true,
-                'child_routes' => [
-
-                    'stats' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/stats/:type',
-                            'constraints' => [
-                                'userId' => '[a-f0-9]+',
-                                'type' => '[a-z0-9][a-z0-9-]*',
-                            ],
-                            'defaults' => [
-                                'controller'    => 'Rest',
-                                'resource'      => 'stats'
-                            ],
-                        ],
-                    ], // stats
-
-                    'user' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/users/:userId',
-                            'constraints' => [
-                                'userId' => '[a-f0-9]+',
-                            ],
-                            'defaults' => [
-                                'controller'    => 'Rest',
-                                'resource'      => 'users'
-                            ],
-                        ],
-                        'may_terminate' => true,
-                        'child_routes' => [
-
-                            'level-1' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/applications[/:lpaId]',
-                                    'constraints' => [
-                                        'lpaId'     => '[0-9]+',
-                                    ],
-                                    'defaults' => [
-                                        'controller'    => 'Rest',
-                                        'resource'      => 'applications'
-                                    ],
-                                ],
-                            ], // level-1
-
-                            'level-2' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/applications/:lpaId/:resource[/:resourceId]',
-                                    'constraints' => [
-                                        'lpaId'      => '[0-9]+',
-                                        'resource'   => '[a-z][a-z-]*',
-                                        'resourceId' => '[a-z0-9][a-z0-9.]*',
-                                    ],
-                                    'defaults' => [
-                                        'controller'    => 'Rest',
-                                    ],
-                                ],
-                            ], // level-2
-
-                        ], // child_routes
-
-                    ], // user
-
-                ], // child_routes
-
-            ], // api-v1
-
             'api-v2' => [
                 'type'    => 'Segment',
                 'options' => [
@@ -122,12 +43,10 @@ return [
                         'options' => [
                             'route'    => '/stats/:type',
                             'constraints' => [
-                                'userId' => '[a-f0-9]+',
                                 'type' => '[a-z0-9][a-z0-9-]*',
                             ],
                             'defaults' => [
-                                'controller'    => 'Stats',
-                                'resource'      => 'stats'
+                                'controller' => 'StatsController',
                             ],
                         ],
                     ], // stats
@@ -135,12 +54,12 @@ return [
                     'user' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/users/:userId',
+                            'route'       => '/users/:userId',
                             'constraints' => [
-                                'userId' => '[a-f0-9]+',
+                                'userId'  => '[a-f0-9]+',
                             ],
                             'defaults' => [
-                                'controller'    => 'Users',
+                                'controller' => 'UserController',
                             ],
                         ],
                         'may_terminate' => true,
@@ -149,15 +68,193 @@ return [
                             'applications' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/applications[/:lpaId]',
+                                    'route'       => '/applications[/:lpaId]',
                                     'constraints' => [
-                                        'lpaId'     => '[0-9]+',
+                                        'lpaId'   => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'controller'    => 'Application',
-                                        'resource'      => 'applications'
+                                        'controller' => 'ApplicationController',
                                     ],
                                 ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+
+                                    'certificate-provider' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/certificate-provider',
+                                            'defaults' => [
+                                                'controller' => 'CertificateProviderController',
+                                            ],
+                                        ],
+                                    ],
+                                    'correspondent' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/correspondent',
+                                            'defaults' => [
+                                                'controller' => 'CorrespondentController',
+                                            ],
+                                        ],
+                                    ],
+                                    'donor' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/donor',
+                                            'defaults' => [
+                                                'controller' => 'DonorController',
+                                            ],
+                                        ],
+                                    ],
+                                    'instruction' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/instruction',
+                                            'defaults' => [
+                                                'controller' => 'InstructionController',
+                                            ],
+                                        ],
+                                    ],
+                                    'lock' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/lock',
+                                            'defaults' => [
+                                                'controller' => 'LockController',
+                                            ],
+                                        ],
+                                    ],
+                                    'notified-people' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/notified-people[/:notifiedPersonId]',
+                                            'constraints' => [
+                                                'notifiedPersonId' => '[0-9]+',
+                                            ],
+                                            'defaults' => [
+                                                'controller' => 'NotifiedPeopleController',
+                                            ],
+                                        ],
+                                    ],
+                                    'payment' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'    => '/payment',
+                                            'defaults' => [
+                                                'controller' => 'PaymentController',
+                                            ],
+                                        ],
+                                    ],
+                                    'pdfs' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/pdfs/:pdfType',
+                                            'constraints' => [
+                                                'pdfType' => '[a-z0-9][a-z0-9.]*',
+                                            ],
+                                            'defaults' => [
+                                                'controller' => 'PdfController',
+                                            ],
+                                        ],
+                                    ],
+                                    'preference' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/preference',
+                                            'defaults' => [
+                                                'controller' => 'PreferenceController',
+                                            ],
+                                        ],
+                                    ],
+                                    'primary-attorneys' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/primary-attorneys[/:primaryAttorneyId]',
+                                            'constraints' => [
+                                                'primaryAttorneyId' => '[0-9]+',
+                                            ],
+                                            'defaults' => [
+                                                'controller' => 'PrimaryAttorneyController',
+                                            ],
+                                        ],
+                                    ],
+                                    'primary-attorney-decisions' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/primary-attorney-decisions',
+                                            'defaults' => [
+                                                'controller' => 'PrimaryAttorneyDecisionsController',
+                                            ],
+                                        ],
+                                    ],
+                                    'repeat-case-number' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/repeat-case-number',
+                                            'defaults' => [
+                                                'controller' => 'RepeatCaseNumberController',
+                                            ],
+                                        ],
+                                    ],
+                                    'replacement-attorneys' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/replacement-attorneys[/:replacementAttorneyId]',
+                                            'constraints' => [
+                                                'replacementAttorneyId' => '[0-9]+',
+                                            ],
+                                            'defaults' => [
+                                                'controller' => 'ReplacementAttorneyController',
+                                            ],
+                                        ],
+                                    ],
+                                    'replacement-attorney-decisions' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/replacement-attorney-decisions',
+                                            'defaults' => [
+                                                'controller' => 'ReplacementAttorneyDecisionsController',
+                                            ],
+                                        ],
+                                    ],
+                                    'seed' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/seed',
+                                            'defaults' => [
+                                                'controller' => 'SeedController',
+                                            ],
+                                        ],
+                                    ],
+                                    'type' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/type',
+                                            'defaults' => [
+                                                'controller' => 'TypeController',
+                                            ],
+                                        ],
+                                    ],
+                                    'who-are-you' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/who-are-you',
+                                            'defaults' => [
+                                                'controller' => 'WhoAreYouController',
+                                            ],
+                                        ],
+                                    ],
+                                    'who-is-registering' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/who-is-registering',
+                                            'defaults' => [
+                                                'controller' => 'WhoIsRegisteringController',
+                                            ],
+                                        ],
+                                    ],
+
+                                ], // child_routes
                             ], // applications
 
                         ], // child_routes
@@ -204,12 +301,13 @@ return [
     'controllers' => [
         'invokables' => [
             'Application\Controller\Index' => 'Application\Controller\IndexController',
-            'Application\Controller\Version1\Rest' => 'Application\Controller\Version1\RestController',
         ],
         'factories' => [
-            'Application\Controller\Console\GenerateStats' => 'Application\Controller\Console\GenerateStatsControllerFactory',
-            'Application\Controller\Ping' => 'Application\Controller\PingControllerFactory',
-            'Application\Controller\Version2\Application' => 'Application\Controller\Version2\ApplicationControllerFactory',
+            'Application\Controller\Console\GenerateStats'  => 'Application\Controller\Console\GenerateStatsControllerFactory',
+            'Application\Controller\Ping'                   => 'Application\Controller\PingControllerFactory',
+        ],
+        'abstract_factories' => [
+            'Application\Controller\ControllerAbstractFactory'
         ],
     ], // controllers
 
@@ -221,36 +319,13 @@ return [
         'factories' => [
             'StatsService' => 'Application\Model\Service\System\StatsFactory',
             \Application\DataAccess\UserDal::class => \Application\DataAccess\UserDalFactory::class,
+            Application\Model\Service\Stats\Service::class => Application\Model\Service\Stats\ServiceFactory::class,
         ],
         'abstract_factories' => [
-            'Application\Model\Rest\ResourceAbstractFactory',
+            'Application\Model\Service\ServiceAbstractFactory',
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
         ],
         'aliases' => [
-            'resource-users'                            => 'Application\Model\Rest\Users\Resource',
-            'resource-applications'                     => 'Application\Model\Rest\Applications\Resource',
-            'resource-status'                           => 'Application\Model\Rest\Status\Resource',
-            'resource-type'                             => 'Application\Model\Rest\Type\Resource',
-            'resource-instruction'                      => 'Application\Model\Rest\Instruction\Resource',
-            'resource-preference'                       => 'Application\Model\Rest\Preference\Resource',
-            'resource-primary-attorney-decisions'       => 'Application\Model\Rest\AttorneyDecisionsPrimary\Resource',
-            'resource-replacement-attorney-decisions'   => 'Application\Model\Rest\AttorneyDecisionsReplacement\Resource',
-            'resource-donor'                            => 'Application\Model\Rest\Donor\Resource',
-            'resource-correspondent'                    => 'Application\Model\Rest\Correspondent\Resource',
-            'resource-payment'                          => 'Application\Model\Rest\Payment\Resource',
-            'resource-who-is-registering'               => 'Application\Model\Rest\WhoIsRegistering\Resource',
-            'resource-who-are-you'                      => 'Application\Model\Rest\WhoAreYou\Resource',
-            'resource-certificate-provider'             => 'Application\Model\Rest\CertificateProvider\Resource',
-            'resource-lock'                             => 'Application\Model\Rest\Lock\Resource',
-            'resource-seed'                             => 'Application\Model\Rest\Seed\Resource',
-            'resource-primary-attorneys'                => 'Application\Model\Rest\AttorneysPrimary\Resource',
-            'resource-replacement-attorneys'            => 'Application\Model\Rest\AttorneysReplacement\Resource',
-            'resource-notified-people'                  => 'Application\Model\Rest\NotifiedPeople\Resource',
-            'resource-repeat-case-number'               => 'Application\Model\Rest\RepeatCaseNumber\Resource',
-            'resource-pdfs'                             => 'Application\Model\Rest\Pdfs\Resource',
-            'resource-metadata'                         => 'Application\Model\Rest\Metadata\Resource',
-            'resource-stats'                            => 'Application\Model\Rest\Stats\Resource',
-
             'translator' => 'MvcTranslator',
             'AuthenticationService' => 'Zend\Authentication\AuthenticationService',
         ],

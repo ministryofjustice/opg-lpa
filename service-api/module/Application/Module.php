@@ -2,16 +2,15 @@
 
 namespace Application;
 
-use Application\Controller\Version1\RestController;
 use Application\DataAccess\Mongo\CollectionFactory;
 use Application\DataAccess\Mongo\DatabaseFactory;
 use Application\DataAccess\Mongo\ManagerFactory;
 use Application\Library\ApiProblem\ApiProblem;
-use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Model\Service\System\DynamoCronLock;
 use Aws\DynamoDb\DynamoDbClient;
+use Aws\S3\S3Client;
 use DynamoQueue\Queue\Client as DynamoQueue;
 use Opg\Lpa\Logger\Logger;
 use Zend\Authentication\AuthenticationService;
@@ -20,12 +19,12 @@ use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblemResponse;
 
-class Module {
-
+class Module
+{
     const VERSION = '3.0.3-dev';
 
-    public function onBootstrap(MvcEvent $e){
-
+    public function onBootstrap(MvcEvent $e)
+    {
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
@@ -34,55 +33,15 @@ class Module {
 
         $request = $e->getApplication()->getServiceManager()->get('Request');
 
-        if( !($request instanceof \Zend\Console\Request) ) {
-
+        if (!($request instanceof \Zend\Console\Request)) {
             // Setup authentication listener...
             $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener, 'authenticate'], 500);
 
             // Register error handler for dispatch and render errors
             $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
             $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
-
         }
-
-    } // function
-
-    public function getControllerConfig(){
-
-        /*
-         * ------------------------------------------------------------------
-         * Setup the REST Controller
-         *
-         */
-
-        return [
-            'initializers' => [
-                'InitRestController' => function($sm, $controller) {
-                    if ($controller instanceof RestController) {
-
-                        //--------------------------------------------------
-                        // Inject the resource
-
-                        // Get the resource name (form the URL)...
-                        $resource = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getParam('resource');
-
-                        // Check if the resource exists...
-                        if( !$sm->has("resource-{$resource}") ){
-                            throw new ApiProblemException('Unknown resource type', 404);
-                        }
-
-                        // Get the resource...
-                        $resource = $sm->get("resource-{$resource}");
-
-                        // Inject it into the Controller...
-                        $controller->setResource( $resource );
-
-                    }
-                }, // InitRestController
-            ], // initializers
-        ];
-
-    } // function
+    }
 
     /*
      * ------------------------------------------------------------------
@@ -90,7 +49,8 @@ class Module {
      *
      */
 
-    public function getServiceConfig() {
+    public function getServiceConfig()
+    {
         return [
             'factories' => [
                 'Zend\Authentication\AuthenticationService' => function ($sm) {
@@ -119,17 +79,26 @@ class Module {
 
                 // Get Dynamo Queue Client
                 'DynamoQueueClient' => function ($sm) {
-                    $config = $sm->get('config')['pdf']['DynamoQueue'];
+                    $config = $sm->get('config');
+                    $dynamoConfig = $config['pdf']['DynamoQueue'];
 
-                    $dynamoDb = new DynamoDbClient($config['client']);
+                    $dynamoDb = new DynamoDbClient($dynamoConfig['client']);
 
-                    return new DynamoQueue($dynamoDb, $config['settings']);
+                    return new DynamoQueue($dynamoDb, $dynamoConfig['settings']);
                 },
+                // Get S3Client Client
+                'S3Client' => function ($sm) {
+                    $config = $sm->get('config');
+
+                    return new S3Client($config['pdf']['cache']['s3']['client']);
+                },
+
             ], // factories
         ];
     } // function
 
-    public function getConfig(){
+    public function getConfig()
+    {
         return include __DIR__ . '/config/module.config.php';
     }
 
@@ -138,6 +107,7 @@ class Module {
      * Listen for and catch ApiProblemExceptions. Convert them to a standard ApiProblemResponse.
      *
      * @param MvcEvent $e
+     * @return ApiProblemResponse
      */
     public function handleError(MvcEvent $e)
     {
@@ -145,8 +115,7 @@ class Module {
         $exception = $e->getParam('exception');
 
         if ($exception instanceof ApiProblemExceptionInterface) {
-
-            $problem = new ApiProblem( $exception->getCode(), $exception->getMessage() );
+            $problem = new ApiProblem($exception->getCode(), $exception->getMessage());
 
             $e->stopPropagation();
             $response = new ApiProblemResponse($problem);
@@ -156,8 +125,6 @@ class Module {
             $logger->err($exception->getMessage());
 
             return $response;
-
         }
     }
-
-} // class
+}

@@ -364,13 +364,6 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
                 0 => __DIR__ . '/..' . '/phpspec/prophecy/src',
             ),
         ),
-        'N' => 
-        array (
-            'Nocarrier' => 
-            array (
-                0 => __DIR__ . '/..' . '/nocarrier/hal/src',
-            ),
-        ),
         'M' => 
         array (
             'Mockery' => 

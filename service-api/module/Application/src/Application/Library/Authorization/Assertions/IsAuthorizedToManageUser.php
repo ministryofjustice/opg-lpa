@@ -14,10 +14,10 @@ use ZfcRbac\Service\AuthorizationService;
  */
 class IsAuthorizedToManageUser implements AssertionInterface
 {
-    public function assert(AuthorizationService $authorization, $routeUser = null)
+    public function assert(AuthorizationService $authorization, $routeUserId = null)
     {
         // We can only authorize is there's a route user...
-        if (!is_string($routeUser)) {
+        if (!is_string($routeUserId)) {
             return false;
         }
 
@@ -34,6 +34,6 @@ class IsAuthorizedToManageUser implements AssertionInterface
         }
 
         // Return true iff the id's match...
-        return ($tokenUser->id() === $routeUser);
+        return ($tokenUser->id() === $routeUserId);
     }
 }
