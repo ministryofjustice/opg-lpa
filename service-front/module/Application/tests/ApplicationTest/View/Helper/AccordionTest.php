@@ -18,7 +18,9 @@ class AccordionTest extends MockeryTestCase
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
         $lpa->id = 99999999;
 
-        $expectedTopRoutes = [];
+        $expectedTopRoutes = [
+            'review-link'
+        ];
 
         $expectedBottomRoutes = [
             'lpa/donor',
@@ -47,6 +49,7 @@ class AccordionTest extends MockeryTestCase
 
         $expectedTopRoutes = [
             'lpa/form-type',
+            'review-link'
         ];
 
         $expectedBottomRoutes = [
@@ -76,6 +79,7 @@ class AccordionTest extends MockeryTestCase
         $expectedTopRoutes = [
             'lpa/form-type',
             'lpa/donor',
+            'review-link'
         ];
 
         $expectedBottomRoutes = [
@@ -104,6 +108,7 @@ class AccordionTest extends MockeryTestCase
         $expectedTopRoutes = [
             'lpa/form-type',
             'lpa/donor',
+            'review-link'
         ];
 
         $expectedBottomRoutes = [
@@ -133,6 +138,7 @@ class AccordionTest extends MockeryTestCase
             'lpa/form-type',
             'lpa/donor',
             'lpa/when-lpa-starts',
+            'review-link'
         ];
 
         $expectedBottomRoutes = [
@@ -162,6 +168,7 @@ class AccordionTest extends MockeryTestCase
             'lpa/donor',
             'lpa/when-lpa-starts',
             'lpa/primary-attorney',
+            'review-link'
         ];
 
         $expectedBottomRoutes = [
@@ -191,6 +198,7 @@ class AccordionTest extends MockeryTestCase
             'lpa/when-lpa-starts',
             'lpa/primary-attorney',
             'lpa/how-primary-attorneys-make-decision',
+            'review-link'
         ];
 
         $expectedBottomRoutes = [
@@ -237,6 +245,7 @@ class AccordionTest extends MockeryTestCase
             'lpa/primary-attorney',
             'lpa/how-primary-attorneys-make-decision',
             'lpa/replacement-attorney',
+            'review-link'
         ];
 
         $expectedBottomRoutes = [
@@ -268,6 +277,7 @@ class AccordionTest extends MockeryTestCase
             'lpa/how-primary-attorneys-make-decision',
             'lpa/replacement-attorney',
             'lpa/when-replacement-attorney-step-in',
+            'review-link'
         ];
 
         $expectedBottomRoutes = [
@@ -297,6 +307,7 @@ class AccordionTest extends MockeryTestCase
             'lpa/how-primary-attorneys-make-decision',
             'lpa/replacement-attorney',
             'lpa/when-replacement-attorney-step-in',
+            'review-link'
         ];
 
         $expectedBottomRoutes = [
@@ -322,6 +333,7 @@ class AccordionTest extends MockeryTestCase
             'lpa/how-primary-attorneys-make-decision',
             'lpa/replacement-attorney',
             'lpa/when-replacement-attorney-step-in',
+            'review-link'
         ];
 
         $expectedBottomRoutes = [
@@ -346,6 +358,7 @@ class AccordionTest extends MockeryTestCase
             'lpa/primary-attorney',
             'lpa/how-primary-attorneys-make-decision',
             'lpa/replacement-attorney',
+            'review-link'
         ];
 
         $expectedBottomRoutes = [
@@ -375,6 +388,7 @@ class AccordionTest extends MockeryTestCase
             'lpa/replacement-attorney',
             'lpa/when-replacement-attorney-step-in',
             'lpa/certificate-provider',
+            'review-link'
         ];
 
         $expectedBottomRoutes = [
@@ -404,6 +418,7 @@ class AccordionTest extends MockeryTestCase
             'lpa/when-replacement-attorney-step-in',
             'lpa/certificate-provider',
             'lpa/people-to-notify',
+            'review-link'
         ];
 
         $expectedBottomRoutes = [
