@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.1 - 2018-04-26
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#165](https://github.com/zendframework/zend-cache/issues/165) fixes an issue
+  with the memcached adapter ensuring that retrieval returns boolean false when
+  unable to retrieve the requested item.
+
 ## 2.8.0 - 2018-04-24
 
 ### Added
