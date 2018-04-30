@@ -16,10 +16,6 @@ use Zend\View\Model\ViewModel;
 class PostcodeControllerTest extends AbstractControllerTest
 {
     /**
-     * @var PostcodeController
-     */
-    private $controller;
-    /**
      * @var MockInterface|MvcEvent
      */
     private $event;
@@ -32,28 +28,33 @@ class PostcodeControllerTest extends AbstractControllerTest
      */
     private $addressLookup;
 
-    public function setUp()
+    protected function getController(string $controllerName)
     {
-        $this->controller = parent::controllerSetUp(PostcodeController::class);
+        /** @var PostcodeController $controller */
+        $controller = parent::getController($controllerName);
 
         $this->event = Mockery::mock(MvcEvent::class);
-        $this->controller->setEvent($this->event);
+        $controller->setEvent($this->event);
 
         $this->routeMatch = Mockery::mock(RouteMatch::class);
 
         $this->addressLookup = Mockery::mock(PostcodeInfo::class);
-        $this->controller->setAddressLookup($this->addressLookup);
+        $controller->setAddressLookup($this->addressLookup);
+
+        return $controller;
     }
 
     public function testIndexActionPostcodeNotFound()
     {
+        $controller = $this->getController(PostcodeController::class);
+
         $this->params->shouldReceive('fromQuery')->withArgs(['postcode'])->andReturn(null)->once();
         $this->event->shouldReceive('getRouteMatch')->andReturn($this->routeMatch)->once();
         $this->event->shouldReceive('getResponse')->andReturn(new Response())->once();
         $this->routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('Page not found', $result->getVariable('content'));
@@ -61,6 +62,8 @@ class PostcodeControllerTest extends AbstractControllerTest
 
     public function testIndexActionSinglePostcode()
     {
+        $controller = $this->getController(PostcodeController::class);
+
         $address = [
             'line1' => '102 Petty France',
             'line2' => 'Westminster',
@@ -73,13 +76,12 @@ class PostcodeControllerTest extends AbstractControllerTest
         $this->addressLookup->shouldReceive('lookupPostcode')->withArgs(['SW1H 9AJ'])->andReturn([$address])->once();
 
         /** @var JsonModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(JsonModel::class, $result);
         $this->assertEquals(true, $result->getVariable('isPostcodeValid'));
         $this->assertEquals(true, $result->getVariable('success'));
         $this->assertEquals([[
-//            'id' => $address['Id'],
             'description' => $address['description'],
             'line1' => $address['line1'],
             'line2' => $address['line2'],

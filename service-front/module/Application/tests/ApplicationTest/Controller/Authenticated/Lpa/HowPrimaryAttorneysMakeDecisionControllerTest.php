@@ -4,14 +4,11 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
 use Application\Form\Lpa\HowAttorneysMakeDecisionForm;
-use Application\Model\Service\Lpa\ApplicantCleanup;
-use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
+use Application\Model\Service\Lpa\Applicant;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
@@ -19,51 +16,50 @@ use Zend\View\Model\ViewModel;
 class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTest
 {
     /**
-     * @var HowPrimaryAttorneysMakeDecisionController
-     */
-    private $controller;
-    /**
      * @var MockInterface|HowAttorneysMakeDecisionForm
      */
     private $form;
-    /**
-     * @var Lpa
-     */
-    private $lpa;
     private $postData = [
         'how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
         'howDetails' => 'Details'
     ];
+    /**
+     * @var MockInterface|Applicant
+     */
+    private $applicantService;
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(HowPrimaryAttorneysMakeDecisionController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(HowAttorneysMakeDecisionForm::class);
-        $this->lpa = FixturesData::getPfLpa();
+
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\HowAttorneysMakeDecisionForm', ['lpa' => $this->lpa]])
             ->andReturn($this->form);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage A LPA has not been set
-     */
-    public function testIndexActionNoLpa()
+    protected function getController(string $controllerName)
     {
-        $this->controller->indexAction();
+        /** @var HowPrimaryAttorneysMakeDecisionController $controller */
+        $controller = parent::getController($controllerName);
+
+        $this->applicantService = Mockery::mock(Applicant::class);
+        $controller->setApplicantService($this->applicantService);
+
+        return $controller;
     }
 
     public function testIndexActionGet()
     {
-        $this->controller->setLpa($this->lpa);
+        $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
+
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')
             ->withArgs([$this->lpa->document->primaryAttorneyDecisions->flatten()])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -72,12 +68,13 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
 
     public function testIndexActionPostInvalid()
     {
-        $this->controller->setLpa($this->lpa);
+        $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
+
         $this->setPostInvalid($this->form, $this->postData);
         $this->form->shouldReceive('setValidationGroup')->withArgs(['how'])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -86,17 +83,18 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
 
     public function testIndexActionPostNotChanged()
     {
+        $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
+
         $response = new Response();
 
-        $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('setValidationGroup')->withArgs(['how'])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/how-primary-attorneys-make-decision');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/how-primary-attorneys-make-decision');
         $this->setRedirectToRoute('lpa/replacement-attorney', $this->lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
@@ -107,50 +105,52 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
      */
     public function testIndexActionPostFailed()
     {
+        $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
+
         $response = new Response();
 
         $postData = $this->postData;
         $postData['how'] = AbstractDecisions::LPA_DECISION_HOW_JOINTLY;
 
-        $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('setValidationGroup')->withArgs(['how'])->once();
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
-            ->withArgs(function ($lpaId, $primaryAttorneyDecisions) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $primaryAttorneyDecisions) {
+                return $lpa->id === $this->lpa->id
                     && $primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY
                     && $primaryAttorneyDecisions->howDetails == null;
             })->andReturn(false)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionPostSuccess()
     {
+        $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
+
         $response = new Response();
 
         $postData = $this->postData;
         $postData['how'] = AbstractDecisions::LPA_DECISION_HOW_DEPENDS;
 
-        $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->twice();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
-            ->withArgs(function ($lpaId, $primaryAttorneyDecisions) {
-                return $lpaId === $this->lpa->id
+            ->withArgs(function ($lpa, $primaryAttorneyDecisions) {
+                return $lpa->id === $this->lpa->id
                     && $primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_DEPENDS
                     && $primaryAttorneyDecisions->howDetails == 'Details';
             })->andReturn(true)->once();
-        $this->lpaApplicationService->shouldReceive('getApplication')
-            ->withArgs([$this->lpa->id])->andReturn($this->lpa)->twice();
+        $this->replacementAttorneyCleanup->shouldReceive('cleanUp')->andReturn(true);
+        $this->applicantService->shouldReceive('cleanUp')->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/how-primary-attorneys-make-decision');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/how-primary-attorneys-make-decision');
         $this->setRedirectToRoute('lpa/replacement-attorney', $this->lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }

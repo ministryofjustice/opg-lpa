@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e390338d208049c7a13464f2830b21ab",
+    "content-hash": "aa35db3cbe3926554e3be7c15cdfc3d3",
     "packages": [
         {
             "name": "alphagov/pay-integration-php",
@@ -866,16 +866,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "9.3.0",
+            "version": "9.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "bf43bc90683b8dcd3e267ef60733f7d03a7e4f90"
+                "reference": "9b4975b0c7ea37c3747ac9c1ca18acca78a6d429"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/bf43bc90683b8dcd3e267ef60733f7d03a7e4f90",
-                "reference": "bf43bc90683b8dcd3e267ef60733f7d03a7e4f90",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/9b4975b0c7ea37c3747ac9c1ca18acca78a6d429",
+                "reference": "9b4975b0c7ea37c3747ac9c1ca18acca78a6d429",
                 "shasum": ""
             },
             "require": {
@@ -898,10 +898,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/9.3.0",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/9.3.1",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2018-02-26T08:42:54+00:00"
+            "time": "2018-04-17T09:23:59+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",

@@ -2,7 +2,9 @@
 
 namespace Application\Model\Service\Authentication\Adapter;
 
-use Application\Model\Service\ApiClient\Client;
+use Application\Model\Service\AuthClient\Client;
+use Application\Model\Service\AuthClient\Exception\ResponseException;
+use Application\Model\Service\AuthClient\Response\AuthResponse;
 use Application\Model\Service\Authentication\Identity\User;
 use Zend\Authentication\Adapter\Exception\RuntimeException;
 use Zend\Authentication\Result;
@@ -68,7 +70,29 @@ class LpaAuthAdapter implements AdapterInterface
             throw new RuntimeException('Password not set');
         }
 
-        $response = $this->client->authenticate($this->email, $this->password);
+        //  Initially assume the authentication failed
+        $response = new AuthResponse();
+        $response->setErrorDescription('authentication-failed');
+
+        try {
+            $postResponse = $this->client->httpPost('/v1/authenticate', [
+                'Username' => strtolower($this->email),
+                'Password' => $this->password,
+            ]);
+
+            if ($postResponse->getStatusCode() == 200) {
+                $response = AuthResponse::buildFromResponse($postResponse);
+            }
+        } catch (ResponseException $e) {
+            switch ($e->getDetail()) {
+                case 'account-locked/max-login-attempts':
+                    $response->setErrorDescription('locked');
+                    break;
+                case 'account-not-active':
+                    $response->setErrorDescription('not-activated');
+                    break;
+            }
+        }
 
         // Don't leave this lying around
         unset($this->password);

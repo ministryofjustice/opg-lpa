@@ -2,45 +2,24 @@
 
 namespace Application\Model\Service\ApiClient;
 
-use GuzzleHttp\Client as GuzzleHttpClient;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
-use Http\Adapter\Guzzle5\Client as Guzzle5Client;
 use Http\Client\HttpClient as HttpClientInterface;
-use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Psr\Http\Message\ResponseInterface;
 
 class Client
 {
-    use ClientV1Trait;
-    use ClientV2ApiTrait;
-    use ClientV2AuthTrait;
-
     /**
-     * The base URI for the API - from config
-     */
-    private $apiBaseUri;
-
-    /**
-     * The base URI for the auth server - from config
-     */
-    private $authBaseUri;
-
-    /**
-     * @var HttpClientInterface PSR-7 compatible HTTP Client
+     * @var HttpClientInterface
      */
     private $httpClient;
 
     /**
-     * The user ID of the logged in account
-     *
      * @var string
      */
-    private $userId;
+    private $apiBaseUri;
 
     /**
-     * The API auth token
-     *
      * @var string
      */
     private $token;
@@ -48,16 +27,131 @@ class Client
     /**
      * Client constructor
      *
+     * @param HttpClientInterface $httpClient
      * @param $apiBaseUri
-     * @param $authBaseUri
+     * @param $token
      */
-    public function __construct($apiBaseUri, $authBaseUri)
+    public function __construct(HttpClientInterface $httpClient, $apiBaseUri, $token)
     {
+        $this->httpClient = $httpClient;
         $this->apiBaseUri = $apiBaseUri;
-        $this->authBaseUri = $authBaseUri;
+        $this->token = $token;
     }
 
-    // Internal API access methods
+    /**
+     * Performs a GET against the API
+     *
+     * @param $path
+     * @param array $query
+     * @return ResponseInterface
+     */
+    public function httpGet($path, array $query = [])
+    {
+        $url = new Uri($this->apiBaseUri . $path);
+
+        foreach ($query as $name => $value) {
+            $url = Uri::withQueryValue($url, $name, urlencode($value));
+        }
+
+        $request = new Request('GET', $url, $this->buildHeaders());
+
+        $response = $this->httpClient->sendRequest($request);
+
+        //  TODO - Confirm why 404 is permitted here before trying to remove it - it has been allowed already for some time
+        if (!in_array($response->getStatusCode(), [200, 404])) {
+            $this->createErrorException($response);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Performs a POST against the API
+     *
+     * @param $path
+     * @param array $payload
+     * @return ResponseInterface
+     */
+    public function httpPost($path, array $payload = [])
+    {
+        $url = new Uri($this->apiBaseUri . $path);
+
+        $body = (!empty($payload) ? json_encode($payload) : null);
+        $request = new Request('POST', $url, $this->buildHeaders(), $body);
+
+        $response = $this->httpClient->sendRequest($request);
+
+        if (!in_array($response->getStatusCode(), [200, 201, 204])) {
+            $this->createErrorException($response);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Performs a PUT against the API
+     *
+     * @param $path
+     * @param array $payload
+     * @return ResponseInterface
+     */
+    public function httpPut($path, array $payload = [])
+    {
+        $url = new Uri($this->apiBaseUri . $path);
+
+        $request = new Request('PUT', $url, $this->buildHeaders(), json_encode($payload));
+
+        $response = $this->httpClient->sendRequest($request);
+
+        if (!in_array($response->getStatusCode(), [200, 204])) {
+            $this->createErrorException($response);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Performs a PATCH against the API
+     *
+     * @param $path
+     * @param array $payload
+     * @return ResponseInterface
+     */
+    public function httpPatch($path, array $payload = [])
+    {
+        $url = new Uri($this->apiBaseUri . $path);
+
+        $request = new Request('PATCH', $url, $this->buildHeaders(), json_encode($payload));
+
+        $response = $this->httpClient->sendRequest($request);
+
+        if ($response->getStatusCode() != 200) {
+            $this->createErrorException($response);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Performs a DELETE against the API
+     *
+     * @param $path
+     * @return ResponseInterface
+     */
+    public function httpDelete($path)
+    {
+        $url = new Uri($this->apiBaseUri . $path);
+
+        $request = new Request('DELETE', $url, $this->buildHeaders());
+
+        $response = $this->httpClient->sendRequest($request);
+
+        if ($response->getStatusCode() != 204) {
+            $this->createErrorException($response);
+        }
+
+        return $response;
+    }
 
     /**
      * Generates the standard set of HTTP headers expected by the API.
@@ -72,190 +166,26 @@ class Client
             'User-agent'    => 'LPA-FRONT'
         ];
 
-        if ($this->getToken() != null) {
-            $headers['Token'] = $this->getToken();
+        if (!is_null($this->token)) {
+            $headers['Token'] = $this->token;
         }
 
         return $headers;
     }
 
     /**
-     * @param Uri $url
-     * @param array $query
-     * @return ResponseInterface
-     */
-    private function httpGet(Uri $url, array $query = array())
-    {
-        foreach ($query as $name => $value) {
-            $url = Uri::withQueryValue($url, $name, urlencode($value));
-        }
-
-        $request = new Request('GET', $url, $this->buildHeaders(), '{}');
-
-        try {
-            $response = $this->getHttpClient()->sendRequest($request);
-            $this->lastStatusCode = $response->getStatusCode();
-        } catch (\RuntimeException $e) {
-            throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
-        }
-
-        if (!in_array($response->getStatusCode(), [200, 404])) {
-            throw $this->createErrorException($response);
-        }
-
-        return $response;
-    }
-
-    private function httpPost(Uri $url, array $payload = array())
-    {
-        $body = (!empty($payload) ? json_encode($payload) : null);
-        $request = new Request('POST', $url, $this->buildHeaders(), $body);
-
-        try {
-            $response = $this->getHttpClient()->sendRequest($request);
-            $this->lastStatusCode = $response->getStatusCode();
-        } catch (\RuntimeException $e) {
-            throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
-        }
-
-        if (!in_array($response->getStatusCode(), [200, 201, 204])) {
-            throw $this->createErrorException($response);
-        }
-
-        return $response;
-    }
-
-    private function httpPatch(Uri $url, array $payload)
-    {
-        $request = new Request('PATCH', $url, $this->buildHeaders(), json_encode($payload));
-
-        try {
-            $response = $this->getHttpClient()->sendRequest($request);
-            $this->lastStatusCode = $response->getStatusCode();
-        } catch (\RuntimeException $e) {
-            throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
-        }
-
-        if ($response->getStatusCode() != 200) {
-            throw $this->createErrorException($response);
-        }
-
-        return $response;
-    }
-
-    private function httpDelete(Uri $url)
-    {
-        $request = new Request('DELETE', $url, $this->buildHeaders(), '{}');
-
-        try {
-            $response = $this->getHttpClient()->sendRequest($request);
-            $this->lastStatusCode = $response->getStatusCode();
-        } catch (\RuntimeException $e) {
-            throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
-        }
-
-        if (!in_array($response->getStatusCode(), [204])) {
-            throw $this->createErrorException($response);
-        }
-
-        return $response;
-    }
-
-    // Response Handling
-
-    /**
      * Called with a response from the API when the response code was unsuccessful. i.e. not 20X.
      *
      * @param ResponseInterface $response
-     *
-     * @return Exception\ResponseException
+     * @throws Exception\ResponseException
      */
     protected function createErrorException(ResponseInterface $response)
     {
         $body = json_decode($response->getBody(), true);
 
         $message = "HTTP:{$response->getStatusCode()} - ";
-        $message .= (is_array($body)) ? print_r($body, true) : 'Unexpected response from server';
+        $message .= (is_array($body) ? print_r($body, true) : 'Unexpected response from server');
 
-        return new Exception\ResponseException($message, $response->getStatusCode(), $response);
-    }
-
-    // Getters and setters
-
-    /**
-     * @param string $userId
-     */
-    public function setUserId($userId)
-    {
-        $this->userId = $userId;
-    }
-
-    /**
-     * @return Exception\ResponseException|Response\Error|array|bool|string
-     * @throws \Exception
-     */
-    public function getUserId()
-    {
-        if (is_null($this->userId)) {
-            $response = $this->getTokenInfo($this->getToken());
-
-            if ($response instanceof Response\ErrorInterface) {
-                if ($response instanceof \Exception) {
-                    throw $response;
-                }
-
-                return $response;
-            }
-
-            if (!is_array($response) || !isset($response['userId'])) {
-                return false;
-            }
-
-            $this->setUserId($response['userId']);
-        }
-
-        return $this->userId;
-    }
-
-    /**
-     * @return string
-     */
-    final public function getToken()
-    {
-        return $this->token;
-    }
-
-    /**
-     * @param $token string
-     * @return $this
-     */
-    final public function setToken($token)
-    {
-        $this->token = $token;
-
-        return $this;
-    }
-
-    /**
-     * @return HttpClientInterface
-     */
-    final protected function getHttpClient()
-    {
-        if (!$this->httpClient instanceof HttpClientInterface) {
-            // @todo - For now create this using Guzzle v5.
-            // This should be removed when the tight couple to Guzzle v5 is removed.
-
-            $this->httpClient = new Guzzle5Client(new GuzzleHttpClient(), new GuzzleMessageFactory());
-        }
-
-        return $this->httpClient;
-    }
-
-    /**
-     * @param HttpClientInterface $client
-     */
-    final protected function setHttpClient(HttpClientInterface $client)
-    {
-        $this->httpClient = $client;
+        throw new Exception\ResponseException($message, $response->getStatusCode(), $response);
     }
 }

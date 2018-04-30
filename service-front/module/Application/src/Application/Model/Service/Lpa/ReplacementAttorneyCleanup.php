@@ -2,32 +2,52 @@
 
 namespace Application\Model\Service\Lpa;
 
+use Application\Model\Service\AbstractService;
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\StateChecker;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 
-class ReplacementAttorneyCleanup
+class ReplacementAttorneyCleanup extends AbstractService
 {
+    /**
+     * @var LpaApplicationService
+     */
+    private $lpaApplicationService;
+
     /**
      * Cleanup data to to with how the Replacement Attorneys should act
      *
      * @param Lpa $lpa
      */
-    public function cleanUp(Lpa $lpa, $client)
+    public function cleanUp(Lpa $lpa)
     {
         $stateChecker = new StateChecker($lpa);
+
         if ($this->whenDecisionsInvalid($lpa, $stateChecker)) {
-            $this->removeWhenDecisions($lpa, $client);
+            $lpa->document->replacementAttorneyDecisions->when = null;
+            $lpa->document->replacementAttorneyDecisions->whenDetails = null;
+
+            $this->lpaApplicationService->setReplacementAttorneyDecisions($lpa, $lpa->document->replacementAttorneyDecisions);
         }
 
         if ($this->howDecisionsInvalid($lpa, $stateChecker)) {
-            $this->removeHowDecisions($lpa, $client);
+            $lpa->document->replacementAttorneyDecisions->how = null;
+            $lpa->document->replacementAttorneyDecisions->howDetails = null;
+
+            $this->lpaApplicationService->setReplacementAttorneyDecisions($lpa, $lpa->document->replacementAttorneyDecisions);
         }
     }
 
+    /**
+     * @param Lpa $lpa
+     * @param StateChecker $stateChecker
+     * @return bool
+     */
     private function whenDecisionsInvalid(Lpa $lpa, StateChecker $stateChecker)
     {
         $decisions = $lpa->document->replacementAttorneyDecisions;
+
         // there are some decisions to remove
         if ($decisions instanceof ReplacementAttorneyDecisions &&
             (!empty($decisions->when) || !empty($decisions->whenDetails))) {
@@ -35,22 +55,23 @@ class ReplacementAttorneyCleanup
             if (!$stateChecker->lpaHasReplacementAttorney()
                || !$stateChecker->lpaHasMultiplePrimaryAttorneys()
                || !$stateChecker->lpaPrimaryAttorneysMakeDecisionJointlyAndSeverally()) {
-                return true;
+
+               return true;
             }
         }
+
         return false;
     }
 
-    private function removeWhenDecisions(Lpa $lpa, $client)
-    {
-        $lpa->document->replacementAttorneyDecisions->when = null;
-        $lpa->document->replacementAttorneyDecisions->whenDetails = null;
-        $client->setReplacementAttorneyDecisions($lpa->id, $lpa->document->replacementAttorneyDecisions);
-    }
-
+    /**
+     * @param Lpa $lpa
+     * @param StateChecker $stateChecker
+     * @return bool
+     */
     private function howDecisionsInvalid(Lpa $lpa, StateChecker $stateChecker)
     {
         $decisions = $lpa->document->replacementAttorneyDecisions;
+
         // there are some decisions to remove
         if ($decisions instanceof ReplacementAttorneyDecisions &&
             (!empty($decisions->how) || !empty($decisions->howDetails))) {
@@ -62,16 +83,16 @@ class ReplacementAttorneyCleanup
             if (!(count($lpa->document->primaryAttorneys) == 1) &&
                 !($stateChecker->lpaReplacementAttorneyStepInWhenLastPrimaryUnableAct()) &&
                 !($stateChecker->lpaPrimaryAttorneysMakeDecisionJointly())) {
+
                 return true;
             }
         }
+
         return false;
     }
 
-    private function removeHowDecisions(Lpa $lpa, $client)
+    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService)
     {
-        $lpa->document->replacementAttorneyDecisions->how = null;
-        $lpa->document->replacementAttorneyDecisions->howDetails = null;
-        $client->setReplacementAttorneyDecisions($lpa->id, $lpa->document->replacementAttorneyDecisions);
+        $this->lpaApplicationService = $lpaApplicationService;
     }
 }

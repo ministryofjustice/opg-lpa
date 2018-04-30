@@ -10,10 +10,12 @@ class DownloadController extends AbstractLpaController
 {
     public function indexAction()
     {
+        $lpa = $this->getLpa();
+
         $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
 
         $this->getLogger()->info('PDF type is ' . $pdfType, [
-            'lpaId' => $this->getLpa()->id
+            'lpaId' => $lpa->id
         ]);
 
         // check PDF availability. return a nice error if unavailable.
@@ -22,7 +24,7 @@ class DownloadController extends AbstractLpaController
             || ($pdfType == 'lp1' && !$this->getFlowChecker()->canGenerateLP1())) {
 
             $this->getLogger()->info('PDF not available', [
-                'lpaId' => $this->getLpa()->id
+                'lpaId' => $lpa->id
             ]);
 
             //  Just redirect to the index template - that contains the error message to display
@@ -31,17 +33,10 @@ class DownloadController extends AbstractLpaController
 
         $this->layout('layout/download.twig');
 
-        $details = $this->getLpaApplicationService()
-                        ->getPdfDetails($this->getLpa()->id, $pdfType);
-
-        $this->getLogger()->info('PDF status is ' . $details['status'], [
-            'lpaId' => $this->getLpa()->id
-        ]);
-
-        if ($details['status'] === 'ready') {
+        if ($this->pdfIsReady($lpa->id, $pdfType)) {
             //  Redirect to download action
             return $this->redirect()->toRoute('lpa/download/file', [
-                'lpa-id'       => $this->getLpa()->id,
+                'lpa-id'       => $lpa->id,
                 'pdf-type'     => $pdfType,
                 'pdf-filename' => $this->getFilename($pdfType),
             ]);
@@ -52,19 +47,20 @@ class DownloadController extends AbstractLpaController
 
     public function downloadAction()
     {
+        $lpa = $this->getLpa();
+
         $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
 
-        $details = $this->getLpaApplicationService()->getPdfDetails($this->getLpa()->id, $pdfType);
-
-        if ($details['status'] !== 'ready') {
+        if (!$this->pdfIsReady($lpa->id, $pdfType)) {
             // If the PDF is not ready, direct the user back to index.
             return $this->redirect()->toRoute('lpa/download', [
-                'lpa-id'   => $this->getLpa()->id,
+                'lpa-id'   => $lpa->id,
                 'pdf-type' => $pdfType
             ]);
         }
 
-        $fileContents = $this->getLpaApplicationService()->getPdf($this->getLpa()->id, $pdfType);
+        //  Get the file contents by requesting the PDF again but with the .pdf file extension
+        $fileContents = $this->getLpaApplicationService()->getPdfContents($lpa->id, $pdfType);
 
         $response = $this->getResponse();
         $response->setContent($fileContents);
@@ -88,6 +84,25 @@ class DownloadController extends AbstractLpaController
         }
 
         return $this->response;
+    }
+
+    /**
+     * Check to see if the PDF is ready to retrieve
+     *
+     * @param $lpaId
+     * @param $pdfType
+     * @return bool
+     */
+    private function pdfIsReady($lpaId, $pdfType)
+    {
+        $details = $this->getLpaApplicationService()
+                        ->getPdf($lpaId, $pdfType);
+
+        $this->getLogger()->info('PDF status is ' . $details['status'], [
+            'lpaId' => $lpaId,
+        ]);
+
+        return ($details['status'] === 'ready');
     }
 
     /**

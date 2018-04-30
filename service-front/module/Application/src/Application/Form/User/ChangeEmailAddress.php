@@ -136,8 +136,8 @@ class ChangeEmailAddress extends AbstractCsrfForm
         }
 
         // Set the password in teh adapter.
-        $this->authenticationService->getAdapter()->setPassword($value);
+        $this->authenticationService->setPassword($value);
 
-        return $this->authenticationService->verify()->isValid();
+        return $this->authenticationService->verify();
     }
 }

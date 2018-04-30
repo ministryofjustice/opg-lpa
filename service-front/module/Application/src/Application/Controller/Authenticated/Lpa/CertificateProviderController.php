@@ -74,9 +74,7 @@ class CertificateProviderController extends AbstractLpaActorController
 
             if ($form->isValid()) {
                 // persist data
-                $cp = new CertificateProvider($form->getModelDataFromValidatedForm());
-
-                if (!$this->getLpaApplicationService()->setCertificateProvider($lpaId, $cp)) {
+                if (!$this->getLpaApplicationService()->setCertificateProvider($lpa, new CertificateProvider($form->getModelDataFromValidatedForm()))) {
                     throw new \RuntimeException('API client failed to save certificate provider for id: '.$lpaId);
                 }
 
@@ -121,14 +119,14 @@ class CertificateProviderController extends AbstractLpaActorController
 
             if ($form->isValid()) {
                 // persist data
-                $cp = new CertificateProvider($form->getModelDataFromValidatedForm());
+                $certificateProvider = new CertificateProvider($form->getModelDataFromValidatedForm());
 
-                if (!$this->getLpaApplicationService()->setCertificateProvider($lpaId, $cp)) {
+                if (!$this->getLpaApplicationService()->setCertificateProvider($lpa, $certificateProvider)) {
                     throw new \RuntimeException('API client failed to update certificate provider for id: '.$lpaId);
                 }
 
                 //  Attempt to update the LPA correspondent too
-                $this->updateCorrespondentData($cp);
+                $this->updateCorrespondentData($certificateProvider);
 
                 return $this->moveToNextRoute();
             }
@@ -177,7 +175,7 @@ class CertificateProviderController extends AbstractLpaActorController
         $this->updateCorrespondentData($this->getLpa()->document->certificateProvider, true);
 
         // delete certificate provider
-        if (!$this->getLpaApplicationService()->deleteCertificateProvider($lpa->id)) {
+        if (!$this->getLpaApplicationService()->deleteCertificateProvider($lpa)) {
             throw new \RuntimeException('API client failed to delete certificate provider for id: ' . $lpa->id);
         }
 

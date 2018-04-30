@@ -13,10 +13,6 @@ use Zend\View\Model\ViewModel;
 
 class SendgridControllerTest extends AbstractControllerTest
 {
-    /**
-     * @var SendgridController
-     */
-    private $controller;
     private $postData = [
         'from' => 'unit@test.com',
         'to' => 'test@unit.com',
@@ -32,15 +28,18 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(SendgridController::class);
+        parent::setUp();
 
         $this->mailTransport = Mockery::mock(MailTransport::class);
     }
 
     public function testIndexAction()
     {
+        /** @var SendgridController $controller */
+        $controller = $this->getController(SendgridController::class);
+
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -49,6 +48,9 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function testBounceActionBlankFromAddress()
     {
+        /** @var SendgridController $controller */
+        $controller = $this->getController(SendgridController::class);
+
         $this->request->shouldReceive('getPost')->withArgs(['from'])->andReturn(null)->once();
         $this->request->shouldReceive('getPost')->withArgs(['to'])->andReturn($this->postData['to'])->once();
         $this->request->shouldReceive('getPost')->withArgs(['subject'])->andReturn($this->postData['subject'])->once();
@@ -67,7 +69,7 @@ class SendgridControllerTest extends AbstractControllerTest
         $this->logger->shouldReceive('err')->withArgs(['Sender or recipient missing, or email sent to blackhole@lastingpowerofattorney.service.gov.uk - the message message will not be sent to SendGrid', $loggingData])->once();
 
         /** @var Response $result */
-        $result = $this->controller->bounceAction();
+        $result = $controller->bounceAction();
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(200, $result->getStatusCode());
@@ -76,6 +78,9 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function testBounceActionEmptyToken()
     {
+        /** @var SendgridController $controller */
+        $controller = $this->getController(SendgridController::class);
+
         $this->request->shouldReceive('getPost')->withArgs(['from'])->andReturn($this->postData['from'])->once();
         $this->request->shouldReceive('getPost')->withArgs(['to'])->andReturn($this->postData['to'])->once();
         $this->request->shouldReceive('getPost')->withArgs(['subject'])->andReturn($this->postData['subject'])->once();
@@ -97,7 +102,7 @@ class SendgridControllerTest extends AbstractControllerTest
         $this->logger->shouldReceive('err')->withArgs(['Missing or invalid bounce token used', $loggingData])->once();
 
         /** @var Response $result */
-        $result = $this->controller->bounceAction();
+        $result = $controller->bounceAction();
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(403, $result->getStatusCode());
@@ -106,6 +111,9 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function testBounceActionSendEmailLogOnly()
     {
+        /** @var SendgridController $controller */
+        $controller = $this->getController(SendgridController::class);
+
         $this->request->shouldReceive('getPost')
             ->withArgs(['from'])->andReturn('<' . $this->postData['from'] . '>')->once();
         $this->request->shouldReceive('getPost')->withArgs(['to'])->andReturn($this->postData['to'])->once();
@@ -129,7 +137,7 @@ class SendgridControllerTest extends AbstractControllerTest
             ->withArgs(['Logging SendGrid inbound parse usage - this will not trigger an email', $loggingData])->once();
 
         /** @var Response $result */
-        $result = $this->controller->bounceAction();
+        $result = $controller->bounceAction();
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(200, $result->getStatusCode());
@@ -138,6 +146,9 @@ class SendgridControllerTest extends AbstractControllerTest
 
     public function testBounceActionSendEmailException()
     {
+        /** @var SendgridController $controller */
+        $controller = $this->getController(SendgridController::class);
+
         $this->request->shouldReceive('getPost')->withArgs(['from'])->andReturn($this->postData['from'])->once();
         $this->request->shouldReceive('getPost')->withArgs(['to'])->andReturn($this->postData['to'])->once();
         $this->request->shouldReceive('getPost')->withArgs(['subject'])->andReturn($this->postData['subject'])->once();
@@ -172,7 +183,7 @@ class SendgridControllerTest extends AbstractControllerTest
         $this->logger->shouldReceive('alert')
             ->withArgs(["Failed to send Sendgrid bounce email due to:\n" . $exception->getMessage(), $alertLoggingData])->once();
 
-        $result = $this->controller->bounceAction();
+        $result = $controller->bounceAction();
 
         $this->assertEquals('failed-sending-email', $result);
     }

@@ -4,14 +4,11 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\AuthController;
 use Application\Form\User\Login;
-use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
-use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Authentication\Result;
-use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayObject;
@@ -19,14 +16,6 @@ use Zend\View\Model\ViewModel;
 
 class AuthControllerTest extends AbstractControllerTest
 {
-    /**
-     * @var AuthController
-     */
-    private $controller;
-    /**
-     * @var User
-     */
-    private $identity;
     /**
      * @var MockInterface|Login
      */
@@ -38,11 +27,7 @@ class AuthControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(AuthController::class);
-        $this->controller->setAuthenticationAdapter($this->authenticationAdapter);
-        $this->controller->setLpaApplicationService($this->lpaApplicationService);
-
-        $this->identity = Mockery::mock(User::class);
+        parent::setUp();
 
         $this->request->shouldReceive('getMethod')->andReturn('POST');
         $this->request->shouldReceive('isPost')->andReturn(true);
@@ -54,19 +39,31 @@ class AuthControllerTest extends AbstractControllerTest
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\User\Login'])->andReturn($this->form);
 
-        $this->authenticationService->shouldReceive('getIdentity')->andReturn(null);
-
         $this->url->shouldReceive('fromRoute')->withArgs(['login'])->andReturn('login');
 
         $this->sessionManager->shouldReceive('initialise');
+
+        $this->setIdentity(null);
+    }
+
+    protected function getController(string $controllerName)
+    {
+        /** @var AuthController $controller */
+        $controller = parent::getController($controllerName);
+
+        $controller->setLpaApplicationService($this->lpaApplicationService);
+
+        return $controller;
     }
 
     public function testIndexActionFormInvalid()
     {
+        $controller = $this->getController(AuthController::class);
+
         $this->form->shouldReceive('isValid')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -77,23 +74,29 @@ class AuthControllerTest extends AbstractControllerTest
 
     public function testIndexActionFormAuthenticationFailed()
     {
+        $controller = $this->getController(AuthController::class);
+
         $authenticationResult = new Result(0, null, ['Authentication Failed']);
 
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
 
-        $this->authenticationAdapter->shouldReceive('setEmail')
-            ->withArgs([$this->postData['email']])->andReturn($this->authenticationAdapter)->once();
-        $this->authenticationAdapter->shouldReceive('setPassword')
-            ->withArgs([$this->postData['password']])->once();
-
+        $this->authenticationService->shouldReceive('setEmail')
+            ->withArgs([$this->postData['email']])
+            ->andReturn($this->authenticationService)
+            ->once();
+        $this->authenticationService->shouldReceive('setPassword')
+            ->withArgs([$this->postData['password']])
+            ->andReturn($this->authenticationService)
+            ->once();
         $this->authenticationService->shouldReceive('authenticate')
-            ->withArgs([$this->authenticationAdapter])->andReturn($authenticationResult)->once();
+            ->andReturn($authenticationResult)
+            ->once();
 
         $this->form->shouldReceive('setData')->withArgs([['email' => $this->postData['email']]])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -104,31 +107,38 @@ class AuthControllerTest extends AbstractControllerTest
 
     public function testIndexActionFormAuthenticationSuccessfulDashboard()
     {
+        $controller = $this->getController(AuthController::class);
+
         $authenticationResult = new Result(1, null);
         $response = new Response();
 
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
 
-        $this->authenticationAdapter->shouldReceive('setEmail')
-            ->withArgs([$this->postData['email']])->andReturn($this->authenticationAdapter)->once();
-        $this->authenticationAdapter->shouldReceive('setPassword')
-            ->withArgs([$this->postData['password']])->once();
-
+        $this->authenticationService->shouldReceive('setEmail')
+            ->withArgs([$this->postData['email']])
+            ->andReturn($this->authenticationService)
+            ->once();
+        $this->authenticationService->shouldReceive('setPassword')
+            ->withArgs([$this->postData['password']])
+            ->andReturn($this->authenticationService)
+            ->once();
         $this->authenticationService->shouldReceive('authenticate')
-            ->withArgs([$this->authenticationAdapter])->andReturn($authenticationResult)->once();
+            ->andReturn($authenticationResult)->once();
 
         $this->sessionManager->shouldReceive('regenerateId')->withArgs([true])->once();
 
         $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexActionFormAuthenticationSuccessfulRedirect()
     {
+        $controller = $this->getController(AuthController::class);
+
         $authenticationResult = new Result(1, null);
         $response = new Response();
 
@@ -137,13 +147,16 @@ class AuthControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
 
-        $this->authenticationAdapter->shouldReceive('setEmail')
-            ->withArgs([$this->postData['email']])->andReturn($this->authenticationAdapter)->once();
-        $this->authenticationAdapter->shouldReceive('setPassword')
-            ->withArgs([$this->postData['password']])->once();
-
+        $this->authenticationService->shouldReceive('setEmail')
+            ->withArgs([$this->postData['email']])
+            ->andReturn($this->authenticationService)
+            ->once();
+        $this->authenticationService->shouldReceive('setPassword')
+            ->withArgs([$this->postData['password']])
+            ->andReturn($this->authenticationService)
+            ->once();
         $this->authenticationService->shouldReceive('authenticate')
-            ->withArgs([$this->authenticationAdapter])->andReturn($authenticationResult)->once();
+            ->andReturn($authenticationResult)->once();
 
         $this->sessionManager->shouldReceive('regenerateId')->withArgs([true])->once();
 
@@ -152,7 +165,7 @@ class AuthControllerTest extends AbstractControllerTest
 
         /** @var ViewModel $result */
         Container::setDefaultManager($this->sessionManager);
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
         Container::setDefaultManager(null);
 
         $this->assertEquals($response, $result);
@@ -160,6 +173,8 @@ class AuthControllerTest extends AbstractControllerTest
 
     public function testIndexActionFormAuthenticationSuccessfulRedirectLpa()
     {
+        $controller = $this->getController(AuthController::class);
+
         $authenticationResult = new Result(1, null);
         $response = new Response();
 
@@ -168,13 +183,16 @@ class AuthControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('isValid')->andReturn(true)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->twice();
 
-        $this->authenticationAdapter->shouldReceive('setEmail')
-            ->withArgs([$this->postData['email']])->andReturn($this->authenticationAdapter)->once();
-        $this->authenticationAdapter->shouldReceive('setPassword')
-            ->withArgs([$this->postData['password']])->once();
-
+        $this->authenticationService->shouldReceive('setEmail')
+            ->withArgs([$this->postData['email']])
+            ->andReturn($this->authenticationService)
+            ->once();
+        $this->authenticationService->shouldReceive('setPassword')
+            ->withArgs([$this->postData['password']])
+            ->andReturn($this->authenticationService)
+            ->once();
         $this->authenticationService->shouldReceive('authenticate')
-            ->withArgs([$this->authenticationAdapter])->andReturn($authenticationResult)->once();
+            ->andReturn($authenticationResult)->once();
 
         $this->sessionManager->shouldReceive('regenerateId')->withArgs([true])->once();
 
@@ -187,7 +205,7 @@ class AuthControllerTest extends AbstractControllerTest
 
         /** @var ViewModel $result */
         Container::setDefaultManager($this->sessionManager);
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
         Container::setDefaultManager(null);
 
         $this->assertEquals($response, $result);
@@ -195,6 +213,8 @@ class AuthControllerTest extends AbstractControllerTest
 
     public function testLogoutAction()
     {
+        $controller = $this->getController(AuthController::class);
+
         $response = new Response();
 
         $this->authenticationService->shouldReceive('clearIdentity')->once();
@@ -202,17 +222,19 @@ class AuthControllerTest extends AbstractControllerTest
         $this->redirect->shouldReceive('toUrl')
             ->withArgs(['https://www.gov.uk/done/lasting-power-of-attorney'])->andReturn($response)->once();
 
-        $result = $this->controller->logoutAction();
+        $result = $controller->logoutAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testDeletedAction()
     {
+        $controller = $this->getController(AuthController::class);
+
         $this->authenticationService->shouldReceive('clearIdentity')->once();
         $this->sessionManager->shouldReceive('destroy')->withArgs([['clear_storage'=>true]])->once();
 
-        $result = $this->controller->deletedAction();
+        $result = $controller->deletedAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());

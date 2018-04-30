@@ -12,6 +12,8 @@ class TypeController extends AbstractLpaController
 {
     public function indexAction()
     {
+        $lpa = $this->getLpa();
+
         $form = $this->getFormElementManager()
                      ->get('Application\Form\Lpa\TypeForm');
 
@@ -21,28 +23,27 @@ class TypeController extends AbstractLpaController
             $form->setData($this->request->getPost());
 
             if ($form->isValid()) {
-                $lpaId = $this->getLpa()->id;
                 $lpaType = $form->getData()['type'];
 
-                if ($lpaType != $this->getLpa()->document->type) {
-                    if (!$this->getLpaApplicationService()->setType($lpaId, $lpaType)) {
-                        throw new RuntimeException('API client failed to set LPA type for id: ' . $lpaId);
+                if ($lpaType != $lpa->document->type) {
+                    if (!$this->getLpaApplicationService()->setType($lpa, $lpaType)) {
+                        throw new RuntimeException('API client failed to set LPA type for id: ' . $lpa->id);
                     }
                 }
 
                 return $this->moveToNextRoute();
             }
-        } elseif ($this->getLpa()->document instanceof Document) {
-            $form->bind($this->getLpa()->document->flatten());
+        } elseif ($lpa->document instanceof Document) {
+            $form->bind($lpa->document->flatten());
 
-            if ($this->getLpa()->document->donor instanceof Donor) {
+            if ($lpa->document->donor instanceof Donor) {
                 $isChangeAllowed = false;
             }
         }
 
         $analyticsDimensions = [];
 
-        if (empty($this->getLpa()->document->type)) {
+        if (empty($lpa->document->type)) {
             $analyticsDimensions = [
                 'dimension2' => date('Y-m-d'),
                 'dimension3' => 0,
@@ -50,16 +51,14 @@ class TypeController extends AbstractLpaController
         }
 
         $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-        $nextUrl = $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $this->getLpa()->id]);
+        $nextUrl = $this->url()->fromRoute($this->getFlowChecker()->nextRoute($currentRouteName), ['lpa-id' => $lpa->id]);
 
         return new ViewModel([
             'form'                => $form,
-            'cloneUrl'            => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id' => $this->getLpa()->id]),
+            'cloneUrl'            => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id' => $lpa->id]),
             'nextUrl'             => $nextUrl,
             'isChangeAllowed'     => $isChangeAllowed,
             'analyticsDimensions' => $analyticsDimensions,
         ]);
     }
-
 }
-

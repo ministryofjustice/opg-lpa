@@ -7,26 +7,15 @@ use Application\Form\Lpa\DateCheckForm;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
-use RuntimeException;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
 class DateCheckControllerTest extends AbstractControllerTest
 {
     /**
-     * @var DateCheckController
-     */
-    private $controller;
-    /**
      * @var MockInterface|DateCheckForm
      */
     private $form;
-    /**
-     * @var Lpa
-     */
-    private $lpa;
     private $postData = [
         'sign-date-donor'                 => ['day' => 1, 'month' => 2, 'year' => 2016],
         'sign-date-donor-life-sustaining' => ['day' => 1, 'month' => 2, 'year' => 2016],
@@ -39,34 +28,26 @@ class DateCheckControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(DateCheckController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(DateCheckForm::class);
-        $this->lpa = FixturesData::getPfLpa();
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\DateCheckForm', ['lpa' => $this->lpa]])->andReturn($this->form);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage A LPA has not been set
-     */
-    public function testIndexActionNoLpa()
-    {
-        $this->controller->indexAction();
-    }
-
     public function testIndexActionGet()
     {
-        $this->controller->setLpa($this->lpa);
+        /** @var DateCheckController $controller */
+        $controller = $this->getController(DateCheckController::class);
+
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
         $currentRouteName = 'lpa/date-check/complete';
-        $this->setMatchedRouteName($this->controller, $currentRouteName);
+        $this->setMatchedRouteName($controller, $currentRouteName);
         $this->setFormAction($this->form, $this->lpa, $currentRouteName);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -76,15 +57,17 @@ class DateCheckControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
-        $this->controller->setLpa($this->lpa);
+        /** @var DateCheckController $controller */
+        $controller = $this->getController(DateCheckController::class);
+
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
         $currentRouteName = 'lpa/date-check/complete';
-        $this->setMatchedRouteName($this->controller, $currentRouteName);
+        $this->setMatchedRouteName($controller, $currentRouteName);
         $this->setFormAction($this->form, $this->lpa, $currentRouteName);
         $this->setPostInvalid($this->form);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -94,21 +77,23 @@ class DateCheckControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalidDates()
     {
+        /** @var DateCheckController $controller */
+        $controller = $this->getController(DateCheckController::class);
+
         //Donor must be the first to sign
         $postData = $this->postData;
         $postData['sign-date-donor']['year'] = 2017;
 
-        $this->controller->setLpa($this->lpa);
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
         $currentRouteName = 'lpa/date-check/complete';
-        $this->setMatchedRouteName($this->controller, $currentRouteName);
+        $this->setMatchedRouteName($controller, $currentRouteName);
         $this->setFormAction($this->form, $this->lpa, $currentRouteName);
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
         $this->form->shouldReceive('setMessages')->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -119,13 +104,15 @@ class DateCheckControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostValidDates()
     {
+        /** @var DateCheckController $controller */
+        $controller = $this->getController(DateCheckController::class);
+
         $response = new Response();
         $postData = $this->postData;
 
-        $this->controller->setLpa($this->lpa);
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
         $currentRouteName = 'lpa/date-check/complete';
-        $this->setMatchedRouteName($this->controller, $currentRouteName);
+        $this->setMatchedRouteName($controller, $currentRouteName);
         $this->setFormAction($this->form, $this->lpa, $currentRouteName);
         $this->setPostValid($this->form, $postData);
         $this->form->shouldReceive('getData')->andReturn($postData)->once();
@@ -137,17 +124,20 @@ class DateCheckControllerTest extends AbstractControllerTest
         $this->redirect->shouldReceive('toUrl')
             ->withArgs(["lpa/{$this->lpa->id}/date-check/valid"])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testValidActionNoReturnRoute()
     {
+        /** @var DateCheckController $controller */
+        $controller = $this->getController(DateCheckController::class);
+
         $this->params->shouldReceive('fromQuery')->withArgs(['return-route', null])->andReturn(null)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->validAction();
+        $result = $controller->validAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -156,10 +146,13 @@ class DateCheckControllerTest extends AbstractControllerTest
 
     public function testValidActionReturnRoute()
     {
+        /** @var DateCheckController $controller */
+        $controller = $this->getController(DateCheckController::class);
+
         $this->params->shouldReceive('fromQuery')->withArgs(['return-route', null])->andReturn('lpa/complete')->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->validAction();
+        $result = $controller->validAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
