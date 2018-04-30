@@ -40,10 +40,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Application\\": "module/Application/src/Application/"
-        },
-        "files":  [
-            "module/Application/Module.php"
-        ]
+            "Application\\": "module/Application/src/"
+        }
     }
 }
