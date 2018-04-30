@@ -3,16 +3,22 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
+use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
 
 class AboutYouController extends AbstractAuthenticatedController
 {
     /**
-     * Allow access to this controller before About You details are set.
+     * @var Container
+     */
+    private $userDetailsSession;
+
+    /**
+     * Flag to indicate if complete user details are required when accessing this controller
      *
      * @var bool
      */
-    protected $excludeFromAboutYouCheck = true;
+    protected $requireCompleteUserDetails = false;
 
     /**
      * @return \Zend\Http\Response|ViewModel
@@ -30,10 +36,9 @@ class AboutYouController extends AbstractAuthenticatedController
         $form->setAttribute('action', $actionTarget);
 
         $request = $this->getRequest();
-        $aboutYouService = $this->getAboutYouDetails();
 
         //  Get any existing data for the user
-        $userDetails = $aboutYouService->load();
+        $userDetails = $this->getUser();
         $userDetailsArr = $userDetails->flatten();
 
         if ($request->isPost()) {
@@ -45,12 +50,11 @@ class AboutYouController extends AbstractAuthenticatedController
             $form->setData(array_merge($data, $existingData));
 
             if ($form->isValid()) {
-                $aboutYouService->updateAllDetails($form);
+                $userService = $this->getUserService();
+                $userService->updateAllDetails($form->getData());
 
                 // Clear the old details out the session.
-                // They will be reloaded the next time the the AbstractAuthenticatedController is called.
-                $detailsContainer = $this->getUserDetailsSession();
-                unset($detailsContainer->user);
+                unset($this->userDetailsSession->user);
 
                 //  Saved successful so return to dashboard with message if required
                 if (!$isNew) {
@@ -82,5 +86,13 @@ class AboutYouController extends AbstractAuthenticatedController
             'form'  => $form,
             'isNew' => $isNew,
         ]);
+    }
+
+    /**
+     * @param Container $userDetailsSession
+     */
+    public function setUserDetailsSession(Container $userDetailsSession)
+    {
+        $this->userDetailsSession = $userDetailsSession;
     }
 }

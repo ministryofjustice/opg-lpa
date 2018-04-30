@@ -68,7 +68,7 @@ class DonorController extends AbstractLpaActorController
                 // persist data
                 $donor = new Donor($form->getModelDataFromValidatedForm());
 
-                if (!$this->getLpaApplicationService()->setDonor($lpaId, $donor)) {
+                if (!$this->getLpaApplicationService()->setDonor($lpa, $donor)) {
                     throw new \RuntimeException('API client failed to save LPA donor for id: '.$lpaId);
                 }
 
@@ -113,7 +113,7 @@ class DonorController extends AbstractLpaActorController
                 // persist data
                 $donor = new Donor($form->getModelDataFromValidatedForm());
 
-                if (!$this->getLpaApplicationService()->setDonor($lpaId, $donor)) {
+                if (!$this->getLpaApplicationService()->setDonor($lpa, $donor)) {
                     throw new \RuntimeException('API client failed to update LPA donor for id: '.$lpaId);
                 }
 

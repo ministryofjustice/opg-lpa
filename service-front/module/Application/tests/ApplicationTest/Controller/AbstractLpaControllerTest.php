@@ -3,11 +3,7 @@
 namespace ApplicationTest\Controller;
 
 use Application\Model\FormFlowChecker;
-use Application\Model\Service\Authentication\Identity\User as UserIdentity;
-use DateTime;
 use Mockery;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
@@ -16,27 +12,12 @@ use Zend\View\Model\ViewModel;
 
 class AbstractLpaControllerTest extends AbstractControllerTest
 {
-    /**
-     * @var TestableAbstractLpaController
-     */
-    private $controller;
-    /**
-     * @var Lpa
-     */
-    private $lpa;
-
-    public function setUp()
-    {
-        $this->controller = parent::controllerSetUp(TestableAbstractLpaController::class);
-
-        $this->user = FixturesData::getUser();
-        $this->userIdentity = new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime());
-
-        $this->lpa = FixturesData::getPfLpa();
-    }
-
     public function testOnDispatchNotAuthenticated()
     {
+        $this->setIdentity(null);
+
+        $controller = $this->getController(TestableAbstractLpaController::class);
+
         $response = new Response();
         $event = new MvcEvent();
 
@@ -44,88 +25,94 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['login', ['state'=>'timeout']])->andReturn($response)->once();
 
-        $result = $this->controller->onDispatch($event);
+        $result = $controller->onDispatch($event);
 
         $this->assertEquals($result, $response);
     }
 
-    public function testOnDispatchNoLpa()
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage Invalid LPA
+     */
+    public function testOnDispatchNoLpaException()
     {
+        $this->lpa = null;
+
+        $controller = $this->getController(TestableAbstractLpaController::class);
+
         $response = new Response();
         $event = new MvcEvent();
 
-        $this->controller->setUser($this->userIdentity);
         $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
 
-        $result = $this->controller->onDispatch($event);
+        $result = $controller->onDispatch($event);
 
         $this->assertEquals($result, $response);
     }
 
     public function testOnDispatchNoMethod()
     {
+        $controller = $this->getController(TestableAbstractLpaController::class);
+
         $response = new Response();
-        $this->controller->dispatch($this->request, $response);
+        $controller->dispatch($this->request, $response);
         $event = Mockery::mock(MvcEvent::class);
 
-        $this->controller->setUser($this->userIdentity);
-        $this->controller->setLpa($this->lpa);
         $this->layout->shouldReceive('__invoke')->andReturn($this->layout)->once();
         $routeMatch = Mockery::mock(RouteMatch::class);
         $event->shouldReceive('getRouteMatch')->andReturn($routeMatch)->twice();
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/unknown')->once();
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn(null)->once();
         $flowChecker = Mockery::mock(FormFlowChecker::class);
-        $this->controller->injectedFlowChecker = $flowChecker;
+        $controller->injectedFlowChecker = $flowChecker;
         $flowChecker->shouldReceive('getNearestAccessibleRoute')
             ->withArgs(['lpa/unknown', null])->andReturn(false)->once();
 
-        $result = $this->controller->onDispatch($event);
+        $result = $controller->onDispatch($event);
 
         $this->assertEquals($result, $response);
     }
 
     public function testOnDispatchCalculatedRouteNotEqual()
     {
+        $controller = $this->getController(TestableAbstractLpaController::class);
+
         $response = new Response();
         $event = Mockery::mock(MvcEvent::class);
 
-        $this->controller->setUser($this->userIdentity);
-        $this->controller->setLpa($this->lpa);
         $this->layout->shouldReceive('__invoke')->andReturn($this->layout)->once();
         $routeMatch = Mockery::mock(RouteMatch::class);
         $event->shouldReceive('getRouteMatch')->andReturn($routeMatch)->twice();
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/donor')->once();
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn(null)->once();
         $flowChecker = Mockery::mock(FormFlowChecker::class);
-        $this->controller->injectedFlowChecker = $flowChecker;
+        $controller->injectedFlowChecker = $flowChecker;
         $flowChecker->shouldReceive('getNearestAccessibleRoute')
             ->withArgs(['lpa/donor', null])->andReturn('lpa/checkout')->once();
         $flowChecker->shouldReceive('getRouteOptions')->withArgs(['lpa/checkout'])->andReturn([])->once();
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
 
-        $result = $this->controller->onDispatch($event);
+        $result = $controller->onDispatch($event);
 
         $this->assertEquals($result, $response);
     }
 
     public function testOnDispatchDownload()
     {
+        $controller = $this->getController(TestableAbstractLpaController::class);
+
         $event = Mockery::mock(MvcEvent::class);
 
-        $this->controller->setUser($this->userIdentity);
-        $this->controller->setLpa($this->lpa);
         $this->layout->shouldReceive('__invoke')->andReturn($this->layout)->once();
         $routeMatch = Mockery::mock(RouteMatch::class);
         $event->shouldReceive('getRouteMatch')->andReturn($routeMatch)->times(3);
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/download')->once();
         $routeMatch->shouldReceive('getParam')->withArgs(['pdf-type'])->andReturn('lp1')->once();
         $flowChecker = Mockery::mock(FormFlowChecker::class);
-        $this->controller->injectedFlowChecker = $flowChecker;
+        $controller->injectedFlowChecker = $flowChecker;
         $flowChecker->shouldReceive('getNearestAccessibleRoute')
             ->withArgs(['lpa/download', 'lp1'])->andReturn('lpa/download')->once();
-        $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
         $this->logger->shouldReceive('info')->withArgs([
             'Request to ApplicationTest\Controller\TestableAbstractLpaController',
             $this->userIdentity->toArray()
@@ -137,7 +124,7 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         })*/->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->onDispatch($event);
+        $result = $controller->onDispatch($event);
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -150,8 +137,10 @@ class AbstractLpaControllerTest extends AbstractControllerTest
      */
     public function testMoveToNextRouteNotRouteMatch()
     {
+        $controller = $this->getController(TestableAbstractLpaController::class);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
 
-        $this->controller->testMoveToNextRoute();
+        $controller->testMoveToNextRoute();
     }
 }

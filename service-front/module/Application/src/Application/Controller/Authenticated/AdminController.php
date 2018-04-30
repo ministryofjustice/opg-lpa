@@ -23,7 +23,7 @@ class AdminController extends AbstractAuthenticatedController
      */
     public function onDispatch(MvcEvent $event)
     {
-        $userEmail = (string)$this->getUserDetails()->email;
+        $userEmail = (string)$this->getUser()->email;
 
         if ($userEmail != '') {
             $adminAccounts = $this->config()['admin']['accounts'];

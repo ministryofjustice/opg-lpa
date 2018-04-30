@@ -14,10 +14,6 @@ return [
     /* ------------------------------------------------------------- */
 
     'controllers' => [
-        'initializers' => [
-            'UserAwareInitializer' => 'Application\ControllerFactory\UserAwareInitializer',
-            'LpaAwareInitializer' => 'Application\ControllerFactory\LpaAwareInitializer',
-        ],
         'factories' => [
             'SessionsController' => 'Application\Controller\Console\SessionsControllerFactory',
         ],
@@ -33,18 +29,18 @@ return [
             'Zend\Log\LoggerAbstractServiceFactory',
         ],
         'aliases' => [
-            'PasswordReset'                         => 'Application\Model\Service\User\PasswordReset',
-            'Register'                              => 'Application\Model\Service\User\Register',
-            'AboutYouDetails'                       => 'Application\Model\Service\User\Details',
-            'DeleteUser'                            => 'Application\Model\Service\User\Delete',
-            'Feedback'                              => 'Application\Model\Service\Feedback\Feedback',
-            'Signatures'                            => 'Application\Model\Service\Feedback\Signatures',
-            'Guidance'                              => 'Application\Model\Service\Guidance\Guidance',
-            'ApplicationList'                       => 'Application\Model\Service\Lpa\ApplicationList',
-            'Metadata'                              => 'Application\Model\Service\Lpa\Metadata',
-            'Communication'                         => 'Application\Model\Service\Lpa\Communication',
-            'PostcodeInfo'                          => 'Application\Model\Service\AddressLookup\PostcodeInfo',
-            'SiteStatus'                            => 'Application\Model\Service\System\Status',
+            'AdminService'                  => 'Application\Model\Service\Admin\Admin',
+            'ApplicantService'              => 'Application\Model\Service\Lpa\Applicant',
+            'Communication'                 => 'Application\Model\Service\Lpa\Communication',
+            'Feedback'                      => 'Application\Model\Service\Feedback\Feedback',
+            'Guidance'                      => 'Application\Model\Service\Guidance\Guidance',
+            'LpaApplicationService'         => 'Application\Model\Service\Lpa\Application',
+            'Metadata'                      => 'Application\Model\Service\Lpa\Metadata',
+            'PostcodeInfo'                  => 'Application\Model\Service\AddressLookup\PostcodeInfo',
+            'ReplacementAttorneyCleanup'    => 'Application\Model\Service\Lpa\ReplacementAttorneyCleanup',
+            'SiteStatus'                    => 'Application\Model\Service\System\Status',
+            'StatsService'                  => 'Application\Model\Service\Stats\Stats',
+            'UserService'                   => 'Application\Model\Service\User\Details',
         ],
     ],
 

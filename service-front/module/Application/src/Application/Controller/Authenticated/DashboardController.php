@@ -3,17 +3,11 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
-use Application\Model\Service\Lpa\ApplicationList;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\ViewModel;
 
 class DashboardController extends AbstractAuthenticatedController
 {
-    /**
-     * @var ApplicationList
-     */
-    private $applicationList;
-
     public function indexAction()
     {
         $search = $this->params()->fromQuery('search', null);
@@ -23,7 +17,7 @@ class DashboardController extends AbstractAuthenticatedController
         $lpasPerPage = 50;
 
         //  Get the LPA list summary using a query if provided
-        $lpasSummary = $this->applicationList->getLpaSummaries($search, $page, $lpasPerPage);
+        $lpasSummary = $this->getLpaApplicationService()->getLpaSummaries($search, $page, $lpasPerPage);
         $lpas = $lpasSummary['applications'];
         $lpasTotalCount = $lpasSummary['total'];
 
@@ -43,7 +37,7 @@ class DashboardController extends AbstractAuthenticatedController
             'freeText'              => $search,
             'isSearch'              => (is_string($search) && !empty($search)),
             'user'                  => [
-                'lastLogin' => $this->getUser()->lastLogin(),
+                'lastLogin' => $this->getIdentity()->lastLogin(),
             ],
         ]);
     }
@@ -136,7 +130,7 @@ class DashboardController extends AbstractAuthenticatedController
                 return $this->redirect()->toRoute('user/dashboard');
             }
 
-            $result = $this->getLpaApplicationService()->setSeed($lpa->id, (int) $seedId);
+            $result = $this->getLpaApplicationService()->setSeed($lpa, (int) $seedId);
 
             $this->resetSessionCloneData($seedId);
 
@@ -208,10 +202,5 @@ class DashboardController extends AbstractAuthenticatedController
     protected function checkAuthenticated($allowRedirect = true)
     {
         return parent::checkAuthenticated(false);
-    }
-
-    public function setApplicationList(ApplicationList $applicationList)
-    {
-        $this->applicationList = $applicationList;
     }
 }

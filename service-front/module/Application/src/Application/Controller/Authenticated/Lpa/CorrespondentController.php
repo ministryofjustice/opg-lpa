@@ -25,13 +25,15 @@ class CorrespondentController extends AbstractLpaActorController
      */
     public function indexAction()
     {
+        $lpa = $this->getLpa();
+
         //  Set hidden form for saving applicant as the default correspondent
         $form = $this->getFormElementManager()
                      ->get('Application\Form\Lpa\CorrespondenceForm', [
-                         'lpa' => $this->getLpa()
+                         'lpa' => $lpa,
                      ]);
         $form->setAttribute('action', $this->url()->fromRoute('lpa/correspondent', [
-            'lpa-id' => $this->getLpa()->id
+            'lpa-id' => $lpa->id,
         ]));
 
         //  Determine some details about the existing correspondent
@@ -90,8 +92,8 @@ class CorrespondentController extends AbstractLpaActorController
                     ];
                 }
 
-                if (!$this->getLpaApplicationService()->setCorrespondent($this->getLpa()->id, $correspondent)) {
-                    throw new \RuntimeException('API client failed to set correspondent for id: '.$this->getLpa()->id);
+                if (!$this->getLpaApplicationService()->setCorrespondent($lpa, $correspondent)) {
+                    throw new \RuntimeException('API client failed to set correspondent for id: ' . $lpa->id);
                 }
 
                 return $this->moveToNextRoute();
@@ -126,7 +128,7 @@ class CorrespondentController extends AbstractLpaActorController
             'correspondentAddress' => $correspondent->address,
             'contactEmail'         => $correspondentEmailAddress,
             'contactPhone'         => $correspondentPhoneNumber,
-            'changeRoute'          => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $this->getLpa()->id]),
+            'changeRoute'          => $this->url()->fromRoute($currentRouteName . '/edit', ['lpa-id' => $lpa->id]),
             'allowEditButton'      => $this->allowCorrespondentToBeEdited(),
         ]);
     }
@@ -270,7 +272,6 @@ class CorrespondentController extends AbstractLpaActorController
     private function processCorrespondentData(array $correspondentData)
     {
         $lpa = $this->getLpa();
-        $lpaId = $lpa->id;
         $lpaCorrespondent = $lpa->document->correspondent;
 
         //  Set aside any data to retain that is not present in the form
@@ -286,8 +287,8 @@ class CorrespondentController extends AbstractLpaActorController
         //  Create a new correspondence data model using the form data and any data to retain from a previous save
         $lpaCorrespondent = new Correspondence(array_merge($correspondentData, $existingDataToRetain));
 
-        if (!$this->getLpaApplicationService()->setCorrespondent($lpaId, $lpaCorrespondent)) {
-            throw new \RuntimeException('API client failed to update correspondent for id: '.$lpaId);
+        if (!$this->getLpaApplicationService()->setCorrespondent($lpa, $lpaCorrespondent)) {
+            throw new \RuntimeException('API client failed to update correspondent for id: '.$lpa->id);
         }
 
         if ($this->isPopup()) {
@@ -296,6 +297,6 @@ class CorrespondentController extends AbstractLpaActorController
 
         $nextRoute = $this->getFlowChecker()->nextRoute('lpa/correspondent/edit');
 
-        return $this->redirect()->toRoute($nextRoute, ['lpa-id' => $lpaId], $this->getFlowChecker()->getRouteOptions($nextRoute));
+        return $this->redirect()->toRoute($nextRoute, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($nextRoute));
     }
 }

@@ -2,12 +2,9 @@
 
 namespace ApplicationTest\Controller\Authenticated;
 
-use Application\Model\Service\Authentication\Identity\User;
-use Application\Model\Service\Lpa\ApplicationList;
+use Application\Controller\Authenticated\DashboardController;
 use ApplicationTest\Controller\AbstractControllerTest;
-use DateTime;
 use Mockery;
-use Mockery\MockInterface;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
@@ -19,28 +16,11 @@ use Zend\View\Model\ViewModel;
 
 class DashboardControllerTest extends AbstractControllerTest
 {
-    /**
-     * @var TestableDashboardController
-     */
-    private $controller;
-    /**
-     * @var MockInterface|ApplicationList
-     */
-    private $applicationList;
-
-    public function setUp()
-    {
-        $this->controller = parent::controllerSetUp(TestableDashboardController::class);
-
-        $this->applicationList = Mockery::mock(ApplicationList::class);
-        $this->controller->setApplicationList($this->applicationList);
-
-        $this->user = FixturesData::getUser();
-        $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
-    }
-
     public function testIndexActionZeroLpas()
     {
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
         $response = new Response();
         $lpasSummary = [
             'applications' => [],
@@ -49,32 +29,34 @@ class DashboardControllerTest extends AbstractControllerTest
 
         $this->params->shouldReceive('fromQuery')->withArgs(['search', null])->andReturn(null)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['page', 1])->andReturn(1)->once();
-        $this->applicationList->shouldReceive('getLpaSummaries')
+        $this->lpaApplicationService->shouldReceive('getLpaSummaries')
             ->withArgs([null, 1, 50])->andReturn($lpasSummary)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['lpa-id'])->andReturn(null)->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['lpa-type-no-id'])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testIndexAction()
     {
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
         $lpasSummary = [
             'applications' => [FixturesData::getHwLpa()->abbreviatedToArray()],
             'total' => 1
         ];
 
-        $this->controller->setUser($this->userIdentity);
         $this->params->shouldReceive('fromQuery')->withArgs(['search', null])->andReturn(null)->once();
         //Specify an invalid page number to exercise line 63
         $this->params->shouldReceive('fromRoute')->withArgs(['page', 1])->andReturn(10)->once();
-        $this->applicationList->shouldReceive('getLpaSummaries')
+        $this->lpaApplicationService->shouldReceive('getLpaSummaries')
             ->withArgs([null, 10, 50])->andReturn($lpasSummary)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -95,6 +77,9 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testIndexActionMultiplePages()
     {
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
         $lpasSummary = [
             'applications' => [],
             'total' => 0
@@ -106,14 +91,13 @@ class DashboardControllerTest extends AbstractControllerTest
             $lpasSummary['total'] = $i;
         }
 
-        $this->controller->setUser($this->userIdentity);
         $this->params->shouldReceive('fromQuery')->withArgs(['search', null])->andReturn(null)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['page', 1])->andReturn(2)->once();
-        $this->applicationList->shouldReceive('getLpaSummaries')
+        $this->lpaApplicationService->shouldReceive('getLpaSummaries')
             ->withArgs([null, 2, 50])->andReturn($lpasSummary)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -134,6 +118,9 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testIndexActionLastPage()
     {
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
         $lpasSummary = [
             'applications' => [],
             'total' => 0
@@ -145,14 +132,13 @@ class DashboardControllerTest extends AbstractControllerTest
             $lpasSummary['total'] = $i;
         }
 
-        $this->controller->setUser($this->userIdentity);
         $this->params->shouldReceive('fromQuery')->withArgs(['search', null])->andReturn(null)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['page', 1])->andReturn(3)->once();
-        $this->applicationList->shouldReceive('getLpaSummaries')
+        $this->lpaApplicationService->shouldReceive('getLpaSummaries')
             ->withArgs([null, 3, 50])->andReturn($lpasSummary)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -173,6 +159,9 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testCreateActionSeedLpaFailed()
     {
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
         $response = new Response();
 
         $this->params->shouldReceive('fromRoute')->withArgs(['lpa-id'])->andReturn(1)->once();
@@ -181,13 +170,16 @@ class DashboardControllerTest extends AbstractControllerTest
             ->withArgs(['Error creating a new LPA. Please try again.'])->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
 
-        $result = $this->controller->createAction();
+        $result = $controller->createAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testCreateActionSeedLpaPartialSuccess()
     {
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
         $response = new Response();
 
         $this->params->shouldReceive('fromRoute')->withArgs(['lpa-id'])->andReturn(1)->once();
@@ -195,11 +187,11 @@ class DashboardControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('createApplication')->andReturn($lpa)->once();
         $this->flashMessenger->shouldReceive('addWarningMessage')
             ->withArgs(['LPA created but could not set seed'])->once();
-        $this->lpaApplicationService->shouldReceive('setSeed')->withArgs([$lpa->id, 1])->andReturn(false)->once();
+        $this->lpaApplicationService->shouldReceive('setSeed')->withArgs([$lpa, 1])->andReturn(false)->once();
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/form-type', ['lpa-id' => $lpa->id]])->andReturn($response)->once();
 
-        $result = $this->controller->createAction();
+        $result = $controller->createAction();
 
         $this->assertEquals($response, $result);
     }
@@ -210,40 +202,49 @@ class DashboardControllerTest extends AbstractControllerTest
      */
     public function testDeleteActionException()
     {
-        $routeMatch = $this->getRouteMatch($this->controller);
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
+        $routeMatch = $this->getRouteMatch($controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $this->lpaApplicationService->shouldReceive('deleteApplication')->andReturn(false)->once();
 
-        $this->controller->deleteLpaAction();
+        $controller->deleteLpaAction();
     }
 
     public function testDeleteActionSuccess()
     {
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
         $response = new Response();
 
         $event = new MvcEvent();
         $routeMatch = Mockery::mock(RouteMatch::class);
         $event->setRouteMatch($routeMatch);
-        $this->controller->setEvent($event);
+        $controller->setEvent($event);
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $this->lpaApplicationService->shouldReceive('deleteApplication')->andReturn(true)->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
 
-        $result = $this->controller->deleteLpaAction();
+        $result = $controller->deleteLpaAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testConfirmDeleteLpaActionNonJs()
     {
-        $routeMatch = $this->getRouteMatch($this->controller);
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
+        $routeMatch = $this->getRouteMatch($controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $lpa = FixturesData::getPfLpa();
         $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->confirmDeleteLpaAction();
+        $result = $controller->confirmDeleteLpaAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/dashboard/confirm-delete.twig', $result->getTemplate());
@@ -253,17 +254,20 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testConfirmDeleteLpaActionJs()
     {
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
         $event = new MvcEvent();
         $routeMatch = Mockery::mock(RouteMatch::class);
         $event->setRouteMatch($routeMatch);
-        $this->controller->setEvent($event);
+        $controller->setEvent($event);
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $lpa = FixturesData::getPfLpa();
         $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->confirmDeleteLpaAction();
+        $result = $controller->confirmDeleteLpaAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/dashboard/confirm-delete.twig', $result->getTemplate());
@@ -273,8 +277,11 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testTermsAction()
     {
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
         /** @var ViewModel $result */
-        $result = $this->controller->termsAction();
+        $result = $controller->termsAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -282,6 +289,10 @@ class DashboardControllerTest extends AbstractControllerTest
 
     public function testCheckAuthenticated()
     {
+        $this->setIdentity(null);
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
         $response = new Response();
 
         $this->sessionManager->shouldReceive('start')->never();
@@ -292,7 +303,7 @@ class DashboardControllerTest extends AbstractControllerTest
             ->withArgs(['login', [ 'state'=>'timeout' ]])->andReturn($response)->once();
 
         Container::setDefaultManager($this->sessionManager);
-        $result = $this->controller->testCheckAuthenticated(true);
+        $result = $controller->testCheckAuthenticated(true);
         Container::setDefaultManager(null);
 
         $this->assertEquals($response, $result);

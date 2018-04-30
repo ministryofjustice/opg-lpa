@@ -2,9 +2,9 @@
 
 namespace Application\Controller;
 
+use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\SessionManager;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Authentication\AuthenticationService;
 use Zend\Cache\Storage\StorageInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\ServiceManager\AbstractPluginManager;
@@ -138,7 +138,7 @@ abstract class AbstractBaseController extends AbstractActionController
      */
     protected function preventAuthenticatedUser(){
 
-        $identity = $this->getAuthenticationService()->getIdentity();
+        $identity = $this->authenticationService->getIdentity();
 
         if( !is_null($identity) ){
             return $this->redirect()->toRoute( 'user/dashboard' );
@@ -181,7 +181,7 @@ abstract class AbstractBaseController extends AbstractActionController
     {
         return $this->config;
     }
-    
+
     /**
      * Returns the cache object.
      *

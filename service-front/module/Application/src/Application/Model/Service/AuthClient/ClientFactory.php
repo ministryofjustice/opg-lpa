@@ -1,14 +1,17 @@
 <?php
 
-namespace Application\Model\Service\ApiClient;
+namespace Application\Model\Service\AuthClient;
 
+use Application\Model\Service\Authentication\Identity\User as UserIdentity;
+use Http\Client\HttpClient as HttpClientInterface;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use Zend\Session\Container;
 
-class ApiClientFactory implements FactoryInterface
+class ClientFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -24,19 +27,21 @@ class ApiClientFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = $container->get('config')['api_client'];
+        /** @var HttpClientInterface $httpClient */
+        $httpClient = $container->get('HttpClient');
 
-        $client = new Client($config['api_uri'], $config['auth_uri']);
+        $baseAuthUri = $container->get('config')['api_client']['auth_uri'];
 
-        $auth = $container->get('AuthenticationService');
+        $token = null;
 
-        if ($auth->hasIdentity()) {
-            $identity = $auth->getIdentity();
+        /** @var Container $userDetailsSession */
+        $userDetailsSession = $container->get('UserDetailsSession');
+        $identity = $userDetailsSession->identity;
 
-            $client->setUserId($identity->id());
-            $client->setToken($identity->token());
+        if ($identity instanceof UserIdentity) {
+            $token = $identity->token();
         }
 
-        return $client;
+        return new Client($httpClient, $baseAuthUri, $token);
     }
 }

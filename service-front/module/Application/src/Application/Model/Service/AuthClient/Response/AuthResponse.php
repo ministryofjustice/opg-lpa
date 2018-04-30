@@ -1,22 +1,13 @@
 <?php
 
-namespace Application\Model\Service\ApiClient\Response;
+namespace Application\Model\Service\AuthClient\Response;
 
-use Application\Model\Service\ApiClient\Exception;
+use Application\Model\Service\AuthClient\Exception;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- *
- * @author Chris Moreton
- *
- * Wraps the information received from the auth server
- *
- */
 class AuthResponse
 {
     private $response;
-
-    //---------------------
 
     public static function buildFromResponse(ResponseInterface $response)
     {
@@ -28,9 +19,7 @@ class AuthResponse
         }
 
         $authResponse = new static();
-
         $authResponse->exchangeArray($body);
-
         $authResponse->setResponse($response);
 
         return $authResponse;
@@ -231,7 +220,6 @@ class AuthResponse
         $this->errorDescription = $errorDescription;
         return $this;
     }
-
     public function isAuthenticated()
     {
         return !empty($this->userId) && !empty($this->token) && empty($this->errorDescription);

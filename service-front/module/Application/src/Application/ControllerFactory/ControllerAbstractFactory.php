@@ -5,10 +5,11 @@ namespace Application\ControllerFactory;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
+use Application\Controller\Authenticated\AboutYouController;
 use Application\Controller\Authenticated\AdminController;
-use Application\Controller\Authenticated\DashboardController;
-use Application\Controller\Authenticated\DeleteController;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
+use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
+use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Controller\Authenticated\PostcodeController;
 use Application\Controller\General\AuthController;
@@ -21,15 +22,13 @@ use Application\Controller\General\RegisterController;
 use Application\Controller\General\SendgridController;
 use Application\Controller\General\StatsController;
 use Application\Controller\General\VerifyEmailAddressController;
-use Exception;
 use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
-use RuntimeException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Stdlib\DispatchableInterface as Dispatchable;
+use Exception;
+use RuntimeException;
 
 /**
  * Creates a controller based on those requested without a specific entry in the controller service locator.
@@ -45,37 +44,30 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $additionalServices = [
+        AboutYouController::class => [
+            'setUserDetailsSession' => 'UserDetailsSession',
+        ],
         AdminController::class => [
             'setAdminService' => 'AdminService'
         ],
-        DashboardController::class => [
-            'setApplicationList' => 'ApplicationList'
-        ],
-        DeleteController::class => [
-            'setDeleteUser' => 'DeleteUser'
-        ],
-        PostcodeController::class => [
-            'setAddressLookup' => 'AddressLookupMoj'
+        AuthController::class => [
+            'setLpaApplicationService' => 'LpaApplicationService'
         ],
         CheckoutController::class => [
             'setCommunicationService' => 'Communication',
             'setPaymentClient'        => 'GovPayClient'
         ],
-        ReuseDetailsController::class => [
-            'setRouter' => 'Router'
-        ],
-        AuthController::class => [
-            'setAuthenticationAdapter' => 'AuthenticationAdapter',
-            'setLpaApplicationService' => 'LpaApplicationService'
-        ],
         FeedbackController::class => [
             'setFeedbackService' => 'Feedback'
         ],
         ForgotPasswordController::class => [
-            'setPasswordResetService' => 'PasswordReset'
+            'setUserService' => 'UserService'
         ],
         GuidanceController::class => [
             'setGuidanceService' => 'Guidance'
+        ],
+        HowPrimaryAttorneysMakeDecisionController::class => [
+            'setApplicantService' => 'ApplicantService',
         ],
         NotificationsController::class => [
             'setMailTransport'     => 'MailTransport'
@@ -83,17 +75,26 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         PingController::class => [
             'setStatusService' => 'SiteStatus'
         ],
+        PostcodeController::class => [
+            'setAddressLookup' => 'AddressLookupMoj'
+        ],
+        PrimaryAttorneyController::class => [
+            'setApplicantService' => 'ApplicantService',
+        ],
         RegisterController::class => [
-            'setRegisterService' => 'Register'
+            'setUserService' => 'UserService'
+        ],
+        ReuseDetailsController::class => [
+            'setRouter' => 'Router'
         ],
         SendgridController::class => [
             'setMailTransport' => 'MailTransport'
         ],
-        VerifyEmailAddressController::class => [
-            'setAboutYouDetails' => 'AboutYouDetails'
-        ],
         StatsController::class => [
-            'setLpaApplicationService' => 'LpaApplicationService'
+            'setStatsService' => 'StatsService',
+        ],
+        VerifyEmailAddressController::class => [
+            'setUserService' => 'UserService'
         ],
     ];
 
@@ -144,11 +145,18 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
             $userDetailsSession = $container->get('UserDetailsSession');
             $lpaApplicationService = $container->get('LpaApplicationService');
-            $aboutYouDetails = $container->get('AboutYouDetails');
-            $authenticationAdapter = $container->get('AuthenticationAdapter');
+            $userService = $container->get('UserService');
 
             if (is_subclass_of($controllerName, AbstractLpaController::class)) {
+                //  Get the LPA ID from the route params
+                $lpaId = $container->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpa-id');
+
+                if (!is_numeric($lpaId)) {
+                    throw new RuntimeException('Invalid LPA ID passed');
+                }
+
                 $controller = new $controllerName(
+                    $lpaId,
                     $formElementManager,
                     $sessionManager,
                     $authenticationService,
@@ -156,9 +164,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $cache,
                     $userDetailsSession,
                     $lpaApplicationService,
-                    $aboutYouDetails,
-                    $authenticationAdapter,
-                    $container->get('ApplicantCleanup'),
+                    $userService,
                     $container->get('ReplacementAttorneyCleanup'),
                     $container->get('Metadata')
                 );
@@ -171,8 +177,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $cache,
                     $userDetailsSession,
                     $lpaApplicationService,
-                    $aboutYouDetails,
-                    $authenticationAdapter
+                    $userService
                 );
             }
         } else {
@@ -210,13 +215,13 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
     }
 
     /**
-     * Appends the namespace to the requested controller.
+     * Prepends the namespace to the requested controller.
      *
      * @param $requestedName
      * @return string
      */
     private function getControllerName($requestedName)
     {
-        return'Application\Controller\\' . $requestedName;
+        return 'Application\Controller\\' . $requestedName;
     }
 }

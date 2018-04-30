@@ -23,15 +23,16 @@ class Communication extends AbstractEmailService
 
     public function sendRegistrationCompleteEmail(Lpa $lpa)
     {
-        $userSession = $this->userDetailsSession;
+        //  Get the user email address
+        $userEmailAddress = $this->userDetailsSession->user->email->address;
 
         // Add the signed in user's email address.
         $to = [
-            $userSession->user->email->address,
+            $userEmailAddress,
         ];
 
         // If we have a separate payment address, send the email to that also.
-        if (!empty($lpa->payment->email) && ((string)$lpa->payment->email != strtolower($userSession->user->email->address))) {
+        if (!empty($lpa->payment->email) && ((string)$lpa->payment->email != strtolower($userEmailAddress))) {
             $to[] = (string) $lpa->payment->email;
         }
 

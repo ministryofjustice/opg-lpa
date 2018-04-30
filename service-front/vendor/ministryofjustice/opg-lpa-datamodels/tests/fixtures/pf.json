@@ -55,7 +55,7 @@
         "replacementAttorneyDecisions" : {
             "whenDetails" : null,
             "how" : null,
-            "replacementAttorneyDecisions" : "first",
+            "when" : "first",
             "howDetails" : null
         },
         "correspondent" : {

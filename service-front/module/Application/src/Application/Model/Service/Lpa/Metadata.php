@@ -3,6 +3,7 @@
 namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractService;
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use RuntimeException;
 
@@ -14,6 +15,11 @@ use RuntimeException;
  */
 class Metadata extends AbstractService
 {
+    /**
+     * @var LpaApplicationService
+     */
+    private $lpaApplicationService;
+
     public function setReplacementAttorneysConfirmed(Lpa $lpa)
     {
         return $this->setMetadataByKey($lpa, Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED);
@@ -46,18 +52,13 @@ class Metadata extends AbstractService
         return $this->setMetadataByKey($lpa, Lpa::ANALYTICS_RETURN_COUNT, $returnCount);
     }
 
-    public function setApplyForFeeReduction(Lpa $lpa, $applyOrNot)
-    {
-        return $this->setMetadataByKey($lpa, Lpa::APPLY_FOR_FEE_REDUCTION, $applyOrNot);
-    }
-
     public function removeMetadata(Lpa $lpa, $key)
     {
         if (array_key_exists($key, $lpa->metadata)) {
             //  Remove the value
             unset($lpa->metadata[$key]);
 
-            if (!$this->getLpaApplicationService()->setMetaData($lpa->id, $lpa->metadata)) {
+            if (!$this->setMetaData($lpa->id, $lpa->metadata)) {
                 throw new RuntimeException(sprintf('API client failed to remove metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
             }
 
@@ -67,13 +68,29 @@ class Metadata extends AbstractService
         return false;
     }
 
+    /**
+     * Sets the LPA's metadata
+     *
+     * @param string $lpaId
+     * @param array $metadata
+     * @return boolean
+     */
+    private function setMetaData($lpaId, array $metadata)
+    {
+        $this->lpaApplicationService->updateApplication($lpaId, [
+            'metadata' => $metadata
+        ]);
+
+        return true;
+    }
+
     private function setMetadataByKey(Lpa $lpa, $key, $value = true)
     {
         if (!array_key_exists($key, $lpa->metadata) || $lpa->metadata[$key] !== $value) {
             //  Update the value
             $lpa->metadata[$key] = $value;
 
-            if (!$this->getLpaApplicationService()->setMetaData($lpa->id, $lpa->metadata)) {
+            if (!$this->setMetaData($lpa->id, $lpa->metadata)) {
                 throw new RuntimeException(sprintf('API client failed to set metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
             }
 
@@ -81,5 +98,10 @@ class Metadata extends AbstractService
         }
 
         return false;
+    }
+
+    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService)
+    {
+        $this->lpaApplicationService = $lpaApplicationService;
     }
 }

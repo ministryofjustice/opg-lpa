@@ -4,12 +4,9 @@ namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\AdminController;
 use Application\Form\Admin\SystemMessageForm;
-use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
-use DateTime;
 use Mockery;
 use Mockery\MockInterface;
-use OpgTest\Lpa\DataModel\FixturesData;
 use Zend\Form\Element;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
@@ -17,10 +14,6 @@ use Zend\View\Model\ViewModel;
 
 class AdminControllerTest extends AbstractControllerTest
 {
-    /**
-     * @var AdminController
-     */
-    private $controller;
     /**
      * @var MockInterface|SystemMessageForm
      */
@@ -31,17 +24,23 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(AdminController::class);
+        parent::setUp();
 
         $this->systemMessageForm = Mockery::mock(SystemMessageForm::class);
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Admin\SystemMessageForm'])->andReturn($this->systemMessageForm);
+
+        //  By default set up the user as admin
+        $this->user->email->address = 'admin@test.com';
     }
 
     public function testIndexAction()
     {
+        /** @var AdminController $controller */
+        $controller = $this->getController(AdminController::class);
+
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -50,56 +49,57 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testOnDispatchEmptyEmail()
     {
+        $this->user->email->address = '';
+
+        /** @var AdminController $controller */
+        $controller = $this->getController(AdminController::class);
+
         $response = new Response();
         $event = new MvcEvent();
 
-        $this->user = FixturesData::getUser();
-        $this->user->email = ['address' => ''];
-        $this->userDetailsSession->user = $this->user;
         $this->redirect->shouldReceive('toRoute')->withArgs(['home'])->andReturn($response)->once();
 
-        $result = $this->controller->onDispatch($event);
+        $result = $controller->onDispatch($event);
 
         $this->assertEquals($response, $result);
     }
 
     public function testOnDispatchUserNotAdmin()
     {
+        $this->user->email->address = 'unit@test.com';
+
+        /** @var AdminController $controller */
+        $controller = $this->getController(AdminController::class);
+
         $response = new Response();
         $event = new MvcEvent();
 
-        $this->user = FixturesData::getUser();
-        $this->user->email = ['address' => 'notadmin@test.com'];
-        $this->userDetailsSession->user = $this->user;
         $this->redirect->shouldReceive('toRoute')->withArgs(['home'])->andReturn($response)->once();
 
-        $result = $this->controller->onDispatch($event);
+        $result = $controller->onDispatch($event);
 
         $this->assertEquals($response, $result);
     }
 
     public function testOnDispatchUserIsAdminPageNotFound()
     {
+        /** @var AdminController $controller */
+        $controller = $this->getController(AdminController::class);
+
         $event = new MvcEvent();
-        $routeMatch = $this->getRouteMatch($this->controller);
+        $routeMatch = $this->getRouteMatch($controller);
         $event->setRouteMatch($routeMatch);
         $response = new Response();
         $event->setResponse($response);
-        $this->controller->setEvent($event);
+        $controller->setEvent($event);
 
-        $this->user = FixturesData::getUser();
-        $this->user->email = ['address' => 'admin@test.com'];
-        $this->userDetailsSession->user = $this->user;
-        $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
-        $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity)->once();
-        $this->controller->setUser($this->userIdentity);
         $this->logger->shouldReceive('info')
             ->withArgs(['Request to ' . AdminController::class, $this->userIdentity->toArray()])->once();
         $routeMatch->shouldReceive('getParam')->withArgs(['action', 'not-found'])->andReturn('not-found')->once();
         $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->onDispatch($event);
+        $result = $controller->onDispatch($event);
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('Page not found', $result->getVariable('content'));
@@ -107,6 +107,9 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testSystemMessageActionGet()
     {
+        /** @var AdminController $controller */
+        $controller = $this->getController(AdminController::class);
+
         $messageElement = Mockery::mock(Element::class);
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->systemMessageForm->shouldReceive('get')->withArgs(['message'])->andReturn($messageElement)->once();
@@ -115,7 +118,7 @@ class AdminControllerTest extends AbstractControllerTest
         $messageElement->shouldReceive('setValue')->withArgs(['System unit test message'])->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->systemMessageAction();
+        $result = $controller->systemMessageAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -124,10 +127,13 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testSystemMessageActionPostInvalid()
     {
+        /** @var AdminController $controller */
+        $controller = $this->getController(AdminController::class);
+
         $this->setPostInvalid($this->systemMessageForm, $this->systemMessagePostData);
 
         /** @var ViewModel $result */
-        $result = $this->controller->systemMessageAction();
+        $result = $controller->systemMessageAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -136,6 +142,9 @@ class AdminControllerTest extends AbstractControllerTest
 
     public function testSystemMessageActionPostEmptyMessage()
     {
+        /** @var AdminController $controller */
+        $controller = $this->getController(AdminController::class);
+
         $response = new Response();
 
         $postData = $this->systemMessagePostData;
@@ -148,13 +157,16 @@ class AdminControllerTest extends AbstractControllerTest
         $this->cache->shouldReceive('removeItem')->withArgs(['system-message'])->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['home'])->andReturn($response)->once();
 
-        $result = $this->controller->systemMessageAction();
+        $result = $controller->systemMessageAction();
 
         $this->assertEquals($response, $result);
     }
 
     public function testSystemMessageActionPostMessage()
     {
+        /** @var AdminController $controller */
+        $controller = $this->getController(AdminController::class);
+
         $response = new Response();
 
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
@@ -165,7 +177,7 @@ class AdminControllerTest extends AbstractControllerTest
             ->withArgs(['system-message', $this->systemMessagePostData['message']])->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['home'])->andReturn($response)->once();
 
-        $result = $this->controller->systemMessageAction();
+        $result = $controller->systemMessageAction();
 
         $this->assertEquals($response, $result);
     }

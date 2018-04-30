@@ -3,16 +3,20 @@
 namespace Application\Model\Service;
 
 use Application\Model\Service\AddressLookup\PostcodeInfo;
+use Application\Model\Service\ApiClient\ApiClientAwareInterface;
+use Application\Model\Service\ApiClient\Client as ApiClient;
+use Application\Model\Service\AuthClient\AuthClientAwareInterface;
+use Application\Model\Service\AuthClient\Client as AuthClient;
+use Application\Model\Service\Lpa\Applicant;
 use Application\Model\Service\Lpa\Communication;
+use Application\Model\Service\Lpa\Metadata;
+use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\User\Details;
-use Application\Model\Service\User\PasswordReset;
 use Exception;
 use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ServiceAbstractFactory implements AbstractFactoryInterface
 {
@@ -22,8 +26,8 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $additionalServices = [
-        PostcodeInfo::class => [
-            'setPostcodeInfoClient' => 'PostcodeInfoClient'
+        Applicant::class => [
+            'setLpaApplicationService' => 'LpaApplicationService',
         ],
         Communication::class => [
             'setUserDetailsSession' => 'UserDetailsSession'
@@ -31,8 +35,14 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         Details::class => [
             'setUserDetailsSession' => 'UserDetailsSession'
         ],
-        PasswordReset::class => [
-            'setRegisterService' => 'Register'
+        Metadata::class => [
+            'setLpaApplicationService' => 'LpaApplicationService',
+        ],
+        PostcodeInfo::class => [
+            'setPostcodeInfoClient' => 'PostcodeInfoClient'
+        ],
+        ReplacementAttorneyCleanup::class => [
+            'setLpaApplicationService' => 'LpaApplicationService',
         ],
     ];
 
@@ -72,22 +82,34 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
 
         $serviceName = $requestedName;
 
+        $authenticationService = $container->get('AuthenticationService');
+        $config = $container->get('Config');
+
         if (is_subclass_of($serviceName, AbstractEmailService::class)) {
             $service = new $serviceName(
-                $container->get('ApiClient'),
-                $container->get('LpaApplicationService'),
-                $container->get('AuthenticationService'),
-                $container->get('Config'),
+                $authenticationService,
+                $config,
                 $container->get('TwigEmailRenderer'),
                 $container->get('MailTransport')
             );
         } else {
             $service = new $serviceName(
-                $container->get('ApiClient'),
-                $container->get('LpaApplicationService'),
-                $container->get('AuthenticationService'),
-                $container->get('Config')
+                $authenticationService,
+                $config
             );
+        }
+
+        //  Inject the API and/or Auth clients if necessary
+        if ($service instanceof ApiClientAwareInterface) {
+            /** @var ApiClient $apiClient */
+            $apiClient = $container->get('ApiClient');
+            $service->setApiClient($apiClient);
+        }
+
+        if ($service instanceof AuthClientAwareInterface) {
+            /** @var AuthClient $authClient */
+            $authClient = $container->get('AuthClient');
+            $service->setAuthClient($authClient);
         }
 
         //  If required load any additional services into the resource

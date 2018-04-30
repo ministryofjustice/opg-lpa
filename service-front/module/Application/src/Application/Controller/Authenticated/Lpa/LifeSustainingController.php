@@ -37,7 +37,7 @@ class LifeSustainingController extends AbstractLpaController
                     $primaryAttorneyDecisions->canSustainLife = $canSustainLife;
 
                     // persist data
-                    if (!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa->id, $primaryAttorneyDecisions)) {
+                    if (!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa, $primaryAttorneyDecisions)) {
                         throw new RuntimeException('API client failed to set life sustaining for id: ' . $lpa->id);
                     }
                 }
@@ -50,6 +50,8 @@ class LifeSustainingController extends AbstractLpaController
             }
         }
 
-        return new ViewModel(['form'=>$form]);
+        return new ViewModel([
+            'form' => $form
+        ]);
     }
 }

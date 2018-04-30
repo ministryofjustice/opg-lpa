@@ -80,7 +80,7 @@ class CheckoutController extends AbstractLpaController
         //  Verify that the payment amount associated with the LPA is corrected based on the fees right now
         $this->verifyLpaPaymentAmount($lpa);
 
-        if (!$this->getLpaApplicationService()->setPayment($lpa->id, $lpa->payment)) {
+        if (!$this->getLpaApplicationService()->setPayment($lpa, $lpa->payment)) {
             throw new RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
         }
 
@@ -114,7 +114,7 @@ class CheckoutController extends AbstractLpaController
         //---
 
         // Lock the LPA form future changes.
-        $this->getLpaApplicationService()->lockLpa($this->getLpa()->id);
+        $this->getLpaApplicationService()->lockLpa($lpa);
 
         //---
 
@@ -220,7 +220,7 @@ class CheckoutController extends AbstractLpaController
 
         $lpa->payment->gatewayReference = $payment->payment_id;
 
-        $this->getLpaApplicationService()->updatePayment($lpa);
+        $this->getLpaApplicationService()->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
         //---
 
@@ -250,7 +250,7 @@ class CheckoutController extends AbstractLpaController
                 $lpaPayment->gatewayReference = null;
 
                 //  Save the LPA to update the details
-                if (!$this->getLpaApplicationService()->setPayment($lpa->id, $lpaPayment)) {
+                if (!$this->getLpaApplicationService()->setPayment($lpa, $lpaPayment)) {
                     throw new RuntimeException('API client failed to set payment details for id: '.$lpa->id . ' in CheckoutController');
                 }
             }
@@ -310,7 +310,7 @@ class CheckoutController extends AbstractLpaController
         $lpa->payment->date = new \DateTime();
         $lpa->payment->email = new EmailAddress(['address'=>strtolower($paymentResponse->email)]);
 
-        $this->getLpaApplicationService()->updatePayment($lpa);
+        $this->getLpaApplicationService()->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
         //---
 

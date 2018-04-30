@@ -3,14 +3,14 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
-use Application\Model\Service\User\Details;
+use Application\Model\Service\User\Details as UserService;
 
 class VerifyEmailAddressController extends AbstractBaseController
 {
     /**
-     * @var Details
+     * @var UserService
      */
-    private $aboutYouDetails;
+    private $userService;
 
     public function verifyAction()
     {
@@ -24,12 +24,12 @@ class VerifyEmailAddressController extends AbstractBaseController
         //---------------------------
 
         $token = $this->params()->fromRoute('token');
-        
-        if ($this->aboutYouDetails->updateEmailUsingToken( $token ) === true) {
+
+        if ($this->userService->updateEmailUsingToken( $token ) === true) {
 
             $this->flashMessenger()
                 ->addSuccessMessage('Your email address was successfully updated. Please login with your new address.');
-            
+
         } else {
             $this->flashMessenger()
                 ->addErrorMessage('There was an error updating your email address');
@@ -39,8 +39,8 @@ class VerifyEmailAddressController extends AbstractBaseController
         return $this->redirect()->toRoute( 'login' );
     }
 
-    public function setAboutYouDetails(Details $aboutYouDetails)
+    public function setUserService(UserService $userService)
     {
-        $this->aboutYouDetails = $aboutYouDetails;
+        $this->userService = $userService;
     }
 }

@@ -8,8 +8,6 @@ use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
@@ -17,48 +15,30 @@ use Zend\View\Model\ViewModel;
 class TypeControllerTest extends AbstractControllerTest
 {
     /**
-     * @var TypeController
-     */
-    private $controller;
-    /**
      * @var MockInterface|TypeForm
      */
     private $form;
-    /**
-     * @var Lpa
-     */
-    private $lpa;
     private $postData = [
         'type' => Document::LPA_TYPE_HW
     ];
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(TypeController::class);
+        parent::setUp();
 
         $this->form = Mockery::mock(TypeForm::class);
-        $this->lpa = FixturesData::getPfLpa();
         $this->formElementManager->shouldReceive('get')
             ->withArgs(['Application\Form\Lpa\TypeForm'])->andReturn($this->form);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage A LPA has not been set
-     */
-    public function testIndexActionNoLpa()
-    {
-        $this->request->shouldReceive('isPost')->andReturn(false)->once();
-
-        $this->controller->indexAction();
-    }
-
     public function testIndexActionGet()
     {
-        $this->controller->setLpa($this->lpa);
+        /** @var TypeController $controller */
+        $controller = $this->getController(TypeController::class);
+
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')->withArgs([$this->lpa->document->flatten()])->once();
-        $this->setMatchedRouteName($this->controller, 'lpa/form-type');
+        $this->setMatchedRouteName($controller, 'lpa/form-type');
         $this->url->shouldReceive('fromRoute')->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])
             ->andReturn('lpa/donor?lpa-id=' .$this->lpa->id)->once();
         $this->url->shouldReceive('fromRoute')
@@ -66,7 +46,7 @@ class TypeControllerTest extends AbstractControllerTest
             ->andReturn('user/dashboard/create-lpa?lpa-id=' .$this->lpa->id)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -79,14 +59,14 @@ class TypeControllerTest extends AbstractControllerTest
 
     public function testIndexActionGetNoType()
     {
-        $this->lpa = new Lpa();
-        $this->lpa->id = 123;
         $this->lpa->document = new Document();
 
-        $this->controller->setLpa($this->lpa);
+        /** @var TypeController $controller */
+        $controller = $this->getController(TypeController::class);
+
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')->withArgs([$this->lpa->document->flatten()])->once();
-        $this->setMatchedRouteName($this->controller, 'lpa/form-type');
+        $this->setMatchedRouteName($controller, 'lpa/form-type');
         $this->url->shouldReceive('fromRoute')->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])
             ->andReturn('lpa/donor?lpa-id=' .$this->lpa->id)->once();
         $this->url->shouldReceive('fromRoute')
@@ -94,7 +74,7 @@ class TypeControllerTest extends AbstractControllerTest
             ->andReturn('user/dashboard/create-lpa?lpa-id=' .$this->lpa->id)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -110,9 +90,11 @@ class TypeControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
-        $this->controller->setLpa($this->lpa);
+        /** @var TypeController $controller */
+        $controller = $this->getController(TypeController::class);
+
         $this->setPostInvalid($this->form);
-        $this->setMatchedRouteName($this->controller, 'lpa/form-type');
+        $this->setMatchedRouteName($controller, 'lpa/form-type');
         $this->url->shouldReceive('fromRoute')->withArgs(['lpa/donor', ['lpa-id' => $this->lpa->id]])
             ->andReturn('lpa/donor?lpa-id=' .$this->lpa->id)->once();
         $this->url->shouldReceive('fromRoute')
@@ -120,7 +102,7 @@ class TypeControllerTest extends AbstractControllerTest
             ->andReturn('user/dashboard/create-lpa?lpa-id=' .$this->lpa->id)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -137,29 +119,33 @@ class TypeControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostFailed()
     {
-        $this->controller->setLpa($this->lpa);
+        /** @var TypeController $controller */
+        $controller = $this->getController(TypeController::class);
+
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setType')
-            ->withArgs([$this->lpa->id, $this->postData['type']])->andReturn(false)->once();
+            ->withArgs([$this->lpa, $this->postData['type']])->andReturn(false)->once();
 
-        $this->controller->indexAction();
+        $controller->indexAction();
     }
 
     public function testIndexActionPostSuccess()
     {
+        /** @var TypeController $controller */
+        $controller = $this->getController(TypeController::class);
+
         $response = new Response();
 
-        $this->controller->setLpa($this->lpa);
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setType')
-            ->withArgs([$this->lpa->id, $this->postData['type']])->andReturn(true)->once();
+            ->withArgs([$this->lpa, $this->postData['type']])->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setMatchedRouteNameHttp($this->controller, 'lpa/form-type');
+        $this->setMatchedRouteNameHttp($controller, 'lpa/form-type');
         $this->setRedirectToRoute('lpa/donor', $this->lpa, $response);
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }

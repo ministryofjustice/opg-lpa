@@ -3,12 +3,18 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
+use Application\Model\Service\Lpa\Applicant as ApplicantService;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Zend\View\Model\ViewModel;
 use RuntimeException;
 
 class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
 {
+    /**
+     * @var ApplicantService
+     */
+    private $applicantService;
+
     public function indexAction()
     {
         $lpa = $this->getLpa();
@@ -44,12 +50,13 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
                     $primaryAttorneyDecisions->howDetails = $howDetails;
 
                     // persist data
-                    if (!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa->id, $primaryAttorneyDecisions)) {
+                    if (!$this->getLpaApplicationService()->setPrimaryAttorneyDecisions($lpa, $primaryAttorneyDecisions)) {
                         throw new RuntimeException('API client failed to set primary attorney decisions for id: ' . $lpa->id);
                     }
 
                     $this->cleanUpReplacementAttorneyDecisions();
-                    $this->cleanUpApplicant();
+
+                    $this->applicantService->cleanUp($lpa);
                 }
 
                 return $this->moveToNextRoute();
@@ -58,6 +65,13 @@ class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
             $form->bind($primaryAttorneyDecisions->flatten());
         }
 
-        return new ViewModel(['form' => $form]);
+        return new ViewModel([
+            'form' => $form
+        ]);
+    }
+
+    public function setApplicantService(ApplicantService $applicantService)
+    {
+        $this->applicantService = $applicantService;
     }
 }

@@ -4,13 +4,9 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Form\Lpa\ReuseDetailsForm;
-use Application\Model\Service\Authentication\Identity\User;
 use ApplicationTest\Controller\AbstractControllerTest;
-use DateTime;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
 use Zend\Router\RouteMatch;
@@ -19,31 +15,28 @@ use Zend\View\Model\ViewModel;
 class ReuseDetailsControllerTest extends AbstractControllerTest
 {
     /**
-     * @var TestableReuseDetailsController
-     */
-    private $controller;
-    /**
      * @var MockInterface|ReuseDetailsForm
      */
     private $form;
-    /**
-     * @var Lpa
-     */
-    private $lpa;
     private $postData = [
         'reuse-details' => 1
     ];
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(TestableReuseDetailsController::class);
-        $this->controller->setRouter($this->router);
-
-        $this->user = FixturesData::getUser();
-        $this->userIdentity = new User($this->user->id, 'token', 60 * 60, new DateTime());
+        parent::setUp();
 
         $this->form = Mockery::mock(ReuseDetailsForm::class);
-        $this->lpa = FixturesData::getPfLpa();
+    }
+
+    protected function getController(string $controllerName)
+    {
+        /** @var ReuseDetailsController $controller */
+        $controller = parent::getController($controllerName);
+
+        $controller->setRouter($this->router);
+
+        return $controller;
     }
 
     /**
@@ -52,10 +45,12 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
      */
     public function testIndexActionRequiredDataMissing()
     {
+        $controller = $this->getController(TestableReuseDetailsController::class);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->params->shouldReceive('fromQuery')->once();
 
-        $this->controller->indexAction();
+        $controller->indexAction();
     }
 
     /**
@@ -64,33 +59,36 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
      */
     public function testIndexActionGetMissingParameters()
     {
+        $controller = $this->getController(TestableReuseDetailsController::class);
+
         $queryParameters = [
             'calling-url' => '',
             'include-trusts' => null,
             'actor-name' => '',
         ];
-        $this->controller->setLpa($this->lpa);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
 
-        $this->controller->indexAction();
+        $controller->indexAction();
     }
 
     public function testIndexActionGet()
     {
+        $controller = $this->getController(TestableReuseDetailsController::class);
+
         $queryParameters = [
             'calling-url' => '/lpa/' . $this->lpa->id . '/donor/add',
             'include-trusts' => '0',
             'actor-name' => 'Donor',
         ];
-        $this->controller->setLpa($this->lpa);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
-        $this->userDetailsSession->user = $this->user;
 
         $this->formElementManager->shouldReceive('get')->withArgs([
             'Application\Form\Lpa\ReuseDetailsForm',
-            ['actorReuseDetails' => $this->controller->testGetActorReuseDetails(false, false)]
+            ['actorReuseDetails' => $controller->testGetActorReuseDetails(false, false)]
         ])->andReturn($this->form);
 
         $this->url->shouldReceive('fromRoute')
@@ -102,7 +100,7 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -113,19 +111,21 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostInvalid()
     {
+        $controller = $this->getController(TestableReuseDetailsController::class);
+
         $queryParameters = [
             'calling-url' => '/lpa/' . $this->lpa->id . '/donor/add',
             'include-trusts' => '0',
             'actor-name' => 'Donor',
         ];
-        $this->controller->setLpa($this->lpa);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
         $this->userDetailsSession->user = $this->user;
 
         $this->formElementManager->shouldReceive('get')->withArgs([
             'Application\Form\Lpa\ReuseDetailsForm',
-            ['actorReuseDetails' => $this->controller->testGetActorReuseDetails(false, false)]
+            ['actorReuseDetails' => $controller->testGetActorReuseDetails(false, false)]
         ])->andReturn($this->form);
 
         $this->url->shouldReceive('fromRoute')
@@ -137,7 +137,7 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
         $this->setPostInvalid($this->form);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -152,19 +152,21 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
      */
     public function testIndexActionPostInvalidRouteMatch()
     {
+        $controller = $this->getController(TestableReuseDetailsController::class);
+
         $queryParameters = [
             'calling-url' => '/lpa/' . $this->lpa->id . '/donor/add',
             'include-trusts' => '0',
             'actor-name' => 'Donor',
         ];
-        $this->controller->setLpa($this->lpa);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
         $this->userDetailsSession->user = $this->user;
 
         $this->formElementManager->shouldReceive('get')->withArgs([
             'Application\Form\Lpa\ReuseDetailsForm',
-            ['actorReuseDetails' => $this->controller->testGetActorReuseDetails(false, false)]
+            ['actorReuseDetails' => $controller->testGetActorReuseDetails(false, false)]
         ])->andReturn($this->form);
 
         $this->url->shouldReceive('fromRoute')
@@ -178,7 +180,7 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
         $this->router->shouldReceive('match')->andReturn(null)->once();
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
@@ -189,6 +191,8 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
 
     public function testIndexActionPostPrimaryAttorneyAdd()
     {
+        $controller = $this->getController(TestableReuseDetailsController::class);
+
         $response = new Response();
 
         $queryParameters = [
@@ -196,14 +200,14 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
             'include-trusts' => '0',
             'actor-name' => 'Donor',
         ];
-        $this->controller->setLpa($this->lpa);
+
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
         $this->userDetailsSession->user = $this->user;
 
         $this->formElementManager->shouldReceive('get')->withArgs([
             'Application\Form\Lpa\ReuseDetailsForm',
-            ['actorReuseDetails' => $this->controller->testGetActorReuseDetails(false, false)]
+            ['actorReuseDetails' => $controller->testGetActorReuseDetails(false, false)]
         ])->andReturn($this->form);
 
         $this->url->shouldReceive('fromRoute')
@@ -225,7 +229,7 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
             'callingUrl'        => '/lpa/' . $this->lpa->id . '/primary-attorney/add',
         ]])->andReturn($response)->once();
 
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertEquals($response, $result);
     }

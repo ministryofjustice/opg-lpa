@@ -3,29 +3,45 @@
 namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\StatsController;
+use Application\Model\Service\Stats\Stats as StatsService;
 use ApplicationTest\Controller\AbstractControllerTest;
+use Mockery;
+use Mockery\MockInterface;
 use Zend\View\Model\ViewModel;
 
 class StatsControllerTest extends AbstractControllerTest
 {
     /**
-     * @var StatsController
+     * @var MockInterface|StatsService
      */
-    private $controller;
+    private $statsService;
 
     public function setUp()
     {
-        $this->controller = parent::controllerSetUp(StatsController::class);
-        $this->controller->setLpaApplicationService($this->lpaApplicationService);
+        parent::setUp();
+
+        $this->statsService = Mockery::mock(StatsService::class);
+        $this->statsService->shouldReceive('getAuthStats')->andReturn($this->getAuthStats())->once();
+        $this->statsService->shouldReceive('getApiStats')->andReturn($this->getApiStats())->once();
+    }
+
+    protected function getController(string $controllerName)
+    {
+        /** @var StatsController $controller */
+        $controller = parent::getController($controllerName);
+
+        $controller->setStatsService($this->statsService);
+
+        return $controller;
     }
 
     public function testIndexAction()
     {
-        $this->lpaApplicationService->shouldReceive('getAuthStats')->andReturn($this->getAuthStats())->once();
-        $this->lpaApplicationService->shouldReceive('getApiStats')->andReturn($this->getApiStats())->once();
+        /** @var StatsController $controller */
+        $controller = $this->getController(StatsController::class);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());

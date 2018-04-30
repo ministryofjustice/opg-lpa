@@ -3,15 +3,15 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
-use Application\Model\Service\User\PasswordReset;
+use Application\Model\Service\User\Details as UserService;
 use Zend\View\Model\ViewModel;
 
 class ForgotPasswordController extends AbstractBaseController
 {
     /**
-     * @var PasswordReset
+     * @var UserService
      */
-    private $passwordResetService;
+    private $userService;
 
     /**
      * GET: Display's the 'Enter your email address' form.
@@ -38,7 +38,7 @@ class ForgotPasswordController extends AbstractBaseController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $result = $this->passwordResetService->requestPasswordResetEmail($form->getData()['email']);
+                $result = $this->userService->requestPasswordResetEmail($form->getData()['email']);
 
                 //We do not want to confirm or deny the existence of a registered user so do not check the result.
                 //Exceptions would still be propagated
@@ -98,7 +98,7 @@ class ForgotPasswordController extends AbstractBaseController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $result = $this->passwordResetService->setNewPassword($token, $form->getData()['password']);
+                $result = $this->userService->setNewPassword($token, $form->getData()['password']);
 
                 // if all good, direct them back to login.
                 if ($result === true) {
@@ -124,8 +124,8 @@ class ForgotPasswordController extends AbstractBaseController
         );
     }
 
-    public function setPasswordResetService(PasswordReset $passwordResetService)
+    public function setUserService(UserService $userService)
     {
-        $this->passwordResetService = $passwordResetService;
+        $this->userService = $userService;
     }
 }

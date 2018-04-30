@@ -9,7 +9,6 @@ use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
-use Application\Model\Service\Lpa\ApplicantCleanup;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
@@ -24,11 +23,14 @@ use ApplicationTest\Controller\Authenticated\Lpa\ReplacementAttorneyControllerTe
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use Opg\Lpa\DataModel\Common\EmailAddress;
+use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\Logger;
+use OpgTest\Lpa\DataModel\FixturesData;
 use Zend\Cache\Storage\Adapter\Memory;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\ResponseCollection;
@@ -49,12 +51,11 @@ use Zend\Router\Http\RouteMatch as HttpRouteMatch;
 use Zend\Cache\Storage\StorageInterface;
 use Zend\Router\RouteStackInterface;
 use Zend\ServiceManager\AbstractPluginManager;
-use Zend\Session\AbstractContainer;
 use Zend\Session\Container;
 use Zend\Session\Storage\ArrayStorage;
-use Zend\Stdlib\ArrayObject;
 use Zend\Stdlib\Parameters;
 use Zend\Uri\Uri;
+use DateTime;
 
 abstract class AbstractControllerTest extends MockeryTestCase
 {
@@ -62,6 +63,10 @@ abstract class AbstractControllerTest extends MockeryTestCase
      * @var MockInterface|Logger
      */
     protected $logger;
+    /**
+     * @var Lpa
+     */
+    protected $lpa;
     /**
      * @var MockInterface|AuthenticationService
      */
@@ -131,7 +136,7 @@ abstract class AbstractControllerTest extends MockeryTestCase
      */
     protected $authenticationAdapter;
     /**
-     * @var AbstractContainer
+     * @var Container
      */
     protected $userDetailsSession;
     /**
@@ -142,6 +147,10 @@ abstract class AbstractControllerTest extends MockeryTestCase
      * @var UserIdentity
      */
     protected $userIdentity = null;
+    /**
+     * @var MockInterface|ReplacementAttorneyCleanup
+     */
+    protected $replacementAttorneyCleanup;
     /**
      * @var MockInterface|Request
      */
@@ -165,17 +174,16 @@ abstract class AbstractControllerTest extends MockeryTestCase
     /**
      * @var MockInterface|Details
      */
-    protected $aboutYouDetails;
+    protected $userDetails;
 
     /**
-     * @param string $controllerName the class of controller to create
-     * @return AbstractController
+     * Set up the services in default configuration - these can be adapted in the subclasses before getting the controller to test
      */
-    public function controllerSetUp(string $controllerName)
+    public function setUp()
     {
-        $this->logger = Mockery::mock(Logger::class);
+        $this->lpa = FixturesData::getPfLpa();
 
-        $this->authenticationService = Mockery::mock(AuthenticationService::class);
+        $this->logger = Mockery::mock(Logger::class);
 
         $this->pluginManager = Mockery::mock(PluginManager::class);
         $this->pluginManager->shouldReceive('setController');
@@ -211,6 +219,18 @@ abstract class AbstractControllerTest extends MockeryTestCase
         $this->responseCollection = Mockery::mock(ResponseCollection::class);
         $this->eventManager->shouldReceive('triggerEventUntil')->andReturn($this->responseCollection);
 
+        $this->formElementManager = Mockery::mock(AbstractPluginManager::class);
+
+        $this->storage = new ArrayStorage();
+
+        $this->sessionManager = Mockery::mock(SessionManager::class);
+        $this->sessionManager->shouldReceive('getStorage')->andReturn($this->storage);
+
+        $this->user = $this->getUserDetails();
+
+        $this->setIdentity(new UserIdentity($this->user->id, 'token', 60 * 60, new DateTime('today midnight')));
+
+        //  Config array merged so it can be updated in calling test class if required
         $this->config = [
             'version' => [
                 'tag' => '1.2.3.4-test',
@@ -250,19 +270,11 @@ abstract class AbstractControllerTest extends MockeryTestCase
             ]
         ];
 
-        $this->formElementManager = Mockery::mock(AbstractPluginManager::class);
-
-        $this->storage = new ArrayStorage();
-
-        $this->sessionManager = Mockery::mock(SessionManager::class);
-        $this->sessionManager->shouldReceive('getStorage')->andReturn($this->storage);
+        $this->cache = Mockery::mock(StorageInterface::class);
 
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
 
-        $this->authenticationAdapter = Mockery::mock(LpaAuthAdapter::class);
-
-        $this->userDetailsSession = new Container();
-        $this->userDetailsSession->user = $this->user;
+        $this->userDetails = Mockery::mock(Details::class);
 
         $this->request = Mockery::mock(Request::class);
 
@@ -270,18 +282,53 @@ abstract class AbstractControllerTest extends MockeryTestCase
 
         $this->apiClient = Mockery::mock(Client::class);
 
-        $this->cache = Mockery::mock(StorageInterface::class);
-
-        $this->metadata = Mockery::mock(Metadata::class);
-
         $this->router = Mockery::mock(RouteStackInterface::class);
+    }
 
-        $this->aboutYouDetails = Mockery::mock(Details::class);
+    /**
+     * Set up the identity and the authentication service responses
+     *
+     * @param UserIdentity|null $identity
+     */
+    protected function setIdentity(UserIdentity $identity = null)
+    {
+        $this->userIdentity = $identity;
 
+        //  Mock or remock the authentication service
+        $this->authenticationService = Mockery::mock(AuthenticationService::class);
+
+        $this->authenticationService->shouldReceive('hasIdentity')->andReturn(!is_null($this->userIdentity));
+        $this->authenticationService->shouldReceive('getIdentity')->andReturn($this->userIdentity);
+    }
+
+    /**
+     * @param string $controllerName
+     * @return AbstractBaseController
+     */
+    protected function getController(string $controllerName)
+    {
         /** @var AbstractBaseController $controller */
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
+            $this->userDetailsSession = new Container();
+            $this->userDetailsSession->user = $this->user;
+
             if (is_subclass_of($controllerName, AbstractLpaController::class)) {
+                $lpaId = ($this->lpa instanceof Lpa ? $this->lpa->id : null);
+
+                //  If there is no identity then the getApplication call will not be made in the abstract contructor
+                if (!is_null($this->userIdentity)) {
+                    if ($this->lpa instanceof Lpa) {
+                        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpaId])->andReturn($this->lpa)->once();
+                    } else {
+                        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpaId])->andReturn(false)->once();
+                    }
+                }
+
+                $this->replacementAttorneyCleanup = Mockery::mock(ReplacementAttorneyCleanup::class);
+                $this->metadata = Mockery::mock(Metadata::class);
+
                 $controller = new $controllerName(
+                    $lpaId,
                     $this->formElementManager,
                     $this->sessionManager,
                     $this->authenticationService,
@@ -289,10 +336,8 @@ abstract class AbstractControllerTest extends MockeryTestCase
                     $this->cache,
                     $this->userDetailsSession,
                     $this->lpaApplicationService,
-                    $this->aboutYouDetails,
-                    $this->authenticationAdapter,
-                    new ApplicantCleanup(),
-                    new ReplacementAttorneyCleanup(),
+                    $this->userDetails,
+                    $this->replacementAttorneyCleanup,
                     $this->metadata
                 );
             } else {
@@ -304,8 +349,7 @@ abstract class AbstractControllerTest extends MockeryTestCase
                     $this->cache,
                     $this->userDetailsSession,
                     $this->lpaApplicationService,
-                    $this->aboutYouDetails,
-                    $this->authenticationAdapter
+                    $this->userDetails
                 );
             }
         } else {
@@ -600,15 +644,18 @@ abstract class AbstractControllerTest extends MockeryTestCase
     {
         $url = $this->getLpaUrl($lpa, $route, $extraQueryParameters, $fragment);
         $queryParameters = ['lpa-id' => $lpa->id];
+
         if (is_array($extraQueryParameters)) {
             $queryParameters = array_merge($queryParameters, $extraQueryParameters);
         }
+
         if (is_array($fragment)) {
             $this->url->shouldReceive('fromRoute')
                 ->withArgs([$route, $queryParameters, $fragment])->andReturn($url)->once();
         } else {
             $this->url->shouldReceive('fromRoute')->withArgs([$route, $queryParameters])->andReturn($url)->once();
         }
+
         return $url;
     }
 
@@ -670,5 +717,38 @@ abstract class AbstractControllerTest extends MockeryTestCase
     public function getExpectedRouteOptions($route)
     {
         return [];
+    }
+
+    /**
+     * Get sample user details
+     *
+     * @param bool $newDetails
+     * @return User
+     */
+    private function getUserDetails($newDetails = false)
+    {
+        $user = new User();
+
+        if (!$newDetails) {
+            //  Just set a name for the user details to be considered existing
+            //  But user the user ID from the LPA fixture data
+            $user->id = $this->lpa->user;
+
+            $user->createdAt = new DateTime();
+
+            $user->updatedAt = new DateTime();
+
+            $user->name = new Name([
+                'title' => 'Mrs',
+                'first' => 'New',
+                'last'  => 'User',
+            ]);
+
+            $user->email = new EmailAddress([
+                'address' => 'unit@test.com',
+            ]);
+        }
+
+        return $user;
     }
 }

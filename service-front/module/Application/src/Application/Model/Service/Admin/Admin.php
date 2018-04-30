@@ -3,22 +3,18 @@
 namespace Application\Model\Service\Admin;
 
 use Application\Model\Service\AbstractService;
-use Application\Model\Service\ApiClient\Client as ApiClient;
+use Application\Model\Service\ApiClient\ApiClientAwareInterface;
+use Application\Model\Service\ApiClient\ApiClientTrait;
+use Application\Model\Service\AuthClient\AuthClientAwareInterface;
+use Application\Model\Service\AuthClient\AuthClientTrait;
 use DateTime;
 use DateTimeZone;
 use Exception;
 
-class Admin extends AbstractService
+class Admin extends AbstractService implements ApiClientAwareInterface, AuthClientAwareInterface
 {
-    private $client;
-
-    /**
-     * @param ApiClient $client
-     */
-    public function __construct(ApiClient $client)
-    {
-        $this->client = $client;
-    }
+    use ApiClientTrait;
+    use AuthClientTrait;
 
     /**
      * @param string $email
@@ -26,28 +22,41 @@ class Admin extends AbstractService
      */
     public function searchUsers(string $email)
     {
-        $result = $this->client->searchUsers($email);
+        $response = $this->authClient->httpGet('/v1/users/search', ['email' => $email]);
 
+        if ($response->getStatusCode() == 200) {
+            $result = json_decode($response->getBody(), true);
 
-        if ($result !== false) {
-            $result = $this->parseDateTime($result, 'lastLoginAt');
-            $result = $this->parseDateTime($result, 'updatedAt');
-            $result = $this->parseDateTime($result, 'createdAt');
-            $result = $this->parseDateTime($result, 'activatedAt');
-            $result = $this->parseDateTime($result, 'deletedAt');
+            if ($result !== false) {
+                $result = $this->parseDateTime($result, 'lastLoginAt');
+                $result = $this->parseDateTime($result, 'updatedAt');
+                $result = $this->parseDateTime($result, 'createdAt');
+                $result = $this->parseDateTime($result, 'activatedAt');
+                $result = $this->parseDateTime($result, 'deletedAt');
 
-            if (array_key_exists('userId', $result) && $result['isActive'] === true) {
-                $numberOfLpas = 0;
+                if (array_key_exists('userId', $result) && $result['isActive'] === true) {
+                    $numberOfLpas = 0;
 
-                try {
-                    $numberOfLpas = $this->client->getApplicationCount($result['userId']);
-                } catch (Exception $ignore) {}
+                    try {
+                        $response = $this->apiClient->httpGet(sprintf('/v2/users/%s/applications', $result['userId']), [
+                            'page' => 1,
+                            'perPage' => 1,
+                        ]);
 
-                $result['numberOfLpas'] = $numberOfLpas;
+                        if ($response->getStatusCode() == 200) {
+                            $body = json_decode($response->getBody(), true);
+                            $numberOfLpas = $body['total'];
+                        }
+                    } catch (Exception $ignore) {}
+
+                    $result['numberOfLpas'] = $numberOfLpas;
+                }
+
+                return $result;
             }
         }
 
-        return $result;
+        return false;
     }
 
     /**

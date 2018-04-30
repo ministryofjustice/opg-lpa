@@ -12,29 +12,30 @@ use Zend\View\Model\ViewModel;
 class GuidanceControllerTest extends AbstractControllerTest
 {
     /**
-     * @var GuidanceController
-     */
-    private $controller;
-    /**
      * @var MockInterface|Guidance
      */
     private $guidanceService;
 
-    public function setUp()
+    protected function getController(string $controllerName)
     {
-        $this->controller = parent::controllerSetUp(GuidanceController::class);
+        /** @var GuidanceController $controller */
+        $controller = parent::getController(GuidanceController::class);
 
         $this->guidanceService = Mockery::mock(Guidance::class);
-        $this->controller->setGuidanceService($this->guidanceService);
+        $controller->setGuidanceService($this->guidanceService);
+
+        return $controller;
     }
 
     public function testIndexActionIsXmlHttpRequestTrue()
     {
+        $controller = $this->getController(GuidanceController::class);
+
         $this->guidanceService->shouldReceive('parseMarkdown')->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('guidance/opg-help-content.twig', $result->getTemplate());
@@ -42,11 +43,13 @@ class GuidanceControllerTest extends AbstractControllerTest
 
     public function testIndexActionIsXmlHttpRequestFalse()
     {
+        $controller = $this->getController(GuidanceController::class);
+
         $this->guidanceService->shouldReceive('parseMarkdown')->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false);
 
         /** @var ViewModel $result */
-        $result = $this->controller->indexAction();
+        $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('guidance/opg-help-with-layout.twig', $result->getTemplate());

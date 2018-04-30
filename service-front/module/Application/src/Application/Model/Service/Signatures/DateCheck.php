@@ -2,13 +2,12 @@
 
 namespace Application\Model\Service\Signatures;
 
-use Application\Model\Service\AbstractService;
 use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Date\IDateService;
 use DateTime;
 use InvalidArgumentException;
 
-class DateCheck extends AbstractService
+class DateCheck
 {
     /**
      * Check that the donor, certificate provider, and attorneys

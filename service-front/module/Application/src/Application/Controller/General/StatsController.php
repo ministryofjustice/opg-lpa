@@ -3,33 +3,31 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Model\Service\Stats\Stats as StatsService;
 use Zend\View\Model\ViewModel;
 
 class StatsController extends AbstractBaseController
 {
     /**
-     * @var LpaApplicationService
+     * @var StatsService
      */
-    private $lpaApplicationService;
+    private $statsService;
 
     public function indexAction()
     {
-        $applicationService = $this->lpaApplicationService;
+        $userStats = $this->statsService->getAuthStats();
 
-        // Get the user stats from auth service
-        $userStats = $applicationService->getAuthStats();
+        //  Get the API stats
+        $stats = $this->statsService->getApiStats();
 
-        // Get all other stats from api
-        $stats = $applicationService->getApiStats();
-
+        //  Set the auth stats in the API stats
         $stats['users'] = $userStats;
 
         return new ViewModel($stats);
     }
 
-    public function setLpaApplicationService(LpaApplicationService $lpaApplicationService)
+    public function setStatsService(StatsService $statsService)
     {
-        $this->lpaApplicationService = $lpaApplicationService;
+        $this->statsService = $statsService;
     }
 }
