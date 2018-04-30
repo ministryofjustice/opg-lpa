@@ -87,7 +87,7 @@ class ChangePasswordControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
         $this->userDetails->shouldReceive('updatePassword')
-            ->withArgs([$this->userIdentity->id(), $this->postData['password_current'], $this->postData['password']])
+            ->withArgs([$this->postData['password_current'], $this->postData['password']])
             ->andReturn(true)->once();
 
         $this->flashMessenger->shouldReceive('addSuccessMessage')->withArgs([
@@ -111,7 +111,7 @@ class ChangePasswordControllerTest extends AbstractControllerTest
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->userDetails->shouldReceive('updatePassword')
-            ->withArgs([$this->userIdentity->id(), $this->postData['password_current'], $this->postData['password']])
+            ->withArgs([$this->postData['password_current'], $this->postData['password']])
             ->andReturn(false)->once();
 
         /** @var ViewModel $result */

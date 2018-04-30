@@ -48,7 +48,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(null, $result->getVariable('error'));
-        $this->assertEquals($this->user->email, $result->getVariable('currentAddress'));
+        $this->assertEquals($this->user->email, $result->getVariable('currentEmailAddress'));
     }
 
     public function testIndexActionPostInvalid()
@@ -68,7 +68,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(null, $result->getVariable('error'));
-        $this->assertEquals($this->user->email, $result->getVariable('currentAddress'));
+        $this->assertEquals($this->user->email, $result->getVariable('currentEmailAddress'));
     }
 
     public function testIndexActionPostValid()
@@ -110,6 +110,6 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
         $this->assertEquals(null, $result->getVariable('error'));
-        $this->assertEquals($this->user->email, $result->getVariable('currentAddress'));
+        $this->assertEquals($this->user->email, $result->getVariable('currentEmailAddress'));
     }
 }
