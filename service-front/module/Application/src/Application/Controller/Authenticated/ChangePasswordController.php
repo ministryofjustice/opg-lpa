@@ -15,10 +15,10 @@ class ChangePasswordController extends AbstractAuthenticatedController
         $error = null;
 
         // This form needs to check the user's current password, thus we pass it the Authentication Service
-        $authentication =   $this->getAuthenticationService();
+        $authentication = $this->getAuthenticationService();
 
-        $currentAddress = (string)$this->getUser()->email;
-        $authentication->setEmail($currentAddress);
+        $currentEmailAddress = (string)$this->getUser()->email;
+        $authentication->setEmail($currentEmailAddress);
 
         $form->setAuthenticationService($authentication);
 
