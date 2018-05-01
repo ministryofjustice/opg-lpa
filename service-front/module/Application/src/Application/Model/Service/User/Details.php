@@ -91,11 +91,14 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
      */
     public function requestEmailUpdate($email, $currentAddress)
     {
-        $identityArray = $this->getAuthenticationService()->getIdentity()->toArray();
+        $identity = $this->getAuthenticationService()->getIdentity();
 
-        $this->getLogger()->info('Requesting email update to new email: ' . $email, $identityArray);
+        $this->getLogger()->info('Requesting email update to new email: ' . $email, $identity->toArray());
 
         try {
+            //  Manually update the token in the auth client
+            $this->authClient->updateToken($identity->token());
+
             $response = $this->authClient->httpGet(sprintf('/v1/users/%s/email/%s', $this->getUserId(), strtolower($email)));
 
             if ($response->getStatusCode() == 200) {
@@ -165,6 +168,9 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
         $this->getLogger()->info('Updating password', $identity->toArray());
 
         try {
+            //  Manually update the token in the auth client
+            $this->authClient->updateToken($identity->token());
+
             $response = $this->authClient->httpPost(sprintf('/v1/users/%s/password', $this->getUserId()), [
                 'CurrentPassword' => $currentPassword,
                 'NewPassword' => $newPassword,
