@@ -59,6 +59,18 @@ class Client
     }
 
     /**
+     * This method is required to allow the token value to be updated manually during a single user action where necessary
+     * Currently this is required during the change password and change email address flows, as those action trigger a
+     * user authentication which updates the auth token in the backend
+     *
+     * @param $token
+     */
+    public function updateToken($token)
+    {
+        $this->token = $token;
+    }
+
+    /**
      * Performs a GET against the API
      *
      * @param $path

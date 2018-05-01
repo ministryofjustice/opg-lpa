@@ -15,7 +15,6 @@ use Zend\Session\Container;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use DateTime;
-use RuntimeException;
 
 abstract class AbstractAuthenticatedController extends AbstractBaseController
 {
