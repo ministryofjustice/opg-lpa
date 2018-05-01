@@ -10,23 +10,27 @@
 }) %}
 
 {% if isTimeout %}
-    <div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
+    <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
       <h1 class="heading-medium error-summary-heading" id="error-heading">Session timed out</h1>
-      <p>Sorry, your session has timed out due to inactivity or because you have signed in on another browser. Please sign in again.</p>
+      <div class="error-summary-text" data-tracking-context="Session">
+          <p data-tracking-summary="Session timed out">Sorry, your session has timed out due to inactivity or because you have signed in on another browser. Please sign in again.</p>
+      </div>
     </div>
 {% endif %}
 
 {% if authError %}
-    <div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
+    <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
       <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem signing you in</h1>
+      <div class="error-summary-text" data-tracking-context="Signing in">
             {% if authError == 'not-activated' %}
-                <p>Your account has not been activated. Click on the link in the email sent to you when you created the account.
+                <p data-tracking-summary="Account not activated">Your account has not been activated. Click on the link in the email sent to you when you created the account.
                     If you haven't received an email, check your spam, bulk or junk email folder or <a href="{{ url('register/resend-email') }}">resend activation email</a>.</p>
             {% elseif authError == 'locked' %}
-               <p>This user account has been locked. Please go <a href="{{ url('forgot-password') }}">here</a> to reset your password OR you can attempt again in 15 minutes.</p>
+               <p data-tracking-summary="Account has been locked">This user account has been locked. Please go <a href="{{ url('forgot-password') }}">here</a> to reset your password OR you can attempt again in 15 minutes.</p>
             {% else %}
-                <p><p>Email and password combination not recognised. Please try signing in again below or <a href="{{ url('register') }}">create an account</a>.</p></p>
+                <p data-tracking-summary="Email and password not recognised">Email and password combination not recognised. Please try signing in again below or <a href="{{ url('register') }}">create an account</a>.</p>
             {% endif %}
+        </div>
     </div>
 {% endif %}
 

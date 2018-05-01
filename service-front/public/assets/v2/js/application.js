@@ -24978,11 +24978,14 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
     },
 
     checkErrors: function(){
-      var errorSummarySelector = '.error-summary-list a'
+      var errorsLinked = $('.error-summary-list li a')
+      for (var i = 0; i < errorsLinked.length; i++) {
+        moj.Modules.formErrorTracker.trackError(errorsLinked[i])
+      }
 
-      var errors = $('.error-summary-list li a')
-      for (var i = 0; i < errors.length; i++) {
-        moj.Modules.formErrorTracker.trackError(errors[i])
+      var errorsText = $('.error-summary-text p')
+      for (var i = 0; i < errorsText.length; i++) {
+        moj.Modules.formErrorTracker.trackErrorText(errorsText[i])
       }
     },
 
@@ -25000,6 +25003,18 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
       }
 
       GOVUK.analytics.trackEvent('form error', questionText, options)
+    },
+
+    trackErrorText: function(error){
+      var trackingContext = $('.error-summary-text').data('tracking-context')
+      var trackingSummary = $(error).data('tracking-summary')
+
+      var options = {
+        transport: 'beacon',
+        label: trackingSummary
+      }
+
+      GOVUK.analytics.trackEvent('form error', trackingContext, options)
     },
 
     getQuestionText: function(error) {

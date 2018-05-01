@@ -2,7 +2,7 @@
 {% macro formErrorSummary(error, form, message) %}
 
     {% if (error is not empty or form.getMessages|length > 0) %}
-    <div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
+    <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
         <h1 class="heading-medium error-summary-heading" id="error-heading">{{ message }}</h1>
 
         {# Show this only if it's a form error #}
@@ -10,27 +10,37 @@
             <p>You need to do the following:</p>
         {% endif %}
 
-        <ul class="error-summary-list text">
-            {# Form errors #}
-            {{ formLinkedErrorListV2(form) ? '' }}
-
+        {% if error is not empty %}
             {# API errors #}
-            {% if error is not empty %}
-                <li><p>
-                    {% if error == 'user-not-found' %}
+            <div class="error-summary-text" data-tracking-context="API error">
+                {% if error == 'user-not-found' %}
+                    <p data-tracking-summary="User not found">
                         We could not find an LPA account for this email address.<br><a href="signup">Create an LPA account now.</a>
-                    {% elseif error == 'address-already-registered' %}
+                    </p>
+                {% elseif error == 'address-already-registered' %}
+                    <p data-tracking-summary="Email address already registered">
                         This email address has already been registered. Please <a href="{{ url('login') }}">sign in</a> or <a href="{{ url('forgot-password') }}">reset your password</a>.
-                    {% elseif error == 'user-already-has-email' %}
+                    </p>
+                {% elseif error == 'user-already-has-email' %}
+                    <p data-tracking-summary="User already has email address">
                         You're already using that email address for this account – please enter another email address.
-                    {% elseif error == 'email-already-exists' %}
+                    </p>
+                {% elseif error == 'email-already-exists' %}
+                    <p data-tracking-summary="Email address already exists">
                         Another LPA account is already using that email address – please enter a different email address.
-                    {% else %}
+                    </p>
+                {% else %}
+                    <p data-tracking-summary="{{ error }}">
                         {{ error }}
-                    {% endif %}
-                </p></li>
-            {% endif %}
-        </ul>
+                    </p>
+                {% endif %}
+            </div>
+        {% else %}
+            <ul class="error-summary-list">
+                {# Form errors #}
+                {{ formLinkedErrorListV2(form) ? '' }}
+            </ul>
+        {% endif %}
     </div>
     {% endif %}
 
