@@ -24978,11 +24978,13 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
     },
 
     checkErrors: function(){
+      // Iterating through link errors
       var errorsLinked = $('.error-summary-list li a')
       for (var i = 0; i < errorsLinked.length; i++) {
         moj.Modules.formErrorTracker.trackError(errorsLinked[i])
       }
 
+      // Iterating through text errors
       var errorsText = $('.error-summary-text p')
       for (var i = 0; i < errorsText.length; i++) {
         moj.Modules.formErrorTracker.trackErrorText(errorsText[i])
@@ -25071,7 +25073,7 @@ showHideContent.init();
 
 
 // ====================================================================================
-// VENDOR CONFIGURATION
+// SIMPLE UTILITIES
 
 // Remove the no-js class
 $('body').removeClass('no-js');

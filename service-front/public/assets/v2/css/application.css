@@ -2591,6 +2591,25 @@ input[type=number] {
       background-image: url("/assets/v2/images/icons/icon-bin-2x.png");
       background-size: 100%; } }
 
+.icon-print {
+  width: 36px;
+  height: 36px;
+  background-image: url("/assets/v2/images/icons/icon-print.png"); }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+    .icon-print {
+      background-image: url("/assets/v2/images/icons/icon-print-2x.png");
+      background-size: 100%; } }
+  @media (max-width: 640px) {
+    .icon-print {
+      width: 27px;
+      height: 27px;
+      background-image: url("/assets/v2/images/icons/icon-print.png");
+      background-size: contain; } }
+  @media only screen and (max-width: 640px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 640px) and (-o-min-device-pixel-ratio: 20 / 10), only screen and (max-width: 640px) and (min-device-pixel-ratio: 2), only screen and (max-width: 640px) and (min-resolution: 192dpi), only screen and (max-width: 640px) and (min-resolution: 2dppx) {
+    .icon-print {
+      background-image: url("/assets/v2/images/icons/icon-print-2x.png");
+      background-size: 100%; } }
+
 .help-sections ul,
 .help-sections ol {
   margin-top: 5px;

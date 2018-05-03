@@ -1,71 +1,19 @@
-.print img {
-  position: relative;
-  bottom: -10px;
-  margin-right: 10px; }
-
-@media print {
-  body {
-    overflow: visible;
-    width: 100%;
-    height: 100%; }
-
-  .no-print, .visually-hidden,
-  .menu,
-  .global-nav,
-  .table-summary-action,
-  .appstatus,
-  .divorced,
-  .no-print *,
-  .visually-hidden *,
-  .menu *,
-  .global-nav *,
-  .table-summary-action *,
-  .appstatus *,
-  .divorced *,
-  a:after {
-    display: none !important; }
-
-  main#content {
-    padding: 20px; }
-
-  .table-summary {
-    text-align: left;
+.table-summary {
+  text-align: left; }
+  .table-summary tbody,
+  .table-summary tr {
+    display: block; }
+  .table-summary th,
+  .table-summary td {
     display: block;
-    margin-top: 40px;
-    float: none; }
-    .table-summary tbody,
-    .table-summary tr {
-      display: block; }
-    .table-summary th,
-    .table-summary td {
-      display: block;
-      width: 100%; }
-    .table-summary tr:first-of-type .table-summary-title {
-      font-size: 24px; }
+    width: 100%; }
 
-  .table-summary-title {
-    font-weight: 700;
-    border-bottom: 0 !important;
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important; }
+.table-summary-title {
+  font-weight: 700; }
 
-  .table-summary-heading .heading-small {
-    font-size: 24px;
-    margin-top: 10px;
-    margin-bottom: 10px; }
-
-  .group-single,
-  .group-element,
-  .group-end {
-    float: none;
-    page-break-after: auto;
-    break-after: auto; }
-
-  .group-single td,
-  .group-element td,
-  .group-end td {
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid gray; } }
+.table-summary-action {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid gray; }
 
 /*# sourceMappingURL=print.css.map */
