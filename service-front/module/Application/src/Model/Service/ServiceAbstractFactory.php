@@ -11,6 +11,7 @@ use Application\Model\Service\Lpa\Applicant;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
+use Application\Model\Service\System\Status;
 use Application\Model\Service\User\Details;
 use Exception;
 use Interop\Container\ContainerInterface;
@@ -43,6 +44,10 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         ],
         ReplacementAttorneyCleanup::class => [
             'setLpaApplicationService' => 'LpaApplicationService',
+        ],
+        Status::class => [
+            'setApiClient' => 'ApiClient',
+            'setAuthClient' => 'AuthClient',
         ],
     ];
 

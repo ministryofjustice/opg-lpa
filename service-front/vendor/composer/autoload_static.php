@@ -9,15 +9,13 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
     public static $files = array (
         '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
         '10a6847eba8a430a134fad89f4a30a26' => __DIR__ . '/..' . '/zendframework/zend-cache/autoload/patternPluginManagerPolyfill.php',
-        'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
-        '3e2471375464aac821502deb0ac64275' => __DIR__ . '/..' . '/symfony/polyfill-php54/bootstrap.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        '3e2471375464aac821502deb0ac64275' => __DIR__ . '/..' . '/symfony/polyfill-php54/bootstrap.php',
         'b067bc7112e384b61c701452d53a14a8' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/JmesPath.php',
         '8a9dc1de0ca7e01f3e08231539562f61' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/functions.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        'ddc0a4d7e61c0286f0f8593b1903e894' => __DIR__ . '/..' . '/clue/stream-filter/src/functions.php',
-        '8cff32064859f4559445b89279f3199c' => __DIR__ . '/..' . '/php-http/message/src/filters.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '6a47392539ca2329373e0d33e1dba053' => __DIR__ . '/..' . '/symfony/polyfill-intl-icu/bootstrap.php',
         '34901568a1e26d13dd475cb2c85e0284' => __DIR__ . '/..' . '/zendframework/zend-form/autoload/formElementManagerPolyfill.php',
@@ -83,10 +81,6 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Symfony\\Component\\Intl\\' => 23,
             'Symfony\\Component\\EventDispatcher\\' => 34,
         ),
-        'R' => 
-        array (
-            'React\\Promise\\' => 14,
-        ),
         'P' => 
         array (
             'Psr\\SimpleCache\\' => 16,
@@ -117,16 +111,12 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'H' => 
         array (
             'Http\\Promise\\' => 13,
-            'Http\\Message\\' => 13,
-            'Http\\Discovery\\' => 15,
             'Http\\Client\\' => 12,
-            'Http\\Adapter\\Guzzle5\\' => 21,
+            'Http\\Adapter\\Guzzle6\\' => 21,
             'Html2Text\\' => 10,
         ),
         'G' => 
         array (
-            'GuzzleHttp\\Stream\\' => 18,
-            'GuzzleHttp\\Ring\\' => 16,
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
@@ -135,10 +125,6 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         array (
             'Doctrine\\Instantiator\\' => 22,
             'DeepCopy\\' => 9,
-        ),
-        'C' => 
-        array (
-            'Clue\\StreamFilter\\' => 18,
         ),
         'A' => 
         array (
@@ -323,10 +309,6 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
         ),
-        'React\\Promise\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/react/promise/src',
-        ),
         'Psr\\SimpleCache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
@@ -379,34 +361,17 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         array (
             0 => __DIR__ . '/..' . '/php-http/promise/src',
         ),
-        'Http\\Message\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/php-http/message/src',
-            1 => __DIR__ . '/..' . '/php-http/message-factory/src',
-        ),
-        'Http\\Discovery\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/php-http/discovery/src',
-        ),
         'Http\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/php-http/httplug/src',
         ),
-        'Http\\Adapter\\Guzzle5\\' => 
+        'Http\\Adapter\\Guzzle6\\' => 
         array (
-            0 => __DIR__ . '/..' . '/php-http/guzzle5-adapter/src',
+            0 => __DIR__ . '/..' . '/php-http/guzzle6-adapter/src',
         ),
         'Html2Text\\' => 
         array (
             0 => __DIR__ . '/..' . '/soundasleep/html2text/src',
-        ),
-        'GuzzleHttp\\Stream\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/guzzlehttp/streams/src',
-        ),
-        'GuzzleHttp\\Ring\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/guzzlehttp/ringphp/src',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
@@ -427,10 +392,6 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'DeepCopy\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
-        ),
-        'Clue\\StreamFilter\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/clue/stream-filter/src',
         ),
         'Aws\\' => 
         array (

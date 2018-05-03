@@ -39,26 +39,6 @@ class Client
     }
 
     /**
-     * Generates the standard set of HTTP headers expected by the API.
-     *
-     * @return array
-     */
-    private function buildHeaders()
-    {
-        $headers = [
-            'Accept'        => 'application/json',
-            'Content-type'  => 'application/json',
-            'User-agent'    => 'LPA-FRONT'
-        ];
-
-        if (!is_null($this->token)) {
-            $headers['Token'] = $this->token;
-        }
-
-        return $headers;
-    }
-
-    /**
      * This method is required to allow the token value to be updated manually during a single user action where necessary
      * Currently this is required during the change password and change email address flows, as those action trigger a
      * user authentication which updates the auth token in the backend
@@ -141,10 +121,29 @@ class Client
     }
 
     /**
+     * Generates the standard set of HTTP headers expected by the API.
+     *
+     * @return array
+     */
+    private function buildHeaders()
+    {
+        $headers = [
+            'Accept'        => 'application/json',
+            'Content-type'  => 'application/json',
+            'User-agent'    => 'LPA-FRONT'
+        ];
+
+        if (!is_null($this->token)) {
+            $headers['Token'] = $this->token;
+        }
+
+        return $headers;
+    }
+
+    /**
      * Called with a response from the API when the response code was unsuccessful. i.e. not 20X.
      *
      * @param ResponseInterface $response
-     *
      * @return Exception\ResponseException
      */
     protected function createErrorException(ResponseInterface $response)
