@@ -20,7 +20,6 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         '6a47392539ca2329373e0d33e1dba053' => __DIR__ . '/..' . '/symfony/polyfill-intl-icu/bootstrap.php',
         'be01b9b16925dcb22165c40b46681ac6' => __DIR__ . '/..' . '/wp-cli/php-cli-tools/lib/cli/cli.php',
         '3a37ebac017bc098e9a86b35401e7a68' => __DIR__ . '/..' . '/mongodb/mongodb/src/functions.php',
-        'a7549af15e67e114d3b908742f757aa9' => __DIR__ . '/../..' . '/module/Application/Module.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -338,7 +337,7 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         ),
         'Application\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/module/Application/src/Application',
+            0 => __DIR__ . '/../..' . '/module/Application/src',
         ),
     );
 
