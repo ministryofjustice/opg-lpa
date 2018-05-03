@@ -35,13 +35,13 @@ class EntityTest extends TestCase
 
     public function testToArray()
     {
-        $this->assertEquals(['who' => $this->lpa->document->whoIsRegistering], $this->entity->toArray());
+        $this->assertEquals(['whoIsRegistering' => $this->lpa->document->whoIsRegistering], $this->entity->toArray());
     }
 
     public function testToArrayString()
     {
         $entity = new Entity($this->lpa->document->whoIsRegistering[0]);
-        $this->assertEquals(['who' => $this->lpa->document->whoIsRegistering[0]], $entity->toArray());
+        $this->assertEquals(['whoIsRegistering' => $this->lpa->document->whoIsRegistering[0]], $entity->toArray());
     }
 
     public function testToArrayAccessorInterface()
@@ -49,7 +49,7 @@ class EntityTest extends TestCase
         $whoAccessorInterface = Mockery::mock(AbstractData::class);
         $whoAccessorInterface->shouldReceive('toArray')->andReturn('donor');
         $entity = new Entity([$whoAccessorInterface]);
-        $this->assertEquals(['who' => ['donor']], $entity->toArray());
+        $this->assertEquals(['whoIsRegistering' => ['donor']], $entity->toArray());
     }
 
     public function testToArrayNull()
