@@ -7,7 +7,7 @@
     <meta http-equiv="refresh" content="4800">
 
     {# An old viewport fix for IE Mobile 10. Been here since dawn of time. Get rid ASAP #}
-    <script type="text/javascript">
+    <script>
         (function(){if(navigator.userAgent.match(/IEMobile\/10\.0/)){var d=document,c="appendChild",a=d.createElement("style");a[c](d.createTextNode("@-ms-viewport{width:auto!important}"));d.getElementsByTagName("head")[0][c](a);}})();
     </script>
 
@@ -52,12 +52,12 @@
     <!--[if IE 8]><link href="{{ StaticAssetPath( '/assets/v2/css/application-ie8.css', { 'minify':true } ) }}" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
 
     <!-- LPA Print styles -->
-    <link href="{{ StaticAssetPath( '/assets/v2/css/print.css', { 'minify':true } ) }}" media="all" rel="stylesheet" type="text/css" />
+    <link href="{{ StaticAssetPath( '/assets/v2/css/print.css', { 'minify':true } ) }}" media="print" rel="stylesheet" type="text/css" />
 
 </head>
 
 <body class="no-js">
-    <script type="text/javascript">document.body.className = document.body.className + ' js-enabled';</script>
+    <script>document.body.className = document.body.className + ' js-enabled';</script>
     <div id="skiplink-container">
         <div><a href="#content" class="skiplink">Skip to main content</a></div>
     </div>
