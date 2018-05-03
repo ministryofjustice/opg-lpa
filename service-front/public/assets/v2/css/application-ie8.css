@@ -2369,6 +2369,10 @@ input[type=number] {
 .text-center {
   text-align: center !important; }
 
+.no-js .hide-if-no-js {
+  display: none !important;
+  visibility: hidden !important; }
+
 .button-secondary {
   background-color: #dee0e2;
   position: relative;
