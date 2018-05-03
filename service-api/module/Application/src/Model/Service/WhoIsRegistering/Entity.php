@@ -20,11 +20,11 @@ class Entity implements EntityInterface
 
         if (is_string($this->who)) {
             $who = [
-                'who' => $this->who,
+                'whoIsRegistering' => $this->who,
             ];
         } elseif (is_array($this->who)) {
             $who = [
-                'who' => array_map(function ($v) {
+                'whoIsRegistering' => array_map(function ($v) {
                     if ($v instanceof LpaAccessorInterface) {
                         return $v->toArray();
                     } else {
