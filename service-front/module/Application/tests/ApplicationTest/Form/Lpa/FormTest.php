@@ -6,7 +6,6 @@ use Application\Form\Lpa\AbstractLpaForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 class FormTest extends MockeryTestCase
@@ -17,7 +16,7 @@ class FormTest extends MockeryTestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
 
-        foreach (glob(__DIR__ . '/../../../../src/Application/Form/Lpa/*.php') as $filepath) {
+        foreach (glob(__DIR__ . '/../../../../src/Form/Lpa/*.php') as $filepath) {
             $pathInfo = pathinfo(realpath($filepath));
             $className = 'Application\\Form\\Lpa\\' . $pathInfo['filename'];
             $reflectionClass = new ReflectionClass($className);
