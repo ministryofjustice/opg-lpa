@@ -45,14 +45,12 @@ class StatsController extends AbstractController
 
         if ($result instanceof ApiProblem) {
             return $result;
-        } elseif ($result instanceof EntityInterface) {
-            $resultData = $result->toArray();
-
-            if (empty($resultData)) {
+        } elseif (is_array($result)) {
+            if (empty($result)) {
                 return new NoContentResponse();
             }
 
-            return new JsonResponse($resultData);
+            return new JsonResponse($result);
         }
 
         // If we get here...
