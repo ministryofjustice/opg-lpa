@@ -7,20 +7,49 @@ return array(
         'environment' => getenv('OPG_LPA_STACK_ENVIRONMENT') ?: 'dev',
     ],
 
+    //  TODO - Still required after API Auth merge?
+    'cleanup' => [
+        'notification' => [
+            'callback' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_ENDPOINT') ?: null,
+            'token' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') ?: null,
+        ],
+        'api-target' => getenv('OPG_LPA_AUTH_API_CLEANUP_TARGET') ?: null,
+        'api-token' => getenv('OPG_LPA_COMMON_AUTH_CLEANUP_TOKEN') ?: null,
+    ], // cleanup
+
+    //  TODO - Still required after API Auth merge?
     'authentication' => [
         'ping' => getenv('OPG_LPA_API_ENDPOINTS_AUTH_PING') ?: 'https://authv2/ping',
         'endpoint' => getenv('OPG_LPA_API_ENDPOINTS_AUTH') ?: 'https://authv2/v1/authenticate',
         'clean-up-token' => getenv('OPG_LPA_COMMON_AUTH_CLEANUP_TOKEN'),
     ],
 
+    //  TODO - Came from auth config...is it still required?
+    'log' => [
+        'sns' => [
+            'endpoints' => [
+                'major' => getenv('OPG_LPA_COMMON_LOGGING_SNS_ENDPOINTS_MAJOR') ?: null,
+                'minor' => getenv('OPG_LPA_COMMON_LOGGING_SNS_ENDPOINTS_MINOR') ?: null,
+                'info' => getenv('OPG_LPA_COMMON_LOGGING_SNS_ENDPOINTS_INFO') ?: null,
+            ],
+            'client' => [
+                'version' => '2010-03-31',
+                'region' => 'eu-west-1',
+                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
+                ] : null,
+            ],
+        ], // sns
+    ], // log
+
     'admin' => [
         'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',',getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : array(),
     ],
 
+    //  TODO - This existed already and the auth version was nearly the same, but the API copy has the additional 'endpoint' parameter
     'cron' => [
-
         'lock' => [
-
             'dynamodb' => [
                 'client' => [
                     'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
@@ -35,17 +64,12 @@ return array(
                     'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
                 ],
             ],
-
         ], // lock
-
     ], // cron
 
     'db' => [
-
         'mongo' => [
-
             'default' => [
-
                 'hosts' => [ 'mongodb-01:27017', 'mongodb-02:27017', 'mongodb-03:27017' ],
                 'options' => [
                     'db' => 'opglpa-api',
@@ -60,12 +84,21 @@ return array(
                 ],
                 'driverOptions' => [
                     'weak_cert_validation' => true //Allows usage of self signed certificates
-                ]
+                ],
 
+                //  TODO - Auth config to be integrated...
+//                'options' => [
+//                    'db' => 'opglpa-auth',
+//                    'username' => 'opglpa-auth',
+//                    'replicaSet' => 'rs0',
+//                    'connect' => false,
+//                    'connectTimeoutMS' => 1000,
+//                    'w' => 'majority',
+//                    'ssl' => true,
+//                    'password' => getenv('OPG_LPA_AUTH_MONGODB_PASSWORD') ?: null,
+//                ],
             ],
-
         ], // mongo
-
 
         // Used to access generated PDFs.
         'redis' => [

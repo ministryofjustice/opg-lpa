@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 1.2.0 - 2018-04-30
+
+### Added
+
+- [#24](https://github.com/zendframework/zend-mvc-console/pull/24) adds support for PHP 7.1 and 7.2.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#24](https://github.com/zendframework/zend-mvc-console/pull/24) removes support for HHVM.
+
+### Fixed
+
+- [#21](https://github.com/zendframework/zend-mvc-console/pull/21) adds a missing import statement for `Zend\Router\RouteMatch` to the
+  `ConsoleViewHelperManagerDelegatorFactory` class.
+
 ## 1.1.11 - 2016-08-29
 
 ### Added

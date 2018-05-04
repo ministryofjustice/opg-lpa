@@ -13,7 +13,6 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\Console\View\ViewModel as ConsoleViewModel;
 use Zend\Mvc\MvcEvent;
 use Zend\Stdlib\ResponseInterface as Response;
-use Zend\View\Model\ModelInterface;
 
 class DefaultRenderingStrategy extends AbstractListenerAggregate
 {

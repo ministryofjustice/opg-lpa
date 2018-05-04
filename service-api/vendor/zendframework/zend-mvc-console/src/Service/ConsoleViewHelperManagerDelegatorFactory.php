@@ -9,6 +9,7 @@ namespace Zend\Mvc\Console\Service;
 
 use Interop\Container\ContainerInterface;
 use Zend\Console\Console;
+use Zend\Router\RouteMatch;
 use Zend\ServiceManager\DelegatorFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Helper as ViewHelper;

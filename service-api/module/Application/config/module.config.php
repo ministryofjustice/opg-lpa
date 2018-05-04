@@ -367,7 +367,7 @@ return [
         'router' => [
             'routes' => [
 
-                'account-cleanup' => [
+                'generate-stats' => [
                     'type'    => 'simple',
                     'options' => [
                         'route'    => 'generate-stats',

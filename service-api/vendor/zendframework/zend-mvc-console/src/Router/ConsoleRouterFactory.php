@@ -8,7 +8,6 @@
 namespace Zend\Mvc\Console\Router;
 
 use Interop\Container\ContainerInterface;
-use Zend\Console\Console;
 use Zend\Router\RouterConfigTrait;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
