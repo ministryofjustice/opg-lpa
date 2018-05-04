@@ -1,9 +1,9 @@
 <?php
 
-namespace ApplicationTest\Model\Mvc\Service;
+namespace AuthTest\Model\Mvc\Service;
 
-use Application\Model\Http\PhpEnvironment\JsonRequest;
-use Application\Model\Mvc\Service\RequestFactory;
+use Auth\Model\Http\PhpEnvironment\JsonRequest;
+use Auth\Model\Mvc\Service\RequestFactory;
 use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;

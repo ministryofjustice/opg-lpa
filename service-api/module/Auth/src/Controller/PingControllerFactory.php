@@ -1,9 +1,9 @@
 <?php
 
-namespace Application\Controller;
+namespace Auth\Controller;
 
-use Application\Model\Service\DataAccess\Mongo\Factory\DatabaseFactory;
-use Application\Model\Service\DataAccess\Mongo\Factory\ManagerFactory;
+use Auth\Model\Service\DataAccess\Mongo\Factory\DatabaseFactory;
+use Auth\Model\Service\DataAccess\Mongo\Factory\ManagerFactory;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use MongoDB\Database;

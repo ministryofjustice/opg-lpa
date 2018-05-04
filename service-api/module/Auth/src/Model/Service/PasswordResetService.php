@@ -1,8 +1,8 @@
 <?php
 
-namespace Application\Model\Service;
+namespace Auth\Model\Service;
 
-use Application\Model\Service\DataAccess;
+use Auth\Model\Service\DataAccess;
 use Zend\Math\BigInteger\BigInteger;
 use DateTime;
 use RuntimeException;

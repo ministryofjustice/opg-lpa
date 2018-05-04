@@ -1,5 +1,5 @@
 <?php
-namespace Application\Model\Service\System;
+namespace Auth\Model\Service\System;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;

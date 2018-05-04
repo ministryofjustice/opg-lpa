@@ -1,9 +1,9 @@
 <?php
 
-namespace Application\Model\Service;
+namespace Auth\Model\Service;
 
-use Application\Model\Service\DataAccess\LogDataSourceInterface;
-use Application\Model\Service\DataAccess\UserDataSourceInterface;
+use Auth\Model\Service\DataAccess\LogDataSourceInterface;
+use Auth\Model\Service\DataAccess\UserDataSourceInterface;
 
 class PasswordChangeService extends AbstractService
 {

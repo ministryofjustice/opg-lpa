@@ -1,7 +1,7 @@
 <?php
-namespace Application\Controller\Version1;
+namespace Auth\Controller\Version1;
 
-use Application\Model\Service\StatsService;
+use Auth\Model\Service\StatsService;
 use Zend\View\Model\JsonModel;
 use Zend\Mvc\Controller\AbstractActionController;
 

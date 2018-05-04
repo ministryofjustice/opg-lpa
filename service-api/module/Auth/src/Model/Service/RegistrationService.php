@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Model\Service;
+namespace Auth\Model\Service;
 
 use DateTime;
 use Zend\Validator\EmailAddress as EmailAddressValidator;
@@ -9,7 +9,7 @@ use Zend\Math\BigInteger\BigInteger;
 class RegistrationService extends AbstractService {
 
     use PasswordValidatorTrait;
-    
+
     //-------------
 
     public function create( $username, $password ){
@@ -38,7 +38,7 @@ class RegistrationService extends AbstractService {
         if ( !$this->isPasswordValid( $password ) ) {
             return 'invalid-password';
         }
-        
+
         // If we get here, all details are valid.
 
         //-----------------------------------------------

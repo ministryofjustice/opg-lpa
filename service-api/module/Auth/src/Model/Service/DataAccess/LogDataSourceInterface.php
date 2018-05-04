@@ -1,5 +1,5 @@
 <?php
-namespace Application\Model\Service\DataAccess;
+namespace Auth\Model\Service\DataAccess;
 
 interface LogDataSourceInterface {
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace ApplicationTest\Model\Service\DataAccess\Mongo;
+namespace AuthTest\Model\Service\DataAccess\Mongo;
 
-use Application\Model\Service\DataAccess\Mongo\User;
-use Application\Model\Service\DataAccess\Mongo\UserCollection;
+use Auth\Model\Service\DataAccess\Mongo\User;
+use Auth\Model\Service\DataAccess\Mongo\UserCollection;
 use DateTime;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;

@@ -1,7 +1,7 @@
 <?php
-namespace Application\Controller\Version1;
+namespace Auth\Controller\Version1;
 
-use Application\Model\Service\RegistrationService;
+use Auth\Model\Service\RegistrationService;
 use Opg\Lpa\Logger\LoggerTrait;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;

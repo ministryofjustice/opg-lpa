@@ -1,10 +1,10 @@
 <?php
 
-namespace ApplicationTest\Model\Service;
+namespace AuthTest\Model\Service;
 
-use Application\Model\Service\AccountCleanupService;
-use Application\Model\Service\DataAccess\Mongo\User;
-use Application\Model\Service\UserManagementService;
+use Auth\Model\Service\AccountCleanupService;
+use Auth\Model\Service\DataAccess\Mongo\User;
+use Auth\Model\Service\UserManagementService;
 use Aws\Sns\SnsClient;
 use DateInterval;
 use DateTime;

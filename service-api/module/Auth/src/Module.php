@@ -7,11 +7,11 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-namespace Application;
+namespace Auth;
 
-use Application\Model\Service\DataAccess\Mongo\Factory\CollectionFactory;
-use Application\Model\Service\DataAccess\Mongo\Factory\DatabaseFactory;
-use Application\Model\Service\DataAccess\Mongo\Factory\ManagerFactory;
+use Auth\Model\Service\DataAccess\Mongo\Factory\CollectionFactory;
+use Auth\Model\Service\DataAccess\Mongo\Factory\DatabaseFactory;
+use Auth\Model\Service\DataAccess\Mongo\Factory\ManagerFactory;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\Sns\SnsClient;
 use GuzzleHttp\Client as GuzzleClient;
@@ -19,9 +19,9 @@ use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-use Application\Model\Service\DataAccess\Mongo;
+use Auth\Model\Service\DataAccess\Mongo;
 
-use Application\Model\Service\System\DynamoCronLock;
+use Auth\Model\Service\System\DynamoCronLock;
 
 class Module
 {

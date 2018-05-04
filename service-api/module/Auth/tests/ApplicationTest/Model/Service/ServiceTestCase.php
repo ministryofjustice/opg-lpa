@@ -1,10 +1,10 @@
 <?php
 
-namespace ApplicationTest\Model\Service;
+namespace AuthTest\Model\Service;
 
-use Application\Model\Service\DataAccess\LogDataSourceInterface;
-use Application\Model\Service\DataAccess\UserDataSourceInterface;
-use Application\Model\Service\DataAccess\UserInterface;
+use Auth\Model\Service\DataAccess\LogDataSourceInterface;
+use Auth\Model\Service\DataAccess\UserDataSourceInterface;
+use Auth\Model\Service\DataAccess\UserInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;

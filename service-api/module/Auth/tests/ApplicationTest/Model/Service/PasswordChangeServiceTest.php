@@ -1,11 +1,11 @@
 <?php
 
-namespace ApplicationTest\Model\Service;
+namespace AuthTest\Model\Service;
 
-use Application\Model\Service\AuthenticationService;
-use Application\Model\Service\DataAccess\Mongo\User;
-use Application\Model\Service\DataAccess\UserInterface;
-use Application\Model\Service\PasswordChangeService;
+use Auth\Model\Service\AuthenticationService;
+use Auth\Model\Service\DataAccess\Mongo\User;
+use Auth\Model\Service\DataAccess\UserInterface;
+use Auth\Model\Service\PasswordChangeService;
 use Mockery;
 use Mockery\MockInterface;
 

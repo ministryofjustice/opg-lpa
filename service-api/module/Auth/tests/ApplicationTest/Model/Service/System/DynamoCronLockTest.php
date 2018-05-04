@@ -1,8 +1,8 @@
 <?php
 
-namespace ApplicationTest\Model\Service\System;
+namespace AuthTest\Model\Service\System;
 
-use Application\Model\Service\System\DynamoCronLock;
+use Auth\Model\Service\System\DynamoCronLock;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Mockery;

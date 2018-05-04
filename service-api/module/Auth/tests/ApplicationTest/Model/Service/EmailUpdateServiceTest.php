@@ -1,9 +1,9 @@
 <?php
 
-namespace ApplicationTest\Model\Service;
+namespace AuthTest\Model\Service;
 
-use Application\Model\Service\DataAccess\Mongo\User;
-use Application\Model\Service\EmailUpdateService;
+use Auth\Model\Service\DataAccess\Mongo\User;
+use Auth\Model\Service\EmailUpdateService;
 use DateTime;
 
 class EmailUpdateServiceTest extends ServiceTestCase

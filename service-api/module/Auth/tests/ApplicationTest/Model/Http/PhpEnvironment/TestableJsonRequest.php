@@ -1,8 +1,8 @@
 <?php
 
-namespace ApplicationTest\Model\Http\PhpEnvironment;
+namespace AuthTest\Model\Http\PhpEnvironment;
 
-use Application\Model\Http\PhpEnvironment\JsonRequest;
+use Auth\Model\Http\PhpEnvironment\JsonRequest;
 
 class TestableJsonRequest extends JsonRequest
 {

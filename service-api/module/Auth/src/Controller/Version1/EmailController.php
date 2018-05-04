@@ -1,8 +1,8 @@
 <?php
-namespace Application\Controller\Version1;
+namespace Auth\Controller\Version1;
 
-use Application\Model\Service\AuthenticationService;
-use Application\Model\Service\EmailUpdateService;
+use Auth\Model\Service\AuthenticationService;
+use Auth\Model\Service\EmailUpdateService;
 use Opg\Lpa\Logger\LoggerTrait;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Application\Controller\Console;
+namespace Auth\Controller\Console;
 
-use Application\Model\Service\AccountCleanupService;
-use Application\Model\Service\System\DynamoCronLock;
+use Auth\Model\Service\AccountCleanupService;
+use Auth\Model\Service\System\DynamoCronLock;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;

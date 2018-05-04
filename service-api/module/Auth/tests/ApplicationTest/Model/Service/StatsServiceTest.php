@@ -1,8 +1,8 @@
 <?php
 
-namespace ApplicationTest\Model\Service;
+namespace AuthTest\Model\Service;
 
-use Application\Model\Service\StatsService;
+use Auth\Model\Service\StatsService;
 use DateTime;
 
 class StatsServiceTest extends ServiceTestCase

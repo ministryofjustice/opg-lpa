@@ -1,9 +1,9 @@
 <?php
 
-namespace ApplicationTest\Model\Service\DataAccess\Mongo\Factory;
+namespace AuthTest\Model\Service\DataAccess\Mongo\Factory;
 
-use Application\Model\Service\DataAccess\Mongo\Factory\DatabaseFactory;
-use Application\Model\Service\DataAccess\Mongo\Factory\ManagerFactory;
+use Auth\Model\Service\DataAccess\Mongo\Factory\DatabaseFactory;
+use Auth\Model\Service\DataAccess\Mongo\Factory\ManagerFactory;
 use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;

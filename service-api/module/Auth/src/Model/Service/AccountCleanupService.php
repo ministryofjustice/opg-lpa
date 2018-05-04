@@ -1,9 +1,9 @@
 <?php
 
-namespace Application\Model\Service;
+namespace Auth\Model\Service;
 
-use Application\Model\Service\DataAccess\LogDataSourceInterface;
-use Application\Model\Service\DataAccess\UserDataSourceInterface;
+use Auth\Model\Service\DataAccess\LogDataSourceInterface;
+use Auth\Model\Service\DataAccess\UserDataSourceInterface;
 use Aws\Sns\SnsClient;
 use DateTime;
 use Exception;
@@ -20,7 +20,7 @@ use Opg\Lpa\Logger\LoggerTrait;
  * The auth service is not concerned with how that notification is then processed.
  *
  * Class AccountCleanupService
- * @package Application\Model\Service
+ * @package Auth\Model\Service
  */
 class AccountCleanupService extends AbstractService
 {

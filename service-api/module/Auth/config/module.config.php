@@ -7,26 +7,37 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-return array(
-    'router' => array(
-        'routes' => array(
-            'home' => array(
+return [
+    'router' => [
+        'routes' => [
+            'home' => [
                 'type' => 'Zend\Router\Http\Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '/',
-                    'defaults' => array(
-                        'controller' => 'Application\Controller\Index',
+                    'defaults' => [
+                        'controller' => 'Auth\Controller\Index',
                         'action'     => 'index',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
+
+            'ping' => [
+                'type' => 'Zend\Router\Http\Segment',
+                'options' => [
+                    'route' => '/ping[/:action]',
+                    'defaults' => [
+                        'controller' => 'Auth\Controller\Ping',
+                        'action'     => 'index',
+                    ],
+                ],
+            ], // ping
 
             'v1' => [
                 'type'    => 'Segment',
                 'options' => [
                     'route'    => '/v1',
                     'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller\Version1',
+                        '__NAMESPACE__' => 'Auth\Controller\Version1',
                         'controller'    => 'Rest',
                     ],
                 ],
@@ -130,7 +141,7 @@ return array(
                                     ], // activate
                                 ]
                             ], // create
-                            
+
                             'password-reset' => [
                                 'type'    => 'Segment',
                                 'options' => [
@@ -141,7 +152,7 @@ return array(
                                     ],
                                 ],
                             ], // password-reset
-                            
+
                             'password-reset-update' => [
                                 'type'    => 'Segment',
                                 'options' => [
@@ -226,7 +237,7 @@ return array(
                                                 ],
                                             ], // update-email
                                         ]
-                                    ], 
+                                    ],
 
                                     'password' => [
                                         'type'    => 'Segment',
@@ -260,89 +271,82 @@ return array(
 
             ], // v1
 
-            'ping' => [
-                'type' => 'Zend\Router\Http\Segment',
-                'options' => [
-                    'route' => '/ping[/:action]',
-                    'defaults' => [
-                        'controller' => 'Application\Controller\Ping',
-                        'action'     => 'index',
-                    ],
-                ],
-            ], // ping
+        ],
+    ],
 
-        ),
-    ),
-    'service_manager' => array(
-        'abstract_factories' => array(
-            'Application\Model\Service\ServiceAbstractFactory',
+    'controllers' => [
+        'abstract_factories' => [
+            'Auth\Controller\Version1\AuthenticatedControllerAbstractFactory',
+        ],
+        'factories' => [
+            'Auth\Controller\Console\AccountCleanup' => 'Auth\Controller\Console\AccountCleanupControllerFactory',
+            'Auth\Controller\Version1\Registration' => 'Auth\Controller\Version1\RegistrationControllerFactory',
+            'Auth\Controller\Version1\Stats' => 'Auth\Controller\Version1\StatsControllerFactory',
+            'Auth\Controller\Ping' => 'Auth\Controller\PingControllerFactory',
+        ],
+        'invokables' => [
+            'Auth\Controller\Index' => 'Auth\Controller\IndexController',
+        ],
+        'aliases' => [
+            'Auth\Controller\Version1\Authenticate' => 'Auth\Controller\Version1\AuthenticateController',
+            'Auth\Controller\Version1\Email' => 'Auth\Controller\Version1\EmailController',
+            'Auth\Controller\Version1\Password' => 'Auth\Controller\Version1\PasswordController',
+            'Auth\Controller\Version1\User' => 'Auth\Controller\Version1\UsersController',
+        ],
+    ],
+
+    'service_manager' => [
+        'abstract_factories' => [
+            'Auth\Model\Service\ServiceAbstractFactory',
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
-        ),
-        'factories' => array(
-            'Request' => 'Application\Model\Mvc\Service\RequestFactory',
-            'translator' => 'Zend\Mvc\Service\TranslatorServiceFactory',
-        ),
-        'aliases' => [
-            'RegistrationService' => 'Application\Model\Service\RegistrationService',
-            'AuthenticationService' => 'Application\Model\Service\AuthenticationService',
-            'PasswordResetService' => 'Application\Model\Service\PasswordResetService',
-            'EmailUpdateService' => 'Application\Model\Service\EmailUpdateService',
-            'StatsService' => 'Application\Model\Service\StatsService',
-            'UserManagementService' => 'Application\Model\Service\UserManagementService',
-            'PasswordChangeService' => 'Application\Model\Service\PasswordChangeService',
-            'AccountCleanupService' => 'Application\Model\Service\AccountCleanupService',
         ],
-    ),
-    'translator' => array(
+        'factories' => [
+            'Request' => 'Auth\Model\Mvc\Service\RequestFactory',
+            'translator' => 'Zend\Mvc\Service\TranslatorServiceFactory',
+        ],
+        'aliases' => [
+            'RegistrationService' => 'Auth\Model\Service\RegistrationService',
+            'AuthenticationService' => 'Auth\Model\Service\AuthenticationService',
+            'PasswordResetService' => 'Auth\Model\Service\PasswordResetService',
+            'EmailUpdateService' => 'Auth\Model\Service\EmailUpdateService',
+            'StatsService' => 'Auth\Model\Service\StatsService',
+            'UserManagementService' => 'Auth\Model\Service\UserManagementService',
+            'PasswordChangeService' => 'Auth\Model\Service\PasswordChangeService',
+            'AccountCleanupService' => 'Auth\Model\Service\AccountCleanupService',
+        ],
+    ],
+
+    'translator' => [
         'locale' => 'en_US',
-        'translation_file_patterns' => array(
-            array(
+        'translation_file_patterns' => [
+            [
                 'type'     => 'gettext',
                 'base_dir' => __DIR__ . '/../language',
                 'pattern'  => '%s.mo',
-            ),
-        ),
-    ),
-    'controllers' => array(
-        'abstract_factories' => array(
-            'Application\Controller\Version1\AuthenticatedControllerAbstractFactory',
-        ),
-        'factories' => array(
-            'Application\Controller\Console\AccountCleanup' => 'Application\Controller\Console\AccountCleanupControllerFactory',
-            'Application\Controller\Version1\Registration' => 'Application\Controller\Version1\RegistrationControllerFactory',
-            'Application\Controller\Version1\Stats' => 'Application\Controller\Version1\StatsControllerFactory',
-            'Application\Controller\Ping' => 'Application\Controller\PingControllerFactory',
-        ),
-        'invokables' => array(
-            'Application\Controller\Index' => 'Application\Controller\IndexController',
-        ),
-        'aliases' => [
-            'Application\Controller\Version1\Authenticate' => 'Application\Controller\Version1\AuthenticateController',
-            'Application\Controller\Version1\Email' => 'Application\Controller\Version1\EmailController',
-            'Application\Controller\Version1\Password' => 'Application\Controller\Version1\PasswordController',
-            'Application\Controller\Version1\User' => 'Application\Controller\Version1\UsersController',
+            ],
         ],
-    ),
-    'view_manager' => array(
+    ],
+
+    'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
         'doctype'                  => 'HTML5',
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
-        'template_map' => array(
+        'template_map' => [
             'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
-            'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
+            'auth/index/index'        => __DIR__ . '/../view/auth/index/index.phtml',
             'error/404'               => __DIR__ . '/../view/error/404.phtml',
             'error/index'             => __DIR__ . '/../view/error/index.phtml',
-        ),
-        'template_path_stack' => array(
+        ],
+        'template_path_stack' => [
             __DIR__ . '/../view',
-        ),
+        ],
         'strategies' => [
             'ViewJsonStrategy',
         ],
-    ),
+    ],
 
     // Placeholder for console routes
     'console' => [
@@ -354,7 +358,7 @@ return array(
                     'options' => [
                         'route'    => 'account-cleanup',
                         'defaults' => [
-                            'controller' => 'Application\Controller\Console\AccountCleanup',
+                            'controller' => 'Auth\Controller\Console\AccountCleanup',
                             'action'     => 'cleanup'
                         ],
                     ],
@@ -364,4 +368,4 @@ return array(
         ],
     ],
 
-);
+];

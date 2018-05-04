@@ -1,8 +1,8 @@
 <?php
 
-namespace Application\Controller\Version1;
+namespace Auth\Controller\Version1;
 
-use Application\Model\Service\RegistrationService;
+use Auth\Model\Service\RegistrationService;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;

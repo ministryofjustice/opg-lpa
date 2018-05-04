@@ -1,8 +1,8 @@
 <?php
 
-namespace ApplicationTest\Controller;
+namespace AuthTest\Controller;
 
-use Application\Controller\IndexController;
+use Auth\Controller\IndexController;
 use PHPUnit\Framework\TestCase;
 
 class IndexControllerTest extends TestCase

@@ -1,9 +1,9 @@
 <?php
 
-namespace ApplicationTest\Model\Service;
+namespace AuthTest\Model\Service;
 
-use Application\Model\Service\DataAccess\Mongo\User;
-use Application\Model\Service\RegistrationService;
+use Auth\Model\Service\DataAccess\Mongo\User;
+use Auth\Model\Service\RegistrationService;
 use DateTime;
 
 class RegistrationServiceTest extends ServiceTestCase

@@ -1,16 +1,16 @@
 <?php
-namespace Application\Model\Service\DataAccess\Mongo;
+namespace Auth\Model\Service\DataAccess\Mongo;
 
 use DateTime;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 
-use Application\Model\Service\DataAccess\TokenInterface;
+use Auth\Model\Service\DataAccess\TokenInterface;
 
 /**
  * Represents a single token.
  *
  * Class User
- * @package Application\Model\Service\DataAccess\Mongo
+ * @package Auth\Model\Service\DataAccess\Mongo
  */
 class Token implements TokenInterface {
 

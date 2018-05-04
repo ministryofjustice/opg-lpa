@@ -1,5 +1,5 @@
 <?php
-namespace Application\Model\Service\DataAccess;
+namespace Auth\Model\Service\DataAccess;
 
 use DateTime;
 
@@ -7,7 +7,7 @@ use DateTime;
  * Interface defining a single user.
  *
  * Interface UserInterface
- * @package Application\Model\Service\DataAccess
+ * @package Auth\Model\Service\DataAccess
  */
 interface UserInterface {
 

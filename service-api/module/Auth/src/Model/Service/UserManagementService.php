@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Model\Service;
+namespace Auth\Model\Service;
 
 use DateTime;
 

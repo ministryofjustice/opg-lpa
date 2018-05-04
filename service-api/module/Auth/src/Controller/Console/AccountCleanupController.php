@@ -1,8 +1,8 @@
 <?php
-namespace Application\Controller\Console;
+namespace Auth\Controller\Console;
 
-use Application\Model\Service\AccountCleanupService;
-use Application\Model\Service\System\DynamoCronLock;
+use Auth\Model\Service\AccountCleanupService;
+use Auth\Model\Service\System\DynamoCronLock;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Model\Service\DataAccess\Mongo\Factory;
+namespace Auth\Model\Service\DataAccess\Mongo\Factory;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;

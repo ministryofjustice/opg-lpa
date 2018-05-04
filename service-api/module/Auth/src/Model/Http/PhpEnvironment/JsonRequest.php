@@ -1,5 +1,5 @@
 <?php
-namespace Application\Model\Http\PhpEnvironment;
+namespace Auth\Model\Http\PhpEnvironment;
 
 use Zend\Json\Json;
 use Zend\Stdlib\Parameters;
@@ -10,7 +10,7 @@ use Zend\Http\PhpEnvironment\Request as HttpRequest;
  * (as well as the default x-www-form-urlencoded).
  *
  * Class JsonRequest
- * @package Application\Model\Http\PhpEnvironment
+ * @package Auth\Model\Http\PhpEnvironment
  */
 class JsonRequest extends HttpRequest {
 

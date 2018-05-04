@@ -1,12 +1,12 @@
 <?php
 
-namespace Application\Controller\Version1;
+namespace Auth\Controller\Version1;
 
-use Application\Model\Service\AuthenticationService;
-use Application\Model\Service\EmailUpdateService;
-use Application\Model\Service\PasswordChangeService;
-use Application\Model\Service\PasswordResetService;
-use Application\Model\Service\UserManagementService;
+use Auth\Model\Service\AuthenticationService;
+use Auth\Model\Service\EmailUpdateService;
+use Auth\Model\Service\PasswordChangeService;
+use Auth\Model\Service\PasswordResetService;
+use Auth\Model\Service\UserManagementService;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;

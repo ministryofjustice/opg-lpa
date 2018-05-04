@@ -1,5 +1,5 @@
 <?php
-namespace Application\Controller\Version1;
+namespace Auth\Controller\Version1;
 
 use Opg\Lpa\Logger\LoggerTrait;
 use ZF\ApiProblem\ApiProblem;

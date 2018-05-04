@@ -1,10 +1,10 @@
 <?php
-namespace Application\Model\Service\DataAccess\Mongo;
+namespace Auth\Model\Service\DataAccess\Mongo;
 
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use MongoDB\Collection as MongoCollection;
 
-use Application\Model\Service\DataAccess\LogDataSourceInterface;
+use Auth\Model\Service\DataAccess\LogDataSourceInterface;
 
 class LogCollection implements LogDataSourceInterface
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace ApplicationTest\Model\Service;
+namespace AuthTest\Model\Service;
 
-use Application\Model\Service\DataAccess\Mongo\User;
-use Application\Model\Service\PasswordResetService;
+use Auth\Model\Service\DataAccess\Mongo\User;
+use Auth\Model\Service\PasswordResetService;
 use DateTime;
 
 class PasswordResetServiceTest extends ServiceTestCase

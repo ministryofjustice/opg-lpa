@@ -1,8 +1,8 @@
 <?php
 
-namespace Application\Controller\Version1;
+namespace Auth\Controller\Version1;
 
-use Application\Model\Service\AuthenticationService;
+use Auth\Model\Service\AuthenticationService;
 use Zend\Http\Request as HttpRequest;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Stdlib\RequestInterface as Request;

@@ -1,18 +1,18 @@
 <?php
-namespace Application\Model\Mvc\Service;
+namespace Auth\Model\Mvc\Service;
 
 use Interop\Container\ContainerInterface;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
 
-use Application\Model\Http\PhpEnvironment\JsonRequest as HttpJsonRequest;
+use Auth\Model\Http\PhpEnvironment\JsonRequest as HttpJsonRequest;
 
 /**
  * Extension to the standard RequestFactory to allow as HttpJsonRequest to be returned
  * instead of the standard HttpRequest.
  *
  * Class RequestFactory
- * @package Application\Model\Mvc\Service
+ * @package Auth\Model\Mvc\Service
  */
 class RequestFactory extends \Zend\Mvc\Service\RequestFactory
 {

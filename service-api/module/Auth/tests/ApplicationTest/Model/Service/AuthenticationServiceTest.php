@@ -1,9 +1,9 @@
 <?php
 
-namespace ApplicationTest\Model\Service;
+namespace AuthTest\Model\Service;
 
-use Application\Model\Service\AuthenticationService;
-use Application\Model\Service\DataAccess\Mongo\User;
+use Auth\Model\Service\AuthenticationService;
+use Auth\Model\Service\DataAccess\Mongo\User;
 use DateInterval;
 use DateTime;
 
@@ -12,7 +12,7 @@ use DateTime;
  * Normally I would mock the datetime generation in the tested class but it's not the pattern at the OPG
  *
  * Class AuthenticationServiceTest
- * @package ApplicationTest\Model\Service
+ * @package AuthTest\Model\Service
  */
 class AuthenticationServiceTest extends ServiceTestCase
 {
