@@ -187,7 +187,7 @@ class Status extends AbstractService
 
         try {
 
-            $response = $this->apiClient->httpGet('/ping');
+            $response = $this->apiClient->httpGet('/ping-api');
 
             // There should be no JSON if we don't get a 200, so return.
             if ($response->getStatusCode() != 200) {
@@ -217,7 +217,7 @@ class Status extends AbstractService
 
         try {
 
-            $response = $this->authClient->httpGet('/ping');
+            $response = $this->authClient->httpGet('/ping-auth');
 
             // There should be no JSON if we don't get a 200, so return.
             if ($response->getStatusCode() != 200) {
