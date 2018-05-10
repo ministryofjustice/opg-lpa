@@ -3,9 +3,11 @@
 namespace Application\Model\Service\System;
 
 use Application\Model\Service\AbstractService;
-use Exception;
+use Application\Model\Service\ApiClient\Client as ApiClient;
+use Application\Model\Service\AuthClient\Client as AuthClient;
 use Aws\DynamoDb\DynamoDbClient;
 use GuzzleHttp\Client as GuzzleClient;
+use Exception;
 
 /**
  * Goes through all required services and checks they're operating.
@@ -15,6 +17,16 @@ use GuzzleHttp\Client as GuzzleClient;
  */
 class Status extends AbstractService
 {
+    /**
+     * @var ApiClient
+     */
+    private $apiClient;
+
+    /**
+     * @var AuthClient
+     */
+    private $authClient;
+
     /**
      * Services:
      *  - API 2
@@ -175,15 +187,7 @@ class Status extends AbstractService
 
         try {
 
-            $config = $this->getConfig()['api_client'];
-
-            $client = new GuzzleClient();
-            $client->setDefaultOption('exceptions', false);
-
-            $response = $client->get(
-                $config['api_uri'] . '/ping',
-                ['connect_timeout' => 5, 'timeout' => 10]
-            );
+            $response = $this->apiClient->httpGet('/ping');
 
             // There should be no JSON if we don't get a 200, so return.
             if ($response->getStatusCode() != 200) {
@@ -194,7 +198,7 @@ class Status extends AbstractService
 
             $result['details']['200'] = true;
 
-            $api = $response->json();
+            $api = json_decode($response->getBody(), true);
 
             $result['ok'] = $api['ok'];
             $result['details'] = $result['details'] + $api;
@@ -213,15 +217,7 @@ class Status extends AbstractService
 
         try {
 
-            $config = $this->getConfig()['api_client'];
-
-            $client = new GuzzleClient();
-            $client->setDefaultOption('exceptions', false);
-
-            $response = $client->get(
-                $config['auth_uri'] . '/ping',
-                ['connect_timeout' => 5, 'timeout' => 10]
-            );
+            $response = $this->authClient->httpGet('/ping');
 
             // There should be no JSON if we don't get a 200, so return.
             if ($response->getStatusCode() != 200) {
@@ -232,7 +228,7 @@ class Status extends AbstractService
 
             $result['details']['200'] = true;
 
-            $api = $response->json();
+            $api = json_decode($response->getBody(), true);
 
             $result['ok'] = $api['ok'];
             $result['details'] = $result['details'] + $api;
@@ -243,4 +239,19 @@ class Status extends AbstractService
 
     } // function
 
+    /**
+     * @param ApiClient $apiClient
+     */
+    public function setApiClient(ApiClient $apiClient)
+    {
+        $this->apiClient = $apiClient;
+    }
+
+    /**
+     * @param AuthClient $authClient
+     */
+    public function setAuthClient(AuthClient $authClient)
+    {
+        $this->authClient = $authClient;
+    }
 } // class

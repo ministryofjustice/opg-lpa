@@ -142,10 +142,7 @@ class Module implements FormElementProviderInterface
 
                 // PSR-7 HTTP Client
                 'HttpClient' => function () {
-                    return new \Http\Adapter\Guzzle5\Client(
-                        new \GuzzleHttp\Client,
-                        new \Http\Message\MessageFactory\GuzzleMessageFactory
-                    );
+                    return new \Http\Adapter\Guzzle6\Client();
                 },
 
                 'Cache' => function (ServiceLocatorInterface $sm) {

@@ -96,7 +96,7 @@ class FlashMessenger extends AbstractPlugin implements IteratorAggregate, Counta
      */
     public function getSessionManager()
     {
-        if (!$this->session instanceof Manager) {
+        if (! $this->session instanceof Manager) {
             $this->setSessionManager(Container::getDefaultManager());
         }
 
@@ -635,7 +635,7 @@ class FlashMessenger extends AbstractPlugin implements IteratorAggregate, Counta
      */
     protected function getMessagesFromContainer()
     {
-        if (!empty($this->messages) || $this->messageAdded) {
+        if (! empty($this->messages) || $this->messageAdded) {
             return;
         }
 
