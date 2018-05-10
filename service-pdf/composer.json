@@ -15,7 +15,6 @@
     ],
     "require": {
         "php": "^7.1",
-        "ext-proctitle": "*",
         "aws/aws-sdk-php": "^3.0",
         "mikehaertl/php-pdftk": "0.2.1",
         "zendframework/zendpdf": "^2.0.2",
