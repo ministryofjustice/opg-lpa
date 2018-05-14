@@ -62,6 +62,18 @@ module.exports = function (grunt) {
       }
     },
 
+    // govuk template css copied into public/assets
+    copy: {
+      main: {
+        files: [{
+          expand: true,
+          src: ['node_modules/govuk_template_mustache/assets/stylesheets/*.css'],
+          dest: 'public/assets/v2/css/',
+          flatten: true
+        }]
+      }
+    },
+
     // minifying the css
     cssmin: {
       options: {
@@ -218,10 +230,11 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-browser-sync');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   // define tasks
   grunt.registerTask('default', ['watch']);
-  grunt.registerTask('compile', ['sass', 'replace:image_url', 'handlebars', 'concat']);
+  grunt.registerTask('compile', ['sass', 'replace:image_url', 'copy', 'handlebars', 'concat']);
   grunt.registerTask('test', ['scsslint', 'jshint']);
   grunt.registerTask('compress', ['cssmin', 'uglify']);
   grunt.registerTask('refresh', ['browserSync', 'watch']);
