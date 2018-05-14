@@ -18,5 +18,10 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-scss-lint": "^0.5.0",
     "grunt-text-replace": "^0.4.0"
+  },
+  "dependencies": {
+    "govuk-elements-sass": "^2.2.0",
+    "govuk_template_mustache": "^0.19.0",
+    "handlebars": "^4.0.11"
   }
 }
