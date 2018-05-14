@@ -5,8 +5,6 @@ namespace Application\Model\Service;
 use Application\Model\Service\AddressLookup\PostcodeInfo;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\Client as ApiClient;
-use Application\Model\Service\AuthClient\AuthClientAwareInterface;
-use Application\Model\Service\AuthClient\Client as AuthClient;
 use Application\Model\Service\Lpa\Applicant;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Lpa\Metadata;
@@ -47,7 +45,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         ],
         Status::class => [
             'setApiClient' => 'ApiClient',
-            'setAuthClient' => 'AuthClient',
         ],
     ];
 
@@ -109,12 +106,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             /** @var ApiClient $apiClient */
             $apiClient = $container->get('ApiClient');
             $service->setApiClient($apiClient);
-        }
-
-        if ($service instanceof AuthClientAwareInterface) {
-            /** @var AuthClient $authClient */
-            $authClient = $container->get('AuthClient');
-            $service->setAuthClient($authClient);
         }
 
         //  If required load any additional services into the resource

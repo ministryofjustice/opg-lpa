@@ -3,10 +3,9 @@
 namespace Application\Model\Service\System;
 
 use Application\Model\Service\AbstractService;
-use Application\Model\Service\ApiClient\Client as ApiClient;
-use Application\Model\Service\AuthClient\Client as AuthClient;
+use Application\Model\Service\ApiClient\ApiClientAwareInterface;
+use Application\Model\Service\ApiClient\ApiClientTrait;
 use Aws\DynamoDb\DynamoDbClient;
-use GuzzleHttp\Client as GuzzleClient;
 use Exception;
 
 /**
@@ -15,17 +14,9 @@ use Exception;
  * Class Status
  * @package Application\Model\Service\System
  */
-class Status extends AbstractService
+class Status extends AbstractService implements ApiClientAwareInterface
 {
-    /**
-     * @var ApiClient
-     */
-    private $apiClient;
-
-    /**
-     * @var AuthClient
-     */
-    private $authClient;
+    use ApiClientTrait;
 
     /**
      * Services:
@@ -217,7 +208,7 @@ class Status extends AbstractService
 
         try {
 
-            $response = $this->authClient->httpGet('/ping-auth');
+            $response = $this->apiClient->httpGet('/ping-auth');
 
             // There should be no JSON if we don't get a 200, so return.
             if ($response->getStatusCode() != 200) {
@@ -237,21 +228,5 @@ class Status extends AbstractService
 
         return $result;
 
-    } // function
-
-    /**
-     * @param ApiClient $apiClient
-     */
-    public function setApiClient(ApiClient $apiClient)
-    {
-        $this->apiClient = $apiClient;
     }
-
-    /**
-     * @param AuthClient $authClient
-     */
-    public function setAuthClient(AuthClient $authClient)
-    {
-        $this->authClient = $authClient;
-    }
-} // class
+}

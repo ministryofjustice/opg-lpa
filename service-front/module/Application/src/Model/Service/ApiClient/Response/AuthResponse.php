@@ -1,8 +1,8 @@
 <?php
 
-namespace Application\Model\Service\AuthClient\Response;
+namespace Application\Model\Service\ApiClient\Response;
 
-use Application\Model\Service\AuthClient\Exception;
+use Application\Model\Service\ApiClient\Exception\ResponseException;
 use Psr\Http\Message\ResponseInterface;
 
 class AuthResponse
@@ -15,7 +15,7 @@ class AuthResponse
 
         // The expected response should always be JSON, thus now an array.
         if (!is_array($body)) {
-            throw new Exception\ResponseException('Malformed JSON response from server', $response->getStatusCode(), $response);
+            throw new ResponseException('Malformed JSON response from server', $response->getStatusCode(), $response);
         }
 
         $authResponse = new static();
