@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Model\Service\Applications;
 
-use Application\DataAccess\Mongo\DateCallback;
+use Application\Model\DataAccess\Mongo\DateCallback;
 use Iterator;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 

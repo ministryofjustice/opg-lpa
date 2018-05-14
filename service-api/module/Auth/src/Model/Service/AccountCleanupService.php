@@ -2,8 +2,8 @@
 
 namespace Auth\Model\Service;
 
-use Auth\Model\Service\DataAccess\LogDataSourceInterface;
-use Auth\Model\Service\DataAccess\UserDataSourceInterface;
+use Auth\Model\DataAccess\LogDataSourceInterface;
+use Auth\Model\DataAccess\UserDataSourceInterface;
 use Aws\Sns\SnsClient;
 use DateTime;
 use Exception;
@@ -62,8 +62,8 @@ class AccountCleanupService extends AbstractService
         $this->config = $config;
     }
 
-    public function cleanup( $notificationCallback  ){
-
+    public function cleanup($notificationCallback)
+    {
         $summary = array();
 
         /**
@@ -102,16 +102,15 @@ class AccountCleanupService extends AbstractService
 
         //------------------------------------------
 
-        $message  = "Unactivated accounts deleted: {$summary['unactivated']}\n";
+        $message = "Unactivated accounts deleted: {$summary['unactivated']}\n";
         $message .= "One month's notice emails sent: {$summary['1-month-notice']}\n";
         $message .= "One week's notice emails sent: {$summary['1-week-notice']}\n";
         $message .= "Expired accounts deleted: {$summary['expired']}\n";
-        $message .= "\nLove,\n".$this->config['stack']['name'];
+        $message .= "\nLove,\n" . $this->config['stack']['name'];
 
         //---
 
         try {
-
             $config = $this->config['log']['sns'];
 
             $this->snsClient->publish(array(
@@ -120,18 +119,13 @@ class AccountCleanupService extends AbstractService
                 'Subject' => 'LPA Account Cleanup Notification',
                 'MessageStructure' => 'string',
             ));
-
-        } catch ( Exception $e ){
-
+        } catch (Exception $e) {
             $this->getLogger()->alert(
                 'Unable to send AWS SNS notification',
-                [ 'exception' => $e->getMessage() ]
+                ['exception' => $e->getMessage()]
             );
-
         }
-
-    } // function
-
+    }
 
     /**
      * Pulls back a list of all users who have no logged in for x time and sends them a notification
@@ -142,29 +136,28 @@ class AccountCleanupService extends AbstractService
      * @param $type
      * @return int The number of users notified
      */
-    private function sendWarningEmails( DateTime $lastLoginBefore, $callback, $type ){
+    private function sendWarningEmails(DateTime $lastLoginBefore, $callback, $type)
+    {
 
-        echo "Sending {$type} warning notifications to accounts inactive since ".$lastLoginBefore->format('r')."\n";
+        echo "Sending {$type} warning notifications to accounts inactive since " . $lastLoginBefore->format('r') . "\n";
 
         //---
 
         // Pull back a list of accounts...
-        $iterator = $this->getUserDataSource()->getAccountsInactiveSince( $lastLoginBefore, $type );
+        $iterator = $this->getUserDataSource()->getAccountsInactiveSince($lastLoginBefore, $type);
 
         //---
 
         $counter = 0;
 
-        foreach( $iterator as $user ){
-
+        foreach ($iterator as $user) {
             // Tell users the day before, giving them that full day to login.
-            $notificationDate = $user->lastLoginAt()->add( \DateInterval::createFromDateString('+9 months') );
+            $notificationDate = $user->lastLoginAt()->add(\DateInterval::createFromDateString('+9 months'));
 
             try {
-
                 // Call the notification callback...
                 // This will thrown an exception on any errors.
-                $this->guzzleClient->post( $callback, [
+                $this->guzzleClient->post($callback, [
                     'form_params' => [
                         'Type' => $type,
                         'Username' => $user->username(),
@@ -175,44 +168,35 @@ class AccountCleanupService extends AbstractService
                     ],
                 ]);
 
-
                 // Flag the account as 'notification sent'...
-                $this->getUserDataSource()->setInactivityFlag( $user->id(), $type );
+                $this->getUserDataSource()->setInactivityFlag($user->id(), $type);
 
                 $counter++;
-
-            } catch( GuzzleClientException $e ){
-
+            } catch (GuzzleClientException $e) {
                 echo "GuzzleClientException: " . $e->getMessage() . "\n";
 
                 // Guzzle exceptions aren't too bad, we will just retry tomorrow.
 
                 $this->getLogger()->warn(
                     'Unable to send account expiry notification',
-                    [ 'exception' => $e->getMessage() ]
+                    ['exception' => $e->getMessage()]
                 );
-
-            } catch( Exception $e ){
-
+            } catch (Exception $e) {
                 echo "Exception: " . $e->getMessage() . "\n";
 
                 // Other types of exception are worse; things still might not work tomorrow.
 
                 $this->getLogger()->alert(
                     'Unable to send account expiry notification',
-                    [ 'exception' => $e->getMessage() ]
+                    ['exception' => $e->getMessage()]
                 );
-
             }
-
-        } // foreach
+        }
 
         echo "{$counter} notifications sent.\n";
 
         return $counter;
-
-    } // function
-
+    }
 
     /**
      * Delete all accounts that have expired.
@@ -220,9 +204,10 @@ class AccountCleanupService extends AbstractService
      * @param DateTime $lastLoginBefore
      * @return int The number of accounts deleted
      */
-    private function deleteExpiredAccounts( DateTime $lastLoginBefore ){
+    private function deleteExpiredAccounts(DateTime $lastLoginBefore)
+    {
 
-        echo "Deleting accounts inactive since ".$lastLoginBefore->format('r')."\n";
+        echo "Deleting accounts inactive since " . $lastLoginBefore->format('r') . "\n";
 
         //---
 
@@ -232,20 +217,18 @@ class AccountCleanupService extends AbstractService
         //---
 
         // Pull back a list of accounts...
-        $iterator = $this->getUserDataSource()->getAccountsInactiveSince( $lastLoginBefore );
+        $iterator = $this->getUserDataSource()->getAccountsInactiveSince($lastLoginBefore);
 
         //---
 
         $counter = 0;
 
-        foreach( $iterator as $user ){
-
+        foreach ($iterator as $user) {
             // Delete each account...
-            $service->delete( $user->id(), 'expired' );
+            $service->delete($user->id(), 'expired');
 
             //  Delete the user account and LPA data in the api database via the API service
             try {
-
                 $cleanUpConfig = $this->config['cleanup'];
 
                 //  Create the delete target
@@ -266,15 +249,12 @@ class AccountCleanupService extends AbstractService
             }
 
             $counter++;
-
-        } // foreach
+        }
 
         echo "{$counter} accounts deleted.\n";
 
         return $counter;
-
-    } // function
-
+    }
 
     /**
      * Delete all accounts created before time x that have not yet been activated.
@@ -282,9 +262,10 @@ class AccountCleanupService extends AbstractService
      * @param DateTime $unactivatedSince
      * @return int The number of accounts deleted
      */
-    private function deleteUnactivatedAccounts( DateTime $unactivatedSince ){
+    private function deleteUnactivatedAccounts(DateTime $unactivatedSince)
+    {
 
-        echo "Deleting unactivated accounts created before ".$unactivatedSince->format('r')."\n";
+        echo "Deleting unactivated accounts created before " . $unactivatedSince->format('r') . "\n";
 
         //---
 
@@ -294,25 +275,21 @@ class AccountCleanupService extends AbstractService
         //---
 
         // Pull back a list of accounts...
-        $iterator = $this->getUserDataSource()->getAccountsUnactivatedOlderThan( $unactivatedSince );
+        $iterator = $this->getUserDataSource()->getAccountsUnactivatedOlderThan($unactivatedSince);
 
         //---
 
         $counter = 0;
 
-        foreach( $iterator as $user ){
-
+        foreach ($iterator as $user) {
             // Delete each account...
-            $service->delete( $user->id(), 'unactivated' );
+            $service->delete($user->id(), 'unactivated');
 
             $counter++;
-
         }
 
         echo "{$counter} accounts deleted.\n";
 
         return $counter;
-
-    } // function
-
-} // class
+    }
+}

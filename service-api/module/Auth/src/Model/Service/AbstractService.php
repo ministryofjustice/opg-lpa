@@ -2,8 +2,8 @@
 
 namespace Auth\Model\Service;
 
-use Auth\Model\Service\DataAccess\LogDataSourceInterface;
-use Auth\Model\Service\DataAccess\UserDataSourceInterface;
+use Auth\Model\DataAccess\LogDataSourceInterface;
+use Auth\Model\DataAccess\UserDataSourceInterface;
 
 abstract class AbstractService
 {

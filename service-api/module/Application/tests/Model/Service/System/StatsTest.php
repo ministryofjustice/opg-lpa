@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Model\Service\System;
 
-use Application\DataAccess\Mongo\CollectionFactory;
+use Application\Model\DataAccess\Mongo\CollectionFactory;
 use Application\Model\Service\System\Stats;
 use Mockery;
 use MongoDB\Collection as MongoCollection;

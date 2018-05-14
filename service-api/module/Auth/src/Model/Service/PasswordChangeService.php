@@ -2,8 +2,8 @@
 
 namespace Auth\Model\Service;
 
-use Auth\Model\Service\DataAccess\LogDataSourceInterface;
-use Auth\Model\Service\DataAccess\UserDataSourceInterface;
+use Auth\Model\DataAccess\LogDataSourceInterface;
+use Auth\Model\DataAccess\UserDataSourceInterface;
 
 class PasswordChangeService extends AbstractService
 {
@@ -14,11 +14,8 @@ class PasswordChangeService extends AbstractService
      */
     private $authenticationService;
 
-    public function __construct(
-        UserDataSourceInterface $userDataSource,
-        LogDataSourceInterface $logDataSource,
-        AuthenticationService $authenticationService
-    ) {
+    public function __construct(UserDataSourceInterface $userDataSource, LogDataSourceInterface $logDataSource, AuthenticationService $authenticationService)
+    {
         parent::__construct($userDataSource, $logDataSource);
 
         $this->authenticationService = $authenticationService;
@@ -26,40 +23,36 @@ class PasswordChangeService extends AbstractService
 
     //-------------
 
-    public function changePassword( $userId, $oldPassword, $newPassword ){
+    public function changePassword($userId, $oldPassword, $newPassword)
+    {
+        $user = $this->getUserDataSource()->getById($userId);
 
-        $user = $this->getUserDataSource()->getById( $userId );
-
-        if( is_null( $user ) ){
+        if (is_null($user)) {
             return 'user-not-found';
         }
 
         //---
 
         // Ensure the new password is valid
-        if ( !$this->isPasswordValid( $newPassword ) ) {
+        if (!$this->isPasswordValid($newPassword)) {
             return 'invalid-new-password';
         }
 
         //---
 
         // Ensure the old password is valid
-        if( !password_verify($oldPassword , $user->password()) ){
+        if (!password_verify($oldPassword, $user->password())) {
             return 'invalid-user-credentials';
         }
 
         //---
 
-        $passwordHash = password_hash( $newPassword, PASSWORD_DEFAULT );
+        $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
 
         $this->getUserDataSource()->setNewPassword($user->id(), $passwordHash);
 
         //---
 
-        return $this->authenticationService->withPassword(
-            $user->username(), $newPassword, true
-        );
-
-    } // function
-
-} // class
+        return $this->authenticationService->withPassword($user->username(), $newPassword, true);
+    }
+}

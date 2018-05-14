@@ -3,7 +3,7 @@
 namespace Application\Controller\Console;
 
 use Application\Model\Service\System\DynamoCronLock;
-use Application\Model\Service\System\Stats;
+use Application\Model\Service\System\Stats as StatsService;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
@@ -28,8 +28,8 @@ class GenerateStatsControllerFactory implements FactoryInterface
     {
         /** @var DynamoCronLock $cronLock */
         $cronLock = $container->get('DynamoCronLock');
-        /** @var Stats $statsService */
-        $statsService = $container->get('StatsService');
+        /** @var StatsService $statsService */
+        $statsService = $container->get(StatsService::class);
 
         return new GenerateStatsController($cronLock, $statsService);
     }

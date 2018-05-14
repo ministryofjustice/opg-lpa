@@ -112,6 +112,7 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         'A' => 
         array (
             'Aws\\' => 4,
+            'Auth\\' => 5,
             'Application\\' => 12,
         ),
     );
@@ -334,6 +335,10 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
         'Aws\\' => 
         array (
             0 => __DIR__ . '/..' . '/aws/aws-sdk-php/src',
+        ),
+        'Auth\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/module/Auth/src',
         ),
         'Application\\' => 
         array (

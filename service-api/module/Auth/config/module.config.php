@@ -1,47 +1,34 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
 
 return [
-    'router' => [
-        'routes' => [
-            'home' => [
-                'type' => 'Zend\Router\Http\Literal',
-                'options' => [
-                    'route'    => '/',
-                    'defaults' => [
-                        'controller' => 'Auth\Controller\Index',
-                        'action'     => 'index',
+
+    'console' => [
+        'router' => [
+            'routes' => [
+                'account-cleanup' => [
+                    'type'    => 'simple',
+                    'options' => [
+                        'route'    => 'account-cleanup',
+                        'defaults' => [
+                            'controller' => 'Auth\Controller\Console\AccountCleanup',
+                            'action'     => 'cleanup'
+                        ],
                     ],
                 ],
             ],
+        ],
+    ],
 
-            'ping' => [
-                'type' => 'Zend\Router\Http\Segment',
-                'options' => [
-                    'route' => '/ping[/:action]',
-                    'defaults' => [
-                        'controller' => 'Auth\Controller\Ping',
-                        'action'     => 'index',
-                    ],
-                ],
-            ], // ping
-
-            'v1' => [
+    'router' => [
+        'routes' => [
+            'auth-v1' => [
                 'type'    => 'Segment',
                 'options' => [
                     'route'    => '/v1',
                     'defaults' => [
                         '__NAMESPACE__' => 'Auth\Controller\Version1',
-                        'controller'    => 'Rest',
                     ],
                 ],
-                'may_terminate' => true,
                 'child_routes' => [
 
                     'stats' => [
@@ -49,7 +36,7 @@ return [
                         'options' => [
                             'route'    => '/stats',
                             'defaults' => [
-                                'controller' => 'Stats',
+                                'controller' => 'StatsController',
                                 'action' => 'index',
                             ],
                         ],
@@ -60,7 +47,7 @@ return [
                         'options' => [
                             'route'    => '/authenticate',
                             'defaults' => [
-                                'controller'    => 'Authenticate',
+                                'controller' => 'AuthenticateController',
                             ],
                         ],
                         'may_terminate' => false,
@@ -87,7 +74,7 @@ return [
                                 'token' => '[a-zA-Z0-9]+',
                             ],
                             'defaults' => [
-                                'controller'    => 'Authenticate',
+                                'controller' => 'AuthenticateController',
                             ],
                         ],
                         'may_terminate' => false,
@@ -112,7 +99,7 @@ return [
                         'options' => [
                             'route'    => '/users',
                             'defaults' => [
-                                'controller'    => 'User',
+                                'controller' => 'UsersController',
                             ],
                         ],
                         'may_terminate' => false,
@@ -123,7 +110,7 @@ return [
                                 'options' => [
                                     'verb' => 'post',
                                     'defaults' => [
-                                        'controller' => 'Registration',
+                                        'controller' => 'RegistrationController',
                                         'action' => 'create'
                                     ],
                                 ],
@@ -134,7 +121,7 @@ return [
                                         'options' => [
                                             'route'    => '/activate',
                                             'defaults' => [
-                                                'controller' => 'Registration',
+                                                'controller' => 'RegistrationController',
                                                 'action'    => 'activate',
                                             ],
                                         ],
@@ -147,7 +134,7 @@ return [
                                 'options' => [
                                     'route'    => '/password-reset',
                                     'defaults' => [
-                                        'controller' => 'Password',
+                                        'controller' => 'PasswordController',
                                         'action'    => 'passwordReset',
                                     ],
                                 ],
@@ -158,7 +145,7 @@ return [
                                 'options' => [
                                     'route'    => '/password-reset-update',
                                     'defaults' => [
-                                        'controller' => 'Password',
+                                        'controller' => 'PasswordController',
                                         'action'    => 'passwordResetUpdate',
                                     ],
                                 ],
@@ -169,7 +156,7 @@ return [
                                 'options' => [
                                     'route'    => '/confirm-new-email',
                                     'defaults' => [
-                                        'controller' => 'Email',
+                                        'controller' => 'EmailController',
                                         'action'    => 'update-email',
                                     ],
                                 ],
@@ -213,7 +200,7 @@ return [
                                         'options' => [
                                             'route'    => '/email',
                                             'defaults' => [
-                                                'controller' => 'Email',
+                                                'controller' => 'EmailController',
                                             ],
                                         ],
                                         'may_terminate' => false,
@@ -244,8 +231,8 @@ return [
                                         'options' => [
                                             'route'    => '/password',
                                             'defaults' => [
-                                                'controller' => 'Password',
-                                                'action'    => 'change',
+                                                'controller' => 'PasswordController',
+                                                'action' => 'change',
                                             ],
                                         ],
                                     ], // password
@@ -275,23 +262,14 @@ return [
     ],
 
     'controllers' => [
-        'abstract_factories' => [
-            'Auth\Controller\Version1\AuthenticatedControllerAbstractFactory',
-        ],
         'factories' => [
             'Auth\Controller\Console\AccountCleanup' => 'Auth\Controller\Console\AccountCleanupControllerFactory',
             'Auth\Controller\Version1\Registration' => 'Auth\Controller\Version1\RegistrationControllerFactory',
             'Auth\Controller\Version1\Stats' => 'Auth\Controller\Version1\StatsControllerFactory',
             'Auth\Controller\Ping' => 'Auth\Controller\PingControllerFactory',
         ],
-        'invokables' => [
-            'Auth\Controller\Index' => 'Auth\Controller\IndexController',
-        ],
-        'aliases' => [
-            'Auth\Controller\Version1\Authenticate' => 'Auth\Controller\Version1\AuthenticateController',
-            'Auth\Controller\Version1\Email' => 'Auth\Controller\Version1\EmailController',
-            'Auth\Controller\Version1\Password' => 'Auth\Controller\Version1\PasswordController',
-            'Auth\Controller\Version1\User' => 'Auth\Controller\Version1\UsersController',
+        'abstract_factories' => [
+            'Auth\Controller\ControllerAbstractFactory',
         ],
     ],
 
@@ -303,37 +281,6 @@ return [
         ],
         'factories' => [
             'Request' => 'Auth\Model\Mvc\Service\RequestFactory',
-            'translator' => 'Zend\Mvc\Service\TranslatorServiceFactory',
-        ],
-        'aliases' => [
-            'RegistrationService' => 'Auth\Model\Service\RegistrationService',
-            'AuthenticationService' => 'Auth\Model\Service\AuthenticationService',
-            'PasswordResetService' => 'Auth\Model\Service\PasswordResetService',
-            'EmailUpdateService' => 'Auth\Model\Service\EmailUpdateService',
-            'StatsService' => 'Auth\Model\Service\StatsService',
-            'UserManagementService' => 'Auth\Model\Service\UserManagementService',
-            'PasswordChangeService' => 'Auth\Model\Service\PasswordChangeService',
-            'AccountCleanupService' => 'Auth\Model\Service\AccountCleanupService',
-        ],
-    ],
-
-    // Placeholder for console routes
-    'console' => [
-        'router' => [
-            'routes' => [
-
-                'account-cleanup' => [
-                    'type'    => 'simple',
-                    'options' => [
-                        'route'    => 'account-cleanup',
-                        'defaults' => [
-                            'controller' => 'Auth\Controller\Console\AccountCleanup',
-                            'action'     => 'cleanup'
-                        ],
-                    ],
-                ],
-
-            ],
         ],
     ],
 

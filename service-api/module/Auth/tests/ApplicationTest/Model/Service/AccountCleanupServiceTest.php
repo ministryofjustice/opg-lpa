@@ -3,7 +3,7 @@
 namespace AuthTest\Model\Service;
 
 use Auth\Model\Service\AccountCleanupService;
-use Auth\Model\Service\DataAccess\Mongo\User;
+use Auth\Model\DataAccess\Mongo\User;
 use Auth\Model\Service\UserManagementService;
 use Aws\Sns\SnsClient;
 use DateInterval;

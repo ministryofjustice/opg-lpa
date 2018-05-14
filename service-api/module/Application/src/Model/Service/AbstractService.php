@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service;
 
-use Application\DataAccess\Mongo\DateCallback;
+use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\DateTime;
 use Application\Library\Lpa\StateChecker;

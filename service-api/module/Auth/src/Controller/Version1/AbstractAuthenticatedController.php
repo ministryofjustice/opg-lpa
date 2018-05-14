@@ -4,10 +4,9 @@ namespace Auth\Controller\Version1;
 
 use Auth\Model\Service\AuthenticationService;
 use Zend\Http\Request as HttpRequest;
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Stdlib\RequestInterface as Request;
 
-abstract class AbstractAuthenticatedController extends AbstractActionController
+abstract class AbstractAuthenticatedController extends AbstractController
 {
     /**
      * @var AuthenticationService

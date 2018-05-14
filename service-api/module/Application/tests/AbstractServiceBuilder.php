@@ -2,7 +2,7 @@
 
 namespace ApplicationTest;
 
-use Application\DataAccess\Mongo\DateCallback;
+use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Library\Authentication\Identity\User as UserIdentity;

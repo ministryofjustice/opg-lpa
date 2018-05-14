@@ -2,7 +2,7 @@
 
 namespace ApplicationTest;
 
-use Application\DataAccess\Mongo\DateCallback;
+use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\Service\AbstractService;
 use Mockery;

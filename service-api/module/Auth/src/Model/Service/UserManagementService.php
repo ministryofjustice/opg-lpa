@@ -4,19 +4,19 @@ namespace Auth\Model\Service;
 
 use DateTime;
 
-class UserManagementService extends AbstractService {
+class UserManagementService extends AbstractService
+{
+    public function get($userId)
+    {
 
-    public function get( $userId ){
+        $user = $this->getUserDataSource()->getById($userId);
 
-        $user = $this->getUserDataSource()->getById( $userId );
-
-        if( is_null( $user ) ){
+        if (is_null($user)) {
             return 'user-not-found';
         }
 
         return $user->toArray();
-
-    } // function
+    }
 
     /**
      * @param string $username
@@ -38,27 +38,27 @@ class UserManagementService extends AbstractService {
             return [
                 'isDeleted' => true,
                 'deletedAt' => $deletionLog['loggedAt']->toDateTime(),
-                'reason'    => $deletionLog['reason']
+                'reason' => $deletionLog['reason']
             ];
         }
 
         return $user->toArray();
     }
 
-    public function delete( $userId, $reason ){
+    public function delete($userId, $reason)
+    {
+        $user = $this->getUserDataSource()->getById($userId);
 
-        $user = $this->getUserDataSource()->getById( $userId );
-
-        if( is_null( $user ) ){
+        if (is_null($user)) {
             return 'user-not-found';
         }
 
         //-------------------------------------------
         // Delete the user account
 
-        $result = $this->getUserDataSource()->delete( $userId );
+        $result = $this->getUserDataSource()->delete($userId);
 
-        if( $result !== true ){
+        if ($result !== true) {
             return 'user-not-found';
         }
 
@@ -66,18 +66,17 @@ class UserManagementService extends AbstractService {
         // Record the account deletion in the log
 
         $details = [
-            'identity_hash' => $this->hashIdentity( $user->username() ),
+            'identity_hash' => $this->hashIdentity($user->username()),
             'type' => 'account-deleted',
             'reason' => $reason,
             'loggedAt' => new DateTime
         ];
 
-        $this->getLogDataSource()->addLog( $details );
+        $this->getLogDataSource()->addLog($details);
 
         //---
 
         return true;
-
     }
 
     /**
@@ -86,11 +85,8 @@ class UserManagementService extends AbstractService {
      * @param $identity
      * @return string
      */
-    private function hashIdentity( $identity ){
-
-        return hash( 'sha512', strtolower( trim($identity) ) );
-
+    private function hashIdentity($identity)
+    {
+        return hash('sha512', strtolower(trim($identity)));
     }
-
-
-} // class
+}

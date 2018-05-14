@@ -2,8 +2,8 @@
 
 namespace Auth\Model\Service;
 
-use Auth\Model\Service\DataAccess\LogDataSourceInterface;
-use Auth\Model\Service\DataAccess\UserDataSourceInterface;
+use Auth\Model\DataAccess\LogDataSourceInterface;
+use Auth\Model\DataAccess\UserDataSourceInterface;
 use Aws\Sns\SnsClient;
 use GuzzleHttp\Client as GuzzleClient;
 use Interop\Container\ContainerInterface;
@@ -51,7 +51,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
 
         if ($requestedName == AccountCleanupService::class) {
             /** @var UserManagementService $userManagementService */
-            $userManagementService = $container->get('UserManagementService');
+            $userManagementService = $container->get(UserManagementService::class);
             /** @var SnsClient $snsClient */
             $snsClient = $container->get('SnsClient');
             /** @var GuzzleClient $guzzleClient */
@@ -67,7 +67,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             );
         } elseif ($requestedName == PasswordChangeService::class) {
             /** @var AuthenticationService $authenticationService */
-            $authenticationService = $container->get('AuthenticationService');
+            $authenticationService = $container->get(AuthenticationService::class);
 
             $service = new PasswordChangeService(
                 $this->getUserDataSource($container),

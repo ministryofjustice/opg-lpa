@@ -2,9 +2,9 @@
 
 namespace Application;
 
-use Application\DataAccess\Mongo\CollectionFactory;
-use Application\DataAccess\Mongo\DatabaseFactory;
-use Application\DataAccess\Mongo\ManagerFactory;
+use Application\Model\DataAccess\Mongo\CollectionFactory;
+use Application\Model\DataAccess\Mongo\DatabaseFactory;
+use Application\Model\DataAccess\Mongo\ManagerFactory;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
@@ -17,6 +17,7 @@ use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\ApiProblem\ApiProblemResponse;
 
 class Module
@@ -43,26 +44,30 @@ class Module
         }
     }
 
-    /*
-     * ------------------------------------------------------------------
-     * Setup the Service Manager
-     *
-     */
-
     public function getServiceConfig()
     {
         return [
             'factories' => [
-                'Zend\Authentication\AuthenticationService' => function ($sm) {
-                    // NonPersistent persists only for the life of the request...
-                    return new AuthenticationService(new NonPersistent());
-                },
-                'DynamoCronLock' => function ($sm) {
+                'DynamoCronLock' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config')['cron']['lock']['dynamodb'];
 
                     $config['keyPrefix'] = $sm->get('config')['stack']['name'];
 
                     return new DynamoCronLock($config);
+                },
+
+                'DynamoQueueClient' => function (ServiceLocatorInterface $sm) {
+                    $config = $sm->get('config');
+                    $dynamoConfig = $config['pdf']['DynamoQueue'];
+
+                    $dynamoDb = new DynamoDbClient($dynamoConfig['client']);
+
+                    return new DynamoQueue($dynamoDb, $dynamoConfig['settings']);
+                },
+
+                'Zend\Authentication\AuthenticationService' => function ($sm) {
+                    // NonPersistent persists only for the life of the request...
+                    return new AuthenticationService(new NonPersistent());
                 },
 
                 // Create an instance of the MongoClient...
@@ -77,15 +82,6 @@ class Module
                 CollectionFactory::class . '-stats-who' => new CollectionFactory('whoAreYou'),
                 CollectionFactory::class . '-stats-lpas' => new CollectionFactory('lpaStats'),
 
-                // Get Dynamo Queue Client
-                'DynamoQueueClient' => function ($sm) {
-                    $config = $sm->get('config');
-                    $dynamoConfig = $config['pdf']['DynamoQueue'];
-
-                    $dynamoDb = new DynamoDbClient($dynamoConfig['client']);
-
-                    return new DynamoQueue($dynamoDb, $dynamoConfig['settings']);
-                },
                 // Get S3Client Client
                 'S3Client' => function ($sm) {
                     $config = $sm->get('config');

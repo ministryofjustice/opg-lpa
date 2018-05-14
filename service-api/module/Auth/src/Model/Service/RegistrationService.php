@@ -6,13 +6,15 @@ use DateTime;
 use Zend\Validator\EmailAddress as EmailAddressValidator;
 use Zend\Math\BigInteger\BigInteger;
 
-class RegistrationService extends AbstractService {
+class RegistrationService extends AbstractService
+{
 
     use PasswordValidatorTrait;
 
     //-------------
 
-    public function create( $username, $password ){
+    public function create($username, $password)
+    {
 
         //-----------------------------------------------
         // Validate details
@@ -22,20 +24,20 @@ class RegistrationService extends AbstractService {
 
         $emailValidator = new EmailAddressValidator();
 
-        if ( !$emailValidator->isValid($username) ) {
+        if (!$emailValidator->isValid($username)) {
             return 'invalid-username';
         }
 
         //------
         // Check the username isn't already used...
 
-        $user = $this->getUserDataSource()->getByUsername( $username );
+        $user = $this->getUserDataSource()->getByUsername($username);
 
-        if( !is_null( $user ) ){
+        if (!is_null($user)) {
             return 'username-already-exists';
         }
 
-        if ( !$this->isPasswordValid( $password ) ) {
+        if (!$this->isPasswordValid($password)) {
             return 'invalid-password';
         }
 
@@ -49,26 +51,24 @@ class RegistrationService extends AbstractService {
          * a clash with the userId or activation_token (despite this being extremely unlikely).
          */
         do {
-
             // Create a 32 character user id and activation token.
 
-            $userId = bin2hex(openssl_random_pseudo_bytes( 16 ));
-            $activationToken = bin2hex(openssl_random_pseudo_bytes( 16 ));
+            $userId = bin2hex(openssl_random_pseudo_bytes(16));
+            $activationToken = bin2hex(openssl_random_pseudo_bytes(16));
 
             // Use base62 for shorter tokens
-            $activationToken = BigInteger::factory('bcmath')->baseConvert( $activationToken, 16, 62 );
+            $activationToken = BigInteger::factory('bcmath')->baseConvert($activationToken, 16, 62);
 
-            $created = (bool)$this->getUserDataSource()->create( $userId,[
+            $created = (bool)$this->getUserDataSource()->create($userId, [
                 'identity' => $username,
                 'active' => false,
                 'activation_token' => $activationToken,
-                'password_hash' => password_hash( $password, PASSWORD_DEFAULT ),
+                'password_hash' => password_hash($password, PASSWORD_DEFAULT),
                 'created' => new DateTime(),
                 'last_updated' => new DateTime(),
                 'failed_login_attempts' => 0,
             ]);
-
-        } while ( !$created );
+        } while (!$created);
 
         //---
 
@@ -76,19 +76,16 @@ class RegistrationService extends AbstractService {
             'userId' => $userId,
             'activation_token' => $activationToken,
         ];
+    }
 
-    } // function
+    public function activate($token)
+    {
+        $result = $this->getUserDataSource()->activate($token);
 
-    public function activate( $token ){
-
-        $result = $this->getUserDataSource()->activate( $token );
-
-        if( is_null($result) || $result === false ){
+        if (is_null($result) || $result === false) {
             return 'account-not-found';
         }
 
         return true;
-
-    } // function
-
-} // class
+    }
+}

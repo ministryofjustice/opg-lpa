@@ -4,10 +4,11 @@ namespace Auth\Model\Service;
 
 use DateTime;
 use RuntimeException;
-use Auth\Model\Service\DataAccess;
+use Auth\Model\DataAccess;
 use Zend\Math\BigInteger\BigInteger;
 
-class AuthenticationService extends AbstractService {
+class AuthenticationService extends AbstractService
+{
 
     //-------------
 
@@ -28,42 +29,42 @@ class AuthenticationService extends AbstractService {
 
     //-------------
 
-    public function withPassword( $username, $password, $createToken ){
+    public function withPassword($username, $password, $createToken)
+    {
 
-        if( empty($username) || empty($password) ){
+        if (empty($username) || empty($password)) {
             return 'missing-credentials';
         }
 
         //---
 
-        $user = $this->getUserDataSource()->getByUsername( $username );
+        $user = $this->getUserDataSource()->getByUsername($username);
 
-        if( !( $user instanceof DataAccess\UserInterface ) ){
+        if (!($user instanceof DataAccess\UserInterface)) {
             return 'user-not-found';
         }
 
         //---
 
-        if( !$user->isActive() ){
+        if (!$user->isActive()) {
             return 'account-not-active';
         }
 
         //---
 
-        if( $user->failedLoginAttempts() >= self::MAX_ALLOWED_LOGIN_ATTEMPTS ){
+        if ($user->failedLoginAttempts() >= self::MAX_ALLOWED_LOGIN_ATTEMPTS) {
 
             // Unlock the account after 15 minutes
-            if(
-                ( $user->lastFailedLoginAttemptAt() instanceof DateTime ) &&
-                ( $user->lastFailedLoginAttemptAt() > new DateTime( '-' . self::ACCOUNT_LOCK_TIME . " seconds" ) ) )
-            {
+            if (
+                ($user->lastFailedLoginAttemptAt() instanceof DateTime) &&
+                ($user->lastFailedLoginAttemptAt() > new DateTime('-' . self::ACCOUNT_LOCK_TIME . " seconds"))) {
 
                 return 'account-locked/max-login-attempts';
 
             } else {
 
                 // Reset field failed login counter
-                $this->getUserDataSource()->resetFailedLoginCounter( $user->id() );
+                $this->getUserDataSource()->resetFailedLoginCounter($user->id());
                 $user->resetFailedLoginAttempts();
 
             }
@@ -73,11 +74,11 @@ class AuthenticationService extends AbstractService {
         //---
 
         // Check password
-        if( !password_verify($password , $user->password()) ){
+        if (!password_verify($password, $user->password())) {
 
-            $this->getUserDataSource()->incrementFailedLoginCounter( $user->id() );
+            $this->getUserDataSource()->incrementFailedLoginCounter($user->id());
 
-            if( ( $user->failedLoginAttempts() + 1 ) >= self::MAX_ALLOWED_LOGIN_ATTEMPTS ){
+            if (($user->failedLoginAttempts() + 1) >= self::MAX_ALLOWED_LOGIN_ATTEMPTS) {
 
                 return 'invalid-user-credentials/account-locked';
 
@@ -100,33 +101,33 @@ class AuthenticationService extends AbstractService {
         //---
 
         // Update the last logged-in time to now.
-        $this->getUserDataSource()->updateLastLoginTime( $user->id() );
+        $this->getUserDataSource()->updateLastLoginTime($user->id());
 
         //---
 
         // Ensure 'failed_login_attempts' is reset if needed
-        if( $user->failedLoginAttempts() > 0 ){
-            $this->getUserDataSource()->resetFailedLoginCounter( $user->id() );
+        if ($user->failedLoginAttempts() > 0) {
+            $this->getUserDataSource()->resetFailedLoginCounter($user->id());
         }
 
         //---
 
         $tokenDetails = array();
 
-        if( $createToken ){
+        if ($createToken) {
 
-            $expires = new DateTime( "+".self::TOKEN_TTL." seconds" );
+            $expires = new DateTime("+" . self::TOKEN_TTL . " seconds");
 
             //---
 
             do {
 
-                $authToken = bin2hex(openssl_random_pseudo_bytes( 32, $strong ));
+                $authToken = bin2hex(openssl_random_pseudo_bytes(32, $strong));
 
                 // Use base62 for shorter tokens
-                $authToken = BigInteger::factory('bcmath')->baseConvert( $authToken, 16, 62 );
+                $authToken = BigInteger::factory('bcmath')->baseConvert($authToken, 16, 62);
 
-                if( $strong !== true ){
+                if ($strong !== true) {
                     // @codeCoverageIgnoreStart
                     throw new RuntimeException('Unable to generate a strong token');
                     // @codeCoverageIgnoreEnd
@@ -138,7 +139,7 @@ class AuthenticationService extends AbstractService {
                     $authToken
                 );
 
-            } while ( !$created );
+            } while (!$created);
 
             $tokenDetails = [
                 'token' => $authToken,
@@ -151,19 +152,20 @@ class AuthenticationService extends AbstractService {
         //---
 
         return [
-            'userId' => $user->id(),
-            'username' => $user->username(),
-            'last_login' => $user->lastLoginAt(),
-            'inactivityFlagsCleared' => $inactivityFlagsCleared,
-        ] + $tokenDetails;
+                'userId' => $user->id(),
+                'username' => $user->username(),
+                'last_login' => $user->lastLoginAt(),
+                'inactivityFlagsCleared' => $inactivityFlagsCleared,
+            ] + $tokenDetails;
 
     } // function
 
-    public function withToken( $token, $extendToken ){
+    public function withToken($token, $extendToken)
+    {
 
-        $user = $this->getUserDataSource()->getByAuthToken( $token );
+        $user = $this->getUserDataSource()->getByAuthToken($token);
 
-        if( !( $user instanceof DataAccess\UserInterface ) ){
+        if (!($user instanceof DataAccess\UserInterface)) {
             return 'invalid-token';
         }
 
@@ -171,13 +173,13 @@ class AuthenticationService extends AbstractService {
 
         $token = $user->authToken();
 
-        if( !( $token instanceof DataAccess\TokenInterface ) ){
+        if (!($token instanceof DataAccess\TokenInterface)) {
             return 'invalid-token';
         }
 
         //---
 
-        if( $token->expiresAt() < (new DateTime()) ){
+        if ($token->expiresAt() < (new DateTime())) {
             return 'token-has-expired';
         }
 
@@ -189,11 +191,11 @@ class AuthenticationService extends AbstractService {
          */
         $secondsSinceLastUpdate = time() - $token->updatedAt()->getTimestamp();
 
-        if( $extendToken && $secondsSinceLastUpdate > 5 ){
+        if ($extendToken && $secondsSinceLastUpdate > 5) {
 
-            $expires = new DateTime( "+".self::TOKEN_TTL." seconds" );
+            $expires = new DateTime("+" . self::TOKEN_TTL . " seconds");
 
-            $this->getUserDataSource()->extendAuthToken( $user->id(), $expires );
+            $this->getUserDataSource()->extendAuthToken($user->id(), $expires);
 
             $expiresAt = [
                 'expiresIn' => self::TOKEN_TTL,
@@ -214,21 +216,20 @@ class AuthenticationService extends AbstractService {
         //---
 
         return [
-            'token' => $token->id(),
-            'userId' => $user->id(),
-            'username' => $user->username(),
-            'last_login' => $user->lastLoginAt(),
-        ] + $expiresAt;
+                'token' => $token->id(),
+                'userId' => $user->id(),
+                'username' => $user->username(),
+                'last_login' => $user->lastLoginAt(),
+            ] + $expiresAt;
 
     } // function
 
     //-------------
 
-    public function deleteToken( $token ){
+    public function deleteToken($token)
+    {
 
-        $this->getUserDataSource()->removeAuthToken( $token );
+        $this->getUserDataSource()->removeAuthToken($token);
 
     }
-
-} // class
-
+}

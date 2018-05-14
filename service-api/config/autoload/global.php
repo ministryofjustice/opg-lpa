@@ -1,13 +1,13 @@
 <?php
 
-return array(
+return [
 
     'stack' => [
         'name' => getenv('OPG_LPA_STACK_NAME') ?: 'local',
         'environment' => getenv('OPG_LPA_STACK_ENVIRONMENT') ?: 'dev',
     ],
 
-    //  TODO - Still required after API Auth merge?
+    //  TODO - To be removed when account clean up is refactored to remove API self call
     'cleanup' => [
         'notification' => [
             'callback' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_ENDPOINT') ?: null,
@@ -17,14 +17,12 @@ return array(
         'api-token' => getenv('OPG_LPA_COMMON_AUTH_CLEANUP_TOKEN') ?: null,
     ], // cleanup
 
-    //  TODO - Still required after API Auth merge?
+    //  TODO - To be removed when API self call is removed
     'authentication' => [
-        'ping' => getenv('OPG_LPA_API_ENDPOINTS_AUTH_PING') ?: 'https://authv2/ping',
-        'endpoint' => getenv('OPG_LPA_API_ENDPOINTS_AUTH') ?: 'https://authv2/v1/authenticate',
+        'endpoint' => getenv('OPG_LPA_API_ENDPOINTS_AUTH') ?: 'https://apiv2/v1/authenticate',
         'clean-up-token' => getenv('OPG_LPA_COMMON_AUTH_CLEANUP_TOKEN'),
     ],
 
-    //  TODO - Came from auth config...is it still required?
     'log' => [
         'sns' => [
             'endpoints' => [
@@ -44,10 +42,9 @@ return array(
     ], // log
 
     'admin' => [
-        'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',',getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : array(),
+        'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : [],
     ],
 
-    //  TODO - This existed already and the auth version was nearly the same, but the API copy has the additional 'endpoint' parameter
     'cron' => [
         'lock' => [
             'dynamodb' => [
@@ -70,7 +67,11 @@ return array(
     'db' => [
         'mongo' => [
             'default' => [
-                'hosts' => [ 'mongodb-01:27017', 'mongodb-02:27017', 'mongodb-03:27017' ],
+                'hosts' => [
+                    'mongodb-01:27017',
+                    'mongodb-02:27017',
+                    'mongodb-03:27017'
+                ],
                 'options' => [
                     'db' => 'opglpa-api',
                     'username' => 'opglpa-api',
@@ -85,18 +86,26 @@ return array(
                 'driverOptions' => [
                     'weak_cert_validation' => true //Allows usage of self signed certificates
                 ],
-
-                //  TODO - Auth config to be integrated...
-//                'options' => [
-//                    'db' => 'opglpa-auth',
-//                    'username' => 'opglpa-auth',
-//                    'replicaSet' => 'rs0',
-//                    'connect' => false,
-//                    'connectTimeoutMS' => 1000,
-//                    'w' => 'majority',
-//                    'ssl' => true,
-//                    'password' => getenv('OPG_LPA_AUTH_MONGODB_PASSWORD') ?: null,
-//                ],
+            ],
+            'auth' => [
+                'hosts' => [
+                    'mongodb-01:27017',
+                    'mongodb-02:27017',
+                    'mongodb-03:27017'
+                ],
+                'options' => [
+                    'db' => 'opglpa-auth',
+                    'username' => 'opglpa-auth',
+                    'replicaSet' => 'rs0',
+                    'connect' => false,
+                    'connectTimeoutMS' => 1000,
+                    'w' => 'majority',
+                    'ssl' => true,
+                    'password' => getenv('OPG_LPA_AUTH_MONGODB_PASSWORD') ?: null,
+                ],
+                'driverOptions' => [
+                    'weak_cert_validation' => true //Allows usage of self signed certificates
+                ],
             ],
         ], // mongo
 
@@ -171,4 +180,4 @@ return array(
 
     ], // pdf
 
-);
+];

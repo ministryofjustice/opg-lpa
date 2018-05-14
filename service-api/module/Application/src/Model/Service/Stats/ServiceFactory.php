@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\Stats;
 
-use Application\DataAccess\Mongo\CollectionFactory;
+use Application\Model\DataAccess\Mongo\CollectionFactory;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;

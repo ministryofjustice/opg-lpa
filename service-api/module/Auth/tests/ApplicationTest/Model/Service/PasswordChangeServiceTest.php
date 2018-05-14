@@ -3,8 +3,8 @@
 namespace AuthTest\Model\Service;
 
 use Auth\Model\Service\AuthenticationService;
-use Auth\Model\Service\DataAccess\Mongo\User;
-use Auth\Model\Service\DataAccess\UserInterface;
+use Auth\Model\DataAccess\Mongo\User;
+use Auth\Model\DataAccess\UserInterface;
 use Auth\Model\Service\PasswordChangeService;
 use Mockery;
 use Mockery\MockInterface;

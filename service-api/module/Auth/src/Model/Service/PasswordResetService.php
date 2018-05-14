@@ -2,7 +2,7 @@
 
 namespace Auth\Model\Service;
 
-use Auth\Model\Service\DataAccess;
+use Auth\Model\DataAccess;
 use Zend\Math\BigInteger\BigInteger;
 use DateTime;
 use RuntimeException;
@@ -50,7 +50,7 @@ class PasswordResetService extends AbstractService
             'expiresAt' => $expires
         ];
 
-        $dataSource->addPasswordResetToken( $user->id(), $tokenDetails );
+        $dataSource->addPasswordResetToken($user->id(), $tokenDetails);
 
         return $tokenDetails;
     }
@@ -68,7 +68,7 @@ class PasswordResetService extends AbstractService
             return 'invalid-token';
         }
 
-        $passwordHash = password_hash( $newPassword, PASSWORD_DEFAULT );
+        $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
 
         $result = $this->getUserDataSource()->updatePasswordUsingToken($token, $passwordHash);
 
