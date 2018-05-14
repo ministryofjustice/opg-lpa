@@ -124,7 +124,6 @@ class Module implements FormElementProviderInterface
             ],
             'factories' => [
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
-                'AuthClient'            => 'Application\Model\Service\AuthClient\ClientFactory',
                 'AuthenticationService' => 'Application\Model\Service\Authentication\AuthenticationServiceFactory',
                 'PostcodeInfoClient'    => 'Application\Model\Service\AddressLookup\PostcodeInfoClientFactory',
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
@@ -132,7 +131,7 @@ class Module implements FormElementProviderInterface
 
                 // Authentication Adapter
                 'LpaAuthAdapter' => function (ServiceLocatorInterface $sm) {
-                    return new LpaAuthAdapter($sm->get('AuthClient'));
+                    return new LpaAuthAdapter($sm->get('ApiClient'));
                 },
 
                 // Generate the session container for a user's personal details
