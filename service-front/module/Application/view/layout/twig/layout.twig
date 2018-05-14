@@ -11,6 +11,10 @@
         (function(){if(navigator.userAgent.match(/IEMobile\/10\.0/)){var d=document,c="appendChild",a=d.createElement("style");a[c](d.createTextNode("@-ms-viewport{width:auto!important}"));d.getElementsByTagName("head")[0][c](a);}})();
     </script>
 
+    <!--[if gt IE 8]><!--><link href="{{ StaticAssetPath( '/assets/v2/css/govuk-template.css', { 'minify':true } ) }}" rel="stylesheet" type="text/css"/><!--<![endif]-->
+    <!--[if IE 7]><link href="{{ StaticAssetPath( '/assets/v2/css/govuk-template-ie7.css', { 'minify':true } ) }}" rel="stylesheet" type="text/css"/><![endif]-->
+    <!--[if IE 8]><link href="{{ StaticAssetPath( '/assets/v2/css/govuk-template-ie8.css', { 'minify':true } ) }}" rel="stylesheet" type="text/css"/><![endif]-->
+
     <link href="{{ StaticAssetPath( '/assets/v2/css/govuk-template-print.css', { 'minify':true } ) }}" media="print" rel="stylesheet" type="text/css" />
 
     <!--[if IE 8]>
