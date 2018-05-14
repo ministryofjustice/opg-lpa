@@ -1,16 +1,26 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-crypt for the canonical source repository
+ * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-crypt/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Crypt\PublicKey;
 
 use Zend\Crypt\PublicKey\Rsa\Exception;
 use Zend\Stdlib\AbstractOptions;
+
+use const OPENSSL_KEYTYPE_RSA;
+
+use function array_replace;
+use function constant;
+use function defined;
+use function openssl_error_string;
+use function openssl_pkey_export;
+use function openssl_pkey_get_details;
+use function openssl_pkey_new;
+use function strtolower;
+use function strtoupper;
 
 /**
  * RSA instance options
@@ -52,10 +62,17 @@ class RsaOptions extends AbstractOptions
     protected $binaryOutput = true;
 
     /**
+     * OPENSSL padding
+     *
+     * @var int|null
+     */
+    protected $opensslPadding;
+
+    /**
      * Set private key
      *
      * @param  Rsa\PrivateKey $key
-     * @return RsaOptions
+     * @return RsaOptions Provides a fluent interface
      */
     public function setPrivateKey(Rsa\PrivateKey $key)
     {
@@ -78,7 +95,7 @@ class RsaOptions extends AbstractOptions
      * Set public key
      *
      * @param  Rsa\PublicKey $key
-     * @return RsaOptions
+     * @return RsaOptions Provides a fluent interface
      */
     public function setPublicKey(Rsa\PublicKey $key)
     {
@@ -100,7 +117,7 @@ class RsaOptions extends AbstractOptions
      * Set pass phrase
      *
      * @param string $phrase
-     * @return RsaOptions
+     * @return RsaOptions Provides a fluent interface
      */
     public function setPassPhrase($phrase)
     {
@@ -122,14 +139,14 @@ class RsaOptions extends AbstractOptions
      * Set hash algorithm
      *
      * @param  string $hash
-     * @return RsaOptions
+     * @return RsaOptions Provides a fluent interface
      * @throws Rsa\Exception\RuntimeException
      * @throws Rsa\Exception\InvalidArgumentException
      */
     public function setHashAlgorithm($hash)
     {
         $hashUpper = strtoupper($hash);
-        if (!defined('OPENSSL_ALGO_' . $hashUpper)) {
+        if (! defined('OPENSSL_ALGO_' . $hashUpper)) {
             throw new Exception\InvalidArgumentException(
                 "Hash algorithm '{$hash}' is not supported"
             );
@@ -152,7 +169,7 @@ class RsaOptions extends AbstractOptions
 
     public function getOpensslSignatureAlgorithm()
     {
-        if (!isset($this->opensslSignatureAlgorithm)) {
+        if (! isset($this->opensslSignatureAlgorithm)) {
             $this->opensslSignatureAlgorithm = constant('OPENSSL_ALGO_' . strtoupper($this->hashAlgorithm));
         }
         return $this->opensslSignatureAlgorithm;
@@ -162,7 +179,7 @@ class RsaOptions extends AbstractOptions
      * Enable/disable the binary output
      *
      * @param  bool $value
-     * @return RsaOptions
+     * @return RsaOptions Provides a fluent interface
      */
     public function setBinaryOutput($value)
     {
@@ -181,10 +198,32 @@ class RsaOptions extends AbstractOptions
     }
 
     /**
+     * Get the OPENSSL padding
+     *
+     * @return int|null
+     */
+    public function getOpensslPadding()
+    {
+        return $this->opensslPadding;
+    }
+
+    /**
+     * Set the OPENSSL padding
+     *
+     * @param int|null $opensslPadding
+     * @return RsaOptions Provides a fluent interface
+     */
+    public function setOpensslPadding($opensslPadding)
+    {
+        $this->opensslPadding = (int) $opensslPadding;
+        return $this;
+    }
+
+    /**
      * Generate new private/public key pair
      *
      * @param  array $opensslConfig
-     * @return RsaOptions
+     * @return RsaOptions Provides a fluent interface
      * @throws Rsa\Exception\RuntimeException
      */
     public function generateKeys(array $opensslConfig = [])
