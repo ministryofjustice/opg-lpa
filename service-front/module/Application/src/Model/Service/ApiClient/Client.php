@@ -87,8 +87,7 @@ class Client
     {
         $url = new Uri($this->apiBaseUri . $path);
 
-        $body = (!empty($payload) ? json_encode($payload) : null);
-        $request = new Request('POST', $url, $this->buildHeaders(), $body);
+        $request = new Request('POST', $url, $this->buildHeaders(), json_encode($payload));
 
         $response = $this->httpClient->sendRequest($request);
 
