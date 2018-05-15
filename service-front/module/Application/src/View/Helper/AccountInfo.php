@@ -45,11 +45,6 @@ class AccountInfo extends AbstractHelper
     private $viewRenderer;
 
     /**
-     * @var User
-     */
-    private $sessionUser;
-
-    /**
      * @param AuthenticationService $authenticationService
      * @param Container $userDetailsSession
      * @param ViewModel $viewModel
