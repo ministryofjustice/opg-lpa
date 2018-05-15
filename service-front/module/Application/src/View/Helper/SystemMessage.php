@@ -1,18 +1,25 @@
 <?php
+
 namespace Application\View\Helper;
 
+use Application\Adapter\DynamoDbKeyValueStore;
 use Zend\View\Helper\AbstractHelper;
 
 class SystemMessage extends AbstractHelper
 {
+    /**
+     * @var DynamoDbKeyValueStore
+     */
+    private $cache;
+
+    public function __construct(DynamoDbKeyValueStore $cache)
+    {
+        $this->cache = $cache;
+    }
+
     public function __invoke()
     {
-        $cache = $this->getView()
-                      ->getHelperPluginManager()
-                      ->getServiceLocator()
-                      ->get('Cache');
-
-        $message = trim($cache->getItem('system-message'));
+        $message = trim($this->cache->getItem('system-message'));
 
         if ($message != '') {
             echo <<<SYSMESS
