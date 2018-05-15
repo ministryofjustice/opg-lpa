@@ -4,9 +4,9 @@ namespace ApplicationTest\View\Helper;
 
 use Application\View\Helper\Accordion;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use PHPUnit\Framework\TestCase;
+use Mockery;
+use Zend\Router\RouteMatch;
 
 /**
  * AccordionTest
@@ -583,13 +583,11 @@ class AccordionTest extends MockeryTestCase
 
     private function assertAccordionRoutes(Lpa $lpa, $currentRoute, array $expectedTopRoutes, array $expectedBottomRoutes)
     {
-        $accordion = $this->getMockBuilder('Application\View\Helper\Accordion')
-            ->setMethods(['getRouteName'])
-            ->getMock();
+        $routeMatch = Mockery::mock(RouteMatch::class);
+        $routeMatch->shouldReceive('getMatchedRouteName')
+                   ->andReturn($currentRoute);
 
-        $accordion->expects($this->any())
-            ->method('getRouteName')
-            ->willReturn($currentRoute);
+        $accordion = new Accordion($routeMatch);
 
         //  Create the expected top routes in the required format
         $expectedTopRoutesFormatted = [];
