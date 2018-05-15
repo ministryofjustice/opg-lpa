@@ -101,7 +101,7 @@ module.exports = function (grunt) {
           // Dependencies
           'node_modules/handlebars/dist/handlebars.js',
           'node_modules/lodash/lodash.js',
-          'node_modules/govuk_frontend_toolkit/javascripts/stageprompt.js',
+          'assets/js/govuk/stageprompt.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/selection-buttons.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/govuk-tracker.js',
