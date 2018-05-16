@@ -1,15 +1,16 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-crypt for the canonical source repository
+ * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-crypt/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Crypt;
 
 use Interop\Container\ContainerInterface;
+
+use function array_key_exists;
+use function sprintf;
 
 /**
  * Plugin manager implementation for the symmetric adapter instances.
@@ -26,7 +27,8 @@ class SymmetricPluginManager implements ContainerInterface
      * @var array
      */
     protected $symmetric = [
-        'mcrypt' => Symmetric\Mcrypt::class,
+        'mcrypt'  => Symmetric\Mcrypt::class,
+        'openssl' => Symmetric\Openssl::class,
     ];
 
     /**
@@ -48,6 +50,12 @@ class SymmetricPluginManager implements ContainerInterface
      */
     public function get($id)
     {
+        if (! $this->has($id)) {
+            throw new Exception\NotFoundException(sprintf(
+                'The symmetric adapter %s does not exist',
+                $id
+            ));
+        }
         $class = $this->symmetric[$id];
         return new $class();
     }

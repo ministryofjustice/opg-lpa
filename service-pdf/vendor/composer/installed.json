@@ -1,17 +1,17 @@
 [
     {
         "name": "aws/aws-sdk-php",
-        "version": "3.55.3",
-        "version_normalized": "3.55.3.0",
+        "version": "3.55.12",
+        "version_normalized": "3.55.12.0",
         "source": {
             "type": "git",
             "url": "https://github.com/aws/aws-sdk-php.git",
-            "reference": "28a1828814ce34d056492fa494f1e4bbaddaf33e"
+            "reference": "5177cbe73c96d25ff759e406ac81b8e25557482c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/28a1828814ce34d056492fa494f1e4bbaddaf33e",
-            "reference": "28a1828814ce34d056492fa494f1e4bbaddaf33e",
+            "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5177cbe73c96d25ff759e406ac81b8e25557482c",
+            "reference": "5177cbe73c96d25ff759e406ac81b8e25557482c",
             "shasum": ""
         },
         "require": {
@@ -42,7 +42,7 @@
             "ext-curl": "To send requests using cURL",
             "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
         },
-        "time": "2018-04-26T21:09:13+00:00",
+        "time": "2018-05-10T23:23:00+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -724,17 +724,17 @@
     },
     {
         "name": "mockery/mockery",
-        "version": "1.0",
-        "version_normalized": "1.0.0.0",
+        "version": "1.1.0",
+        "version_normalized": "1.1.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/mockery/mockery.git",
-            "reference": "1bac8c362b12f522fdd1f1fa3556284c91affa38"
+            "reference": "99e29d3596b16dabe4982548527d5ddf90232e99"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/mockery/mockery/zipball/1bac8c362b12f522fdd1f1fa3556284c91affa38",
-            "reference": "1bac8c362b12f522fdd1f1fa3556284c91affa38",
+            "url": "https://api.github.com/repos/mockery/mockery/zipball/99e29d3596b16dabe4982548527d5ddf90232e99",
+            "reference": "99e29d3596b16dabe4982548527d5ddf90232e99",
             "shasum": ""
         },
         "require": {
@@ -743,9 +743,10 @@
             "php": ">=5.6.0"
         },
         "require-dev": {
-            "phpunit/phpunit": "~5.7|~6.1"
+            "phpdocumentor/phpdocumentor": "^2.9",
+            "phpunit/phpunit": "~5.7.10|~6.5"
         },
-        "time": "2017-10-06T16:20:43+00:00",
+        "time": "2018-05-08T08:54:48+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -774,8 +775,8 @@
                 "homepage": "http://davedevelopment.co.uk"
             }
         ],
-        "description": "Mockery is a simple yet flexible PHP mock object framework for use in unit testing with PHPUnit, PHPSpec or any other testing framework. Its core goal is to offer a test double framework with a succinct API capable of clearly defining all possible object operations and interactions using a human readable Domain Specific Language (DSL). Designed as a drop in alternative to PHPUnit's phpunit-mock-objects library, Mockery is easy to integrate with PHPUnit and can operate alongside phpunit-mock-objects without the World ending.",
-        "homepage": "http://github.com/mockery/mockery",
+        "description": "Mockery is a simple yet flexible PHP mock object framework",
+        "homepage": "https://github.com/mockery/mockery",
         "keywords": [
             "BDD",
             "TDD",
@@ -1013,6 +1014,56 @@
             "source": "https://github.com/NSmithUK/dynamo-queue-php/tree/v1.1.0",
             "issues": "https://github.com/NSmithUK/dynamo-queue-php/issues"
         }
+    },
+    {
+        "name": "paragonie/random_compat",
+        "version": "v2.0.12",
+        "version_normalized": "2.0.12.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/paragonie/random_compat.git",
+            "reference": "258c89a6b97de7dfaf5b8c7607d0478e236b04fb"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/paragonie/random_compat/zipball/258c89a6b97de7dfaf5b8c7607d0478e236b04fb",
+            "reference": "258c89a6b97de7dfaf5b8c7607d0478e236b04fb",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "4.*|5.*"
+        },
+        "suggest": {
+            "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
+        },
+        "time": "2018-04-04T21:24:14+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "lib/random.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Paragon Initiative Enterprises",
+                "email": "security@paragonie.com",
+                "homepage": "https://paragonie.com"
+            }
+        ],
+        "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
+        "keywords": [
+            "csprng",
+            "pseudorandom",
+            "random"
+        ]
     },
     {
         "name": "phar-io/manifest",
@@ -2619,17 +2670,17 @@
     },
     {
         "name": "symfony/polyfill-intl-icu",
-        "version": "v1.7.0",
-        "version_normalized": "1.7.0.0",
+        "version": "v1.8.0",
+        "version_normalized": "1.8.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-intl-icu.git",
-            "reference": "254919c03761d46c29291616576ed003f10e91c1"
+            "reference": "80ee17ae83c10cd513e5144f91a73607a21edb4e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-intl-icu/zipball/254919c03761d46c29291616576ed003f10e91c1",
-            "reference": "254919c03761d46c29291616576ed003f10e91c1",
+            "url": "https://api.github.com/repos/symfony/polyfill-intl-icu/zipball/80ee17ae83c10cd513e5144f91a73607a21edb4e",
+            "reference": "80ee17ae83c10cd513e5144f91a73607a21edb4e",
             "shasum": ""
         },
         "require": {
@@ -2639,11 +2690,11 @@
         "suggest": {
             "ext-intl": "For best performance"
         },
-        "time": "2018-01-30T19:27:44+00:00",
+        "time": "2018-04-25T14:53:50+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.7-dev"
+                "dev-master": "1.8-dev"
             }
         },
         "installation-source": "dist",
@@ -2679,17 +2730,17 @@
     },
     {
         "name": "symfony/polyfill-mbstring",
-        "version": "v1.7.0",
-        "version_normalized": "1.7.0.0",
+        "version": "v1.8.0",
+        "version_normalized": "1.8.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-mbstring.git",
-            "reference": "78be803ce01e55d3491c1397cf1c64beb9c1b63b"
+            "reference": "3296adf6a6454a050679cde90f95350ad604b171"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/78be803ce01e55d3491c1397cf1c64beb9c1b63b",
-            "reference": "78be803ce01e55d3491c1397cf1c64beb9c1b63b",
+            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/3296adf6a6454a050679cde90f95350ad604b171",
+            "reference": "3296adf6a6454a050679cde90f95350ad604b171",
             "shasum": ""
         },
         "require": {
@@ -2698,11 +2749,11 @@
         "suggest": {
             "ext-mbstring": "For best performance"
         },
-        "time": "2018-01-30T19:27:44+00:00",
+        "time": "2018-04-26T10:06:28+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.7-dev"
+                "dev-master": "1.8-dev"
             }
         },
         "installation-source": "dist",
@@ -2740,27 +2791,27 @@
     },
     {
         "name": "symfony/polyfill-php54",
-        "version": "v1.7.0",
-        "version_normalized": "1.7.0.0",
+        "version": "v1.8.0",
+        "version_normalized": "1.8.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-php54.git",
-            "reference": "84e2b616c197ef400c6d0556a0606cee7c9e21d5"
+            "reference": "6c3a2b84c6025e4ea3f6a19feac35408c64b22e1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-php54/zipball/84e2b616c197ef400c6d0556a0606cee7c9e21d5",
-            "reference": "84e2b616c197ef400c6d0556a0606cee7c9e21d5",
+            "url": "https://api.github.com/repos/symfony/polyfill-php54/zipball/6c3a2b84c6025e4ea3f6a19feac35408c64b22e1",
+            "reference": "6c3a2b84c6025e4ea3f6a19feac35408c64b22e1",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.3"
         },
-        "time": "2018-01-30T19:27:44+00:00",
+        "time": "2018-04-26T10:06:28+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.7-dev"
+                "dev-master": "1.8-dev"
             }
         },
         "installation-source": "dist",
@@ -3142,38 +3193,39 @@
     },
     {
         "name": "zendframework/zend-crypt",
-        "version": "2.6.0",
-        "version_normalized": "2.6.0.0",
+        "version": "3.3.0",
+        "version_normalized": "3.3.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/zend-crypt.git",
-            "reference": "1b2f5600bf6262904167116fa67b58ab1457036d"
+            "reference": "9c2916faa9b2132a0f91cdca8e95b025c352f065"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/zend-crypt/zipball/1b2f5600bf6262904167116fa67b58ab1457036d",
-            "reference": "1b2f5600bf6262904167116fa67b58ab1457036d",
+            "url": "https://api.github.com/repos/zendframework/zend-crypt/zipball/9c2916faa9b2132a0f91cdca8e95b025c352f065",
+            "reference": "9c2916faa9b2132a0f91cdca8e95b025c352f065",
             "shasum": ""
         },
         "require": {
-            "container-interop/container-interop": "~1.0",
-            "php": "^5.5 || ^7.0",
-            "zendframework/zend-math": "^2.6",
-            "zendframework/zend-stdlib": "^2.7 || ^3.0"
+            "container-interop/container-interop": "^1.2",
+            "ext-mbstring": "*",
+            "php": "^5.6 || ^7.0",
+            "zendframework/zend-math": "^3.0",
+            "zendframework/zend-stdlib": "^2.7.7 || ^3.1"
         },
         "require-dev": {
-            "fabpot/php-cs-fixer": "1.7.*",
-            "phpunit/phpunit": "~4.0"
+            "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.2",
+            "zendframework/zend-coding-standard": "~1.0.0"
         },
         "suggest": {
-            "ext-mcrypt": "Required for most features of Zend\\Crypt"
+            "ext-openssl": "Required for most features of Zend\\Crypt"
         },
-        "time": "2016-02-03T23:46:30+00:00",
+        "time": "2018-04-24T22:01:58+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "2.6-dev",
-                "dev-develop": "2.7-dev"
+                "dev-master": "3.3.x-dev",
+                "dev-develop": "3.4.x-dev"
             }
         },
         "installation-source": "dist",
@@ -3186,10 +3238,11 @@
         "license": [
             "BSD-3-Clause"
         ],
-        "homepage": "https://github.com/zendframework/zend-crypt",
+        "description": "Strong cryptography tools and password hashing",
         "keywords": [
+            "ZendFramework",
             "crypt",
-            "zf2"
+            "zf"
         ]
     },
     {
@@ -3332,38 +3385,38 @@
     },
     {
         "name": "zendframework/zend-math",
-        "version": "2.7.0",
-        "version_normalized": "2.7.0.0",
+        "version": "3.1.0",
+        "version_normalized": "3.1.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/zend-math.git",
-            "reference": "f4358090d5d23973121f1ed0b376184b66d9edec"
+            "reference": "558806e338ee68575fbe69489c9dcb6d57a1dae0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/zend-math/zipball/f4358090d5d23973121f1ed0b376184b66d9edec",
-            "reference": "f4358090d5d23973121f1ed0b376184b66d9edec",
+            "url": "https://api.github.com/repos/zendframework/zend-math/zipball/558806e338ee68575fbe69489c9dcb6d57a1dae0",
+            "reference": "558806e338ee68575fbe69489c9dcb6d57a1dae0",
             "shasum": ""
         },
         "require": {
-            "php": "^5.5 || ^7.0"
+            "ext-mbstring": "*",
+            "paragonie/random_compat": "^2.0.11",
+            "php": "^5.6 || ^7.0"
         },
         "require-dev": {
-            "fabpot/php-cs-fixer": "1.7.*",
-            "ircmaxell/random-lib": "~1.1",
-            "phpunit/phpunit": "~4.0"
+            "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.2",
+            "zendframework/zend-coding-standard": "~1.0.0"
         },
         "suggest": {
             "ext-bcmath": "If using the bcmath functionality",
-            "ext-gmp": "If using the gmp functionality",
-            "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if Mcrypt extensions is unavailable"
+            "ext-gmp": "If using the gmp functionality"
         },
-        "time": "2016-04-07T16:29:53+00:00",
+        "time": "2018-04-26T21:37:02+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "2.7-dev",
-                "dev-develop": "2.8-dev"
+                "dev-master": "3.1.x-dev",
+                "dev-develop": "3.2.x-dev"
             }
         },
         "installation-source": "dist",
@@ -3376,44 +3429,45 @@
         "license": [
             "BSD-3-Clause"
         ],
-        "homepage": "https://github.com/zendframework/zend-math",
+        "description": "Create cryptographically secure pseudo-random numbers, and manage big integers",
         "keywords": [
+            "ZendFramework",
             "math",
-            "zf2"
+            "zf"
         ]
     },
     {
         "name": "zendframework/zend-memory",
-        "version": "2.5.2",
-        "version_normalized": "2.5.2.0",
+        "version": "2.6.0",
+        "version_normalized": "2.6.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/zend-memory.git",
-            "reference": "bbf8b9509660b2a97f2d6ccfefabffac3cca6a5c"
+            "reference": "a01d5eb74012c2a170e1ea1e18486152d2eea5f7"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/zend-memory/zipball/bbf8b9509660b2a97f2d6ccfefabffac3cca6a5c",
-            "reference": "bbf8b9509660b2a97f2d6ccfefabffac3cca6a5c",
+            "url": "https://api.github.com/repos/zendframework/zend-memory/zipball/a01d5eb74012c2a170e1ea1e18486152d2eea5f7",
+            "reference": "a01d5eb74012c2a170e1ea1e18486152d2eea5f7",
             "shasum": ""
         },
         "require": {
-            "php": "^5.5 || ^7.0"
+            "php": "^5.6 || ^7.0"
         },
         "require-dev": {
-            "phpunit/phpunit": "^4.8",
-            "squizlabs/php_codesniffer": "^2.3.1",
-            "zendframework/zend-cache": "^2.7"
+            "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.4",
+            "zendframework/zend-cache": "^2.7",
+            "zendframework/zend-coding-standard": "~1.0.0"
         },
         "suggest": {
             "zendframework/zend-cache": "To support swapping memory objects into and out of non-memory cache storage"
         },
-        "time": "2016-05-11T14:49:42+00:00",
+        "time": "2018-04-30T15:45:17+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "2.5-dev",
-                "dev-develop": "2.6-dev"
+                "dev-master": "2.6.x-dev",
+                "dev-develop": "2.7.x-dev"
             }
         },
         "installation-source": "dist",
@@ -3426,10 +3480,11 @@
         "license": [
             "BSD-3-Clause"
         ],
-        "homepage": "https://github.com/zendframework/zend-memory",
+        "description": "Manage data in an environment with limited memory",
         "keywords": [
+            "ZendFramework",
             "memory",
-            "zf2"
+            "zf"
         ]
     },
     {

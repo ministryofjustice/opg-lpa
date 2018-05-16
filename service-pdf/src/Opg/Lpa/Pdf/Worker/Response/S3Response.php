@@ -36,7 +36,7 @@ class S3Response extends AbstractResponse
         }
 
         //  We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
-        $blockCipher = BlockCipher::factory('mcrypt', $encryptionConfig['options']);
+        $blockCipher = BlockCipher::factory('openssl', $encryptionConfig['options']);
         $blockCipher->setKey($encryptionKeysDocument);
         $blockCipher->setBinaryOutput(true);
 

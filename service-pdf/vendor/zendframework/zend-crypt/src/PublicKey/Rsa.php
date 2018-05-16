@@ -1,10 +1,8 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-crypt for the canonical source repository
+ * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-crypt/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Crypt\PublicKey;
@@ -12,6 +10,15 @@ namespace Zend\Crypt\PublicKey;
 use Traversable;
 use Zend\Crypt\PublicKey\Rsa\Exception;
 use Zend\Stdlib\ArrayUtils;
+
+use function base64_decode;
+use function base64_encode;
+use function extension_loaded;
+use function is_file;
+use function is_string;
+use function openssl_error_string;
+use function openssl_sign;
+use function openssl_verify;
 
 /**
  * Implementation of the RSA public key encryption algorithm.
@@ -37,15 +44,15 @@ class Rsa
      */
     public static function factory($options)
     {
-        if (!extension_loaded('openssl')) {
+        if (! extension_loaded('openssl')) {
             throw new Exception\RuntimeException(
-                'Can not create Zend\Crypt\PublicKey\Rsa; openssl extension to be loaded'
+                'Can not create Zend\Crypt\PublicKey\Rsa; openssl extension needs to be loaded'
             );
         }
 
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
-        } elseif (!is_array($options)) {
+        } elseif (! is_array($options)) {
             throw new Exception\InvalidArgumentException(
                 'The options parameter must be an array or a Traversable'
             );
@@ -99,7 +106,7 @@ class Rsa
      */
     public function __construct(RsaOptions $options = null)
     {
-        if (!extension_loaded('openssl')) {
+        if (! extension_loaded('openssl')) {
             throw new Exception\RuntimeException(
                 'Zend\Crypt\PublicKey\Rsa requires openssl extension to be loaded'
             );
@@ -116,7 +123,7 @@ class Rsa
      * Set options
      *
      * @param RsaOptions $options
-     * @return Rsa
+     * @return Rsa Provides a fluent interface
      */
     public function setOptions(RsaOptions $options)
     {
@@ -249,7 +256,7 @@ class Rsa
      * @return string
      * @throws Rsa\Exception\InvalidArgumentException
      */
-    public function encrypt($data, Rsa\AbstractKey $key = null, $padding = null)
+    public function encrypt($data, Rsa\AbstractKey $key = null)
     {
         if (null === $key) {
             $key = $this->options->getPublicKey();
@@ -259,6 +266,7 @@ class Rsa
             throw new Exception\InvalidArgumentException('No key specified for the decryption');
         }
 
+        $padding = $this->getOptions()->getOpensslPadding();
         if (null === $padding) {
             $encrypted = $key->encrypt($data);
         } else {
@@ -292,8 +300,7 @@ class Rsa
     public function decrypt(
         $data,
         Rsa\AbstractKey $key = null,
-        $mode = self::MODE_AUTO,
-        $padding = null
+        $mode = self::MODE_AUTO
     ) {
         if (null === $key) {
             $key = $this->options->getPrivateKey();
@@ -319,6 +326,7 @@ class Rsa
                 break;
         }
 
+        $padding = $this->getOptions()->getOpensslPadding();
         if (null === $padding) {
             return $key->decrypt($data);
         } else {
@@ -331,7 +339,7 @@ class Rsa
      * @see RsaOptions::generateKeys()
      *
      * @param  array $opensslConfig
-     * @return Rsa
+     * @return Rsa Provides a fluent interface
      * @throws Rsa\Exception\RuntimeException
      */
     public function generateKeys(array $opensslConfig = [])

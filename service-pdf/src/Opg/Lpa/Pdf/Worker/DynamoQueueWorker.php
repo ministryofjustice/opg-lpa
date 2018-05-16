@@ -40,7 +40,7 @@ class DynamoQueueWorker extends AbstractWorker implements ProcessorInterface
         }
 
         //  We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
-        $blockCipher = BlockCipher::factory('mcrypt', $encryptionConfig['options']);
+        $blockCipher = BlockCipher::factory('openssl', $encryptionConfig['options']);
         $blockCipher->setKey($encryptionKeysQueue);
 
         //  Get the JSON from the message and decompress it

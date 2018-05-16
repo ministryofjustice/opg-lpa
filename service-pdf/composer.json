@@ -15,11 +15,10 @@
     ],
     "require": {
         "php": "^7.1",
-        "ext-proctitle": "*",
         "aws/aws-sdk-php": "^3.0",
         "mikehaertl/php-pdftk": "0.2.1",
         "zendframework/zendpdf": "^2.0.2",
-        "zendframework/zend-crypt": "^2.5",
+        "zendframework/zend-crypt": "^3.3",
         "zendframework/zend-filter": "^2.5",
         "ministryofjustice/opg-lpa-datamodels": "^10.0",
         "ministryofjustice/opg-lpa-logger": "^4.0",
