@@ -3,7 +3,6 @@
 namespace Opg\Lpa\Pdf;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\Lpa\StateChecker;
 use mikehaertl\pdftk\Pdf as PdftkPdf;
 use ZendPdf\PdfDocument as ZendPdfDocument;
 use Exception;
@@ -68,12 +67,10 @@ abstract class AbstractIndividualPdf extends AbstractPdf
 
         //  If an LPA was provided confirm that the LPA provided can be used to generate this type of PDF
         if ($lpa instanceof Lpa) {
-            $stateChecker = new StateChecker($lpa);
-
             //  If applicable check that the document can be created
-            if (($this instanceof AbstractLp1 && !$stateChecker->canGenerateLP1())
-                || ($this instanceof Lp3 && !$stateChecker->canGenerateLP3())
-                || ($this instanceof Lpa120 && !$stateChecker->canGenerateLPA120())) {
+            if (($this instanceof AbstractLp1 && !$lpa->canGenerateLP1())
+                || ($this instanceof Lp3 && !$lpa->canGenerateLP3())
+                || ($this instanceof Lpa120 && !$lpa->canGenerateLPA120())) {
 
                 throw new Exception('LPA does not contain all the required data to generate ' . get_class($this));
             }

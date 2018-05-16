@@ -15,7 +15,6 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Opg\Lpa\DataModel\Lpa\StateChecker;
 use Opg\Lpa\Pdf\Aggregator\ContinuationSheet1 as ContinuationSheet1Aggregator;
 use Opg\Lpa\Pdf\Aggregator\ContinuationSheet2 as ContinuationSheet2Aggregator;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
@@ -73,8 +72,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
         //  If an LPA has been provided - check that it has been completed
         if ($lpa instanceof Lpa) {
-            $stateChecker = new StateChecker($lpa);
-            $this->lpaIsComplete = $stateChecker->isStateCompleted() && $lpa->getCompletedAt() instanceof DateTime;
+            $this->lpaIsComplete = $lpa->isStateCompleted() && $lpa->getCompletedAt() instanceof DateTime;
         }
 
         parent::__construct($lpa, $options);

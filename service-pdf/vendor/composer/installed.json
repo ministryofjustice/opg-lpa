@@ -642,17 +642,17 @@
     },
     {
         "name": "ministryofjustice/opg-lpa-datamodels",
-        "version": "10.0.0",
-        "version_normalized": "10.0.0.0",
+        "version": "dev-LPA-2575-statechecker",
+        "version_normalized": "dev-LPA-2575-statechecker",
         "source": {
             "type": "git",
             "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-            "reference": "f88f52737d381113b999738af08c88d6898ec17c"
+            "reference": "b439afb64ebeb6513f553762811198c9598a3c44"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/f88f52737d381113b999738af08c88d6898ec17c",
-            "reference": "f88f52737d381113b999738af08c88d6898ec17c",
+            "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/b439afb64ebeb6513f553762811198c9598a3c44",
+            "reference": "b439afb64ebeb6513f553762811198c9598a3c44",
             "shasum": ""
         },
         "require": {
@@ -664,7 +664,7 @@
         "require-dev": {
             "phpunit/phpunit": "^7.0"
         },
-        "time": "2018-04-30T12:34:54+00:00",
+        "time": "2018-05-18T12:22:37+00:00",
         "type": "library",
         "installation-source": "source",
         "autoload": {
@@ -677,7 +677,7 @@
         ],
         "description": "PHP data models that represent a Lasting Power of Attorney",
         "support": {
-            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/10.0.0",
+            "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/LPA-2575-statechecker",
             "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
         }
     },
