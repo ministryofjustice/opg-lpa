@@ -5,7 +5,6 @@ namespace Application\Model\Service;
 use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\DateTime;
-use Application\Library\Lpa\StateChecker;
 use Application\Model\Service\Lock\LockedException;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
@@ -120,7 +119,7 @@ abstract class AbstractService implements AuthorizationServiceAwareInterface
         }
 
         // If instrument created, record the date.
-        $isCreated = (new StateChecker($lpa))->isStateCreated();
+        $isCreated = $lpa->isStateCreated();
 
         if ($isCreated) {
             $this->getLogger()->info('LPA is created', [
@@ -143,7 +142,7 @@ abstract class AbstractService implements AuthorizationServiceAwareInterface
         }
 
         // If completed, record the date.
-        $isCompleted = (new StateChecker($lpa))->isStateCompleted();
+        $isCompleted = $lpa->isStateCompleted();
 
         if ($isCompleted) {
             $this->getLogger()->info('LPA is complete', [

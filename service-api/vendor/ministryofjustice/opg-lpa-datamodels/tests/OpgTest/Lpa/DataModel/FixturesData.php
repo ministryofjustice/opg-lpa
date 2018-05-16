@@ -10,6 +10,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\User\User;
+use OpgTest\Lpa\DataModel\Lpa\TestableLpa;
 
 /**
  * Class FixturesData returns complex test data
