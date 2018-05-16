@@ -10,7 +10,6 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Opg\Lpa\DataModel\Lpa\StateChecker;
 use Zend\View\Helper\ServerUrl;
 use Zend\View\Model\ViewModel;
 use RuntimeException;
@@ -132,9 +131,7 @@ class CheckoutController extends AbstractLpaController
 
     private function isLPAComplete()
     {
-        $stateChecker = new StateChecker($this->getLpa());
-
-        return ($stateChecker->isStateCreated() && $this->getFlowChecker()->backToForm() == "lpa/checkout");
+        return ($this->getLpa()->isStateCreated() && $this->getFlowChecker()->backToForm() == "lpa/checkout");
     }
 
     public function payAction()
