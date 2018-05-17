@@ -39,6 +39,6 @@ class MailTransportFactory implements FactoryInterface
         /** @var Twig_Environment $emailRenderer */
         $emailRenderer = $container->get('TwigEmailRenderer');
 
-        return new MailTransport($client, $emailRenderer, $emailConfig);
+        return new MailTransport($client->client, $emailRenderer, $emailConfig);
     }
 }
