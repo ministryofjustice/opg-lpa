@@ -5,8 +5,7 @@ namespace Application\Model\Service\Mail\Transport;
 use Application\Model\Service\Mail\Message;
 use Html2Text\Html2Text;
 use Opg\Lpa\Logger\LoggerTrait;
-use SendGrid as SendGridClient;
-use SendGrid\Email as SendGridMessage;
+use SendGrid;
 use Twig_Environment;
 use Zend\Mime;
 use Zend\Mail\Exception\InvalidArgumentException;
@@ -31,7 +30,7 @@ class MailTransport implements TransportInterface
     /**
      * Mail client object
      *
-     * @var SendGridClient
+     * @var SendGrid\Client
      */
     private $client;
 
@@ -171,11 +170,11 @@ class MailTransport implements TransportInterface
     /**
      * MailTransport constructor
      *
-     * @param SendGridClient $client
+     * @param SendGrid\Client $client
      * @param Twig_Environment $emailRenderer
      * @param array $emailConfig
      */
-    public function __construct(SendGridClient $client, Twig_Environment $emailRenderer, array $emailConfig)
+    public function __construct(SendGrid\Client $client, Twig_Environment $emailRenderer, array $emailConfig)
     {
         $this->client = $client;
         $this->emailRenderer = $emailRenderer;
@@ -199,10 +198,10 @@ class MailTransport implements TransportInterface
                 throw new InvalidArgumentException('Mail\Message returns as invalid');
             }
 
-            //  Start to create the email message
-            $email = new SendGridMessage();
+            //  Get the "from" address
+            $from = $this->getFrom($message);
 
-            //  Get the to addresses
+            //  Get the "to" address(es)
             $toEmails = [];
             $toAddressList = $message->getTo();
 
@@ -212,24 +211,68 @@ class MailTransport implements TransportInterface
 
             foreach ($toAddressList as $address) {
                 $toEmails[] = $address->getEmail();
-                $email->addTo($address->getEmail());
             }
-
-            //  Set the from address
-            $from = $this->getFrom($message);
-            $email->setFrom($from->getEmail())
-                  ->setFromName($from->getName());
 
             //  Log the attempt to send the message
             $this->getLogger()->info('Attempting to send email via SendGrid', [
-                'from-address' => $email->getFrom(),
+                'from-address' => $from->getEmail(),
                 'to-address'   => $toEmails,
                 'categories'   => $categories
             ]);
 
-            //  Check that CC and BCC addresses have not been used
-            if (count($message->getCc()) > 0 || count($message->getBcc()) > 0) {
-                throw new InvalidArgumentException('SendGrid does not support CC or BCC addresses (but TO addresses are hidden from each other)');
+            $from = new SendGrid\Email($from->getName(), $from->getEmail());
+
+            //  Parse the message content to get the HTML and plain text versions
+            $messagePlainText = null;
+            $messageHtml = null;
+
+            $messageBody = $message->getBody();
+
+            // If $messageBody is a string, then all we have is plain text, so we can just set it.
+            if (is_string($messageBody)) {
+                $messagePlainText = $messageBody;
+            } elseif ($messageBody instanceof MimeMessage) {
+                foreach ($messageBody->getParts() as $part) {
+                    switch ($part->type) {
+                        case 'text/plain':
+                            if (!is_null($messagePlainText)) {
+                                throw new InvalidArgumentException("SendGrid only supports a single plain text body");
+                            }
+
+                            $messagePlainText = new SendGrid\Content($part->type, $part->getRawContent());
+                            break;
+                        case 'text/html':
+                            if (!is_null($messageHtml)) {
+                                throw new InvalidArgumentException("SendGrid only supports a single HTML body");
+                            }
+
+                            if (is_null($messagePlainText)) {
+                                $messagePlainText = new SendGrid\Content('text/plain', Html2Text::convert($part->getRawContent()));
+                            }
+
+                            $messageHtml = new SendGrid\Content($part->type, $part->getRawContent());
+                            break;
+                        default:
+                            throw new InvalidArgumentException("Unimplemented content part found: {$part->type}");
+                    }
+                }
+            }
+
+            //  Ensure some content was set
+            if (is_null($messagePlainText) && is_null($messageHtml)) {
+                throw new InvalidArgumentException("No message content has been set");
+            }
+
+            //  Create the email message using the plain text initially
+            $mainRecipient = array_shift($toEmails);
+            $email = new SendGrid\Mail($from, $message->getSubject(), new SendGrid\Email(null, $mainRecipient), $messagePlainText);
+
+            //  Add the HTML content
+            $email->addContent($messageHtml);
+
+            //  Add other "to" email addresses
+            foreach ($toEmails as $toEmail) {
+                $email->personalization[0]->addTo(new SendGrid\Email(null, $toEmail));
             }
 
             //  Get the reply to address
@@ -238,14 +281,12 @@ class MailTransport implements TransportInterface
             if (count($replyTo) == 1) {
                 //  Extract the Address object
                 $replyTo = array_pop(current($replyTo));
+                $replyTo = new SendGrid\Email(null, $replyTo->getEmail());
 
-                $email->setReplyTo($replyTo->getEmail());
+                $email->setReplyTo($replyTo);
             } elseif (count($replyTo) > 1) {
                 throw new InvalidArgumentException('SendGrid only supports a single REPLY TO address');
             }
-
-            //  Set the subject for the message
-            $email->setSubject($message->getSubject());
 
             // Custom Headers
             foreach ($message->getHeaders() as $header) {
@@ -267,62 +308,14 @@ class MailTransport implements TransportInterface
 
                 if ($sendAt) {
                     $email->setSendAt($sendAt);
-                    $email->setDate(date('r', $sendAt));
                 }
             }
 
-            // Set Content
-            $plainTextSet = false;
-            $htmlTextSet = false;
+            //  Send message
+            $result = $this->client->mail()->send()->post($email);
 
-            $body = $message->getBody();
-
-            // If $body is a string, then all we have is plain text, so we can just set it.
-            if (is_string($body)) {
-                $email->setText($body);
-                $plainTextSet = true;
-            } elseif ($body instanceof MimeMessage) {
-                foreach ($body->getParts() as $part) {
-                    switch ($part->type) {
-                        case 'text/plain':
-                            if ($plainTextSet) {
-                                throw new InvalidArgumentException("SendGrid only supports a single plain text body");
-                            }
-
-                            $email->setText($part->getRawContent());
-                            $plainTextSet = true;
-                            break;
-                        case 'text/html':
-                            if ($htmlTextSet) {
-                                throw new InvalidArgumentException("SendGrid only supports a single HTML body");
-                            }
-
-                            $html = $part->getRawContent();
-                            $email->setHtml($html);
-                            $htmlTextSet = true;
-
-                            if (!$plainTextSet) {
-                                $text = Html2Text::convert($html);
-                                $email->setText($text);
-                                $plainTextSet = true;
-                            }
-                            break;
-                        default:
-                            throw new InvalidArgumentException("Unimplemented content part found: {$part->type}");
-                    }
-                }
-            }
-
-            // Ensure some content was set
-            if (!$plainTextSet && !$htmlTextSet) {
-                throw new InvalidArgumentException("No message content has been set");
-            }
-
-            // Send message
-            $result = $this->client->send($email);
-
-            if ($result->code != 200) {
-                throw new TransportInvalidArgumentException("Email sending failed: {$result->message}");
+            if (!in_array($result->statusCode(), [200, 202])) {
+                throw new TransportInvalidArgumentException('Email sending failed: ' . $result->body());
             }
         } catch (InvalidArgumentException $iae) {
             //  Log an appropriate error message and rethrow the exception
