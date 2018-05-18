@@ -4,6 +4,7 @@ namespace Application\View\Helper;
 
 use Application\Model\FormFlowChecker;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Zend\Router\RouteMatch;
 use Zend\View\Helper\AbstractHelper;
 
 class Accordion extends AbstractHelper
@@ -35,6 +36,19 @@ class Accordion extends AbstractHelper
         'lpa/fee-reduction',
     ];
 
+    /**
+     * @var RouteMatch
+     */
+    private $routeMatch;
+
+    /**
+     * @param RouteMatch $routeMatch
+     */
+    public function __construct(RouteMatch $routeMatch)
+    {
+        $this->routeMatch = $routeMatch;
+    }
+
     public function __invoke(Lpa $lpa = null)
     {
         $this->lpa = $lpa;
@@ -56,7 +70,7 @@ class Accordion extends AbstractHelper
             $includeUpToRoute = $flowChecker->backToForm();
 
             // If the route for us to include up to is earlier than the current route...
-            $currentRoute = $this->getRouteName();
+            $currentRoute = $this->routeMatch->getMatchedRouteName();
 
             if (array_search($includeUpToRoute, $this->bars) < array_search($currentRoute, $this->bars)) {
                 $includeUpToRoute = $currentRoute;
@@ -102,7 +116,7 @@ class Accordion extends AbstractHelper
             $includeUpToRoute = $flowChecker->backToForm();
 
             // Skip all routes before the current route...
-            $currentRoute = $this->getRouteName();
+            $currentRoute = $this->routeMatch->getMatchedRouteName();
             $startAt = array_search($currentRoute, $this->bars);
             $startAt = is_int($startAt) ? $startAt : 0;
             $bars = array_slice($this->bars, $startAt + 1); // +1 to start one past the page the current page.
@@ -143,15 +157,5 @@ class Accordion extends AbstractHelper
         }
 
         return $barsInPlay;
-    }
-
-    protected function getRouteName()
-    {
-        $application = $this->getView()
-                            ->getHelperPluginManager()
-                            ->getServiceLocator()
-                            ->get('application');
-
-        return $application->getMvcEvent()->getRouteMatch()->getMatchedRouteName();
     }
 }
