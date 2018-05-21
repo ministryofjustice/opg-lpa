@@ -41,6 +41,17 @@ return [
                 ],
             ], // terms
 
+            'privacy' => [
+                'type' => 'Zend\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/privacy-notice',
+                    'defaults' => [
+                        'controller' => 'General\HomeController',
+                        'action'     => 'privacy',
+                    ],
+                ],
+            ], // privacy
+
             'contact' => [
                 'type' => 'Zend\Router\Http\Literal',
                 'options' => [
