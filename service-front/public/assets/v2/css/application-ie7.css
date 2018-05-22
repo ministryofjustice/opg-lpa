@@ -3512,6 +3512,17 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
       top: auto;
       bottom: -2px; }
 
+.meta-data {
+  font-family: "nta", Arial, sans-serif;
+  font-weight: 400;
+  text-transform: none;
+  font-size: 14px;
+  line-height: 1.14286;
+  font-size: 16px;
+  line-height: 1.25;
+  color: #6f777b;
+  margin-top: 3.15789em; }
+
 .noscroll {
   position: relative;
   overflow: hidden;
