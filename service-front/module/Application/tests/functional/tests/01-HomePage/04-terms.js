@@ -1,10 +1,10 @@
 
-casper.test.begin('Checking "Terms and Conditions" page', {
+casper.test.begin('Checking "Terms of use" page', {
 
     setUp: function(test) {},
 
     tearDown: function(test) {},
-    
+
     test: function(test) {
 
         casper.start(basePath + paths.terms).then(function () {
@@ -14,7 +14,7 @@ casper.test.begin('Checking "Terms and Conditions" page', {
             test.assertUrlMatch(new RegExp('^' + basePath + paths.terms + '$'), 'Page is on the expected URL.');
 
         });
-        
+
         casper.run(function () { test.done(); });
     }
 });
