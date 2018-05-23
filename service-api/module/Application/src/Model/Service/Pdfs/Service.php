@@ -204,7 +204,7 @@ class Service extends AbstractService implements LpaConsumerInterface
         }
 
         // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
-        $blockCipher = BlockCipher::factory('mcrypt', $this->pdfConfig['encryption']['options']);
+        $blockCipher = BlockCipher::factory('openssl', $this->pdfConfig['encryption']['options']);
 
         // Set the secret key
         $blockCipher->setKey($encryptionKey);
@@ -243,7 +243,7 @@ class Service extends AbstractService implements LpaConsumerInterface
         }
 
         // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
-        $blockCipher = BlockCipher::factory('mcrypt', $this->pdfConfig['encryption']['options']);
+        $blockCipher = BlockCipher::factory('openssl', $this->pdfConfig['encryption']['options']);
 
         // Set the secret key
         $blockCipher->setKey($encryptionKeysConfig);

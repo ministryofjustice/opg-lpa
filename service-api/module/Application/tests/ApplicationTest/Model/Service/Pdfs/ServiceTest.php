@@ -314,7 +314,7 @@ class ServiceTest extends AbstractServiceTest
             ->build();
 
         $config = $this->config['pdf']['encryption'];
-        $blockCipher = BlockCipher::factory('mcrypt', $config['options']);
+        $blockCipher = BlockCipher::factory('openssl', $config['options']);
         $blockCipher->setKey($config['keys']['document']);
         $blockCipher->setBinaryOutput(true);
         $encryptedData = $blockCipher->encrypt('test');
