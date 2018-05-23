@@ -14,9 +14,15 @@ spl_autoload_register(function ($class) {
         __DIR__ . '/../src/',
     ];
 
+    //  Strip out any leading "ApplicationTest" if present
+    if (strpos($class, 'ApplicationTest\\') === 0) {
+        $class = str_replace('ApplicationTest\\', '', $class);
+    }
+
     //  Loop through the base directories to try to find the requested class
     foreach ($baseDirs as $baseDir) {
-        //  Replace the separators with directory separators in the relative class name, append and with .php
+        //  Replace the separators with directory separators in the relative class name, strip out any leading "ApplicationTest/" and append and with .php
+
         $file = $baseDir . str_replace('\\', '/', $class) . '.php';
 
         // if the file exists, require it
@@ -34,4 +40,4 @@ if (file_exists($composerAutoloadFile)) {
 }
 
 require __DIR__ . '/../../../vendor/ministryofjustice/opg-lpa-datamodels/tests/OpgTest/Lpa/DataModel/FixturesData.php';
-require __DIR__ . '/ApplicationTest/ControllerFactory/NonDispatchableController.php';
+require __DIR__ . '/ControllerFactory/NonDispatchableController.php';

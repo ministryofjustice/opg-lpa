@@ -16,7 +16,7 @@ class FormTest extends MockeryTestCase
     {
         $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
 
-        foreach (glob(__DIR__ . '/../../../../src/Form/Lpa/*.php') as $filepath) {
+        foreach (glob(__DIR__ . '/../../../src/Form/Lpa/*.php') as $filepath) {
             $pathInfo = pathinfo(realpath($filepath));
             $className = 'Application\\Form\\Lpa\\' . $pathInfo['filename'];
             $reflectionClass = new ReflectionClass($className);
