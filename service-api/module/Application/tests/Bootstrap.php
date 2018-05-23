@@ -16,6 +16,11 @@ spl_autoload_register(function ($class) {
         __DIR__ . '/../src/',
     ];
 
+    //  Strip out any leading "ApplicationTest" if present
+    if (strpos($class, 'ApplicationTest\\') === 0) {
+        $class = str_replace('ApplicationTest\\', '', $class);
+    }
+
     //  Loop through the base directories to try to find the requested class
     foreach ($baseDirs as $baseDir) {
         //  Replace the separators with directory separators in the relative class name, append and with .php
