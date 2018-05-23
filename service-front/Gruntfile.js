@@ -1,8 +1,6 @@
 module.exports = function (grunt) {
   'use strict';
 
-  grunt.util.linefeed = '\n';
-
   grunt.initConfig({
 
     // watching sass and js (as they need post tasks)
@@ -29,8 +27,7 @@ module.exports = function (grunt) {
           'assets/bower/govuk_frontend_toolkit/stylesheets',
           'assets/bower/govuk_template/source/assets/stylesheets',
           'assets/bower/govuk_elements/public/sass'
-          ],
-          unix_newlines: true
+          ]
         },
         files: {
           'public/assets/v2/css/application.css': 'assets/sass/application.scss',
@@ -55,23 +52,14 @@ module.exports = function (grunt) {
       }
     },
 
+    // replacing a compass depended helper within govuk template css
     replace: {
-      // replacing a compass depended helper within govuk template css
       image_url: {
         src: ['public/assets/v2/css/*.css'],
         dest: 'public/assets/v2/css/',
         replacements: [{
           from: 'image-url',
           to: 'url'
-        }]
-      },
-      // replacing windows style relative paths with unix ones
-      css_min_map: {
-        src: ['public/assets/v2/css/*.min.css.map'],
-        dest: 'public/assets/v2/css/',
-        replacements: [{
-          from: '\\\\',
-          to: '/'
         }]
       }
     },
@@ -237,7 +225,7 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['watch']);
   grunt.registerTask('compile', ['sass', 'replace:image_url', 'handlebars', 'concat']);
   grunt.registerTask('test', ['scsslint', 'jshint']);
-  grunt.registerTask('compress', ['cssmin', 'replace:css_min_map', 'uglify']);
+  grunt.registerTask('compress', ['cssmin', 'uglify']);
   grunt.registerTask('refresh', ['browserSync', 'watch']);
   grunt.registerTask('build', ['compile', 'compress']);
 };
