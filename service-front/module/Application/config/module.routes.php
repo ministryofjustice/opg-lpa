@@ -33,7 +33,7 @@ return [
             'terms' => [
                 'type' => 'Zend\Router\Http\Literal',
                 'options' => [
-                    'route'    => '/terms-and-conditions',
+                    'route'    => '/terms',
                     'defaults' => [
                         'controller' => 'General\HomeController',
                         'action'     => 'terms',
