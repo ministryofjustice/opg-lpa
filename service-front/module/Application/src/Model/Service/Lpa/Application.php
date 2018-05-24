@@ -154,9 +154,14 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
             //  Get the Donor name
             $donorName = '';
+            $lpaType = '';
 
             if ($lpa->document->donor instanceof Donor && $lpa->document->donor->name instanceof LongName) {
                 $donorName = (string) $lpa->document->donor->name;
+            }
+
+            if (!is_null($lpa->document->type)) {
+                $lpaType = $lpa->document->type;
             }
 
             //  Get the progress string
@@ -173,7 +178,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
                 'id'        => $lpa->id,
                 'version'   => 2,
                 'donor'     => $donorName,
-                'type'      => $lpa->document->type,
+                'type'      => $lpaType,
                 'updatedAt' => $lpa->updatedAt,
                 'progress'  => $progress,
             ]);
