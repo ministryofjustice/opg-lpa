@@ -30,15 +30,15 @@ class MailTransportFactory implements FactoryInterface
         $emailConfig = $container->get('Config')['email'];
         $sendGridConfig = $emailConfig['sendgrid'];
 
-        if (!isset($sendGridConfig['user']) || !isset($sendGridConfig['key'])) {
+        if (!isset($sendGridConfig['key'])) {
             throw new RuntimeException('Sendgrid settings not found');
         }
 
-        $client = new SendGridClient($sendGridConfig['user'], $sendGridConfig['key']);
+        $client = new SendGridClient($sendGridConfig['key']);
 
         /** @var Twig_Environment $emailRenderer */
         $emailRenderer = $container->get('TwigEmailRenderer');
 
-        return new MailTransport($client, $emailRenderer, $emailConfig);
+        return new MailTransport($client->client, $emailRenderer, $emailConfig);
     }
 }

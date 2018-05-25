@@ -185,7 +185,7 @@ class DashboardController extends AbstractAuthenticatedController
     //---
 
     /**
-     * Displayed when the Terms and Conditions have changed since the user last logged in.
+     * Displayed when the Terms of use have changed since the user last logged in.
      */
     public function termsAction()
     {

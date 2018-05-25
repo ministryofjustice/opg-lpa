@@ -112,7 +112,7 @@ class SessionFactory implements FactoryInterface {
             //---
 
             // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
-            $blockCipher = BlockCipher::factory('mcrypt', [
+            $blockCipher = BlockCipher::factory('openssl', [
                 'algorithm' => 'aes',
                 'mode' => 'cbc',
             ]);
