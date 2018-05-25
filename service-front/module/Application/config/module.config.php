@@ -86,11 +86,8 @@ return [
 
     'view_helpers' => [
         'invokables' => [
-            'accordion'             => 'Application\View\Helper\Accordion',
-            'accountInfo'           => 'Application\View\Helper\AccountInfo',
             'pageHeaders'           => 'Application\View\Helper\PageHeaders',
             'elementGroupClass'     => 'Application\View\Helper\ElementGroupClass',
-            'routeName'             => 'Application\View\Helper\RouteName',
             'formElementErrors'     => 'Application\View\Helper\FormElementErrors',
             'formElementErrorsV2'   => 'Application\View\Helper\FormElementErrorsV2',
             'formErrorList'         => 'Application\View\Helper\FormErrorList',
@@ -99,13 +96,18 @@ return [
             'formErrorTextExchange' => 'Application\View\Helper\FormErrorTextExchange',
             'concatNames'           => 'Application\View\Helper\ConcatNames',
             'cellStyles'            => 'Application\View\Helper\CellStyles',
-            'systemMessage'         => 'Application\View\Helper\SystemMessage',
             'formatLpaId'           => 'Application\View\Helper\FormatLpaId',
             'ordinalSuffix'         => 'Application\View\Helper\OrdinalSuffix',
             'applicantNames'        => 'Application\View\Helper\ApplicantNames',
             'moneyFormat'           => 'Application\View\Helper\MoneyFormat',
             'formRadio'             => 'Application\Form\View\Helper\FormRadio',
             'finalCheckAccessible'  => 'Application\View\Helper\FinalCheckAccessible',
+        ],
+        'factories' => [
+            'accordion'     => 'Application\View\Helper\AccordionFactory',
+            'accountInfo'   => 'Application\View\Helper\AccountInfoFactory',
+            'routeName'     => 'Application\View\Helper\RouteNameFactory',
+            'systemMessage' => 'Application\View\Helper\SystemMessageFactory',
         ],
     ],
 

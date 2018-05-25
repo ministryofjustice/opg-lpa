@@ -417,14 +417,14 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
                     return true;
                 }
             } elseif ($response instanceof AuthResponseException) {
-                if ($response->getDetail() == 'username-already-exists') {
-                    $result = 'address-already-registered';
-                } else {
-                    $result = $response->getDetail();
-                }
+                $result = $response->getDetail();
             }
         } catch (AuthResponseException $e) {
             $result = $e->getDetail();
+
+            if ($result == 'username-already-exists') {
+                $result = 'address-already-registered';
+            }
         }
 
         return $result;

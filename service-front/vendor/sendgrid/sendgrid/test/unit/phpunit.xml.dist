@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="bootstrap.php">
-  <testsuites>
-    <testsuite name="General">
-      <file>./SendGrid.php</file>
-      <file>./SendGrid/Email.php</file>
-      <file>./SendGrid/Response.php</file>
-      <file>./SendGrid/Exception.php</file>
-    </testsuite>
-  </testsuites>
+<phpunit colors="true" bootstrap="../../vendor/autoload.php">
+    <testsuites>
+        <testsuite name="General">
+            <directory>.</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>
