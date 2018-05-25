@@ -19,9 +19,6 @@ class WritableStreamFunctionalTest extends FunctionalTestCase
         $this->collectionWrapper = new CollectionWrapper($this->manager, $this->getDatabaseName(), 'fs');
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
     public function testValidConstructorOptions()
     {
         new WritableStream($this->collectionWrapper, 'filename', [

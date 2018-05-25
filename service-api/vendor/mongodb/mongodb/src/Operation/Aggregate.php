@@ -21,7 +21,6 @@ use MongoDB\Driver\Command;
 use MongoDB\Driver\ReadConcern;
 use MongoDB\Driver\ReadPreference;
 use MongoDB\Driver\Server;
-use MongoDB\Driver\Session;
 use MongoDB\Driver\WriteConcern;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Exception\InvalidArgumentException;
@@ -42,6 +41,7 @@ use Traversable;
 class Aggregate implements Executable
 {
     private static $wireVersionForCollation = 5;
+    private static $wireVersionForCursor = 2;
     private static $wireVersionForDocumentLevelValidation = 4;
     private static $wireVersionForReadConcern = 4;
     private static $wireVersionForWriteConcern = 5;
@@ -74,13 +74,6 @@ class Aggregate implements Executable
      *    This is not supported for server versions < 3.4 and will result in an
      *    exception at execution time if used.
      *
-     *  * comment (string): An arbitrary string to help trace the operation
-     *    through the database profiler, currentOp, and logs.
-     *
-     *  * hint (string|document): The index to use. Specify either the index
-     *    name as a string or the index key pattern as a document. If specified,
-     *    then the query system will only consider plans using the hinted index.
-     *
      *  * maxTimeMS (integer): The maximum amount of time to allow the query to
      *    run.
      *
@@ -92,20 +85,17 @@ class Aggregate implements Executable
      *
      *  * readPreference (MongoDB\Driver\ReadPreference): Read preference.
      *
-     *    This option is ignored if the $out stage is specified.
-     *
-     *  * session (MongoDB\Driver\Session): Client session.
-     *
-     *    Sessions are not supported for server versions < 3.6.
-     *
      *  * typeMap (array): Type map for BSON deserialization. This will be
      *    applied to the returned Cursor (it is not sent to the server).
      *
      *  * useCursor (boolean): Indicates whether the command will request that
      *    the server provide results using a cursor. The default is true.
      *
-     *    This option allows users to turn off cursors if necessary to aid in
-     *    mongod/mongos upgrades.
+     *    For servers < 2.6, this option is ignored as aggregation cursors are
+     *    not available.
+     *
+     *    For servers >= 2.6, this option allows users to turn off cursors if
+     *    necessary to aid in mongod/mongos upgrades.
      *
      *  * writeConcern (MongoDB\Driver\WriteConcern): Write concern. This only
      *    applies when the $out stage is specified.
@@ -156,18 +146,6 @@ class Aggregate implements Executable
             throw InvalidArgumentException::invalidType('"collation" option', $options['collation'], 'array or object');
         }
 
-        if (isset($options['comment']) && ! is_string($options['comment'])) {
-            throw InvalidArgumentException::invalidType('"comment" option', $options['comment'], 'string');
-        }
-
-        if (isset($options['hint']) && ! is_string($options['hint']) && ! is_array($options['hint']) && ! is_object($options['hint'])) {
-            throw InvalidArgumentException::invalidType('"hint" option', $options['hint'], 'string or array or object');
-        }
-
-        if (isset($options['maxAwaitTimeMS']) && ! is_integer($options['maxAwaitTimeMS'])) {
-            throw InvalidArgumentException::invalidType('"maxAwaitTimeMS" option', $options['maxAwaitTimeMS'], 'integer');
-        }
-
         if (isset($options['maxTimeMS']) && ! is_integer($options['maxTimeMS'])) {
             throw InvalidArgumentException::invalidType('"maxTimeMS" option', $options['maxTimeMS'], 'integer');
         }
@@ -178,10 +156,6 @@ class Aggregate implements Executable
 
         if (isset($options['readPreference']) && ! $options['readPreference'] instanceof ReadPreference) {
             throw InvalidArgumentException::invalidType('"readPreference" option', $options['readPreference'], 'MongoDB\Driver\ReadPreference');
-        }
-
-        if (isset($options['session']) && ! $options['session'] instanceof Session) {
-            throw InvalidArgumentException::invalidType('"session" option', $options['session'], 'MongoDB\Driver\Session');
         }
 
         if (isset($options['typeMap']) && ! is_array($options['typeMap'])) {
@@ -198,6 +172,10 @@ class Aggregate implements Executable
 
         if (isset($options['batchSize']) && ! $options['useCursor']) {
             throw new InvalidArgumentException('"batchSize" option should not be used if "useCursor" is false');
+        }
+
+        if (isset($options['typeMap']) && ! $options['useCursor']) {
+            throw new InvalidArgumentException('"typeMap" option should not be used if "useCursor" is false');
         }
 
         if (isset($options['readConcern']) && $options['readConcern']->isDefault()) {
@@ -238,16 +216,13 @@ class Aggregate implements Executable
             throw UnsupportedException::writeConcernNotSupported();
         }
 
-        $hasOutStage = \MongoDB\is_last_pipeline_operator_out($this->pipeline);
+        $isCursorSupported = \MongoDB\server_supports_feature($server, self::$wireVersionForCursor);
+        $readPreference = isset($this->options['readPreference']) ? $this->options['readPreference'] : null;
 
-        $command = $this->createCommand($server);
-        $options = $this->createOptions($hasOutStage);
+        $command = $this->createCommand($server, $isCursorSupported);
+        $cursor = $server->executeCommand($this->databaseName, $command, $readPreference);
 
-        $cursor = $hasOutStage
-            ? $server->executeReadWriteCommand($this->databaseName, $command, $options)
-            : $server->executeReadCommand($this->databaseName, $command, $options);
-
-        if ($this->options['useCursor']) {
+        if ($isCursorSupported && $this->options['useCursor']) {
             if (isset($this->options['typeMap'])) {
                 $cursor->setTypeMap($this->options['typeMap']);
             }
@@ -272,15 +247,20 @@ class Aggregate implements Executable
      * Create the aggregate command.
      *
      * @param Server  $server
+     * @param boolean $isCursorSupported
      * @return Command
      */
-    private function createCommand(Server $server)
+    private function createCommand(Server $server, $isCursorSupported)
     {
         $cmd = [
             'aggregate' => $this->collectionName,
             'pipeline' => $this->pipeline,
         ];
-        $cmdOptions = [];
+
+        // Servers < 2.6 do not support any command options
+        if ( ! $isCursorSupported) {
+            return new Command($cmd);
+        }
 
         $cmd['allowDiskUse'] = $this->options['allowDiskUse'];
 
@@ -288,22 +268,20 @@ class Aggregate implements Executable
             $cmd['bypassDocumentValidation'] = $this->options['bypassDocumentValidation'];
         }
 
-        foreach (['comment', 'maxTimeMS'] as $option) {
-            if (isset($this->options[$option])) {
-                $cmd[$option] = $this->options[$option];
-            }
-        }
-
         if (isset($this->options['collation'])) {
             $cmd['collation'] = (object) $this->options['collation'];
         }
 
-        if (isset($this->options['hint'])) {
-            $cmd['hint'] = is_array($this->options['hint']) ? (object) $this->options['hint'] : $this->options['hint'];
+        if (isset($this->options['maxTimeMS'])) {
+            $cmd['maxTimeMS'] = $this->options['maxTimeMS'];
         }
 
-        if (isset($this->options['maxAwaitTimeMS'])) {
-            $cmdOptions['maxAwaitTimeMS'] = $this->options['maxAwaitTimeMS'];
+        if (isset($this->options['readConcern'])) {
+            $cmd['readConcern'] = \MongoDB\read_concern_as_document($this->options['readConcern']);
+        }
+
+        if (isset($this->options['writeConcern'])) {
+            $cmd['writeConcern'] = \MongoDB\write_concern_as_document($this->options['writeConcern']);
         }
 
         if ($this->options['useCursor']) {
@@ -312,37 +290,6 @@ class Aggregate implements Executable
                 : new stdClass;
         }
 
-        return new Command($cmd, $cmdOptions);
-    }
-
-    /**
-     * Create options for executing the command.
-     *
-     * @see http://php.net/manual/en/mongodb-driver-server.executereadcommand.php
-     * @see http://php.net/manual/en/mongodb-driver-server.executereadwritecommand.php
-     * @param boolean $hasOutStage
-     * @return array
-     */
-    private function createOptions($hasOutStage)
-    {
-        $options = [];
-
-        if (isset($this->options['readConcern'])) {
-            $options['readConcern'] = $this->options['readConcern'];
-        }
-
-        if ( ! $hasOutStage && isset($this->options['readPreference'])) {
-            $options['readPreference'] = $this->options['readPreference'];
-        }
-
-        if (isset($this->options['session'])) {
-            $options['session'] = $this->options['session'];
-        }
-
-        if ($hasOutStage && isset($this->options['writeConcern'])) {
-            $options['writeConcern'] = $this->options['writeConcern'];
-        }
-
-        return $options;
+        return new Command($cmd);
     }
 }

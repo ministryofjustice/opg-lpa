@@ -33,6 +33,7 @@ use MongoDB\Exception\UnsupportedException;
 class FindOne implements Executable
 {
     private $find;
+    private $options;
 
     /**
      * Constructs a find command for finding a single document.
@@ -78,10 +79,6 @@ class FindOne implements Executable
      *  * returnKey (boolean): If true, returns only the index keys in the
      *    resulting documents.
      *
-     *  * session (MongoDB\Driver\Session): Client session.
-     *
-     *    Sessions are not supported for server versions < 3.6.
-     *
      *  * showRecordId (boolean): Determines whether to return the record
      *    identifier for each document. If true, adds a field $recordId to the
      *    returned documents.
@@ -108,6 +105,8 @@ class FindOne implements Executable
             $filter,
             ['limit' => 1] + $options
         );
+
+        $this->options = $options;
     }
 
     /**

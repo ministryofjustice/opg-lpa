@@ -132,7 +132,7 @@ class ReadableStream
      *
      * Note: this method may return a string smaller than the requested length
      * if data is not available to be read.
-     *
+     * 
      * @param integer $length Number of bytes to read
      * @return string
      * @throws InvalidArgumentException if $length is negative
@@ -175,7 +175,7 @@ class ReadableStream
     public function seek($offset)
     {
         if ($offset < 0 || $offset > $this->file->length) {
-            throw new InvalidArgumentException(sprintf('$offset must be >= 0 and <= %d; given: %d', $this->file->length, $offset));
+            throw new InvalidArgumentException(sprintf('$offset must be >= 0 and <= %d; given: %d', $length, $offset));
         }
 
         /* Compute the offsets for the chunk and buffer (i.e. chunk data) from
@@ -186,32 +186,9 @@ class ReadableStream
         $this->chunkOffset = (integer) floor($offset / $this->chunkSize);
         $this->bufferOffset = $offset % $this->chunkSize;
 
-        if ($lastChunkOffset === $this->chunkOffset) {
-            return;
-        }
-
-        if ($this->chunksIterator === null) {
-            return;
-        }
-
-        // Clear the buffer since the current chunk will be changed
-        $this->buffer = null;
-
-        /* If we are seeking to a previous chunk, we need to reinitialize the
-         * chunk iterator.
-         */
-        if ($lastChunkOffset > $this->chunkOffset) {
+        if ($lastChunkOffset !== $this->chunkOffset) {
+            $this->buffer = null;
             $this->chunksIterator = null;
-            return;
-        }
-
-        /* If we are seeking to a subsequent chunk, we do not need to
-         * reinitalize the chunk iterator. Instead, we can simply move forward
-         * to $this->chunkOffset.
-         */
-        $numChunks = $this->chunkOffset - $lastChunkOffset;
-        for ($i = 0; $i < $numChunks; $i++) {
-            $this->chunksIterator->next();
         }
     }
 

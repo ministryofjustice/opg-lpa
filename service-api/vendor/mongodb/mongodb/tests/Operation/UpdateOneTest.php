@@ -27,7 +27,6 @@ class UpdateOneTest extends TestCase
 
     /**
      * @dataProvider provideUpdateDocuments
-     * @doesNotPerformAssertions
      */
     public function testConstructorUpdateArgument($update)
     {

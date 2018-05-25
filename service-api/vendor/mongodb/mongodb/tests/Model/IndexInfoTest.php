@@ -1,6 +1,6 @@
 <?php
 
-namespace MongoDB\Tests\Model;
+namespace MongoDB\Tests;
 
 use MongoDB\Model\IndexInfo;
 use MongoDB\Tests\TestCase;
@@ -80,7 +80,7 @@ class IndexInfoTest extends TestCase
         $this->assertFalse($info->isSparse());
         $this->assertTrue($info->isTtl());
         $this->assertFalse($info->isUnique());
-        $this->assertArrayHasKey('expireAfterSeconds', $info);
+        $this->assertTrue(isset($info['expireAfterSeconds']));
         $this->assertSame(100, $info['expireAfterSeconds']);
     }
 
@@ -107,7 +107,7 @@ class IndexInfoTest extends TestCase
         ]);
 
         $this->assertInstanceOf('ArrayAccess', $info);
-        $this->assertArrayHasKey('name', $info);
+        $this->assertTrue(isset($info['name']));
         $this->assertSame('x_1', $info['name']);
     }
 

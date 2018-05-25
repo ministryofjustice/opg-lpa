@@ -39,10 +39,6 @@ class UpdateTest extends TestCase
     {
         $options = [];
 
-        foreach ($this->getInvalidArrayValues() as $value) {
-            $options[][] = ['arrayFilters' => $value];
-        }
-
         foreach ($this->getInvalidBooleanValues() as $value) {
             $options[][] = ['bypassDocumentValidation' => $value];
         }
@@ -53,10 +49,6 @@ class UpdateTest extends TestCase
 
         foreach ($this->getInvalidBooleanValues() as $value) {
             $options[][] = ['multi' => $value];
-        }
-
-        foreach ($this->getInvalidSessionValues() as $value) {
-            $options[][] = ['session' => $value];
         }
 
         foreach ($this->getInvalidBooleanValues() as $value) {

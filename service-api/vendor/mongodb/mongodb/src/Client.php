@@ -256,16 +256,4 @@ class Client
 
         return new Database($this->manager, $databaseName, $options);
     }
-
-    /**
-     * Start a new client session.
-     *
-     * @see http://php.net/manual/en/mongodb-driver-manager.startsession.php
-     * @param array  $options      Session options
-     * @return MongoDB\Driver\Session
-     */
-    public function startSession(array $options = [])
-    {
-        return $this->manager->startSession($options);
-    }
 }

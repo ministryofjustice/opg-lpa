@@ -1,6 +1,6 @@
 <?php
 
-namespace MongoDB\Tests\Model;
+namespace MongoDB\Tests;
 
 use MongoDB\Model\IndexInput;
 use MongoDB\Tests\TestCase;

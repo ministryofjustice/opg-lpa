@@ -17,7 +17,6 @@
 
 namespace MongoDB\GridFS;
 
-use MongoDB\Collection;
 use MongoDB\Driver\Cursor;
 use MongoDB\Driver\Manager;
 use MongoDB\Driver\ReadConcern;

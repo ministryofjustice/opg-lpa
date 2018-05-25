@@ -5,7 +5,6 @@ namespace MongoDB\Tests\Operation;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Operation\Aggregate;
 use MongoDB\Tests\CommandObserver;
-use ArrayIterator;
 use stdClass;
 
 class AggregateFunctionalTest extends FunctionalTestCase
@@ -31,6 +30,10 @@ class AggregateFunctionalTest extends FunctionalTestCase
 
     public function testDefaultWriteConcernIsOmitted()
     {
+        if (version_compare($this->getServerVersion(), '2.6.0', '<')) {
+            $this->markTestSkipped('$out pipeline operator is not supported');
+        }
+
         (new CommandObserver)->observe(
             function() {
                 $operation = new Aggregate(
@@ -73,29 +76,6 @@ class AggregateFunctionalTest extends FunctionalTestCase
         $operation->execute($this->getPrimaryServer());
     }
 
-    public function testSessionOption()
-    {
-        if (version_compare($this->getServerVersion(), '3.6.0', '<')) {
-            $this->markTestSkipped('Sessions are not supported');
-        }
-
-        (new CommandObserver)->observe(
-            function() {
-                $operation = new Aggregate(
-                    $this->getDatabaseName(),
-                    $this->getCollectionName(),
-                    [],
-                    ['session' => $this->createSession()]
-                );
-
-                $operation->execute($this->getPrimaryServer());
-            },
-            function(stdClass $command) {
-                $this->assertObjectHasAttribute('lsid', $command);
-            }
-        );
-    }
-
     /**
      * @dataProvider provideTypeMapOptionsAndExpectedDocuments
      */
@@ -104,31 +84,10 @@ class AggregateFunctionalTest extends FunctionalTestCase
         $this->createFixtures(3);
 
         $pipeline = [['$match' => ['_id' => ['$ne' => 2]]]];
-
         $operation = new Aggregate($this->getDatabaseName(), $this->getCollectionName(), $pipeline, ['typeMap' => $typeMap]);
         $results = iterator_to_array($operation->execute($this->getPrimaryServer()));
 
         $this->assertEquals($expectedDocuments, $results);
-    }
-
-    /**
-     * @dataProvider provideTypeMapOptionsAndExpectedDocuments
-     */
-    public function testTypeMapOptionWithoutCursor(array $typeMap = null, array $expectedDocuments)
-    {
-        if (version_compare($this->getServerVersion(), '3.6.0', '>=')) {
-            $this->markTestSkipped('Aggregations with useCursor == false are not supported');
-        }
-
-        $this->createFixtures(3);
-
-        $pipeline = [['$match' => ['_id' => ['$ne' => 2]]]];
-
-        $operation = new Aggregate($this->getDatabaseName(), $this->getCollectionName(), $pipeline, ['typeMap' => $typeMap, 'useCursor' => false]);
-        $results = $operation->execute($this->getPrimaryServer());
-
-        $this->assertInstanceOf(ArrayIterator::class, $results);
-        $this->assertEquals($expectedDocuments, iterator_to_array($results));
     }
 
     public function provideTypeMapOptionsAndExpectedDocuments()

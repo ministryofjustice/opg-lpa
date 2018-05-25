@@ -31,6 +31,10 @@ class CountFunctionalTest extends FunctionalTestCase
 
     public function testHintOption()
     {
+        if (version_compare($this->getServerVersion(), '2.6.0', '<')) {
+            $this->markTestSkipped('count command does not support "hint" option');
+        }
+
         $insertMany = new InsertMany($this->getDatabaseName(), $this->getCollectionName(), [
             ['x' => 1],
             ['x' => 2],
@@ -68,28 +72,5 @@ class CountFunctionalTest extends FunctionalTestCase
             $operation = new Count($this->getDatabaseName(), $this->getCollectionName(), $filter, ['hint' => $hint]);
             $this->assertEquals(3, $operation->execute($this->getPrimaryServer()));
         }
-    }
-
-    public function testSessionOption()
-    {
-        if (version_compare($this->getServerVersion(), '3.6.0', '<')) {
-            $this->markTestSkipped('Sessions are not supported');
-        }
-
-        (new CommandObserver)->observe(
-            function() {
-                $operation = new Count(
-                    $this->getDatabaseName(),
-                    $this->getCollectionName(),
-                    [],
-                    ['session' => $this->createSession()]
-                );
-
-                $operation->execute($this->getPrimaryServer());
-            },
-            function(stdClass $command) {
-                $this->assertObjectHasAttribute('lsid', $command);
-            }
-        );
     }
 }

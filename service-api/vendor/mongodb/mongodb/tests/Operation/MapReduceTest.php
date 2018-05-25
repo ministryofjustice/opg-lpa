@@ -83,10 +83,6 @@ class MapReduceTest extends TestCase
             $options[][] = ['scope' => $value];
         }
 
-        foreach ($this->getInvalidSessionValues() as $value) {
-            $options[][] = ['session' => $value];
-        }
-
         foreach ($this->getInvalidDocumentValues() as $value) {
             $options[][] = ['sort' => $value];
         }

@@ -1,6 +1,6 @@
-====================================
-MongoDB\\Collection::createIndexes()
-====================================
+==================================
+MongoDBCollection::createIndexes()
+==================================
 
 .. default-domain:: mongodb
 
