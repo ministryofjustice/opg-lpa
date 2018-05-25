@@ -4852,7 +4852,7 @@ return /******/ (function(modules) { // webpackBootstrap
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.5';
+  var VERSION = '4.17.10';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -5276,6 +5276,14 @@ return /******/ (function(modules) { // webpackBootstrap
   /** Used to access faster Node.js helpers. */
   var nodeUtil = (function() {
     try {
+      // Use `util.types` for Node.js 10+.
+      var types = freeModule && freeModule.require && freeModule.require('util').types;
+
+      if (types) {
+        return types;
+      }
+
+      // Legacy `process.binding('util')` for Node.js < 10.
       return freeProcess && freeProcess.binding && freeProcess.binding('util');
     } catch (e) {}
   }());
@@ -22004,8 +22012,15 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
   }
 };
 ;
+// DEPRECATED
+// This isn’t needed if you’re using GOV.UK Elements 3.0.0 or above
+
 ;(function (global) {
   'use strict'
+
+  if (window.console && window.console.warn) {
+    window.console.warn('Deprecation warning: Custom radio buttons and checkboxes (released in GOV.UK Elements 3.0.0) no longer require this JavaScript.')
+  }
 
   var $ = global.jQuery
   var GOVUK = global.GOVUK || {}
@@ -24978,11 +24993,13 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
     },
 
     checkErrors: function(){
+      // Iterating through link errors
       var errorsLinked = $('.error-summary-list li a')
       for (var i = 0; i < errorsLinked.length; i++) {
         moj.Modules.formErrorTracker.trackError(errorsLinked[i])
       }
 
+      // Iterating through text errors
       var errorsText = $('.error-summary-text p')
       for (var i = 0; i < errorsText.length; i++) {
         moj.Modules.formErrorTracker.trackErrorText(errorsText[i])

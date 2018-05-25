@@ -24,9 +24,8 @@ module.exports = function (grunt) {
       dev: {
         options: {
           loadPath: [
-          'assets/bower/govuk_frontend_toolkit/stylesheets',
-          'assets/bower/govuk_template/source/assets/stylesheets',
-          'assets/bower/govuk_elements/public/sass'
+          'node_modules/govuk_frontend_toolkit/stylesheets',
+          'node_modules/govuk-elements-sass/public/sass'
           ]
         },
         files: {
@@ -34,7 +33,6 @@ module.exports = function (grunt) {
           'public/assets/v2/css/application-ie8.css': 'assets/sass/application-ie8.scss',
           'public/assets/v2/css/application-ie7.css': 'assets/sass/application-ie7.scss',
           'public/assets/v2/css/application-ie6.css': 'assets/sass/application-ie6.scss',
-          'public/assets/v2/css/govuk-template-print.css': 'assets/bower/govuk_template/source/assets/stylesheets/govuk-template-print.scss',
           'public/assets/v2/css/print.css': 'assets/sass/print.scss'
         }
       }
@@ -64,6 +62,18 @@ module.exports = function (grunt) {
       }
     },
 
+    // govuk template css copied into public/assets
+    copy: {
+      main: {
+        files: [{
+          expand: true,
+          src: ['node_modules/govuk_template_mustache/assets/stylesheets/*.css'],
+          dest: 'public/assets/v2/css/',
+          flatten: true
+        }]
+      }
+    },
+
     // minifying the css
     cssmin: {
       options: {
@@ -88,15 +98,15 @@ module.exports = function (grunt) {
       },
       dist: {
         src: [
-          // Bower Dependencies
-          'assets/bower/handlebars/handlebars.js',
-          'assets/bower/lodash/lodash.js',
-          'assets/bower/stageprompt/script/stageprompt.js',
-          'assets/bower/govuk_frontend_toolkit/javascripts/govuk/selection-buttons.js',
-          'assets/bower/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
-          'assets/bower/govuk_frontend_toolkit/javascripts/govuk/analytics/govuk-tracker.js',
-          'assets/bower/govuk_frontend_toolkit/javascripts/govuk/analytics/google-analytics-universal-tracker.js',
-          'assets/bower/govuk_frontend_toolkit/javascripts/govuk/analytics/analytics.js',
+          // Dependencies
+          'node_modules/handlebars/dist/handlebars.js',
+          'node_modules/lodash/lodash.js',
+          'assets/js/govuk/stageprompt.js',
+          'node_modules/govuk_frontend_toolkit/javascripts/govuk/selection-buttons.js',
+          'node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
+          'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/govuk-tracker.js',
+          'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/google-analytics-universal-tracker.js',
+          'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/analytics.js',
 
 
           // OPG Scripts
@@ -220,10 +230,11 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-browser-sync');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   // define tasks
   grunt.registerTask('default', ['watch']);
-  grunt.registerTask('compile', ['sass', 'replace:image_url', 'handlebars', 'concat']);
+  grunt.registerTask('compile', ['sass', 'replace:image_url', 'copy', 'handlebars', 'concat']);
   grunt.registerTask('test', ['scsslint', 'jshint']);
   grunt.registerTask('compress', ['cssmin', 'uglify']);
   grunt.registerTask('refresh', ['browserSync', 'watch']);
