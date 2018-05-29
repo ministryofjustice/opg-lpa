@@ -303,7 +303,7 @@ class MailTransport implements TransportInterface
             }
 
             //  If supported and required set send at
-            if ($message instanceof Message§) {
+            if ($message instanceof Message) {
                 $sendAt = $message->getSendAt();
 
                 if ($sendAt) {
