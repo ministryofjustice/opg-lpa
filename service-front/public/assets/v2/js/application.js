@@ -25038,30 +25038,34 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
       var $error = $(error)
       var errorID = $error.attr('href')
 
-      var $element = $(errorID)
-      var elementID = $element.prop('id')
+      if (errorID.indexOf('secret_') >= 0) {
+        questionText = 'CSRF error'
+      } else {
+        var $element = $(errorID)
+        var elementID = $element.prop('id')
 
-      var nodeName = document.getElementById(elementID).nodeName.toLowerCase()
-      var questionText
-      var legendText
+        var nodeName = document.getElementById(elementID).nodeName.toLowerCase()
+        var questionText
+        var legendText
 
-      // If the error is on an input or textarea
-      if (nodeName === 'input' || nodeName === 'textarea' || nodeName === 'select') {
-        // Get the label
-        questionText = $.trim($('label[for="' + elementID + '"]')[0].childNodes[0].nodeValue)
-        // Get the legend for that label/input
-        legendText = $.trim($element.closest('fieldset').find('legend').text())
-        // combine the legend with the label
-        questionText = legendText.length > 0 ? legendText + ': ' + questionText : questionText
-      }
-      // If the error is on a fieldset (for radio buttons and checkboxes)
-      else if (nodeName === 'fieldset') {
-        legendText = $.trim($element.find('legend').text())
-        questionText = legendText
-      }
-      // Anything else
-      else {
-        questionText = ''
+        // If the error is on an input or textarea
+        if (nodeName === 'input' || nodeName === 'textarea' || nodeName === 'select') {
+          // Get the label
+          questionText = $.trim($('label[for="' + elementID + '"]')[0].childNodes[0].nodeValue)
+          // Get the legend for that label/input
+          legendText = $.trim($element.closest('fieldset').find('legend').text())
+          // combine the legend with the label
+          questionText = legendText.length > 0 ? legendText + ': ' + questionText : questionText
+        }
+        // If the error is on a fieldset (for radio buttons and checkboxes)
+        else if (nodeName === 'fieldset') {
+          legendText = $.trim($element.find('legend').text())
+          questionText = legendText
+        }
+        // Anything else
+        else {
+          questionText = ''
+        }
       }
 
       return questionText
