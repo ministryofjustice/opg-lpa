@@ -1,17 +1,11 @@
 {% extends 'layout/twig/layout.twig' %}
 
+{% block htmlTitle %}
+    {% if (error is empty) %}Account activated{% else %}Account activation problem{% endif %} -
+{% endblock %}
+
 {% block pageTitle %}
-
-{% if (error is empty) %}
-
-    Account activated
-
-{% else %}
-
-    Account activation problem
-
-{% endif %}
-
+    {% if (error is empty) %}Account activated{% else %}Account activation problem{% endif %}
 {% endblock %}
 
 {% block content %}
