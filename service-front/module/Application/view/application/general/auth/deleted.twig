@@ -1,8 +1,7 @@
 {% extends 'layout/twig/layout.twig' %}
 
-{% block pageTitle %}
-    We've deleted your account
-{% endblock %}
+{% block htmlTitle %}Account deleted - {% endblock %}
+{% block pageTitle %}We've deleted your account{% endblock %}
 
 {% block content %}
 	<a href="{{ url('home') }}">Continue to home page</a>
