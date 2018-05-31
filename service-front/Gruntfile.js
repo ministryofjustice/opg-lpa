@@ -31,8 +31,6 @@ module.exports = function (grunt) {
         files: {
           'public/assets/v2/css/application.css': 'assets/sass/application.scss',
           'public/assets/v2/css/application-ie8.css': 'assets/sass/application-ie8.scss',
-          'public/assets/v2/css/application-ie7.css': 'assets/sass/application-ie7.scss',
-          'public/assets/v2/css/application-ie6.css': 'assets/sass/application-ie6.scss',
           'public/assets/v2/css/print.css': 'assets/sass/print.scss'
         }
       }
@@ -67,7 +65,13 @@ module.exports = function (grunt) {
       main: {
         files: [{
           expand: true,
-          src: ['node_modules/govuk_template_mustache/assets/stylesheets/*.css'],
+          src: [
+            'node_modules/govuk_template_mustache/assets/stylesheets/fonts-ie8.css',
+            'node_modules/govuk_template_mustache/assets/stylesheets/fonts.css',
+            'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-ie8.css',
+            'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css',
+            'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css',
+          ],
           dest: 'public/assets/v2/css/',
           flatten: true
         }]
