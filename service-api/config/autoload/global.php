@@ -17,9 +17,8 @@ return [
         'api-token' => getenv('OPG_LPA_COMMON_AUTH_CLEANUP_TOKEN') ?: null,
     ], // cleanup
 
-    //  TODO - To be removed when API self call is removed
+    //  TODO - To be removed when account clean up is refactored to remove API self call
     'authentication' => [
-        'endpoint' => getenv('OPG_LPA_API_ENDPOINTS_AUTH') ?: 'https://apiv2/v1/authenticate',
         'clean-up-token' => getenv('OPG_LPA_COMMON_AUTH_CLEANUP_TOKEN'),
     ],
 
