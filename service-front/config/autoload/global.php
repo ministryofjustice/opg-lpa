@@ -147,8 +147,7 @@ return array(
 
     'api_client' => [
         'api_uri' => getenv('OPG_LPA_FRONT_ENDPOINTS_API') ?: 'https://apiv2',
-        'auth_uri' => getenv('OPG_LPA_FRONT_ENDPOINTS_AUTH') ?: 'https://authv2',
-    ], // api_client
+    ],
 
     'email' => [
 
