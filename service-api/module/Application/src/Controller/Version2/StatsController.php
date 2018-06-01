@@ -4,7 +4,6 @@ namespace Application\Controller\Version2;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-use Application\Model\Service\EntityInterface;
 use Application\Model\Service\Stats\Service;
 use ZF\ApiProblem\ApiProblem;
 

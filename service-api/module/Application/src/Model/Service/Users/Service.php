@@ -2,8 +2,8 @@
 
 namespace Application\Model\Service\Users;
 
-use Application\DataAccess\Mongo\DateCallback;
-use Application\DataAccess\UserDal;
+use Application\Model\DataAccess\Mongo\DateCallback;
+use Application\Model\DataAccess\UserDal;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Authentication\Identity\User as UserIdentity;
 use Application\Library\DateTime;

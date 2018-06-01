@@ -24,7 +24,7 @@ class AuthenticationListener
     {
         $serviceManager = $e->getApplication()->getServiceManager();
 
-        $authService = $serviceManager->get('AuthenticationService');
+        $authService = $serviceManager->get('Zend\Authentication\AuthenticationService');
 
         $config = $serviceManager->get('Config');
         $authConfig = $config['authentication'];

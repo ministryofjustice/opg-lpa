@@ -9,7 +9,6 @@ namespace Zend\Mvc\Console\Router;
 
 use Interop\Container\ContainerInterface;
 use Zend\Console\Console;
-use Zend\Console\Request as ConsoleRequest;
 use Zend\ServiceManager\DelegatorFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

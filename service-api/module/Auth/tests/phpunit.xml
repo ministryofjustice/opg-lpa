@@ -1,0 +1,10 @@
+<phpunit bootstrap="Bootstrap.php" colors="true">
+    <testsuite name="AuthTest">
+        <directory>.</directory>
+    </testsuite>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./../src</directory>
+        </whitelist>
+    </filter>
+</phpunit>

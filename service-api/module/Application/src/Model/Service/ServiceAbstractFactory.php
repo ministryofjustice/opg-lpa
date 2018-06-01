@@ -2,8 +2,8 @@
 
 namespace Application\Model\Service;
 
-use Application\DataAccess\Mongo\CollectionFactory;
-use Application\DataAccess\UserDal;
+use Application\Model\DataAccess\Mongo\CollectionFactory;
+use Application\Model\DataAccess\UserDal;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Interop\Container\ContainerInterface;

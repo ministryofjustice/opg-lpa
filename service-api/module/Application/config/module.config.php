@@ -2,9 +2,27 @@
 
 return [
 
+    'console' => [
+        'router' => [
+            'routes' => [
+
+                'generate-stats' => [
+                    'type'    => 'simple',
+                    'options' => [
+                        'route'    => 'generate-stats',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Console\GenerateStats',
+                            'action'     => 'generate'
+                        ],
+                    ],
+                ],
+
+            ],
+        ],
+    ],
+
     'router' => [
         'routes' => [
-
             'home' => [
                 'type' => 'Zend\Router\Http\Literal',
                 'options' => [
@@ -14,7 +32,7 @@ return [
                         'action'     => 'index',
                     ],
                 ],
-            ], // home
+            ],
 
             'ping' => [
                 'type' => 'Zend\Router\Http\Segment',
@@ -25,7 +43,7 @@ return [
                         'action'     => 'index',
                     ],
                 ],
-            ], // ping
+            ],
 
             'api-v2' => [
                 'type'    => 'Segment',
@@ -317,8 +335,8 @@ return [
             'ZfcRbac\Initializer\AuthorizationServiceInitializer',
         ],
         'factories' => [
-            'StatsService' => 'Application\Model\Service\System\StatsFactory',
-            \Application\DataAccess\UserDal::class => \Application\DataAccess\UserDalFactory::class,
+            \Application\Model\Service\System\Stats::class => \Application\Model\Service\System\StatsFactory::class,
+            \Application\Model\DataAccess\UserDal::class => \Application\Model\DataAccess\UserDalFactory::class,
             Application\Model\Service\Stats\Service::class => Application\Model\Service\Stats\ServiceFactory::class,
         ],
         'abstract_factories' => [
@@ -327,7 +345,6 @@ return [
         ],
         'aliases' => [
             'translator' => 'MvcTranslator',
-            'AuthenticationService' => 'Zend\Authentication\AuthenticationService',
         ],
     ], // service_manager
 
@@ -359,26 +376,6 @@ return [
         ],
         'strategies' => [
             'ViewJsonStrategy',
-        ],
-    ],
-
-    // Placeholder for console routes
-    'console' => [
-        'router' => [
-            'routes' => [
-
-                'account-cleanup' => [
-                    'type'    => 'simple',
-                    'options' => [
-                        'route'    => 'generate-stats',
-                        'defaults' => [
-                            'controller' => 'Application\Controller\Console\GenerateStats',
-                            'action'     => 'generate'
-                        ],
-                    ],
-                ],
-
-            ],
         ],
     ],
 

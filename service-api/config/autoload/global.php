@@ -1,26 +1,52 @@
 <?php
 
-return array(
+return [
 
     'stack' => [
         'name' => getenv('OPG_LPA_STACK_NAME') ?: 'local',
         'environment' => getenv('OPG_LPA_STACK_ENVIRONMENT') ?: 'dev',
     ],
 
+    //  TODO - To be removed when account clean up is refactored to remove API self call
+    'cleanup' => [
+        'notification' => [
+            'callback' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_ENDPOINT') ?: null,
+            'token' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') ?: null,
+        ],
+        'api-target' => getenv('OPG_LPA_AUTH_API_CLEANUP_TARGET') ?: null,
+        'api-token' => getenv('OPG_LPA_COMMON_AUTH_CLEANUP_TOKEN') ?: null,
+    ], // cleanup
+
+    //  TODO - To be removed when API self call is removed
     'authentication' => [
-        'ping' => getenv('OPG_LPA_API_ENDPOINTS_AUTH_PING') ?: 'https://authv2/ping',
-        'endpoint' => getenv('OPG_LPA_API_ENDPOINTS_AUTH') ?: 'https://authv2/v1/authenticate',
+        'endpoint' => getenv('OPG_LPA_API_ENDPOINTS_AUTH') ?: 'https://apiv2/v1/authenticate',
         'clean-up-token' => getenv('OPG_LPA_COMMON_AUTH_CLEANUP_TOKEN'),
     ],
 
+    'log' => [
+        'sns' => [
+            'endpoints' => [
+                'major' => getenv('OPG_LPA_COMMON_LOGGING_SNS_ENDPOINTS_MAJOR') ?: null,
+                'minor' => getenv('OPG_LPA_COMMON_LOGGING_SNS_ENDPOINTS_MINOR') ?: null,
+                'info' => getenv('OPG_LPA_COMMON_LOGGING_SNS_ENDPOINTS_INFO') ?: null,
+            ],
+            'client' => [
+                'version' => '2010-03-31',
+                'region' => 'eu-west-1',
+                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
+                ] : null,
+            ],
+        ], // sns
+    ], // log
+
     'admin' => [
-        'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',',getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : array(),
+        'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : [],
     ],
 
     'cron' => [
-
         'lock' => [
-
             'dynamodb' => [
                 'client' => [
                     'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
@@ -35,18 +61,17 @@ return array(
                     'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
                 ],
             ],
-
         ], // lock
-
     ], // cron
 
     'db' => [
-
         'mongo' => [
-
             'default' => [
-
-                'hosts' => [ 'mongodb-01:27017', 'mongodb-02:27017', 'mongodb-03:27017' ],
+                'hosts' => [
+                    'mongodb-01:27017',
+                    'mongodb-02:27017',
+                    'mongodb-03:27017'
+                ],
                 'options' => [
                     'db' => 'opglpa-api',
                     'username' => 'opglpa-api',
@@ -60,12 +85,29 @@ return array(
                 ],
                 'driverOptions' => [
                     'weak_cert_validation' => true //Allows usage of self signed certificates
-                ]
-
+                ],
             ],
-
+            'auth' => [
+                'hosts' => [
+                    'mongodb-01:27017',
+                    'mongodb-02:27017',
+                    'mongodb-03:27017'
+                ],
+                'options' => [
+                    'db' => 'opglpa-auth',
+                    'username' => 'opglpa-auth',
+                    'replicaSet' => 'rs0',
+                    'connect' => false,
+                    'connectTimeoutMS' => 1000,
+                    'w' => 'majority',
+                    'ssl' => true,
+                    'password' => getenv('OPG_LPA_AUTH_MONGODB_PASSWORD') ?: null,
+                ],
+                'driverOptions' => [
+                    'weak_cert_validation' => true //Allows usage of self signed certificates
+                ],
+            ],
         ], // mongo
-
 
         // Used to access generated PDFs.
         'redis' => [
@@ -138,4 +180,4 @@ return array(
 
     ], // pdf
 
-);
+];

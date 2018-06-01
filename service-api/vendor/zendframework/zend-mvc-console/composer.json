@@ -1,13 +1,21 @@
 {
     "name": "zendframework/zend-mvc-console",
-    "description": " ",
+    "description": "Integration between zend-mvc and zend-console",
     "license": "BSD-3-Clause",
     "keywords": [
-        "zf2",
+        "zf",
+        "zendframework",
         "mvc",
         "console"
     ],
-    "homepage": "https://github.com/zendframework/zend-mvc-console",
+    "support": {
+        "docs": "https://docs.zendframework.com/zend-mvc-console/",
+        "issues": "https://github.com/zendframework/zend-mvc-console/issues",
+        "source": "https://github.com/zendframework/zend-mvc-console",
+        "rss": "https://github.com/zendframework/zend-mvc-console/releases.atom",
+        "chat": "https://zendframework-slack.herokuapp.com",
+        "forum": "https://discourse.zendframework.com/c/questions/components"
+    },
     "require": {
         "php": "^5.6 || ^7.0",
         "container-interop/container-interop": "^1.1",
@@ -22,16 +30,15 @@
         "zendframework/zend-view": "^2.6.3"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "^2.3.1",
-        "phpunit/PHPUnit": "^4.5",
-        "zendframework/zend-filter": "^2.6.1",
-        "zendframework/zend-form": "^2.7"
-    },
-    "suggest": {
-        "zendframework/zend-filter": "^2.6.1, to filter rendered results"
+        "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.4",
+        "zendframework/zend-coding-standard": "~1.0.0",
+        "zendframework/zend-filter": "^2.6.1"
     },
     "conflict": {
         "zendframework/zend-mvc": "<3.0.0"
+    },
+    "suggest": {
+        "zendframework/zend-filter": "^2.6.1, to filter rendered results"
     },
     "autoload": {
         "psr-4": {
@@ -43,10 +50,13 @@
             "ZendTest\\Mvc\\Console\\": "test/"
         }
     },
+    "config": {
+        "sort-packages": true
+    },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev",
-            "dev-develop": "1.2-dev"
+            "dev-master": "1.2.x-dev",
+            "dev-develop": "1.3.x-dev"
         },
         "zf": {
             "component": "Zend\\Mvc\\Console"
@@ -57,10 +67,9 @@
             "@cs-check",
             "@test"
         ],
-        "upload-coverage": "coveralls",
         "cs-check": "phpcs",
-        "cs-fix": "phpcbf fix -v",
-        "test": "phpunit",
-        "test-coverage": "phpunit --coverage-clover clover.xml"
+        "cs-fix": "phpcbf",
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
     }
 }

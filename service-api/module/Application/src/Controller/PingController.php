@@ -39,24 +39,17 @@ class PingController extends AbstractActionController
     private $database;
 
     /**
-     * @var string
-     */
-    private $authPingEndPoint;
-
-    /**
      * PingController constructor
      *
      * @param DynamoQueueClient $dynamoQueueClient
      * @param Manager $manager
      * @param Database $database
-     * @param $authPingEndPoint
      */
-    public function __construct(DynamoQueueClient $dynamoQueueClient, Manager $manager, Database $database, $authPingEndPoint)
+    public function __construct(DynamoQueueClient $dynamoQueueClient, Manager $manager, Database $database)
     {
         $this->dynamoQueueClient = $dynamoQueueClient;
         $this->manager = $manager;
         $this->database = $database;
-        $this->authPingEndPoint = $authPingEndPoint;
     }
 
 
@@ -107,11 +100,6 @@ class PingController extends AbstractActionController
 
         } catch( \Exception $e ){}
 
-
-        //----------------------------
-        // Check Auth
-
-        $result['auth'] = $this->auth();
 
         //----------------------------
         // Check DynamoDB
@@ -189,42 +177,4 @@ class PingController extends AbstractActionController
         return $primaryFound;
 
     }
-
-    /**
-     * Check we can ping Auth
-     *
-     * @return array
-     */
-    private function auth(){
-
-        $result = array( 'ok'=> false, 'details'=>array( '200'=>false ) );
-
-        try {
-            $client = new GuzzleClient();
-
-            $response = $client->get(
-                $this->authPingEndPoint,
-                ['connect_timeout' => 5, 'timeout' => 10]
-            );
-
-            // There should be no JSON if we don't get a 200, so return.
-            if ($response->getStatusCode() != 200) {
-                return $result;
-            }
-
-            //---
-
-            $result['details']['200'] = true;
-
-            $api = json_decode($response->getBody(), true);
-
-            $result['ok'] = $api['ok'];
-            $result['details'] = $result['details'] + $api;
-
-        } catch( \Exception $e ){ /* Don't throw exceptions; we just return ok==false */ }
-
-        return $result;
-
-    } // function
-
 } // class

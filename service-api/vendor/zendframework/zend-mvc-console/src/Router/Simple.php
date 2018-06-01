@@ -8,8 +8,8 @@
 namespace Zend\Mvc\Console\Router;
 
 use Traversable;
-use Zend\Console\RouteMatcher\DefaultRouteMatcher;
 use Zend\Console\Request as ConsoleRequest;
+use Zend\Console\RouteMatcher\DefaultRouteMatcher;
 use Zend\Console\RouteMatcher\RouteMatcherInterface;
 use Zend\Mvc\Console\Exception;
 use Zend\Stdlib\ArrayUtils;

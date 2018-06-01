@@ -9,10 +9,10 @@ namespace Zend\Mvc\Console\Service;
 
 use Interop\Container\ContainerInterface;
 use Zend\Console\Console;
+use Zend\Mvc\Console\View\ViewManager as ConsoleViewManager;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Mvc\Console\View\ViewManager as ConsoleViewManager;
 
 class ConsoleViewManagerFactory implements FactoryInterface
 {
