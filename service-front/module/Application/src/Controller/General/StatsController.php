@@ -15,13 +15,7 @@ class StatsController extends AbstractBaseController
 
     public function indexAction()
     {
-        $userStats = $this->statsService->getAuthStats();
-
-        //  Get the API stats
         $stats = $this->statsService->getApiStats();
-
-        //  Set the auth stats in the API stats
-        $stats['users'] = $userStats;
 
         return new ViewModel($stats);
     }
