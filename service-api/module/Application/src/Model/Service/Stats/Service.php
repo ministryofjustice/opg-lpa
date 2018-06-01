@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\Stats;
 
+use Auth\Model\Service\StatsService as AuthStatsService;
 use MongoDB\Collection;
 use MongoDB\Driver\ReadPreference;
 
@@ -13,11 +14,18 @@ class Service
     protected $collection = null;
 
     /**
-     * @param Collection $collection
+     * @var AuthStatsService
      */
-    public function __construct(Collection $collection)
+    protected $authStatsService = null;
+
+    /**
+     * @param Collection $collection
+     * @param AuthStatsService $authStatsService
+     */
+    public function __construct(Collection $collection, AuthStatsService $authStatsService)
     {
         $this->collection = $collection;
+        $this->authStatsService = $authStatsService;
     }
 
     /**
@@ -40,10 +48,16 @@ class Service
             ];
         }
 
+        //  Get the user stats from the auth module
+        $stats['users'] = $this->authStatsService->getStats();
+
         // Return specific subset of stats if requested
         switch ($type) {
             case 'lpas':
                 $stats = $stats['lpas'];
+                break;
+            case 'users':
+                $stats = $stats['users'];
                 break;
             case 'lpasperuser':
                 $stats = $stats['lpasPerUser'];

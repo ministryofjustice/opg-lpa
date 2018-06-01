@@ -31,17 +31,6 @@ return [
                 ],
                 'child_routes' => [
 
-                    'stats' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/stats',
-                            'defaults' => [
-                                'controller' => 'StatsController',
-                                'action' => 'index',
-                            ],
-                        ],
-                    ], // stats
-
                     'authenticate' => [
                         'type'    => 'Segment',
                         'options' => [
