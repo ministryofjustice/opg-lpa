@@ -25037,6 +25037,7 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
     getQuestionText: function(error) {
       var $error = $(error)
       var errorID = $error.attr('href')
+      var questionText
 
       if (errorID.indexOf('secret_') >= 0) {
         questionText = 'CSRF error'
@@ -25045,7 +25046,6 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
         var elementID = $element.prop('id')
 
         var nodeName = document.getElementById(elementID).nodeName.toLowerCase()
-        var questionText
         var legendText
 
         // If the error is on an input or textarea
