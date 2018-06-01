@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\ApiClient\Response;
 
-use Application\Model\Service\ApiClient\Exception;
+use Application\Model\Service\ApiClient\Exception\ResponseException;
 use Opg\Lpa\DataModel\Lpa\Lpa as BaseLpa;
 use Psr\Http\Message\ResponseInterface;
 
@@ -16,7 +16,7 @@ class Lpa extends BaseLpa
 
         // The expected response should always be JSON, thus now an array.
         if (!is_array($body)) {
-            throw new Exception\ResponseException('Malformed JSON response from server', $response->getStatusCode(), $response);
+            throw new ResponseException('Malformed JSON response from server', $response->getStatusCode(), $response);
         }
 
         $lpa = new static( $body );

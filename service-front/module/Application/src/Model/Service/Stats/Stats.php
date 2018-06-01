@@ -5,21 +5,18 @@ namespace Application\Model\Service\Stats;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
-use Application\Model\Service\AuthClient\AuthClientAwareInterface;
-use Application\Model\Service\AuthClient\AuthClientTrait;
 use Psr\Http\Message\ResponseInterface;
 
-class Stats extends AbstractService implements ApiClientAwareInterface, AuthClientAwareInterface
+class Stats extends AbstractService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
-    use AuthClientTrait;
 
     /**
      * @return bool|mixed
      */
     public function getAuthStats()
     {
-        return $this->parseResponse($this->authClient->httpGet('/v1/stats'));
+        return $this->parseResponse($this->apiClient->httpGet('/v1/stats'));
     }
 
     /**

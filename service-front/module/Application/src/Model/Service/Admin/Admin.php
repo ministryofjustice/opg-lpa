@@ -5,16 +5,13 @@ namespace Application\Model\Service\Admin;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
-use Application\Model\Service\AuthClient\AuthClientAwareInterface;
-use Application\Model\Service\AuthClient\AuthClientTrait;
 use DateTime;
 use DateTimeZone;
 use Exception;
 
-class Admin extends AbstractService implements ApiClientAwareInterface, AuthClientAwareInterface
+class Admin extends AbstractService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
-    use AuthClientTrait;
 
     /**
      * @param string $email
@@ -22,7 +19,7 @@ class Admin extends AbstractService implements ApiClientAwareInterface, AuthClie
      */
     public function searchUsers(string $email)
     {
-        $response = $this->authClient->httpGet('/v1/users/search', ['email' => $email]);
+        $response = $this->apiClient->httpGet('/v1/users/search', ['email' => $email]);
 
         if ($response->getStatusCode() == 200) {
             $result = json_decode($response->getBody(), true);
