@@ -2,19 +2,34 @@
 
 namespace Auth\Model\Service;
 
-use Auth\Model\DataAccess\LogDataSourceInterface;
-use Auth\Model\DataAccess\UserDataSourceInterface;
-use Aws\Sns\SnsClient;
-use GuzzleHttp\Client as GuzzleClient;
+use Application\Model\DataAccess\Mongo\CollectionFactory;
 use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
-use RuntimeException;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
+use Exception;
+use RuntimeException;
 
 class ServiceAbstractFactory implements AbstractFactoryInterface
 {
+    /**
+     * Any additional services to be injected into the requested service using the setter method specified
+     *
+     * @var array
+     */
+    private $additionalServices = [
+        AccountCleanupService::class => [
+            'setUserManagementService' => UserManagementService::class,
+            'setSnsClient'             => 'SnsClient',
+            'setGuzzleClient'          => 'GuzzleClient',
+            'setConfig'                => 'config',
+            'setApiLpaCollection'      => CollectionFactory::class . '-lpa',
+            'setApiUserCollection'     => CollectionFactory::class . '-user',
+        ],
+        PasswordChangeService::class => [
+            'setAuthenticationService' => AuthenticationService::class,
+        ],
+    ];
+
     /**
      * Can the factory create an instance for the service?
      *
@@ -24,20 +39,16 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
      */
     public function canCreate(ContainerInterface $container, $requestedName)
     {
-        return class_exists($requestedName) && is_subclass_of($requestedName, AbstractService::class);
+        return class_exists($requestedName)
+            && is_subclass_of($requestedName, AbstractService::class);
     }
 
     /**
-     * Create an object
-     *
-     * @param  ContainerInterface $container
-     * @param  string $requestedName
-     * @param  null|array $options
-     * @return object
-     * @throws ServiceNotFoundException if unable to resolve the service.
-     * @throws ServiceNotCreatedException if an exception is raised when
-     *     creating a service.
-     * @throws ContainerException if any other error occurs
+     * @param ContainerInterface $container
+     * @param string $requestedName
+     * @param array|null $options
+     * @return AccountCleanupService|PasswordChangeService
+     * @throws Exception
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -49,80 +60,36 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             ));
         }
 
-        if ($requestedName == AccountCleanupService::class) {
-            /** @var UserManagementService $userManagementService */
-            $userManagementService = $container->get(UserManagementService::class);
-            /** @var SnsClient $snsClient */
-            $snsClient = $container->get('SnsClient');
-            /** @var GuzzleClient $guzzleClient */
-            $guzzleClient = $container->get('GuzzleClient');
-
-            $service = new AccountCleanupService(
-                $this->getUserDataSource($container),
-                $this->getLogDataSource($container),
-                $userManagementService,
-                $snsClient,
-                $guzzleClient,
-                $container->get('config')
-            );
-        } elseif ($requestedName == PasswordChangeService::class) {
-            /** @var AuthenticationService $authenticationService */
-            $authenticationService = $container->get(AuthenticationService::class);
-
-            $service = new PasswordChangeService(
-                $this->getUserDataSource($container),
-                $this->getLogDataSource($container),
-                $authenticationService
-            );
-        } else {
-            $service = new $requestedName(
-                $this->getUserDataSource($container),
-                $this->getLogDataSource($container)
-            );
-        }
-
-        return $service;
-    }
-
-    /**
-     * Returns an data source that implement UserInterface from the service manager.
-     *
-     * @param ContainerInterface $container
-     * @return UserDataSourceInterface
-     */
-    private function getUserDataSource(ContainerInterface $container)
-    {
+        //  Get the common data sources
         if (!$container->has('UserDataSource')) {
             throw new RunTimeException('UserDataSource has not been defined in the service manager');
         }
 
-        $access = $container->get('UserDataSource');
+        $userDataSource = $container->get('UserDataSource');
 
-        if (!($access instanceof UserDataSourceInterface)) {
-            throw new RunTimeException('UserDataSource must implement UserDataSourceInterface');
-        }
-
-        return $access;
-    }
-
-    /**
-     * Returns an data source that implement LogDataSourceInterface from the service manager.
-     *
-     * @param ContainerInterface $container
-     * @return LogDataSourceInterface
-     */
-    private function getLogDataSource(ContainerInterface $container)
-    {
         if (!$container->has('LogDataSource')) {
             throw new RunTimeException('LogDataSource has not been defined in the service manager');
         }
 
-        $access = $container->get('LogDataSource');
+        $logDataSource = $container->get('LogDataSource');
 
-        if (!($access instanceof LogDataSourceInterface)) {
-            throw new RunTimeException('LogDataSource must implement LogDataSourceInterface');
+        //  Create the service with the common data sources
+        $service = new $requestedName(
+            $userDataSource,
+            $logDataSource
+        );
+
+        //  If required load any additional services into the service
+        if (array_key_exists($requestedName, $this->additionalServices) && is_array($this->additionalServices[$requestedName])) {
+            foreach ($this->additionalServices[$requestedName] as $setterMethod => $additionalService) {
+                if (!method_exists($service, $setterMethod)) {
+                    throw new Exception(sprintf('The setter method %s does not exist on the requested service %s', $setterMethod, $requestedName));
+                }
+
+                $service->$setterMethod($container->get($additionalService));
+            }
         }
 
-        return $access;
+        return $service;
     }
 }

@@ -7,20 +7,12 @@ return [
         'environment' => getenv('OPG_LPA_STACK_ENVIRONMENT') ?: 'dev',
     ],
 
-    //  TODO - To be removed when account clean up is refactored to remove API self call
     'cleanup' => [
         'notification' => [
             'callback' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_ENDPOINT') ?: null,
             'token' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') ?: null,
         ],
-        'api-target' => getenv('OPG_LPA_AUTH_API_CLEANUP_TARGET') ?: null,
-        'api-token' => getenv('OPG_LPA_COMMON_AUTH_CLEANUP_TOKEN') ?: null,
     ], // cleanup
-
-    //  TODO - To be removed when account clean up is refactored to remove API self call
-    'authentication' => [
-        'clean-up-token' => getenv('OPG_LPA_COMMON_AUTH_CLEANUP_TOKEN'),
-    ],
 
     'log' => [
         'sns' => [

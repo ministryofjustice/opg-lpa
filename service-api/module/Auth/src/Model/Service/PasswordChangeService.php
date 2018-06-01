@@ -2,9 +2,6 @@
 
 namespace Auth\Model\Service;
 
-use Auth\Model\DataAccess\LogDataSourceInterface;
-use Auth\Model\DataAccess\UserDataSourceInterface;
-
 class PasswordChangeService extends AbstractService
 {
     use PasswordValidatorTrait;
@@ -14,15 +11,12 @@ class PasswordChangeService extends AbstractService
      */
     private $authenticationService;
 
-    public function __construct(UserDataSourceInterface $userDataSource, LogDataSourceInterface $logDataSource, AuthenticationService $authenticationService)
-    {
-        parent::__construct($userDataSource, $logDataSource);
-
-        $this->authenticationService = $authenticationService;
-    }
-
-    //-------------
-
+    /**
+     * @param $userId
+     * @param $oldPassword
+     * @param $newPassword
+     * @return array|string
+     */
     public function changePassword($userId, $oldPassword, $newPassword)
     {
         $user = $this->getUserDataSource()->getById($userId);
@@ -54,5 +48,13 @@ class PasswordChangeService extends AbstractService
         //---
 
         return $this->authenticationService->withPassword($user->username(), $newPassword, true);
+    }
+
+    /**
+     * @param AuthenticationService $authenticationService
+     */
+    public function setAuthenticationService(AuthenticationService $authenticationService)
+    {
+        $this->authenticationService = $authenticationService;
     }
 }
