@@ -14,25 +14,10 @@ class Stats extends AbstractService implements ApiClientAwareInterface
     /**
      * @return bool|mixed
      */
-    public function getAuthStats()
-    {
-        return $this->parseResponse($this->apiClient->httpGet('/v1/stats'));
-    }
-
-    /**
-     * @return bool|mixed
-     */
     public function getApiStats()
     {
-        return $this->parseResponse($this->apiClient->httpGet('/v2/stats/all'));
-    }
+        $response = $this->apiClient->httpGet('/v2/stats/all');
 
-    /**
-     * @param ResponseInterface $response
-     * @return bool|mixed
-     */
-    private function parseResponse(ResponseInterface $response)
-    {
         if ($response->getStatusCode() == 200) {
             return json_decode($response->getBody(), true);
         }
