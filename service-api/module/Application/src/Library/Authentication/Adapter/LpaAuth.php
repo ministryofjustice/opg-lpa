@@ -1,107 +1,68 @@
 <?php
+
 namespace Application\Library\Authentication\Adapter;
 
-use Exception;
-
-use \GuzzleHttp\Client as GuzzleClient;
-
+use Application\Library\Authentication\Identity;
+use Auth\Model\Service\AuthenticationService;
 use Zend\Authentication\Result;
 use Zend\Authentication\Adapter\AdapterInterface;
-use Zend\Authentication\Adapter\Exception\ExceptionInterface as AdapterExceptionInterface;
-
-use Application\Library\Authentication\Identity;
 
 /**
- * Authentication adapter for Version 2 of the LPA auth service.
- *
- * Class LpaAuthOne
+ * Class LpaAuth
  * @package Application\Library\Authentication\Adapter
  */
-class LpaAuth implements AdapterInterface {
+class LpaAuth implements AdapterInterface
+{
+    /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
 
     /**
-     * The token to authenticate.
-     *
      * @var string
      */
     private $token;
 
     /**
-     * The endpoint (domain and path) to authenticate against.
-     *
-     * @var string
-     */
-    private $authEndpoint;
-
-    /**
-     * The administrator config for the API
-     *
      * @var array
      */
-    private $adminConfig;
-
-    //-------------------------------
+    private $adminAccounts;
 
     /**
-     * Sets username and password for authentication
+     * @param AuthenticationService $authenticationService
+     * @param $token
+     * @param array $adminAccounts
      */
-    public function __construct( $token, $authEndpoint, $adminConfig ){
+    public function __construct(AuthenticationService $authenticationService, $token, array $adminAccounts)
+    {
+        $this->authenticationService = $authenticationService;
         $this->token = $token;
-        $this->authEndpoint = $authEndpoint;
-        $this->adminConfig = $adminConfig;
+        $this->adminAccounts = $adminAccounts;
     }
 
     /**
-     * Performs an authentication attempt
-     *
-     * @return \Zend\Authentication\Result
-     * @throws \Zend\Authentication\Adapter\Exception\ExceptionInterface
-     *               If authentication cannot be performed
+     * @return Result
      */
-    public function authenticate(){
+    public function authenticate()
+    {
+        $user = null;
 
-        // The default result...
-        $result = new Result( Result::FAILURE, null );
+        $data = $this->authenticationService->withToken($this->token, true);
 
-        try {
-
-            $client = new GuzzleClient();
-
-            $response = $client->post( $this->authEndpoint , [
-                'form_params' => [
-                    'Token' => $this->token,
-                ]
-            ]);
-
-            if( $response->getStatusCode() == 200 ){
-
-                $data = json_decode($response->getBody(), true);
-
-                if( isset( $data['userId'] ) && isset( $data['username'] ) ){
-                    $user = new Identity\User($data['userId'], $data['username']);
-
-                    $isAdmin = in_array($data['username'], $this->adminConfig['accounts']);
-                    if ($isAdmin === true) {
-                        $user->setAsAdmin();
-                    }
-
-                    $result = new Result( Result::SUCCESS, $user);
-                }
-
-            } // if
-
-        } catch (AdapterExceptionInterface $e){
-            // The exception is specific to authentication, so throw it.
-            throw $e;
-        } catch (Exception $e){
-            // Do nothing, allow Result::FAILURE to be returned.
-        }
-
-        // Don't leave the token lying around...
+        //  Clear up the token
         unset($this->token);
 
-        return $result;
+        if (isset($data['userId']) && isset($data['username'])) {
+            $userId = $data['userId'];
+            $username = $data['username'];
 
-    } // function
+            $user = new Identity\User($userId, $username);
 
-} // class
+            if (in_array($username, $this->adminAccounts)) {
+                $user->setAsAdmin();
+            }
+        }
+
+        return new Result(is_null($user) ? Result::FAILURE : Result::SUCCESS, $user);
+    }
+}

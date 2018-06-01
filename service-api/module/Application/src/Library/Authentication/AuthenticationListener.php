@@ -2,6 +2,7 @@
 
 namespace Application\Library\Authentication;
 
+use Auth\Model\Service\AuthenticationService;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Authentication\Result as AuthenticationResult;
 use Zend\Mvc\MvcEvent;
@@ -59,7 +60,10 @@ class AuthenticationListener
             $this->getLogger()->info('Authentication attempt - token supplied');
 
             //  Attempt to authenticate - if successful the identity will be persisted for the request
-            $authAdapter = new Adapter\LpaAuth($token, $authConfig['endpoint'], $config['admin']);
+            /** @var AuthenticationService $authenticationService */
+            $authenticationService = $serviceManager->get(AuthenticationService::class);
+
+            $authAdapter = new Adapter\LpaAuth($authenticationService, $token, $config['admin']['accounts']);
             $result = $authService->authenticate($authAdapter);
 
             if (AuthenticationResult::SUCCESS !== $result->getCode()) {
