@@ -10,6 +10,7 @@ use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\Users\Service;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use ApplicationTest\AbstractServiceTest;
+use Auth\Model\Service\UserManagementService;
 use Mockery;
 use MongoDB\Collection as MongoCollection;
 use MongoDB\UpdateResult;
@@ -208,11 +209,14 @@ class ServiceTest extends AbstractServiceTest
         $applicationsService->shouldReceive('deleteAll')->once();
         $userCollection = Mockery::mock(MongoCollection::class);
         $userCollection->shouldReceive('deleteOne')->with([ '_id' => $user->id ])->once();
+        $userManagementService = Mockery::mock(UserManagementService::class);
+        $userManagementService->shouldReceive('delete')->once();
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withUser(FixturesData::getUser())
             ->withApplicationsService($applicationsService)
             ->withUserCollection($userCollection)
+            ->withUserManagementService($userManagementService)
             ->build();
 
         $result = $service->delete($user->id);

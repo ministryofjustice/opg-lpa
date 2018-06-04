@@ -10,6 +10,7 @@ use Application\Library\DateTime;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
+use Auth\Model\Service\UserManagementService;
 use MongoDB\BSON\UTCDateTime;
 use Opg\Lpa\DataModel\User\User;
 
@@ -24,6 +25,11 @@ class Service extends AbstractService
      * @var ApplicationService
      */
     private $applicationsService;
+
+    /**
+     * @var UserManagementService $userManagementService
+     */
+    private $userManagementService;
 
     /**
      * @param $id
@@ -77,6 +83,8 @@ class Service extends AbstractService
 
         // Delete the user's About Me details.
         $this->collection->deleteOne(['_id' => $id]);
+
+        $this->userManagementService->delete($id, 'user-initiated');
 
         return true;
     }
@@ -171,5 +179,13 @@ class Service extends AbstractService
     public function setApplicationsService(ApplicationService $applicationsService)
     {
         $this->applicationsService = $applicationsService;
+    }
+
+    /**
+     * @param UserManagementService $userManagementService
+     */
+    public function setUserManagementService(UserManagementService $userManagementService)
+    {
+        $this->userManagementService = $userManagementService;
     }
 }

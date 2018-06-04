@@ -11,6 +11,8 @@ class ServiceBuilder extends AbstractServiceBuilder
 
     private $userDal;
 
+    private $userManagementService;
+
     /**
      * @return Service
      */
@@ -25,6 +27,10 @@ class ServiceBuilder extends AbstractServiceBuilder
 
         if ($this->userDal !== null) {
             $service->setUserDal($this->userDal);
+        }
+
+        if ($this->userManagementService !== null) {
+            $service->setUserManagementService($this->userManagementService);
         }
 
         return $service;
@@ -43,6 +49,12 @@ class ServiceBuilder extends AbstractServiceBuilder
     public function withUserDal($userDal)
     {
         $this->userDal = $userDal;
+        return $this;
+    }
+
+    public function withUserManagementService($userManagementService)
+    {
+        $this->userManagementService = $userManagementService;
         return $this;
     }
 }
