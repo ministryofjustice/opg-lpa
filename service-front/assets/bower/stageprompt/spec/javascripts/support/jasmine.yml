@@ -1,0 +1,5 @@
+src_files:
+    - 'lib/*.js'
+    - 'script/*.js'
+spec_files:
+  - '**/*[sS]pec.js'

@@ -1,0 +1,11 @@
+<div class="breadcrumbs">
+  <ol>
+    <li><a href="/">GOV.UK elements</a></li>
+    {% if section %}
+    <li><a href="/{{ section }}/">{% if section_name %} {{ section_name }} {% endif %}</a></li>
+    {% endif %}
+    {% if page_name %}
+    <li>{{ page_name }}</li>
+    {% endif %}
+  </ol>
+</div>

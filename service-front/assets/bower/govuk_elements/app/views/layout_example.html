@@ -1,0 +1,53 @@
+{% extends "govuk_template.html" %}
+
+{% block head %}
+  {% include "includes/head.html" %}
+  <style>
+
+    /* Styles for this example page */
+
+    /* Indented panels within bulleted lists */
+    .list-bullet .panel-border-narrow {
+      display: block;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      background: #F5F2F0;
+      padding-right: 15px;
+    }
+
+    /* Implementation advice */
+    .implementation-advice {
+      clear: both;
+      border-top: 1px solid #bfc1c3;
+      padding-top: 1.25em;
+    }
+
+    /* Reduce spacing before lists */
+    .lead-in {
+      margin-bottom: 0;
+    }
+
+     /* End: Styles for this example page */
+
+  </style>
+{% endblock %}
+
+{% block body_start %}
+  {% include "includes/elements_tracking.html" %}
+{% endblock %}
+
+{% block cookie_message %}
+  <p>{{cookieText | safe }}</p>
+{% endblock %}
+
+{% block proposition_header %}
+  {% include "includes/service_manual_navigation.html" %}
+{% endblock %}
+
+{% block header_class %}
+  with-proposition
+{% endblock %}
+
+{% block body_end %}
+  {% include "includes/scripts.html" %}
+{% endblock %}
