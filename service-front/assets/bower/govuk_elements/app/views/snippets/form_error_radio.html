@@ -1,0 +1,57 @@
+{% if error %}
+<div class="error-summary" role="group" aria-labelledby="error-summary-heading" tabindex="-1">
+
+  <h1 class="heading-medium error-summary-heading" id="error-summary-heading">
+    Message to alert the user to a problem goes here
+  </h1>
+
+  <p>
+    Optional description of the errors and how to correct them
+  </p>
+
+  <ul class="error-summary-list">
+    <li><a href="#example-personal-details">Descriptive link to the question with an error</a></li>
+  </ul>
+
+</div>
+{% endif %}
+
+<h1 class="heading-large">
+  Check your personal details
+</h1>
+
+<p class="lede">
+  Look at your name, signature and other details.
+</p>
+
+
+<div class="form-group {% if error %} error{% endif %}">
+  <fieldset>
+
+    <legend {% if error %} id="example-personal-details"{% endif %}>
+
+      <span class="form-label-bold">
+        Are your personal details correct and up-to-date?
+      </span>
+      {% if error %}
+        <span class="error-message">
+          Error message about personal details goes here
+        </span>
+      {% endif %}
+
+    </legend>
+
+    <label class="block-label selection-button-radio" for="personal_details_yes">
+      <input id="personal_details_yes" type="radio" name="personalDetails" value="Yes">
+      Yes, my personal details are correct
+    </label>
+
+    <label class="block-label selection-button-radio" for="personal_details_no">
+      <input id="personal_details_no" type="radio" name="personalDetails" value="No">
+      No, some details are wrong or have changed
+    </label>
+
+  </fieldset>
+</div>
+
+<input class="button" type="submit" value="Continue">

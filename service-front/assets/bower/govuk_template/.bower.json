@@ -1,0 +1,14 @@
+{
+  "name": "govuk_template",
+  "homepage": "https://github.com/alphagov/govuk_template",
+  "version": "0.19.2",
+  "_release": "0.19.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.19.2",
+    "commit": "2a645b85c5c2104bcaadab5e9665d95e29b75968"
+  },
+  "_source": "git://github.com/alphagov/govuk_template.git",
+  "_target": "0.19.*",
+  "_originalSource": "git://github.com/alphagov/govuk_template.git"
+}
