@@ -21,7 +21,6 @@ class StatsControllerTest extends AbstractControllerTest
         parent::setUp();
 
         $this->statsService = Mockery::mock(StatsService::class);
-        $this->statsService->shouldReceive('getAuthStats')->andReturn($this->getAuthStats())->once();
         $this->statsService->shouldReceive('getApiStats')->andReturn($this->getApiStats())->once();
     }
 
@@ -59,7 +58,8 @@ class StatsControllerTest extends AbstractControllerTest
             'lpas'                    => $this->getLpaStats(),
             'who'                     => $this->getWhoAreYouStats(),
             'correspondence'          => $this->getCorrespondenceStats(),
-            'preferencesInstructions' => $this->getPreferencesInstructionsStats()
+            'preferencesInstructions' => $this->getPreferencesInstructionsStats(),
+            'users'                   => $this->getAuthStats(),
         ];
     }
 
