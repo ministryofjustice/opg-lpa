@@ -33,9 +33,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         Version1\RegistrationController::class => [
             'setRegistrationService' => RegistrationService::class,
         ],
-        Version1\StatsController::class => [
-            'setStatsService' => StatsService::class,
-        ],
         Version1\UsersController::class => [
             'setUserManagementService' => UserManagementService::class,
         ],

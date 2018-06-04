@@ -27,9 +27,6 @@ class AuthenticationListener
 
         $authService = $serviceManager->get('Zend\Authentication\AuthenticationService');
 
-        $config = $serviceManager->get('Config');
-        $authConfig = $config['authentication'];
-
         /*
          * Do some authentication. Initially this will will just be via the token passed from front-2.
          * This token will have come from Auth-1. As this will be replaced we'll use a custom header value of:
@@ -40,20 +37,10 @@ class AuthenticationListener
         $token = $e->getRequest()->getHeader('Token');
 
         if (!$token) {
-            //  Check to see if this is a request from the auth service to clean up data
-            $token = $e->getRequest()->getHeader('AuthCleanUpToken');
+            //  No token; set Guest....
+            $authService->getStorage()->write(new Identity\Guest());
 
-            if ($token && trim($token->getFieldValue()) == $authConfig['clean-up-token']) {
-                //  Set identity as the auth service
-                $authService->getStorage()->write(new Identity\AuthService());
-
-                $this->getLogger()->info('Authentication success - auth service for clean up');
-            } else {
-                //  No token; set Guest....
-                $authService->getStorage()->write(new Identity\Guest());
-
-                $this->getLogger()->info('No token, guest set in Authentication Listener');
-            }
+            $this->getLogger()->info('No token, guest set in Authentication Listener');
         } else {
             $token = trim($token->getFieldValue());
 
@@ -62,6 +49,7 @@ class AuthenticationListener
             //  Attempt to authenticate - if successful the identity will be persisted for the request
             /** @var AuthenticationService $authenticationService */
             $authenticationService = $serviceManager->get(AuthenticationService::class);
+            $config = $serviceManager->get('Config');
 
             $authAdapter = new Adapter\LpaAuth($authenticationService, $token, $config['admin']['accounts']);
             $result = $authService->authenticate($authAdapter);

@@ -253,9 +253,6 @@ return [
     'controllers' => [
         'factories' => [
             'Auth\Controller\Console\AccountCleanup' => 'Auth\Controller\Console\AccountCleanupControllerFactory',
-            'Auth\Controller\Version1\Registration' => 'Auth\Controller\Version1\RegistrationControllerFactory',
-            'Auth\Controller\Version1\Stats' => 'Auth\Controller\Version1\StatsControllerFactory',
-            'Auth\Controller\Ping' => 'Auth\Controller\PingControllerFactory',
         ],
         'abstract_factories' => [
             'Auth\Controller\ControllerAbstractFactory',

@@ -57,8 +57,6 @@ class AccountCleanupServiceTest extends ServiceTestCase
             'notification' => [
                 'token' => 'unit_test',
             ],
-            'api-target' => 'http://unit_test_delete_target/',
-            'api-token' => 'unit_test',
         ],
         'log' => [
             'sns' => [

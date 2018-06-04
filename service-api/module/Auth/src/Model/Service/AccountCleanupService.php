@@ -2,14 +2,14 @@
 
 namespace Auth\Model\Service;
 
-use Auth\Model\DataAccess\LogDataSourceInterface;
-use Auth\Model\DataAccess\UserDataSourceInterface;
 use Aws\Sns\SnsClient;
-use DateTime;
-use Exception;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\Collection;
 use Opg\Lpa\Logger\LoggerTrait;
+use DateTime;
+use Exception;
 
 /**
  * - Deletes accounts after 9 months.
@@ -46,22 +46,19 @@ class AccountCleanupService extends AbstractService
      */
     private $config;
 
-    public function __construct(
-        UserDataSourceInterface $userDataSource,
-        LogDataSourceInterface $logDataSource,
-        UserManagementService $userManagementService,
-        SnsClient $snsClient,
-        GuzzleClient $guzzleClient,
-        array $config
-    ) {
-        parent::__construct($userDataSource, $logDataSource);
+    /**
+     * @var Collection
+     */
+    private $apiLpaCollection;
 
-        $this->userManagementService = $userManagementService;
-        $this->snsClient = $snsClient;
-        $this->guzzleClient = $guzzleClient;
-        $this->config = $config;
-    }
+    /**
+     * @var Collection
+     */
+    private $apiUserCollection;
 
+    /**
+     * @param $notificationCallback
+     */
     public function cleanup($notificationCallback)
     {
         $summary = array();
@@ -138,7 +135,6 @@ class AccountCleanupService extends AbstractService
      */
     private function sendWarningEmails(DateTime $lastLoginBefore, $callback, $type)
     {
-
         echo "Sending {$type} warning notifications to accounts inactive since " . $lastLoginBefore->format('r') . "\n";
 
         //---
@@ -206,15 +202,7 @@ class AccountCleanupService extends AbstractService
      */
     private function deleteExpiredAccounts(DateTime $lastLoginBefore)
     {
-
         echo "Deleting accounts inactive since " . $lastLoginBefore->format('r') . "\n";
-
-        //---
-
-        // Holds the delete account logic.
-        $service = $this->userManagementService;
-
-        //---
 
         // Pull back a list of accounts...
         $iterator = $this->getUserDataSource()->getAccountsInactiveSince($lastLoginBefore);
@@ -224,29 +212,27 @@ class AccountCleanupService extends AbstractService
         $counter = 0;
 
         foreach ($iterator as $user) {
-            // Delete each account...
-            $service->delete($user->id(), 'expired');
+            //  Delete the user data
+            $this->userManagementService->delete($user->id(), 'expired');
 
-            //  Delete the user account and LPA data in the api database via the API service
-            try {
-                $cleanUpConfig = $this->config['cleanup'];
+            //  Delete the LPAs in the API data for this user
+            $lpas = $this->apiLpaCollection->find([
+                'user' => $user->id()
+            ]);
 
-                //  Create the delete target
-                $deleteTarget = $cleanUpConfig['api-target'] . $user->id();
+            foreach ($lpas as $lpa) {
+                //  We don't want to remove the document entirely as we need to make sure the same ID isn't reassigned.
+                //  So we just strip the document down to '_id' and 'updatedAt'.
+                $criteria = array_intersect_key($lpa, array_flip(['_id', 'user']));
 
-                $this->guzzleClient->delete($deleteTarget, [
-                    'headers' => [
-                        'AuthCleanUpToken' => $cleanUpConfig['api-token'],
-                    ],
-                ]);
-            } catch (Exception $e) {
-                //  Output and log the error so the issue can be investigated
-                echo "Exception: " . $e->getMessage() . "\n";
-
-                $this->getLogger()->alert('Unable to clean up expired account on the API service', [
-                    'exception' => $e->getMessage()
+                $this->apiLpaCollection->replaceOne($criteria, [
+                    'updatedAt' => new UTCDateTime(),
                 ]);
             }
+
+            $this->apiUserCollection->deleteOne([
+                '_id' => $user->id()
+            ]);
 
             $counter++;
         }
@@ -264,15 +250,7 @@ class AccountCleanupService extends AbstractService
      */
     private function deleteUnactivatedAccounts(DateTime $unactivatedSince)
     {
-
         echo "Deleting unactivated accounts created before " . $unactivatedSince->format('r') . "\n";
-
-        //---
-
-        // Holds the delete account logic.
-        $service = $this->userManagementService;
-
-        //---
 
         // Pull back a list of accounts...
         $iterator = $this->getUserDataSource()->getAccountsUnactivatedOlderThan($unactivatedSince);
@@ -283,7 +261,7 @@ class AccountCleanupService extends AbstractService
 
         foreach ($iterator as $user) {
             // Delete each account...
-            $service->delete($user->id(), 'unactivated');
+            $this->userManagementService->delete($user->id(), 'unactivated');
 
             $counter++;
         }
@@ -291,5 +269,53 @@ class AccountCleanupService extends AbstractService
         echo "{$counter} accounts deleted.\n";
 
         return $counter;
+    }
+
+    /**
+     * @param UserManagementService $userManagementService
+     */
+    public function setUserManagementService(UserManagementService $userManagementService)
+    {
+        $this->userManagementService = $userManagementService;
+    }
+
+    /**
+     * @param SnsClient $snsClient
+     */
+    public function setSnsClient(SnsClient $snsClient)
+    {
+        $this->snsClient = $snsClient;
+    }
+
+    /**
+     * @param GuzzleClient $guzzleClient
+     */
+    public function setGuzzleClient(GuzzleClient $guzzleClient)
+    {
+        $this->guzzleClient = $guzzleClient;
+    }
+
+    /**
+     * @param array $config
+     */
+    public function setConfig(array $config)
+    {
+        $this->config = $config;
+    }
+
+    /**
+     * @param Collection $apiLpaCollection
+     */
+    public function setApiLpaCollection(Collection $apiLpaCollection)
+    {
+        $this->apiLpaCollection = $apiLpaCollection;
+    }
+
+    /**
+     * @param Collection $apiUserCollection
+     */
+    public function setApiUserCollection(Collection $apiUserCollection)
+    {
+        $this->apiUserCollection = $apiUserCollection;
     }
 }
