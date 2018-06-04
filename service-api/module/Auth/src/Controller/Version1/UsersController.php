@@ -64,38 +64,6 @@ class UsersController extends AbstractAuthenticatedController
     }
 
     /**
-     * @return ApiProblemResponse
-     */
-    public function deleteAction()
-    {
-        $userId = $this->params('userId');
-
-        // Authenticate the token...
-        if ($this->authenticateUserToken($this->getRequest(), $userId, true) === false) {
-            //Token does not match userId
-            return new ApiProblemResponse(
-                new ApiProblem(401, 'invalid-token')
-            );
-        }
-
-        // Delete the user
-        $result = $this->userManagementService->delete($userId, 'user-initiated');
-
-        if (is_string($result)) {
-            return new ApiProblemResponse(
-                new ApiProblem(400, $result)
-            );
-        }
-
-        $this->getLogger()->info("User has deleted their account", [
-            'userId' => $userId
-        ]);
-
-        // Return 204 - No Content
-        $this->response->setStatusCode(204);
-    }
-
-    /**
      * @param UserManagementService $userManagementService
      */
     public function setUserManagementService(UserManagementService $userManagementService)

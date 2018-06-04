@@ -6,6 +6,7 @@ use Application\Model\DataAccess\Mongo\CollectionFactory;
 use Application\Model\DataAccess\UserDal;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Service\Applications\Service as ApplicationsService;
+use Auth\Model\Service\UserManagementService;
 use Interop\Container\ContainerInterface;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
@@ -34,8 +35,9 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setApplicationsService' => ApplicationsService::class,
         ],
         Users\Service::class => [
-            'setUserDal'             => UserDal::class,
-            'setApplicationsService' => ApplicationsService::class,
+            'setApplicationsService'   => ApplicationsService::class,
+            'setUserDal'               => UserDal::class,
+            'setUserManagementService' => UserManagementService::class,
         ],
     ];
 

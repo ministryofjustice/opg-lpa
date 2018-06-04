@@ -174,16 +174,6 @@ return [
                                         ],
                                     ], // get
 
-                                    'delete' => [
-                                        'type' => 'method',
-                                        'options' => [
-                                            'verb' => 'delete',
-                                            'defaults' => [
-                                                'action' => 'delete'
-                                            ],
-                                        ],
-                                    ], // delete
-
                                     'email' => [
                                         'type'    => 'segment',
                                         'options' => [
