@@ -71,10 +71,9 @@ class NotificationsController extends AbstractBaseController
 
         $sendAt = new DateTime('today 11am', new DateTimeZone('Europe/London'));
 
-        //  If the time above is after 11am today then send the email straight away
-        //  Otherwise defer delivery to that time
-        if ($sendAt->getTimestamp() > time()) {
-            //The call to time() above can't be mocked so ignoring this line until this code is refactored
+        //  If the time now is after the time above send the email straight away - otherwise defer delivery to that time
+        if (time() > $sendAt->getTimestamp()) {
+            //  The call to time() above can't be mocked so ignoring this line until this code is refactored
             //  @codeCoverageIgnoreStart
             $sendAt = null;
         }
