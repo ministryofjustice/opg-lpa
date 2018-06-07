@@ -10,7 +10,6 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use MongoDB\Database;
 use MongoDB\Driver\Manager;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class DatabaseFactoryTest extends MockeryTestCase
 {

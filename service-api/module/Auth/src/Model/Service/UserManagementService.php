@@ -2,10 +2,20 @@
 
 namespace Auth\Model\Service;
 
+use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
 use DateTime;
 
 class UserManagementService extends AbstractService
 {
+    /**
+     * @var AuthLogCollection
+     */
+    private $authLogCollection;
+
+    /**
+     * @param $userId
+     * @return array|string
+     */
     public function get($userId)
     {
 
@@ -29,7 +39,7 @@ class UserManagementService extends AbstractService
         if (is_null($user)) {
             //Check if user has been deleted
             $identityHash = $this->hashIdentity($username);
-            $deletionLog = $this->getLogDataSource()->getLogByIdentityHash($identityHash);
+            $deletionLog = $this->authLogCollection->getLogByIdentityHash($identityHash);
 
             if (is_null($deletionLog)) {
                 return false;
@@ -45,6 +55,11 @@ class UserManagementService extends AbstractService
         return $user->toArray();
     }
 
+    /**
+     * @param $userId
+     * @param $reason
+     * @return bool|string
+     */
     public function delete($userId, $reason)
     {
         $user = $this->getAuthUserCollection()->getById($userId);
@@ -72,7 +87,7 @@ class UserManagementService extends AbstractService
             'loggedAt' => new DateTime
         ];
 
-        $this->getLogDataSource()->addLog($details);
+        $this->authLogCollection->addLog($details);
 
         //---
 
@@ -88,5 +103,13 @@ class UserManagementService extends AbstractService
     private function hashIdentity($identity)
     {
         return hash('sha512', strtolower(trim($identity)));
+    }
+
+    /**
+     * @param $authLogCollection
+     */
+    public function setAuthLogCollection($authLogCollection)
+    {
+        $this->authLogCollection = $authLogCollection;
     }
 }

@@ -9,7 +9,6 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Exception;
-use RuntimeException;
 
 class ServiceAbstractFactory implements AbstractFactoryInterface
 {
@@ -29,6 +28,9 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         ],
         PasswordChangeService::class => [
             'setAuthenticationService' => AuthenticationService::class,
+        ],
+        UserManagementService::class => [
+            'setAuthLogCollection' => AuthLogCollection::class,
         ],
     ];
 
@@ -62,11 +64,10 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             ));
         }
 
-        //  Create the service with the common data sources
+        //  Create the service with the common mongo user collection
         $authUserCollection = $container->get(AuthUserCollection::class);
-        $authLogCollection = $container->get(AuthLogCollection::class);
 
-        $service = new $requestedName($authUserCollection, $authLogCollection);
+        $service = new $requestedName($authUserCollection);
 
         //  If required load any additional services into the service
         if (array_key_exists($requestedName, $this->additionalServices) && is_array($this->additionalServices[$requestedName])) {

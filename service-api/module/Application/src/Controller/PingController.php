@@ -29,11 +29,6 @@ class PingController extends AbstractActionController
     private $dynamoQueueClient;
 
     /**
-     * @var Manager
-     */
-    private $manager;
-
-    /**
      * @var Database
      */
     private $database;
@@ -42,13 +37,11 @@ class PingController extends AbstractActionController
      * PingController constructor
      *
      * @param DynamoQueueClient $dynamoQueueClient
-     * @param Manager $manager
      * @param Database $database
      */
-    public function __construct(DynamoQueueClient $dynamoQueueClient, Manager $manager, Database $database)
+    public function __construct(DynamoQueueClient $dynamoQueueClient, Database $database)
     {
         $this->dynamoQueueClient = $dynamoQueueClient;
-        $this->manager = $manager;
         $this->database = $database;
     }
 
@@ -156,13 +149,14 @@ class PingController extends AbstractActionController
     private function canConnectToMongo(){
 
         $pingCommand = new Command(['ping' => 1]);
-        $this->manager->executeCommand($this->database->getDatabaseName(), $pingCommand);
+        $manager = $this->database->getManager();
+        $manager->executeCommand($this->database->getDatabaseName(), $pingCommand);
 
         //---
 
         $primaryFound = false;
 
-        foreach( $this->manager->getServers() as $server ){
+        foreach( $manager->getServers() as $server ){
 
             // If the connection is to primary, all is okay.
             if( $server->isPrimary() ){

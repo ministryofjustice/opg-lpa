@@ -29,7 +29,7 @@ class Token
      * Returns a DateTime for a given key from a range of time formats.
      *
      * @param $key
-     * @return DateTime
+     * @return DateTime|boolean
      */
     private function returnDateField($key)
     {

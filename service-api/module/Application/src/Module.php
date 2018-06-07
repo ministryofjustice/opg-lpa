@@ -71,50 +71,35 @@ class Module
                     return new AuthenticationService(new NonPersistent());
                 },
 
-
-
-
-                // Create an instance of the MongoClient...
-                Mongo\ManagerFactory::class . '-default' => new Mongo\ManagerFactory('default'),
-                Mongo\ManagerFactory::class . '-auth' => new Mongo\ManagerFactory('auth'),
-
-                // Connect the above MongoClient to a DB...
-                Mongo\DatabaseFactory::class . '-default' => new Mongo\DatabaseFactory('default'),
-                Mongo\DatabaseFactory::class . '-auth' => new Mongo\DatabaseFactory('auth'),
-
-
-
-                //  Access collections within the above opglpa-api DB
+                //  Mongo collections for api database
                 Mongo\CollectionFactory::class . '-api-lpa' => new Mongo\CollectionFactory('lpa'),
                 Mongo\CollectionFactory::class . '-api-user' => new Mongo\CollectionFactory('user'),
                 Mongo\CollectionFactory::class . '-api-stats-who' => new Mongo\CollectionFactory('whoAreYou'),
                 Mongo\CollectionFactory::class . '-api-stats-lpas' => new Mongo\CollectionFactory('lpaStats'),
 
-
-
-
-
-
+                //  Mongo collections for auth database
+                Mongo\CollectionFactory::class . '-auth-user' => new Mongo\CollectionFactory('user', 'auth'),
+                Mongo\CollectionFactory::class . '-auth-log' => new Mongo\CollectionFactory('log', 'auth'),
 
                 AuthUserCollection::class => function (ContainerInterface $container) {
-                    $mcf = new Mongo\CollectionFactory('user', 'auth');
-
-                    $authUserCollection = $mcf->__invoke($container, 'TODO');
+                    $authUserCollection = $container->get(Mongo\CollectionFactory::class . '-auth-user');
 
                     return new AuthUserCollection($authUserCollection);
                 },
-                AuthLogCollection::class => function (ContainerInterface $container) {
-                    $mcf = new Mongo\CollectionFactory('log', 'auth');
 
-                    $authLogCollection = $mcf->__invoke($container, 'TODO');
+                AuthLogCollection::class => function (ContainerInterface $container) {
+                    $authLogCollection = $container->get(Mongo\CollectionFactory::class . '-auth-log');
 
                     return new AuthLogCollection($authLogCollection);
                 },
 
+                //  Mongo database
+                Mongo\DatabaseFactory::class . '-default' => Mongo\DatabaseFactory::class,
+                Mongo\DatabaseFactory::class . '-auth'    => Mongo\DatabaseFactory::class,
 
-
-
-
+                //  Mongo manager to inject into the Mongo database
+                Mongo\ManagerFactory::class . '-default' => Mongo\ManagerFactory::class,
+                Mongo\ManagerFactory::class . '-auth'    => Mongo\ManagerFactory::class,
 
                 // Get S3Client Client
                 'S3Client' => function ($sm) {
