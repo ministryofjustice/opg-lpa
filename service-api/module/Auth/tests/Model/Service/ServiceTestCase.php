@@ -2,7 +2,6 @@
 
 namespace AuthTest\Model\Service;
 
-use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use Mockery;
@@ -16,16 +15,9 @@ abstract class ServiceTestCase extends MockeryTestCase
      */
     protected $authUserCollection;
 
-    /**
-     * @var MockInterface|AuthLogCollection
-     */
-    protected $authLogCollection;
-
     protected function setUp()
     {
         $this->authUserCollection = Mockery::mock(AuthUserCollection::class);
-
-        $this->authLogCollection = Mockery::mock(AuthLogCollection::class);
     }
 
     /**
@@ -70,18 +62,5 @@ abstract class ServiceTestCase extends MockeryTestCase
         $this->authUserCollection->shouldReceive('getByResetToken')
             ->withArgs([$token])->once()
             ->andReturn($user);
-    }
-
-    /**
-     * @param string $username
-     * @param array $log
-     */
-    protected function setLogDataSourceGetLogByIdentityHashExpectation(string $username, $log)
-    {
-        $hash = hash('sha512', strtolower(trim($username)));
-
-        $this->authLogCollection->shouldReceive('getLogByIdentityHash')
-            ->withArgs([$hash])->once()
-            ->andReturn($log);
     }
 }

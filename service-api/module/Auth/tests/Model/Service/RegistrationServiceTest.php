@@ -22,7 +22,7 @@ class RegistrationServiceTest extends ServiceTestCase
     {
         parent::setUp();
 
-        $this->service = new RegistrationService($this->authUserCollection, $this->authLogCollection);
+        $this->service = new RegistrationService($this->authUserCollection);
     }
 
     public function testCreateInvalidUsername()

@@ -22,7 +22,7 @@ class EmailUpdateServiceTest extends ServiceTestCase
     {
         parent::setUp();
 
-        $this->service = new EmailUpdateService($this->authUserCollection, $this->authLogCollection);
+        $this->service = new EmailUpdateService($this->authUserCollection);
     }
 
     public function testGenerateTokenInvalidEmail()

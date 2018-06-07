@@ -16,7 +16,7 @@ class StatsServiceTest extends ServiceTestCase
     {
         parent::setUp();
 
-        $this->service = new StatsService($this->authUserCollection, $this->authLogCollection);
+        $this->service = new StatsService($this->authUserCollection);
     }
 
     public function testGetStats()

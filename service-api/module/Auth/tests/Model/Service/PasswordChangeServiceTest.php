@@ -33,7 +33,7 @@ class PasswordChangeServiceTest extends ServiceTestCase
 
         $this->user = new User([]);
 
-        $this->service = new PasswordChangeService($this->authUserCollection, $this->authLogCollection);
+        $this->service = new PasswordChangeService($this->authUserCollection);
 
         $this->service->setAuthenticationService($this->authenticationService);
     }

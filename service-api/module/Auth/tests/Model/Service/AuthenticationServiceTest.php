@@ -30,7 +30,7 @@ class AuthenticationServiceTest extends ServiceTestCase
     {
         parent::setUp();
 
-        $this->service = new AuthenticationService($this->authUserCollection, $this->authLogCollection);
+        $this->service = new AuthenticationService($this->authUserCollection);
     }
 
     public function testWithPasswordMissingCredentials()

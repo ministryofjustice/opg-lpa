@@ -22,7 +22,7 @@ class PasswordResetServiceTest extends ServiceTestCase
     {
         parent::setUp();
 
-        $this->service = new PasswordResetService($this->authUserCollection, $this->authLogCollection);
+        $this->service = new PasswordResetService($this->authUserCollection);
     }
 
     public function testGenerateTokenUserNotFound()
