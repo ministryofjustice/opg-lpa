@@ -3,7 +3,6 @@
 namespace Application\Model\Service;
 
 use Application\Model\DataAccess\Mongo\CollectionFactory;
-use Application\Model\DataAccess\UserDal;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Auth\Model\Service\UserManagementService;
@@ -36,7 +35,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         ],
         Users\Service::class => [
             'setApplicationsService'   => ApplicationsService::class,
-            'setUserDal'               => UserDal::class,
             'setUserManagementService' => UserManagementService::class,
         ],
     ];

@@ -9,8 +9,6 @@ class ServiceBuilder extends AbstractServiceBuilder
 {
     private $authUserCollection = null;
 
-    private $userDal;
-
     private $userManagementService;
 
     /**
@@ -23,10 +21,6 @@ class ServiceBuilder extends AbstractServiceBuilder
 
         if ($this->applicationsService !== null) {
             $service->setApplicationsService($this->applicationsService);
-        }
-
-        if ($this->userDal !== null) {
-            $service->setUserDal($this->userDal);
         }
 
         if ($this->userManagementService !== null) {
@@ -43,12 +37,6 @@ class ServiceBuilder extends AbstractServiceBuilder
     public function withAuthUserCollection($authUserCollection)
     {
         $this->authUserCollection = $authUserCollection;
-        return $this;
-    }
-
-    public function withUserDal($userDal)
-    {
-        $this->userDal = $userDal;
         return $this;
     }
 

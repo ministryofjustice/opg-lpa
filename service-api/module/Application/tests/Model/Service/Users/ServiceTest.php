@@ -3,7 +3,6 @@
 namespace ApplicationTest\Model\Service\Users;
 
 use Application\Model\DataAccess\Mongo\DateCallback;
-use Application\Model\DataAccess\UserDal;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\Service\DataModelEntity;
@@ -53,11 +52,8 @@ class ServiceTest extends AbstractServiceTest
         $userCollection = Mockery::mock(MongoCollection::class);
         $userCollection->shouldReceive('findOne')->andReturn(null)->once();
         $userCollection->shouldReceive('insertOne')->once();
-        $userDal = Mockery::mock(UserDal::class);
-        $userDal->shouldReceive('findById')->andReturn(null)->once();
-        $userDal->shouldReceive('injectEmailAddressFromIdentity')->andReturn($user->getEmail())->once();
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withAuthUserCollection($userCollection)->withUserDal($userDal)->build();
+        $service = $serviceBuilder->withUser(FixturesData::getUser())->withAuthUserCollection($userCollection)->build();
 
         $entity = $service->fetch($user->id);
         $entityArray = $entity->toArray();
@@ -77,10 +73,8 @@ class ServiceTest extends AbstractServiceTest
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollection::class);
         $userCollection->shouldNotReceive('insertOne');
-        $userDal = Mockery::mock(UserDal::class);
-        $userDal->shouldReceive('findById')->andReturn($user)->once();
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withAuthUserCollection($userCollection)->withUserDal($userDal)->build();
+        $service = $serviceBuilder->withUser(FixturesData::getUser())->withAuthUserCollection($userCollection)->build();
 
         $entity = $service->fetch($user->id);
 
