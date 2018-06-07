@@ -3,7 +3,7 @@
 namespace AuthTest\Model\Service;
 
 use Auth\Model\Service\AccountCleanupService;
-use Auth\Model\DataAccess\Mongo\User;
+use Application\Model\DataAccess\Mongo\Collection\User;
 use Auth\Model\Service\UserManagementService;
 use Aws\Sns\SnsClient;
 use DateInterval;
@@ -82,14 +82,12 @@ class AccountCleanupServiceTest extends ServiceTestCase
 
         $this->request = Mockery::mock(RequestInterface::class);
 
-        $this->service = new AccountCleanupService(
-            $this->userDataSource,
-            $this->logDataSource,
-            $this->userManagementService,
-            $this->snsClient,
-            $this->guzzleClient,
-            $this->config
-        );
+        $this->service = new AccountCleanupService($this->authUserCollection, $this->authLogCollection);
+
+        $this->service->setUserManagementService($this->userManagementService);
+        $this->service->setSnsClient($this->snsClient);
+        $this->service->setGuzzleClient($this->guzzleClient);
+        $this->service->setConfig($this->config);
 
         $this->service->setLogger($this->logger);
     }
@@ -198,7 +196,7 @@ class AccountCleanupServiceTest extends ServiceTestCase
                 ];
             })->once();
 
-        $this->userDataSource->shouldReceive('setInactivityFlag')->withArgs([1, '1-week-notice'])->once();
+        $this->authUserCollection->shouldReceive('setInactivityFlag')->withArgs([1, '1-week-notice'])->once();
 
         $result = $this->service->cleanup('http://callback');
 
@@ -279,7 +277,7 @@ class AccountCleanupServiceTest extends ServiceTestCase
                     ];
             })->once();
 
-        $this->userDataSource->shouldReceive('setInactivityFlag')->withArgs([1, '1-month-notice'])->once();
+        $this->authUserCollection->shouldReceive('setInactivityFlag')->withArgs([1, '1-month-notice'])->once();
 
         $result = $this->service->cleanup('http://callback');
 
@@ -307,14 +305,14 @@ class AccountCleanupServiceTest extends ServiceTestCase
         array $oneMonthWarningAccounts = [],
         array $unactivatedAccounts = []
     ) {
-        $this->userDataSource->shouldReceive('getAccountsInactiveSince')
+        $this->authUserCollection->shouldReceive('getAccountsInactiveSince')
             ->withArgs(function ($lastLoginBefore) {
                 return $lastLoginBefore < new DateTime('-9 months +1 week')
                     && $lastLoginBefore >= new DateTime('-9 months -1 second');
             })->once()
             ->andReturn($expiredAccounts);
 
-        $this->userDataSource->shouldReceive('getAccountsInactiveSince')
+        $this->authUserCollection->shouldReceive('getAccountsInactiveSince')
             ->withArgs(function ($lastLoginBefore, $excludeFlag = null) {
                 return $lastLoginBefore < new DateTime('-8 months')
                     && $lastLoginBefore >= new DateTime('-9 months +1 week -1 second')
@@ -322,14 +320,14 @@ class AccountCleanupServiceTest extends ServiceTestCase
             })->once()
             ->andReturn($oneWeekWarningAccounts);
 
-        $this->userDataSource->shouldReceive('getAccountsInactiveSince')
+        $this->authUserCollection->shouldReceive('getAccountsInactiveSince')
             ->withArgs(function ($lastLoginBefore, $excludeFlag = null) {
                 return $lastLoginBefore >= new DateTime('-8 months -1 second')
                     && $excludeFlag === '1-month-notice';
             })->once()
             ->andReturn($oneMonthWarningAccounts);
 
-        $this->userDataSource->shouldReceive('getAccountsUnactivatedOlderThan')
+        $this->authUserCollection->shouldReceive('getAccountsUnactivatedOlderThan')
             ->withArgs(function ($olderThan) {
                 return $olderThan >= new DateTime('-24 hours -1 second');
             })->once()

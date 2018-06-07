@@ -2,7 +2,7 @@
 
 namespace AuthTest\Model\Service;
 
-use Auth\Model\DataAccess\Mongo\User;
+use Application\Model\DataAccess\Mongo\Collection\User;
 use Auth\Model\Service\EmailUpdateService;
 use DateTime;
 
@@ -22,7 +22,7 @@ class EmailUpdateServiceTest extends ServiceTestCase
     {
         parent::setUp();
 
-        $this->service = new EmailUpdateService($this->userDataSource, $this->logDataSource);
+        $this->service = new EmailUpdateService($this->authUserCollection, $this->authLogCollection);
     }
 
     public function testGenerateTokenInvalidEmail()
@@ -77,7 +77,7 @@ class EmailUpdateServiceTest extends ServiceTestCase
 
         $this->setUserDataSourceGetByUsernameExpectation('unit@test.com', null);
 
-        $this->userDataSource->shouldReceive('addEmailUpdateTokenAndNewEmail')
+        $this->authUserCollection->shouldReceive('addEmailUpdateTokenAndNewEmail')
             ->withArgs(function ($id, $token, $newEmail) {
                 //Store generated token details for later validation
                 $this->tokenDetails = $token;
@@ -96,7 +96,7 @@ class EmailUpdateServiceTest extends ServiceTestCase
 
     public function testUpdateEmailUsingToken()
     {
-        $this->userDataSource->shouldReceive('updateEmailUsingToken')->withArgs(['token'])->once();
+        $this->authUserCollection->shouldReceive('updateEmailUsingToken')->withArgs(['token'])->once();
 
         $result = $this->service->updateEmailUsingToken('token');
 

@@ -19,7 +19,7 @@ class PasswordChangeService extends AbstractService
      */
     public function changePassword($userId, $oldPassword, $newPassword)
     {
-        $user = $this->getUserDataSource()->getById($userId);
+        $user = $this->getAuthUserCollection()->getById($userId);
 
         if (is_null($user)) {
             return 'user-not-found';
@@ -43,7 +43,7 @@ class PasswordChangeService extends AbstractService
 
         $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
 
-        $this->getUserDataSource()->setNewPassword($user->id(), $passwordHash);
+        $this->getAuthUserCollection()->setNewPassword($user->id(), $passwordHash);
 
         //---
 

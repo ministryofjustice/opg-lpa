@@ -9,6 +9,19 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 class ManagerFactory implements FactoryInterface
 {
     /**
+     * @var string
+     */
+    private $configKey;
+
+    /**
+     * @param string $configKey
+     */
+    public function __construct($configKey = 'default')
+    {
+        $this->configKey = $configKey;
+    }
+
+    /**
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param array|null $options
@@ -16,7 +29,7 @@ class ManagerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = $container->get('config')['db']['mongo']['default'];
+        $config = $container->get('config')['db']['mongo'][$this->configKey];
 
         // Split the array out into comma separated values.
         $uri = 'mongodb://' . implode(',', $config['hosts']) . '/' . $config['options']['db'];

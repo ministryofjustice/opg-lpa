@@ -9,7 +9,7 @@ class UserManagementService extends AbstractService
     public function get($userId)
     {
 
-        $user = $this->getUserDataSource()->getById($userId);
+        $user = $this->getAuthUserCollection()->getById($userId);
 
         if (is_null($user)) {
             return 'user-not-found';
@@ -24,7 +24,7 @@ class UserManagementService extends AbstractService
      */
     public function getByUsername(string $username)
     {
-        $user = $this->getUserDataSource()->getByUsername($username);
+        $user = $this->getAuthUserCollection()->getByUsername($username);
 
         if (is_null($user)) {
             //Check if user has been deleted
@@ -47,7 +47,7 @@ class UserManagementService extends AbstractService
 
     public function delete($userId, $reason)
     {
-        $user = $this->getUserDataSource()->getById($userId);
+        $user = $this->getAuthUserCollection()->getById($userId);
 
         if (is_null($user)) {
             return 'user-not-found';
@@ -56,7 +56,7 @@ class UserManagementService extends AbstractService
         //-------------------------------------------
         // Delete the user account
 
-        $result = $this->getUserDataSource()->delete($userId);
+        $result = $this->getAuthUserCollection()->delete($userId);
 
         if ($result !== true) {
             return 'user-not-found';

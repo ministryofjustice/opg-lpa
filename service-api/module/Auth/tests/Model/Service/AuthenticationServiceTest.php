@@ -3,7 +3,7 @@
 namespace AuthTest\Model\Service;
 
 use Auth\Model\Service\AuthenticationService;
-use Auth\Model\DataAccess\Mongo\User;
+use Application\Model\DataAccess\Mongo\Collection\User;
 use DateInterval;
 use DateTime;
 
@@ -30,7 +30,7 @@ class AuthenticationServiceTest extends ServiceTestCase
     {
         parent::setUp();
 
-        $this->service = new AuthenticationService($this->userDataSource, $this->logDataSource);
+        $this->service = new AuthenticationService($this->authUserCollection, $this->authLogCollection);
     }
 
     public function testWithPasswordMissingCredentials()
@@ -81,10 +81,10 @@ class AuthenticationServiceTest extends ServiceTestCase
                 ->sub(new DateInterval('PT' . (AuthenticationService::ACCOUNT_LOCK_TIME + 1) . 'S'))
         ]));
 
-        $this->userDataSource->shouldReceive('resetFailedLoginCounter')
+        $this->authUserCollection->shouldReceive('resetFailedLoginCounter')
             ->withArgs([1])->once();
 
-        $this->userDataSource->shouldReceive('incrementFailedLoginCounter')
+        $this->authUserCollection->shouldReceive('incrementFailedLoginCounter')
             ->withArgs([1])->once();
 
         $result = $this->service->withPassword('max@logins.com', 'valid', false);
@@ -100,7 +100,7 @@ class AuthenticationServiceTest extends ServiceTestCase
             'failed_login_attempts' => AuthenticationService::MAX_ALLOWED_LOGIN_ATTEMPTS - 1
         ]));
 
-        $this->userDataSource->shouldReceive('incrementFailedLoginCounter')
+        $this->authUserCollection->shouldReceive('incrementFailedLoginCounter')
             ->withArgs([1])->once();
 
         $result = $this->service->withPassword('max@logins.com', 'valid', false);
@@ -121,10 +121,10 @@ class AuthenticationServiceTest extends ServiceTestCase
             'last_login' => $today
         ]));
 
-        $this->userDataSource->shouldReceive('updateLastLoginTime')
+        $this->authUserCollection->shouldReceive('updateLastLoginTime')
             ->withArgs([1])->once();
 
-        $this->userDataSource->shouldReceive('resetFailedLoginCounter')
+        $this->authUserCollection->shouldReceive('resetFailedLoginCounter')
             ->withArgs([1])->once();
 
         $result = $this->service->withPassword('test@test.com', 'valid', false);
@@ -149,10 +149,10 @@ class AuthenticationServiceTest extends ServiceTestCase
             'last_login' => $today
         ]));
 
-        $this->userDataSource->shouldReceive('updateLastLoginTime')
+        $this->authUserCollection->shouldReceive('updateLastLoginTime')
             ->withArgs([1])->once();
 
-        $this->userDataSource->shouldReceive('setAuthToken')
+        $this->authUserCollection->shouldReceive('setAuthToken')
             ->withArgs(function ($userId, $expires, $authToken) {
                 //Store generated token details for later validation
                 $this->tokenDetails = [
@@ -280,7 +280,7 @@ class AuthenticationServiceTest extends ServiceTestCase
             ]
         ]));
 
-        $this->userDataSource->shouldReceive('extendAuthToken')
+        $this->authUserCollection->shouldReceive('extendAuthToken')
             ->withArgs(function ($userId, $expires) {
                 //Store generated token details for later validation
                 $this->tokenDetails = [
@@ -306,7 +306,7 @@ class AuthenticationServiceTest extends ServiceTestCase
 
     public function testDeleteToken()
     {
-        $this->userDataSource->shouldReceive('removeAuthToken')
+        $this->authUserCollection->shouldReceive('removeAuthToken')
             ->withArgs(['token'])->once();
 
         $result = $this->service->deleteToken('token');

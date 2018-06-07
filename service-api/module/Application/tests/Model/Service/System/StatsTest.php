@@ -2,13 +2,11 @@
 
 namespace ApplicationTest\Model\Service\System;
 
-use Application\Model\DataAccess\Mongo\CollectionFactory;
 use Application\Model\Service\System\Stats;
 use Mockery;
 use MongoDB\Collection as MongoCollection;
 use Opg\Lpa\Logger\Logger;
 use PHPUnit\Framework\TestCase;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class StatsTest extends TestCase
 {

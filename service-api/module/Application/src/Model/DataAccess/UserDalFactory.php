@@ -18,7 +18,7 @@ class UserDalFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         /** @var Collection $collection */
-        $collection = $container->get(CollectionFactory::class . '-user');
+        $collection = $container->get(CollectionFactory::class . '-api-user');
 
         return new UserDal($collection);
     }

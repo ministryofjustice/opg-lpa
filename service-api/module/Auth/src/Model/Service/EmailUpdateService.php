@@ -2,10 +2,10 @@
 
 namespace Auth\Model\Service;
 
+use Application\Model\DataAccess\Mongo\Collection\User;
+use Zend\Math\BigInteger\BigInteger;
 use DateTime;
 use RuntimeException;
-use Zend\Math\BigInteger\BigInteger;
-use Auth\Model\DataAccess\UserInterface;
 
 class EmailUpdateService extends AbstractService
 {
@@ -23,13 +23,13 @@ class EmailUpdateService extends AbstractService
             return 'invalid-email';
         }
 
-        $dataSource = $this->getUserDataSource();
+        $dataSource = $this->getAuthUserCollection();
 
         $user = $dataSource->getById($userId);
 
         $userWithRequestedEmailAddress = $dataSource->getByUsername($newEmail);
 
-        if ($userWithRequestedEmailAddress instanceof UserInterface) {
+        if ($userWithRequestedEmailAddress instanceof User) {
             if ($userWithRequestedEmailAddress->id() == $user->id()) {
                 return 'username-same-as-current';
             } else {
@@ -37,7 +37,7 @@ class EmailUpdateService extends AbstractService
             }
         }
 
-        if (!($user instanceof UserInterface)) {
+        if (!$user instanceof User) {
             return 'user-not-found';
         }
 
@@ -67,6 +67,6 @@ class EmailUpdateService extends AbstractService
 
     public function updateEmailUsingToken($token)
     {
-        return $this->getUserDataSource()->updateEmailUsingToken($token);
+        return $this->getAuthUserCollection()->updateEmailUsingToken($token);
     }
 }

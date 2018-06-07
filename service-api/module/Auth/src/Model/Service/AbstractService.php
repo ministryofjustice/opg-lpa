@@ -2,34 +2,34 @@
 
 namespace Auth\Model\Service;
 
-use Auth\Model\DataAccess\LogDataSourceInterface;
-use Auth\Model\DataAccess\UserDataSourceInterface;
+use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 
 abstract class AbstractService
 {
     /**
-     * @var UserDataSourceInterface
+     * @var AuthUserCollection
      */
-    private $userDataSource;
+    private $authUserCollection;
 
     /**
-     * @var LogDataSourceInterface
+     * @var AuthLogCollection
      */
-    private $logDataSource;
+    private $authLogCollection;
 
-    public function __construct(UserDataSourceInterface $userDataSource, LogDataSourceInterface $logDataSource)
+    public function __construct(AuthUserCollection $authUserCollection, AuthLogCollection $authLogCollection)
     {
-        $this->userDataSource = $userDataSource;
-        $this->logDataSource = $logDataSource;
+        $this->authUserCollection = $authUserCollection;
+        $this->authLogCollection = $authLogCollection;
     }
 
-    protected function getUserDataSource(): UserDataSourceInterface
+    protected function getAuthUserCollection(): AuthUserCollection
     {
-        return $this->userDataSource;
+        return $this->authUserCollection;
     }
 
-    protected function getLogDataSource(): LogDataSourceInterface
+    protected function getLogDataSource(): AuthLogCollection
     {
-        return $this->logDataSource;
+        return $this->authLogCollection;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace AuthTest\Model\Service;
 
-use Auth\Model\DataAccess\LogDataSourceInterface;
-use Auth\Model\DataAccess\UserDataSourceInterface;
-use Auth\Model\DataAccess\UserInterface;
+use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
+use Application\Model\DataAccess\Mongo\Collection\User;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -12,62 +12,62 @@ use Mockery\MockInterface;
 abstract class ServiceTestCase extends MockeryTestCase
 {
     /**
-     * @var MockInterface|UserDataSourceInterface
+     * @var MockInterface|AuthUserCollection
      */
-    protected $userDataSource;
+    protected $authUserCollection;
 
     /**
-     * @var MockInterface|LogDataSourceInterface
+     * @var MockInterface|AuthLogCollection
      */
-    protected $logDataSource;
+    protected $authLogCollection;
 
     protected function setUp()
     {
-        $this->userDataSource = Mockery::mock(UserDataSourceInterface::class);
+        $this->authUserCollection = Mockery::mock(AuthUserCollection::class);
 
-        $this->logDataSource = Mockery::mock(LogDataSourceInterface::class);
+        $this->authLogCollection = Mockery::mock(AuthLogCollection::class);
     }
 
     /**
      * @param int $userId
-     * @param UserInterface $user
+     * @param User $user
      */
     protected function setUserDataSourceGetByIdExpectation(int $userId, $user)
     {
-        $this->userDataSource->shouldReceive('getById')
+        $this->authUserCollection->shouldReceive('getById')
             ->withArgs([$userId])->once()
             ->andReturn($user);
     }
 
     /**
      * @param string $username
-     * @param UserInterface $user
+     * @param User $user
      */
     protected function setUserDataSourceGetByUsernameExpectation(string $username, $user)
     {
-        $this->userDataSource->shouldReceive('getByUsername')
+        $this->authUserCollection->shouldReceive('getByUsername')
             ->withArgs([$username])->once()
             ->andReturn($user);
     }
 
     /**
      * @param string $token
-     * @param UserInterface $user
+     * @param User $user
      */
     protected function setUserDataSourceGetByAuthTokenExpectation(string $token, $user)
     {
-        $this->userDataSource->shouldReceive('getByAuthToken')
+        $this->authUserCollection->shouldReceive('getByAuthToken')
             ->withArgs([$token])->once()
             ->andReturn($user);
     }
 
     /**
      * @param string $token
-     * @param UserInterface $user
+     * @param User $user
      */
     protected function setUserDataSourceGetByResetTokenExpectation(string $token, $user)
     {
-        $this->userDataSource->shouldReceive('getByResetToken')
+        $this->authUserCollection->shouldReceive('getByResetToken')
             ->withArgs([$token])->once()
             ->andReturn($user);
     }
@@ -80,7 +80,7 @@ abstract class ServiceTestCase extends MockeryTestCase
     {
         $hash = hash('sha512', strtolower(trim($username)));
 
-        $this->logDataSource->shouldReceive('getLogByIdentityHash')
+        $this->authLogCollection->shouldReceive('getLogByIdentityHash')
             ->withArgs([$hash])->once()
             ->andReturn($log);
     }

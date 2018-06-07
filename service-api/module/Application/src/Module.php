@@ -2,9 +2,9 @@
 
 namespace Application;
 
-use Application\Model\DataAccess\Mongo\CollectionFactory;
-use Application\Model\DataAccess\Mongo\DatabaseFactory;
-use Application\Model\DataAccess\Mongo\ManagerFactory;
+use Application\Model\DataAccess\Mongo;
+use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
@@ -12,6 +12,7 @@ use Application\Model\Service\System\DynamoCronLock;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\S3\S3Client;
 use DynamoQueue\Queue\Client as DynamoQueue;
+use Interop\Container\ContainerInterface;
 use Opg\Lpa\Logger\Logger;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
@@ -70,17 +71,50 @@ class Module
                     return new AuthenticationService(new NonPersistent());
                 },
 
+
+
+
                 // Create an instance of the MongoClient...
-                ManagerFactory::class => ManagerFactory::class,
+                Mongo\ManagerFactory::class . '-default' => new Mongo\ManagerFactory('default'),
+                Mongo\ManagerFactory::class . '-auth' => new Mongo\ManagerFactory('auth'),
 
                 // Connect the above MongoClient to a DB...
-                DatabaseFactory::class => DatabaseFactory::class,
+                Mongo\DatabaseFactory::class . '-default' => new Mongo\DatabaseFactory('default'),
+                Mongo\DatabaseFactory::class . '-auth' => new Mongo\DatabaseFactory('auth'),
 
-                // Access collections within the above DB...
-                CollectionFactory::class . '-lpa' => new CollectionFactory('lpa'),
-                CollectionFactory::class . '-user' => new CollectionFactory('user'),
-                CollectionFactory::class . '-stats-who' => new CollectionFactory('whoAreYou'),
-                CollectionFactory::class . '-stats-lpas' => new CollectionFactory('lpaStats'),
+
+
+                //  Access collections within the above opglpa-api DB
+                Mongo\CollectionFactory::class . '-api-lpa' => new Mongo\CollectionFactory('lpa'),
+                Mongo\CollectionFactory::class . '-api-user' => new Mongo\CollectionFactory('user'),
+                Mongo\CollectionFactory::class . '-api-stats-who' => new Mongo\CollectionFactory('whoAreYou'),
+                Mongo\CollectionFactory::class . '-api-stats-lpas' => new Mongo\CollectionFactory('lpaStats'),
+
+
+
+
+
+
+
+                AuthUserCollection::class => function (ContainerInterface $container) {
+                    $mcf = new Mongo\CollectionFactory('user', 'auth');
+
+                    $authUserCollection = $mcf->__invoke($container, 'TODO');
+
+                    return new AuthUserCollection($authUserCollection);
+                },
+                AuthLogCollection::class => function (ContainerInterface $container) {
+                    $mcf = new Mongo\CollectionFactory('log', 'auth');
+
+                    $authLogCollection = $mcf->__invoke($container, 'TODO');
+
+                    return new AuthLogCollection($authLogCollection);
+                },
+
+
+
+
+
 
                 // Get S3Client Client
                 'S3Client' => function ($sm) {

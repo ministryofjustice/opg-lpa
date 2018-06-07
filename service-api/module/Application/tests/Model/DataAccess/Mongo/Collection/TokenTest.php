@@ -1,8 +1,8 @@
 <?php
 
-namespace AuthTest\Model\DataAccess\Mongo;
+namespace ApplicationTest\Model\DataAccess\Mongo\Collection;
 
-use Auth\Model\DataAccess\Mongo\Token;
+use Application\Model\DataAccess\Mongo\Collection\Token;
 use DateTime;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MongoDB\BSON\UTCDateTime;

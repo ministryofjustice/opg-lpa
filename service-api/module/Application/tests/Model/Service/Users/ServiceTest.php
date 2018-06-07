@@ -57,7 +57,7 @@ class ServiceTest extends AbstractServiceTest
         $userDal->shouldReceive('findById')->andReturn(null)->once();
         $userDal->shouldReceive('injectEmailAddressFromIdentity')->andReturn($user->getEmail())->once();
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->withUserDal($userDal)->build();
+        $service = $serviceBuilder->withUser(FixturesData::getUser())->withAuthUserCollection($userCollection)->withUserDal($userDal)->build();
 
         $entity = $service->fetch($user->id);
         $entityArray = $entity->toArray();
@@ -80,7 +80,7 @@ class ServiceTest extends AbstractServiceTest
         $userDal = Mockery::mock(UserDal::class);
         $userDal->shouldReceive('findById')->andReturn($user)->once();
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->withUserDal($userDal)->build();
+        $service = $serviceBuilder->withUser(FixturesData::getUser())->withAuthUserCollection($userCollection)->withUserDal($userDal)->build();
 
         $entity = $service->fetch($user->id);
 
@@ -108,7 +108,7 @@ class ServiceTest extends AbstractServiceTest
         $userCollection->shouldReceive('findOne')->andReturn(null)->once();
         $userCollection->shouldReceive('insertOne')->once();
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
+        $service = $serviceBuilder->withUser(FixturesData::getUser())->withAuthUserCollection($userCollection)->build();
 
         $entity = $service->update(null, $user->id);
         $entityArray = $entity->toArray();
@@ -130,7 +130,7 @@ class ServiceTest extends AbstractServiceTest
         $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $userCollection->shouldNotReceive('updateOne');
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
+        $service = $serviceBuilder->withUser(FixturesData::getUser())->withAuthUserCollection($userCollection)->build();
 
         $userUpdate = FixturesData::getUser();
         $userUpdate->name->title = 'TooLong';
@@ -157,7 +157,7 @@ class ServiceTest extends AbstractServiceTest
         $updateResult->shouldReceive('getModifiedCount')->andReturn(1);
         $userCollection->shouldReceive('updateOne')->andReturn($updateResult)->once();
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
+        $service = $serviceBuilder->withUser(FixturesData::getUser())->withAuthUserCollection($userCollection)->build();
 
         $userUpdate = FixturesData::getUser();
         $userUpdate->name->first = 'Edited';
@@ -179,7 +179,7 @@ class ServiceTest extends AbstractServiceTest
         $updateResult->shouldReceive('getModifiedCount')->andReturn(2);
         $userCollection->shouldReceive('updateOne')->andReturn($updateResult)->once();
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withUserCollection($userCollection)->build();
+        $service = $serviceBuilder->withUser(FixturesData::getUser())->withAuthUserCollection($userCollection)->build();
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unable to update User. This might be because "updatedAt" has changed.');
@@ -215,7 +215,7 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder
             ->withUser(FixturesData::getUser())
             ->withApplicationsService($applicationsService)
-            ->withUserCollection($userCollection)
+            ->withAuthUserCollection($userCollection)
             ->withUserManagementService($userManagementService)
             ->build();
 

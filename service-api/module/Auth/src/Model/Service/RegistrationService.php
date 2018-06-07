@@ -31,7 +31,7 @@ class RegistrationService extends AbstractService
         //------
         // Check the username isn't already used...
 
-        $user = $this->getUserDataSource()->getByUsername($username);
+        $user = $this->getAuthUserCollection()->getByUsername($username);
 
         if (!is_null($user)) {
             return 'username-already-exists';
@@ -59,7 +59,7 @@ class RegistrationService extends AbstractService
             // Use base62 for shorter tokens
             $activationToken = BigInteger::factory('bcmath')->baseConvert($activationToken, 16, 62);
 
-            $created = (bool)$this->getUserDataSource()->create($userId, [
+            $created = (bool)$this->getAuthUserCollection()->create($userId, [
                 'identity' => $username,
                 'active' => false,
                 'activation_token' => $activationToken,
@@ -80,7 +80,7 @@ class RegistrationService extends AbstractService
 
     public function activate($token)
     {
-        $result = $this->getUserDataSource()->activate($token);
+        $result = $this->getAuthUserCollection()->activate($token);
 
         if (is_null($result) || $result === false) {
             return 'account-not-found';

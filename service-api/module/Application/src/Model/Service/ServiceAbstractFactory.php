@@ -70,13 +70,13 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             throw new Exception(sprintf('Abstract factory %s can not create the requested service %s', get_class($this), $requestedName));
         }
 
-        $lpaCollection = $container->get(CollectionFactory::class . '-lpa');
+        $lpaCollection = $container->get(CollectionFactory::class . '-api-lpa');
         $collection = null;
 
         if ($requestedName == Users\Service::class) {
-            $collection = $container->get(CollectionFactory::class . '-user');
+            $collection = $container->get(CollectionFactory::class . '-api-user');
         } elseif ($requestedName == WhoAreYou\Service::class) {
-            $collection = $container->get(CollectionFactory::class . '-stats-who');
+            $collection = $container->get(CollectionFactory::class . '-api-stats-who');
         }
 
         //  Get the route user

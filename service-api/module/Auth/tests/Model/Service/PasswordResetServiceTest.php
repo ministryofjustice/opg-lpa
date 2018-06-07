@@ -2,7 +2,7 @@
 
 namespace AuthTest\Model\Service;
 
-use Auth\Model\DataAccess\Mongo\User;
+use Application\Model\DataAccess\Mongo\Collection\User;
 use Auth\Model\Service\PasswordResetService;
 use DateTime;
 
@@ -22,7 +22,7 @@ class PasswordResetServiceTest extends ServiceTestCase
     {
         parent::setUp();
 
-        $this->service = new PasswordResetService($this->userDataSource, $this->logDataSource);
+        $this->service = new PasswordResetService($this->authUserCollection, $this->authLogCollection);
     }
 
     public function testGenerateTokenUserNotFound()
@@ -53,7 +53,7 @@ class PasswordResetServiceTest extends ServiceTestCase
             'active' => true
         ]));
 
-        $this->userDataSource->shouldReceive('addPasswordResetToken')
+        $this->authUserCollection->shouldReceive('addPasswordResetToken')
             ->withArgs(function ($id, $token) {
                 //Store generated token details for later validation
                 $this->tokenDetails = $token;
@@ -90,7 +90,7 @@ class PasswordResetServiceTest extends ServiceTestCase
     {
         $this->setUserDataSourceGetByResetTokenExpectation('token', new User([]));
 
-        $this->userDataSource->shouldReceive('updatePasswordUsingToken')
+        $this->authUserCollection->shouldReceive('updatePasswordUsingToken')
             ->withArgs(function ($token, $passwordHash) {
                 return $token === 'token' && password_verify('Password123', $passwordHash);
             })->once()->andReturn(false);
@@ -104,12 +104,12 @@ class PasswordResetServiceTest extends ServiceTestCase
     {
         $this->setUserDataSourceGetByResetTokenExpectation('token', new User(['_id' => 1]));
 
-        $this->userDataSource->shouldReceive('updatePasswordUsingToken')
+        $this->authUserCollection->shouldReceive('updatePasswordUsingToken')
             ->withArgs(function ($token, $passwordHash) {
                 return $token === 'token' && password_verify('Password123', $passwordHash);
             })->once()->andReturn(true);
 
-        $this->userDataSource->shouldReceive('resetFailedLoginCounter')
+        $this->authUserCollection->shouldReceive('resetFailedLoginCounter')
             ->withArgs([1])->once();
 
         $result = $this->service->updatePasswordUsingToken('token', 'Password123');

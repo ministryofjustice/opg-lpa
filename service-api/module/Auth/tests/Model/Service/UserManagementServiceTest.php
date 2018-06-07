@@ -2,7 +2,7 @@
 
 namespace AuthTest\Model\Service;
 
-use Auth\Model\DataAccess\Mongo\User;
+use Application\Model\DataAccess\Mongo\Collection\User;
 use Auth\Model\Service\UserManagementService;
 use DateTime;
 use MongoDB\BSON\UTCDateTime;
@@ -18,7 +18,7 @@ class UserManagementServiceTest extends ServiceTestCase
     {
         parent::setUp();
 
-        $this->service = new UserManagementService($this->userDataSource, $this->logDataSource);
+        $this->service = new UserManagementService($this->authUserCollection, $this->authLogCollection);
     }
 
     public function testGetUserNotFound()
@@ -115,7 +115,7 @@ class UserManagementServiceTest extends ServiceTestCase
     {
         $this->setUserDataSourceGetByIdExpectation(1, new User([]));
 
-        $this->userDataSource->shouldReceive('delete')
+        $this->authUserCollection->shouldReceive('delete')
             ->withArgs([1])->once()
             ->andReturn(false);
 
@@ -128,11 +128,11 @@ class UserManagementServiceTest extends ServiceTestCase
     {
         $this->setUserDataSourceGetByIdExpectation(1, new User(['identity' => 'unit@test.com']));
 
-        $this->userDataSource->shouldReceive('delete')
+        $this->authUserCollection->shouldReceive('delete')
             ->withArgs([1])->once()
             ->andReturn(true);
 
-        $this->logDataSource->shouldReceive('addLog')
+        $this->authLogCollection->shouldReceive('addLog')
             ->withArgs(function ($details) {
                 return $details['identity_hash'] === hash('sha512', strtolower(trim('unit@test.com')))
                     && $details['type'] === 'account-deleted'

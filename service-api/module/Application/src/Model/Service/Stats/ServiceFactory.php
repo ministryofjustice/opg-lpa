@@ -17,7 +17,7 @@ class ServiceFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $collection = $container->get(CollectionFactory::class . '-stats-lpas');
+        $collection = $container->get(CollectionFactory::class . '-api-stats-lpas');
         $authStatsService = $container->get(AuthStatsService::class);
 
         return new Service($collection, $authStatsService);

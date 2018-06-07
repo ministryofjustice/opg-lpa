@@ -7,7 +7,7 @@ use ApplicationTest\AbstractServiceBuilder;
 
 class ServiceBuilder extends AbstractServiceBuilder
 {
-    private $userCollection = null;
+    private $authUserCollection = null;
 
     private $userDal;
 
@@ -19,7 +19,7 @@ class ServiceBuilder extends AbstractServiceBuilder
     public function build()
     {
         /** @var Service $service */
-        $service = parent::buildMocks(Service::class, true, $this->userCollection);
+        $service = parent::buildMocks(Service::class, true, $this->authUserCollection);
 
         if ($this->applicationsService !== null) {
             $service->setApplicationsService($this->applicationsService);
@@ -37,12 +37,12 @@ class ServiceBuilder extends AbstractServiceBuilder
     }
 
     /**
-     * @param $userCollection
+     * @param $authUserCollection
      * @return $this
      */
-    public function withUserCollection($userCollection)
+    public function withAuthUserCollection($authUserCollection)
     {
-        $this->userCollection = $userCollection;
+        $this->authUserCollection = $authUserCollection;
         return $this;
     }
 

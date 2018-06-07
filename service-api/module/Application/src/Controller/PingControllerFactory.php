@@ -23,9 +23,9 @@ class PingControllerFactory implements FactoryInterface
         /** @var DynamoQueueClient $dynamoQueueClient */
         $dynamoQueueClient = $container->get('DynamoQueueClient');
         /** @var Manager $manager */
-        $manager = $container->get(ManagerFactory::class);
+        $manager = $container->get(ManagerFactory::class . '-default');
         /** @var Database $database */
-        $database = $container->get(DatabaseFactory::class);
+        $database = $container->get(DatabaseFactory::class . '-default');
 
         return new PingController($dynamoQueueClient, $manager, $database);
     }

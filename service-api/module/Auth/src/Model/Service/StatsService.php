@@ -6,7 +6,7 @@ class StatsService extends AbstractService
 {
     public function getStats()
     {
-        $dataSource = $this->getUserDataSource();
+        $dataSource = $this->getAuthUserCollection();
 
         return [
             'total' => $dataSource->countAccounts(),
