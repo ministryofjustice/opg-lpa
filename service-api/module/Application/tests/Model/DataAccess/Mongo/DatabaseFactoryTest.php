@@ -30,7 +30,7 @@ class DatabaseFactoryTest extends MockeryTestCase
         $manager = new Manager('mongodb://unittest');
 
         $this->container->shouldReceive('get')
-            ->withArgs([ManagerFactory::class])->once()
+            ->withArgs([ManagerFactory::class . '-auth'])->once()
             ->andReturn($manager);
 
         $this->container->shouldReceive('get')
@@ -47,7 +47,7 @@ class DatabaseFactoryTest extends MockeryTestCase
                 ]
             ]);
 
-        $result = $factory->__invoke($this->container, '');
+        $result = $factory->__invoke($this->container, DatabaseFactory::class . '-auth');
 
         $this->assertInstanceOf(Database::class, $result);
     }

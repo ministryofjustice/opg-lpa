@@ -50,7 +50,7 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollection::class);
-        $userCollection->shouldReceive('findOne')->andReturn(null)->once();
+        $userCollection->shouldReceive('findOne')->andReturn(null)->twice();
         $userCollection->shouldReceive('insertOne')->once();
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withAuthUserCollection($userCollection)->build();
@@ -72,6 +72,7 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
         $userCollection = Mockery::mock(MongoCollection::class);
+        $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $userCollection->shouldNotReceive('insertOne');
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withAuthUserCollection($userCollection)->build();

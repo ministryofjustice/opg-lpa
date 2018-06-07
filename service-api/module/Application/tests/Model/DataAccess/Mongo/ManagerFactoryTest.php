@@ -41,7 +41,7 @@ class ManagerFactoryTest extends MockeryTestCase
                 ]
             ]);
 
-        $result = $factory->__invoke($this->container, '');
+        $result = $factory->__invoke($this->container, ManagerFactory::class . '-auth');
 
         $this->assertInstanceOf(Manager::class, $result);
     }

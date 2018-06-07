@@ -30,7 +30,7 @@ class CollectionFactoryTest extends MockeryTestCase
         $database = Mockery::mock(Database::class);
 
         $this->container->shouldReceive('get')
-            ->withArgs([DatabaseFactory::class])->once()
+            ->withArgs([DatabaseFactory::class . '-default'])->once()
             ->andReturn($database);
 
         $collection = Mockery::mock(Collection::class);
