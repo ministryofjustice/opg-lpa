@@ -27,19 +27,9 @@ use Throwable;
 class PhptTestCase implements Test, SelfDescribing
 {
     /**
-     * @var string
+     * @var string[]
      */
-    private $filename;
-
-    /**
-     * @var AbstractPhpProcess
-     */
-    private $phpUtil;
-
-    /**
-     * @var array
-     */
-    private $settings = [
+    private const SETTINGS = [
         'allow_url_fopen=1',
         'auto_append_file=',
         'auto_prepend_file=',
@@ -61,6 +51,15 @@ class PhptTestCase implements Test, SelfDescribing
         'safe_mode=0',
         'xdebug.default_enable=0'
     ];
+    /**
+     * @var string
+     */
+    private $filename;
+
+    /**
+     * @var AbstractPhpProcess
+     */
+    private $phpUtil;
 
     /**
      * Constructs a test case with the given filename.
@@ -112,7 +111,7 @@ class PhptTestCase implements Test, SelfDescribing
         }
 
         $xfail    = false;
-        $settings = $this->parseIniSection($this->settings);
+        $settings = $this->parseIniSection(self::SETTINGS);
 
         $result->startTest($this);
 
@@ -212,7 +211,7 @@ class PhptTestCase implements Test, SelfDescribing
     private function parseIniSection($content, $ini = []): array
     {
         if (\is_string($content)) {
-            $content = \explode("\n", \trim($content));
+            $content = \explode(PHP_EOL, \trim($content));
         }
 
         foreach ($content as $setting) {
@@ -244,7 +243,7 @@ class PhptTestCase implements Test, SelfDescribing
     {
         $env = [];
 
-        foreach (\explode("\n", \trim($content)) as $e) {
+        foreach (\explode(PHP_EOL, \trim($content)) as $e) {
             $e = \explode('=', \trim($e), 2);
 
             if (!empty($e[0]) && isset($e[1])) {
@@ -266,11 +265,11 @@ class PhptTestCase implements Test, SelfDescribing
             'EXPECTREGEX' => 'assertRegExp',
         ];
 
-        $actual = \preg_replace('/\r\n/', "\n", \trim($output));
+        $actual = \preg_replace('/\r\n/', PHP_EOL, \trim($output));
 
         foreach ($assertions as $sectionName => $sectionAssertion) {
             if (isset($sections[$sectionName])) {
-                $sectionContent = \preg_replace('/\r\n/', "\n", \trim($sections[$sectionName]));
+                $sectionContent = \preg_replace('/\r\n/', PHP_EOL, \trim($sections[$sectionName]));
                 $assertion      = $sectionAssertion;
                 $expected       = $sectionName === 'EXPECTREGEX' ? "/{$sectionContent}/" : $sectionContent;
 
@@ -325,7 +324,7 @@ class PhptTestCase implements Test, SelfDescribing
         if (isset($sections['CLEAN'])) {
             $cleanCode = $this->render($sections['CLEAN']);
 
-            $this->phpUtil->runJob($cleanCode, $this->settings);
+            $this->phpUtil->runJob($cleanCode, self::SETTINGS);
         }
     }
 

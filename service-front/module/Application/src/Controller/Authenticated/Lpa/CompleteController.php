@@ -72,7 +72,7 @@ class CompleteController extends AbstractLpaController
             'correspondentName'  => ($lpa->document->correspondent->name instanceof LongName ? $lpa->document->correspondent->name : $lpa->document->correspondent->company),
             'paymentAmount'      => $lpa->payment->amount,
             'paymentReferenceNo' => $lpa->payment->reference,
-            'hasRemission'       => $this->getFlowChecker()->isEligibleForFeeReduction(),
+            'hasRemission'       => $lpa->isEligibleForFeeReduction(),
             'isPaymentSkipped'   => $isPaymentSkipped,
         ];
 
@@ -81,7 +81,7 @@ class CompleteController extends AbstractLpaController
             $viewParams['peopleToNotify'] = $lpa->document->peopleToNotify;
         }
 
-        if ($this->getFlowChecker()->isEligibleForFeeReduction()) {
+        if ($lpa->isEligibleForFeeReduction()) {
             $viewParams['lpa120Url'] = $this->url()->fromRoute('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lpa120']);
         }
 
