@@ -2,9 +2,8 @@
 
 namespace AuthTest\Model\Service;
 
-use Auth\Model\DataAccess\LogDataSourceInterface;
-use Auth\Model\DataAccess\UserDataSourceInterface;
-use Auth\Model\DataAccess\UserInterface;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
+use Application\Model\DataAccess\Mongo\Collection\User;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -12,76 +11,56 @@ use Mockery\MockInterface;
 abstract class ServiceTestCase extends MockeryTestCase
 {
     /**
-     * @var MockInterface|UserDataSourceInterface
+     * @var MockInterface|AuthUserCollection
      */
-    protected $userDataSource;
-
-    /**
-     * @var MockInterface|LogDataSourceInterface
-     */
-    protected $logDataSource;
+    protected $authUserCollection;
 
     protected function setUp()
     {
-        $this->userDataSource = Mockery::mock(UserDataSourceInterface::class);
-
-        $this->logDataSource = Mockery::mock(LogDataSourceInterface::class);
+        $this->authUserCollection = Mockery::mock(AuthUserCollection::class);
     }
 
     /**
      * @param int $userId
-     * @param UserInterface $user
+     * @param User $user
      */
     protected function setUserDataSourceGetByIdExpectation(int $userId, $user)
     {
-        $this->userDataSource->shouldReceive('getById')
+        $this->authUserCollection->shouldReceive('getById')
             ->withArgs([$userId])->once()
             ->andReturn($user);
     }
 
     /**
      * @param string $username
-     * @param UserInterface $user
+     * @param User $user
      */
     protected function setUserDataSourceGetByUsernameExpectation(string $username, $user)
     {
-        $this->userDataSource->shouldReceive('getByUsername')
+        $this->authUserCollection->shouldReceive('getByUsername')
             ->withArgs([$username])->once()
             ->andReturn($user);
     }
 
     /**
      * @param string $token
-     * @param UserInterface $user
+     * @param User $user
      */
     protected function setUserDataSourceGetByAuthTokenExpectation(string $token, $user)
     {
-        $this->userDataSource->shouldReceive('getByAuthToken')
+        $this->authUserCollection->shouldReceive('getByAuthToken')
             ->withArgs([$token])->once()
             ->andReturn($user);
     }
 
     /**
      * @param string $token
-     * @param UserInterface $user
+     * @param User $user
      */
     protected function setUserDataSourceGetByResetTokenExpectation(string $token, $user)
     {
-        $this->userDataSource->shouldReceive('getByResetToken')
+        $this->authUserCollection->shouldReceive('getByResetToken')
             ->withArgs([$token])->once()
             ->andReturn($user);
-    }
-
-    /**
-     * @param string $username
-     * @param array $log
-     */
-    protected function setLogDataSourceGetLogByIdentityHashExpectation(string $username, $log)
-    {
-        $hash = hash('sha512', strtolower(trim($username)));
-
-        $this->logDataSource->shouldReceive('getLogByIdentityHash')
-            ->withArgs([$hash])->once()
-            ->andReturn($log);
     }
 }

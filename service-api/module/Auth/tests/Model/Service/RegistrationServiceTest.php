@@ -2,7 +2,7 @@
 
 namespace AuthTest\Model\Service;
 
-use Auth\Model\DataAccess\Mongo\User;
+use Application\Model\DataAccess\Mongo\Collection\User;
 use Auth\Model\Service\RegistrationService;
 use DateTime;
 
@@ -22,7 +22,7 @@ class RegistrationServiceTest extends ServiceTestCase
     {
         parent::setUp();
 
-        $this->service = new RegistrationService($this->userDataSource, $this->logDataSource);
+        $this->service = new RegistrationService($this->authUserCollection);
     }
 
     public function testCreateInvalidUsername()
@@ -54,7 +54,7 @@ class RegistrationServiceTest extends ServiceTestCase
     {
         $this->setUserDataSourceGetByUsernameExpectation('unit@test.com', null);
 
-        $this->userDataSource->shouldReceive('create')
+        $this->authUserCollection->shouldReceive('create')
             ->withArgs(function ($id, $details) {
                 //Store generated token details for later validation
                 $this->tokenDetails = [
@@ -79,7 +79,7 @@ class RegistrationServiceTest extends ServiceTestCase
 
     public function testActivateAccountNotFound()
     {
-        $this->userDataSource->shouldReceive('activate')
+        $this->authUserCollection->shouldReceive('activate')
             ->withArgs(['activation_token'])->once()
             ->andReturn(null);
 
@@ -90,7 +90,7 @@ class RegistrationServiceTest extends ServiceTestCase
 
     public function testActivateSuccessful()
     {
-        $this->userDataSource->shouldReceive('activate')
+        $this->authUserCollection->shouldReceive('activate')
             ->withArgs(['activation_token'])->once()
             ->andReturn(true);
 

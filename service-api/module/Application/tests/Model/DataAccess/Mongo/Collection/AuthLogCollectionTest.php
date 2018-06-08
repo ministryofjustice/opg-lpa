@@ -1,8 +1,8 @@
 <?php
 
-namespace AuthTest\Model\DataAccess\Mongo;
+namespace ApplicationTest\Model\DataAccess\Mongo\Collection;
 
-use Auth\Model\DataAccess\Mongo\LogCollection;
+use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
 use DateTime;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -11,12 +11,12 @@ use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
 use MongoDB\InsertOneResult;
 
-class LogCollectionTest extends MockeryTestCase
+class AuthLogCollectionTest extends MockeryTestCase
 {
     /**
-     * @var LogCollection
+     * @var AuthLogCollection
      */
-    private $logCollection;
+    private $authLogCollection;
 
     /**
      * @var MockInterface|Collection
@@ -27,7 +27,7 @@ class LogCollectionTest extends MockeryTestCase
     {
         $this->mongoCollection = Mockery::mock(Collection::class);
 
-        $this->logCollection = new LogCollection($this->mongoCollection);
+        $this->authLogCollection = new AuthLogCollection($this->mongoCollection);
     }
 
     public function testAddLogFalse()
@@ -46,7 +46,7 @@ class LogCollectionTest extends MockeryTestCase
                 && $date->toDateTime() >= new DateTime('-1 second');
         })->once()->andReturn($dbResult);
 
-        $result = $this->logCollection->addLog($log);
+        $result = $this->authLogCollection->addLog($log);
 
         $this->assertEquals(false, $result);
     }
@@ -63,7 +63,7 @@ class LogCollectionTest extends MockeryTestCase
         $this->mongoCollection->shouldReceive('insertOne')->withArgs([$log])->once()
             ->andReturn($dbResult);
 
-        $result = $this->logCollection->addLog($log);
+        $result = $this->authLogCollection->addLog($log);
 
         $this->assertEquals(true, $result);
     }
@@ -73,7 +73,7 @@ class LogCollectionTest extends MockeryTestCase
         $this->mongoCollection->shouldReceive('findOne')->withArgs([['identity_hash' => 'unit-test']])->once()
             ->andReturn(null);
 
-        $result = $this->logCollection->getLogByIdentityHash('unit-test');
+        $result = $this->authLogCollection->getLogByIdentityHash('unit-test');
 
         $this->assertEquals(null, $result);
     }
@@ -83,7 +83,7 @@ class LogCollectionTest extends MockeryTestCase
         $this->mongoCollection->shouldReceive('findOne')->withArgs([['identity_hash' => 'unit-test']])->once()
             ->andReturn(['message' => 'Unit test']);
 
-        $result = $this->logCollection->getLogByIdentityHash('unit-test');
+        $result = $this->authLogCollection->getLogByIdentityHash('unit-test');
 
         $this->assertEquals(['message' => 'Unit test'], $result);
     }

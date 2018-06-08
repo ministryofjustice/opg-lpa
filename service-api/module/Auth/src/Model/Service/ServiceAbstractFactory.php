@@ -2,12 +2,13 @@
 
 namespace Auth\Model\Service;
 
+use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use Application\Model\DataAccess\Mongo\CollectionFactory;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Exception;
-use RuntimeException;
 
 class ServiceAbstractFactory implements AbstractFactoryInterface
 {
@@ -22,11 +23,14 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setSnsClient'             => 'SnsClient',
             'setGuzzleClient'          => 'GuzzleClient',
             'setConfig'                => 'config',
-            'setApiLpaCollection'      => CollectionFactory::class . '-lpa',
-            'setApiUserCollection'     => CollectionFactory::class . '-user',
+            'setApiLpaCollection'      => CollectionFactory::class . '-api-lpa',
+            'setApiUserCollection'     => CollectionFactory::class . '-api-user',
         ],
         PasswordChangeService::class => [
             'setAuthenticationService' => AuthenticationService::class,
+        ],
+        UserManagementService::class => [
+            'setAuthLogCollection' => AuthLogCollection::class,
         ],
     ];
 
@@ -60,24 +64,10 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             ));
         }
 
-        //  Get the common data sources
-        if (!$container->has('UserDataSource')) {
-            throw new RunTimeException('UserDataSource has not been defined in the service manager');
-        }
+        //  Create the service with the common mongo user collection
+        $authUserCollection = $container->get(AuthUserCollection::class);
 
-        $userDataSource = $container->get('UserDataSource');
-
-        if (!$container->has('LogDataSource')) {
-            throw new RunTimeException('LogDataSource has not been defined in the service manager');
-        }
-
-        $logDataSource = $container->get('LogDataSource');
-
-        //  Create the service with the common data sources
-        $service = new $requestedName(
-            $userDataSource,
-            $logDataSource
-        );
+        $service = new $requestedName($authUserCollection);
 
         //  If required load any additional services into the service
         if (array_key_exists($requestedName, $this->additionalServices) && is_array($this->additionalServices[$requestedName])) {

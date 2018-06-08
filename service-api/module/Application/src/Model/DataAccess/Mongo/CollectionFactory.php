@@ -13,6 +13,11 @@ class CollectionFactory implements FactoryInterface
      */
     private $collectionName;
 
+    /**
+     * @var string
+     */
+    private $configKey;
+
     private $options = [
         'typeMap' => [
             'root' => 'array',
@@ -21,9 +26,14 @@ class CollectionFactory implements FactoryInterface
         ]
     ];
 
-    public function __construct($collectionName)
+    /**
+     * @param $collectionName
+     * @param string $configKey
+     */
+    public function __construct($collectionName, $configKey = 'default')
     {
         $this->collectionName = $collectionName;
+        $this->configKey = $configKey;
     }
 
     /**
@@ -35,7 +45,7 @@ class CollectionFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         /** @var Database $database */
-        $database = $container->get(DatabaseFactory::class);
+        $database = $container->get(DatabaseFactory::class . '-' . $this->configKey);
 
         return $database->selectCollection($this->collectionName, $this->options);
     }

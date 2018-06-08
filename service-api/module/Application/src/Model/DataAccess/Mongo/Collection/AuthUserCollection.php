@@ -1,15 +1,14 @@
 <?php
 
-namespace Auth\Model\DataAccess\Mongo;
+namespace Application\Model\DataAccess\Mongo\Collection;
 
-use Auth\Model\DataAccess\UserDataSourceInterface;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use MongoDB\Collection as MongoCollection;
-use MongoDB\Driver\ReadPreference;
 use MongoDB\Driver\Exception\Exception as MongoException;
+use MongoDB\Driver\ReadPreference;
 use DateTime;
 
-class UserCollection implements UserDataSourceInterface
+class AuthUserCollection
 {
 
     protected $collection;
@@ -369,8 +368,9 @@ class UserCollection implements UserDataSourceInterface
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Auth\Model\DataAccess\UserDataSourceInterface::updatePasswordUsingToken()
+     * @param $token
+     * @param $passwordHash
+     * @return bool|string
      */
     public function updatePasswordUsingToken($token, $passwordHash)
     {
@@ -429,8 +429,8 @@ class UserCollection implements UserDataSourceInterface
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Auth\Model\DataAccess\UserDataSourceInterface::updateEmailUsingToken()
+     * @param $token
+     * @return User|bool|string
      */
     public function updateEmailUsingToken($token)
     {

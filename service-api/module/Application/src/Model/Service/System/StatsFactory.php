@@ -27,11 +27,11 @@ class StatsFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         /** @var Collection $lpaCollection */
-        $lpaCollection = $container->get(CollectionFactory::class . '-lpa');
+        $lpaCollection = $container->get(CollectionFactory::class . '-api-lpa');
         /** @var Collection $statsLpaCollection */
-        $statsLpaCollection = $container->get(CollectionFactory::class . '-stats-lpas');
+        $statsLpaCollection = $container->get(CollectionFactory::class . '-api-stats-lpas');
         /** @var Collection $statsWhoCollection */
-        $statsWhoCollection = $container->get(CollectionFactory::class . '-stats-who');
+        $statsWhoCollection = $container->get(CollectionFactory::class . '-api-stats-who');
 
         return new Stats($lpaCollection, $statsLpaCollection, $statsWhoCollection);
     }

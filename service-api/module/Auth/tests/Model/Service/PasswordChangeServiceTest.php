@@ -3,8 +3,7 @@
 namespace AuthTest\Model\Service;
 
 use Auth\Model\Service\AuthenticationService;
-use Auth\Model\DataAccess\Mongo\User;
-use Auth\Model\DataAccess\UserInterface;
+use Application\Model\DataAccess\Mongo\Collection\User;
 use Auth\Model\Service\PasswordChangeService;
 use Mockery;
 use Mockery\MockInterface;
@@ -22,7 +21,7 @@ class PasswordChangeServiceTest extends ServiceTestCase
     private $authenticationService;
 
     /**
-     * @var UserInterface
+     * @var User
      */
     private $user;
 
@@ -34,11 +33,9 @@ class PasswordChangeServiceTest extends ServiceTestCase
 
         $this->user = new User([]);
 
-        $this->service = new PasswordChangeService(
-            $this->userDataSource,
-            $this->logDataSource,
-            $this->authenticationService
-        );
+        $this->service = new PasswordChangeService($this->authUserCollection);
+
+        $this->service->setAuthenticationService($this->authenticationService);
     }
 
     public function testChangePasswordNullUser()
@@ -80,7 +77,7 @@ class PasswordChangeServiceTest extends ServiceTestCase
 
         $this->setUserDataSourceGetByIdExpectation(1, $this->user);
 
-        $this->userDataSource->shouldReceive('setNewPassword')
+        $this->authUserCollection->shouldReceive('setNewPassword')
             ->withArgs(function ($userId, $passwordHash) {
                 return $userId === 1 && password_verify('Password123', $passwordHash);
             })->once();

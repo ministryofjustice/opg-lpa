@@ -140,7 +140,7 @@ class AccountCleanupService extends AbstractService
         //---
 
         // Pull back a list of accounts...
-        $iterator = $this->getUserDataSource()->getAccountsInactiveSince($lastLoginBefore, $type);
+        $iterator = $this->getAuthUserCollection()->getAccountsInactiveSince($lastLoginBefore, $type);
 
         //---
 
@@ -165,7 +165,7 @@ class AccountCleanupService extends AbstractService
                 ]);
 
                 // Flag the account as 'notification sent'...
-                $this->getUserDataSource()->setInactivityFlag($user->id(), $type);
+                $this->getAuthUserCollection()->setInactivityFlag($user->id(), $type);
 
                 $counter++;
             } catch (GuzzleClientException $e) {
@@ -205,7 +205,7 @@ class AccountCleanupService extends AbstractService
         echo "Deleting accounts inactive since " . $lastLoginBefore->format('r') . "\n";
 
         // Pull back a list of accounts...
-        $iterator = $this->getUserDataSource()->getAccountsInactiveSince($lastLoginBefore);
+        $iterator = $this->getAuthUserCollection()->getAccountsInactiveSince($lastLoginBefore);
 
         //---
 
@@ -253,7 +253,7 @@ class AccountCleanupService extends AbstractService
         echo "Deleting unactivated accounts created before " . $unactivatedSince->format('r') . "\n";
 
         // Pull back a list of accounts...
-        $iterator = $this->getUserDataSource()->getAccountsUnactivatedOlderThan($unactivatedSince);
+        $iterator = $this->getAuthUserCollection()->getAccountsUnactivatedOlderThan($unactivatedSince);
 
         //---
 

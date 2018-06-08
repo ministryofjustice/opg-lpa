@@ -2,7 +2,8 @@
 
 namespace Auth\Model\Service;
 
-use Auth\Model\DataAccess;
+use Application\Model\DataAccess\Mongo\Collection\Token;
+use Application\Model\DataAccess\Mongo\Collection\User;
 use Zend\Math\BigInteger\BigInteger;
 use DateTime;
 use RuntimeException;
@@ -30,9 +31,9 @@ class AuthenticationService extends AbstractService
             return 'missing-credentials';
         }
 
-        $user = $this->getUserDataSource()->getByUsername($username);
+        $user = $this->getAuthUserCollection()->getByUsername($username);
 
-        if (!($user instanceof DataAccess\UserInterface)) {
+        if (!$user instanceof User) {
             return 'user-not-found';
         }
 
@@ -48,14 +49,14 @@ class AuthenticationService extends AbstractService
                 return 'account-locked/max-login-attempts';
             } else {
                 // Reset field failed login counter
-                $this->getUserDataSource()->resetFailedLoginCounter($user->id());
+                $this->getAuthUserCollection()->resetFailedLoginCounter($user->id());
                 $user->resetFailedLoginAttempts();
             }
         }
 
         // Check password
         if (!password_verify($password, $user->password())) {
-            $this->getUserDataSource()->incrementFailedLoginCounter($user->id());
+            $this->getAuthUserCollection()->incrementFailedLoginCounter($user->id());
 
             if (($user->failedLoginAttempts() + 1) >= self::MAX_ALLOWED_LOGIN_ATTEMPTS) {
                 return 'invalid-user-credentials/account-locked';
@@ -71,11 +72,11 @@ class AuthenticationService extends AbstractService
         $inactivityFlagsCleared = !is_null($user->inactivityFlags());
 
         // Update the last logged-in time to now.
-        $this->getUserDataSource()->updateLastLoginTime($user->id());
+        $this->getAuthUserCollection()->updateLastLoginTime($user->id());
 
         // Ensure 'failed_login_attempts' is reset if needed
         if ($user->failedLoginAttempts() > 0) {
-            $this->getUserDataSource()->resetFailedLoginCounter($user->id());
+            $this->getAuthUserCollection()->resetFailedLoginCounter($user->id());
         }
 
         $tokenDetails = array();
@@ -95,7 +96,7 @@ class AuthenticationService extends AbstractService
                     // @codeCoverageIgnoreEnd
                 }
 
-                $created = (bool)$this->getUserDataSource()->setAuthToken(
+                $created = (bool)$this->getAuthUserCollection()->setAuthToken(
                     $user->id(),
                     $expires,
                     $authToken
@@ -119,15 +120,15 @@ class AuthenticationService extends AbstractService
 
     public function withToken($token, $extendToken)
     {
-        $user = $this->getUserDataSource()->getByAuthToken($token);
+        $user = $this->getAuthUserCollection()->getByAuthToken($token);
 
-        if (!($user instanceof DataAccess\UserInterface)) {
+        if (!$user instanceof User) {
             return 'invalid-token';
         }
 
         $token = $user->authToken();
 
-        if (!($token instanceof DataAccess\TokenInterface)) {
+        if (!($token instanceof Token)) {
             return 'invalid-token';
         }
 
@@ -144,7 +145,7 @@ class AuthenticationService extends AbstractService
         if ($extendToken && $secondsSinceLastUpdate > 5) {
             $expires = new DateTime("+" . self::TOKEN_TTL . " seconds");
 
-            $this->getUserDataSource()->extendAuthToken($user->id(), $expires);
+            $this->getAuthUserCollection()->extendAuthToken($user->id(), $expires);
 
             $expiresAt = [
                 'expiresIn' => self::TOKEN_TTL,
@@ -168,6 +169,6 @@ class AuthenticationService extends AbstractService
 
     public function deleteToken($token)
     {
-        $this->getUserDataSource()->removeAuthToken($token);
+        $this->getAuthUserCollection()->removeAuthToken($token);
     }
 }

@@ -1,18 +1,15 @@
 <?php
 
-namespace AuthTest\Model\DataAccess\Mongo\Factory;
+namespace ApplicationTest\Model\DataAccess\Mongo;
 
-use Auth\Model\DataAccess\Mongo\Factory\DatabaseFactory;
-use Auth\Model\DataAccess\Mongo\Factory\ManagerFactory;
+use Application\Model\DataAccess\Mongo\ManagerFactory;
 use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use MongoDB\Database;
 use MongoDB\Driver\Manager;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
-class DatabaseFactoryTest extends MockeryTestCase
+class ManagerFactoryTest extends MockeryTestCase
 {
     /**
      * @var MockInterface|ContainerInterface
@@ -26,13 +23,7 @@ class DatabaseFactoryTest extends MockeryTestCase
 
     public function testCreateService()
     {
-        $factory = new DatabaseFactory();
-
-        $manager = new Manager('mongodb://unittest');
-
-        $this->container->shouldReceive('get')
-            ->withArgs([ManagerFactory::class])->once()
-            ->andReturn($manager);
+        $factory = new ManagerFactory();
 
         $this->container->shouldReceive('get')
             ->withArgs(['config'])->once()
@@ -40,16 +31,18 @@ class DatabaseFactoryTest extends MockeryTestCase
                 'db' => [
                     'mongo' => [
                         'auth' => [
+                            'hosts' => [ 'unittest' ],
                             'options' => [
                                 'db' => 'unit-test'
-                            ]
+                            ],
+                            'driverOptions' => []
                         ],
                     ],
                 ]
             ]);
 
-        $result = $factory->__invoke($this->container, '');
+        $result = $factory->__invoke($this->container, ManagerFactory::class . '-auth');
 
-        $this->assertInstanceOf(Database::class, $result);
+        $this->assertInstanceOf(Manager::class, $result);
     }
 }

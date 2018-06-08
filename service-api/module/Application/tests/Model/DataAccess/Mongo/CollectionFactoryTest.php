@@ -1,9 +1,9 @@
 <?php
 
-namespace AuthTest\Model\DataAccess\Mongo\Factory;
+namespace ApplicationTest\Model\DataAccess\Mongo;
 
-use Auth\Model\DataAccess\Mongo\Factory\CollectionFactory;
-use Auth\Model\DataAccess\Mongo\Factory\DatabaseFactory;
+use Application\Model\DataAccess\Mongo\CollectionFactory;
+use Application\Model\DataAccess\Mongo\DatabaseFactory;
 use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -30,7 +30,7 @@ class CollectionFactoryTest extends MockeryTestCase
         $database = Mockery::mock(Database::class);
 
         $this->container->shouldReceive('get')
-            ->withArgs([DatabaseFactory::class])->once()
+            ->withArgs([DatabaseFactory::class . '-default'])->once()
             ->andReturn($database);
 
         $collection = Mockery::mock(Collection::class);

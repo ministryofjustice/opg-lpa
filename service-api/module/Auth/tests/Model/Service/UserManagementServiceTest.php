@@ -2,10 +2,13 @@
 
 namespace AuthTest\Model\Service;
 
-use Auth\Model\DataAccess\Mongo\User;
+use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
+use Application\Model\DataAccess\Mongo\Collection\User;
 use Auth\Model\Service\UserManagementService;
 use DateTime;
 use MongoDB\BSON\UTCDateTime;
+use Mockery;
+use Mockery\MockInterface;
 
 class UserManagementServiceTest extends ServiceTestCase
 {
@@ -14,11 +17,20 @@ class UserManagementServiceTest extends ServiceTestCase
      */
     private $service;
 
+    /**
+     * @var MockInterface|AuthLogCollection
+     */
+    private $authLogCollection;
+
     protected function setUp()
     {
         parent::setUp();
 
-        $this->service = new UserManagementService($this->userDataSource, $this->logDataSource);
+        $this->service = new UserManagementService($this->authUserCollection);
+
+        $this->authLogCollection = Mockery::mock(AuthLogCollection::class);
+
+        $this->service->setAuthLogCollection($this->authLogCollection);
     }
 
     public function testGetUserNotFound()
@@ -115,7 +127,7 @@ class UserManagementServiceTest extends ServiceTestCase
     {
         $this->setUserDataSourceGetByIdExpectation(1, new User([]));
 
-        $this->userDataSource->shouldReceive('delete')
+        $this->authUserCollection->shouldReceive('delete')
             ->withArgs([1])->once()
             ->andReturn(false);
 
@@ -128,11 +140,11 @@ class UserManagementServiceTest extends ServiceTestCase
     {
         $this->setUserDataSourceGetByIdExpectation(1, new User(['identity' => 'unit@test.com']));
 
-        $this->userDataSource->shouldReceive('delete')
+        $this->authUserCollection->shouldReceive('delete')
             ->withArgs([1])->once()
             ->andReturn(true);
 
-        $this->logDataSource->shouldReceive('addLog')
+        $this->authLogCollection->shouldReceive('addLog')
             ->withArgs(function ($details) {
                 return $details['identity_hash'] === hash('sha512', strtolower(trim('unit@test.com')))
                     && $details['type'] === 'account-deleted'
@@ -143,5 +155,18 @@ class UserManagementServiceTest extends ServiceTestCase
         $result = $this->service->delete(1, 'expired');
 
         $this->assertEquals(true, $result);
+    }
+
+    /**
+     * @param string $username
+     * @param array $log
+     */
+    protected function setLogDataSourceGetLogByIdentityHashExpectation(string $username, $log)
+    {
+        $hash = hash('sha512', strtolower(trim($username)));
+
+        $this->authLogCollection->shouldReceive('getLogByIdentityHash')
+            ->withArgs([$hash])->once()
+            ->andReturn($log);
     }
 }

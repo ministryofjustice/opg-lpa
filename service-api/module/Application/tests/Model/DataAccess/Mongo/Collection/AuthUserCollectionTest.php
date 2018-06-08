@@ -1,9 +1,9 @@
 <?php
 
-namespace AuthTest\Model\DataAccess\Mongo;
+namespace ApplicationTest\Model\DataAccess\Mongo\Collection;
 
-use Auth\Model\DataAccess\Mongo\User;
-use Auth\Model\DataAccess\Mongo\UserCollection;
+use Application\Model\DataAccess\Mongo\Collection\User;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use DateTime;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -15,12 +15,12 @@ use MongoDB\Driver\ReadPreference;
 use MongoDB\InsertOneResult;
 use MongoDB\UpdateResult;
 
-class UserCollectionTest extends MockeryTestCase
+class AuthUserCollectionTest extends MockeryTestCase
 {
     /**
-     * @var UserCollection
+     * @var AuthUserCollection
      */
-    private $userCollection;
+    private $authUserCollection;
 
     /**
      * @var MockInterface|Collection
@@ -31,7 +31,7 @@ class UserCollectionTest extends MockeryTestCase
     {
         $this->mongoCollection = Mockery::mock(Collection::class);
 
-        $this->userCollection = new UserCollection($this->mongoCollection);
+        $this->authUserCollection = new AuthUserCollection($this->mongoCollection);
     }
 
     public function testGetByUsernameNotFound()
@@ -39,7 +39,7 @@ class UserCollectionTest extends MockeryTestCase
         $this->mongoCollection->shouldReceive('findOne')->withArgs([['identity' => 'unit@test.com']])
             ->once()->andReturn(null);
 
-        $result = $this->userCollection->getByUsername('unit@test.com');
+        $result = $this->authUserCollection->getByUsername('unit@test.com');
 
         $this->assertEquals(null, $result);
     }
@@ -50,7 +50,7 @@ class UserCollectionTest extends MockeryTestCase
             ->once()->andReturn(['_id' => 1]);
 
         /** @var User $result */
-        $result = $this->userCollection->getByUsername('unit@test.com');
+        $result = $this->authUserCollection->getByUsername('unit@test.com');
 
         $this->assertEquals(1, $result->id());
     }
@@ -60,7 +60,7 @@ class UserCollectionTest extends MockeryTestCase
         $this->mongoCollection->shouldReceive('findOne')->withArgs([['_id' => 1]])
             ->once()->andReturn(null);
 
-        $result = $this->userCollection->getById(1);
+        $result = $this->authUserCollection->getById(1);
 
         $this->assertEquals(null, $result);
     }
@@ -71,7 +71,7 @@ class UserCollectionTest extends MockeryTestCase
             ->once()->andReturn(['_id' => 1]);
 
         /** @var User $result */
-        $result = $this->userCollection->getById(1);
+        $result = $this->authUserCollection->getById(1);
 
         $this->assertEquals(1, $result->id());
     }
@@ -81,7 +81,7 @@ class UserCollectionTest extends MockeryTestCase
         $this->mongoCollection->shouldReceive('findOne')->withArgs([['auth_token.token' => 'unit-test']])
             ->once()->andReturn(null);
 
-        $result = $this->userCollection->getByAuthToken('unit-test');
+        $result = $this->authUserCollection->getByAuthToken('unit-test');
 
         $this->assertEquals(null, $result);
     }
@@ -92,7 +92,7 @@ class UserCollectionTest extends MockeryTestCase
             ->once()->andReturn(['_id' => 1]);
 
         /** @var User $result */
-        $result = $this->userCollection->getByAuthToken('unit-test');
+        $result = $this->authUserCollection->getByAuthToken('unit-test');
 
         $this->assertEquals(1, $result->id());
     }
@@ -105,7 +105,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $date->toDateTime() > new DateTime('-1 second');
         })->once()->andReturn(null);
 
-        $result = $this->userCollection->getByResetToken('unit-test');
+        $result = $this->authUserCollection->getByResetToken('unit-test');
 
         $this->assertEquals(null, $result);
     }
@@ -119,7 +119,7 @@ class UserCollectionTest extends MockeryTestCase
         })->once()->andReturn(['_id' => 1]);
 
         /** @var User $result */
-        $result = $this->userCollection->getByResetToken('unit-test');
+        $result = $this->authUserCollection->getByResetToken('unit-test');
 
         $this->assertEquals(1, $result->id());
     }
@@ -136,7 +136,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->updateLastLoginTime(1);
+        $result = $this->authUserCollection->updateLastLoginTime(1);
 
         $this->assertEquals($dbResult, $result);
     }
@@ -151,7 +151,7 @@ class UserCollectionTest extends MockeryTestCase
             ['upsert' => false, 'multiple' => false]
         ])->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->resetFailedLoginCounter(1);
+        $result = $this->authUserCollection->resetFailedLoginCounter(1);
 
         $this->assertEquals($dbResult, $result);
     }
@@ -168,7 +168,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->incrementFailedLoginCounter(1);
+        $result = $this->authUserCollection->incrementFailedLoginCounter(1);
 
         $this->assertEquals($dbResult, $result);
     }
@@ -178,7 +178,7 @@ class UserCollectionTest extends MockeryTestCase
         $this->mongoCollection->shouldReceive('insertOne')->withArgs([['_id' => 1]])
             ->once()->andThrow(new MongoException());
 
-        $result = $this->userCollection->create(1, []);
+        $result = $this->authUserCollection->create(1, []);
 
         $this->assertEquals(false, $result);
     }
@@ -194,7 +194,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $date->toDateTime() >= new DateTime('-1 second');
         })->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->create(1, ['created' => new DateTime()]);
+        $result = $this->authUserCollection->create(1, ['created' => new DateTime()]);
 
         $this->assertEquals(true, $result);
     }
@@ -204,7 +204,7 @@ class UserCollectionTest extends MockeryTestCase
         $this->mongoCollection->shouldReceive('findOne')->withArgs([['_id' => 1]])
             ->once()->andReturn(null);
 
-        $result = $this->userCollection->delete(1);
+        $result = $this->authUserCollection->delete(1);
 
         $this->assertEquals(null, $result);
     }
@@ -220,7 +220,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $date->toDateTime() >= new DateTime('-1 second');
         })->once();
 
-        $result = $this->userCollection->delete(1);
+        $result = $this->authUserCollection->delete(1);
 
         $this->assertEquals(true, $result);
     }
@@ -230,7 +230,7 @@ class UserCollectionTest extends MockeryTestCase
         $this->mongoCollection->shouldReceive('findOne')->withArgs([['activation_token' => 'unit-test']])
             ->once()->andReturn(null);
 
-        $result = $this->userCollection->activate('unit-test');
+        $result = $this->authUserCollection->activate('unit-test');
 
         $this->assertEquals(null, $result);
     }
@@ -254,7 +254,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->activate('unit-test');
+        $result = $this->authUserCollection->activate('unit-test');
 
         $this->assertEquals(true, $result);
     }
@@ -273,7 +273,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->setNewPassword(1, 'Password123');
+        $result = $this->authUserCollection->setNewPassword(1, 'Password123');
 
         $this->assertEquals(true, $result);
     }
@@ -289,7 +289,7 @@ class UserCollectionTest extends MockeryTestCase
             ['upsert' => false, 'multiple' => false]
         ])->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->removeAuthToken('unit-test');
+        $result = $this->authUserCollection->removeAuthToken('unit-test');
 
         $this->assertEquals(true, $result);
     }
@@ -306,7 +306,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andThrow(new MongoException());
 
-        $result = $this->userCollection->extendAuthToken(1, new DateTime('+1 minute'));
+        $result = $this->authUserCollection->extendAuthToken(1, new DateTime('+1 minute'));
 
         $this->assertEquals(false, $result);
     }
@@ -326,7 +326,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->extendAuthToken(1, new DateTime('+1 minute'));
+        $result = $this->authUserCollection->extendAuthToken(1, new DateTime('+1 minute'));
 
         $this->assertEquals(true, $result);
     }
@@ -349,7 +349,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->setAuthToken(1, new DateTime('+1 minute'), 'unit-test');
+        $result = $this->authUserCollection->setAuthToken(1, new DateTime('+1 minute'), 'unit-test');
 
         $this->assertEquals(true, $result);
     }
@@ -366,7 +366,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->addPasswordResetToken(1, [
+        $result = $this->authUserCollection->addPasswordResetToken(1, [
             'token' => 'unit-test',
             'createdAt' => new DateTime()
         ]);
@@ -378,7 +378,7 @@ class UserCollectionTest extends MockeryTestCase
     {
         $this->mongoCollection->shouldReceive('findOne')->once()->andReturn(null);
 
-        $result = $this->userCollection->updatePasswordUsingToken('unit-test', 'Password123');
+        $result = $this->authUserCollection->updatePasswordUsingToken('unit-test', 'Password123');
 
         $this->assertEquals('invalid-token', $result);
     }
@@ -399,7 +399,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->updatePasswordUsingToken('unit-test', 'Password123');
+        $result = $this->authUserCollection->updatePasswordUsingToken('unit-test', 'Password123');
 
         $this->assertEquals(true, $result);
     }
@@ -416,7 +416,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->addEmailUpdateTokenAndNewEmail(1, [
+        $result = $this->authUserCollection->addEmailUpdateTokenAndNewEmail(1, [
             'token' => 'unit-test',
             'createdAt' => new DateTime()
         ], 'unit@test.com');
@@ -432,7 +432,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $date->toDateTime() > new DateTime('-1 second');
         })->once()->andReturn(null);
 
-        $result = $this->userCollection->updateEmailUsingToken('unit-test');
+        $result = $this->authUserCollection->updateEmailUsingToken('unit-test');
 
         $this->assertEquals('invalid-token', $result);
     }
@@ -449,7 +449,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $date->toDateTime() > new DateTime('-1 second');
         })->once()->andReturn(['_id' => 1, 'email_update_request' => ['email' => 'unit@test.com']]);
 
-        $result = $this->userCollection->updateEmailUsingToken('unit-test');
+        $result = $this->authUserCollection->updateEmailUsingToken('unit-test');
 
         $this->assertEquals('username-already-exists', $result);
     }
@@ -476,7 +476,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->updateEmailUsingToken('unit-test');
+        $result = $this->authUserCollection->updateEmailUsingToken('unit-test');
 
         $this->assertEquals(false, $result);
     }
@@ -503,7 +503,7 @@ class UserCollectionTest extends MockeryTestCase
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->updateEmailUsingToken('unit-test');
+        $result = $this->authUserCollection->updateEmailUsingToken('unit-test');
 
         $this->assertEquals(new User(['_id' => 1, 'email_update_request' => ['email' => 'unit@test.com']]), $result);
     }
@@ -519,7 +519,7 @@ class UserCollectionTest extends MockeryTestCase
             ],
         ]])->once()->andReturn([['_id' => 1]]);
 
-        $result = $this->userCollection->getAccountsInactiveSince($date);
+        $result = $this->authUserCollection->getAccountsInactiveSince($date);
 
         $this->assertEquals([new User(['_id' => 1])], iterator_to_array($result));
     }
@@ -536,7 +536,7 @@ class UserCollectionTest extends MockeryTestCase
             'inactivity_flags' => ['$nin' => ['unit-test']]
         ]])->once()->andReturn([['_id' => 1]]);
 
-        $result = $this->userCollection->getAccountsInactiveSince($date, 'unit-test');
+        $result = $this->authUserCollection->getAccountsInactiveSince($date, 'unit-test');
 
         $this->assertEquals([new User(['_id' => 1])], iterator_to_array($result));
     }
@@ -552,7 +552,7 @@ class UserCollectionTest extends MockeryTestCase
             ['upsert' => false, 'multiple' => false]
         ])->once()->andReturn($dbResult);
 
-        $result = $this->userCollection->setInactivityFlag(1, 'unit-test');
+        $result = $this->authUserCollection->setInactivityFlag(1, 'unit-test');
 
         $this->assertEquals(true, $result);
     }
@@ -566,7 +566,7 @@ class UserCollectionTest extends MockeryTestCase
             'created' => ['$lt' => new UTCDateTime($date)]
         ]])->once()->andReturn([['_id' => 1]]);
 
-        $result = $this->userCollection->getAccountsUnactivatedOlderThan($date);
+        $result = $this->authUserCollection->getAccountsUnactivatedOlderThan($date);
 
         $this->assertEquals([new User(['_id' => 1])], iterator_to_array($result));
     }
@@ -578,7 +578,7 @@ class UserCollectionTest extends MockeryTestCase
             ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)]
         ])->once()->andReturn(1);
 
-        $result = $this->userCollection->countAccounts();
+        $result = $this->authUserCollection->countAccounts();
 
         $this->assertEquals(1, $result);
     }
@@ -596,7 +596,7 @@ class UserCollectionTest extends MockeryTestCase
             ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)]
         ])->once()->andReturn(1);
 
-        $result = $this->userCollection->countActivatedAccounts();
+        $result = $this->authUserCollection->countActivatedAccounts();
 
         $this->assertEquals(1, $result);
     }
@@ -617,7 +617,7 @@ class UserCollectionTest extends MockeryTestCase
             ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)]
         ])->once()->andReturn(1);
 
-        $result = $this->userCollection->countActivatedAccounts($date);
+        $result = $this->authUserCollection->countActivatedAccounts($date);
 
         $this->assertEquals(1, $result);
     }
@@ -629,7 +629,7 @@ class UserCollectionTest extends MockeryTestCase
             ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)]
         ])->once()->andReturn(1);
 
-        $result = $this->userCollection->countDeletedAccounts();
+        $result = $this->authUserCollection->countDeletedAccounts();
 
         $this->assertEquals(1, $result);
     }

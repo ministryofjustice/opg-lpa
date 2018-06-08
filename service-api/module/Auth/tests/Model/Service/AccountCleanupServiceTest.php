@@ -3,7 +3,7 @@
 namespace AuthTest\Model\Service;
 
 use Auth\Model\Service\AccountCleanupService;
-use Auth\Model\DataAccess\Mongo\User;
+use Application\Model\DataAccess\Mongo\Collection\User;
 use Auth\Model\Service\UserManagementService;
 use Aws\Sns\SnsClient;
 use DateInterval;
@@ -13,6 +13,7 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
 use Mockery;
 use Mockery\MockInterface;
+use MongoDB\Collection;
 use Opg\Lpa\Logger\Logger;
 use Psr\Http\Message\RequestInterface;
 
@@ -42,6 +43,16 @@ class AccountCleanupServiceTest extends ServiceTestCase
      * @var MockInterface|GuzzleClient
      */
     private $guzzleClient;
+
+    /**
+     * @var MockInterface|Collection
+     */
+    private $apiLpaCollection;
+
+    /**
+     * @var MockInterface|Collection
+     */
+    private $apiUserCollection;
 
     /**
      * @var MockInterface|RequestInterface
@@ -80,18 +91,22 @@ class AccountCleanupServiceTest extends ServiceTestCase
 
         $this->guzzleClient = Mockery::mock(GuzzleClient::class);
 
-        $this->request = Mockery::mock(RequestInterface::class);
+        $this->apiLpaCollection = Mockery::mock(Collection::class);
 
-        $this->service = new AccountCleanupService(
-            $this->userDataSource,
-            $this->logDataSource,
-            $this->userManagementService,
-            $this->snsClient,
-            $this->guzzleClient,
-            $this->config
-        );
+        $this->apiUserCollection = Mockery::mock(Collection::class);
+
+        $this->service = new AccountCleanupService($this->authUserCollection);
+
+        $this->service->setUserManagementService($this->userManagementService);
+        $this->service->setSnsClient($this->snsClient);
+        $this->service->setGuzzleClient($this->guzzleClient);
+        $this->service->setConfig($this->config);
+        $this->service->setApiLpaCollection($this->apiLpaCollection);
+        $this->service->setApiUserCollection($this->apiUserCollection);
 
         $this->service->setLogger($this->logger);
+
+        $this->request = Mockery::mock(RequestInterface::class);
     }
 
     public function testCleanupNone()
@@ -136,14 +151,11 @@ class AccountCleanupServiceTest extends ServiceTestCase
         //  Create the expected unit test delete target including the user ID
         $apiDeleteTarget = 'http://unit_test_delete_target/' . 1;
 
-        $this->guzzleClient->shouldReceive('delete')
-            ->withArgs([$apiDeleteTarget, [
-                'headers' => [
-                    'AuthCleanUpToken' => 'unit_test',
-                ],
-            ]])->once();
-
         $this->userManagementService->shouldReceive('delete')->withArgs([1, 'expired']);
+
+        $this->apiLpaCollection->shouldReceive('find')->withArgs([['user' => 1]])->andReturn([]);
+
+        $this->apiUserCollection->shouldReceive('deleteOne')->withArgs([['_id' => 1]])->andReturnNull();
 
         $result = $this->service->cleanup('');
 
@@ -157,15 +169,11 @@ class AccountCleanupServiceTest extends ServiceTestCase
 
         $this->snsClient->shouldReceive('publish')->once();
 
-        $this->guzzleClient->shouldReceive('delete')->once()
-            ->andThrow(new GuzzleClientException('Unit test exception', $this->request));
-
         $this->userManagementService->shouldReceive('delete')->withArgs([1, 'expired']);
 
-        $this->logger->shouldReceive('alert')->withArgs(function ($message, $extra) {
-            return $message === 'Unable to clean up expired account on the API service'
-                && $extra['exception'] === 'Unit test exception';
-        })->once();
+        $this->apiLpaCollection->shouldReceive('find')->withArgs([['user' => 1]])->andReturn([]);
+
+        $this->apiUserCollection->shouldReceive('deleteOne')->withArgs([['_id' => 1]])->andReturnNull();
 
         $result = $this->service->cleanup('');
 
@@ -198,7 +206,7 @@ class AccountCleanupServiceTest extends ServiceTestCase
                 ];
             })->once();
 
-        $this->userDataSource->shouldReceive('setInactivityFlag')->withArgs([1, '1-week-notice'])->once();
+        $this->authUserCollection->shouldReceive('setInactivityFlag')->withArgs([1, '1-week-notice'])->once();
 
         $result = $this->service->cleanup('http://callback');
 
@@ -279,7 +287,7 @@ class AccountCleanupServiceTest extends ServiceTestCase
                     ];
             })->once();
 
-        $this->userDataSource->shouldReceive('setInactivityFlag')->withArgs([1, '1-month-notice'])->once();
+        $this->authUserCollection->shouldReceive('setInactivityFlag')->withArgs([1, '1-month-notice'])->once();
 
         $result = $this->service->cleanup('http://callback');
 
@@ -307,14 +315,14 @@ class AccountCleanupServiceTest extends ServiceTestCase
         array $oneMonthWarningAccounts = [],
         array $unactivatedAccounts = []
     ) {
-        $this->userDataSource->shouldReceive('getAccountsInactiveSince')
+        $this->authUserCollection->shouldReceive('getAccountsInactiveSince')
             ->withArgs(function ($lastLoginBefore) {
                 return $lastLoginBefore < new DateTime('-9 months +1 week')
                     && $lastLoginBefore >= new DateTime('-9 months -1 second');
             })->once()
             ->andReturn($expiredAccounts);
 
-        $this->userDataSource->shouldReceive('getAccountsInactiveSince')
+        $this->authUserCollection->shouldReceive('getAccountsInactiveSince')
             ->withArgs(function ($lastLoginBefore, $excludeFlag = null) {
                 return $lastLoginBefore < new DateTime('-8 months')
                     && $lastLoginBefore >= new DateTime('-9 months +1 week -1 second')
@@ -322,14 +330,14 @@ class AccountCleanupServiceTest extends ServiceTestCase
             })->once()
             ->andReturn($oneWeekWarningAccounts);
 
-        $this->userDataSource->shouldReceive('getAccountsInactiveSince')
+        $this->authUserCollection->shouldReceive('getAccountsInactiveSince')
             ->withArgs(function ($lastLoginBefore, $excludeFlag = null) {
                 return $lastLoginBefore >= new DateTime('-8 months -1 second')
                     && $excludeFlag === '1-month-notice';
             })->once()
             ->andReturn($oneMonthWarningAccounts);
 
-        $this->userDataSource->shouldReceive('getAccountsUnactivatedOlderThan')
+        $this->authUserCollection->shouldReceive('getAccountsUnactivatedOlderThan')
             ->withArgs(function ($olderThan) {
                 return $olderThan >= new DateTime('-24 hours -1 second');
             })->once()

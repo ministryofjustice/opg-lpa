@@ -2,7 +2,7 @@
 
 namespace Auth\Model\Service;
 
-use Auth\Model\DataAccess;
+use Application\Model\DataAccess\Mongo\Collection\User;
 use Zend\Math\BigInteger\BigInteger;
 use DateTime;
 use RuntimeException;
@@ -15,11 +15,11 @@ class PasswordResetService extends AbstractService
 
     public function generateToken($username)
     {
-        $dataSource = $this->getUserDataSource();
+        $dataSource = $this->getAuthUserCollection();
 
         $user = $dataSource->getByUsername($username);
 
-        if (!$user instanceof DataAccess\UserInterface) {
+        if (!$user instanceof User) {
             return 'user-not-found';
         }
 
@@ -62,19 +62,19 @@ class PasswordResetService extends AbstractService
         }
 
         //  Before attempting to update the password get the user record with the reset token
-        $user = $this->getUserDataSource()->getByResetToken($token);
+        $user = $this->getAuthUserCollection()->getByResetToken($token);
 
-        if (!$user instanceof DataAccess\UserInterface) {
+        if (!$user instanceof User) {
             return 'invalid-token';
         }
 
         $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
 
-        $result = $this->getUserDataSource()->updatePasswordUsingToken($token, $passwordHash);
+        $result = $this->getAuthUserCollection()->updatePasswordUsingToken($token, $passwordHash);
 
         //  If the password updated correctly then reset the failed login attempt count for the user too
         if ($result === true) {
-            $this->getUserDataSource()->resetFailedLoginCounter($user->id());
+            $this->getAuthUserCollection()->resetFailedLoginCounter($user->id());
             $user->resetFailedLoginAttempts();
         }
 

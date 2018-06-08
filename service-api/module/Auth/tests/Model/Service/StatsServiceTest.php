@@ -16,20 +16,20 @@ class StatsServiceTest extends ServiceTestCase
     {
         parent::setUp();
 
-        $this->service = new StatsService($this->userDataSource, $this->logDataSource);
+        $this->service = new StatsService($this->authUserCollection);
     }
 
     public function testGetStats()
     {
-        $this->userDataSource->shouldReceive('countAccounts')->once()->andReturn(4);
-        $this->userDataSource->shouldReceive('countActivatedAccounts')
+        $this->authUserCollection->shouldReceive('countAccounts')->once()->andReturn(4);
+        $this->authUserCollection->shouldReceive('countActivatedAccounts')
             ->withArgs([])->once()->andReturn(3);
-        $this->userDataSource->shouldReceive('countActivatedAccounts')
+        $this->authUserCollection->shouldReceive('countActivatedAccounts')
             ->withArgs(function ($since) {
                 return $since == new DateTime('first day of this month 00:00:00');
             })
             ->once()->andReturn(2);
-        $this->userDataSource->shouldReceive('countDeletedAccounts')->once()->andReturn(1);
+        $this->authUserCollection->shouldReceive('countDeletedAccounts')->once()->andReturn(1);
 
         $result = $this->service->getStats();
 

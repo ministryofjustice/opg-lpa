@@ -3,7 +3,6 @@
 namespace Application\Model\Service\Users;
 
 use Application\Model\DataAccess\Mongo\DateCallback;
-use Application\Model\DataAccess\UserDal;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Authentication\Identity\User as UserIdentity;
 use Application\Library\DateTime;
@@ -16,11 +15,6 @@ use Opg\Lpa\DataModel\User\User;
 
 class Service extends AbstractService
 {
-    /**
-     * @var UserDal
-     */
-    private $userDal;
-
     /**
      * @var ApplicationService
      */
@@ -39,13 +33,28 @@ class Service extends AbstractService
     {
         $this->checkAccess($id);
 
-        //  Get user using the DAL
-        $user = $this->userDal->findById($id);
+        //  Try to get an existing user
+        $user = $this->collection->findOne([
+            '_id' => $id
+        ]);
 
         //  If there is no user create one now and ensure that the email address is correct
         if (is_null($user)) {
             $user = $this->save($id);
-            $this->userDal->injectEmailAddressFromIdentity($user);
+        } else {
+            //  Create the user object using the data
+            $user = new User([
+                'id' => $id
+            ] + $user);
+        }
+
+        //  Inject the email address from the identity to ensure it is correct
+        $identity = $this->getAuthorizationService()->getIdentity();
+
+        if ($identity instanceof UserIdentity) {
+            $user->email = [
+                'address' => $identity->email()
+            ];
         }
 
         return new DataModelEntity($user);
@@ -163,14 +172,6 @@ class Service extends AbstractService
         }
 
         return $user;
-    }
-
-    /**
-     * @param UserDal $userDal
-     */
-    public function setUserDal(UserDal $userDal)
-    {
-        $this->userDal = $userDal;
     }
 
     /**

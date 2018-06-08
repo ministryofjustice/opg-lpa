@@ -336,7 +336,6 @@ return [
         ],
         'factories' => [
             \Application\Model\Service\System\Stats::class => \Application\Model\Service\System\StatsFactory::class,
-            \Application\Model\DataAccess\UserDal::class => \Application\Model\DataAccess\UserDalFactory::class,
             Application\Model\Service\Stats\Service::class => Application\Model\Service\Stats\ServiceFactory::class,
         ],
         'abstract_factories' => [

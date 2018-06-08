@@ -1,8 +1,7 @@
 <?php
 
-namespace Auth\Model\DataAccess\Mongo;
+namespace Application\Model\DataAccess\Mongo\Collection;
 
-use Auth\Model\DataAccess\UserInterface;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use DateTime;
 
@@ -10,9 +9,9 @@ use DateTime;
  * Represents a single user.
  *
  * Class User
- * @package Auth\Model\DataAccess\Mongo
+ * @package Application\Model\DataAccess\Mongo
  */
-class User implements UserInterface
+class User
 {
     /**
      * The user's data.
@@ -30,7 +29,7 @@ class User implements UserInterface
      * Returns a DateTime for a given key from a range of time formats.
      *
      * @param $key
-     * @return DateTime
+     * @return DateTime|boolean
      */
     private function returnDateField($key)
     {
