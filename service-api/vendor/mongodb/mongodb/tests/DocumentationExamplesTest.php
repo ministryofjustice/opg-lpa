@@ -4,7 +4,6 @@ namespace MongoDB\Tests;
 
 use MongoDB\Database;
 use MongoDB\Driver\Cursor;
-use MongoDB\Driver\Server;
 use MongoDB\Operation\DropCollection;
 use MongoDB\Operation\DropDatabase;
 
@@ -713,6 +712,10 @@ class DocumentationExamplesTest extends FunctionalTestCase
 
     public function testExample_51_54()
     {
+        if (version_compare($this->getServerVersion(), '2.6.0', '<')) {
+            $this->markTestSkipped('$currentDate update operator is not supported');
+        }
+
         $db = new Database($this->manager, $this->getDatabaseName());
 
         // Start Example 51
@@ -851,6 +854,8 @@ class DocumentationExamplesTest extends FunctionalTestCase
         $this->assertCursorCount(1, $cursor);
     }
 
+
+
     public function testExample_55_58()
     {
         $db = new Database($this->manager, $this->getDatabaseName());
@@ -918,266 +923,6 @@ class DocumentationExamplesTest extends FunctionalTestCase
 
         $this->assertSame(2, $deleteResult->getDeletedCount());
         $this->assertInventoryCount(0);
-    }
-
-    public function testChangeStreamExample_1_4()
-    {
-        if ($this->getPrimaryServer()->getType() === Server::TYPE_STANDALONE) {
-            $this->markTestSkipped('$changeStream is not supported on standalone servers');
-        }
-
-        if (version_compare($this->getFeatureCompatibilityVersion(), '3.6', '<')) {
-            $this->markTestSkipped('$changeStream is only supported on FCV 3.6 or higher');
-        }
-
-        $db = new Database($this->manager, $this->getDatabaseName());
-        $db->dropCollection('inventory');
-
-        // Start Changestream Example 1
-        $changeStream = $db->inventory->watch();
-        $changeStream->rewind();
-
-        $firstChange = $changeStream->current();
-
-        $changeStream->next();
-
-        $secondChange = $changeStream->current();
-        // End Changestream Example 1
-
-        $this->assertNull($firstChange);
-        $this->assertNull($secondChange);
-
-        // Start Changestream Example 2
-        $changeStream = $db->inventory->watch([], ['fullDocument' => \MongoDB\Operation\Watch::FULL_DOCUMENT_UPDATE_LOOKUP]);
-        $changeStream->rewind();
-
-        $firstChange = $changeStream->current();
-
-        $changeStream->next();
-
-        $nextChange = $changeStream->current();
-        // End Changestream Example 2
-
-        $this->assertNull($firstChange);
-        $this->assertNull($nextChange);
-
-        $insertManyResult = $db->inventory->insertMany([
-            ['_id' => 1, 'x' => 'foo'],
-            ['_id' => 2, 'x' => 'bar'],
-        ]);
-        $this->assertEquals(2, $insertManyResult->getInsertedCount());
-
-        $changeStream->next();
-        $this->assertTrue($changeStream->valid());
-        $lastChange = $changeStream->current();
-
-        $expectedChange = [
-            '_id' => $lastChange->_id,
-            'operationType' => 'insert',
-            'fullDocument' => ['_id' => 1, 'x' => 'foo'],
-            'ns' => ['db' => $this->getDatabaseName(), 'coll' => 'inventory'],
-            'documentKey' => ['_id' => 1],
-        ];
-
-        $this->assertSameDocument($expectedChange, $lastChange);
-
-        // Start Changestream Example 3
-        $resumeToken = ($lastChange !== null) ? $lastChange->_id : null;
-
-        if ($resumeToken === null) {
-            throw new \Exception('resumeToken was not found');
-        }
-
-        $changeStream = $db->inventory->watch([], ['resumeAfter' => $resumeToken]);
-        $changeStream->rewind();
-
-        $nextChange = $changeStream->current();
-        // End Changestream Example 3
-
-        $expectedChange = [
-            '_id' => $nextChange->_id,
-            'operationType' => 'insert',
-            'fullDocument' => ['_id' => 2, 'x' => 'bar'],
-            'ns' => ['db' => $this->getDatabaseName(), 'coll' => 'inventory'],
-            'documentKey' => ['_id' => 2],
-        ];
-
-        $this->assertSameDocument($expectedChange, $nextChange);
-
-        // Start Changestream Example 4
-        $pipeline = [['$match' => ['$or' => [['fullDocument.username' => 'alice'], ['operationType' => 'delete']]]]];
-        $changeStream = $db->inventory->watch($pipeline);
-        $changeStream->rewind();
-
-        $firstChange = $changeStream->current();
-
-        $changeStream->next();
-
-        $nextChange = $changeStream->current();
-        // End Changestream Example 4
-
-        $this->assertNull($firstChange);
-        $this->assertNull($nextChange);
-    }
-
-    public function testAggregation_example_1()
-    {
-        $db = new Database($this->manager, $this->getDatabaseName());
-
-        // Start Aggregation Example 1
-        $cursor = $db->sales->aggregate([
-            ['$match' => ['items.fruit' => 'banana']],
-            ['$sort' => ['date' => 1]],
-        ]);
-        // End Aggregation Example 1
-
-        $this->assertInstanceOf('MongoDB\Driver\Cursor', $cursor);
-    }
-
-    public function testAggregation_example_2()
-    {
-        $db = new Database($this->manager, $this->getDatabaseName());
-
-        // Start Aggregation Example 2
-        $cursor = $db->sales->aggregate([
-            ['$unwind' => '$items'],
-            ['$match' => ['items.fruit' => 'banana']],
-            [
-                '$group' => ['_id' => ['day' => ['$dayOfWeek' => '$date']],
-                'count' => ['$sum' => '$items.quantity']],
-            ],
-            [
-                '$project' => [
-                    'dayOfWeek' => '$_id.day',
-                    'numberSold' => '$count',
-                    '_id' => 0,
-                ]
-            ],
-            ['$sort' => ['numberSold' => 1]],
-        ]);
-        // End Aggregation Example 2
-
-        $this->assertInstanceOf('MongoDB\Driver\Cursor', $cursor);
-    }
-
-    public function testAggregation_example_3()
-    {
-        $db = new Database($this->manager, $this->getDatabaseName());
-
-        // Start Aggregation Example 3
-        $cursor = $db->sales->aggregate([
-            ['$unwind' => '$items'],
-            ['$group' => [
-                '_id' => ['day' => ['$dayOfWeek' => '$date']],
-                'items_sold' => ['$sum' => '$items.quantity'],
-                'revenue' => [
-                    '$sum' => [
-                        '$multiply' => ['$items.quantity', '$items.price']
-                    ]
-                ],
-            ]],
-            ['$project' => [
-                'day' => '$_id.day',
-                'revenue' => 1,
-                'items_sold' => 1,
-                'discount' => [
-                    '$cond' => [
-                        'if' => ['$lte' => ['$revenue', 250]],
-                        'then' => 25,
-                        'else' => 0,
-                    ]
-                ],
-            ]],
-        ]);
-        // End Aggregation Example 3
-
-        $this->assertInstanceOf('MongoDB\Driver\Cursor', $cursor);
-    }
-
-    public function testAggregation_example_4()
-    {
-        if (version_compare($this->getServerVersion(), '3.6.0', '<')) {
-            $this->markTestSkipped('$lookup does not support "let" option');
-        }
-
-        $db = new Database($this->manager, $this->getDatabaseName());
-
-        // Start Aggregation Example 4
-        $cursor = $db->air_alliances->aggregate([
-            ['$lookup' => [
-                'from' => 'air_airlines',
-                'let' => ['constituents' => '$airlines'],
-                'pipeline' => [['$match' => [
-                        '$expr' => ['$in' => ['$name', '$constituents']]
-                ]]],
-                'as' => 'airlines',
-            ]],
-            ['$project' => [
-                '_id' => 0,
-                'name' => 1,
-                'airlines' => [
-                    '$filter' => [
-                        'input' => '$airlines',
-                        'as' => 'airline',
-                        'cond' => ['$eq' => ['$$airline.country', 'Canada']],
-                    ]
-                ],
-            ]],
-        ]);
-        // End Aggregation Example 4
-
-        $this->assertInstanceOf('MongoDB\Driver\Cursor', $cursor);
-    }
-
-    public function testRunCommand_example_1()
-    {
-        $db = new Database($this->manager, $this->getDatabaseName());
-
-        // Start runCommand Example 1
-        $cursor = $db->command(['buildInfo' => 1]);
-        $result = $cursor->toArray()[0];
-        // End runCommand Example 1
-
-        $this->assertInstanceOf('MongoDB\Driver\Cursor', $cursor);
-    }
-
-    public function testRunCommand_example_2()
-    {
-        $db = new Database($this->manager, $this->getDatabaseName());
-        $db->dropCollection('restaurants');
-        $db->createCollection('restaurants');
-
-        // Start runCommand Example 2
-        $cursor = $db->command(['collStats' => 'restaurants']);
-        $result = $cursor->toArray()[0];
-        // End runCommand Example 2
-
-        $this->assertInstanceOf('MongoDB\Driver\Cursor', $cursor);
-    }
-
-    public function testIndex_example_1()
-    {
-        $db = new Database($this->manager, $this->getDatabaseName());
-
-        // Start Index Example 1
-        $indexName = $db->records->createIndex(['score' => 1]);
-        // End Index Example 1
-
-        $this->assertEquals('score_1', $indexName);
-    }
-
-    public function testIndex_example_2()
-    {
-        $db = new Database($this->manager, $this->getDatabaseName());
-
-        // Start Index Example 2
-        $indexName = $db->restaurants->createIndex(
-            ['cuisine' => 1, 'name' => 1],
-            ['partialFilterExpression' => ['rating' => ['$gt' => 5]]]
-        );
-        // End Index Example 2
-
-        $this->assertEquals('cuisine_1_name_1', $indexName);
     }
 
     /**

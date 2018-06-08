@@ -39,4 +39,3 @@ Methods
    /reference/method/MongoDBClient-listDatabases
    /reference/method/MongoDBClient-selectCollection
    /reference/method/MongoDBClient-selectDatabase
-   /reference/method/MongoDBClient-startSession

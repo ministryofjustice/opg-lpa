@@ -1,26 +1,14 @@
 <?php
 
-namespace MongoDB\Tests\Operation;
+namespace MongoDB\Tests\Collection;
 
 use MongoDB\DeleteResult;
-use MongoDB\Collection;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\WriteConcern;
 use MongoDB\Operation\Delete;
-use MongoDB\Tests\CommandObserver;
-use stdClass;
 
 class DeleteFunctionalTest extends FunctionalTestCase
 {
-    private $collection;
-
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->collection = new Collection($this->manager, $this->getDatabaseName(), $this->getCollectionName());
-    }
-
     public function testDeleteOne()
     {
         $this->createFixtures(3);
@@ -58,30 +46,6 @@ class DeleteFunctionalTest extends FunctionalTestCase
         ];
 
         $this->assertSameDocuments($expected, $this->collection->find());
-    }
-
-    public function testSessionOption()
-    {
-        if (version_compare($this->getServerVersion(), '3.6.0', '<')) {
-            $this->markTestSkipped('Sessions are not supported');
-        }
-
-        (new CommandObserver)->observe(
-            function() {
-                $operation = new Delete(
-                    $this->getDatabaseName(),
-                    $this->getCollectionName(),
-                    [],
-                    0,
-                    ['session' => $this->createSession()]
-                );
-
-                $operation->execute($this->getPrimaryServer());
-            },
-            function(stdClass $command) {
-                $this->assertObjectHasAttribute('lsid', $command);
-            }
-        );
     }
 
     public function testUnacknowledgedWriteConcern()

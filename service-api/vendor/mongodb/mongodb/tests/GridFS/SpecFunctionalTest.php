@@ -330,7 +330,7 @@ class SpecFunctionalTest extends FunctionalTestCase
                 /* Although ReadableStream throws a CorruptFileException, the
                  * stream wrapper will convert it to a PHP error of type
                  * E_USER_WARNING. */
-                return 'PHPUnit\Framework\Error\Warning';
+                return 'PHPUnit_Framework_Error_Warning';
 
             default:
                 throw new LogicException('Unsupported error: ' . $error);

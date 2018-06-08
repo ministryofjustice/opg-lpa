@@ -41,9 +41,4 @@ abstract class FunctionalTestCase extends BaseFunctionalTestCase
     {
         return new WriteConcern(-2);
     }
-
-    protected function createSession()
-    {
-        return $this->manager->startSession();
-    }
 }

@@ -1,48 +1,21 @@
 <?php
 
-namespace MongoDB\Tests\Operation;
+namespace MongoDB\Tests\Collection;
 
-use MongoDB\Collection;
 use MongoDB\UpdateResult;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\WriteConcern;
 use MongoDB\Operation\Update;
-use MongoDB\Tests\CommandObserver;
-use stdClass;
 
 class UpdateFunctionalTest extends FunctionalTestCase
 {
-    private $collection;
+    private $omitModifiedCount;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->collection = new Collection($this->manager, $this->getDatabaseName(), $this->getCollectionName());
-    }
-
-    public function testSessionOption()
-    {
-        if (version_compare($this->getServerVersion(), '3.6.0', '<')) {
-            $this->markTestSkipped('Sessions are not supported');
-        }
-
-        (new CommandObserver)->observe(
-            function() {
-                $operation = new Update(
-                    $this->getDatabaseName(),
-                    $this->getCollectionName(),
-                    ['_id' => 1],
-                    ['$inc' => ['x' => 1]],
-                    ['session' => $this->createSession()]
-                );
-
-                $operation->execute($this->getPrimaryServer());
-            },
-            function(stdClass $command) {
-                $this->assertObjectHasAttribute('lsid', $command);
-            }
-        );
+        $this->omitModifiedCount = version_compare($this->getServerVersion(), '2.6.0', '<');
     }
 
     public function testUpdateOne()
@@ -57,7 +30,7 @@ class UpdateFunctionalTest extends FunctionalTestCase
 
         $this->assertInstanceOf('MongoDB\UpdateResult', $result);
         $this->assertSame(1, $result->getMatchedCount());
-        $this->assertSame(1, $result->getModifiedCount());
+        $this->omitModifiedCount or $this->assertSame(1, $result->getModifiedCount());
         $this->assertSame(0, $result->getUpsertedCount());
         $this->assertNull($result->getUpsertedId());
 
@@ -83,7 +56,7 @@ class UpdateFunctionalTest extends FunctionalTestCase
 
         $this->assertInstanceOf('MongoDB\UpdateResult', $result);
         $this->assertSame(2, $result->getMatchedCount());
-        $this->assertSame(2, $result->getModifiedCount());
+        $this->omitModifiedCount or $this->assertSame(2, $result->getModifiedCount());
         $this->assertSame(0, $result->getUpsertedCount());
         $this->assertNull($result->getUpsertedId());
 
@@ -109,7 +82,7 @@ class UpdateFunctionalTest extends FunctionalTestCase
 
         $this->assertInstanceOf('MongoDB\UpdateResult', $result);
         $this->assertSame(0, $result->getMatchedCount());
-        $this->assertSame(0, $result->getModifiedCount());
+        $this->omitModifiedCount or $this->assertSame(0, $result->getModifiedCount());
         $this->assertSame(1, $result->getUpsertedCount());
         $this->assertSame(5, $result->getUpsertedId());
 
@@ -136,7 +109,7 @@ class UpdateFunctionalTest extends FunctionalTestCase
 
         $this->assertInstanceOf('MongoDB\UpdateResult', $result);
         $this->assertSame(0, $result->getMatchedCount());
-        $this->assertSame(0, $result->getModifiedCount());
+        $this->omitModifiedCount or $this->assertSame(0, $result->getModifiedCount());
         $this->assertSame(1, $result->getUpsertedCount());
         $this->assertInstanceOf('MongoDB\BSON\ObjectId', $result->getUpsertedId());
 

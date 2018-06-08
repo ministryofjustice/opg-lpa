@@ -1,6 +1,6 @@
 <?php
 
-namespace MongoDB\Tests\Model;
+namespace MongoDB\Tests;
 
 use MongoDB\Model\DatabaseInfo;
 use MongoDB\Tests\TestCase;

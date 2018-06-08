@@ -11,7 +11,6 @@ use MongoDB\Model\BSONDocument;
 use InvalidArgumentException;
 use stdClass;
 use Traversable;
-use UnexpectedValueException;
 
 abstract class FunctionalTestCase extends TestCase
 {
@@ -77,34 +76,6 @@ abstract class FunctionalTestCase extends TestCase
         );
     }
 
-    protected function getFeatureCompatibilityVersion(ReadPreference $readPreference = null)
-    {
-        if (version_compare($this->getServerVersion(), '3.4.0', '<')) {
-            return $this->getServerVersion($readPreference);
-        }
-
-        $cursor = $this->manager->executeCommand(
-            'admin',
-            new Command(['getParameter' => 1, 'featureCompatibilityVersion' => 1]),
-            $readPreference ?: new ReadPreference(ReadPreference::RP_PRIMARY)
-        );
-
-        $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
-        $document = current($cursor->toArray());
-
-        // MongoDB 3.6: featureCompatibilityVersion is an embedded document
-        if (isset($document['featureCompatibilityVersion']['version']) && is_string($document['featureCompatibilityVersion']['version'])) {
-            return $document['featureCompatibilityVersion']['version'];
-        }
-
-        // MongoDB 3.4: featureCompatibilityVersion is a string
-        if (isset($document['featureCompatibilityVersion']) && is_string($document['featureCompatibilityVersion'])) {
-            return $document['featureCompatibilityVersion'];
-        }
-
-        throw new UnexpectedValueException('Could not determine featureCompatibilityVersion');
-    }
-
     protected function getPrimaryServer()
     {
         return $this->manager->selectServer(new ReadPreference(ReadPreference::RP_PRIMARY));
@@ -121,11 +92,7 @@ abstract class FunctionalTestCase extends TestCase
         $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
         $document = current($cursor->toArray());
 
-        if (isset($document['version']) && is_string($document['version'])) {
-            return $document['version'];
-        }
-
-        throw new UnexpectedValueException('Could not determine server version');
+        return $document['version'];
     }
 
     /**

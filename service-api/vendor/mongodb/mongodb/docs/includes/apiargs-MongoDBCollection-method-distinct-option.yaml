@@ -13,10 +13,4 @@ source:
 source:
   file: apiargs-MongoDBCollection-common-option.yaml
   ref: readPreference
----
-source:
-  file: apiargs-common-option.yaml
-  ref: session
-post: |
-  .. versionadded:: 1.3
 ...

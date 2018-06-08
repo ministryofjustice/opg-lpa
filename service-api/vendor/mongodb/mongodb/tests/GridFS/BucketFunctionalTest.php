@@ -17,9 +17,6 @@ use MongoDB\Operation\ListIndexes;
  */
 class BucketFunctionalTest extends FunctionalTestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
     public function testValidConstructorOptions()
     {
         new Bucket($this->manager, $this->getDatabaseName(), [
@@ -141,7 +138,7 @@ class BucketFunctionalTest extends FunctionalTestCase
     }
 
     /**
-     * @expectedException PHPUnit\Framework\Error\Warning
+     * @expectedException PHPUnit_Framework_Error_Warning
      */
     public function testDownloadingFileWithMissingChunk()
     {
@@ -153,7 +150,7 @@ class BucketFunctionalTest extends FunctionalTestCase
     }
 
     /**
-     * @expectedException PHPUnit\Framework\Error\Warning
+     * @expectedException PHPUnit_Framework_Error_Warning
      */
     public function testDownloadingFileWithUnexpectedChunkIndex()
     {
@@ -168,7 +165,7 @@ class BucketFunctionalTest extends FunctionalTestCase
     }
 
     /**
-     * @expectedException PHPUnit\Framework\Error\Warning
+     * @expectedException PHPUnit_Framework_Error_Warning
      */
     public function testDownloadingFileWithUnexpectedChunkSize()
     {

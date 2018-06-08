@@ -44,18 +44,6 @@ class AggregateTest extends TestCase
             $options[][] = ['collation' => $value];
         }
 
-        foreach ($this->getInvalidStringValues() as $value) {
-            $options[][] = ['comment' => $value];
-        }
-
-        foreach ($this->getInvalidHintValues() as $value) {
-            $options[][] = ['hint' => $value];
-        }
-
-        foreach ($this->getInvalidIntegerValues() as $value) {
-            $options[][] = ['maxAwaitTimeMS' => $value];
-        }
-
         foreach ($this->getInvalidIntegerValues() as $value) {
             $options[][] = ['maxTimeMS' => $value];
         }
@@ -66,10 +54,6 @@ class AggregateTest extends TestCase
 
         foreach ($this->getInvalidReadPreferenceValues() as $value) {
             $options[][] = ['readPreference' => $value];
-        }
-
-        foreach ($this->getInvalidSessionValues() as $value) {
-            $options[][] = ['session' => $value];
         }
 
         foreach ($this->getInvalidArrayValues() as $value) {
@@ -101,8 +85,17 @@ class AggregateTest extends TestCase
         );
     }
 
-    private function getInvalidHintValues()
+    /**
+     * @expectedException MongoDB\Exception\InvalidArgumentException
+     * @expectedExceptionMessage "typeMap" option should not be used if "useCursor" is false
+     */
+    public function testConstructorTypeMapOptionRequiresUseCursor()
     {
-        return [123, 3.14, true];
+        new Aggregate(
+            $this->getDatabaseName(),
+            $this->getCollectionName(),
+            [['$match' => ['x' => 1]]],
+            ['typeMap' => ['root' => 'array'], 'useCursor' => false]
+        );
     }
 }

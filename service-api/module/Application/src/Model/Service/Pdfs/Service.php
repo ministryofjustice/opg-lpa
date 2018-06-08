@@ -5,7 +5,6 @@ namespace Application\Model\Service\Pdfs;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Http\Response\File as FileResponse;
-use Application\Library\Lpa\StateChecker;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\LpaConsumerInterface;
 use Aws\S3\S3Client;
@@ -106,17 +105,15 @@ class Service extends AbstractService implements LpaConsumerInterface
         $lpa = $this->getLpa();
 
         // Check if we can generate this document type.
-        $state = new StateChecker($lpa);
-
         switch ($type) {
             case 'lp1':
-                $complete = $state->canGenerateLP1();
+                $complete = $lpa->canGenerateLP1();
                 break;
             case 'lp3':
-                $complete = $state->canGenerateLP3();
+                $complete = $lpa->canGenerateLP3();
                 break;
             case 'lpa120':
-                $complete = $state->canGenerateLPA120();
+                $complete = $lpa->canGenerateLPA120();
                 break;
         }
 

@@ -40,6 +40,8 @@ class ResultPrinter extends Printer implements TestListener
     public const COLOR_ALWAYS  = 'always';
     public const COLOR_DEFAULT = self::COLOR_NEVER;
 
+    private const AVAILABLE_COLORS = [self::COLOR_NEVER, self::COLOR_AUTO, self::COLOR_ALWAYS];
+
     /**
      * @var array
      */
@@ -144,12 +146,10 @@ class ResultPrinter extends Printer implements TestListener
     {
         parent::__construct($out);
 
-        $availableColors = [self::COLOR_NEVER, self::COLOR_AUTO, self::COLOR_ALWAYS];
-
-        if (!\in_array($colors, $availableColors)) {
+        if (!\in_array($colors, self::AVAILABLE_COLORS, true)) {
             throw InvalidArgumentHelper::factory(
                 3,
-                \vsprintf('value from "%s", "%s" or "%s"', $availableColors)
+                \vsprintf('value from "%s", "%s" or "%s"', self::AVAILABLE_COLORS)
             );
         }
 
@@ -190,11 +190,6 @@ class ResultPrinter extends Printer implements TestListener
         }
 
         $this->printFooter($result);
-    }
-
-    public function printWaitPrompt(): void
-    {
-        $this->write("\n<RETURN> to continue\n");
     }
 
     /**
@@ -311,10 +306,8 @@ class ResultPrinter extends Printer implements TestListener
 
         $this->lastTestFailed = false;
 
-        if ($test instanceof TestCase) {
-            if (!$test->hasExpectationOnOutput()) {
-                $this->write($test->getActualOutput());
-            }
+        if ($test instanceof TestCase && !$test->hasExpectationOnOutput()) {
+            $this->write($test->getActualOutput());
         }
     }
 
@@ -445,7 +438,7 @@ class ResultPrinter extends Printer implements TestListener
                 $color = 'fg-black, bg-yellow';
 
                 if ($this->verbose || !$result->allHarmless()) {
-                    $this->write("\n");
+                    $this->write(PHP_EOL);
                 }
 
                 $this->writeWithColor(
@@ -453,7 +446,7 @@ class ResultPrinter extends Printer implements TestListener
                     'OK, but incomplete, skipped, or risky tests!'
                 );
             } else {
-                $this->write("\n");
+                $this->write(PHP_EOL);
 
                 if ($result->errorCount()) {
                     $color = 'fg-white, bg-red';
@@ -525,7 +518,7 @@ class ResultPrinter extends Printer implements TestListener
     protected function writeNewLine(): void
     {
         $this->column = 0;
-        $this->write("\n");
+        $this->write(PHP_EOL);
     }
 
     /**
@@ -539,7 +532,7 @@ class ResultPrinter extends Printer implements TestListener
         }
 
         $codes   = \array_map('\trim', \explode(',', $color));
-        $lines   = \explode("\n", $buffer);
+        $lines   = \explode(PHP_EOL, $buffer);
         $padding = \max(\array_map('\strlen', $lines));
         $styles  = [];
 
@@ -555,7 +548,7 @@ class ResultPrinter extends Printer implements TestListener
             $styledLines[] = $style . \str_pad($line, $padding) . "\x1b[0m";
         }
 
-        return \implode("\n", $styledLines);
+        return \implode(PHP_EOL, $styledLines);
     }
 
     /**
@@ -566,7 +559,7 @@ class ResultPrinter extends Printer implements TestListener
         $this->write($this->formatWithColor($color, $buffer));
 
         if ($lf) {
-            $this->write("\n");
+            $this->write(PHP_EOL);
         }
     }
 
