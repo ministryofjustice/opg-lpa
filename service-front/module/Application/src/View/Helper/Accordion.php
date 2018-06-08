@@ -94,7 +94,7 @@ class Accordion extends AbstractHelper
             }
 
             // Added the special case bar for the review link.
-            if ($flowChecker->isStateCreated()) {
+            if ($this->lpa->isStateCreated()) {
                 $barsInPlay[] = ['routeName' => 'review-link'];
             }
         }

@@ -133,7 +133,7 @@ final class Test
             $methodName
         );
 
-        if (isset($annotations['class']['coversNothing']) || isset($annotations['method']['coversNothing'])) {
+        if (self::shouldCoversAnnotationBeUsed($annotations) === false) {
             return false;
         }
 
@@ -160,7 +160,7 @@ final class Test
         $reflector  = new ReflectionClass($className);
         $docComment = $reflector->getDocComment();
         $reflector  = new ReflectionMethod($className, $methodName);
-        $docComment .= "\n" . $reflector->getDocComment();
+        $docComment .= PHP_EOL . $reflector->getDocComment();
         $requires = [];
 
         if ($count = \preg_match_all(self::REGEX_REQUIRES_OS, $docComment, $matches)) {
@@ -445,7 +445,7 @@ final class Test
             $annotationContent = \substr($docComment, $offset);
             $data              = [];
 
-            foreach (\explode("\n", $annotationContent) as $candidateRow) {
+            foreach (\explode(PHP_EOL, $annotationContent) as $candidateRow) {
                 $candidateRow = \trim($candidateRow);
 
                 if ($candidateRow[0] !== '[') {
@@ -876,10 +876,10 @@ final class Test
     private static function cleanUpMultiLineAnnotation(string $docComment): string
     {
         //removing initial '   * ' for docComment
-        $docComment = \str_replace("\r\n", "\n", $docComment);
-        $docComment = \preg_replace('/' . '\n' . '\s*' . '\*' . '\s?' . '/', "\n", $docComment);
+        $docComment = \str_replace("\r\n", PHP_EOL, $docComment);
+        $docComment = \preg_replace('/' . '\n' . '\s*' . '\*' . '\s?' . '/', PHP_EOL, $docComment);
         $docComment = \substr($docComment, 0, -1);
-        $docComment = \rtrim($docComment, "\n");
+        $docComment = \rtrim($docComment, PHP_EOL);
 
         return $docComment;
     }
@@ -901,22 +901,22 @@ final class Test
             $methodName
         );
 
-        if (isset($annotations['class'][$settingName])) {
-            if ($annotations['class'][$settingName][0] === 'enabled') {
-                return true;
-            }
-
-            if ($annotations['class'][$settingName][0] === 'disabled') {
-                return false;
-            }
-        }
-
         if (isset($annotations['method'][$settingName])) {
             if ($annotations['method'][$settingName][0] === 'enabled') {
                 return true;
             }
 
             if ($annotations['method'][$settingName][0] === 'disabled') {
+                return false;
+            }
+        }
+
+        if (isset($annotations['class'][$settingName])) {
+            if ($annotations['class'][$settingName][0] === 'enabled') {
+                return true;
+            }
+
+            if ($annotations['class'][$settingName][0] === 'disabled') {
                 return false;
             }
         }
@@ -1093,5 +1093,22 @@ final class Test
             '$1',
             $version
         );
+    }
+
+    private static function shouldCoversAnnotationBeUsed(array $annotations): bool
+    {
+        if (isset($annotations['method']['coversNothing'])) {
+            return false;
+        }
+
+        if (isset($annotations['method']['covers'])) {
+            return true;
+        }
+
+        if (isset($annotations['class']['coversNothing'])) {
+            return false;
+        }
+
+        return true;
     }
 }
