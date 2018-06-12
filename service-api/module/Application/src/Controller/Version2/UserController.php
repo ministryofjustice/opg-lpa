@@ -2,6 +2,7 @@
 
 namespace Application\Controller\Version2;
 
+use Application\Library\Authentication\Identity\User as UserIdentity;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\EntityInterface;
@@ -33,6 +34,8 @@ class UserController extends AbstractController
      */
     public function get($id)
     {
+        $this->checkAccess();
+
         $result = $this->getService()->fetch($id);
 
         if ($result instanceof ApiProblem) {
@@ -42,6 +45,13 @@ class UserController extends AbstractController
 
             if (empty($resultData)) {
                 return new NoContentResponse();
+            }
+
+            //  Inject the email address from the identity to ensure it is correct
+            $identity = $this->authorizationService->getIdentity();
+
+            if ($identity instanceof UserIdentity) {
+                $resultData['email']['address'] = $identity->email();
             }
 
             return new JsonResponse($resultData);
@@ -58,6 +68,8 @@ class UserController extends AbstractController
      */
     public function update($id, $data)
     {
+        $this->checkAccess();
+
         $result = $this->getService()->update($data, $id);
 
         if ($result instanceof ApiProblem) {
@@ -76,6 +88,8 @@ class UserController extends AbstractController
      */
     public function delete($id)
     {
+        $this->checkAccess();
+
         $result = $this->getService()->delete($id);
 
         if ($result instanceof ApiProblem) {

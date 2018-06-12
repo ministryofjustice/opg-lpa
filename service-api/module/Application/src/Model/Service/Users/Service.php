@@ -4,7 +4,6 @@ namespace Application\Model\Service\Users;
 
 use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Library\Authentication\Identity\User as UserIdentity;
 use Application\Library\DateTime;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
@@ -31,14 +30,13 @@ class Service extends AbstractService
      */
     public function fetch($id)
     {
-        $this->checkAccess($id);
-
         //  Try to get an existing user
         $user = $this->collection->findOne([
             '_id' => $id
         ]);
 
         //  If there is no user create one now and ensure that the email address is correct
+
         if (is_null($user)) {
             $user = $this->save($id);
         } else {
@@ -46,15 +44,6 @@ class Service extends AbstractService
             $user = new User([
                 'id' => $id
             ] + $user);
-        }
-
-        //  Inject the email address from the identity to ensure it is correct
-        $identity = $this->getAuthorizationService()->getIdentity();
-
-        if ($identity instanceof UserIdentity) {
-            $user->email = [
-                'address' => $identity->email()
-            ];
         }
 
         return new DataModelEntity($user);
@@ -67,8 +56,6 @@ class Service extends AbstractService
      */
     public function update($data, $id)
     {
-        $this->checkAccess($id);
-
         $user = $this->save($id, $data);
 
         // If it's not a user, it's a different kind of response, so return it.
@@ -85,10 +72,8 @@ class Service extends AbstractService
      */
     public function delete($id)
     {
-        $this->checkAccess($id);
-
         // Delete all applications for the user.
-        $this->applicationsService->deleteAll();
+        $this->applicationsService->deleteAll($id);
 
         // Delete the user's About Me details.
         $this->collection->deleteOne(['_id' => $id]);
@@ -100,19 +85,14 @@ class Service extends AbstractService
 
     /**
      * @param $id
-     * @param null $data
+     * @param array $data
      * @return ValidationApiProblem|array|null|object|User
      */
-    private function save($id, $data = null)
+    private function save($id, array $data = [])
     {
-        $this->checkAccess($id);
-
-        $user = $this->collection->findOne(['_id' => $id]);
-
-        // Ensure $data is an array.
-        if (!is_array($data)) {
-            $data = [];
-        }
+        $user = $this->collection->findOne([
+            '_id' => $id
+        ]);
 
         // Protect these values from the client setting them manually.
         unset($data['id'], $data['email'], $data['createdAt'], $data['updatedAt']);
@@ -128,19 +108,18 @@ class Service extends AbstractService
 
             $new = true;
         } else {
-            $user = [ 'id' => $user['_id'] ] + $user;
+            $user = [
+                'id' => $user['_id']
+            ] + $user;
         }
+
+        //  Keep email up to date with what's in the auth service
+        $authUserData = $this->userManagementService->get($id);
+        $data['email']['address'] = $authUserData['username'];
 
         $data = array_merge($user, $data);
 
         $user = new User($data);
-
-        // Keep email up to date with what's in the authentication service.
-        $identity = $this->getAuthorizationService()->getIdentity();
-
-        if ($identity instanceof UserIdentity) {
-            $user->email = [ 'address' => $identity->email() ];
-        }
 
         if ($new) {
             $this->collection->insertOne($user->toArray(new DateCallback()));

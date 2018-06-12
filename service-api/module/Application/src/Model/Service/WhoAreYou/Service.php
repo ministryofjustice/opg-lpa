@@ -6,21 +6,19 @@ use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\AbstractService;
-use Application\Model\Service\LpaConsumerInterface;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use RuntimeException;
 
-class Service extends AbstractService implements LpaConsumerInterface
+class Service extends AbstractService
 {
     /**
+     * @param $lpaId
      * @param $data
      * @return ApiProblem|ValidationApiProblem|Entity
      */
-    public function create($data)
+    public function create($lpaId, $data)
     {
-        $this->checkAccess();
-
-        $lpa = $this->getLpa();
+        $lpa = $this->getLpa($lpaId);
 
         if ($lpa->whoAreYouAnswered === true) {
             return new ApiProblem(403, 'Question already answered');
@@ -34,7 +32,7 @@ class Service extends AbstractService implements LpaConsumerInterface
             return new ValidationApiProblem($validation);
         }
 
-        $lpa->whoAreYouAnswered = true;
+        $lpa->setWhoAreYouAnswered(true);
 
         if ($lpa->validate()->hasErrors()) {
             throw new RuntimeException('A malformed LPA object was created');

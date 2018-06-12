@@ -45,6 +45,19 @@ return [
                 ],
             ],
 
+            'stats' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/stats/:type',
+                    'constraints' => [
+                        'type' => '[a-z0-9][a-z0-9-]*',
+                    ],
+                    'defaults' => [
+                        'controller' => 'Application\Controller\Stats',
+                    ],
+                ],
+            ],
+
             'api-v2' => [
                 'type'    => 'Segment',
                 'options' => [
@@ -55,19 +68,6 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
-
-                    'stats' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/stats/:type',
-                            'constraints' => [
-                                'type' => '[a-z0-9][a-z0-9-]*',
-                            ],
-                            'defaults' => [
-                                'controller' => 'StatsController',
-                            ],
-                        ],
-                    ], // stats
 
                     'user' => [
                         'type'    => 'Segment',
@@ -323,6 +323,7 @@ return [
         'factories' => [
             'Application\Controller\Console\GenerateStats'  => 'Application\Controller\Console\GenerateStatsControllerFactory',
             'Application\Controller\Ping'                   => 'Application\Controller\PingControllerFactory',
+            'Application\Controller\Stats'                  => 'Application\Controller\StatsControllerFactory',
         ],
         'abstract_factories' => [
             'Application\Controller\ControllerAbstractFactory'
@@ -331,9 +332,6 @@ return [
 
 
     'service_manager' => [
-        'initializers' => [
-            'ZfcRbac\Initializer\AuthorizationServiceInitializer',
-        ],
         'factories' => [
             \Application\Model\Service\System\Stats::class => \Application\Model\Service\System\StatsFactory::class,
             Application\Model\Service\Stats\Service::class => Application\Model\Service\Stats\ServiceFactory::class,

@@ -6,15 +6,15 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Http\Response\File as FileResponse;
 use Application\Model\Service\AbstractService;
-use Application\Model\Service\LpaConsumerInterface;
 use Aws\S3\S3Client;
 use DynamoQueue\Queue\Client as DynamoQueue;
 use DynamoQueue\Queue\Job\Job as DynamoQueueJob;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
 use Zend\Filter\Compress;
 
-class Service extends AbstractService implements LpaConsumerInterface
+class Service extends AbstractService
 {
     /**
      * PDF status constants
@@ -49,14 +49,13 @@ class Service extends AbstractService implements LpaConsumerInterface
     ];
 
     /**
+     * @param $lpaId
      * @param $id
      * @return ApiProblem|ValidationApiProblem|FileResponse|array
      */
-    public function fetch($id)
+    public function fetch($lpaId, $id)
     {
-        $this->checkAccess();
-
-        $lpa = $this->getLpa();
+        $lpa = $this->getLpa($lpaId);
 
         $validation = $lpa->validate();
 
@@ -65,11 +64,11 @@ class Service extends AbstractService implements LpaConsumerInterface
         }
 
         if (in_array($id, $this->pdfTypes)) {
-            $details = $this->getPdfDetails($id);
+            $details = $this->getPdfDetails($lpa, $id);
 
             if ($details['status'] == self::STATUS_NOT_QUEUED) {
                 // Then add the LPA to the PDF queue.
-                $this->addLpaToQueue($id);
+                $this->addLpaToQueue($lpa, $id);
 
                 $details['status'] = self::STATUS_IN_QUEUE;
             }
@@ -86,7 +85,7 @@ class Service extends AbstractService implements LpaConsumerInterface
         if (in_array($id, $typesWithExtention)) {
             $type = rtrim($id, '.pdf');
 
-            $file = $this->getPdfFile($type);
+            $file = $this->getPdfFile($lpa, $type);
 
             if ($file !== false) {
                 return new FileResponse($file, FileResponse::TYPE_PDF);
@@ -97,13 +96,12 @@ class Service extends AbstractService implements LpaConsumerInterface
     }
 
     /**
+     * @param Lpa $lpa
      * @param $type
      * @return array
      */
-    private function getPdfDetails($type)
+    private function getPdfDetails(Lpa $lpa, $type)
     {
-        $lpa = $this->getLpa();
-
         // Check if we can generate this document type.
         switch ($type) {
             case 'lp1':
@@ -119,7 +117,7 @@ class Service extends AbstractService implements LpaConsumerInterface
 
         // If the LPA is complete, we check to see the status...
         if ($complete) {
-            $status = $this->getPdfStatus($type);
+            $status = $this->getPdfStatus($lpa, $type);
         } else {
             // Otherwise the status is 'not available'...
             $status = self::STATUS_NOT_AVAILABLE;
@@ -140,12 +138,13 @@ class Service extends AbstractService implements LpaConsumerInterface
      * - It's in the queue ready for processing.
      * - It's ready to be downloaded.
      *
+     * @param Lpa $lpa
      * @param $type
      * @return string
      */
-    private function getPdfStatus($type)
+    private function getPdfStatus(Lpa $lpa, $type)
     {
-        $ident = $this->getPdfIdent($type);
+        $ident = $this->getPdfIdent($lpa, $type);
 
         // Check if the file already exists in the cache.
         $bucketConfig = $this->pdfConfig['cache']['s3']['settings'];
@@ -178,12 +177,11 @@ class Service extends AbstractService implements LpaConsumerInterface
     }
 
     /**
+     * @param Lpa $lpa
      * @param $type
      */
-    private function addLpaToQueue($type)
+    private function addLpaToQueue(Lpa $lpa, $type)
     {
-        $lpa = $this->getLpa();
-
         // Setup the message
         $message = json_encode([
             'lpa' => $lpa->toArray(),
@@ -210,21 +208,21 @@ class Service extends AbstractService implements LpaConsumerInterface
         $encryptedMessage = $blockCipher->encrypt($message);
 
         // Add the message to the queue
-        $this->dynamoQueueClient->enqueue('\Opg\Lpa\Pdf\Worker\DynamoQueueWorker', $encryptedMessage, $this->getPdfIdent($type));
+        $this->dynamoQueueClient->enqueue('\Opg\Lpa\Pdf\Worker\DynamoQueueWorker', $encryptedMessage, $this->getPdfIdent($lpa, $type));
     }
 
     /**
+     * @param Lpa $lpa
      * @param $type
-     * @return \Aws\Result|bool|string
+     * @return bool|string
      */
-    public function getPdfFile($type)
+    private function getPdfFile(Lpa $lpa, $type)
     {
-
         $bucketConfig = $this->pdfConfig['cache']['s3']['settings'];
 
         try {
             $file = $this->s3Client->getObject($bucketConfig + [
-                'Key' => $this->getPdfIdent($type),
+                'Key' => $this->getPdfIdent($lpa, $type),
             ]);
         } catch (\Aws\S3\Exception\S3Exception $e) {
             return false;
@@ -253,15 +251,16 @@ class Service extends AbstractService implements LpaConsumerInterface
     /**
      * Generates a unique identifier the represents the LPA data and type of form ( lp1, lp3, etc. ).
      *
+     * @param Lpa $lpa
      * @param $type
      * @return string
      */
-    private function getPdfIdent($type)
+    private function getPdfIdent(Lpa $lpa, $type)
     {
         // $keys are included so a new ident is generated when encryption keys change.
         $keys = $this->pdfConfig['encryption']['keys'];
 
-        $hash = hash('sha512', md5($this->getLpa()->toJson()) . $keys['document'] . $keys['queue']);
+        $hash = hash('sha512', md5($lpa->toJson()) . $keys['document'] . $keys['queue']);
 
         return strtolower("{$type}-{$hash}");
     }

@@ -6,22 +6,18 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
-use Application\Model\Service\LpaConsumerInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
 use RuntimeException;
 
-class Service extends AbstractService implements LpaConsumerInterface
+class Service extends AbstractService
 {
     /**
+     * @param $lpaId
      * @param $data
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function create($data)
+    public function create($lpaId, $data)
     {
-        $this->checkAccess();
-
-        $lpa = $this->getLpa();
-
         switch ($data['type']) {
             case 'trust':
                 $attorney = new Attorneys\TrustCorporation($data);
@@ -34,15 +30,17 @@ class Service extends AbstractService implements LpaConsumerInterface
                 throw new RuntimeException('Invalid type passed');
         }
 
+        $lpa = $this->getLpa($lpaId);
+
         //  If the client has not passed an id, set it to max(current ids) + 1 - The array is seeded with 0, meaning if this is the first attorney the id will be 1.
         if (is_null($attorney->id)) {
             $ids = [0];
 
-            foreach ($lpa->document->replacementAttorneys as $a) {
+            foreach ($lpa->getDocument()->getReplacementAttorneys() as $a) {
                 $ids[] = $a->id;
             }
 
-            $attorney->id = (int) max($ids) + 1;
+            $attorney->setId((int) max($ids) + 1);
         }
 
         $validation = $attorney->validateForApi();
@@ -51,7 +49,7 @@ class Service extends AbstractService implements LpaConsumerInterface
             return new ValidationApiProblem($validation);
         }
 
-        $lpa->document->replacementAttorneys[] = $attorney;
+        $lpa->getDocument()->replacementAttorneys[] = $attorney;
 
         $this->updateLpa($lpa);
 
@@ -59,17 +57,16 @@ class Service extends AbstractService implements LpaConsumerInterface
     }
 
     /**
+     * @param $lpaId
      * @param $data
      * @param $id
      * @return ApiProblem|ValidationApiProblem|DataModelEntity
      */
-    public function update($data, $id)
+    public function update($lpaId, $data, $id)
     {
-        $this->checkAccess();
+        $lpa = $this->getLpa($lpaId);
 
-        $lpa = $this->getLpa();
-
-        foreach ($lpa->document->replacementAttorneys as $key => $attorney) {
+        foreach ($lpa->getDocument()->getReplacementAttorneys() as $key => $attorney) {
             if ($attorney->id == (int) $id) {
                 switch ($data['type']) {
                     case 'trust':
@@ -83,7 +80,7 @@ class Service extends AbstractService implements LpaConsumerInterface
                         throw new RuntimeException('Invalid type passed');
                 }
 
-                $attorney->id = (int) $id;
+                $attorney->setId((int) $id);
 
                 $validation = $attorney->validateForApi();
 
@@ -91,7 +88,7 @@ class Service extends AbstractService implements LpaConsumerInterface
                     return new ValidationApiProblem($validation);
                 }
 
-                $lpa->document->replacementAttorneys[$key] = $attorney;
+                $lpa->getDocument()->replacementAttorneys[$key] = $attorney;
 
                 $this->updateLpa($lpa);
 
@@ -103,18 +100,17 @@ class Service extends AbstractService implements LpaConsumerInterface
     }
 
     /**
+     * @param $lpaId
      * @param $id
      * @return ApiProblem|bool
      */
-    public function delete($id)
+    public function delete($lpaId, $id)
     {
-        $this->checkAccess();
+        $lpa = $this->getLpa($lpaId);
 
-        $lpa = $this->getLpa();
-
-        foreach ($lpa->document->replacementAttorneys as $key => $attorney) {
+        foreach ($lpa->getDocument()->getReplacementAttorneys() as $key => $attorney) {
             if ($attorney->id == (int) $id) {
-                unset($lpa->document->replacementAttorneys[$key]);
+                unset($lpa->getDocument()->replacementAttorneys[$key]);
 
                 $this->updateLpa($lpa);
 

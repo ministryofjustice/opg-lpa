@@ -5,26 +5,24 @@ namespace Application\Model\Service\Lock;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\DateTime;
 use Application\Model\Service\AbstractService;
-use Application\Model\Service\LpaConsumerInterface;
 use RuntimeException;
 
-class Service extends AbstractService implements LpaConsumerInterface
+class Service extends AbstractService
 {
     /**
+     * @param $lpaId
      * @return ApiProblem|Entity
      */
-    public function create()
+    public function create($lpaId)
     {
-        $this->checkAccess();
+        $lpa = $this->getLpa($lpaId);
 
-        $lpa = $this->getLpa();
-
-        if ($lpa->locked === true) {
+        if ($lpa->isLocked()) {
             return new ApiProblem(403, 'LPA already locked');
         }
 
-        $lpa->locked = true;
-        $lpa->lockedAt = new DateTime();
+        $lpa->setLocked(true);
+        $lpa->setLockedAt(new DateTime());
 
         if ($lpa->validate()->hasErrors()) {
             throw new RuntimeException('A malformed LPA object was created');

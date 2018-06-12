@@ -25,7 +25,9 @@ class LockController extends AbstractController
      */
     public function create($data)
     {
-        $result = $this->getService()->create();
+        $this->checkAccess();
+
+        $result = $this->getService()->create($this->lpaId);
 
         if ($result instanceof ApiProblem) {
             return $result;

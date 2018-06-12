@@ -26,7 +26,9 @@ class DonorController extends AbstractController
      */
     public function update($id, $data)
     {
-        $result = $this->getService()->update($data);
+        $this->checkAccess();
+
+        $result = $this->getService()->update($this->lpaId, $data);
 
         if ($result instanceof ApiProblem) {
             return $result;

@@ -5,29 +5,28 @@ namespace Application\Model\Service\Payment;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
-use Application\Model\Service\LpaConsumerInterface;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use RuntimeException;
 
-class Service extends AbstractService implements LpaConsumerInterface
+class Service extends AbstractService
 {
     /**
+     * @param $lpaId
      * @param $data
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function update($data)
+    public function update($lpaId, $data)
     {
-        $this->checkAccess();
+        $payment = new Payment($data);
 
-        $lpa = $this->getLpa();
-
-        $lpa->payment = new Payment($data);
-
-        $validation = $lpa->payment->validate();
+        $validation = $payment->validate();
 
         if ($validation->hasErrors()) {
             return new ValidationApiProblem($validation);
         }
+
+        $lpa = $this->getLpa($lpaId);
+        $lpa->setPayment($payment);
 
         if ($lpa->validate()->hasErrors()) {
             throw new RuntimeException('A malformed LPA object');
@@ -35,6 +34,6 @@ class Service extends AbstractService implements LpaConsumerInterface
 
         $this->updateLpa($lpa);
 
-        return new DataModelEntity($lpa->payment);
+        return new DataModelEntity($payment);
     }
 }

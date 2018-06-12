@@ -31,7 +31,9 @@ class PrimaryAttorneyController extends AbstractController
      */
     public function create($data)
     {
-        $result = $this->getService()->create($data);
+        $this->checkAccess();
+
+        $result = $this->getService()->create($this->lpaId, $data);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -50,7 +52,9 @@ class PrimaryAttorneyController extends AbstractController
      */
     public function update($id, $data)
     {
-        $result = $this->getService()->update($data, $id);
+        $this->checkAccess();
+
+        $result = $this->getService()->update($this->lpaId, $data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -68,7 +72,9 @@ class PrimaryAttorneyController extends AbstractController
      */
     public function delete($id)
     {
-        $result = $this->getService()->delete($id);
+        $this->checkAccess();
+
+        $result = $this->getService()->delete($this->lpaId, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;

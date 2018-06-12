@@ -7,7 +7,6 @@ use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Auth\Model\Service\UserManagementService;
 use Interop\Container\ContainerInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Exception;
 
@@ -77,29 +76,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             $collection = $container->get(CollectionFactory::class . '-api-stats-who');
         }
 
-        //  Get the route user
-        $userId = $container->get('Application')->getMvcEvent()->getRouteMatch()->getParam('userId');
-
-        if (empty($userId)) {
-            throw new ApiProblemException('User identifier missing from URL', 400);
-        }
-
-        $service = new $requestedName($userId, $lpaCollection, $collection);
-
-        //  If appropriate set the LPA from the route parameter
-        if ($service instanceof LpaConsumerInterface) {
-            $lpaId = $container->get('Application')->getMvcEvent()->getRouteMatch()->getParam('lpaId');
-
-            if (!is_numeric($lpaId)) {
-                throw new ApiProblemException('LPA identifier missing from URL', 400);
-            }
-
-            $lpaData = $lpaCollection->findOne(['_id' => (int) $lpaId, 'user' => $userId]);
-
-            $lpaData = ['id' => $lpaData['_id']] + $lpaData;
-
-            $service->setLpa(new Lpa($lpaData));
-        }
+        $service = new $requestedName($lpaCollection, $collection);
 
         //  If required load any additional services into the service
         if (array_key_exists($requestedName, $this->additionalServices) && is_array($this->additionalServices[$requestedName])) {
