@@ -3,9 +3,64 @@
 {% block htmlTitle %}Final check: LPA details - {% endblock %}
 {% block pageTitle %}Final check: LPA details{% endblock %}
 
+{% set exemption = false %}
+{% set remission = false %}
+{% set notify = false %}
+
+{% if lpa.payment.reducedFeeReceivesBenefits or lpa.payment.reducedFeeUniversalCredit %}
+    {% set exemption = true %}
+{% endif %}
+
+{% if lpa.payment.reducedFeeLowIncome %}
+    {% set remission = true %}
+{% endif %}
+
+{% if lpa.document.peopleToNotify is defined and lpa.document.peopleToNotify|length > 0 %}
+    {% set notify = true %}
+{% endif %}
+
 {% block content %}
 
     <p class="text">Check all the details on this page are correct and everyone has agreed to be part of this lasting power of attorney before continuing.</p>
+
+    <details role="group">
+        <summary role="button" data-journey-click="page:link.reveal:help: What do I need to do next?">
+            <span class="summary">What do I need to do next?</span>
+        </summary>
+        <div class="panel text">
+            <ul class="list list-number">
+                <li>Click to confirm all the details on this page are correct</li>
+
+                {% if not exemption %}
+                    <li>Next, pay the application fee online by card (you can also choose to pay by cheque)</li>
+                {% endif %}
+
+                <li>Then download and print the LPA, and get it signed and dated in the right order</li>
+
+                {% if exemption %}
+                    <li>Then download, print, sign and date the fee remission and exemption form</li>
+                {% endif %}
+
+                {% if remission %}
+                    <li>Download, print, sign and date the fee remissions form</li>
+                {% endif %}
+
+                {% if notify %}
+                    <li>Download and print the people to notify form - give one to each person to notify</li>
+                {% endif %}
+
+                {% if exemption %}
+                    <li>Finally, post the LPA to OPG, along with the fee remission and exemption form and proof of the donor’s benefits</li>
+                {% elseif remission %}
+                    <li>Finally, post the LPA to OPG, along with the fee remissions form and proof of the donor’s income</li>
+                {% else %}
+                    <li>Finally, post the LPA to OPG</li>
+                {% endif %}
+            </ul>
+
+            <p>If there are no problems with the LPA, we'll register it and send it to the correspondent. If we can't register the LPA, we'll write to the correspondent to let them know.</p>
+        </div>
+    </details>
 
     {% if (lpaIsCompleted) %}
 
