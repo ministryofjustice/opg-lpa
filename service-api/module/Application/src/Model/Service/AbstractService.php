@@ -21,20 +21,13 @@ abstract class AbstractService
     protected $lpaCollection = null;
 
     /**
-     * @var Collection
-     */
-    protected $collection = null;
-
-    /**
      * AbstractService constructor
      *
      * @param Collection $lpaCollection
-     * @param Collection|null $collection
      */
-    public function __construct(Collection $lpaCollection, Collection $collection = null)
+    public function __construct(Collection $lpaCollection)
     {
         $this->lpaCollection = $lpaCollection;
-        $this->collection = $collection;
     }
 
     /**

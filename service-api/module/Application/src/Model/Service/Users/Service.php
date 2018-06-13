@@ -10,10 +10,16 @@ use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
 use Auth\Model\Service\UserManagementService;
 use MongoDB\BSON\UTCDateTime;
+use MongoDB\Collection;
 use Opg\Lpa\DataModel\User\User;
 
 class Service extends AbstractService
 {
+    /**
+     * @var Collection
+     */
+    private $apiUserCollection;
+
     /**
      * @var ApplicationService
      */
@@ -31,7 +37,7 @@ class Service extends AbstractService
     public function fetch($id)
     {
         //  Try to get an existing user
-        $user = $this->collection->findOne([
+        $user = $this->apiUserCollection->findOne([
             '_id' => $id
         ]);
 
@@ -76,7 +82,7 @@ class Service extends AbstractService
         $this->applicationsService->deleteAll($id);
 
         // Delete the user's About Me details.
-        $this->collection->deleteOne(['_id' => $id]);
+        $this->apiUserCollection->deleteOne(['_id' => $id]);
 
         $this->userManagementService->delete($id, 'user-initiated');
 
@@ -90,7 +96,7 @@ class Service extends AbstractService
      */
     private function save($id, array $data = [])
     {
-        $user = $this->collection->findOne([
+        $user = $this->apiUserCollection->findOne([
             '_id' => $id
         ]);
 
@@ -122,7 +128,7 @@ class Service extends AbstractService
         $user = new User($data);
 
         if ($new) {
-            $this->collection->insertOne($user->toArray(new DateCallback()));
+            $this->apiUserCollection->insertOne($user->toArray(new DateCallback()));
         } else {
             $validation = $user->validate();
 
@@ -137,7 +143,7 @@ class Service extends AbstractService
 
             // updatedAt is included in the query so that data isn't overwritten
             // if the User has changed since this process loaded it.
-            $result = $this->collection->updateOne(
+            $result = $this->apiUserCollection->updateOne(
                 ['_id' => $user->id, 'updatedAt' => $lastUpdated],
                 ['$set' => $user->toArray(new DateCallback())],
                 ['upsert' => false, 'multiple' => false]
@@ -151,6 +157,14 @@ class Service extends AbstractService
         }
 
         return $user;
+    }
+
+    /**
+     * @param Collection $apiUserCollection
+     */
+    public function setApiUserCollection(Collection $apiUserCollection)
+    {
+        $this->apiUserCollection = $apiUserCollection;
     }
 
     /**

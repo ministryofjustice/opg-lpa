@@ -6,11 +6,17 @@ use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\AbstractService;
+use MongoDB\Collection;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use RuntimeException;
 
 class Service extends AbstractService
 {
+    /**
+     * @var Collection
+     */
+    private $apiStatsWhoCollection;
+
     /**
      * @param $lpaId
      * @param $data
@@ -41,8 +47,16 @@ class Service extends AbstractService
         // We update the LPA first as there's a chance a RuntimeException will be thrown if there's an 'updatedAt' mismatch.
         $this->updateLpa($lpa);
 
-        $this->collection->insertOne($answer->toArray(new DateCallback()));
+        $this->apiStatsWhoCollection->insertOne($answer->toArray(new DateCallback()));
 
         return new Entity($lpa->whoAreYouAnswered);
+    }
+
+    /**
+     * @param Collection $apiStatsWhoCollection
+     */
+    public function setApiStatsWhoCollection(Collection $apiStatsWhoCollection)
+    {
+        $this->apiStatsWhoCollection = $apiStatsWhoCollection;
     }
 }

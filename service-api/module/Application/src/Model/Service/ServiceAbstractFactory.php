@@ -33,8 +33,12 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setApplicationsService' => ApplicationsService::class,
         ],
         Users\Service::class => [
+            'setApiUserCollection'     => CollectionFactory::class . '-api-user',
             'setApplicationsService'   => ApplicationsService::class,
             'setUserManagementService' => UserManagementService::class,
+        ],
+        WhoAreYou\Service::class => [
+            'setApiStatsWhoCollection' => CollectionFactory::class . '-api-stats-who',
         ],
     ];
 
@@ -68,15 +72,8 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         }
 
         $lpaCollection = $container->get(CollectionFactory::class . '-api-lpa');
-        $collection = null;
 
-        if ($requestedName == Users\Service::class) {
-            $collection = $container->get(CollectionFactory::class . '-api-user');
-        } elseif ($requestedName == WhoAreYou\Service::class) {
-            $collection = $container->get(CollectionFactory::class . '-api-stats-who');
-        }
-
-        $service = new $requestedName($lpaCollection, $collection);
+        $service = new $requestedName($lpaCollection);
 
         //  If required load any additional services into the service
         if (array_key_exists($requestedName, $this->additionalServices) && is_array($this->additionalServices[$requestedName])) {
