@@ -15,7 +15,7 @@ class Service extends AbstractService
     /**
      * @var Collection
      */
-    private $apiStatsWhoCollection;
+    private $apiWhoCollection;
 
     /**
      * @param $lpaId
@@ -47,16 +47,16 @@ class Service extends AbstractService
         // We update the LPA first as there's a chance a RuntimeException will be thrown if there's an 'updatedAt' mismatch.
         $this->updateLpa($lpa);
 
-        $this->apiStatsWhoCollection->insertOne($answer->toArray(new DateCallback()));
+        $this->apiWhoCollection->insertOne($answer->toArray(new DateCallback()));
 
         return new Entity($lpa->whoAreYouAnswered);
     }
 
     /**
-     * @param Collection $apiStatsWhoCollection
+     * @param Collection $apiWhoCollection
      */
-    public function setApiStatsWhoCollection(Collection $apiStatsWhoCollection)
+    public function setApiWhoCollection(Collection $apiWhoCollection)
     {
-        $this->apiStatsWhoCollection = $apiStatsWhoCollection;
+        $this->apiWhoCollection = $apiWhoCollection;
     }
 }

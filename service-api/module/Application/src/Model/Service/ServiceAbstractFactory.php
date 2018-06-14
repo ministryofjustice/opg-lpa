@@ -38,7 +38,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setUserManagementService' => UserManagementService::class,
         ],
         WhoAreYou\Service::class => [
-            'setApiStatsWhoCollection' => CollectionFactory::class . '-api-stats-who',
+            'setApiWhoCollection' => CollectionFactory::class . '-api-who',
         ],
     ];
 

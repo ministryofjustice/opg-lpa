@@ -44,23 +44,23 @@ class Stats
     /**
      * @var Collection
      */
-    private $statsWhoCollection;
+    private $whoCollection;
 
     /**
      * Stats constructor
      *
      * @param Collection $lpaCollection
      * @param Collection $statsLpaCollection
-     * @param Collection $statsWhoCollection
+     * @param Collection $whoCollection
      */
     public function __construct(
         Collection $lpaCollection,
         Collection $statsLpaCollection,
-        Collection $statsWhoCollection
+        Collection $whoCollection
     ) {
         $this->lpaCollection = $lpaCollection;
         $this->statsLpaCollection = $statsLpaCollection;
-        $this->statsWhoCollection = $statsWhoCollection;
+        $this->whoCollection = $whoCollection;
     }
 
     /**
@@ -432,7 +432,7 @@ class Stats
         foreach ($options as $topLevel => $details) {
             // Get the count for all top level...
             $result[$topLevel] = [
-                'count' => $this->statsWhoCollection->count([
+                'count' => $this->whoCollection->count([
                     'who' => $topLevel,
                     '_id' => $range
                 ], $readPreference),

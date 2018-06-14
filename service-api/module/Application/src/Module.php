@@ -74,7 +74,7 @@ class Module
                 //  Mongo collections for api database
                 Mongo\CollectionFactory::class . '-api-lpa' => new Mongo\CollectionFactory('lpa'),
                 Mongo\CollectionFactory::class . '-api-user' => new Mongo\CollectionFactory('user'),
-                Mongo\CollectionFactory::class . '-api-stats-who' => new Mongo\CollectionFactory('whoAreYou'),
+                Mongo\CollectionFactory::class . '-api-who' => new Mongo\CollectionFactory('whoAreYou'),
                 Mongo\CollectionFactory::class . '-api-stats-lpas' => new Mongo\CollectionFactory('lpaStats'),
 
                 //  Mongo collections for auth database
