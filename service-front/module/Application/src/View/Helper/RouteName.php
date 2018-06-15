@@ -15,7 +15,7 @@ class RouteName extends AbstractHelper
     /**
      * @param RouteMatch $routeMatch
      */
-    public function __construct(RouteMatch $routeMatch)
+    public function __construct(?RouteMatch $routeMatch)
     {
         $this->routeMatch = $routeMatch;
     }

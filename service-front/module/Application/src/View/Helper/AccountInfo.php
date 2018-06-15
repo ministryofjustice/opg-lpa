@@ -52,7 +52,7 @@ class AccountInfo extends AbstractHelper
      * @param LpaApplicationService $lpaApplicationService
      * @param Twig_Environment $viewRenderer
      */
-    public function __construct(AuthenticationService $authenticationService, Container $userDetailsSession, ViewModel $viewModel, RouteMatch $routeMatch, LpaApplicationService $lpaApplicationService, Twig_Environment $viewRenderer)
+    public function __construct(AuthenticationService $authenticationService, Container $userDetailsSession, ViewModel $viewModel, ?RouteMatch $routeMatch, LpaApplicationService $lpaApplicationService, Twig_Environment $viewRenderer)
     {
         $this->authenticationService = $authenticationService;
         $this->userDetailsSession = $userDetailsSession;
@@ -94,7 +94,9 @@ class AccountInfo extends AbstractHelper
         }
 
         //  Include the name of the current route
-        $params['route'] = $this->routeMatch->getMatchedRouteName();
+        if ($this->routeMatch) {
+            $params['route'] = $this->routeMatch->getMatchedRouteName();
+        }
 
         // Check if the user has one or more LPAs
         // Once a user has more than one, we cache the result in the session to save a lookup for every page load.
