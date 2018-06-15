@@ -37,7 +37,7 @@
                         <li>Next, pay the application fee online by card (you can also choose to pay by cheque)</li>
                     {% endif %}
 
-                    <li>Then download and print the LPA, and get it signed and dated in the right order</li>
+                    <li>{% if exemption %}Next,{% else %}Then{% endif %} download and print the LPA, and get it signed and dated in the right order</li>
 
                     {% if exemption %}
                         <li>Then download, print, sign and date the fee remission and exemption form</li>
