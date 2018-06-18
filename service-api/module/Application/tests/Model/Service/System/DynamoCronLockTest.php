@@ -64,6 +64,7 @@ class DynamoCronLockTest extends TestCase
 
         $loggerMock = Mockery::mock(Logger::class);
         $loggerMock->shouldReceive('alert');
+        /** @var Logger $loggerMock */
 
         $dynamoCronLock->setLogger($loggerMock);
 
@@ -80,6 +81,7 @@ class DynamoCronLockTest extends TestCase
 
         $loggerMock = Mockery::mock(Logger::class);
         $loggerMock->shouldReceive('alert');
+        /** @var Logger $loggerMock */
 
         $dynamoCronLock->setLogger($loggerMock);
 

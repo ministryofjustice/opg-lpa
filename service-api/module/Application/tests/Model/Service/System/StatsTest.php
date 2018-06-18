@@ -24,6 +24,7 @@ class StatsTest extends TestCase
         $lpaCollection->shouldReceive('getManager')->andReturn($manager)->once();
         $lpaCollection->shouldReceive('getDatabaseName')->andReturn('test')->once();
         $lpaCollection->shouldReceive('getCollectionName')->andReturn('test')->once();
+        /** @var MongoCollection $lpaCollection */
 
         $statsLpasCollection = Mockery::mock(MongoCollection::class);
         $statsLpasCollection->shouldReceive('deleteMany')->withArgs([[]])->once();
@@ -35,15 +36,18 @@ class StatsTest extends TestCase
                 && isset($stats['correspondence'])
                 && isset($stats['preferencesInstructions']);
         })->once();
+        /** @var MongoCollection $statsLpasCollection */
 
-        $statsWhoCollection = Mockery::mock(MongoCollection::class);
-        $statsWhoCollection->shouldReceive('count')->andReturn(1);
+        $whoCollection = Mockery::mock(MongoCollection::class);
+        $whoCollection->shouldReceive('count')->andReturn(1);
+        /** @var MongoCollection $whoCollection */
 
         $logger = Mockery::mock(Logger::class);
         $logger->shouldReceive('info');
         $logger->shouldReceive('err');
+        /** @var Logger $logger */
 
-        $stats = new Stats($lpaCollection, $statsLpasCollection, $statsWhoCollection);
+        $stats = new Stats($lpaCollection, $statsLpasCollection, $whoCollection);
         $stats->setLogger($logger);
 
         $result = $stats->generate();

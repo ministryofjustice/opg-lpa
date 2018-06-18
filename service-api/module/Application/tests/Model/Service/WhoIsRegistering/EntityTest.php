@@ -30,18 +30,18 @@ class EntityTest extends TestCase
 
         //  Set up an LPA to test
         $this->lpa = FixturesData::getHwLpa();
-        $this->entity = new Entity($this->lpa->document->whoIsRegistering);
+        $this->entity = new Entity($this->lpa->getDocument()->getWhoIsRegistering());
     }
 
     public function testToArray()
     {
-        $this->assertEquals(['whoIsRegistering' => $this->lpa->document->whoIsRegistering], $this->entity->toArray());
+        $this->assertEquals(['whoIsRegistering' => $this->lpa->getDocument()->getWhoIsRegistering()], $this->entity->toArray());
     }
 
     public function testToArrayString()
     {
-        $entity = new Entity($this->lpa->document->whoIsRegistering[0]);
-        $this->assertEquals(['whoIsRegistering' => $this->lpa->document->whoIsRegistering[0]], $entity->toArray());
+        $entity = new Entity($this->lpa->getDocument()->getWhoIsRegistering()[0]);
+        $this->assertEquals(['whoIsRegistering' => $this->lpa->getDocument()->getWhoIsRegistering()[0]], $entity->toArray());
     }
 
     public function testToArrayAccessorInterface()

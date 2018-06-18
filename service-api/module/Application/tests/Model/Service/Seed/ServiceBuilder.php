@@ -3,10 +3,12 @@
 namespace ApplicationTest\Model\Service\Seed;
 
 use Application\Model\Service\Seed\Service;
-use ApplicationTest\AbstractServiceBuilder;
+use ApplicationTest\Model\Service\AbstractServiceBuilder;
 
 class ServiceBuilder extends AbstractServiceBuilder
 {
+    private $applicationsService = null;
+
     /**
      * @return Service
      */
@@ -20,5 +22,15 @@ class ServiceBuilder extends AbstractServiceBuilder
         }
 
         return $service;
+    }
+
+    /**
+     * @param $applicationsService
+     * @return $this
+     */
+    public function withApplicationsService($applicationsService)
+    {
+        $this->applicationsService = $applicationsService;
+        return $this;
     }
 }

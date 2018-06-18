@@ -6,7 +6,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\WhoAreYou\Entity;
 use Application\Model\Service\WhoAreYou\Service;
-use ApplicationTest\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
 use MongoDB\Collection as MongoCollection;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
@@ -23,32 +23,27 @@ class ServiceTest extends AbstractServiceTest
     {
         parent::setUp();
 
-        $this->service = new Service(FixturesData::getUser()->getId(), $this->lpaCollection);
+        $this->service = new Service($this->lpaCollection);
 
         $this->service->setLogger($this->logger);
-
-        $this->service->setAuthorizationService($this->authorizationService);
-    }
-
-    public function testCreateCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->create(null);
     }
 
     public function testCreateAlreadyAnswered()
     {
         $lpa = FixturesData::getPfLpa();
-        $lpa->whoAreYouAnswered = true;
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $lpa->setWhoAreYouAnswered(true);
 
-        $apiProblem = $service->create(null);
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->build();
+
+        $apiProblem = $service->create($lpa->getId(), null);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
-        $this->assertEquals(403, $apiProblem->status);
-        $this->assertEquals('Question already answered', $apiProblem->detail);
+        $this->assertEquals(403, $apiProblem->getStatus());
+        $this->assertEquals('Question already answered', $apiProblem->getDetail());
 
         $serviceBuilder->verify();
     }
@@ -56,18 +51,22 @@ class ServiceTest extends AbstractServiceTest
     public function testCreateValidationFailed()
     {
         $lpa = FixturesData::getHwLpa();
-        $lpa->whoAreYouAnswered = false;
+        $lpa->setWhoAreYouAnswered(false);
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->build();
 
         $whoAreYou = new WhoAreYou();
-        $validationError = $service->create($whoAreYou->toArray());
+        $validationError = $service->create($lpa->getId(), $whoAreYou->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
-        $this->assertEquals(400, $validationError->status);
-        $this->assertEquals('Your request could not be processed due to validation error', $validationError->detail);
-        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->type);
-        $this->assertEquals('Bad Request', $validationError->title);
+        $this->assertEquals(400, $validationError->getStatus());
+        $this->assertEquals('Your request could not be processed due to validation error', $validationError->getDetail());
+        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->getType());
+        $this->assertEquals('Bad Request', $validationError->getTitle());
         $validation = $validationError->validation;
         $this->assertEquals(1, count($validation));
         $this->assertTrue(array_key_exists('who', $validation));
@@ -79,18 +78,22 @@ class ServiceTest extends AbstractServiceTest
     {
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
-        $lpa->whoAreYouAnswered = false;
-        $lpa->user = 3;
+        $lpa->setWhoAreYouAnswered(false);
+        $lpa->setUser(3);
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->build();
 
         //So we expect an exception and for no document to be updated
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
         $whoAreYou = new WhoAreYou();
-        $whoAreYou->who = 'donor';
-        $service->create($whoAreYou->toArray());
+        $whoAreYou->setWho('donor');
+        $service->create($lpa->getId(), $whoAreYou->toArray());
 
         $serviceBuilder->verify();
     }
@@ -98,23 +101,24 @@ class ServiceTest extends AbstractServiceTest
     public function testCreate()
     {
         $lpa = FixturesData::getHwLpa();
-        $lpa->whoAreYouAnswered = false;
-        $statsWhoCollection = Mockery::mock(MongoCollection::class);
-        $statsWhoCollection->shouldReceive('insertOne')->once();
+        $lpa->setWhoAreYouAnswered(false);
+
+        $whoCollection = Mockery::mock(MongoCollection::class);
+        $whoCollection->shouldReceive('insertOne')->once();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withUser(FixturesData::getUser())
             ->withLpa($lpa)
             ->withUpdateNumberModified(1)
-            ->withStatsWhoCollection($statsWhoCollection)
+            ->withApiWhoCollection($whoCollection)
             ->build();
 
         $whoAreYou = new WhoAreYou();
-        $whoAreYou->who = 'donor';
-        $entity = $service->create($whoAreYou->toArray());
+        $whoAreYou->setWho('donor');
+        $entity = $service->create($lpa->getId(), $whoAreYou->toArray());
 
         $this->assertEquals(new Entity(true), $entity);
-        $this->assertTrue($lpa->whoAreYouAnswered);
 
         $serviceBuilder->verify();
     }

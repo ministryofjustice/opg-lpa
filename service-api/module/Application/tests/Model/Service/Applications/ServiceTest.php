@@ -5,12 +5,11 @@ namespace ApplicationTest\Model\Service\Applications;
 use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\DateTime;
 use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\Lock\LockedException;
-use ApplicationTest\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\UpdateResult;
@@ -31,28 +30,18 @@ class ServiceTest extends AbstractServiceTest
     {
         parent::setUp();
 
-        $this->service = new TestableService(FixturesData::getUser()->getId(), $this->lpaCollection);
+        $this->service = new TestableService($this->lpaCollection);
 
         $this->service->setLogger($this->logger);
-
-        $this->service->setAuthorizationService($this->authorizationService);
-    }
-
-    public function testFetchCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->fetch(-1);
     }
 
     public function testFetchNotFound()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $this->setFindNullLpaExpectation($user, -1);
 
-        $entity = $this->service->fetch(-1);
+        $entity = $this->service->fetch(-1, $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(404, $entity->getStatus());
@@ -62,69 +51,25 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchHwLpa()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $lpa = FixturesData::getHwLpa();
         $this->setFindOneLpaExpectation($user, $lpa);
 
-        $entity = $this->service->fetch($lpa->getId());
+        $entity = $this->service->fetch($lpa->getId(), $user->getId());
         $this->assertTrue($entity instanceof DataModelEntity);
         $this->assertEquals($lpa, $entity->getData());
-    }
-
-    public function testFetchNotAuthenticated()
-    {
-        $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, false);
-
-        $this->expectException(UnauthorizedException::class);
-        $this->expectExceptionMessage('You need to be authenticated to access this service');
-
-        $this->service->fetch(1);
-    }
-
-    public function testFetchMissingPermission()
-    {
-        $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, true, false);
-
-        $this->expectException(UnauthorizedException::class);
-        $this->expectExceptionMessage('You do not have permission to access this service');
-
-        $this->service->fetch(1);
-    }
-
-    public function testFetchMissingPermissionAdmin()
-    {
-        $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, true, false, true);
-
-        $lpa = FixturesData::getHwLpa();
-        $this->setFindOneLpaExpectation($user, $lpa);
-
-        $entity = $this->service->fetch($lpa->getId());
-        $this->assertTrue($entity instanceof DataModelEntity);
-        $this->assertEquals($lpa, $entity->getData());
-    }
-
-    public function testCreateCheckAccess()
-    {
-        parent::setUpCheckAccessTest($this->service);
-
-        $this->service->create(null);
     }
 
     public function testCreateNullData()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $this->setCreateIdExpectations();
 
         $this->setInsertOneExpectations($user);
 
         /* @var DataModelEntity */
-        $createdEntity = $this->service->create(null);
+        $createdEntity = $this->service->create(null, $user->getId());
 
         $this->assertNotNull($createdEntity);
     }
@@ -132,7 +77,6 @@ class ServiceTest extends AbstractServiceTest
     public function testCreateMalformedData()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $this->setCreateIdExpectations();
 
@@ -144,13 +88,12 @@ class ServiceTest extends AbstractServiceTest
             'document' => [
                 'type' => 'blah',
             ],
-        ]);
+        ], $user->getId());
     }
 
     public function testCreateFullLpa()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $this->setCreateIdExpectations();
 
@@ -158,7 +101,7 @@ class ServiceTest extends AbstractServiceTest
 
         $lpa = FixturesData::getHwLpa();
         /* @var DataModelEntity */
-        $createdEntity = $this->service->create($lpa->toArray());
+        $createdEntity = $this->service->create($lpa->toArray(), $user->getId());
 
         $this->assertNotNull($createdEntity);
     }
@@ -166,7 +109,6 @@ class ServiceTest extends AbstractServiceTest
     public function testCreateFilterIncomingData()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $this->setCreateIdExpectations();
 
@@ -177,7 +119,7 @@ class ServiceTest extends AbstractServiceTest
         $lpa->set('locked', true);
 
         /* @var $createdEntity DataModelEntity */
-        $createdEntity = $this->service->create($lpa->toArray());
+        $createdEntity = $this->service->create($lpa->toArray(), $user->getId());
         $createdLpa = $createdEntity->getData();
 
         //The following properties should be maintained
@@ -197,17 +139,9 @@ class ServiceTest extends AbstractServiceTest
         $this->assertNotEquals($lpa->get('seed'), $createdLpa->get('seed'));
     }
 
-    public function testPatchCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->patch(null, -1);
-    }
-
     public function testPatchValidationError()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, true, true, false, 2);
 
         $pfLpa = FixturesData::getPfLpa();
         $this->setFindOneLpaExpectation($user, $pfLpa);
@@ -218,7 +152,7 @@ class ServiceTest extends AbstractServiceTest
         $lpa->setDocument(new Document());
         $lpa->getDocument()->setType('invalid');
 
-        $validationError = $this->service->patch($lpa->toArray(), $lpa->getId());
+        $validationError = $this->service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(400, $validationError->getStatus());
@@ -238,9 +172,6 @@ class ServiceTest extends AbstractServiceTest
 
     public function testUpdateLpaValidationError()
     {
-        $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
-
         $pfLpa = FixturesData::getPfLpa();
         $this->logger->shouldReceive('info')
             ->withArgs(['Updating LPA', ['lpaid' => $pfLpa->getId()]])->once();
@@ -259,13 +190,12 @@ class ServiceTest extends AbstractServiceTest
     public function testPatchFullLpaNoChanges()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, true, true, false, 3);
 
         $lpa = FixturesData::getHwLpa();
         $this->setUpdateOneLpaExpectations($user, $lpa, $lpa, true, false, true, false, true, false, 0);
 
         /* @var DataModelEntity */
-        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId());
+        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
 
         $this->assertNotNull($patchedEntity);
 
@@ -279,7 +209,6 @@ class ServiceTest extends AbstractServiceTest
     public function testPatchFullLpaChanges()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, true, true, false, 3);
 
         $lpa = FixturesData::getHwLpa();
         $lpa->getDocument()->setInstruction('Changed');
@@ -297,7 +226,7 @@ class ServiceTest extends AbstractServiceTest
         );
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId());
+        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
 
         $this->assertNotNull($patchedEntity);
         //Updated date should not have changed as the LPA document hasn't changed
@@ -310,7 +239,6 @@ class ServiceTest extends AbstractServiceTest
     public function testPatchLockedLpa()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, true, true, false, 3);
 
         $lpa = FixturesData::getHwLpa();
         $lpa->setLocked(true);
@@ -325,13 +253,12 @@ class ServiceTest extends AbstractServiceTest
 
         $this->expectException(LockedException::class);
         $this->expectExceptionMessage('LPA has already been locked.');
-        $this->service->patch($lpa->toArray(), $lpa->getId());
+        $this->service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
     }
 
     public function testPatchSetCreatedDate()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, true, true, false, 3);
 
         $lpa = FixturesData::getHwLpa();
         $lpa->setCreatedAt(null);
@@ -342,7 +269,7 @@ class ServiceTest extends AbstractServiceTest
         $lpa->getDocument()->setInstruction('Changed');
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId());
+        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
 
         /** @var Lpa $lpaOut */
         $lpaOut = $patchedEntity->getData();
@@ -353,7 +280,6 @@ class ServiceTest extends AbstractServiceTest
     public function testPatchNotCreatedYet()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, true, true, false, 3);
 
         $lpa = FixturesData::getHwLpa();
         $this->setUpdateOneLpaExpectations($user, $lpa, $lpa, false, false, false, false, true, true, 1);
@@ -362,7 +288,7 @@ class ServiceTest extends AbstractServiceTest
         $lpa->getDocument()->setCertificateProvider(null);
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId());
+        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
 
         /** @var Lpa $lpaOut */
         $lpaOut = $patchedEntity->getData();
@@ -373,7 +299,6 @@ class ServiceTest extends AbstractServiceTest
     public function testPatchSetCompletedAtNotLocked()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, true, true, false, 3);
 
         $lpa = FixturesData::getHwLpa();
         $lpa->setCompletedAt(null);
@@ -383,7 +308,7 @@ class ServiceTest extends AbstractServiceTest
         $this->assertNull($lpa->getCompletedAt());
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId());
+        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
 
         /** @var Lpa $lpaOut */
         $lpaOut = $patchedEntity->getData();
@@ -394,7 +319,6 @@ class ServiceTest extends AbstractServiceTest
     public function testPatchSetCompletedAtLocked()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, true, true, false, 3);
 
         $lpa = FixturesData::getHwLpa();
         $lpa->setCompletedAt(null);
@@ -404,7 +328,7 @@ class ServiceTest extends AbstractServiceTest
         $this->assertNull($lpa->getCompletedAt());
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId());
+        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
 
         /** @var Lpa $lpaOut */
         $lpaOut = $patchedEntity->getData();
@@ -415,20 +339,18 @@ class ServiceTest extends AbstractServiceTest
     public function testPatchUpdateNumberModifiedError()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, true, true, false, 3);
 
         $lpa = FixturesData::getHwLpa();
         $this->setUpdateOneLpaExpectations($user, $lpa, $lpa, true, false, true, false, true, false, 2);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unable to update LPA. This might be because "updatedAt" has changed.');
-        $this->service->patch($lpa->toArray(), $lpa->getId());
+        $this->service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
     }
 
     public function testPatchFilterIncomingData()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, true, true, false, 3);
 
         $lpa = FixturesData::getHwLpa();
         $lpa->set('startedAt', new DateTime());
@@ -454,7 +376,7 @@ class ServiceTest extends AbstractServiceTest
         );
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId());
+        $patchedEntity = $this->service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
 
         $patchedLpa = $patchedEntity->getData();
 
@@ -475,21 +397,13 @@ class ServiceTest extends AbstractServiceTest
         $this->assertNotEquals($lpa->get('seed'), $patchedLpa->get('seed'));
     }
 
-    public function testDeleteCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->delete(-1);
-    }
-
     public function testDeleteNotFound()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $this->setDeleteExpectations($user, -1, null);
 
-        $response = $this->service->delete(-1);
+        $response = $this->service->delete(-1, $user->getId());
 
         $this->assertTrue($response instanceof ApiProblem);
         $this->assertEquals(404, $response->getStatus());
@@ -499,27 +413,18 @@ class ServiceTest extends AbstractServiceTest
     public function testDelete()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $lpa = FixturesData::getPfLpa();
         $this->setDeleteExpectations($user, $lpa->getId(), $lpa);
 
-        $response = $this->service->delete($lpa->getId());
+        $response = $this->service->delete($lpa->getId(), $user->getId());
 
         $this->assertTrue($response);
-    }
-
-    public function testDeleteAllCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->deleteAll();
     }
 
     public function testDeleteAll()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user, true, true, false, 2);
 
         $lpa = FixturesData::getPfLpa();
         $this->setDeleteExpectations($user, $lpa->getId(), $lpa);
@@ -528,27 +433,19 @@ class ServiceTest extends AbstractServiceTest
             ->withArgs([['user' => $user->getId()], ['_id' => true]])->once()
             ->andReturn([['_id' => $lpa->getId()]]);
 
-        $response = $this->service->deleteAll();
+        $response = $this->service->deleteAll($user->getId());
 
         $this->assertTrue($response);
-    }
-
-    public function testFetchAllCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->fetchAll();
     }
 
     public function testFetchAllNoRecords()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $this->setFetchAllExpectations(['user' => $user->getId()], []);
 
         /** @var Collection $response */
-        $response = $this->service->fetchAll();
+        $response = $this->service->fetchAll($user->getId());
 
         $this->assertEquals(0, $response->count());
     }
@@ -556,13 +453,12 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchAllOneRecord()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $lpas = [FixturesData::getHwLpa()];
         $this->setFetchAllExpectations(['user' => $user->getId()], $lpas);
 
         /** @var Collection $response */
-        $response = $this->service->fetchAll();
+        $response = $this->service->fetchAll($user->getId());
 
         $this->assertEquals(1, $response->count());
         $lpaCollection = $response->toArray();
@@ -577,13 +473,12 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchAllSearchById()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
         $this->setFetchAllExpectations(['user' => $user->getId(), '_id' => $lpas[1]->id], [$lpas[1]]);
 
         /** @var Collection $response */
-        $response = $this->service->fetchAll(['search' => $lpas[1]->id]);
+        $response = $this->service->fetchAll($user->getId(), ['search' => $lpas[1]->id]);
 
         $this->assertEquals(1, $response->count());
         $lpaCollection = $response->toArray();
@@ -598,7 +493,6 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchAllSearchByIdAndFilter()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
         $this->setFetchAllExpectations([
@@ -609,7 +503,7 @@ class ServiceTest extends AbstractServiceTest
         ], []);
 
         /** @var Collection $response */
-        $response = $this->service->fetchAll(['search' => $lpas[1]->id, 'filter' => ['user' => 'missing']]);
+        $response = $this->service->fetchAll($user->getId(), ['search' => $lpas[1]->id, 'filter' => ['user' => 'missing']]);
 
         $this->assertEquals(0, $response->count());
     }
@@ -617,13 +511,12 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchAllSearchByReference()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
         $this->setFetchAllExpectations(['user' => $user->getId(), '_id' => $lpas[0]->id], [$lpas[0]]);
 
         /** @var Collection $response */
-        $response = $this->service->fetchAll(['search' => Formatter::id($lpas[0]->id)]);
+        $response = $this->service->fetchAll($user->getId(), ['search' => Formatter::id($lpas[0]->id)]);
 
         $this->assertEquals(1, $response->count());
         $lpaCollection = $response->toArray();
@@ -638,7 +531,6 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchAllSearchByName()
     {
         $user = FixturesData::getUser();
-        $this->setCheckAccessExpectations($this->service, $user);
 
         $lpas = [FixturesData::getHwLpa(), FixturesData::getPfLpa()];
         $this->setFetchAllExpectations([
@@ -650,7 +542,7 @@ class ServiceTest extends AbstractServiceTest
         ], []);
 
         /** @var Collection $response */
-        $response = $this->service->fetchAll(['search' => $lpas[0]->document->donor->name]);
+        $response = $this->service->fetchAll($user->getId(), ['search' => $lpas[0]->document->donor->name]);
 
         $this->assertEquals(0, $response->count());
     }
@@ -887,5 +779,27 @@ class ServiceTest extends AbstractServiceTest
                 ->withArgs([$filter, ['sort' => ['updatedAt' => -1], 'skip' => 0, 'limit' => 10]])
                 ->andReturn(new DummyLpaMongoCursor($lpas));
         }
+    }
+
+    /**
+     * @param User $user
+     * @param int $lpaId
+     */
+    private function setFindNullLpaExpectation(User $user, int $lpaId)
+    {
+        $this->lpaCollection->shouldReceive('findOne')
+            ->withArgs([['_id' => $lpaId, 'user' => $user->getId()]])->once()
+            ->andReturn(null);
+    }
+
+    /**
+     * @param User $user
+     * @param Lpa $lpa
+     */
+    private function setFindOneLpaExpectation(User $user, Lpa $lpa)
+    {
+        $this->lpaCollection->shouldReceive('findOne')
+            ->withArgs([['_id' => $lpa->getId(), 'user' => $user->getId()]])->once()
+            ->andReturn($lpa->toArray(new DateCallback()));
     }
 }

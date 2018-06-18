@@ -33,9 +33,9 @@ class EntityTest extends TestCase
 
     public function testToArray()
     {
-        $document = $this->lpa->document->toArray();
+        $document = $this->lpa->getDocument()->toArray();
         $expected = [
-            'seed' => $this->lpa->id,
+            'seed' => $this->lpa->getId(),
             'donor' => $document['donor'],
             'correspondent' => $document['correspondent'],
             'certificateProvider' => $document['certificateProvider'],

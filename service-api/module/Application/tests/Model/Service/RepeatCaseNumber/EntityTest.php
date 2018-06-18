@@ -28,7 +28,7 @@ class EntityTest extends TestCase
 
         //  Set up an LPA to test
         $this->lpa = FixturesData::getHwLpa();
-        $this->entity = new Entity($this->lpa->repeatCaseNumber);
+        $this->entity = new Entity($this->lpa->getRepeatCaseNumber());
     }
 
     public function testToArray()

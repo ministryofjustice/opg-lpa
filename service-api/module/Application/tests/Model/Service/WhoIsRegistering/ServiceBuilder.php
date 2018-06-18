@@ -3,11 +3,10 @@
 namespace ApplicationTest\Model\Service\WhoIsRegistering;
 
 use Application\Model\Service\WhoIsRegistering\Service;
-use ApplicationTest\AbstractServiceBuilder;
+use ApplicationTest\Model\Service\AbstractServiceBuilder;
 
 class ServiceBuilder extends AbstractServiceBuilder
 {
-
     /**
      * @return Service
      */

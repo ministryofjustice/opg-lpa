@@ -21,7 +21,7 @@ class StatsFactory implements FactoryInterface
         $lpaCollection = $container->get(CollectionFactory::class . '-api-lpa');
         /** @var Collection $statsLpaCollection */
         $statsLpaCollection = $container->get(CollectionFactory::class . '-api-stats-lpas');
-        /** @var Collection $statsWhoCollection */
+        /** @var Collection $whoCollection */
         $whoCollection = $container->get(CollectionFactory::class . '-api-who');
 
         return new Stats($lpaCollection, $statsLpaCollection, $whoCollection);

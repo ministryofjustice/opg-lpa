@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\CertificateProvider;
 
 use Application\Model\Service\CertificateProvider\Service;
-use ApplicationTest\AbstractServiceBuilder;
+use ApplicationTest\Model\Service\AbstractServiceBuilder;
 
 class ServiceBuilder extends AbstractServiceBuilder
 {

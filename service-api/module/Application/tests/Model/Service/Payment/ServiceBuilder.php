@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\Payment;
 
 use Application\Model\Service\Payment\Service;
-use ApplicationTest\AbstractServiceBuilder;
+use ApplicationTest\Model\Service\AbstractServiceBuilder;
 
 class ServiceBuilder extends AbstractServiceBuilder
 {

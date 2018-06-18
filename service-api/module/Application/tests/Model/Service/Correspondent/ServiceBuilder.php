@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\Correspondent;
 
 use Application\Model\Service\Correspondent\Service;
-use ApplicationTest\AbstractServiceBuilder;
+use ApplicationTest\Model\Service\AbstractServiceBuilder;
 
 class ServiceBuilder extends AbstractServiceBuilder
 {
