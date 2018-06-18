@@ -16,7 +16,7 @@ class Stats extends AbstractService implements ApiClientAwareInterface
      */
     public function getApiStats()
     {
-        $response = $this->apiClient->httpGet('/v2/stats/all');
+        $response = $this->apiClient->httpGet('/stats/all');
 
         if ($response->getStatusCode() == 200) {
             return json_decode($response->getBody(), true);
