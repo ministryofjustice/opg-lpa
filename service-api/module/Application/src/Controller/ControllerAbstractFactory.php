@@ -3,14 +3,11 @@
 namespace Application\Controller;
 
 use Application\Controller\Version2;
+use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Service;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\Stdlib\DispatchableInterface as Dispatchable;
-use Exception;
-use RuntimeException;
 
 /**
  * Creates a controller based on those requested without a specific entry in the controller service locator.
@@ -40,7 +37,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         Version2\ReplacementAttorneyController::class           => Service\AttorneysReplacement\Service::class,
         Version2\ReplacementAttorneyDecisionsController::class  => Service\AttorneyDecisionsReplacement\Service::class,
         Version2\SeedController::class                          => Service\Seed\Service::class,
-        Version2\StatsController::class                         => Service\Stats\Service::class,
         Version2\TypeController::class                          => Service\Type\Service::class,
         Version2\UserController::class                          => Service\Users\Service::class,
         Version2\WhoAreYouController::class                     => Service\WhoAreYou\Service::class,
@@ -60,16 +56,11 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
     }
 
     /**
-     * Create an object
-     *
-     * @param  ContainerInterface $container
-     * @param  string $requestedName
-     * @param  null|array $options
-     * @return object
-     * @throws ServiceNotFoundException if unable to resolve the service.
-     * @throws ServiceNotCreatedException if an exception is raised when
-     *     creating a service.
-     * @throws Exception if any other error occurs
+     * @param ContainerInterface $container
+     * @param string $requestedName
+     * @param array|null $options
+     * @return mixed
+     * @throws ApiProblemException
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -81,16 +72,10 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             ));
         }
 
-        //  Create the controller injecting the appropriate service
+        //  Create the controller injecting the appropriate services
+        $authorizationService = $container->get('ZfcRbac\Service\AuthorizationService');
         $service = $container->get($this->serviceMappings[$requestedName]);
 
-        $controller = new $requestedName($service);
-
-        // Ensure it's Dispatchable...
-        if (($controller instanceof Dispatchable) === false) {
-            throw new RuntimeException('Requested controller class is not Dispatchable');
-        }
-
-        return $controller;
+        return new $requestedName($authorizationService, $service);
     }
 }

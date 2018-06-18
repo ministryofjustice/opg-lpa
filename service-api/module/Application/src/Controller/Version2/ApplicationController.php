@@ -28,7 +28,9 @@ class ApplicationController extends AbstractController
      */
     public function get($id)
     {
-        $result = $this->getService()->fetch($id);
+        $this->checkAccess();
+
+        $result = $this->getService()->fetch($id, $this->routeUserId);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -51,6 +53,8 @@ class ApplicationController extends AbstractController
      */
     public function getList()
     {
+        $this->checkAccess();
+
         $query = $this->params()->fromQuery();
 
         //  If appropriate numeric values have been provided then get the correct page
@@ -68,7 +72,7 @@ class ApplicationController extends AbstractController
         unset($filteredQuery['perPage']);
 
         //  Get the collection of applications with the query data
-        $result = $this->getService()->fetchAll($filteredQuery);
+        $result = $this->getService()->fetchAll($this->routeUserId, $filteredQuery);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -95,7 +99,9 @@ class ApplicationController extends AbstractController
      */
     public function create($data)
     {
-        $result = $this->getService()->create($data);
+        $this->checkAccess();
+
+        $result = $this->getService()->create($data, $this->routeUserId);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -114,7 +120,9 @@ class ApplicationController extends AbstractController
      */
     public function patch($id, $data)
     {
-        $result = $this->getService()->patch($data, $id);
+        $this->checkAccess();
+
+        $result = $this->getService()->patch($data, $id, $this->routeUserId);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -132,7 +140,9 @@ class ApplicationController extends AbstractController
      */
     public function delete($id)
     {
-        $result = $this->getService()->delete($id);
+        $this->checkAccess();
+
+        $result = $this->getService()->delete($id, $this->routeUserId);
 
         if ($result instanceof ApiProblem) {
             return $result;

@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\AttorneyDecisionsPrimary;
 
 use Application\Model\Service\AttorneyDecisionsPrimary\Service;
-use ApplicationTest\AbstractServiceBuilder;
+use ApplicationTest\Model\Service\AbstractServiceBuilder;
 
 class ServiceBuilder extends AbstractServiceBuilder
 {

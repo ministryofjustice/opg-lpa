@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\NotifiedPeople;
 
 use Application\Model\Service\NotifiedPeople\Service;
-use ApplicationTest\AbstractServiceBuilder;
+use ApplicationTest\Model\Service\AbstractServiceBuilder;
 
 class ServiceBuilder extends AbstractServiceBuilder
 {

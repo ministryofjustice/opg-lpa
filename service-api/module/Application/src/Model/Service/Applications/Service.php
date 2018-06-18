@@ -20,12 +20,11 @@ class Service extends AbstractService
 {
     /**
      * @param $data
+     * @param $userId
      * @return DataModelEntity
      */
-    public function create($data)
+    public function create($data, $userId)
     {
-        $this->checkAccess();
-
         // If no data was passed, represent with an empty array.
         if (is_null($data)) {
             $data = [];
@@ -50,7 +49,7 @@ class Service extends AbstractService
             'id'                => $id,
             'startedAt'         => new DateTime(),
             'updatedAt'         => new DateTime(),
-            'user'              => $this->routeUserId,
+            'user'              => $userId,
             'locked'            => false,
             'whoAreYouAnswered' => false,
             'document'          => new Document\Document(),
@@ -90,14 +89,13 @@ class Service extends AbstractService
     /**
      * @param $data
      * @param $id
+     * @param $userId
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function patch($data, $id)
+    public function patch($data, $id, $userId)
     {
-        $this->checkAccess();
-
         /** @var Lpa $lpa */
-        $lpa = $this->fetch($id)->getData();
+        $lpa = $this->fetch($id, $userId)->getData();
 
         $data = $this->filterIncomingData($data);
 
@@ -118,20 +116,19 @@ class Service extends AbstractService
 
     /**
      * @param $id
+     * @param $userId
      * @return ApiProblem|DataModelEntity
      */
-    public function fetch($id)
+    public function fetch($id, $userId)
     {
-        $this->checkAccess();
-
         // Note: user has to match
         $result = $this->lpaCollection->findOne([
             '_id' => (int) $id,
-            'user' => $this->routeUserId
+            'user' => $userId
         ]);
 
         if (is_null($result)) {
-            return new ApiProblem(404, 'Document ' . $id . ' not found for user ' . $this->routeUserId);
+            return new ApiProblem(404, 'Document ' . $id . ' not found for user ' . $userId);
         }
 
         $result = ['id' => $result['_id']] + $result;
@@ -142,15 +139,14 @@ class Service extends AbstractService
     }
 
     /**
+     * @param $userId
      * @param array $params
      * @return Collection
      */
-    public function fetchAll($params = [])
+    public function fetchAll($userId, $params = [])
     {
-        $this->checkAccess();
-
         $filter = [
-            'user' => $this->routeUserId
+            'user' => $userId
         ];
 
         //  Merge in any filter requirements...
@@ -224,15 +220,14 @@ class Service extends AbstractService
 
     /**
      * @param $id
+     * @param $userId
      * @return ApiProblem|bool
      */
-    public function delete($id)
+    public function delete($id, $userId)
     {
-        $this->checkAccess();
-
         $filter = [
             '_id' => (int) $id,
-            'user' => $this->routeUserId,
+            'user' => $userId,
         ];
 
         $result = $this->lpaCollection->findOne($filter, ['projection' => ['_id' => true]]);
@@ -251,18 +246,17 @@ class Service extends AbstractService
     }
 
     /**
+     * @param $userId
      * @return bool
      */
-    public function deleteAll()
+    public function deleteAll($userId)
     {
-        $this->checkAccess();
-
-        $query = ['user' => $this->routeUserId];
+        $query = ['user' => $userId];
 
         $lpas = $this->lpaCollection->find($query, ['_id' => true]);
 
         foreach ($lpas as $lpa) {
-            $this->delete($lpa['_id']);
+            $this->delete($lpa['_id'], $userId);
         }
 
         return true;

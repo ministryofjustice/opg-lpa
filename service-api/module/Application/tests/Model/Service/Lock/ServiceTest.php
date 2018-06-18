@@ -5,8 +5,9 @@ namespace ApplicationTest\Model\Service\Lock;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\Lock\Entity;
 use Application\Model\Service\Lock\Service;
-use ApplicationTest\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTest;
 use OpgTest\Lpa\DataModel\FixturesData;
+use DateTime;
 
 class ServiceTest extends AbstractServiceTest
 {
@@ -19,32 +20,23 @@ class ServiceTest extends AbstractServiceTest
     {
         parent::setUp();
 
-        $this->service = new Service(FixturesData::getUser()->getId(), $this->lpaCollection);
+        $this->service = new Service($this->lpaCollection);
 
         $this->service->setLogger($this->logger);
-
-        $this->service->setAuthorizationService($this->authorizationService);
-    }
-
-    public function testCreateCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->create(null);
     }
 
     public function testCreateAlreadyLocked()
     {
         $lpa = FixturesData::getPfLpa();
-        $lpa->locked = true;
+        $lpa->setLocked(true);
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
-        $apiProblem = $service->create(null); //Data is ignored. Locked always set to true
+        $apiProblem = $service->create($lpa->getId());
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
-        $this->assertEquals(403, $apiProblem->status);
-        $this->assertEquals('LPA already locked', $apiProblem->detail);
+        $this->assertEquals(403, $apiProblem->getStatus());
+        $this->assertEquals('LPA already locked', $apiProblem->getDetail());
 
         $serviceBuilder->verify();
     }
@@ -53,7 +45,7 @@ class ServiceTest extends AbstractServiceTest
     {
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
-        $lpa->user = 3;
+        $lpa->setUser(3);
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
@@ -61,7 +53,7 @@ class ServiceTest extends AbstractServiceTest
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $service->create(null); //Data is ignored. Locked always set to true
+        $service->create($lpa->getId());
 
         $serviceBuilder->verify();
     }
@@ -70,7 +62,7 @@ class ServiceTest extends AbstractServiceTest
     {
         //  Initialise the LPA is unlocked
         $lpa = FixturesData::getHwLpa();
-        $lpa->locked = false;
+        $lpa->setLocked(false);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
@@ -79,14 +71,18 @@ class ServiceTest extends AbstractServiceTest
             ->withUpdateNumberModified(1)
             ->build();
 
-        $entity = $service->create(null); //Data is ignored. Locked always set to true
+        $entity = $service->create($lpa->getId());
+
+        $lockData = $entity->toArray();
 
         //  Create an LPA to compare
-        $lpa->locked = true;
+        $lpa->setLocked(true);
+        $lpa->setLockedAt(new DateTime($lockData['lockedAt']));
+
         $comparisonEntity = new Entity($lpa);
 
         $this->assertEquals($comparisonEntity, $entity);
-        $this->assertTrue($lpa->locked);
+        $this->assertTrue($lpa->isLocked());
 
         $serviceBuilder->verify();
     }

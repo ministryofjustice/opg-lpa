@@ -6,7 +6,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Http\Response\File as FileResponse;
 use Application\Model\Service\Pdfs\Service;
-use ApplicationTest\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTest;
 use Aws\Command;
 use Aws\Result;
 use Aws\S3\Exception\S3Exception;
@@ -25,17 +25,15 @@ class ServiceTest extends AbstractServiceTest
      */
     private $service;
 
-    private $config = array();
+    private $config = [];
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->service = new Service(FixturesData::getUser()->getId(), $this->lpaCollection);
+        $this->service = new Service($this->lpaCollection);
 
         $this->service->setLogger($this->logger);
-
-        $this->service->setAuthorizationService($this->authorizationService);
 
         $this->config = [
             'pdf' => [
@@ -67,23 +65,17 @@ class ServiceTest extends AbstractServiceTest
         $this->service->setPdfConfig($this->config);
     }
 
-    public function testFetchCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->fetch(-1);
-    }
-
     public function testFetchNotFound()
     {
+        $lpa = FixturesData::getPfLpa();
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa(FixturesData::getPfLpa())->build();
+        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
-        $entity = $service->fetch(-1);
+        $entity = $service->fetch($lpa->getId(), -1);
 
         $this->assertTrue($entity instanceof ApiProblem);
-        $this->assertEquals(404, $entity->status);
-        $this->assertEquals('Document not found', $entity->detail);
+        $this->assertEquals(404, $entity->getStatus());
+        $this->assertEquals('Document not found', $entity->getDetail());
 
         $serviceBuilder->verify();
     }
@@ -92,17 +84,17 @@ class ServiceTest extends AbstractServiceTest
     {
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
-        $lpa->user = 3;
+        $lpa->setUser(3);
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
-        $validationError = $service->fetch(-1);
+        $validationError = $service->fetch($lpa->getId(), -1);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
-        $this->assertEquals(400, $validationError->status);
-        $this->assertEquals('Your request could not be processed due to validation error', $validationError->detail);
-        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->type);
-        $this->assertEquals('Bad Request', $validationError->title);
+        $this->assertEquals(400, $validationError->getStatus());
+        $this->assertEquals('Your request could not be processed due to validation error', $validationError->getDetail());
+        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->getType());
+        $this->assertEquals('Bad Request', $validationError->getTitle());
         $validation = $validationError->validation;
         $this->assertEquals(1, count($validation));
         $this->assertTrue(array_key_exists('user', $validation));
@@ -116,7 +108,7 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
-        $data = $service->fetch('lpa120');
+        $data = $service->fetch($lpa->getId(), 'lpa120');
 
         $this->assertEquals([
             'type'     => 'lpa120',
@@ -133,7 +125,7 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
-        $data = $service->fetch('lp3');
+        $data = $service->fetch($lpa->getId(), 'lp3');
 
         $this->assertEquals([
             'type'     => 'lp3',
@@ -147,21 +139,23 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchLp1InQueue()
     {
         $lpa = FixturesData::getHwLpa();
+
         $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
         $dynamoQueueClient->shouldReceive('checkStatus')->andReturn(DynamoQueueJob::STATE_WAITING)->once();
+
+        $s3Client = Mockery::mock(S3Client::class);
+        $s3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withUser(FixturesData::getUser())
             ->withLpa($lpa)
             ->withConfig($this->config)
             ->withDynamoQueueClient($dynamoQueueClient)
+            ->withS3Client($s3Client)
             ->build();
 
-        $mockS3Client = Mockery::mock(S3Client::class);
-        $mockS3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
-        $service->setS3Client($mockS3Client);
-
-        $data = $service->fetch('lp1');
+        $data = $service->fetch($lpa->getId(), 'lp1');
 
         $this->assertEquals([
             'type'     => 'lp1',
@@ -175,21 +169,23 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchLp1Ready()
     {
         $lpa = FixturesData::getHwLpa();
+
         $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
         $dynamoQueueClient->shouldReceive('deleteJob')->once();
+
+        $s3Client = Mockery::mock(S3Client::class);
+        $s3Client->shouldReceive('headObject')->once();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withUser(FixturesData::getUser())
             ->withLpa($lpa)
             ->withConfig($this->config)
             ->withDynamoQueueClient($dynamoQueueClient)
+            ->withS3Client($s3Client)
             ->build();
 
-        $mockS3Client = Mockery::mock(S3Client::class);
-        $mockS3Client->shouldReceive('headObject')->once();
-        $service->setS3Client($mockS3Client);
-
-        $data = $service->fetch('lp1');
+        $data = $service->fetch($lpa->getId(), 'lp1');
 
         $this->assertEquals([
             'type'     => 'lp1',
@@ -203,23 +199,25 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchLp1NotQueued()
     {
         $lpa = FixturesData::getHwLpa();
+
         $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
         $dynamoQueueClient->shouldReceive('checkStatus')->andReturn(DynamoQueueJob::STATE_DONE)->once();
         $dynamoQueueClient->shouldReceive('deleteJob')->once();
         $dynamoQueueClient->shouldReceive('enqueue')->once();
+
+        $s3Client = Mockery::mock(S3Client::class);
+        $s3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withUser(FixturesData::getUser())
             ->withLpa($lpa)
             ->withConfig($this->config)
             ->withDynamoQueueClient($dynamoQueueClient)
+            ->withS3Client($s3Client)
             ->build();
 
-        $mockS3Client = Mockery::mock(S3Client::class);
-        $mockS3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
-        $service->setS3Client($mockS3Client);
-
-        $data = $service->fetch('lp1');
+        $data = $service->fetch($lpa->getId(), 'lp1');
 
         $this->assertEquals([
             'type'     => 'lp1',
@@ -233,26 +231,29 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchLp1CryptInvalidArgumentException()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $config = $this->config;
+        $config['pdf']['encryption']['keys']['queue'] = 'Invalid';
+
         $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
         $dynamoQueueClient->shouldReceive('checkStatus')->andReturn(DynamoQueueJob::STATE_DONE)->once();
         $dynamoQueueClient->shouldReceive('deleteJob')->once();
+
+        $s3Client = Mockery::mock(S3Client::class);
+        $s3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
+
         $serviceBuilder = new ServiceBuilder();
-        $config = $this->config;
-        $config['pdf']['encryption']['keys']['queue'] = 'Invalid';
         $service = $serviceBuilder
             ->withUser(FixturesData::getUser())
             ->withLpa($lpa)
             ->withConfig($config)
             ->withDynamoQueueClient($dynamoQueueClient)
+            ->withS3Client($s3Client)
             ->build();
-
-        $mockS3Client = Mockery::mock(S3Client::class);
-        $mockS3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
-        $service->setS3Client($mockS3Client);
 
         $this->expectException(CryptInvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid encryption key');
-        $service->fetch('lp1');
+        $service->fetch($lpa->getId(), 'lp1');
 
         $serviceBuilder->verify();
     }
@@ -260,18 +261,23 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchLpa120PdfNotAvailable()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $s3Client = Mockery::mock(S3Client::class);
+        $s3Client->shouldReceive('getObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->withConfig($this->config)->build();
+        $service = $serviceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withConfig($this->config)
+            ->withS3Client($s3Client)
+            ->build();
 
-        $mockS3Client = Mockery::mock(S3Client::class);
-        $mockS3Client->shouldReceive('getObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
-        $service->setS3Client($mockS3Client);
-
-        $entity = $service->fetch('lpa120.pdf');
+        $entity = $service->fetch($lpa->getId(), 'lpa120.pdf');
 
         $this->assertTrue($entity instanceof ApiProblem);
-        $this->assertEquals(404, $entity->status);
-        $this->assertEquals('Document not found', $entity->detail);
+        $this->assertEquals(404, $entity->getStatus());
+        $this->assertEquals('Document not found', $entity->getDetail());
 
         $serviceBuilder->verify();
     }
@@ -279,26 +285,28 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchLp1PdfCryptInvalidArgumentException()
     {
         $lpa = FixturesData::getHwLpa();
-        $serviceBuilder = new ServiceBuilder();
+
         $config = $this->config;
         $config['pdf']['encryption']['keys']['document'] = 'Invalid';
-        $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withConfig($config)
-            ->build();
 
-        $mockS3Client = Mockery::mock(S3Client::class);
+        $s3Client = Mockery::mock(S3Client::class);
         $s3ResultBody = Mockery::mock(GuzzleStreamInterface::class);
         $s3ResultBody->shouldReceive('getContents')->once();
         $s3Result = new Result();
         $s3Result['Body'] = $s3ResultBody;
-        $mockS3Client->shouldReceive('getObject')->andReturn($s3Result)->once();
-        $service->setS3Client($mockS3Client);
+        $s3Client->shouldReceive('getObject')->andReturn($s3Result)->once();
+
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withUser(FixturesData::getUser())
+            ->withLpa($lpa)
+            ->withConfig($config)
+            ->withS3Client($s3Client)
+            ->build();
 
         $this->expectException(CryptInvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid encryption key');
-        $service->fetch('lp1.pdf');
+        $service->fetch($lpa->getId(), 'lp1.pdf');
 
         $serviceBuilder->verify();
     }
@@ -306,28 +314,29 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchLp1Pdf()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $encryptionConfig = $this->config['pdf']['encryption'];
+        $blockCipher = BlockCipher::factory('openssl', $encryptionConfig['options']);
+        $blockCipher->setKey($encryptionConfig['keys']['document']);
+        $blockCipher->setBinaryOutput(true);
+        $encryptedData = $blockCipher->encrypt('test');
+
+        $s3Client = Mockery::mock(S3Client::class);
+        $s3ResultBody = Mockery::mock(GuzzleStreamInterface::class);
+        $s3ResultBody->shouldReceive('getContents')->andReturn($encryptedData)->once();
+        $s3Result = new Result();
+        $s3Result['Body'] = $s3ResultBody;
+        $s3Client->shouldReceive('getObject')->andReturn($s3Result)->once();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withUser(FixturesData::getUser())
             ->withLpa($lpa)
             ->withConfig($this->config)
+            ->withS3Client($s3Client)
             ->build();
 
-        $config = $this->config['pdf']['encryption'];
-        $blockCipher = BlockCipher::factory('openssl', $config['options']);
-        $blockCipher->setKey($config['keys']['document']);
-        $blockCipher->setBinaryOutput(true);
-        $encryptedData = $blockCipher->encrypt('test');
-
-        $mockS3Client = Mockery::mock(S3Client::class);
-        $s3ResultBody = Mockery::mock(GuzzleStreamInterface::class);
-        $s3ResultBody->shouldReceive('getContents')->andReturn($encryptedData)->once();
-        $s3Result = new Result();
-        $s3Result['Body'] = $s3ResultBody;
-        $mockS3Client->shouldReceive('getObject')->andReturn($s3Result)->once();
-        $service->setS3Client($mockS3Client);
-
-        $fileResponse = $service->fetch('lp1.pdf');
+        $fileResponse = $service->fetch($lpa->getId(), 'lp1.pdf');
 
         $this->assertTrue($fileResponse instanceof FileResponse);
 

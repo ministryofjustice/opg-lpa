@@ -2,10 +2,11 @@
 
 namespace ApplicationTest\Model\Service\Applications;
 
-use ApplicationTest\AbstractServiceBuilder;
-use Mockery;
-use MongoDB\Driver\Query;
+use ApplicationTest\Model\Service\AbstractServiceBuilder;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Mockery;
+use Mockery\MockInterface;
+use Traversable;
 
 class ServiceBuilder extends AbstractServiceBuilder
 {
@@ -80,6 +81,16 @@ class ServiceBuilder extends AbstractServiceBuilder
         $this->lpaCollection->shouldReceive('findOne')->andReturn(null);
 
         return $service;
+    }
+
+    /**
+     * @return MockInterface
+     */
+    private function getDefaultCursor()
+    {
+        $defaultCursor = Mockery::mock(Traversable::class);
+        $defaultCursor->shouldReceive('toArray')->andReturn([]);
+        return $defaultCursor;
     }
 
     /**

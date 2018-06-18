@@ -26,7 +26,9 @@ class SeedController extends AbstractController
      */
     public function get($id)
     {
-        $result = $this->getService()->fetch();
+        $this->checkAccess();
+
+        $result = $this->getService()->fetch($this->lpaId, $this->routeUserId);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -51,7 +53,9 @@ class SeedController extends AbstractController
      */
     public function update($id, $data)
     {
-        $result = $this->getService()->update($data, $id);
+        $this->checkAccess();
+
+        $result = $this->getService()->update($this->lpaId, $data, $this->routeUserId);
 
         if ($result instanceof ApiProblem) {
             return $result;

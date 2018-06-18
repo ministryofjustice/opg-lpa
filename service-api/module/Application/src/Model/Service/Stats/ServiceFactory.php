@@ -5,6 +5,7 @@ namespace Application\Model\Service\Stats;
 use Application\Model\DataAccess\Mongo\CollectionFactory;
 use Auth\Model\Service\StatsService as AuthStatsService;
 use Interop\Container\ContainerInterface;
+use MongoDB\Collection;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 class ServiceFactory implements FactoryInterface
@@ -17,7 +18,9 @@ class ServiceFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        /** @var Collection $lpaCollection */
         $collection = $container->get(CollectionFactory::class . '-api-stats-lpas');
+        /** @var AuthStatsService $authStatsService */
         $authStatsService = $container->get(AuthStatsService::class);
 
         return new Service($collection, $authStatsService);

@@ -3,31 +3,17 @@
 namespace Application\Model\Service;
 
 use Application\Model\DataAccess\Mongo\DateCallback;
-use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\DateTime;
 use Application\Model\Service\Lock\LockedException;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Logger\LoggerTrait;
-use ZfcRbac\Service\AuthorizationServiceAwareInterface;
-use ZfcRbac\Service\AuthorizationServiceAwareTrait;
 use RuntimeException;
 
-abstract class AbstractService implements AuthorizationServiceAwareInterface
+abstract class AbstractService
 {
     use LoggerTrait;
-    use AuthorizationServiceAwareTrait;
-
-    /**
-     * @var Lpa
-     */
-    protected $lpa = null;
-
-    /**
-     * @var string
-     */
-    protected $routeUserId = null;
 
     /**
      * @var Collection
@@ -35,56 +21,34 @@ abstract class AbstractService implements AuthorizationServiceAwareInterface
     protected $lpaCollection = null;
 
     /**
-     * @var Collection
-     */
-    protected $collection = null;
-
-    /**
      * AbstractService constructor
      *
-     * @param string $routeUserId
      * @param Collection $lpaCollection
-     * @param Collection|null $collection
      */
-    public function __construct($routeUserId, Collection $lpaCollection, Collection $collection = null)
+    public function __construct(Collection $lpaCollection)
     {
-        $this->routeUserId = $routeUserId;
         $this->lpaCollection = $lpaCollection;
-        $this->collection = $collection;
-    }
-
-    public function setLpa(Lpa $lpa)
-    {
-        $this->lpa = $lpa;
     }
 
     /**
-     * @return Lpa
+     * @param $lpaId
+     * @return null|Lpa
      */
-    public function getLpa()
+    protected function getLpa($lpaId)
     {
-        if (!$this->lpa instanceof Lpa) {
-            throw new RuntimeException('LPA not set');
+        $result = $this->lpaCollection->findOne([
+            '_id' => (int) $lpaId
+        ]);
+
+        if (is_null($result)) {
+            return null;
         }
 
-        return $this->lpa;
-    }
+        $result = [
+            'id' => $result['_id']
+        ] + $result;
 
-    public function checkAccess($userId = null)
-    {
-        if (is_null($userId) && $this->routeUserId != null) {
-            $userId = $this->routeUserId;
-        }
-
-        if (!$this->getAuthorizationService()->isGranted('authenticated')) {
-            throw new UnauthorizedException('You need to be authenticated to access this service');
-        }
-
-        if (!$this->getAuthorizationService()->isGranted('isAuthorizedToManageUser', $userId)
-            && !$this->getAuthorizationService()->isGranted('admin')) {
-
-            throw new UnauthorizedException('You do not have permission to access this service');
-        }
+        return new Lpa($result);
     }
 
     /**
@@ -98,9 +62,6 @@ abstract class AbstractService implements AuthorizationServiceAwareInterface
             'lpaid' => $lpa->id
         ]);
 
-        // Should already have been checked, but no harm checking again.
-        $this->checkAccess();
-
         // Check LPA is (still) valid.
         if ($lpa->validateForApi()->hasErrors()) {
             throw new RuntimeException('LPA object is invalid');
@@ -108,11 +69,11 @@ abstract class AbstractService implements AuthorizationServiceAwareInterface
 
         // Check LPA in database isn't locked...
         $locked = ($this->lpaCollection->count([
-                '_id' => $lpa->id,
-                'locked' => true,
-            ], [
-                '_id' => true,
-            ] ) > 0);
+            '_id' => $lpa->id,
+            'locked' => true,
+        ], [
+            '_id' => true,
+        ]) > 0);
 
         if ($locked === true) {
             throw new LockedException('LPA has already been locked.');
@@ -183,21 +144,10 @@ abstract class AbstractService implements AuthorizationServiceAwareInterface
 
         $lastUpdated = new UTCDateTime($lpa->updatedAt);
 
-        $existingLpa = new Lpa();
-        $existingLpaResult = $this->lpaCollection->findOne([
-            '_id' => $lpa->id
-        ]);
-
-        if (!is_null($existingLpaResult)) {
-            $existingLpaResult = [
-                    'id' => $existingLpaResult['_id']
-                ] + $existingLpaResult;
-
-            $existingLpa = new Lpa($existingLpaResult);
-        }
-
         //  Only update the edited date if the LPA document itself has changed
-        if (!$lpa->equalsIgnoreMetadata($existingLpa)) {
+        $existingLpa = $this->getLpa($lpa->id);
+
+        if (is_null($existingLpa) || !$lpa->equalsIgnoreMetadata($existingLpa)) {
             // Record the time we updated the document.
             $lpa->updatedAt = new DateTime();
 

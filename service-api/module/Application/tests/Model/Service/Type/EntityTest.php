@@ -28,12 +28,12 @@ class EntityTest extends TestCase
 
         //  Set up an LPA to test
         $this->lpa = FixturesData::getHwLpa();
-        $this->entity = new Entity($this->lpa->document->type);
+        $this->entity = new Entity($this->lpa->getDocument()->getType());
     }
 
     public function testToArray()
     {
-        $this->assertEquals(['type' => $this->lpa->document->type], $this->entity->toArray());
+        $this->assertEquals(['type' => $this->lpa->getDocument()->getType()], $this->entity->toArray());
     }
 
     public function testToArrayNull()

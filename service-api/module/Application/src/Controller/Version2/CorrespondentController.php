@@ -27,7 +27,9 @@ class CorrespondentController extends AbstractController
      */
     public function update($id, $data)
     {
-        $result = $this->getService()->update($data);
+        $this->checkAccess();
+
+        $result = $this->getService()->update($this->lpaId, $data);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -45,7 +47,9 @@ class CorrespondentController extends AbstractController
      */
     public function delete($id)
     {
-        $result = $this->getService()->delete();
+        $this->checkAccess();
+
+        $result = $this->getService()->delete($this->lpaId);
 
         if ($result instanceof ApiProblem) {
             return $result;

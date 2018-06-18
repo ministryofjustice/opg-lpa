@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\RepeatCaseNumber;
 
 use Application\Model\Service\RepeatCaseNumber\Service;
-use ApplicationTest\AbstractServiceBuilder;
+use ApplicationTest\Model\Service\AbstractServiceBuilder;
 
 class ServiceBuilder extends AbstractServiceBuilder
 {

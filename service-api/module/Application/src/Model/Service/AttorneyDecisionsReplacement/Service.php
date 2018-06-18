@@ -5,29 +5,28 @@ namespace Application\Model\Service\AttorneyDecisionsReplacement;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
-use Application\Model\Service\LpaConsumerInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use RuntimeException;
 
-class Service extends AbstractService implements LpaConsumerInterface
+class Service extends AbstractService
 {
     /**
+     * @param $lpaId
      * @param $data
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function update($data)
+    public function update($lpaId, $data)
     {
-        $this->checkAccess();
+        $replacementAttorneyDecisions = new ReplacementAttorneyDecisions($data);
 
-        $lpa = $this->getLpa();
-
-        $lpa->document->replacementAttorneyDecisions = new ReplacementAttorneyDecisions($data);
-
-        $validation = $lpa->document->replacementAttorneyDecisions->validate();
+        $validation = $replacementAttorneyDecisions->validate();
 
         if ($validation->hasErrors()) {
             return new ValidationApiProblem($validation);
         }
+
+        $lpa = $this->getLpa($lpaId);
+        $lpa->getDocument()->setReplacementAttorneyDecisions($replacementAttorneyDecisions);
 
         if ($lpa->validate()->hasErrors()) {
             throw new RuntimeException('A malformed LPA object');
@@ -35,6 +34,6 @@ class Service extends AbstractService implements LpaConsumerInterface
 
         $this->updateLpa($lpa);
 
-        return new DataModelEntity($lpa->document->replacementAttorneyDecisions);
+        return new DataModelEntity($replacementAttorneyDecisions);
     }
 }

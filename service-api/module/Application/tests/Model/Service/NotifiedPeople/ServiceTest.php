@@ -6,7 +6,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\NotifiedPeople\Service;
-use ApplicationTest\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTest;
 use ApplicationTest\DummyDocument;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use OpgTest\Lpa\DataModel\FixturesData;
@@ -22,18 +22,9 @@ class ServiceTest extends AbstractServiceTest
     {
         parent::setUp();
 
-        $this->service = new Service(FixturesData::getUser()->getId(), $this->lpaCollection);
+        $this->service = new Service($this->lpaCollection);
 
         $this->service->setLogger($this->logger);
-
-        $this->service->setAuthorizationService($this->authorizationService);
-    }
-
-    public function testCreateCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->create(null);
     }
 
     public function testCreateValidationFailed()
@@ -43,13 +34,13 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
         $person = new NotifiedPerson();
-        $validationError = $service->create($person->toArray());
+        $validationError = $service->create($lpa->getId(), $person->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
-        $this->assertEquals(400, $validationError->status);
-        $this->assertEquals('Your request could not be processed due to validation error', $validationError->detail);
-        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->type);
-        $this->assertEquals('Bad Request', $validationError->title);
+        $this->assertEquals(400, $validationError->getStatus());
+        $this->assertEquals('Your request could not be processed due to validation error', $validationError->getDetail());
+        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->getType());
+        $this->assertEquals('Bad Request', $validationError->getTitle());
         $validation = $validationError->validation;
         $this->assertEquals(2, count($validation));
         $this->assertTrue(array_key_exists('name', $validation));
@@ -70,21 +61,14 @@ class ServiceTest extends AbstractServiceTest
 
         $person = new NotifiedPerson(FixturesData::getAttorneyHumanJson());
         $person->id = null;
-        $entity = $service->create($person->toArray());
+        $entity = $service->create($lpa->getId(), $person->toArray());
 
         //  We expect an ID value to have been added
-        $person->id = 1;
+        $person->setId(1);
 
         $this->assertEquals(new DataModelEntity($person), $entity);
 
         $serviceBuilder->verify();
-    }
-
-    public function testUpdateCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->update(null, -1);
     }
 
     public function testUpdateNotFound()
@@ -93,11 +77,11 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
-        $apiProblem = $service->update(null, -1);
+        $apiProblem = $service->update($lpa->getId(), null, -1);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
-        $this->assertEquals(404, $apiProblem->status);
-        $this->assertEquals('Document not found', $apiProblem->detail);
+        $this->assertEquals(404, $apiProblem->getStatus());
+        $this->assertEquals('Document not found', $apiProblem->getDetail());
 
         $serviceBuilder->verify();
     }
@@ -109,13 +93,13 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
         $person = new NotifiedPerson();
-        $validationError = $service->update($person->toArray(), $lpa->document->peopleToNotify[0]->id);
+        $validationError = $service->update($lpa->getId(), $person->toArray(), $lpa->getDocument()->getPeopleToNotify()[0]->id);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
-        $this->assertEquals(400, $validationError->status);
-        $this->assertEquals('Your request could not be processed due to validation error', $validationError->detail);
-        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->type);
-        $this->assertEquals('Bad Request', $validationError->title);
+        $this->assertEquals(400, $validationError->getStatus());
+        $this->assertEquals('Your request could not be processed due to validation error', $validationError->getDetail());
+        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->getType());
+        $this->assertEquals('Bad Request', $validationError->getTitle());
         $validation = $validationError->validation;
         $this->assertEquals(2, count($validation));
         $this->assertTrue(array_key_exists('name', $validation));
@@ -135,22 +119,15 @@ class ServiceTest extends AbstractServiceTest
             ->build();
 
         $person = new NotifiedPerson(FixturesData::getAttorneyHumanJson());
-        $id = $lpa->document->peopleToNotify[0]->id;
-        $entity = $service->update($person->toArray(), $id);
+        $id = $lpa->getDocument()->getPeopleToNotify()[0]->id;
+        $entity = $service->update($lpa->getId(), $person->toArray(), $id);
 
         //Id will have been set to passed in id
-        $person->id = $id;
+        $person->setId($id);
 
         $this->assertEquals(new DataModelEntity($person), $entity);
 
         $serviceBuilder->verify();
-    }
-
-    public function testDeleteCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->delete(-1);
     }
 
     public function testDeleteNotFound()
@@ -159,11 +136,11 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
-        $apiProblem = $service->delete(-1);
+        $apiProblem = $service->delete($lpa->getId(), -1);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
-        $this->assertEquals(404, $apiProblem->status);
-        $this->assertEquals('Document not found', $apiProblem->detail);
+        $this->assertEquals(404, $apiProblem->getStatus());
+        $this->assertEquals('Document not found', $apiProblem->getDetail());
 
         $serviceBuilder->verify();
     }
@@ -178,12 +155,10 @@ class ServiceTest extends AbstractServiceTest
             ->withUpdateNumberModified(1)
             ->build();
 
-        $attorneyCount = count($lpa->document->peopleToNotify);
-        $id = $lpa->document->peopleToNotify[0]->id;
-        $result = $service->delete($id);
+        $id = $lpa->getDocument()->getPeopleToNotify()[0]->id;
+        $result = $service->delete($lpa->getId(), $id);
 
         $this->assertTrue($result);
-        $this->assertEquals($attorneyCount-1, count($lpa->document->peopleToNotify));
 
         $serviceBuilder->verify();
     }

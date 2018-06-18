@@ -6,7 +6,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\AttorneysReplacement\Service;
-use ApplicationTest\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTest;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use OpgTest\Lpa\DataModel\FixturesData;
 
@@ -21,18 +21,9 @@ class ServiceTest extends AbstractServiceTest
     {
         parent::setUp();
 
-        $this->service = new Service(FixturesData::getUser()->getId(), $this->lpaCollection);
+        $this->service = new Service($this->lpaCollection);
 
         $this->service->setLogger($this->logger);
-
-        $this->service->setAuthorizationService($this->authorizationService);
-    }
-
-    public function testCreateCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->create(null);
     }
 
     public function testCreateInvalidType()
@@ -47,7 +38,7 @@ class ServiceTest extends AbstractServiceTest
         $attorney = new Human();
         $attorneyArray = $attorney->toArray();
         $attorneyArray['type'] = 'Invalid';
-        $service->create($attorneyArray);
+        $service->create($lpa->getId(), $attorneyArray);
 
         $serviceBuilder->verify();
     }
@@ -59,13 +50,13 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
         $attorney = new Human();
-        $validationError = $service->create($attorney->toArray());
+        $validationError = $service->create($lpa->getId(), $attorney->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
-        $this->assertEquals(400, $validationError->status);
-        $this->assertEquals('Your request could not be processed due to validation error', $validationError->detail);
-        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->type);
-        $this->assertEquals('Bad Request', $validationError->title);
+        $this->assertEquals(400, $validationError->getStatus());
+        $this->assertEquals('Your request could not be processed due to validation error', $validationError->getDetail());
+        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->getType());
+        $this->assertEquals('Bad Request', $validationError->getTitle());
         $validation = $validationError->validation;
         $this->assertEquals(3, count($validation));
         $this->assertTrue(array_key_exists('address', $validation));
@@ -86,18 +77,11 @@ class ServiceTest extends AbstractServiceTest
             ->build();
 
         $attorney = FixturesData::getAttorneyTrust();
-        $entity = $service->create($attorney->toArray());
+        $entity = $service->create($lpa->getId(), $attorney->toArray());
 
         $this->assertEquals(new DataModelEntity($attorney), $entity);
 
         $serviceBuilder->verify();
-    }
-
-    public function testUpdateCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->update(null, -1);
     }
 
     public function testUpdateNotFound()
@@ -106,11 +90,11 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
-        $apiProblem = $service->update(null, -1);
+        $apiProblem = $service->update($lpa->getId(), null, -1);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
-        $this->assertEquals(404, $apiProblem->status);
-        $this->assertEquals('Document not found', $apiProblem->detail);
+        $this->assertEquals(404, $apiProblem->getStatus());
+        $this->assertEquals('Document not found', $apiProblem->getDetail());
 
         $serviceBuilder->verify();
     }
@@ -127,7 +111,7 @@ class ServiceTest extends AbstractServiceTest
         $attorney = new Human();
         $attorneyArray = $attorney->toArray();
         $attorneyArray['type'] = 'Invalid';
-        $service->update($attorneyArray, $lpa->document->replacementAttorneys[2]->id);
+        $service->update($lpa->getId(), $attorneyArray, $lpa->getDocument()->getReplacementAttorneys()[2]->id);
 
         $serviceBuilder->verify();
     }
@@ -139,13 +123,13 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
         $attorney = new Human();
-        $validationError = $service->update($attorney->toArray(), $lpa->document->replacementAttorneys[1]->id);
+        $validationError = $service->update($lpa->getId(), $attorney->toArray(), $lpa->getDocument()->getReplacementAttorneys()[1]->id);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
-        $this->assertEquals(400, $validationError->status);
-        $this->assertEquals('Your request could not be processed due to validation error', $validationError->detail);
-        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->type);
-        $this->assertEquals('Bad Request', $validationError->title);
+        $this->assertEquals(400, $validationError->getStatus());
+        $this->assertEquals('Your request could not be processed due to validation error', $validationError->getDetail());
+        $this->assertEquals('https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md', $validationError->getType());
+        $this->assertEquals('Bad Request', $validationError->getTitle());
         $validation = $validationError->validation;
         $this->assertEquals(3, count($validation));
         $this->assertTrue(array_key_exists('address', $validation));
@@ -166,22 +150,15 @@ class ServiceTest extends AbstractServiceTest
             ->build();
 
         $attorney = FixturesData::getAttorneyTrust();
-        $id = $lpa->document->replacementAttorneys[0]->id;
-        $entity = $service->update($attorney->toArray(), $id);
+        $id = $lpa->getDocument()->getReplacementAttorneys()[0]->id;
+        $entity = $service->update($lpa->getId(), $attorney->toArray(), $id);
 
         //Id will have been set to passed in id
-        $attorney->id = $id;
+        $attorney->setId($id);
 
         $this->assertEquals(new DataModelEntity($attorney), $entity);
 
         $serviceBuilder->verify();
-    }
-
-    public function testDeleteCheckAccess()
-    {
-        $this->setUpCheckAccessTest($this->service);
-
-        $this->service->delete(-1);
     }
 
     public function testDeleteNotFound()
@@ -190,11 +167,11 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
 
-        $apiProblem = $service->delete(-1);
+        $apiProblem = $service->delete($lpa->getId(), -1);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
-        $this->assertEquals(404, $apiProblem->status);
-        $this->assertEquals('Document not found', $apiProblem->detail);
+        $this->assertEquals(404, $apiProblem->getStatus());
+        $this->assertEquals('Document not found', $apiProblem->getDetail());
 
         $serviceBuilder->verify();
     }
@@ -209,12 +186,10 @@ class ServiceTest extends AbstractServiceTest
             ->withUpdateNumberModified(1)
             ->build();
 
-        $attorneyCount = count($lpa->document->replacementAttorneys);
-        $id = $lpa->document->replacementAttorneys[1]->id;
-        $result = $service->delete($id);
+        $id = $lpa->getDocument()->getReplacementAttorneys()[1]->id;
+        $result = $service->delete($lpa->getId(), $id);
 
         $this->assertTrue($result);
-        $this->assertEquals($attorneyCount-1, count($lpa->document->replacementAttorneys));
 
         $serviceBuilder->verify();
     }

@@ -25,7 +25,9 @@ class WhoAreYouController extends AbstractController
      */
     public function create($data)
     {
-        $result = $this->getService()->create($data);
+        $this->checkAccess();
+
+        $result = $this->getService()->create($this->lpaId, $data);
 
         if ($result instanceof ApiProblem) {
             return $result;

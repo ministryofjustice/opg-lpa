@@ -5,29 +5,28 @@ namespace Application\Model\Service\Donor;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
-use Application\Model\Service\LpaConsumerInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use RuntimeException;
 
-class Service extends AbstractService implements LpaConsumerInterface
+class Service extends AbstractService
 {
     /**
+     * @param $lpaId
      * @param $data
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function update($data)
+    public function update($lpaId, $data)
     {
-        $this->checkAccess();
+        $donor = new Donor($data);
 
-        $lpa = $this->getLpa();
-
-        $lpa->document->donor = new Donor($data);
-
-        $validation = $lpa->document->donor->validate();
+        $validation = $donor->validate();
 
         if ($validation->hasErrors()) {
             return new ValidationApiProblem($validation);
         }
+
+        $lpa = $this->getLpa($lpaId);
+        $lpa->getDocument()->setDonor($donor);
 
         if ($lpa->validate()->hasErrors()) {
             throw new RuntimeException('A malformed LPA object');
@@ -35,6 +34,6 @@ class Service extends AbstractService implements LpaConsumerInterface
 
         $this->updateLpa($lpa);
 
-        return new DataModelEntity($lpa->document->donor);
+        return new DataModelEntity($donor);
     }
 }

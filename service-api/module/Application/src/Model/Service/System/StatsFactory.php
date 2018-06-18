@@ -4,25 +4,16 @@ namespace Application\Model\Service\System;
 
 use Application\Model\DataAccess\Mongo\CollectionFactory;
 use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use MongoDB\Collection;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 class StatsFactory implements FactoryInterface
 {
     /**
-     * Create an object
-     *
-     * @param  ContainerInterface $container
-     * @param  string $requestedName
-     * @param  null|array $options
-     * @return object
-     * @throws ServiceNotFoundException if unable to resolve the service.
-     * @throws ServiceNotCreatedException if an exception is raised when
-     *     creating a service.
-     * @throws ContainerException if any other error occurs
+     * @param ContainerInterface $container
+     * @param string $requestedName
+     * @param array|null $options
+     * @return Stats
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -30,9 +21,9 @@ class StatsFactory implements FactoryInterface
         $lpaCollection = $container->get(CollectionFactory::class . '-api-lpa');
         /** @var Collection $statsLpaCollection */
         $statsLpaCollection = $container->get(CollectionFactory::class . '-api-stats-lpas');
-        /** @var Collection $statsWhoCollection */
-        $statsWhoCollection = $container->get(CollectionFactory::class . '-api-stats-who');
+        /** @var Collection $whoCollection */
+        $whoCollection = $container->get(CollectionFactory::class . '-api-who');
 
-        return new Stats($lpaCollection, $statsLpaCollection, $statsWhoCollection);
+        return new Stats($lpaCollection, $statsLpaCollection, $whoCollection);
     }
 }

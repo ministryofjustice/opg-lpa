@@ -4,24 +4,23 @@ namespace Application\Model\Service\WhoIsRegistering;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\AbstractService;
-use Application\Model\Service\LpaConsumerInterface;
 use RuntimeException;
 
-class Service extends AbstractService implements LpaConsumerInterface
+class Service extends AbstractService
 {
     /**
+     * @param $lpaId
      * @param $data
      * @return ValidationApiProblem|Entity
      */
-    public function update($data)
+    public function update($lpaId, $data)
     {
-        $this->checkAccess();
+        $whoIsRegistering = (isset($data['whoIsRegistering']) ? $data['whoIsRegistering'] : null);
 
-        $lpa = $this->getLpa();
+        $lpa = $this->getLpa($lpaId);
+        $lpa->getDocument()->setWhoIsRegistering($whoIsRegistering);
 
-        $lpa->document->whoIsRegistering = (isset($data['whoIsRegistering']) ? $data['whoIsRegistering'] : null);
-
-        $validation = $lpa->document->validate();
+        $validation = $lpa->getDocument()->validate();
 
         if ($validation->hasErrors()) {
             return new ValidationApiProblem($validation);
@@ -33,6 +32,6 @@ class Service extends AbstractService implements LpaConsumerInterface
 
         $this->updateLpa($lpa);
 
-        return new Entity($lpa->document->whoIsRegistering);
+        return new Entity($whoIsRegistering);
     }
 }

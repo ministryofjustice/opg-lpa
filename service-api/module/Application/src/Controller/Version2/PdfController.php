@@ -31,7 +31,9 @@ class PdfController extends AbstractController
      */
     public function get($id)
     {
-        $result = $this->getService()->fetch($id);
+        $this->checkAccess();
+
+        $result = $this->getService()->fetch($this->lpaId, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;

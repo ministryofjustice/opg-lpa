@@ -4,25 +4,24 @@ namespace Application\Model\Service\RepeatCaseNumber;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\AbstractService;
-use Application\Model\Service\LpaConsumerInterface;
 
-class Service extends AbstractService implements LpaConsumerInterface
+class Service extends AbstractService
 {
     /**
+     * @param $lpaId
      * @param $data
      * @return ValidationApiProblem|Entity
      */
-    public function update($data)
+    public function update($lpaId, $data)
     {
-        $this->checkAccess();
+        $repeatCaseNumber = (isset($data['repeatCaseNumber']) ? $data['repeatCaseNumber'] : null);
 
-        $lpa = $this->getLpa();
-
-        $lpa->repeatCaseNumber = (isset($data['repeatCaseNumber']) ? $data['repeatCaseNumber'] : null);
-
-        if (!is_int($lpa->repeatCaseNumber) && is_numeric($lpa->repeatCaseNumber)) {
-            $lpa->repeatCaseNumber = (int) $lpa->repeatCaseNumber;
+        if (!is_int($repeatCaseNumber) && is_numeric($repeatCaseNumber)) {
+            $repeatCaseNumber = (int) $repeatCaseNumber;
         }
+
+        $lpa = $this->getLpa($lpaId);
+        $lpa->setRepeatCaseNumber($repeatCaseNumber);
 
         $validation = $lpa->validateForApi();
 
@@ -32,17 +31,16 @@ class Service extends AbstractService implements LpaConsumerInterface
 
         $this->updateLpa($lpa);
 
-        return new Entity($lpa->repeatCaseNumber);
+        return new Entity($repeatCaseNumber);
     }
 
     /**
+     * @param $lpaId
      * @return ValidationApiProblem|bool
      */
-    public function delete()
+    public function delete($lpaId)
     {
-        $this->checkAccess();
-
-        $lpa = $this->getLpa();
+        $lpa = $this->getLpa($lpaId);
 
         $lpa->repeatCaseNumber = null;
 

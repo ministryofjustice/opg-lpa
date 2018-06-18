@@ -4,6 +4,7 @@ namespace Application\Model\Service\Lock;
 
 use Application\Model\Service\EntityInterface;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use DateTime;
 
 class Entity implements EntityInterface
 {
@@ -19,7 +20,7 @@ class Entity implements EntityInterface
         if (is_bool($this->lpa->locked)) {
             return [
                 'locked'   => $this->lpa->locked,
-                'lockedAt' => ($this->lpa->lockedAt instanceof \DateTime ? $this->lpa->lockedAt->format('Y-m-d\TH:i:s.uO') : null),
+                'lockedAt' => ($this->lpa->lockedAt instanceof DateTime ? $this->lpa->lockedAt->format('Y-m-d\TH:i:s.uO') : null),
             ];
         }
 

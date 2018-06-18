@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\Stats;
 
 use Application\Model\Service\Stats\Service;
-use ApplicationTest\AbstractServiceTest;
+use ApplicationTest\Model\Service\AbstractServiceTest;
 use Auth\Model\Service\StatsService as AuthStatsService;
 use DateTime;
 use Mockery;

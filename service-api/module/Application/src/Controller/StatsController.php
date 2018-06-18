@@ -1,13 +1,14 @@
 <?php
 
-namespace Application\Controller\Version2;
+namespace Application\Controller;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\Stats\Service;
+use Zend\Mvc\Controller\AbstractRestfulController;
 use ZF\ApiProblem\ApiProblem;
 
-class StatsController extends AbstractController
+class StatsController extends AbstractRestfulController
 {
     /**
      * Name of the identifier used in the routes to this RESTful controller
@@ -15,6 +16,11 @@ class StatsController extends AbstractController
      * @var string
      */
     protected $identifierName = 'type';
+
+    /**
+     * @var Service
+     */
+    private $service;
 
     /**
      * @param Service $service
@@ -25,22 +31,12 @@ class StatsController extends AbstractController
     }
 
     /**
-     * Get the service to use
-     *
-     * @return Service
-     */
-    protected function getService()
-    {
-        return $this->service;
-    }
-
-    /**
      * @param mixed $id
      * @return JsonResponse|NoContentResponse|ApiProblem
      */
     public function get($id)
     {
-        $result = $this->getService()->fetch($id);
+        $result = $this->service->fetch($id);
 
         if ($result instanceof ApiProblem) {
             return $result;
