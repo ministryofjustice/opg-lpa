@@ -1,15 +1,20 @@
 <?php
 
-namespace Auth\Controller\Console;
+namespace Application\Controller\Console;
 
-use Auth\Model\Service\AccountCleanupService;
+use Application\Model\Service\AccountCleanup\Service as AccountCleanupService;
 use Application\Model\Service\System\DynamoCronLock;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\Console\Controller\AbstractConsoleController;
 
-class AccountCleanupController extends AbstractActionController
+class AccountCleanupController extends AbstractConsoleController
 {
     use LoggerTrait;
+
+    /**
+     * @var DynamoCronLock
+     */
+    private $cronLock;
 
     /**
      * @var AccountCleanupService
@@ -17,25 +22,13 @@ class AccountCleanupController extends AbstractActionController
     private $accountCleanupService;
 
     /**
-     * @var DynamoCronLock
-     */
-    private $dynamoCronLock;
-
-    /**
-     * @var array
-     */
-    private $config;
-
-    /**
+     * @param DynamoCronLock $cronLock
      * @param AccountCleanupService $accountCleanupService
-     * @param DynamoCronLock $dynamoCronLock
-     * @param array $config
      */
-    public function __construct(AccountCleanupService $accountCleanupService, DynamoCronLock $dynamoCronLock, array $config)
+    public function __construct(DynamoCronLock $cronLock, AccountCleanupService $accountCleanupService)
     {
+        $this->cronLock = $cronLock;
         $this->accountCleanupService = $accountCleanupService;
-        $this->dynamoCronLock = $dynamoCronLock;
-        $this->config = $config;
     }
 
     /**
@@ -43,19 +36,15 @@ class AccountCleanupController extends AbstractActionController
      */
     public function cleanupAction()
     {
-        $cronLock = $this->dynamoCronLock;
-
         $lockName = 'AccountCleanup';
 
         // Attempt to get the cron lock...
-        if ($cronLock->getLock($lockName, (60 * 60))) {
+        if ($this->cronLock->getLock($lockName, (60 * 60))) {
             echo "Got the AccountCleanup lock; running Cleanup\n";
 
             $this->getLogger()->info("This node got the AccountCleanup cron lock for {$lockName}");
 
-            $callbackUrl = $this->config['cleanup']['notification']['callback'];
-
-            $this->accountCleanupService->cleanup($callbackUrl);
+            $this->accountCleanupService->cleanup();
         } else {
             echo "Did not get the AccountCleanup lock\n";
 

@@ -2,23 +2,6 @@
 
 return [
 
-    'console' => [
-        'router' => [
-            'routes' => [
-                'account-cleanup' => [
-                    'type'    => 'simple',
-                    'options' => [
-                        'route'    => 'account-cleanup',
-                        'defaults' => [
-                            'controller' => 'Auth\Controller\Console\AccountCleanup',
-                            'action'     => 'cleanup'
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ],
-
     'router' => [
         'routes' => [
             'auth-v1' => [
@@ -241,9 +224,6 @@ return [
     ],
 
     'controllers' => [
-        'factories' => [
-            'Auth\Controller\Console\AccountCleanup' => 'Auth\Controller\Console\AccountCleanupControllerFactory',
-        ],
         'abstract_factories' => [
             'Auth\Controller\ControllerAbstractFactory',
         ],

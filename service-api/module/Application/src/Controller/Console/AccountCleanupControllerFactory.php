@@ -1,8 +1,8 @@
 <?php
 
-namespace Auth\Controller\Console;
+namespace Application\Controller\Console;
 
-use Auth\Model\Service\AccountCleanupService;
+use Application\Model\Service\AccountCleanup\Service as AccountCleanupService;
 use Application\Model\Service\System\DynamoCronLock;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
@@ -17,11 +17,11 @@ class AccountCleanupControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var AccountCleanupService $accountCleanupService */
-        $accountCleanupService = $container->get(AccountCleanupService::class);
         /** @var DynamoCronLock $dynamoCronLock */
         $dynamoCronLock = $container->get('DynamoCronLock');
+        /** @var AccountCleanupService $accountCleanupService */
+        $accountCleanupService = $container->get(AccountCleanupService::class);
 
-        return new AccountCleanupController($accountCleanupService, $dynamoCronLock, $container->get('config'));
+        return new AccountCleanupController($dynamoCronLock, $accountCleanupService);
     }
 }

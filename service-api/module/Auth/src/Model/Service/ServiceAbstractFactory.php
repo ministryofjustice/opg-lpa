@@ -4,7 +4,6 @@ namespace Auth\Model\Service;
 
 use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
-use Application\Model\DataAccess\Mongo\CollectionFactory;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
@@ -18,14 +17,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $additionalServices = [
-        AccountCleanupService::class => [
-            'setUserManagementService' => UserManagementService::class,
-            'setSnsClient'             => 'SnsClient',
-            'setGuzzleClient'          => 'GuzzleClient',
-            'setConfig'                => 'config',
-            'setApiLpaCollection'      => CollectionFactory::class . '-api-lpa',
-            'setApiUserCollection'     => CollectionFactory::class . '-api-user',
-        ],
         PasswordChangeService::class => [
             'setAuthenticationService' => AuthenticationService::class,
         ],
@@ -51,7 +42,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param array|null $options
-     * @return AccountCleanupService|PasswordChangeService
+     * @return AbstractService
      * @throws Exception
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
