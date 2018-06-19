@@ -21,14 +21,14 @@ class DeleteController extends AbstractAuthenticatedController
     public function confirmAction()
     {
         //  Delete all v2 LPAs, their v2 Personal details, and their Auth account.
-        if ($this->getUserService()->delete()) {
-            // Redirect them to the deleted page.
-            return $this->redirect()->toRoute('deleted');
-        } else {
+        if (!$this->getUserService()->delete()) {
             $view = new ViewModel();
             $view->setTemplate('error/500.twig');
+
             return $view;
         }
+
+        return $this->redirect()->toRoute('deleted');
     }
 
     /**
