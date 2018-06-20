@@ -67,6 +67,7 @@ class Service
      * @param array $config
      * @param Collection $apiLpaCollection
      * @param Collection $apiUserCollection
+     * @param AuthUserCollection $authUserCollection
      */
     public function __construct(UserManagementService $userManagementService, SnsClient $snsClient, GuzzleClient $guzzleClient, array $config, Collection $apiLpaCollection, Collection $apiUserCollection, AuthUserCollection $authUserCollection)
     {
