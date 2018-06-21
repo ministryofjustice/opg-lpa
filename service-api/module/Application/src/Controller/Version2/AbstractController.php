@@ -24,16 +24,6 @@ abstract class AbstractController extends AbstractRestfulController
     protected $identifierName = 'lpaId';
 
     /**
-     * @var AuthorizationService
-     */
-    protected $authorizationService;
-
-    /**
-     * @var mixed
-     */
-    protected $service;
-
-    /**
      * @var string
      */
     protected $routeUserId;
@@ -42,6 +32,16 @@ abstract class AbstractController extends AbstractRestfulController
      * @var string
      */
     protected $lpaId;
+
+    /**
+     * @var AuthorizationService
+     */
+    protected $authorizationService;
+
+    /**
+     * @var mixed
+     */
+    protected $service;
 
     /**
      * @param AuthorizationService $authorizationService

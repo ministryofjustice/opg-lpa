@@ -31,9 +31,7 @@ class EmailController extends AbstractAuthenticatedController
             );
         }
 
-        $service = $this->emailUpdateService;
-
-        $result = $service->generateToken($userId, $newEmail);
+        $result = $this->emailUpdateService->generateToken($userId, $newEmail);
 
         if ($result === 'invalid-email') {
             return new ApiProblemResponse(
