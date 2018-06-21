@@ -60,13 +60,10 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             throw new ServiceNotFoundException(sprintf('Abstract factory %s can not create the requested service %s', get_class($this), $requestedName));
         }
 
-        if (is_subclass_of($requestedName, Auth\AbstractAuthenticatedController::class)) {
-            /** @var AuthenticationService $authenticationService */
-            $authenticationService = $container->get(AuthenticationService::class);
-            $controller = new $requestedName($authenticationService);
-        } else {
-            $controller = new $requestedName();
-        }
+        /** @var AuthenticationService $authenticationService */
+        $authenticationService = $container->get(AuthenticationService::class);
+
+        $controller = new $requestedName($authenticationService);
 
         //  If required load any additional services into the resource
         if (array_key_exists($requestedName, $this->additionalServices)

@@ -8,7 +8,7 @@ use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 
-class UsersController extends AbstractAuthenticatedController
+class UsersController extends AbstractController
 {
     use LoggerTrait;
 
