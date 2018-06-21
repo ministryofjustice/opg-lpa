@@ -1,6 +1,6 @@
 <?php
 
-namespace Auth\Controller\Version1;
+namespace Application\Controller\Version2\Auth;
 
 use Auth\Model\Service\EmailUpdateService;
 use Opg\Lpa\Logger\LoggerTrait;

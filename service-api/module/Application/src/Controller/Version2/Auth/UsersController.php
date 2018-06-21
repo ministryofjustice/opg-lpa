@@ -1,6 +1,6 @@
 <?php
 
-namespace Auth\Controller\Version1;
+namespace Application\Controller\Version2\Auth;
 
 use Auth\Model\Service\UserManagementService;
 use Opg\Lpa\Logger\LoggerTrait;

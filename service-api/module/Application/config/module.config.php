@@ -5,16 +5,6 @@ return [
     'console' => [
         'router' => [
             'routes' => [
-                'generate-stats' => [
-                    'type'    => 'simple',
-                    'options' => [
-                        'route'    => 'generate-stats',
-                        'defaults' => [
-                            'controller' => 'Application\Controller\Console\GenerateStats',
-                            'action'     => 'generate'
-                        ],
-                    ],
-                ],
                 'account-cleanup' => [
                     'type'    => 'simple',
                     'options' => [
@@ -22,6 +12,16 @@ return [
                         'defaults' => [
                             'controller' => 'Application\Controller\Console\AccountCleanup',
                             'action'     => 'cleanup'
+                        ],
+                    ],
+                ],
+                'generate-stats' => [
+                    'type'    => 'simple',
+                    'options' => [
+                        'route'    => 'generate-stats',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Console\GenerateStats',
+                            'action'     => 'generate'
                         ],
                     ],
                 ],
@@ -280,8 +280,222 @@ return [
                                         ],
                                     ],
 
-                                ], // child_routes
-                            ], // applications
+                                ],
+                            ],
+
+                        ],
+                    ],
+
+                ],
+            ],
+
+            'auth-v1' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/v1',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller\Version2\Auth',
+                    ],
+                ],
+                'child_routes' => [
+
+                    'authenticate' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/authenticate',
+                            'defaults' => [
+                                'controller' => 'AuthenticateController',
+                            ],
+                        ],
+                        'may_terminate' => false,
+                        'child_routes' => [
+
+                            'post' => [
+                                'type' => 'method',
+                                'options' => [
+                                    'verb' => 'post',
+                                    'defaults' => [
+                                        'action' => 'index'
+                                    ],
+                                ],
+                            ],
+
+                        ],
+                    ], // authenticate
+
+                    'token' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/token/:token',
+                            'constraints' => [
+                                'token' => '[a-zA-Z0-9]+',
+                            ],
+                            'defaults' => [
+                                'controller' => 'AuthenticateController',
+                            ],
+                        ],
+                        'may_terminate' => false,
+                        'child_routes' => [
+
+                            'delete' => [
+                                'type' => 'method',
+                                'options' => [
+                                    'verb' => 'delete',
+                                    'defaults' => [
+                                        'action' => 'delete'
+                                    ],
+                                ],
+                            ], // delete
+
+                        ],
+                    ], // token
+
+
+                    'user' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/users',
+                            'defaults' => [
+                                'controller' => 'UsersController',
+                            ],
+                        ],
+                        'may_terminate' => false,
+                        'child_routes' => [
+
+                            'create' => [
+                                'type' => 'method',
+                                'options' => [
+                                    'verb' => 'post',
+                                    'defaults' => [
+                                        'controller' => 'RegistrationController',
+                                        'action' => 'create'
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'activate' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'    => '/activate',
+                                            'defaults' => [
+                                                'controller' => 'RegistrationController',
+                                                'action'    => 'activate',
+                                            ],
+                                        ],
+                                    ], // activate
+                                ]
+                            ], // create
+
+                            'password-reset' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/password-reset',
+                                    'defaults' => [
+                                        'controller' => 'PasswordController',
+                                        'action'    => 'passwordReset',
+                                    ],
+                                ],
+                            ], // password-reset
+
+                            'password-reset-update' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/password-reset-update',
+                                    'defaults' => [
+                                        'controller' => 'PasswordController',
+                                        'action'    => 'passwordResetUpdate',
+                                    ],
+                                ],
+                            ], // password-reset-update
+
+                            'confirm-new-email' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/confirm-new-email',
+                                    'defaults' => [
+                                        'controller' => 'EmailController',
+                                        'action'    => 'update-email',
+                                    ],
+                                ],
+                            ], // confirm-new-email
+
+                            //---
+
+                            'id' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/:userId',
+                                    'constraints' => [
+                                        'userId' => '[a-zA-Z0-9]+',
+                                    ],
+                                ],
+                                'may_terminate' => false,
+                                'child_routes' => [
+
+                                    'get' => [
+                                        'type' => 'method',
+                                        'options' => [
+                                            'verb' => 'get',
+                                            'defaults' => [
+                                                'action' => 'index'
+                                            ],
+                                        ],
+                                    ], // get
+
+                                    'email' => [
+                                        'type'    => 'segment',
+                                        'options' => [
+                                            'route'    => '/email',
+                                            'defaults' => [
+                                                'controller' => 'EmailController',
+                                            ],
+                                        ],
+                                        'may_terminate' => false,
+                                        'child_routes' => [
+                                            'request-token' => [
+                                                'type' => 'segment',
+                                                'options' => [
+                                                    'route' => '/:newEmail',
+                                                    'defaults' => [
+                                                        'action'    => 'get-email-update-token',
+                                                    ],
+                                                ],
+                                            ], // request-token
+                                            'update-email' => [
+                                                'type' => 'method',
+                                                'options' => [
+                                                    'verb' => 'post',
+                                                    'defaults' => [
+                                                        'action'    => 'update-email',
+                                                    ],
+                                                ],
+                                            ], // update-email
+                                        ]
+                                    ],
+
+                                    'password' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'    => '/password',
+                                            'defaults' => [
+                                                'controller' => 'PasswordController',
+                                                'action' => 'change',
+                                            ],
+                                        ],
+                                    ], // password
+
+                                ],
+                            ], // id
+
+                            'search-users' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/search',
+                                    'defaults' => [
+                                        'action'    => 'search',
+                                    ],
+                                ],
+                            ], // search-users
 
                         ], // child_routes
 
@@ -289,11 +503,10 @@ return [
 
                 ], // child_routes
 
-            ], // api-v2
+            ], // v1
 
-        ], //routes
-
-    ], // router
+        ],
+    ],
 
     'zfc_rbac' => [
         'assertion_map' => [
@@ -335,7 +548,8 @@ return [
             'Application\Controller\Stats'                  => 'Application\Controller\StatsControllerFactory',
         ],
         'abstract_factories' => [
-            'Application\Controller\ControllerAbstractFactory'
+            'Application\Controller\Version2\Auth\ControllerAbstractFactory',
+            'Application\Controller\ControllerAbstractFactory',
         ],
     ], // controllers
 

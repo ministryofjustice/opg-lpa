@@ -1,6 +1,6 @@
 <?php
 
-namespace Auth\Controller\Version1;
+namespace Application\Controller\Version2\Auth;
 
 use Auth\Model\Service\AuthenticationService;
 use Zend\Http\Request as HttpRequest;

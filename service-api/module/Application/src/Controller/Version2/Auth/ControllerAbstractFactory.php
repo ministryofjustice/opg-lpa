@@ -1,14 +1,13 @@
 <?php
 
-namespace Auth\Controller;
+namespace Application\Controller\Version2\Auth;
 
-use Auth\Controller\Version1;
+use Application\Controller\Version2\Auth;
 use Auth\Model\Service\AuthenticationService;
 use Auth\Model\Service\EmailUpdateService;
 use Auth\Model\Service\PasswordChangeService;
 use Auth\Model\Service\PasswordResetService;
 use Auth\Model\Service\RegistrationService;
-use Auth\Model\Service\StatsService;
 use Auth\Model\Service\UserManagementService;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
@@ -23,17 +22,17 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $additionalServices = [
-        Version1\EmailController::class => [
+        Auth\EmailController::class => [
             'setEmailUpdateService' => EmailUpdateService::class,
         ],
-        Version1\PasswordController::class => [
+        Auth\PasswordController::class => [
             'setPasswordChangeService' => PasswordChangeService::class,
             'setPasswordResetService' => PasswordResetService::class,
         ],
-        Version1\RegistrationController::class => [
+        Auth\RegistrationController::class => [
             'setRegistrationService' => RegistrationService::class,
         ],
-        Version1\UsersController::class => [
+        Auth\UsersController::class => [
             'setUserManagementService' => UserManagementService::class,
         ],
     ];
@@ -47,7 +46,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      */
     public function canCreate(ContainerInterface $container, $requestedName)
     {
-        return (class_exists($requestedName) && is_subclass_of($requestedName, Version1\AbstractController::class));
+        return (class_exists($requestedName) && is_subclass_of($requestedName, Auth\AbstractController::class));
     }
 
     /**
@@ -63,7 +62,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             throw new ServiceNotFoundException(sprintf('Abstract factory %s can not create the requested service %s', get_class($this), $requestedName));
         }
 
-        if (is_subclass_of($requestedName, Version1\AbstractAuthenticatedController::class)) {
+        if (is_subclass_of($requestedName, Auth\AbstractAuthenticatedController::class)) {
             /** @var AuthenticationService $authenticationService */
             $authenticationService = $container->get(AuthenticationService::class);
             $controller = new $requestedName($authenticationService);
