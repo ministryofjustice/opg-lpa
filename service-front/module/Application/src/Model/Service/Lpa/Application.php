@@ -49,23 +49,19 @@ class Application extends AbstractService implements ApiClientAwareInterface
     /**
      * Create a new LPA application
      *
-     * @return ResponseException|\Exception|static
+     * @return bool|static
      */
     public function createApplication()
     {
         $target = sprintf('/v2/users/%s/applications', $this->getUserId());
 
-        try {
-            $response = $this->apiClient->httpPost($target);
+        $response = $this->apiClient->httpPost($target);
 
-            if ($response->getStatusCode() == 201) {
-                return LpaResponse::buildFromResponse($response);
-            }
-        } catch (ResponseException $e) {
-            return $e;
+        if ($response->getStatusCode() == 201) {
+            return LpaResponse::buildFromResponse($response);
         }
 
-        return new ResponseException('unknown-error', $response->getStatusCode(), $response);
+        return false;
     }
 
     /**
@@ -73,30 +69,26 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param $lpaId
      * @param array $data
-     * @return ResponseException|\Exception|static
+     * @return bool|static
      */
     public function updateApplication($lpaId, array $data)
     {
         $target = sprintf('/v2/users/%s/applications/%d', $this->getUserId(), $lpaId);
 
-        try {
-            $response = $this->apiClient->httpPatch($target, $data);
+        $response = $this->apiClient->httpPatch($target, $data);
 
-            if ($response->getStatusCode() == 200) {
-                return LpaResponse::buildFromResponse($response);
-            }
-        } catch (ResponseException $e) {
-            return $e;
+        if ($response->getStatusCode() == 200) {
+            return LpaResponse::buildFromResponse($response);
         }
 
-        return new ResponseException('unknown-error', $response->getStatusCode(), $response);
+        return false;
     }
 
     /**
      * Deletes an LPA application
      *
      * @param $lpaId
-     * @return true|ResponseException
+     * @return bool
      */
     public function deleteApplication($lpaId)
     {
@@ -108,7 +100,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
             return true;
         }
 
-        return new ResponseException('unknown-error', $response->getStatusCode(), $response);
+        return false;
     }
 
     /**
