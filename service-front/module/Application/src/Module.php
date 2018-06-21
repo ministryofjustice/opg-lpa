@@ -4,7 +4,9 @@ namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
+use Application\Model\Service\ApiClient\Exception\ResponseException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
+use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
 use Opg\Lpa\Logger\LoggerTrait;
@@ -96,17 +98,21 @@ class Module implements FormElementProviderInterface
         $sm = $e->getApplication()->getServiceManager();
 
         $auth = $sm->get('AuthenticationService');
+        /** @var Identity $identity */
         $identity = $auth->getIdentity();
 
         //  If there is an identity (logged in user) then get the token details and check to see if it has expired
         if (!is_null($identity)) {
-            $info = $sm->get('UserService')->getTokenInfo($identity->token());
+            try {
+                $info = $sm->get('UserService')->getTokenInfo($identity->token());
 
-            if (is_array($info) && isset($info['expiresIn'])) {
-                // update the time the token expires in the session
-                $identity->tokenExpiresIn($info['expiresIn']);
-            } else {
-                // else the user will need to re-login, so remove the current identity.
+                if (is_array($info) && isset($info['expiresIn'])) {
+                    // update the time the token expires in the session
+                    $identity->tokenExpiresIn($info['expiresIn']);
+                } else {
+                    $auth->clearIdentity();
+                }
+            } catch (ResponseException $rex) {
                 $auth->clearIdentity();
             }
         }
