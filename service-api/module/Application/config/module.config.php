@@ -504,10 +504,10 @@ return [
             'Application\Controller\Index' => 'Application\Controller\IndexController',
         ],
         'factories' => [
-            'Application\Controller\Console\AccountCleanup' => 'Application\Controller\Console\AccountCleanupControllerFactory',
-            'Application\Controller\Console\GenerateStats'  => 'Application\Controller\Console\GenerateStatsControllerFactory',
-            'Application\Controller\Ping'                   => 'Application\Controller\PingControllerFactory',
-            'Application\Controller\Stats'                  => 'Application\Controller\StatsControllerFactory',
+            'Application\Controller\Console\AccountCleanup' => Application\Controller\Console\AccountCleanupControllerFactory::class,
+            'Application\Controller\Console\GenerateStats'  => Application\Controller\Console\GenerateStatsControllerFactory::class,
+            'Application\Controller\Ping'                   => Application\Controller\PingControllerFactory::class,
+            'Application\Controller\Stats'                  => Application\Controller\StatsControllerFactory::class,
         ],
         'abstract_factories' => [
             'Application\Controller\Version2\Auth\ControllerAbstractFactory',
