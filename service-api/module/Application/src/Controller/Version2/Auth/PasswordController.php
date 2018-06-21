@@ -2,8 +2,7 @@
 
 namespace Application\Controller\Version2\Auth;
 
-use Auth\Model\Service\PasswordChangeService;
-use Auth\Model\Service\PasswordResetService;
+use Auth\Model\Service\PasswordService;
 use Opg\Lpa\Logger\LoggerTrait;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -14,14 +13,9 @@ class PasswordController extends AbstractAuthenticatedController
     use LoggerTrait;
 
     /**
-     * @var PasswordChangeService
+     * @var PasswordService
      */
-    private $passwordChangeService;
-
-    /**
-     * @var PasswordResetService
-     */
-    private $passwordResetService;
+    private $passwordService;
 
     /**
      * Change the user's password; and then automatically re-logs them in again.
@@ -49,7 +43,7 @@ class PasswordController extends AbstractAuthenticatedController
             );
         }
 
-        $result = $this->passwordChangeService->changePassword($userId, $currentPassword, $newPassword);
+        $result = $this->passwordService->changePassword($userId, $currentPassword, $newPassword);
 
         if (is_string($result)) {
             return new ApiProblemResponse(
@@ -82,7 +76,7 @@ class PasswordController extends AbstractAuthenticatedController
             );
         }
 
-        $result = $this->passwordResetService->generateToken($username);
+        $result = $this->passwordService->generateToken($username);
 
         if ($result == 'user-not-found') {
             $this->getLogger()->notice("Password reset request for unknown user", [
@@ -126,7 +120,7 @@ class PasswordController extends AbstractAuthenticatedController
             );
         }
 
-        $result = $this->passwordResetService->updatePasswordUsingToken($token, $newPassword);
+        $result = $this->passwordService->updatePasswordUsingToken($token, $newPassword);
 
         if ($result === 'invalid-token') {
             return new ApiProblemResponse(
@@ -149,18 +143,10 @@ class PasswordController extends AbstractAuthenticatedController
     }
 
     /**
-     * @param PasswordChangeService $passwordChangeService
+     * @param PasswordService $passwordService
      */
-    public function setPasswordChangeService(PasswordChangeService $passwordChangeService)
+    public function setPasswordService(PasswordService $passwordService)
     {
-        $this->passwordChangeService = $passwordChangeService;
-    }
-
-    /**
-     * @param PasswordResetService $passwordResetService
-     */
-    public function setPasswordResetService(PasswordResetService $passwordResetService)
-    {
-        $this->passwordResetService = $passwordResetService;
+        $this->passwordService = $passwordService;
     }
 }

@@ -7,17 +7,55 @@ use Zend\Math\BigInteger\BigInteger;
 use DateTime;
 use RuntimeException;
 
-class PasswordResetService extends AbstractService
+class PasswordService extends AbstractService
 {
     const TOKEN_TTL = 86400; // 24 hours
 
     use PasswordValidatorTrait;
 
+    /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
+
+    /**
+     * @param $userId
+     * @param $oldPassword
+     * @param $newPassword
+     * @return array|string
+     */
+    public function changePassword($userId, $oldPassword, $newPassword)
+    {
+        $user = $this->getAuthUserCollection()->getById($userId);
+
+        if (is_null($user)) {
+            return 'user-not-found';
+        }
+
+        // Ensure the new password is valid
+        if (!$this->isPasswordValid($newPassword)) {
+            return 'invalid-new-password';
+        }
+
+        // Ensure the old password is valid
+        if (!password_verify($oldPassword, $user->password())) {
+            return 'invalid-user-credentials';
+        }
+
+        $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        $this->getAuthUserCollection()->setNewPassword($user->id(), $passwordHash);
+
+        return $this->authenticationService->withPassword($user->username(), $newPassword, true);
+    }
+
+    /**
+     * @param $username
+     * @return array|string
+     */
     public function generateToken($username)
     {
-        $dataSource = $this->getAuthUserCollection();
-
-        $user = $dataSource->getByUsername($username);
+        $user = $this->getAuthUserCollection()->getByUsername($username);
 
         if (!$user instanceof User) {
             return 'user-not-found';
@@ -50,11 +88,16 @@ class PasswordResetService extends AbstractService
             'expiresAt' => $expires
         ];
 
-        $dataSource->addPasswordResetToken($user->id(), $tokenDetails);
+        $this->getAuthUserCollection()->addPasswordResetToken($user->id(), $tokenDetails);
 
         return $tokenDetails;
     }
 
+    /**
+     * @param $token
+     * @param $newPassword
+     * @return bool|string
+     */
     public function updatePasswordUsingToken($token, $newPassword)
     {
         if (!$this->isPasswordValid($newPassword)) {
@@ -79,5 +122,13 @@ class PasswordResetService extends AbstractService
         }
 
         return $result;
+    }
+
+    /**
+     * @param AuthenticationService $authenticationService
+     */
+    public function setAuthenticationService(AuthenticationService $authenticationService)
+    {
+        $this->authenticationService = $authenticationService;
     }
 }

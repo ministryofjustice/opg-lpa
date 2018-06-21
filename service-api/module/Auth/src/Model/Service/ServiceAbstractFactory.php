@@ -17,7 +17,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $additionalServices = [
-        PasswordChangeService::class => [
+        PasswordService::class => [
             'setAuthenticationService' => AuthenticationService::class,
         ],
         UserManagementService::class => [

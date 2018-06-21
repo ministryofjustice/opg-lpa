@@ -5,8 +5,7 @@ namespace Application\Controller\Version2\Auth;
 use Application\Controller\Version2\Auth;
 use Auth\Model\Service\AuthenticationService;
 use Auth\Model\Service\EmailUpdateService;
-use Auth\Model\Service\PasswordChangeService;
-use Auth\Model\Service\PasswordResetService;
+use Auth\Model\Service\PasswordService;
 use Auth\Model\Service\RegistrationService;
 use Auth\Model\Service\UserManagementService;
 use Interop\Container\ContainerInterface;
@@ -26,8 +25,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setEmailUpdateService' => EmailUpdateService::class,
         ],
         Auth\PasswordController::class => [
-            'setPasswordChangeService' => PasswordChangeService::class,
-            'setPasswordResetService' => PasswordResetService::class,
+            'setPasswordService' => PasswordService::class,
         ],
         Auth\RegistrationController::class => [
             'setRegistrationService' => RegistrationService::class,
