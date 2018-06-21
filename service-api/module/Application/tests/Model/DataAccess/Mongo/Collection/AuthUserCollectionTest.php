@@ -278,22 +278,6 @@ class AuthUserCollectionTest extends MockeryTestCase
         $this->assertEquals(true, $result);
     }
 
-    public function testRemoveAuthToken()
-    {
-        $dbResult = Mockery::mock(UpdateResult::class);
-        $dbResult->shouldReceive('isAcknowledged')->once()->andReturn(true);
-
-        $this->mongoCollection->shouldReceive('updateOne')->withArgs([
-            ['auth_token.token' => 'unit-test'],
-            ['$unset' => ['auth_token' => true]],
-            ['upsert' => false, 'multiple' => false]
-        ])->once()->andReturn($dbResult);
-
-        $result = $this->authUserCollection->removeAuthToken('unit-test');
-
-        $this->assertEquals(true, $result);
-    }
-
     public function testModifyAuthTokenMongoException()
     {
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {

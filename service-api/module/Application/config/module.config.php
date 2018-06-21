@@ -323,34 +323,6 @@ return [
                         ],
                     ], // authenticate
 
-                    'token' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/token/:token',
-                            'constraints' => [
-                                'token' => '[a-zA-Z0-9]+',
-                            ],
-                            'defaults' => [
-                                'controller' => 'AuthenticateController',
-                            ],
-                        ],
-                        'may_terminate' => false,
-                        'child_routes' => [
-
-                            'delete' => [
-                                'type' => 'method',
-                                'options' => [
-                                    'verb' => 'delete',
-                                    'defaults' => [
-                                        'action' => 'delete'
-                                    ],
-                                ],
-                            ], // delete
-
-                        ],
-                    ], // token
-
-
                     'user' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -431,16 +403,6 @@ return [
                                 ],
                                 'may_terminate' => false,
                                 'child_routes' => [
-
-                                    'get' => [
-                                        'type' => 'method',
-                                        'options' => [
-                                            'verb' => 'get',
-                                            'defaults' => [
-                                                'action' => 'index'
-                                            ],
-                                        ],
-                                    ], // get
 
                                     'email' => [
                                         'type'    => 'segment',

@@ -32,21 +32,6 @@ class AuthenticateController extends AbstractAuthenticatedController
     }
 
     /**
-     * Deletes a token.
-     */
-    public function deleteAction()
-    {
-        $token = $this->params('token');
-
-        if (!empty($token)) {
-            $this->authenticationService->deleteToken($token);
-        }
-
-        // Return 204 - No Content
-        $this->response->setStatusCode(204);
-    }
-
-    /**
      * Authenticate a user with a passed token.
      *
      * @param $token
