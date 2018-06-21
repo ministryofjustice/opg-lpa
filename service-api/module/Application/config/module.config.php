@@ -5,7 +5,6 @@ return [
     'console' => [
         'router' => [
             'routes' => [
-
                 'generate-stats' => [
                     'type'    => 'simple',
                     'options' => [
@@ -16,7 +15,16 @@ return [
                         ],
                     ],
                 ],
-
+                'account-cleanup' => [
+                    'type'    => 'simple',
+                    'options' => [
+                        'route'    => 'account-cleanup',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Console\AccountCleanup',
+                            'action'     => 'cleanup'
+                        ],
+                    ],
+                ],
             ],
         ],
     ],
@@ -321,6 +329,7 @@ return [
             'Application\Controller\Index' => 'Application\Controller\IndexController',
         ],
         'factories' => [
+            'Application\Controller\Console\AccountCleanup' => 'Application\Controller\Console\AccountCleanupControllerFactory',
             'Application\Controller\Console\GenerateStats'  => 'Application\Controller\Console\GenerateStatsControllerFactory',
             'Application\Controller\Ping'                   => 'Application\Controller\PingControllerFactory',
             'Application\Controller\Stats'                  => 'Application\Controller\StatsControllerFactory',
@@ -333,8 +342,9 @@ return [
 
     'service_manager' => [
         'factories' => [
-            \Application\Model\Service\System\Stats::class => \Application\Model\Service\System\StatsFactory::class,
-            Application\Model\Service\Stats\Service::class => Application\Model\Service\Stats\ServiceFactory::class,
+            Application\Model\Service\AccountCleanup\Service::class => Application\Model\Service\AccountCleanup\ServiceFactory::class,
+            Application\Model\Service\System\Stats::class           => Application\Model\Service\System\StatsFactory::class,
+            Application\Model\Service\Stats\Service::class          => Application\Model\Service\Stats\ServiceFactory::class,
         ],
         'abstract_factories' => [
             'Application\Model\Service\ServiceAbstractFactory',

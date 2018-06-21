@@ -3,11 +3,11 @@
 namespace Application\Controller\Console;
 
 use Application\Model\Service\System\DynamoCronLock;
-use Application\Model\Service\System\Stats;
+use Application\Model\Service\System\Stats as StatsService;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\Console\Controller\AbstractConsoleController;
 
-class GenerateStatsController extends AbstractActionController
+class GenerateStatsController extends AbstractConsoleController
 {
     use LoggerTrait;
 
@@ -17,16 +17,15 @@ class GenerateStatsController extends AbstractActionController
     private $cronLock;
 
     /**
-     * @var Stats
+     * @var StatsService
      */
     private $statsService;
 
     /**
-     * GenerateStatsController constructor
      * @param DynamoCronLock $cronLock
-     * @param Stats $statsService
+     * @param StatsService $statsService
      */
-    public function __construct(DynamoCronLock $cronLock, Stats $statsService)
+    public function __construct(DynamoCronLock $cronLock, StatsService $statsService)
     {
         $this->cronLock = $cronLock;
         $this->statsService = $statsService;
@@ -45,7 +44,7 @@ class GenerateStatsController extends AbstractActionController
 
             $this->getLogger()->info("This node got the GenerateApiStats cron lock for {$lockName}");
 
-            $result = $this->statsService->generate();
+            $this->statsService->generate();
         } else {
             echo "Did not get the GenerateApiStats lock\n";
 

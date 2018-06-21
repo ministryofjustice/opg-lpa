@@ -1,7 +1,9 @@
 <?php
 
-namespace Auth\Model\Service;
+namespace Application\Model\Service\AccountCleanup;
 
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
+use Auth\Model\Service\UserManagementService;
 use Aws\Sns\SnsClient;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
@@ -18,11 +20,8 @@ use Exception;
  *
  * Warnings are sent by calling a HTTP based notification endpoint.
  * The auth service is not concerned with how that notification is then processed.
- *
- * Class AccountCleanupService
- * @package Auth\Model\Service
  */
-class AccountCleanupService extends AbstractService
+class Service
 {
     use LoggerTrait;
 
@@ -57,11 +56,35 @@ class AccountCleanupService extends AbstractService
     private $apiUserCollection;
 
     /**
-     * @param $notificationCallback
+     * @var AuthUserCollection
      */
-    public function cleanup($notificationCallback)
+    private $authUserCollection;
+
+    /**
+     * @param UserManagementService $userManagementService
+     * @param SnsClient $snsClient
+     * @param GuzzleClient $guzzleClient
+     * @param array $config
+     * @param Collection $apiLpaCollection
+     * @param Collection $apiUserCollection
+     * @param AuthUserCollection $authUserCollection
+     */
+    public function __construct(UserManagementService $userManagementService, SnsClient $snsClient, GuzzleClient $guzzleClient, array $config, Collection $apiLpaCollection, Collection $apiUserCollection, AuthUserCollection $authUserCollection)
+    {
+        $this->userManagementService = $userManagementService;
+        $this->snsClient = $snsClient;
+        $this->guzzleClient = $guzzleClient;
+        $this->config = $config;
+        $this->apiLpaCollection = $apiLpaCollection;
+        $this->apiUserCollection = $apiUserCollection;
+        $this->authUserCollection = $authUserCollection;
+    }
+
+    public function cleanup()
     {
         $summary = array();
+
+        $notificationCallback = $this->config['cleanup']['notification']['callback'];
 
         /**
          * 1 - Delete accounts >= -9 months
@@ -140,7 +163,7 @@ class AccountCleanupService extends AbstractService
         //---
 
         // Pull back a list of accounts...
-        $iterator = $this->getAuthUserCollection()->getAccountsInactiveSince($lastLoginBefore, $type);
+        $iterator = $this->authUserCollection->getAccountsInactiveSince($lastLoginBefore, $type);
 
         //---
 
@@ -165,7 +188,7 @@ class AccountCleanupService extends AbstractService
                 ]);
 
                 // Flag the account as 'notification sent'...
-                $this->getAuthUserCollection()->setInactivityFlag($user->id(), $type);
+                $this->authUserCollection->setInactivityFlag($user->id(), $type);
 
                 $counter++;
             } catch (GuzzleClientException $e) {
@@ -205,7 +228,7 @@ class AccountCleanupService extends AbstractService
         echo "Deleting accounts inactive since " . $lastLoginBefore->format('r') . "\n";
 
         // Pull back a list of accounts...
-        $iterator = $this->getAuthUserCollection()->getAccountsInactiveSince($lastLoginBefore);
+        $iterator = $this->authUserCollection->getAccountsInactiveSince($lastLoginBefore);
 
         //---
 
@@ -253,7 +276,7 @@ class AccountCleanupService extends AbstractService
         echo "Deleting unactivated accounts created before " . $unactivatedSince->format('r') . "\n";
 
         // Pull back a list of accounts...
-        $iterator = $this->getAuthUserCollection()->getAccountsUnactivatedOlderThan($unactivatedSince);
+        $iterator = $this->authUserCollection->getAccountsUnactivatedOlderThan($unactivatedSince);
 
         //---
 
@@ -269,53 +292,5 @@ class AccountCleanupService extends AbstractService
         echo "{$counter} accounts deleted.\n";
 
         return $counter;
-    }
-
-    /**
-     * @param UserManagementService $userManagementService
-     */
-    public function setUserManagementService(UserManagementService $userManagementService)
-    {
-        $this->userManagementService = $userManagementService;
-    }
-
-    /**
-     * @param SnsClient $snsClient
-     */
-    public function setSnsClient(SnsClient $snsClient)
-    {
-        $this->snsClient = $snsClient;
-    }
-
-    /**
-     * @param GuzzleClient $guzzleClient
-     */
-    public function setGuzzleClient(GuzzleClient $guzzleClient)
-    {
-        $this->guzzleClient = $guzzleClient;
-    }
-
-    /**
-     * @param array $config
-     */
-    public function setConfig(array $config)
-    {
-        $this->config = $config;
-    }
-
-    /**
-     * @param Collection $apiLpaCollection
-     */
-    public function setApiLpaCollection(Collection $apiLpaCollection)
-    {
-        $this->apiLpaCollection = $apiLpaCollection;
-    }
-
-    /**
-     * @param Collection $apiUserCollection
-     */
-    public function setApiUserCollection(Collection $apiUserCollection)
-    {
-        $this->apiUserCollection = $apiUserCollection;
     }
 }

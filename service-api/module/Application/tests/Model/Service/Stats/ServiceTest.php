@@ -3,14 +3,14 @@
 namespace ApplicationTest\Model\Service\Stats;
 
 use Application\Model\Service\Stats\Service;
-use ApplicationTest\Model\Service\AbstractServiceTest;
 use Auth\Model\Service\StatsService as AuthStatsService;
 use DateTime;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MongoDB\Collection as MongoCollection;
 use MongoDB\Driver\ReadPreference;
 
-class ServiceTest extends AbstractServiceTest
+class ServiceTest extends MockeryTestCase
 {
     public function testFetch()
     {

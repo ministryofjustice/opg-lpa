@@ -1,8 +1,9 @@
 <?php
 
-namespace AuthTest\Model\Service;
+namespace ApplicationTest\Model\Service\AccountCleanup;
 
-use Auth\Model\Service\AccountCleanupService;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
+use Application\Model\Service\AccountCleanup\Service;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use Auth\Model\Service\UserManagementService;
 use Aws\Sns\SnsClient;
@@ -12,15 +13,16 @@ use Exception;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use MongoDB\Collection;
 use Opg\Lpa\Logger\Logger;
 use Psr\Http\Message\RequestInterface;
 
-class AccountCleanupServiceTest extends ServiceTestCase
+class ServiceTest extends MockeryTestCase
 {
     /**
-     * @var AccountCleanupService
+     * @var Service
      */
     private $service;
 
@@ -55,9 +57,9 @@ class AccountCleanupServiceTest extends ServiceTestCase
     private $apiUserCollection;
 
     /**
-     * @var MockInterface|RequestInterface
+     * @var MockInterface|AuthUserCollection
      */
-    private $request;
+    private $authUserCollection;
 
     /** @var array  */
     private $config = [
@@ -67,6 +69,7 @@ class AccountCleanupServiceTest extends ServiceTestCase
         'cleanup' => [
             'notification' => [
                 'token' => 'unit_test',
+                'callback' => 'http://callback',
             ],
         ],
         'log' => [
@@ -95,18 +98,11 @@ class AccountCleanupServiceTest extends ServiceTestCase
 
         $this->apiUserCollection = Mockery::mock(Collection::class);
 
-        $this->service = new AccountCleanupService($this->authUserCollection);
+        $this->authUserCollection = Mockery::mock(AuthUserCollection::class);
 
-        $this->service->setUserManagementService($this->userManagementService);
-        $this->service->setSnsClient($this->snsClient);
-        $this->service->setGuzzleClient($this->guzzleClient);
-        $this->service->setConfig($this->config);
-        $this->service->setApiLpaCollection($this->apiLpaCollection);
-        $this->service->setApiUserCollection($this->apiUserCollection);
+        $this->service = new Service($this->userManagementService, $this->snsClient, $this->guzzleClient, $this->config, $this->apiLpaCollection, $this->apiUserCollection, $this->authUserCollection);
 
         $this->service->setLogger($this->logger);
-
-        $this->request = Mockery::mock(RequestInterface::class);
     }
 
     public function testCleanupNone()
@@ -119,7 +115,7 @@ class AccountCleanupServiceTest extends ServiceTestCase
                 && $message['MessageStructure'] === 'string';
         })->once();
 
-        $result = $this->service->cleanup('');
+        $result = $this->service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -136,7 +132,7 @@ class AccountCleanupServiceTest extends ServiceTestCase
             return $message === 'Unable to send AWS SNS notification' && array_key_exists('exception', $extra);
         })->once();
 
-        $result = $this->service->cleanup('');
+        $result = $this->service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -157,7 +153,7 @@ class AccountCleanupServiceTest extends ServiceTestCase
 
         $this->apiUserCollection->shouldReceive('deleteOne')->withArgs([['_id' => 1]])->andReturnNull();
 
-        $result = $this->service->cleanup('');
+        $result = $this->service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -175,7 +171,7 @@ class AccountCleanupServiceTest extends ServiceTestCase
 
         $this->apiUserCollection->shouldReceive('deleteOne')->withArgs([['_id' => 1]])->andReturnNull();
 
-        $result = $this->service->cleanup('');
+        $result = $this->service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -208,7 +204,7 @@ class AccountCleanupServiceTest extends ServiceTestCase
 
         $this->authUserCollection->shouldReceive('setInactivityFlag')->withArgs([1, '1-week-notice'])->once();
 
-        $result = $this->service->cleanup('http://callback');
+        $result = $this->service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -224,15 +220,18 @@ class AccountCleanupServiceTest extends ServiceTestCase
 
         $this->snsClient->shouldReceive('publish')->once();
 
+        /** @var RequestInterface $request */
+        $request = Mockery::mock(RequestInterface::class);
+
         $this->guzzleClient->shouldReceive('post')->once()
-            ->andThrow(new GuzzleClientException('Unit test exception', $this->request));
+            ->andThrow(new GuzzleClientException('Unit test exception', $request));
 
         $this->logger->shouldReceive('warn')->withArgs(function ($message, $extra) {
             return $message === 'Unable to send account expiry notification'
                 && $extra['exception'] === 'Unit test exception';
         })->once();
 
-        $result = $this->service->cleanup('');
+        $result = $this->service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -256,7 +255,7 @@ class AccountCleanupServiceTest extends ServiceTestCase
                 && $extra['exception'] === 'Unit test exception';
         })->once();
 
-        $result = $this->service->cleanup('');
+        $result = $this->service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -289,7 +288,7 @@ class AccountCleanupServiceTest extends ServiceTestCase
 
         $this->authUserCollection->shouldReceive('setInactivityFlag')->withArgs([1, '1-month-notice'])->once();
 
-        $result = $this->service->cleanup('http://callback');
+        $result = $this->service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -303,7 +302,7 @@ class AccountCleanupServiceTest extends ServiceTestCase
 
         $this->userManagementService->shouldReceive('delete')->withArgs([1, 'unactivated']);
 
-        $result = $this->service->cleanup('');
+        $result = $this->service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
