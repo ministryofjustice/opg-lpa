@@ -2,7 +2,7 @@
 
 namespace Application\Controller\Version2\Auth;
 
-use Auth\Model\Service\UserManagementService;
+use Auth\Model\Service\UserManagementService as Service;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
@@ -13,9 +13,14 @@ class UsersController extends AbstractController
     use LoggerTrait;
 
     /**
-     * @var UserManagementService
+     * Get the service to use
+     *
+     * @return Service
      */
-    private $userManagementService;
+    protected function getService()
+    {
+        return $this->service;
+    }
 
     /**
      * @return JsonModel|ApiProblemResponse
@@ -24,7 +29,7 @@ class UsersController extends AbstractController
     {
         $email = $this->params()->fromQuery()['email'];
 
-        $user = $this->userManagementService->getByUsername($email);
+        $user = $this->service->getByUsername($email);
 
         if ($user === false) {
             return new ApiProblemResponse(
@@ -33,13 +38,5 @@ class UsersController extends AbstractController
         }
 
         return new JsonModel($user);
-    }
-
-    /**
-     * @param UserManagementService $userManagementService
-     */
-    public function setUserManagementService(UserManagementService $userManagementService)
-    {
-        $this->userManagementService = $userManagementService;
     }
 }

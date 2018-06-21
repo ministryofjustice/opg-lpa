@@ -2,6 +2,7 @@
 
 namespace Application\Controller\Version2\Auth;
 
+use Auth\Model\Service\AbstractService;
 use Auth\Model\Service\AuthenticationService;
 use Zend\Http\Request as HttpRequest;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -14,11 +15,35 @@ abstract class AbstractController extends AbstractActionController
      */
     protected $authenticationService;
 
-    public function __construct(AuthenticationService $authenticationService)
+    /**
+     * @var mixed
+     */
+    protected $service;
+
+    /**
+     * @param AuthenticationService $authenticationService
+     * @param AbstractService $service
+     */
+    public function __construct(AuthenticationService $authenticationService, ?AbstractService $service)
     {
         $this->authenticationService = $authenticationService;
+        $this->service = $service;
     }
 
+    /**
+     * Get the service to use
+     * Abstract function here so that this can be implemented in the subclass controllers and type hint appropriately
+     *
+     * @return AbstractService
+     */
+    abstract protected function getService();
+
+    /**
+     * @param Request $request
+     * @param $userId
+     * @param bool $extendToken
+     * @return bool
+     */
     protected function authenticateUserToken(Request $request, $userId, bool $extendToken = false)
     {
         if (($request instanceof HttpRequest) === false) {

@@ -12,6 +12,17 @@ class AuthenticateController extends AbstractController
     use LoggerTrait;
 
     /**
+     * Get the service to use
+     * TODO - Tidy this....
+     *
+     * @return null
+     */
+    protected function getService()
+    {
+        return null;
+    }
+
+    /**
      * @return JsonModel|ApiProblemResponse
      */
     public function indexAction()

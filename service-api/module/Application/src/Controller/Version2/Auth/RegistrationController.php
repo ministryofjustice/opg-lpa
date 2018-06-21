@@ -2,7 +2,7 @@
 
 namespace Application\Controller\Version2\Auth;
 
-use Auth\Model\Service\RegistrationService;
+use Auth\Model\Service\RegistrationService as Service;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
@@ -13,9 +13,14 @@ class RegistrationController extends AbstractController
     use LoggerTrait;
 
     /**
-     * @var RegistrationService
+     * Get the service to use
+     *
+     * @return Service
      */
-    private $registrationService;
+    protected function getService()
+    {
+        return $this->service;
+    }
 
     /**
      * @return JsonModel|ApiProblemResponse
@@ -30,7 +35,7 @@ class RegistrationController extends AbstractController
             );
         }
 
-        $result = $this->registrationService->create($params['Username'], $params['Password']);
+        $result = $this->service->create($params['Username'], $params['Password']);
 
         if (is_string($result)) {
             return new ApiProblemResponse(
@@ -56,7 +61,7 @@ class RegistrationController extends AbstractController
             );
         }
 
-        $result = $this->registrationService->activate($token);
+        $result = $this->service->activate($token);
 
         if (is_string($result)) {
             return new ApiProblemResponse(
@@ -70,13 +75,5 @@ class RegistrationController extends AbstractController
 
         // Return 204 - No Content
         $this->response->setStatusCode(204);
-    }
-
-    /**
-     * @param RegistrationService $registrationService
-     */
-    public function setRegistrationService(RegistrationService $registrationService)
-    {
-        $this->registrationService = $registrationService;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Application\Controller\Version2\Auth;
 
-use Auth\Model\Service\PasswordService;
+use Auth\Model\Service\PasswordService as Service;
 use Opg\Lpa\Logger\LoggerTrait;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -13,9 +13,14 @@ class PasswordController extends AbstractController
     use LoggerTrait;
 
     /**
-     * @var PasswordService
+     * Get the service to use
+     *
+     * @return Service
      */
-    private $passwordService;
+    protected function getService()
+    {
+        return $this->service;
+    }
 
     /**
      * Change the user's password; and then automatically re-logs them in again.
@@ -43,7 +48,7 @@ class PasswordController extends AbstractController
             );
         }
 
-        $result = $this->passwordService->changePassword($userId, $currentPassword, $newPassword);
+        $result = $this->service->changePassword($userId, $currentPassword, $newPassword);
 
         if (is_string($result)) {
             return new ApiProblemResponse(
@@ -76,7 +81,7 @@ class PasswordController extends AbstractController
             );
         }
 
-        $result = $this->passwordService->generateToken($username);
+        $result = $this->service->generateToken($username);
 
         if ($result == 'user-not-found') {
             $this->getLogger()->notice("Password reset request for unknown user", [
@@ -120,7 +125,7 @@ class PasswordController extends AbstractController
             );
         }
 
-        $result = $this->passwordService->updatePasswordUsingToken($token, $newPassword);
+        $result = $this->service->updatePasswordUsingToken($token, $newPassword);
 
         if ($result === 'invalid-token') {
             return new ApiProblemResponse(
@@ -140,13 +145,5 @@ class PasswordController extends AbstractController
 
         // Return 204 - No Content
         $this->response->setStatusCode(204);
-    }
-
-    /**
-     * @param PasswordService $passwordService
-     */
-    public function setPasswordService(PasswordService $passwordService)
-    {
-        $this->passwordService = $passwordService;
     }
 }

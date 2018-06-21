@@ -2,7 +2,7 @@
 
 namespace Application\Controller\Version2\Auth;
 
-use Auth\Model\Service\EmailUpdateService;
+use Auth\Model\Service\EmailUpdateService as Service;
 use Opg\Lpa\Logger\LoggerTrait;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -13,9 +13,14 @@ class EmailController extends AbstractController
     use LoggerTrait;
 
     /**
-     * @var EmailUpdateService
+     * Get the service to use
+     *
+     * @return Service
      */
-    private $emailUpdateService;
+    protected function getService()
+    {
+        return $this->service;
+    }
 
     /**
      * @return JsonModel|ApiProblemResponse
@@ -31,7 +36,7 @@ class EmailController extends AbstractController
             );
         }
 
-        $result = $this->emailUpdateService->generateToken($userId, $newEmail);
+        $result = $this->service->generateToken($userId, $newEmail);
 
         if ($result === 'invalid-email') {
             return new ApiProblemResponse(
@@ -87,7 +92,7 @@ class EmailController extends AbstractController
             );
         }
 
-        $result = $this->emailUpdateService->updateEmailUsingToken($emailUpdateToken);
+        $result = $this->service->updateEmailUsingToken($emailUpdateToken);
 
         if ($result === 'invalid-token') {
             return new ApiProblemResponse(
@@ -113,13 +118,5 @@ class EmailController extends AbstractController
 
         // Return 204 - No Content
         $this->response->setStatusCode(204);
-    }
-
-    /**
-     * @param EmailUpdateService $emailUpdateService
-     */
-    public function setEmailUpdateService(EmailUpdateService $emailUpdateService)
-    {
-        $this->emailUpdateService = $emailUpdateService;
     }
 }

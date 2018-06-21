@@ -3,6 +3,7 @@
 namespace Application\Controller\Version2\Auth;
 
 use Application\Controller\Version2\Auth;
+use Application\Library\ApiProblem\ApiProblemException;
 use Auth\Model\Service\AuthenticationService;
 use Auth\Model\Service\EmailUpdateService;
 use Auth\Model\Service\PasswordService;
@@ -11,28 +12,17 @@ use Auth\Model\Service\UserManagementService;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
-use Exception;
 
 class ControllerAbstractFactory implements AbstractFactoryInterface
 {
     /**
-     * Any additional services to be injected into the requested service using the setter method specified
-     *
      * @var array
      */
-    private $additionalServices = [
-        Auth\EmailController::class => [
-            'setEmailUpdateService' => EmailUpdateService::class,
-        ],
-        Auth\PasswordController::class => [
-            'setPasswordService' => PasswordService::class,
-        ],
-        Auth\RegistrationController::class => [
-            'setRegistrationService' => RegistrationService::class,
-        ],
-        Auth\UsersController::class => [
-            'setUserManagementService' => UserManagementService::class,
-        ],
+    private $serviceMappings = [
+        Auth\EmailController::class        => EmailUpdateService::class,
+        Auth\PasswordController::class     => PasswordService::class,
+        Auth\RegistrationController::class => RegistrationService::class,
+        Auth\UsersController::class        => UserManagementService::class,
     ];
 
     /**
@@ -52,35 +42,27 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      * @param string $requestedName
      * @param array|null $options
      * @return mixed
-     * @throws Exception
+     * @throws ApiProblemException
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         if (!$this->canCreate($container, $requestedName)) {
-            throw new ServiceNotFoundException(sprintf('Abstract factory %s can not create the requested service %s', get_class($this), $requestedName));
+            throw new ServiceNotFoundException(sprintf(
+                'Abstract factory %s can not create the requested service %s',
+                get_class($this),
+                $requestedName
+            ));
         }
 
+        //  Create the controller injecting the appropriate services
         /** @var AuthenticationService $authenticationService */
         $authenticationService = $container->get(AuthenticationService::class);
+        $service = null;
 
-        $controller = new $requestedName($authenticationService);
-
-        //  If required load any additional services into the resource
-        if (array_key_exists($requestedName, $this->additionalServices)
-            && is_array($this->additionalServices[$requestedName])) {
-            foreach ($this->additionalServices[$requestedName] as $setterMethod => $additionalService) {
-                if (!method_exists($controller, $setterMethod)) {
-                    throw new Exception(sprintf(
-                        'The setter method %s does not exist on the requested resource %s',
-                        $setterMethod,
-                        $requestedName
-                    ));
-                }
-
-                $controller->$setterMethod($container->get($additionalService));
-            }
+        if (isset($this->serviceMappings[$requestedName])) {
+            $service = $container->get($this->serviceMappings[$requestedName]);
         }
 
-        return $controller;
+        return new $requestedName($authenticationService, $service);
     }
 }
