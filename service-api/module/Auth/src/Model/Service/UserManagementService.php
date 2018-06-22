@@ -13,6 +13,11 @@ class UserManagementService extends AbstractService
     private $authLogCollection;
 
     /**
+     * @var RegistrationService
+     */
+    private $registrationService;
+
+    /**
      * @param $userId
      * @return array|string
      */
@@ -26,6 +31,29 @@ class UserManagementService extends AbstractService
         }
 
         return $user->toArray();
+    }
+
+    /**
+     * TODO - For now just proxy through to registration service
+     *
+     * @param $username
+     * @param $password
+     * @return array|string
+     */
+    public function create($username, $password)
+    {
+        return $this->registrationService->create($username, $password);
+    }
+
+    /**
+     * TODO - For now just proxy through to registration service
+     *
+     * @param $token
+     * @return bool|string
+     */
+    public function activate($token)
+    {
+        return $this->registrationService->activate($token);
     }
 
     /**
@@ -108,8 +136,16 @@ class UserManagementService extends AbstractService
     /**
      * @param $authLogCollection
      */
-    public function setAuthLogCollection($authLogCollection)
+    public function setAuthLogCollection(AuthLogCollection $authLogCollection)
     {
         $this->authLogCollection = $authLogCollection;
+    }
+
+    /**
+     * @param RegistrationService $registrationService
+     */
+    public function setRegistrationService(RegistrationService $registrationService)
+    {
+        $this->registrationService = $registrationService;
     }
 }

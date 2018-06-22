@@ -4,9 +4,8 @@ namespace Application\Controller\Version2\Auth;
 
 use Auth\Model\Service\EmailUpdateService as Service;
 use Opg\Lpa\Logger\LoggerTrait;
-use ZF\ApiProblem\ApiProblem;
-use ZF\ApiProblem\ApiProblemResponse;
 use Zend\View\Model\JsonModel;
+use ZF\ApiProblem\ApiProblem;
 
 class EmailController extends AbstractController
 {
@@ -23,43 +22,42 @@ class EmailController extends AbstractController
     }
 
     /**
-     * @return JsonModel|ApiProblemResponse
+     * Change the user email address
+     *
+     * NOTE: This action does not actually change the email value by itself
+     * It will set the new value in an unverified state, then the function below must be called to complete the change
+     *
+     * @return JsonModel|ApiProblem
      */
-    public function getEmailUpdateTokenAction()
+    public function changeAction()
     {
         $userId = $this->params('userId');
-        $newEmail = $this->params('newEmail');
+        $newEmailAddress = $this->getRequest()->getPost('newEmail');
 
-        if (!$this->authenticateUserToken($this->getRequest(), $userId)) {
-            return new ApiProblemResponse(
-                new ApiProblem(401, 'invalid-token')
-            );
+        if (empty($newEmailAddress)) {
+            return new ApiProblem(400, 'Email address must be passed');
         }
 
-        $result = $this->service->generateToken($userId, $newEmail);
+        if (!$this->authenticateUserToken($this->getRequest(), $userId)) {
+            return new ApiProblem(401, 'invalid-token');
+        }
+
+        $result = $this->service->generateToken($userId, $newEmailAddress);
 
         if ($result === 'invalid-email') {
-            return new ApiProblemResponse(
-                new ApiProblem(400, 'Invalid email address')
-            );
+            return new ApiProblem(400, 'Invalid email address');
         }
 
         if ($result === 'user-not-found') {
-            return new ApiProblemResponse(
-                new ApiProblem(404, 'User not found')
-            );
+            return new ApiProblem(404, 'User not found');
         }
 
         if ($result === 'username-already-exists') {
-            return new ApiProblemResponse(
-                new ApiProblem(400, 'Email already exists for another user')
-            );
+            return new ApiProblem(400, 'Email already exists for another user');
         }
 
         if ($result === 'username-same-as-current') {
-            return new ApiProblemResponse(
-                new ApiProblem(400, 'User already has this email')
-            );
+            return new ApiProblem(400, 'User already has this email');
         }
 
         // Map DateTimes to strings
@@ -75,41 +73,30 @@ class EmailController extends AbstractController
     }
 
     /**
-     * @return ApiProblemResponse
+     * Use a token value to verify a new email address
+     *
+     * @return ApiProblem
      */
-    public function updateEmailAction()
+    public function verifyAction()
     {
-        $emailUpdateToken = $this->getRequest()->getPost('Token');
-
-        if (is_null($emailUpdateToken)) {
-            // Check for the old parameter name
-            $emailUpdateToken = $this->getRequest()->getPost('emailUpdateToken');
-        }
+        $emailUpdateToken = $this->getRequest()->getPost('emailUpdateToken');
 
         if (empty($emailUpdateToken)) {
-            return new ApiProblemResponse(
-                new ApiProblem(400, 'Token must be passed')
-            );
+            return new ApiProblem(400, 'Token must be passed');
         }
 
         $result = $this->service->updateEmailUsingToken($emailUpdateToken);
 
         if ($result === 'invalid-token') {
-            return new ApiProblemResponse(
-                new ApiProblem(404, 'Invalid token')
-            );
+            return new ApiProblem(404, 'Invalid token');
         }
 
         if ($result === 'username-already-exists') {
-            return new ApiProblemResponse(
-                new ApiProblem(400, 'Email already exists for another user')
-            );
+            return new ApiProblem(400, 'Email already exists for another user');
         }
 
         if ($result === false) {
-            return new ApiProblemResponse(
-                new ApiProblem(500, 'Unable to update email address')
-            );
+            return new ApiProblem(500, 'Unable to update email address');
         }
 
         $this->getLogger()->info("User successfully update email with token", [

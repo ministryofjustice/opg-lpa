@@ -5,15 +5,14 @@ namespace Application\Controller\Version2\Auth;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
-use ZF\ApiProblem\ApiProblemResponse;
 
 class AuthenticateController extends AbstractController
 {
     use LoggerTrait;
 
     /**
-     * Get the service to use
-     * TODO - Tidy this....
+     * TODO - Refactor later...
+     * NOTE - Present to satisfy requirement in AbstractController
      *
      * @return null
      */
@@ -23,67 +22,63 @@ class AuthenticateController extends AbstractController
     }
 
     /**
-     * @return JsonModel|ApiProblemResponse
+     * @return JsonModel|ApiProblem
      */
-    public function indexAction()
+    public function authenticateAction()
     {
-        $params = $this->getRequest()->getPost();
+        $data = $this->getRequest()->getPost();
 
-        $updateToken = ( isset($params['Update']) && $params['Update'] === 'false' ) ? false : true;
+        $updateToken = (isset($data['Update']) && $data['Update'] === 'false' ? false : true);
 
-        if (isset($params['Token'])) {
-            return $this->withToken(trim($params['Token']), $updateToken);
-        } elseif (isset($params['Username']) && isset($params['Password'])) {
-            return $this->withPassword(trim($params['Username']), $params['Password'], $updateToken);
-        } else {
-            return new ApiProblemResponse(
-                new ApiProblem(400, 'Either Token or Username & Password must be passed')
-            );
+        if (isset($data['authToken'])) {
+            return $this->withToken(trim($data['authToken']), $updateToken);
+        } elseif (isset($data['username']) && isset($data['password'])) {
+            return $this->withPassword(trim($data['username']), $data['password'], $updateToken);
         }
+
+        return new ApiProblem(400, 'Either token or username & password must be passed');
     }
 
     /**
-     * Authenticate a user with a passed token.
+     * Authenticate a user with a passed authToken.
      *
-     * @param $token
+     * @param $authToken
      * @param $updateToken
-     * @return JsonModel|ApiProblemResponse
+     * @return JsonModel|ApiProblem
      */
-    private function withToken($token, $updateToken)
+    private function withToken($authToken, $updateToken)
     {
-        $result = $this->authenticationService->withToken($token, $updateToken);
+        $result = $this->authenticationService->withToken($authToken, $updateToken);
 
         if (is_string($result)) {
-            $this->getLogger()->notice("Failed authentication attempt with a token", [
-                'token' => $token
+            $this->getLogger()->notice("Failed authentication attempt with a authToken", [
+                'authToken' => $authToken
             ]);
 
-            return new ApiProblemResponse(
-                new ApiProblem(401, $result)
-            );
+            return new ApiProblem(401, $result);
         }
 
         // Map DateTimes to strings
         $result = array_map(function ($v) {
-            return ($v instanceof \DateTime) ? $v->format('Y-m-d\TH:i:sO') : $v;
+            return ($v instanceof \DateTime ? $v->format('Y-m-d\TH:i:sO') : $v);
         }, $result);
 
-        $this->getLogger()->info("User successfully authenticated with a token", [
+        $this->getLogger()->info("User successfully authenticated with a authToken", [
             'tokenExtended' => (bool)$updateToken,
-            'userId'=>$result['userId'],
-            'expiresAt'=>$result['expiresAt'],
+            'userId'        => $result['userId'],
+            'expiresAt'     => $result['expiresAt'],
         ]);
 
         return new JsonModel($result);
     }
 
     /**
-     * Authenticate a user with a passed usernamer (email address) and password.
+     * Authenticate a user with a passed username (email address) and password.
      *
      * @param $username
      * @param $password
      * @param $updateToken
-     * @return JsonModel|ApiProblemResponse
+     * @return JsonModel|ApiProblem
      */
     private function withPassword($username, $password, $updateToken)
     {
@@ -94,20 +89,18 @@ class AuthenticateController extends AbstractController
                 'username' => $username
             ]);
 
-            return new ApiProblemResponse(
-                new ApiProblem(401, $result)
-            );
+            return new ApiProblem(401, $result);
         }
 
         // Map DateTimes to strings
         $result = array_map(function ($v) {
-            return ( $v instanceof \DateTime ) ? $v->format('Y-m-d\TH:i:sO') : $v;
+            return ($v instanceof \DateTime ? $v->format('Y-m-d\TH:i:sO') : $v);
         }, $result);
 
         $this->getLogger()->info("User successfully authenticated with a password", [
-            'userId'=>$result['userId'],
-            'last_login'=>$result['last_login'],
-            'expiresAt'=>$result['expiresAt'],
+            'userId'     => $result['userId'],
+            'last_login' => $result['last_login'],
+            'expiresAt'  => $result['expiresAt'],
         ]);
 
         return new JsonModel($result);

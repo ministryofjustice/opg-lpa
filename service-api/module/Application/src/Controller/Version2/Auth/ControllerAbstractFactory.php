@@ -19,10 +19,9 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $serviceMappings = [
-        Auth\EmailController::class        => EmailUpdateService::class,
-        Auth\PasswordController::class     => PasswordService::class,
-        Auth\RegistrationController::class => RegistrationService::class,
-        Auth\UsersController::class        => UserManagementService::class,
+        Auth\EmailController::class     => EmailUpdateService::class,
+        Auth\PasswordController::class  => PasswordService::class,
+        Auth\UsersController::class     => UserManagementService::class,
     ];
 
     /**
@@ -63,6 +62,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             $service = $container->get($this->serviceMappings[$requestedName]);
         }
 
-        return new $requestedName($authenticationService, $service);
+        $controller = new $requestedName($authenticationService, $service);
+
+        return $controller;
     }
 }

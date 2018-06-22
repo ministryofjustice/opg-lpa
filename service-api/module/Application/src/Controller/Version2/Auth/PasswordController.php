@@ -5,7 +5,6 @@ namespace Application\Controller\Version2\Auth;
 use Auth\Model\Service\PasswordService as Service;
 use Opg\Lpa\Logger\LoggerTrait;
 use ZF\ApiProblem\ApiProblem;
-use ZF\ApiProblem\ApiProblemResponse;
 use Zend\View\Model\JsonModel;
 
 class PasswordController extends AbstractController
@@ -23,37 +22,46 @@ class PasswordController extends AbstractController
     }
 
     /**
-     * Change the user's password; and then automatically re-logs them in again.
-     * i.e. it returns a new valid auth token.
+     * Change the user password either by providing the existing password or a password token
      *
-     * @return JsonModel|ApiProblemResponse
+     * @return JsonModel|ApiProblem
      */
     public function changeAction()
     {
         $userId = $this->params('userId');
 
-        $currentPassword = $this->getRequest()->getPost('CurrentPassword');
-        $newPassword = $this->getRequest()->getPost('NewPassword');
+        if (empty($userId)) {
+            return $this->changeWithToken();
+        }
+
+        return $this->changeWithPassword($userId);
+    }
+
+    /**
+     * Change the user password by providing the existing password
+     * NOTE: This also re-executes the login so that the calling function has access to a new authentication token
+     *
+     * @param $userId
+     * @return JsonModel|ApiProblem
+     */
+    private function changeWithPassword($userId)
+    {
+        $currentPassword = $this->getRequest()->getPost('currentPassword');
+        $newPassword = $this->getRequest()->getPost('newPassword');
 
         if (empty($currentPassword) || empty($newPassword)) {
             // Token and/or userId not passed
-            return new ApiProblemResponse(
-                new ApiProblem(400, 'Missing Current Password and/or New Password')
-            );
+            return new ApiProblem(400, 'Missing Current Password and/or New Password');
         }
 
         if (!$this->authenticateUserToken($this->getRequest(), $userId)) {
-            return new ApiProblemResponse(
-                new ApiProblem(401, 'invalid-token')
-            );
+            return new ApiProblem(401, 'invalid-token');
         }
 
         $result = $this->service->changePassword($userId, $currentPassword, $newPassword);
 
         if (is_string($result)) {
-            return new ApiProblemResponse(
-                new ApiProblem(401, $result)
-            );
+            return new ApiProblem(401, $result);
         }
 
         $this->getLogger()->info("User successfully change their password", [
@@ -69,16 +77,46 @@ class PasswordController extends AbstractController
     }
 
     /**
-     * @return JsonModel|ApiProblemResponse
+     * Change the user password by providing password token
+     *
+     * @return ApiProblem
      */
-    public function passwordResetAction()
+    private function changeWithToken()
     {
-        $username = $this->getRequest()->getPost('Username');
+        $passwordToken = $this->getRequest()->getPost('passwordToken');
+        $newPassword = $this->getRequest()->getPost('newPassword');
+
+        if (empty($passwordToken)) {
+            return new ApiProblem(400, 'token required');
+        }
+
+        $result = $this->service->updatePasswordUsingToken($passwordToken, $newPassword);
+
+        if ($result === 'invalid-token') {
+            return new ApiProblem(400, 'Invalid passwordToken');
+        }
+
+        if ($result === 'invalid-password') {
+            return new ApiProblem(400, 'Invalid password');
+        }
+
+        $this->getLogger()->info("User successfully change their password via a reset", [
+            'passwordToken' => $passwordToken
+        ]);
+
+        // Return 204 - No Content
+        $this->response->setStatusCode(204);
+    }
+
+    /**
+     * @return JsonModel|ApiProblem
+     */
+    public function resetAction()
+    {
+        $username = $this->getRequest()->getPost('username');
 
         if (empty($username)) {
-            return new ApiProblemResponse(
-                new ApiProblem(400, 'Username must be passed')
-            );
+            return new ApiProblem(400, 'username must be passed');
         }
 
         $result = $this->service->generateToken($username);
@@ -88,9 +126,7 @@ class PasswordController extends AbstractController
                 'username' => $username
             ]);
 
-            return new ApiProblemResponse(
-                new ApiProblem(404, 'User not found')
-            );
+            return new ApiProblem(404, 'User not found');
         }
 
         // Map DateTimes to strings
@@ -102,48 +138,10 @@ class PasswordController extends AbstractController
         $token = (isset($result['activation_token']) ? $result['activation_token'] : $result['token']);
 
         $this->getLogger()->info("Password reset token requested", [
-            'token' => $token,
+            'token'    => $token,
             'username' => $username
         ]);
 
         return new JsonModel($result);
-    }
-
-    /**
-     * Update user password following password reset request
-     *
-     * @return ApiProblemResponse
-     */
-    public function passwordResetUpdateAction()
-    {
-        $token = $this->getRequest()->getPost('Token');
-        $newPassword = $this->getRequest()->getPost('NewPassword');
-
-        if (empty($token)) {
-            return new ApiProblemResponse(
-                new ApiProblem(400, 'Token required')
-            );
-        }
-
-        $result = $this->service->updatePasswordUsingToken($token, $newPassword);
-
-        if ($result === 'invalid-token') {
-            return new ApiProblemResponse(
-                new ApiProblem(400, 'Invalid token')
-            );
-        }
-
-        if ($result === 'invalid-password') {
-            return new ApiProblemResponse(
-                new ApiProblem(400, 'Invalid password')
-            );
-        }
-
-        $this->getLogger()->info("User successfully change their password via a reset", [
-            'token' => $token
-        ]);
-
-        // Return 204 - No Content
-        $this->response->setStatusCode(204);
     }
 }

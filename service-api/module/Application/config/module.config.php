@@ -66,7 +66,100 @@ return [
                 ],
             ],
 
-            'api-v2' => [
+            'auth-routes' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/v1',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller\Version2\Auth',
+                    ],
+                ],
+                'child_routes' => [
+
+                    'authenticate' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/authenticate',
+                            'defaults' => [
+                                'controller' => 'AuthenticateController',
+                                'action'     => 'authenticate',
+                            ],
+                        ],
+                    ],
+                    'user' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/users',
+                            'defaults' => [
+                                'controller' => 'UsersController',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+
+                            'search-users' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/search',
+                                    'defaults' => [
+                                        'action' => 'search',
+                                    ],
+                                ],
+                            ],
+                            'email-change' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/:userId/email',
+                                    'constraints' => [
+                                        'userId'  => '[a-zA-Z0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => 'EmailController',
+                                        'action'     => 'change',
+                                    ],
+                                ],
+                            ],
+                            'email-verify' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/email',
+                                    'defaults' => [
+                                        'controller' => 'EmailController',
+                                        'action'     => 'verify',
+                                    ],
+                                ],
+                            ],
+                            'password-change' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '[/:userId]/password',
+                                    'constraints' => [
+                                        'userId' => '[a-zA-Z0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => 'PasswordController',
+                                        'action'     => 'change',
+                                    ],
+                                ],
+                            ],
+                            'password-reset' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/password-reset',
+                                    'defaults' => [
+                                        'controller' => 'PasswordController',
+                                        'action'     => 'reset',
+                                    ],
+                                ],
+                            ],
+
+                        ],
+                    ],
+
+                ],
+            ],
+
+            'api-routes' => [
                 'type'    => 'Segment',
                 'options' => [
                     'route'    => '/v2',
@@ -288,185 +381,6 @@ return [
 
                 ],
             ],
-
-            'auth-v1' => [
-                'type'    => 'Segment',
-                'options' => [
-                    'route'    => '/v1',
-                    'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller\Version2\Auth',
-                    ],
-                ],
-                'child_routes' => [
-
-                    'authenticate' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/authenticate',
-                            'defaults' => [
-                                'controller' => 'AuthenticateController',
-                            ],
-                        ],
-                        'may_terminate' => false,
-                        'child_routes' => [
-
-                            'post' => [
-                                'type' => 'method',
-                                'options' => [
-                                    'verb' => 'post',
-                                    'defaults' => [
-                                        'action' => 'index'
-                                    ],
-                                ],
-                            ],
-
-                        ],
-                    ], // authenticate
-
-                    'user' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/users',
-                            'defaults' => [
-                                'controller' => 'UsersController',
-                            ],
-                        ],
-                        'may_terminate' => false,
-                        'child_routes' => [
-
-                            'create' => [
-                                'type' => 'method',
-                                'options' => [
-                                    'verb' => 'post',
-                                    'defaults' => [
-                                        'controller' => 'RegistrationController',
-                                        'action' => 'create'
-                                    ],
-                                ],
-                                'may_terminate' => true,
-                                'child_routes' => [
-                                    'activate' => [
-                                        'type'    => 'Segment',
-                                        'options' => [
-                                            'route'    => '/activate',
-                                            'defaults' => [
-                                                'controller' => 'RegistrationController',
-                                                'action'    => 'activate',
-                                            ],
-                                        ],
-                                    ], // activate
-                                ]
-                            ], // create
-
-                            'password-reset' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/password-reset',
-                                    'defaults' => [
-                                        'controller' => 'PasswordController',
-                                        'action'    => 'passwordReset',
-                                    ],
-                                ],
-                            ], // password-reset
-
-                            'password-reset-update' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/password-reset-update',
-                                    'defaults' => [
-                                        'controller' => 'PasswordController',
-                                        'action'    => 'passwordResetUpdate',
-                                    ],
-                                ],
-                            ], // password-reset-update
-
-                            'confirm-new-email' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/confirm-new-email',
-                                    'defaults' => [
-                                        'controller' => 'EmailController',
-                                        'action'    => 'update-email',
-                                    ],
-                                ],
-                            ], // confirm-new-email
-
-                            //---
-
-                            'id' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/:userId',
-                                    'constraints' => [
-                                        'userId' => '[a-zA-Z0-9]+',
-                                    ],
-                                ],
-                                'may_terminate' => false,
-                                'child_routes' => [
-
-                                    'email' => [
-                                        'type'    => 'segment',
-                                        'options' => [
-                                            'route'    => '/email',
-                                            'defaults' => [
-                                                'controller' => 'EmailController',
-                                            ],
-                                        ],
-                                        'may_terminate' => false,
-                                        'child_routes' => [
-                                            'request-token' => [
-                                                'type' => 'segment',
-                                                'options' => [
-                                                    'route' => '/:newEmail',
-                                                    'defaults' => [
-                                                        'action'    => 'get-email-update-token',
-                                                    ],
-                                                ],
-                                            ], // request-token
-                                            'update-email' => [
-                                                'type' => 'method',
-                                                'options' => [
-                                                    'verb' => 'post',
-                                                    'defaults' => [
-                                                        'action'    => 'update-email',
-                                                    ],
-                                                ],
-                                            ], // update-email
-                                        ]
-                                    ],
-
-                                    'password' => [
-                                        'type'    => 'Segment',
-                                        'options' => [
-                                            'route'    => '/password',
-                                            'defaults' => [
-                                                'controller' => 'PasswordController',
-                                                'action' => 'change',
-                                            ],
-                                        ],
-                                    ], // password
-
-                                ],
-                            ], // id
-
-                            'search-users' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/search',
-                                    'defaults' => [
-                                        'action'    => 'search',
-                                    ],
-                                ],
-                            ], // search-users
-
-                        ], // child_routes
-
-                    ], // user
-
-                ], // child_routes
-
-            ], // v1
-
         ],
     ],
 
@@ -514,7 +428,6 @@ return [
             'Application\Controller\ControllerAbstractFactory',
         ],
     ], // controllers
-
 
     'service_manager' => [
         'factories' => [
