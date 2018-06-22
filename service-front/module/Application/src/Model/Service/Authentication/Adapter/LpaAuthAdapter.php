@@ -76,8 +76,8 @@ class LpaAuthAdapter implements AdapterInterface
 
         try {
             $postResponse = $this->client->httpPost('/v1/authenticate', [
-                'Username' => strtolower($this->email),
-                'Password' => $this->password,
+                'username' => strtolower($this->email),
+                'password' => $this->password,
             ]);
 
             if ($postResponse->getStatusCode() == 200) {

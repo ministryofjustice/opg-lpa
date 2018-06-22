@@ -19,7 +19,9 @@ class Admin extends AbstractService implements ApiClientAwareInterface
      */
     public function searchUsers(string $email)
     {
-        $response = $this->apiClient->httpGet('/v1/users/search', ['email' => $email]);
+        $response = $this->apiClient->httpGet('/v1/users/search', [
+            'email' => $email
+        ]);
 
         if ($response->getStatusCode() == 200) {
             $result = json_decode($response->getBody(), true);
