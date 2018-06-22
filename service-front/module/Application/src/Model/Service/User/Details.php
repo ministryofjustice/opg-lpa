@@ -95,7 +95,9 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             //  Manually update the token in the client
             $this->apiClient->updateToken($identity->token());
 
-            $response = $this->apiClient->httpGet(sprintf('/v1/users/%s/email/%s', $this->getUserId(), strtolower($email)));
+            $response = $this->apiClient->httpPost(sprintf('/v1/users/%s/email', $this->getUserId()), [
+                'newEmail' => strtolower($email),
+            ]);
 
             if ($response->getStatusCode() == 200) {
                 $body = json_decode($response->getBody(), true);
@@ -138,8 +140,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         $this->getLogger()->info('Updating email using token');
 
         try {
-            $response = $this->apiClient->httpPost('/v1/users/confirm-new-email', [
-                'Token' => $emailUpdateToken,
+            $response = $this->apiClient->httpPost(sprintf('/v1/users/email'), [
+                'emailUpdateToken' => $emailUpdateToken,
             ]);
 
             if ($response->getStatusCode() == 204) {
@@ -168,8 +170,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             $this->apiClient->updateToken($identity->token());
 
             $response = $this->apiClient->httpPost(sprintf('/v1/users/%s/password', $this->getUserId()), [
-                'CurrentPassword' => $currentPassword,
-                'NewPassword' => $newPassword,
+                'currentPassword' => $currentPassword,
+                'newPassword'     => $newPassword,
             ]);
 
             if ($response->getStatusCode() == 200) {
@@ -208,7 +210,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     public function getTokenInfo($token)
     {
         $response = $this->apiClient->httpPost('/v1/authenticate', [
-            'Token' => $token,
+            'authToken' => $token,
         ]);
 
         if ($response->getStatusCode() == 200) {
@@ -306,7 +308,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     private function requestPasswordReset($email)
     {
         $response = $this->apiClient->httpPost('/v1/users/password-reset', [
-            'Username' => strtolower($email),
+            'username' => strtolower($email),
         ]);
 
         if ($response->getStatusCode() == 200) {
@@ -335,9 +337,9 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         $result = null;
 
         try {
-            $response = $this->apiClient->httpPost('/v1/users/password-reset-update', [
-                'Token' => $restToken,
-                'NewPassword' => $password,
+            $response = $this->apiClient->httpPost('/v1/users/password', [
+                'passwordToken' => $restToken,
+                'newPassword'   => $password,
             ]);
 
             if ($response->getStatusCode() == 204) {
@@ -369,8 +371,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
 
         try {
             $response = $this->apiClient->httpPost('/v1/users', [
-                'Username' => strtolower($email),
-                'Password' => $password,
+                'username' => strtolower($email),
+                'password' => $password,
             ]);
 
             if ($response->getStatusCode() == 200) {
@@ -452,8 +454,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         $logger = $this->getLogger();
 
         try {
-            $response = $this->apiClient->httpPost('/v1/users/activate', [
-                'Token' => $token,
+            $response = $this->apiClient->httpPost('/v1/users', [
+                'activationToken' => $token,
             ]);
 
             if ($response->getStatusCode() == 204) {
