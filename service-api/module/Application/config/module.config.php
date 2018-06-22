@@ -69,7 +69,7 @@ return [
             'auth-routes' => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/v1',
+                    'route'    => '/v2',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller\Version2\Auth',
                     ],
@@ -86,7 +86,7 @@ return [
                             ],
                         ],
                     ],
-                    'user' => [
+                    'users' => [
                         'type'    => 'Segment',
                         'options' => [
                             'route'    => '/users',
@@ -173,7 +173,7 @@ return [
                     'user' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'       => '/users/:userId',
+                            'route'       => '/user/:userId',
                             'constraints' => [
                                 'userId'  => '[a-f0-9]+',
                             ],
