@@ -19,7 +19,7 @@ class Admin extends AbstractService implements ApiClientAwareInterface
      */
     public function searchUsers(string $email)
     {
-        $response = $this->apiClient->httpGet('/v1/users/search', [
+        $response = $this->apiClient->httpGet('/v2/users/search', [
             'email' => $email
         ]);
 
@@ -37,7 +37,7 @@ class Admin extends AbstractService implements ApiClientAwareInterface
                     $numberOfLpas = 0;
 
                     try {
-                        $response = $this->apiClient->httpGet(sprintf('/v2/users/%s/applications', $result['userId']), [
+                        $response = $this->apiClient->httpGet(sprintf('/v2/user/%s/applications', $result['userId']), [
                             'page' => 1,
                             'perPage' => 1,
                         ]);

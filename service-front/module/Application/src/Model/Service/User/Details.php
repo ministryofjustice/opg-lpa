@@ -28,7 +28,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      */
     public function getUserDetails()
     {
-        $response = $this->apiClient->httpGet('/v2/users/' . $this->getUserId());
+        $response = $this->apiClient->httpGet('/v2/user/' . $this->getUserId());
 
         if ($response->getStatusCode() == 200) {
             return new User(json_decode($response->getBody(), true));
@@ -69,7 +69,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             throw new RuntimeException('Unable to save details');
         }
 
-        $response = $this->apiClient->httpPut('/v2/users/' . $this->getUserId(), $userDetails->toArray());
+        $response = $this->apiClient->httpPut('/v2/user/' . $this->getUserId(), $userDetails->toArray());
 
         if ($response->getStatusCode() != 200) {
             throw new RuntimeException('Unable to save details');
@@ -95,7 +95,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             //  Manually update the token in the client
             $this->apiClient->updateToken($identity->token());
 
-            $response = $this->apiClient->httpPost(sprintf('/v1/users/%s/email', $this->getUserId()), [
+            $response = $this->apiClient->httpPost(sprintf('/v2/users/%s/email', $this->getUserId()), [
                 'newEmail' => strtolower($email),
             ]);
 
@@ -140,7 +140,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         $this->getLogger()->info('Updating email using token');
 
         try {
-            $response = $this->apiClient->httpPost(sprintf('/v1/users/email'), [
+            $response = $this->apiClient->httpPost(sprintf('/v2/users/email'), [
                 'emailUpdateToken' => $emailUpdateToken,
             ]);
 
@@ -169,7 +169,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             //  Manually update the token in the client
             $this->apiClient->updateToken($identity->token());
 
-            $response = $this->apiClient->httpPost(sprintf('/v1/users/%s/password', $this->getUserId()), [
+            $response = $this->apiClient->httpPost(sprintf('/v2/users/%s/password', $this->getUserId()), [
                 'currentPassword' => $currentPassword,
                 'newPassword'     => $newPassword,
             ]);
@@ -209,7 +209,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      */
     public function getTokenInfo($token)
     {
-        $response = $this->apiClient->httpPost('/v1/authenticate', [
+        $response = $this->apiClient->httpPost('/v2/authenticate', [
             'authToken' => $token,
         ]);
 
@@ -230,7 +230,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         $this->getLogger()->info('Deleting user and all their LPAs', $this->getAuthenticationService()->getIdentity()->toArray());
 
         //  The API to delete the user will delete their associated LPAs too
-        $response = $this->apiClient->httpDelete('/v2/users/' . $this->getUserId());
+        $response = $this->apiClient->httpDelete('/v2/user/' . $this->getUserId());
 
         if ($response->getStatusCode() == 204) {
             return true;
@@ -307,7 +307,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      */
     private function requestPasswordReset($email)
     {
-        $response = $this->apiClient->httpPost('/v1/users/password-reset', [
+        $response = $this->apiClient->httpPost('/v2/users/password-reset', [
             'username' => strtolower($email),
         ]);
 
@@ -337,7 +337,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         $result = null;
 
         try {
-            $response = $this->apiClient->httpPost('/v1/users/password', [
+            $response = $this->apiClient->httpPost('/v2/users/password', [
                 'passwordToken' => $restToken,
                 'newPassword'   => $password,
             ]);
@@ -370,7 +370,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         $result = 'unknown-error';
 
         try {
-            $response = $this->apiClient->httpPost('/v1/users', [
+            $response = $this->apiClient->httpPost('/v2/users', [
                 'username' => strtolower($email),
                 'password' => $password,
             ]);
@@ -454,7 +454,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         $logger = $this->getLogger();
 
         try {
-            $response = $this->apiClient->httpPost('/v1/users', [
+            $response = $this->apiClient->httpPost('/v2/users', [
                 'activationToken' => $token,
             ]);
 
