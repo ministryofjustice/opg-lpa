@@ -1,13 +1,13 @@
 <?php
 
-namespace Application\Controller\Version2;
+namespace Application\Controller\Version2\Lpa;
 
 use Application\Library\Http\Response\Json as JsonResponse;
+use Application\Model\Service\Donor\Service;
 use Application\Model\Service\EntityInterface;
-use Application\Model\Service\Type\Service;
 use ZF\ApiProblem\ApiProblem;
 
-class TypeController extends AbstractController
+class DonorController extends AbstractLpaController
 {
     /**
      * Get the service to use

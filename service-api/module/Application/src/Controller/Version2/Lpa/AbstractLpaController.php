@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Controller\Version2;
+namespace Application\Controller\Version2\Lpa;
 
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\Authorization\UnauthorizedException;
@@ -13,7 +13,7 @@ use ZfcRbac\Service\AuthorizationService;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 
-abstract class AbstractController extends AbstractRestfulController
+abstract class AbstractLpaController extends AbstractRestfulController
 {
     /**
      * Name of the identifier used in the routes to this RESTful controller

@@ -1,20 +1,15 @@
 <?php
 
-namespace Application\Controller\Version2;
+namespace Application\Controller\Version2\Lpa;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-use Application\Model\Service\AttorneysReplacement\Service;
 use Application\Model\Service\EntityInterface;
+use Application\Model\Service\RepeatCaseNumber\Service;
 use ZF\ApiProblem\ApiProblem;
 
-class ReplacementAttorneyController extends AbstractController
+class RepeatCaseNumberController extends AbstractLpaController
 {
-    /**
-     * @var string
-     */
-    protected $identifierName = 'replacementAttorneyId';
-
     /**
      * Get the service to use
      *
@@ -26,26 +21,6 @@ class ReplacementAttorneyController extends AbstractController
     }
 
     /**
-     * @param mixed $data
-     * @return JsonResponse|ApiProblem
-     */
-    public function create($data)
-    {
-        $this->checkAccess();
-
-        $result = $this->getService()->create($this->lpaId, $data);
-
-        if ($result instanceof ApiProblem) {
-            return $result;
-        } elseif ($result instanceof EntityInterface) {
-            return new JsonResponse($result->toArray(), 201);
-        }
-
-        // If we get here...
-        return new ApiProblem(500, 'Unable to process request');
-    }
-
-    /**
      * @param mixed $id
      * @param mixed $data
      * @return JsonResponse|ApiProblem
@@ -54,7 +29,7 @@ class ReplacementAttorneyController extends AbstractController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->update($this->lpaId, $data, $id);
+        $result = $this->getService()->update($this->lpaId, $data);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -74,7 +49,7 @@ class ReplacementAttorneyController extends AbstractController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->delete($this->lpaId, $id);
+        $result = $this->getService()->delete($this->lpaId);
 
         if ($result instanceof ApiProblem) {
             return $result;

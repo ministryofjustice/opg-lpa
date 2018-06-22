@@ -1,7 +1,8 @@
 <?php
 
-namespace Application\Controller;
+namespace Application\ControllerFactory;
 
+use Application\Controller\PingController;
 use Application\Model\DataAccess\Mongo\DatabaseFactory;
 use DynamoQueue\Queue\Client as DynamoQueueClient;
 use Interop\Container\ContainerInterface;

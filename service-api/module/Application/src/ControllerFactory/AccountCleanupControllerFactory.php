@@ -1,7 +1,8 @@
 <?php
 
-namespace Application\Controller\Console;
+namespace Application\ControllerFactory;
 
+use Application\Controller\Console\AccountCleanupController;
 use Application\Model\Service\AccountCleanup\Service as AccountCleanupService;
 use Application\Model\Service\System\DynamoCronLock;
 use Interop\Container\ContainerInterface;

@@ -7,7 +7,7 @@ use Opg\Lpa\Logger\LoggerTrait;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
 
-class UsersController extends AbstractController
+class UsersController extends AbstractAuthController
 {
     use LoggerTrait;
 

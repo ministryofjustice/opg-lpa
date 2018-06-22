@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Controller\Version2;
+namespace Application\Controller\Version2\Lpa;
 
 use Application\Library\Http\Response\File as FileResponse;
 use Application\Library\Http\Response\Json as JsonResponse;
@@ -8,7 +8,7 @@ use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\Pdfs\Service;
 use ZF\ApiProblem\ApiProblem;
 
-class PdfController extends AbstractController
+class PdfController extends AbstractLpaController
 {
     /**
      * @var string

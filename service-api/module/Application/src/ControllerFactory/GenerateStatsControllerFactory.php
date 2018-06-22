@@ -1,7 +1,8 @@
 <?php
 
-namespace Application\Controller\Console;
+namespace Application\ControllerFactory;
 
+use Application\Controller\Console\GenerateStatsController;
 use Application\Model\Service\System\DynamoCronLock;
 use Application\Model\Service\System\Stats as StatsService;
 use Interop\Container\ContainerInterface;

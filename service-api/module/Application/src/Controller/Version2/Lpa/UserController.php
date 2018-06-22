@@ -1,15 +1,23 @@
 <?php
 
-namespace Application\Controller\Version2;
+namespace Application\Controller\Version2\Lpa;
 
+use Application\Library\Authentication\Identity\User as UserIdentity;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\EntityInterface;
-use Application\Model\Service\NotifiedPeople\Service;
+use Application\Model\Service\Users\Service;
 use ZF\ApiProblem\ApiProblem;
 
-class NotifiedPeopleController extends AbstractController
+class UserController extends AbstractLpaController
 {
+    /**
+     * Name of the identifier used in the routes to this RESTful controller
+     *
+     * @var string
+     */
+    protected $identifierName = 'userId';
+
     /**
      * Get the service to use
      *
@@ -21,24 +29,32 @@ class NotifiedPeopleController extends AbstractController
     }
 
     /**
-     * @var string
+     * @param mixed $id
+     * @return JsonResponse|NoContentResponse|ApiProblem
      */
-    protected $identifierName = 'notifiedPersonId';
-
-    /**
-     * @param mixed $data
-     * @return JsonResponse|ApiProblem
-     */
-    public function create($data)
+    public function get($id)
     {
         $this->checkAccess();
 
-        $result = $this->getService()->create($this->lpaId, $data);
+        $result = $this->getService()->fetch($id);
 
         if ($result instanceof ApiProblem) {
             return $result;
         } elseif ($result instanceof EntityInterface) {
-            return new JsonResponse($result->toArray(), 201);
+            $resultData = $result->toArray();
+
+            if (empty($resultData)) {
+                return new NoContentResponse();
+            }
+
+            //  Inject the email address from the identity to ensure it is correct
+            $identity = $this->authorizationService->getIdentity();
+
+            if ($identity instanceof UserIdentity) {
+                $resultData['email']['address'] = $identity->email();
+            }
+
+            return new JsonResponse($resultData);
         }
 
         // If we get here...
@@ -54,7 +70,7 @@ class NotifiedPeopleController extends AbstractController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->update($this->lpaId, $data, $id);
+        $result = $this->getService()->update($data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -74,7 +90,7 @@ class NotifiedPeopleController extends AbstractController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->delete($this->lpaId, $id);
+        $result = $this->getService()->delete($id);
 
         if ($result instanceof ApiProblem) {
             return $result;

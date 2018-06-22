@@ -1,27 +1,25 @@
 <?php
 
-namespace Application\Controller\Version2\Auth;
+namespace Application\ControllerFactory;
 
-use Application\Controller\Version2\Auth;
-use Application\Library\ApiProblem\ApiProblemException;
+use Application\Controller\Version2\Auth as AuthControllers;
 use Auth\Model\Service\AuthenticationService;
 use Auth\Model\Service\EmailUpdateService;
 use Auth\Model\Service\PasswordService;
-use Auth\Model\Service\RegistrationService;
 use Auth\Model\Service\UserManagementService;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 
-class ControllerAbstractFactory implements AbstractFactoryInterface
+class AuthControllerAbstractFactory implements AbstractFactoryInterface
 {
     /**
      * @var array
      */
     private $serviceMappings = [
-        Auth\EmailController::class     => EmailUpdateService::class,
-        Auth\PasswordController::class  => PasswordService::class,
-        Auth\UsersController::class     => UserManagementService::class,
+        AuthControllers\EmailController::class     => EmailUpdateService::class,
+        AuthControllers\PasswordController::class  => PasswordService::class,
+        AuthControllers\UsersController::class     => UserManagementService::class,
     ];
 
     /**
@@ -33,7 +31,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      */
     public function canCreate(ContainerInterface $container, $requestedName)
     {
-        return (class_exists($requestedName) && is_subclass_of($requestedName, Auth\AbstractController::class));
+        return (class_exists($requestedName) && is_subclass_of($requestedName, AuthControllers\AbstractAuthController::class));
     }
 
     /**
@@ -41,7 +39,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      * @param string $requestedName
      * @param array|null $options
      * @return mixed
-     * @throws ApiProblemException
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {

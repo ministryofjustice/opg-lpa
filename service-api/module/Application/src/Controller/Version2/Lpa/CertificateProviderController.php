@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Controller\Version2;
+namespace Application\Controller\Version2\Lpa;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
@@ -8,7 +8,7 @@ use Application\Model\Service\CertificateProvider\Service;
 use Application\Model\Service\EntityInterface;
 use ZF\ApiProblem\ApiProblem;
 
-class CertificateProviderController extends AbstractController
+class CertificateProviderController extends AbstractLpaController
 {
     /**
      * Get the service to use

@@ -1,7 +1,8 @@
 <?php
 
-namespace Application\Controller;
+namespace Application\ControllerFactory;
 
+use Application\Controller\StatsController;
 use Application\Model\Service\Stats\Service as StatsService;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;

@@ -1,15 +1,20 @@
 <?php
 
-namespace Application\Controller\Version2;
+namespace Application\Controller\Version2\Lpa;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
+use Application\Model\Service\AttorneysReplacement\Service;
 use Application\Model\Service\EntityInterface;
-use Application\Model\Service\Seed\Service;
 use ZF\ApiProblem\ApiProblem;
 
-class SeedController extends AbstractController
+class ReplacementAttorneyController extends AbstractLpaController
 {
+    /**
+     * @var string
+     */
+    protected $identifierName = 'replacementAttorneyId';
+
     /**
      * Get the service to use
      *
@@ -21,25 +26,19 @@ class SeedController extends AbstractController
     }
 
     /**
-     * @param mixed $id
-     * @return JsonResponse|NoContentResponse|ApiProblem
+     * @param mixed $data
+     * @return JsonResponse|ApiProblem
      */
-    public function get($id)
+    public function create($data)
     {
         $this->checkAccess();
 
-        $result = $this->getService()->fetch($this->lpaId, $this->routeUserId);
+        $result = $this->getService()->create($this->lpaId, $data);
 
         if ($result instanceof ApiProblem) {
             return $result;
         } elseif ($result instanceof EntityInterface) {
-            $resultData = $result->toArray();
-
-            if (empty($resultData)) {
-                return new NoContentResponse();
-            }
-
-            return new JsonResponse($resultData);
+            return new JsonResponse($result->toArray(), 201);
         }
 
         // If we get here...
@@ -55,12 +54,32 @@ class SeedController extends AbstractController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->update($this->lpaId, $data, $this->routeUserId);
+        $result = $this->getService()->update($this->lpaId, $data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;
         } elseif ($result instanceof EntityInterface) {
             return new JsonResponse($result->toArray());
+        }
+
+        // If we get here...
+        return new ApiProblem(500, 'Unable to process request');
+    }
+
+    /**
+     * @param mixed $id
+     * @return NoContentResponse|ApiProblem
+     */
+    public function delete($id)
+    {
+        $this->checkAccess();
+
+        $result = $this->getService()->delete($this->lpaId, $id);
+
+        if ($result instanceof ApiProblem) {
+            return $result;
+        } elseif ($result === true) {
+            return new NoContentResponse();
         }
 
         // If we get here...

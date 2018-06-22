@@ -1,13 +1,13 @@
 <?php
 
-namespace Application\Controller\Version2;
+namespace Application\Controller\Version2\Lpa;
 
 use Application\Library\Http\Response\Json as JsonResponse;
-use Application\Model\Service\Donor\Service;
 use Application\Model\Service\EntityInterface;
+use Application\Model\Service\Lock\Service;
 use ZF\ApiProblem\ApiProblem;
 
-class DonorController extends AbstractController
+class LockController extends AbstractLpaController
 {
     /**
      * Get the service to use
@@ -20,20 +20,19 @@ class DonorController extends AbstractController
     }
 
     /**
-     * @param mixed $id
      * @param mixed $data
      * @return JsonResponse|ApiProblem
      */
-    public function update($id, $data)
+    public function create($data)
     {
         $this->checkAccess();
 
-        $result = $this->getService()->update($this->lpaId, $data);
+        $result = $this->getService()->create($this->lpaId);
 
         if ($result instanceof ApiProblem) {
             return $result;
         } elseif ($result instanceof EntityInterface) {
-            return new JsonResponse($result->toArray());
+            return new JsonResponse($result->toArray(), 201);
         }
 
         // If we get here...

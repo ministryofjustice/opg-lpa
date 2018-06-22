@@ -7,7 +7,7 @@ use Opg\Lpa\Logger\LoggerTrait;
 use ZF\ApiProblem\ApiProblem;
 use Zend\View\Model\JsonModel;
 
-class PasswordController extends AbstractController
+class PasswordController extends AbstractAuthController
 {
     use LoggerTrait;
 

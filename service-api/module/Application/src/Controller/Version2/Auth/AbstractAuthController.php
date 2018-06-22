@@ -12,7 +12,7 @@ use Zend\Stdlib\RequestInterface as Request;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 
-abstract class AbstractController extends AbstractRestfulController
+abstract class AbstractAuthController extends AbstractRestfulController
 {
     /**
      * @var string

@@ -1,20 +1,15 @@
 <?php
 
-namespace Application\Controller\Version2;
+namespace Application\Controller\Version2\Lpa;
 
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
-use Application\Model\Service\AttorneysPrimary\Service;
 use Application\Model\Service\EntityInterface;
+use Application\Model\Service\NotifiedPeople\Service;
 use ZF\ApiProblem\ApiProblem;
 
-class PrimaryAttorneyController extends AbstractController
+class NotifiedPeopleController extends AbstractLpaController
 {
-    /**
-     * @var string
-     */
-    protected $identifierName = 'primaryAttorneyId';
-
     /**
      * Get the service to use
      *
@@ -24,6 +19,11 @@ class PrimaryAttorneyController extends AbstractController
     {
         return $this->service;
     }
+
+    /**
+     * @var string
+     */
+    protected $identifierName = 'notifiedPersonId';
 
     /**
      * @param mixed $data

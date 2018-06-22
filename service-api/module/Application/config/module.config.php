@@ -164,7 +164,7 @@ return [
                 'options' => [
                     'route'    => '/v2',
                     'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller\Version2',
+                        '__NAMESPACE__' => 'Application\Controller\Version2\Lpa',
                     ],
                 ],
                 'may_terminate' => true,
@@ -418,14 +418,14 @@ return [
             'Application\Controller\Index' => 'Application\Controller\IndexController',
         ],
         'factories' => [
-            'Application\Controller\Console\AccountCleanup' => Application\Controller\Console\AccountCleanupControllerFactory::class,
-            'Application\Controller\Console\GenerateStats'  => Application\Controller\Console\GenerateStatsControllerFactory::class,
-            'Application\Controller\Ping'                   => Application\Controller\PingControllerFactory::class,
-            'Application\Controller\Stats'                  => Application\Controller\StatsControllerFactory::class,
+            'Application\Controller\Console\AccountCleanup' => Application\ControllerFactory\AccountCleanupControllerFactory::class,
+            'Application\Controller\Console\GenerateStats'  => Application\ControllerFactory\GenerateStatsControllerFactory::class,
+            'Application\Controller\Ping'                   => Application\ControllerFactory\PingControllerFactory::class,
+            'Application\Controller\Stats'                  => Application\ControllerFactory\StatsControllerFactory::class,
         ],
         'abstract_factories' => [
-            'Application\Controller\Version2\Auth\ControllerAbstractFactory',
-            'Application\Controller\ControllerAbstractFactory',
+            'Application\ControllerFactory\AuthControllerAbstractFactory',
+            'Application\ControllerFactory\LpaControllerAbstractFactory',
         ],
     ], // controllers
 
