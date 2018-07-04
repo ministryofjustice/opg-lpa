@@ -4,9 +4,8 @@
     {% include 'application/general/register/partials/index-error-summary.twig' %}
 {% endblock %}
 
-{% block pageTitle %}
-    Create an account
-{% endblock %}
+{% block htmlTitle %}Create an account - {% endblock %}
+{% block pageTitle %}Create an account{% endblock %}
 
 {% block content %}
 
@@ -112,7 +111,7 @@
         <div class="form-group {{ terms.getMessages|length >0 ? 'error'}}">
             <label class="block-label" for="{{ terms.getAttribute('id') }}">
                 {{ formElement(terms) }}
-                I agree to the <a href="/terms-and-conditions" target="_blank">terms and conditions</a>
+                I agree to the <a href="/terms" target="_blank">terms of use</a>
                 {{ formElementErrorsV2(terms) }}
             </label>
         </div>

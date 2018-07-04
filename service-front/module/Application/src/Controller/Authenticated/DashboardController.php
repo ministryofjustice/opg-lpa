@@ -127,6 +127,7 @@ class DashboardController extends AbstractAuthenticatedController
 
             if (!$lpa instanceof Lpa) {
                 $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
+
                 return $this->redirect()->toRoute('user/dashboard');
             }
 
@@ -151,6 +152,7 @@ class DashboardController extends AbstractAuthenticatedController
     public function deleteLpaAction()
     {
         $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
+
         if ($this->getLpaApplicationService()->deleteApplication($lpaId) !== true) {
             throw new \RuntimeException('API client failed to delete LPA for id: '.$lpaId);
         }
@@ -185,7 +187,7 @@ class DashboardController extends AbstractAuthenticatedController
     //---
 
     /**
-     * Displayed when the Terms and Conditions have changed since the user last logged in.
+     * Displayed when the Terms of use have changed since the user last logged in.
      */
     public function termsAction()
     {

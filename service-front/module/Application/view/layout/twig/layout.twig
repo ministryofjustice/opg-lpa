@@ -3,13 +3,11 @@
 <!--[if gt IE 8]><!--><html lang="en"><!--<![endif]-->
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>Make a lasting power of attorney | GOV.UK</title>
+    <title>{% block htmlTitle %}{% endblock %}Make a lasting power of attorney - GOV.UK</title>
     <meta http-equiv="refresh" content="4800">
 
-    {# An old viewport fix for IE Mobile 10. Been here since dawn of time. Get rid ASAP #}
-    <script>
-        (function(){if(navigator.userAgent.match(/IEMobile\/10\.0/)){var d=document,c="appendChild",a=d.createElement("style");a[c](d.createTextNode("@-ms-viewport{width:auto!important}"));d.getElementsByTagName("head")[0][c](a);}})();
-    </script>
+    <!--[if gt IE 8]><!--><link href="{{ StaticAssetPath( '/assets/v2/css/govuk-template.css', { 'minify':true } ) }}" rel="stylesheet" type="text/css"/><!--<![endif]-->
+    <!--[if IE 8]><link href="{{ StaticAssetPath( '/assets/v2/css/govuk-template-ie8.css', { 'minify':true } ) }}" rel="stylesheet" type="text/css"/><![endif]-->
 
     <link href="{{ StaticAssetPath( '/assets/v2/css/govuk-template-print.css', { 'minify':true } ) }}" media="print" rel="stylesheet" type="text/css" />
 
@@ -47,8 +45,6 @@
 
     <!--[if gt IE 8]><!--><link href="{{ StaticAssetPath( '/assets/v2/css/application.css', { 'minify':true } ) }}" media="screen" rel="stylesheet" type="text/css" /><!--<![endif]-->
 
-    <!--[if IE 6]><link href="{{ StaticAssetPath( '/assets/v2/css/application-ie6.css', { 'minify':true } ) }}" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
-    <!--[if IE 7]><link href="{{ StaticAssetPath( '/assets/v2/css/application-ie7.css', { 'minify':true } ) }}" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
     <!--[if IE 8]><link href="{{ StaticAssetPath( '/assets/v2/css/application-ie8.css', { 'minify':true } ) }}" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
 
     <!-- LPA Print styles -->
@@ -141,7 +137,8 @@
                     <h2 class="visually-hidden">Support links</h2>
                     <ul class="group">
                         <li><a href="/contact">Contact us</a></li>
-                        <li><a href="/terms-and-conditions" target="_blank">Terms and conditions</a></li>
+                        <li><a href="/terms" target="_blank">Terms of use</a></li>
+                        <li><a href="/privacy-notice" target="_blank">Privacy notice</a></li>
                         <li><a href="https://www.gov.uk/help/cookies" target="_blank">Cookies</a></li>
                         <li>Built by <a target="_blank" href="https://www.gov.uk/government/organisations/office-of-the-public-guardian">OPG Digital</a></li>
                     </ul>

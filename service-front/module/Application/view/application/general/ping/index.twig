@@ -1,8 +1,7 @@
 {% extends 'layout/twig/layout.twig' %}
 
-{% block pageTitle %}
-    Service status
-{% endblock %}
+{% block htmlTitle %}Service status - {% endblock %}
+{% block pageTitle %}Service status{% endblock %}
 
 {% block content %}
 
@@ -35,17 +34,6 @@
 				<li>
 					<i class="icon icon-cross"></i>
 					<p class="flush--bottom">API service is down</p>
-				</li>
-			{% endif %}
-			{% if status.auth.ok == true %}
-				<li>
-					<i class="icon icon-tick"></i>
-					<p class="flush--bottom">Authentication service is up and running</p>
-				</li>
-			{% else %}
-				<li>
-					<i class="icon icon-cross"></i>
-					<p class="flush--bottom">Authentication service is down</p>
 				</li>
 			{% endif %}
 		</ul>

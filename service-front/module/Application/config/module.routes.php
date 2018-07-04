@@ -33,13 +33,24 @@ return [
             'terms' => [
                 'type' => 'Zend\Router\Http\Literal',
                 'options' => [
-                    'route'    => '/terms-and-conditions',
+                    'route'    => '/terms',
                     'defaults' => [
                         'controller' => 'General\HomeController',
                         'action'     => 'terms',
                     ],
                 ],
             ], // terms
+
+            'privacy' => [
+                'type' => 'Zend\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/privacy-notice',
+                    'defaults' => [
+                        'controller' => 'General\HomeController',
+                        'action'     => 'privacy',
+                    ],
+                ],
+            ], // privacy
 
             'contact' => [
                 'type' => 'Zend\Router\Http\Literal',

@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 1.1.0 - 2018-04-30
+
+### Added
+
+- [#10](https://github.com/zendframework/zend-mvc-plugin-flashmessenger/pull/10) ports the flashMessenger view helper from zend-view to this package, under the
+  class name `Zend\Mvc\Plugin\FlashMessenger\View\Helper\FlashMessenger`, and using the helper name
+  `flashMessenger()`.
+
+- [#19](https://github.com/zendframework/zend-mvc-plugin-flashmessenger/pull/19) adds support for PHP 7.1 and 7.2.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#19](https://github.com/zendframework/zend-mvc-plugin-flashmessenger/pull/19) removes support for HHVM.
+
+### Fixed
+
+- Nothing.
+
 ## 1.0.0 - 2016-05-31
 
 First stable release.

@@ -4,7 +4,9 @@ namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
+use Application\Model\Service\ApiClient\Exception\ResponseException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
+use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
 use Opg\Lpa\Logger\LoggerTrait;
@@ -96,17 +98,21 @@ class Module implements FormElementProviderInterface
         $sm = $e->getApplication()->getServiceManager();
 
         $auth = $sm->get('AuthenticationService');
+        /** @var Identity $identity */
         $identity = $auth->getIdentity();
 
         //  If there is an identity (logged in user) then get the token details and check to see if it has expired
         if (!is_null($identity)) {
-            $info = $sm->get('UserService')->getTokenInfo($identity->token());
+            try {
+                $info = $sm->get('UserService')->getTokenInfo($identity->token());
 
-            if (is_array($info) && isset($info['expiresIn'])) {
-                // update the time the token expires in the session
-                $identity->tokenExpiresIn($info['expiresIn']);
-            } else {
-                // else the user will need to re-login, so remove the current identity.
+                if (is_array($info) && isset($info['expiresIn'])) {
+                    // update the time the token expires in the session
+                    $identity->tokenExpiresIn($info['expiresIn']);
+                } else {
+                    $auth->clearIdentity();
+                }
+            } catch (ResponseException $rex) {
                 $auth->clearIdentity();
             }
         }
@@ -124,7 +130,6 @@ class Module implements FormElementProviderInterface
             ],
             'factories' => [
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
-                'AuthClient'            => 'Application\Model\Service\AuthClient\ClientFactory',
                 'AuthenticationService' => 'Application\Model\Service\Authentication\AuthenticationServiceFactory',
                 'PostcodeInfoClient'    => 'Application\Model\Service\AddressLookup\PostcodeInfoClientFactory',
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
@@ -132,7 +137,7 @@ class Module implements FormElementProviderInterface
 
                 // Authentication Adapter
                 'LpaAuthAdapter' => function (ServiceLocatorInterface $sm) {
-                    return new LpaAuthAdapter($sm->get('AuthClient'));
+                    return new LpaAuthAdapter($sm->get('ApiClient'));
                 },
 
                 // Generate the session container for a user's personal details
@@ -142,10 +147,7 @@ class Module implements FormElementProviderInterface
 
                 // PSR-7 HTTP Client
                 'HttpClient' => function () {
-                    return new \Http\Adapter\Guzzle5\Client(
-                        new \GuzzleHttp\Client,
-                        new \Http\Message\MessageFactory\GuzzleMessageFactory
-                    );
+                    return new \Http\Adapter\Guzzle6\Client();
                 },
 
                 'Cache' => function (ServiceLocatorInterface $sm) {
