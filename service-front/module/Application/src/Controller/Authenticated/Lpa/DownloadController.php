@@ -15,16 +15,15 @@ class DownloadController extends AbstractLpaController
         $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
 
         $this->getLogger()->info('PDF type is ' . $pdfType, [
-            'lpaId' => $lpa->id
+            'lpaId' => $lpa->getId()
         ]);
 
         // check PDF availability. return a nice error if unavailable.
-        if (($pdfType == 'lpa120' && !$this->getFlowChecker()->canGenerateLPA120())
-            || ($pdfType == 'lp3' && !$this->getFlowChecker()->canGenerateLP3())
-            || ($pdfType == 'lp1' && !$this->getFlowChecker()->canGenerateLP1())) {
-
+        if (($pdfType == 'lpa120' && !$lpa->canGenerateLPA120())
+            || ($pdfType == 'lp3' && !$lpa->canGenerateLP3())
+            || ($pdfType == 'lp1' && !$lpa->canGenerateLP1())) {
             $this->getLogger()->info('PDF not available', [
-                'lpaId' => $lpa->id
+                'lpaId' => $lpa->getId()
             ]);
 
             //  Just redirect to the index template - that contains the error message to display
@@ -33,10 +32,10 @@ class DownloadController extends AbstractLpaController
 
         $this->layout('layout/download.twig');
 
-        if ($this->pdfIsReady($lpa->id, $pdfType)) {
+        if ($this->pdfIsReady($lpa->getId(), $pdfType)) {
             //  Redirect to download action
             return $this->redirect()->toRoute('lpa/download/file', [
-                'lpa-id'       => $lpa->id,
+                'lpa-id'       => $lpa->getId(),
                 'pdf-type'     => $pdfType,
                 'pdf-filename' => $this->getFilename($pdfType),
             ]);
@@ -51,16 +50,16 @@ class DownloadController extends AbstractLpaController
 
         $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
 
-        if (!$this->pdfIsReady($lpa->id, $pdfType)) {
+        if (!$this->pdfIsReady($lpa->getId(), $pdfType)) {
             // If the PDF is not ready, direct the user back to index.
             return $this->redirect()->toRoute('lpa/download', [
-                'lpa-id'   => $lpa->id,
+                'lpa-id'   => $lpa->getId(),
                 'pdf-type' => $pdfType
             ]);
         }
 
         //  Get the file contents by requesting the PDF again but with the .pdf file extension
-        $fileContents = $this->getLpaApplicationService()->getPdfContents($lpa->id, $pdfType);
+        $fileContents = $this->getLpaApplicationService()->getPdfContents($lpa->getId(), $pdfType);
 
         $response = $this->getResponse();
         $response->setContent($fileContents);

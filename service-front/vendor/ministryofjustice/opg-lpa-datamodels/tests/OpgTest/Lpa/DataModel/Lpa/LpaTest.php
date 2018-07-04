@@ -2,6 +2,9 @@
 
 namespace OpgTest\Lpa\DataModel\Lpa;
 
+use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
+use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
@@ -158,5 +161,276 @@ class LpaTest extends TestCase
         $this->assertEquals(11111, $model->getRepeatCaseNumber());
         $this->assertEquals($document, $model->getDocument());
         $this->assertEquals($metadata, $model->getMetadata());
+    }
+
+    public function testCanGenerateLP1()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $this->assertTrue($lpa->canGenerateLP1());
+    }
+
+    public function testCanGenerateLP3()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $this->assertTrue($lpa->canGenerateLP3());
+    }
+
+    public function testCanGenerateLPA120()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $lpa->get('payment')->set('reducedFeeUniversalCredit', true);
+        $this->assertTrue($lpa->canGenerateLPA120());
+    }
+
+    public function testCanGenerateLPA120NotCompleted()
+    {
+        $lpa = new Lpa();
+        $this->assertFalse($lpa->canGenerateLPA120());
+    }
+
+    public function testCanGenerateLPA120NoPayment()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $lpa->set('payment', null);
+        $this->assertFalse($lpa->canGenerateLPA120());
+    }
+
+    public function testIsStateStartedBlankLpa()
+    {
+        $lpa = new Lpa();
+        $this->assertFalse($lpa->isStateStarted());
+    }
+
+    public function testIsStateCreatedBlankLpa()
+    {
+        $lpa = new Lpa();
+        $this->assertFalse($lpa->isStateCreated());
+    }
+
+    public function testIsStateCompletedBlankLpa()
+    {
+        $lpa = new Lpa();
+        $this->assertFalse($lpa->isStateCompleted());
+    }
+
+    public function testPaymentResolvedCard()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $lpa->get('payment')->set('method', 'card');
+        $lpa->get('payment')->set('reference', 'testreference');
+        $this->assertTrue($lpa->isPaymentResolved());
+    }
+
+    public function testPaymentResolvedUnknownPaymentMethod()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $lpa->get('payment')->set('method', 'unknown');
+        $this->assertFalse($lpa->isPaymentResolved());
+    }
+
+    public function testIsEligibleForFeeReductionNoPayment()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $lpa->set('payment', null);
+        $this->assertFalse($lpa->isEligibleForFeeReduction());
+    }
+
+    public function testIsWhoAreYouAnswered()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $this->assertTrue($lpa->isWhoAreYouAnswered());
+    }
+
+    public function testLpaHasCorrespondent()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $this->assertTrue($lpa->hasCorrespondent());
+    }
+
+    public function testLpaHasApplicant()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $this->assertTrue($lpa->hasApplicant());
+    }
+
+    public function testLpaHasFinishedCreation()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $this->assertTrue($lpa->hasFinishedCreation());
+    }
+
+    public function testLpaHasFinishedCreationReplacementAttorneyStepInWhenLastPrimaryUnableAct()
+    {
+        $lpa = FixturesData::getPfLpa();
+        FixturesData::getReplacementAttorneyDecisions($lpa)
+            ->set('when', ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST);
+        FixturesData::getReplacementAttorneyDecisions($lpa)
+            ->set('how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY);
+        $this->assertTrue($lpa->hasFinishedCreation());
+    }
+
+    public function testLpaHasFinishedCreationPrimaryAttorneysMakeDecisionJointly()
+    {
+        $lpa = FixturesData::getPfLpa();
+        FixturesData::getPrimaryAttorneyDecisions($lpa)->set('how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY);
+        FixturesData::getReplacementAttorneyDecisions($lpa)
+            ->set('how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY);
+        $this->assertTrue($lpa->hasFinishedCreation());
+    }
+
+    public function testLpaHasFinishedCreationHasMultipleReplacementAttorneys()
+    {
+        $lpa = FixturesData::getPfLpa();
+        //Set only one primary attorney
+        $lpa->get('document')->set('primaryAttorneys', [$lpa->get('document')->get('primaryAttorneys')[0]]);
+        FixturesData::getReplacementAttorneyDecisions($lpa)
+            ->set('how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY);
+        $this->assertTrue($lpa->hasFinishedCreation());
+    }
+
+    public function testLpaHasCreated()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $this->assertTrue($lpa->hasCreated());
+    }
+
+    public function testLpaHasPeopleToNotify()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $this->assertTrue($lpa->hasPeopleToNotify());
+    }
+
+    public function testLpaHasPeopleToNotifyIndex()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $this->assertTrue($lpa->hasPeopleToNotify(0));
+    }
+
+    public function testLpaReplacementAttorneysMakeDecisionJointlyAndSeverally()
+    {
+        $lpa = FixturesData::getPfLpa();
+        FixturesData::getReplacementAttorneyDecisions($lpa)
+            ->set('how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY);
+        $this->assertTrue($lpa->isHowReplacementAttorneysMakeDecisionJointlyAndSeverally());
+    }
+
+    public function testLpaReplacementAttorneysMakeDecisionJointly()
+    {
+        $lpa = FixturesData::getPfLpa();
+        FixturesData::getReplacementAttorneyDecisions($lpa)->set('how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY);
+        $this->assertTrue($lpa->isHowReplacementAttorneysMakeDecisionJointly());
+    }
+
+    public function testLpaReplacementAttorneysMakeDecisionDepends()
+    {
+        $lpa = FixturesData::getPfLpa();
+        FixturesData::getReplacementAttorneyDecisions($lpa)->set('how', AbstractDecisions::LPA_DECISION_HOW_DEPENDS);
+        $this->assertTrue($lpa->isHowReplacementAttorneysMakeDecisionDepends());
+    }
+
+    public function testIsReplacementAttorneyStepInDepends()
+    {
+        $lpa = FixturesData::getPfLpa();
+        FixturesData::getPrimaryAttorneyDecisions($lpa)
+            ->set('how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY);
+        FixturesData::getReplacementAttorneyDecisions($lpa)
+            ->set('when', ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS);
+        $this->assertTrue($lpa->isWhenReplacementAttorneyStepInDepends());
+    }
+
+    public function testIsReplacementAttorneyStepInWhenLastPrimaryUnableAct()
+    {
+        $lpa = FixturesData::getPfLpa();
+        FixturesData::getPrimaryAttorneyDecisions($lpa)
+            ->set('how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY);
+        FixturesData::getReplacementAttorneyDecisions($lpa)
+            ->set('when', ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST);
+        $this->assertTrue($lpa->isWhenReplacementAttorneyStepInWhenLastPrimaryUnableAct());
+    }
+
+    public function testIsReplacementAttorneyStepInWhenFirstPrimaryUnableAct()
+    {
+        $lpa = FixturesData::getPfLpa();
+        FixturesData::getPrimaryAttorneyDecisions($lpa)
+            ->set('how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY);
+        FixturesData::getReplacementAttorneyDecisions($lpa)
+            ->set('when', ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST);
+        $this->assertTrue($lpa->isWhenReplacementAttorneyStepInWhenFirstPrimaryUnableAct());
+    }
+
+    public function testHasReplacementAttorney()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $this->assertTrue($lpa->hasReplacementAttorney());
+    }
+
+    public function testHasReplacementAttorneyIndex()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $this->assertTrue($lpa->hasReplacementAttorney(0));
+    }
+
+    public function testIsPrimaryAttorneysMakeDecisionJointlyAndSeverally()
+    {
+        $lpa = FixturesData::getPfLpa();
+        FixturesData::getPrimaryAttorneyDecisions($lpa)
+            ->set('how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY);
+        $this->assertTrue($lpa->isHowPrimaryAttorneysMakeDecisionJointlyAndSeverally());
+    }
+
+    public function testIsPrimaryAttorneysMakeDecisionJointly()
+    {
+        $lpa = FixturesData::getPfLpa();
+        FixturesData::getPrimaryAttorneyDecisions($lpa)->set('how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY);
+        $this->assertTrue($lpa->isHowPrimaryAttorneysMakeDecisionJointly());
+    }
+
+    public function testIsPrimaryAttorneysMakeDecisionDepends()
+    {
+        $lpa = FixturesData::getPfLpa();
+        FixturesData::getPrimaryAttorneyDecisions($lpa)->set('how', AbstractDecisions::LPA_DECISION_HOW_DEPENDS);
+        $this->assertTrue($lpa->isHowPrimaryAttorneysMakeDecisionDepends());
+    }
+
+    public function testHasPrimaryAttorney()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $this->assertTrue($lpa->hasPrimaryAttorney());
+    }
+
+    public function testLpaHasPrimaryAttorneyIndex()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $this->assertTrue($lpa->hasPrimaryAttorney(0));
+    }
+
+    public function testHasTrustCorporation()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $lpa->get('document')->set('primaryAttorneys', [new TrustCorporation()]);
+        $this->assertTrue($lpa->hasTrustCorporation());
+
+        $lpa = FixturesData::getHwLpa();
+        $lpa->get('document')->set('replacementAttorneys', [new TrustCorporation()]);
+        $this->assertTrue($lpa->hasTrustCorporation());
+
+        $lpa = FixturesData::getHwLpa();
+        $this->assertFalse($lpa->hasTrustCorporation());
+    }
+
+    public function testHasTrustCorporationPrimary()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $lpa->get('document')->set('primaryAttorneys', [new TrustCorporation()]);
+        $this->assertTrue($lpa->hasTrustCorporation('primary'));
+        $this->assertFalse($lpa->hasTrustCorporation('replacement'));
+    }
+
+    public function testHasTrustCorporationReplacement()
+    {
+        $lpa = FixturesData::getHwLpa();
+        $lpa->get('document')->set('replacementAttorneys', [new TrustCorporation()]);
+        $this->assertFalse($lpa->hasTrustCorporation('primary'));
+        $this->assertTrue($lpa->hasTrustCorporation('replacement'));
     }
 }

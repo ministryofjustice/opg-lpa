@@ -5,10 +5,7 @@ namespace Application\Model\Service\User;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
-use Application\Model\Service\ApiClient\Exception\ResponseException as ApiResponseException;
-use Application\Model\Service\AuthClient\AuthClientAwareInterface;
-use Application\Model\Service\AuthClient\AuthClientTrait;
-use Application\Model\Service\AuthClient\Exception\ResponseException as AuthResponseException;
+use Application\Model\Service\ApiClient\Exception\ResponseException;
 use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\LoggerTrait;
@@ -16,10 +13,9 @@ use Zend\Session\Container;
 use Exception;
 use RuntimeException;
 
-class Details extends AbstractEmailService implements ApiClientAwareInterface, AuthClientAwareInterface
+class Details extends AbstractEmailService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
-    use AuthClientTrait;
     use LoggerTrait;
 
     /**
@@ -96,10 +92,10 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
         $this->getLogger()->info('Requesting email update to new email: ' . $email, $identity->toArray());
 
         try {
-            //  Manually update the token in the auth client
-            $this->authClient->updateToken($identity->token());
+            //  Manually update the token in the client
+            $this->apiClient->updateToken($identity->token());
 
-            $response = $this->authClient->httpGet(sprintf('/v1/users/%s/email/%s', $this->getUserId(), strtolower($email)));
+            $response = $this->apiClient->httpGet(sprintf('/v1/users/%s/email/%s', $this->getUserId(), strtolower($email)));
 
             if ($response->getStatusCode() == 200) {
                 $body = json_decode($response->getBody(), true);
@@ -124,7 +120,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
                     return true;
                 }
             }
-        } catch (AuthResponseException $ex) {
+        } catch (ResponseException $ex) {
             //  Get the real error out of the exception details
             switch ($ex->getDetail()) {
                 case 'User already has this email':
@@ -142,14 +138,14 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
         $this->getLogger()->info('Updating email using token');
 
         try {
-            $response = $this->authClient->httpPost('/v1/users/confirm-new-email', [
+            $response = $this->apiClient->httpPost('/v1/users/confirm-new-email', [
                 'Token' => $emailUpdateToken,
             ]);
 
             if ($response->getStatusCode() == 204) {
                 return true;
             }
-        } catch (AuthResponseException $ignore) {}
+        } catch (ResponseException $ignore) {}
 
         return false;
     }
@@ -168,10 +164,10 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
         $this->getLogger()->info('Updating password', $identity->toArray());
 
         try {
-            //  Manually update the token in the auth client
-            $this->authClient->updateToken($identity->token());
+            //  Manually update the token in the client
+            $this->apiClient->updateToken($identity->token());
 
-            $response = $this->authClient->httpPost(sprintf('/v1/users/%s/password', $this->getUserId()), [
+            $response = $this->apiClient->httpPost(sprintf('/v1/users/%s/password', $this->getUserId()), [
                 'CurrentPassword' => $currentPassword,
                 'NewPassword' => $newPassword,
             ]);
@@ -207,33 +203,25 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
      * Returns user account details for a passed authentication token.
      *
      * @param $token
-     * @return AuthResponseException|Exception|mixed
+     * @return bool|mixed
      */
     public function getTokenInfo($token)
     {
-        try {
-            $response = $this->authClient->httpPost('/v1/authenticate', [
-                'Token' => $token,
-            ]);
+        $response = $this->apiClient->httpPost('/v1/authenticate', [
+            'Token' => $token,
+        ]);
 
-            if ($response->getStatusCode() == 200) {
-                $body = json_decode($response->getBody(), true);
-
-                if (is_array($body)) {
-                    return $body;
-                }
-            }
-        } catch (AuthResponseException $e) {
-            return $e;
+        if ($response->getStatusCode() == 200) {
+            return json_decode($response->getBody(), true);
         }
 
-        return new AuthResponseException('unknown-error', $response->getStatusCode(), $response);
+        return false;
     }
 
     /**
      * Deletes a user and their LPAs
      *
-     * @return ApiResponseException|AuthResponseException|bool|Exception
+     * @return bool
      */
     public function delete()
     {
@@ -242,21 +230,11 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
         //  The API to delete the user will delete their associated LPAs too
         $response = $this->apiClient->httpDelete('/v2/users/' . $this->getUserId());
 
-        if ($response->getStatusCode() != 204) {
-            return false;
+        if ($response->getStatusCode() == 204) {
+            return true;
         }
 
-        try {
-            $response = $this->authClient->httpDelete('/v1/users/' . $this->getUserId());
-
-            if ($response->getStatusCode() == 204) {
-                return true;
-            }
-        } catch (AuthResponseException $e) {
-            return $e;
-        }
-
-        return new ApiResponseException('unknown-error', $response->getStatusCode(), $response);
+        return false;
     }
 
     public function requestPasswordResetEmail($email)
@@ -265,92 +243,89 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
 
         $logger->info('User requested password reset email');
 
-        $resetToken = $this->requestPasswordReset(strtolower($email));
+        try {
+            $resetToken = $this->requestPasswordReset(strtolower($email));
 
-        //  A successful response is a string...
-        if (!is_string($resetToken)) {
-            if ($resetToken instanceof AuthResponseException) {
-                if ($resetToken->getMessage() == 'account-not-activated') {
-                    $body = json_decode($resetToken->getResponse()->getBody(), true);
+            //  A successful response is a string...
+            if (!is_string($resetToken)) {
+                return "unknown-error";
+            }
 
-                    if (isset($body['activation_token'])) {
-                        //  If they have not yet activated their account we re-send them the activation link via the register service
-                        try {
-                            $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_ACCOUNT_ACTIVATE_PASSWORD_RESET, [
-                                'token' => $body['activation_token'],
-                            ]);
-                        } catch (Exception $ex) {
-                            $logger->err('Failed to send account activate email when triggering password reset: ' . $ex->getMessage());
-                        }
-                    }
-                }
+            try {
+                $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_RESET, [
+                    'token' => $resetToken,
+                ]);
+            } catch (Exception $e) {
+                return "failed-sending-email";
+            }
 
-                // 404 response means user not found...
-                if ($resetToken->getCode() == 404) {
+            $logger->info('Password reset email sent to ' . $email);
+
+            return true;
+        } catch (ResponseException $rex) {
+            if ($rex->getMessage() == 'account-not-activated') {
+                $body = json_decode($rex->getResponse()->getBody(), true);
+
+                if (isset($body['activation_token'])) {
+                    //  If they have not yet activated their account we re-send them the activation link via the register service
                     try {
-                        $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_RESET_NO_ACCOUNT);
-                    } catch (Exception $e) {
-                        return "failed-sending-email";
+                        $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_ACCOUNT_ACTIVATE_PASSWORD_RESET, [
+                            'token' => $body['activation_token'],
+                        ]);
+                    } catch (Exception $ex) {
+                        $logger->err('Failed to send account activate email when triggering password reset: ' . $ex->getMessage());
                     }
-
-                    return true;
-                }
-
-                if ($resetToken->getDetail() != null) {
-                    return trim($resetToken->getDetail());
                 }
             }
 
-            return "unknown-error";
+            // 404 response means user not found...
+            if ($rex->getCode() == 404) {
+                try {
+                    $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_RESET_NO_ACCOUNT);
+                } catch (Exception $e) {
+                    return "failed-sending-email";
+                }
+
+                return true;
+            }
+
+            if ($rex->getDetail() != null) {
+                return trim($rex->getDetail());
+            }
         }
 
-        // Send the password reset email
-        try {
-            $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_PASSWORD_RESET, [
-                'token' => $resetToken,
-            ]);
-        } catch (Exception $e) {
-            return "failed-sending-email";
-        }
-
-        $logger->info('Password reset email sent to ' . $email);
-
-        return true;
+        return false;
     }
 
     /**
      * Returns a password reset token for a given email address
      *
      * @param $email
-     * @return AuthResponseException|Exception|mixed
+     * @return mixed
      */
     private function requestPasswordReset($email)
     {
-        try {
-            $response = $this->authClient->httpPost('/v1/users/password-reset', [
-                'Username' => strtolower($email),
-            ]);
+        $response = $this->apiClient->httpPost('/v1/users/password-reset', [
+            'Username' => strtolower($email),
+        ]);
 
-            if ($response->getStatusCode() == 200) {
-                $body = json_decode($response->getBody(), true);
+        if ($response->getStatusCode() == 200) {
+            $body = json_decode($response->getBody(), true);
 
-                if (is_array($body)) {
-                    // If we have the token, return it.
-                    if (isset($body['token'])) {
-                        return $body['token'];
-                    }
+            if (is_array($body)) {
+                // If we have the token, return it.
+                if (isset($body['token'])) {
+                    return $body['token'];
+                }
 
-                    // If we have activation_token, then the account has not been activated.
-                    if (isset($body['activation_token'])) {
-                        return new AuthResponseException('account-not-activated', $response->getStatusCode(), $response);
-                    }
+                // If we have activation_token, then the account has not been activated.
+                if (isset($body['activation_token'])) {
+                    throw new ResponseException('account-not-activated', $response->getStatusCode(), $response);
                 }
             }
-        } catch (AuthResponseException $e) {
-            return $e;
         }
 
-        return new AuthResponseException('unknown-error', $response->getStatusCode(), $response);
+        throw new ResponseException('unknown-error', $response->getStatusCode(), $response);
     }
 
     public function setNewPassword($restToken, $password)
@@ -360,7 +335,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
         $result = null;
 
         try {
-            $response = $this->authClient->httpPost('/v1/users/password-reset-update', [
+            $response = $this->apiClient->httpPost('/v1/users/password-reset-update', [
                 'Token' => $restToken,
                 'NewPassword' => $password,
             ]);
@@ -368,19 +343,15 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
             if ($response->getStatusCode() == 204) {
                 return true;
             }
-
-            $result = new AuthResponseException('unknown-error', $response->getStatusCode(), $response);
-        } catch (AuthResponseException $e) {
-            $result = $e;
+        } catch (ResponseException $rex) {
+            if ($rex->getDetail() == 'Invalid token') {
+                return 'invalid-token';
+            } elseif ($rex->getDetail() != null) {
+                return trim($rex->getDetail());
+            }
         }
 
-        if ($result->getDetail() == 'Invalid token') {
-            return "invalid-token";
-        } elseif ($result->getDetail() != null) {
-            return trim($result->getDetail());
-        }
-
-        return "unknown-error";
+        return 'unknown-error';
     }
 
     /**
@@ -397,7 +368,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
         $result = 'unknown-error';
 
         try {
-            $response = $this->authClient->httpPost('/v1/users', [
+            $response = $this->apiClient->httpPost('/v1/users', [
                 'Username' => strtolower($email),
                 'Password' => $password,
             ]);
@@ -416,15 +387,13 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
 
                     return true;
                 }
-            } elseif ($response instanceof AuthResponseException) {
-                if ($response->getDetail() == 'username-already-exists') {
-                    $result = 'address-already-registered';
-                } else {
-                    $result = $response->getDetail();
-                }
             }
-        } catch (AuthResponseException $e) {
+        } catch (ResponseException $e) {
             $result = $e->getDetail();
+
+            if ($result == 'username-already-exists') {
+                $result = 'address-already-registered';
+            }
         }
 
         return $result;
@@ -438,26 +407,37 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
      */
     public function resendActivateEmail($email)
     {
-        //  Trigger a request to reset the password in the API - this will return the activation token
-        $resetToken = $this->requestPasswordReset(strtolower($email));
+        $accountActivationToken = null;
 
-        if ($resetToken instanceof AuthResponseException && $resetToken->getMessage() == 'account-not-activated') {
-            $body = json_decode($resetToken->getResponse()->getBody(), true);
+        //  Trigger a request to reset the password in the API - this will return the activation token or throw an exception
+        try {
+            $resetToken = $this->requestPasswordReset(strtolower($email));
+        } catch (ResponseException $rex) {
+            //  Only take any action if the not activated message was returned
+            if ($rex->getMessage() == 'account-not-activated') {
+                $body = json_decode($rex->getResponse()->getBody(), true);
 
-            if (isset($body['activation_token'])) {
-                // If they have not yet activated their account, we re-send them the activation link.
-                try {
-                    $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_ACCOUNT_ACTIVATE, [
-                        'token' => $body['activation_token'],
-                    ]);
-                } catch (Exception $e) {
-                    return "failed-sending-email";
+                if (isset($body['activation_token'])) {
+                    $accountActivationToken = $body['activation_token'];
                 }
-
-                return true;
             }
         }
 
+        if (!is_null($accountActivationToken)) {
+            try {
+                $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_ACCOUNT_ACTIVATE, [
+                    'token' => $accountActivationToken,
+                ]);
+            } catch (Exception $e) {
+                return "failed-sending-email";
+            }
+
+            return true;
+        }
+
+        //  If a proper reset token was returned, or the exception thrown was NOT account-not-activated then
+        //  something has gone wrong so return false - when using this function the account should existing
+        //  but be inactive so an exception of account-not-activated is the only "valid" outcome above
         return false;
     }
 
@@ -472,7 +452,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
         $logger = $this->getLogger();
 
         try {
-            $response = $this->authClient->httpPost('/v1/users/activate', [
+            $response = $this->apiClient->httpPost('/v1/users/activate', [
                 'Token' => $token,
             ]);
 
@@ -481,7 +461,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface, A
 
                 return true;
             }
-        } catch (AuthResponseException $ignore) {}
+        } catch (ResponseException $ignore) {}
 
         $logger->info('Account activation attempt with token failed, or was already activated');
 

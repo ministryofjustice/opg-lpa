@@ -39,6 +39,18 @@ class Client
     }
 
     /**
+     * This method is required to allow the token value to be updated manually during a single user action where necessary
+     * Currently this is required during the change password and change email address flows, as those action trigger a
+     * user authentication which updates the auth token in the backend
+     *
+     * @param $token
+     */
+    public function updateToken($token)
+    {
+        $this->token = $token;
+    }
+
+    /**
      * Performs a GET against the API
      *
      * @param $path
@@ -53,8 +65,7 @@ class Client
             $url = Uri::withQueryValue($url, $name, urlencode($value));
         }
 
-        $request = new Request('GET', $url, $this->buildHeaders());
-
+        $request = new Request('GET', $url, $this->buildHeaders(), '{}');
         $response = $this->httpClient->sendRequest($request);
 
         //  TODO - Confirm why 404 is permitted here before trying to remove it - it has been allowed already for some time
@@ -76,8 +87,7 @@ class Client
     {
         $url = new Uri($this->apiBaseUri . $path);
 
-        $body = (!empty($payload) ? json_encode($payload) : null);
-        $request = new Request('POST', $url, $this->buildHeaders(), $body);
+        $request = new Request('POST', $url, $this->buildHeaders(), json_encode($payload));
 
         $response = $this->httpClient->sendRequest($request);
 
@@ -142,7 +152,7 @@ class Client
     {
         $url = new Uri($this->apiBaseUri . $path);
 
-        $request = new Request('DELETE', $url, $this->buildHeaders());
+        $request = new Request('DELETE', $url, $this->buildHeaders(), '{}');
 
         $response = $this->httpClient->sendRequest($request);
 

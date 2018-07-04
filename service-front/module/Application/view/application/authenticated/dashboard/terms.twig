@@ -4,15 +4,14 @@
     {% include 'application/authenticated/about-you/partials/form-error-summary.twig' %}
 {% endblock %}
 
-{% block pageTitle %}
-	Terms and conditions
-{% endblock %}
+{% block htmlTitle %}Terms of use - {% endblock %}
+{% block pageTitle %}Terms of use{% endblock %}
 
 
 {% block content %}
 <div class="text">
-	<p class="lede">The terms and conditions for using the digital lasting power of attorney service have changed.</p>
-	<p><a href="/terms-and-conditions">Find out more</a> or <a href="{{ url('user/dashboard') }}">continue using the service</a>.</p>
+	<p class="lede">The terms of use for the digital lasting power of attorney service have changed.</p>
+	<p><a href="/terms">Find out more</a> or <a href="{{ url('user/dashboard') }}">continue using the service</a>.</p>
 </div>
 
 {% endblock %}

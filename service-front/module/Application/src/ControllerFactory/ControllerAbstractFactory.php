@@ -70,7 +70,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setApplicantService' => 'ApplicantService',
         ],
         NotificationsController::class => [
-            'setMailTransport'     => 'MailTransport'
+            'setMailTransport' => 'MailTransport'
         ],
         PingController::class => [
             'setStatusService' => 'SiteStatus'

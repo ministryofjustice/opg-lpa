@@ -5,12 +5,11 @@ namespace Application\Model\Service;
 use Application\Model\Service\AddressLookup\PostcodeInfo;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\Client as ApiClient;
-use Application\Model\Service\AuthClient\AuthClientAwareInterface;
-use Application\Model\Service\AuthClient\Client as AuthClient;
 use Application\Model\Service\Lpa\Applicant;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
+use Application\Model\Service\System\Status;
 use Application\Model\Service\User\Details;
 use Exception;
 use Interop\Container\ContainerInterface;
@@ -43,6 +42,9 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         ],
         ReplacementAttorneyCleanup::class => [
             'setLpaApplicationService' => 'LpaApplicationService',
+        ],
+        Status::class => [
+            'setApiClient' => 'ApiClient',
         ],
     ];
 
@@ -104,12 +106,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             /** @var ApiClient $apiClient */
             $apiClient = $container->get('ApiClient');
             $service->setApiClient($apiClient);
-        }
-
-        if ($service instanceof AuthClientAwareInterface) {
-            /** @var AuthClient $authClient */
-            $authClient = $container->get('AuthClient');
-            $service->setAuthClient($authClient);
         }
 
         //  If required load any additional services into the resource

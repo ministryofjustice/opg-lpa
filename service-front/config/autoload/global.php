@@ -147,14 +147,12 @@ return array(
 
     'api_client' => [
         'api_uri' => getenv('OPG_LPA_FRONT_ENDPOINTS_API') ?: 'https://apiv2',
-        'auth_uri' => getenv('OPG_LPA_FRONT_ENDPOINTS_AUTH') ?: 'https://authv2',
-    ], // api_client
+    ],
 
     'email' => [
 
         'sendgrid' => [
-            'user' => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_USER') ?: null,
-            'key' => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_PASSWORD') ?: null,
+            'key'     => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY') ?: null,
             'webhook' => [
                 'token' => getenv('OPG_LPA_FRONT_EMAIL_SENDGRID_WEBHOOK_TOKEN') ?: null,
             ],

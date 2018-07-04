@@ -4852,7 +4852,7 @@ return /******/ (function(modules) { // webpackBootstrap
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.5';
+  var VERSION = '4.17.10';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -5276,6 +5276,14 @@ return /******/ (function(modules) { // webpackBootstrap
   /** Used to access faster Node.js helpers. */
   var nodeUtil = (function() {
     try {
+      // Use `util.types` for Node.js 10+.
+      var types = freeModule && freeModule.require && freeModule.require('util').types;
+
+      if (types) {
+        return types;
+      }
+
+      // Legacy `process.binding('util')` for Node.js < 10.
       return freeProcess && freeProcess.binding && freeProcess.binding('util');
     } catch (e) {}
   }());
@@ -22004,8 +22012,15 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
   }
 };
 ;
+// DEPRECATED
+// This isn’t needed if you’re using GOV.UK Elements 3.0.0 or above
+
 ;(function (global) {
   'use strict'
+
+  if (window.console && window.console.warn) {
+    window.console.warn('Deprecation warning: Custom radio buttons and checkboxes (released in GOV.UK Elements 3.0.0) no longer require this JavaScript.')
+  }
 
   var $ = global.jQuery
   var GOVUK = global.GOVUK || {}
@@ -25022,31 +25037,35 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
     getQuestionText: function(error) {
       var $error = $(error)
       var errorID = $error.attr('href')
-
-      var $element = $(errorID)
-      var elementID = $element.prop('id')
-
-      var nodeName = document.getElementById(elementID).nodeName.toLowerCase()
       var questionText
-      var legendText
 
-      // If the error is on an input or textarea
-      if (nodeName === 'input' || nodeName === 'textarea' || nodeName === 'select') {
-        // Get the label
-        questionText = $.trim($('label[for="' + elementID + '"]')[0].childNodes[0].nodeValue)
-        // Get the legend for that label/input
-        legendText = $.trim($element.closest('fieldset').find('legend').text())
-        // combine the legend with the label
-        questionText = legendText.length > 0 ? legendText + ': ' + questionText : questionText
-      }
-      // If the error is on a fieldset (for radio buttons and checkboxes)
-      else if (nodeName === 'fieldset') {
-        legendText = $.trim($element.find('legend').text())
-        questionText = legendText
-      }
-      // Anything else
-      else {
-        questionText = ''
+      if (errorID.indexOf('secret_') >= 0) {
+        questionText = 'CSRF error'
+      } else {
+        var $element = $(errorID)
+        var elementID = $element.prop('id')
+
+        var nodeName = document.getElementById(elementID).nodeName.toLowerCase()
+        var legendText
+
+        // If the error is on an input or textarea
+        if (nodeName === 'input' || nodeName === 'textarea' || nodeName === 'select') {
+          // Get the label
+          questionText = $.trim($('label[for="' + elementID + '"]')[0].childNodes[0].nodeValue)
+          // Get the legend for that label/input
+          legendText = $.trim($element.closest('fieldset').find('legend').text())
+          // combine the legend with the label
+          questionText = legendText.length > 0 ? legendText + ': ' + questionText : questionText
+        }
+        // If the error is on a fieldset (for radio buttons and checkboxes)
+        else if (nodeName === 'fieldset') {
+          legendText = $.trim($element.find('legend').text())
+          questionText = legendText
+        }
+        // Anything else
+        else {
+          questionText = ''
+        }
       }
 
       return questionText
