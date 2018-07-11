@@ -200,6 +200,6 @@ return array(
         'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: null,
     ], // log
 
-    'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gsi.gov.uk',
+    'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gov.uk',
 
 );
