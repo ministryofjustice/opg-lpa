@@ -77,9 +77,9 @@
 
         <div class="iconlinks iconlinks--right">
             <div class="iconlinks-item">
-                <a href="#" class="iconlinks-link js-print hide-if-no-js" data-journey-click="page:link:Print this page">
+                <a href="#" class="iconlinks-link js-print hide-if-no-js" data-journey-click="page:link:Print this summary">
                     <i class="icon icon-print"></i>
-                    <span class="iconlinks-text">Print this page</span>
+                    <span class="iconlinks-text">Print this summary</span>
                 </a>
             </div>
         </div>
@@ -110,7 +110,7 @@
 
         {% else %}
 
-            <details>
+            <details class="no-print-for-summary">
                 <summary data-journey-click="page:link.reveal:help: Why are you asking me to pay now?">
                     <span class="summary">Why are you asking me to pay now?</span>
                 </summary>
