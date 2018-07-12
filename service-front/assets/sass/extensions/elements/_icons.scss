@@ -122,3 +122,11 @@
         background-size: contain;
     }
 }
+
+.icon-print {
+    @include icon(icon-print, 36, 36);
+    @include media(mobile) {
+        @include icon(icon-print, 27, 27);
+        background-size: contain;
+    }
+}

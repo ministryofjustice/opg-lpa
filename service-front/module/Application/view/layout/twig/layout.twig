@@ -48,12 +48,12 @@
     <!--[if IE 8]><link href="{{ StaticAssetPath( '/assets/v2/css/application-ie8.css', { 'minify':true } ) }}" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
 
     <!-- LPA Print styles -->
-    <link href="{{ StaticAssetPath( '/assets/v2/css/print.css', { 'minify':true } ) }}" media="all" rel="stylesheet" type="text/css" />
+    <link href="{{ StaticAssetPath( '/assets/v2/css/print.css', { 'minify':true } ) }}" media="print" rel="stylesheet" type="text/css" />
 
 </head>
 
 <body class="no-js">
-    <script type="text/javascript">document.body.className = document.body.className + ' js-enabled';</script>
+    <script>document.body.className = document.body.className + ' js-enabled';</script>
     <div id="skiplink-container">
         <div><a href="#content" class="skiplink">Skip to main content</a></div>
     </div>
@@ -118,11 +118,11 @@
         </div>
 
         {% block divider %}
-        <hr class="no-print">
+        <hr>
         {% endblock divider %}
 
         {% if hideFeedbackLink is not defined %}
-        <p class="no-print">
+        <p>
             Your <a href="/send-feedback">feedback</a> will help us to improve
         </p>
         {% endif %}

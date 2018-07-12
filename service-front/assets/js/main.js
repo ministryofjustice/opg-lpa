@@ -18,7 +18,7 @@ showHideContent.init();
 
 
 // ====================================================================================
-// VENDOR CONFIGURATION
+// SIMPLE UTILITIES
 
 // Remove the no-js class
 $('body').removeClass('no-js');
