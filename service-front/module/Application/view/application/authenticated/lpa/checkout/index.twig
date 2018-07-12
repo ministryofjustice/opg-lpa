@@ -75,9 +75,12 @@
             </div>
         </div>
 
-        <div class="grid-row no-print">
-            <div class="column-full text-right push--bottom">
-                <a href="#" class="print js-print" data-journey-click="page:link:Print this page"><img src="/assets/v2/images/icons/printer-64x64.png" width="35" height="35" alt="">Print this page</a>
+        <div class="iconlinks iconlinks--right">
+            <div class="iconlinks-item">
+                <a href="#" class="iconlinks-link js-print hide-if-no-js" data-journey-click="page:link:Print this summary">
+                    <i class="icon icon-print"></i>
+                    <span class="iconlinks-text">Print this summary</span>
+                </a>
             </div>
         </div>
 
@@ -107,9 +110,9 @@
 
         {% else %}
 
-            <details class="no-print">
-                <summary data-journey-click="page:link.reveal:help: More information about paying the application fee">
-                    <span class="summary">More information about paying the application fee</span>
+            <details class="no-print-for-summary">
+                <summary data-journey-click="page:link.reveal:help: Why are you asking me to pay now?">
+                    <span class="summary">Why are you asking me to pay now?</span>
                 </summary>
                 <div class="panel panel-border-narrow text">
                     <p>The fee covers the cost of processing your application, not just registering the LPA.</p>
@@ -134,7 +137,7 @@
                 {{ form().openTag( form )|raw }}
                 {{ formElement(form.getCsrf) }}
 
-            <div class="form-group no-print">
+            <div class="form-group">
                 {{ formElement(form.get('submit')) }}
                 <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link">Confirm and pay by cheque</a>
             </div>

@@ -23987,7 +23987,9 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
 
         hookupPrintLinks: function() {
             $('.js-print').on('click', function(){
+                $('body').addClass('summary-print');
                 window.print();
+                $('body').removeClass('summary-print');
                 return false;
             });
         }
@@ -25092,7 +25094,7 @@ showHideContent.init();
 
 
 // ====================================================================================
-// VENDOR CONFIGURATION
+// SIMPLE UTILITIES
 
 // Remove the no-js class
 $('body').removeClass('no-js');
