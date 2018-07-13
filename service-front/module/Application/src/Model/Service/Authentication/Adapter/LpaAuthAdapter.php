@@ -75,9 +75,9 @@ class LpaAuthAdapter implements AdapterInterface
         $response->setErrorDescription('authentication-failed');
 
         try {
-            $postResponse = $this->client->httpPost('/v1/authenticate', [
-                'Username' => strtolower($this->email),
-                'Password' => $this->password,
+            $postResponse = $this->client->httpPost('/v2/authenticate', [
+                'username' => strtolower($this->email),
+                'password' => $this->password,
             ]);
 
             if ($postResponse->getStatusCode() == 200) {
