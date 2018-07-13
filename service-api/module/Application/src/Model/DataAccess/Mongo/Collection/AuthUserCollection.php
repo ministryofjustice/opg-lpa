@@ -270,26 +270,6 @@ class AuthUserCollection
     }
 
     /**
-     * Delete the passed authentication token.
-     *
-     * @param $authToken
-     * @return bool
-     */
-    public function removeAuthToken($authToken)
-    {
-        $updateResult = $this->collection->updateOne(
-            ['auth_token.token' => $authToken],
-            [
-                '$unset' => [
-                    'auth_token' => true,
-                ],
-            ],
-            ['upsert' => false, 'multiple' => false]
-        );
-        return $updateResult->isAcknowledged();
-    }
-
-    /**
      * Sets a new auth token.
      *
      * @param $userId

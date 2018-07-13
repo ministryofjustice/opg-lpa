@@ -5,16 +5,6 @@ return [
     'console' => [
         'router' => [
             'routes' => [
-                'generate-stats' => [
-                    'type'    => 'simple',
-                    'options' => [
-                        'route'    => 'generate-stats',
-                        'defaults' => [
-                            'controller' => 'Application\Controller\Console\GenerateStats',
-                            'action'     => 'generate'
-                        ],
-                    ],
-                ],
                 'account-cleanup' => [
                     'type'    => 'simple',
                     'options' => [
@@ -22,6 +12,16 @@ return [
                         'defaults' => [
                             'controller' => 'Application\Controller\Console\AccountCleanup',
                             'action'     => 'cleanup'
+                        ],
+                    ],
+                ],
+                'generate-stats' => [
+                    'type'    => 'simple',
+                    'options' => [
+                        'route'    => 'generate-stats',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Console\GenerateStats',
+                            'action'     => 'generate'
                         ],
                     ],
                 ],
@@ -66,12 +66,105 @@ return [
                 ],
             ],
 
-            'api-v2' => [
+            'auth-routes' => [
                 'type'    => 'Segment',
                 'options' => [
                     'route'    => '/v2',
                     'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller\Version2',
+                        '__NAMESPACE__' => 'Application\Controller\Version2\Auth',
+                    ],
+                ],
+                'child_routes' => [
+
+                    'authenticate' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/authenticate',
+                            'defaults' => [
+                                'controller' => 'AuthenticateController',
+                                'action'     => 'authenticate',
+                            ],
+                        ],
+                    ],
+                    'users' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/users',
+                            'defaults' => [
+                                'controller' => 'UsersController',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+
+                            'search-users' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/search',
+                                    'defaults' => [
+                                        'action' => 'search',
+                                    ],
+                                ],
+                            ],
+                            'email-change' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/:userId/email',
+                                    'constraints' => [
+                                        'userId'  => '[a-zA-Z0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => 'EmailController',
+                                        'action'     => 'change',
+                                    ],
+                                ],
+                            ],
+                            'email-verify' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/email',
+                                    'defaults' => [
+                                        'controller' => 'EmailController',
+                                        'action'     => 'verify',
+                                    ],
+                                ],
+                            ],
+                            'password-change' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '[/:userId]/password',
+                                    'constraints' => [
+                                        'userId' => '[a-zA-Z0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => 'PasswordController',
+                                        'action'     => 'change',
+                                    ],
+                                ],
+                            ],
+                            'password-reset' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/password-reset',
+                                    'defaults' => [
+                                        'controller' => 'PasswordController',
+                                        'action'     => 'reset',
+                                    ],
+                                ],
+                            ],
+
+                        ],
+                    ],
+
+                ],
+            ],
+
+            'api-routes' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/v2',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Application\Controller\Version2\Lpa',
                     ],
                 ],
                 'may_terminate' => true,
@@ -80,7 +173,7 @@ return [
                     'user' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'       => '/users/:userId',
+                            'route'       => '/user/:userId',
                             'constraints' => [
                                 'userId'  => '[a-f0-9]+',
                             ],
@@ -280,20 +373,16 @@ return [
                                         ],
                                     ],
 
-                                ], // child_routes
-                            ], // applications
+                                ],
+                            ],
 
-                        ], // child_routes
+                        ],
+                    ],
 
-                    ], // user
-
-                ], // child_routes
-
-            ], // api-v2
-
-        ], //routes
-
-    ], // router
+                ],
+            ],
+        ],
+    ],
 
     'zfc_rbac' => [
         'assertion_map' => [
@@ -329,16 +418,16 @@ return [
             'Application\Controller\Index' => 'Application\Controller\IndexController',
         ],
         'factories' => [
-            'Application\Controller\Console\AccountCleanup' => 'Application\Controller\Console\AccountCleanupControllerFactory',
-            'Application\Controller\Console\GenerateStats'  => 'Application\Controller\Console\GenerateStatsControllerFactory',
-            'Application\Controller\Ping'                   => 'Application\Controller\PingControllerFactory',
-            'Application\Controller\Stats'                  => 'Application\Controller\StatsControllerFactory',
+            'Application\Controller\Console\AccountCleanup' => Application\ControllerFactory\AccountCleanupControllerFactory::class,
+            'Application\Controller\Console\GenerateStats'  => Application\ControllerFactory\GenerateStatsControllerFactory::class,
+            'Application\Controller\Ping'                   => Application\ControllerFactory\PingControllerFactory::class,
+            'Application\Controller\Stats'                  => Application\ControllerFactory\StatsControllerFactory::class,
         ],
         'abstract_factories' => [
-            'Application\Controller\ControllerAbstractFactory'
+            'Application\ControllerFactory\AuthControllerAbstractFactory',
+            'Application\ControllerFactory\LpaControllerAbstractFactory',
         ],
     ], // controllers
-
 
     'service_manager' => [
         'factories' => [

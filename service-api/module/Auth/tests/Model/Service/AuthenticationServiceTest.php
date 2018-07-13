@@ -303,14 +303,4 @@ class AuthenticationServiceTest extends ServiceTestCase
             'last_login' => $today
         ] + $this->tokenDetails, $result);
     }
-
-    public function testDeleteToken()
-    {
-        $this->authUserCollection->shouldReceive('removeAuthToken')
-            ->withArgs(['token'])->once();
-
-        $result = $this->service->deleteToken('token');
-
-        $this->assertNull($result);
-    }
 }

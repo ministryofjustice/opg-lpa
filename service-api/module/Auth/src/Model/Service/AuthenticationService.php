@@ -166,9 +166,4 @@ class AuthenticationService extends AbstractService
             'last_login' => $user->lastLoginAt(),
         ] + $expiresAt;
     }
-
-    public function deleteToken($token)
-    {
-        $this->getAuthUserCollection()->removeAuthToken($token);
-    }
 }
