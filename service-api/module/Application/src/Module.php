@@ -18,6 +18,7 @@ use Interop\Container\ContainerInterface;
 use Opg\Lpa\Logger\Logger;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
+use Zend\Console\Request as ConsoleRequest;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -33,11 +34,9 @@ class Module
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
 
-        //---
-
         $request = $e->getApplication()->getServiceManager()->get('Request');
 
-        if (!($request instanceof \Zend\Console\Request)) {
+        if (!$request instanceof ConsoleRequest) {
             // Setup authentication listener...
             $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener, 'authenticate'], 500);
 

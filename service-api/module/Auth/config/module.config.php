@@ -8,9 +8,6 @@ return [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
         ],
-        'factories' => [
-            'Request' => 'Auth\Model\Mvc\Service\RequestFactory',
-        ],
     ],
 
 ];

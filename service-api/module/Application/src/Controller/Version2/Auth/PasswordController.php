@@ -6,6 +6,7 @@ use Auth\Model\Service\PasswordService as Service;
 use Opg\Lpa\Logger\LoggerTrait;
 use ZF\ApiProblem\ApiProblem;
 use Zend\View\Model\JsonModel;
+use DateTime;
 
 class PasswordController extends AbstractAuthController
 {
@@ -30,11 +31,30 @@ class PasswordController extends AbstractAuthController
     {
         $userId = $this->params('userId');
 
-        if (empty($userId)) {
-            return $this->changeWithToken();
+        $newPassword = $this->getBodyContent('newPassword');
+
+        if (empty($newPassword)) {
+            return new ApiProblem(400, 'Missing New Password');
         }
 
-        return $this->changeWithPassword($userId);
+        if (!empty($userId)) {
+            $currentPassword = $this->getBodyContent('currentPassword');
+
+            if (empty($currentPassword)) {
+                return new ApiProblem(400, 'Missing Current Password');
+            }
+
+            return $this->changeWithPassword($userId, $currentPassword, $newPassword);
+        }
+
+        //  Change the password using a token value
+        $passwordToken = $this->getBodyContent('passwordToken');
+
+        if (empty($passwordToken)) {
+            return new ApiProblem(400, 'token required');
+        }
+
+        return $this->changeWithToken($passwordToken, $newPassword);
     }
 
     /**
@@ -42,18 +62,12 @@ class PasswordController extends AbstractAuthController
      * NOTE: This also re-executes the login so that the calling function has access to a new authentication token
      *
      * @param $userId
+     * @param $currentPassword
+     * @param $newPassword
      * @return JsonModel|ApiProblem
      */
-    private function changeWithPassword($userId)
+    private function changeWithPassword($userId, $currentPassword, $newPassword)
     {
-        $currentPassword = $this->getRequest()->getPost('currentPassword');
-        $newPassword = $this->getRequest()->getPost('newPassword');
-
-        if (empty($currentPassword) || empty($newPassword)) {
-            // Token and/or userId not passed
-            return new ApiProblem(400, 'Missing Current Password and/or New Password');
-        }
-
         if (!$this->authenticateUserToken($this->getRequest(), $userId)) {
             return new ApiProblem(401, 'invalid-token');
         }
@@ -70,7 +84,7 @@ class PasswordController extends AbstractAuthController
 
         // Map DateTimes to strings
         $result = array_map(function ($v) {
-            return ( $v instanceof \DateTime ) ? $v->format('Y-m-d\TH:i:sO') : $v;
+            return ($v instanceof DateTime ? $v->format('Y-m-d\TH:i:sO') : $v);
         }, $result);
 
         return new JsonModel($result);
@@ -79,17 +93,12 @@ class PasswordController extends AbstractAuthController
     /**
      * Change the user password by providing password token
      *
-     * @return ApiProblem
+     * @param $passwordToken
+     * @param $newPassword
+     * @return JsonModel|ApiProblem
      */
-    private function changeWithToken()
+    private function changeWithToken($passwordToken, $newPassword)
     {
-        $passwordToken = $this->getRequest()->getPost('passwordToken');
-        $newPassword = $this->getRequest()->getPost('newPassword');
-
-        if (empty($passwordToken)) {
-            return new ApiProblem(400, 'token required');
-        }
-
         $result = $this->service->updatePasswordUsingToken($passwordToken, $newPassword);
 
         if ($result === 'invalid-token') {
@@ -104,8 +113,10 @@ class PasswordController extends AbstractAuthController
             'passwordToken' => $passwordToken
         ]);
 
-        // Return 204 - No Content
+        //  Return 204 - No Content
         $this->response->setStatusCode(204);
+
+        return new JsonModel();
     }
 
     /**
@@ -113,7 +124,7 @@ class PasswordController extends AbstractAuthController
      */
     public function resetAction()
     {
-        $username = $this->getRequest()->getPost('username');
+        $username = $this->getBodyContent('username');
 
         if (empty($username)) {
             return new ApiProblem(400, 'username must be passed');

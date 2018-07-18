@@ -32,7 +32,8 @@ class EmailController extends AbstractAuthController
     public function changeAction()
     {
         $userId = $this->params('userId');
-        $newEmailAddress = $this->getRequest()->getPost('newEmail');
+
+        $newEmailAddress = $this->getBodyContent('newEmail');
 
         if (empty($newEmailAddress)) {
             return new ApiProblem(400, 'Email address must be passed');
@@ -75,11 +76,11 @@ class EmailController extends AbstractAuthController
     /**
      * Use a token value to verify a new email address
      *
-     * @return ApiProblem
+     * @return JsonModel|ApiProblem
      */
     public function verifyAction()
     {
-        $emailUpdateToken = $this->getRequest()->getPost('emailUpdateToken');
+        $emailUpdateToken = $this->getBodyContent('emailUpdateToken');
 
         if (empty($emailUpdateToken)) {
             return new ApiProblem(400, 'Token must be passed');
@@ -105,5 +106,7 @@ class EmailController extends AbstractAuthController
 
         // Return 204 - No Content
         $this->response->setStatusCode(204);
+
+        return new JsonModel();
     }
 }
