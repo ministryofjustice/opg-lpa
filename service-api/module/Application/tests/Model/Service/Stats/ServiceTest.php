@@ -2,8 +2,8 @@
 
 namespace ApplicationTest\Model\Service\Stats;
 
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use Application\Model\Service\Stats\Service;
-use Auth\Model\Service\StatsService as AuthStatsService;
 use DateTime;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -22,22 +22,30 @@ class ServiceTest extends MockeryTestCase
             ->withArgs([[], ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)]])
             ->andReturn(['generated' => $generated]);
 
-        $authStatsService = Mockery::mock(AuthStatsService::class);
-        $authStatsService->shouldReceive('getStats')
-            ->andReturn([
-                'total' => 1,
-            ]);
+        $authUserCollection = Mockery::mock(AuthUserCollection::class);
+        $authUserCollection->shouldReceive('countAccounts')->once()->andReturn(4);
+        $authUserCollection->shouldReceive('countActivatedAccounts')
+            ->withArgs([])->once()->andReturn(3);
+        $authUserCollection->shouldReceive('countActivatedAccounts')
+            ->withArgs(function ($since) {
+                return $since == new DateTime('first day of this month 00:00:00');
+            })
+            ->once()->andReturn(2);
+        $authUserCollection->shouldReceive('countDeletedAccounts')->once()->andReturn(1);
 
         /** @var MongoCollection $statsLpasCollection */
-        /** @var AuthStatsService $authStatsService */
-        $service = new Service($statsLpasCollection, $authStatsService);
+        /** @var AuthUserCollection $authUserCollection */
+        $service = new Service($statsLpasCollection, $authUserCollection);
 
         $data = $service->fetch('all');
 
         $this->assertEquals([
             'generated' => $generated,
             'users' => [
-                'total' => 1,
+                'total' => 4,
+                'activated' => 3,
+                'activated-this-month' => 2,
+                'deleted' => 1,
             ],
         ], $data);
     }
