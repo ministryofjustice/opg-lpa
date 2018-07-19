@@ -16,6 +16,7 @@ return [
     'controllers' => [
         'factories' => [
             'SessionsController' => 'Application\Controller\Console\SessionsControllerFactory',
+            'DynamoDbController' => 'Application\Controller\Console\DynamoDbControllerFactory',
         ],
         'abstract_factories' => [
             'Application\ControllerFactory\ControllerAbstractFactory'
@@ -123,6 +124,17 @@ return [
                         'defaults' => [
                             'controller' => 'Console\SessionsController',
                             'action'     => 'gc'
+                        ],
+                    ],
+                ],
+
+                'dynamodb-init' => [
+                    'type'    => 'simple',
+                    'options' => [
+                        'route'    => 'dynamodb-init',
+                        'defaults' => [
+                            'controller' => 'DynamoDbController',
+                            'action'     => 'init'
                         ],
                     ],
                 ],

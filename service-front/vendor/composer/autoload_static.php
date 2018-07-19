@@ -38,6 +38,7 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Zend\\View\\' => 10,
             'Zend\\Validator\\' => 15,
             'Zend\\Uri\\' => 9,
+            'Zend\\Text\\' => 10,
             'Zend\\Test\\' => 10,
             'Zend\\Stdlib\\' => 12,
             'Zend\\Session\\' => 13,
@@ -45,6 +46,7 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
             'Zend\\Router\\' => 12,
             'Zend\\Mvc\\Plugin\\FlashMessenger\\' => 31,
             'Zend\\Mvc\\I18n\\' => 14,
+            'Zend\\Mvc\\Console\\' => 17,
             'Zend\\Mvc\\' => 9,
             'Zend\\ModuleManager\\' => 19,
             'Zend\\Mime\\' => 10,
@@ -163,6 +165,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-uri/src',
         ),
+        'Zend\\Text\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-text/src',
+        ),
         'Zend\\Test\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-test/src',
@@ -190,6 +196,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'Zend\\Mvc\\I18n\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-mvc-i18n/src',
+        ),
+        'Zend\\Mvc\\Console\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-mvc-console/src',
         ),
         'Zend\\Mvc\\' => 
         array (
