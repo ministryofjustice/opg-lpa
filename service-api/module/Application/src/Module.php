@@ -10,8 +10,10 @@ use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Model\Service\System\DynamoCronLock;
 use Aws\DynamoDb\DynamoDbClient;
+use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
 use DynamoQueue\Queue\Client as DynamoQueue;
+use GuzzleHttp\Client as GuzzleClient;
 use Interop\Container\ContainerInterface;
 use Opg\Lpa\Logger\Logger;
 use Zend\Authentication\AuthenticationService;
@@ -64,6 +66,16 @@ class Module
                     $dynamoDb = new DynamoDbClient($dynamoConfig['client']);
 
                     return new DynamoQueue($dynamoDb, $dynamoConfig['settings']);
+                },
+
+                'GuzzleClient' => function (ServiceLocatorInterface $sm) {
+                    return new GuzzleClient();
+                },
+
+                'SnsClient' => function (ServiceLocatorInterface $sm) {
+                    $config = $sm->get('Config')['log']['sns'];
+
+                    return new SnsClient($config['client']);
                 },
 
                 'Zend\Authentication\AuthenticationService' => function ($sm) {
