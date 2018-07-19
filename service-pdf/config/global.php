@@ -48,6 +48,7 @@ return [
             ],
         ],
         'password' => getenv('OPG_LPA_PDF_OWNER_PASSWORD') ?: 'default-password',
+        'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
     ],
 
     'strike_throughs' => [
