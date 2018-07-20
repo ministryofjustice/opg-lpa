@@ -56,7 +56,7 @@ class UsersController extends AbstractAuthController
 
     /**
      * @param $activationToken
-     * @return ApiProblem
+     * @return JsonModel|ApiProblem
      */
     private function activateAccount($activationToken)
     {
@@ -72,6 +72,8 @@ class UsersController extends AbstractAuthController
 
         // Return 204 - No Content
         $this->response->setStatusCode(204);
+
+        return new JsonModel();
     }
 
     /**

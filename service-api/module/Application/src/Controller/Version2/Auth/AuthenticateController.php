@@ -26,7 +26,7 @@ class AuthenticateController extends AbstractAuthController
      */
     public function authenticateAction()
     {
-        $data = $this->getRequest()->getPost();
+        $data = $this->getBodyContent();
 
         $updateToken = (isset($data['Update']) && $data['Update'] === 'false' ? false : true);
 
