@@ -1,0 +1,9 @@
+#!/bin/bash
+cd /app
+AUTO_CREATE="${OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE:-FALSE}"
+echo "Auto creating Dynamo DB tables (if enabled)" $AUTO_CREATE
+if [ $AUTO_CREATE = "TRUE" ]
+then
+    /sbin/setuser app vendor/bin/dynamo-queue create --endpoint ${OPG_LPA_COMMON_DYNAMODB_ENDPOINT} --region eu-west-1 --table ${OPG_LPA_COMMON_QUEUE_DYNAMODB_TABLE}
+fi
+exit 0
