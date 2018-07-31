@@ -47,6 +47,7 @@ return array(
             'settings' => [
                 'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
             ],
+            'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
         ],
 
         'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',',getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : array(),
@@ -71,6 +72,7 @@ return array(
                 'settings' => [
                     'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
                 ],
+                'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
             ],
 
         ], // lock
@@ -125,6 +127,7 @@ return array(
                     'before' => function(){ sleep(1); },
                 ]
             ],
+            'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
         ],
 
         'encryption' => [
