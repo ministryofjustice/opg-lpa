@@ -16,6 +16,7 @@ RUN mkdir -p /srv/opg-lpa-pdf2/application && \
     ln -s /app /srv/opg-lpa-pdf2/application/current
 
 ADD docker/my_init/* /etc/my_init.d/
+RUN chmod a+x /etc/my_init.d/*
 
 RUN mkdir /etc/service/opg-lpa-pdf2/
 ADD docker/confd /etc/confd
