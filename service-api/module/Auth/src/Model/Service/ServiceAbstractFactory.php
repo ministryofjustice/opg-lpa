@@ -22,7 +22,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         ],
         UserManagementService::class => [
             'setAuthLogCollection'   => AuthLogCollection::class,
-            'setRegistrationService' => RegistrationService::class,
         ],
     ];
 
