@@ -30,7 +30,7 @@
 
     <p>If you sign in the wrong order, you’ll need to print and sign the relevant parts of the LPA again.</p>
 
-    <p><strong class="bold-small">If you have paid online, the fee will be returned to you if OPG have not received your signed LPA within 40 days. You can still send the LPA to OPG after 40 days but you will be contacted to pay again if you’ve been refunded. If paying by cheque, post this to us with your signed LPA.</strong></p>
+    <p><strong class="bold-small">If you have paid online, the fee will be returned to you if OPG have not received your signed LPA by {{ lpa.completedAt|date_modify("+40 day")|date('d/m/Y') }}. You can still send the LPA to OPG after {{ lpa.completedAt|date_modify("+40 day")|date('d/m/Y') }} but you will be contacted to pay again if you’ve been refunded. If paying by cheque, post this to us with your signed LPA.</strong></p>
 
     <div class="panel-cta">
         <div class="panel-body">
