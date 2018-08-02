@@ -3,19 +3,18 @@
 namespace Auth\Model\Service;
 
 use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
+use Zend\Validator\EmailAddress as EmailAddressValidator;
+use Zend\Math\BigInteger\BigInteger;
 use DateTime;
 
 class UserManagementService extends AbstractService
 {
+    use PasswordValidatorTrait;
+
     /**
      * @var AuthLogCollection
      */
     private $authLogCollection;
-
-    /**
-     * @var RegistrationService
-     */
-    private $registrationService;
 
     /**
      * @param $userId
@@ -31,29 +30,6 @@ class UserManagementService extends AbstractService
         }
 
         return $user->toArray();
-    }
-
-    /**
-     * TODO - For now just proxy through to registration service
-     *
-     * @param $username
-     * @param $password
-     * @return array|string
-     */
-    public function create($username, $password)
-    {
-        return $this->registrationService->create($username, $password);
-    }
-
-    /**
-     * TODO - For now just proxy through to registration service
-     *
-     * @param $token
-     * @return bool|string
-     */
-    public function activate($token)
-    {
-        return $this->registrationService->activate($token);
     }
 
     /**
@@ -84,6 +60,74 @@ class UserManagementService extends AbstractService
     }
 
     /**
+     * @param $username
+     * @param $password
+     * @return array|string
+     */
+    public function create($username, $password)
+    {
+        $emailValidator = new EmailAddressValidator();
+
+        if (!$emailValidator->isValid($username)) {
+            return 'invalid-username';
+        }
+
+        //  Check the username isn't already used...
+        $user = $this->getAuthUserCollection()->getByUsername($username);
+
+        if (!is_null($user)) {
+            return 'username-already-exists';
+        }
+
+        if (!$this->isPasswordValid($password)) {
+            return 'invalid-password';
+        }
+
+        //  Create the account
+        //  We use a loop here to ensure we retry to create the account if there's
+        //  a clash with the userId or activation_token (despite this being extremely unlikely).
+        do {
+            // Create a 32 character user id and activation token.
+
+            $userId = bin2hex(openssl_random_pseudo_bytes(16));
+            $activationToken = bin2hex(openssl_random_pseudo_bytes(16));
+
+            // Use base62 for shorter tokens
+            $activationToken = BigInteger::factory('bcmath')->baseConvert($activationToken, 16, 62);
+
+            $created = (bool)$this->getAuthUserCollection()->create($userId, [
+                'identity' => $username,
+                'active' => false,
+                'activation_token' => $activationToken,
+                'password_hash' => password_hash($password, PASSWORD_DEFAULT),
+                'created' => new DateTime(),
+                'last_updated' => new DateTime(),
+                'failed_login_attempts' => 0,
+            ]);
+        } while (!$created);
+
+        return [
+            'userId' => $userId,
+            'activation_token' => $activationToken,
+        ];
+    }
+
+    /**
+     * @param $token
+     * @return bool|string
+     */
+    public function activate($token)
+    {
+        $result = $this->getAuthUserCollection()->activate($token);
+
+        if (is_null($result) || $result === false) {
+            return 'account-not-found';
+        }
+
+        return true;
+    }
+
+    /**
      * @param $userId
      * @param $reason
      * @return bool|string
@@ -96,18 +140,13 @@ class UserManagementService extends AbstractService
             return 'user-not-found';
         }
 
-        //-------------------------------------------
-        // Delete the user account
-
         $result = $this->getAuthUserCollection()->delete($userId);
 
         if ($result !== true) {
             return 'user-not-found';
         }
 
-        //-------------------------------------------
         // Record the account deletion in the log
-
         $details = [
             'identity_hash' => $this->hashIdentity($user->username()),
             'type' => 'account-deleted',
@@ -116,8 +155,6 @@ class UserManagementService extends AbstractService
         ];
 
         $this->authLogCollection->addLog($details);
-
-        //---
 
         return true;
     }
@@ -139,13 +176,5 @@ class UserManagementService extends AbstractService
     public function setAuthLogCollection(AuthLogCollection $authLogCollection)
     {
         $this->authLogCollection = $authLogCollection;
-    }
-
-    /**
-     * @param RegistrationService $registrationService
-     */
-    public function setRegistrationService(RegistrationService $registrationService)
-    {
-        $this->registrationService = $registrationService;
     }
 }
