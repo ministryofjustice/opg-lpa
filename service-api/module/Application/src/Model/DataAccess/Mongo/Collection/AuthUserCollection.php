@@ -10,7 +10,9 @@ use DateTime;
 
 class AuthUserCollection
 {
-
+    /**
+     * @var MongoCollection
+     */
     protected $collection;
 
     /**

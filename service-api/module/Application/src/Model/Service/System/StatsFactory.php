@@ -2,9 +2,10 @@
 
 namespace Application\Model\Service\System;
 
-use Application\Model\DataAccess\Mongo\CollectionFactory;
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
 use Interop\Container\ContainerInterface;
-use MongoDB\Collection;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 class StatsFactory implements FactoryInterface
@@ -17,13 +18,13 @@ class StatsFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var Collection $lpaCollection */
-        $lpaCollection = $container->get(CollectionFactory::class . '-api-lpa');
-        /** @var Collection $statsLpaCollection */
-        $statsLpaCollection = $container->get(CollectionFactory::class . '-api-stats-lpas');
-        /** @var Collection $whoCollection */
-        $whoCollection = $container->get(CollectionFactory::class . '-api-who');
+        /** @var ApiLpaCollection $apiLpaCollection */
+        $apiLpaCollection = $container->get(ApiLpaCollection::class);
+        /** @var ApiStatsLpasCollection $apiStatsLpasCollection */
+        $apiStatsLpasCollection = $container->get(ApiStatsLpasCollection::class);
+        /** @var ApiWhoCollection $apiWhoCollection */
+        $apiWhoCollection = $container->get(ApiWhoCollection::class);
 
-        return new Stats($lpaCollection, $statsLpaCollection, $whoCollection);
+        return new Stats($apiLpaCollection, $apiStatsLpasCollection, $apiWhoCollection);
     }
 }

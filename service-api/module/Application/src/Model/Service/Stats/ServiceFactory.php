@@ -2,10 +2,9 @@
 
 namespace Application\Model\Service\Stats;
 
+use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
-use Application\Model\DataAccess\Mongo\CollectionFactory;
 use Interop\Container\ContainerInterface;
-use MongoDB\Collection;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 class ServiceFactory implements FactoryInterface
@@ -18,11 +17,11 @@ class ServiceFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var Collection $lpaCollection */
-        $collection = $container->get(CollectionFactory::class . '-api-stats-lpas');
+        /** @var ApiStatsLpasCollection $apiStatsLpasCollection */
+        $apiStatsLpasCollection = $container->get(ApiStatsLpasCollection::class);
         /** @var AuthUserCollection $authUserCollection */
         $authUserCollection = $container->get(AuthUserCollection::class);
 
-        return new Service($collection, $authUserCollection);
+        return new Service($apiStatsLpasCollection, $authUserCollection);
     }
 }

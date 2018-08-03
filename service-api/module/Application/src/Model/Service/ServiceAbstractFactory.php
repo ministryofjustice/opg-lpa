@@ -2,8 +2,10 @@
 
 namespace Application\Model\Service;
 
-use Application\Model\DataAccess\Mongo\CollectionFactory;
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Library\ApiProblem\ApiProblemException;
+use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Auth\Model\Service\UserManagementService;
 use Interop\Container\ContainerInterface;
@@ -33,12 +35,12 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setApplicationsService' => ApplicationsService::class,
         ],
         Users\Service::class => [
-            'setApiUserCollection'     => CollectionFactory::class . '-api-user',
+            'setApiUserCollection'     => ApiUserCollection::class,
             'setApplicationsService'   => ApplicationsService::class,
             'setUserManagementService' => UserManagementService::class,
         ],
         WhoAreYou\Service::class => [
-            'setApiWhoCollection' => CollectionFactory::class . '-api-who',
+            'setApiWhoCollection' => ApiWhoCollection::class,
         ],
     ];
 
@@ -71,9 +73,9 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             throw new Exception(sprintf('Abstract factory %s can not create the requested service %s', get_class($this), $requestedName));
         }
 
-        $lpaCollection = $container->get(CollectionFactory::class . '-api-lpa');
+        $apiLpaCollection = $container->get(ApiLpaCollection::class);
 
-        $service = new $requestedName($lpaCollection);
+        $service = new $requestedName($apiLpaCollection);
 
         //  If required load any additional services into the service
         if (array_key_exists($requestedName, $this->additionalServices) && is_array($this->additionalServices[$requestedName])) {

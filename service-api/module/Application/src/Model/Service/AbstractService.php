@@ -2,11 +2,11 @@
 
 namespace Application\Model\Service;
 
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\DateTime;
 use Application\Model\Service\Lock\LockedException;
 use MongoDB\BSON\UTCDateTime;
-use MongoDB\Collection;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Logger\LoggerTrait;
 use RuntimeException;
@@ -16,18 +16,18 @@ abstract class AbstractService
     use LoggerTrait;
 
     /**
-     * @var Collection
+     * @var ApiLpaCollection
      */
-    protected $lpaCollection = null;
+    protected $apiLpaCollection = null;
 
     /**
      * AbstractService constructor
      *
-     * @param Collection $lpaCollection
+     * @param ApiLpaCollection $apiLpaCollection
      */
-    public function __construct(Collection $lpaCollection)
+    public function __construct(ApiLpaCollection $apiLpaCollection)
     {
-        $this->lpaCollection = $lpaCollection;
+        $this->apiLpaCollection = $apiLpaCollection;
     }
 
     /**
@@ -36,7 +36,7 @@ abstract class AbstractService
      */
     protected function getLpa($lpaId)
     {
-        $result = $this->lpaCollection->findOne([
+        $result = $this->apiLpaCollection->findOne([
             '_id' => (int) $lpaId
         ]);
 
@@ -68,7 +68,7 @@ abstract class AbstractService
         }
 
         // Check LPA in database isn't locked...
-        $locked = ($this->lpaCollection->count([
+        $locked = ($this->apiLpaCollection->count([
             '_id' => $lpa->id,
             'locked' => true,
         ], [
@@ -159,7 +159,7 @@ abstract class AbstractService
 
         // updatedAt is included in the query so that data isn't overwritten
         // if the Document has changed since this process loaded it.
-        $result = $this->lpaCollection->updateOne(
+        $result = $this->apiLpaCollection->updateOne(
             ['_id' => $lpa->id, 'updatedAt' => $lastUpdated ],
             ['$set' => array_merge($lpa->toArray(new DateCallback()), ['search' => $searchField])],
             ['upsert' => false, 'multiple' => false]

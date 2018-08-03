@@ -2,18 +2,18 @@
 
 namespace Application\Model\Service\WhoAreYou;
 
+use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
 use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\AbstractService;
-use MongoDB\Collection;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use RuntimeException;
 
 class Service extends AbstractService
 {
     /**
-     * @var Collection
+     * @var ApiWhoCollection
      */
     private $apiWhoCollection;
 
@@ -53,9 +53,9 @@ class Service extends AbstractService
     }
 
     /**
-     * @param Collection $apiWhoCollection
+     * @param ApiWhoCollection $apiWhoCollection
      */
-    public function setApiWhoCollection(Collection $apiWhoCollection)
+    public function setApiWhoCollection(ApiWhoCollection $apiWhoCollection)
     {
         $this->apiWhoCollection = $apiWhoCollection;
     }

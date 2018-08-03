@@ -2,13 +2,14 @@
 
 namespace Application\Model\Service\AccountCleanup;
 
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use Auth\Model\Service\UserManagementService;
 use Aws\Sns\SnsClient;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
 use MongoDB\BSON\UTCDateTime;
-use MongoDB\Collection;
 use Opg\Lpa\Logger\LoggerTrait;
 use DateTime;
 use Exception;
@@ -46,12 +47,12 @@ class Service
     private $config;
 
     /**
-     * @var Collection
+     * @var ApiLpaCollection
      */
     private $apiLpaCollection;
 
     /**
-     * @var Collection
+     * @var ApiUserCollection
      */
     private $apiUserCollection;
 
@@ -65,11 +66,11 @@ class Service
      * @param SnsClient $snsClient
      * @param GuzzleClient $guzzleClient
      * @param array $config
-     * @param Collection $apiLpaCollection
-     * @param Collection $apiUserCollection
+     * @param ApiLpaCollection $apiLpaCollection
+     * @param ApiUserCollection $apiUserCollection
      * @param AuthUserCollection $authUserCollection
      */
-    public function __construct(UserManagementService $userManagementService, SnsClient $snsClient, GuzzleClient $guzzleClient, array $config, Collection $apiLpaCollection, Collection $apiUserCollection, AuthUserCollection $authUserCollection)
+    public function __construct(UserManagementService $userManagementService, SnsClient $snsClient, GuzzleClient $guzzleClient, array $config, ApiLpaCollection $apiLpaCollection, ApiUserCollection $apiUserCollection, AuthUserCollection $authUserCollection)
     {
         $this->userManagementService = $userManagementService;
         $this->snsClient = $snsClient;

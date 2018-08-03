@@ -2,16 +2,16 @@
 
 namespace Application\Model\Service\Stats;
 
+use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
-use MongoDB\Collection;
 use MongoDB\Driver\ReadPreference;
 
 class Service
 {
     /**
-     * @var Collection
+     * @var ApiStatsLpasCollection
      */
-    protected $collection = null;
+    protected $apiStatsLpasCollection = null;
 
     /**
      * @var AuthUserCollection
@@ -19,12 +19,12 @@ class Service
     protected $authUserCollection = null;
 
     /**
-     * @param Collection $collection
+     * @param ApiStatsLpasCollection $apiStatsLpasCollection
      * @param AuthUserCollection $authUserCollection
      */
-    public function __construct(Collection $collection, AuthUserCollection $authUserCollection)
+    public function __construct(ApiStatsLpasCollection $apiStatsLpasCollection, AuthUserCollection $authUserCollection)
     {
-        $this->collection = $collection;
+        $this->apiStatsLpasCollection = $apiStatsLpasCollection;
         $this->authUserCollection = $authUserCollection;
     }
 
@@ -40,7 +40,7 @@ class Service
         ];
 
         // Stats can (ideally) be pulled from a secondary.
-        $stats = $this->collection->findOne([], $readPreference);
+        $stats = $this->apiStatsLpasCollection->findOne([], $readPreference);
 
         if (!isset($stats['generated']) || !is_string($stats['generated'])) {
             return [

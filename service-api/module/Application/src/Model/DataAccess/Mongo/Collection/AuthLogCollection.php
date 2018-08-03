@@ -7,8 +7,14 @@ use MongoDB\Collection as MongoCollection;
 
 class AuthLogCollection
 {
+    /**
+     * @var MongoCollection
+     */
     protected $collection;
 
+    /**
+     * @param MongoCollection $collection
+     */
     public function __construct(MongoCollection $collection)
     {
         $this->collection = $collection;

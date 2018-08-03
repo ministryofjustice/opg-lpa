@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\Users;
 
+use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
@@ -10,13 +11,12 @@ use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
 use Auth\Model\Service\UserManagementService;
 use MongoDB\BSON\UTCDateTime;
-use MongoDB\Collection;
 use Opg\Lpa\DataModel\User\User;
 
 class Service extends AbstractService
 {
     /**
-     * @var Collection
+     * @var ApiUserCollection
      */
     private $apiUserCollection;
 
@@ -160,9 +160,9 @@ class Service extends AbstractService
     }
 
     /**
-     * @param Collection $apiUserCollection
+     * @param ApiUserCollection $apiUserCollection
      */
-    public function setApiUserCollection(Collection $apiUserCollection)
+    public function setApiUserCollection(ApiUserCollection $apiUserCollection)
     {
         $this->apiUserCollection = $apiUserCollection;
     }

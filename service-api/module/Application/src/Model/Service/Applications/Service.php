@@ -38,7 +38,7 @@ class Service extends AbstractService
             $id = $csprng->GetInt(1000000, 99999999999);
 
             // Check if the id already exists. We're looking for a value of null.
-            $exists = $this->lpaCollection->findOne([
+            $exists = $this->apiLpaCollection->findOne([
                 '_id' => $id
             ], [
                 '_id' => true
@@ -65,7 +65,7 @@ class Service extends AbstractService
             throw new RuntimeException('A malformed LPA object was created');
         }
 
-        $this->lpaCollection->insertOne($lpa->toArray(new DateCallback()));
+        $this->apiLpaCollection->insertOne($lpa->toArray(new DateCallback()));
 
         $entity = new DataModelEntity($lpa);
 
@@ -122,7 +122,7 @@ class Service extends AbstractService
     public function fetch($id, $userId)
     {
         // Note: user has to match
-        $result = $this->lpaCollection->findOne([
+        $result = $this->apiLpaCollection->findOne([
             '_id' => (int) $id,
             'user' => $userId
         ]);
@@ -176,7 +176,7 @@ class Service extends AbstractService
             }
         }
 
-        $count = $this->lpaCollection->count($filter);
+        $count = $this->apiLpaCollection->count($filter);
 
         // If there are no records, just return an empty paginator...
         if ($count == 0) {
@@ -184,10 +184,10 @@ class Service extends AbstractService
         }
 
         // Map the results into a Zend Paginator, lazely converting them to LPA instances as we go...
-        $lpaCollection = $this->lpaCollection;
+        $apiLpaCollection = $this->apiLpaCollection;
 
         $callback = new PaginatorCallback(
-            function ($offset, $itemCountPerPage) use ($lpaCollection, $filter) {
+            function ($offset, $itemCountPerPage) use ($apiLpaCollection, $filter) {
                 // getItems callback
                 $options = [
                     'sort' => [
@@ -197,7 +197,7 @@ class Service extends AbstractService
                     'limit' => $itemCountPerPage
                 ];
 
-                $cursor = $lpaCollection->find($filter, $options);
+                $cursor = $apiLpaCollection->find($filter, $options);
                 $lpas = $cursor->toArray();
 
                 // Convert the results to instances of the LPA object..
@@ -230,7 +230,7 @@ class Service extends AbstractService
             'user' => $userId,
         ];
 
-        $result = $this->lpaCollection->findOne($filter, ['projection' => ['_id' => true]]);
+        $result = $this->apiLpaCollection->findOne($filter, ['projection' => ['_id' => true]]);
 
         if (is_null($result)) {
             return new ApiProblem(404, 'Document not found');
@@ -240,7 +240,7 @@ class Service extends AbstractService
         //  So we just strip the document down to '_id' and 'updatedAt'.
         $result['updatedAt'] = new UTCDateTime();
 
-        $this->lpaCollection->replaceOne($filter, $result);
+        $this->apiLpaCollection->replaceOne($filter, $result);
 
         return true;
     }
@@ -253,7 +253,7 @@ class Service extends AbstractService
     {
         $query = ['user' => $userId];
 
-        $lpas = $this->lpaCollection->find($query, ['_id' => true]);
+        $lpas = $this->apiLpaCollection->find($query, ['_id' => true]);
 
         foreach ($lpas as $lpa) {
             $this->delete($lpa['_id'], $userId);

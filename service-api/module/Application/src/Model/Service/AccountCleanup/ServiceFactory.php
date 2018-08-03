@@ -2,13 +2,13 @@
 
 namespace Application\Model\Service\AccountCleanup;
 
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
-use Application\Model\DataAccess\Mongo\CollectionFactory;
 use Auth\Model\Service\UserManagementService;
 use Aws\Sns\SnsClient;
 use GuzzleHttp\Client as GuzzleClient;
 use Interop\Container\ContainerInterface;
-use MongoDB\Collection;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 class ServiceFactory implements FactoryInterface
@@ -29,10 +29,10 @@ class ServiceFactory implements FactoryInterface
         $guzzleClient = $container->get('GuzzleClient');
         /** @var array $config */
         $config = $container->get('config');
-        /** @var Collection $apiLpaCollection */
-        $apiLpaCollection = $container->get(CollectionFactory::class . '-api-lpa');
-        /** @var Collection $apiUserCollection */
-        $apiUserCollection = $container->get(CollectionFactory::class . '-api-user');
+        /** @var ApiLpaCollection $apiLpaCollection */
+        $apiLpaCollection = $container->get(ApiLpaCollection::class);
+        /** @var ApiUserCollection $apiUserCollection */
+        $apiUserCollection = $container->get(ApiUserCollection::class);
         /** @var AuthUserCollection $authUserCollection */
         $authUserCollection = $container->get(AuthUserCollection::class);
 
