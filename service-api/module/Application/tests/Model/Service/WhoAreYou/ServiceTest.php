@@ -104,7 +104,7 @@ class ServiceTest extends AbstractServiceTest
         $lpa->setWhoAreYouAnswered(false);
 
         $whoCollection = Mockery::mock(ApiWhoCollection::class);
-        $whoCollection->shouldReceive('insertOne')->once();
+        $whoCollection->shouldReceive('insert')->once();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder

@@ -6,7 +6,6 @@ use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
 use MongoDB\BSON\Javascript as MongoCode;
-use MongoDB\BSON\ObjectID as MongoId;
 use MongoDB\BSON\Regex;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use MongoDB\Driver\Command;
@@ -55,7 +54,8 @@ class Stats
      * @param ApiStatsLpasCollection $apiStatsLpasCollection
      * @param ApiWhoCollection $apiWhoCollection
      */
-    public function __construct(ApiLpaCollection $apiLpaCollection, ApiStatsLpasCollection $apiStatsLpasCollection, ApiWhoCollection $apiWhoCollection) {
+    public function __construct(ApiLpaCollection $apiLpaCollection, ApiStatsLpasCollection $apiStatsLpasCollection, ApiWhoCollection $apiWhoCollection)
+    {
         $this->apiLpaCollection = $apiLpaCollection;
         $this->apiStatsLpasCollection = $apiStatsLpasCollection;
         $this->apiWhoCollection = $apiWhoCollection;
@@ -380,12 +380,12 @@ class Stats
         for ($i = 0; $i < 4; $i++) {
             $ts = strtotime("-{$i} months", $firstDayOfThisMonth);
 
-            $results['by-month'][date('Y-m', $ts)] = $this->getWhoAreYouStatsForTimeRange($ts, $lastTimestamp);
+            $results['by-month'][date('Y-m', $ts)] = $this->apiWhoCollection->getStatsForTimeRange($ts, $lastTimestamp, WhoAreYou::options());
 
             $lastTimestamp = $ts;
         }
 
-        $results['all'] = $this->getWhoAreYouStatsForTimeRange(0, time());
+        $results['all'] = $this->apiWhoCollection->getStatsForTimeRange(0, time(), WhoAreYou::options());
 
         ksort($results['by-month']);
 
@@ -393,51 +393,6 @@ class Stats
         $results['generationTimeInMs'] = round((microtime(true) - $startGeneration) * 1000);
 
         return $results;
-    }
-
-    /**
-     * Return the WhoAreYou values for a specific date range.
-     *
-     * @param $start
-     * @param $end
-     * @return array
-     */
-    private function getWhoAreYouStatsForTimeRange($start, $end)
-    {
-        // Stats can (ideally) be processed on a secondary.
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
-        // Convert the timestamps to MongoIds
-        $start = str_pad(dechex($start), 8, "0", STR_PAD_LEFT);
-        $start = new MongoId($start."0000000000000000");
-
-        $end = str_pad(dechex($end), 8, "0", STR_PAD_LEFT);
-        $end = new MongoId($end."0000000000000000");
-
-        $range = [
-            '$gte' => $start,
-            '$lte' => $end
-        ];
-
-        $result = [];
-
-        // Base the groupings on the Model's data.
-        $options = WhoAreYou::options();
-
-        // For each top level 'who' level...
-        foreach ($options as $topLevel => $details) {
-            // Get the count for all top level...
-            $result[$topLevel] = [
-                'count' => $this->apiWhoCollection->count([
-                    'who' => $topLevel,
-                    '_id' => $range
-                ], $readPreference),
-            ];
-        }
-
-        return $result;
     }
 
     /**

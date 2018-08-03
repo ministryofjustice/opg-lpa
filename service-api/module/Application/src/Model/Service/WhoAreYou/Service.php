@@ -3,7 +3,6 @@
 namespace Application\Model\Service\WhoAreYou;
 
 use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
-use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\AbstractService;
@@ -47,7 +46,7 @@ class Service extends AbstractService
         // We update the LPA first as there's a chance a RuntimeException will be thrown if there's an 'updatedAt' mismatch.
         $this->updateLpa($lpa);
 
-        $this->apiWhoCollection->insertOne($answer->toArray(new DateCallback()));
+        $this->apiWhoCollection->insert($answer);
 
         return new Entity($lpa->whoAreYouAnswered);
     }
