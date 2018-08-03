@@ -7,8 +7,12 @@ use MongoDB\Collection as MongoCollection;
 use MongoDB\Driver\Exception\Exception as MongoException;
 use MongoDB\Driver\ReadPreference;
 use DateTime;
+use Generator;
 
-class AuthUserCollection
+use Application\Model\DataAccess;
+use Application\Model\DataAccess\AuthUserInterface;
+
+class AuthUserCollection implements DataAccess\AuthUserRepositoryInterface
 {
 
     protected $collection;
@@ -27,7 +31,7 @@ class AuthUserCollection
      * @param $username
      * @return User|null
      */
-    public function getByUsername($username)
+    public function getByUsername($username) : ?AuthUserInterface
     {
         $data = $this->collection->findOne(['identity' => $username]);
 
@@ -42,7 +46,7 @@ class AuthUserCollection
      * @param $id
      * @return User|null
      */
-    public function getById($id)
+    public function getById($id) : ?AuthUserInterface
     {
         $data = $this->collection->findOne(['_id' => $id]);
 
@@ -57,7 +61,7 @@ class AuthUserCollection
      * @param $token
      * @return User|null
      */
-    public function getByAuthToken($token)
+    public function getByAuthToken($token) : ?AuthUserInterface
     {
         $data = $this->collection->findOne(['auth_token.token' => $token]);
 
@@ -72,7 +76,7 @@ class AuthUserCollection
      * @param $token
      * @return User|null
      */
-    public function getByResetToken($token)
+    public function getByResetToken($token) : ?AuthUserInterface
     {
         $data = $this->collection->findOne(
             [
@@ -92,9 +96,9 @@ class AuthUserCollection
 
     /**
      * @param $id
-     * @return \MongoDB\UpdateResult
+     * @return bool
      */
-    public function updateLastLoginTime($id)
+    public function updateLastLoginTime($id) : bool
     {
         return $this->collection->updateOne([
             '_id' => $id
@@ -108,16 +112,16 @@ class AuthUserCollection
         ], [
             'upsert' => false,
             'multiple' => false
-        ]);
+        ])->getModifiedCount() == 1;
     }
 
     /**
      * Resets the user's failed login counter to zero.
      *
      * @param $id
-     * @return \MongoDB\UpdateResult
+     * @return bool
      */
-    public function resetFailedLoginCounter($id)
+    public function resetFailedLoginCounter($id) : bool
     {
         return $this->collection->updateOne([
             '_id' => $id
@@ -128,16 +132,16 @@ class AuthUserCollection
         ], [
             'upsert' => false,
             'multiple' => false
-        ]);
+        ])->getModifiedCount() == 1;
     }
 
     /**
      * Increments the user's failed login counter by 1.
      *
      * @param $id
-     * @return \MongoDB\UpdateResult
+     * @return bool
      */
-    public function incrementFailedLoginCounter($id)
+    public function incrementFailedLoginCounter($id) : bool
     {
         return $this->collection->updateOne([
             '_id' => $id
@@ -151,7 +155,7 @@ class AuthUserCollection
         ], [
             'upsert' => false,
             'multiple' => false
-        ]);
+        ])->getModifiedCount() == 1;
     }
 
     /**
@@ -161,7 +165,7 @@ class AuthUserCollection
      * @param array $details
      * @return bool
      */
-    public function create($id, array $details)
+    public function create($id, array $details) : bool
     {
         // Map DateTimes to MongoDates
         $details = array_map(function ($v) {
@@ -189,7 +193,7 @@ class AuthUserCollection
      * @param $id
      * @return bool|null
      */
-    public function delete($id)
+    public function delete($id) : bool
     {
         $filter = ['_id' => $id];
         $data = $this->collection->findOne($filter);
@@ -214,7 +218,7 @@ class AuthUserCollection
      * @param $token
      * @return bool|null
      */
-    public function activate($token)
+    public function activate($token) : bool
     {
         // Check the token maps to a user...
         $user = $this->collection->findOne(['activation_token' => $token]);
@@ -250,7 +254,7 @@ class AuthUserCollection
      * @param $passwordHash
      * @return bool
      */
-    public function setNewPassword($userId, $passwordHash)
+    public function setNewPassword($userId, $passwordHash) : bool
     {
         $result = $this->collection->updateOne(
             ['_id' => $userId],
@@ -277,7 +281,7 @@ class AuthUserCollection
      * @param $token
      * @return bool
      */
-    public function setAuthToken($userId, DateTime $expires, $token)
+    public function setAuthToken($userId, DateTime $expires, $token) : bool
     {
         return $this->modifyAuthToken($userId, $expires, [
             'auth_token.createdAt' => new MongoDate(),
@@ -292,7 +296,7 @@ class AuthUserCollection
      * @param DateTime $expires
      * @return bool
      */
-    public function extendAuthToken($userId, DateTime $expires)
+    public function extendAuthToken($userId, DateTime $expires) : bool
     {
         return $this->modifyAuthToken($userId, $expires);
     }
@@ -306,7 +310,7 @@ class AuthUserCollection
      * @param array $set
      * @return bool
      */
-    private function modifyAuthToken($userId, DateTime $expires, array $set = array())
+    private function modifyAuthToken($userId, DateTime $expires, array $set = array()) : bool
     {
         $set = $set + [
             'auth_token.updatedAt' => new MongoDate(),
@@ -331,9 +335,9 @@ class AuthUserCollection
     /**
      * @param $id
      * @param array $token
-     * @return \MongoDB\UpdateResult
+     * @return bool
      */
-    public function addPasswordResetToken($id, array $token)
+    public function addPasswordResetToken($id, array $token) : bool
     {
         // Map DateTimes to MongoDates
         $token = array_map(function ($v) {
@@ -344,20 +348,20 @@ class AuthUserCollection
             ['_id' => $id],
             ['$set' => ['password_reset_token' => $token]],
             ['upsert' => false, 'multiple' => false]
-        );
+        )->getModifiedCount() == 1;
     }
 
     /**
      * @param $token
      * @param $passwordHash
-     * @return bool|string
+     * @return DataAccess\AuthUpdatePasswordUsingTokenError
      */
-    public function updatePasswordUsingToken($token, $passwordHash)
+    public function updatePasswordUsingToken($token, $passwordHash) : DataAccess\AuthUpdatePasswordUsingTokenError
     {
         $user = $this->getByResetToken($token);
 
         if (!$user instanceof User) {
-            return 'invalid-token';
+            return new DataAccess\AuthUpdatePasswordUsingTokenError( 'invalid-token');
         }
 
         //---
@@ -377,16 +381,21 @@ class AuthUserCollection
             ['upsert' => false, 'multiple' => false]
         );
 
-        return ($result->getModifiedCount() == 1);
+        if ($result->getModifiedCount() != 1) {
+            return new DataAccess\AuthUpdatePasswordUsingTokenError('nothing-modified');
+        }
+
+        // All went well; no error to return.
+        return null;
     }
 
     /**
      * @param $id
      * @param array $token
      * @param $newEmail
-     * @return \MongoDB\UpdateResult
+     * @return bool
      */
-    public function addEmailUpdateTokenAndNewEmail($id, array $token, $newEmail)
+    public function addEmailUpdateTokenAndNewEmail($id, array $token, $newEmail) : bool
     {
         // Map DateTimes to MongoDates
         $token = array_map(function ($v) {
@@ -405,14 +414,14 @@ class AuthUserCollection
         ], [
             'upsert' => false,
             'multiple' => false
-        ]);
+        ])->getModifiedCount() == 1;
     }
 
     /**
      * @param $token
-     * @return User|bool|string
+     * @return DataAccess\AuthUpdateEmailUsingTokenResponse
      */
-    public function updateEmailUsingToken($token)
+    public function updateEmailUsingToken($token) : DataAccess\AuthUpdateEmailUsingTokenResponse
     {
         $user = $this->collection->findOne(
             [
@@ -422,7 +431,7 @@ class AuthUserCollection
         );
 
         if (!is_array($user)) {
-            return 'invalid-token';
+            return new DataAccess\AuthUpdateEmailUsingTokenResponse('invalid-token');
         }
 
         $newEmail = $user['email_update_request']['email'];
@@ -434,7 +443,7 @@ class AuthUserCollection
         );
 
         if (is_array($clashUser)) {
-            return 'username-already-exists';
+            return new DataAccess\AuthUpdateEmailUsingTokenResponse('username-already-exists');
         }
 
         //---
@@ -453,7 +462,12 @@ class AuthUserCollection
             ['upsert' => false, 'multiple' => false]
         );
 
-        return ($result->getModifiedCount() == 1) ? new User($user) : false;
+        if ($result->getModifiedCount() != 1) {
+            return new DataAccess\AuthUpdateEmailUsingTokenResponse('nothing-modified');
+        }
+
+        // Returns the User, wrapped in a Response object.
+        return new DataAccess\AuthUpdateEmailUsingTokenResponse(new User($user));
     }
 
     /**
@@ -463,9 +477,9 @@ class AuthUserCollection
      *
      * @param DateTime $since
      * @param null $excludeFlag
-     * @return \Generator
+     * @return Generator
      */
-    public function getAccountsInactiveSince(DateTime $since, $excludeFlag = null)
+    public function getAccountsInactiveSince(DateTime $since, $excludeFlag = null) : Generator
     {
         $query = [
             '$or' => [
@@ -494,7 +508,7 @@ class AuthUserCollection
      * @param $flag
      * @return bool
      */
-    public function setInactivityFlag($userId, $flag)
+    public function setInactivityFlag($userId, $flag) : bool
     {
         $updateResult = $this->collection->updateOne(
             ['_id' => $userId],
@@ -509,9 +523,9 @@ class AuthUserCollection
      * Returns all accounts create before date $olderThan and that have not been activated.
      *
      * @param DateTime $olderThan
-     * @return \Generator
+     * @return Generator
      */
-    public function getAccountsUnactivatedOlderThan(DateTime $olderThan)
+    public function getAccountsUnactivatedOlderThan(DateTime $olderThan) : Generator
     {
         $users = $this->collection->find([
             'active' => ['$ne' => true],
@@ -528,7 +542,7 @@ class AuthUserCollection
      *
      * @return int Account count
      */
-    public function countAccounts()
+    public function countAccounts() : int
     {
         // All accounts that have not been deleted...
         $criteria = ['identity' => ['$exists' => true]];
@@ -545,7 +559,7 @@ class AuthUserCollection
      * @param DateTime|null $since only include accounts activated $since
      * @return int Account count
      */
-    public function countActivatedAccounts(DateTime $since = null)
+    public function countActivatedAccounts(DateTime $since = null) : int
     {
         // All accounts that have not been deleted...
         $criteria = ['identity' => ['$exists' => true]];
@@ -571,7 +585,7 @@ class AuthUserCollection
      *
      * @return int Account count
      */
-    public function countDeletedAccounts()
+    public function countDeletedAccounts() : int
     {
         // All accounts that HAVE been deleted...
         $criteria = ['identity' => ['$exists' => false]];

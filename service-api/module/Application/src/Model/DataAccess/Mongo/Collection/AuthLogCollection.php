@@ -5,7 +5,9 @@ namespace Application\Model\DataAccess\Mongo\Collection;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use MongoDB\Collection as MongoCollection;
 
-class AuthLogCollection
+use Application\Model\DataAccess\AuthLogRepositoryInterface;
+
+class AuthLogCollection implements AuthLogRepositoryInterface
 {
     protected $collection;
 
@@ -20,7 +22,7 @@ class AuthLogCollection
      * @param array $details
      * @return bool
      */
-    public function addLog(array $details)
+    public function addLog(array $details) : bool
     {
         // Map DateTimes to MongoDates
         $details = array_map(function ($v) {
@@ -38,7 +40,7 @@ class AuthLogCollection
      * @param string $identityHash
      * @return array
      */
-    public function getLogByIdentityHash(string $identityHash)
+    public function getLogByIdentityHash(string $identityHash) : ?array
     {
         $data = $this->collection->findOne([
             'identity_hash' => $identityHash
