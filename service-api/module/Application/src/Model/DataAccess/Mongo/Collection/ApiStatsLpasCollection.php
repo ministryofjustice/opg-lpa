@@ -3,6 +3,7 @@
 namespace Application\Model\DataAccess\Mongo\Collection;
 
 use MongoDB\Collection as MongoCollection;
+use MongoDB\Driver\ReadPreference;
 
 class ApiStatsLpasCollection
 {
@@ -20,19 +21,31 @@ class ApiStatsLpasCollection
     }
 
     /**
-     * Proxy requests to collection
-     * TODO - To be removed....
-     *
-     * @param $name
-     * @param $arguments
-     * @return mixed
+     * @param $stats
      */
-    public function __call($name, $arguments)
+    public function insert($stats)
     {
-        if (is_callable([$this->collection, $name ])) {
-            return call_user_func_array([$this->collection, $name], $arguments);
-        }
+        $this->collection->insertOne($stats);
+    }
 
-        throw new \InvalidArgumentException("Unknown method $name called");
+    /**
+     * @return array|null|object
+     */
+    public function getStats()
+    {
+        // Return all the cached data.// Stats can (ideally) be processed on a secondary.
+        $readPreference = [
+            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
+        ];
+
+        return $this->collection->findOne([], $readPreference);
+    }
+
+    /**
+     * Empty the collection
+     */
+    public function delete()
+    {
+        $this->collection->deleteMany([]);
     }
 }

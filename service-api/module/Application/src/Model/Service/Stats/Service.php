@@ -4,7 +4,6 @@ namespace Application\Model\Service\Stats;
 
 use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
-use MongoDB\Driver\ReadPreference;
 
 class Service
 {
@@ -34,13 +33,7 @@ class Service
      */
     public function fetch($type)
     {
-        // Return all the cached data.// Stats can (ideally) be processed on a secondary.
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
-        // Stats can (ideally) be pulled from a secondary.
-        $stats = $this->apiStatsLpasCollection->findOne([], $readPreference);
+        $stats = $this->apiStatsLpasCollection->getStats();
 
         if (!isset($stats['generated']) || !is_string($stats['generated'])) {
             return [

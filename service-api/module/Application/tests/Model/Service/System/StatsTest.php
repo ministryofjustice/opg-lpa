@@ -29,8 +29,8 @@ class StatsTest extends TestCase
         /** @var ApiLpaCollection $apiLpaCollection */
 
         $statsLpasCollection = Mockery::mock(ApiStatsLpasCollection::class);
-        $statsLpasCollection->shouldReceive('deleteMany')->withArgs([[]])->once();
-        $statsLpasCollection->shouldReceive('insertOne')->withArgs(function ($stats) {
+        $statsLpasCollection->shouldReceive('delete')->once();
+        $statsLpasCollection->shouldReceive('insert')->withArgs(function ($stats) {
             return isset($stats['generated'])
                 && isset($stats['lpas'])
                 && isset($stats['lpasPerUser'])

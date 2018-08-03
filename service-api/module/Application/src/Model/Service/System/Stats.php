@@ -55,11 +55,7 @@ class Stats
      * @param ApiStatsLpasCollection $apiStatsLpasCollection
      * @param ApiWhoCollection $apiWhoCollection
      */
-    public function __construct(
-        ApiLpaCollection $apiLpaCollection,
-        ApiStatsLpasCollection $apiStatsLpasCollection,
-        ApiWhoCollection $apiWhoCollection
-    ) {
+    public function __construct(ApiLpaCollection $apiLpaCollection, ApiStatsLpasCollection $apiStatsLpasCollection, ApiWhoCollection $apiWhoCollection) {
         $this->apiLpaCollection = $apiLpaCollection;
         $this->apiStatsLpasCollection = $apiStatsLpasCollection;
         $this->apiWhoCollection = $apiWhoCollection;
@@ -132,10 +128,10 @@ class Stats
         // Save the results
 
         // Empty the collection
-        $this->apiStatsLpasCollection->deleteMany([]);
+        $this->apiStatsLpasCollection->delete();
 
         // Add the new data
-        $this->apiStatsLpasCollection->insertOne($stats);
+        $this->apiStatsLpasCollection->insert($stats);
 
         //---
 

@@ -8,7 +8,6 @@ use Application\Model\Service\Stats\Service;
 use DateTime;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use MongoDB\Driver\ReadPreference;
 
 class ServiceTest extends MockeryTestCase
 {
@@ -17,9 +16,7 @@ class ServiceTest extends MockeryTestCase
         $generated = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
 
         $statsLpasCollection = Mockery::mock(ApiStatsLpasCollection::class);
-        $statsLpasCollection->shouldReceive('setReadPreference');
-        $statsLpasCollection->shouldReceive('findOne')
-            ->withArgs([[], ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)]])
+        $statsLpasCollection->shouldReceive('getStats')
             ->andReturn(['generated' => $generated]);
 
         $authUserCollection = Mockery::mock(AuthUserCollection::class);
