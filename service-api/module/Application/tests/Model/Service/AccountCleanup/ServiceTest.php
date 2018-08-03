@@ -152,7 +152,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->apiLpaCollection->shouldReceive('find')->withArgs([['user' => 1]])->andReturn([]);
 
-        $this->apiUserCollection->shouldReceive('deleteOne')->withArgs([['_id' => 1]])->andReturnNull();
+        $this->apiUserCollection->shouldReceive('deleteById')->withArgs([1])->andReturnNull();
 
         $result = $this->service->cleanup();
 
@@ -170,7 +170,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->apiLpaCollection->shouldReceive('find')->withArgs([['user' => 1]])->andReturn([]);
 
-        $this->apiUserCollection->shouldReceive('deleteOne')->withArgs([['_id' => 1]])->andReturnNull();
+        $this->apiUserCollection->shouldReceive('deleteById')->withArgs([1])->andReturnNull();
 
         $result = $this->service->cleanup();
 

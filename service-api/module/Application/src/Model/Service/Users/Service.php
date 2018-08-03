@@ -3,14 +3,12 @@
 namespace Application\Model\Service\Users;
 
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
-use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
 use Auth\Model\Service\UserManagementService;
-use MongoDB\BSON\UTCDateTime;
 use Opg\Lpa\DataModel\User\User;
 
 class Service extends AbstractService
@@ -37,9 +35,7 @@ class Service extends AbstractService
     public function fetch($id)
     {
         //  Try to get an existing user
-        $user = $this->apiUserCollection->findOne([
-            '_id' => $id
-        ]);
+        $user = $this->apiUserCollection->getById($id);
 
         //  If there is no user create one now and ensure that the email address is correct
 
@@ -82,7 +78,7 @@ class Service extends AbstractService
         $this->applicationsService->deleteAll($id);
 
         // Delete the user's About Me details.
-        $this->apiUserCollection->deleteOne(['_id' => $id]);
+        $this->apiUserCollection->deleteById($id);
 
         $this->userManagementService->delete($id, 'user-initiated');
 
@@ -96,9 +92,7 @@ class Service extends AbstractService
      */
     private function save($id, array $data = [])
     {
-        $user = $this->apiUserCollection->findOne([
-            '_id' => $id
-        ]);
+        $user = $this->apiUserCollection->getById($id);
 
         // Protect these values from the client setting them manually.
         unset($data['id'], $data['email'], $data['createdAt'], $data['updatedAt']);
@@ -128,7 +122,7 @@ class Service extends AbstractService
         $user = new User($data);
 
         if ($new) {
-            $this->apiUserCollection->insertOne($user->toArray(new DateCallback()));
+            $this->apiUserCollection->insert($user);
         } else {
             $validation = $user->validate();
 
@@ -136,24 +130,7 @@ class Service extends AbstractService
                 return new ValidationApiProblem($validation);
             }
 
-            $lastUpdated = new UTCDateTime($user->updatedAt);
-
-            // Record the time we updated the user.
-            $user->updatedAt = new DateTime();
-
-            // updatedAt is included in the query so that data isn't overwritten
-            // if the User has changed since this process loaded it.
-            $result = $this->apiUserCollection->updateOne(
-                ['_id' => $user->id, 'updatedAt' => $lastUpdated],
-                ['$set' => $user->toArray(new DateCallback())],
-                ['upsert' => false, 'multiple' => false]
-            );
-
-            // Ensure that one (and only one) document was updated.
-            // If not, something when wrong.
-            if ($result->getModifiedCount() !== 0 && $result->getModifiedCount() !== 1) {
-                throw new \RuntimeException('Unable to update User. This might be because "updatedAt" has changed.');
-            }
+            $this->apiUserCollection->update($user);
         }
 
         return $user;

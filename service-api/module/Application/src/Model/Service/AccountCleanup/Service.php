@@ -254,9 +254,7 @@ class Service
                 ]);
             }
 
-            $this->apiUserCollection->deleteOne([
-                '_id' => $user->id()
-            ]);
+            $this->apiUserCollection->deleteById($user->id());
 
             $counter++;
         }
