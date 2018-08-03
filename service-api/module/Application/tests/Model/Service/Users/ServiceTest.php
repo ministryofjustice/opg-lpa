@@ -2,16 +2,15 @@
 
 namespace ApplicationTest\Model\Service\Users;
 
+use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\Users\Service;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Auth\Model\Service\UserManagementService;
 use Mockery;
-use MongoDB\Collection as MongoCollection;
 use MongoDB\UpdateResult;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
@@ -28,7 +27,7 @@ class ServiceTest extends AbstractServiceTest
     {
         parent::setUp();
 
-        $this->service = new Service($this->lpaCollection);
+        $this->service = new Service($this->apiLpaCollection);
 
         $this->service->setLogger($this->logger);
     }
@@ -37,7 +36,7 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $userCollection = Mockery::mock(MongoCollection::class);
+        $userCollection = Mockery::mock(ApiUserCollection::class);
         $userCollection->shouldReceive('findOne')->andReturn(null)->twice();
         $userCollection->shouldReceive('insertOne')->once();
 
@@ -68,7 +67,7 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $userCollection = Mockery::mock(MongoCollection::class);
+        $userCollection = Mockery::mock(ApiUserCollection::class);
         $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $userCollection->shouldNotReceive('insertOne');
 
@@ -89,7 +88,7 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $userCollection = Mockery::mock(MongoCollection::class);
+        $userCollection = Mockery::mock(ApiUserCollection::class);
         $userCollection->shouldReceive('findOne')->andReturn(null)->once();
         $userCollection->shouldReceive('insertOne')->once();
 
@@ -120,7 +119,7 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $userCollection = Mockery::mock(MongoCollection::class);
+        $userCollection = Mockery::mock(ApiUserCollection::class);
         $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $userCollection->shouldNotReceive('updateOne');
 
@@ -154,7 +153,7 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $userCollection = Mockery::mock(MongoCollection::class);
+        $userCollection = Mockery::mock(ApiUserCollection::class);
         $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $updateResult = Mockery::mock(UpdateResult::class);
         $updateResult->shouldReceive('getModifiedCount')->andReturn(1);
@@ -185,7 +184,7 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $userCollection = Mockery::mock(MongoCollection::class);
+        $userCollection = Mockery::mock(ApiUserCollection::class);
         $userCollection->shouldReceive('findOne')->andReturn($user->toArray(new DateCallback()))->once();
         $updateResult = Mockery::mock(UpdateResult::class);
         $updateResult->shouldReceive('getModifiedCount')->andReturn(2);
@@ -218,7 +217,7 @@ class ServiceTest extends AbstractServiceTest
         $applicationsService = Mockery::mock(ApplicationsService::class);
         $applicationsService->shouldReceive('deleteAll')->once();
 
-        $userCollection = Mockery::mock(MongoCollection::class);
+        $userCollection = Mockery::mock(ApiUserCollection::class);
         $userCollection->shouldReceive('deleteOne')->with([ '_id' => $user->getId() ])->once();
 
         $userManagementService = Mockery::mock(UserManagementService::class);

@@ -30,7 +30,7 @@ class ServiceTest extends AbstractServiceTest
     {
         parent::setUp();
 
-        $this->service = new TestableService($this->lpaCollection);
+        $this->service = new TestableService($this->apiLpaCollection);
 
         $this->service->setLogger($this->logger);
     }
@@ -247,7 +247,7 @@ class ServiceTest extends AbstractServiceTest
         $this->logger->shouldReceive('info')
             ->withArgs(['Updating LPA', ['lpaid' => $lpa->getId()]])->once();
 
-        $this->lpaCollection->shouldReceive('count')
+        $this->apiLpaCollection->shouldReceive('count')
             ->withArgs([[ '_id'=>$lpa->getId(), 'locked'=>true ], [ '_id'=>true ]])->once()
             ->andReturn(1);
 
@@ -429,7 +429,7 @@ class ServiceTest extends AbstractServiceTest
         $lpa = FixturesData::getPfLpa();
         $this->setDeleteExpectations($user, $lpa->getId(), $lpa);
 
-        $this->lpaCollection->shouldReceive('find')
+        $this->apiLpaCollection->shouldReceive('find')
             ->withArgs([['user' => $user->getId()], ['_id' => true]])->once()
             ->andReturn([['_id' => $lpa->getId()]]);
 
@@ -461,10 +461,10 @@ class ServiceTest extends AbstractServiceTest
         $response = $this->service->fetchAll($user->getId());
 
         $this->assertEquals(1, $response->count());
-        $lpaCollection = $response->toArray();
+        $apiLpaCollection = $response->toArray();
 
-        $this->assertEquals(1, $lpaCollection['total']);
-        $applications = $lpaCollection['applications'];
+        $this->assertEquals(1, $apiLpaCollection['total']);
+        $applications = $apiLpaCollection['applications'];
         $this->assertEquals(1, count($applications));
 
         $this->assertEquals(($lpas[0])->abbreviatedToArray(), $applications[0]);
@@ -481,10 +481,10 @@ class ServiceTest extends AbstractServiceTest
         $response = $this->service->fetchAll($user->getId(), ['search' => $lpas[1]->id]);
 
         $this->assertEquals(1, $response->count());
-        $lpaCollection = $response->toArray();
+        $apiLpaCollection = $response->toArray();
 
-        $this->assertEquals(1, $lpaCollection['total']);
-        $applications = $lpaCollection['applications'];
+        $this->assertEquals(1, $apiLpaCollection['total']);
+        $applications = $apiLpaCollection['applications'];
         $this->assertEquals(1, count($applications));
 
         $this->assertEquals(($lpas[1])->abbreviatedToArray(), $applications[0]);
@@ -519,10 +519,10 @@ class ServiceTest extends AbstractServiceTest
         $response = $this->service->fetchAll($user->getId(), ['search' => Formatter::id($lpas[0]->id)]);
 
         $this->assertEquals(1, $response->count());
-        $lpaCollection = $response->toArray();
+        $apiLpaCollection = $response->toArray();
 
-        $this->assertEquals(1, $lpaCollection['total']);
-        $applications = $lpaCollection['applications'];
+        $this->assertEquals(1, $apiLpaCollection['total']);
+        $applications = $apiLpaCollection['applications'];
         $this->assertEquals(1, count($applications));
 
         $this->assertEquals(($lpas[0])->abbreviatedToArray(), $applications[0]);
@@ -549,7 +549,7 @@ class ServiceTest extends AbstractServiceTest
 
     private function setCreateIdExpectations()
     {
-        $this->lpaCollection->shouldReceive('findOne')
+        $this->apiLpaCollection->shouldReceive('findOne')
             ->withArgs(function ($filter, $options) {
                 return is_int($filter['_id']) && $filter['_id'] >= 1000000 && $filter['_id'] <= 99999999999
                     && $options['_id'] === true;
@@ -561,7 +561,7 @@ class ServiceTest extends AbstractServiceTest
      */
     private function setInsertOneExpectations(User $user)
     {
-        $this->lpaCollection->shouldReceive('insertOne')
+        $this->apiLpaCollection->shouldReceive('insertOne')
             ->withArgs(function ($document) use ($user) {
                 return is_int($document['_id']) && $document['_id'] >= 1000000 && $document['_id'] <= 99999999999
                     && $document['startedAt'] instanceof UTCDateTime
@@ -602,7 +602,7 @@ class ServiceTest extends AbstractServiceTest
         $this->logger->shouldReceive('info')
             ->withArgs(['Updating LPA', ['lpaid' => $updatedLpa->getId()]])->once();
 
-        $this->lpaCollection->shouldReceive('count')
+        $this->apiLpaCollection->shouldReceive('count')
             ->withArgs([[ '_id'=>$updatedLpa->getId(), 'locked'=>true ], [ '_id'=>true ]])->once()
             ->andReturn(0);
 
@@ -655,7 +655,7 @@ class ServiceTest extends AbstractServiceTest
             })->once();
         }
 
-        $this->lpaCollection->shouldReceive('findOne')
+        $this->apiLpaCollection->shouldReceive('findOne')
             ->withArgs([['_id' => $originalLpa->getId()]])->once()
             ->andReturn($originalLpa->toArray(new DateCallback()));
 
@@ -664,7 +664,7 @@ class ServiceTest extends AbstractServiceTest
             ->times($modifiedCount === 0 ? 1 : 2)->andReturn($modifiedCount);
 
         if ($setCreatedAt === true || $setCompletedAt === true || $setUpdatedAt === true) {
-            $this->lpaCollection->shouldReceive('updateOne')
+            $this->apiLpaCollection->shouldReceive('updateOne')
                 ->withArgs(function (
                     $filter,
                     $update,
@@ -712,7 +712,7 @@ class ServiceTest extends AbstractServiceTest
                 })->once()
                 ->andReturn($updateResult);
         } else {
-            $this->lpaCollection->shouldReceive('updateOne')
+            $this->apiLpaCollection->shouldReceive('updateOne')
                 ->withArgs([
                     ['_id' => $updatedLpa->getId(), 'updatedAt' => new UTCDateTime($originalLpa->getUpdatedAt())],
                     ['$set' => array_merge($originalLpa->toArray(new DateCallback()), ['search' => $searchField])],
@@ -747,14 +747,14 @@ class ServiceTest extends AbstractServiceTest
     {
         $isLpa = ($lpa instanceof Lpa) === true;
         $lpaFilter = ['_id' => $lpaId, 'user' => $user->getId()];
-        $this->lpaCollection->shouldReceive('findOne')
+        $this->apiLpaCollection->shouldReceive('findOne')
             ->withArgs([$lpaFilter, ['projection' => ['_id' => true]]])->once()
             ->andReturn($isLpa === false ? null : ['_id' => $lpa->getId()]);
 
         if ($isLpa === true) {
             $result['updatedAt'] = new UTCDateTime();
 
-            $this->lpaCollection->shouldReceive('replaceOne')
+            $this->apiLpaCollection->shouldReceive('replaceOne')
                 ->withArgs(function ($filter, $replacement) use ($lpaFilter) {
                     return $filter == $lpaFilter
                         && $replacement['updatedAt'] > new UTCDateTime(new DateTime('-1 minute'));
@@ -770,12 +770,12 @@ class ServiceTest extends AbstractServiceTest
     {
         $lpasCount = count($lpas);
 
-        $this->lpaCollection->shouldReceive('count')
+        $this->apiLpaCollection->shouldReceive('count')
             ->withArgs([$filter])->once()
             ->andReturn($lpasCount);
 
         if ($lpasCount > 0) {
-            $this->lpaCollection->shouldReceive('find')
+            $this->apiLpaCollection->shouldReceive('find')
                 ->withArgs([$filter, ['sort' => ['updatedAt' => -1], 'skip' => 0, 'limit' => 10]])
                 ->andReturn(new DummyLpaMongoCursor($lpas));
         }
@@ -787,7 +787,7 @@ class ServiceTest extends AbstractServiceTest
      */
     private function setFindNullLpaExpectation(User $user, int $lpaId)
     {
-        $this->lpaCollection->shouldReceive('findOne')
+        $this->apiLpaCollection->shouldReceive('findOne')
             ->withArgs([['_id' => $lpaId, 'user' => $user->getId()]])->once()
             ->andReturn(null);
     }
@@ -798,7 +798,7 @@ class ServiceTest extends AbstractServiceTest
      */
     private function setFindOneLpaExpectation(User $user, Lpa $lpa)
     {
-        $this->lpaCollection->shouldReceive('findOne')
+        $this->apiLpaCollection->shouldReceive('findOne')
             ->withArgs([['_id' => $lpa->getId(), 'user' => $user->getId()]])->once()
             ->andReturn($lpa->toArray(new DateCallback()));
     }

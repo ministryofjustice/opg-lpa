@@ -24,61 +24,61 @@ class ServiceBuilder extends AbstractServiceBuilder
 
         if ($this->user !== null) {
             if ($this->toDelete === null) {
-                $this->lpaCollection->shouldNotReceive('replaceOne');
+                $this->apiLpaCollection->shouldNotReceive('replaceOne');
             } else {
-                $this->lpaCollection->shouldReceive('findOne')
+                $this->apiLpaCollection->shouldReceive('findOne')
                     ->withArgs([
                         ['_id' => (int)$this->toDelete->id, 'user' => $this->user->id],
                         ['projection' => ['_id'=>true]]
                     ])
                     ->andReturn(['_id' => $this->toDelete->id]);
-                $this->lpaCollection->shouldReceive('find')
+                $this->apiLpaCollection->shouldReceive('find')
                     ->withArgs([['user' => $this->user->id], [ '_id'=>true ]])
                     ->andReturn([['_id' => $this->toDelete->id]]);
-                $this->lpaCollection->shouldReceive('replaceOne');
+                $this->apiLpaCollection->shouldReceive('replaceOne');
             }
 
             if ($this->lpas === null) {
-                $this->lpaCollection->shouldReceive('count')
+                $this->apiLpaCollection->shouldReceive('count')
                     ->withArgs([['user' => $this->user->id]])
                     ->andReturn(0);
-                $this->lpaCollection->shouldReceive('find')
+                $this->apiLpaCollection->shouldReceive('find')
                     ->withArgs([['user' => $this->user->id]])
                     ->andReturn($this->getDefaultCursor());
             } else {
                 $options = ['sort' => ['updatedAt' => -1], 'skip' => 0, 'limit' => 250];
 
-                $this->lpaCollection->shouldReceive('count')
+                $this->apiLpaCollection->shouldReceive('count')
                     ->withArgs([['user' => $this->user->id]])
                     ->andReturn(count($this->lpas));
-                $this->lpaCollection->shouldReceive('find')
+                $this->apiLpaCollection->shouldReceive('find')
                     ->withArgs([['user' => $this->user->id], $options])
                     ->andReturn(new DummyLpaMongoCursor($this->lpas));
 
                 foreach ($this->lpas as $lpa) {
-                    $this->lpaCollection->shouldReceive('count')
+                    $this->apiLpaCollection->shouldReceive('count')
                         ->withArgs([['user' => $this->user->id, '_id' => $lpa->id]])
                         ->andReturn(count($this->lpas));
-                    $this->lpaCollection->shouldReceive('find')
+                    $this->apiLpaCollection->shouldReceive('find')
                         ->withArgs([['user' => $this->user->id, '_id' => $lpa->id], $options])
                         ->andReturn(new DummyLpaMongoCursor([$lpa]));
                 }
 
                 //Defaults
-                $this->lpaCollection->shouldReceive('count')
+                $this->apiLpaCollection->shouldReceive('count')
                     ->andReturn(0);
-                $this->lpaCollection->shouldReceive('find')
+                $this->apiLpaCollection->shouldReceive('find')
                     ->andReturn($this->getDefaultCursor());
             }
         }
 
         if ($this->insert) {
-            $this->lpaCollection->shouldReceive('insertOne')->once();
+            $this->apiLpaCollection->shouldReceive('insertOne')->once();
         } else {
-            $this->lpaCollection->shouldNotReceive('insertOne');
+            $this->apiLpaCollection->shouldNotReceive('insertOne');
         }
 
-        $this->lpaCollection->shouldReceive('findOne')->andReturn(null);
+        $this->apiLpaCollection->shouldReceive('findOne')->andReturn(null);
 
         return $service;
     }

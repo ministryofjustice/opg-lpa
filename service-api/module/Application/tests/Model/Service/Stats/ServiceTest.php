@@ -2,12 +2,12 @@
 
 namespace ApplicationTest\Model\Service\Stats;
 
+use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use Application\Model\Service\Stats\Service;
 use DateTime;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use MongoDB\Collection as MongoCollection;
 use MongoDB\Driver\ReadPreference;
 
 class ServiceTest extends MockeryTestCase
@@ -16,7 +16,7 @@ class ServiceTest extends MockeryTestCase
     {
         $generated = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
 
-        $statsLpasCollection = Mockery::mock(MongoCollection::class);
+        $statsLpasCollection = Mockery::mock(ApiStatsLpasCollection::class);
         $statsLpasCollection->shouldReceive('setReadPreference');
         $statsLpasCollection->shouldReceive('findOne')
             ->withArgs([[], ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)]])
@@ -33,7 +33,7 @@ class ServiceTest extends MockeryTestCase
             ->once()->andReturn(2);
         $authUserCollection->shouldReceive('countDeletedAccounts')->once()->andReturn(1);
 
-        /** @var MongoCollection $statsLpasCollection */
+        /** @var ApiStatsLpasCollection $statsLpasCollection */
         /** @var AuthUserCollection $authUserCollection */
         $service = new Service($statsLpasCollection, $authUserCollection);
 
