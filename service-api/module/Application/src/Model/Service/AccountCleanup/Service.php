@@ -9,7 +9,6 @@ use Auth\Model\Service\UserManagementService;
 use Aws\Sns\SnsClient;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
-use MongoDB\BSON\UTCDateTime;
 use Opg\Lpa\Logger\LoggerTrait;
 use DateTime;
 use Exception;
@@ -240,18 +239,10 @@ class Service
             $this->userManagementService->delete($user->id(), 'expired');
 
             //  Delete the LPAs in the API data for this user
-            $lpas = $this->apiLpaCollection->find([
-                'user' => $user->id()
-            ]);
+            $lpas = $this->apiLpaCollection->fetchByUserId($user->id());
 
             foreach ($lpas as $lpa) {
-                //  We don't want to remove the document entirely as we need to make sure the same ID isn't reassigned.
-                //  So we just strip the document down to '_id' and 'updatedAt'.
-                $criteria = array_intersect_key($lpa, array_flip(['_id', 'user']));
-
-                $this->apiLpaCollection->replaceOne($criteria, [
-                    'updatedAt' => new UTCDateTime(),
-                ]);
+                $this->apiLpaCollection->deleteById($lpa['_id'], $lpa['user']);
             }
 
             $this->apiUserCollection->deleteById($user->id());

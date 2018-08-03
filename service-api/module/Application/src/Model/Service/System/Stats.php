@@ -5,16 +5,10 @@ namespace Application\Model\Service\System;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
-use MongoDB\BSON\Javascript as MongoCode;
-use MongoDB\BSON\Regex;
-use MongoDB\BSON\UTCDateTime as MongoDate;
-use MongoDB\Driver\Command;
-use MongoDB\Driver\ReadPreference;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use Opg\Lpa\Logger\LoggerTrait;
@@ -79,7 +73,12 @@ class Stats
         }
 
         try {
-            $stats['lpasPerUser'] = $this->getLpasPerUser();
+            $stats['lpasPerUser'] = [
+                'generated' => date('d/m/Y H:i:s', (new DateTime())->getTimestamp()),
+                'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000),
+                'all' => $this->apiLpaCollection->getLpasPerUser(),
+            ];
+
             $this->getLogger()->info("Successfully generated lpasPerUser stats");
         } catch (Exception $ex) {
             $this->getLogger()->err("Failed to generate lpasPerUser stats due to {$ex->getMessage()}", [$ex]);
@@ -150,11 +149,6 @@ class Stats
     {
         $startGeneration = microtime(true);
 
-        // Stats can (ideally) be processed on a secondary.
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
         // Broken down by month
         $byMonth = [];
 
@@ -168,26 +162,14 @@ class Stats
         for ($i = 1; $i <= 4; $i++) {
             $month = [];
 
-            // Create MongoDate date range
-            $dateRange = [
-                '$gte' => new MongoDate($start),
-                '$lte' => new MongoDate($end)
-            ];
-
             // Started if we have a startedAt, but no createdAt...
-            $month['started'] = $this->apiLpaCollection->count([
-                'startedAt' => $dateRange
-            ], $readPreference);
+            $month['started'] = $this->apiLpaCollection->countBetween($start, $end, 'startedAt');
 
             // Created if we have a createdAt, but no completedAt...
-            $month['created'] = $this->apiLpaCollection->count([
-                'createdAt' => $dateRange
-            ], $readPreference);
+            $month['created'] = $this->apiLpaCollection->countBetween($start, $end, 'createdAt');
 
             // Count all the LPAs that have a completedAt...
-            $month['completed'] = $this->apiLpaCollection->count([
-                'completedAt' => $dateRange
-            ], $readPreference);
+            $month['completed'] = $this->apiLpaCollection->countBetween($start, $end, 'completedAt');
 
             $byMonth[date('Y-m', $start->getTimestamp())] = $month;
 
@@ -202,65 +184,27 @@ class Stats
         $pf = [];
 
         // Started if we have a startedAt, but no createdAt...
-        $summary['started'] = $pf['started'] = $this->apiLpaCollection->count([
-            'startedAt' => [
-                '$ne' => null
-            ],
-            'createdAt' => null,
-            'document.type' => Document::LPA_TYPE_PF
-        ], $readPreference);
+        $summary['started'] = $pf['started'] = $this->apiLpaCollection->countStartedForType(Document::LPA_TYPE_PF);
 
         // Created if we have a createdAt, but no completedAt...
-        $summary['created'] = $pf['created'] = $this->apiLpaCollection->count([
-            'createdAt' => [
-                '$ne' => null
-            ],
-            'completedAt' => null,
-            'document.type' => Document::LPA_TYPE_PF
-        ], $readPreference);
+        $summary['created'] = $pf['created'] = $this->apiLpaCollection->countCreatedForType(Document::LPA_TYPE_PF);
 
         // Count all the LPAs that have a completedAt...
-        $summary['completed'] = $pf['completed'] = $this->apiLpaCollection->count([
-            'completedAt' => [
-                '$ne' => null
-            ],
-            'document.type' => Document::LPA_TYPE_PF
-        ], $readPreference);
+        $summary['completed'] = $pf['completed'] = $this->apiLpaCollection->countCompletedForType(Document::LPA_TYPE_PF);
 
         $hw = [];
 
         // Started if we have a startedAt, but no createdAt...
-        $summary['started'] += $hw['started'] = $this->apiLpaCollection->count([
-            'startedAt' => [
-                '$ne' => null
-            ],
-            'createdAt' => null,
-            'document.type' => Document::LPA_TYPE_HW
-        ], $readPreference);
+        $summary['started'] += $hw['started'] = $this->apiLpaCollection->countStartedForType(Document::LPA_TYPE_HW);
 
         // Created if we have a createdAt, but no completedAt...
-        $summary['created'] += $hw['created'] = $this->apiLpaCollection->count([
-            'createdAt' => [
-                '$ne' => null
-            ],
-            'completedAt' => null,
-            'document.type' => Document::LPA_TYPE_HW
-        ], $readPreference);
+        $summary['created'] += $hw['created'] = $this->apiLpaCollection->countCreatedForType(Document::LPA_TYPE_HW);
 
         // Count all the LPAs that have a completedAt...
-        $summary['completed'] += $hw['completed'] = $this->apiLpaCollection->count([
-            'completedAt' => [
-                '$ne' => null
-            ],
-            'document.type' => Document::LPA_TYPE_HW
-        ], $readPreference);
+        $summary['completed'] += $hw['completed'] = $this->apiLpaCollection->countCompletedForType(Document::LPA_TYPE_HW);
 
         // Deleted LPAs have no 'document'...
-        $summary['deleted'] = $this->apiLpaCollection->count([
-            'document' => [
-                '$exists' => false
-            ]
-        ], $readPreference);
+        $summary['deleted'] = $this->apiLpaCollection->countDeleted();
 
         ksort($byMonth);
 
@@ -271,94 +215,6 @@ class Stats
             'health-and-welfare' => $hw,
             'property-and-finance' => $pf,
             'by-month' => $byMonth
-        ];
-    }
-
-    /**
-     * Returns a list of lpa counts and user counts, in order to
-     * answer questions of the form how many users have five LPAs?
-     *
-     * @return array
-     *
-     * The key of the return array is the number of LPAs
-     * The value is the number of users with this many LPAs
-     */
-    private function getLpasPerUser()
-    {
-        $startGeneration = microtime(true);
-
-        //------------------------------------
-
-        // Returns the number of LPAs under each userId
-
-        $map = new MongoCode(
-            'function() {
-                if( this.user ){
-                    emit(this.user,1);
-                }
-            }'
-        );
-
-        $reduce = new MongoCode(
-            'function(user, lpas) {
-                return lpas.length;
-            }'
-        );
-
-        $manager = $this->apiLpaCollection->getManager();
-
-        $command = new Command([
-            'mapreduce' => $this->apiLpaCollection->getCollectionName(),
-            'map' => $map,
-            'reduce' => $reduce,
-            'out' => ['inline'=>1],
-            'query' => [ 'user' => [ '$exists'=>true ] ],
-        ]);
-
-        // Stats can (ideally) be processed on a secondary.
-        $document = $cursor = $manager->executeCommand(
-            $this->apiLpaCollection->getDatabaseName(),
-            $command,
-            new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        )->toArray()[0];
-
-        //------------------------------------
-
-        /*
-         * This creates an array where:
-         *  key = a number or LPAs
-         *  value = the number of users with that number of LPAs.
-         *
-         * This lets us say:
-         *  N users have X LPAs
-         */
-
-        $lpasPerUser = array_reduce(
-            $document->results,
-            function ($carry, $item) {
-
-                $count = (int)$item->value;
-
-                if (!isset($carry[$count])) {
-                    $carry[$count] = 1;
-                } else {
-                    $carry[$count]++;
-                }
-
-                return $carry;
-            },
-            []
-        );
-
-        //---
-
-        // Sort by key so they're pre-ordered when sent to Mongo.
-        krsort($lpasPerUser);
-
-        return [
-            'generated' => date('d/m/Y H:i:s', (new DateTime())->getTimestamp()),
-            'generationTimeInMs' => round((microtime(true) - $startGeneration) * 1000),
-            'all' => $lpasPerUser
         ];
     }
 
@@ -402,11 +258,6 @@ class Stats
     {
         $startGeneration = microtime(true);
 
-        // Stats can (ideally) be processed on a secondary.
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
         $correspondenceStats = [];
 
         $start = new DateTime('first day of this month');
@@ -419,54 +270,17 @@ class Stats
         for ($i = 1; $i <= 4; $i++) {
             $month = [];
 
-            // Create MongoDate date range
-            $dateRange = [
-                '$gte' => new MongoDate($start),
-                '$lte' => new MongoDate($end)
-            ];
+            $month['completed'] = $this->apiLpaCollection->countCompletedBetween($start, $end);
 
-            $month['completed'] = $this->apiLpaCollection->count([
-                'completedAt' => $dateRange
-            ], $readPreference);
+            $month['contactByEmail'] = $this->apiLpaCollection->countCompletedBetweenCorrespondentEmail($start, $end);
 
-            $month['contactByEmail'] = $this->apiLpaCollection->count([
-                'completedAt' => $dateRange,
-                'document.correspondent' => [
-                    '$ne' => null
-                ], 'document.correspondent.email' => [
-                    '$ne' => null
-                ]
-            ], $readPreference);
+            $month['contactByPhone'] = $this->apiLpaCollection->countCompletedBetweenCorrespondentPhone($start, $end);
 
-            $month['contactByPhone'] = $this->apiLpaCollection->count([
-                'completedAt' => $dateRange,
-                'document.correspondent' => [
-                    '$ne' => null
-                ], 'document.correspondent.phone' => [
-                    '$ne' => null
-                ]
-            ], $readPreference);
+            $month['contactByPost'] = $this->apiLpaCollection->countCompletedBetweenCorrespondentPost($start, $end);
 
-            $month['contactByPost'] = $this->apiLpaCollection->count([
-                'completedAt' => $dateRange,
-                'document.correspondent' => [
-                    '$ne' => null
-                ], 'document.correspondent.contactByPost' => true
-            ], $readPreference);
+            $month['contactInEnglish'] = $this->apiLpaCollection->countCompletedBetweenCorrespondentEnglish($start, $end);
 
-            $month['contactInEnglish'] = $this->apiLpaCollection->count([
-                'completedAt' => $dateRange,
-                'document.correspondent' => [
-                    '$ne' => null
-                ], 'document.correspondent.contactInWelsh' => false
-            ], $readPreference);
-
-            $month['contactInWelsh'] = $this->apiLpaCollection->count([
-                'completedAt' => $dateRange,
-                'document.correspondent' => [
-                    '$ne' => null
-                ], 'document.correspondent.contactInWelsh' => true
-            ], $readPreference);
+            $month['contactInWelsh'] = $this->apiLpaCollection->countCompletedBetweenCorrespondentWelsh($start, $end);
 
             $correspondenceStats[date('Y-m', $start->getTimestamp())] = $month;
 
@@ -490,11 +304,6 @@ class Stats
     {
         $startGeneration = microtime(true);
 
-        // Stats can (ideally) be processed on a secondary.
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
         $preferencesInstructionsStats = [];
 
         $start = new DateTime('first day of this month');
@@ -507,25 +316,11 @@ class Stats
         for ($i = 1; $i <= 4; $i++) {
             $month = [];
 
-            // Create MongoDate date range
-            $dateRange = [
-                '$gte' => new MongoDate($start),
-                '$lte' => new MongoDate($end)
-            ];
+            $month['completed'] = $this->apiLpaCollection->countCompletedBetween($start, $end);
 
-            $month['completed'] = $this->apiLpaCollection->count([
-                'completedAt' => $dateRange
-            ], $readPreference);
+            $month['preferencesStated'] = $this->apiLpaCollection->countCompletedBetweenWithPreferences($start, $end);
 
-            $month['preferencesStated'] = $this->apiLpaCollection->count([
-                'completedAt' => $dateRange,
-                'document.preference' => new Regex('.+', '')
-            ], $readPreference);
-
-            $month['instructionsStated'] = $this->apiLpaCollection->count([
-                'completedAt' => $dateRange,
-                'document.instruction' => new Regex('.+', '')
-            ], $readPreference);
+            $month['instructionsStated'] = $this->apiLpaCollection->countCompletedBetweenWithInstructions($start, $end);
 
             $preferencesInstructionsStats[date('Y-m', $start->getTimestamp())] = $month;
 
@@ -549,11 +344,6 @@ class Stats
     {
         $startGeneration = microtime(true);
 
-        // Stats can (ideally) be processed on a secondary.
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
         $optionStats = [];
 
         $start = new DateTime('first day of this month');
@@ -566,247 +356,90 @@ class Stats
         for ($i = 1; $i <= 4; $i++) {
             $month = [];
 
-            // Create MongoDate date range
-            $dateRange = [
-                '$gte' => new MongoDate($start),
-                '$lte' => new MongoDate($end)
-            ];
-
-            $month['completed'] = $this->apiLpaCollection->count([
-                'completedAt' => $dateRange
-            ], $readPreference);
+            $month['completed'] = $this->apiLpaCollection->countCompletedBetween($start, $end);
 
             $month['type'] = [
-                Document::LPA_TYPE_HW => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.type' => Document::LPA_TYPE_HW
-                ], $readPreference),
-                Document::LPA_TYPE_PF => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.type' => Document::LPA_TYPE_PF
-                ], $readPreference)
+                Document::LPA_TYPE_HW => $this->apiLpaCollection->countCompletedBetweenByType($start, $end, Document::LPA_TYPE_HW),
+                Document::LPA_TYPE_PF => $this->apiLpaCollection->countCompletedBetweenByType($start, $end, Document::LPA_TYPE_PF),
             ];
 
             $month['canSign'] = [
-                'true' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.donor.canSign' => true
-                ], $readPreference),
-                'false' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.donor.canSign' => false
-                ], $readPreference)
+                'true'  => $this->apiLpaCollection->countCompletedBetweenByCanSign($start, $end, true),
+                'false' => $this->apiLpaCollection->countCompletedBetweenByCanSign($start, $end, false),
             ];
 
             $month['replacementAttorneys'] = [
-                'yes' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.replacementAttorneys' => [
-                        '$gt' => []
-                    ]
-                ], $readPreference),
-                'no' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.replacementAttorneys' => []
-                ], $readPreference),
-                'multiple' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.replacementAttorneys' => [
-                        '$ne' => null
-                    ],
-                    '$where' => 'this.document.replacementAttorneys.length > 1'
-                ], $readPreference)
+                'yes'       => $this->apiLpaCollection->countCompletedBetweenHasActors($start, $end, 'replacementAttorneys'),
+                'no'        => $this->apiLpaCollection->countCompletedBetweenHasNoActors($start, $end, 'replacementAttorneys'),
+                'multiple'  => $this->apiLpaCollection->countCompletedBetweenHasMultipleActors($start, $end, 'replacementAttorneys'),
             ];
 
             $month['peopleToNotify'] = [
-                'yes' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.peopleToNotify' => [
-                        '$gt' => []
-                    ]
-                ], $readPreference),
-                'no' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.peopleToNotify' => []
-                ], $readPreference),
-                'multiple' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.peopleToNotify' => [
-                        '$ne' => null
-                    ],
-                    '$where' => 'this.document.peopleToNotify.length > 1'
-                ], $readPreference)
+                'yes'       => $this->apiLpaCollection->countCompletedBetweenHasActors($start, $end, 'peopleToNotify'),
+                'no'        => $this->apiLpaCollection->countCompletedBetweenHasNoActors($start, $end, 'peopleToNotify'),
+                'multiple'  => $this->apiLpaCollection->countCompletedBetweenHasMultipleActors($start, $end, 'peopleToNotify'),
             ];
 
             $month['whoIsRegistering'] = [
-                'donor' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.whoIsRegistering' => 'donor'
-                ], $readPreference),
-                'attorneys' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.whoIsRegistering' => [
-                        '$gt' => []
-                    ]
-                ], $readPreference)
+                'donor'     => $this->apiLpaCollection->countCompletedBetweenDonorRegistering($start, $end),
+                'attorneys' => $this->apiLpaCollection->countCompletedBetweenAttorneyRegistering($start, $end),
             ];
 
             $month['repeatCaseNumber'] = [
-                'yes' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'repeatCaseNumber' => [
-                        '$ne' => null
-                    ]
-                ], $readPreference),
-                'no' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'repeatCaseNumber' => null
-                ], $readPreference)
+                'yes' => $this->apiLpaCollection->countCompletedBetweenCaseNumber($start, $end, true),
+                'no'  => $this->apiLpaCollection->countCompletedBetweenCaseNumber($start, $end, false),
             ];
 
             $month['payment'] = [
-                'reducedFeeReceivesBenefits' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'payment.reducedFeeReceivesBenefits' => true,
-                    'payment.reducedFeeAwardedDamages' => true,
-                    'payment.reducedFeeLowIncome' => null,
-                    'payment.reducedFeeUniversalCredit' => null,
-                ], $readPreference),
-                'reducedFeeUniversalCredit' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'payment.reducedFeeReceivesBenefits' => false,
-                    'payment.reducedFeeAwardedDamages' => null,
-                    'payment.reducedFeeLowIncome' => false,
-                    'payment.reducedFeeUniversalCredit' => true,
-                ], $readPreference),
-                'reducedFeeLowIncome' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'payment.reducedFeeReceivesBenefits' => false,
-                    'payment.reducedFeeAwardedDamages' => null,
-                    'payment.reducedFeeLowIncome' => true,
-                    'payment.reducedFeeUniversalCredit' => false,
-                ], $readPreference),
-                'notApply' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'payment.reducedFeeReceivesBenefits' => null,
-                    'payment.reducedFeeAwardedDamages' => null,
-                    'payment.reducedFeeLowIncome' => null,
-                    'payment.reducedFeeUniversalCredit' => null,
-                ], $readPreference),
-                Payment::PAYMENT_TYPE_CARD => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'payment.method' => Payment::PAYMENT_TYPE_CARD,
-                ], $readPreference),
-                Payment::PAYMENT_TYPE_CHEQUE => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'payment.method' => Payment::PAYMENT_TYPE_CHEQUE,
-                ], $readPreference)
+                'reducedFeeReceivesBenefits' => $this->apiLpaCollection->countCompletedBetweenFeeType($start, $end, true, true, null, null),
+                'reducedFeeUniversalCredit'  => $this->apiLpaCollection->countCompletedBetweenFeeType($start, $end, false, null, false, true),
+                'reducedFeeLowIncome'        => $this->apiLpaCollection->countCompletedBetweenFeeType($start, $end, false, null, true, false),
+                'notApply'                   => $this->apiLpaCollection->countCompletedBetweenFeeType($start, $end, null, null, null, null),
+                Payment::PAYMENT_TYPE_CARD   => $this->apiLpaCollection->countCompletedBetweenPaymentType($start, $end, Payment::PAYMENT_TYPE_CARD),
+                Payment::PAYMENT_TYPE_CHEQUE => $this->apiLpaCollection->countCompletedBetweenPaymentType($start, $end, Payment::PAYMENT_TYPE_CHEQUE),
             ];
 
             $month['primaryAttorneys'] = [
-                'multiple' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.primaryAttorneys' => [
-                        '$ne' => null
-                    ],
-                    '$where' => 'this.document.primaryAttorneys.length > 1'
-                ], $readPreference)
+                'multiple'  => $this->apiLpaCollection->countCompletedBetweenHasMultipleActors($start, $end, 'primaryAttorneys'),
             ];
 
             $month['primaryAttorneyDecisions'] = [
                 'when' => [
-                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW => $this->apiLpaCollection->count([
-                        'completedAt' => $dateRange,
-                        'document.primaryAttorneyDecisions.when' => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW
-                    ], $readPreference),
-                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY => $this->apiLpaCollection->count([
-                        'completedAt' => $dateRange,
-                        'document.primaryAttorneyDecisions.when' =>
-                            PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY
-                    ], $readPreference)
+                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW         => $this->apiLpaCollection->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'when', PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW),
+                    PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY => $this->apiLpaCollection->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'when', PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY),
                 ],
                 'how' => [
-                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY => $this->apiLpaCollection->count([
-                        'completedAt' => $dateRange,
-                        'document.primaryAttorneyDecisions.how' =>
-                            AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
-                    ], $readPreference),
-                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY => $this->apiLpaCollection->count([
-                        'completedAt' => $dateRange,
-                        'document.primaryAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY
-                    ], $readPreference),
-                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS => $this->apiLpaCollection->count([
-                        'completedAt' => $dateRange,
-                        'document.primaryAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS
-                    ], $readPreference)
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY => $this->apiLpaCollection->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY),
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY               => $this->apiLpaCollection->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY),
+                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS               => $this->apiLpaCollection->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'how', AbstractDecisions::LPA_DECISION_HOW_DEPENDS),
                 ],
                 'canSustainLife' => [
-                    'true' => $this->apiLpaCollection->count([
-                        'completedAt' => $dateRange,
-                        'document.primaryAttorneyDecisions.canSustainLife' => true
-                    ], $readPreference),
-                    'false' => $this->apiLpaCollection->count([
-                        'completedAt' => $dateRange,
-                        'document.primaryAttorneyDecisions.canSustainLife' => false
-                    ], $readPreference)
+                    'true'  => $this->apiLpaCollection->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'canSustainLife', true),
+                    'false' => $this->apiLpaCollection->countCompletedBetweenWithAttorneyDecisions($start, $end, 'primaryAttorneyDecisions', 'canSustainLife', false),
                 ]
             ];
 
             $month['replacementAttorneyDecisions'] = [
                 'when' => [
-                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST => $this->apiLpaCollection->count([
-                        'completedAt' => $dateRange,
-                        'document.replacementAttorneyDecisions.when' =>
-                            ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST
-                    ], $readPreference),
-                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST => $this->apiLpaCollection->count([
-                        'completedAt' => $dateRange,
-                        'document.replacementAttorneyDecisions.when' =>
-                            ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST
-                    ], $readPreference),
-                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS => $this->apiLpaCollection->count([
-                        'completedAt' => $dateRange,
-                        'document.replacementAttorneyDecisions.when' =>
-                            ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS
-                    ], $readPreference)
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST   => $this->apiLpaCollection->countCompletedBetweenWithAttorneyDecisions($start, $end, 'replacementAttorneyDecisions', 'when', ReplacementAttorneyDecisions::LPA_DECISION_WHEN_FIRST),
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST    => $this->apiLpaCollection->countCompletedBetweenWithAttorneyDecisions($start, $end, 'replacementAttorneyDecisions', 'when', ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST),
+                    ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS => $this->apiLpaCollection->countCompletedBetweenWithAttorneyDecisions($start, $end, 'replacementAttorneyDecisions', 'when', ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS),
                 ],
                 'how' => [
-                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY => $this->apiLpaCollection->count([
-                        'completedAt' => $dateRange,
-                        'document.replacementAttorneyDecisions.how' =>
-                            AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
-                    ], $readPreference),
-                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY => $this->apiLpaCollection->count([
-                        'completedAt' => $dateRange,
-                        'document.replacementAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_JOINTLY
-                    ], $readPreference),
-                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS => $this->apiLpaCollection->count([
-                        'completedAt' => $dateRange,
-                        'document.replacementAttorneyDecisions.how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS
-                    ], $readPreference)
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY => $this->apiLpaCollection->countCompletedBetweenWithAttorneyDecisions($start, $end, 'replacementAttorneyDecisions', 'how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY),
+                    AbstractDecisions::LPA_DECISION_HOW_JOINTLY               => $this->apiLpaCollection->countCompletedBetweenWithAttorneyDecisions($start, $end, 'replacementAttorneyDecisions', 'how', AbstractDecisions::LPA_DECISION_HOW_JOINTLY),
+                    AbstractDecisions::LPA_DECISION_HOW_DEPENDS               => $this->apiLpaCollection->countCompletedBetweenWithAttorneyDecisions($start, $end, 'replacementAttorneyDecisions', 'how', AbstractDecisions::LPA_DECISION_HOW_DEPENDS),
                 ]
             ];
 
             $month['trust'] = [
-                'primaryAttorneys' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.primaryAttorneys' => ['$elemMatch' => ['type' => 'trust']]
-                ], $readPreference),
-                'replacementAttorneys' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'document.replacementAttorneys' => ['$elemMatch' => ['type' => 'trust']]
-                ], $readPreference)
+                'primaryAttorneys'     => $this->apiLpaCollection->countCompletedBetweenWithTrust($start, $end, 'primaryAttorneys'),
+                'replacementAttorneys' => $this->apiLpaCollection->countCompletedBetweenWithTrust($start, $end, 'replacementAttorneys'),
             ];
 
             $month['certificateProviderSkipped'] = [
-                'yes' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'metadata.' . Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED => ['$exists' => true]
-                ], $readPreference),
-                'no' => $this->apiLpaCollection->count([
-                    'completedAt' => $dateRange,
-                    'metadata.' . Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED => ['$exists' => false]
-                ], $readPreference)
+                'yes' => $this->apiLpaCollection->countCompletedBetweenCertificateProviderSkipped($start, $end, true),
+                'no'  => $this->apiLpaCollection->countCompletedBetweenCertificateProviderSkipped($start, $end, false),
             ];
 
             $optionStats[date('Y-m', $start->getTimestamp())] = $month;
