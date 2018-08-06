@@ -144,7 +144,7 @@ class ApiLpaCollection
     {
         //  We don't want to remove the document entirely as we need to make sure the same ID isn't reassigned
         return $this->collection->replaceOne([
-            '_id' => $lpaId,
+            '_id' => (int)$lpaId,
             'user' => $userId,
         ], [
             'updatedAt' => new UTCDateTime(),
