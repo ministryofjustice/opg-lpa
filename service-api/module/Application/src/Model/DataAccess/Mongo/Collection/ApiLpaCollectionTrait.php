@@ -4,6 +4,7 @@ namespace Application\Model\DataAccess\Mongo\Collection;
 
 use Application\Model\Service\Lock\LockedException;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Opg\Lpa\Logger\Logger;
 use RuntimeException;
 
 trait ApiLpaCollectionTrait
@@ -50,9 +51,11 @@ trait ApiLpaCollectionTrait
      */
     protected function updateLpa(Lpa $lpa)
     {
-//        $this->getLogger()->info('Updating LPA', [
-//            'lpaid' => $lpa->id
-//        ]);
+        $logger = Logger::getInstance();
+
+        $logger->info('Updating LPA', [
+            'lpaid' => $lpa->id
+        ]);
 
         // Check LPA is (still) valid.
         if ($lpa->validateForApi()->hasErrors()) {
@@ -71,9 +74,9 @@ trait ApiLpaCollectionTrait
 
         $this->apiLpaCollection->update($lpa, $updateTimestamp);
 
-//        $this->getLogger()->info('LPA updated successfully', [
-//            'lpaid' => $lpa->id,
-//            'updatedAt' => $lpa->updatedAt,
-//        ]);
+        $logger->info('LPA updated successfully', [
+            'lpaid' => $lpa->id,
+            'updatedAt' => $lpa->updatedAt,
+        ]);
     }
 }
