@@ -1,20 +1,20 @@
 <?php
 
-namespace Auth\Model\Service;
+namespace Application\Model\Service\UserManagement;
 
-use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
+use Application\Model\DataAccess\Mongo\Collection\AuthLogCollectionTrait;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
+use Application\Model\Service\AbstractService;
+use Application\Model\Service\PasswordValidatorTrait;
 use Zend\Validator\EmailAddress as EmailAddressValidator;
 use Zend\Math\BigInteger\BigInteger;
 use DateTime;
 
-class UserManagementService extends AbstractService
+class Service extends AbstractService
 {
+    use AuthLogCollectionTrait;
+    use AuthUserCollectionTrait;
     use PasswordValidatorTrait;
-
-    /**
-     * @var AuthLogCollection
-     */
-    private $authLogCollection;
 
     /**
      * @param $userId
@@ -22,8 +22,7 @@ class UserManagementService extends AbstractService
      */
     public function get($userId)
     {
-
-        $user = $this->getAuthUserCollection()->getById($userId);
+        $user = $this->authUserCollection->getById($userId);
 
         if (is_null($user)) {
             return 'user-not-found';
@@ -38,7 +37,7 @@ class UserManagementService extends AbstractService
      */
     public function getByUsername(string $username)
     {
-        $user = $this->getAuthUserCollection()->getByUsername($username);
+        $user = $this->authUserCollection->getByUsername($username);
 
         if (is_null($user)) {
             //Check if user has been deleted
@@ -73,7 +72,7 @@ class UserManagementService extends AbstractService
         }
 
         //  Check the username isn't already used...
-        $user = $this->getAuthUserCollection()->getByUsername($username);
+        $user = $this->authUserCollection->getByUsername($username);
 
         if (!is_null($user)) {
             return 'username-already-exists';
@@ -95,7 +94,7 @@ class UserManagementService extends AbstractService
             // Use base62 for shorter tokens
             $activationToken = BigInteger::factory('bcmath')->baseConvert($activationToken, 16, 62);
 
-            $created = (bool)$this->getAuthUserCollection()->create($userId, [
+            $created = (bool)$this->authUserCollection->create($userId, [
                 'identity' => $username,
                 'active' => false,
                 'activation_token' => $activationToken,
@@ -118,7 +117,7 @@ class UserManagementService extends AbstractService
      */
     public function activate($token)
     {
-        $result = $this->getAuthUserCollection()->activate($token);
+        $result = $this->authUserCollection->activate($token);
 
         if (is_null($result) || $result === false) {
             return 'account-not-found';
@@ -134,13 +133,13 @@ class UserManagementService extends AbstractService
      */
     public function delete($userId, $reason)
     {
-        $user = $this->getAuthUserCollection()->getById($userId);
+        $user = $this->authUserCollection->getById($userId);
 
         if (is_null($user)) {
             return 'user-not-found';
         }
 
-        $result = $this->getAuthUserCollection()->delete($userId);
+        $result = $this->authUserCollection->delete($userId);
 
         if ($result !== true) {
             return 'user-not-found';
@@ -168,13 +167,5 @@ class UserManagementService extends AbstractService
     private function hashIdentity($identity)
     {
         return hash('sha512', strtolower(trim($identity)));
-    }
-
-    /**
-     * @param $authLogCollection
-     */
-    public function setAuthLogCollection(AuthLogCollection $authLogCollection)
-    {
-        $this->authLogCollection = $authLogCollection;
     }
 }

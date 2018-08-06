@@ -16,7 +16,8 @@ use Application\Model\DataAccess\Mongo\Collection\AuthLogCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
 use Application\Model\Service\Applications\Service as ApplicationsService;
-use Auth\Model\Service\UserManagementService;
+use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Application\Model\Service\UserManagement\Service as UserManagementService;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Exception;
@@ -40,6 +41,9 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setGuzzleClient'           => 'GuzzleClient',
             'setSnsClient'              => 'SnsClient',
             'setUserManagementService'  => UserManagementService::class,
+        ],
+        Password\Service::class => [
+            'setAuthenticationService' => AuthenticationService::class,
         ],
         Pdfs\Service::class => [
             'setPdfConfig'         => 'config',

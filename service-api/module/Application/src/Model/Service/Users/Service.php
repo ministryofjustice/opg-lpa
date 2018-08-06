@@ -8,7 +8,7 @@ use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
-use Auth\Model\Service\UserManagementService;
+use Application\Model\Service\UserManagement\Service as UserManagementService;
 use Opg\Lpa\DataModel\User\User;
 
 class Service extends AbstractService

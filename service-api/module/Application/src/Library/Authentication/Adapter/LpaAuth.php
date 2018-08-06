@@ -3,7 +3,7 @@
 namespace Application\Library\Authentication\Adapter;
 
 use Application\Library\Authentication\Identity;
-use Auth\Model\Service\AuthenticationService;
+use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Zend\Authentication\Result;
 use Zend\Authentication\Adapter\AdapterInterface;
 

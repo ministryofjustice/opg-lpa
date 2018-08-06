@@ -2,7 +2,7 @@
 
 namespace Application\Library\Authentication;
 
-use Auth\Model\Service\AuthenticationService;
+use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Authentication\Result as AuthenticationResult;
 use Zend\Mvc\MvcEvent;

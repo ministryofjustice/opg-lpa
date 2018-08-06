@@ -6,7 +6,7 @@ use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
 use Application\Model\Service\AbstractService;
-use Auth\Model\Service\UserManagementService;
+use Application\Model\Service\UserManagement\Service as UserManagementService;
 use Aws\Sns\SnsClient;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;

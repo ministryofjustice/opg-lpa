@@ -1,10 +1,9 @@
 <?php
 
-namespace Auth\Model\Service;
+namespace Application\Model\Service;
 
 trait PasswordValidatorTrait
 {
-
     /**
      * Determins if the given password passes validation
      *
