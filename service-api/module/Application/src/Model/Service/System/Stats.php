@@ -2,16 +2,16 @@
 
 namespace Application\Model\Service\System;
 
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
-use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
-use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
+use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollectionTrait;
+use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollectionTrait;
+use Application\Model\Service\AbstractService;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
-use Opg\Lpa\Logger\LoggerTrait;
 use DateTime;
 use Exception;
 
@@ -22,38 +22,11 @@ use Exception;
  * Class Stats
  * @package Application\Model\Service\System
  */
-class Stats
+class Stats extends AbstractService
 {
-    use LoggerTrait;
-
-    /**
-     * @var ApiLpaCollection
-     */
-    private $apiLpaCollection;
-
-    /**
-     * @var ApiStatsLpasCollection
-     */
-    private $apiStatsLpasCollection;
-
-    /**
-     * @var ApiWhoCollection
-     */
-    private $apiWhoCollection;
-
-    /**
-     * Stats constructor
-     *
-     * @param ApiLpaCollection $apiLpaCollection
-     * @param ApiStatsLpasCollection $apiStatsLpasCollection
-     * @param ApiWhoCollection $apiWhoCollection
-     */
-    public function __construct(ApiLpaCollection $apiLpaCollection, ApiStatsLpasCollection $apiStatsLpasCollection, ApiWhoCollection $apiWhoCollection)
-    {
-        $this->apiLpaCollection = $apiLpaCollection;
-        $this->apiStatsLpasCollection = $apiStatsLpasCollection;
-        $this->apiWhoCollection = $apiWhoCollection;
-    }
+    use ApiLpaCollectionTrait;
+    use ApiStatsLpasCollectionTrait;
+    use ApiWhoCollectionTrait;
 
     /**
      * @return bool

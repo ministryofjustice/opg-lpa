@@ -2,9 +2,9 @@
 
 namespace Application\Model\Service\Users;
 
-use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
+use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
@@ -13,10 +13,7 @@ use Opg\Lpa\DataModel\User\User;
 
 class Service extends AbstractService
 {
-    /**
-     * @var ApiUserCollection
-     */
-    private $apiUserCollection;
+    use ApiUserCollectionTrait;
 
     /**
      * @var ApplicationService
@@ -134,14 +131,6 @@ class Service extends AbstractService
         }
 
         return $user;
-    }
-
-    /**
-     * @param ApiUserCollection $apiUserCollection
-     */
-    public function setApiUserCollection(ApiUserCollection $apiUserCollection)
-    {
-        $this->apiUserCollection = $apiUserCollection;
     }
 
     /**

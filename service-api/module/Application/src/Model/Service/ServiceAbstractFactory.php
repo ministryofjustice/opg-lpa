@@ -4,8 +4,17 @@ namespace Application\Model\Service;
 
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Library\ApiProblem\ApiProblemException;
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
+use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollectionTrait;
+use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
+use Application\Model\DataAccess\Mongo\Collection\AuthLogCollectionTrait;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Auth\Model\Service\UserManagementService;
 use Interop\Container\ContainerInterface;
@@ -26,6 +35,12 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $additionalServices = [
+        AccountCleanup\Service::class => [
+            'setConfig'                 => 'config',
+            'setGuzzleClient'           => 'GuzzleClient',
+            'setSnsClient'              => 'SnsClient',
+            'setUserManagementService'  => UserManagementService::class,
+        ],
         Pdfs\Service::class => [
             'setPdfConfig'         => 'config',
             'setDynamoQueueClient' => 'DynamoQueueClient',
@@ -35,12 +50,8 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setApplicationsService' => ApplicationsService::class,
         ],
         Users\Service::class => [
-            'setApiUserCollection'     => ApiUserCollection::class,
             'setApplicationsService'   => ApplicationsService::class,
             'setUserManagementService' => UserManagementService::class,
-        ],
-        WhoAreYou\Service::class => [
-            'setApiWhoCollection' => ApiWhoCollection::class,
         ],
     ];
 
@@ -73,9 +84,36 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             throw new Exception(sprintf('Abstract factory %s can not create the requested service %s', get_class($this), $requestedName));
         }
 
-        $apiLpaCollection = $container->get(ApiLpaCollection::class);
+        $service = new $requestedName();
 
-        $service = new $requestedName($apiLpaCollection);
+        $traitsUsed = class_uses($service);
+
+        //  Inject the required Mongo collections
+        if (is_array($traitsUsed)) {
+            if (in_array(ApiLpaCollectionTrait::class, $traitsUsed)) {
+                $service->setApiLpaCollection($container->get(ApiLpaCollection::class));
+            }
+
+            if (in_array(ApiStatsLpasCollectionTrait::class, $traitsUsed)) {
+                $service->setApiStatsLpasCollection($container->get(ApiStatsLpasCollection::class));
+            }
+
+            if (in_array(ApiUserCollectionTrait::class, $traitsUsed)) {
+                $service->setApiUserCollection($container->get(ApiUserCollection::class));
+            }
+
+            if (in_array(ApiWhoCollectionTrait::class, $traitsUsed)) {
+                $service->setApiWhoCollection($container->get(ApiWhoCollection::class));
+            }
+
+            if (in_array(AuthLogCollectionTrait::class, $traitsUsed)) {
+                $service->setAuthLogCollection($container->get(AuthLogCollection::class));
+            }
+
+            if (in_array(AuthUserCollectionTrait::class, $traitsUsed)) {
+                $service->setAuthUserCollection($container->get(AuthUserCollection::class));
+            }
+        }
 
         //  If required load any additional services into the service
         if (array_key_exists($requestedName, $this->additionalServices) && is_array($this->additionalServices[$requestedName])) {

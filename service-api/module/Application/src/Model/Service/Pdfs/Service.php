@@ -5,6 +5,7 @@ namespace Application\Model\Service\Pdfs;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\Http\Response\File as FileResponse;
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
 use Application\Model\Service\AbstractService;
 use Aws\S3\S3Client;
 use DynamoQueue\Queue\Client as DynamoQueue;
@@ -16,6 +17,8 @@ use Zend\Filter\Compress;
 
 class Service extends AbstractService
 {
+    use ApiLpaCollectionTrait;
+
     /**
      * PDF status constants
      */

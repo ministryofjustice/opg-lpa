@@ -2,30 +2,14 @@
 
 namespace Application\Model\Service\Stats;
 
-use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollectionTrait;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
+use Application\Model\Service\AbstractService;
 
-class Service
+class Service extends AbstractService
 {
-    /**
-     * @var ApiStatsLpasCollection
-     */
-    protected $apiStatsLpasCollection = null;
-
-    /**
-     * @var AuthUserCollection
-     */
-    protected $authUserCollection = null;
-
-    /**
-     * @param ApiStatsLpasCollection $apiStatsLpasCollection
-     * @param AuthUserCollection $authUserCollection
-     */
-    public function __construct(ApiStatsLpasCollection $apiStatsLpasCollection, AuthUserCollection $authUserCollection)
-    {
-        $this->apiStatsLpasCollection = $apiStatsLpasCollection;
-        $this->authUserCollection = $authUserCollection;
-    }
+    use ApiStatsLpasCollectionTrait;
+    use AuthUserCollectionTrait;
 
     /**
      * @param $type

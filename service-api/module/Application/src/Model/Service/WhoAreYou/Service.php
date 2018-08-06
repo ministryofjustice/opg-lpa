@@ -2,19 +2,18 @@
 
 namespace Application\Model\Service\WhoAreYou;
 
-use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
+use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollectionTrait;
 use Application\Model\Service\AbstractService;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use RuntimeException;
 
 class Service extends AbstractService
 {
-    /**
-     * @var ApiWhoCollection
-     */
-    private $apiWhoCollection;
+    use ApiLpaCollectionTrait;
+    use ApiWhoCollectionTrait;
 
     /**
      * @param $lpaId
@@ -49,13 +48,5 @@ class Service extends AbstractService
         $this->apiWhoCollection->insert($answer);
 
         return new Entity($lpa->whoAreYouAnswered);
-    }
-
-    /**
-     * @param ApiWhoCollection $apiWhoCollection
-     */
-    public function setApiWhoCollection(ApiWhoCollection $apiWhoCollection)
-    {
-        $this->apiWhoCollection = $apiWhoCollection;
     }
 }
