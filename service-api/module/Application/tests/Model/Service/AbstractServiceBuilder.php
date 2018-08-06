@@ -7,7 +7,6 @@ use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Model\Service\AbstractService;
 use Mockery;
 use Mockery\MockInterface;
-use MongoDB\UpdateResult;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\Logger;
@@ -106,34 +105,28 @@ abstract class AbstractServiceBuilder
 
         if ($this->user !== null) {
             if ($this->lpa !== null) {
-                $this->apiLpaCollection->shouldReceive('findOne')
-                    ->withArgs([['_id' => (int)$this->lpa->getId(), 'user' => $this->user->getId()]])
+                $this->apiLpaCollection->shouldReceive('getById')
+                    ->withArgs([(int)$this->lpa->getId(), $this->user->getId()])
                     ->andReturn($this->lpa->toArray(new DateCallback()));
-                $this->apiLpaCollection->shouldReceive('findOne')
-                    ->withArgs([['_id' => $this->lpa->getId()]])
+                $this->apiLpaCollection->shouldReceive('getById')
+                    ->withArgs([$this->lpa->getId()])
                     ->andReturn($this->lpa->toArray(new DateCallback()));
-
-                $this->apiLpaCollection->shouldReceive('count')
-                    ->withArgs([[ '_id'=>$this->lpa->getId(), 'locked'=>true ], [ '_id'=>true ]])
-                    ->andReturn(0);
             }
         }
 
         if ($this->lpa === null) {
-            $this->apiLpaCollection->shouldNotReceive('findOne');
-            $this->apiLpaCollection->shouldNotReceive('find');
+            $this->apiLpaCollection->shouldNotReceive('getById');
+            $this->apiLpaCollection->shouldNotReceive('fetch');
         }
 
         if ($addDefaults) {
-            $this->apiLpaCollection->shouldReceive('findOne')->andReturn(null);
+            $this->apiLpaCollection->shouldReceive('getById')->andReturn(null);
         }
 
         if ($this->updateNumberModified === null) {
-            $this->apiLpaCollection->shouldNotReceive('updateOne');
+            $this->apiLpaCollection->shouldNotReceive('update');
         } else {
-            $updateResult = Mockery::mock(UpdateResult::class);
-            $updateResult->shouldReceive('getModifiedCount')->andReturn($this->updateNumberModified);
-            $this->apiLpaCollection->shouldReceive('updateOne')->once()->andReturn($updateResult);
+            $this->apiLpaCollection->shouldReceive('update');
         }
 
         return $service;

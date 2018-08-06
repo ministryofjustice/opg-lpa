@@ -17,15 +17,33 @@ class StatsTest extends TestCase
         $apiLpaCollection = Mockery::mock(ApiLpaCollection::class);
 
         //Return 1 for all counts to aid mocking mongo calls
-        $apiLpaCollection->shouldReceive('count')->andReturn(1);
-
-        $manager = Mockery::mock();
-        $cursor = Mockery::mock(\Traversable::class);
-        $cursor->shouldReceive('toArray')->andReturn([0 => (object)['results' => [(object)['value' => 1], (object)['value' => 1]]]]);
-        $manager->shouldReceive('executeCommand')->andReturn($cursor)->once();
-        $apiLpaCollection->shouldReceive('getManager')->andReturn($manager)->once();
-        $apiLpaCollection->shouldReceive('getDatabaseName')->andReturn('test')->once();
-        $apiLpaCollection->shouldReceive('getCollectionName')->andReturn('test')->once();
+        $apiLpaCollection->shouldReceive('countBetween')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countStartedForType')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCreatedForType')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedForType')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countDeleted')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetween')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenCorrespondentEmail')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenCorrespondentPhone')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenCorrespondentPost')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenCorrespondentEnglish')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenCorrespondentWelsh')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenWithPreferences')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenWithInstructions')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenByType')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenByCanSign')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenHasActors')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenHasNoActors')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenHasMultipleActors')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenDonorRegistering')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenAttorneyRegistering')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenCaseNumber')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenFeeType')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenPaymentType')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenWithAttorneyDecisions')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenWithTrust')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCompletedBetweenCertificateProviderSkipped')->andReturn(1);
+        $apiLpaCollection->shouldReceive('getLpasPerUser')->andReturn([]);
         /** @var ApiLpaCollection $apiLpaCollection */
 
         $statsLpasCollection = Mockery::mock(ApiStatsLpasCollection::class);
@@ -41,12 +59,11 @@ class StatsTest extends TestCase
         /** @var ApiStatsLpasCollection $statsLpasCollection */
 
         $whoCollection = Mockery::mock(ApiWhoCollection::class);
-        $whoCollection->shouldReceive('count')->andReturn(1);
+        $whoCollection->shouldReceive('getStatsForTimeRange')->andReturn(1);
         /** @var ApiWhoCollection $whoCollection */
 
         $logger = Mockery::mock(Logger::class);
         $logger->shouldReceive('info');
-        $logger->shouldReceive('err');
         /** @var Logger $logger */
 
         $stats = new Stats($apiLpaCollection, $statsLpasCollection, $whoCollection);

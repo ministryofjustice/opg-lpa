@@ -150,7 +150,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->userManagementService->shouldReceive('delete')->withArgs([1, 'expired']);
 
-        $this->apiLpaCollection->shouldReceive('find')->withArgs([['user' => 1]])->andReturn([]);
+        $this->apiLpaCollection->shouldReceive('fetchByUserId')->with(1)->andReturn([]);
 
         $this->apiUserCollection->shouldReceive('deleteById')->withArgs([1])->andReturnNull();
 
@@ -168,7 +168,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->userManagementService->shouldReceive('delete')->withArgs([1, 'expired']);
 
-        $this->apiLpaCollection->shouldReceive('find')->withArgs([['user' => 1]])->andReturn([]);
+        $this->apiLpaCollection->shouldReceive('fetchByUserId')->with(1)->andReturn([]);
 
         $this->apiUserCollection->shouldReceive('deleteById')->withArgs([1])->andReturnNull();
 

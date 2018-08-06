@@ -167,7 +167,8 @@ class Service extends AbstractService
             }
         }
 
-        $count = $this->apiLpaCollection->fetch($filter);
+        $cursor = $this->apiLpaCollection->fetch($filter);
+        $count = count($cursor->toArray());
 
         // If there are no records, just return an empty paginator...
         if ($count == 0) {
