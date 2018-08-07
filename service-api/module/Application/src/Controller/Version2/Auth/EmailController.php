@@ -88,20 +88,21 @@ class EmailController extends AbstractAuthController
 
         $result = $this->service->updateEmailUsingToken($emailUpdateToken);
 
-        if ($result === 'invalid-token') {
-            return new ApiProblem(404, 'Invalid token');
-        }
+        if ($result->error()) {
+            if ($result->message() === 'invalid-token') {
+                return new ApiProblem(404, 'Invalid token');
+            }
 
-        if ($result === 'username-already-exists') {
-            return new ApiProblem(400, 'Email already exists for another user');
-        }
+            if ($result->message() === 'username-already-exists') {
+                return new ApiProblem(400, 'Email already exists for another user');
+            }
 
-        if ($result === false) {
             return new ApiProblem(500, 'Unable to update email address');
         }
 
+
         $this->getLogger()->info("User successfully update email with token", [
-            'userId' => $result->id()
+            'userId' => $result->getUser()->id()
         ]);
 
         // Return 204 - No Content

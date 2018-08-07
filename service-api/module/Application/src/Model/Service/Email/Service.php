@@ -66,6 +66,10 @@ class Service extends AbstractService
         return $tokenDetails;
     }
 
+    /**
+     * @param $token
+     * @return \Application\Model\DataAccess\Repository\Auth\UpdateEmailUsingTokenResponse
+     */
     public function updateEmailUsingToken($token)
     {
         return $this->authUserCollection->updateEmailUsingToken($token);
