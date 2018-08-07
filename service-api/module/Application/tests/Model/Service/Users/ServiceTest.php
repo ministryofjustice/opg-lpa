@@ -7,7 +7,6 @@ use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\DataModelEntity;
-use Application\Model\Service\Users\Service;
 use Application\Model\Service\UserManagement\Service as UserManagementService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
@@ -17,35 +16,20 @@ use DateTime;
 
 class ServiceTest extends AbstractServiceTest
 {
-    /**
-     * @var Service
-     */
-    private $service;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->service = new Service($this->apiLpaCollection);
-
-        $this->service->setLogger($this->logger);
-    }
-
     public function testFetchDoesNotExist()
     {
         $user = FixturesData::getUser();
 
-        $userCollection = Mockery::mock(ApiUserCollection::class);
-        $userCollection->shouldReceive('getById')->andReturn(null)->twice();
-        $userCollection->shouldReceive('insert')->once();
+        $apiUserCollection = Mockery::mock(ApiUserCollection::class);
+        $apiUserCollection->shouldReceive('getById')->andReturn(null)->twice();
+        $apiUserCollection->shouldReceive('insert')->once();
 
         $userManagementService = Mockery::mock(UserManagementService::class);
         $userManagementService->shouldReceive('get')->andReturn(['username' => $user->getEmail()->getAddress()]);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withApiUserCollection($userCollection)
+            ->withApiUserCollection($apiUserCollection)
             ->withUserManagementService($userManagementService)
             ->build();
 
@@ -66,14 +50,13 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $userCollection = Mockery::mock(ApiUserCollection::class);
-        $userCollection->shouldReceive('getById')->andReturn($user->toArray(new DateCallback()))->once();
-        $userCollection->shouldNotReceive('insert');
+        $apiUserCollection = Mockery::mock(ApiUserCollection::class);
+        $apiUserCollection->shouldReceive('getById')->andReturn($user->toArray(new DateCallback()))->once();
+        $apiUserCollection->shouldNotReceive('insert');
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withApiUserCollection($userCollection)
+            ->withApiUserCollection($apiUserCollection)
             ->build();
 
         $entity = $service->fetch($user->getId());
@@ -87,17 +70,16 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $userCollection = Mockery::mock(ApiUserCollection::class);
-        $userCollection->shouldReceive('getById')->andReturn(null)->once();
-        $userCollection->shouldReceive('insert')->once();
+        $apiUserCollection = Mockery::mock(ApiUserCollection::class);
+        $apiUserCollection->shouldReceive('getById')->andReturn(null)->once();
+        $apiUserCollection->shouldReceive('insert')->once();
 
         $userManagementService = Mockery::mock(UserManagementService::class);
         $userManagementService->shouldReceive('get')->andReturn(['username' => $user->getEmail()->getAddress()]);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withApiUserCollection($userCollection)
+            ->withApiUserCollection($apiUserCollection)
             ->withUserManagementService($userManagementService)
             ->build();
 
@@ -118,17 +100,16 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $userCollection = Mockery::mock(ApiUserCollection::class);
-        $userCollection->shouldReceive('getById')->andReturn($user->toArray(new DateCallback()))->once();
-        $userCollection->shouldNotReceive('update');
+        $apiUserCollection = Mockery::mock(ApiUserCollection::class);
+        $apiUserCollection->shouldReceive('getById')->andReturn($user->toArray(new DateCallback()))->once();
+        $apiUserCollection->shouldNotReceive('update');
 
         $userManagementService = Mockery::mock(UserManagementService::class);
         $userManagementService->shouldReceive('get')->andReturn(['username' => $user->getEmail()->getAddress()]);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withApiUserCollection($userCollection)
+            ->withApiUserCollection($apiUserCollection)
             ->withUserManagementService($userManagementService)
             ->build();
 
@@ -152,17 +133,16 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $userCollection = Mockery::mock(ApiUserCollection::class);
-        $userCollection->shouldReceive('getById')->andReturn($user->toArray(new DateCallback()))->once();
-        $userCollection->shouldReceive('update')->once();
+        $apiUserCollection = Mockery::mock(ApiUserCollection::class);
+        $apiUserCollection->shouldReceive('getById')->andReturn($user->toArray(new DateCallback()))->once();
+        $apiUserCollection->shouldReceive('update')->once();
 
         $userManagementService = Mockery::mock(UserManagementService::class);
         $userManagementService->shouldReceive('get')->andReturn(['username' => $user->getEmail()->getAddress()]);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withApiUserCollection($userCollection)
+            ->withApiUserCollection($apiUserCollection)
             ->withUserManagementService($userManagementService)
             ->build();
 
@@ -184,17 +164,16 @@ class ServiceTest extends AbstractServiceTest
         $applicationsService = Mockery::mock(ApplicationsService::class);
         $applicationsService->shouldReceive('deleteAll')->once();
 
-        $userCollection = Mockery::mock(ApiUserCollection::class);
-        $userCollection->shouldReceive('deleteById')->with($user->getId())->once();
+        $apiUserCollection = Mockery::mock(ApiUserCollection::class);
+        $apiUserCollection->shouldReceive('deleteById')->with($user->getId())->once();
 
         $userManagementService = Mockery::mock(UserManagementService::class);
         $userManagementService->shouldReceive('delete')->once();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
             ->withApplicationsService($applicationsService)
-            ->withApiUserCollection($userCollection)
+            ->withApiUserCollection($apiUserCollection)
             ->withUserManagementService($userManagementService)
             ->build();
 

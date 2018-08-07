@@ -5,12 +5,10 @@ namespace ApplicationTest\Model\Service\System;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
-use Application\Model\Service\System\Stats;
+use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
-use Opg\Lpa\Logger\Logger;
-use PHPUnit\Framework\TestCase;
 
-class StatsTest extends TestCase
+class StatsTest extends AbstractServiceTest
 {
     public function testGenerate()
     {
@@ -46,9 +44,9 @@ class StatsTest extends TestCase
         $apiLpaCollection->shouldReceive('getLpasPerUser')->andReturn([]);
         /** @var ApiLpaCollection $apiLpaCollection */
 
-        $statsLpasCollection = Mockery::mock(ApiStatsLpasCollection::class);
-        $statsLpasCollection->shouldReceive('delete')->once();
-        $statsLpasCollection->shouldReceive('insert')->withArgs(function ($stats) {
+        $apiStatsLpasCollection = Mockery::mock(ApiStatsLpasCollection::class);
+        $apiStatsLpasCollection->shouldReceive('delete')->once();
+        $apiStatsLpasCollection->shouldReceive('insert')->withArgs(function ($stats) {
             return isset($stats['generated'])
                 && isset($stats['lpas'])
                 && isset($stats['lpasPerUser'])
@@ -56,20 +54,20 @@ class StatsTest extends TestCase
                 && isset($stats['correspondence'])
                 && isset($stats['preferencesInstructions']);
         })->once();
-        /** @var ApiStatsLpasCollection $statsLpasCollection */
+        /** @var ApiStatsLpasCollection $apiStatsLpasCollection */
 
-        $whoCollection = Mockery::mock(ApiWhoCollection::class);
-        $whoCollection->shouldReceive('getStatsForTimeRange')->andReturn(1);
-        /** @var ApiWhoCollection $whoCollection */
+        $apiWhoCollection = Mockery::mock(ApiWhoCollection::class);
+        $apiWhoCollection->shouldReceive('getStatsForTimeRange')->andReturn(1);
+        /** @var ApiWhoCollection $apiWhoCollection */
 
-        $logger = Mockery::mock(Logger::class);
-        $logger->shouldReceive('info');
-        /** @var Logger $logger */
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($apiLpaCollection)
+            ->withApiStatsLpasCollection($apiStatsLpasCollection)
+            ->withApiWhoCollection($apiWhoCollection)
+            ->build();
 
-        $stats = new Stats($apiLpaCollection, $statsLpasCollection, $whoCollection);
-        $stats->setLogger($logger);
-
-        $result = $stats->generate();
+        $result = $service->generate();
 
         $this->assertTrue($result);
     }
