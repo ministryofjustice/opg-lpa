@@ -5,9 +5,9 @@ namespace Application\Model\DataAccess\Mongo\Collection;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use MongoDB\Collection as MongoCollection;
 
-use Application\Model\DataAccess\AuthLogRepositoryInterface;
+use Application\Model\DataAccess\Repository\Auth;
 
-class AuthLogCollection implements AuthLogRepositoryInterface
+class AuthLogCollection implements Auth\LogRepositoryInterface
 {
     /**
      * @var MongoCollection

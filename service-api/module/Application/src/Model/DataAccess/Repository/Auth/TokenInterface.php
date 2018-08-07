@@ -1,9 +1,10 @@
 <?php
-namespace Application\Model\DataAccess;
+namespace Application\Model\DataAccess\Repository\Auth;
 
 use DateTime;
 
-interface AuthTokenInterface {
+interface TokenInterface
+{
 
     /**
      * Returns the token.

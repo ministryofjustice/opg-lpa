@@ -5,8 +5,7 @@ namespace Application\Model\DataAccess\Mongo\Collection;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use DateTime;
 
-use Application\Model\DataAccess\AuthUserInterface;
-use Application\Model\DataAccess\AuthTokenInterface;
+use Application\Model\DataAccess\Repository\Auth;
 
 /**
  * Represents a single user.
@@ -14,7 +13,7 @@ use Application\Model\DataAccess\AuthTokenInterface;
  * Class User
  * @package Application\Model\DataAccess\Mongo
  */
-class User implements AuthUserInterface
+class User implements Auth\UserInterface
 {
     /**
      * The user's data.
@@ -201,9 +200,9 @@ class User implements AuthUserInterface
     /**
      * Returns the user's current authentication token (if present).
      *
-     * @return AuthTokenInterface|null
+     * @return Auth\TokenInterface|null
      */
-    public function authToken() : AuthTokenInterface
+    public function authToken() : Auth\TokenInterface
     {
         return (isset($this->data['auth_token'])) ? new Token($this->data['auth_token']) : null;
     }

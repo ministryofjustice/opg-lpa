@@ -1,7 +1,8 @@
 <?php
-namespace Application\Model\DataAccess;
+namespace Application\Model\DataAccess\Repository\Auth;
 
-class AuthUpdatePasswordUsingTokenError {
+class UpdatePasswordUsingTokenError
+{
 
     private $message;
 

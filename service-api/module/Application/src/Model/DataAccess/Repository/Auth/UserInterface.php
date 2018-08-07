@@ -1,9 +1,10 @@
 <?php
-namespace Application\Model\DataAccess;
+namespace Application\Model\DataAccess\Repository\Auth;
 
 use DateTime;
 
-interface AuthUserInterface {
+interface UserInterface
+{
 
     /**
      * Returns an array representation of the user's basic info.
@@ -101,9 +102,9 @@ interface AuthUserInterface {
     /**
      * Returns the user's current authentication token (if present).
      *
-     * @return AuthTokenInterface|null
+     * @return TokenInterface|null
      */
-    public function authToken() : ?AuthTokenInterface;
+    public function authToken() : ?TokenInterface;
 
     /**
      * Any account inactivity flags that may be set

@@ -1,7 +1,8 @@
 <?php
-namespace Application\Model\DataAccess;
+namespace Application\Model\DataAccess\Repository\Auth;
 
-interface AuthLogRepositoryInterface {
+interface LogRepositoryInterface
+{
 
     /**
      * Add a document to the log collection.

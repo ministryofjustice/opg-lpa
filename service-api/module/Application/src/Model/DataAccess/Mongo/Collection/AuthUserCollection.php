@@ -9,10 +9,9 @@ use MongoDB\Driver\ReadPreference;
 use DateTime;
 use Generator;
 
-use Application\Model\DataAccess;
-use Application\Model\DataAccess\AuthUserInterface;
+use Application\Model\DataAccess\Repository\Auth;
 
-class AuthUserCollection implements DataAccess\AuthUserRepositoryInterface
+class AuthUserCollection implements Auth\UserRepositoryInterface
 {
     /**
      * @var MongoCollection
@@ -33,7 +32,7 @@ class AuthUserCollection implements DataAccess\AuthUserRepositoryInterface
      * @param $username
      * @return User|null
      */
-    public function getByUsername($username) : ?AuthUserInterface
+    public function getByUsername($username) : ?Auth\UserInterface
     {
         $data = $this->collection->findOne(['identity' => $username]);
 
@@ -48,7 +47,7 @@ class AuthUserCollection implements DataAccess\AuthUserRepositoryInterface
      * @param $id
      * @return User|null
      */
-    public function getById($id) : ?AuthUserInterface
+    public function getById($id) : ?Auth\UserInterface
     {
         $data = $this->collection->findOne(['_id' => $id]);
 
@@ -63,7 +62,7 @@ class AuthUserCollection implements DataAccess\AuthUserRepositoryInterface
      * @param $token
      * @return User|null
      */
-    public function getByAuthToken($token) : ?AuthUserInterface
+    public function getByAuthToken($token) : ?Auth\UserInterface
     {
         $data = $this->collection->findOne(['auth_token.token' => $token]);
 
@@ -78,7 +77,7 @@ class AuthUserCollection implements DataAccess\AuthUserRepositoryInterface
      * @param $token
      * @return User|null
      */
-    public function getByResetToken($token) : ?AuthUserInterface
+    public function getByResetToken($token) : ?Auth\UserInterface
     {
         $data = $this->collection->findOne(
             [
@@ -356,14 +355,14 @@ class AuthUserCollection implements DataAccess\AuthUserRepositoryInterface
     /**
      * @param $token
      * @param $passwordHash
-     * @return DataAccess\AuthUpdatePasswordUsingTokenError
+     * @return Auth\UpdatePasswordUsingTokenError
      */
-    public function updatePasswordUsingToken($token, $passwordHash) : DataAccess\AuthUpdatePasswordUsingTokenError
+    public function updatePasswordUsingToken($token, $passwordHash) : Auth\UpdatePasswordUsingTokenError
     {
         $user = $this->getByResetToken($token);
 
         if (!$user instanceof User) {
-            return new DataAccess\AuthUpdatePasswordUsingTokenError( 'invalid-token');
+            return new Auth\UpdatePasswordUsingTokenError( 'invalid-token');
         }
 
         //---
@@ -384,7 +383,7 @@ class AuthUserCollection implements DataAccess\AuthUserRepositoryInterface
         );
 
         if ($result->getModifiedCount() != 1) {
-            return new DataAccess\AuthUpdatePasswordUsingTokenError('nothing-modified');
+            return new Auth\UpdatePasswordUsingTokenError('nothing-modified');
         }
 
         // All went well; no error to return.
@@ -421,9 +420,9 @@ class AuthUserCollection implements DataAccess\AuthUserRepositoryInterface
 
     /**
      * @param $token
-     * @return DataAccess\AuthUpdateEmailUsingTokenResponse
+     * @return Auth\UpdateEmailUsingTokenResponse
      */
-    public function updateEmailUsingToken($token) : DataAccess\AuthUpdateEmailUsingTokenResponse
+    public function updateEmailUsingToken($token) : Auth\UpdateEmailUsingTokenResponse
     {
         $user = $this->collection->findOne(
             [
@@ -433,7 +432,7 @@ class AuthUserCollection implements DataAccess\AuthUserRepositoryInterface
         );
 
         if (!is_array($user)) {
-            return new DataAccess\AuthUpdateEmailUsingTokenResponse('invalid-token');
+            return new Auth\UpdateEmailUsingTokenResponse('invalid-token');
         }
 
         $newEmail = $user['email_update_request']['email'];
@@ -445,7 +444,7 @@ class AuthUserCollection implements DataAccess\AuthUserRepositoryInterface
         );
 
         if (is_array($clashUser)) {
-            return new DataAccess\AuthUpdateEmailUsingTokenResponse('username-already-exists');
+            return new Auth\UpdateEmailUsingTokenResponse('username-already-exists');
         }
 
         //---
@@ -465,11 +464,11 @@ class AuthUserCollection implements DataAccess\AuthUserRepositoryInterface
         );
 
         if ($result->getModifiedCount() != 1) {
-            return new DataAccess\AuthUpdateEmailUsingTokenResponse('nothing-modified');
+            return new Auth\UpdateEmailUsingTokenResponse('nothing-modified');
         }
 
         // Returns the User, wrapped in a Response object.
-        return new DataAccess\AuthUpdateEmailUsingTokenResponse(new User($user));
+        return new Auth\UpdateEmailUsingTokenResponse(new User($user));
     }
 
     /**

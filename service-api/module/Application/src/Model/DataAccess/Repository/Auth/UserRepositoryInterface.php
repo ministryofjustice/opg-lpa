@@ -1,36 +1,37 @@
 <?php
-namespace Application\Model\DataAccess;
+namespace Application\Model\DataAccess\Repository\Auth;
 
 use DateTime;
 use Generator;
 
-interface AuthUserRepositoryInterface {
+interface UserRepositoryInterface
+{
 
     /**
      * Returns a single user by username (email address).
      *
      * @param $username
-     * @return AuthUserInterface|null
+     * @return UserInterface|null
      */
-    public function getByUsername($username) : ?AuthUserInterface;
+    public function getByUsername($username) : ?UserInterface;
 
     /**
      * @param $id
-     * @return AuthUserInterface|null
+     * @return UserInterface|null
      */
-    public function getById($id) : ?AuthUserInterface;
+    public function getById($id) : ?UserInterface;
 
     /**
      * @param $token
-     * @return AuthUserInterface|null
+     * @return UserInterface|null
      */
-    public function getByAuthToken($token) : ?AuthUserInterface;
+    public function getByAuthToken($token) : ?UserInterface;
 
     /**
      * @param $token
-     * @return AuthUserInterface|null
+     * @return UserInterface|null
      */
-    public function getByResetToken($token) : ?AuthUserInterface;
+    public function getByResetToken($token) : ?UserInterface;
 
     /**
      * @param $id
@@ -119,9 +120,9 @@ interface AuthUserRepositoryInterface {
     /**
      * @param $token
      * @param $passwordHash
-     * @return AuthUpdatePasswordUsingTokenError
+     * @return UpdatePasswordUsingTokenError
      */
-    public function updatePasswordUsingToken($token, $passwordHash) : ?AuthUpdatePasswordUsingTokenError;
+    public function updatePasswordUsingToken($token, $passwordHash) : ?UpdatePasswordUsingTokenError;
 
     /**
      * @param $id
@@ -133,9 +134,9 @@ interface AuthUserRepositoryInterface {
 
     /**
      * @param $token
-     * @return AuthUpdateEmailUsingTokenResponse
+     * @return UpdateEmailUsingTokenResponse
      */
-    public function updateEmailUsingToken($token) : AuthUpdateEmailUsingTokenResponse;
+    public function updateEmailUsingToken($token) : UpdateEmailUsingTokenResponse;
 
     /**
      * Returns all accounts that have not been logged into since $since.

@@ -5,7 +5,7 @@ namespace Application\Model\DataAccess\Mongo\Collection;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use DateTime;
 
-use Application\Model\DataAccess\AuthTokenInterface;
+use Application\Model\DataAccess\Repository\Auth;
 
 /**
  * Represents a single token.
@@ -13,7 +13,7 @@ use Application\Model\DataAccess\AuthTokenInterface;
  * Class User
  * @package Application\Model\DataAccess\Mongo
  */
-class Token implements AuthTokenInterface
+class Token implements Auth\TokenInterface
 {
     /**
      * The token's data.
