@@ -118,15 +118,18 @@ class Service extends AbstractService
 
         $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
 
-        $result = $this->authUserCollection->updatePasswordUsingToken($token, $passwordHash);
+        $error = $this->authUserCollection->updatePasswordUsingToken($token, $passwordHash);
 
-        //  If the password updated correctly then reset the failed login attempt count for the user too
-        if ($result === true) {
+        // If there's no error...
+        // If the password updated correctly then reset the failed login attempt count for the user too
+        if (is_null($error)) {
             $this->authUserCollection->resetFailedLoginCounter($user->id());
             $user->resetFailedLoginAttempts();
+            return null;
         }
 
-        return $result;
+        // Else return the error message
+        return $error->message();
     }
 
     /**

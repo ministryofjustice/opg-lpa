@@ -357,7 +357,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $passwordHash
      * @return Auth\UpdatePasswordUsingTokenError
      */
-    public function updatePasswordUsingToken($token, $passwordHash) : Auth\UpdatePasswordUsingTokenError
+    public function updatePasswordUsingToken($token, $passwordHash) : ?Auth\UpdatePasswordUsingTokenError
     {
         $user = $this->getByResetToken($token);
 

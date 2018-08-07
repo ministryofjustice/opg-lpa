@@ -109,6 +109,10 @@ class PasswordController extends AbstractAuthController
             return new ApiProblem(400, 'Invalid password');
         }
 
+        if (is_string($result)) {
+            return new ApiProblem(400, "Unknown error: {$result}");
+        }
+
         $this->getLogger()->info("User successfully change their password via a reset", [
             'passwordToken' => $passwordToken
         ]);
