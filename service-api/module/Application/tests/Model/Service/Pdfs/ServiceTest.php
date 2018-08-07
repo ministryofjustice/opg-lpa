@@ -31,7 +31,7 @@ class ServiceTest extends AbstractServiceTest
     {
         parent::setUp();
 
-        $this->service = new Service($this->lpaCollection);
+        $this->service = new Service($this->apiLpaCollection);
 
         $this->service->setLogger($this->logger);
 

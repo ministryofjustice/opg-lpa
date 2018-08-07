@@ -2,14 +2,14 @@
 
 namespace Application\Model\Service\AccountCleanup;
 
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
-use Auth\Model\Service\UserManagementService;
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
+use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
+use Application\Model\Service\AbstractService;
+use Application\Model\Service\UserManagement\Service as UserManagementService;
 use Aws\Sns\SnsClient;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
-use MongoDB\BSON\UTCDateTime;
-use MongoDB\Collection;
-use Opg\Lpa\Logger\LoggerTrait;
 use DateTime;
 use Exception;
 
@@ -21,24 +21,11 @@ use Exception;
  * Warnings are sent by calling a HTTP based notification endpoint.
  * The auth service is not concerned with how that notification is then processed.
  */
-class Service
+class Service extends AbstractService
 {
-    use LoggerTrait;
-
-    /**
-     * @var UserManagementService
-     */
-    private $userManagementService;
-
-    /**
-     * @var SnsClient
-     */
-    private $snsClient;
-
-    /**
-     * @var GuzzleClient
-     */
-    private $guzzleClient;
+    use ApiLpaCollectionTrait;
+    use ApiUserCollectionTrait;
+    use AuthUserCollectionTrait;
 
     /**
      * @var array
@@ -46,40 +33,23 @@ class Service
     private $config;
 
     /**
-     * @var Collection
+     * @var GuzzleClient
      */
-    private $apiLpaCollection;
+    private $guzzleClient;
 
     /**
-     * @var Collection
+     * @var SnsClient
      */
-    private $apiUserCollection;
+    private $snsClient;
 
     /**
-     * @var AuthUserCollection
+     * @var UserManagementService
      */
-    private $authUserCollection;
+    private $userManagementService;
 
     /**
-     * @param UserManagementService $userManagementService
-     * @param SnsClient $snsClient
-     * @param GuzzleClient $guzzleClient
-     * @param array $config
-     * @param Collection $apiLpaCollection
-     * @param Collection $apiUserCollection
-     * @param AuthUserCollection $authUserCollection
+     * Execute the account cleanup
      */
-    public function __construct(UserManagementService $userManagementService, SnsClient $snsClient, GuzzleClient $guzzleClient, array $config, Collection $apiLpaCollection, Collection $apiUserCollection, AuthUserCollection $authUserCollection)
-    {
-        $this->userManagementService = $userManagementService;
-        $this->snsClient = $snsClient;
-        $this->guzzleClient = $guzzleClient;
-        $this->config = $config;
-        $this->apiLpaCollection = $apiLpaCollection;
-        $this->apiUserCollection = $apiUserCollection;
-        $this->authUserCollection = $authUserCollection;
-    }
-
     public function cleanup()
     {
         $summary = array();
@@ -239,23 +209,13 @@ class Service
             $this->userManagementService->delete($user->id(), 'expired');
 
             //  Delete the LPAs in the API data for this user
-            $lpas = $this->apiLpaCollection->find([
-                'user' => $user->id()
-            ]);
+            $lpas = $this->apiLpaCollection->fetchByUserId($user->id());
 
             foreach ($lpas as $lpa) {
-                //  We don't want to remove the document entirely as we need to make sure the same ID isn't reassigned.
-                //  So we just strip the document down to '_id' and 'updatedAt'.
-                $criteria = array_intersect_key($lpa, array_flip(['_id', 'user']));
-
-                $this->apiLpaCollection->replaceOne($criteria, [
-                    'updatedAt' => new UTCDateTime(),
-                ]);
+                $this->apiLpaCollection->deleteById($lpa['_id'], $lpa['user']);
             }
 
-            $this->apiUserCollection->deleteOne([
-                '_id' => $user->id()
-            ]);
+            $this->apiUserCollection->deleteById($user->id());
 
             $counter++;
         }
@@ -292,5 +252,37 @@ class Service
         echo "{$counter} accounts deleted.\n";
 
         return $counter;
+    }
+
+    /**
+     * @param array $config
+     */
+    public function setConfig(array $config)
+    {
+        $this->config = $config;
+    }
+
+    /**
+     * @param GuzzleClient $guzzleClient
+     */
+    public function setGuzzleClient(GuzzleClient $guzzleClient)
+    {
+        $this->guzzleClient = $guzzleClient;
+    }
+
+    /**
+     * @param SnsClient $snsClient
+     */
+    public function setSnsClient(SnsClient $snsClient)
+    {
+        $this->snsClient = $snsClient;
+    }
+
+    /**
+     * @param UserManagementService $userManagementService
+     */
+    public function setUserManagementService(UserManagementService $userManagementService)
+    {
+        $this->userManagementService = $userManagementService;
     }
 }

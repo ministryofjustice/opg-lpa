@@ -3,11 +3,14 @@
 namespace Application\Model\Service\Instruction;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
 use Application\Model\Service\AbstractService;
 use RuntimeException;
 
 class Service extends AbstractService
 {
+    use ApiLpaCollectionTrait;
+
     /**
      * @param $lpaId
      * @param $data

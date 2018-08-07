@@ -14,7 +14,9 @@ use Application\Model\DataAccess\AuthUserInterface;
 
 class AuthUserCollection implements DataAccess\AuthUserRepositoryInterface
 {
-
+    /**
+     * @var MongoCollection
+     */
     protected $collection;
 
     /**

@@ -2,18 +2,18 @@
 
 namespace ApplicationTest\Model\Service;
 
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use MongoDB\Collection;
 use Opg\Lpa\Logger\Logger;
 
 abstract class AbstractServiceTest extends MockeryTestCase
 {
     /**
-     * @var MockInterface|Collection
+     * @var MockInterface|ApiLpaCollection
      */
-    protected $lpaCollection;
+    protected $apiLpaCollection;
 
     /**
      * @var MockInterface|Logger
@@ -22,7 +22,7 @@ abstract class AbstractServiceTest extends MockeryTestCase
 
     protected function setUp()
     {
-        $this->lpaCollection = Mockery::mock(Collection::class);
+        $this->apiLpaCollection = Mockery::mock(ApiLpaCollection::class);
 
         $this->logger = Mockery::mock(Logger::class);
     }

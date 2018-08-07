@@ -2,31 +2,14 @@
 
 namespace Application\Model\Service\Stats;
 
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
-use MongoDB\Collection;
-use MongoDB\Driver\ReadPreference;
+use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollectionTrait;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
+use Application\Model\Service\AbstractService;
 
-class Service
+class Service extends AbstractService
 {
-    /**
-     * @var Collection
-     */
-    protected $collection = null;
-
-    /**
-     * @var AuthUserCollection
-     */
-    protected $authUserCollection = null;
-
-    /**
-     * @param Collection $collection
-     * @param AuthUserCollection $authUserCollection
-     */
-    public function __construct(Collection $collection, AuthUserCollection $authUserCollection)
-    {
-        $this->collection = $collection;
-        $this->authUserCollection = $authUserCollection;
-    }
+    use ApiStatsLpasCollectionTrait;
+    use AuthUserCollectionTrait;
 
     /**
      * @param $type
@@ -34,13 +17,7 @@ class Service
      */
     public function fetch($type)
     {
-        // Return all the cached data.// Stats can (ideally) be processed on a secondary.
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
-        // Stats can (ideally) be pulled from a secondary.
-        $stats = $this->collection->findOne([], $readPreference);
+        $stats = $this->apiStatsLpasCollection->getStats();
 
         if (!isset($stats['generated']) || !is_string($stats['generated'])) {
             return [

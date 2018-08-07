@@ -2,10 +2,12 @@
 
 namespace ApplicationTest\Model\Service\AccountCleanup;
 
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
-use Application\Model\Service\AccountCleanup\Service;
 use Application\Model\DataAccess\Mongo\Collection\User;
-use Auth\Model\Service\UserManagementService;
+use Application\Model\Service\AccountCleanup\Service;
+use Application\Model\Service\UserManagement\Service as UserManagementService;
 use Aws\Sns\SnsClient;
 use DateInterval;
 use DateTime;
@@ -15,7 +17,6 @@ use GuzzleHttp\Exception\ClientException as GuzzleClientException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use MongoDB\Collection;
 use Opg\Lpa\Logger\Logger;
 use Psr\Http\Message\RequestInterface;
 
@@ -47,12 +48,12 @@ class ServiceTest extends MockeryTestCase
     private $guzzleClient;
 
     /**
-     * @var MockInterface|Collection
+     * @var MockInterface|ApiLpaCollection
      */
     private $apiLpaCollection;
 
     /**
-     * @var MockInterface|Collection
+     * @var MockInterface|ApiUserCollection
      */
     private $apiUserCollection;
 
@@ -94,9 +95,9 @@ class ServiceTest extends MockeryTestCase
 
         $this->guzzleClient = Mockery::mock(GuzzleClient::class);
 
-        $this->apiLpaCollection = Mockery::mock(Collection::class);
+        $this->apiLpaCollection = Mockery::mock(ApiLpaCollection::class);
 
-        $this->apiUserCollection = Mockery::mock(Collection::class);
+        $this->apiUserCollection = Mockery::mock(ApiUserCollection::class);
 
         $this->authUserCollection = Mockery::mock(AuthUserCollection::class);
 
@@ -149,9 +150,9 @@ class ServiceTest extends MockeryTestCase
 
         $this->userManagementService->shouldReceive('delete')->withArgs([1, 'expired']);
 
-        $this->apiLpaCollection->shouldReceive('find')->withArgs([['user' => 1]])->andReturn([]);
+        $this->apiLpaCollection->shouldReceive('fetchByUserId')->with(1)->andReturn([]);
 
-        $this->apiUserCollection->shouldReceive('deleteOne')->withArgs([['_id' => 1]])->andReturnNull();
+        $this->apiUserCollection->shouldReceive('deleteById')->withArgs([1])->andReturnNull();
 
         $result = $this->service->cleanup();
 
@@ -167,9 +168,9 @@ class ServiceTest extends MockeryTestCase
 
         $this->userManagementService->shouldReceive('delete')->withArgs([1, 'expired']);
 
-        $this->apiLpaCollection->shouldReceive('find')->withArgs([['user' => 1]])->andReturn([]);
+        $this->apiLpaCollection->shouldReceive('fetchByUserId')->with(1)->andReturn([]);
 
-        $this->apiUserCollection->shouldReceive('deleteOne')->withArgs([['_id' => 1]])->andReturnNull();
+        $this->apiUserCollection->shouldReceive('deleteById')->withArgs([1])->andReturnNull();
 
         $result = $this->service->cleanup();
 

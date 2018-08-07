@@ -1,15 +1,19 @@
 <?php
 
-namespace Auth\Model\Service;
+namespace Application\Model\Service\Authentication;
 
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\Token;
 use Application\Model\DataAccess\Mongo\Collection\User;
+use Application\Model\Service\AbstractService;
 use Zend\Math\BigInteger\BigInteger;
 use DateTime;
 use RuntimeException;
 
-class AuthenticationService extends AbstractService
+class Service extends AbstractService
 {
+    use AuthUserCollectionTrait;
+
     /**
      * The maximum number of consecutive login attempts before an account is locked.
      */
@@ -31,7 +35,7 @@ class AuthenticationService extends AbstractService
             return 'missing-credentials';
         }
 
-        $user = $this->getAuthUserCollection()->getByUsername($username);
+        $user = $this->authUserCollection->getByUsername($username);
 
         if (!$user instanceof User) {
             return 'user-not-found';
@@ -49,14 +53,14 @@ class AuthenticationService extends AbstractService
                 return 'account-locked/max-login-attempts';
             } else {
                 // Reset field failed login counter
-                $this->getAuthUserCollection()->resetFailedLoginCounter($user->id());
+                $this->authUserCollection->resetFailedLoginCounter($user->id());
                 $user->resetFailedLoginAttempts();
             }
         }
 
         // Check password
         if (!password_verify($password, $user->password())) {
-            $this->getAuthUserCollection()->incrementFailedLoginCounter($user->id());
+            $this->authUserCollection->incrementFailedLoginCounter($user->id());
 
             if (($user->failedLoginAttempts() + 1) >= self::MAX_ALLOWED_LOGIN_ATTEMPTS) {
                 return 'invalid-user-credentials/account-locked';
@@ -72,11 +76,11 @@ class AuthenticationService extends AbstractService
         $inactivityFlagsCleared = !is_null($user->inactivityFlags());
 
         // Update the last logged-in time to now.
-        $this->getAuthUserCollection()->updateLastLoginTime($user->id());
+        $this->authUserCollection->updateLastLoginTime($user->id());
 
         // Ensure 'failed_login_attempts' is reset if needed
         if ($user->failedLoginAttempts() > 0) {
-            $this->getAuthUserCollection()->resetFailedLoginCounter($user->id());
+            $this->authUserCollection->resetFailedLoginCounter($user->id());
         }
 
         $tokenDetails = array();
@@ -96,7 +100,7 @@ class AuthenticationService extends AbstractService
                     // @codeCoverageIgnoreEnd
                 }
 
-                $created = (bool)$this->getAuthUserCollection()->setAuthToken(
+                $created = (bool)$this->authUserCollection->setAuthToken(
                     $user->id(),
                     $expires,
                     $authToken
@@ -111,16 +115,16 @@ class AuthenticationService extends AbstractService
         }
 
         return [
-            'userId' => $user->id(),
-            'username' => $user->username(),
-            'last_login' => $user->lastLoginAt(),
-            'inactivityFlagsCleared' => $inactivityFlagsCleared,
-        ] + $tokenDetails;
+                'userId' => $user->id(),
+                'username' => $user->username(),
+                'last_login' => $user->lastLoginAt(),
+                'inactivityFlagsCleared' => $inactivityFlagsCleared,
+            ] + $tokenDetails;
     }
 
     public function withToken($token, $extendToken)
     {
-        $user = $this->getAuthUserCollection()->getByAuthToken($token);
+        $user = $this->authUserCollection->getByAuthToken($token);
 
         if (!$user instanceof User) {
             return 'invalid-token';
@@ -145,7 +149,7 @@ class AuthenticationService extends AbstractService
         if ($extendToken && $secondsSinceLastUpdate > 5) {
             $expires = new DateTime("+" . self::TOKEN_TTL . " seconds");
 
-            $this->getAuthUserCollection()->extendAuthToken($user->id(), $expires);
+            $this->authUserCollection->extendAuthToken($user->id(), $expires);
 
             $expiresAt = [
                 'expiresIn' => self::TOKEN_TTL,
@@ -160,10 +164,10 @@ class AuthenticationService extends AbstractService
         }
 
         return [
-            'token' => $token->id(),
-            'userId' => $user->id(),
-            'username' => $user->username(),
-            'last_login' => $user->lastLoginAt(),
-        ] + $expiresAt;
+                'token' => $token->id(),
+                'userId' => $user->id(),
+                'username' => $user->username(),
+                'last_login' => $user->lastLoginAt(),
+            ] + $expiresAt;
     }
 }

@@ -3,7 +3,6 @@
 namespace ApplicationTest\Model\DataAccess\Mongo;
 
 use Application\Model\DataAccess\Mongo\DatabaseFactory;
-use Application\Model\DataAccess\Mongo\ManagerFactory;
 use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -30,18 +29,18 @@ class DatabaseFactoryTest extends MockeryTestCase
         $manager = new Manager('mongodb://unittest');
 
         $this->container->shouldReceive('get')
-            ->withArgs([ManagerFactory::class . '-auth'])->once()
-            ->andReturn($manager);
-
-        $this->container->shouldReceive('get')
             ->withArgs(['config'])->once()
             ->andReturn([
                 'db' => [
                     'mongo' => [
                         'auth' => [
+                            'hosts' => [
+                                'unittest'
+                            ],
                             'options' => [
                                 'db' => 'unit-test'
-                            ]
+                            ],
+                            'driverOptions' => []
                         ],
                     ],
                 ]

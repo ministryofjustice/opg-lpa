@@ -9,8 +9,14 @@ use Application\Model\DataAccess\AuthLogRepositoryInterface;
 
 class AuthLogCollection implements AuthLogRepositoryInterface
 {
+    /**
+     * @var MongoCollection
+     */
     protected $collection;
 
+    /**
+     * @param MongoCollection $collection
+     */
     public function __construct(MongoCollection $collection)
     {
         $this->collection = $collection;

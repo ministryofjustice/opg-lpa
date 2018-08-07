@@ -4,11 +4,11 @@ namespace ApplicationTest\Model\Service\WhoAreYou;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
 use Application\Model\Service\WhoAreYou\Entity;
 use Application\Model\Service\WhoAreYou\Service;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
-use MongoDB\Collection as MongoCollection;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use OpgTest\Lpa\DataModel\FixturesData;
 
@@ -23,7 +23,7 @@ class ServiceTest extends AbstractServiceTest
     {
         parent::setUp();
 
-        $this->service = new Service($this->lpaCollection);
+        $this->service = new Service($this->apiLpaCollection);
 
         $this->service->setLogger($this->logger);
     }
@@ -103,8 +103,8 @@ class ServiceTest extends AbstractServiceTest
         $lpa = FixturesData::getHwLpa();
         $lpa->setWhoAreYouAnswered(false);
 
-        $whoCollection = Mockery::mock(MongoCollection::class);
-        $whoCollection->shouldReceive('insertOne')->once();
+        $whoCollection = Mockery::mock(ApiWhoCollection::class);
+        $whoCollection->shouldReceive('insert')->once();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
