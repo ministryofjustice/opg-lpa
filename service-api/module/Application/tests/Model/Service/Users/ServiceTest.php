@@ -2,14 +2,14 @@
 
 namespace ApplicationTest\Model\Service\Users;
 
+use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\DateCallback;
-use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\Users\Service;
-use Application\Model\Service\Applications\Service as ApplicationsService;
+use Application\Model\Service\UserManagement\Service as UserManagementService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
-use Auth\Model\Service\UserManagementService;
 use Mockery;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
