@@ -1,8 +1,9 @@
 <?php
 
-namespace ApplicationTest\Model\Service\Email;
+    namespace ApplicationTest\Model\Service\Email;
 
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
+use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
+use Application\Model\DataAccess\Repository\Auth\UpdateEmailUsingTokenResponse;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use Application\Model\Service\Email\Service as EmailUpdateService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
@@ -13,23 +14,23 @@ use Mockery\MockInterface;
 class ServiceTest extends AbstractServiceTest
 {
     /**
-     * @var MockInterface|AuthUserCollection
+     * @var MockInterface|UserRepositoryInterface
      */
-    private $authUserCollection;
+    private $authUserRepository;
 
     protected function setUp()
     {
         parent::setUp();
 
         //  Set up the services so they can be enhanced for each test
-        $this->authUserCollection = Mockery::mock(AuthUserCollection::class);
+        $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
     }
 
     public function testGenerateTokenInvalidEmail()
     {
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->generateToken(1, 'invalid');
@@ -48,7 +49,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->generateToken(1, 'unit@test.com');
@@ -67,7 +68,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->generateToken(1, 'unit@test.com');
@@ -83,7 +84,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->generateToken(1, 'unit@test.com');
@@ -103,14 +104,14 @@ class ServiceTest extends AbstractServiceTest
 
         $this->setUserDataSourceGetByUsernameExpectation('unit@test.com', null);
 
-        $this->authUserCollection->shouldReceive('addEmailUpdateTokenAndNewEmail')
+        $this->authUserRepository->shouldReceive('addEmailUpdateTokenAndNewEmail')
             ->withArgs(function ($id, $token, $newEmail) {
                 //Store generated token details for later validation
                 $this->tokenDetails = $token;
 
                 $expectedExpires = new DateTime('+' . (EmailUpdateService::TOKEN_TTL - 1) . ' seconds');
 
-                return $id === 1 && strlen($token['token']) > 20
+                return $id === "1" && strlen($token['token']) > 20
                     && $token['expiresIn'] === EmailUpdateService::TOKEN_TTL && $token['expiresAt'] > $expectedExpires
                     && $newEmail === 'unit@test.com';
             })
@@ -118,7 +119,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->generateToken(1, 'unit@test.com');
@@ -128,17 +129,17 @@ class ServiceTest extends AbstractServiceTest
 
     public function testUpdateEmailUsingToken()
     {
-        $this->authUserCollection->shouldReceive('updateEmailUsingToken')->withArgs(['token'])->once();
+        $this->authUserRepository->shouldReceive('updateEmailUsingToken')->withArgs(['token'])->once();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->updateEmailUsingToken('token');
 
-        // Method doesn't return anything
-        $this->assertNull($result);
+
+        $this->assertInstanceOf(UpdateEmailUsingTokenResponse::class, $result);
     }
 
     /**
@@ -147,7 +148,7 @@ class ServiceTest extends AbstractServiceTest
      */
     private function setUserDataSourceGetByIdExpectation(int $userId, $user)
     {
-        $this->authUserCollection->shouldReceive('getById')
+        $this->authUserRepository->shouldReceive('getById')
             ->withArgs([$userId])->once()
             ->andReturn($user);
     }
@@ -158,7 +159,7 @@ class ServiceTest extends AbstractServiceTest
      */
     private function setUserDataSourceGetByUsernameExpectation(string $username, $user)
     {
-        $this->authUserCollection->shouldReceive('getByUsername')
+        $this->authUserRepository->shouldReceive('getByUsername')
             ->withArgs([$username])->once()
             ->andReturn($user);
     }
