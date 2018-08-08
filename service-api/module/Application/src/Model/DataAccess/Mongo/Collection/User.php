@@ -202,7 +202,7 @@ class User implements Auth\UserInterface
      *
      * @return Auth\TokenInterface|null
      */
-    public function authToken() : Auth\TokenInterface
+    public function authToken() : ?Auth\TokenInterface
     {
         return (isset($this->data['auth_token'])) ? new Token($this->data['auth_token']) : null;
     }
