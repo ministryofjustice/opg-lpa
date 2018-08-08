@@ -11,13 +11,8 @@ use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollectionTrait;
-use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
-use Application\Model\DataAccess\Mongo\Collection\AuthLogCollectionTrait;
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
 
-use Application\Model\DataAccess\Repository\Auth\LogRepositoryTrait;
-use Application\Model\DataAccess\Repository\Auth\LogRepositoryInterface;
+use Application\Model\DataAccess\Repository\Auth;
 
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
@@ -114,12 +109,12 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
                 $service->setApiWhoCollection($container->get(ApiWhoCollection::class));
             }
 
-            if (in_array(AuthUserCollectionTrait::class, $traitsUsed)) {
-                $service->setAuthUserCollection($container->get(AuthUserCollection::class));
+            if (in_array(Auth\LogRepositoryTrait::class, $traitsUsed)) {
+                $service->setLogRepository($container->get(Auth\LogRepositoryInterface::class));
             }
 
-            if (in_array(LogRepositoryTrait::class, $traitsUsed)) {
-                $service->setLogRepository($container->get(LogRepositoryInterface::class));
+            if (in_array(Auth\UserRepositoryTrait::class, $traitsUsed)) {
+                $service->setUserRepository($container->get(Auth\UserRepositoryInterface::class));
             }
         }
 
