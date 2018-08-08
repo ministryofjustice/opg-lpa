@@ -2,8 +2,8 @@
 
 namespace Application\Model\Service\Email;
 
+use Application\Model\DataAccess\Repository\Auth\UserInterface as User;
 use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
-use Application\Model\DataAccess\Mongo\Collection\User;
 use Application\Model\Service\AbstractService;
 use Zend\Math\BigInteger\BigInteger;
 use DateTime;
