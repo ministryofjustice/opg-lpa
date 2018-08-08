@@ -48,8 +48,8 @@ class Module
     {
         return [
             'aliases' => [
-                Repository\Auth\UserRepositoryInterface::class => Mongo\Collection\AuthUserCollection::class,
-                Repository\Auth\LogRepositoryInterface::class => Mongo\Collection\AuthLogCollection::class,
+                Repository\Auth\UserRepositoryInterface::class  => Mongo\Collection\AuthUserCollection::class,
+                Repository\Auth\LogRepositoryInterface::class   => Mongo\Collection\AuthLogCollection::class,
             ],
             'factories' => [
                 'DynamoCronLock' => function (ServiceLocatorInterface $sm) {

@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\Email;
 
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
+use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use Application\Model\Service\AbstractService;
 use Zend\Math\BigInteger\BigInteger;
@@ -11,7 +11,7 @@ use RuntimeException;
 
 class Service extends AbstractService
 {
-    use AuthUserCollectionTrait;
+    use UserRepositoryTrait;
 
     const TOKEN_TTL = 86400; // 24 hours
 
@@ -26,9 +26,9 @@ class Service extends AbstractService
             return 'invalid-email';
         }
 
-        $user = $this->authUserCollection->getById($userId);
+        $user = $this->getUserRepository()->getById($userId);
 
-        $userWithRequestedEmailAddress = $this->authUserCollection->getByUsername($newEmail);
+        $userWithRequestedEmailAddress = $this->getUserRepository()->getByUsername($newEmail);
 
         if ($userWithRequestedEmailAddress instanceof User) {
             if ($userWithRequestedEmailAddress->id() == $user->id()) {
@@ -61,7 +61,7 @@ class Service extends AbstractService
             'expiresAt' => $expires
         ];
 
-        $this->authUserCollection->addEmailUpdateTokenAndNewEmail($user->id(), $tokenDetails, $newEmail);
+        $this->getUserRepository()->addEmailUpdateTokenAndNewEmail($user->id(), $tokenDetails, $newEmail);
 
         return $tokenDetails;
     }
@@ -72,6 +72,6 @@ class Service extends AbstractService
      */
     public function updateEmailUsingToken($token)
     {
-        return $this->authUserCollection->updateEmailUsingToken($token);
+        return $this->getUserRepository()->updateEmailUsingToken($token);
     }
 }

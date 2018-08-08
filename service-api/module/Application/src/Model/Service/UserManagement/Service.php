@@ -2,8 +2,8 @@
 
 namespace Application\Model\Service\UserManagement;
 
+use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
 use Application\Model\DataAccess\Repository\Auth\LogRepositoryTrait;
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\PasswordValidatorTrait;
 use Zend\Validator\EmailAddress as EmailAddressValidator;
@@ -13,7 +13,7 @@ use DateTime;
 class Service extends AbstractService
 {
     use LogRepositoryTrait;
-    use AuthUserCollectionTrait;
+    use UserRepositoryTrait;
     use PasswordValidatorTrait;
 
     /**
@@ -22,7 +22,7 @@ class Service extends AbstractService
      */
     public function get($userId)
     {
-        $user = $this->authUserCollection->getById($userId);
+        $user = $this->getUserRepository()->getById($userId);
 
         if (is_null($user)) {
             return 'user-not-found';
@@ -37,7 +37,7 @@ class Service extends AbstractService
      */
     public function getByUsername(string $username)
     {
-        $user = $this->authUserCollection->getByUsername($username);
+        $user = $this->getUserRepository()->getByUsername($username);
 
         if (is_null($user)) {
             //Check if user has been deleted
@@ -72,7 +72,7 @@ class Service extends AbstractService
         }
 
         //  Check the username isn't already used...
-        $user = $this->authUserCollection->getByUsername($username);
+        $user = $this->getUserRepository()->getByUsername($username);
 
         if (!is_null($user)) {
             return 'username-already-exists';
@@ -94,7 +94,7 @@ class Service extends AbstractService
             // Use base62 for shorter tokens
             $activationToken = BigInteger::factory('bcmath')->baseConvert($activationToken, 16, 62);
 
-            $created = (bool)$this->authUserCollection->create($userId, [
+            $created = (bool)$this->getUserRepository()->create($userId, [
                 'identity' => $username,
                 'active' => false,
                 'activation_token' => $activationToken,
@@ -117,7 +117,7 @@ class Service extends AbstractService
      */
     public function activate($token)
     {
-        $result = $this->authUserCollection->activate($token);
+        $result = $this->getUserRepository()->activate($token);
 
         if (is_null($result) || $result === false) {
             return 'account-not-found';
@@ -133,13 +133,13 @@ class Service extends AbstractService
      */
     public function delete($userId, $reason)
     {
-        $user = $this->authUserCollection->getById($userId);
+        $user = $this->getUserRepository()->getById($userId);
 
         if (is_null($user)) {
             return 'user-not-found';
         }
 
-        $result = $this->authUserCollection->delete($userId);
+        $result = $this->getUserRepository()->delete($userId);
 
         if ($result !== true) {
             return 'user-not-found';
