@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\DataAccess\Mongo\Collection;
 
+use Application\Model\DataAccess\Repository\Auth;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use DateTime;
@@ -127,6 +128,7 @@ class AuthUserCollectionTest extends MockeryTestCase
     public function testUpdateLastLoginTime()
     {
         $dbResult = Mockery::mock(UpdateResult::class);
+        $dbResult->shouldReceive('getModifiedCount')->once()->andReturn(1);
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $date = $update['$set']['last_login'];
@@ -138,12 +140,13 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->updateLastLoginTime(1);
 
-        $this->assertEquals($dbResult, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testResetFailedLoginCounter()
     {
         $dbResult = Mockery::mock(UpdateResult::class);
+        $dbResult->shouldReceive('getModifiedCount')->once()->andReturn(1);
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs([
             ['_id' => 1],
@@ -153,12 +156,13 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->resetFailedLoginCounter(1);
 
-        $this->assertEquals($dbResult, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIncrementFailedLoginCounter()
     {
         $dbResult = Mockery::mock(UpdateResult::class);
+        $dbResult->shouldReceive('getModifiedCount')->once()->andReturn(1);
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $date = $update['$set']['last_failed_login'];
@@ -170,7 +174,7 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->incrementFailedLoginCounter(1);
 
-        $this->assertEquals($dbResult, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testCreateMongoException()
@@ -341,6 +345,7 @@ class AuthUserCollectionTest extends MockeryTestCase
     public function testAddPasswordResetToken()
     {
         $dbResult = Mockery::mock(UpdateResult::class);
+        $dbResult->shouldReceive('getModifiedCount')->once()->andReturn(1);
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $createdAtDate = $update['$set']['password_reset_token']['createdAt'];
@@ -355,7 +360,7 @@ class AuthUserCollectionTest extends MockeryTestCase
             'createdAt' => new DateTime()
         ]);
 
-        $this->assertEquals($dbResult, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testUpdatePasswordUsingTokenNotFound()
@@ -364,7 +369,8 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->updatePasswordUsingToken('unit-test', 'Password123');
 
-        $this->assertEquals('invalid-token', $result);
+        $this->assertInstanceOf(Auth\UpdatePasswordUsingTokenError::class, $result);
+        $this->assertEquals('invalid-token', $result->message());
     }
 
     public function testUpdatePasswordUsingToken()
@@ -376,7 +382,7 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $lastUpdatedDate = $update['$set']['last_updated'];
-            return $filter === ['_id' => 1]
+            return $filter === ['_id' => "1"]
                 && $lastUpdatedDate instanceof UTCDateTime && $lastUpdatedDate->toDateTime() > new DateTime('-1 second')
                 && $update['$set']['password_hash'] === 'Password123'
                 && $update['$unset'] === ['password_reset_token' => true, 'auth_token' => true]
@@ -385,12 +391,13 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->updatePasswordUsingToken('unit-test', 'Password123');
 
-        $this->assertEquals(true, $result);
+        $this->assertEquals(null, $result);
     }
 
     public function testAddEmailUpdateTokenAndNewEmail()
     {
         $dbResult = Mockery::mock(UpdateResult::class);
+        $dbResult->shouldReceive('getModifiedCount')->once()->andReturn(1);
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $createdAtDate = $update['$set']['email_update_request']['token']['createdAt'];
@@ -405,7 +412,7 @@ class AuthUserCollectionTest extends MockeryTestCase
             'createdAt' => new DateTime()
         ], 'unit@test.com');
 
-        $this->assertEquals($dbResult, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testUpdateEmailUsingTokenNotFound()
@@ -418,7 +425,8 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->updateEmailUsingToken('unit-test');
 
-        $this->assertEquals('invalid-token', $result);
+        $this->assertInstanceOf(Auth\UpdateEmailUsingTokenResponse::class, $result);
+        $this->assertEquals('invalid-token', $result->message());
     }
 
     public function testUpdateEmailUsingTokenUsernameAlreadyExists()
@@ -435,7 +443,8 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->updateEmailUsingToken('unit-test');
 
-        $this->assertEquals('username-already-exists', $result);
+        $this->assertInstanceOf(Auth\UpdateEmailUsingTokenResponse::class, $result);
+        $this->assertEquals('username-already-exists', $result->message());
     }
 
     public function testUpdateEmailUsingTokenUsernameFalse()
@@ -462,7 +471,8 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->updateEmailUsingToken('unit-test');
 
-        $this->assertEquals(false, $result);
+        $this->assertInstanceOf(Auth\UpdateEmailUsingTokenResponse::class, $result);
+        $this->assertEquals("nothing-modified", $result->message());
     }
 
     public function testUpdateEmailUsingTokenUsername()
@@ -489,7 +499,8 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->updateEmailUsingToken('unit-test');
 
-        $this->assertEquals(new User(['_id' => 1, 'email_update_request' => ['email' => 'unit@test.com']]), $result);
+        $this->assertInstanceOf(Auth\UpdateEmailUsingTokenResponse::class, $result);
+        $this->assertEquals(new User(['_id' => 1, 'email_update_request' => ['email' => 'unit@test.com']]), $result->getUser());
     }
 
     public function testGetAccountsInactiveSinceNoExcludeFlag()
