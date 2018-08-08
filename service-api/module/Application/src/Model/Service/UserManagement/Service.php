@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\UserManagement;
 
-use Application\Model\DataAccess\Mongo\Collection\AuthLogCollectionTrait;
+use Application\Model\DataAccess\Repository\Auth\LogRepositoryTrait;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\PasswordValidatorTrait;
@@ -12,7 +12,7 @@ use DateTime;
 
 class Service extends AbstractService
 {
-    use AuthLogCollectionTrait;
+    use LogRepositoryTrait;
     use AuthUserCollectionTrait;
     use PasswordValidatorTrait;
 
@@ -42,7 +42,7 @@ class Service extends AbstractService
         if (is_null($user)) {
             //Check if user has been deleted
             $identityHash = $this->hashIdentity($username);
-            $deletionLog = $this->authLogCollection->getLogByIdentityHash($identityHash);
+            $deletionLog = $this->getLogRepository()->getLogByIdentityHash($identityHash);
 
             if (is_null($deletionLog)) {
                 return false;
@@ -153,7 +153,7 @@ class Service extends AbstractService
             'loggedAt' => new DateTime
         ];
 
-        $this->authLogCollection->addLog($details);
+        $this->getLogRepository()->addLog($details);
 
         return true;
     }

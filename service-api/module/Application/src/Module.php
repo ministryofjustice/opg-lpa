@@ -2,6 +2,7 @@
 
 namespace Application;
 
+use Application\Model\DataAccess\Repository;
 use Application\Model\DataAccess\Mongo;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
@@ -46,6 +47,10 @@ class Module
     public function getServiceConfig()
     {
         return [
+            'aliases' => [
+                Repository\Auth\UserRepositoryInterface::class => Mongo\Collection\AuthUserCollection::class,
+                Repository\Auth\LogRepositoryInterface::class => Mongo\Collection\AuthLogCollection::class,
+            ],
             'factories' => [
                 'DynamoCronLock' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config')['cron']['lock']['dynamodb'];

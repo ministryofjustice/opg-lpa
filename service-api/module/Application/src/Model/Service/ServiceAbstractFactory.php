@@ -15,6 +15,10 @@ use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
 use Application\Model\DataAccess\Mongo\Collection\AuthLogCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
+
+use Application\Model\DataAccess\Repository\Auth\LogRepositoryTrait;
+use Application\Model\DataAccess\Repository\Auth\LogRepositoryInterface;
+
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\UserManagement\Service as UserManagementService;
@@ -110,12 +114,12 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
                 $service->setApiWhoCollection($container->get(ApiWhoCollection::class));
             }
 
-            if (in_array(AuthLogCollectionTrait::class, $traitsUsed)) {
-                $service->setAuthLogCollection($container->get(AuthLogCollection::class));
-            }
-
             if (in_array(AuthUserCollectionTrait::class, $traitsUsed)) {
                 $service->setAuthUserCollection($container->get(AuthUserCollection::class));
+            }
+
+            if (in_array(LogRepositoryTrait::class, $traitsUsed)) {
+                $service->setLogRepository($container->get(LogRepositoryInterface::class));
             }
         }
 
