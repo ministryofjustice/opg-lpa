@@ -225,7 +225,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
         $user = $this->collection->findOne(['activation_token' => $token]);
 
         if (!is_array($user)) {
-            return null;
+            return false;
         }
 
         //---
