@@ -200,7 +200,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
         $data = $this->collection->findOne($filter);
 
         if (!is_array($data)) {
-            return null;
+            return false;
         }
 
         $details = [
