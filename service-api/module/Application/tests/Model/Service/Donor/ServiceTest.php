@@ -4,32 +4,22 @@ namespace ApplicationTest\Model\Service\Donor;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
-use Application\Model\Service\Donor\Service;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ServiceTest extends AbstractServiceTest
 {
-    /**
-     * @var Service
-     */
-    private $service;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->service = new Service($this->apiLpaCollection);
-
-        $this->service->setLogger($this->logger);
-    }
-
     public function testUpdateValidationFailed()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         //Make sure the donor is invalid
         $donor = new Donor();
@@ -56,8 +46,13 @@ class ServiceTest extends AbstractServiceTest
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
         $lpa->setUser(3);
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         //So we expect an exception and for no document to be updated
         $this->expectException(\RuntimeException::class);
@@ -71,11 +66,12 @@ class ServiceTest extends AbstractServiceTest
     public function testUpdate()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
             ->build();
 
         $donor = new Donor($lpa->getDocument()->getDonor()->toArray());

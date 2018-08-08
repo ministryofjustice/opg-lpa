@@ -8,6 +8,7 @@ use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use Application\Model\Service\AccountCleanup\Service;
 use Application\Model\Service\UserManagement\Service as UserManagementService;
+use ApplicationTest\Model\Service\AbstractServiceTest;
 use Aws\Sns\SnsClient;
 use DateInterval;
 use DateTime;
@@ -20,33 +21,8 @@ use Mockery\MockInterface;
 use Opg\Lpa\Logger\Logger;
 use Psr\Http\Message\RequestInterface;
 
-class ServiceTest extends MockeryTestCase
+class ServiceTest extends AbstractServiceTest
 {
-    /**
-     * @var Service
-     */
-    private $service;
-
-    /**
-     * @var MockInterface|UserManagementService
-     */
-    private $userManagementService;
-
-    /**
-     * @var MockInterface|Logger
-     */
-    private $logger;
-
-    /**
-     * @var MockInterface|SnsClient
-     */
-    private $snsClient;
-
-    /**
-     * @var MockInterface|GuzzleClient
-     */
-    private $guzzleClient;
-
     /**
      * @var MockInterface|ApiLpaCollection
      */
@@ -62,7 +38,9 @@ class ServiceTest extends MockeryTestCase
      */
     private $authUserCollection;
 
-    /** @var array  */
+    /**
+     * @var array
+     */
     private $config = [
         'stack' => [
             'name' => 'unit_test'
@@ -83,40 +61,71 @@ class ServiceTest extends MockeryTestCase
         ]
     ];
 
+    /**
+     * @var MockInterface|GuzzleClient
+     */
+    private $guzzleClient;
+
+    /**
+     * @var MockInterface|SnsClient
+     */
+    private $snsClient;
+
+    /**
+     * @var MockInterface|UserManagementService
+     */
+    private $userManagementService;
+
+    /**
+     * @var MockInterface|Logger
+     */
+    private $logger;
+
     protected function setUp()
     {
         parent::setUp();
 
-        $this->userManagementService = Mockery::mock(UserManagementService::class);
-
-        $this->logger = Mockery::mock(Logger::class);
-
-        $this->snsClient = Mockery::mock(SnsClient::class);
-
-        $this->guzzleClient = Mockery::mock(GuzzleClient::class);
-
+        //  Set up the services so they can be enhanced for each test
         $this->apiLpaCollection = Mockery::mock(ApiLpaCollection::class);
 
         $this->apiUserCollection = Mockery::mock(ApiUserCollection::class);
 
         $this->authUserCollection = Mockery::mock(AuthUserCollection::class);
 
-        $this->service = new Service($this->userManagementService, $this->snsClient, $this->guzzleClient, $this->config, $this->apiLpaCollection, $this->apiUserCollection, $this->authUserCollection);
+        $this->guzzleClient = Mockery::mock(GuzzleClient::class);
 
-        $this->service->setLogger($this->logger);
+        $this->snsClient = Mockery::mock(SnsClient::class);
+
+        $this->userManagementService = Mockery::mock(UserManagementService::class);
+
+        $this->logger = Mockery::mock(Logger::class);
     }
 
     public function testCleanupNone()
     {
         $this->setAccountsExpectations();
 
-        $this->snsClient->shouldReceive('publish')->withArgs(function ($message) {
-            return $message['TopicArn'] === 'info_endpoint' && empty($message['Message']) === false
-                && $message['Subject'] === 'LPA Account Cleanup Notification'
-                && $message['MessageStructure'] === 'string';
-        })->once();
+        $this->snsClient->shouldReceive('publish')
+            ->withArgs(function ($message) {
+                return $message['TopicArn'] === 'info_endpoint' && empty($message['Message']) === false
+                    && $message['Subject'] === 'LPA Account Cleanup Notification'
+                    && $message['MessageStructure'] === 'string';
+            })
+            ->once();
 
-        $result = $this->service->cleanup();
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApiUserCollection($this->apiUserCollection)
+            ->withAuthUserCollection($this->authUserCollection)
+            ->withConfig($this->config)
+            ->withGuzzleClient($this->guzzleClient)
+            ->withSnsClient($this->snsClient)
+            ->withUserManagementService($this->userManagementService)
+            ->withLogger($this->logger)
+            ->build();
+
+        $result = $service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -133,7 +142,19 @@ class ServiceTest extends MockeryTestCase
             return $message === 'Unable to send AWS SNS notification' && array_key_exists('exception', $extra);
         })->once();
 
-        $result = $this->service->cleanup();
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApiUserCollection($this->apiUserCollection)
+            ->withAuthUserCollection($this->authUserCollection)
+            ->withConfig($this->config)
+            ->withGuzzleClient($this->guzzleClient)
+            ->withSnsClient($this->snsClient)
+            ->withUserManagementService($this->userManagementService)
+            ->withLogger($this->logger)
+            ->build();
+
+        $result = $service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -143,18 +164,33 @@ class ServiceTest extends MockeryTestCase
     {
         $this->setAccountsExpectations([new User(['_id' => 1])]);
 
-        $this->snsClient->shouldReceive('publish')->once();
+        $this->snsClient->shouldReceive('publish')
+            ->once();
 
-        //  Create the expected unit test delete target including the user ID
-        $apiDeleteTarget = 'http://unit_test_delete_target/' . 1;
+        $this->userManagementService->shouldReceive('delete')
+            ->withArgs([1, 'expired']);
 
-        $this->userManagementService->shouldReceive('delete')->withArgs([1, 'expired']);
+        $this->apiLpaCollection->shouldReceive('fetchByUserId')
+            ->with(1)
+            ->andReturn([]);
 
-        $this->apiLpaCollection->shouldReceive('fetchByUserId')->with(1)->andReturn([]);
+        $this->apiUserCollection->shouldReceive('deleteById')
+            ->withArgs([1])
+            ->andReturnNull();
 
-        $this->apiUserCollection->shouldReceive('deleteById')->withArgs([1])->andReturnNull();
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApiUserCollection($this->apiUserCollection)
+            ->withAuthUserCollection($this->authUserCollection)
+            ->withConfig($this->config)
+            ->withGuzzleClient($this->guzzleClient)
+            ->withSnsClient($this->snsClient)
+            ->withUserManagementService($this->userManagementService)
+            ->withLogger($this->logger)
+            ->build();
 
-        $result = $this->service->cleanup();
+        $result = $service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -164,15 +200,33 @@ class ServiceTest extends MockeryTestCase
     {
         $this->setAccountsExpectations([new User(['_id' => 1])]);
 
-        $this->snsClient->shouldReceive('publish')->once();
+        $this->snsClient->shouldReceive('publish')
+            ->once();
 
-        $this->userManagementService->shouldReceive('delete')->withArgs([1, 'expired']);
+        $this->userManagementService->shouldReceive('delete')
+            ->withArgs([1, 'expired']);
 
-        $this->apiLpaCollection->shouldReceive('fetchByUserId')->with(1)->andReturn([]);
+        $this->apiLpaCollection->shouldReceive('fetchByUserId')
+            ->with(1)
+            ->andReturn([]);
 
-        $this->apiUserCollection->shouldReceive('deleteById')->withArgs([1])->andReturnNull();
+        $this->apiUserCollection->shouldReceive('deleteById')
+            ->withArgs([1])
+            ->andReturnNull();
 
-        $result = $this->service->cleanup();
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApiUserCollection($this->apiUserCollection)
+            ->withAuthUserCollection($this->authUserCollection)
+            ->withConfig($this->config)
+            ->withGuzzleClient($this->guzzleClient)
+            ->withSnsClient($this->snsClient)
+            ->withUserManagementService($this->userManagementService)
+            ->withLogger($this->logger)
+            ->build();
+
+        $result = $service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -201,11 +255,26 @@ class ServiceTest extends MockeryTestCase
                         'Token' => 'unit_test',
                     ],
                 ];
-            })->once();
+            })
+            ->once();
 
-        $this->authUserCollection->shouldReceive('setInactivityFlag')->withArgs([1, '1-week-notice'])->once();
+        $this->authUserCollection->shouldReceive('setInactivityFlag')
+            ->withArgs([1, '1-week-notice'])
+            ->once();
 
-        $result = $this->service->cleanup();
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApiUserCollection($this->apiUserCollection)
+            ->withAuthUserCollection($this->authUserCollection)
+            ->withConfig($this->config)
+            ->withGuzzleClient($this->guzzleClient)
+            ->withSnsClient($this->snsClient)
+            ->withUserManagementService($this->userManagementService)
+            ->withLogger($this->logger)
+            ->build();
+
+        $result = $service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -219,20 +288,36 @@ class ServiceTest extends MockeryTestCase
             'last_login' => new DateTime('-9 months +1 week')
         ])]);
 
-        $this->snsClient->shouldReceive('publish')->once();
+        $this->snsClient->shouldReceive('publish')
+            ->once();
 
         /** @var RequestInterface $request */
         $request = Mockery::mock(RequestInterface::class);
 
-        $this->guzzleClient->shouldReceive('post')->once()
+        $this->guzzleClient->shouldReceive('post')
+            ->once()
             ->andThrow(new GuzzleClientException('Unit test exception', $request));
 
-        $this->logger->shouldReceive('warn')->withArgs(function ($message, $extra) {
-            return $message === 'Unable to send account expiry notification'
-                && $extra['exception'] === 'Unit test exception';
-        })->once();
+        $this->logger->shouldReceive('warn')
+            ->withArgs(function ($message, $extra) {
+                return $message === 'Unable to send account expiry notification'
+                    && $extra['exception'] === 'Unit test exception';
+            })
+            ->once();
 
-        $result = $this->service->cleanup();
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApiUserCollection($this->apiUserCollection)
+            ->withAuthUserCollection($this->authUserCollection)
+            ->withConfig($this->config)
+            ->withGuzzleClient($this->guzzleClient)
+            ->withSnsClient($this->snsClient)
+            ->withUserManagementService($this->userManagementService)
+            ->withLogger($this->logger)
+            ->build();
+
+        $result = $service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -246,17 +331,33 @@ class ServiceTest extends MockeryTestCase
             'last_login' => new DateTime('-9 months +1 week')
         ])]);
 
-        $this->snsClient->shouldReceive('publish')->once();
+        $this->snsClient->shouldReceive('publish')
+            ->once();
 
-        $this->guzzleClient->shouldReceive('post')->once()
+        $this->guzzleClient->shouldReceive('post')
+            ->once()
             ->andThrow(new Exception('Unit test exception'));
 
-        $this->logger->shouldReceive('alert')->withArgs(function ($message, $extra) {
-            return $message === 'Unable to send account expiry notification'
-                && $extra['exception'] === 'Unit test exception';
-        })->once();
+        $this->logger->shouldReceive('alert')
+            ->withArgs(function ($message, $extra) {
+                return $message === 'Unable to send account expiry notification'
+                    && $extra['exception'] === 'Unit test exception';
+            })
+            ->once();
 
-        $result = $this->service->cleanup();
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApiUserCollection($this->apiUserCollection)
+            ->withAuthUserCollection($this->authUserCollection)
+            ->withConfig($this->config)
+            ->withGuzzleClient($this->guzzleClient)
+            ->withSnsClient($this->snsClient)
+            ->withUserManagementService($this->userManagementService)
+            ->withLogger($this->logger)
+            ->build();
+
+        $result = $service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -270,7 +371,8 @@ class ServiceTest extends MockeryTestCase
             'last_login' => new DateTime('-8 months')
         ])]);
 
-        $this->snsClient->shouldReceive('publish')->once();
+        $this->snsClient->shouldReceive('publish')
+            ->once();
 
         $this->guzzleClient->shouldReceive('post')
             ->withArgs(function ($uri, $options) {
@@ -285,11 +387,26 @@ class ServiceTest extends MockeryTestCase
                             'Token' => 'unit_test',
                         ],
                     ];
-            })->once();
+            })
+            ->once();
 
-        $this->authUserCollection->shouldReceive('setInactivityFlag')->withArgs([1, '1-month-notice'])->once();
+        $this->authUserCollection->shouldReceive('setInactivityFlag')
+            ->withArgs([1, '1-month-notice'])
+            ->once();
 
-        $result = $this->service->cleanup();
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApiUserCollection($this->apiUserCollection)
+            ->withAuthUserCollection($this->authUserCollection)
+            ->withConfig($this->config)
+            ->withGuzzleClient($this->guzzleClient)
+            ->withSnsClient($this->snsClient)
+            ->withUserManagementService($this->userManagementService)
+            ->withLogger($this->logger)
+            ->build();
+
+        $result = $service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
@@ -299,27 +416,38 @@ class ServiceTest extends MockeryTestCase
     {
         $this->setAccountsExpectations([], [], [], [new User(['_id' => 1])]);
 
-        $this->snsClient->shouldReceive('publish')->once();
+        $this->snsClient->shouldReceive('publish')
+            ->once();
 
-        $this->userManagementService->shouldReceive('delete')->withArgs([1, 'unactivated']);
+        $this->userManagementService->shouldReceive('delete')
+            ->withArgs([1, 'unactivated']);
 
-        $result = $this->service->cleanup();
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApiUserCollection($this->apiUserCollection)
+            ->withAuthUserCollection($this->authUserCollection)
+            ->withConfig($this->config)
+            ->withGuzzleClient($this->guzzleClient)
+            ->withSnsClient($this->snsClient)
+            ->withUserManagementService($this->userManagementService)
+            ->withLogger($this->logger)
+            ->build();
+
+        $result = $service->cleanup();
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
     }
 
-    private function setAccountsExpectations(
-        array $expiredAccounts = [],
-        array $oneWeekWarningAccounts = [],
-        array $oneMonthWarningAccounts = [],
-        array $unactivatedAccounts = []
-    ) {
+    private function setAccountsExpectations(array $expiredAccounts = [], array $oneWeekWarningAccounts = [], array $oneMonthWarningAccounts = [], array $unactivatedAccounts = [])
+    {
         $this->authUserCollection->shouldReceive('getAccountsInactiveSince')
             ->withArgs(function ($lastLoginBefore) {
                 return $lastLoginBefore < new DateTime('-9 months +1 week')
                     && $lastLoginBefore >= new DateTime('-9 months -1 second');
-            })->once()
+            })
+            ->once()
             ->andReturn($expiredAccounts);
 
         $this->authUserCollection->shouldReceive('getAccountsInactiveSince')
@@ -327,20 +455,23 @@ class ServiceTest extends MockeryTestCase
                 return $lastLoginBefore < new DateTime('-8 months')
                     && $lastLoginBefore >= new DateTime('-9 months +1 week -1 second')
                     && $excludeFlag === '1-week-notice';
-            })->once()
+            })
+            ->once()
             ->andReturn($oneWeekWarningAccounts);
 
         $this->authUserCollection->shouldReceive('getAccountsInactiveSince')
             ->withArgs(function ($lastLoginBefore, $excludeFlag = null) {
                 return $lastLoginBefore >= new DateTime('-8 months -1 second')
                     && $excludeFlag === '1-month-notice';
-            })->once()
+            })
+            ->once()
             ->andReturn($oneMonthWarningAccounts);
 
         $this->authUserCollection->shouldReceive('getAccountsUnactivatedOlderThan')
             ->withArgs(function ($olderThan) {
                 return $olderThan >= new DateTime('-24 hours -1 second');
-            })->once()
+            })
+            ->once()
             ->andReturn($unactivatedAccounts);
     }
 }

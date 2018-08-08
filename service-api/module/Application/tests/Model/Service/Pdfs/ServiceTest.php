@@ -20,56 +20,43 @@ use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgum
 
 class ServiceTest extends AbstractServiceTest
 {
-    /**
-     * @var Service
-     */
-    private $service;
-
-    private $config = [];
-
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->service = new Service($this->apiLpaCollection);
-
-        $this->service->setLogger($this->logger);
-
-        $this->config = [
-            'pdf' => [
-                'cache' => [
-                    's3' => [
-                        'settings' => [
-                            'Bucket' => null
-                        ],
-                        'client' => [
-                            'version' => '2006-03-01',
-                            'region' => 'eu-west-1',
-                            'credentials' => null
-                        ]
-                    ]
-                ],
-                'encryption' => [
-                    'keys' => [
-                        'queue' => 'teststringlongenoughtobevalid123',
-                        'document' => 'teststringlongenoughtobevalid123'
+    private $config = [
+        'pdf' => [
+            'cache' => [
+                's3' => [
+                    'settings' => [
+                        'Bucket' => null
                     ],
-                    'options' => [
-                        'algorithm' => 'aes',
-                        'mode' => 'cbc'
+                    'client' => [
+                        'version' => '2006-03-01',
+                        'region' => 'eu-west-1',
+                        'credentials' => null
                     ]
                 ]
+            ],
+            'encryption' => [
+                'keys' => [
+                    'queue' => 'teststringlongenoughtobevalid123',
+                    'document' => 'teststringlongenoughtobevalid123'
+                ],
+                'options' => [
+                    'algorithm' => 'aes',
+                    'mode' => 'cbc'
+                ]
             ]
-        ];
-
-        $this->service->setPdfConfig($this->config);
-    }
+        ]
+    ];
 
     public function testFetchNotFound()
     {
         $lpa = FixturesData::getPfLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $entity = $service->fetch($lpa->getId(), -1);
 
@@ -85,8 +72,13 @@ class ServiceTest extends AbstractServiceTest
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
         $lpa->setUser(3);
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $validationError = $service->fetch($lpa->getId(), -1);
 
@@ -105,8 +97,12 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchLpa120NotAvailable()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))->build();
 
         $data = $service->fetch($lpa->getId(), 'lpa120');
 
@@ -122,8 +118,13 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchLp3NotAvailable()
     {
         $lpa = FixturesData::getPfLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $data = $service->fetch($lpa->getId(), 'lp3');
 
@@ -140,6 +141,8 @@ class ServiceTest extends AbstractServiceTest
     {
         $lpa = FixturesData::getHwLpa();
 
+        $user = FixturesData::getUser();
+
         $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
         $dynamoQueueClient->shouldReceive('checkStatus')->andReturn(DynamoQueueJob::STATE_WAITING)->once();
 
@@ -148,9 +151,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withConfig($this->config)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withPdfConfig($this->config)
             ->withDynamoQueueClient($dynamoQueueClient)
             ->withS3Client($s3Client)
             ->build();
@@ -170,6 +172,8 @@ class ServiceTest extends AbstractServiceTest
     {
         $lpa = FixturesData::getHwLpa();
 
+        $user = FixturesData::getUser();
+
         $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
         $dynamoQueueClient->shouldReceive('deleteJob')->once();
 
@@ -178,9 +182,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withConfig($this->config)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withPdfConfig($this->config)
             ->withDynamoQueueClient($dynamoQueueClient)
             ->withS3Client($s3Client)
             ->build();
@@ -200,6 +203,8 @@ class ServiceTest extends AbstractServiceTest
     {
         $lpa = FixturesData::getHwLpa();
 
+        $user = FixturesData::getUser();
+
         $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
         $dynamoQueueClient->shouldReceive('checkStatus')->andReturn(DynamoQueueJob::STATE_DONE)->once();
         $dynamoQueueClient->shouldReceive('deleteJob')->once();
@@ -210,9 +215,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withConfig($this->config)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withPdfConfig($this->config)
             ->withDynamoQueueClient($dynamoQueueClient)
             ->withS3Client($s3Client)
             ->build();
@@ -232,6 +236,8 @@ class ServiceTest extends AbstractServiceTest
     {
         $lpa = FixturesData::getHwLpa();
 
+        $user = FixturesData::getUser();
+
         $config = $this->config;
         $config['pdf']['encryption']['keys']['queue'] = 'Invalid';
 
@@ -244,9 +250,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withConfig($config)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withPdfConfig($config)
             ->withDynamoQueueClient($dynamoQueueClient)
             ->withS3Client($s3Client)
             ->build();
@@ -262,14 +267,15 @@ class ServiceTest extends AbstractServiceTest
     {
         $lpa = FixturesData::getHwLpa();
 
+        $user = FixturesData::getUser();
+
         $s3Client = Mockery::mock(S3Client::class);
         $s3Client->shouldReceive('getObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withConfig($this->config)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withPdfConfig($this->config)
             ->withS3Client($s3Client)
             ->build();
 
@@ -286,6 +292,8 @@ class ServiceTest extends AbstractServiceTest
     {
         $lpa = FixturesData::getHwLpa();
 
+        $user = FixturesData::getUser();
+
         $config = $this->config;
         $config['pdf']['encryption']['keys']['document'] = 'Invalid';
 
@@ -298,9 +306,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withConfig($config)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withPdfConfig($config)
             ->withS3Client($s3Client)
             ->build();
 
@@ -314,6 +321,8 @@ class ServiceTest extends AbstractServiceTest
     public function testFetchLp1Pdf()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
 
         $encryptionConfig = $this->config['pdf']['encryption'];
         $blockCipher = BlockCipher::factory('openssl', $encryptionConfig['options']);
@@ -330,9 +339,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withConfig($this->config)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withPdfConfig($this->config)
             ->withS3Client($s3Client)
             ->build();
 

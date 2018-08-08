@@ -7,10 +7,14 @@ use ApplicationTest\Model\Service\AbstractServiceBuilder;
 
 class ServiceBuilder extends AbstractServiceBuilder
 {
-    private $apiUserCollection = null;
+    /**
+     * @var null
+     */
+    private $applicationsService;
 
-    private $applicationsService = null;
-
+    /**
+     * @var
+     */
     private $userManagementService;
 
     /**
@@ -20,10 +24,6 @@ class ServiceBuilder extends AbstractServiceBuilder
     {
         /** @var Service $service */
         $service = parent::buildMocks(Service::class);
-
-        if ($this->apiUserCollection !== null) {
-            $service->setApiUserCollection($this->apiUserCollection);
-        }
 
         if ($this->applicationsService !== null) {
             $service->setApplicationsService($this->applicationsService);
@@ -36,18 +36,20 @@ class ServiceBuilder extends AbstractServiceBuilder
         return $service;
     }
 
-    public function withApiUserCollection($apiUserCollection)
-    {
-        $this->apiUserCollection = $apiUserCollection;
-        return $this;
-    }
-
+    /**
+     * @param $applicationsService
+     * @return $this
+     */
     public function withApplicationsService($applicationsService)
     {
         $this->applicationsService = $applicationsService;
         return $this;
     }
 
+    /**
+     * @param $userManagementService
+     * @return $this
+     */
     public function withUserManagementService($userManagementService)
     {
         $this->userManagementService = $userManagementService;

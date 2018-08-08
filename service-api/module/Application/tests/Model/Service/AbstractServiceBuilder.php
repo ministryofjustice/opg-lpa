@@ -3,42 +3,129 @@
 namespace ApplicationTest\Model\Service;
 
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
-use Application\Model\DataAccess\Mongo\DateCallback;
+use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
+use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
+use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use Application\Model\Service\AbstractService;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\Logger;
 
 abstract class AbstractServiceBuilder
 {
-    const LPA_COLLECTION_NAMESPACE = 'opglpa-api.lpa';
-
     /**
-     * @var Lpa
+     * @var MockInterface|Logger
      */
-    protected $lpa;
-
-    /**
-     * @var User
-     */
-    protected $user;
+    private $logger = null;
 
     /**
      * @var MockInterface|ApiLpaCollection
      */
-    protected $apiLpaCollection = null;
+    private $apiLpaCollection = null;
 
     /**
-     * @var int
+     * @var MockInterface|ApiStatsLpasCollection
      */
-    protected $updateNumberModified = null;
+    private $apiStatsLpasCollection = null;
 
     /**
-     * @var array
+     * @var MockInterface|ApiUserCollection
      */
-    protected $config = array();
+    private $apiUserCollection = null;
+
+    /**
+     * @var MockInterface|ApiWhoCollection
+     */
+    private $apiWhoCollection = null;
+
+    /**
+     * @var MockInterface|AuthLogCollection
+     */
+    private $authLogCollection = null;
+
+    /**
+     * @var MockInterface|AuthUserCollection
+     */
+    private $authUserCollection = null;
+
+    /**
+     * @param $logger
+     * @return $this
+     */
+    public function withLogger($logger)
+    {
+        $this->logger = $logger;
+
+        return $this;
+    }
+
+    /**
+     * @param $apiLpaCollection
+     * @return $this
+     */
+    public function withApiLpaCollection($apiLpaCollection)
+    {
+        $this->apiLpaCollection = $apiLpaCollection;
+
+        return $this;
+    }
+
+    /**
+     * @param $apiStatsLpasCollection
+     * @return $this
+     */
+    public function withApiStatsLpasCollection($apiStatsLpasCollection)
+    {
+        $this->apiStatsLpasCollection = $apiStatsLpasCollection;
+
+        return $this;
+    }
+
+    /**
+     * @param $apiUserCollection
+     * @return $this
+     */
+    public function withApiUserCollection($apiUserCollection)
+    {
+        $this->apiUserCollection = $apiUserCollection;
+
+        return $this;
+    }
+
+    /**
+     * @param $apiWhoCollection
+     * @return $this
+     */
+    public function withApiWhoCollection($apiWhoCollection)
+    {
+        $this->apiWhoCollection = $apiWhoCollection;
+
+        return $this;
+    }
+
+    /**
+     * @param $authLogCollection
+     * @return $this
+     */
+    public function withAuthLogCollection($authLogCollection)
+    {
+        $this->authLogCollection = $authLogCollection;
+
+        return $this;
+    }
+
+    /**
+     * @param $authUserCollection
+     * @return $this
+     */
+    public function withAuthUserCollection($authUserCollection)
+    {
+        $this->authUserCollection = $authUserCollection;
+
+        return $this;
+    }
 
     /**
      * @return AbstractService
@@ -46,89 +133,79 @@ abstract class AbstractServiceBuilder
     abstract public function build();
 
     /**
-     * @param Lpa $lpa
-     * @return $this
+     * @param string $serviceName
+     * @return AbstractService
      */
-    public function withLpa(Lpa $lpa)
+    protected function buildMocks(string $serviceName)
     {
-        $this->lpa = $lpa;
-        return $this;
-    }
-
-    /**
-     * @param User $user
-     * @return $this
-     */
-    public function withUser(User $user)
-    {
-        $this->user = $user;
-        return $this;
-    }
-
-    /**
-     * @param int $updateNumberModified
-     * @return $this
-     */
-    public function withUpdateNumberModified($updateNumberModified)
-    {
-        $this->updateNumberModified = $updateNumberModified;
-        return $this;
-    }
-
-    /**
-     * @param array $config
-     * @return $this
-     */
-    public function withConfig($config)
-    {
-        $this->config = $config;
-        return $this;
-    }
-
-    public function verify()
-    {
-        $this->apiLpaCollection->mockery_verify();
-        Mockery::close();
-    }
-
-    protected function buildMocks(string $serviceName, $addDefaults = true)
-    {
-        /** @var MockInterface|Logger $loggerMock */
-        $loggerMock = Mockery::mock(Logger::class);
-        $loggerMock->shouldReceive('info');
-
-        $this->apiLpaCollection = $this->apiLpaCollection ?: Mockery::mock(ApiLpaCollection::class);
+        //  If the logger hasn't been mocked yet, do that now
+        if ($this->logger === null) {
+            $this->logger = Mockery::mock(Logger::class);
+            $this->logger->shouldReceive('info');
+        }
 
         /** @var AbstractService $service */
-        $service = new $serviceName($this->apiLpaCollection);
-        $service->setLogger($loggerMock);
+        $service = new $serviceName();
 
-        if ($this->user !== null) {
-            if ($this->lpa !== null) {
-                $this->apiLpaCollection->shouldReceive('getById')
-                    ->withArgs([(int)$this->lpa->getId(), $this->user->getId()])
-                    ->andReturn($this->lpa->toArray(new DateCallback()));
-                $this->apiLpaCollection->shouldReceive('getById')
-                    ->withArgs([$this->lpa->getId()])
-                    ->andReturn($this->lpa->toArray(new DateCallback()));
-            }
+        $service->setLogger($this->logger);
+
+        //  Add the collections if they are present
+        if ($this->apiLpaCollection !== null) {
+            $service->setApiLpaCollection($this->apiLpaCollection);
         }
 
-        if ($this->lpa === null) {
-            $this->apiLpaCollection->shouldNotReceive('getById');
-            $this->apiLpaCollection->shouldNotReceive('fetch');
+        if ($this->apiStatsLpasCollection !== null) {
+            $service->setApiStatsLpasCollection($this->apiStatsLpasCollection);
         }
 
-        if ($addDefaults) {
-            $this->apiLpaCollection->shouldReceive('getById')->andReturn(null);
+        if ($this->apiUserCollection !== null) {
+            $service->setApiUserCollection($this->apiUserCollection);
         }
 
-        if ($this->updateNumberModified === null) {
-            $this->apiLpaCollection->shouldNotReceive('update');
-        } else {
-            $this->apiLpaCollection->shouldReceive('update');
+        if ($this->apiWhoCollection !== null) {
+            $service->setApiWhoCollection($this->apiWhoCollection);
+        }
+
+        if ($this->authLogCollection !== null) {
+            $service->setAuthLogCollection($this->authLogCollection);
+        }
+
+        if ($this->authUserCollection !== null) {
+            $service->setAuthUserCollection($this->authUserCollection);
         }
 
         return $service;
+    }
+
+    /**
+     * Mockery verification function
+     */
+    public function verify()
+    {
+        if ($this->apiLpaCollection !== null) {
+            $this->apiLpaCollection->mockery_verify();
+        }
+
+        if ($this->apiStatsLpasCollection !== null) {
+            $this->apiStatsLpasCollection->mockery_verify();
+        }
+
+        if ($this->apiUserCollection !== null) {
+            $this->apiUserCollection->mockery_verify();
+        }
+
+        if ($this->apiWhoCollection !== null) {
+            $this->apiWhoCollection->mockery_verify();
+        }
+
+        if ($this->authLogCollection !== null) {
+            $this->authLogCollection->mockery_verify();
+        }
+
+        if ($this->authUserCollection !== null) {
+            $this->authUserCollection->mockery_verify();
+        }
+
+        Mockery::close();
     }
 }

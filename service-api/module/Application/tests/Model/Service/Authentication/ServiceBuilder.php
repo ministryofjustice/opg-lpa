@@ -1,8 +1,8 @@
 <?php
 
-namespace ApplicationTest\Model\Service\WhoAreYou;
+namespace ApplicationTest\Model\Service\Authentication;
 
-use Application\Model\Service\WhoAreYou\Service;
+use Application\Model\Service\Authentication\Service;
 use ApplicationTest\Model\Service\AbstractServiceBuilder;
 
 class ServiceBuilder extends AbstractServiceBuilder

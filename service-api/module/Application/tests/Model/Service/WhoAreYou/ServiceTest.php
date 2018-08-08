@@ -6,7 +6,6 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
 use Application\Model\Service\WhoAreYou\Entity;
-use Application\Model\Service\WhoAreYou\Service;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
@@ -14,29 +13,16 @@ use OpgTest\Lpa\DataModel\FixturesData;
 
 class ServiceTest extends AbstractServiceTest
 {
-    /**
-     * @var Service
-     */
-    private $service;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->service = new Service($this->apiLpaCollection);
-
-        $this->service->setLogger($this->logger);
-    }
-
     public function testCreateAlreadyAnswered()
     {
         $lpa = FixturesData::getPfLpa();
         $lpa->setWhoAreYouAnswered(true);
 
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
             ->build();
 
         $apiProblem = $service->create($lpa->getId(), null);
@@ -53,10 +39,11 @@ class ServiceTest extends AbstractServiceTest
         $lpa = FixturesData::getHwLpa();
         $lpa->setWhoAreYouAnswered(false);
 
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
             ->build();
 
         $whoAreYou = new WhoAreYou();
@@ -81,10 +68,11 @@ class ServiceTest extends AbstractServiceTest
         $lpa->setWhoAreYouAnswered(false);
         $lpa->setUser(3);
 
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
             ->build();
 
         //So we expect an exception and for no document to be updated
@@ -103,14 +91,14 @@ class ServiceTest extends AbstractServiceTest
         $lpa = FixturesData::getHwLpa();
         $lpa->setWhoAreYouAnswered(false);
 
+        $user = FixturesData::getUser();
+
         $whoCollection = Mockery::mock(ApiWhoCollection::class);
         $whoCollection->shouldReceive('insert')->once();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
             ->withApiWhoCollection($whoCollection)
             ->build();
 
