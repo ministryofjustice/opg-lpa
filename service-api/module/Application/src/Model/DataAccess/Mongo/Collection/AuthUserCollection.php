@@ -478,9 +478,9 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      *
      * @param DateTime $since
      * @param null $excludeFlag
-     * @return Generator
+     * @return iterable
      */
-    public function getAccountsInactiveSince(DateTime $since, $excludeFlag = null) : Generator
+    public function getAccountsInactiveSince(DateTime $since, $excludeFlag = null) : iterable
     {
         $query = [
             '$or' => [
@@ -524,9 +524,9 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * Returns all accounts create before date $olderThan and that have not been activated.
      *
      * @param DateTime $olderThan
-     * @return Generator
+     * @return iterable
      */
-    public function getAccountsUnactivatedOlderThan(DateTime $olderThan) : Generator
+    public function getAccountsUnactivatedOlderThan(DateTime $olderThan) : iterable
     {
         $users = $this->collection->find([
             'active' => ['$ne' => true],
