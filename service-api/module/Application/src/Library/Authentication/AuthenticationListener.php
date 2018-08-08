@@ -28,7 +28,7 @@ class AuthenticationListener
         $authService = $serviceManager->get('Zend\Authentication\AuthenticationService');
 
         /*
-         * Do some authentication. Initially this will will just be via the token passed from front-2.
+         * Do some authentication. Initially this will just be via the token passed from front-2.
          * This token will have come from Auth-1. As this will be replaced we'll use a custom header value of:
          *      X-AuthOne
          *
