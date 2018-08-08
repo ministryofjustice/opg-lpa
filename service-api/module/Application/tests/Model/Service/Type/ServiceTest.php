@@ -4,34 +4,20 @@ namespace ApplicationTest\Model\Service\Type;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\Type\Entity;
-use Application\Model\Service\Type\Service;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ServiceTest extends AbstractServiceTest
 {
-    /**
-     * @var Service
-     */
-    private $service;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->service = new Service($this->lpaCollection);
-
-        $this->service->setLogger($this->logger);
-    }
-
     public function testUpdateValidationFailed()
     {
         $lpa = FixturesData::getHwLpa();
 
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
             ->build();
 
         $validationError = $service->update($lpa->getId(), ['type' => 'Invalid']);
@@ -54,10 +40,11 @@ class ServiceTest extends AbstractServiceTest
         $lpa = FixturesData::getHwLpa();
         $lpa->setUser(3);
 
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
             ->build();
 
         //So we expect an exception and for no document to be updated
@@ -73,11 +60,11 @@ class ServiceTest extends AbstractServiceTest
     {
         $lpa = FixturesData::getHwLpa();
 
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
             ->build();
 
         $entity = $service->update($lpa->getId(), ['type' => 'property-and-financial']);

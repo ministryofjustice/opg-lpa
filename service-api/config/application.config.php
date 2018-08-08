@@ -13,7 +13,6 @@ return array(
         'ZF\ApiProblem',
         'ZfcRbac',
         'Application',
-        'Auth',
     ),
 
     // These are various options for the listeners attached to the ModuleManager

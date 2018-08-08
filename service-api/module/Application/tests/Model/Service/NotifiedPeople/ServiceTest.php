@@ -5,33 +5,22 @@ namespace ApplicationTest\Model\Service\NotifiedPeople;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
-use Application\Model\Service\NotifiedPeople\Service;
 use ApplicationTest\Model\Service\AbstractServiceTest;
-use ApplicationTest\DummyDocument;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ServiceTest extends AbstractServiceTest
 {
-    /**
-     * @var Service
-     */
-    private $service;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->service = new Service($this->lpaCollection);
-
-        $this->service->setLogger($this->logger);
-    }
-
     public function testCreateValidationFailed()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $person = new NotifiedPerson();
         $validationError = $service->create($lpa->getId(), $person->toArray());
@@ -52,11 +41,12 @@ class ServiceTest extends AbstractServiceTest
     public function testCreate()
     {
         $lpa = FixturesData::getPfLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
             ->build();
 
         $person = new NotifiedPerson(FixturesData::getAttorneyHumanJson());
@@ -74,8 +64,13 @@ class ServiceTest extends AbstractServiceTest
     public function testUpdateNotFound()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $apiProblem = $service->update($lpa->getId(), null, -1);
 
@@ -89,8 +84,13 @@ class ServiceTest extends AbstractServiceTest
     public function testUpdateValidationFailed()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $person = new NotifiedPerson();
         $validationError = $service->update($lpa->getId(), $person->toArray(), $lpa->getDocument()->getPeopleToNotify()[0]->id);
@@ -111,11 +111,12 @@ class ServiceTest extends AbstractServiceTest
     public function testUpdate()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
             ->build();
 
         $person = new NotifiedPerson(FixturesData::getAttorneyHumanJson());
@@ -133,8 +134,13 @@ class ServiceTest extends AbstractServiceTest
     public function testDeleteNotFound()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $apiProblem = $service->delete($lpa->getId(), -1);
 
@@ -148,11 +154,12 @@ class ServiceTest extends AbstractServiceTest
     public function testDelete()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
             ->build();
 
         $id = $lpa->getDocument()->getPeopleToNotify()[0]->id;

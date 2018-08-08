@@ -4,32 +4,22 @@ namespace ApplicationTest\Model\Service\CertificateProvider;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
-use Application\Model\Service\CertificateProvider\Service;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ServiceTest extends AbstractServiceTest
 {
-    /**
-     * @var Service
-     */
-    private $service;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->service = new Service($this->lpaCollection);
-
-        $this->service->setLogger($this->logger);
-    }
-
     public function testUpdateValidationFailed()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         //Make sure the certificate provider is invalid
         $certificateProvider = new CertificateProvider();
@@ -54,8 +44,13 @@ class ServiceTest extends AbstractServiceTest
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
         $lpa->setUser(3);
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         //So we expect an exception and for no document to be updated
         $this->expectException(\RuntimeException::class);
@@ -69,11 +64,12 @@ class ServiceTest extends AbstractServiceTest
     public function testUpdate()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
             ->build();
 
         $certificateProvider = new CertificateProvider($lpa->getDocument()->getCertificateProvider()->toArray());
@@ -91,8 +87,13 @@ class ServiceTest extends AbstractServiceTest
         //LPA's document must be invalid
         $lpa = FixturesData::getHwLpa();
         $lpa->getDocument()->setPrimaryAttorneys([]);
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $validationError = $service->delete($lpa->getId());
 
@@ -113,8 +114,13 @@ class ServiceTest extends AbstractServiceTest
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
         $lpa->setUser(3);
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         //So we expect an exception and for no document to be updated
         $this->expectException(\RuntimeException::class);
@@ -128,11 +134,12 @@ class ServiceTest extends AbstractServiceTest
     public function testDelete()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
             ->build();
 
         $response = $service->delete($lpa->getId());

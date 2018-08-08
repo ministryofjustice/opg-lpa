@@ -4,33 +4,23 @@ namespace ApplicationTest\Model\Service\Lock;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\Lock\Entity;
-use Application\Model\Service\Lock\Service;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use OpgTest\Lpa\DataModel\FixturesData;
 use DateTime;
 
 class ServiceTest extends AbstractServiceTest
 {
-    /**
-     * @var Service
-     */
-    private $service;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->service = new Service($this->lpaCollection);
-
-        $this->service->setLogger($this->logger);
-    }
-
     public function testCreateAlreadyLocked()
     {
         $lpa = FixturesData::getPfLpa();
         $lpa->setLocked(true);
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $apiProblem = $service->create($lpa->getId());
 
@@ -46,8 +36,13 @@ class ServiceTest extends AbstractServiceTest
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
         $lpa->setUser(3);
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         //So we expect an exception and for no document to be updated
         $this->expectException(\RuntimeException::class);
@@ -64,11 +59,11 @@ class ServiceTest extends AbstractServiceTest
         $lpa = FixturesData::getHwLpa();
         $lpa->setLocked(false);
 
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
             ->build();
 
         $entity = $service->create($lpa->getId());

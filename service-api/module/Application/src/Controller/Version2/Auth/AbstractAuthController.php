@@ -3,8 +3,8 @@
 namespace Application\Controller\Version2\Auth;
 
 use Application\Library\ApiProblem\ApiProblemException;
-use Auth\Model\Service\AbstractService;
-use Auth\Model\Service\AuthenticationService;
+use Application\Model\Service\AbstractService;
+use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Zend\Http\Request as HttpRequest;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Mvc\MvcEvent;

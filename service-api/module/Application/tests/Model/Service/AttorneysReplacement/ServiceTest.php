@@ -5,32 +5,22 @@ namespace ApplicationTest\Model\Service\AttorneysReplacement;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\Service\DataModelEntity;
-use Application\Model\Service\AttorneysReplacement\Service;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use OpgTest\Lpa\DataModel\FixturesData;
 
 class ServiceTest extends AbstractServiceTest
 {
-    /**
-     * @var Service
-     */
-    private $service;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->service = new Service($this->lpaCollection);
-
-        $this->service->setLogger($this->logger);
-    }
-
     public function testCreateInvalidType()
     {
         $lpa = FixturesData::getPfLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Invalid type passed');
@@ -46,8 +36,13 @@ class ServiceTest extends AbstractServiceTest
     public function testCreateValidationFailed()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $attorney = new Human();
         $validationError = $service->create($lpa->getId(), $attorney->toArray());
@@ -69,11 +64,12 @@ class ServiceTest extends AbstractServiceTest
     public function testCreate()
     {
         $lpa = FixturesData::getPfLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
             ->build();
 
         $attorney = FixturesData::getAttorneyTrust();
@@ -87,8 +83,13 @@ class ServiceTest extends AbstractServiceTest
     public function testUpdateNotFound()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $apiProblem = $service->update($lpa->getId(), null, -1);
 
@@ -102,8 +103,13 @@ class ServiceTest extends AbstractServiceTest
     public function testUpdateInvalidType()
     {
         $lpa = FixturesData::getPfLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Invalid type passed');
@@ -119,8 +125,13 @@ class ServiceTest extends AbstractServiceTest
     public function testUpdateValidationFailed()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $attorney = new Human();
         $validationError = $service->update($lpa->getId(), $attorney->toArray(), $lpa->getDocument()->getReplacementAttorneys()[1]->id);
@@ -142,11 +153,12 @@ class ServiceTest extends AbstractServiceTest
     public function testUpdate()
     {
         $lpa = FixturesData::getPfLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
             ->build();
 
         $attorney = FixturesData::getAttorneyTrust();
@@ -164,8 +176,13 @@ class ServiceTest extends AbstractServiceTest
     public function testDeleteNotFound()
     {
         $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder->withUser(FixturesData::getUser())->withLpa($lpa)->build();
+        $service = $serviceBuilder
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->build();
 
         $apiProblem = $service->delete($lpa->getId(), -1);
 
@@ -179,11 +196,12 @@ class ServiceTest extends AbstractServiceTest
     public function testDelete()
     {
         $lpa = FixturesData::getPfLpa();
+
+        $user = FixturesData::getUser();
+
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser(FixturesData::getUser())
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
             ->build();
 
         $id = $lpa->getDocument()->getReplacementAttorneys()[1]->id;

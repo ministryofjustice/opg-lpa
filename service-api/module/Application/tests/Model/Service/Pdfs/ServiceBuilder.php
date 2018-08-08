@@ -8,6 +8,8 @@ use Mockery\MockInterface;
 
 class ServiceBuilder extends AbstractServiceBuilder
 {
+    private $pdfConfig = null;
+
     private $dynamoQueueClient = null;
 
     private $s3Client = null;
@@ -20,7 +22,9 @@ class ServiceBuilder extends AbstractServiceBuilder
         /** @var Service $service */
         $service = parent::buildMocks(Service::class);
 
-        $service->setPdfConfig($this->config);
+        if ($this->pdfConfig !== null) {
+            $service->setPdfConfig($this->pdfConfig);
+        }
 
         if ($this->dynamoQueueClient !== null) {
             $service->setDynamoQueueClient($this->dynamoQueueClient);
@@ -31,6 +35,16 @@ class ServiceBuilder extends AbstractServiceBuilder
         }
 
         return $service;
+    }
+
+    /**
+     * @param $pdfConfig
+     * @return $this
+     */
+    public function withPdfConfig($pdfConfig)
+    {
+        $this->pdfConfig = $pdfConfig;
+        return $this;
     }
 
     /**

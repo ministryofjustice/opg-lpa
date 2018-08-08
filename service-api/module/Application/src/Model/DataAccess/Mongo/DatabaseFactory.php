@@ -25,11 +25,31 @@ class DatabaseFactory implements FactoryInterface
 
         $configKey = str_replace(DatabaseFactory::class . '-', '', $requestedName);
 
-        /** @var Manager $manager */
-        $manager = $container->get(ManagerFactory::class . '-' . $configKey);
+        $config = $container->get('config')['db']['mongo'][$configKey];
 
-        $databaseName = $container->get('config')['db']['mongo'][$configKey]['options']['db'];
+        return new Database($this->getManager($config), $config['options']['db']);
+    }
 
-        return new Database($manager, $databaseName);
+    /**
+     * @param array $config
+     * @return Manager
+     */
+    private function getManager(array $config)
+    {
+        //  Split the array out into comma separated values
+        $uri = 'mongodb://' . implode(',', $config['hosts']) . '/' . $config['options']['db'];
+
+        $options = $config['options'];
+
+        if (array_key_exists('socketTimeoutMS', $options)) {
+            if (is_int($options['socketTimeoutMS'])) {
+                // This connection option only works on the url itself
+                $uri .= '?socketTimeoutMS=' . $options['socketTimeoutMS'];
+            }
+
+            unset($options['socketTimeoutMS']);
+        }
+
+        return new Manager($uri, $options, $config['driverOptions']);
     }
 }

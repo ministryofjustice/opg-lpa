@@ -3,45 +3,37 @@
 namespace ApplicationTest\Model\Service\Seed;
 
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\Service\Seed\Entity;
-use Application\Model\Service\Seed\Service;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use ApplicationTest\Model\Service\Applications\ServiceBuilder as ApplicationsServiceBuilder;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
+use Mockery;
 
 class ServiceTest extends AbstractServiceTest
 {
-    /**
-     * @var Service
-     */
-    private $service;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->service = new Service($this->lpaCollection);
-
-        $this->service->setLogger($this->logger);
-    }
-
     public function testFetchSeedNotFound()
     {
-        $lpa = FixturesData::getHwLpa();
         $seedLpa = FixturesData::getPfLpa();
+
+        $lpa = FixturesData::getHwLpa();
+        $lpa->setSeed($seedLpa->getId());
+
         $user = FixturesData::getUser();
 
-        $lpa->setSeed($seedLpa->getId());
+        $apiLpaCollection2 = Mockery::mock(ApiLpaCollection::class);
+        $apiLpaCollection2->shouldReceive('getById')
+            ->andReturnNull();
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withUser($user)
+            ->withApiLpaCollection($apiLpaCollection2)
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser($user)
-            ->withLpa($lpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
             ->withApplicationsService($applicationsService)
             ->build();
 
@@ -56,23 +48,22 @@ class ServiceTest extends AbstractServiceTest
 
     public function testFetchUserDoesNotMatch()
     {
-        $lpa = FixturesData::getHwLpa();
         $seedLpa = FixturesData::getPfLpa();
-        $user = FixturesData::getUser();
-
         $seedLpa->setUser(-1);
+
+        $lpa = FixturesData::getHwLpa();
         $lpa->setSeed($seedLpa->getId());
+
+        $user = FixturesData::getUser();
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withUser($user)
-            ->withLpa($seedLpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($seedLpa, $user))
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser($user)
-            ->withLpa($lpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
             ->withApplicationsService($applicationsService)
             ->build();
 
@@ -87,22 +78,21 @@ class ServiceTest extends AbstractServiceTest
 
     public function testFetch()
     {
-        $lpa = FixturesData::getHwLpa();
         $seedLpa = FixturesData::getPfLpa();
-        $user = FixturesData::getUser();
 
+        $lpa = FixturesData::getHwLpa();
         $lpa->setSeed($seedLpa->getId());
+
+        $user = FixturesData::getUser();
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withUser($user)
-            ->withLpa($seedLpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($seedLpa, $user))
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser($user)
-            ->withLpa($lpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
             ->withApplicationsService($applicationsService)
             ->build();
 
@@ -116,12 +106,12 @@ class ServiceTest extends AbstractServiceTest
     public function testUpdateValidationFailed()
     {
         $lpa = FixturesData::getHwLpa();
+
         $user = FixturesData::getUser();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser($user)
-            ->withLpa($lpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
             ->build();
 
         $entity = $service->update($lpa->getId(), ['seed' => 'Invalid'], $user->getId());
@@ -135,21 +125,21 @@ class ServiceTest extends AbstractServiceTest
 
     public function testUpdateSeedNotFound()
     {
-        $lpa = FixturesData::getHwLpa();
         $seedLpa = FixturesData::getPfLpa();
-        $user = FixturesData::getUser();
 
+        $lpa = FixturesData::getHwLpa();
         $lpa->setSeed($seedLpa->getId());
+
+        $user = FixturesData::getUser();
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withUser($user)
+            ->withApiLpaCollection($this->getApiLpaCollection(new Lpa(), $user))
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser($user)
-            ->withLpa($lpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
             ->withApplicationsService($applicationsService)
             ->build();
 
@@ -164,23 +154,22 @@ class ServiceTest extends AbstractServiceTest
 
     public function testUpdateUserDoesNotMatch()
     {
-        $lpa = FixturesData::getHwLpa();
         $seedLpa = FixturesData::getPfLpa();
-        $user = FixturesData::getUser();
-
         $seedLpa->setUser(-1);
+
+        $lpa = FixturesData::getHwLpa();
         $lpa->setSeed($seedLpa->getId());
+
+        $user = FixturesData::getUser();
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withUser($user)
-            ->withLpa($seedLpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($seedLpa, $user))
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser($user)
-            ->withLpa($lpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
             ->withApplicationsService($applicationsService)
             ->build();
 
@@ -197,20 +186,18 @@ class ServiceTest extends AbstractServiceTest
     {
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
-        $user = FixturesData::getUser();
-
         $lpa->setUser(3);
+
+        $user = FixturesData::getUser();
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withUser($user)
-            ->withLpa($lpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser($user)
-            ->withLpa($lpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
             ->withApplicationsService($applicationsService)
             ->build();
 
@@ -225,23 +212,21 @@ class ServiceTest extends AbstractServiceTest
 
     public function testUpdate()
     {
-        $lpa = FixturesData::getHwLpa();
         $seedLpa = FixturesData::getPfLpa();
-        $user = FixturesData::getUser();
-
         $seedLpa->setId(123456789);
+
+        $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withUser($user)
-            ->withLpa($seedLpa)
+            ->withApiLpaCollection($this->getApiLpaCollection($seedLpa, $user))
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUser($user)
-            ->withLpa($lpa)
-            ->withUpdateNumberModified(1)
+            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
             ->withApplicationsService($applicationsService)
             ->build();
 

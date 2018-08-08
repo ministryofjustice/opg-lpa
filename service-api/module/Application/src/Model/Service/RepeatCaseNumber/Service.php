@@ -3,10 +3,13 @@
 namespace Application\Model\Service\RepeatCaseNumber;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
 use Application\Model\Service\AbstractService;
 
 class Service extends AbstractService
 {
+    use ApiLpaCollectionTrait;
+
     /**
      * @param $lpaId
      * @param $data

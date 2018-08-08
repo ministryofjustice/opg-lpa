@@ -61,6 +61,5 @@ return array(
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
     'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
     'Aws\\' => array($vendorDir . '/aws/aws-sdk-php/src'),
-    'Auth\\' => array($baseDir . '/module/Auth/src'),
     'Application\\' => array($baseDir . '/module/Application/src'),
 );

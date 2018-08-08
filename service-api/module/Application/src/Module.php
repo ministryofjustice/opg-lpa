@@ -3,8 +3,6 @@
 namespace Application;
 
 use Application\Model\DataAccess\Mongo;
-use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
@@ -14,7 +12,6 @@ use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
 use DynamoQueue\Queue\Client as DynamoQueue;
 use GuzzleHttp\Client as GuzzleClient;
-use Interop\Container\ContainerInterface;
 use Opg\Lpa\Logger\Logger;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
@@ -82,35 +79,17 @@ class Module
                     return new AuthenticationService(new NonPersistent());
                 },
 
-                //  Mongo collections for api database
-                Mongo\CollectionFactory::class . '-api-lpa' => new Mongo\CollectionFactory('lpa'),
-                Mongo\CollectionFactory::class . '-api-user' => new Mongo\CollectionFactory('user'),
-                Mongo\CollectionFactory::class . '-api-who' => new Mongo\CollectionFactory('whoAreYou'),
-                Mongo\CollectionFactory::class . '-api-stats-lpas' => new Mongo\CollectionFactory('lpaStats'),
-
-                //  Mongo collections for auth database
-                Mongo\CollectionFactory::class . '-auth-user' => new Mongo\CollectionFactory('user', 'auth'),
-                Mongo\CollectionFactory::class . '-auth-log' => new Mongo\CollectionFactory('log', 'auth'),
-
-                AuthUserCollection::class => function (ContainerInterface $container) {
-                    $authUserCollection = $container->get(Mongo\CollectionFactory::class . '-auth-user');
-
-                    return new AuthUserCollection($authUserCollection);
-                },
-
-                AuthLogCollection::class => function (ContainerInterface $container) {
-                    $authLogCollection = $container->get(Mongo\CollectionFactory::class . '-auth-log');
-
-                    return new AuthLogCollection($authLogCollection);
-                },
-
                 //  Mongo database
-                Mongo\DatabaseFactory::class . '-default' => Mongo\DatabaseFactory::class,
-                Mongo\DatabaseFactory::class . '-auth'    => Mongo\DatabaseFactory::class,
+                Mongo\DatabaseFactory::class . '-default'   => Mongo\DatabaseFactory::class,
+                Mongo\DatabaseFactory::class . '-auth'      => Mongo\DatabaseFactory::class,
 
-                //  Mongo manager to inject into the Mongo database
-                Mongo\ManagerFactory::class . '-default' => Mongo\ManagerFactory::class,
-                Mongo\ManagerFactory::class . '-auth'    => Mongo\ManagerFactory::class,
+                //  Collection wrappers for Mongo collection
+                Mongo\Collection\ApiLpaCollection::class        => Mongo\Collection\CollectionFactory::class,
+                Mongo\Collection\ApiStatsLpasCollection::class  => Mongo\Collection\CollectionFactory::class,
+                Mongo\Collection\ApiUserCollection::class       => Mongo\Collection\CollectionFactory::class,
+                Mongo\Collection\ApiWhoCollection::class        => Mongo\Collection\CollectionFactory::class,
+                Mongo\Collection\AuthLogCollection::class       => Mongo\Collection\CollectionFactory::class,
+                Mongo\Collection\AuthUserCollection::class      => Mongo\Collection\CollectionFactory::class,
 
                 // Get S3Client Client
                 'S3Client' => function ($sm) {

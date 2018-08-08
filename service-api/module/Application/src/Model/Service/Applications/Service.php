@@ -2,14 +2,13 @@
 
 namespace Application\Model\Service\Applications;
 
-use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
 use Application\Library\Random\Csprng;
+use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
-use MongoDB\BSON\UTCDateTime;
 use Opg\Lpa\DataModel\Lpa\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Paginator\Adapter\Callback as PaginatorCallback;
@@ -18,6 +17,8 @@ use RuntimeException;
 
 class Service extends AbstractService
 {
+    use ApiLpaCollectionTrait;
+
     /**
      * @param $data
      * @param $userId
@@ -37,13 +38,9 @@ class Service extends AbstractService
         do {
             $id = $csprng->GetInt(1000000, 99999999999);
 
-            // Check if the id already exists. We're looking for a value of null.
-            $exists = $this->lpaCollection->findOne([
-                '_id' => $id
-            ], [
-                '_id' => true
-            ]);
-        } while (!is_null($exists));
+            //  Try to get an existing LPA to check if the ID is already used
+            $existingLpa = $this->apiLpaCollection->getById($id);
+        } while (!is_null($existingLpa));
 
         $lpa = new Lpa([
             'id'                => $id,
@@ -65,7 +62,7 @@ class Service extends AbstractService
             throw new RuntimeException('A malformed LPA object was created');
         }
 
-        $this->lpaCollection->insertOne($lpa->toArray(new DateCallback()));
+        $this->apiLpaCollection->insert($lpa);
 
         $entity = new DataModelEntity($lpa);
 
@@ -122,10 +119,7 @@ class Service extends AbstractService
     public function fetch($id, $userId)
     {
         // Note: user has to match
-        $result = $this->lpaCollection->findOne([
-            '_id' => (int) $id,
-            'user' => $userId
-        ]);
+        $result = $this->apiLpaCollection->getById((int) $id, $userId);
 
         if (is_null($result)) {
             return new ApiProblem(404, 'Document ' . $id . ' not found for user ' . $userId);
@@ -176,7 +170,8 @@ class Service extends AbstractService
             }
         }
 
-        $count = $this->lpaCollection->count($filter);
+        $cursor = $this->apiLpaCollection->fetch($filter);
+        $count = count($cursor->toArray());
 
         // If there are no records, just return an empty paginator...
         if ($count == 0) {
@@ -184,10 +179,10 @@ class Service extends AbstractService
         }
 
         // Map the results into a Zend Paginator, lazely converting them to LPA instances as we go...
-        $lpaCollection = $this->lpaCollection;
+        $apiLpaCollection = $this->apiLpaCollection;
 
         $callback = new PaginatorCallback(
-            function ($offset, $itemCountPerPage) use ($lpaCollection, $filter) {
+            function ($offset, $itemCountPerPage) use ($apiLpaCollection, $filter) {
                 // getItems callback
                 $options = [
                     'sort' => [
@@ -197,7 +192,7 @@ class Service extends AbstractService
                     'limit' => $itemCountPerPage
                 ];
 
-                $cursor = $lpaCollection->find($filter, $options);
+                $cursor = $apiLpaCollection->fetch($filter, $options);
                 $lpas = $cursor->toArray();
 
                 // Convert the results to instances of the LPA object..
@@ -225,22 +220,13 @@ class Service extends AbstractService
      */
     public function delete($id, $userId)
     {
-        $filter = [
-            '_id' => (int) $id,
-            'user' => $userId,
-        ];
-
-        $result = $this->lpaCollection->findOne($filter, ['projection' => ['_id' => true]]);
+        $result = $this->apiLpaCollection->getById((int) $id, $userId);
 
         if (is_null($result)) {
             return new ApiProblem(404, 'Document not found');
         }
 
-        //  We don't want to remove the document entirely as we need to make sure the same ID isn't reassigned.
-        //  So we just strip the document down to '_id' and 'updatedAt'.
-        $result['updatedAt'] = new UTCDateTime();
-
-        $this->lpaCollection->replaceOne($filter, $result);
+        $this->apiLpaCollection->deleteById($id, $userId);
 
         return true;
     }
@@ -251,9 +237,7 @@ class Service extends AbstractService
      */
     public function deleteAll($userId)
     {
-        $query = ['user' => $userId];
-
-        $lpas = $this->lpaCollection->find($query, ['_id' => true]);
+        $lpas = $this->apiLpaCollection->fetchByUserId($userId);
 
         foreach ($lpas as $lpa) {
             $this->delete($lpa['_id'], $userId);

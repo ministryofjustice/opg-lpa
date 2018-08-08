@@ -430,11 +430,6 @@ return [
     ], // controllers
 
     'service_manager' => [
-        'factories' => [
-            Application\Model\Service\AccountCleanup\Service::class => Application\Model\Service\AccountCleanup\ServiceFactory::class,
-            Application\Model\Service\System\Stats::class           => Application\Model\Service\System\StatsFactory::class,
-            Application\Model\Service\Stats\Service::class          => Application\Model\Service\Stats\ServiceFactory::class,
-        ],
         'abstract_factories' => [
             'Application\Model\Service\ServiceAbstractFactory',
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
