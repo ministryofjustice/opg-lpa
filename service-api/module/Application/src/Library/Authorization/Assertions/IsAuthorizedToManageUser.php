@@ -2,7 +2,6 @@
 
 namespace Application\Library\Authorization\Assertions;
 
-use Application\Library\Authentication\Identity\AuthService;
 use ZfcRbac\Assertion\AssertionInterface;
 use ZfcRbac\Service\AuthorizationService;
 
@@ -22,11 +21,6 @@ class IsAuthorizedToManageUser implements AssertionInterface
         }
 
         $tokenUser = $authorization->getIdentity();
-
-        //  If the token user is a service then allow it
-        if ($tokenUser instanceof AuthService) {
-            return true;
-        }
 
         //  Otherwise we can only authorize if we can get the user's id from the Identity...
         if (!is_callable([$tokenUser, 'id'])) {
