@@ -48,7 +48,7 @@ class AuthUserCollectionTest extends MockeryTestCase
     public function testGetByUsername()
     {
         $this->mongoCollection->shouldReceive('findOne')->withArgs([['identity' => 'unit@test.com']])
-            ->once()->andReturn(['_id' => 1]);
+            ->once()->andReturn(['_id' => "1"]);
 
         /** @var User $result */
         $result = $this->authUserCollection->getByUsername('unit@test.com');
@@ -58,7 +58,7 @@ class AuthUserCollectionTest extends MockeryTestCase
 
     public function testGetByIdNotFound()
     {
-        $this->mongoCollection->shouldReceive('findOne')->withArgs([['_id' => 1]])
+        $this->mongoCollection->shouldReceive('findOne')->withArgs([['_id' => "1"]])
             ->once()->andReturn(null);
 
         $result = $this->authUserCollection->getById(1);
@@ -68,8 +68,8 @@ class AuthUserCollectionTest extends MockeryTestCase
 
     public function testGetById()
     {
-        $this->mongoCollection->shouldReceive('findOne')->withArgs([['_id' => 1]])
-            ->once()->andReturn(['_id' => 1]);
+        $this->mongoCollection->shouldReceive('findOne')->withArgs([['_id' => "1"]])
+            ->once()->andReturn(['_id' => "1"]);
 
         /** @var User $result */
         $result = $this->authUserCollection->getById(1);
@@ -90,7 +90,7 @@ class AuthUserCollectionTest extends MockeryTestCase
     public function testGetByAuthToken()
     {
         $this->mongoCollection->shouldReceive('findOne')->withArgs([['auth_token.token' => 'unit-test']])
-            ->once()->andReturn(['_id' => 1]);
+            ->once()->andReturn(['_id' => "1"]);
 
         /** @var User $result */
         $result = $this->authUserCollection->getByAuthToken('unit-test');
@@ -117,7 +117,7 @@ class AuthUserCollectionTest extends MockeryTestCase
             $date = $filter['password_reset_token.expiresAt']['$gt'];
             return $filter['password_reset_token.token'] === 'unit-test' && $date instanceof UTCDateTime
                 && $date->toDateTime() > new DateTime('-1 second');
-        })->once()->andReturn(['_id' => 1]);
+        })->once()->andReturn(['_id' => "1"]);
 
         /** @var User $result */
         $result = $this->authUserCollection->getByResetToken('unit-test');
@@ -132,13 +132,13 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $date = $update['$set']['last_login'];
-            return $filter === ['_id' => 1] && $date instanceof UTCDateTime
+            return $filter === ['_id' => "1"] && $date instanceof UTCDateTime
                 && $date->toDateTime() > new DateTime('-1 second')
                 && $update['$unset']['inactivity_flags'] === true
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->authUserCollection->updateLastLoginTime(1);
+        $result = $this->authUserCollection->updateLastLoginTime("1");
 
         $this->assertEquals(true, $result);
     }
@@ -149,12 +149,12 @@ class AuthUserCollectionTest extends MockeryTestCase
         $dbResult->shouldReceive('getModifiedCount')->once()->andReturn(1);
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs([
-            ['_id' => 1],
+            ['_id' => "1"],
             ['$set' => ['failed_login_attempts' => 0]],
             ['upsert' => false, 'multiple' => false]
         ])->once()->andReturn($dbResult);
 
-        $result = $this->authUserCollection->resetFailedLoginCounter(1);
+        $result = $this->authUserCollection->resetFailedLoginCounter("1");
 
         $this->assertEquals(true, $result);
     }
@@ -166,23 +166,23 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $date = $update['$set']['last_failed_login'];
-            return $filter === ['_id' => 1] && $date instanceof UTCDateTime
+            return $filter === ['_id' => "1"] && $date instanceof UTCDateTime
                 && $date->toDateTime() > new DateTime('-1 second')
                 && $update['$inc']['failed_login_attempts'] === 1
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->authUserCollection->incrementFailedLoginCounter(1);
+        $result = $this->authUserCollection->incrementFailedLoginCounter("1");
 
         $this->assertEquals(true, $result);
     }
 
     public function testCreateMongoException()
     {
-        $this->mongoCollection->shouldReceive('insertOne')->withArgs([['_id' => 1]])
+        $this->mongoCollection->shouldReceive('insertOne')->withArgs([['_id' => "1"]])
             ->once()->andThrow(new MongoException());
 
-        $result = $this->authUserCollection->create(1, []);
+        $result = $this->authUserCollection->create("1", []);
 
         $this->assertEquals(false, $result);
     }
@@ -194,37 +194,37 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $this->mongoCollection->shouldReceive('insertOne')->withArgs(function ($details) {
             $date = $details['created'];
-            return $details['_id'] === 1 && $date instanceof UTCDateTime
+            return $details['_id'] === "1" && $date instanceof UTCDateTime
                 && $date->toDateTime() >= new DateTime('-1 second');
         })->once()->andReturn($dbResult);
 
-        $result = $this->authUserCollection->create(1, ['created' => new DateTime()]);
+        $result = $this->authUserCollection->create("1", ['created' => new DateTime()]);
 
         $this->assertEquals(true, $result);
     }
 
     public function testDeleteNotFound()
     {
-        $this->mongoCollection->shouldReceive('findOne')->withArgs([['_id' => 1]])
+        $this->mongoCollection->shouldReceive('findOne')->withArgs([['_id' => "1"]])
             ->once()->andReturn(null);
 
-        $result = $this->authUserCollection->delete(1);
+        $result = $this->authUserCollection->delete("1");
 
         $this->assertEquals(null, $result);
     }
 
     public function testDelete()
     {
-        $this->mongoCollection->shouldReceive('findOne')->withArgs([['_id' => 1]])
-            ->once()->andReturn(['_id' => 1]);
+        $this->mongoCollection->shouldReceive('findOne')->withArgs([['_id' => "1"]])
+            ->once()->andReturn(['_id' => "1"]);
 
         $this->mongoCollection->shouldReceive('replaceOne')->withArgs(function ($filter, $replacement) {
             $date = $replacement['deletedAt'];
-            return $filter['_id'] === 1 && $replacement['_id'] === 1 && $date instanceof UTCDateTime
+            return $filter['_id'] === "1" && $replacement['_id'] === "1" && $date instanceof UTCDateTime
                 && $date->toDateTime() >= new DateTime('-1 second');
         })->once();
 
-        $result = $this->authUserCollection->delete(1);
+        $result = $this->authUserCollection->delete("1");
 
         $this->assertEquals(true, $result);
     }
@@ -242,7 +242,7 @@ class AuthUserCollectionTest extends MockeryTestCase
     public function testActivate()
     {
         $this->mongoCollection->shouldReceive('findOne')->withArgs([['activation_token' => 'unit-test']])
-            ->once()->andReturn(['_id' => 1]);
+            ->once()->andReturn(['_id' => "1"]);
 
         $dbResult = Mockery::mock(UpdateResult::class);
         $dbResult->shouldReceive('getModifiedCount')->once()->andReturn(1);
@@ -250,7 +250,7 @@ class AuthUserCollectionTest extends MockeryTestCase
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $dateActivated = $update['$set']['activated'];
             $lastUpdatedDate = $update['$set']['last_updated'];
-            return $filter === ['_id' => 1]
+            return $filter === ['_id' => "1"]
                 && $dateActivated instanceof UTCDateTime && $dateActivated->toDateTime() > new DateTime('-1 second')
                 && $lastUpdatedDate instanceof UTCDateTime && $lastUpdatedDate->toDateTime() > new DateTime('-1 second')
                 && $update['$set']['active'] === true
@@ -270,14 +270,14 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $lastUpdatedDate = $update['$set']['last_updated'];
-            return $filter === ['_id' => 1]
+            return $filter === ['_id' => "1"]
                 && $lastUpdatedDate instanceof UTCDateTime && $lastUpdatedDate->toDateTime() > new DateTime('-1 second')
                 && $update['$set']['password_hash'] === 'Password123'
                 && $update['$unset']['auth_token'] === true
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->authUserCollection->setNewPassword(1, 'Password123');
+        $result = $this->authUserCollection->setNewPassword("1", 'Password123');
 
         $this->assertEquals(true, $result);
     }
@@ -287,14 +287,14 @@ class AuthUserCollectionTest extends MockeryTestCase
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $updatedAtDate = $update['$set']['auth_token.updatedAt'];
             $expiresAtDate = $update['$set']['auth_token.expiresAt'];
-            return $filter === ['_id' => 1]
+            return $filter === ['_id' => "1"]
                 && $updatedAtDate instanceof UTCDateTime && $updatedAtDate->toDateTime() > new DateTime('-1 second')
                 && $expiresAtDate instanceof UTCDateTime
                 && $expiresAtDate->toDateTime() > new DateTime('+1 minute -1 second')
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andThrow(new MongoException());
 
-        $result = $this->authUserCollection->extendAuthToken(1, new DateTime('+1 minute'));
+        $result = $this->authUserCollection->extendAuthToken("1", new DateTime('+1 minute'));
 
         $this->assertEquals(false, $result);
     }
@@ -307,14 +307,14 @@ class AuthUserCollectionTest extends MockeryTestCase
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $updatedAtDate = $update['$set']['auth_token.updatedAt'];
             $expiresAtDate = $update['$set']['auth_token.expiresAt'];
-            return $filter === ['_id' => 1]
+            return $filter === ['_id' => "1"]
                 && $updatedAtDate instanceof UTCDateTime && $updatedAtDate->toDateTime() > new DateTime('-1 second')
                 && $expiresAtDate instanceof UTCDateTime
                 && $expiresAtDate->toDateTime() > new DateTime('+1 minute -1 second')
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->authUserCollection->extendAuthToken(1, new DateTime('+1 minute'));
+        $result = $this->authUserCollection->extendAuthToken("1", new DateTime('+1 minute'));
 
         $this->assertEquals(true, $result);
     }
@@ -328,7 +328,7 @@ class AuthUserCollectionTest extends MockeryTestCase
             $createdAtDate = $update['$set']['auth_token.createdAt'];
             $updatedAtDate = $update['$set']['auth_token.updatedAt'];
             $expiresAtDate = $update['$set']['auth_token.expiresAt'];
-            return $filter === ['_id' => 1]
+            return $filter === ['_id' => "1"]
                 && $createdAtDate instanceof UTCDateTime && $createdAtDate->toDateTime() > new DateTime('-1 second')
                 && $updatedAtDate instanceof UTCDateTime && $updatedAtDate->toDateTime() > new DateTime('-1 second')
                 && $expiresAtDate instanceof UTCDateTime
@@ -337,7 +337,7 @@ class AuthUserCollectionTest extends MockeryTestCase
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->authUserCollection->setAuthToken(1, new DateTime('+1 minute'), 'unit-test');
+        $result = $this->authUserCollection->setAuthToken("1", new DateTime('+1 minute'), 'unit-test');
 
         $this->assertEquals(true, $result);
     }
@@ -349,13 +349,13 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $createdAtDate = $update['$set']['password_reset_token']['createdAt'];
-            return $filter === ['_id' => 1]
+            return $filter === ['_id' => "1"]
                 && $createdAtDate instanceof UTCDateTime && $createdAtDate->toDateTime() > new DateTime('-1 second')
                 && $update['$set']['password_reset_token']['token'] === 'unit-test'
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->authUserCollection->addPasswordResetToken(1, [
+        $result = $this->authUserCollection->addPasswordResetToken("1", [
             'token' => 'unit-test',
             'createdAt' => new DateTime()
         ]);
@@ -375,7 +375,7 @@ class AuthUserCollectionTest extends MockeryTestCase
 
     public function testUpdatePasswordUsingToken()
     {
-        $this->mongoCollection->shouldReceive('findOne')->once()->andReturn(['_id' => 1]);
+        $this->mongoCollection->shouldReceive('findOne')->once()->andReturn(['_id' => "1"]);
 
         $dbResult = Mockery::mock(UpdateResult::class);
         $dbResult->shouldReceive('getModifiedCount')->once()->andReturn(1);
@@ -401,13 +401,13 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $createdAtDate = $update['$set']['email_update_request']['token']['createdAt'];
-            return $filter === ['_id' => 1]
+            return $filter === ['_id' => "1"]
                 && $createdAtDate instanceof UTCDateTime && $createdAtDate->toDateTime() > new DateTime('-1 second')
                 && $update['$set']['email_update_request']['token']['token'] === 'unit-test'
                 && $options === ['upsert' => false, 'multiple' => false];
         })->once()->andReturn($dbResult);
 
-        $result = $this->authUserCollection->addEmailUpdateTokenAndNewEmail(1, [
+        $result = $this->authUserCollection->addEmailUpdateTokenAndNewEmail("1", [
             'token' => 'unit-test',
             'createdAt' => new DateTime()
         ], 'unit@test.com');
@@ -456,14 +456,14 @@ class AuthUserCollectionTest extends MockeryTestCase
             $date = $filter['email_update_request.token.expiresAt']['$gt'];
             return $filter['email_update_request.token.token'] === 'unit-test' && $date instanceof UTCDateTime
                 && $date->toDateTime() > new DateTime('-1 second');
-        })->once()->andReturn(['_id' => 1, 'email_update_request' => ['email' => 'unit@test.com']]);
+        })->once()->andReturn(['_id' => "1", 'email_update_request' => ['email' => 'unit@test.com']]);
 
         $dbResult = Mockery::mock(UpdateResult::class);
         $dbResult->shouldReceive('getModifiedCount')->once()->andReturn(0);
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $lastUpdatedDate = $update['$set']['last_updated'];
-            return $filter === ['_id' => 1]
+            return $filter === ['_id' => "1"]
                 && $lastUpdatedDate instanceof UTCDateTime && $lastUpdatedDate->toDateTime() > new DateTime('-1 second')
                 && $update['$set']['identity'] === 'unit@test.com'
                 && $options === ['upsert' => false, 'multiple' => false];
@@ -484,14 +484,14 @@ class AuthUserCollectionTest extends MockeryTestCase
             $date = $filter['email_update_request.token.expiresAt']['$gt'];
             return $filter['email_update_request.token.token'] === 'unit-test' && $date instanceof UTCDateTime
                 && $date->toDateTime() > new DateTime('-1 second');
-        })->once()->andReturn(['_id' => 1, 'email_update_request' => ['email' => 'unit@test.com']]);
+        })->once()->andReturn(['_id' => "1", 'email_update_request' => ['email' => 'unit@test.com']]);
 
         $dbResult = Mockery::mock(UpdateResult::class);
         $dbResult->shouldReceive('getModifiedCount')->once()->andReturn(1);
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs(function ($filter, $update, $options) {
             $lastUpdatedDate = $update['$set']['last_updated'];
-            return $filter === ['_id' => 1]
+            return $filter === ['_id' => "1"]
                 && $lastUpdatedDate instanceof UTCDateTime && $lastUpdatedDate->toDateTime() > new DateTime('-1 second')
                 && $update['$set']['identity'] === 'unit@test.com'
                 && $options === ['upsert' => false, 'multiple' => false];
@@ -512,11 +512,11 @@ class AuthUserCollectionTest extends MockeryTestCase
                 ['last_login' => ['$lt' => new UTCDateTime($date)]],
                 ['last_login' => ['$lt' => $date->getTimestamp()]],
             ],
-        ]])->once()->andReturn([['_id' => 1]]);
+        ]])->once()->andReturn([['_id' => "1"]]);
 
         $result = $this->authUserCollection->getAccountsInactiveSince($date);
 
-        $this->assertEquals([new User(['_id' => 1])], iterator_to_array($result));
+        $this->assertEquals([new User(['_id' => "1"])], iterator_to_array($result));
     }
 
     public function testGetAccountsInactiveSinceExcludeFlag()
@@ -529,11 +529,11 @@ class AuthUserCollectionTest extends MockeryTestCase
                 ['last_login' => ['$lt' => $date->getTimestamp()]],
             ],
             'inactivity_flags' => ['$nin' => ['unit-test']]
-        ]])->once()->andReturn([['_id' => 1]]);
+        ]])->once()->andReturn([['_id' => "1"]]);
 
         $result = $this->authUserCollection->getAccountsInactiveSince($date, 'unit-test');
 
-        $this->assertEquals([new User(['_id' => 1])], iterator_to_array($result));
+        $this->assertEquals([new User(['_id' => "1"])], iterator_to_array($result));
     }
 
     public function testSetInactivityFlag()
@@ -542,7 +542,7 @@ class AuthUserCollectionTest extends MockeryTestCase
         $dbResult->shouldReceive('isAcknowledged')->once()->andReturn(true);
 
         $this->mongoCollection->shouldReceive('updateOne')->withArgs([
-            ['_id' => 1],
+            ['_id' => "1"],
             ['$addToSet' => ['inactivity_flags' => 'unit-test']],
             ['upsert' => false, 'multiple' => false]
         ])->once()->andReturn($dbResult);
@@ -559,11 +559,11 @@ class AuthUserCollectionTest extends MockeryTestCase
         $this->mongoCollection->shouldReceive('find')->withArgs([[
             'active' => ['$ne' => true],
             'created' => ['$lt' => new UTCDateTime($date)]
-        ]])->once()->andReturn([['_id' => 1]]);
+        ]])->once()->andReturn([['_id' => "1"]]);
 
         $result = $this->authUserCollection->getAccountsUnactivatedOlderThan($date);
 
-        $this->assertEquals([new User(['_id' => 1])], iterator_to_array($result));
+        $this->assertEquals([new User(['_id' => "1"])], iterator_to_array($result));
     }
 
     public function testCountAccounts()

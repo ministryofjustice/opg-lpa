@@ -32,7 +32,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $username
      * @return User|null
      */
-    public function getByUsername($username) : ?Auth\UserInterface
+    public function getByUsername(string $username) : ?Auth\UserInterface
     {
         $data = $this->collection->findOne(['identity' => $username]);
 
@@ -47,7 +47,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $id
      * @return User|null
      */
-    public function getById($id) : ?Auth\UserInterface
+    public function getById(string $id) : ?Auth\UserInterface
     {
         $data = $this->collection->findOne(['_id' => $id]);
 
@@ -62,7 +62,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $token
      * @return User|null
      */
-    public function getByAuthToken($token) : ?Auth\UserInterface
+    public function getByAuthToken(string $token) : ?Auth\UserInterface
     {
         $data = $this->collection->findOne(['auth_token.token' => $token]);
 
@@ -77,7 +77,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $token
      * @return User|null
      */
-    public function getByResetToken($token) : ?Auth\UserInterface
+    public function getByResetToken(string $token) : ?Auth\UserInterface
     {
         $data = $this->collection->findOne(
             [
@@ -99,7 +99,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $id
      * @return bool
      */
-    public function updateLastLoginTime($id) : bool
+    public function updateLastLoginTime(string $id) : bool
     {
         return $this->collection->updateOne([
             '_id' => $id
@@ -122,7 +122,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $id
      * @return bool
      */
-    public function resetFailedLoginCounter($id) : bool
+    public function resetFailedLoginCounter(string $id) : bool
     {
         return $this->collection->updateOne([
             '_id' => $id
@@ -142,7 +142,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $id
      * @return bool
      */
-    public function incrementFailedLoginCounter($id) : bool
+    public function incrementFailedLoginCounter(string $id) : bool
     {
         return $this->collection->updateOne([
             '_id' => $id
@@ -166,7 +166,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param array $details
      * @return bool
      */
-    public function create($id, array $details) : bool
+    public function create(string $id, array $details) : bool
     {
         // Map DateTimes to MongoDates
         $details = array_map(function ($v) {
@@ -194,7 +194,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $id
      * @return bool|null
      */
-    public function delete($id) : bool
+    public function delete(string $id) : bool
     {
         $filter = ['_id' => $id];
         $data = $this->collection->findOne($filter);
@@ -219,7 +219,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $token
      * @return bool|null
      */
-    public function activate($token) : bool
+    public function activate(string $token) : bool
     {
         // Check the token maps to a user...
         $user = $this->collection->findOne(['activation_token' => $token]);
@@ -255,7 +255,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $passwordHash
      * @return bool
      */
-    public function setNewPassword($userId, $passwordHash) : bool
+    public function setNewPassword(string $userId, string $passwordHash) : bool
     {
         $result = $this->collection->updateOne(
             ['_id' => $userId],
@@ -282,7 +282,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $token
      * @return bool
      */
-    public function setAuthToken($userId, DateTime $expires, $token) : bool
+    public function setAuthToken(string $userId, DateTime $expires, string $token) : bool
     {
         return $this->modifyAuthToken($userId, $expires, [
             'auth_token.createdAt' => new MongoDate(),
@@ -297,7 +297,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param DateTime $expires
      * @return bool
      */
-    public function extendAuthToken($userId, DateTime $expires) : bool
+    public function extendAuthToken(string $userId, DateTime $expires) : bool
     {
         return $this->modifyAuthToken($userId, $expires);
     }
@@ -311,7 +311,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param array $set
      * @return bool
      */
-    private function modifyAuthToken($userId, DateTime $expires, array $set = array()) : bool
+    private function modifyAuthToken(string $userId, DateTime $expires, array $set = array()) : bool
     {
         $set = $set + [
             'auth_token.updatedAt' => new MongoDate(),
@@ -338,7 +338,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param array $token
      * @return bool
      */
-    public function addPasswordResetToken($id, array $token) : bool
+    public function addPasswordResetToken(string $id, array $token) : bool
     {
         // Map DateTimes to MongoDates
         $token = array_map(function ($v) {
@@ -357,7 +357,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $passwordHash
      * @return Auth\UpdatePasswordUsingTokenError
      */
-    public function updatePasswordUsingToken($token, $passwordHash) : ?Auth\UpdatePasswordUsingTokenError
+    public function updatePasswordUsingToken(string $token, string $passwordHash) : ?Auth\UpdatePasswordUsingTokenError
     {
         $user = $this->getByResetToken($token);
 
@@ -396,7 +396,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $newEmail
      * @return bool
      */
-    public function addEmailUpdateTokenAndNewEmail($id, array $token, $newEmail) : bool
+    public function addEmailUpdateTokenAndNewEmail(string $id, array $token, string $newEmail) : bool
     {
         // Map DateTimes to MongoDates
         $token = array_map(function ($v) {
@@ -422,7 +422,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $token
      * @return Auth\UpdateEmailUsingTokenResponse
      */
-    public function updateEmailUsingToken($token) : Auth\UpdateEmailUsingTokenResponse
+    public function updateEmailUsingToken(string $token) : Auth\UpdateEmailUsingTokenResponse
     {
         $user = $this->collection->findOne(
             [
@@ -480,7 +480,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param null $excludeFlag
      * @return iterable
      */
-    public function getAccountsInactiveSince(DateTime $since, $excludeFlag = null) : iterable
+    public function getAccountsInactiveSince(DateTime $since, ?string $excludeFlag = null) : iterable
     {
         $query = [
             '$or' => [
@@ -509,7 +509,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $flag
      * @return bool
      */
-    public function setInactivityFlag($userId, $flag) : bool
+    public function setInactivityFlag(string $userId, string $flag) : bool
     {
         $updateResult = $this->collection->updateOne(
             ['_id' => $userId],

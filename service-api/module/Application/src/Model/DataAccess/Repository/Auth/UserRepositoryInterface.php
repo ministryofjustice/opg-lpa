@@ -2,7 +2,6 @@
 namespace Application\Model\DataAccess\Repository\Auth;
 
 use DateTime;
-use Generator;
 
 interface UserRepositoryInterface
 {
@@ -13,31 +12,31 @@ interface UserRepositoryInterface
      * @param $username
      * @return UserInterface|null
      */
-    public function getByUsername($username) : ?UserInterface;
+    public function getByUsername(string $username) : ?UserInterface;
 
     /**
      * @param $id
      * @return UserInterface|null
      */
-    public function getById($id) : ?UserInterface;
+    public function getById(string $id) : ?UserInterface;
 
     /**
      * @param $token
      * @return UserInterface|null
      */
-    public function getByAuthToken($token) : ?UserInterface;
+    public function getByAuthToken(string $token) : ?UserInterface;
 
     /**
      * @param $token
      * @return UserInterface|null
      */
-    public function getByResetToken($token) : ?UserInterface;
+    public function getByResetToken(string $token) : ?UserInterface;
 
     /**
      * @param $id
      * @return bool
      */
-    public function updateLastLoginTime($id) : bool;
+    public function updateLastLoginTime(string $id) : bool;
 
     /**
      * Resets the user's failed login counter to zero.
@@ -45,7 +44,7 @@ interface UserRepositoryInterface
      * @param $id
      * @return bool
      */
-    public function resetFailedLoginCounter($id) : bool;
+    public function resetFailedLoginCounter(string $id) : bool;
 
     /**
      * Increments the user's failed login counter by 1.
@@ -53,7 +52,7 @@ interface UserRepositoryInterface
      * @param $id
      * @return bool
      */
-    public function incrementFailedLoginCounter($id) : bool;
+    public function incrementFailedLoginCounter(string $id) : bool;
 
     /**
      * Creates a new user account
@@ -62,7 +61,7 @@ interface UserRepositoryInterface
      * @param array $details
      * @return bool
      */
-    public function create($id, array $details) : bool;
+    public function create(string $id, array $details) : bool;
 
     /**
      * Delete the account for the passed user.
@@ -72,7 +71,7 @@ interface UserRepositoryInterface
      * @param $id
      * @return bool|null
      */
-    public function delete($id) : bool;
+    public function delete(string $id) : bool;
 
     /**
      * Activates a user account
@@ -80,7 +79,7 @@ interface UserRepositoryInterface
      * @param $token
      * @return bool|null
      */
-    public function activate($token) : bool;
+    public function activate(string $token) : bool;
 
     /**
      * Updates a user's password.
@@ -89,7 +88,7 @@ interface UserRepositoryInterface
      * @param $passwordHash
      * @return bool
      */
-    public function setNewPassword($userId, $passwordHash) : bool;
+    public function setNewPassword(string $userId, string $passwordHash) : bool;
 
     /**
      * Sets a new auth token.
@@ -99,7 +98,7 @@ interface UserRepositoryInterface
      * @param $token
      * @return bool
      */
-    public function setAuthToken($userId, DateTime $expires, $token) : bool;
+    public function setAuthToken(string $userId, DateTime $expires, string $token) : bool;
 
     /**
      * Extends the authentication token.
@@ -108,21 +107,21 @@ interface UserRepositoryInterface
      * @param DateTime $expires
      * @return bool
      */
-    public function extendAuthToken($userId, DateTime $expires) : bool;
+    public function extendAuthToken(string $userId, DateTime $expires) : bool;
 
     /**
      * @param $id
      * @param array $token
      * @return bool
      */
-    public function addPasswordResetToken($id, array $token) : bool;
+    public function addPasswordResetToken(string $id, array $token) : bool;
 
     /**
      * @param $token
      * @param $passwordHash
      * @return UpdatePasswordUsingTokenError
      */
-    public function updatePasswordUsingToken($token, $passwordHash) : ?UpdatePasswordUsingTokenError;
+    public function updatePasswordUsingToken(string $token, string $passwordHash) : ?UpdatePasswordUsingTokenError;
 
     /**
      * @param $id
@@ -130,13 +129,13 @@ interface UserRepositoryInterface
      * @param $newEmail
      * @return bool
      */
-    public function addEmailUpdateTokenAndNewEmail($id, array $token, $newEmail) : bool;
+    public function addEmailUpdateTokenAndNewEmail(string $id, array $token, string $newEmail) : bool;
 
     /**
      * @param $token
      * @return UpdateEmailUsingTokenResponse
      */
-    public function updateEmailUsingToken($token) : UpdateEmailUsingTokenResponse;
+    public function updateEmailUsingToken(string $token) : UpdateEmailUsingTokenResponse;
 
     /**
      * Returns all accounts that have not been logged into since $since.
@@ -147,7 +146,7 @@ interface UserRepositoryInterface
      * @param null $excludeFlag
      * @return iterable
      */
-    public function getAccountsInactiveSince(DateTime $since, $excludeFlag = null) : iterable;
+    public function getAccountsInactiveSince(DateTime $since, ?string $excludeFlag = null) : iterable;
 
     /**
      * Adds a new inactivity flag to an account.
@@ -156,7 +155,7 @@ interface UserRepositoryInterface
      * @param $flag
      * @return bool
      */
-    public function setInactivityFlag($userId, $flag) : bool;
+    public function setInactivityFlag(string $userId, string $flag) : bool;
 
     /**
      * Returns all accounts create before date $olderThan and that have not been activated.
