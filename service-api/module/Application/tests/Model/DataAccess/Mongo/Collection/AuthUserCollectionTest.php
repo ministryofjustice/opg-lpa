@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Model\DataAccess\Mongo\Collection;
 
-use Application\Model\DataAccess\Repository\Auth;
+use Application\Model\DataAccess\Repository\User as UserRepository;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use DateTime;
@@ -369,7 +369,7 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->updatePasswordUsingToken('unit-test', 'Password123');
 
-        $this->assertInstanceOf(Auth\UpdatePasswordUsingTokenError::class, $result);
+        $this->assertInstanceOf(UserRepository\UpdatePasswordUsingTokenError::class, $result);
         $this->assertEquals('invalid-token', $result->message());
     }
 
@@ -425,7 +425,7 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->updateEmailUsingToken('unit-test');
 
-        $this->assertInstanceOf(Auth\UpdateEmailUsingTokenResponse::class, $result);
+        $this->assertInstanceOf(UserRepository\UpdateEmailUsingTokenResponse::class, $result);
         $this->assertEquals('invalid-token', $result->message());
     }
 
@@ -443,7 +443,7 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->updateEmailUsingToken('unit-test');
 
-        $this->assertInstanceOf(Auth\UpdateEmailUsingTokenResponse::class, $result);
+        $this->assertInstanceOf(UserRepository\UpdateEmailUsingTokenResponse::class, $result);
         $this->assertEquals('username-already-exists', $result->message());
     }
 
@@ -471,7 +471,7 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->updateEmailUsingToken('unit-test');
 
-        $this->assertInstanceOf(Auth\UpdateEmailUsingTokenResponse::class, $result);
+        $this->assertInstanceOf(UserRepository\UpdateEmailUsingTokenResponse::class, $result);
         $this->assertEquals("nothing-modified", $result->message());
     }
 
@@ -499,7 +499,7 @@ class AuthUserCollectionTest extends MockeryTestCase
 
         $result = $this->authUserCollection->updateEmailUsingToken('unit-test');
 
-        $this->assertInstanceOf(Auth\UpdateEmailUsingTokenResponse::class, $result);
+        $this->assertInstanceOf(UserRepository\UpdateEmailUsingTokenResponse::class, $result);
         $this->assertEquals(new User(['_id' => 1, 'email_update_request' => ['email' => 'unit@test.com']]), $result->getUser());
     }
 

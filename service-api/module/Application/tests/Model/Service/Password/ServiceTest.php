@@ -2,8 +2,8 @@
 
 namespace AuthTest\Model\Service;
 
-use Application\Model\DataAccess\Repository\Auth\UpdatePasswordUsingTokenError;
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\UpdatePasswordUsingTokenError;
+use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\Password\Service as PasswordService;
 use ApplicationTest\Model\Service\AbstractServiceTest;

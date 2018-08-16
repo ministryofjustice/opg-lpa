@@ -2,8 +2,8 @@
 
 namespace Application\Model\Service\Email;
 
-use Application\Model\DataAccess\Repository\Auth\UserInterface as User;
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
+use Application\Model\DataAccess\Repository\User\UserInterface as User;
+use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Zend\Math\BigInteger\BigInteger;
 use DateTime;
@@ -68,7 +68,7 @@ class Service extends AbstractService
 
     /**
      * @param $token
-     * @return \Application\Model\DataAccess\Repository\Auth\UpdateEmailUsingTokenResponse
+     * @return \Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse
      */
     public function updateEmailUsingToken($token)
     {

@@ -1,11 +1,9 @@
 <?php
-
 namespace Application\Model\DataAccess\Mongo\Collection;
 
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use DateTime;
-
-use Application\Model\DataAccess\Repository\Auth;
+use Application\Model\DataAccess\Repository\User as UserRepository;
 
 /**
  * Represents a single user.
@@ -13,7 +11,7 @@ use Application\Model\DataAccess\Repository\Auth;
  * Class User
  * @package Application\Model\DataAccess\Mongo
  */
-class User implements Auth\UserInterface
+class User implements UserRepository\UserInterface
 {
     /**
      * The user's data.
@@ -200,9 +198,9 @@ class User implements Auth\UserInterface
     /**
      * Returns the user's current authentication token (if present).
      *
-     * @return Auth\TokenInterface|null
+     * @return UserRepository\TokenInterface|null
      */
-    public function authToken() : ?Auth\TokenInterface
+    public function authToken() : ?UserRepository\TokenInterface
     {
         return (isset($this->data['auth_token'])) ? new Token($this->data['auth_token']) : null;
     }

@@ -3,8 +3,8 @@
 namespace ApplicationTest\Model\Service\UserManagement;
 
 use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
-use Application\Model\DataAccess\Repository\Auth\LogRepositoryInterface;
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use DateTime;

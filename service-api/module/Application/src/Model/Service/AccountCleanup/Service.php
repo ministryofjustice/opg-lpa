@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\AccountCleanup;
 
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
+use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
 use Application\Model\Service\AbstractService;

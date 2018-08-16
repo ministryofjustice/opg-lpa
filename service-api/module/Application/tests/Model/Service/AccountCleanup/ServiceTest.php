@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Model\Service\AccountCleanup;
 
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\User;

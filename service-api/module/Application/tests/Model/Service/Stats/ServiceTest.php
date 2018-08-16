@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\Stats;
 
 use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use DateTime;
 use Mockery;

@@ -2,8 +2,8 @@
 
 namespace ApplicationTest\Model\Service;
 
-use Application\Model\DataAccess\Repository\Auth\LogRepositoryInterface;
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;

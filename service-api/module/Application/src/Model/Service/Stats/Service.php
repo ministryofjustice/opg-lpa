@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\Stats;
 
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
+use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollectionTrait;
 use Application\Model\Service\AbstractService;
 

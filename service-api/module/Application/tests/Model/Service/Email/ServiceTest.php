@@ -2,8 +2,8 @@
 
 namespace ApplicationTest\Model\Service\Email;
 
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
-use Application\Model\DataAccess\Repository\Auth\UpdateEmailUsingTokenResponse;
+use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use Application\Model\Service\Email\Service as EmailUpdateService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
