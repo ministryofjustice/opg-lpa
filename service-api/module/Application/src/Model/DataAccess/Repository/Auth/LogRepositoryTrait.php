@@ -20,7 +20,7 @@ trait LogRepositoryTrait
     /**
      * @return LogRepositoryInterface
      */
-    public function getLogRepository() : LogRepositoryInterface
+    private function getLogRepository() : LogRepositoryInterface
     {
         if (!($this->logRepository instanceof LogRepositoryInterface)) {
             throw new \RuntimeException("Instance of LogRepository not set");

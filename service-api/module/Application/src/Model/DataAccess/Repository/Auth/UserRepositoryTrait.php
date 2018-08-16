@@ -20,7 +20,7 @@ trait UserRepositoryTrait
     /**
      * @return UserRepositoryInterface
      */
-    public function getUserRepository() : UserRepositoryInterface
+    private function getUserRepository() : UserRepositoryInterface
     {
         if (!($this->userRepository instanceof UserRepositoryInterface)) {
             throw new \RuntimeException("Instance of UserRepository not set");

@@ -7,8 +7,6 @@ use MongoDB\Collection as MongoCollection;
 use MongoDB\Driver\Exception\Exception as MongoException;
 use MongoDB\Driver\ReadPreference;
 use DateTime;
-use Generator;
-
 use Application\Model\DataAccess\Repository\Auth;
 
 class AuthUserCollection implements Auth\UserRepositoryInterface

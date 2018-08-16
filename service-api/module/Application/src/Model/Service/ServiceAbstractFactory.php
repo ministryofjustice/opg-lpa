@@ -11,9 +11,7 @@ use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollectionTrait;
-
 use Application\Model\DataAccess\Repository\Auth;
-
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\UserManagement\Service as UserManagementService;

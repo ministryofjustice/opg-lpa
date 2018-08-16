@@ -72,7 +72,7 @@ class PasswordController extends AbstractAuthController
             return new ApiProblem(401, 'invalid-token');
         }
 
-        $result = $this->service->changePassword($userId, $currentPassword, $newPassword);
+        $result = $this->getService()->changePassword($userId, $currentPassword, $newPassword);
 
         if (is_string($result)) {
             return new ApiProblem(401, $result);
@@ -99,7 +99,7 @@ class PasswordController extends AbstractAuthController
      */
     private function changeWithToken($passwordToken, $newPassword)
     {
-        $result = $this->service->updatePasswordUsingToken($passwordToken, $newPassword);
+        $result = $this->getService()->updatePasswordUsingToken($passwordToken, $newPassword);
 
         if ($result === 'invalid-token') {
             return new ApiProblem(400, 'Invalid passwordToken');
@@ -134,7 +134,7 @@ class PasswordController extends AbstractAuthController
             return new ApiProblem(400, 'username must be passed');
         }
 
-        $result = $this->service->generateToken($username);
+        $result = $this->getService()->generateToken($username);
 
         if ($result == 'user-not-found') {
             $this->getLogger()->notice("Password reset request for unknown user", [

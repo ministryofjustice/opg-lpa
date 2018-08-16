@@ -1,6 +1,6 @@
 <?php
 
-    namespace ApplicationTest\Model\Service\Email;
+namespace ApplicationTest\Model\Service\Email;
 
 use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
 use Application\Model\DataAccess\Repository\Auth\UpdateEmailUsingTokenResponse;

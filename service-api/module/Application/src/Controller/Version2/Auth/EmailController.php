@@ -43,7 +43,7 @@ class EmailController extends AbstractAuthController
             return new ApiProblem(401, 'invalid-token');
         }
 
-        $result = $this->service->generateToken($userId, $newEmailAddress);
+        $result = $this->getService()->generateToken($userId, $newEmailAddress);
 
         if ($result === 'invalid-email') {
             return new ApiProblem(400, 'Invalid email address');
@@ -86,7 +86,7 @@ class EmailController extends AbstractAuthController
             return new ApiProblem(400, 'Token must be passed');
         }
 
-        $result = $this->service->updateEmailUsingToken($emailUpdateToken);
+        $result = $this->getService()->updateEmailUsingToken($emailUpdateToken);
 
         if ($result->error()) {
             if ($result->message() === 'invalid-token') {
