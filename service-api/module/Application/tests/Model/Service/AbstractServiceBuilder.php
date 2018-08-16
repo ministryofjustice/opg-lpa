@@ -2,6 +2,8 @@
 
 namespace ApplicationTest\Model\Service;
 
+use Application\Model\DataAccess\Repository\Auth\LogRepositoryInterface;
+use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
@@ -49,6 +51,16 @@ abstract class AbstractServiceBuilder
      * @var MockInterface|AuthUserCollection
      */
     private $authUserCollection = null;
+
+    /**
+     * @var MockInterface|LogRepositoryInterface
+     */
+    private $authLogRepository = null;
+
+    /**
+     * @var MockInterface|UserRepositoryInterface
+     */
+    private $authUserRepository = null;
 
     /**
      * @param $logger
@@ -128,6 +140,28 @@ abstract class AbstractServiceBuilder
     }
 
     /**
+     * @param $authLogRepository
+     * @return $this
+     */
+    public function withAuthLogRepository($authLogRepository)
+    {
+        $this->authLogRepository = $authLogRepository;
+
+        return $this;
+    }
+
+    /**
+     * @param $authUserRepository
+     * @return $this
+     */
+    public function withAuthUserRepository($authUserRepository)
+    {
+        $this->authUserRepository = $authUserRepository;
+
+        return $this;
+    }
+
+    /**
      * @return AbstractService
      */
     abstract public function build();
@@ -166,12 +200,12 @@ abstract class AbstractServiceBuilder
             $service->setApiWhoCollection($this->apiWhoCollection);
         }
 
-        if ($this->authLogCollection !== null) {
-            $service->setAuthLogCollection($this->authLogCollection);
+        if ($this->authLogRepository !== null) {
+            $service->setLogRepository($this->authLogRepository);
         }
 
-        if ($this->authUserCollection !== null) {
-            $service->setAuthUserCollection($this->authUserCollection);
+        if ($this->authUserRepository !== null) {
+            $service->setUserRepository($this->authUserRepository);
         }
 
         return $service;
@@ -204,6 +238,14 @@ abstract class AbstractServiceBuilder
 
         if ($this->authUserCollection !== null) {
             $this->authUserCollection->mockery_verify();
+        }
+
+        if ($this->authLogRepository !== null) {
+            $this->authLogRepository->mockery_verify();
+        }
+
+        if ($this->authUserRepository !== null) {
+            $this->authUserRepository->mockery_verify();
         }
 
         Mockery::close();

@@ -3,7 +3,8 @@
 namespace ApplicationTest\Model\Service\UserManagement;
 
 use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
+use Application\Model\DataAccess\Repository\Auth\LogRepositoryInterface;
+use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use DateTime;
@@ -14,23 +15,23 @@ use Mockery\MockInterface;
 class ServiceTest extends AbstractServiceTest
 {
     /**
-     * @var MockInterface|AuthLogCollection
+     * @var MockInterface|LogRepositoryInterface
      */
-    private $authLogCollection;
+    private $authLogRepository;
 
     /**
-     * @var MockInterface|AuthUserCollection
+     * @var MockInterface|UserRepositoryInterface
      */
-    private $authUserCollection;
+    private $authUserRepository;
 
     protected function setUp()
     {
         parent::setUp();
 
         //  Set up the services so they can be enhanced for each test
-        $this->authLogCollection = Mockery::mock(AuthLogCollection::class);
+        $this->authLogRepository = Mockery::mock(LogRepositoryInterface::class);
 
-        $this->authUserCollection = Mockery::mock(AuthUserCollection::class);
+        $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
     }
 
     public function testGetUserNotFound()
@@ -39,8 +40,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->get(1);
@@ -59,8 +60,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->get(1);
@@ -86,8 +87,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->getByUsername('unit@test.com');
@@ -106,8 +107,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->getByUsername('unit@test.com');
@@ -125,8 +126,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->getByUsername('unit@test.com');
@@ -148,8 +149,8 @@ class ServiceTest extends AbstractServiceTest
     {
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->create('invalid', 'Password123');
@@ -163,8 +164,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->create('unit@test.com', 'Password123');
@@ -178,8 +179,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->create('unit@test.com', 'invalid');
@@ -191,7 +192,7 @@ class ServiceTest extends AbstractServiceTest
     {
         $this->setUserDataSourceGetByUsernameExpectation('unit@test.com', null);
 
-        $this->authUserCollection->shouldReceive('create')
+        $this->authUserRepository->shouldReceive('create')
             ->withArgs(function ($id, $details) {
                 //Store generated token details for later validation
                 $this->tokenDetails = [
@@ -213,8 +214,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->create('unit@test.com', 'Password123');
@@ -224,15 +225,15 @@ class ServiceTest extends AbstractServiceTest
 
     public function testActivateAccountNotFound()
     {
-        $this->authUserCollection->shouldReceive('activate')
+        $this->authUserRepository->shouldReceive('activate')
             ->withArgs(['activation_token'])
             ->once()
-            ->andReturn(null);
+            ->andReturn(false);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->activate('activation_token');
@@ -242,15 +243,15 @@ class ServiceTest extends AbstractServiceTest
 
     public function testActivateSuccessful()
     {
-        $this->authUserCollection->shouldReceive('activate')
+        $this->authUserRepository->shouldReceive('activate')
             ->withArgs(['activation_token'])
             ->once()
             ->andReturn(true);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->activate('activation_token');
@@ -264,8 +265,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->delete(1, 'expired');
@@ -277,15 +278,15 @@ class ServiceTest extends AbstractServiceTest
     {
         $this->setUserDataSourceGetByIdExpectation(1, new User([]));
 
-        $this->authUserCollection->shouldReceive('delete')
+        $this->authUserRepository->shouldReceive('delete')
             ->withArgs([1])
             ->once()
             ->andReturn(false);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->delete(1, 'expired');
@@ -297,18 +298,18 @@ class ServiceTest extends AbstractServiceTest
     {
         $this->setUserDataSourceGetByIdExpectation(1, new User(['identity' => 'unit@test.com']));
 
-        $this->authUserCollection->shouldReceive('delete')
+        $this->authUserRepository->shouldReceive('delete')
             ->withArgs([1])
             ->once()
             ->andReturn(true);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthLogCollection($this->authLogCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
-        $this->authLogCollection->shouldReceive('addLog')
+        $this->authLogRepository->shouldReceive('addLog')
             ->withArgs(function ($details) {
                 return $details['identity_hash'] === hash('sha512', strtolower(trim('unit@test.com')))
                     && $details['type'] === 'account-deleted'
@@ -329,7 +330,7 @@ class ServiceTest extends AbstractServiceTest
     {
         $hash = hash('sha512', strtolower(trim($username)));
 
-        $this->authLogCollection->shouldReceive('getLogByIdentityHash')
+        $this->authLogRepository->shouldReceive('getLogByIdentityHash')
             ->withArgs([$hash])->once()
             ->andReturn($log);
     }
@@ -340,7 +341,7 @@ class ServiceTest extends AbstractServiceTest
      */
     private function setUserDataSourceGetByIdExpectation(int $userId, $user)
     {
-        $this->authUserCollection->shouldReceive('getById')
+        $this->authUserRepository->shouldReceive('getById')
             ->withArgs([$userId])->once()
             ->andReturn($user);
     }
@@ -351,7 +352,7 @@ class ServiceTest extends AbstractServiceTest
      */
     private function setUserDataSourceGetByUsernameExpectation(string $username, $user)
     {
-        $this->authUserCollection->shouldReceive('getByUsername')
+        $this->authUserRepository->shouldReceive('getByUsername')
             ->withArgs([$username])->once()
             ->andReturn($user);
     }

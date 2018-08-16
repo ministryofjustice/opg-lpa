@@ -2,9 +2,9 @@
 
 namespace Application\Model\Service\AccountCleanup;
 
+use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\UserManagement\Service as UserManagementService;
 use Aws\Sns\SnsClient;
@@ -25,7 +25,7 @@ class Service extends AbstractService
 {
     use ApiLpaCollectionTrait;
     use ApiUserCollectionTrait;
-    use AuthUserCollectionTrait;
+    use UserRepositoryTrait;
 
     /**
      * @var array
@@ -133,7 +133,7 @@ class Service extends AbstractService
         //---
 
         // Pull back a list of accounts...
-        $iterator = $this->authUserCollection->getAccountsInactiveSince($lastLoginBefore, $type);
+        $iterator = $this->getUserRepository()->getAccountsInactiveSince($lastLoginBefore, $type);
 
         //---
 
@@ -158,7 +158,7 @@ class Service extends AbstractService
                 ]);
 
                 // Flag the account as 'notification sent'...
-                $this->authUserCollection->setInactivityFlag($user->id(), $type);
+                $this->getUserRepository()->setInactivityFlag($user->id(), $type);
 
                 $counter++;
             } catch (GuzzleClientException $e) {
@@ -198,7 +198,7 @@ class Service extends AbstractService
         echo "Deleting accounts inactive since " . $lastLoginBefore->format('r') . "\n";
 
         // Pull back a list of accounts...
-        $iterator = $this->authUserCollection->getAccountsInactiveSince($lastLoginBefore);
+        $iterator = $this->getUserRepository()->getAccountsInactiveSince($lastLoginBefore);
 
         //---
 
@@ -236,7 +236,7 @@ class Service extends AbstractService
         echo "Deleting unactivated accounts created before " . $unactivatedSince->format('r') . "\n";
 
         // Pull back a list of accounts...
-        $iterator = $this->authUserCollection->getAccountsUnactivatedOlderThan($unactivatedSince);
+        $iterator = $this->getUserRepository()->getAccountsUnactivatedOlderThan($unactivatedSince);
 
         //---
 

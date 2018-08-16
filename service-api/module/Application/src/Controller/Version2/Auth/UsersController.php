@@ -43,7 +43,7 @@ class UsersController extends AbstractAuthController
      */
     private function createAccount($username, $password)
     {
-        $result = $this->service->create($username, $password);
+        $result = $this->getService()->create($username, $password);
 
         if (is_string($result)) {
             return new ApiProblem(400, $result);
@@ -60,7 +60,7 @@ class UsersController extends AbstractAuthController
      */
     private function activateAccount($activationToken)
     {
-        $result = $this->service->activate($activationToken);
+        $result = $this->getService()->activate($activationToken);
 
         if (is_string($result)) {
             return new ApiProblem(400, $result);
@@ -86,7 +86,7 @@ class UsersController extends AbstractAuthController
     {
         $email = $this->params()->fromQuery()['email'];
 
-        $user = $this->service->getByUsername($email);
+        $user = $this->getService()->getByUsername($email);
 
         if ($user === false) {
             return new ApiProblem(404, 'No user found with supplied email address');

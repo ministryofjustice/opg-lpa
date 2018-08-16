@@ -2,8 +2,8 @@
 
 namespace Application\Model\Service\Password;
 
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
-use Application\Model\DataAccess\Mongo\Collection\User;
+use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
+use Application\Model\DataAccess\Repository\Auth\UserInterface as User;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\PasswordValidatorTrait;
@@ -13,8 +13,8 @@ use RuntimeException;
 
 class Service extends AbstractService
 {
-    use AuthUserCollectionTrait;
     use PasswordValidatorTrait;
+    use UserRepositoryTrait;
 
     const TOKEN_TTL = 86400; // 24 hours
 
@@ -31,7 +31,7 @@ class Service extends AbstractService
      */
     public function changePassword($userId, $oldPassword, $newPassword)
     {
-        $user = $this->authUserCollection->getById($userId);
+        $user = $this->getUserRepository()->getById($userId);
 
         if (is_null($user)) {
             return 'user-not-found';
@@ -49,7 +49,7 @@ class Service extends AbstractService
 
         $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
 
-        $this->authUserCollection->setNewPassword($user->id(), $passwordHash);
+        $this->getUserRepository()->setNewPassword($user->id(), $passwordHash);
 
         return $this->authenticationService->withPassword($user->username(), $newPassword, true);
     }
@@ -60,7 +60,7 @@ class Service extends AbstractService
      */
     public function generateToken($username)
     {
-        $user = $this->authUserCollection->getByUsername($username);
+        $user = $this->getUserRepository()->getByUsername($username);
 
         if (!$user instanceof User) {
             return 'user-not-found';
@@ -93,7 +93,7 @@ class Service extends AbstractService
             'expiresAt' => $expires
         ];
 
-        $this->authUserCollection->addPasswordResetToken($user->id(), $tokenDetails);
+        $this->getUserRepository()->addPasswordResetToken($user->id(), $tokenDetails);
 
         return $tokenDetails;
     }
@@ -110,7 +110,7 @@ class Service extends AbstractService
         }
 
         //  Before attempting to update the password get the user record with the reset token
-        $user = $this->authUserCollection->getByResetToken($token);
+        $user = $this->getUserRepository()->getByResetToken($token);
 
         if (!$user instanceof User) {
             return 'invalid-token';
@@ -118,15 +118,18 @@ class Service extends AbstractService
 
         $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
 
-        $result = $this->authUserCollection->updatePasswordUsingToken($token, $passwordHash);
+        $error = $this->getUserRepository()->updatePasswordUsingToken($token, $passwordHash);
 
-        //  If the password updated correctly then reset the failed login attempt count for the user too
-        if ($result === true) {
-            $this->authUserCollection->resetFailedLoginCounter($user->id());
+        // If there's no error...
+        // If the password updated correctly then reset the failed login attempt count for the user too
+        if (is_null($error)) {
+            $this->getUserRepository()->resetFailedLoginCounter($user->id());
             $user->resetFailedLoginAttempts();
+            return null;
         }
 
-        return $result;
+        // Else return the error message
+        return $error->message();
     }
 
     /**

@@ -5,13 +5,15 @@ namespace Application\Model\DataAccess\Mongo\Collection;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use DateTime;
 
+use Application\Model\DataAccess\Repository\Auth;
+
 /**
  * Represents a single token.
  *
  * Class User
  * @package Application\Model\DataAccess\Mongo
  */
-class Token
+class Token implements Auth\TokenInterface
 {
     /**
      * The token's data.
@@ -29,12 +31,12 @@ class Token
      * Returns a DateTime for a given key from a range of time formats.
      *
      * @param $key
-     * @return DateTime|boolean
+     * @return DateTime|null
      */
     private function returnDateField($key)
     {
         if (!isset($this->data[$key])) {
-            return false;
+            return null;
         }
 
         if ($this->data[$key] instanceof DateTime) {
@@ -55,7 +57,7 @@ class Token
      *
      * @return string
      */
-    public function id()
+    public function id() : ?string
     {
         return (isset($this->data['token'])) ? $this->data['token'] : null;
     }
@@ -65,7 +67,7 @@ class Token
      *
      * @return mixed
      */
-    public function user()
+    public function user() : ?string
     {
         return (isset($this->data['user'])) ? $this->data['user'] : null;
     }
@@ -75,7 +77,7 @@ class Token
      *
      * @return DateTime
      */
-    public function expiresAt()
+    public function expiresAt() : ?DateTime
     {
         return $this->returnDateField('expiresAt');
     }
@@ -85,7 +87,7 @@ class Token
      *
      * @return DateTime
      */
-    public function updatedAt()
+    public function updatedAt() : ?DateTime
     {
         return $this->returnDateField('updatedAt');
     }
@@ -95,7 +97,7 @@ class Token
      *
      * @return DateTime
      */
-    public function createdAt()
+    public function createdAt() : ?DateTime
     {
         return $this->returnDateField('createdAt');
     }

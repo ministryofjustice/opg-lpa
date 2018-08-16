@@ -2,9 +2,9 @@
 
 namespace ApplicationTest\Model\Service\AccountCleanup;
 
+use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use Application\Model\Service\AccountCleanup\Service;
 use Application\Model\Service\UserManagement\Service as UserManagementService;
@@ -34,9 +34,9 @@ class ServiceTest extends AbstractServiceTest
     private $apiUserCollection;
 
     /**
-     * @var MockInterface|AuthUserCollection
+     * @var MockInterface|UserRepositoryInterface
      */
-    private $authUserCollection;
+    private $authUserRepository;
 
     /**
      * @var array
@@ -90,7 +90,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->apiUserCollection = Mockery::mock(ApiUserCollection::class);
 
-        $this->authUserCollection = Mockery::mock(AuthUserCollection::class);
+        $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
 
         $this->guzzleClient = Mockery::mock(GuzzleClient::class);
 
@@ -117,7 +117,7 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
             ->withApiUserCollection($this->apiUserCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
             ->withSnsClient($this->snsClient)
@@ -146,7 +146,7 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
             ->withApiUserCollection($this->apiUserCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
             ->withSnsClient($this->snsClient)
@@ -182,7 +182,7 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
             ->withApiUserCollection($this->apiUserCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
             ->withSnsClient($this->snsClient)
@@ -218,7 +218,7 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
             ->withApiUserCollection($this->apiUserCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
             ->withSnsClient($this->snsClient)
@@ -258,7 +258,7 @@ class ServiceTest extends AbstractServiceTest
             })
             ->once();
 
-        $this->authUserCollection->shouldReceive('setInactivityFlag')
+        $this->authUserRepository->shouldReceive('setInactivityFlag')
             ->withArgs([1, '1-week-notice'])
             ->once();
 
@@ -266,7 +266,7 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
             ->withApiUserCollection($this->apiUserCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
             ->withSnsClient($this->snsClient)
@@ -309,7 +309,7 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
             ->withApiUserCollection($this->apiUserCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
             ->withSnsClient($this->snsClient)
@@ -349,7 +349,7 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
             ->withApiUserCollection($this->apiUserCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
             ->withSnsClient($this->snsClient)
@@ -390,7 +390,7 @@ class ServiceTest extends AbstractServiceTest
             })
             ->once();
 
-        $this->authUserCollection->shouldReceive('setInactivityFlag')
+        $this->authUserRepository->shouldReceive('setInactivityFlag')
             ->withArgs([1, '1-month-notice'])
             ->once();
 
@@ -398,7 +398,7 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
             ->withApiUserCollection($this->apiUserCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
             ->withSnsClient($this->snsClient)
@@ -426,7 +426,7 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
             ->withApiUserCollection($this->apiUserCollection)
-            ->withAuthUserCollection($this->authUserCollection)
+            ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
             ->withSnsClient($this->snsClient)
@@ -442,7 +442,7 @@ class ServiceTest extends AbstractServiceTest
 
     private function setAccountsExpectations(array $expiredAccounts = [], array $oneWeekWarningAccounts = [], array $oneMonthWarningAccounts = [], array $unactivatedAccounts = [])
     {
-        $this->authUserCollection->shouldReceive('getAccountsInactiveSince')
+        $this->authUserRepository->shouldReceive('getAccountsInactiveSince')
             ->withArgs(function ($lastLoginBefore) {
                 return $lastLoginBefore < new DateTime('-9 months +1 week')
                     && $lastLoginBefore >= new DateTime('-9 months -1 second');
@@ -450,7 +450,7 @@ class ServiceTest extends AbstractServiceTest
             ->once()
             ->andReturn($expiredAccounts);
 
-        $this->authUserCollection->shouldReceive('getAccountsInactiveSince')
+        $this->authUserRepository->shouldReceive('getAccountsInactiveSince')
             ->withArgs(function ($lastLoginBefore, $excludeFlag = null) {
                 return $lastLoginBefore < new DateTime('-8 months')
                     && $lastLoginBefore >= new DateTime('-9 months +1 week -1 second')
@@ -459,7 +459,7 @@ class ServiceTest extends AbstractServiceTest
             ->once()
             ->andReturn($oneWeekWarningAccounts);
 
-        $this->authUserCollection->shouldReceive('getAccountsInactiveSince')
+        $this->authUserRepository->shouldReceive('getAccountsInactiveSince')
             ->withArgs(function ($lastLoginBefore, $excludeFlag = null) {
                 return $lastLoginBefore >= new DateTime('-8 months -1 second')
                     && $excludeFlag === '1-month-notice';
@@ -467,7 +467,7 @@ class ServiceTest extends AbstractServiceTest
             ->once()
             ->andReturn($oneMonthWarningAccounts);
 
-        $this->authUserCollection->shouldReceive('getAccountsUnactivatedOlderThan')
+        $this->authUserRepository->shouldReceive('getAccountsUnactivatedOlderThan')
             ->withArgs(function ($olderThan) {
                 return $olderThan >= new DateTime('-24 hours -1 second');
             })

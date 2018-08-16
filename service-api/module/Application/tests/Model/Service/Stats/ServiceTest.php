@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\Stats;
 
 use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
+use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use DateTime;
 use Mockery;
@@ -18,21 +18,21 @@ class ServiceTest extends AbstractServiceTest
         $apiStatsLpasCollection->shouldReceive('getStats')
             ->andReturn(['generated' => $generated]);
 
-        $authUserCollection = Mockery::mock(AuthUserCollection::class);
-        $authUserCollection->shouldReceive('countAccounts')->once()->andReturn(4);
-        $authUserCollection->shouldReceive('countActivatedAccounts')
+        $authUserRepository = Mockery::mock(UserRepositoryInterface::class);
+        $authUserRepository->shouldReceive('countAccounts')->once()->andReturn(4);
+        $authUserRepository->shouldReceive('countActivatedAccounts')
             ->withArgs([])->once()->andReturn(3);
-        $authUserCollection->shouldReceive('countActivatedAccounts')
+        $authUserRepository->shouldReceive('countActivatedAccounts')
             ->withArgs(function ($since) {
                 return $since == new DateTime('first day of this month 00:00:00');
             })
             ->once()->andReturn(2);
-        $authUserCollection->shouldReceive('countDeletedAccounts')->once()->andReturn(1);
+        $authUserRepository->shouldReceive('countDeletedAccounts')->once()->andReturn(1);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withApiStatsLpasCollection($apiStatsLpasCollection)
-            ->withAuthUserCollection($authUserCollection)
+            ->withAuthUserRepository($authUserRepository)
             ->build();
 
         $data = $service->fetch('all');

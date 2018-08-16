@@ -5,13 +5,15 @@ namespace Application\Model\DataAccess\Mongo\Collection;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use DateTime;
 
+use Application\Model\DataAccess\Repository\Auth;
+
 /**
  * Represents a single user.
  *
  * Class User
  * @package Application\Model\DataAccess\Mongo
  */
-class User
+class User implements Auth\UserInterface
 {
     /**
      * The user's data.
@@ -29,12 +31,12 @@ class User
      * Returns a DateTime for a given key from a range of time formats.
      *
      * @param $key
-     * @return DateTime|boolean
+     * @return DateTime|null
      */
     private function returnDateField($key)
     {
         if (!isset($this->data[$key])) {
-            return false;
+            return null;
         }
 
         if ($this->data[$key] instanceof DateTime) {
@@ -55,7 +57,7 @@ class User
      *
      * @return array
      */
-    public function toArray()
+    public function toArray() : array
     {
         return [
             'userId' => $this->id(),
@@ -77,7 +79,7 @@ class User
      *
      * @return string
      */
-    public function id()
+    public function id() : ?string
     {
         return (isset($this->data['_id'])) ? $this->data['_id'] : null;
     }
@@ -87,7 +89,7 @@ class User
      *
      * @return string
      */
-    public function username()
+    public function username() : ?string
     {
         return (isset($this->data['identity'])) ? $this->data['identity'] : null;
     }
@@ -97,7 +99,7 @@ class User
      *
      * @return bool
      */
-    public function isActive()
+    public function isActive() : bool
     {
         if (!isset($this->data['active'])) {
             return false;
@@ -110,7 +112,7 @@ class User
      *
      * @return string
      */
-    public function password()
+    public function password() : ?string
     {
         return (isset($this->data['password_hash'])) ? $this->data['password_hash'] : null;
     }
@@ -120,7 +122,7 @@ class User
      *
      * @return DateTime
      */
-    public function createdAt()
+    public function createdAt() : ?DateTime
     {
         return $this->returnDateField('created');
     }
@@ -130,7 +132,7 @@ class User
      *
      * @return DateTime
      */
-    public function updatedAt()
+    public function updatedAt() : ?DateTime
     {
         return $this->returnDateField('last_updated');
     }
@@ -140,7 +142,7 @@ class User
      *
      * @return DateTime
      */
-    public function deleteAt()
+    public function deleteAt() : ?DateTime
     {
         return $this->returnDateField('deleteAt');
     }
@@ -150,7 +152,7 @@ class User
      *
      * @return DateTime
      */
-    public function lastLoginAt()
+    public function lastLoginAt() : ?DateTime
     {
         return $this->returnDateField('last_login');
     }
@@ -160,7 +162,7 @@ class User
      *
      * @return DateTime
      */
-    public function activatedAt()
+    public function activatedAt() : ?DateTime
     {
         return $this->returnDateField('activated');
     }
@@ -170,7 +172,7 @@ class User
      *
      * @return DateTime
      */
-    public function lastFailedLoginAttemptAt()
+    public function lastFailedLoginAttemptAt() : ?DateTime
     {
         return $this->returnDateField('last_failed_login');
     }
@@ -180,7 +182,7 @@ class User
      *
      * @return int
      */
-    public function failedLoginAttempts()
+    public function failedLoginAttempts() : int
     {
         return (isset($this->data['failed_login_attempts'])) ? (int)$this->data['failed_login_attempts'] : 0;
     }
@@ -190,7 +192,7 @@ class User
      *
      * @return string
      */
-    public function activationToken()
+    public function activationToken() : ?string
     {
         return (isset($this->data['activation_token'])) ? $this->data['activation_token'] : null;
     }
@@ -198,9 +200,9 @@ class User
     /**
      * Returns the user's current authentication token (if present).
      *
-     * @return Token|null
+     * @return Auth\TokenInterface|null
      */
-    public function authToken()
+    public function authToken() : ?Auth\TokenInterface
     {
         return (isset($this->data['auth_token'])) ? new Token($this->data['auth_token']) : null;
     }
@@ -210,7 +212,7 @@ class User
      *
      * @return array|null
      */
-    public function inactivityFlags()
+    public function inactivityFlags() : ?array
     {
         return (isset($this->data['inactivity_flags'])) ? $this->data['inactivity_flags'] : null;
     }

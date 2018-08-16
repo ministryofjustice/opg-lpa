@@ -2,14 +2,14 @@
 
 namespace Application\Model\Service\Stats;
 
+use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollectionTrait;
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollectionTrait;
 use Application\Model\Service\AbstractService;
 
 class Service extends AbstractService
 {
     use ApiStatsLpasCollectionTrait;
-    use AuthUserCollectionTrait;
+    use UserRepositoryTrait;
 
     /**
      * @param $type
@@ -27,10 +27,10 @@ class Service extends AbstractService
 
         //  Get the user stats
         $stats['users'] = [
-            'total'                 => $this->authUserCollection->countAccounts(),
-            'activated'             => $this->authUserCollection->countActivatedAccounts(),
-            'activated-this-month'  => $this->authUserCollection->countActivatedAccounts(new \DateTime('first day of this month 00:00:00')),
-            'deleted'               => $this->authUserCollection->countDeletedAccounts(),
+            'total'                 => $this->getUserRepository()->countAccounts(),
+            'activated'             => $this->getUserRepository()->countActivatedAccounts(),
+            'activated-this-month'  => $this->getUserRepository()->countActivatedAccounts(new \DateTime('first day of this month 00:00:00')),
+            'deleted'               => $this->getUserRepository()->countDeletedAccounts(),
         ];
 
         // Return specific subset of stats if requested
