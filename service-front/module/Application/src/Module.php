@@ -55,7 +55,6 @@ class Module implements FormElementProviderInterface
                     // URLs excluded from creating a session
                     '/ping/elb',
                     '/ping/json',
-                    '/notifications/expiry-notice',
                 ])) {
                 $this->bootstrapSession($e);
                 $this->bootstrapIdentity($e);

@@ -114,28 +114,6 @@ return [
                 ],
             ], // sendgrid-bounce
 
-            'notifications' => [
-                'type' => 'Zend\Router\Http\Segment',
-                'options' => [
-                    'route'    => '/notifications',
-                    'defaults' => [
-                        'controller' => 'General\NotificationsController',
-                    ],
-                ],
-                'may_terminate' => false,
-                'child_routes' => [
-                    'callback' => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/expiry-notice',
-                            'defaults' => [
-                                'action'     => 'expiry-notice',
-                            ],
-                        ],
-                    ],
-                ],
-            ], // notifications
-
             'guidance' => [
                 'type' => 'Zend\Router\Http\Segment',
                 'options' => [

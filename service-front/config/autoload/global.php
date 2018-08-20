@@ -26,12 +26,6 @@ return array(
         'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
     ],
 
-    'account-cleanup' => [
-        'notification' => [
-            'token' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') ?: null,
-        ],
-    ], // cleanup-cleanup
-
     'admin' => [
 
         'dynamodb' => [

@@ -51,8 +51,6 @@ class MailTransport implements TransportInterface
      */
     const EMAIL_ACCOUNT_ACTIVATE                = 'email-account-activate';
     const EMAIL_ACCOUNT_ACTIVATE_PASSWORD_RESET = 'email-account-activate-reset-password';
-    const EMAIL_DELETE_NOTIFICATION_1_WEEK      = 'email-delete-notification-1-week';
-    const EMAIL_DELETE_NOTIFICATION_1_MONTH     = 'email-delete-notification-1-month';
     const EMAIL_FEEDBACK                        = 'email-feedback';
     const EMAIL_LPA_REGISTRATION                = 'email-lpa-registration';
     const EMAIL_NEW_EMAIL_ADDRESS_NOTIFY        = 'email-new-email-address-notify';
@@ -78,24 +76,6 @@ class MailTransport implements TransportInterface
                 'opg-lpa',
                 'opg-lpa-passwordreset',
                 'opg-lpa-passwordreset-activate',
-            ],
-        ],
-        self::EMAIL_DELETE_NOTIFICATION_1_WEEK => [
-            'template' => 'account-deletion-notification.twig',
-            'categories' => [
-                'opg',
-                'opg-lpa',
-                'opg-lpa-notification',
-                'opg-lpa-notification-1-week-notice',
-            ],
-        ],
-        self::EMAIL_DELETE_NOTIFICATION_1_MONTH => [
-            'template' => 'account-deletion-notification.twig',
-            'categories' => [
-                'opg',
-                'opg-lpa',
-                'opg-lpa-notification',
-                'opg-lpa-notification-1-month-notice',
             ],
         ],
         self::EMAIL_FEEDBACK => [
