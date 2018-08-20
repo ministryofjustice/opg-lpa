@@ -1,0 +1,10 @@
+.idea
+composer.phar
+composer.lock
+vendor
+tests/local
+.DS_Store
+environment.sh
+docker.env
+.vscode/launch.json
+environment_test.sh

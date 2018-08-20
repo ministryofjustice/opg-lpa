@@ -298,7 +298,7 @@ class ServiceTest extends AbstractServiceTest
         $config['pdf']['encryption']['keys']['document'] = 'Invalid';
 
         $s3Client = Mockery::mock(S3Client::class);
-        $s3ResultBody = Mockery::mock(GuzzleStreamInterface::class);
+        $s3ResultBody = Mockery::mock();
         $s3ResultBody->shouldReceive('getContents')->once();
         $s3Result = new Result();
         $s3Result['Body'] = $s3ResultBody;
@@ -331,7 +331,7 @@ class ServiceTest extends AbstractServiceTest
         $encryptedData = $blockCipher->encrypt('test');
 
         $s3Client = Mockery::mock(S3Client::class);
-        $s3ResultBody = Mockery::mock(GuzzleStreamInterface::class);
+        $s3ResultBody = Mockery::mock();
         $s3ResultBody->shouldReceive('getContents')->andReturn($encryptedData)->once();
         $s3Result = new Result();
         $s3Result['Body'] = $s3ResultBody;
