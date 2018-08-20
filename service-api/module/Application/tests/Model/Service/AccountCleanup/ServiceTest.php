@@ -6,7 +6,6 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\User;
-use Application\Model\Service\AccountCleanup\Service;
 use Application\Model\Service\UserManagement\Service as UserManagementService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Aws\Sns\SnsClient;
@@ -16,7 +15,6 @@ use Exception;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
 use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Opg\Lpa\Logger\Logger;
 use Psr\Http\Message\RequestInterface;
@@ -116,7 +114,6 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
-            ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
@@ -145,7 +142,6 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
-            ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
@@ -181,7 +177,6 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
-            ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
@@ -217,7 +212,6 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
-            ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
@@ -265,7 +259,6 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
-            ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
@@ -308,7 +301,6 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
-            ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
@@ -348,7 +340,6 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
-            ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
@@ -397,7 +388,6 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
-            ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)
@@ -425,7 +415,6 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withApiLpaCollection($this->apiLpaCollection)
-            ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withGuzzleClient($this->guzzleClient)

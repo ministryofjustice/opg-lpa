@@ -33,11 +33,6 @@ abstract class AbstractServiceBuilder
     private $apiStatsLpasCollection = null;
 
     /**
-     * @var MockInterface|ApiUserCollection
-     */
-    private $apiUserCollection = null;
-
-    /**
      * @var MockInterface|ApiWhoCollection
      */
     private $apiWhoCollection = null;
@@ -91,17 +86,6 @@ abstract class AbstractServiceBuilder
     public function withApiStatsLpasCollection($apiStatsLpasCollection)
     {
         $this->apiStatsLpasCollection = $apiStatsLpasCollection;
-
-        return $this;
-    }
-
-    /**
-     * @param $apiUserCollection
-     * @return $this
-     */
-    public function withApiUserCollection($apiUserCollection)
-    {
-        $this->apiUserCollection = $apiUserCollection;
 
         return $this;
     }
@@ -192,10 +176,6 @@ abstract class AbstractServiceBuilder
             $service->setApiStatsLpasCollection($this->apiStatsLpasCollection);
         }
 
-        if ($this->apiUserCollection !== null) {
-            $service->setApiUserCollection($this->apiUserCollection);
-        }
-
         if ($this->apiWhoCollection !== null) {
             $service->setApiWhoCollection($this->apiWhoCollection);
         }
@@ -222,10 +202,6 @@ abstract class AbstractServiceBuilder
 
         if ($this->apiStatsLpasCollection !== null) {
             $this->apiStatsLpasCollection->mockery_verify();
-        }
-
-        if ($this->apiUserCollection !== null) {
-            $this->apiUserCollection->mockery_verify();
         }
 
         if ($this->apiWhoCollection !== null) {
