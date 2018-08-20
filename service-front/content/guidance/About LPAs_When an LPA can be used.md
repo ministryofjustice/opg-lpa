@@ -2,38 +2,33 @@
 
 ## Health and welfare LPA
 
-A health and welfare LPA takes effect only after it's registered and if you don't have the mental capacity to make decisions. Your attorneys cannot make decisions for you when you can make them yourself.
+A health and welfare LPA can only be used after it’s been registered and if the donor does not have the [mental capacity](/help/#topic-mental-capacity) to make decisions.
+
+The attorneys cannot make a decision for the donor when the donor can make that decision themselves.
+
+In the preferences and instructions section, the donor can say how they would like their mental capacity to be assessed. However, if the donor trusts their attorneys to assess their mental capacity, they do not need to add instructions.
 
 ## Property and financial affairs LPA
 
-A property and financial affairs LPA usually takes effect when it's registered. You decide whether your attorneys should act on your behalf and in which circumstances. If you don't have mental capacity, your attorneys can act and make decisions on your behalf.
+When they make a property and financial affairs LPA, the donor can decide whether it can be used:
 
-However, you can choose that your property and financial affairs LPA will take effect – and your attorneys will be able to act for you – only when you don't have mental capacity. In this case, banks and other financial institutions will sometimes want written confirmation that a donor does not have mental capacity before they'll recognise an attorney's authority to act under an LPA.
+* as soon as it’s registered
+* only when they have lost [mental capacity](/help/#topic-mental-capacity)
 
-### As soon as it's registered (and also when I don't have mental capacity)
+### As soon as it's registered
 
-Choose this option if:
+Most people choose this option as it’s the most practical.
 
-* you want your attorneys to be able to help you either now or in the future with your property and financial affairs while you have mental capacity
+It means that the attorneys can help the donor with their property and financial affairs, now and in the future.
 
-If it's difficult to do things, you might want your attorneys to help you. For example, if you can’t leave the house or it’s hard to talk to your electricity supplier, you might ask your attorneys to deal with the bank or pay bills. You can also decide not to let your attorneys make certain decisions, for example, about selling your house.
+While the donor has mental capacity, the attorneys can only act with the donor’s permission.
 
-As long as you have mental capacity, you control your property and financial affairs.
+This option is useful if the donor is able to make their own decisions but there’s another reason they want their attorneys’ help. For example, if the donor finds it difficult to visit the bank or talk on the phone, they might ask their attorneys to deal with the bank or pay bills.
 
-### Only when I don't have mental capacity
+### Only when the donor does not have mental capacity
 
-Choose this option if:
+This option means that the attorneys can only act on the donor’s behalf after the LPA has been registered and if the donor has lost capacity.
 
-* you don't want your attorneys to make decisions on your behalf while you can make them yourself
+Be careful, as this option can make the LPA a lot less useful. Each time the attorneys try to use the LPA, they might be asked to prove that the donor does not have mental capacity.
 
-* you want the security of having the LPA registered and ready to use in case you don't have mental capacity in the future
-
-When you reach the 'Preferences and instructions' section in this LPA service, you can add directions for how your attorneys should act. Some people explain how their mental capacity should be assessed. For example:
-
-> My attorneys shall only act under this power if they have obtained a written medical opinion stating that I am no longer mentally capable of managing and administering my property and financial affairs.
-
-or:
-
-> This lasting power of attorney only applies if my GP or another doctor confirms in writing that I don't have capacity to make specific decisions about property or finances.
-
-However, if you trust your attorneys to assess your mental capacity, you do not need to add instructions.
+In the preferences and instructions section of the LPA, the donor can  say how their mental capacity should be assessed. However, if the donor trusts their attorneys to assess their mental capacity, they do not need to add instructions.
