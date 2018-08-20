@@ -59,7 +59,7 @@ class ApiUserCollection
         $result = $this->collection->updateOne(
             ['_id' => $user->id, 'updatedAt' => $lastUpdated],
             ['$set' => $user->toArray(new DateCallback())],
-            ['upsert' => false, 'multiple' => false]
+            ['upsert' => true, 'multiple' => false]
         );
 
         // Ensure that one (and only one) document was updated.

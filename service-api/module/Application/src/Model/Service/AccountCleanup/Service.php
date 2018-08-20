@@ -4,7 +4,6 @@ namespace Application\Model\Service\AccountCleanup;
 
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
-use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\UserManagement\Service as UserManagementService;
 use Aws\Sns\SnsClient;
@@ -24,7 +23,6 @@ use Exception;
 class Service extends AbstractService
 {
     use ApiLpaCollectionTrait;
-    use ApiUserCollectionTrait;
     use UserRepositoryTrait;
 
     /**
@@ -214,8 +212,6 @@ class Service extends AbstractService
             foreach ($lpas as $lpa) {
                 $this->apiLpaCollection->deleteById($lpa['_id'], $lpa['user']);
             }
-
-            $this->apiUserCollection->deleteById($user->id());
 
             $counter++;
         }

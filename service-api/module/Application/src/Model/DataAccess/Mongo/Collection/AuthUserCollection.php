@@ -7,9 +7,12 @@ use MongoDB\Driver\Exception\Exception as MongoException;
 use MongoDB\Driver\ReadPreference;
 use DateTime;
 use Application\Model\DataAccess\Repository\User as UserRepository;
+use Opg\Lpa\DataModel\User\User as UserModel;
 
 class AuthUserCollection implements UserRepository\UserRepositoryInterface
 {
+    use ApiUserCollectionTrait;
+
     /**
      * @var MongoCollection
      */
@@ -206,6 +209,11 @@ class AuthUserCollection implements UserRepository\UserRepositoryInterface
         ];
 
         $this->collection->replaceOne($filter, $details);
+
+        //---
+
+        // Delete the profile data
+        $this->apiUserCollection->deleteById($id);
 
         return true;
     }
@@ -592,5 +600,36 @@ class AuthUserCollection implements UserRepository\UserRepositoryInterface
 
         // Stats can (ideally) be processed on a secondary.
         return $this->collection->count($criteria, ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)]);
+    }
+
+    /**
+     * Return a user's profile details
+     *
+     * @param $id
+     * @return UserModel
+     */
+    public function getProfile($id) : ?UserModel
+    {
+        $result = $this->apiUserCollection->getById($id);
+
+        if (!is_array($result)) {
+            return null;
+        }
+
+        return new UserModel(['id' => $id] + $result);
+    }
+
+    /**
+     * Updates a user's profile. If it doesn't already exist, it's created.
+     *
+     * @param UserModel $data
+     * @return bool
+     */
+    public function saveProfile(UserModel $data) : bool
+    {
+        $this->apiUserCollection->update($data);
+
+        // Exception is thrown on error, so if here...
+        return true;
     }
 }

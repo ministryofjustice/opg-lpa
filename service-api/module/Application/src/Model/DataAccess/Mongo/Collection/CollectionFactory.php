@@ -71,6 +71,12 @@ class CollectionFactory implements FactoryInterface
         /** @var Collection $mongoCollection */
         $mongoCollection = $database->selectCollection($collectionName, $this->collectionOptions);
 
-        return new $requestedName($mongoCollection);
+        $result = new $requestedName($mongoCollection);
+
+        if (method_exists($result, 'setApiUserCollection')) {
+            $result->setApiUserCollection($container->get(ApiUserCollection::class));
+        }
+
+        return $result;
     }
 }

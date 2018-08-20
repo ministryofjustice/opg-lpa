@@ -2,6 +2,7 @@
 namespace Application\Model\DataAccess\Repository\User;
 
 use DateTime;
+use Opg\Lpa\DataModel\User\User as UserModel;
 
 interface UserRepositoryInterface
 {
@@ -186,4 +187,20 @@ interface UserRepositoryInterface
      * @return int Account count
      */
     public function countDeletedAccounts() : int;
+
+    /**
+     * Return a user's profile details
+     *
+     * @param $id
+     * @return UserModel
+     */
+    public function getProfile($id) : ?UserModel;
+
+    /**
+     * Updates a user's profile. If it doesn't already exist, it's created.
+     *
+     * @param UserModel $data
+     * @return bool
+     */
+    public function saveProfile(UserModel $data) : bool;
 }
