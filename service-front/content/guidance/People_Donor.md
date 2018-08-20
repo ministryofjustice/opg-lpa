@@ -1,51 +1,39 @@
-# Donor
+# The donor
 
-The donor is the person who makes a lasting power of attorney (LPA). LPAs can be used to make decisions on the donor’s behalf if they lose mental capacity or find decisions difficult for another reason.
+The donor is the person who wants to make an LPA so that they can appoint other people to help them make decisions or to make decisions on their behalf. An LPA is for one person only.
 
-### Mental capacity: definition
+A donor must:
 
-'Mental capacity' means the ability to make a decision. A person with mental capacity has at least a general understanding of the decision they need to make, why they need to make it and what is likely to happen when they've made it. People can sometimes make certain decisions but don't have the mental capacity to make others.
+* be at least 18 years old
+* have [mental capacity](/help/#topic-mental-capacity)
 
-The Ministry of Justice website has information about mental capacity.
+It's OK for the donor to get help making their LPA. Many donors talk to family, friends or a legal adviser. However, the donor must make their own decisions about their LPA. For example, no one else should choose the donor’s attorneys for them.
 
-A lasting power of attorney is a legal document that allows the donor to choose people (called ‘attorneys’) to make decisions for them. You can make an LPA for your property and financial affairs, or your health and welfare. Some people choose to make both.
+## List the donor’s other names in the LPA
 
-Only the donor can decide to give others the power to make decisions on their behalf. This applies whether the donor gets help making their LPA or not.
+If the donor uses more than one name or used to be known by a different or maiden name, include a list of these names in the ‘donor details’ section of the LPA.
 
-## Who can be a donor
-An LPA is for one person only. You can make an LPA if:
+This will help attorneys deal with banks and other organisations on the donor’s behalf.
 
-* you are at least 18 years old
-* you have the mental capacity to do so
+## If the donor lives outside England and Wales, or has property outside England and Wales
 
-It's fine for the donor to get help when making their LPA. Many people talk to family, friends or a legal adviser. But the donor alone must make their decisions about their LPA. For example, no one else should choose the donor’s attorneys for them.
+LPAs cover people who live or have assets in England and Wales. An LPA may not work in other countries, including Scotland and Northern Ireland.
 
-Most people can make an LPA. However, there could be complications because of:
+The donor should think about getting legal advice on making an LPA if:
 
-* residency – if the donor lives or has property outside England and Wales
-* bankruptcy – if the donor is bankrupt or subject to a debt relief order and wants to make an LPA for their property and financial affairs
+* the donor lives outside England and Wales
+* the donor has property outside England and Wales
+* the donor is planning to move away from England and Wales
+* there are other reasons why where the donor lives could cause complications
 
-### Residency and property
+## If the donor is bankrupt or subject to a debt relief order
 
-LPAs cover people who live or have assets in England and Wales. An LPA may not work in other countries, including Scotland and Northern Ireland. The donor (or the person helping them) should think about getting legal advice to create an LPA if:
+There are rules about bankruptcy and debt relief orders (DROs) for a property and financial affairs LPA.
 
-* they live outside England and Wales
-* they have property outside England and Wales
-* they are planning to move away from England and Wales
-* there are other reasons why where the donor lives complicates the situation
+If the donor is bankrupt or subject to a DRO, they can make, sign and register a property and financial affairs LPA. However, their attorneys will not have power over all the donor’s property.
 
-### Bankruptcy and debt relief orders
+The donor should think about getting legal advice before they make an LPA.
 
-There are rules about bankruptcy and debt relief orders for a property and financial affairs LPA.
+The LPA will be cancelled if the donor becomes bankrupt or subject to a DRO after their property and financial affairs LPA is made or registered.
 
-If you are bankrupt or subject to a debt relief order, you can make, sign and register a property and financial affairs LPA. However, your attorneys will not have power over all of your property. If this applies to you, you should think about getting legal advice before you make an LPA.
-
-If you become bankrupt or subject to a debt relief order after your property and financial affairs LPA is made or registered, it will be cancelled.
-
-If an attorney becomes bankrupt or subject to a debt relief order, they can no longer be an attorney under a property and financial affairs LPA.
-
-Bankruptcy does not affect a health and welfare LPA.
-
-## Other names
-
-If the donor uses more than one name or used to be known by a different name, they (or the person helping them) should make a list of the other names they use. A list will help attorneys deal with banks and other organisations on the donor’s behalf when the donors use the LPA.
+Bankruptcy and DROs do not affect a health and welfare LPA.
