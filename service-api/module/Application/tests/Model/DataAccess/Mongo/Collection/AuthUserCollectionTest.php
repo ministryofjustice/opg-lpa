@@ -5,6 +5,7 @@ namespace ApplicationTest\Model\DataAccess\Mongo\Collection;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
+use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use DateTime;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -28,11 +29,19 @@ class AuthUserCollectionTest extends MockeryTestCase
      */
     private $mongoCollection;
 
+    /**
+     * @var MockInterface|ApiUserCollection
+     */
+    private $apiUserCollection;
+
     protected function setUp()
     {
         $this->mongoCollection = Mockery::mock(Collection::class);
 
         $this->authUserCollection = new AuthUserCollection($this->mongoCollection);
+
+        $this->apiUserCollection = Mockery::mock(ApiUserCollection::class);
+        $this->authUserCollection->setApiUserCollection($this->apiUserCollection);
     }
 
     public function testGetByUsernameNotFound()
@@ -223,6 +232,8 @@ class AuthUserCollectionTest extends MockeryTestCase
             return $filter['_id'] === "1" && $replacement['_id'] === "1" && $date instanceof UTCDateTime
                 && $date->toDateTime() >= new DateTime('-1 second');
         })->once();
+
+        $this->apiUserCollection->shouldReceive('deleteById')->withArgs(["1"])->once();
 
         $result = $this->authUserCollection->delete("1");
 
