@@ -2,8 +2,8 @@
 
 * LPA basics
 	* About LPAs_LPA basics.md
-* About this service
-	* Process_About this service.md
+* How to make an LPA online
+	* Process_How to make an LPA online.md
 * Before you begin
 	* Process_Before you begin.md
 * The 2 types of LPA
