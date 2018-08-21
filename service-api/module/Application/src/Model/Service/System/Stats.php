@@ -4,7 +4,7 @@ namespace Application\Model\Service\System;
 
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollectionTrait;
-use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollectionTrait;
+use Application\Model\DataAccess\Repository\Application\WhoRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
@@ -26,7 +26,7 @@ class Stats extends AbstractService
 {
     use ApiLpaCollectionTrait;
     use ApiStatsLpasCollectionTrait;
-    use ApiWhoCollectionTrait;
+    use WhoRepositoryTrait;
 
     /**
      * @return bool
@@ -209,7 +209,7 @@ class Stats extends AbstractService
         for ($i = 0; $i < 4; $i++) {
             $ts = strtotime("-{$i} months", $firstDayOfThisMonth);
             
-            $results['by-month'][date('Y-m', $ts)] = $this->apiWhoCollection->getStatsForTimeRange(
+            $results['by-month'][date('Y-m', $ts)] = $this->getWhoRepository()->getStatsForTimeRange(
                 new DateTime("@{$ts}"),
                 new DateTime("@{$lastTimestamp}"),
                 WhoAreYou::options()
@@ -218,7 +218,7 @@ class Stats extends AbstractService
             $lastTimestamp = $ts;
         }
 
-        $results['all'] = $this->apiWhoCollection->getStatsForTimeRange(new DateTime("@0"), new DateTime(), WhoAreYou::options());
+        $results['all'] = $this->getWhoRepository()->getStatsForTimeRange(new DateTime("@0"), new DateTime(), WhoAreYou::options());
 
         ksort($results['by-month']);
 

@@ -10,7 +10,6 @@ use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
-use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollectionTrait;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 use Application\Model\Service\Applications\Service as ApplicationsService;
@@ -102,10 +101,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
 
             if (in_array(ApiUserCollectionTrait::class, $traitsUsed)) {
                 $service->setApiUserCollection($container->get(ApiUserCollection::class));
-            }
-
-            if (in_array(ApiWhoCollectionTrait::class, $traitsUsed)) {
-                $service->setApiWhoCollection($container->get(ApiWhoCollection::class));
             }
 
             if (in_array(UserRepository\LogRepositoryTrait::class, $traitsUsed)) {
