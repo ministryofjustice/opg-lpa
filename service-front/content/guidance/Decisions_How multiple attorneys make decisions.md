@@ -1,102 +1,78 @@
 # How multiple attorneys make decisions
 
-If you have more than one attorney, you must decide whether you want them to make some or all decisions on their own or whether they should agree some or all decisions unanimously. The legal terms are 'severally' and 'jointly'.
+If the donor has more than one attorney or replacement attorney, they must decide how they want their attorneys to make decisions.
 
-Your options are:
+The options are:
 
-*	jointly and severally
-*	jointly
-*	jointly for some decisions, and jointly and severally for other decisions
+* **jointly and severally** - the attorneys can make decisions on their own or together
+* **jointly** - the attorneys must all agree on every decision
+* **jointly for some decisions, jointly and severally for others** - the attorneys must all agree on certain decisions, but other decisions can be made by one or some of the attorneys
 
-Most people choose jointly and severally because it is the most flexible and practical way for attorneys to make decisions.
+Each choice is explained below. If the donor’s not sure which is best for their circumstances, they may want to get legal advice.
 
-Whichever way you appoint your attorneys to act, they must always act in your best interests and make every effort to find out whether you can make a decision before they do.
+## Jointly and severally (attorneys act together or individually)
 
-Each choice is explained below. If you are not sure which option is best for your circumstances, then you can get legal advice.
+The attorneys can make decisions on their own or together.
 
-## Jointly and severally (attorneys act either together or individually)
+Most donors choose this option because:
 
-Your attorneys can make decisions on your behalf on their own or together.
+* attorneys can make day-to-day or urgent decisions quickly, without having to involve all the attorneys
+* decisions will not be delayed, or not made, because the attorneys cannot meet or agree
+* if one attorney can no longer act, the LPA will not be cancelled
+* attorneys can share tasks and responsibilities between them
+* documents or cheques do not need to be signed by every attorney
 
-Any action taken by any attorney alone is as valid as if they were the only attorney. It's up to your attorneys to choose how they make decisions but they must always act in your best interests.
+The donor can add preferences to say how they would prefer their attorneys to make a particular decision. However, the attorneys do not have to follow these requests.
 
-Most people choose this option because:
+For example, the donor could say that they would prefer a particular attorney to be involved in making the decision to sell the donor’s home.
 
-*	attorneys can make simple or urgent decisions quickly and easily
-*	if an attorney can no longer act, the LPA won't be cancelled
+See the [preferences and instructions](/help/#topic-preferences-and-instructions) page for more information.
 
-It is possible for one attorney to make decisions for you without asking your other attorneys.
+## Jointly (attorneys must all agree on every decision)
 
-If you choose this option, you must not say anywhere else in the LPA that certain decisions must be made by:
-
-*	one particular attorney
-*	some or all of your attorneys
-*	a minimum number of attorneys
-
-You can say how you’d like your attorneys to make a particular decision in the preferences section of your LPA. However, they don’t have to follow your preferences.
-
-See [Preferences and instructions](/help/#topic-preferences-and-instructions) for more information.
-
-## Jointly (attorneys agree every decision unanimously)
-
-Your attorneys must always make all decisions together. They must agree unanimously and they must all sign any relevant documents.
-
-Choose this option if you want your attorneys to agree on every decision, regardless of how large or small it is.
+The attorneys must make all decisions together, however big or small. The attorneys must all agree on every decision.
 
 With this option:
 
-*   if your attorneys can’t all agree on a decision, it can’t be made
-*	if your attorneys can’t work together, your LPA won’t work
-*	if one attorney can no longer act or dies, your LPA will stop working, unless you’ve appointed replacements or unless stated otherwise in [instructions](/help/#topic-preferences-and-instructions)
-*   your attorneys may not be able to use internet or telephone banking to manage your bank accounts
+* if the attorneys cannot all agree on a decision, it cannot be made
+* if the attorneys cannot work together, the LPA will not work
+* if a document or cheque needs to be signed, all the attorneys must sign it
+* the attorneys may not be able to use internet or telephone banking to manage the donor’s bank accounts
 
-If you have appointed replacement attorneys, they all take over if one of your original attorneys can no longer act – your original attorneys stop acting for you. This is because the law treats attorneys who act jointly as a single unit.
+If the attorneys live far apart, they may find acting jointly difficult – for example, it may be difficult to all go to the bank together.
+
+The donor should also consider whether anything could stop the attorneys working together in the future. For example, what would happen if the attorneys fell out or if one moved abroad?
+
+The law treats attorneys who act jointly as a single unit. This means that if an attorney dies or can no longer act, the LPA will stop working, unless the donor said otherwise in their [instructions](/help/#topic-preferences-and-instructions).
 
 ## Jointly for some decisions, and jointly and severally for other decisions
 
-Your attorneys must make certain decisions together and agree them unanimously – but they can make other decisions individually.
+The donor specifies certain decisions that the attorneys must all make together and agree on. Any other decisions can be made individually.
 
-If you choose this option you must clearly state which decisions your attorneys should make together and agree unanimously: that is, when they should act jointly.
+Some donors choose this option because they do not mind their attorneys making everyday decisions alone, but want them to make certain important decisions together. For example, selling the donor’s house. The donor must clearly say which decisions the attorneys must make together.
 
-Some people pick this option because they don’t mind their attorneys taking everyday decisions alone but want them to make important decisions together, such as selling a house.
+With this option, if the attorneys cannot all agree on a joint decision, it cannot be made.
 
-With this option:
+The donor should consider whether anything could stop the attorneys working together to make joint decisions. For example, what would happen if the attorneys fell out or if one moved abroad?
 
-*	if your attorneys can’t agree on a joint decision, it can’t be made
-*	if one attorney can no longer act or dies, your remaining attorneys won't be able to make any of the joint decisions, unless you’ve appointed replacements
+If an attorney dies or can no longer act, the remaining attorneys will not be able to make any of the joint decisions, unless the donor either said otherwise in their [instructions](/help/#topic-preferences-and-instructions).
 
-If one attorney can no longer act and you’ve appointed replacements:
+### Examples of instructions for attorneys appointed jointly for some decisions and severally for others
 
-*	the replacement attorneys take over making all joint decisions from your original attorneys
-*	the replacement and remaining original attorneys can make any decisions they’re allowed to make individually
+Do not use these examples unless they’re exactly what the donor wants – they need to state what’s right for them.
 
-### Examples of working jointly for some decisions, and jointly and severally for others
+Property and finance:
 
-Property and financial affairs LPA examples:
+"My attorneys must act jointly in relation to decisions about selling or letting my house and may act jointly and severally for everything else."
 
-> My attorneys must act jointly in relation to decisions about selling or letting my house and may act jointly and severally for everything else.
+"My attorneys must act jointly in relation to decisions about investments in stocks and shares and may act jointly and severally for everything else."
 
-> My attorneys must act jointly in relation to decisions about investments in stocks and shares and may act jointly and severally for everything else.
+In these examples, ‘everything else’ means all other decisions about the donor’s property and finance.
 
-In the first example, 'everything else' means all financial decisions apart from selling or letting your house. In the second example, 'everything else' means all money matters apart from investing in stocks and shares.
+Health and welfare:
 
-Health and welfare LPA examples:
+"My attorneys must act jointly in relation to decisions about where I live and may act jointly and severally for everything else."
 
-> My attorneys must act jointly in relation to decisions about where I live and may act jointly and severally for everything else.
+"My attorneys must act jointly in relation to decisions I have authorised them to make about life-sustaining treatment and may act jointly and severally for everything else."
 
-> My attorneys must act jointly in relation to decisions I have authorised them to make about life-sustaining treatment and may act jointly and severally for everything else.
-
-In both examples, 'everything else' means all decisions about your day-to-day care and medical treatment, except specific life-sustaining treatment decisions.
-
-### Questions to ask yourself
-
-* Do you trust each of your attorneys to make decisions in your best interests? If not, are these the right attorneys?
-* Do your attorneys know what you would decide if you could?
-* What might stop your attorneys working together? Do they get on? What would happen if they fell out?
-* Even if your attorneys can make most decisions on their own, are there some big decisions that you want them to agree on?
-* Do you want your attorneys or replacement attorneys to make all their decisions together and agree everything unanimously?
-* Are you happy for your attorneys to choose whether they make decisions together or individually?
-* Do your attorneys understand how you would like them to make decisions?
-* Do you know what will happen if one attorney can't act any more?
-* Do you want replacement attorneys? They're an important backup if your attorneys have to make some or all decisions together.
-
+The donor must be careful not to make instructions that contradict with their choice about who has authority to make decisions about [life-sustaining treatment](/help/#topic-life-sustaining-treatment) (LST). For example, the donor cannot give doctors the authority to make LST decisions, then make an instruction that refers to their attorneys making LST decisions.
