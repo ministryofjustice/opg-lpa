@@ -50,6 +50,7 @@ class Module
             'aliases' => [
                 Repository\User\UserRepositoryInterface::class  => Mongo\Collection\AuthUserCollection::class,
                 Repository\User\LogRepositoryInterface::class   => Mongo\Collection\AuthLogCollection::class,
+                Repository\Application\WhoRepositoryInterface::class  => Mongo\Collection\ApiWhoCollection::class,
             ],
             'factories' => [
                 'DynamoCronLock' => function (ServiceLocatorInterface $sm) {

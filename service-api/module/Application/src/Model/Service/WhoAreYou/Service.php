@@ -4,8 +4,8 @@ namespace Application\Model\Service\WhoAreYou;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Model\DataAccess\Repository\Application\WhoRepositoryTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
-use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollectionTrait;
 use Application\Model\Service\AbstractService;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use RuntimeException;
@@ -13,7 +13,7 @@ use RuntimeException;
 class Service extends AbstractService
 {
     use ApiLpaCollectionTrait;
-    use ApiWhoCollectionTrait;
+    use WhoRepositoryTrait;
 
     /**
      * @param $lpaId
@@ -45,7 +45,7 @@ class Service extends AbstractService
         // We update the LPA first as there's a chance a RuntimeException will be thrown if there's an 'updatedAt' mismatch.
         $this->updateLpa($lpa);
 
-        $this->apiWhoCollection->insert($answer);
+        $this->getWhoRepository()->insert($answer);
 
         return new Entity($lpa->whoAreYouAnswered);
     }

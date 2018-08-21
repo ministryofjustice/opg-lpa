@@ -11,6 +11,7 @@ use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollectionTrait;
+use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
@@ -113,6 +114,10 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
 
             if (in_array(UserRepository\UserRepositoryTrait::class, $traitsUsed)) {
                 $service->setUserRepository($container->get(UserRepository\UserRepositoryInterface::class));
+            }
+
+            if (in_array(ApplicationRepository\WhoRepositoryTrait::class, $traitsUsed)) {
+                $service->setWhoRepository($container->get(ApplicationRepository\WhoRepositoryInterface::class));
             }
         }
 
