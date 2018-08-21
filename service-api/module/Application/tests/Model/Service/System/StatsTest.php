@@ -4,7 +4,7 @@ namespace ApplicationTest\Model\Service\System;
 
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
-use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
+use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
 
@@ -56,15 +56,14 @@ class StatsTest extends AbstractServiceTest
         })->once();
         /** @var ApiStatsLpasCollection $apiStatsLpasCollection */
 
-        $apiWhoCollection = Mockery::mock(ApiWhoCollection::class);
-        $apiWhoCollection->shouldReceive('getStatsForTimeRange')->andReturn(1);
-        /** @var ApiWhoCollection $apiWhoCollection */
+        $whoRepository = Mockery::mock(WhoRepositoryInterface::class);
+        $whoRepository->shouldReceive('getStatsForTimeRange')->andReturn([]);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withApiLpaCollection($apiLpaCollection)
             ->withApiStatsLpasCollection($apiStatsLpasCollection)
-            ->withApiWhoCollection($apiWhoCollection)
+            ->withWhoRepository($whoRepository)
             ->build();
 
         $result = $service->generate();
