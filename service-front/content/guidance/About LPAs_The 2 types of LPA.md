@@ -1,54 +1,77 @@
-# The 2 types of LPA
+# 2 types of LPA
 
-There are 2 types of LPA. Some people make one, while others make both. To make both types of LPA, you need to complete two separate forms. However, the forms are very similar with only a few small, but important, differences.
+There are 2 types of LPA: property and financial affairs, and health and welfare.
 
-## Property and financial affairs LPA
+The [donor](/help/#topic-donor) can have one or both. The LPAs do not have to be made at the same time and the donor can choose different attorneys for each LPA.
 
-You choose people you trust to make decisions on your behalf about money and financial matters, including:
+## Property and financial affairs
 
-* opening, closing and using your bank or building society accounts
-* claiming, receiving and using your benefits, pensions and allowances
+This LPA covers the donor’s money and property.
+
+The donor does not have to own their own home or have a lot of money to make this type of LPA.
+
+### Decisions the attorneys can make
+
+The donor chooses people they trust (‘[attorneys](/help/#topic-attorneys)’) to make decisions on their behalf about money and financial matters, such as:
+
+* opening, closing and using their bank or building society accounts
+* claiming, receiving and using their benefits, pensions and allowances
 * paying household and other bills
-* buying and selling your house and other property
+* buying and selling their house
+* managing their property and investments
 
-The people you choose to make decisions are known as 'attorneys'. You can have one attorney or more.
+The donor can also make a separate LPA for their business affairs if they want different people to make those decisions.
 
-You don't have to own your own home or have a lot of money to make a property and financial affairs LPA. For example, if it's hard to manage your bank account or bills alone, you may want someone to help.
+### When a property and financial affairs LPA can be used
 
-You can also make a separate LPA for your business affairs if you want different people to make those decisions.
+When they make their LPA, the donor can decide whether it can be used:
 
-You can choose that your LPA will only be used if you are no longer able to make decisions. Or you can choose that it can be used while you have mental capacity because you want people to help you with your finances.
+* as soon as it’s registered
+* only when they have lost mental capacity
 
-## Health and welfare LPA
+Find out more about deciding [when an LPA can be used](/help/#topic-when-an-lpa-can-be-used).
 
-You choose people you trust to make decisions on your behalf about things such as:
+## Health and welfare
+
+This LPA covers the donor’s health care and personal welfare.
+
+### Decisions the attorneys can make
+
+The donor chooses people they trust (‘[attorneys](/help/#topic-attorneys)’) to make decisions about things such as:
 
 * giving or refusing consent to particular types of health care, including medical treatment
-* you staying in your own home and getting help and support from social services
-* whether you move into residential care and finding a good care home
-* day-to-day matters such as your diet, dress or daily routine
+* getting help and support from social services
+* where the donor lives - for example, whether the donor stays in their own home or moves into a care home
+* finding a good care home or care providers
+* day-to-day matters like the donor’s diet, dress or daily routine
 
-The people you choose to make decisions are known as 'attorneys'. You can have one attorney or more.
+A health and welfare attorney might need to spend the donor’s money on things that maintain or improve the donor’s quality of life. This can include:
 
-You must also choose whether your attorneys or your doctors will make decisions if you ever need treatment to stay alive and you aren't capable of deciding.
+* hairdressing or new clothes
+* decorating the donor’s home or room in a care home
+* paying for extra support so the donor can go out more, for example to visit relatives or to go on holiday
 
-As a safeguard, a health and welfare LPA can only be used when you don't have the mental capacity to make decisions.
+The attorney must ask for money from the person in charge of the donor’s funds. In some cases, the same person may be an attorney on both the donor’s financial and property affairs LPA and health and welfare LPA.
 
-## Health and welfare: other ways to plan
+### When a health and welfare LPA can be used
 
-There are other ways to make your views known and help other people make decisions about your health and welfare.
+This type of LPA can only be used after it’s been registered and if the donor does not have the mental capacity to make decisions.
 
-### Advance statement of your preferences and wishes
+Find out more about [when an LPA can be used](/help/#topic-when-an-lpa-can-be-used).
 
-This is a written statement setting out your preferences and wishes for any care you may need in future. This isn't legally binding but the people looking after you have to take what you say into account when they decide about your best interests. NHS Choices website has <a href="http://www.nhs.uk/Planners/end-of-life-care/Pages/advance-statement.aspx" rel="external" target="_blank">information about advance statements.</a>
+### Life-sustaining treatment
 
-### Care plan
-If you have a long-term health condition, you can create a written care plan with your GP, nurse or social worker that sets out ways of helping you look after yourself on a day-to-day basis. NHS Choices website has <a href="http://www.nhs.uk/Planners/Yourhealth/Pages/Careplan.aspx" rel="external" target="_blank">information about care plans.</a>
+'Life-sustaining treatment' is medical treatment needed to keep someone alive.
 
-### Advance decision
-This is a legally binding document that allows you to specify types of treatments that you don't want, in case you aren't able to make a decision about them in the future. NHS Choices website has <a href="http://www.nhs.uk/Planners/end-of-life-care/Pages/advance-decision-to-refuse-treatment.aspx" rel="external" target="_blank">information about advance decisions.</a>
+In their LPA, the donor must choose whether their attorneys can give or refuse consent to life-sustaining treatment on their behalf.
 
-If you've made an advance decision, you can still make an LPA. If you want the advance decision to be taken into account, you should state this when you have the opportunity to 'add extra instructions' in the preferences and instructions section of your LPA.
+There’s more information about this on the [life-sustaining treatment](/help/#topic-life-sustaining-treatment) help page.
 
-When making a health and welfare LPA, you'll have to decide whether your attorneys or your doctors should make decisions about life-sustaining treatment. If you let your attorneys decide about life-sustaining treatments that you've previously made an advance decision about, the LPA will take the place of the advance decision.
+### Advance decision to refuse treatment
+
+An advance decision is a legally binding written statement. It lets someone say what medical treatment they do not want to have in certain situations. It’s sometimes called a ‘living will’.
+
+If the donor already has an advance decision, and then makes a health and welfare LPA, the LPA might take priority when a decision needs to be made about life-sustaining treatment. There’s more information about this on the [life-sustaining treatment](/help/#topic-life-sustaining-treatment) help page.
+
+
 
