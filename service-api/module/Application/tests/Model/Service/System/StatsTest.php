@@ -5,6 +5,7 @@ namespace ApplicationTest\Model\Service\System;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
+use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
 
@@ -44,9 +45,9 @@ class StatsTest extends AbstractServiceTest
         $apiLpaCollection->shouldReceive('getLpasPerUser')->andReturn([]);
         /** @var ApiLpaCollection $apiLpaCollection */
 
-        $apiStatsLpasCollection = Mockery::mock(ApiStatsLpasCollection::class);
-        $apiStatsLpasCollection->shouldReceive('delete')->once();
-        $apiStatsLpasCollection->shouldReceive('insert')->withArgs(function ($stats) {
+        $statsRepository = Mockery::mock(StatsRepositoryInterface::class);
+        $statsRepository->shouldReceive('delete')->once();
+        $statsRepository->shouldReceive('insert')->withArgs(function ($stats) {
             return isset($stats['generated'])
                 && isset($stats['lpas'])
                 && isset($stats['lpasPerUser'])
@@ -54,7 +55,6 @@ class StatsTest extends AbstractServiceTest
                 && isset($stats['correspondence'])
                 && isset($stats['preferencesInstructions']);
         })->once();
-        /** @var ApiStatsLpasCollection $apiStatsLpasCollection */
 
         $whoRepository = Mockery::mock(WhoRepositoryInterface::class);
         $whoRepository->shouldReceive('getStatsForTimeRange')->andReturn([]);
@@ -62,7 +62,7 @@ class StatsTest extends AbstractServiceTest
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
             ->withApiLpaCollection($apiLpaCollection)
-            ->withApiStatsLpasCollection($apiStatsLpasCollection)
+            ->withStatsRepository($statsRepository)
             ->withWhoRepository($whoRepository)
             ->build();
 

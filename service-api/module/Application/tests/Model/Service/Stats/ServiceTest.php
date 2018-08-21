@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Model\Service\Stats;
 
-use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
+use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use DateTime;
@@ -14,9 +14,8 @@ class ServiceTest extends AbstractServiceTest
     {
         $generated = date('d/m/Y H:i:s', (new DateTime())->getTimestamp());
 
-        $apiStatsLpasCollection = Mockery::mock(ApiStatsLpasCollection::class);
-        $apiStatsLpasCollection->shouldReceive('getStats')
-            ->andReturn(['generated' => $generated]);
+        $statsRepository = Mockery::mock(StatsRepositoryInterface::class);
+        $statsRepository->shouldReceive('getStats')->andReturn(['generated' => $generated]);
 
         $authUserRepository = Mockery::mock(UserRepositoryInterface::class);
         $authUserRepository->shouldReceive('countAccounts')->once()->andReturn(4);
@@ -31,8 +30,8 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiStatsLpasCollection($apiStatsLpasCollection)
             ->withAuthUserRepository($authUserRepository)
+            ->withStatsRepository($statsRepository)
             ->build();
 
         $data = $service->fetch('all');
