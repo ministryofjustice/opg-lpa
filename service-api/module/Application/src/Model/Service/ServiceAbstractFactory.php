@@ -5,13 +5,9 @@ namespace Application\Model\Service;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
-use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
-use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollectionTrait;
-use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
-use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
-use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\User as UserRepository;
+use Application\Model\DataAccess\Repository\Stats as StatsRepository;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\UserManagement\Service as UserManagementService;
@@ -95,14 +91,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
                 $service->setApiLpaCollection($container->get(ApiLpaCollection::class));
             }
 
-            if (in_array(ApiStatsLpasCollectionTrait::class, $traitsUsed)) {
-                $service->setApiStatsLpasCollection($container->get(ApiStatsLpasCollection::class));
-            }
-
-            if (in_array(ApiUserCollectionTrait::class, $traitsUsed)) {
-                $service->setApiUserCollection($container->get(ApiUserCollection::class));
-            }
-
             if (in_array(UserRepository\LogRepositoryTrait::class, $traitsUsed)) {
                 $service->setLogRepository($container->get(UserRepository\LogRepositoryInterface::class));
             }
@@ -113,6 +101,10 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
 
             if (in_array(ApplicationRepository\WhoRepositoryTrait::class, $traitsUsed)) {
                 $service->setWhoRepository($container->get(ApplicationRepository\WhoRepositoryInterface::class));
+            }
+
+            if (in_array(StatsRepository\StatsRepositoryTrait::class, $traitsUsed)) {
+                $service->setStatsRepository($container->get(StatsRepository\StatsRepositoryInterface::class));
             }
         }
 

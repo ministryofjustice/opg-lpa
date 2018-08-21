@@ -3,7 +3,7 @@
 namespace Application\Model\Service\System;
 
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
-use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollectionTrait;
+use Application\Model\DataAccess\Repository\Stats\StatsRepositoryTrait;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\AbstractDecisions;
@@ -25,7 +25,7 @@ use Exception;
 class Stats extends AbstractService
 {
     use ApiLpaCollectionTrait;
-    use ApiStatsLpasCollectionTrait;
+    use StatsRepositoryTrait;
     use WhoRepositoryTrait;
 
     /**
@@ -100,10 +100,10 @@ class Stats extends AbstractService
         // Save the results
 
         // Empty the collection
-        $this->apiStatsLpasCollection->delete();
+        $this->getStatsRepository()->delete();
 
         // Add the new data
-        $this->apiStatsLpasCollection->insert($stats);
+        $this->getStatsRepository()->insert($stats);
 
         //---
 

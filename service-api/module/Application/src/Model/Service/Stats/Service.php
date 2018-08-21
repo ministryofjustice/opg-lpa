@@ -3,12 +3,12 @@
 namespace Application\Model\Service\Stats;
 
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
-use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollectionTrait;
+use Application\Model\DataAccess\Repository\Stats\StatsRepositoryTrait;
 use Application\Model\Service\AbstractService;
 
 class Service extends AbstractService
 {
-    use ApiStatsLpasCollectionTrait;
+    use StatsRepositoryTrait;
     use UserRepositoryTrait;
 
     /**
@@ -17,7 +17,7 @@ class Service extends AbstractService
      */
     public function fetch($type)
     {
-        $stats = $this->apiStatsLpasCollection->getStats();
+        $stats = $this->getStatsRepository()->getStats();
 
         if (!isset($stats['generated']) || !is_string($stats['generated'])) {
             return [

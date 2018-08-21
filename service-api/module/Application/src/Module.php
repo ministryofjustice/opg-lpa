@@ -51,6 +51,7 @@ class Module
                 Repository\User\UserRepositoryInterface::class  => Mongo\Collection\AuthUserCollection::class,
                 Repository\User\LogRepositoryInterface::class   => Mongo\Collection\AuthLogCollection::class,
                 Repository\Application\WhoRepositoryInterface::class  => Mongo\Collection\ApiWhoCollection::class,
+                Repository\Stats\StatsRepositoryInterface::class  => Mongo\Collection\ApiStatsLpasCollection::class,
             ],
             'factories' => [
                 'DynamoCronLock' => function (ServiceLocatorInterface $sm) {
