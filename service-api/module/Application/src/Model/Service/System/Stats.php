@@ -208,13 +208,17 @@ class Stats extends AbstractService
 
         for ($i = 0; $i < 4; $i++) {
             $ts = strtotime("-{$i} months", $firstDayOfThisMonth);
-
-            $results['by-month'][date('Y-m', $ts)] = $this->apiWhoCollection->getStatsForTimeRange($ts, $lastTimestamp, WhoAreYou::options());
+            
+            $results['by-month'][date('Y-m', $ts)] = $this->apiWhoCollection->getStatsForTimeRange(
+                new DateTime("@{$ts}"),
+                new DateTime("@{$lastTimestamp}"),
+                WhoAreYou::options()
+            );
 
             $lastTimestamp = $ts;
         }
 
-        $results['all'] = $this->apiWhoCollection->getStatsForTimeRange(0, time(), WhoAreYou::options());
+        $results['all'] = $this->apiWhoCollection->getStatsForTimeRange(new DateTime("@0"), new DateTime(), WhoAreYou::options());
 
         ksort($results['by-month']);
 

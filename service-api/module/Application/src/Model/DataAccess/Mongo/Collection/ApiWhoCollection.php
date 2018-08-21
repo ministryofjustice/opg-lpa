@@ -1,14 +1,15 @@
 <?php
-
 namespace Application\Model\DataAccess\Mongo\Collection;
 
+use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
 use Application\Model\DataAccess\Mongo\DateCallback;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use MongoDB\BSON\ObjectID as MongoId;
 use MongoDB\Collection as MongoCollection;
 use MongoDB\Driver\ReadPreference;
+use DateTime;
 
-class ApiWhoCollection
+class ApiWhoCollection implements WhoRepositoryInterface
 {
     /**
      * @var MongoCollection
@@ -25,11 +26,13 @@ class ApiWhoCollection
 
     /**
      * @param WhoAreYou $answer
-     * @return \MongoDB\InsertOneResult
+     * @return bool
      */
-    public function insert(WhoAreYou $answer)
+    public function insert(WhoAreYou $answer) : bool
     {
-        return $this->collection->insertOne($answer->toArray(new DateCallback()));
+        $result = $this->collection->insertOne($answer->toArray(new DateCallback()));
+
+        return ($result->getInsertedCount() == 1);
     }
 
     /**
@@ -40,7 +43,7 @@ class ApiWhoCollection
      * @param $options
      * @return array
      */
-    public function getStatsForTimeRange($start, $end, $options)
+    public function getStatsForTimeRange(DateTime $start, DateTime $end, array $options) : array
     {
         // Stats can (ideally) be processed on a secondary.
         $readPreference = [
@@ -48,10 +51,10 @@ class ApiWhoCollection
         ];
 
         // Convert the timestamps to MongoIds
-        $start = str_pad(dechex($start), 8, "0", STR_PAD_LEFT);
+        $start = str_pad(dechex($start->getTimestamp()), 8, "0", STR_PAD_LEFT);
         $start = new MongoId($start."0000000000000000");
 
-        $end = str_pad(dechex($end), 8, "0", STR_PAD_LEFT);
+        $end = str_pad(dechex($end->getTimestamp()), 8, "0", STR_PAD_LEFT);
         $end = new MongoId($end."0000000000000000");
 
         $range = [
