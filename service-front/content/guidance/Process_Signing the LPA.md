@@ -20,7 +20,9 @@ If the attorneys are appointed jointly and severally, or jointly for some decisi
 
 Everyone can sign the LPA on the same day or different days, as long as people sign in the right order.
 
-All the information on this page is also included in the LPA document that you will print and download once you’ve finished making the LPA.
+<div class="panel panel-border-wide">
+    <p>All the information on this page is also included in the LPA document that you will print and download once you’ve finished making the LPA.</p>
+</div>
 
 ### Who can be a witness?
 
