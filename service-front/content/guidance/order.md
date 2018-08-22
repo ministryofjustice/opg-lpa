@@ -36,7 +36,7 @@
 	* People_Applicant.md
 * Correspondent
 	* People_Correspondent.md
-* Fees and reductions
-	* Process_Fees and reductions.md
+* Fees reductions and exemptions
+	* Process_Fees reductions and exemptions.md
 * Glossary
 	* About LPAs_Glossary.md
