@@ -1,75 +1,81 @@
 # Replacement attorneys
 
-Replacement attorneys are people you choose to step in if one of your original attorneys can no longer make decisions on your behalf.
+Replacement attorneys are people the donor chooses to step in if one of their original attorneys can no longer act.
 
-A replacement attorney will step in if one of your attorneys:
+Replacement attorneys need to [sign the LPA](/help/#topic-signing-the-lpa) before it can be registered.
 
-* dies
-* loses mental capacity
-* decides they can no longer act on your behalf (known as 'disclaiming their appointment')
-* was your wife, husband or civil partner but your relationship has legally ended
-* becomes bankrupt or subject to a debt relief order – this only applies to property and financial affairs LPAs
-
-A replacement attorney can't replace another replacement attorney. 
-
-## Who can be a replacement attorney
-
-A replacement attorney must meet the same requirements as an original attorney. This includes having mental capacity and being 18 or over when you sign your LPA. See [Attorneys](/help/#topic-attorneys) help topic for more on the requirements.
-
-A person who is on the Disclosure and Barring Service barred list can't act as a replacement attorney. They're breaking the law if they do.
-
-## Protecting your LPA
-
-Having replacement attorneys means that your LPA should still work if an original attorney can no longer act on your behalf.
+The donor does not have to appoint replacement attorneys, but having them helps to protect the LPA. It means the LPA should still work if an original attorney can no longer act.
 
 Without replacements:
 
-* if you have only one attorney and that attorney can no longer act for you, your LPA will no longer work
-* if you have attorneys who must make all or some decisions together ('jointly') and 1 attorney can no longer act, the rest will not be able to make those joint decisions
+* if there’s only one attorney and that attorney can no longer act, the LPA will stop working
+* if the donor appointed their attorneys to act jointly and one attorney can no longer act, the LPA will stop working, unless the donor has stated otherwise in their instructions
+* if the donor appointed their attorneys to act jointly for some decisions and jointly and severally for others, and one attorney can no longer act, the joint decisions can longer be made
 
-If your LPA can't be used and you don't have mental capacity, someone you know will have to apply to the Court of Protection to get the power to act on your behalf – this can be expensive and take a long time.
+If the LPA cannot be used and the donor no longer has mental capacity, someone will have to apply to the Court of Protection to get the power to act on the donor’s behalf – this can be expensive and usually takes a long time.
 
-## When a replacement attorney steps in
+## Who can be a replacement attorney
 
-A replacement attorney can only act if the original attorney they're replacing is permanently unable to make decisions for one of the reasons above.
+A replacement attorney must meet the same requirements as an original attorney. This includes having mental capacity and being 18 or over when the donor signs the LPA.
 
-A replacement attorney:
+The donor should choose their replacements as carefully as they choose their original attorneys.
 
-* can't temporarily stand in for an attorney who is still able to act (for example, while the first attorney is on holiday)
-* can't replace a replacement attorney
+See the [Attorneys](/help/#topic-attorneys) section for more information.
 
-If your attorneys have to make all or some decisions jointly and one can no longer act, your replacement attorneys make those joint decisions instead. Both your remaining original attorneys and your replacements can make any decisions that don't have to be made jointly.
+## When replacement attorneys step in
 
-Replacement attorneys usually step in as soon as one of your original attorneys stops acting for you. If you include more than one replacement attorney in your LPA, they all start at the same time, unless you've:
+Replacement attorneys step in if one of the attorneys can no longer act. This may be because the attorney:
 
-1. Appointed your attorneys to act jointly and severally.
-2. Stated the order in which your original attorneys will be replaced.
+* dies
+* loses mental capacity
+* decides they no longer want to act as an attorney (known as 'disclaiming their appointment')
+* was the donor’s wife, husband or civil partner, but the relationship has legally ended and the donor has not stated in their instructions that their ex-partner can continue as an attorney in these circumstances
+* becomes bankrupt or subject to a debt relief order and was an attorney for a property and financial affairs LPA
 
-## Stating an order
+## Replacing attorneys who act jointly and severally
 
-You can only state an order if your attorneys act jointly and severally. You can only state an order for replacing original attorneys.
+When there are replacement attorneys, if an original attorney dies or can no longer act:
 
-### Examples:
+* all the replacement attorneys will step in
+* the replacement attorneys and any remaining original attorneys can then make decisions ‘jointly and severally’
 
-> If one of my attorneys (my mother and father) can no longer act, I would like that attorney to be replaced by my sister. If later on my other parent can no longer act, I would like my brother to step in to replace that person as my attorney.
+### State the order in which replacements can step in
 
-> If my attorney Dave Smith becomes unable to act under this LPA, I want replacement attorney Jane Hall to step in and act in his place.
+When the original attorneys are appointed to act jointly and severally, the donor can add instructions to specify the order in which their replacement can step in. This is optional.
 
+Examples:
 
-## Replacement attorney examples
+If one of my attorneys (my mother and father) can no longer act, I would like that attorney to be replaced by my sister. If later on my other parent can no longer act, I would like my brother to step in to replace that person as my attorney.
 
-> You choose your husband as your attorney. You appoint your best friend as a replacement attorney in case your husband dies before you or can no longer act for another reason.
+If my attorney Dave Smith becomes unable to act under this LPA, I want replacement attorney Jane Hall to step in and act in his place.
 
-> You choose 2 attorneys. You appoint a replacement who can step in and work with one of the attorneys if the other can no longer act. (If your attorneys must make any or all decisions jointly, the remaining original attorney won't be able to make those decisions. The replacement will replace both original attorneys for the joint decisions.)
+## Replacing attorneys who act jointly
 
-> You choose your wife and adult son as attorneys. You appoint your 3 grandchildren, who are all over 18, as replacement attorneys. You don't state an order, so all 3 will step in if one of your original attorneys can no longer act.
+Replacement attorneys are an important backup when attorneys are appointed to act jointly.
 
+When there are replacement attorneys, if an attorney dies or can no longer act:
 
-## Questions to ask yourself
+* all the replacement attorneys will replace all the original attorneys
+* the remaining original attorneys will not be able to make any decisions on the donor’s behalf anymore
 
-* Do you want replacement attorneys in case your original attorneys can no longer act? How many?
-* Would it be better to choose several attorneys to act jointly and severally instead of just one attorney?
-* Do the people you're considering as replacement attorneys understand that it may be years before they'll need to act for you, if at all?
-* Would you want new attorneys to replace original ones in a particular order? (This is only possible if you have said that attorneys should make decisions jointly and severally.)
+If the donor wants to change how their replacement attorneys step in, they can explain their wishes in the [instructions section](/help/#topic-preferences-and-instructions).
 
-You need to choose your replacements as carefully as your original attorneys.
+Example instructions:
+
+"If one of my original joint attorneys, Jim Taylor and Bob Jones, is unable or unwilling to act, I then reappoint my remaining original attorney, Jim Taylor or Bob Jones, as replacement attorney to act solely."
+
+If the donor has appointed replacement attorneys, they could add further instructions:
+
+"If neither of my original attorneys is able or willing to act, I appoint my replacement attorneys to act."
+
+## Replacing attorneys who act jointly for some decisions
+
+Replacement attorneys are an important backup when attorneys are appointed to act jointly for some decisions, and jointly and severally for others.
+
+When there are replacement attorneys, if an attorney dies or can no longer act:
+
+* all the replacement attorneys step in and take over making the joint decisions
+* the remaining original attorneys will not be able to make the joint decisions anymore
+* the replacement and remaining original attorneys can make all other decisions individually
+
+The donor can change this arrangement, so that if one of their attorneys can no longer act, their remaining attorneys can continue to make the joint decisions. If the donor wants this alternative arrangement to apply, they should state this clearly in the instructions section of the LPA. See above for examples.
