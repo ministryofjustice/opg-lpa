@@ -7,8 +7,6 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
 use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
-use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
 use Application\Model\Service\AbstractService;
 use Mockery;
 use Mockery\MockInterface;
@@ -25,16 +23,6 @@ abstract class AbstractServiceBuilder
      * @var MockInterface|ApiLpaCollection
      */
     private $apiLpaCollection = null;
-
-    /**
-     * @var MockInterface|AuthLogCollection
-     */
-    private $authLogCollection = null;
-
-    /**
-     * @var MockInterface|AuthUserCollection
-     */
-    private $authUserCollection = null;
 
     /**
      * @var MockInterface|LogRepositoryInterface
@@ -74,28 +62,6 @@ abstract class AbstractServiceBuilder
     public function withApiLpaCollection($apiLpaCollection)
     {
         $this->apiLpaCollection = $apiLpaCollection;
-
-        return $this;
-    }
-
-    /**
-     * @param $authLogCollection
-     * @return $this
-     */
-    public function withAuthLogCollection($authLogCollection)
-    {
-        $this->authLogCollection = $authLogCollection;
-
-        return $this;
-    }
-
-    /**
-     * @param $authUserCollection
-     * @return $this
-     */
-    public function withAuthUserCollection($authUserCollection)
-    {
-        $this->authUserCollection = $authUserCollection;
 
         return $this;
     }
@@ -198,15 +164,7 @@ abstract class AbstractServiceBuilder
         if ($this->apiLpaCollection !== null) {
             $this->apiLpaCollection->mockery_verify();
         }
-
-        if ($this->authLogCollection !== null) {
-            $this->authLogCollection->mockery_verify();
-        }
-
-        if ($this->authUserCollection !== null) {
-            $this->authUserCollection->mockery_verify();
-        }
-
+        
         if ($this->authLogRepository !== null) {
             $this->authLogRepository->mockery_verify();
         }
