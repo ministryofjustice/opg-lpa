@@ -1,58 +1,48 @@
 # Life-sustaining treatment
 
-'Life-sustaining treatment' means care, surgery, medicine or other help from doctors that's needed to keep someone alive.
+Life-sustaining treatment is care, surgery, medicine or other help from doctors that's needed to keep someone alive. For example:
 
-You can state in your health and welfare LPA what you'd want to happen if you needed life-sustaining treatment and you no longer had mental capacity.
-
-You have 2 options:
-
-* Option A. Yes. I want to give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf. If you choose this option, your attorneys can speak to doctors as if they were you.
-* Option B. No. I do not give my attorneys authority to give or refuse consent to life-sustaining treatment on my behalf. If you choose this option, it means doctors will make the decisions about life-sustaining treatment instead of your attorneys.
-
-After you print out your LPA document, you'll have to sign and date the option you've chosen. This must be witnessed.
-
-See [Attorneys](/help/#topic-attorneys) for information on choosing your attorneys.
-
-## Life-sustaining treatment: definition
-
-Life-sustaining treatment can include:
-
-* a serious operation, such as heart bypass surgery
-* chemotherapy, radiotherapy or another cancer treatment
-* an organ transplant
+* a serious operation, such as a heart bypass or organ transplant
+* cancer treatment
 * artificial nutrition or hydration (food or water given other than by mouth)
 
-Whether some treatments are life-sustaining depends on the situation. For example, if someone had pneumonia, a simple course of antibiotics could be life-sustaining.
+Whether some treatments are life-sustaining depends on the situation. For example, if someone has pneumonia, a simple course of antibiotics could be life-sustaining.
 
-Decisions about life-sustaining treatment can be needed in unexpected circumstances. One example is a routine operation where things don't go as planned.
+Decisions about life-sustaining treatment can be needed in unexpected circumstances. For example, if a routine operation does not go as planned and a decision needs to be made about life-sustaining treatment while the donor is under general anesthetic.
 
-### Option A: attorneys
+## Decisions about life-sustaining treatment
 
-Choose option A if you want your attorneys to decide about life-sustaining treatment if ever you need it and can't make the decisions yourself.
+When making a health and welfare LPA, the donor must choose who they want to make decisions about life-sustaining treatment if they do not have the mental capacity to decide themselves.
 
-At the end of the LPA service there is a section where you can add preferences and instructions for your attorneys. If you have specific wishes about life-sustaining treatment, make them clear in that section, so that any decisions your attorneys make are as close as possible to the decisions you would have made.
+The donor has 2 options.
 
-See [Preferences and instructions](/help/#topic-preferences-and-instructions) for more on giving guidance to your attorneys.
+1. **To give their attorneys authority to give or refuse consent to life-sustaining treatment** on the donor’s behalf. If the donor chooses this option, their attorneys can speak to doctors as if they were the donor.
+2. **Not to give their attorneys authority to give or refuse consent to life-sustaining treatment** on the donor’s behalf. If the donor chooses this option, it means doctors will make any decisions about life-sustaining treatment instead of the donor’s attorneys.
 
-### Option B: doctors
+After you print out the LPA document, the donor has to sign and date the option they've chosen. This must be witnessed.
 
-Choose option B if you want your doctors to decide about life-sustaining treatment if you can't. If the situation arises, they must:
+## Taking the donor’s wishes into account
 
-* carry out an assessment of your best interests
-* take into account, where possible, the views of your attorneys and other people involved in your welfare
-* take into account what you have said or written about life-sustaining treatment, including any guidance you've given in your LPA
+If the donor chooses to give their attorneys the power to make decisions about life-sustaining treatment, they can add preferences and instructions about treatment. For example, the donor can express preferences about treatment or give instructions about when their attorneys must or must not consent to life-sustaining treatment.
 
-### Making your treatment preferences known
+This can help the attorneys make decisions that are as close as possible to those the donor would have made themselves.
 
-If you've made an advance decision to refuse treatment that your attorneys or doctors must take into account, you can refer to it when adding 'extra instructions' under the 'preferences and instructions' section of this LPA service.
+See the [preferences and instructions](/help/#topic-preferences-and-instructions) help page for more guidance.
 
- <a href="http://www.nhs.uk/Planners/end-of-life-care/Pages/advance-decision-to-refuse-treatment.aspx" rel="external" target="_blank">NHS Choices has information about advance decisions.</a>
+## If the donor has an ‘advance decision’
 
-You can also let people know your views on treatments and care in:
+An advance decision to refuse treatment is a legally binding written statement. It lets someone say what medical treatment they do not want to have in certain situations in the future. It’s sometimes called a ‘living will’.
 
-* statements of preference
-* care plans
+The donor can have an advance decision and an LPA.
 
-See [The 2 types of LPA](/help/#topic-the-2-types-of-lpa) for more information.
+### If the donor makes an LPA after making an advance decision
 
-There's more about life-sustaining treatment, advance decisions and how health professionals must respond to your written wishes in chapter 9 of the <a href="http://www.justice.gov.uk/protecting-the-vulnerable/mental-capacity-act" rel="external" target="_blank">Mental Capacity Act 2005 Code of Practice</a>.
+Whoever the donor has chosen to make decisions about life-sustaining treatment (either their attorneys or doctors), might override what is written in the advance decision.
+
+When making decisions, the attorneys or doctors should consider any preferences and follow any instructions the donor put in their LPA.
+
+The donor may want to get legal advice, particularly if their advance decision and their LPA say very different things.
+
+NHS Choices has <a href="http://www.nhs.uk/Planners/end-of-life-care/Pages/advance-decision-to-refuse-treatment.aspx" target="_blank">more information about advance decisions</a>.
+
+There's more about life-sustaining treatment, advance decisions and how health professionals must respond to someone's written wishes in chapter 9 of the <a href="http://www.justice.gov.uk/protecting-the-vulnerable/mental-capacity-act" target="_blank">Mental Capacity Act 2005 Code of Practice</a>.
