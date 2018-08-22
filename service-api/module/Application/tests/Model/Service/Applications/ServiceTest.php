@@ -692,7 +692,7 @@ class ServiceTest extends AbstractServiceTest
                     && ($lpa->getDocument() instanceof Document);
             })
             ->once()
-            ->andReturn(null);
+            ->andReturn(true);
     }
 
     private function setUpdateOneLpaExpectations(User $user, Lpa $lpa, Lpa $existingLpa = null)
@@ -729,6 +729,8 @@ class ServiceTest extends AbstractServiceTest
                     // Record the time we updated the document.
                     $lpaIn->setUpdatedAt(new DateTime());
                 }
+
+                return true;
             });
     }
 

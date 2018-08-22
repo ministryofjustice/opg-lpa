@@ -2,7 +2,9 @@
 
 namespace Application\Model\DataAccess\Mongo\Collection;
 
-use Application\Library\DateTime;
+use DateTime;
+use Application\Library\DateTime as MillisecondDateTime;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Mongo\DateCallback;
 use MongoDB\BSON\Javascript as MongoCode;
 use MongoDB\BSON\Regex;
@@ -13,7 +15,7 @@ use MongoDB\Driver\ReadPreference;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use RuntimeException;
 
-class ApiLpaCollection
+class ApiLpaCollection implements ApplicationRepositoryInterface
 {
     /**
      * @var MongoCollection
@@ -31,11 +33,11 @@ class ApiLpaCollection
     /**
      * Get an LPA by ID, and user ID if provided
      *
-     * @param $id
-     * @param null $userId
-     * @return array|null|object
+     * @param int $id
+     * @param string $userId
+     * @return array|null
      */
-    public function getById($id, $userId = null)
+    public function getById(int $id, ?string $userId = null) : ?array
     {
         $criteria = [
             '_id' => $id
@@ -51,19 +53,19 @@ class ApiLpaCollection
     /**
      * @param array $criteria
      * @param array $options
-     * @return \MongoDB\Driver\Cursor
+     * @return iterable
      */
-    public function fetch(array $criteria, array $options = [])
+    public function fetch(array $criteria, array $options = []) : iterable
     {
         return $this->collection->find($criteria, $options);
     }
 
     /**
-     * @param $userId
+     * @param string $userId
      * @param array $options
-     * @return \MongoDB\Driver\Cursor
+     * @return iterable
      */
-    public function fetchByUserId($userId, array $options = [])
+    public function fetchByUserId(string $userId, array $options = []) : iterable
     {
         return $this->fetch([
             'user' => $userId,
@@ -72,25 +74,28 @@ class ApiLpaCollection
 
     /**
      * @param Lpa $lpa
-     * @return \MongoDB\InsertOneResult
+     * @return bool
      */
-    public function insert(Lpa $lpa)
+    public function insert(Lpa $lpa) : bool
     {
-        return $this->collection->insertOne($lpa->toArray(new DateCallback()));
+        $result = $this->collection->insertOne($lpa->toArray(new DateCallback()));
+
+        return ($result->getInsertedCount() == 1);
     }
 
     /**
      * Update the LPA and the updated TS if requested to do so
      *
      * @param Lpa $lpa
-     * @param $updateTimestamp
+     * @param bool $updateTimestamp
+     * @return bool
      */
-    public function update(Lpa $lpa, $updateTimestamp)
+    public function update(Lpa $lpa, bool $updateTimestamp) : bool
     {
         //  If instrument created, record the date.
         if ($lpa->isStateCreated()) {
-            if (!($lpa->createdAt instanceof \DateTime)) {
-                $lpa->createdAt = new DateTime();
+            if (!($lpa->createdAt instanceof DateTime)) {
+                $lpa->createdAt = new MillisecondDateTime();
             }
         } else {
             $lpa->createdAt = null;
@@ -99,8 +104,8 @@ class ApiLpaCollection
         // If completed, record the date.
         if ($lpa->isStateCompleted()) {
             // If we don't already have a complete date and the LPA is locked...
-            if (!($lpa->completedAt instanceof \DateTime) && $lpa->locked === true) {
-                $lpa->completedAt = new DateTime();
+            if (!($lpa->completedAt instanceof DateTime) && $lpa->locked === true) {
+                $lpa->completedAt = new MillisecondDateTime();
             }
         } else {
             $lpa->completedAt = null;
@@ -117,7 +122,7 @@ class ApiLpaCollection
 
         if ($updateTimestamp === true) {
             // Record the time we updated the document.
-            $lpa->updatedAt = new DateTime();
+            $lpa->updatedAt = new MillisecondDateTime();
         }
 
         // updatedAt is included in the query so that data isn't overwritten
@@ -133,33 +138,44 @@ class ApiLpaCollection
         if ($result->getModifiedCount() !== 0 && $result->getModifiedCount() !== 1) {
             throw new RuntimeException('Unable to update LPA. This might be because "updatedAt" has changed.');
         }
+
+        return true;
     }
 
     /**
-     * @param $lpaId
-     * @param $userId
-     * @return \MongoDB\UpdateResult
+     * @param int $lpaId
+     * @param string $userId
+     * @return bool
      */
-    public function deleteById($lpaId, $userId)
+    public function deleteById(int $lpaId, string $userId) : bool
     {
         //  We don't want to remove the document entirely as we need to make sure the same ID isn't reassigned
-        return $this->collection->replaceOne([
+        $result = $this->collection->replaceOne([
             '_id' => (int)$lpaId,
             'user' => $userId,
         ], [
             'updatedAt' => new UTCDateTime(),
         ]);
+
+        return $result->isAcknowledged() && $result->getModifiedCount() === 1;
     }
 
     /**
      * Get the count of LPAs between two dates for the timestamp field name provided
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
-     * @param $timestampFieldName
+     * $timestampFieldName can be one of:
+     *  startedAt
+     *  createdAt
+     *  updatedAt
+     *  completedAt
+     *  lockedAt
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param string $timestampFieldName
      * @return int
      */
-    public function countBetween(\Datetime $start, \Datetime $end, $timestampFieldName)
+    public function countBetween(Datetime $start, Datetime $end, string $timestampFieldName) : int
     {
         //  Call from stats so (ideally) process on a secondary
         $readPreference = [
@@ -180,7 +196,7 @@ class ApiLpaCollection
      * @param $lpaType
      * @return int
      */
-    public function countStartedForType($lpaType)
+    public function countStartedForType(string $lpaType) : int
     {
         //  Call from stats so (ideally) process on a secondary
         $readPreference = [
@@ -202,7 +218,7 @@ class ApiLpaCollection
      * @param $lpaType
      * @return int
      */
-    public function countCreatedForType($lpaType)
+    public function countCreatedForType(string $lpaType) : int
     {
         //  Call from stats so (ideally) process on a secondary
         $readPreference = [
@@ -224,7 +240,7 @@ class ApiLpaCollection
      * @param $lpaType
      * @return int
      */
-    public function countCompletedForType($lpaType)
+    public function countCompletedForType(string $lpaType) : int
     {
         //  Call from stats so (ideally) process on a secondary
         $readPreference = [
@@ -244,7 +260,7 @@ class ApiLpaCollection
      *
      * @return int
      */
-    public function countDeleted()
+    public function countDeleted() : int
     {
         //  Call from stats so (ideally) process on a secondary
         $readPreference = [
@@ -262,12 +278,12 @@ class ApiLpaCollection
      * Returns a list of lpa counts and user counts, in order to
      * answer questions of the form how many users have five LPAs?
      *
-     * @return array
-     *
      * The key of the return array is the number of LPAs
      * The value is the number of users with this many LPAs
+     *
+     * @return array
      */
-    public function getLpasPerUser()
+    public function getLpasPerUser() : array
     {
         // Returns the number of LPAs under each userId
         $map = new MongoCode(
@@ -335,12 +351,12 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs - with additional criteria if provided
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
+     * @param Datetime $start
+     * @param Datetime $end
      * @param array $additionalCriteria
      * @return int
      */
-    public function countCompletedBetween(\Datetime $start, \Datetime $end, $additionalCriteria = [])
+    public function countCompletedBetween(Datetime $start, Datetime $end, array $additionalCriteria = []) : int
     {
         //  Call from stats so (ideally) process on a secondary
         $readPreference = [
@@ -364,11 +380,11 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with a correspondent that has entered an email address
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
+     * @param Datetime $start
+     * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentEmail(\Datetime $start, \Datetime $end)
+    public function countCompletedBetweenCorrespondentEmail(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.correspondent' => [
@@ -382,11 +398,11 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with a correspondent that has entered phone number
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
+     * @param Datetime $start
+     * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentPhone(\Datetime $start, \Datetime $end)
+    public function countCompletedBetweenCorrespondentPhone(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.correspondent' => [
@@ -400,11 +416,11 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with a correspondent that has entered a postal address
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
+     * @param Datetime $start
+     * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentPost(\Datetime $start, \Datetime $end)
+    public function countCompletedBetweenCorrespondentPost(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.correspondent' => [
@@ -416,11 +432,11 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with a correspondent that has requested to be contacted in English
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
+     * @param Datetime $start
+     * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentEnglish(\Datetime $start, \Datetime $end)
+    public function countCompletedBetweenCorrespondentEnglish(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.correspondent' => [
@@ -432,11 +448,11 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with a correspondent that has requested to be contacted in Welsh
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
+     * @param Datetime $start
+     * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenCorrespondentWelsh(\Datetime $start, \Datetime $end)
+    public function countCompletedBetweenCorrespondentWelsh(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.correspondent' => [
@@ -448,11 +464,11 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with preferences
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
+     * @param Datetime $start
+     * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenWithPreferences(\Datetime $start, \Datetime $end)
+    public function countCompletedBetweenWithPreferences(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.preference' => new Regex('.+', '')
@@ -462,11 +478,11 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with instructions
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
+     * @param Datetime $start
+     * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenWithInstructions(\Datetime $start, \Datetime $end)
+    public function countCompletedBetweenWithInstructions(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.instruction' => new Regex('.+', '')
@@ -476,12 +492,12 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs by LPA type
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
-     * @param $lpaType
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param string $lpaType
      * @return int
      */
-    public function countCompletedBetweenByType(\Datetime $start, \Datetime $end, $lpaType)
+    public function countCompletedBetweenByType(Datetime $start, Datetime $end, string $lpaType) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.type' => $lpaType
@@ -491,12 +507,12 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs by canSign response
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
-     * @param $canSignValue
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param bool $canSignValue
      * @return int
      */
-    public function countCompletedBetweenByCanSign(\Datetime $start, \Datetime $end, $canSignValue)
+    public function countCompletedBetweenByCanSign(Datetime $start, Datetime $end, bool $canSignValue) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.donor.canSign' => $canSignValue
@@ -506,12 +522,12 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with at least one of the actor type defined
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
-     * @param $actorType
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param string $actorType
      * @return int
      */
-    public function countCompletedBetweenHasActors(\Datetime $start, \Datetime $end, $actorType)
+    public function countCompletedBetweenHasActors(Datetime $start, Datetime $end, string $actorType) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.' . $actorType => [
@@ -523,12 +539,12 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with none of the actor type
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
-     * @param $actorType
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param string $actorType
      * @return int
      */
-    public function countCompletedBetweenHasNoActors(\Datetime $start, \Datetime $end, $actorType)
+    public function countCompletedBetweenHasNoActors(Datetime $start, Datetime $end, string $actorType) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.' . $actorType => []
@@ -538,12 +554,12 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with multiple actors of the type
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
-     * @param $actorType
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param string $actorType
      * @return int
      */
-    public function countCompletedBetweenHasMultipleActors(\Datetime $start, \Datetime $end, $actorType)
+    public function countCompletedBetweenHasMultipleActors(Datetime $start, Datetime $end, string $actorType) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.' . $actorType => [
@@ -556,11 +572,11 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs where the donor is registering
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
+     * @param Datetime $start
+     * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenDonorRegistering(\Datetime $start, \Datetime $end)
+    public function countCompletedBetweenDonorRegistering(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.whoIsRegistering' => 'donor'
@@ -570,11 +586,11 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs where an attorney is registering
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
+     * @param Datetime $start
+     * @param Datetime $end
      * @return int
      */
-    public function countCompletedBetweenAttorneyRegistering(\Datetime $start, \Datetime $end)
+    public function countCompletedBetweenAttorneyRegistering(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.whoIsRegistering' => [
@@ -586,11 +602,12 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with a case number
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param bool $hasCaseNumber
      * @return int
      */
-    public function countCompletedBetweenCaseNumber(\Datetime $start, \Datetime $end, $hasCaseNumber)
+    public function countCompletedBetweenCaseNumber(Datetime $start, Datetime $end, bool $hasCaseNumber) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'repeatCaseNumber' => ($hasCaseNumber ? [
@@ -602,15 +619,15 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with the fee options set as provided
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
-     * @param $reducedFeeReceivesBenefits
-     * @param $reducedFeeAwardedDamages
-     * @param $reducedFeeLowIncome
-     * @param $reducedFeeUniversalCredit
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param ?bool $reducedFeeReceivesBenefits
+     * @param ?bool $reducedFeeAwardedDamages
+     * @param ?bool $reducedFeeLowIncome
+     * @param ?bool $reducedFeeUniversalCredit
      * @return int
      */
-    public function countCompletedBetweenFeeType(\Datetime $start, \Datetime $end, $reducedFeeReceivesBenefits, $reducedFeeAwardedDamages, $reducedFeeLowIncome, $reducedFeeUniversalCredit)
+    public function countCompletedBetweenFeeType(Datetime $start, Datetime $end, ?bool $reducedFeeReceivesBenefits, ?bool $reducedFeeAwardedDamages, ?bool $reducedFeeLowIncome, ?bool $reducedFeeUniversalCredit) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'payment.reducedFeeReceivesBenefits' => $reducedFeeReceivesBenefits,
@@ -623,12 +640,12 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with the payment type defined
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
-     * @param $paymentType
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param string $paymentType
      * @return int
      */
-    public function countCompletedBetweenPaymentType(\Datetime $start, \Datetime $end, $paymentType)
+    public function countCompletedBetweenPaymentType(Datetime $start, Datetime $end, string $paymentType) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'payment.method' => $paymentType,
@@ -638,14 +655,14 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with the attorney decisions (primary or replacement) set to the type and value provided
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
-     * @param $attorneyDecisionsType
-     * @param $decisionType
-     * @param $decisionValue
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param string $attorneyDecisionsType
+     * @param string $decisionType
+     * @param string $decisionValue
      * @return int
      */
-    public function countCompletedBetweenWithAttorneyDecisions(\Datetime $start, \Datetime $end, $attorneyDecisionsType, $decisionType, $decisionValue)
+    public function countCompletedBetweenWithAttorneyDecisions(Datetime $start, Datetime $end, string $attorneyDecisionsType, string $decisionType, string $decisionValue) : int
     {
         return $this->countCompletedBetween($start, $end, [
             sprintf('document.%s.%s', $attorneyDecisionsType, $decisionType) => $decisionValue
@@ -655,12 +672,12 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs with a trust set as an attorney
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
-     * @param $attorneyType
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param string $attorneyType
      * @return int
      */
-    public function countCompletedBetweenWithTrust(\Datetime $start, \Datetime $end, $attorneyType)
+    public function countCompletedBetweenWithTrust(Datetime $start, Datetime $end, string $attorneyType) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'document.' . $attorneyType => ['$elemMatch' => ['type' => 'trust']]
@@ -670,12 +687,12 @@ class ApiLpaCollection
     /**
      * Get the number of completed LPAs where the certificate provider is skipped or not
      *
-     * @param \Datetime $start
-     * @param \Datetime $end
-     * @param $isSkipped
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param bool $isSkipped
      * @return int
      */
-    public function countCompletedBetweenCertificateProviderSkipped(\Datetime $start, \Datetime $end, $isSkipped)
+    public function countCompletedBetweenCertificateProviderSkipped(Datetime $start, Datetime $end, bool $isSkipped) : int
     {
         return $this->countCompletedBetween($start, $end, [
             'metadata.' . Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED => ['$exists' => $isSkipped],
