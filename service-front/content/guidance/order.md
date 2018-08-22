@@ -30,8 +30,8 @@
 	* Process_How to view a draft of the LPA.md
 * Signing the LPA
 	* Process_Signing the LPA.md
-* Registering the LPA
-	* Process_Registering the LPA.md
+* How to register the LPA
+	* Process_How to register the LPA.md
 * Applicant
 	* People_Applicant.md
 * Correspondent
