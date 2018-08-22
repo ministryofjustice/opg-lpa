@@ -12,7 +12,6 @@ use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\Lock\LockedException;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery\MockInterface;
-use MongoDB\BSON\UTCDateTime;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Formatter;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -496,7 +495,7 @@ class ServiceTest extends AbstractServiceTest
         $this->apiLpaCollection->shouldReceive('fetchByUserId')
             ->withArgs([$user->getId()])
             ->once()
-            ->andReturn([['_id' => $lpa->getId()]]);
+            ->andReturn(new \ArrayIterator([['_id' => $lpa->getId()]]));
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
@@ -748,8 +747,6 @@ class ServiceTest extends AbstractServiceTest
             ->andReturn($isLpa === false ? null : ['_id' => $lpa->getId()]);
 
         if ($isLpa === true) {
-            $result['updatedAt'] = new UTCDateTime();
-
             $this->apiLpaCollection->shouldReceive('deleteById')
                 ->withArgs([$lpaId, $user->getId()])
                 ->once();
@@ -764,14 +761,19 @@ class ServiceTest extends AbstractServiceTest
     {
         $lpasCount = count($lpas);
 
-        $this->apiLpaCollection->shouldReceive('fetch')
+        $this->apiLpaCollection->shouldReceive('count')
             ->withArgs([$filter])
-            ->andReturn(new DummyLpaMongoCursor($lpas));
+            ->andReturn($lpasCount);
 
         if ($lpasCount > 0) {
+
+            $lpasArray = array_map(function (Lpa $lpa){
+                return $lpa->toArray(new DateCallback());
+            }, $lpas);
+
             $this->apiLpaCollection->shouldReceive('fetch')
                 ->withArgs([$filter, ['sort' => ['updatedAt' => -1], 'skip' => 0, 'limit' => 10]])
-                ->andReturn(new DummyLpaMongoCursor($lpas));
+                ->andReturn(new \ArrayIterator($lpasArray));
         }
     }
 }

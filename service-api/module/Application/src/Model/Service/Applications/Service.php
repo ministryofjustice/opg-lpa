@@ -170,8 +170,8 @@ class Service extends AbstractService
             }
         }
 
-        $cursor = $this->apiLpaCollection->fetch($filter);
-        $count = count($cursor->toArray());
+        // Get the total number of results
+        $count = $this->apiLpaCollection->count($filter);
 
         // If there are no records, just return an empty paginator...
         if ($count == 0) {
@@ -193,14 +193,13 @@ class Service extends AbstractService
                 ];
 
                 $cursor = $apiLpaCollection->fetch($filter, $options);
-                $lpas = $cursor->toArray();
 
                 // Convert the results to instances of the LPA object..
                 $items = array_map(function ($lpa) {
                     $lpa = [ 'id' => $lpa['_id'] ] + $lpa;
 
                     return new Lpa($lpa);
-                }, $lpas);
+                }, iterator_to_array($cursor, false));
 
                 return $items;
             },

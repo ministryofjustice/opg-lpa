@@ -2,6 +2,7 @@
 
 namespace Application\Model\DataAccess\Mongo\Collection;
 
+use Traversable;
 use DateTime;
 use Application\Library\DateTime as MillisecondDateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
@@ -51,21 +52,32 @@ class ApiLpaCollection implements ApplicationRepositoryInterface
     }
 
     /**
+     * Counts the number of results for the given criteria.
+     *
+     * @param array $criteria
+     * @return int
+     */
+    public function count(array $criteria) : int
+    {
+        return $this->collection->count($criteria);
+    }
+
+    /**
      * @param array $criteria
      * @param array $options
-     * @return iterable
+     * @return Traversable
      */
-    public function fetch(array $criteria, array $options = []) : iterable
+    public function fetch(array $criteria, array $options = []) : Traversable
     {
-        return $this->collection->find($criteria, $options);
+        yield from $this->collection->find($criteria, $options);
     }
 
     /**
      * @param string $userId
      * @param array $options
-     * @return iterable
+     * @return Traversable
      */
-    public function fetchByUserId(string $userId, array $options = []) : iterable
+    public function fetchByUserId(string $userId, array $options = []) : Traversable
     {
         return $this->fetch([
             'user' => $userId,

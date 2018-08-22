@@ -2,6 +2,7 @@
 namespace Application\Model\DataAccess\Repository\Application;
 
 use DateTime;
+use Traversable;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 
 interface ApplicationRepositoryInterface {
@@ -16,18 +17,26 @@ interface ApplicationRepositoryInterface {
     public function getById(int $id, ?string $userId = null) : ?array;
 
     /**
+     * Counts the number of results for the given criteria.
+     *
+     * @param array $criteria
+     * @return int
+     */
+    public function count(array $criteria) : int;
+
+    /**
      * @param array $criteria
      * @param array $options
-     * @return iterable
+     * @return Traversable
      */
-    public function fetch(array $criteria, array $options = []) : iterable;
+    public function fetch(array $criteria, array $options = []) : Traversable;
 
     /**
      * @param string $userId
      * @param array $options
-     * @return iterable
+     * @return Traversable
      */
-    public function fetchByUserId(string $userId, array $options = []) : iterable;
+    public function fetchByUserId(string $userId, array $options = []) : Traversable;
 
     /**
      * @param Lpa $lpa

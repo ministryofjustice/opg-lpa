@@ -168,7 +168,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->apiLpaCollection->shouldReceive('fetchByUserId')
             ->with(1)
-            ->andReturn([]);
+            ->andReturn(new \ArrayIterator([]));
 
         $this->apiUserCollection->shouldReceive('deleteById')
             ->withArgs([1])
@@ -203,7 +203,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->apiLpaCollection->shouldReceive('fetchByUserId')
             ->with(1)
-            ->andReturn([]);
+            ->andReturn(new \ArrayIterator([]));
 
         $this->apiUserCollection->shouldReceive('deleteById')
             ->withArgs([1])
