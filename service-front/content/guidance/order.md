@@ -2,6 +2,8 @@
 
 * What is an LPA
 	* About LPAs_What is an LPA.md
+* Mental capacity
+	* About LPAs_Mental capacity.md
 * How to make an LPA online
 	* Process_How to make an LPA online.md
 * Before you begin
