@@ -30,6 +30,8 @@
 	* Decisions_Preferences and instructions.md
 * How to view a draft of the LPA
 	* Process_How to view a draft of the LPA.md
+* If you find a mistake
+	* Process_If you find a mistake.md
 * Signing the LPA
 	* Process_Signing the LPA.md
 * How to register the LPA
