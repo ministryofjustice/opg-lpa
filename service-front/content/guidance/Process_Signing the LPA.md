@@ -39,7 +39,7 @@ Witnesses must give their full name and address wherever they sign the form.
 
 ### Check your signing dates
 
-Once you’ve completed your LPA, you'll see a link to the ‘check signing dates’ service on the [your LPAs](https://www.lastingpowerofattorney.service.gov.uk/user/dashboard) page.
+Once you’ve completed your LPA, you'll see a link to the ‘check signing dates’ service on the [your LPAs](/user/dashboard) page.
 
 You can use this service to check the LPA has been signed in the correct order, before you send it for registration.
 
