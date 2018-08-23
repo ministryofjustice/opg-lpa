@@ -8,7 +8,7 @@ You'll be asked some questions and we'll use your answers to create an LPA that 
 
 You cannot complete the whole process online as the law says that an LPA must be a paper document with handwritten signatures or marks.
 
-We'll save the LPA as you progress so you do not need to make it in one go. You can stop at any time, then come back when you’re ready to continue. You can also [view a draft of the LPA](/help/#topic-how-to-view-a-draft-of-the-lpa) before you finish making it.
+We'll save the LPA as you progress so you do not need to make it in one go. You can stop at any time, then come back when you’re ready to continue. You can also [view a draft of the LPA](/help/#topic-view-a-draft-of-the-lpa) before you finish making it.
 
 You can only make an LPA for England and Wales – your LPA may not be recognised in other countries. There’s a different process in [Scotland](http://www.publicguardian-scotland.gov.uk/power-of-attorney) and [Northern Ireland](http://www.nidirect.gov.uk/managing-your-affairs-and-enduring-power-of-attorney). People involved in the LPA do not need to be British citizens or live in the UK.
 
