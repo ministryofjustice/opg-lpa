@@ -1,91 +1,114 @@
 # Attorneys
-Attorneys are people you trust and appoint under your LPA to make decisions on your behalf when you don't have mental capacity.
 
-You must have at least one attorney. There's no upper limit but too many attorneys could make things difficult, as they'll need to work together.
+When they make an LPA, the [donor](/help/#topic-donor) chooses one or more trusted people to make decisions (‘act’) on their behalf. These people are called attorneys.
 
-You should think about replacement attorneys – people who step in if one of your original attorneys can no longer act. See [Replacement attorneys](/help/#topic-replacement-attorneys) for more information.
+The donor must choose at least one attorney. They can have as many attorneys as they want, but if there are too many, it may be difficult for them to all work together.
+
+When making decisions for the donor, the attorneys must always:
+
+* act in the donor’s best interests
+* follow any instructions the donor put in their LPA
+* consider any preferences the donor put in their LPA
+
+[When an LPA can be used](/help/#topic-when-an-lpa-can-be-used) explains when attorneys can start acting on the donor’s behalf.
+
+[The 2 types of LPA](/help/#topic-the-2-types-of-lpa) explains the types of decisions the attorneys will be able to make on the donor’s behalf.
+
+Attorneys need to [sign the LPA](/help/#topic-signing-the-lpa) before it can be registered.
 
 ## Who can be an attorney
 
-In legal terms, an 'attorney' is a person who's allowed to act on behalf of someone.
+The donor can ask anyone aged 18 or over who has mental capacity to be their attorney.
 
-Attorneys don't need to be solicitors. Many people choose family members, friends and other people they trust with no legal background. If an attorney is not a professional, the important thing is that you know each other well and they respect your views and  will act in your best interests.
+A person who is on the Disclosure and Barring Service barred list cannot act as an attorney. They're breaking the law if they do.
 
-You can ask anyone with mental capacity aged 18 or over to be your attorney, including:
+An undischarged bankrupt or a person subject to a debt relief order cannot be an attorney for a property and financial affairs LPA.
 
-* your wife, husband, civil partner or partner
-* a family member
-* a close friend
-* a professional, such as a solicitor
+## Choosing attorneys
 
-Make sure that each person agrees to be your attorney before you name them in your LPA.
+The donor should choose people they trust and know well. Many donors choose family members or close friends to be their attorneys.
 
-If you choose your wife, husband or civil partner and your relationship is later legally ended, they will usually have to stop being your attorney. However, you can state in your instructions that they can continue to be your attorney if your relationship legally ends. If you don't and they are your only attorney, your LPA will be cancelled.
+Attorneys do not need to be solicitors or have a legal background.
 
-A person who is on the Disclosure and Barring Service barred list can't act as an attorney. They're breaking the law if they do.
+The donor must decide:
 
-### Property and financial affairs LPA attorneys
+* who they want to appoint as their attorney or attorneys
+* whether they want any [replacement attorneys](/help/#topic-replacement-attorneys) - people who step in if one of the original attorneys can no longer act
+* [how they want their attorneys to work together](/help/#topic-how-multiple-attorneys-make-decisions)
 
-An undischarged bankrupt or a person subject to a debt relief order can't be an attorney for a property and financial affairs LPA. If an attorney becomes bankrupt or subject to a debt relief order after the LPA has been registered, they will no longer be able to act.
+It’s important that:
 
-Bankruptcy and debt relief orders don't affect health and welfare LPAs.
+* the donor knows their attorneys well
+* the attorneys understand the donor’s beliefs and preferences well enough to make decisions for the donor
+* the donor trusts their attorneys to act in their best interests
+* the attorneys have the skills to act under the LPA. For example, do they manage their own affairs well? Are they good with money?
 
-If you appoint a professional attorney for a property and financial affairs LPA, such as a solicitor, you must name an individual. You can't just give a job title or the name of a firm. Professional attorneys usually charge fees.
+The donor should fully discuss the LPA with their potential attorneys before appointing them. Being an attorney can be a lot of work. Ask the potential attorneys to visit the ‘[Acting as an attorney](https://www.gov.uk/lasting-power-attorney-duties)’ pages on GOV.UK to find out more about what’s involved.
 
-### Trust corporation
+Each attorney must:
 
-A trust corporation can be an attorney for a property and financial affairs LPA. A trust corporation manages funds: for example, savings, pensions, investments. It is usually run by a commercial bank or firm of solicitors.
+* understand the role and responsibilities of an attorney
+* agree to be the donor’s attorney
+* sign the LPA
+* follow the [Mental Capacity Act Code of Practice](https://www.gov.uk/government/publications/mental-capacity-act-code-of-practice)
 
-If your finances are complex or you don't have anyone you want to appoint, you might choose a trust corporation. If you're considering this, you should get legal or financial advice.
+## Appointing the donor’s wife, husband or civil partner as an attorney
 
-If you appoint a trust corporation, make sure you use the exact name they operate under in your LPA. You can't appoint more than one trust corporation in your LPA.
+The donor can appoint their wife, husband or civil partner as an attorney. This person will usually have to stop being an attorney if the marriage or civil partnership is later ended through divorce, dissolution or annulment. If they’re the only attorney and there are no replacements, this means the LPA can no longer be used. See ‘When attorneys can no longer act’ below.
 
-### Health and welfare LPA attorneys
+In their [instructions](/help/#topic-preferences-and-instructions) the donor can state that their wife, husband or civil partner can continue to be their attorney after a divorce, dissolution or annulment.
 
-An attorney for a health and welfare LPA must be a person. You can have as many attorneys as you need.
+## Professional attorneys
 
-## When attorneys can act
-Your LPA can only be used after it's been registered by the Office of the Public Guardian (OPG).
+Some donors ask a professional, such as a solicitor or accountant, to be their attorney or one of their attorneys. Professional attorneys usually charge fees.
 
-There are different rules about when attorneys can start making decisions on your behalf, depending on:
+If the donor appoints a professional attorney, they must name an individual in the LPA. They cannot just give a job title or the name of a firm.
 
-* the type of LPA
-* whether you still have the mental capacity to make decisions
+## If an attorney becomes bankrupt or subject to a debt relief order
 
-[When an LPA can be used](/help/#topic-when-an-lpa-can-be-used) explains the rules for the 2 types of LPA.
+If an attorney on a property and financial affairs LPA becomes bankrupt or subject to a debt relief order after the LPA is registered, they’ll no longer be able to act. If they’re the only attorney and there are no replacements, this means the LPA can no longer be used. See ‘When attorneys can no longer act’ below.
 
-### Mental capacity: definition
+People who are bankrupt or subject to a debt relief order can still be attorneys on a health and welfare LPA.
 
-'Mental capacity' means the ability to make a decision. A person with mental capacity has at least a general understanding of the decision they need to make, why they need to make it and the likely consequences. Sometimes people can make some kinds of decision but don't have the mental capacity to make others.
+## If an attorney is placed on the Disclosure and Barring Service barred list
 
-The Ministry of Justice website has <a href="http://www.justice.gov.uk/protecting-the-vulnerable/mental-capacity-act" rel="external" target="_blank">more information about mental capacity</a>.
+If an attorney on any type of LPA is placed on the Disclosure and Barring Service barred list, they’ll no longer be able to act an attorney. They're breaking the law if they do.
+
+If they’re the only attorney and there are no replacements, this means the LPA can no longer be used. See ‘When attorneys can no longer act’ below.
+
+## Trust corporations
+
+A trust corporation can be the attorney or one of the attorneys on a property and financial affairs LPA. A trust corporation manages funds, such as savings, pensions, investments. It’s usually run by a commercial bank or firm of solicitors.
+
+If the donor’s finances are complex or they do not have anyone they want to appoint as an attorney, they might choose a trust corporation. If they’re considering this, the donor should get legal or financial advice.
+
+If the donor appoints a trust corporation as their attorney, make sure you use the exact name it operates under in the LPA.
+
+The donor can only appoint one trust corporation in their LPA.
 
 ## When attorneys can no longer act
 
-An attorney can no longer act on your behalf if they:
+An attorney can no longer act if they:
 
-* lose mental capacity
-* decide they no longer want to act as your attorney (known as 'disclaiming their appointment')
-* were your wife, husband or civil partner but your relationship has legally ended and you've not stated in your LPA restrictions that they can continue
+* lose [mental capacity](/help/#topic-mental-capacity)
+* decide they no longer want to act as an attorney (known as 'disclaiming their appointment')
+* were the donor’s wife, husband or civil partner, but the relationship has legally ended (unless the donor states otherwise in their instructions)
 * become bankrupt or subject to a debt relief order and were an attorney for a property and financial affairs LPA
+* are placed on the Disclosure and Barring Service barred list
 
-If you've said that your attorneys must act together for some or all decisions, they will not be able to make those decisions if one dies or can no longer act for you for another reason. To protect your LPA, you should consider appointing replacement attorneys.
+When an attorney dies or can no longer act, the LPA will be cancelled if:
 
-If you cancel your LPA, your attorneys can no longer act on your behalf.
+* the donor only appointed one attorney and no replacement attorneys
+* the donor appointed the attorneys jointly and did not appoint any replacements
+
+To protect their LPA, the donor should consider appointing [replacement attorneys](/help/#topic-replacement-attorneys).
+
+If the donor cancels their LPA, the attorneys can no longer act on the donor’s behalf.
+
+### Remove an attorney after the LPA has been registered
+
+As long as the donor still has mental capacity, they can contact OPG and ask for a particular attorney to be removed from their LPA.
 
 ### Concerns about attorneys
 
-The Office of the Public Guardian (OPG) does not supervise attorneys. However, if someone believes your attorneys are not acting in your best interests, they can raise concerns with OPG. OPG or other organisations, such as the police or social services, may investigate.
-
-### Questions to ask yourself
-
-Most donors take some time choosing the best people to be their attorneys. Consider these questions:
-
-
-* How many attorneys do you want to appoint?
-* Are these people willing to act? Have you discussed your LPA fully with them?
-* Do they understand the role and responsibilities of an attorney?
-* Do you trust them to act in your best interests?
-* Do they know you, your beliefs and your preferences well enough to make decisions for you?
-* Do they have the skills to act under your LPA and do they manage their own affairs well? For example, are they good with money?
-* Who can be your replacement attorneys?
+The Office of the Public Guardian (OPG) does not supervise attorneys. However, people can raise concerns with OPG if they believe an attorney is not acting in the donor’s best interests. OPG or other organisations, such as the police or social services, may investigate.
