@@ -19,7 +19,7 @@ The donor must sign the LPA before the certificate provider. The certificate pro
 
 ## Who can be a certificate provider
 
-The certificate provider must be 18 years old or over and have mental capacity.
+The certificate provider must be 18 years old or over and have [mental capacity](/help/#topic-mental-capacity).
 
 They can be either:
 

@@ -47,7 +47,7 @@ A person to notify can object to an LPA's registration if:
 
 * the donor or an attorney has died
 * the donor and an attorney were married or had a civil partnership, and the relationship has legally ended
-* an attorney does not have mental capacity
+* an attorney does not have [mental capacity](/help/#topic-mental-capacity)
 * an attorney has decided they do not want to be an attorney anymore (known as 'disclaiming their appointment')
 * the donor or an attorney is bankrupt, interim bankrupt or subject to a debt relief order (this only applies to property and financial affairs LPAs)
 
