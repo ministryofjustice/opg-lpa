@@ -43,7 +43,7 @@ This must be one of the following:
 * a registered social worker
 * an independent mental capacity advocate (IMCA)
 
-Other professionals may have skills that allow them to judge whether the donor can make an LPA. [Contact the Office of the Public Guardian](https://www.lastingpowerofattorney.service.gov.uk/contact) if you’re not sure about the donor’s choice of certificate provider.
+Other professionals may have skills that allow them to judge whether the donor can make an LPA. [Contact the Office of the Public Guardian](/contact) if you’re not sure about the donor’s choice of certificate provider.
 
 If you choose a professional, they may charge you a fee.
 
