@@ -1994,6 +1994,10 @@ input[type=number] {
   padding-left: 20px;
   list-style-type: decimal; }
 
+.help-sections ol.alpha {
+  padding-left: 20px;
+  list-style-type: upper-alpha; }
+
 .flush {
   margin: 0 !important; }
 

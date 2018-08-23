@@ -16,8 +16,14 @@ When making a health and welfare LPA, the donor must choose who they want to mak
 
 The donor has 2 options.
 
-1. **To give their attorneys authority to give or refuse consent to life-sustaining treatment** on the donor’s behalf. If the donor chooses this option, their attorneys can speak to doctors as if they were the donor.
-2. **Not to give their attorneys authority to give or refuse consent to life-sustaining treatment** on the donor’s behalf. If the donor chooses this option, it means doctors will make any decisions about life-sustaining treatment instead of the donor’s attorneys.
+<ol class="alpha">
+    <li>
+        <strong>To give their attorneys authority to give or refuse consent to life-sustaining treatment</strong> on the donor’s behalf. If the donor chooses this option, their attorneys can speak to doctors as if they were the donor.
+    </li>
+    <li>
+        <strong>Not to give their attorneys authority to give or refuse consent to life-sustaining treatment</strong> on the donor’s behalf. If the donor chooses this option, it means doctors will make any decisions about life-sustaining treatment instead of the donor’s attorneys.
+    </li>
+</ol>
 
 After you print out the LPA document, the donor has to sign and date the option they've chosen. This must be witnessed.
 
