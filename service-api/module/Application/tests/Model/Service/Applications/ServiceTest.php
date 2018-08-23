@@ -9,7 +9,6 @@ use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
 use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\DataModelEntity;
-use Application\Model\Service\Lock\LockedException;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
@@ -281,27 +280,6 @@ class ServiceTest extends AbstractServiceTest
         $lpaOut = $patchedEntity->getData();
 
         $this->assertNotEquals($lpa->getUpdatedAt(), $lpaOut->getUpdatedAt());
-    }
-
-    public function testPatchLockedLpa()
-    {
-        $lpa = FixturesData::getHwLpa();
-
-        $user = FixturesData::getUser();
-
-        $lpa->setLocked(true);
-
-        $this->setFindOneLpaExpectation($user, $lpa);
-
-        $this->expectException(LockedException::class);
-        $this->expectExceptionMessage('LPA has already been locked.');
-
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
-            ->build();
-
-        $service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
     }
 
     public function testPatchSetCreatedDate()
@@ -705,7 +683,13 @@ class ServiceTest extends AbstractServiceTest
 
         $this->apiLpaCollection->shouldReceive('update')
             ->once()
-            ->andReturnUsing(function (Lpa $lpaIn, $updateTimestamp) {
+            ->andReturnUsing(function (Lpa $lpaIn) use ($existingLpa) {
+
+                $updateTimestamp = true;
+                if (!is_null($existingLpa)) {
+                    $updateTimestamp = !$lpaIn->equalsIgnoreMetadata($existingLpa);
+                }
+
                 if ($lpaIn->isStateCreated()) {
                     if (!$lpaIn->getCreatedAt() instanceof DateTime) {
                         $lpaIn->setCreatedAt(new DateTime());
