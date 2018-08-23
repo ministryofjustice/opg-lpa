@@ -1,6 +1,6 @@
 ## Help topics
 
-* What is an LPA
+* What is an LPA?
 	* About LPAs_What is an LPA.md
 * Mental capacity
 	* About LPAs_Mental capacity.md
@@ -42,7 +42,7 @@
 	* People_Applicant.md
 * Correspondent
 	* People_Correspondent.md
-* Fees reductions and exemptions
+* Fees, reductions and exemptions
 	* Process_Fees reductions and exemptions.md
 * Glossary
 	* About LPAs_Glossary.md

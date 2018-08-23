@@ -27,7 +27,10 @@ class Guidance extends AbstractService
             if (preg_match('/^\s+\*\s*(.*\.md)/', $line, $matches)) {
                 $sectionFilename = trim($matches[1]);
 
-                $sectionId = trim(strtolower(str_replace(' ', '-', $sectionTitle)));
+                // Cleaning out characters that won't play nicely in a url
+                $sectionTitleClean = str_replace(array('?',','),'',$sectionTitle);
+
+                $sectionId = trim(strtolower(str_replace(' ', '-', $sectionTitleClean)));
 
                 $sectionArray[] = [
                     'id' => $sectionId,
