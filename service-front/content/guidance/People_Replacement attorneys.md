@@ -27,7 +27,7 @@ See the [Attorneys](/help/#topic-attorneys) section for more information.
 Replacement attorneys step in if one of the attorneys can no longer act. This may be because the attorney:
 
 * dies
-* loses mental capacity
+* loses [mental capacity](/help/#topic-mental-capacity)
 * decides they no longer want to act as an attorney (known as 'disclaiming their appointment')
 * was the donor’s wife, husband or civil partner, but the relationship has legally ended and the donor has not stated in their instructions that their ex-partner can continue as an attorney in these circumstances
 * becomes bankrupt or subject to a debt relief order and was an attorney for a property and financial affairs LPA

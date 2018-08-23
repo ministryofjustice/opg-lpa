@@ -27,7 +27,7 @@ The donor can also make a separate LPA for their business affairs if they want d
 When they make their LPA, the donor can decide whether it can be used:
 
 * as soon as it’s registered
-* only when they have lost mental capacity
+* only when they have lost [mental capacity](/help/#topic-mental-capacity)
 
 Find out more about deciding [when an LPA can be used](/help/#topic-when-an-lpa-can-be-used).
 
@@ -55,7 +55,7 @@ The attorney must ask for money from the person in charge of the donor’s funds
 
 ### When a health and welfare LPA can be used
 
-This type of LPA can only be used after it’s been registered and if the donor does not have the mental capacity to make decisions.
+This type of LPA can only be used after it’s been registered and if the donor does not have the [mental capacity](/help/#topic-mental-capacity) to make decisions.
 
 Find out more about [when an LPA can be used](/help/#topic-when-an-lpa-can-be-used).
 
