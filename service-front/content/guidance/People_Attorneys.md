@@ -18,7 +18,7 @@ Attorneys need to [sign the LPA](/help/#topic-signing-the-lpa) before it can be 
 
 ## Who can be an attorney
 
-The donor can ask anyone aged 18 or over who has mental capacity to be their attorney.
+The donor can ask anyone aged 18 or over who has [mental capacity](/help/#topic-mental-capacity) to be their attorney.
 
 A person who is on the Disclosure and Barring Service barred list cannot act as an attorney. They're breaking the law if they do.
 
