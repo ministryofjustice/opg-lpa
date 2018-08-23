@@ -29,16 +29,16 @@ casper.test.begin('Checking the guidance popup', {
             test.pass('Guidance popup appears.');
 
             //-------------------------------------------------------
-            // Initially the popup should show 'LPA basics'...
+            // Initially the popup should show 'What is an LPA?'...
 
-            // By default we should get LPA basics...
+            // By default we should get What is an LPA?...
             test.assertUrlMatch( new RegExp('^'+basePath + paths.firstGuidance+'$'), 'Popup URL is correct.');
 
             // And so this id should be visible...
-            test.assertVisible('#topic-lpa-basics', 'Basics article is visible.');
+            test.assertVisible('#topic-what-is-an-lpa', 'What is an LPA? article is visible.');
 
             // And most likely the h1 is...
-            test.assertSelectorHasText('#topic-lpa-basics h1', 'LPA basics', 'Basics article h1 looks sensible.');
+            test.assertSelectorHasText('#topic-what-is-an-lpa h1', 'What is an LPA?', 'Basics article h1 looks sensible.');
 
             //-------------------------------------------------------
             // Check all of the side links...
@@ -52,7 +52,7 @@ casper.test.begin('Checking the guidance popup', {
             test.assertElementCount('#popup .help-topics a.js-guidance', numberOfGuidanceHelpTopics, numberOfGuidanceHelpTopics+' help topics correctly found.');
 
             var lastUrl = this.getCurrentUrl();
-            var lastH1 = this.getElementsInfo('#topic-lpa-basics h1')[0].text;
+            var lastH1 = this.getElementsInfo('#topic-what-is-an-lpa h1')[0].text;
 
             // We're going to iterate over all help topics minus the first (because we're already on that one)...
             for (var i = 0; i < (numberOfGuidanceHelpTopics-1); i++) {
