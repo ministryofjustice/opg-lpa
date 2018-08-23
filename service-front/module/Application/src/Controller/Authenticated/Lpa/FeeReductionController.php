@@ -57,7 +57,7 @@ class FeeReductionController extends AbstractLpaController
         $amount = Calculator::getBenefitsFee( $isRepeatApplication );
         $amount = ( floor( $amount ) == $amount ) ? $amount : money_format('%i', $amount);
         $reductionOptions['reducedFeeReceivesBenefits'] = new Element('reductionOptions', [
-            'label' => "The donor currently claims one of <a class=\"js-guidance\" href=\"/guide#topic-fees-and-reductions\" data-journey-click=\"page:link:help: these means-tested benefits\">these means-tested benefits</a> and hasn't been awarded personal injury damages of more than £16,000<br><strong class='bold-small'>Fee: £".$amount."</strong>"
+            'label' => "The donor currently claims one of <a class=\"js-guidance\" href=\"/guide#topic-fees-reductions-and-exemptions\" data-journey-click=\"page:link:help: these means-tested benefits\">these means-tested benefits</a> and hasn't been awarded personal injury damages of more than £16,000<br><strong class='bold-small'>Fee: £".$amount."</strong>"
         ]);
         $reductionOptions['reducedFeeReceivesBenefits']->setAttributes([
             'type' => 'radio',
