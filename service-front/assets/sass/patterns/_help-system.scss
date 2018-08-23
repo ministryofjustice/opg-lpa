@@ -175,6 +175,10 @@
     ol {
         @extend %list-number;
     }
+
+    ol.alpha {
+        @extend %list-alpha;
+    }
 }
 
 .help-footer {
