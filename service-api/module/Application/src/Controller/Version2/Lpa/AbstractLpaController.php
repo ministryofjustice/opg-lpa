@@ -5,7 +5,7 @@ namespace Application\Controller\Version2\Lpa;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\Service\AbstractService;
-use Application\Model\Service\Lock\LockedException;
+use Application\Model\DataAccess\Repository\Application\LockedException;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Mvc\MvcEvent;
 use ZfcRbac\Exception\UnauthorizedException as ZFCUnauthorizedException;

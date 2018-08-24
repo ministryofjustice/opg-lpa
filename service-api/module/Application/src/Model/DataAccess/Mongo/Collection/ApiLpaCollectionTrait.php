@@ -2,7 +2,6 @@
 
 namespace Application\Model\DataAccess\Mongo\Collection;
 
-use Application\Model\Service\Lock\LockedException;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\Logger\Logger;
 use RuntimeException;
@@ -62,17 +61,7 @@ trait ApiLpaCollectionTrait
             throw new RuntimeException('LPA object is invalid');
         }
 
-        // Check LPA in database isn't locked...
-        $existingLpa = $this->getLpa($lpa->id);
-
-        if ($existingLpa instanceof Lpa && $existingLpa->isLocked()) {
-            throw new LockedException('LPA has already been locked.');
-        }
-
-        //  Only update the timestamp if the LPA document itself has changed
-        $updateTimestamp = (is_null($existingLpa) || !$lpa->equalsIgnoreMetadata($existingLpa));
-
-        $this->apiLpaCollection->update($lpa, $updateTimestamp);
+        $this->apiLpaCollection->update($lpa);
 
         $logger->info('LPA updated successfully', [
             'lpaid' => $lpa->id,

@@ -45,13 +45,12 @@ interface ApplicationRepositoryInterface {
     public function insert(Lpa $lpa) : bool;
 
     /**
-     * Update the LPA and the updated TS if requested to do so
+     * Update the LPA
      *
      * @param Lpa $lpa
-     * @param bool $updateTimestamp
      * @return bool
      */
-    public function update(Lpa $lpa, bool $updateTimestamp) : bool;
+    public function update(Lpa $lpa) : bool;
 
     /**
      * @param int $lpaId

@@ -5,6 +5,7 @@ namespace Application\Model\DataAccess\Mongo\Collection;
 use Traversable;
 use DateTime;
 use Application\Library\DateTime as MillisecondDateTime;
+use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Mongo\DateCallback;
 use MongoDB\BSON\Javascript as MongoCode;
@@ -96,14 +97,30 @@ class ApiLpaCollection implements ApplicationRepositoryInterface
     }
 
     /**
-     * Update the LPA and the updated TS if requested to do so
+     * Update the LPA
      *
      * @param Lpa $lpa
-     * @param bool $updateTimestamp
      * @return bool
      */
-    public function update(Lpa $lpa, bool $updateTimestamp) : bool
+    public function update(Lpa $lpa) : bool
     {
+        // Check to ensure the LPA isn't locked.
+        $inDbLpa = $this->getById($lpa->getId());
+
+        $updateTimestamp = true;
+
+        if (!is_null($inDbLpa)) {
+            $inDbLpa = new Lpa($inDbLpa);
+
+            if ($inDbLpa->isLocked()) {
+                throw new LockedException('LPA has already been locked.');
+            }
+
+            $updateTimestamp = !$lpa->equalsIgnoreMetadata($inDbLpa);
+        }
+
+        //------------------------------------------
+
         //  If instrument created, record the date.
         if ($lpa->isStateCreated()) {
             if (!($lpa->createdAt instanceof DateTime)) {
