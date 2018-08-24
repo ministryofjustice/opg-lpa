@@ -25,7 +25,7 @@ trait ApplicationRepositoryTrait {
      */
     private function getApplicationRepository() : ApplicationRepositoryInterface
     {
-        if (!($this->applicationRepository instanceof WhoRepositoryInterface)) {
+        if (!($this->applicationRepository instanceof ApplicationRepositoryInterface)) {
             throw new \RuntimeException("Instance of ApplicationRepository not set");
         }
 

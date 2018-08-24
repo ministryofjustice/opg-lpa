@@ -106,6 +106,10 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             if (in_array(StatsRepository\StatsRepositoryTrait::class, $traitsUsed)) {
                 $service->setStatsRepository($container->get(StatsRepository\StatsRepositoryInterface::class));
             }
+
+            if (in_array(ApplicationRepository\ApplicationRepositoryTrait::class, $traitsUsed)) {
+                $service->setApplicationRepository($container->get(ApplicationRepository\ApplicationRepositoryInterface::class));
+            }
         }
 
         //  If required load any additional services into the service

@@ -50,10 +50,12 @@ class Module
     {
         return [
             'aliases' => [
-                Repository\User\UserRepositoryInterface::class  => Mongo\Collection\AuthUserCollection::class,
-                Repository\User\LogRepositoryInterface::class   => Mongo\Collection\AuthLogCollection::class,
-                Repository\Application\WhoRepositoryInterface::class  => Mongo\Collection\ApiWhoCollection::class,
-                Repository\Stats\StatsRepositoryInterface::class  => Mongo\Collection\ApiStatsLpasCollection::class,
+                // Map the Repository Interfaces to concrete implementations.
+                Repository\User\LogRepositoryInterface::class => Mongo\Collection\AuthLogCollection::class,
+                Repository\User\UserRepositoryInterface::class => Mongo\Collection\AuthUserCollection::class,
+                Repository\Stats\StatsRepositoryInterface::class => Mongo\Collection\ApiStatsLpasCollection::class,
+                Repository\Application\WhoRepositoryInterface::class => Mongo\Collection\ApiWhoCollection::class,
+                Repository\Application\ApplicationRepositoryInterface::class => Mongo\Collection\ApiLpaCollection::class,
             ],
             'invokables' => [
                 HttpClient::class => Guzzle6Client::class,
