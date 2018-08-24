@@ -99,7 +99,7 @@ An attorney can no longer act if they:
 When an attorney dies or can no longer act, the LPA will be cancelled if:
 
 * the donor only appointed one attorney and no replacement attorneys
-* the donor appointed the attorneys jointly and did not appoint any replacements
+* the donor appointed the attorneys jointly and did not appoint any replacements, unless the donor specified otherwise in their [instructions](/help/#topic-preferences-and-instructions)
 
 To protect their LPA, the donor should consider appointing [replacement attorneys](/help/#topic-replacement-attorneys).
 
