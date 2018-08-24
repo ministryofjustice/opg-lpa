@@ -2,7 +2,7 @@
 
 This online service helps you make a lasting power of attorney (LPA) that you can post to Office of the Public Guardian (OPG) for registration. An LPA can only be used once OPG have registered it.
 
-The donor can use the service to make their LPA themselves or ask someone to help them make it.
+The [donor](/help/#topic-donor) can use the service to make their LPA themselves or ask someone to help them make it.
 
 You'll be asked some questions and we'll use your answers to create an LPA that you can print, get everyone to sign, and then post to OPG for registration.
 
