@@ -1,6 +1,6 @@
 # Before you begin
 
-Before you start making the LPA, it’s important that the donor knows how they want it to work and talks to the people they want to be involved.
+Before you start making the LPA, it’s important that the [donor](/help/#topic-donor) knows how they want it to work and talks to the people they want to be involved.
 
 The donor should decide:
 
