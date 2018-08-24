@@ -2,7 +2,7 @@
 
 There are 2 types of LPA: property and financial affairs, and health and welfare.
 
-The [donor](/help/#topic-donor) can have one or both. The LPAs do not have to be made at the same time and the donor can choose different attorneys for each LPA.
+The [donor](/help/#topic-donor) can have one or both. The LPAs do not have to be made at the same time and the donor can choose different [attorneys](/help/#topic-attorneys) for each LPA.
 
 ## Property and financial affairs
 
@@ -12,7 +12,7 @@ The donor does not have to own their own home or have a lot of money to make thi
 
 ### Decisions the attorneys can make
 
-The donor chooses people they trust (‘[attorneys](/help/#topic-attorneys)’) to make decisions on their behalf about money and financial matters, such as:
+The donor chooses people they trust (attorneys) to make decisions on their behalf about money and financial matters, such as:
 
 * opening, closing and using their bank or building society accounts
 * claiming, receiving and using their benefits, pensions and allowances
@@ -37,7 +37,7 @@ This LPA covers the donor’s health care and personal welfare.
 
 ### Decisions the attorneys can make
 
-The donor chooses people they trust (‘[attorneys](/help/#topic-attorneys)’) to make decisions about things such as:
+The donor chooses people they trust (attorneys) to make decisions about things such as:
 
 * giving or refusing consent to particular types of health care, including medical treatment
 * getting help and support from social services
