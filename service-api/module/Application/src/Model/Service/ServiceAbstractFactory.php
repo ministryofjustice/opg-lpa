@@ -2,9 +2,7 @@
 
 namespace Application\Model\Service;
 
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Library\ApiProblem\ApiProblemException;
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 use Application\Model\DataAccess\Repository\Stats as StatsRepository;
@@ -87,10 +85,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
 
         //  Inject the required Mongo collections
         if (is_array($traitsUsed)) {
-            if (in_array(ApiLpaCollectionTrait::class, $traitsUsed)) {
-                $service->setApiLpaCollection($container->get(ApiLpaCollection::class));
-            }
-
             if (in_array(UserRepository\LogRepositoryTrait::class, $traitsUsed)) {
                 $service->setLogRepository($container->get(UserRepository\LogRepositoryInterface::class));
             }

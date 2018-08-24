@@ -4,7 +4,7 @@ namespace Application\Model\Service\AttorneysReplacement;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys;
@@ -12,7 +12,7 @@ use RuntimeException;
 
 class Service extends AbstractService
 {
-    use ApiLpaCollectionTrait;
+    use ApplicationRepositoryTrait;
 
     /**
      * @param $lpaId
