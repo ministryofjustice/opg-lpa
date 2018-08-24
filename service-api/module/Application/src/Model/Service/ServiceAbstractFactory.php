@@ -31,7 +31,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
     private $additionalServices = [
         AccountCleanup\Service::class => [
             'setConfig'                 => 'config',
-            'setGuzzleClient'           => 'GuzzleClient',
+            'setNotifyClient'           => 'NotifyClient',
             'setSnsClient'              => 'SnsClient',
             'setUserManagementService'  => UserManagementService::class,
         ],
