@@ -49,7 +49,13 @@ class ApiLpaCollection implements ApplicationRepositoryInterface
             $criteria['user'] = $userId;
         }
 
-        return $this->collection->findOne($criteria);
+        $result = $this->collection->findOne($criteria);
+
+        if (is_array($result) && isset($result['_id'])) {
+            $result = ['id' => $result['_id']] + $result;
+        }
+
+        return $result;
     }
 
     /**
