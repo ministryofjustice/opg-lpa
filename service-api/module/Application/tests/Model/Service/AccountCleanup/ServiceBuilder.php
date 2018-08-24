@@ -10,7 +10,7 @@ class ServiceBuilder extends AbstractServiceBuilder
 {
     private $config = null;
 
-    private $guzzleClient = null;
+    private $notifyClient = null;
 
     private $snsClient = null;
 
@@ -28,8 +28,8 @@ class ServiceBuilder extends AbstractServiceBuilder
             $service->setConfig($this->config);
         }
 
-        if ($this->guzzleClient !== null) {
-            $service->setGuzzleClient($this->guzzleClient);
+        if ($this->notifyClient !== null) {
+            $service->setNotifyClient($this->notifyClient);
         }
 
         if ($this->snsClient !== null) {
@@ -54,12 +54,12 @@ class ServiceBuilder extends AbstractServiceBuilder
     }
 
     /**
-     * @param MockInterface $guzzleClient
+     * @param MockInterface $notifyClient
      * @return $this
      */
-    public function withGuzzleClient($guzzleClient)
+    public function withNotifyClient($notifyClient)
     {
-        $this->guzzleClient = $guzzleClient;
+        $this->notifyClient = $notifyClient;
         return $this;
     }
 

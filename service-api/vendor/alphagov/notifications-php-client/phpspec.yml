@@ -1,0 +1,10 @@
+suites:
+    notify_integration_suite:
+        namespace: Alphagov\Notifications
+        psr4_prefix: Alphagov\Notifications
+        spec_prefix: spec\integration
+
+    notify_unit_suite:
+        namespace: Alphagov\Notifications
+        psr4_prefix: Alphagov\Notifications
+        spec_prefix: spec\unit

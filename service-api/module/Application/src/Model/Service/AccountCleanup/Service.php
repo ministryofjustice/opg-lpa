@@ -2,14 +2,14 @@
 
 namespace Application\Model\Service\AccountCleanup;
 
+use Alphagov\Notifications\Client as NotifyClient;
+use Alphagov\Notifications\Exception\NotifyException;
 use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\UserManagement\Service as UserManagementService;
 use Aws\Sns\SnsClient;
-use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Exception\ClientException as GuzzleClientException;
 use DateTime;
 use Exception;
 
@@ -33,9 +33,9 @@ class Service extends AbstractService
     private $config;
 
     /**
-     * @var GuzzleClient
+     * @var NotifyClient
      */
-    private $guzzleClient;
+    private $notifyClient;
 
     /**
      * @var SnsClient
@@ -48,57 +48,47 @@ class Service extends AbstractService
     private $userManagementService;
 
     /**
+     * Warning type constants
+     */
+    const WARNING_1_WEEK_NOTICE = '1-week-notice';
+    const WARNING_1_MONTH_NOTICE = '1-month-notice';
+
+    /**
+     * Warning emails config
+     */
+    private $warningEmailConfig = [
+        self::WARNING_1_WEEK_NOTICE => [
+            'dateShift'  => '-9 months +1 week',
+            'templateId' => '3e0cc4c8-0c2a-4d2a-808a-32407b2e6276',
+        ],
+        self::WARNING_1_MONTH_NOTICE => [
+            'dateShift'  => '-8 months',
+            'templateId' => '0ef97354-9db2-4d52-a1cf-0aa762444cb1',
+        ],
+    ];
+
+    /**
      * Execute the account cleanup
      */
     public function cleanup()
     {
-        $summary = array();
+        //  Delete inactive accounts
+        $expiredAccountsDeletedCount = $this->deleteExpiredAccounts();
 
-        $notificationCallback = $this->config['cleanup']['notification']['callback'];
+        //  Account inactive for 8 months and 3 weeks (1 week remaining)...
+        $expiryAccountsWarning1WeekCount = $this->sendWarningEmails(self::WARNING_1_WEEK_NOTICE);
 
-        /**
-         * 1 - Delete accounts >= -9 months
-         * 2 - Notify accounts >= -9 months +1 week
-         * 3 - Notify accounts >= -8 months
-         */
+        //  Account inactive for 8 months (1 month remaining)...
+        $expiryAccountsWarning1MonthCount = $this->sendWarningEmails(self::WARNING_1_MONTH_NOTICE);
 
-        // Accounts inactive for 9 months...
-        $summary['expired'] = $this->deleteExpiredAccounts(
-            new DateTime('-9 months')
-        );
+        //  Remove accounts that have not been activated
+        $unactivatedAccountsDeletedCount = $this->deleteUnactivatedAccounts();
 
-
-        // Account inactive for 8 months and 3 weeks (1 week remaining)...
-        $summary['1-week-notice'] = $this->sendWarningEmails(
-            new DateTime('-9 months +1 week'),
-            $notificationCallback,
-            '1-week-notice'
-        );
-
-
-        // Account inactive for 8 months (1 month remaining)...
-        $summary['1-month-notice'] = $this->sendWarningEmails(
-            new DateTime('-8 months'),
-            $notificationCallback,
-            '1-month-notice'
-        );
-
-        //------------------------------------------
-
-        // Remove accounts that have not been activated for > 24 hours.
-        $summary['unactivated'] = $this->deleteUnactivatedAccounts(
-            new DateTime('-24 hours')
-        );
-
-        //------------------------------------------
-
-        $message = "Unactivated accounts deleted: {$summary['unactivated']}\n";
-        $message .= "One month's notice emails sent: {$summary['1-month-notice']}\n";
-        $message .= "One week's notice emails sent: {$summary['1-week-notice']}\n";
-        $message .= "Expired accounts deleted: {$summary['expired']}\n";
+        $message = "Unactivated accounts deleted: $unactivatedAccountsDeletedCount\n";
+        $message .= "One month's notice emails sent: $expiryAccountsWarning1MonthCount\n";
+        $message .= "One week's notice emails sent: $expiryAccountsWarning1WeekCount\n";
+        $message .= "Expired accounts deleted: $expiredAccountsDeletedCount\n";
         $message .= "\nLove,\n" . $this->config['stack']['name'];
-
-        //---
 
         try {
             $config = $this->config['log']['sns'];
@@ -121,21 +111,25 @@ class Service extends AbstractService
      * Pulls back a list of all users who have no logged in for x time and sends them a notification
      * warning when their account will be deleted.
      *
-     * @param DateTime $lastLoginBefore
-     * @param $callback
-     * @param $type
+     * @param $warningType
      * @return int The number of users notified
+     * @throws Exception
      */
-    private function sendWarningEmails(DateTime $lastLoginBefore, $callback, $type)
+    private function sendWarningEmails($warningType)
     {
-        echo "Sending {$type} warning notifications to accounts inactive since " . $lastLoginBefore->format('r') . "\n";
+        if (!array_key_exists($warningType, $this->warningEmailConfig)) {
+            throw new Exception('Invalid warning type: ' . $warningType);
+        }
 
-        //---
+        $warningConfig = $this->warningEmailConfig[$warningType];
+
+        $lastLoginBefore = new DateTime($warningConfig['dateShift']);
+        $templateId = $warningConfig['templateId'];
+
+        echo "Sending {$warningType} warning notifications to accounts inactive since " . $lastLoginBefore->format('r') . "\n";
 
         // Pull back a list of accounts...
-        $iterator = $this->getUserRepository()->getAccountsInactiveSince($lastLoginBefore, $type);
-
-        //---
+        $iterator = $this->getUserRepository()->getAccountsInactiveSince($lastLoginBefore, $warningType);
 
         $counter = 0;
 
@@ -144,41 +138,29 @@ class Service extends AbstractService
             $notificationDate = $user->lastLoginAt()->add(\DateInterval::createFromDateString('+9 months'));
 
             try {
-                // Call the notification callback...
-                // This will thrown an exception on any errors.
-                $this->guzzleClient->post($callback, [
-                    'form_params' => [
-                        'Type' => $type,
-                        'Username' => $user->username(),
-                        'Date' => $notificationDate->format('Y-m-d'),
-                    ],
-                    'headers' => [
-                        'Token' => $this->config['cleanup']['notification']['token'],
-                    ],
+                // Call the notify to send the reminder email - this will thrown an exception on any errors
+                $this->notifyClient->sendEmail($user->username(), $templateId, [
+                    'deletionDate' => $notificationDate->format('j F Y'),
                 ]);
 
                 // Flag the account as 'notification sent'...
-                $this->getUserRepository()->setInactivityFlag($user->id(), $type);
+                $this->getUserRepository()->setInactivityFlag($user->id(), $warningType);
 
                 $counter++;
-            } catch (GuzzleClientException $e) {
-                echo "GuzzleClientException: " . $e->getMessage() . "\n";
+            } catch (NotifyException $e) {
+                echo "NotifyException: " . $e->getMessage() . "\n";
 
-                // Guzzle exceptions aren't too bad, we will just retry tomorrow.
-
-                $this->getLogger()->warn(
-                    'Unable to send account expiry notification',
-                    ['exception' => $e->getMessage()]
-                );
+                // Notify exceptions aren't too bad, we will just retry tomorrow.
+                $this->getLogger()->warn('Unable to send account expiry notification', [
+                    'exception' => $e->getMessage()
+                ]);
             } catch (Exception $e) {
                 echo "Exception: " . $e->getMessage() . "\n";
 
                 // Other types of exception are worse; things still might not work tomorrow.
-
-                $this->getLogger()->alert(
-                    'Unable to send account expiry notification',
-                    ['exception' => $e->getMessage()]
-                );
+                $this->getLogger()->alert('Unable to send account expiry notification', [
+                    'exception' => $e->getMessage()
+                ]);
             }
         }
 
@@ -190,11 +172,12 @@ class Service extends AbstractService
     /**
      * Delete all accounts that have expired.
      *
-     * @param DateTime $lastLoginBefore
      * @return int The number of accounts deleted
      */
-    private function deleteExpiredAccounts(DateTime $lastLoginBefore)
+    private function deleteExpiredAccounts()
     {
+        $lastLoginBefore = new DateTime('-9 months');
+
         echo "Deleting accounts inactive since " . $lastLoginBefore->format('r') . "\n";
 
         // Pull back a list of accounts...
@@ -228,11 +211,12 @@ class Service extends AbstractService
     /**
      * Delete all accounts created before time x that have not yet been activated.
      *
-     * @param DateTime $unactivatedSince
      * @return int The number of accounts deleted
      */
-    private function deleteUnactivatedAccounts(DateTime $unactivatedSince)
+    private function deleteUnactivatedAccounts()
     {
+        $unactivatedSince = new DateTime('-24 hours');
+
         echo "Deleting unactivated accounts created before " . $unactivatedSince->format('r') . "\n";
 
         // Pull back a list of accounts...
@@ -263,11 +247,11 @@ class Service extends AbstractService
     }
 
     /**
-     * @param GuzzleClient $guzzleClient
+     * @param NotifyClient $notifyClient
      */
-    public function setGuzzleClient(GuzzleClient $guzzleClient)
+    public function setNotifyClient(NotifyClient $notifyClient)
     {
-        $this->guzzleClient = $guzzleClient;
+        $this->notifyClient = $notifyClient;
     }
 
     /**

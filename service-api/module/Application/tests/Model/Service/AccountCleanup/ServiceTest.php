@@ -6,20 +6,17 @@ use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
 use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\User;
-use Application\Model\Service\AccountCleanup\Service;
 use Application\Model\Service\UserManagement\Service as UserManagementService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
+use Alphagov\Notifications\Client as NotifyClient;
+use Alphagov\Notifications\Exception\NotifyException;
 use Aws\Sns\SnsClient;
 use DateInterval;
 use DateTime;
 use Exception;
-use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Exception\ClientException as GuzzleClientException;
 use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Opg\Lpa\Logger\Logger;
-use Psr\Http\Message\RequestInterface;
 
 class ServiceTest extends AbstractServiceTest
 {
@@ -45,10 +42,9 @@ class ServiceTest extends AbstractServiceTest
         'stack' => [
             'name' => 'unit_test'
         ],
-        'cleanup' => [
-            'notification' => [
-                'token' => 'unit_test',
-                'callback' => 'http://callback',
+        'notify' => [
+            'api' => [
+                'key' => 'DUMMYKEY',
             ],
         ],
         'log' => [
@@ -62,9 +58,9 @@ class ServiceTest extends AbstractServiceTest
     ];
 
     /**
-     * @var MockInterface|GuzzleClient
+     * @var MockInterface|NotifyClient
      */
-    private $guzzleClient;
+    private $notifyClient;
 
     /**
      * @var MockInterface|SnsClient
@@ -92,7 +88,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
 
-        $this->guzzleClient = Mockery::mock(GuzzleClient::class);
+        $this->notifyClient = Mockery::mock(NotifyClient::class);
 
         $this->snsClient = Mockery::mock(SnsClient::class);
 
@@ -119,7 +115,7 @@ class ServiceTest extends AbstractServiceTest
             ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
-            ->withGuzzleClient($this->guzzleClient)
+            ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
             ->withUserManagementService($this->userManagementService)
             ->withLogger($this->logger)
@@ -148,7 +144,7 @@ class ServiceTest extends AbstractServiceTest
             ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
-            ->withGuzzleClient($this->guzzleClient)
+            ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
             ->withUserManagementService($this->userManagementService)
             ->withLogger($this->logger)
@@ -184,7 +180,7 @@ class ServiceTest extends AbstractServiceTest
             ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
-            ->withGuzzleClient($this->guzzleClient)
+            ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
             ->withUserManagementService($this->userManagementService)
             ->withLogger($this->logger)
@@ -220,7 +216,7 @@ class ServiceTest extends AbstractServiceTest
             ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
-            ->withGuzzleClient($this->guzzleClient)
+            ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
             ->withUserManagementService($this->userManagementService)
             ->withLogger($this->logger)
@@ -234,28 +230,22 @@ class ServiceTest extends AbstractServiceTest
 
     public function testCleanupOneWeekWarningAccountsSuccessful()
     {
+        $lastLoginDate = new DateTime('-9 months +1 week');
+
         $this->setAccountsExpectations([], [new User([
             '_id' => 1,
             'identity' => 'unit@test.com',
-            'last_login' => new DateTime('-9 months +1 week')
+            'last_login' => clone $lastLoginDate
         ])]);
 
         $this->snsClient->shouldReceive('publish')->once();
 
-        $this->guzzleClient->shouldReceive('post')
-            ->withArgs(function ($uri, $options) {
-                return $uri === 'http://callback' && $options === [
-                    'form_params' => [
-                        'Type' => '1-week-notice',
-                        'Username' => 'unit@test.com',
-                        'Date' => ((new DateTime('-9 months +1 week'))
-                            ->add(DateInterval::createFromDateString('+9 months')))->format('Y-m-d'),
-                    ],
-                    'headers' => [
-                        'Token' => 'unit_test',
-                    ],
-                ];
-            })
+        $lastLoginDate->add(DateInterval::createFromDateString('+9 months'));
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->withArgs(['unit@test.com', '3e0cc4c8-0c2a-4d2a-808a-32407b2e6276', [
+                'deletionDate' => $lastLoginDate->format('j F Y')
+            ]])
             ->once();
 
         $this->authUserRepository->shouldReceive('setInactivityFlag')
@@ -268,7 +258,7 @@ class ServiceTest extends AbstractServiceTest
             ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
-            ->withGuzzleClient($this->guzzleClient)
+            ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
             ->withUserManagementService($this->userManagementService)
             ->withLogger($this->logger)
@@ -280,7 +270,7 @@ class ServiceTest extends AbstractServiceTest
         $this->assertEquals(null, $result);
     }
 
-    public function testCleanupOneWeekWarningAccountsGuzzleException()
+    public function testCleanupOneWeekWarningAccountsNotifyException()
     {
         $this->setAccountsExpectations([], [new User([
             '_id' => 1,
@@ -291,12 +281,9 @@ class ServiceTest extends AbstractServiceTest
         $this->snsClient->shouldReceive('publish')
             ->once();
 
-        /** @var RequestInterface $request */
-        $request = Mockery::mock(RequestInterface::class);
-
-        $this->guzzleClient->shouldReceive('post')
+        $this->notifyClient->shouldReceive('sendEmail')
             ->once()
-            ->andThrow(new GuzzleClientException('Unit test exception', $request));
+            ->andThrow(new NotifyException('Unit test exception'));
 
         $this->logger->shouldReceive('warn')
             ->withArgs(function ($message, $extra) {
@@ -311,7 +298,7 @@ class ServiceTest extends AbstractServiceTest
             ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
-            ->withGuzzleClient($this->guzzleClient)
+            ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
             ->withUserManagementService($this->userManagementService)
             ->withLogger($this->logger)
@@ -334,7 +321,7 @@ class ServiceTest extends AbstractServiceTest
         $this->snsClient->shouldReceive('publish')
             ->once();
 
-        $this->guzzleClient->shouldReceive('post')
+        $this->notifyClient->shouldReceive('sendEmail')
             ->once()
             ->andThrow(new Exception('Unit test exception'));
 
@@ -351,7 +338,7 @@ class ServiceTest extends AbstractServiceTest
             ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
-            ->withGuzzleClient($this->guzzleClient)
+            ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
             ->withUserManagementService($this->userManagementService)
             ->withLogger($this->logger)
@@ -365,29 +352,23 @@ class ServiceTest extends AbstractServiceTest
 
     public function testCleanupOneMonthWarningAccountsSuccessful()
     {
+        $lastLoginDate = new DateTime('-8 months');
+
         $this->setAccountsExpectations([], [], [new User([
             '_id' => 1,
             'identity' => 'unit@test.com',
-            'last_login' => new DateTime('-8 months')
+            'last_login' => clone $lastLoginDate,
         ])]);
 
         $this->snsClient->shouldReceive('publish')
             ->once();
 
-        $this->guzzleClient->shouldReceive('post')
-            ->withArgs(function ($uri, $options) {
-                return $uri === 'http://callback' && $options === [
-                        'form_params' => [
-                            'Type' => '1-month-notice',
-                            'Username' => 'unit@test.com',
-                            'Date' => ((new DateTime('-8 months'))
-                                ->add(DateInterval::createFromDateString('+9 months')))->format('Y-m-d'),
-                        ],
-                        'headers' => [
-                            'Token' => 'unit_test',
-                        ],
-                    ];
-            })
+        $lastLoginDate->add(DateInterval::createFromDateString('+9 months'));
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->withArgs(['unit@test.com', '0ef97354-9db2-4d52-a1cf-0aa762444cb1', [
+                'deletionDate' => $lastLoginDate->format('j F Y')
+            ]])
             ->once();
 
         $this->authUserRepository->shouldReceive('setInactivityFlag')
@@ -400,7 +381,7 @@ class ServiceTest extends AbstractServiceTest
             ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
-            ->withGuzzleClient($this->guzzleClient)
+            ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
             ->withUserManagementService($this->userManagementService)
             ->withLogger($this->logger)
@@ -428,7 +409,7 @@ class ServiceTest extends AbstractServiceTest
             ->withApiUserCollection($this->apiUserCollection)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
-            ->withGuzzleClient($this->guzzleClient)
+            ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
             ->withUserManagementService($this->userManagementService)
             ->withLogger($this->logger)

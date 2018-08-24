@@ -7,12 +7,11 @@ return [
         'environment' => getenv('OPG_LPA_STACK_ENVIRONMENT') ?: 'dev',
     ],
 
-    'cleanup' => [
-        'notification' => [
-            'callback' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_ENDPOINT') ?: null,
-            'token' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_TOKEN') ?: null,
+    'notify' => [
+        'api' => [
+            'key' => getenv('OPG_LPA_API_NOTIFY_API_KEY') ?: null,
         ],
-    ], // cleanup
+    ],
 
     'log' => [
         'sns' => [

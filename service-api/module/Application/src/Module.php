@@ -8,11 +8,13 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Model\Service\System\DynamoCronLock;
+use Alphagov\Notifications\Client as NotifyClient;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
 use DynamoQueue\Queue\Client as DynamoQueue;
-use GuzzleHttp\Client as GuzzleClient;
+use Http\Adapter\Guzzle6\Client as Guzzle6Client;
+use Http\Client\HttpClient;
 use Opg\Lpa\Logger\Logger;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
@@ -51,6 +53,9 @@ class Module
                 Repository\Auth\UserRepositoryInterface::class  => Mongo\Collection\AuthUserCollection::class,
                 Repository\Auth\LogRepositoryInterface::class   => Mongo\Collection\AuthLogCollection::class,
             ],
+            'invokables' => [
+                HttpClient::class => Guzzle6Client::class,
+            ],
             'factories' => [
                 'DynamoCronLock' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config')['cron']['lock']['dynamodb'];
@@ -69,8 +74,13 @@ class Module
                     return new DynamoQueue($dynamoDb, $dynamoConfig['settings']);
                 },
 
-                'GuzzleClient' => function (ServiceLocatorInterface $sm) {
-                    return new GuzzleClient();
+                'NotifyClient' => function (ServiceLocatorInterface $sm) {
+                    $config = $sm->get('config');
+
+                    return new NotifyClient([
+                        'apiKey' => $config['notify']['api']['key'],
+                        'httpClient' => $sm->get(HttpClient::class)
+                    ]);
                 },
 
                 'SnsClient' => function (ServiceLocatorInterface $sm) {
