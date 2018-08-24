@@ -16,7 +16,6 @@ use Application\Controller\General\AuthController;
 use Application\Controller\General\FeedbackController;
 use Application\Controller\General\ForgotPasswordController;
 use Application\Controller\General\GuidanceController;
-use Application\Controller\General\NotificationsController;
 use Application\Controller\General\PingController;
 use Application\Controller\General\RegisterController;
 use Application\Controller\General\SendgridController;
@@ -68,9 +67,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         ],
         HowPrimaryAttorneysMakeDecisionController::class => [
             'setApplicantService' => 'ApplicantService',
-        ],
-        NotificationsController::class => [
-            'setMailTransport' => 'MailTransport'
         ],
         PingController::class => [
             'setStatusService' => 'SiteStatus'
