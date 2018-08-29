@@ -19,7 +19,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         $person = new NotifiedPerson();
@@ -46,7 +46,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->build();
 
         $person = new NotifiedPerson(FixturesData::getAttorneyHumanJson());
@@ -69,7 +69,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         $apiProblem = $service->update($lpa->getId(), null, -1);
@@ -89,7 +89,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         $person = new NotifiedPerson();
@@ -116,7 +116,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->build();
 
         $person = new NotifiedPerson(FixturesData::getAttorneyHumanJson());
@@ -139,7 +139,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         $apiProblem = $service->delete($lpa->getId(), -1);
@@ -159,7 +159,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->build();
 
         $id = $lpa->getDocument()->getPeopleToNotify()[0]->id;

@@ -18,7 +18,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         //Make sure the correspondent is invalid
@@ -49,7 +49,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         //So we expect an exception and for no document to be updated
@@ -69,7 +69,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->build();
 
         $correspondent = new Correspondence($lpa->getDocument()->getCorrespondent()->toArray());
@@ -92,7 +92,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         $validationError = $service->delete($lpa->getId());
@@ -119,7 +119,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         //So we expect an exception and for no document to be updated
@@ -139,7 +139,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->build();
 
         $response = $service->delete($lpa->getId());

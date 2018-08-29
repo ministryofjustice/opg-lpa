@@ -28,12 +28,12 @@ class ServiceTest extends AbstractServiceTest
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withApiLpaCollection($apiLpaCollection2)
+            ->withApplicationRepository($apiLpaCollection2)
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->withApplicationsService($applicationsService)
             ->build();
 
@@ -58,12 +58,12 @@ class ServiceTest extends AbstractServiceTest
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($seedLpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($seedLpa, $user))
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->withApplicationsService($applicationsService)
             ->build();
 
@@ -87,12 +87,12 @@ class ServiceTest extends AbstractServiceTest
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($seedLpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($seedLpa, $user))
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->withApplicationsService($applicationsService)
             ->build();
 
@@ -111,7 +111,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         $entity = $service->update($lpa->getId(), ['seed' => 'Invalid'], $user->getId());
@@ -134,12 +134,12 @@ class ServiceTest extends AbstractServiceTest
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection(new Lpa(), $user))
+            ->withApplicationRepository($this->getApplicationRepository(new Lpa(), $user))
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->withApplicationsService($applicationsService)
             ->build();
 
@@ -164,12 +164,12 @@ class ServiceTest extends AbstractServiceTest
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($seedLpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($seedLpa, $user))
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->withApplicationsService($applicationsService)
             ->build();
 
@@ -192,12 +192,12 @@ class ServiceTest extends AbstractServiceTest
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->withApplicationsService($applicationsService)
             ->build();
 
@@ -221,12 +221,12 @@ class ServiceTest extends AbstractServiceTest
 
         $applicationsServiceBuilder = new ApplicationsServiceBuilder();
         $applicationsService = $applicationsServiceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($seedLpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($seedLpa, $user))
             ->build();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->withApplicationsService($applicationsService)
             ->build();
 

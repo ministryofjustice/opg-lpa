@@ -18,7 +18,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         //Make sure the donor is invalid
@@ -51,7 +51,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         //So we expect an exception and for no document to be updated
@@ -71,7 +71,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->build();
 
         $donor = new Donor($lpa->getDocument()->getDonor()->toArray());

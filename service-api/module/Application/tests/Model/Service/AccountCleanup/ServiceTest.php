@@ -2,9 +2,8 @@
 
 namespace ApplicationTest\Model\Service\AccountCleanup;
 
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
-use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use Application\Model\Service\UserManagement\Service as UserManagementService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
@@ -21,19 +20,14 @@ use Opg\Lpa\Logger\Logger;
 class ServiceTest extends AbstractServiceTest
 {
     /**
-     * @var MockInterface|ApiLpaCollection
-     */
-    private $apiLpaCollection;
-
-    /**
-     * @var MockInterface|ApiUserCollection
-     */
-    private $apiUserCollection;
-
-    /**
      * @var MockInterface|UserRepositoryInterface
      */
     private $authUserRepository;
+
+    /**
+     * @var MockInterface|ApplicationRepositoryInterface
+     */
+    private $applicationRepository;
 
     /**
      * @var array
@@ -82,9 +76,8 @@ class ServiceTest extends AbstractServiceTest
         parent::setUp();
 
         //  Set up the services so they can be enhanced for each test
-        $this->apiLpaCollection = Mockery::mock(ApiLpaCollection::class);
 
-        $this->apiUserCollection = Mockery::mock(ApiUserCollection::class);
+        $this->applicationRepository = Mockery::mock(ApplicationRepositoryInterface::class);
 
         $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
 
@@ -111,7 +104,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
@@ -139,7 +132,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
@@ -164,17 +157,17 @@ class ServiceTest extends AbstractServiceTest
         $this->userManagementService->shouldReceive('delete')
             ->withArgs([1, 'expired']);
 
-        $this->apiLpaCollection->shouldReceive('fetchByUserId')
+        $this->applicationRepository->shouldReceive('fetchByUserId')
             ->with(1)
             ->andReturn(new \ArrayIterator([]));
 
-        $this->apiUserCollection->shouldReceive('deleteById')
+        $this->applicationRepository->shouldReceive('deleteById')
             ->withArgs([1])
             ->andReturnNull();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
@@ -199,17 +192,17 @@ class ServiceTest extends AbstractServiceTest
         $this->userManagementService->shouldReceive('delete')
             ->withArgs([1, 'expired']);
 
-        $this->apiLpaCollection->shouldReceive('fetchByUserId')
+        $this->applicationRepository->shouldReceive('fetchByUserId')
             ->with(1)
             ->andReturn(new \ArrayIterator([]));
 
-        $this->apiUserCollection->shouldReceive('deleteById')
+        $this->applicationRepository->shouldReceive('deleteById')
             ->withArgs([1])
             ->andReturnNull();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
@@ -250,7 +243,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
@@ -289,7 +282,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
@@ -328,7 +321,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
@@ -370,7 +363,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
@@ -397,7 +390,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)

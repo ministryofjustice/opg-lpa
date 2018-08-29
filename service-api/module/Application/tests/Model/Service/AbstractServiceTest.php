@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Model\Service;
 
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Mongo\DateCallback;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -19,20 +19,20 @@ abstract class AbstractServiceTest extends MockeryTestCase
      * @param User $user
      * @param bool $isModified
      * @param bool $addDefaults
-     * @return ApiLpaCollection|MockInterface
+     * @return ApplicationRepositoryInterface|MockInterface
      */
-    public function getApiLpaCollection(Lpa $lpa, User $user, $isModified = false, $addDefaults = true)
+    public function getApplicationRepository(Lpa $lpa, User $user, $isModified = false, $addDefaults = true)
     {
-        $apiLpaCollection = Mockery::mock(ApiLpaCollection::class);
+        $apiLpaCollection = Mockery::mock(ApplicationRepositoryInterface::class);
 
         if ($user !== null) {
             if ($lpa !== null) {
                 $apiLpaCollection->shouldReceive('getById')
                     ->withArgs([(int)$lpa->getId(), $user->getId()])
-                    ->andReturn($lpa->toArray(new DateCallback()));
+                    ->andReturn($lpa->toArray(new DateCallback()) + ['id'=>$lpa->getId()]);
                 $apiLpaCollection->shouldReceive('getById')
                     ->withArgs([$lpa->getId()])
-                    ->andReturn($lpa->toArray(new DateCallback()));
+                    ->andReturn($lpa->toArray(new DateCallback()) + ['id'=>$lpa->getId()]);
             }
         }
 
@@ -51,7 +51,7 @@ abstract class AbstractServiceTest extends MockeryTestCase
             $apiLpaCollection->shouldNotReceive('update');
         }
 
-        /** @var ApiLpaCollection $apiLpaCollection */
+        /** @var ApplicationRepositoryInterface $apiLpaCollection */
         return $apiLpaCollection;
     }
 }

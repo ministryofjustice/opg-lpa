@@ -22,7 +22,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         $apiProblem = $service->create($lpa->getId(), null);
@@ -43,7 +43,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         $whoAreYou = new WhoAreYou();
@@ -72,7 +72,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         //So we expect an exception and for no document to be updated
@@ -98,7 +98,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
             ->withWhoRepository($whoRepository)
             ->build();
 

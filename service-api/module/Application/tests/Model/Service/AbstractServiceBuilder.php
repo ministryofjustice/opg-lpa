@@ -5,8 +5,8 @@ namespace ApplicationTest\Model\Service;
 use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
 use Application\Model\Service\AbstractService;
 use Mockery;
 use Mockery\MockInterface;
@@ -18,11 +18,6 @@ abstract class AbstractServiceBuilder
      * @var MockInterface|Logger
      */
     private $logger = null;
-
-    /**
-     * @var MockInterface|ApiLpaCollection
-     */
-    private $apiLpaCollection = null;
 
     /**
      * @var MockInterface|LogRepositoryInterface
@@ -45,23 +40,17 @@ abstract class AbstractServiceBuilder
     private $statsRepository = null;
 
     /**
+     * @var MockInterface|ApplicationRepositoryInterface
+     */
+    private $applicationRepository = null;
+
+    /**
      * @param $logger
      * @return $this
      */
     public function withLogger($logger)
     {
         $this->logger = $logger;
-
-        return $this;
-    }
-
-    /**
-     * @param $apiLpaCollection
-     * @return $this
-     */
-    public function withApiLpaCollection($apiLpaCollection)
-    {
-        $this->apiLpaCollection = $apiLpaCollection;
 
         return $this;
     }
@@ -110,6 +99,13 @@ abstract class AbstractServiceBuilder
         return $this;
     }
 
+    public function withApplicationRepository($applicationRepository)
+    {
+        $this->applicationRepository = $applicationRepository;
+
+        return $this;
+    }
+
     /**
      * @return AbstractService
      */
@@ -132,11 +128,6 @@ abstract class AbstractServiceBuilder
 
         $service->setLogger($this->logger);
 
-        //  Add the collections if they are present
-        if ($this->apiLpaCollection !== null) {
-            $service->setApiLpaCollection($this->apiLpaCollection);
-        }
-
         if ($this->authLogRepository !== null) {
             $service->setLogRepository($this->authLogRepository);
         }
@@ -153,6 +144,10 @@ abstract class AbstractServiceBuilder
             $service->setStatsRepository($this->statsRepository);
         }
 
+        if ($this->applicationRepository !== null) {
+            $service->setApplicationRepository($this->applicationRepository);
+        }
+
         return $service;
     }
 
@@ -161,10 +156,6 @@ abstract class AbstractServiceBuilder
      */
     public function verify()
     {
-        if ($this->apiLpaCollection !== null) {
-            $this->apiLpaCollection->mockery_verify();
-        }
-        
         if ($this->authLogRepository !== null) {
             $this->authLogRepository->mockery_verify();
         }
@@ -179,6 +170,10 @@ abstract class AbstractServiceBuilder
 
         if ($this->statsRepository !== null) {
             $this->statsRepository->mockery_verify();
+        }
+
+        if ($this->applicationRepository !== null) {
+            $this->applicationRepository->mockery_verify();
         }
 
         Mockery::close();

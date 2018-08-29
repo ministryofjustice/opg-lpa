@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Model\Service\Applications;
 
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
@@ -21,9 +21,9 @@ use Mockery;
 class ServiceTest extends AbstractServiceTest
 {
     /**
-     * @var MockInterface|ApiLpaCollection
+     * @var MockInterface|ApplicationRepositoryInterface
      */
-    private $apiLpaCollection;
+    private $applicationRepository;
 
     /**
      * @var TestableService
@@ -35,21 +35,21 @@ class ServiceTest extends AbstractServiceTest
         parent::setUp();
 
         //  Set up the ApiLpaCollection so it can be enhanced for each test
-        $this->apiLpaCollection = Mockery::mock(ApiLpaCollection::class);
+        $this->applicationRepository = Mockery::mock(ApplicationRepositoryInterface::class);
     }
 
     public function testFetchNotFound()
     {
         $user = FixturesData::getUser();
 
-        $this->apiLpaCollection->shouldReceive('getById')
+        $this->applicationRepository->shouldReceive('getById')
             ->withArgs([-1, $user->getId()])
             ->once()
             ->andReturn(null);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         $entity = $service->fetch(-1, $user->getId());
@@ -69,7 +69,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         $entity = $service->fetch($lpa->getId(), $user->getId());
@@ -86,7 +86,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /* @var DataModelEntity */
@@ -107,7 +107,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         $service->create([
@@ -128,7 +128,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /* @var DataModelEntity */
@@ -150,7 +150,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /* @var $createdEntity DataModelEntity */
@@ -190,7 +190,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         $validationError = $service->patch($lpa->toArray(), $lpa->getId(), $user->getId());
@@ -226,7 +226,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         $service->testUpdateLpa($lpa);
@@ -242,7 +242,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /* @var DataModelEntity */
@@ -268,7 +268,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /* @var $patchedEntity DataModelEntity */
@@ -294,7 +294,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /* @var $patchedEntity DataModelEntity */
@@ -318,7 +318,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /* @var $patchedEntity DataModelEntity */
@@ -344,7 +344,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /* @var $patchedEntity DataModelEntity */
@@ -370,7 +370,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /* @var $patchedEntity DataModelEntity */
@@ -401,7 +401,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /* @var $patchedEntity DataModelEntity */
@@ -434,7 +434,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         $response = $service->delete(-1, $user->getId());
@@ -454,7 +454,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         $response = $service->delete($lpa->getId(), $user->getId());
@@ -470,14 +470,14 @@ class ServiceTest extends AbstractServiceTest
 
         $this->setDeleteExpectations($user, $lpa->getId(), $lpa);
 
-        $this->apiLpaCollection->shouldReceive('fetchByUserId')
+        $this->applicationRepository->shouldReceive('fetchByUserId')
             ->withArgs([$user->getId()])
             ->once()
             ->andReturn(new \ArrayIterator([['_id' => $lpa->getId()]]));
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         $response = $service->deleteAll($user->getId());
@@ -493,7 +493,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /** @var Collection $response */
@@ -512,7 +512,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /** @var Collection $response */
@@ -538,7 +538,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /** @var Collection $response */
@@ -569,7 +569,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /** @var Collection $response */
@@ -588,7 +588,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /** @var Collection $response */
@@ -620,7 +620,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->apiLpaCollection)
+            ->withApplicationRepository($this->applicationRepository)
             ->build();
 
         /** @var Collection $response */
@@ -636,17 +636,17 @@ class ServiceTest extends AbstractServiceTest
     private function setFindOneLpaExpectation(User $user, Lpa $lpa)
     {
         //  Return with or without user ID
-        $this->apiLpaCollection->shouldReceive('getById')
+        $this->applicationRepository->shouldReceive('getById')
             ->withArgs([$lpa->getId(), $user->getId()])
-            ->andReturn($lpa->toArray(new DateCallback()));
-        $this->apiLpaCollection->shouldReceive('getById')
+            ->andReturn($lpa->toArray(new DateCallback()) + ['id'=>$lpa->getId()]);
+        $this->applicationRepository->shouldReceive('getById')
             ->withArgs([$lpa->getId()])
-            ->andReturn($lpa->toArray(new DateCallback()));
+            ->andReturn($lpa->toArray(new DateCallback()) + ['id'=>$lpa->getId()]);
     }
 
     private function setCreateIdExpectations()
     {
-        $this->apiLpaCollection->shouldReceive('getById')
+        $this->applicationRepository->shouldReceive('getById')
             ->once()
             ->andReturn(null);
     }
@@ -656,7 +656,7 @@ class ServiceTest extends AbstractServiceTest
      */
     private function setInsertOneExpectations(User $user)
     {
-        $this->apiLpaCollection->shouldReceive('insert')
+        $this->applicationRepository->shouldReceive('insert')
             ->withArgs(function ($lpa) use ($user) {
                 /** @var Lpa $lpa */
                 return is_int($lpa->getId())
@@ -681,7 +681,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->setFindOneLpaExpectation($user, $existingLpa);
 
-        $this->apiLpaCollection->shouldReceive('update')
+        $this->applicationRepository->shouldReceive('update')
             ->once()
             ->andReturnUsing(function (Lpa $lpaIn) use ($existingLpa) {
 
@@ -725,13 +725,13 @@ class ServiceTest extends AbstractServiceTest
     private function setDeleteExpectations(User $user, int $lpaId, $lpa)
     {
         $isLpa = ($lpa instanceof Lpa) === true;
-        $this->apiLpaCollection->shouldReceive('getById')
+        $this->applicationRepository->shouldReceive('getById')
             ->withArgs([$lpaId, $user->getId()])
             ->once()
             ->andReturn($isLpa === false ? null : ['_id' => $lpa->getId()]);
 
         if ($isLpa === true) {
-            $this->apiLpaCollection->shouldReceive('deleteById')
+            $this->applicationRepository->shouldReceive('deleteById')
                 ->withArgs([$lpaId, $user->getId()])
                 ->once();
         }
@@ -745,7 +745,7 @@ class ServiceTest extends AbstractServiceTest
     {
         $lpasCount = count($lpas);
 
-        $this->apiLpaCollection->shouldReceive('count')
+        $this->applicationRepository->shouldReceive('count')
             ->withArgs([$filter])
             ->andReturn($lpasCount);
 
@@ -755,7 +755,7 @@ class ServiceTest extends AbstractServiceTest
                 return $lpa->toArray(new DateCallback());
             }, $lpas);
 
-            $this->apiLpaCollection->shouldReceive('fetch')
+            $this->applicationRepository->shouldReceive('fetch')
                 ->withArgs([$filter, ['sort' => ['updatedAt' => -1], 'skip' => 0, 'limit' => 10]])
                 ->andReturn(new \ArrayIterator($lpasArray));
         }

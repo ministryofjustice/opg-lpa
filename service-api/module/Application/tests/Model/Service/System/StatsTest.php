@@ -61,7 +61,7 @@ class StatsTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($apiLpaCollection)
+            ->withApplicationRepository($apiLpaCollection)
             ->withStatsRepository($statsRepository)
             ->withWhoRepository($whoRepository)
             ->build();
