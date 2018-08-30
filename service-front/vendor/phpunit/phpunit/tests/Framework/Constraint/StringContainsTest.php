@@ -7,7 +7,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace PHPUnit\Framework\Constraint;
 
 use PHPUnit\Framework\ExpectationFailedException;
@@ -50,7 +49,7 @@ EOF
         $this->assertTrue($constraint->evaluate('ORYGINAŁ', '', true));
         $this->assertTrue($constraint->evaluate('oryginał', '', true));
         $this->assertEquals('contains "oryginał"', $constraint->toString());
-        $this->assertEquals(1, \count($constraint));
+        $this->assertCount(1, $constraint);
 
         $this->expectException(ExpectationFailedException::class);
 
@@ -65,7 +64,7 @@ EOF
         $this->assertFalse($constraint->evaluate('ORYGINAŁ', '', true));
         $this->assertTrue($constraint->evaluate('oryginał', '', true));
         $this->assertEquals('contains "oryginał"', $constraint->toString());
-        $this->assertEquals(1, \count($constraint));
+        $this->assertCount(1, $constraint);
 
         $this->expectException(ExpectationFailedException::class);
 

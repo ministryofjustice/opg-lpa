@@ -2,11 +2,35 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 3.0.0 - TBD
+## 2.10.0 - 2018-06-07
 
 ### Added
 
-- Nothing.
+- [#213](https://github.com/zendframework/zend-mail/pull/213) re-adds support for PHP 5.6 and 7.0; ZF policy is never
+  to bump the major version of a PHP requirement unless the package is bumping major version.
+
+- [#172](https://github.com/zendframework/zend-mail/pull/172) adds the flag `connection_time_limit` to the possible `Zend\Mail\Transport\Smtp` options.
+  This flag, when provided as a positive integer, and in conjunction with the `use_complete_quit` flag, will
+  reconnect to the server after the specified interval.
+
+- [#166](https://github.com/zendframework/zend-mail/pull/166) adds functionality for handling `References` and `In-Reply-To` headers.
+
+- [#148](https://github.com/zendframework/zend-mail/pull/148) adds the optional constructor argument `$comment` and the method `getComment()` to the class
+  `Zend\Mail\Address`. When a comment is present, `toString()` will include it in the representation.
+
+- [#148](https://github.com/zendframework/zend-mail/pull/148) adds the method `Zend\Mail\Address::fromString(string $address, $comment = null) : Address`.
+  The method can be used to generate an instance from a string containing a `(name)?<email>` value.
+  The `$comment` argument can be used to associate a comment with the address.
+
+### Changed
+
+- [#196](https://github.com/zendframework/zend-mail/pull/196) updates how the `Headers::fromString()` handles header line continuations
+  that include a single empty line, ensuring they are concatenated to the
+  header value.
+
+- [#165](https://github.com/zendframework/zend-mail/pull/165) changes the `AbstractAddressList` IDN&lt;-&gt;ASCII conversion; it now no longer requires
+  ext-intl, but instead uses a bundled true/punycode library to accomplish it. This also means that
+  the conversions will work on any PHP installation.
 
 ### Deprecated
 
@@ -18,25 +42,21 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#211](https://github.com/zendframework/zend-mail/pull/211) fixes how the `ContentType` header class parses the value it receives. Previously,
+  it was incorrectly splitting the value on semi-colons that were inside quotes; in now correctly
+  ignores them.
 
-## 2.9.1 - TBD
+- [#204](https://github.com/zendframework/zend-mail/pull/204) fixes `HeaderWrap::mimeDecodeValue()` behavior when handling a multiline UTF-8
+  header split across a character. The fix will only work when ext-imap is present, however.
 
-### Added
+- [#164](https://github.com/zendframework/zend-mail/pull/164) fixes the return value from `Zend\Mail\Protocol\Imap::capability()` when no response is
+  returned from the server; previously, it returned `false`, but now correctly returns an empty array.
 
-- Nothing.
+- [#148](https://github.com/zendframework/zend-mail/pull/148) fixes how `Zend\Mail\Header\AbstractAddressList` parses address values, ensuring
+  that they now retain any address comment discovered to include in the generated `Zend\Mail\Address` instances.
 
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
+- [#147](https://github.com/zendframework/zend-mail/pull/147) fixes how address lists are parsed, expanding the functionality to allow either
+  `,` or `;` delimiters (or both in combination).
 
 ## 2.9.0 - 2017-03-01
 
@@ -74,7 +94,7 @@ All notable changes to this project will be documented in this file, in reverse 
 - [#143](https://github.com/zendframework/zend-mail/pull/143) fixed parsing
   of `<` and `>` being part of the email address comment.
 
-## 2.8.0 - TBD
+## 2.8.0 - 2017-06-08
 
 ### Added
 

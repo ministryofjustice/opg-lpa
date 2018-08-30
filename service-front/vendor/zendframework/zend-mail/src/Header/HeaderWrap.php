@@ -1,10 +1,8 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-mail for the canonical source repository
+ * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-mail/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Mail\Header;
@@ -112,7 +110,25 @@ abstract class HeaderWrap
 
         $decodedValue = iconv_mime_decode($value, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
 
+        // imap (unlike iconv) can handle multibyte headers which are splitted across multiple line
+        if (self::isNotDecoded($value, $decodedValue) && extension_loaded('imap')) {
+            return array_reduce(
+                imap_mime_header_decode(imap_utf8($value)),
+                function ($accumulator, $headerPart) {
+                    return $accumulator . $headerPart->text;
+                },
+                ''
+            );
+        }
+
         return $decodedValue;
+    }
+
+    private static function isNotDecoded($originalValue, $value)
+    {
+        return 0 === strpos($value, '=?')
+            && strlen($value) - 2 === strpos($value, '?=')
+            && false !== strpos($originalValue, $value);
     }
 
     /**
