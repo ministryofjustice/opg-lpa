@@ -194,8 +194,6 @@ class Service extends AbstractService
 
                 // Convert the results to instances of the LPA object..
                 $items = array_map(function ($lpa) {
-                    $lpa = [ 'id' => $lpa['_id'] ] + $lpa;
-
                     return new Lpa($lpa);
                 }, iterator_to_array($cursor, false));
 

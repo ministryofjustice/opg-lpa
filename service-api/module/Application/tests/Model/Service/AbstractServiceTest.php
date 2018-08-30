@@ -29,10 +29,10 @@ abstract class AbstractServiceTest extends MockeryTestCase
             if ($lpa !== null) {
                 $apiLpaCollection->shouldReceive('getById')
                     ->withArgs([(int)$lpa->getId(), $user->getId()])
-                    ->andReturn($lpa->toArray(new DateCallback()) + ['id'=>$lpa->getId()]);
+                    ->andReturn($lpa->toArray());
                 $apiLpaCollection->shouldReceive('getById')
                     ->withArgs([$lpa->getId()])
-                    ->andReturn($lpa->toArray(new DateCallback()) + ['id'=>$lpa->getId()]);
+                    ->andReturn($lpa->toArray());
             }
         }
 

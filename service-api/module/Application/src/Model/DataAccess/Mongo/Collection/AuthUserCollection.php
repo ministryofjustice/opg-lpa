@@ -9,7 +9,7 @@ use DateTime;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 use Opg\Lpa\DataModel\User\User as UserModel;
 
-class AuthUserCollection implements UserRepository\UserRepositoryInterface
+class AuthUserCollection extends AbstractCollection implements UserRepository\UserRepositoryInterface
 {
     use ApiUserCollectionTrait;
 

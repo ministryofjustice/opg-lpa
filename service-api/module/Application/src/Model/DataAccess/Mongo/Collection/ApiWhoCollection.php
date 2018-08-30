@@ -9,7 +9,7 @@ use MongoDB\Collection as MongoCollection;
 use MongoDB\Driver\ReadPreference;
 use DateTime;
 
-class ApiWhoCollection implements WhoRepositoryInterface
+class ApiWhoCollection extends AbstractCollection implements WhoRepositoryInterface
 {
     /**
      * @var MongoCollection
@@ -30,7 +30,7 @@ class ApiWhoCollection implements WhoRepositoryInterface
      */
     public function insert(WhoAreYou $answer) : bool
     {
-        $result = $this->collection->insertOne($answer->toArray(new DateCallback()));
+        $result = $this->collection->insertOne($this->prepare($answer->toArray(true)));
 
         return ($result->getInsertedCount() == 1);
     }

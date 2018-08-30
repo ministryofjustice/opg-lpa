@@ -6,7 +6,7 @@ use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
 use MongoDB\Collection as MongoCollection;
 use MongoDB\Driver\ReadPreference;
 
-class ApiStatsLpasCollection implements StatsRepositoryInterface
+class ApiStatsLpasCollection extends AbstractCollection implements StatsRepositoryInterface
 {
     /**
      * @var MongoCollection

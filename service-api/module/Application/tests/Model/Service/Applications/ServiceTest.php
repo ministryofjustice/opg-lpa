@@ -638,10 +638,10 @@ class ServiceTest extends AbstractServiceTest
         //  Return with or without user ID
         $this->applicationRepository->shouldReceive('getById')
             ->withArgs([$lpa->getId(), $user->getId()])
-            ->andReturn($lpa->toArray(new DateCallback()) + ['id'=>$lpa->getId()]);
+            ->andReturn($lpa->toArray());
         $this->applicationRepository->shouldReceive('getById')
             ->withArgs([$lpa->getId()])
-            ->andReturn($lpa->toArray(new DateCallback()) + ['id'=>$lpa->getId()]);
+            ->andReturn($lpa->toArray());
     }
 
     private function setCreateIdExpectations()
@@ -752,7 +752,7 @@ class ServiceTest extends AbstractServiceTest
         if ($lpasCount > 0) {
 
             $lpasArray = array_map(function (Lpa $lpa){
-                return $lpa->toArray(new DateCallback());
+                return $lpa->toArray();
             }, $lpas);
 
             $this->applicationRepository->shouldReceive('fetch')

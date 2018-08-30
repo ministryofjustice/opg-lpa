@@ -17,7 +17,7 @@ use MongoDB\Driver\ReadPreference;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use RuntimeException;
 
-class ApiLpaCollection implements ApplicationRepositoryInterface
+class ApiLpaCollection extends AbstractCollection implements ApplicationRepositoryInterface
 {
     /**
      * @var MongoCollection
@@ -76,7 +76,15 @@ class ApiLpaCollection implements ApplicationRepositoryInterface
      */
     public function fetch(array $criteria, array $options = []) : Traversable
     {
-        yield from $this->collection->find($criteria, $options);
+        $result = $this->collection->find($criteria, $options);
+
+        foreach ($result as $data) {
+            if (isset($data['_id'])) {
+                $data['id'] = $data['_id'];
+            }
+
+            yield $data;
+        }
     }
 
     /**
@@ -97,7 +105,7 @@ class ApiLpaCollection implements ApplicationRepositoryInterface
      */
     public function insert(Lpa $lpa) : bool
     {
-        $result = $this->collection->insertOne($lpa->toArray(new DateCallback()));
+        $result = $this->collection->insertOne($this->prepare($lpa->toArray(true)));
 
         return ($result->getInsertedCount() == 1);
     }
@@ -164,7 +172,7 @@ class ApiLpaCollection implements ApplicationRepositoryInterface
         // if the Document has changed since this process loaded it.
         $result = $this->collection->updateOne(
             ['_id' => $lpa->id, 'updatedAt' => $lastUpdated ],
-            ['$set' => array_merge($lpa->toArray(new DateCallback()), ['search' => $searchField])],
+            ['$set' => array_merge($this->prepare($lpa->toArray(true)), ['search' => $searchField])],
             ['upsert' => false, 'multiple' => false]
         );
 
