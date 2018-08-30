@@ -18,6 +18,8 @@
 namespace MongoDB;
 
 use MongoDB\BSON\JavascriptInterface;
+use MongoDB\BSON\Serializable;
+use MongoDB\ChangeStream;
 use MongoDB\Driver\Cursor;
 use MongoDB\Driver\Manager;
 use MongoDB\Driver\ReadConcern;
@@ -49,6 +51,7 @@ use MongoDB\Operation\MapReduce;
 use MongoDB\Operation\ReplaceOne;
 use MongoDB\Operation\UpdateMany;
 use MongoDB\Operation\UpdateOne;
+use MongoDB\Operation\Watch;
 use Traversable;
 
 class Collection
@@ -202,7 +205,7 @@ class Collection
             $options['readConcern'] = $this->readConcern;
         }
 
-        if ( ! isset($options['typeMap']) && ( ! isset($options['useCursor']) || $options['useCursor'])) {
+        if ( ! isset($options['typeMap'])) {
             $options['typeMap'] = $this->typeMap;
         }
 
@@ -274,7 +277,7 @@ class Collection
      * @see CreateIndexes::__construct() for supported command options
      * @param array|object $key     Document containing fields mapped to values,
      *                              which denote order or an index type
-     * @param array        $options Index options
+     * @param array        $options Index and command options
      * @return string The name of the created index
      * @throws UnsupportedException if options are not supported by the selected server
      * @throws InvalidArgumentException for parameter/option parsing errors
@@ -282,8 +285,9 @@ class Collection
      */
     public function createIndex($key, array $options = [])
     {
-        $indexOptions = array_diff_key($options, ['writeConcern' => 1]);
-        $commandOptions = array_intersect_key($options, ['writeConcern' => 1]);
+        $commandOptionKeys = ['maxTimeMS' => 1, 'session' => 1, 'writeConcern' => 1];
+        $indexOptions = array_diff_key($options, $commandOptionKeys);
+        $commandOptions = array_intersect_key($options, $commandOptionKeys);
 
         return current($this->createIndexes([['key' => $key] + $indexOptions], $commandOptions));
     }
@@ -828,7 +832,7 @@ class Collection
      */
     public function mapReduce(JavascriptInterface $map, JavascriptInterface $reduce, $out, array $options = [])
     {
-        $hasOutputCollection = ! $this->isOutInline($out);
+        $hasOutputCollection = ! \MongoDB\is_mapreduce_output_inline($out);
 
         if ( ! isset($options['readPreference'])) {
             $options['readPreference'] = $this->readPreference;
@@ -937,6 +941,43 @@ class Collection
     }
 
     /**
+     * Create a change stream for watching changes to the collection.
+     *
+     * @see Watch::__construct() for supported options
+     * @param array $pipeline List of pipeline operations
+     * @param array $options  Command options
+     * @return ChangeStream
+     * @throws InvalidArgumentException for parameter/option parsing errors
+     */
+    public function watch(array $pipeline = [], array $options = [])
+    {
+        if ( ! isset($options['readPreference'])) {
+            $options['readPreference'] = $this->readPreference;
+        }
+
+        $server = $this->manager->selectServer($options['readPreference']);
+
+        /* Although change streams require a newer version of the server than
+         * read concerns, perform the usual wire version check before inheriting
+         * the collection's read concern. In the event that the server is too
+         * old, this makes it more likely that users will encounter an error
+         * related to change streams being unsupported instead of an
+         * UnsupportedException regarding use of the "readConcern" option from
+         * the Aggregate operation class. */
+        if ( ! isset($options['readConcern']) && \MongoDB\server_supports_feature($server, self::$wireVersionForReadConcern)) {
+            $options['readConcern'] = $this->readConcern;
+        }
+
+        if ( ! isset($options['typeMap'])) {
+            $options['typeMap'] = $this->typeMap;
+        }
+
+        $operation = new Watch($this->manager, $this->databaseName, $this->collectionName, $pipeline, $options);
+
+        return $operation->execute($server);
+    }
+
+    /**
      * Get a clone of this collection with different options.
      *
      * @see Collection::__construct() for supported options
@@ -954,20 +995,5 @@ class Collection
         ];
 
         return new Collection($this->manager, $this->databaseName, $this->collectionName, $options);
-    }
-
-    private function isOutInline($out)
-    {
-        if ( ! is_array($out) && ! is_object($out)) {
-            return false;
-        }
-
-        $out = (array) $out;
-
-        if (key($out) === 'inline') {
-            return true;
-        }
-
-        return false;
     }
 }

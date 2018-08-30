@@ -64,6 +64,21 @@ class MapReduceFunctionalTest extends FunctionalTestCase
         $operation->execute($this->getPrimaryServer());
     }
 
+    public function testFinalize()
+    {
+        $this->createFixtures(3);
+
+        $map = new Javascript('function() { emit(this.x, this.y); }');
+        $reduce = new Javascript('function(key, values) { return Array.sum(values); }');
+        $out = ['inline' => 1];
+        $finalize = new Javascript('function(key, reducedValue) { return reducedValue; }');
+
+        $operation = new MapReduce($this->getDatabaseName(), $this->getCollectionName(), $map, $reduce, $out, ['finalize' => $finalize]);
+        $result = $operation->execute($this->getPrimaryServer());
+
+        $this->assertNotNull($result);
+    }
+
     public function testResult()
     {
         $this->createFixtures(3);
@@ -73,6 +88,22 @@ class MapReduceFunctionalTest extends FunctionalTestCase
         $out = ['inline' => 1];
 
         $operation = new MapReduce($this->getDatabaseName(), $this->getCollectionName(), $map, $reduce, $out);
+        $result = $operation->execute($this->getPrimaryServer());
+
+        $this->assertInstanceOf('MongoDB\MapReduceResult', $result);
+        $this->assertGreaterThanOrEqual(0, $result->getExecutionTimeMS());
+        $this->assertNotEmpty($result->getCounts());
+    }
+
+    public function testResultIncludesTimingWithVerboseOption()
+    {
+        $this->createFixtures(3);
+
+        $map = new Javascript('function() { emit(this.x, this.y); }');
+        $reduce = new Javascript('function(key, values) { return Array.sum(values); }');
+        $out = ['inline' => 1];
+
+        $operation = new MapReduce($this->getDatabaseName(), $this->getCollectionName(), $map, $reduce, $out, ['verbose' => true]);
         $result = $operation->execute($this->getPrimaryServer());
 
         $this->assertInstanceOf('MongoDB\MapReduceResult', $result);
@@ -96,6 +127,33 @@ class MapReduceFunctionalTest extends FunctionalTestCase
         $this->assertGreaterThanOrEqual(0, $result->getExecutionTimeMS());
         $this->assertNotEmpty($result->getCounts());
         $this->assertEmpty($result->getTiming());
+    }
+
+    public function testSessionOption()
+    {
+        if (version_compare($this->getServerVersion(), '3.6.0', '<')) {
+            $this->markTestSkipped('Sessions are not supported');
+        }
+
+        $this->createFixtures(3);
+
+        (new CommandObserver)->observe(
+            function() {
+                $operation = new MapReduce(
+                    $this->getDatabaseName(),
+                    $this->getCollectionName(),
+                    new Javascript('function() { emit(this.x, this.y); }'),
+                    new Javascript('function(key, values) { return Array.sum(values); }'),
+                    ['inline' => 1],
+                    ['session' => $this->createSession()]
+                );
+
+                $operation->execute($this->getPrimaryServer());
+            },
+            function(stdClass $command) {
+                $this->assertObjectHasAttribute('lsid', $command);
+            }
+        );
     }
 
     /**

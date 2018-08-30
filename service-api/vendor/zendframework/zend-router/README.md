@@ -1,7 +1,7 @@
 # zend-router
 
 [![Build Status](https://secure.travis-ci.org/zendframework/zend-router.svg?branch=master)](https://secure.travis-ci.org/zendframework/zend-router)
-[![Coverage Status](https://coveralls.io/repos/zendframework/zend-router/badge.svg?branch=master)](https://coveralls.io/r/zendframework/zend-router?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/zendframework/zend-router/badge.svg?branch=master)](https://coveralls.io/github/zendframework/zend-router?branch=master)
 
 zend-router provides flexible HTTP routing.
 
@@ -19,4 +19,4 @@ Additionally, it supports combinations of different route types in tree
 structures, allowing for fast, b-tree lookups.
 
 - File issues at https://github.com/zendframework/zend-router/issues
-- Documentation is at https://zendframework.github.io/zend-router/
+- Documentation is at https://docs.zendframework.com/zend-router

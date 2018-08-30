@@ -1,14 +1,26 @@
 <?php
 
-namespace MongoDB\Tests\Collection;
+namespace MongoDB\Tests\Operation;
 
+use MongoDB\Collection;
 use MongoDB\InsertOneResult;
 use MongoDB\Driver\WriteConcern;
 use MongoDB\Model\BSONDocument;
 use MongoDB\Operation\InsertOne;
+use MongoDB\Tests\CommandObserver;
+use stdClass;
 
 class InsertOneFunctionalTest extends FunctionalTestCase
 {
+    private $collection;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->collection = new Collection($this->manager, $this->getDatabaseName(), $this->getCollectionName());
+    }
+
     /**
      * @dataProvider provideDocumentWithExistingId
      */
@@ -53,6 +65,29 @@ class InsertOneFunctionalTest extends FunctionalTestCase
         ];
 
         $this->assertSameDocuments($expected, $this->collection->find());
+    }
+
+    public function testSessionOption()
+    {
+        if (version_compare($this->getServerVersion(), '3.6.0', '<')) {
+            $this->markTestSkipped('Sessions are not supported');
+        }
+
+        (new CommandObserver)->observe(
+            function() {
+                $operation = new InsertOne(
+                    $this->getDatabaseName(),
+                    $this->getCollectionName(),
+                    ['_id' => 1],
+                    ['session' => $this->createSession()]
+                );
+
+                $operation->execute($this->getPrimaryServer());
+            },
+            function(stdClass $command) {
+                $this->assertObjectHasAttribute('lsid', $command);
+            }
+        );
     }
 
     public function testUnacknowledgedWriteConcern()

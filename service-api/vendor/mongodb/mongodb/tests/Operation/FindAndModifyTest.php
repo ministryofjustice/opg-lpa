@@ -19,6 +19,10 @@ class FindAndModifyTest extends TestCase
     {
         $options = [];
 
+        foreach ($this->getInvalidArrayValues() as $value) {
+            $options[][] = ['arrayFilters' => $value];
+        }
+
         foreach ($this->getInvalidBooleanValues() as $value) {
             $options[][] = ['bypassDocumentValidation' => $value];
         }
@@ -45,6 +49,10 @@ class FindAndModifyTest extends TestCase
 
         foreach ($this->getInvalidBooleanValues() as $value) {
             $options[][] = ['remove' => $value];
+        }
+
+        foreach ($this->getInvalidSessionValues() as $value) {
+            $options[][] = ['session' => $value];
         }
 
         foreach ($this->getInvalidDocumentValues() as $value) {

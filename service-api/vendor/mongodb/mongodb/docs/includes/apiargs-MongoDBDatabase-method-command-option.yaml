@@ -6,6 +6,12 @@ description: |
    operation. Defaults to the database's read preference.
 ---
 source:
+  file: apiargs-common-option.yaml
+  ref: session
+post: |
+  .. versionadded:: 1.3
+---
+source:
   file: apiargs-MongoDBDatabase-common-option.yaml
   ref: typeMap
 ...

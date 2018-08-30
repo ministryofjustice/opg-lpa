@@ -21,6 +21,7 @@ use MongoDB\Driver\Command;
 use MongoDB\Driver\ReadConcern;
 use MongoDB\Driver\ReadPreference;
 use MongoDB\Driver\Server;
+use MongoDB\Driver\Session;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnexpectedValueException;
@@ -69,6 +70,10 @@ class Count implements Executable
      *
      *  * readPreference (MongoDB\Driver\ReadPreference): Read preference.
      *
+     *  * session (MongoDB\Driver\Session): Client session.
+     *
+     *    Sessions are not supported for server versions < 3.6.
+     *
      *  * skip (integer): The number of documents to skip before returning the
      *    documents.
      *
@@ -108,6 +113,10 @@ class Count implements Executable
             throw InvalidArgumentException::invalidType('"readPreference" option', $options['readPreference'], 'MongoDB\Driver\ReadPreference');
         }
 
+        if (isset($options['session']) && ! $options['session'] instanceof Session) {
+            throw InvalidArgumentException::invalidType('"session" option', $options['session'], 'MongoDB\Driver\Session');
+        }
+
         if (isset($options['skip']) && ! is_integer($options['skip'])) {
             throw InvalidArgumentException::invalidType('"skip" option', $options['skip'], 'integer');
         }
@@ -142,9 +151,7 @@ class Count implements Executable
             throw UnsupportedException::readConcernNotSupported();
         }
 
-        $readPreference = isset($this->options['readPreference']) ? $this->options['readPreference'] : null;
-
-        $cursor = $server->executeCommand($this->databaseName, $this->createCommand(), $readPreference);
+        $cursor = $server->executeReadCommand($this->databaseName, $this->createCommand(), $this->createOptions());
         $result = current($cursor->toArray());
 
         // Older server versions may return a float
@@ -182,10 +189,31 @@ class Count implements Executable
             }
         }
 
+        return new Command($cmd);
+    }
+
+    /**
+     * Create options for executing the command.
+     *
+     * @see http://php.net/manual/en/mongodb-driver-server.executereadcommand.php
+     * @return array
+     */
+    private function createOptions()
+    {
+        $options = [];
+
         if (isset($this->options['readConcern'])) {
-            $cmd['readConcern'] = \MongoDB\read_concern_as_document($this->options['readConcern']);
+            $options['readConcern'] = $this->options['readConcern'];
         }
 
-        return new Command($cmd);
+        if (isset($this->options['readPreference'])) {
+            $options['readPreference'] = $this->options['readPreference'];
+        }
+
+        if (isset($this->options['session'])) {
+            $options['session'] = $this->options['session'];
+        }
+
+        return $options;
     }
 }
