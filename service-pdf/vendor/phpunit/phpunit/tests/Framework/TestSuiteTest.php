@@ -7,7 +7,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace PHPUnit\Framework;
 
 class TestSuiteTest extends TestCase
@@ -192,7 +191,7 @@ class TestSuiteTest extends TestCase
             'DontSkipInheritedClass'
         );
 
-        $dir = \dirname(__DIR__) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'Inheritance' . DIRECTORY_SEPARATOR;
+        $dir = \dirname(__DIR__) . \DIRECTORY_SEPARATOR . '_files' . \DIRECTORY_SEPARATOR . 'Inheritance' . \DIRECTORY_SEPARATOR;
 
         $suite->addTestFile($dir . 'InheritanceA.php');
         $suite->addTestFile($dir . 'InheritanceB.php');
@@ -200,5 +199,27 @@ class TestSuiteTest extends TestCase
         $result = $suite->run();
 
         $this->assertCount(2, $result);
+    }
+
+    /**
+     * @expectedException PHPUnit\Framework\Exception
+     * @expectedExceptionMessage No valid test provided.
+     */
+    public function testCreateTestForConstructorlessTestClass(): void
+    {
+        $reflection = $this->getMockBuilder(\ReflectionClass::class)
+            ->setConstructorArgs([$this])
+            ->getMock();
+
+        $reflection->expects($this->once())
+            ->method('getConstructor')
+            ->willReturn(null);
+        $reflection->expects($this->once())
+            ->method('isInstantiable')
+            ->willReturn(true);
+        $reflection->expects($this->once())
+            ->method('getName')
+            ->willReturn(__CLASS__);
+        TestSuite::createTest($reflection, 'TestForConstructorlessTestClass');
     }
 }
