@@ -7,7 +7,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace PHPUnit\Framework\Constraint;
 
 use PHPUnit\Framework\ExpectationFailedException;
@@ -44,10 +43,6 @@ EOF
 
     /**
      * @dataProvider isEqualProvider
-     *
-     * @param mixed $expected
-     * @param mixed $actual
-     * @param mixed $message
      */
     public function testConstraintIsEqual2($expected, $actual, $message): void
     {
@@ -321,6 +316,6 @@ EOF
      */
     private function trimnl($string)
     {
-        return \preg_replace('/[ ]*\n/', PHP_EOL, $string);
+        return \preg_replace('/[ ]*\n/', "\n", $string);
     }
 }

@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 3.1.1 - 2018-07-10
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#34](https://github.com/zendframework/zend-math/pull/34) fixes the docblock for `Rand::getFloat` to indicate that the bottom boundary
+  can include 0.
+
+- [#36](https://github.com/zendframework/zend-math/pull/36) removes all references to ircmaxell/random-lib from the component. While
+  it was no longer used internally, references still existed that caused confusion for
+  some users.
+
 ## 3.1.0 - 2018-04-26
 
 ### Added
