@@ -82,6 +82,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionCostandUsageReportService(array $args = [])
  * @method \Aws\DAX\DAXClient createDAX(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionDAX(array $args = [])
+ * @method \Aws\DLM\DLMClient createDLM(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionDLM(array $args = [])
  * @method \Aws\DataPipeline\DataPipelineClient createDataPipeline(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionDataPipeline(array $args = [])
  * @method \Aws\DatabaseMigrationService\DatabaseMigrationServiceClient createDatabaseMigrationService(array $args = [])
@@ -96,6 +98,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionDynamoDb(array $args = [])
  * @method \Aws\DynamoDbStreams\DynamoDbStreamsClient createDynamoDbStreams(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionDynamoDbStreams(array $args = [])
+ * @method \Aws\EKS\EKSClient createEKS(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionEKS(array $args = [])
  * @method \Aws\Ec2\Ec2Client createEc2(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionEc2(array $args = [])
  * @method \Aws\Ecr\EcrClient createEcr(array $args = [])
@@ -178,6 +182,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionMTurk(array $args = [])
  * @method \Aws\MachineLearning\MachineLearningClient createMachineLearning(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionMachineLearning(array $args = [])
+ * @method \Aws\Macie\MacieClient createMacie(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionMacie(array $args = [])
  * @method \Aws\MarketplaceCommerceAnalytics\MarketplaceCommerceAnalyticsClient createMarketplaceCommerceAnalytics(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionMarketplaceCommerceAnalytics(array $args = [])
  * @method \Aws\MarketplaceEntitlementService\MarketplaceEntitlementServiceClient createMarketplaceEntitlementService(array $args = [])
@@ -284,10 +290,12 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionWorkSpaces(array $args = [])
  * @method \Aws\XRay\XRayClient createXRay(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionXRay(array $args = [])
+ * @method \Aws\signer\signerClient createsigner(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionsigner(array $args = [])
  */
 class Sdk
 {
-    const VERSION = '3.60.0';
+    const VERSION = '3.67.2';
 
     /** @var array Arguments for creating clients */
     private $args;

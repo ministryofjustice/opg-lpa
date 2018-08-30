@@ -33,9 +33,6 @@ class ExceptionWrapper extends Exception
      */
     protected $previous;
 
-    /**
-     * @param Throwable $t
-     */
     public function __construct(Throwable $t)
     {
         // PDOException::getCode() is a string.
@@ -52,7 +49,7 @@ class ExceptionWrapper extends Exception
         $string = TestFailure::exceptionToString($this);
 
         if ($trace = Filter::getFilteredStacktrace($this)) {
-            $string .= PHP_EOL . $trace;
+            $string .= "\n" . $trace;
         }
 
         if ($this->previous) {
@@ -72,9 +69,6 @@ class ExceptionWrapper extends Exception
         return $this->previous;
     }
 
-    /**
-     * @param string $className
-     */
     public function setClassName(string $className): void
     {
         $this->className = $className;
