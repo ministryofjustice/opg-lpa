@@ -11,9 +11,9 @@
 
 namespace Symfony\Component\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
@@ -30,11 +30,11 @@ class CountValidator extends ConstraintValidator
             return;
         }
 
-        if (!is_array($value) && !$value instanceof \Countable) {
+        if (!\is_array($value) && !$value instanceof \Countable) {
             throw new UnexpectedTypeException($value, 'array or \Countable');
         }
 
-        $count = count($value);
+        $count = \count($value);
 
         if (null !== $constraint->max && $count > $constraint->max) {
             if ($this->context instanceof ExecutionContextInterface) {

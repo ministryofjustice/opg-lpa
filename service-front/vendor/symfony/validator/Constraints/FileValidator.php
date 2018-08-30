@@ -13,9 +13,9 @@ namespace Symfony\Component\Validator\Constraints;
 
 use Symfony\Component\HttpFoundation\File\File as FileObject;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
@@ -164,7 +164,7 @@ class FileValidator extends ConstraintValidator
             }
         }
 
-        if (!is_scalar($value) && !$value instanceof FileObject && !(is_object($value) && method_exists($value, '__toString'))) {
+        if (!is_scalar($value) && !$value instanceof FileObject && !(\is_object($value) && method_exists($value, '__toString'))) {
             throw new UnexpectedTypeException($value, 'string');
         }
 
@@ -287,7 +287,7 @@ class FileValidator extends ConstraintValidator
 
     private static function moreDecimalsThan($double, $numberOfDecimals)
     {
-        return strlen((string) $double) > strlen(round($double, $numberOfDecimals));
+        return \strlen((string) $double) > \strlen(round($double, $numberOfDecimals));
     }
 
     /**
