@@ -26,12 +26,10 @@ abstract class AbstractCollection {
 
         // Function to recursively map DateTime -> MongoDB\BSON\UTCDateTime
         $map = function(array $input) use (&$map){
-            //var_dump($input); die;
             $output = [];
             foreach ($input as $key => $value) {
                 if (is_array($value)) {
                     $output[$key] = $map($value);
-                    $output[$key] = $value;
                 } elseif ($value instanceof DateTime) {
                     $output[$key] = new UTCDateTime($value);
                 } else {
