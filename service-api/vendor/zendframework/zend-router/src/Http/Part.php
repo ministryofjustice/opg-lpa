@@ -60,7 +60,7 @@ class Part extends TreeRouteStack implements RouteInterface
     ) {
         $this->routePluginManager = $routePlugins;
 
-        if (!$route instanceof RouteInterface) {
+        if (! $route instanceof RouteInterface) {
             $route = $this->routeFromArray($route);
         }
 
@@ -87,30 +87,30 @@ class Part extends TreeRouteStack implements RouteInterface
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
-        } elseif (!is_array($options)) {
+        } elseif (! is_array($options)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects an array or Traversable set of options',
                 __METHOD__
             ));
         }
 
-        if (!isset($options['route'])) {
+        if (! isset($options['route'])) {
             throw new Exception\InvalidArgumentException('Missing "route" in options array');
         }
 
-        if (!isset($options['route_plugins'])) {
+        if (! isset($options['route_plugins'])) {
             throw new Exception\InvalidArgumentException('Missing "route_plugins" in options array');
         }
 
-        if (!isset($options['prototypes'])) {
+        if (! isset($options['prototypes'])) {
             $options['prototypes'] = null;
         }
 
-        if (!isset($options['may_terminate'])) {
+        if (! isset($options['may_terminate'])) {
             $options['may_terminate'] = false;
         }
 
-        if (!isset($options['child_routes']) || !$options['child_routes']) {
+        if (! isset($options['child_routes']) || ! $options['child_routes']) {
             $options['child_routes'] = null;
         }
 
@@ -156,14 +156,11 @@ class Part extends TreeRouteStack implements RouteInterface
             $pathLength = strlen($uri->getPath());
 
             if ($this->mayTerminate && $nextOffset === $pathLength) {
-                $query = $uri->getQuery();
-                if ('' == trim($query) || !$this->hasQueryChild()) {
-                    return $match;
-                }
+                return $match;
             }
 
             if (isset($options['translator'])
-                && !isset($options['locale'])
+                && ! isset($options['locale'])
                 && null !== ($locale = $match->getParam('locale', null))
             ) {
                 $options['locale'] = $locale;
@@ -199,15 +196,15 @@ class Part extends TreeRouteStack implements RouteInterface
 
         $options['has_child'] = (isset($options['name']));
 
-        if (isset($options['translator']) && !isset($options['locale']) && isset($params['locale'])) {
+        if (isset($options['translator']) && ! isset($options['locale']) && isset($params['locale'])) {
             $options['locale'] = $params['locale'];
         }
 
         $path   = $this->route->assemble($params, $options);
         $params = array_diff_key($params, array_flip($this->route->getAssembledParams()));
 
-        if (!isset($options['name'])) {
-            if (!$this->mayTerminate) {
+        if (! isset($options['name'])) {
+            if (! $this->mayTerminate) {
                 throw new Exception\RuntimeException('Part route may not terminate');
             } else {
                 return $path;
@@ -232,20 +229,5 @@ class Part extends TreeRouteStack implements RouteInterface
         // Part routes may not occur as base route of other part routes, so we
         // don't have to return anything here.
         return [];
-    }
-
-    /**
-     * Is one of the child routes a query route?
-     *
-     * @return bool
-     */
-    protected function hasQueryChild()
-    {
-        foreach ($this->routes as $route) {
-            if ($route instanceof Query) {
-                return true;
-            }
-        }
-        return false;
     }
 }

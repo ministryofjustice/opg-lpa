@@ -76,7 +76,7 @@ class CachingIterator implements Countable, Iterator
     }
 
     /**
-     * @see http://php.net/iterator.mixed
+     * @see http://php.net/iterator.key
      * @return mixed
      */
     public function key()
@@ -115,7 +115,6 @@ class CachingIterator implements Countable, Iterator
     }
 
     /**
-     * 
      * @see http://php.net/iterator.valid
      * @return boolean
      */
