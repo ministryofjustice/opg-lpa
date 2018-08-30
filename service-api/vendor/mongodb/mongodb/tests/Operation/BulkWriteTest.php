@@ -294,6 +294,18 @@ class BulkWriteTest extends TestCase
 
     /**
      * @expectedException MongoDB\Exception\InvalidArgumentException
+     * @expectedExceptionMessageRegExp /Expected \$operations\[0\]\["updateMany"\]\[2\]\["arrayFilters"\] to have type "array" but found "[\w ]+"/
+     * @dataProvider provideInvalidArrayValues
+     */
+    public function testUpdateManyArrayFiltersOptionTypeCheck($arrayFilters)
+    {
+        new BulkWrite($this->getDatabaseName(), $this->getCollectionName(), [
+            [BulkWrite::UPDATE_MANY => [['x' => 1], ['$set' => ['x' => 1]], ['arrayFilters' => $arrayFilters]]],
+        ]);
+    }
+
+    /**
+     * @expectedException MongoDB\Exception\InvalidArgumentException
      * @expectedExceptionMessageRegExp /Expected \$operations\[0\]\["updateMany"\]\[2\]\["collation"\] to have type "array or object" but found "[\w ]+"/
      * @dataProvider provideInvalidDocumentValues
      */
@@ -375,6 +387,18 @@ class BulkWriteTest extends TestCase
 
     /**
      * @expectedException MongoDB\Exception\InvalidArgumentException
+     * @expectedExceptionMessageRegExp /Expected \$operations\[0\]\["updateOne"\]\[2\]\["arrayFilters"\] to have type "array" but found "[\w ]+"/
+     * @dataProvider provideInvalidArrayValues
+     */
+    public function testUpdateOneArrayFiltersOptionTypeCheck($arrayFilters)
+    {
+        new BulkWrite($this->getDatabaseName(), $this->getCollectionName(), [
+            [BulkWrite::UPDATE_ONE => [['x' => 1], ['$set' => ['x' => 1]], ['arrayFilters' => $arrayFilters]]],
+        ]);
+    }
+
+    /**
+     * @expectedException MongoDB\Exception\InvalidArgumentException
      * @expectedExceptionMessageRegExp /Expected \$operations\[0\]\["updateOne"\]\[2\]\["collation"\] to have type "array or object" but found "[\w ]+"/
      * @dataProvider provideInvalidDocumentValues
      */
@@ -421,6 +445,10 @@ class BulkWriteTest extends TestCase
 
         foreach ($this->getInvalidBooleanValues() as $value) {
             $options[][] = ['ordered' => $value];
+        }
+
+        foreach ($this->getInvalidSessionValues() as $value) {
+            $options[][] = ['session' => $value];
         }
 
         foreach ($this->getInvalidWriteConcernValues() as $value) {

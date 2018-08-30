@@ -1,45 +1,43 @@
 {
     "name": "zendframework/zend-router",
-    "description": " ",
+    "description": "Flexible routing system for HTTP and console applications",
     "license": "BSD-3-Clause",
     "keywords": [
-        "zf2",
+        "zf",
+        "zend",
+        "zendframework",
         "mvc",
         "routing"
     ],
-    "homepage": "https://github.com/zendframework/zend-router",
-    "autoload": {
-        "psr-4": {
-            "Zend\\Router\\": "src/"
-        }
+    "support": {
+        "docs": "https://docs.zendframework.com/zend-router/",
+        "issues": "https://github.com/zendframework/zend-router/issues",
+        "source": "https://github.com/zendframework/zend-router",
+        "rss": "https://github.com/zendframework/zend-router/releases.atom",
+        "slack": "https://zendframework-slack.herokuapp.com",
+        "forum": "https://discourse.zendframework.com/c/questions/components"
     },
     "require": {
-        "php": "^5.5 || ^7.0",
-        "container-interop/container-interop": "^1.1",
-        "zendframework/zend-http": "^2.5",
-        "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3",
-        "zendframework/zend-stdlib": "^2.7.5 || ^3.0"
+        "php": "^5.6 || ^7.0",
+        "container-interop/container-interop": "^1.2",
+        "zendframework/zend-http": "^2.8.1",
+        "zendframework/zend-servicemanager": "^2.7.8 || ^3.3",
+        "zendframework/zend-stdlib": "^2.7.7 || ^3.1"
     },
     "require-dev": {
-        "zendframework/zend-i18n": "^2.6",
-        "squizlabs/php_codesniffer": "^2.3",
-        "phpunit/phpunit": "^4.5",
-        "sebastian/version": "^1.0.4"
-    },
-    "suggest": {
-        "zendframework/zend-i18n": "^2.6, if defining translatable HTTP path segments"
+        "phpunit/phpunit": "^5.7.22 || ^6.4.1",
+        "zendframework/zend-coding-standard": "~1.0.0",
+        "zendframework/zend-i18n": "^2.7.4"
     },
     "conflict": {
         "zendframework/zend-mvc": "<3.0.0"
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "3.0-dev",
-            "dev-develop": "3.1-dev"
-        },
-        "zf": {
-            "component": "Zend\\Router",
-            "config-provider": "Zend\\Router\\ConfigProvider"
+    "suggest": {
+        "zendframework/zend-i18n": "^2.7.4, if defining translatable HTTP path segments"
+    },
+    "autoload": {
+        "psr-4": {
+            "Zend\\Router\\": "src/"
         }
     },
     "autoload-dev": {
@@ -47,15 +45,27 @@
             "ZendTest\\Router\\": "test/"
         }
     },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.2.x-dev",
+            "dev-develop": "3.3.x-dev"
+        },
+        "zf": {
+            "component": "Zend\\Router",
+            "config-provider": "Zend\\Router\\ConfigProvider"
+        }
+    },
     "scripts": {
         "check": [
             "@cs-check",
             "@test"
         ],
-        "upload-coverage": "coveralls",
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
-        "test": "phpunit",
-        "test-coverage": "phpunit --coverage-clover clover.xml"
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
     }
 }

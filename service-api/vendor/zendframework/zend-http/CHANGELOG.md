@@ -2,6 +2,90 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.2 - 2018-08-13
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#153](https://github.com/zendframework/zend-diactoros/pull/153) changes the reason phrase associated with the status code 425
+  from "Unordered Collection" to "Too Early", corresponding to a new definition
+  of the code as specified by the IANA.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#151](https://github.com/zendframework/zend-http/pull/151) fixes how Referer and other location-based headers report problems with
+  invalid URLs provided in the header value, raising a `Zend\Http\Exception\InvalidArgumentException`
+  in such cases. This change ensures the behavior is consistent with behavior
+  prior to the 2.8.0 release.
+
+## 2.8.1 - 2018-08-01
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- This release modifies how `Zend\Http\PhpEnvironment\Request` marshals the
+  request URI. In prior releases, we would attempt to inspect the
+  `X-Rewrite-Url` and `X-Original-Url` headers, using their values, if present.
+  These headers are issued by the ISAPI_Rewrite module for IIS (developed by
+  HeliconTech). However, we have no way of guaranteeing that the module is what
+  issued the headers, making it an unreliable source for discovering the URI. As
+  such, we have removed this feature in this release of zend-http.
+
+  If you are developing a zend-mvc application, you can mimic the
+  functionality by adding a bootstrap listener like the following:
+
+  ```php
+  public function onBootstrap(MvcEvent $mvcEvent)
+  {
+      $request = $mvcEvent->getRequest();
+      $requestUri = null;
+
+      $httpXRewriteUrl = $request->getHeader('X-Rewrite-Url');
+      if ($httpXRewriteUrl) {
+          $requestUri = $httpXRewriteUrl->getFieldValue();
+      }
+
+      $httpXOriginalUrl = $request->getHeader('X-Original-Url');
+      if ($httpXOriginalUrl) {
+          $requestUri = $httpXOriginalUrl->getFieldValue();
+      }
+
+      if ($requestUri) {
+          $request->setUri($requestUri)
+      }
+  }
+  ```
+
+  If you use a listener such as the above, make sure you also instruct your web
+  server to strip any incoming headers of the same name so that you can
+  guarantee they are issued by the ISAPI_Rewrite module.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.8.0 - 2018-04-26
 
 ### Added

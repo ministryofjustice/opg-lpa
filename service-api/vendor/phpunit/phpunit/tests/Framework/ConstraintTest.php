@@ -7,7 +7,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace PHPUnit\Framework;
 
 use PHPUnit\Framework\Constraint\Count;
@@ -72,7 +71,7 @@ EOF
 
     public function testConstraintFileNotExists(): void
     {
-        $file = \dirname(__DIR__) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'ClassWithNonPublicAttributes.php';
+        $file = \dirname(__DIR__) . \DIRECTORY_SEPARATOR . '_files' . \DIRECTORY_SEPARATOR . 'ClassWithNonPublicAttributes.php';
 
         $constraint = Assert::logicalNot(
             Assert::fileExists()
@@ -102,7 +101,7 @@ EOF
 
     public function testConstraintFileNotExists2(): void
     {
-        $file = \dirname(__DIR__) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'ClassWithNonPublicAttributes.php';
+        $file = \dirname(__DIR__) . \DIRECTORY_SEPARATOR . '_files' . \DIRECTORY_SEPARATOR . 'ClassWithNonPublicAttributes.php';
 
         $constraint = Assert::logicalNot(
             Assert::fileExists()
@@ -1143,7 +1142,7 @@ EOF
         $this->assertFalse($constraint->evaluate('ORYGINAŁ', '', true));
         $this->assertFalse($constraint->evaluate('oryginał', '', true));
         $this->assertEquals('does not contain "oryginał"', $constraint->toString());
-        $this->assertEquals(1, \count($constraint));
+        $this->assertCount(1, $constraint);
 
         $this->expectException(ExpectationFailedException::class);
 
@@ -1160,7 +1159,7 @@ EOF
         $this->assertTrue($constraint->evaluate('ORYGINAŁ', '', true));
         $this->assertFalse($constraint->evaluate('oryginał', '', true));
         $this->assertEquals('does not contain "oryginał"', $constraint->toString());
-        $this->assertEquals(1, \count($constraint));
+        $this->assertCount(1, $constraint);
 
         $this->expectException(ExpectationFailedException::class);
 
@@ -1488,6 +1487,6 @@ EOF
      */
     private function trimnl($string)
     {
-        return \preg_replace('/[ ]*\n/', PHP_EOL, $string);
+        return \preg_replace('/[ ]*\n/', "\n", $string);
     }
 }
