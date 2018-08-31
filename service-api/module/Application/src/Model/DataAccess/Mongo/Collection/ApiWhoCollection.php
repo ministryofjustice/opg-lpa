@@ -2,7 +2,6 @@
 namespace Application\Model\DataAccess\Mongo\Collection;
 
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
-use Application\Model\DataAccess\Mongo\DateCallback;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use MongoDB\BSON\ObjectID as MongoId;
 use MongoDB\Collection as MongoCollection;

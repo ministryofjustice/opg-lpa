@@ -3,7 +3,6 @@
 namespace Application\Model\DataAccess\Mongo\Collection;
 
 use Application\Library\DateTime;
-use Application\Model\DataAccess\Mongo\DateCallback;
 use Opg\Lpa\DataModel\User\User as UserModel;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection as MongoCollection;

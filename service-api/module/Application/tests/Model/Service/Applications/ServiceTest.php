@@ -3,7 +3,6 @@
 namespace ApplicationTest\Model\Service\Applications;
 
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
-use Application\Model\DataAccess\Mongo\DateCallback;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;

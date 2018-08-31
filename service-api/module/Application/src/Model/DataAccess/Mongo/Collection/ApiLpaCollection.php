@@ -7,7 +7,6 @@ use DateTime;
 use Application\Library\DateTime as MillisecondDateTime;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
-use Application\Model\DataAccess\Mongo\DateCallback;
 use MongoDB\BSON\Javascript as MongoCode;
 use MongoDB\BSON\Regex;
 use MongoDB\BSON\UTCDateTime;

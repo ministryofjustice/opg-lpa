@@ -3,7 +3,6 @@
 namespace ApplicationTest\Model\Service;
 
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
-use Application\Model\DataAccess\Mongo\DateCallback;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
