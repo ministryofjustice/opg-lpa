@@ -240,26 +240,22 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     /**
      * Returns $this as an array, propagating to all properties that implement AccessorInterface.
      *
-     * @param callable|null $dateCallback
+     * @param bool $retainDateTimeInstances
      * @return array
      */
-    public function toArray(callable $dateCallback = null)
+    public function toArray(bool $retainDateTimeInstances = false)
     {
         $values = get_object_vars($this);
 
         foreach ($values as $k => $v) {
-            if ($v instanceof DateTime) {
-                if (is_callable($dateCallback)) {
-                    $values[$k] = call_user_func($dateCallback, $v);
-                } else {
-                    //  Get the value as a normal datetime string
-                    $values[$k] = $v->format('Y-m-d\TH:i:s.uO'); // ISO8601 including microseconds
-                }
+            if ($v instanceof DateTime && !$retainDateTimeInstances) {
+                //  Get the value as a normal datetime string
+                $values[$k] = $v->format('Y-m-d\TH:i:s.uO'); // ISO8601 including microseconds
             }
 
             // Recursively build this array...
             if ($v instanceof AccessorInterface) {
-                $values[$k] = $v->toArray($dateCallback);
+                $values[$k] = $v->toArray($retainDateTimeInstances);
             }
 
             // If the value is an array, check if it contains instances of AccessorInterface...
@@ -267,7 +263,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
                 // If so, map them...
                 foreach ($v as $a => $b) {
                     if ($b instanceof AccessorInterface) {
-                        $values[$k][$a] = $b->toArray($dateCallback);
+                        $values[$k][$a] = $b->toArray($retainDateTimeInstances);
                     }
                 }
             }
