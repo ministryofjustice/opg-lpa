@@ -26,10 +26,8 @@
 	* People_Certificate providers.md
 * People to notify
 	* People_People to be told.md
-* Preferences and instructions for health and welfare
-	* Decisions_Preferences and instructions for health and welfare.md
-* Preferences and instructions for property and finance
-	* Decisions_Preferences and instructions for property and finance.md
+* Preferences and instructions
+	* Decisions_Preferences and instructions.md
 * View a draft of the LPA
 	* Process_View a draft of the LPA.md
 * If you find a mistake
