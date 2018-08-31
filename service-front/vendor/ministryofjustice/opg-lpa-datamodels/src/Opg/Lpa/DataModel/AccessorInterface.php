@@ -43,10 +43,10 @@ interface AccessorInterface
     /**
      * Returns an array representation of $this instance.
      *
-     * @param callable|null $dateCallback
+     * @param bool $retainDateTimeInstances
      * @return array
      */
-    public function toArray(callable $dateCallback = null);
+    public function toArray(bool $retainDateTimeInstances = false);
 
     /**
      * Returns an JSON representation of $this instance.
