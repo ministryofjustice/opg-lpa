@@ -46,11 +46,9 @@ class LpaTest extends TestCase
     {
         $lpa = FixturesData::getHwLpa();
 
-        $lpaArray = $lpa->toArray(function (DateTime $dateTime) {
-            //  Dummy callable
-        });
+        $lpaArray = $lpa->toArray();
 
-        $this->assertEquals($lpa->get('id'), $lpaArray['_id']);
+        $this->assertEquals($lpa->get('id'), $lpaArray['id']);
     }
 
     public function testAbbreviatedToArray()
