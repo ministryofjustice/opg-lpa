@@ -40,11 +40,9 @@ class UserTest extends TestCase
     {
         $user = FixturesData::getUser();
 
-        $lpaArray = $user->toArray(function (DateTime $dateTime) {
-            //  Dummy callable
-        });
+        $lpaArray = $user->toArray();
 
-        $this->assertEquals($user->get('id'), $lpaArray['_id']);
+        $this->assertEquals($user->get('id'), $lpaArray['id']);
     }
 
     public function testGetsAndSets()
