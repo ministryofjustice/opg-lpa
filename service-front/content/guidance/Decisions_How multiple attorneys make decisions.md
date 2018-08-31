@@ -43,19 +43,39 @@ If the attorneys live far apart, they may find acting jointly difficult – for 
 
 The donor should also consider whether anything could stop the attorneys working together in the future. For example, what would happen if the attorneys fell out or if one moved abroad?
 
-The law treats attorneys who act jointly as a single unit. This means that if an attorney dies or can no longer act, the LPA will stop working, unless the donor said otherwise in their [instructions](/help/#topic-preferences-and-instructions).
+### If one of the attorneys dies or is unable to act
+
+The law treats attorneys who act jointly as a single unit. This means that if an attorney dies or is unable or unwilling to act, the LPA will stop working. However, the donor can add [instructions](/help/#topic-preferences-and-instructions) to change this.
+
+In their instructions the donor can state that if one of the joint attorneys can no longer act, the remaining joint attorneys can continue to make all decisions. For example, the donor could use an instruction like the one below:
+
+"If one of my original joint attorneys, Jane Taylor and Robert Smith, is unable or unwilling to act, I then reappoint my remaining original attorneys, Jane Taylor or Robert Smith, as replacement attorney to act solely."
+
+If the donor has also appointed [replacement attorneys](/help/#topic-replacement-attorneys), the donor could add further instructions:
+
+"If neither of my original attorneys is able or willing to act, I appoint my replacement attorneys to act."
 
 ## Jointly for some decisions, and jointly and severally for other decisions
 
 The donor specifies certain decisions that the attorneys must all make together and agree on. Any other decisions can be made individually.
 
-Some donors choose this option because they do not mind their attorneys making everyday decisions alone, but want them to make certain important decisions together. For example, selling the donor’s house. The donor must clearly say which decisions the attorneys must make together.
+Some donors choose this option because they do not mind their attorneys making everyday decisions alone, but want them to make certain important decisions together. For example, selling the donor’s house. The donor must clearly say which decisions the attorneys must make together. We’ve included some examples at the end of the page.
 
 With this option, if the attorneys cannot all agree on a joint decision, it cannot be made.
 
 The donor should consider whether anything could stop the attorneys working together to make joint decisions. For example, what would happen if the attorneys fell out or if one moved abroad?
 
-If an attorney dies or can no longer act, the remaining attorneys will not be able to make any of the joint decisions, unless the donor either said otherwise in their [instructions](/help/#topic-preferences-and-instructions).
+### If one of the attorneys dies or is unable to act
+
+If an attorney dies or is unable or unwilling to act, the remaining attorneys will not be able to make any of the joint decisions, unless the donor either said otherwise in their [instructions](/help/#topic-preferences-and-instructions).
+
+In their instructions the donor can state that if one of their attorneys can no longer act, the remaining attorneys can continue to make all the joint decisions. For example, the donor could use an instruction like the one below:
+
+"If one of my original attorneys, Jane Taylor and Robert Smith, is unable or unwilling to act, I then reappoint my remaining original attorneys, Jane Taylor or Robert Smith, as replacement attorney to act solely."
+
+If the donor has also appointed [replacement attorneys](/help/#topic-replacement-attorneys), the donor could add further instructions:
+
+"If neither of my original attorneys is able or willing to act, I appoint my replacement attorneys to act."
 
 ### Examples of instructions for attorneys appointed jointly for some decisions and severally for others
 
