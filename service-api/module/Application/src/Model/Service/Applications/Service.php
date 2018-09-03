@@ -6,7 +6,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
 use Application\Library\Random\Csprng;
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
 use Opg\Lpa\DataModel\Lpa\Document;
@@ -17,7 +17,7 @@ use RuntimeException;
 
 class Service extends AbstractService
 {
-    use ApiLpaCollectionTrait;
+    use ApplicationRepositoryTrait;
 
     /**
      * @param $data
@@ -39,7 +39,7 @@ class Service extends AbstractService
             $id = $csprng->GetInt(1000000, 99999999999);
 
             //  Try to get an existing LPA to check if the ID is already used
-            $existingLpa = $this->apiLpaCollection->getById($id);
+            $existingLpa = $this->getApplicationRepository()->getById($id);
         } while (!is_null($existingLpa));
 
         $lpa = new Lpa([
@@ -62,7 +62,7 @@ class Service extends AbstractService
             throw new RuntimeException('A malformed LPA object was created');
         }
 
-        $this->apiLpaCollection->insert($lpa);
+        $this->getApplicationRepository()->insert($lpa);
 
         $entity = new DataModelEntity($lpa);
 
@@ -119,13 +119,11 @@ class Service extends AbstractService
     public function fetch($id, $userId)
     {
         // Note: user has to match
-        $result = $this->apiLpaCollection->getById((int) $id, $userId);
+        $result = $this->getApplicationRepository()->getById((int) $id, $userId);
 
         if (is_null($result)) {
             return new ApiProblem(404, 'Document ' . $id . ' not found for user ' . $userId);
         }
-
-        $result = ['id' => $result['_id']] + $result;
 
         $lpa = new Lpa($result);
 
@@ -170,8 +168,8 @@ class Service extends AbstractService
             }
         }
 
-        $cursor = $this->apiLpaCollection->fetch($filter);
-        $count = count($cursor->toArray());
+        // Get the total number of results
+        $count = $this->getApplicationRepository()->count($filter);
 
         // If there are no records, just return an empty paginator...
         if ($count == 0) {
@@ -179,7 +177,7 @@ class Service extends AbstractService
         }
 
         // Map the results into a Zend Paginator, lazely converting them to LPA instances as we go...
-        $apiLpaCollection = $this->apiLpaCollection;
+        $apiLpaCollection = $this->getApplicationRepository();
 
         $callback = new PaginatorCallback(
             function ($offset, $itemCountPerPage) use ($apiLpaCollection, $filter) {
@@ -193,14 +191,11 @@ class Service extends AbstractService
                 ];
 
                 $cursor = $apiLpaCollection->fetch($filter, $options);
-                $lpas = $cursor->toArray();
 
                 // Convert the results to instances of the LPA object..
                 $items = array_map(function ($lpa) {
-                    $lpa = [ 'id' => $lpa['_id'] ] + $lpa;
-
                     return new Lpa($lpa);
-                }, $lpas);
+                }, iterator_to_array($cursor, false));
 
                 return $items;
             },
@@ -220,13 +215,13 @@ class Service extends AbstractService
      */
     public function delete($id, $userId)
     {
-        $result = $this->apiLpaCollection->getById((int) $id, $userId);
+        $result = $this->getApplicationRepository()->getById((int) $id, $userId);
 
         if (is_null($result)) {
             return new ApiProblem(404, 'Document not found');
         }
 
-        $this->apiLpaCollection->deleteById($id, $userId);
+        $this->getApplicationRepository()->deleteById($id, $userId);
 
         return true;
     }
@@ -237,7 +232,7 @@ class Service extends AbstractService
      */
     public function deleteAll($userId)
     {
-        $lpas = $this->apiLpaCollection->fetchByUserId($userId);
+        $lpas = $this->getApplicationRepository()->fetchByUserId($userId);
 
         foreach ($lpas as $lpa) {
             $this->delete($lpa['_id'], $userId);

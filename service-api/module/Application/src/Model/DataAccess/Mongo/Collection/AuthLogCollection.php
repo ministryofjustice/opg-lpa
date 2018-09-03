@@ -1,12 +1,11 @@
 <?php
-
 namespace Application\Model\DataAccess\Mongo\Collection;
 
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use MongoDB\Collection as MongoCollection;
-use Application\Model\DataAccess\Repository\Auth;
+use Application\Model\DataAccess\Repository\User as UserRepository;
 
-class AuthLogCollection implements Auth\LogRepositoryInterface
+class AuthLogCollection extends AbstractCollection implements UserRepository\LogRepositoryInterface
 {
     /**
      * @var MongoCollection

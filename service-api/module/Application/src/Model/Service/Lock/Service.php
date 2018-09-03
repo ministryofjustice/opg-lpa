@@ -4,13 +4,13 @@ namespace Application\Model\Service\Lock;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\DateTime;
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use RuntimeException;
 
 class Service extends AbstractService
 {
-    use ApiLpaCollectionTrait;
+    use ApplicationRepositoryTrait;
 
     /**
      * @param $lpaId

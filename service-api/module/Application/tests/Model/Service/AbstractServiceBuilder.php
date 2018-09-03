@@ -2,14 +2,11 @@
 
 namespace ApplicationTest\Model\Service;
 
-use Application\Model\DataAccess\Repository\Auth\LogRepositoryInterface;
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
-use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
-use Application\Model\DataAccess\Mongo\Collection\ApiUserCollection;
-use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
-use Application\Model\DataAccess\Mongo\Collection\AuthLogCollection;
-use Application\Model\DataAccess\Mongo\Collection\AuthUserCollection;
+use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
+use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
+use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
 use Application\Model\Service\AbstractService;
 use Mockery;
 use Mockery\MockInterface;
@@ -23,36 +20,6 @@ abstract class AbstractServiceBuilder
     private $logger = null;
 
     /**
-     * @var MockInterface|ApiLpaCollection
-     */
-    private $apiLpaCollection = null;
-
-    /**
-     * @var MockInterface|ApiStatsLpasCollection
-     */
-    private $apiStatsLpasCollection = null;
-
-    /**
-     * @var MockInterface|ApiUserCollection
-     */
-    private $apiUserCollection = null;
-
-    /**
-     * @var MockInterface|ApiWhoCollection
-     */
-    private $apiWhoCollection = null;
-
-    /**
-     * @var MockInterface|AuthLogCollection
-     */
-    private $authLogCollection = null;
-
-    /**
-     * @var MockInterface|AuthUserCollection
-     */
-    private $authUserCollection = null;
-
-    /**
      * @var MockInterface|LogRepositoryInterface
      */
     private $authLogRepository = null;
@@ -63,78 +30,27 @@ abstract class AbstractServiceBuilder
     private $authUserRepository = null;
 
     /**
+     * @var MockInterface|WhoRepositoryInterface
+     */
+    private $whoRepository = null;
+
+    /**
+     * @var MockInterface|StatsRepositoryInterface
+     */
+    private $statsRepository = null;
+
+    /**
+     * @var MockInterface|ApplicationRepositoryInterface
+     */
+    private $applicationRepository = null;
+
+    /**
      * @param $logger
      * @return $this
      */
     public function withLogger($logger)
     {
         $this->logger = $logger;
-
-        return $this;
-    }
-
-    /**
-     * @param $apiLpaCollection
-     * @return $this
-     */
-    public function withApiLpaCollection($apiLpaCollection)
-    {
-        $this->apiLpaCollection = $apiLpaCollection;
-
-        return $this;
-    }
-
-    /**
-     * @param $apiStatsLpasCollection
-     * @return $this
-     */
-    public function withApiStatsLpasCollection($apiStatsLpasCollection)
-    {
-        $this->apiStatsLpasCollection = $apiStatsLpasCollection;
-
-        return $this;
-    }
-
-    /**
-     * @param $apiUserCollection
-     * @return $this
-     */
-    public function withApiUserCollection($apiUserCollection)
-    {
-        $this->apiUserCollection = $apiUserCollection;
-
-        return $this;
-    }
-
-    /**
-     * @param $apiWhoCollection
-     * @return $this
-     */
-    public function withApiWhoCollection($apiWhoCollection)
-    {
-        $this->apiWhoCollection = $apiWhoCollection;
-
-        return $this;
-    }
-
-    /**
-     * @param $authLogCollection
-     * @return $this
-     */
-    public function withAuthLogCollection($authLogCollection)
-    {
-        $this->authLogCollection = $authLogCollection;
-
-        return $this;
-    }
-
-    /**
-     * @param $authUserCollection
-     * @return $this
-     */
-    public function withAuthUserCollection($authUserCollection)
-    {
-        $this->authUserCollection = $authUserCollection;
 
         return $this;
     }
@@ -162,6 +78,35 @@ abstract class AbstractServiceBuilder
     }
 
     /**
+     * @param $whoRepository
+     * @return $this
+     */
+    public function withWhoRepository($whoRepository)
+    {
+        $this->whoRepository = $whoRepository;
+
+        return $this;
+    }
+
+    /**
+     * @param $statsRepository
+     * @return $this
+     */
+    public function withStatsRepository($statsRepository)
+    {
+        $this->statsRepository = $statsRepository;
+
+        return $this;
+    }
+
+    public function withApplicationRepository($applicationRepository)
+    {
+        $this->applicationRepository = $applicationRepository;
+
+        return $this;
+    }
+
+    /**
      * @return AbstractService
      */
     abstract public function build();
@@ -183,29 +128,24 @@ abstract class AbstractServiceBuilder
 
         $service->setLogger($this->logger);
 
-        //  Add the collections if they are present
-        if ($this->apiLpaCollection !== null) {
-            $service->setApiLpaCollection($this->apiLpaCollection);
-        }
-
-        if ($this->apiStatsLpasCollection !== null) {
-            $service->setApiStatsLpasCollection($this->apiStatsLpasCollection);
-        }
-
-        if ($this->apiUserCollection !== null) {
-            $service->setApiUserCollection($this->apiUserCollection);
-        }
-
-        if ($this->apiWhoCollection !== null) {
-            $service->setApiWhoCollection($this->apiWhoCollection);
-        }
-
         if ($this->authLogRepository !== null) {
             $service->setLogRepository($this->authLogRepository);
         }
 
         if ($this->authUserRepository !== null) {
             $service->setUserRepository($this->authUserRepository);
+        }
+
+        if ($this->whoRepository !== null) {
+            $service->setWhoRepository($this->whoRepository);
+        }
+
+        if ($this->statsRepository !== null) {
+            $service->setStatsRepository($this->statsRepository);
+        }
+
+        if ($this->applicationRepository !== null) {
+            $service->setApplicationRepository($this->applicationRepository);
         }
 
         return $service;
@@ -216,36 +156,24 @@ abstract class AbstractServiceBuilder
      */
     public function verify()
     {
-        if ($this->apiLpaCollection !== null) {
-            $this->apiLpaCollection->mockery_verify();
-        }
-
-        if ($this->apiStatsLpasCollection !== null) {
-            $this->apiStatsLpasCollection->mockery_verify();
-        }
-
-        if ($this->apiUserCollection !== null) {
-            $this->apiUserCollection->mockery_verify();
-        }
-
-        if ($this->apiWhoCollection !== null) {
-            $this->apiWhoCollection->mockery_verify();
-        }
-
-        if ($this->authLogCollection !== null) {
-            $this->authLogCollection->mockery_verify();
-        }
-
-        if ($this->authUserCollection !== null) {
-            $this->authUserCollection->mockery_verify();
-        }
-
         if ($this->authLogRepository !== null) {
             $this->authLogRepository->mockery_verify();
         }
 
         if ($this->authUserRepository !== null) {
             $this->authUserRepository->mockery_verify();
+        }
+
+        if ($this->whoRepository !== null) {
+            $this->whoRepository->mockery_verify();
+        }
+
+        if ($this->statsRepository !== null) {
+            $this->statsRepository->mockery_verify();
+        }
+
+        if ($this->applicationRepository !== null) {
+            $this->applicationRepository->mockery_verify();
         }
 
         Mockery::close();

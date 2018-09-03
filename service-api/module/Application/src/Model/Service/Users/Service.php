@@ -4,7 +4,7 @@ namespace Application\Model\Service\Users;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
-use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
+use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
@@ -13,7 +13,7 @@ use Opg\Lpa\DataModel\User\User;
 
 class Service extends AbstractService
 {
-    use ApiUserCollectionTrait;
+    use UserRepositoryTrait;
 
     /**
      * @var ApplicationService
@@ -32,20 +32,18 @@ class Service extends AbstractService
     public function fetch($id)
     {
         //  Try to get an existing user
-        $user = $this->apiUserCollection->getById($id);
+        $user = $this->getUserRepository()->getProfile($id);
 
         //  If there is no user create one now and ensure that the email address is correct
-
         if (is_null($user)) {
             $user = $this->save($id);
-        } else {
-            //  Create the user object using the data
-            $user = new User([
-                'id' => $id
-            ] + $user);
         }
 
-        return new DataModelEntity($user);
+        if ($user instanceof User) {
+            return new DataModelEntity($user);
+        }
+
+        return $user;
     }
 
     /**
@@ -74,9 +72,6 @@ class Service extends AbstractService
         // Delete all applications for the user.
         $this->applicationsService->deleteAll($id);
 
-        // Delete the user's About Me details.
-        $this->apiUserCollection->deleteById($id);
-
         $this->userManagementService->delete($id, 'user-initiated');
 
         return true;
@@ -89,10 +84,10 @@ class Service extends AbstractService
      */
     private function save($id, array $data = [])
     {
-        $user = $this->apiUserCollection->getById($id);
-
         // Protect these values from the client setting them manually.
         unset($data['id'], $data['email'], $data['createdAt'], $data['updatedAt']);
+
+        $user = $this->getUserRepository()->getProfile($id);
 
         $new = false;
 
@@ -105,9 +100,7 @@ class Service extends AbstractService
 
             $new = true;
         } else {
-            $user = [
-                'id' => $user['_id']
-            ] + $user;
+            $user = $user->toArray();
         }
 
         //  Keep email up to date with what's in the auth service
@@ -118,17 +111,16 @@ class Service extends AbstractService
 
         $user = new User($data);
 
-        if ($new) {
-            $this->apiUserCollection->insert($user);
-        } else {
+        if (!$new) {
+            // We don't validate if it's new
             $validation = $user->validate();
 
             if ($validation->hasErrors()) {
                 return new ValidationApiProblem($validation);
             }
-
-            $this->apiUserCollection->update($user);
         }
+
+        $this->getUserRepository()->saveProfile($user);
 
         return $user;
     }

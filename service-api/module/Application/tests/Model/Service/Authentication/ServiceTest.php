@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Model\Service\Authentication;
 
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Mongo\Collection\User;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use ApplicationTest\Model\Service\AbstractServiceTest;

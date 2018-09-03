@@ -2,8 +2,8 @@
 
 namespace Application\Model\Service\Password;
 
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
-use Application\Model\DataAccess\Repository\Auth\UserInterface as User;
+use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
+use Application\Model\DataAccess\Repository\User\UserInterface as User;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\PasswordValidatorTrait;

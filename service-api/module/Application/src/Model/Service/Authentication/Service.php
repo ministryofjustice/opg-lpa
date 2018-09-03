@@ -2,9 +2,9 @@
 
 namespace Application\Model\Service\Authentication;
 
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
-use Application\Model\DataAccess\Repository\Auth\TokenInterface as Token;
-use Application\Model\DataAccess\Repository\Auth\UserInterface as User;
+use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
+use Application\Model\DataAccess\Repository\User\TokenInterface as Token;
+use Application\Model\DataAccess\Repository\User\UserInterface as User;
 use Application\Model\Service\AbstractService;
 use Zend\Math\BigInteger\BigInteger;
 use DateTime;

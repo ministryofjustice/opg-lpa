@@ -4,7 +4,7 @@ namespace ApplicationTest\Model\Service\WhoAreYou;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Model\DataAccess\Mongo\Collection\ApiWhoCollection;
+use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
 use Application\Model\Service\WhoAreYou\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
@@ -22,7 +22,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         $apiProblem = $service->create($lpa->getId(), null);
@@ -43,7 +43,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         $whoAreYou = new WhoAreYou();
@@ -72,7 +72,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user))
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
         //So we expect an exception and for no document to be updated
@@ -93,13 +93,13 @@ class ServiceTest extends AbstractServiceTest
 
         $user = FixturesData::getUser();
 
-        $whoCollection = Mockery::mock(ApiWhoCollection::class);
-        $whoCollection->shouldReceive('insert')->once();
+        $whoRepository = Mockery::mock(WhoRepositoryInterface::class);
+        $whoRepository->shouldReceive('insert')->once();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApiLpaCollection($this->getApiLpaCollection($lpa, $user, true))
-            ->withApiWhoCollection($whoCollection)
+            ->withApplicationRepository($this->getApplicationRepository($lpa, $user, true))
+            ->withWhoRepository($whoRepository)
             ->build();
 
         $whoAreYou = new WhoAreYou();

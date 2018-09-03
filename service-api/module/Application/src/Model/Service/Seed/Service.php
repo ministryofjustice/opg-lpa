@@ -3,7 +3,7 @@
 namespace Application\Model\Service\Seed;
 
 use Application\Library\ApiProblem\ApiProblem;
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\Applications\Service as ApplicationService;
@@ -12,7 +12,7 @@ use RuntimeException;
 
 class Service extends AbstractService
 {
-    use ApiLpaCollectionTrait;
+    use ApplicationRepositoryTrait;
 
     /**
      * @var ApplicationService

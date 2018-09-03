@@ -2,8 +2,8 @@
 
 namespace Application\Model\Service\UserManagement;
 
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
-use Application\Model\DataAccess\Repository\Auth\LogRepositoryTrait;
+use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
+use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\PasswordValidatorTrait;
 use Zend\Validator\EmailAddress as EmailAddressValidator;

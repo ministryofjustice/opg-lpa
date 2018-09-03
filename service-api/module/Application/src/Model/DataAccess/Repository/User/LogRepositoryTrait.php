@@ -1,5 +1,5 @@
 <?php
-namespace Application\Model\DataAccess\Repository\Auth;
+namespace Application\Model\DataAccess\Repository\User;
 
 trait LogRepositoryTrait
 {

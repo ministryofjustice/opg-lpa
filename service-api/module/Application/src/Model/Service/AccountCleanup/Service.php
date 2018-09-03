@@ -2,11 +2,10 @@
 
 namespace Application\Model\Service\AccountCleanup;
 
+use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
-use Application\Model\DataAccess\Repository\Auth\UserRepositoryTrait;
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollectionTrait;
-use Application\Model\DataAccess\Mongo\Collection\ApiUserCollectionTrait;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\UserManagement\Service as UserManagementService;
 use Aws\Sns\SnsClient;
@@ -23,8 +22,7 @@ use Exception;
  */
 class Service extends AbstractService
 {
-    use ApiLpaCollectionTrait;
-    use ApiUserCollectionTrait;
+    use ApplicationRepositoryTrait;
     use UserRepositoryTrait;
 
     /**
@@ -192,13 +190,11 @@ class Service extends AbstractService
             $this->userManagementService->delete($user->id(), 'expired');
 
             //  Delete the LPAs in the API data for this user
-            $lpas = $this->apiLpaCollection->fetchByUserId($user->id());
+            $lpas = $this->getApplicationRepository()->fetchByUserId($user->id());
 
             foreach ($lpas as $lpa) {
-                $this->apiLpaCollection->deleteById($lpa['_id'], $lpa['user']);
+                $this->getApplicationRepository()->deleteById($lpa['_id'], $lpa['user']);
             }
-
-            $this->apiUserCollection->deleteById($user->id());
 
             $counter++;
         }

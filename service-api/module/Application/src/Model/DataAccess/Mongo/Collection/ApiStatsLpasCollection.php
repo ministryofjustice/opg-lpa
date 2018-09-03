@@ -2,10 +2,11 @@
 
 namespace Application\Model\DataAccess\Mongo\Collection;
 
+use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
 use MongoDB\Collection as MongoCollection;
 use MongoDB\Driver\ReadPreference;
 
-class ApiStatsLpasCollection
+class ApiStatsLpasCollection extends AbstractCollection implements StatsRepositoryInterface
 {
     /**
      * @var MongoCollection
@@ -21,19 +22,26 @@ class ApiStatsLpasCollection
     }
 
     /**
-     * @param $stats
+     * Insert a new set of stats into the cache.
+     *
+     * @param array $stats
+     * @return bool
      */
-    public function insert($stats)
+    public function insert(array $stats) : bool
     {
-        $this->collection->insertOne($stats);
+        $result = $this->collection->insertOne($stats);
+
+        return ($result->getInsertedCount() == 1);
     }
 
     /**
-     * @return array|null|object
+     * Returns the current set of cached stats.
+     *
+     * @return array
      */
-    public function getStats()
+    public function getStats() : ?array
     {
-        // Return all the cached data.// Stats can (ideally) be processed on a secondary.
+        // Return all the cached data. Stats can (ideally) be processed on a secondary.
         $readPreference = [
             'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
         ];
@@ -42,10 +50,12 @@ class ApiStatsLpasCollection
     }
 
     /**
-     * Empty the collection
+     * Delete all previously cached stats.
      */
-    public function delete()
+    public function delete() : bool
     {
-        $this->collection->deleteMany([]);
+        $result = $this->collection->deleteMany([]);
+
+        return $result->isAcknowledged();
     }
 }

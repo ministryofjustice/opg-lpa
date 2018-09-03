@@ -1,5 +1,4 @@
 <?php
-
 namespace Application\Model\DataAccess\Mongo\Collection;
 
 use MongoDB\BSON\UTCDateTime as MongoDate;
@@ -7,10 +6,13 @@ use MongoDB\Collection as MongoCollection;
 use MongoDB\Driver\Exception\Exception as MongoException;
 use MongoDB\Driver\ReadPreference;
 use DateTime;
-use Application\Model\DataAccess\Repository\Auth;
+use Application\Model\DataAccess\Repository\User as UserRepository;
+use Opg\Lpa\DataModel\User\User as UserModel;
 
-class AuthUserCollection implements Auth\UserRepositoryInterface
+class AuthUserCollection extends AbstractCollection implements UserRepository\UserRepositoryInterface
 {
+    use ApiUserCollectionTrait;
+
     /**
      * @var MongoCollection
      */
@@ -30,7 +32,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $username
      * @return User|null
      */
-    public function getByUsername(string $username) : ?Auth\UserInterface
+    public function getByUsername(string $username) : ?UserRepository\UserInterface
     {
         $data = $this->collection->findOne(['identity' => $username]);
 
@@ -45,7 +47,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $id
      * @return User|null
      */
-    public function getById(string $id) : ?Auth\UserInterface
+    public function getById(string $id) : ?UserRepository\UserInterface
     {
         $data = $this->collection->findOne(['_id' => $id]);
 
@@ -60,7 +62,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $token
      * @return User|null
      */
-    public function getByAuthToken(string $token) : ?Auth\UserInterface
+    public function getByAuthToken(string $token) : ?UserRepository\UserInterface
     {
         $data = $this->collection->findOne(['auth_token.token' => $token]);
 
@@ -75,7 +77,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
      * @param $token
      * @return User|null
      */
-    public function getByResetToken(string $token) : ?Auth\UserInterface
+    public function getByResetToken(string $token) : ?UserRepository\UserInterface
     {
         $data = $this->collection->findOne(
             [
@@ -207,6 +209,11 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
         ];
 
         $this->collection->replaceOne($filter, $details);
+
+        //---
+
+        // Delete the profile data
+        $this->apiUserCollection->deleteById($id);
 
         return true;
     }
@@ -353,14 +360,14 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
     /**
      * @param $token
      * @param $passwordHash
-     * @return Auth\UpdatePasswordUsingTokenError
+     * @return UserRepository\UpdatePasswordUsingTokenError
      */
-    public function updatePasswordUsingToken(string $token, string $passwordHash) : ?Auth\UpdatePasswordUsingTokenError
+    public function updatePasswordUsingToken(string $token, string $passwordHash) : ?UserRepository\UpdatePasswordUsingTokenError
     {
         $user = $this->getByResetToken($token);
 
         if (!$user instanceof User) {
-            return new Auth\UpdatePasswordUsingTokenError( 'invalid-token');
+            return new UserRepository\UpdatePasswordUsingTokenError( 'invalid-token');
         }
 
         //---
@@ -381,7 +388,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
         );
 
         if ($result->getModifiedCount() != 1) {
-            return new Auth\UpdatePasswordUsingTokenError('nothing-modified');
+            return new UserRepository\UpdatePasswordUsingTokenError('nothing-modified');
         }
 
         // All went well; no error to return.
@@ -418,9 +425,9 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
 
     /**
      * @param $token
-     * @return Auth\UpdateEmailUsingTokenResponse
+     * @return UserRepository\UpdateEmailUsingTokenResponse
      */
-    public function updateEmailUsingToken(string $token) : Auth\UpdateEmailUsingTokenResponse
+    public function updateEmailUsingToken(string $token) : UserRepository\UpdateEmailUsingTokenResponse
     {
         $user = $this->collection->findOne(
             [
@@ -430,7 +437,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
         );
 
         if (!is_array($user)) {
-            return new Auth\UpdateEmailUsingTokenResponse('invalid-token');
+            return new UserRepository\UpdateEmailUsingTokenResponse('invalid-token');
         }
 
         $newEmail = $user['email_update_request']['email'];
@@ -442,7 +449,7 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
         );
 
         if (is_array($clashUser)) {
-            return new Auth\UpdateEmailUsingTokenResponse('username-already-exists');
+            return new UserRepository\UpdateEmailUsingTokenResponse('username-already-exists');
         }
 
         //---
@@ -462,11 +469,11 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
         );
 
         if ($result->getModifiedCount() != 1) {
-            return new Auth\UpdateEmailUsingTokenResponse('nothing-modified');
+            return new UserRepository\UpdateEmailUsingTokenResponse('nothing-modified');
         }
 
         // Returns the User, wrapped in a Response object.
-        return new Auth\UpdateEmailUsingTokenResponse(new User($user));
+        return new UserRepository\UpdateEmailUsingTokenResponse(new User($user));
     }
 
     /**
@@ -593,5 +600,36 @@ class AuthUserCollection implements Auth\UserRepositoryInterface
 
         // Stats can (ideally) be processed on a secondary.
         return $this->collection->count($criteria, ['readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)]);
+    }
+
+    /**
+     * Return a user's profile details
+     *
+     * @param $id
+     * @return UserModel
+     */
+    public function getProfile($id) : ?UserModel
+    {
+        $result = $this->apiUserCollection->getById($id);
+
+        if (!is_array($result)) {
+            return null;
+        }
+
+        return new UserModel(['id' => $id] + $result);
+    }
+
+    /**
+     * Updates a user's profile. If it doesn't already exist, it's created.
+     *
+     * @param UserModel $data
+     * @return bool
+     */
+    public function saveProfile(UserModel $data) : bool
+    {
+        $this->apiUserCollection->update($data);
+
+        // Exception is thrown on error, so if here...
+        return true;
     }
 }

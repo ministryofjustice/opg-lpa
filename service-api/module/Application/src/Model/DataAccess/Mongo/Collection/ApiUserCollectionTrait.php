@@ -2,6 +2,10 @@
 
 namespace Application\Model\DataAccess\Mongo\Collection;
 
+/*
+ * We need to keep this as it's used by AuthUserCollection
+ */
+
 trait ApiUserCollectionTrait
 {
     /**
