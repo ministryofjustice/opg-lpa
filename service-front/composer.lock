@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6f25341c24afd138fb55101d5fc02268",
+    "content-hash": "0a251e4ea17b253a37d20c208a3acee5",
     "packages": [
         {
             "name": "alphagov/pay-integration-php",
@@ -3247,6 +3247,47 @@
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
             "time": "2018-08-05T14:25:16+00:00"
+        },
+        {
+            "name": "theiconic/php-ga-measurement-protocol",
+            "version": "v2.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/theiconic/php-ga-measurement-protocol.git",
+                "reference": "26c09a43a25235da85131c0fa060ec1fe2b2f16f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/theiconic/php-ga-measurement-protocol/zipball/26c09a43a25235da85131c0fa060ec1fe2b2f16f",
+                "reference": "26c09a43a25235da85131c0fa060ec1fe2b2f16f",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.0",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.7.*",
+                "satooshi/php-coveralls": "1.0.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TheIconic\\Tracking\\GoogleAnalytics\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "THE ICONIC ENGINEERING TEAM",
+                    "email": "engineering@theiconic.com.au"
+                }
+            ],
+            "description": "Send data to Google Analytics from the server using PHP. This library fully implements GA measurement protocol.",
+            "time": "2017-06-30T02:41:52+00:00"
         },
         {
             "name": "theseer/tokenizer",

@@ -3,7 +3,9 @@
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\DownloadController;
+use Application\Model\Service\Analytics\GoogleAnalyticsService;
 use ApplicationTest\Controller\AbstractControllerTest;
+use Exception;
 use Mockery;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Zend\Http\Header\HeaderInterface;
@@ -126,6 +128,9 @@ class DownloadControllerTest extends AbstractControllerTest
         /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
 
+        $googleAnalyticsService = Mockery::mock(GoogleAnalyticsService::class);
+        $controller->setAnalyticsService($googleAnalyticsService);
+
         $response = Mockery::mock(Response::class);
         $controller->dispatch($this->request, $response);
 
@@ -158,6 +163,68 @@ class DownloadControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('getHeaders')->andReturn($headers);
 
         $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
+
+        $uri = Mockery::mock(Uri::class);
+        $uri->shouldReceive('getPath')->andReturn('/test-path');
+
+        $this->request->shouldReceive('getUri')->andReturn($uri);
+        $googleAnalyticsService->shouldReceive('sendPageView')->withArgs(['/test-path', 'Lasting-Power-of-Attorney-LP1F.pdf']);
+
+        $result = $controller->downloadAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testDownloadActionReadyWithAnalyticsException()
+    {
+        /** @var DownloadController $controller */
+        $controller = $this->getController(DownloadController::class);
+
+        $googleAnalyticsService = Mockery::mock(GoogleAnalyticsService::class);
+        $controller->setAnalyticsService($googleAnalyticsService);
+
+        $response = Mockery::mock(Response::class);
+        $controller->dispatch($this->request, $response);
+
+        $pdfType = 'lp1';
+        $routeMatch = $this->getRouteMatch($controller);
+        $routeMatch->shouldReceive('getParam')->withArgs(['pdf-type'])->andReturn($pdfType)->once();
+        $this->lpaApplicationService->shouldReceive('getPdf')
+            ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
+        $this->lpaApplicationService->shouldReceive('getPdfContents')
+            ->withArgs([$this->lpa->id, $pdfType])->andReturn('PDF content')->once();
+        $response->shouldReceive('setContent')->withArgs(['PDF content'])->once();
+        $headers = Mockery::mock(Headers::class);
+        $response->shouldReceive('getHeaders')->andReturn($headers)->once();
+        $headers->shouldReceive('clearHeaders')->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Content-Type', 'application/pdf'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')
+            ->withArgs(['Content-Disposition', 'inline; filename="Lasting-Power-of-Attorney-LP1F.pdf"'])
+            ->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Transfer-Encoding', 'Binary'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Description', 'File Transfer'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')->withArgs(['Pragma', 'public'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')->withArgs(['Expires', '0'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')->withArgs(['Cache-Control', 'must-revalidate'])->andReturn($headers)->once();
+        $headers->shouldReceive('addHeaderLine')->withArgs(['Content-Length', 11])->andReturn($headers)->once();
+
+        $userAgentHeader = Mockery::mock(HeaderInterface::class);
+        $userAgentHeader->shouldReceive('getFieldValue')->andReturn('');
+        $headers->shouldReceive('get')->andReturn($userAgentHeader);
+        $this->request->shouldReceive('getHeaders')->andReturn($headers);
+
+        $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
+
+        $uri = Mockery::mock(Uri::class);
+        $uri->shouldReceive('getPath')->andReturn('/test-path');
+
+        $exception = new Exception('Test Exception');
+
+        $this->request->shouldReceive('getUri')->andReturn($uri);
+        $googleAnalyticsService->shouldReceive('sendPageView')->withArgs(['/test-path', 'Lasting-Power-of-Attorney-LP1F.pdf'])->andThrowExceptions([$exception]);
+
+        $this->logger->shouldReceive('err')->withArgs([$exception]);
 
         $result = $controller->downloadAction();
 
