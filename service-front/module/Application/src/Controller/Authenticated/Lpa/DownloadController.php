@@ -3,11 +3,18 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
+use Application\Model\Service\Analytics\GoogleAnalyticsService;
+use Exception;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Zend\View\Model\ViewModel;
 
 class DownloadController extends AbstractLpaController
 {
+    /**
+     * @var GoogleAnalyticsService
+     */
+    private $analyticsService;
+
     public function indexAction()
     {
         $lpa = $this->getLpa();
@@ -82,6 +89,14 @@ class DownloadController extends AbstractLpaController
             $headers->addHeaderLine('Content-Disposition', 'inline; filename="' . $this->getFilename($pdfType) .'"');
         }
 
+        // Send a page view to the analytics service for the document being provided
+        try {
+            $this->analyticsService->sendPageView($this->getRequest()->getUri()->getPath(), $this->getFilename($pdfType));
+        } catch (Exception $ex) {
+            // Log the error but don't impact the user because of analytics failures
+            $this->getLogger()->err($ex);
+        }
+
         return $this->response;
     }
 
@@ -120,5 +135,15 @@ class DownloadController extends AbstractLpaController
         }
 
         return 'Lasting-Power-of-Attorney-' . strtoupper($pdfType) . $lpaTypeChar . '.pdf';
+    }
+
+    /**
+     * Set the service to be used for sending analytics data
+     *
+     * @param GoogleAnalyticsService
+     */
+    public function setAnalyticsService($analyticsService)
+    {
+        $this->analyticsService = $analyticsService;
     }
 }
