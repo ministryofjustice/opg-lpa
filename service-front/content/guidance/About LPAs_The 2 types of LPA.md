@@ -1,4 +1,4 @@
-# 2 types of LPA
+# The 2 types of LPA
 
 There are 2 types of LPA: property and financial affairs, and health and welfare.
 

@@ -152,6 +152,7 @@
 
         .popup & {
             @extend %heading-xlarge;
+            margin-top: 0;
         }
     }
 

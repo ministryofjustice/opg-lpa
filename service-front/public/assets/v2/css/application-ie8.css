@@ -2029,6 +2029,8 @@ input[type=number] {
     font-weight: 700; }
 .help-sections article:first-child h1 {
   margin-top: 0; }
+.popup .help-sections h1 {
+  margin-top: 0; }
 
 .help-footer {
   padding: 30px 0 0; }
