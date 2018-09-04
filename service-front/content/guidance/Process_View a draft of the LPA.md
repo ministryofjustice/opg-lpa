@@ -13,7 +13,7 @@ When you download the preview LPA, sections 12 to 15 will have a watermark on th
 
 ## Preview from the ‘Create a lasting power of attorney’ page
 
-If you’re on the ‘Create a lasting power of attorney’ page, you’ll see a ‘preview the LPA’ link just above each question.
+If you're on the 'Create a lasting power of attorney' page, the 'preview the LPA' link will appear when you're on the 'Who's applying to register the LPA?' question, or any question below that. You’ll see the link just above the question.
 
 This link takes you to a page where you can review and edit the LPA and download a preview.
 
