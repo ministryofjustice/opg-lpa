@@ -12,7 +12,7 @@ The attorneys must always:
 
 The donor can make their LPA themselves or ask someone to help them make it.
 
-## 2 types of LPA
+## The 2 types of LPA
 
 There are [2 types of LPA](/help/#topic-the-2-types-of-lpa). An LPA can be made to cover the donor’s property and financial affairs or their health and welfare.
 
