@@ -26,7 +26,7 @@ They can be either:
 * someone who has known the donor personally for at least 2 years, such as a friend or neighbour (but not a relative)
 * someone with relevant professional skills, such as the donor’s GP or solicitor
 
-### Someone who has known the donor well for at least 2 years**
+### Someone who has known the donor well for at least 2 years
 
 This could be one of the donor’s friends or neighbours, someone they know at a social or sports club, a work colleague, or similar.
 
