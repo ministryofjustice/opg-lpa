@@ -37,7 +37,7 @@ class Users extends AbstractMigration
         $users->addColumn('id', 'string')
             ->addColumn('identity', 'text')
             ->addColumn('password_hash', 'text')
-            ->addColumn('activation_token', 'text')
+            ->addColumn('activation_token', 'text', ['null' => true])
 
             ->addColumn('active', 'boolean')
             ->addColumn('failed_login_attempts', 'integer')

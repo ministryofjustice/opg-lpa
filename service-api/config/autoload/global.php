@@ -55,6 +55,20 @@ return [
     ], // cron
 
     'db' => [
+        'postgres' => [
+            'default' => [
+                'adapter' => 'pgsql',
+                'host'      => getenv('OPG_LPA_POSTGRES_HOSTNAME') ?: null,
+                'port'      => getenv('OPG_LPA_POSTGRES_PORT') ?: null,
+                'dbname'    => getenv('OPG_LPA_POSTGRES_NAME') ?: null,
+                'username'  => getenv('OPG_LPA_POSTGRES_USERNAME') ?: null,
+                'password'  => getenv('OPG_LPA_POSTGRES_PASSWORD') ?: null,
+                'options' => [
+                    // Warning: RDS and ATTR_PERSISTENT are not friends.
+                    PDO::ATTR_PERSISTENT => false
+                ]
+            ],
+        ],
         'mongo' => [
             'default' => [
                 'hosts' => [

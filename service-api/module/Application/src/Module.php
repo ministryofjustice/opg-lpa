@@ -4,6 +4,7 @@ namespace Application;
 
 use Application\Model\DataAccess\Repository;
 use Application\Model\DataAccess\Mongo;
+use Application\Model\DataAccess\Postgres;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
@@ -52,13 +53,14 @@ class Module
             'aliases' => [
                 // Map the Repository Interfaces to concrete implementations.
                 Repository\User\LogRepositoryInterface::class => Mongo\Collection\AuthLogCollection::class,
-                Repository\User\UserRepositoryInterface::class => Mongo\Collection\AuthUserCollection::class,
+                Repository\User\UserRepositoryInterface::class => Postgres\UserData::class,
                 Repository\Stats\StatsRepositoryInterface::class => Mongo\Collection\ApiStatsLpasCollection::class,
                 Repository\Application\WhoRepositoryInterface::class => Mongo\Collection\ApiWhoCollection::class,
                 Repository\Application\ApplicationRepositoryInterface::class => Mongo\Collection\ApiLpaCollection::class,
             ],
             'invokables' => [
                 HttpClient::class => Guzzle6Client::class,
+                Postgres\UserData::class => Postgres\UserData::class,
             ],
             'factories' => [
                 'DynamoCronLock' => function (ServiceLocatorInterface $sm) {
