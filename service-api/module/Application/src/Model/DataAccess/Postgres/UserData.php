@@ -119,7 +119,18 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function resetFailedLoginCounter(string $id) : bool
     {
-        die(__METHOD__.' not implement');
+        $sql = new Sql($this->getZendDb());
+        $update = $sql->update(self::USERS_TABLE);
+        $update->where(['id'=>$id]);
+
+        $update->set([
+            'failed_login_attempts' => 0,
+        ]);
+
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $results = $statement->execute();
+
+        return $results->getAffectedRows() === 1;
     }
 
     /**
@@ -130,7 +141,19 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function incrementFailedLoginCounter(string $id) : bool
     {
-        die(__METHOD__.' not implement');
+        $sql = new Sql($this->getZendDb());
+        $update = $sql->update(self::USERS_TABLE);
+        $update->where(['id'=>$id]);
+
+        $update->set([
+            'last_failed_login' => gmdate(self::TIME_FORMAT),
+            'failed_login_attempts' => new Expression('failed_login_attempts + 1'),
+        ]);
+
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $results = $statement->execute();
+
+        return $results->getAffectedRows() === 1;
     }
 
     /**
