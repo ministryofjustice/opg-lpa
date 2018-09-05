@@ -4,12 +4,36 @@ namespace Application\Model\DataAccess\Postgres;
 use PDO;
 use PDOException;
 use DateTime;
+use Zend\Db\Sql\Sql;
 use Opg\Lpa\DataModel\User\User as ProfileUserModel;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 
 class UserData extends AbstractBase implements UserRepository\UserRepositoryInterface {
 
     const USERS_TABLE = 'users';
+
+    /**
+     * Returns a single user by a given field name and associated value.
+     *
+     * @param $field
+     * @param $value
+     * @return array|null
+     */
+    private function getByField($field, $value) : ?array
+    {
+        $sql    = new Sql($this->getZendDb());
+        $select = $sql->select(self::USERS_TABLE);
+        $select->where([$field => $value]);
+        $select->limit(1);
+
+        $result = $sql->prepareStatementForSqlObject($select)->execute();
+
+        if (!$result->isQueryResult() || $result->count() != 1) {
+            return null;
+        }
+
+        return $result->current();
+    }
 
     /**
      * Returns a single user by username (email address).
@@ -19,16 +43,13 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getByUsername(string $username) : ?UserRepository\UserInterface
     {
-        $sql = 'SELECT * FROM '.self::USERS_TABLE.' WHERE identity = :identity LIMIT 1';
-        $stmt = $this->getPdo()->prepare($sql);
-        $stmt->execute(['identity' => $username]);
-        $data = $stmt->fetch();
+        $user = $this->getByField('identity', $username);
 
-        if (!is_array($data)) {
+        if (!is_array($user)) {
             return null;
         }
 
-        return new UserModel($data);
+        return new UserModel($user);
     }
 
     /**
@@ -101,29 +122,36 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function create(string $id, array $details) : bool
     {
-        $fields = ['id', 'identity', 'password_hash', 'active', 'activation_token', 'created', 'updated', 'failed_login_attempts'];
+        $sql = new Sql($this->getZendDb());
+        $update = $sql->insert(self::USERS_TABLE);
 
-        $sql  = 'INSERT INTO '.self::USERS_TABLE.'('.implode(', ', $fields).') VALUES(:'.implode(', :', $fields).')';
-        $stmt = $this->getPdo()->prepare($sql);
+        $update->columns(['id', 'identity', 'password_hash', 'active', 'activation_token', 'created', 'updated', 'failed_login_attempts']);
 
-        // Values are bound manually to sense check the data.
-        $stmt->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmt->bindValue(':identity', $details['identity'], PDO::PARAM_STR);
-        $stmt->bindValue(':active', $details['active'], PDO::PARAM_BOOL);
-        $stmt->bindValue(':activation_token', $details['activation_token'], PDO::PARAM_STR);
-        $stmt->bindValue(':password_hash', $details['password_hash'], PDO::PARAM_STR);
-        $stmt->bindValue(':created', $details['created']->format(self::TIME_FORMAT), PDO::PARAM_STR);
-        $stmt->bindValue(':updated', $details['last_updated']->format(self::TIME_FORMAT), PDO::PARAM_STR);
-        $stmt->bindValue(':failed_login_attempts', $details['failed_login_attempts'], PDO::PARAM_INT);
+        $update->values([
+            'id'                    => $id,
+            'identity'              => $details['identity'],
+            'password_hash'         => $details['password_hash'],
+            'activation_token'      => $details['activation_token'],
+            'active'                => $details['active'],
+            'created'               => $details['created']->format(self::TIME_FORMAT),
+            'updated'               => $details['last_updated']->format(self::TIME_FORMAT),
+            'failed_login_attempts' => $details['failed_login_attempts']
+        ]);
+
+        $statement = $sql->prepareStatementForSqlObject($update);
 
         try {
-            $stmt->execute();
+            $statement->execute();
 
-        } catch (PDOException $e) {
+        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e){
 
             // If it's a key clash, and not on the identity, re-try with new values.
-            if ($e->getCode() == 23505 && strpos($e->getMessage(), 'users_identity') === false) {
-                return false;
+            if ($e->getPrevious() instanceof PDOException) {
+                $pdoException = $e->getPrevious();
+
+                if ($pdoException->getCode() == 23505 && strpos($pdoException->getMessage(), 'users_identity') === false) {
+                    return false;
+                }
             }
 
             // Otherwise re-throw the exception
@@ -155,18 +183,27 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function activate(string $token) : bool
     {
-        $sql = 'SELECT * FROM '.self::USERS_TABLE.' WHERE activation_token = :token LIMIT 1';
-        $stmt = $this->getPdo()->prepare($sql);
-        $stmt->execute(['token' => $token]);
-        $user = $stmt->fetch();
+        $user = $this->getByField('activation_token', $token);
 
         if (!is_array($user)) {
             return false;
         }
 
+        $sql = new Sql($this->getZendDb());
+        $update = $sql->update(self::USERS_TABLE);
+        $update->where(['id'=>$user['id']]);
 
+        $update->set([
+            'active' => true,
+            'updated' => gmdate(self::TIME_FORMAT),
+            'activated' => gmdate(self::TIME_FORMAT),
+            'activation_token' => null,
+        ]);
 
-        die(__METHOD__.' not implement');
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $results = $statement->execute();
+
+        return $results->getAffectedRows() === 1;
     }
 
     /**
