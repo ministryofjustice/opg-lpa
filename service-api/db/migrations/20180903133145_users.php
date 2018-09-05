@@ -45,9 +45,11 @@ class Users extends AbstractMigration
             ->addColumn('created', 'datetime', ['timezone'=>true])
             ->addColumn('updated', 'datetime', ['timezone'=>true])
             ->addColumn('activated', 'datetime', ['null' => true, 'timezone'=>true])
-            ->addColumn('deleted', 'datetime', ['null' => true, 'timezone'=>true])
             ->addColumn('last_login', 'datetime', ['null' => true, 'timezone'=>true])
+            ->addColumn('last_failed_login', 'datetime', ['null' => true, 'timezone'=>true])
+            ->addColumn('deleted', 'datetime', ['null' => true, 'timezone'=>true])
 
+            ->addColumn('inactivity_flags', 'jsonb', ['null' => true])
             ->addColumn('auth_token', 'jsonb', ['null' => true])
             ->addColumn('password_reset_token', 'jsonb', ['null' => true])
             ->addColumn('profile', 'jsonb', ['null' => true])

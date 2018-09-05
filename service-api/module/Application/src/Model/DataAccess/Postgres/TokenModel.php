@@ -8,19 +8,52 @@ class TokenModel implements UserRepository\TokenInterface
 {
 
     /**
-     * Returns the token.
+     * The token's data.
+     *
+     * @var array
+     */
+    private $data;
+
+    public function __construct(array $data)
+    {
+        $this->data = $data;
+    }
+
+    /**
+     * Returns a DateTime for a given key from a range of time formats.
+     *
+     * @param $key
+     * @return DateTime|null
+     */
+    private function returnDateField($key)
+    {
+        if (!isset($this->data[$key])) {
+            return null;
+        }
+
+        if ($this->data[$key] instanceof DateTime) {
+            return $this->data[$key];
+        }
+
+        return new DateTime($this->data[$key]);
+    }
+
+    //---------------------------------------
+
+    /**
+     * Returns the token's id.
      *
      * @return string
      */
     public function id() : ?string
     {
-        die(__METHOD__.' not implement');
+        return (isset($this->data['token'])) ? $this->data['token'] : null;
     }
 
     /**
-     * Returns the owner of the token's user details.
+     * Returns the owner of the token's user id.
      *
-     * @return string
+     * @return mixed
      */
     public function user() : ?string
     {
@@ -34,7 +67,7 @@ class TokenModel implements UserRepository\TokenInterface
      */
     public function expiresAt() : ?DateTime
     {
-        die(__METHOD__.' not implement');
+        return $this->returnDateField('expiresAt');
     }
 
     /**
@@ -44,7 +77,7 @@ class TokenModel implements UserRepository\TokenInterface
      */
     public function updatedAt() : ?DateTime
     {
-        die(__METHOD__.' not implement');
+        return $this->returnDateField('updatedAt');
     }
 
     /**
@@ -54,7 +87,7 @@ class TokenModel implements UserRepository\TokenInterface
      */
     public function createdAt() : ?DateTime
     {
-        die(__METHOD__.' not implement');
+        return $this->returnDateField('createdAt');
     }
 
 }

@@ -1,10 +1,10 @@
 <?php
 namespace Application\Model\DataAccess\Postgres;
 
-use PDO;
 use PDOException;
 use DateTime;
 use Zend\Db\Sql\Sql;
+use Zend\Db\Sql\Predicate\Expression;
 use Opg\Lpa\DataModel\User\User as ProfileUserModel;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 
@@ -15,15 +15,14 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * Returns a single user by a given field name and associated value.
      *
-     * @param $field
-     * @param $value
+     * @param array $where
      * @return array|null
      */
-    private function getByField($field, $value) : ?array
+    private function getByField(array $where) : ?array
     {
         $sql    = new Sql($this->getZendDb());
         $select = $sql->select(self::USERS_TABLE);
-        $select->where([$field => $value]);
+        $select->where($where);
         $select->limit(1);
 
         $result = $sql->prepareStatementForSqlObject($select)->execute();
@@ -43,7 +42,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getByUsername(string $username) : ?UserRepository\UserInterface
     {
-        $user = $this->getByField('identity', $username);
+        $user = $this->getByField(['identity' => $username]);
 
         if (!is_array($user)) {
             return null;
@@ -58,7 +57,13 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getById(string $id) : ?UserRepository\UserInterface
     {
-        die(__METHOD__.' not implement');
+        $user = $this->getByField(['id' => $id]);
+
+        if (!is_array($user)) {
+            return null;
+        }
+
+        return new UserModel($user);
     }
 
     /**
@@ -67,7 +72,13 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getByAuthToken(string $token) : ?UserRepository\UserInterface
     {
-        die(__METHOD__.' not implement');
+        $user = $this->getByField([new Expression("auth_token ->> 'token' = ?", $token)]);
+
+        if (!is_array($user)) {
+            return null;
+        }
+
+        return new UserModel($user);
     }
 
     /**
@@ -85,7 +96,19 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function updateLastLoginTime(string $id) : bool
     {
-        die(__METHOD__.' not implement');
+        $sql = new Sql($this->getZendDb());
+        $update = $sql->update(self::USERS_TABLE);
+        $update->where(['id'=>$id]);
+
+        $update->set([
+            'last_login' => gmdate(self::TIME_FORMAT),
+            'inactivity_flags' => null,
+        ]);
+
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $results = $statement->execute();
+
+        return $results->getAffectedRows() === 1;
     }
 
     /**
@@ -183,15 +206,9 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function activate(string $token) : bool
     {
-        $user = $this->getByField('activation_token', $token);
-
-        if (!is_array($user)) {
-            return false;
-        }
-
         $sql = new Sql($this->getZendDb());
         $update = $sql->update(self::USERS_TABLE);
-        $update->where(['id'=>$user['id']]);
+        $update->where(['activation_token'=>$token]);
 
         $update->set([
             'active' => true,
@@ -228,7 +245,23 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function setAuthToken(string $userId, DateTime $expires, string $token) : bool
     {
-        die(__METHOD__.' not implement');
+        $sql = new Sql($this->getZendDb());
+        $update = $sql->update(self::USERS_TABLE);
+        $update->where(['id'=>$userId]);
+
+        $update->set([
+            'auth_token' => json_encode([
+                'token' => $token,
+                'createdAt' => gmdate(self::TIME_FORMAT),
+                'updatedAt' => gmdate(self::TIME_FORMAT),
+                'expiresAt' => $expires->format(self::TIME_FORMAT),
+            ]),
+        ]);
+
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $results = $statement->execute();
+
+        return $results->getAffectedRows() === 1;
     }
 
     /**
@@ -240,7 +273,20 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function extendAuthToken(string $userId, DateTime $expires) : bool
     {
-        die(__METHOD__.' not implement');
+        $sql = new Sql($this->getZendDb());
+        $update = $sql->update(self::USERS_TABLE);
+        $update->where(['id'=>$userId]);
+
+        // Merges the new times into the existing JSON
+        $update->set(['auth_token' => new Expression("auth_token || ?", json_encode([
+            'updatedAt' => gmdate(self::TIME_FORMAT),
+            'expiresAt' => $expires->format(self::TIME_FORMAT),
+        ]))]);
+
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $results = $statement->execute();
+
+        return $results->getAffectedRows() === 1;
     }
 
     /**
@@ -355,22 +401,51 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * Return a user's profile details
      *
      * @param $id
-     * @return UserModel
+     * @return ProfileUserModel
      */
     public function getProfile($id) : ?ProfileUserModel
     {
-        die(__METHOD__.' not implement');
+        $user = $this->getByField(['id' => $id]);
+
+        if (!is_array($user) || !isset($user['profile'])) {
+            return null;
+        }
+
+        // Map fields needed from the top level (user), into the profile.
+        $profile = array_merge(json_decode($user['profile'], true), [
+            'id'=>$id,
+            'createdAt'=>$user['created'],
+            'updatedAt'=>$user['updated']
+        ]);
+
+        return new ProfileUserModel($profile);
     }
 
     /**
      * Updates a user's profile. If it doesn't already exist, it's created.
      *
-     * @param UserModel $data
+     * @param ProfileUserModel $data
      * @return bool
      */
     public function saveProfile(ProfileUserModel $data) : bool
     {
-        die(__METHOD__.' not implement');
+        $sql = new Sql($this->getZendDb());
+        $update = $sql->update(self::USERS_TABLE);
+        $update->where(['id'=>$data->getId()]);
+
+        $data = $data->toArray();
+
+        // Remove unwarned fields
+        unset($data['id'], $data['createdAt'], $data['updatedAt']);
+
+        $update->set([
+            'profile' => json_encode($data),
+        ]);
+
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $results = $statement->execute();
+
+        return $results->getAffectedRows() === 1;
     }
 
 }

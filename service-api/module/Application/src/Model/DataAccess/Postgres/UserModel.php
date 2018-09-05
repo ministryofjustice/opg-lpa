@@ -22,13 +22,44 @@ class UserModel implements UserRepository\UserInterface
     //---------------------------------------
 
     /**
+     * Returns a DateTime for a given key from a range of time formats.
+     *
+     * @param $key
+     * @return DateTime|null
+     */
+    private function returnDateField($key)
+    {
+        if (!isset($this->data[$key])) {
+            return null;
+        }
+
+        if ($this->data[$key] instanceof DateTime) {
+            return $this->data[$key];
+        }
+
+        return new DateTime($this->data[$key]);
+    }
+
+    //---------------------------------------
+
+    /**
      * Returns an array representation of the user's basic info.
      *
      * @return array
      */
     public function toArray() : array
     {
-        die(__METHOD__.' not implement');
+        return [
+            'userId' => $this->id(),
+            'username' => $this->username(),
+            'isActive' => $this->isActive(),
+            'lastLoginAt' => $this->lastLoginAt(),
+            'updatedAt' => $this->updatedAt(),
+            'createdAt' => $this->createdAt(),
+            'activatedAt' => $this->activatedAt(),
+            'lastFailedLoginAttemptAt' => $this->lastFailedLoginAttemptAt(),
+            'failedLoginAttempts' => $this->failedLoginAttempts(),
+        ];
     }
 
     //---------------------------------------
@@ -40,7 +71,7 @@ class UserModel implements UserRepository\UserInterface
      */
     public function id() : ?string
     {
-        die(__METHOD__.' not implement');
+        return (isset($this->data['id'])) ? $this->data['id'] : null;
     }
 
     /**
@@ -50,7 +81,7 @@ class UserModel implements UserRepository\UserInterface
      */
     public function username() : ?string
     {
-        die(__METHOD__.' not implement');
+        return (isset($this->data['identity'])) ? $this->data['identity'] : null;
     }
 
     /**
@@ -60,7 +91,10 @@ class UserModel implements UserRepository\UserInterface
      */
     public function isActive() : bool
     {
-        die(__METHOD__.' not implement');
+        if (!isset($this->data['active'])) {
+            return false;
+        }
+        return ($this->data['active'] === true || $this->data['active'] === 'Y');
     }
 
     /**
@@ -70,7 +104,7 @@ class UserModel implements UserRepository\UserInterface
      */
     public function password() : ?string
     {
-        die(__METHOD__.' not implement');
+        return (isset($this->data['password_hash'])) ? $this->data['password_hash'] : null;
     }
 
     /**
@@ -80,7 +114,7 @@ class UserModel implements UserRepository\UserInterface
      */
     public function createdAt() : ?DateTime
     {
-        die(__METHOD__.' not implement');
+        return $this->returnDateField('created');
     }
 
     /**
@@ -90,7 +124,7 @@ class UserModel implements UserRepository\UserInterface
      */
     public function updatedAt() : ?DateTime
     {
-        die(__METHOD__.' not implement');
+        return $this->returnDateField('updated');
     }
 
     /**
@@ -100,7 +134,7 @@ class UserModel implements UserRepository\UserInterface
      */
     public function deleteAt() : ?DateTime
     {
-        die(__METHOD__.' not implement');
+        return $this->returnDateField('deleted');
     }
 
     /**
@@ -110,7 +144,7 @@ class UserModel implements UserRepository\UserInterface
      */
     public function lastLoginAt() : ?DateTime
     {
-        die(__METHOD__.' not implement');
+        return $this->returnDateField('last_login');
     }
 
     /**
@@ -120,7 +154,7 @@ class UserModel implements UserRepository\UserInterface
      */
     public function activatedAt() : ?DateTime
     {
-        die(__METHOD__.' not implement');
+        return $this->returnDateField('activated');
     }
 
     /**
@@ -130,7 +164,7 @@ class UserModel implements UserRepository\UserInterface
      */
     public function lastFailedLoginAttemptAt() : ?DateTime
     {
-        die(__METHOD__.' not implement');
+        return $this->returnDateField('last_failed_login');
     }
 
     /**
@@ -140,7 +174,7 @@ class UserModel implements UserRepository\UserInterface
      */
     public function failedLoginAttempts() : int
     {
-        die(__METHOD__.' not implement');
+        return (isset($this->data['failed_login_attempts'])) ? (int)$this->data['failed_login_attempts'] : 0;
     }
 
     /**
@@ -150,7 +184,7 @@ class UserModel implements UserRepository\UserInterface
      */
     public function activationToken() : ?string
     {
-        die(__METHOD__.' not implement');
+        return (isset($this->data['activation_token'])) ? $this->data['activation_token'] : null;
     }
 
     /**
@@ -160,7 +194,11 @@ class UserModel implements UserRepository\UserInterface
      */
     public function authToken() : ?UserRepository\TokenInterface
     {
-        die(__METHOD__.' not implement');
+        if (!isset($this->data['auth_token'])) {
+            return null;
+        }
+
+        return new TokenModel(json_decode($this->data['auth_token'], true));
     }
 
     /**
@@ -170,7 +208,11 @@ class UserModel implements UserRepository\UserInterface
      */
     public function inactivityFlags() : ?array
     {
-        die(__METHOD__.' not implement');
+        if (!isset($this->data['inactivity_flags'])) {
+            return null;
+        }
+
+        return json_decode($this->data['inactivity_flags'], true);
     }
 
     /**
@@ -179,7 +221,7 @@ class UserModel implements UserRepository\UserInterface
      */
     public function resetFailedLoginAttempts()
     {
-        die(__METHOD__.' not implement');
+        $this->data['failed_login_attempts'] = 0;
     }
 
 }
