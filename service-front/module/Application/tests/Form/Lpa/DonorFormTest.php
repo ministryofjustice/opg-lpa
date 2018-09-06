@@ -15,7 +15,7 @@ class DonorFormTest extends MockeryTestCase
      */
     public function setUp()
     {
-        $this->setUpForm(new DonorForm());
+        $this->setUpActorForm(new DonorForm());
     }
 
     public function testNameAndInstances()
@@ -45,7 +45,7 @@ class DonorFormTest extends MockeryTestCase
 
     public function testValidateByModelOK()
     {
-        $this->form->setData([
+        $this->form->setData(array_merge([
             'name-title'       => 'Mr',
             'name-first'       => 'first',
             'name-last'        => 'last',
@@ -58,7 +58,7 @@ class DonorFormTest extends MockeryTestCase
                 'day'   => '20'
             ],
             'canSign'          => false
-        ]);
+        ], $this->getCsrfData()));
 
         $this->assertTrue($this->form->isValid());
         $this->assertEquals([], $this->form->getMessages());
@@ -66,7 +66,7 @@ class DonorFormTest extends MockeryTestCase
 
     public function testValidateByModelInvalid()
     {
-        $this->form->setData([
+        $this->form->setData(array_merge([
             'name-title'       => '',
             'name-first'       => '',
             'name-last'        => '',
@@ -78,7 +78,7 @@ class DonorFormTest extends MockeryTestCase
                 'day'   => '20'
             ],
             'canSign'          => 123
-        ]);
+        ], $this->getCsrfData()));
 
         $this->assertFalse($this->form->isValid());
 
