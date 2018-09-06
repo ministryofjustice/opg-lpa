@@ -36,6 +36,7 @@ class ApplicantFormTest extends MockeryTestCase
         $this->assertInstanceOf('Application\Form\Lpa\AbstractMainFlowForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractLpaForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
+        $this->assertInstanceOf('Application\Form\AbstractForm', $this->form);
         $this->assertEquals('form-applicant', $this->form->getName());
     }
 
