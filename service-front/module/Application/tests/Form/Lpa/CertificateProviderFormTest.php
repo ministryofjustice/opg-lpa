@@ -24,6 +24,7 @@ class CertificateProviderFormTest extends MockeryTestCase
         $this->assertInstanceOf('Application\Form\Lpa\AbstractActorForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractLpaForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
+        $this->assertInstanceOf('Application\Form\AbstractForm', $this->form);
         $this->assertEquals('form-certificate-provider', $this->form->getName());
     }
 

@@ -2,12 +2,11 @@
 
 namespace ApplicationTest\Form\Lpa;
 
-use Application\Form\Lpa\TypeForm;
+use Application\Form\Lpa\ReuseDetailsForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
 
-class TypeFormTest extends MockeryTestCase
+class ReuseDetailsFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -16,29 +15,28 @@ class TypeFormTest extends MockeryTestCase
      */
     public function setUp()
     {
-        $this->setUpMainFlowForm(new TypeForm());
+        $this->setUpLpaForm(new ReuseDetailsForm());
     }
 
     public function testNameAndInstances()
     {
-        $this->assertInstanceOf('Application\Form\Lpa\TypeForm', $this->form);
-        $this->assertInstanceOf('Application\Form\Lpa\AbstractMainFlowForm', $this->form);
+        $this->assertInstanceOf('Application\Form\Lpa\ReuseDetailsForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractLpaForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractForm', $this->form);
-        $this->assertEquals('form-type', $this->form->getName());
+        $this->assertEquals('form-reuse-details', $this->form->getName());
     }
 
     public function testElements()
     {
-        $this->assertInstanceOf('Application\Form\Element\Type', $this->form->get('type'));
-        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('save'));
+        $this->assertInstanceOf('Application\Form\Element\ReuseDetails', $this->form->get('reuse-details'));
+        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('submit'));
     }
 
     public function testValidateByModelOK()
     {
         $this->form->setData(array_merge([
-            'type' => Document::LPA_TYPE_HW,
+            'reuse-details' => '1',
         ], $this->getCsrfData()));
 
         $this->assertTrue($this->form->isValid());
@@ -48,13 +46,13 @@ class TypeFormTest extends MockeryTestCase
     public function testValidateByModelInvalid()
     {
         $this->form->setData(array_merge([
-            'type' => 'invalid-lpa-type',
+            'reuse-details' => null,
         ], $this->getCsrfData()));
 
         $this->assertFalse($this->form->isValid());
         $this->assertEquals([
-            'type' => [
-                0 => 'allowed-values:property-and-financial,health-and-welfare'
+            'reuse-details' => [
+                0 => 'cannot-be-empty'
             ]
         ], $this->form->getMessages());
     }
