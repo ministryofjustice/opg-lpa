@@ -4,6 +4,7 @@ namespace Application\Model\DataAccess\Postgres;
 use PDOException;
 use DateTime;
 use Zend\Db\Sql\Sql;
+use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\Expression;
 use Opg\Lpa\DataModel\User\User as ProfileUserModel;
 use Application\Model\DataAccess\Repository\User as UserRepository;
@@ -465,7 +466,25 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getAccountsInactiveSince(DateTime $since, ?string $excludeFlag = null) : iterable
     {
-        die(__METHOD__.' not implement');
+        $sql    = new Sql($this->getZendDb());
+        $select = $sql->select(self::USERS_TABLE);
+
+        $select->where([
+            new Operator('last_login', Operator::OPERATOR_LESS_THAN, $since->format('c'))
+        ]);
+
+        // Exclude results that have already been actioned.
+        if (!is_null($excludeFlag)) {
+            $select->where([
+                new Expression("inactivity_flags -> '{$excludeFlag}' IS NULL")
+            ]);
+        }
+
+        $users = $sql->prepareStatementForSqlObject($select)->execute();
+
+        foreach ($users as $user) {
+            yield new UserModel($user);
+        }
     }
 
     /**
@@ -477,7 +496,16 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function setInactivityFlag(string $userId, string $flag) : bool
     {
-        die(__METHOD__.' not implement');
+        return $this->updateRow(
+            ['id' => $userId],
+            [
+                'inactivity_flags' => new Expression(
+                    // Adds the flag to the object. If the object does exist, create it.
+                    "(CASE WHEN inactivity_flags IS NULL THEN '{}'::JSONB ELSE inactivity_flags END) || ?",
+                    json_encode([$flag => true])
+                )
+            ]
+        );
     }
 
     /**
@@ -488,7 +516,19 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getAccountsUnactivatedOlderThan(DateTime $olderThan) : iterable
     {
-        die(__METHOD__.' not implement');
+        $sql    = new Sql($this->getZendDb());
+        $select = $sql->select(self::USERS_TABLE);
+
+        $select->where([
+            'active' => false,
+            new Operator('created', Operator::OPERATOR_LESS_THAN, $olderThan->format('c')),
+        ]);
+
+        $users = $sql->prepareStatementForSqlObject($select)->execute();
+
+        foreach ($users as $user) {
+            yield new UserModel($user);
+        }
     }
 
     /**
@@ -498,7 +538,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function countAccounts() : int
     {
-        die(__METHOD__.' not implement');
+        die(__METHOD__." not implement\n");
     }
 
     /**
@@ -509,7 +549,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function countActivatedAccounts(DateTime $since = null) : int
     {
-        die(__METHOD__.' not implement');
+        die(__METHOD__." not implement\n");
     }
 
     /**
@@ -519,7 +559,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function countDeletedAccounts() : int
     {
-        die(__METHOD__.' not implement');
+        die(__METHOD__." not implement\n");
     }
 
     /**
