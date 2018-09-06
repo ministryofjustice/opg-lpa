@@ -12,6 +12,9 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
     const USERS_TABLE = 'users';
 
+    //-----------------------------------------------------------
+    // Helpers
+
     /**
      * Returns a single user by a given field name and associated value.
      *
@@ -33,6 +36,29 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
         return $result->current();
     }
+
+    /**
+     * Updates a single row. Returns true on success, otherwise false.
+     *
+     * @param array $where
+     * @param array $set
+     * @return bool
+     */
+    private function updateRow(array $where, array $set) : bool
+    {
+        $sql = new Sql($this->getZendDb());
+        $update = $sql->update(self::USERS_TABLE);
+        $update->where($where);
+
+        $update->set($set);
+
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $results = $statement->execute();
+
+        return $results->getAffectedRows() === 1;
+    }
+
+    //-----------------------------------------------------------
 
     /**
      * Returns a single user by username (email address).
@@ -87,7 +113,13 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getByResetToken(string $token) : ?UserRepository\UserInterface
     {
-        die(__METHOD__.' not implement');
+        $user = $this->getByField([new Expression("password_reset_token ->> 'token' = ?", $token)]);
+
+        if (!is_array($user)) {
+            return null;
+        }
+
+        return new UserModel($user);
     }
 
     /**
@@ -96,19 +128,13 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function updateLastLoginTime(string $id) : bool
     {
-        $sql = new Sql($this->getZendDb());
-        $update = $sql->update(self::USERS_TABLE);
-        $update->where(['id'=>$id]);
-
-        $update->set([
-            'last_login' => gmdate(self::TIME_FORMAT),
-            'inactivity_flags' => null,
-        ]);
-
-        $statement = $sql->prepareStatementForSqlObject($update);
-        $results = $statement->execute();
-
-        return $results->getAffectedRows() === 1;
+        return  $this->updateRow(
+            ['id' => $id],
+            [
+                'last_login' => gmdate(self::TIME_FORMAT),
+                'inactivity_flags' => null,
+            ]
+        );
     }
 
     /**
@@ -119,18 +145,12 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function resetFailedLoginCounter(string $id) : bool
     {
-        $sql = new Sql($this->getZendDb());
-        $update = $sql->update(self::USERS_TABLE);
-        $update->where(['id'=>$id]);
-
-        $update->set([
-            'failed_login_attempts' => 0,
-        ]);
-
-        $statement = $sql->prepareStatementForSqlObject($update);
-        $results = $statement->execute();
-
-        return $results->getAffectedRows() === 1;
+        return  $this->updateRow(
+            ['id' => $id],
+            [
+                'failed_login_attempts' => 0,
+            ]
+        );
     }
 
     /**
@@ -141,19 +161,13 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function incrementFailedLoginCounter(string $id) : bool
     {
-        $sql = new Sql($this->getZendDb());
-        $update = $sql->update(self::USERS_TABLE);
-        $update->where(['id'=>$id]);
-
-        $update->set([
-            'last_failed_login' => gmdate(self::TIME_FORMAT),
-            'failed_login_attempts' => new Expression('failed_login_attempts + 1'),
-        ]);
-
-        $statement = $sql->prepareStatementForSqlObject($update);
-        $results = $statement->execute();
-
-        return $results->getAffectedRows() === 1;
+        return  $this->updateRow(
+            ['id' => $id],
+            [
+                'last_failed_login' => gmdate(self::TIME_FORMAT),
+                'failed_login_attempts' => new Expression('failed_login_attempts + 1'),
+            ]
+        );
     }
 
     /**
@@ -218,7 +232,27 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function delete(string $id) : bool
     {
-        die(__METHOD__.' not implement');
+        return $this->updateRow(
+            ['id' => $id],
+            [
+                'deleted' => gmdate(self::TIME_FORMAT),
+                'active' => null,
+                'identity' => null,
+                'password_hash' => null,
+                'activation_token' => null,
+                'failed_login_attempts' => null,
+                'created' => null,
+                'updated' => null,
+                'activated' => null,
+                'last_login' => null,
+                'last_failed_login' => null,
+                'inactivity_flags' => null,
+                'auth_token' => null,
+                'email_update_request' => null,
+                'password_reset_token' => null,
+                'profile' => null,
+            ]
+        );
     }
 
     /**
@@ -229,21 +263,15 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function activate(string $token) : bool
     {
-        $sql = new Sql($this->getZendDb());
-        $update = $sql->update(self::USERS_TABLE);
-        $update->where(['activation_token'=>$token]);
-
-        $update->set([
-            'active' => true,
-            'updated' => gmdate(self::TIME_FORMAT),
-            'activated' => gmdate(self::TIME_FORMAT),
-            'activation_token' => null,
-        ]);
-
-        $statement = $sql->prepareStatementForSqlObject($update);
-        $results = $statement->execute();
-
-        return $results->getAffectedRows() === 1;
+        return $this->updateRow(
+            ['activation_token' => $token],
+            [
+                'active' => true,
+                'updated' => gmdate(self::TIME_FORMAT),
+                'activated' => gmdate(self::TIME_FORMAT),
+                'activation_token' => null,
+            ]
+        );
     }
 
     /**
@@ -255,7 +283,14 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function setNewPassword(string $userId, string $passwordHash) : bool
     {
-        die(__METHOD__.' not implement');
+        return $this->updateRow(
+            ['id' => $userId],
+            [
+                'password_hash' => $passwordHash,
+                'updated' => gmdate(self::TIME_FORMAT),
+                'auth_token' => null,
+            ]
+        );
     }
 
     /**
@@ -268,23 +303,17 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function setAuthToken(string $userId, DateTime $expires, string $token) : bool
     {
-        $sql = new Sql($this->getZendDb());
-        $update = $sql->update(self::USERS_TABLE);
-        $update->where(['id'=>$userId]);
-
-        $update->set([
-            'auth_token' => json_encode([
-                'token' => $token,
-                'createdAt' => gmdate(self::TIME_FORMAT),
-                'updatedAt' => gmdate(self::TIME_FORMAT),
-                'expiresAt' => $expires->format(self::TIME_FORMAT),
-            ]),
-        ]);
-
-        $statement = $sql->prepareStatementForSqlObject($update);
-        $results = $statement->execute();
-
-        return $results->getAffectedRows() === 1;
+        return $this->updateRow(
+            ['id' => $userId],
+            [
+                'auth_token' => json_encode([
+                    'token' => $token,
+                    'createdAt' => gmdate(self::TIME_FORMAT),
+                    'updatedAt' => gmdate(self::TIME_FORMAT),
+                    'expiresAt' => $expires->format(self::TIME_FORMAT),
+                ]),
+            ]
+        );
     }
 
     /**
@@ -296,20 +325,15 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function extendAuthToken(string $userId, DateTime $expires) : bool
     {
-        $sql = new Sql($this->getZendDb());
-        $update = $sql->update(self::USERS_TABLE);
-        $update->where(['id'=>$userId]);
-
-        // Merges the new times into the existing JSON
-        $update->set(['auth_token' => new Expression("auth_token || ?", json_encode([
-            'updatedAt' => gmdate(self::TIME_FORMAT),
-            'expiresAt' => $expires->format(self::TIME_FORMAT),
-        ]))]);
-
-        $statement = $sql->prepareStatementForSqlObject($update);
-        $results = $statement->execute();
-
-        return $results->getAffectedRows() === 1;
+        return  $this->updateRow(
+            ['id' => $userId],
+            [
+                'auth_token' => new Expression("auth_token || ?", json_encode([
+                    'updatedAt' => gmdate(self::TIME_FORMAT),
+                    'expiresAt' => $expires->format(self::TIME_FORMAT),
+                ]))
+            ]
+        );
     }
 
     /**
@@ -319,7 +343,17 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function addPasswordResetToken(string $id, array $token) : bool
     {
-        die(__METHOD__.' not implement');
+        // Map DateTimes to Strings
+        $token = array_map(function ($v) {
+            return ($v instanceof DateTime) ? $v->format(self::TIME_FORMAT) : $v;
+        }, $token);
+
+        return $this->updateRow(
+            ['id' => $id],
+            [
+                'password_reset_token' => json_encode($token),
+            ]
+        );
     }
 
     /**
@@ -329,7 +363,22 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function updatePasswordUsingToken(string $token, string $passwordHash) : ?UserRepository\UpdatePasswordUsingTokenError
     {
-        die(__METHOD__.' not implement');
+        $result = $this->updateRow(
+            [new Expression("password_reset_token ->> 'token' = ?", $token)],
+            [
+                'password_reset_token' => null,
+                'password_hash' => $passwordHash,
+                'updated' => gmdate(self::TIME_FORMAT),
+                'auth_token' => null,
+            ]
+        );
+
+        if (!$result) {
+            return new UserRepository\UpdatePasswordUsingTokenError('nothing-modified');
+        }
+
+        // All went well; no error to return.
+        return null;
     }
 
     /**
@@ -340,7 +389,20 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function addEmailUpdateTokenAndNewEmail(string $id, array $token, string $newEmail) : bool
     {
-        die(__METHOD__.' not implement');
+        // Map DateTimes to Strings
+        $token = array_map(function ($v) {
+            return ($v instanceof DateTime) ? $v->format(self::TIME_FORMAT) : $v;
+        }, $token);
+
+        return $this->updateRow(
+            ['id' => $id],
+            [
+                'email_update_request' => json_encode([
+                    'token' => $token,
+                    'email' => $newEmail,
+                ]),
+            ]
+        );
     }
 
     /**
@@ -349,7 +411,47 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function updateEmailUsingToken(string $token) : UserRepository\UpdateEmailUsingTokenResponse
     {
-        die(__METHOD__.' not implement');
+        $user = $this->getByField([new Expression("email_update_request -> 'token' ->> 'token' = ?", $token)]);
+
+        if (!is_array($user)) {
+            return new UserRepository\UpdateEmailUsingTokenResponse('invalid-token');
+        }
+
+        $request = json_decode($user['email_update_request'], true);
+        $expires = new DateTime($request['token']['expiresAt']);
+
+        if ($expires < new DateTime()) {
+            // Token has expired
+            return new UserRepository\UpdateEmailUsingTokenResponse('invalid-token');
+        }
+
+        //-------------
+
+        $newEmail = $request['email'];
+
+        $clashUser = $this->getByField(['identity' => $newEmail]);
+
+        if (is_array($clashUser)) {
+            return new UserRepository\UpdateEmailUsingTokenResponse('username-already-exists');
+        }
+
+        //-------------
+
+        $result = $this->updateRow(
+            ['id' => $user['id']],
+            [
+                'identity' => $newEmail,
+                'updated' => gmdate(self::TIME_FORMAT),
+                'email_update_request' => null,
+            ]
+        );
+
+        if (!$result) {
+            return new UserRepository\UpdateEmailUsingTokenResponse('nothing-modified');
+        }
+
+        // Returns the User, wrapped in a Response object.
+        return new UserRepository\UpdateEmailUsingTokenResponse(new UserModel($user));
     }
 
     /**
@@ -447,28 +549,22 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     /**
      * Updates a user's profile. If it doesn't already exist, it's created.
      *
-     * @param ProfileUserModel $data
+     * @param ProfileUserModel $user
      * @return bool
      */
-    public function saveProfile(ProfileUserModel $data) : bool
+    public function saveProfile(ProfileUserModel $user) : bool
     {
-        $sql = new Sql($this->getZendDb());
-        $update = $sql->update(self::USERS_TABLE);
-        $update->where(['id'=>$data->getId()]);
-
-        $data = $data->toArray();
+        $data = $user->toArray();
 
         // Remove unwarned fields
         unset($data['id'], $data['createdAt'], $data['updatedAt']);
 
-        $update->set([
-            'profile' => json_encode($data),
-        ]);
-
-        $statement = $sql->prepareStatementForSqlObject($update);
-        $results = $statement->execute();
-
-        return $results->getAffectedRows() === 1;
+        return $this->updateRow(
+            ['id'=>$user->getId()],
+            [
+                'profile' => json_encode($data),
+            ]
+        );
     }
 
 }

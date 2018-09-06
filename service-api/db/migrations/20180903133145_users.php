@@ -35,15 +35,15 @@ class Users extends AbstractMigration
         $users = $this->table('users', ['id' => false, 'primary_key'=>'id']);
 
         $users->addColumn('id', 'string')
-            ->addColumn('identity', 'text')
-            ->addColumn('password_hash', 'text')
+            ->addColumn('identity', 'text', ['null' => true])
+            ->addColumn('password_hash', 'text', ['null' => true])
             ->addColumn('activation_token', 'text', ['null' => true])
 
-            ->addColumn('active', 'boolean')
-            ->addColumn('failed_login_attempts', 'integer')
+            ->addColumn('active', 'boolean', ['null' => true])
+            ->addColumn('failed_login_attempts', 'integer', ['null' => true])
 
-            ->addColumn('created', 'datetime', ['timezone'=>true])
-            ->addColumn('updated', 'datetime', ['timezone'=>true])
+            ->addColumn('created', 'datetime', ['null' => true, 'timezone'=>true])
+            ->addColumn('updated', 'datetime', ['null' => true, 'timezone'=>true])
             ->addColumn('activated', 'datetime', ['null' => true, 'timezone'=>true])
             ->addColumn('last_login', 'datetime', ['null' => true, 'timezone'=>true])
             ->addColumn('last_failed_login', 'datetime', ['null' => true, 'timezone'=>true])
@@ -51,6 +51,7 @@ class Users extends AbstractMigration
 
             ->addColumn('inactivity_flags', 'jsonb', ['null' => true])
             ->addColumn('auth_token', 'jsonb', ['null' => true])
+            ->addColumn('email_update_request', 'jsonb', ['null' => true])
             ->addColumn('password_reset_token', 'jsonb', ['null' => true])
             ->addColumn('profile', 'jsonb', ['null' => true])
 
