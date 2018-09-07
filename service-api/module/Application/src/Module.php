@@ -52,7 +52,7 @@ class Module
         return [
             'aliases' => [
                 // Map the Repository Interfaces to concrete implementations.
-                Repository\User\LogRepositoryInterface::class => Mongo\Collection\AuthLogCollection::class,
+                Repository\User\LogRepositoryInterface::class => Postgres\LogData::class,
                 Repository\User\UserRepositoryInterface::class => Postgres\UserData::class,
                 Repository\Stats\StatsRepositoryInterface::class => Mongo\Collection\ApiStatsLpasCollection::class,
                 Repository\Application\WhoRepositoryInterface::class => Mongo\Collection\ApiWhoCollection::class,
@@ -61,6 +61,7 @@ class Module
             'invokables' => [
                 HttpClient::class => Guzzle6Client::class,
                 Postgres\UserData::class => Postgres\UserData::class,
+                Postgres\LogData::class => Postgres\LogData::class,
             ],
             'factories' => [
                 'DynamoCronLock' => function (ServiceLocatorInterface $sm) {
