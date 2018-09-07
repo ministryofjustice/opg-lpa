@@ -58,6 +58,7 @@ class Users extends AbstractMigration
             // Simple (non-jsonb) indexes.
             ->addIndex(['identity'], ['unique' => true])
             ->addIndex(['activation_token'], ['unique' => true])
+            ->addIndex(['activated'])
             ->addIndex(['last_login'])
             ->addIndex(['active','last_login'])
             ->create();

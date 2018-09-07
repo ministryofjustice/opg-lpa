@@ -6,6 +6,8 @@ use DateTime;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\Expression;
+use Zend\Db\Sql\Predicate\IsNull;
+use Zend\Db\Sql\Predicate\IsNotNull;
 use Opg\Lpa\DataModel\User\User as ProfileUserModel;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 
@@ -36,6 +38,31 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         }
 
         return $result->current();
+    }
+
+    /**
+     * Counts the number of row that match the passed where clause.
+     *
+     * @param array $where
+     * @return int
+     */
+    private function countRows(array $where) : int
+    {
+        $sql = new Sql($this->getZendDb());
+
+        $select = $sql->select(self::USERS_TABLE);
+
+        $select->columns(['count' => new Expression('count(*)')]);
+
+        $select->where($where);
+
+        $result = $sql->prepareStatementForSqlObject($select)->execute();
+
+        if (!$result->isQueryResult() || $result->count() != 1) {
+            return 0;
+        }
+
+        return $result->current()['count'];
     }
 
     /**
@@ -532,13 +559,14 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     }
 
     /**
-     * Counts the number of account in the system.
+     * Counts the number of account in the system. (Excludes deleted accounts)
      *
      * @return int Account count
      */
     public function countAccounts() : int
     {
-        die(__METHOD__." not implement\n");
+        // All 'live' accounts have an identity
+        return $this->countRows([new IsNotNull('identity')]);
     }
 
     /**
@@ -549,7 +577,15 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function countActivatedAccounts(DateTime $since = null) : int
     {
-        die(__METHOD__." not implement\n");
+        if (is_null($since)) {
+            // All activated accounts have an activation date.
+            $where = [new IsNotNull('activated')];
+
+        } else {
+            $where = [new Operator('activated', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $since->format('c'))];
+        }
+
+        return $this->countRows($where);
     }
 
     /**
@@ -559,7 +595,8 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function countDeletedAccounts() : int
     {
-        die(__METHOD__." not implement\n");
+        // Deleted accounts have a row, but no identity
+        return $this->countRows([new IsNull('identity')]);
     }
 
     /**
