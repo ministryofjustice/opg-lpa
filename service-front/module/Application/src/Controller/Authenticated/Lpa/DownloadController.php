@@ -91,7 +91,8 @@ class DownloadController extends AbstractLpaController
 
         // Send a page view to the analytics service for the document being provided
         try {
-            $this->analyticsService->sendPageView($this->getRequest()->getUri()->getPath(), $this->getFilename($pdfType));
+            $uri = $this->getRequest()->getUri();
+            $this->analyticsService->sendPageView($uri->getHost(), $uri->getPath(), $this->getFilename($pdfType));
         } catch (Exception $ex) {
             // Log the error but don't impact the user because of analytics failures
             $this->getLogger()->err($ex);

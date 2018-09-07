@@ -19,11 +19,12 @@ class GoogleAnalyticsService extends AbstractService
     /**
      * Call Google Analytics to register a page view for the PDFs
      *
+     * @param string $hostName The domain name of the environment e.g. example.domain.gov
      * @param string $pagePath Page url, excluding the domain e.g. /general/mypage
      * @param string $pageTitle Title of the page
      * @throws Exception
      */
-    function sendPageView(string $pagePath, string $pageTitle) : void
+    public function sendPageView(string $hostName, string $pagePath, string $pageTitle) : void
     {
         $this->getLogger()->debug('Sending analytics page view ' . $pagePath . ' , ' . $pageTitle);
 
@@ -36,6 +37,7 @@ class GoogleAnalyticsService extends AbstractService
         $analytics->setProtocolVersion('1')
             ->setTrackingId('UA-33184303-1')
             ->setClientId($clientId)
+            ->setDocumentHostName($hostName)
             ->setDocumentPath($pagePath)
             ->setDocumentTitle($pageTitle)
             ->setAnonymizeIp(true);
@@ -51,7 +53,7 @@ class GoogleAnalyticsService extends AbstractService
      * @return string Client Id
      * @throws Exception
      */
-    function getAnalyticsClientId() : string
+    public function getAnalyticsClientId() : string
     {
         if (isset($_COOKIE['_ga'])) {
             list($version, $domainDepth, $cid1, $cid2) = explode('.', $_COOKIE['_ga'], 4);
@@ -69,7 +71,7 @@ class GoogleAnalyticsService extends AbstractService
      *
      * @param Analytics $analyticsClient Google analytics client
      */
-    function setAnalyticsClient(Analytics $analyticsClient) : void
+    public function setAnalyticsClient(Analytics $analyticsClient) : void
     {
         $this->analyticsClient = $analyticsClient;
     }
