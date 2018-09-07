@@ -211,11 +211,11 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     public function create(string $id, array $details) : bool
     {
         $sql = new Sql($this->getZendDb());
-        $update = $sql->insert(self::USERS_TABLE);
+        $insert = $sql->insert(self::USERS_TABLE);
 
-        $update->columns(['id', 'identity', 'password_hash', 'active', 'activation_token', 'created', 'updated', 'failed_login_attempts']);
+        $insert->columns(['id', 'identity', 'password_hash', 'active', 'activation_token', 'created', 'updated', 'failed_login_attempts']);
 
-        $update->values([
+        $insert->values([
             'id'                    => $id,
             'identity'              => $details['identity'],
             'password_hash'         => $details['password_hash'],
@@ -226,7 +226,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             'failed_login_attempts' => $details['failed_login_attempts']
         ]);
 
-        $statement = $sql->prepareStatementForSqlObject($update);
+        $statement = $sql->prepareStatementForSqlObject($insert);
 
         try {
             $statement->execute();
