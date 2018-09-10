@@ -1,13 +1,12 @@
 <?php
 
-namespace ApplicationTest\Form\Lpa;
+namespace ApplicationTest\Form\User;
 
-use Application\Form\Lpa\TypeForm;
+use Application\Form\User\ConfirmEmail as ConfirmEmailForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
 
-class TypeFormTest extends MockeryTestCase
+class ConfirmEmailTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -16,46 +15,51 @@ class TypeFormTest extends MockeryTestCase
      */
     public function setUp()
     {
-        $this->setUpMainFlowForm(new TypeForm());
+        $this->setUpCsrfForm(new ConfirmEmailForm());
     }
 
     public function testNameAndInstances()
     {
-        $this->assertInstanceOf('Application\Form\Lpa\TypeForm', $this->form);
-        $this->assertInstanceOf('Application\Form\Lpa\AbstractMainFlowForm', $this->form);
-        $this->assertInstanceOf('Application\Form\Lpa\AbstractLpaForm', $this->form);
+        $this->assertInstanceOf('Application\Form\User\ConfirmEmail', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractForm', $this->form);
-        $this->assertEquals('form-type', $this->form->getName());
+        $this->assertEquals('confirm-email', $this->form->getName());
     }
 
     public function testElements()
     {
-        $this->assertInstanceOf('Application\Form\Element\Type', $this->form->get('type'));
-        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('save'));
+        $this->assertInstanceOf('Zend\Form\Element\Email', $this->form->get('email'));
+        $this->assertInstanceOf('Zend\Form\Element\Email', $this->form->get('email_confirm'));
     }
 
     public function testValidateByModelOK()
     {
         $this->form->setData(array_merge([
-            'type' => Document::LPA_TYPE_HW,
+            'email'         => 'a@b.com',
+            'email_confirm' => 'a@b.com',
         ], $this->getCsrfData()));
 
         $this->assertTrue($this->form->isValid());
+
         $this->assertEquals([], $this->form->getMessages());
     }
 
     public function testValidateByModelInvalid()
     {
         $this->form->setData(array_merge([
-            'type' => 'invalid-lpa-type',
+            'email'         => '',
+            'email_confirm' => '',
         ], $this->getCsrfData()));
 
         $this->assertFalse($this->form->isValid());
+
         $this->assertEquals([
-            'type' => [
-                0 => 'allowed-values:property-and-financial,health-and-welfare'
-            ]
+            'email' => [
+                'isEmpty' => 'cannot-be-empty'
+            ],
+            'email_confirm' => [
+                'isEmpty' => 'cannot-be-empty'
+            ],
         ], $this->form->getMessages());
     }
 }

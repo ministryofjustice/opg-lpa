@@ -2,11 +2,11 @@
 
 namespace ApplicationTest\Form\Lpa;
 
-use Application\Form\Lpa\DonorForm;
+use Application\Form\Lpa\AttorneyForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class DonorFormTest extends MockeryTestCase
+class AttorneyFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -15,17 +15,17 @@ class DonorFormTest extends MockeryTestCase
      */
     public function setUp()
     {
-        $this->setUpActorForm(new DonorForm());
+        $this->setUpActorForm(new AttorneyForm());
     }
 
     public function testNameAndInstances()
     {
-        $this->assertInstanceOf('Application\Form\Lpa\DonorForm', $this->form);
+        $this->assertInstanceOf('Application\Form\Lpa\AttorneyForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractActorForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractLpaForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractForm', $this->form);
-        $this->assertEquals('form-donor', $this->form->getName());
+        $this->assertEquals('form-attorney', $this->form->getName());
     }
 
     public function testElements()
@@ -40,7 +40,6 @@ class DonorFormTest extends MockeryTestCase
         $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-address2'));
         $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-address3'));
         $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-postcode'));
-        $this->assertInstanceOf('Zend\Form\Element\Checkbox', $this->form->get('canSign'));
         $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('submit'));
     }
 
@@ -58,7 +57,6 @@ class DonorFormTest extends MockeryTestCase
                 'month' => '05',
                 'day'   => '20'
             ],
-            'canSign'          => false
         ], $this->getCsrfData()));
 
         $this->assertTrue($this->form->isValid());
@@ -78,7 +76,6 @@ class DonorFormTest extends MockeryTestCase
                 'month' => '05',
                 'day'   => '20'
             ],
-            'canSign'          => 123
         ], $this->getCsrfData()));
 
         $this->assertFalse($this->form->isValid());
@@ -98,9 +95,6 @@ class DonorFormTest extends MockeryTestCase
             ],
             'address-postcode' => [
                 0 => 'linked-1-cannot-be-null'
-            ],
-            'canSign' => [
-                0 => 'expected-type:bool'
             ],
             'name-title' => [
                 0 => 'cannot-be-blank'

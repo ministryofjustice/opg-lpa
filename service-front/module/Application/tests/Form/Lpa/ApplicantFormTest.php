@@ -2,12 +2,12 @@
 
 namespace ApplicationTest\Form\Lpa;
 
-use Application\Form\Lpa\TypeForm;
+use Application\Form\Lpa\ApplicantForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 
-class TypeFormTest extends MockeryTestCase
+class ApplicantFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -16,29 +16,39 @@ class TypeFormTest extends MockeryTestCase
      */
     public function setUp()
     {
-        $this->setUpMainFlowForm(new TypeForm());
+        //  Set up the form with the LPA data
+        $lpa = new Lpa([
+            'document' => [
+                'primaryAttorneys' => [],
+            ],
+        ]);
+
+        $form = new ApplicantForm(null, [
+            'lpa' => $lpa,
+        ]);
+
+        $this->setUpMainFlowForm($form);
     }
 
     public function testNameAndInstances()
     {
-        $this->assertInstanceOf('Application\Form\Lpa\TypeForm', $this->form);
+        $this->assertInstanceOf('Application\Form\Lpa\ApplicantForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractMainFlowForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractLpaForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractForm', $this->form);
-        $this->assertEquals('form-type', $this->form->getName());
+        $this->assertEquals('form-applicant', $this->form->getName());
     }
 
     public function testElements()
     {
-        $this->assertInstanceOf('Application\Form\Element\Type', $this->form->get('type'));
-        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('save'));
+        $this->assertInstanceOf('Zend\Form\Element\Radio', $this->form->get('whoIsRegistering'));
     }
 
     public function testValidateByModelOK()
     {
         $this->form->setData(array_merge([
-            'type' => Document::LPA_TYPE_HW,
+            'whoIsRegistering' => 'donor',
         ], $this->getCsrfData()));
 
         $this->assertTrue($this->form->isValid());
@@ -48,14 +58,15 @@ class TypeFormTest extends MockeryTestCase
     public function testValidateByModelInvalid()
     {
         $this->form->setData(array_merge([
-            'type' => 'invalid-lpa-type',
+            'whoIsRegistering' => 'someoneelse',
         ], $this->getCsrfData()));
 
         $this->assertFalse($this->form->isValid());
+
         $this->assertEquals([
-            'type' => [
-                0 => 'allowed-values:property-and-financial,health-and-welfare'
-            ]
+            'whoIsRegistering' => [
+                'notInArray' => 'The input was not found in the haystack'
+            ],
         ], $this->form->getMessages());
     }
 }

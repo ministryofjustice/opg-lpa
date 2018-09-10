@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Form\Lpa;
 
+use Application\Form\AbstractCsrfForm;
 use Application\Form\Lpa\AbstractLpaForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -27,7 +28,10 @@ class FormTest extends MockeryTestCase
                     'lpa' => $lpa
                 ]);
 
-                $this->setUpForm($form);
+                /** @var AbstractCsrfForm $form */
+                $this->setUpCsrfForm($form);
+
+                $secretKeys = null;
 
                 foreach ($form->getElements() as $key => $value) {
                     if (strpos($key, 'secret') === 0) {
