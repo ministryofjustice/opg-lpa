@@ -2,11 +2,11 @@
 
 namespace ApplicationTest\Form\Lpa;
 
-use Application\Form\Lpa\DonorForm;
+use Application\Form\Lpa\TrustCorporationForm;
 use ApplicationTest\Form\FormTestSetupTrait;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class DonorFormTest extends MockeryTestCase
+class TrustCorporationFormTest extends MockeryTestCase
 {
     use FormTestSetupTrait;
 
@@ -15,50 +15,39 @@ class DonorFormTest extends MockeryTestCase
      */
     public function setUp()
     {
-        $this->setUpActorForm(new DonorForm());
+        $this->setUpActorForm(new TrustCorporationForm());
     }
 
     public function testNameAndInstances()
     {
-        $this->assertInstanceOf('Application\Form\Lpa\DonorForm', $this->form);
+        $this->assertInstanceOf('Application\Form\Lpa\TrustCorporationForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractActorForm', $this->form);
         $this->assertInstanceOf('Application\Form\Lpa\AbstractLpaForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractForm', $this->form);
-        $this->assertEquals('form-donor', $this->form->getName());
+        $this->assertEquals('form-trust-corporation', $this->form->getName());
     }
 
     public function testElements()
     {
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('name-title'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('name-first'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('name-last'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('otherNames'));
-        $this->assertInstanceOf('Application\Form\Fieldset\Dob', $this->form->get('dob-date'));
+        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('name'));
+        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('number'));
         $this->assertInstanceOf('Zend\Form\Element\Email', $this->form->get('email-address'));
         $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-address1'));
         $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-address2'));
         $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-address3'));
         $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-postcode'));
-        $this->assertInstanceOf('Zend\Form\Element\Checkbox', $this->form->get('canSign'));
         $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('submit'));
     }
 
     public function testValidateByModelOK()
     {
         $this->form->setData(array_merge([
-            'name-title'       => 'Mr',
-            'name-first'       => 'first',
-            'name-last'        => 'last',
+            'name'             => 'Some Inc.',
+            'number'           => '12345678',
             'email-address'    => '',
             'address-address1' => 'add1',
             'address-postcode' => 'postcode',
-            'dob-date'         => [
-                'year'  => '1984',
-                'month' => '05',
-                'day'   => '20'
-            ],
-            'canSign'          => false
         ], $this->getCsrfData()));
 
         $this->assertTrue($this->form->isValid());
@@ -68,26 +57,19 @@ class DonorFormTest extends MockeryTestCase
     public function testValidateByModelInvalid()
     {
         $this->form->setData(array_merge([
-            'name-title'       => '',
-            'name-first'       => '',
-            'name-last'        => '',
+            'name'             => '',
+            'number'           => '',
             'address-address1' => 'add1',
             'email-address'    => 'inv@lid@mail.address',
-            'dob-date'         => [
-                'year'  => '1984',
-                'month' => '05',
-                'day'   => '20'
-            ],
-            'canSign'          => 123
         ], $this->getCsrfData()));
 
         $this->assertFalse($this->form->isValid());
 
         $this->assertEquals([
-            'name-first' => [
+            'name' => [
                 0 => 'cannot-be-blank'
             ],
-            'name-last' => [
+            'number' => [
                 0 => 'cannot-be-blank'
             ],
             'email-address' => [
@@ -98,12 +80,6 @@ class DonorFormTest extends MockeryTestCase
             ],
             'address-postcode' => [
                 0 => 'linked-1-cannot-be-null'
-            ],
-            'canSign' => [
-                0 => 'expected-type:bool'
-            ],
-            'name-title' => [
-                0 => 'cannot-be-blank'
             ],
         ], $this->form->getMessages());
     }
