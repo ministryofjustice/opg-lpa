@@ -8,3 +8,5 @@ bin/lock acquire \
 --name db-migrate \
 --ttl 60 \
 && vendor/bin/phinx migrate
+
+exit 0
