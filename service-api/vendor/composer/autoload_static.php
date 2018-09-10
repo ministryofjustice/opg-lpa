@@ -498,6 +498,17 @@ class ComposerStaticInit409970bb818922b230ff267b0f1a52e7
                 0 => __DIR__ . '/..' . '/doctrine/lexer/lib',
             ),
         ),
+        'C' => 
+        array (
+            'Commando' => 
+            array (
+                0 => __DIR__ . '/..' . '/nategood/commando/src',
+            ),
+            'Colors' => 
+            array (
+                0 => __DIR__ . '/..' . '/kevinlebrun/colors.php/src',
+            ),
+        ),
     );
 
     public static $classMap = array (

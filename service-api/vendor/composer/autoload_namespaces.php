@@ -14,4 +14,6 @@ return array(
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),
     'Egulias\\' => array($vendorDir . '/egulias/email-validator/src'),
     'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),
+    'Commando' => array($vendorDir . '/nategood/commando/src'),
+    'Colors' => array($vendorDir . '/kevinlebrun/colors.php/src'),
 );
