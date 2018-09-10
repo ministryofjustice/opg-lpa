@@ -15,14 +15,14 @@ class DynamoDbKeyValueStore implements StorageInterface
     
     /**
      * The AWS client
-     * 
+     *
      * @var Aws\DynamoDb\DynamoDbClient
      */
     private $client;
 
     /**
      * The name of the table holding the key/value store
-     * 
+     *
      * @var string
      */
     private $tableName;
@@ -33,12 +33,12 @@ class DynamoDbKeyValueStore implements StorageInterface
      * @var string
      */
     private $keyPrefix;
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param array $config
-     * 
+     *
      * [
      *      'settings' => [
      *          'table_name' => 'my-table',
@@ -58,12 +58,9 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function __construct(array $config)
     {
-        $this->client = new DynamoDbClient($config['client']);
-
         $this->tableName = $config['settings']['table_name'];
 
         $this->keyPrefix = ( isset($config['keyPrefix']) ) ? $config['keyPrefix'] : 'default';
-
     }
 
     /**
@@ -72,10 +69,9 @@ class DynamoDbKeyValueStore implements StorageInterface
      * @param $key
      * @return string
      */
-    private function formatKey( $key ){
-
+    private function formatKey($key)
+    {
         return "{$this->keyPrefix}/{$key}";
-
     }
     
     /* (non-PHPdoc)
@@ -90,15 +86,14 @@ class DynamoDbKeyValueStore implements StorageInterface
         } else {
             $value = array('B' => $value);
         }
-        
-        $result = $this->client->putItem(array(
+
+        $this->client->putItem(array(
             'TableName' => $this->tableName,
             'Item' => array(
                 'id'      => $key,
                 'value'   => $value,
             )
         ));
-    
     }
     
     /* (non-PHPdoc)
@@ -108,7 +103,7 @@ class DynamoDbKeyValueStore implements StorageInterface
     {
         $key = array('S' => $this->formatKey($key));
         
-        $result = $this->client->deleteItem(array(
+        $this->client->deleteItem(array(
             'TableName' => $this->tableName,
             'Key' => array(
                 'id'      => $key,
@@ -122,7 +117,6 @@ class DynamoDbKeyValueStore implements StorageInterface
     public function getItem($key, & $success = null, & $casToken = null)
     {
         try {
-
             $result = $this->client->getItem(array(
                 'TableName' => $this->tableName,
                 'Key' => array(
@@ -133,13 +127,13 @@ class DynamoDbKeyValueStore implements StorageInterface
             $success = true;
 
             return $result['Item']['value']['B'];
-
-        } catch (Exception $e){}
+        } catch (Exception $e) {
+            // Ignore exception
+        }
 
         $success = false;
 
         return null;
-
     }
     
      /* (non-PHPdoc)
@@ -308,6 +302,14 @@ class DynamoDbKeyValueStore implements StorageInterface
     public function touchItems(array $keys)
     {
         throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+    }
+
+    /**
+     * @param DynamoDbClient $dynamoDbClient set Dynamo DB client
+     */
+    public function setDynamoDbClient(DynamoDbClient $dynamoDbClient)
+    {
+        $this->client = $dynamoDbClient;
     }
 
 }
