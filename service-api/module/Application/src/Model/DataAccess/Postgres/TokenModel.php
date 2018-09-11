@@ -51,16 +51,6 @@ class TokenModel implements UserRepository\TokenInterface
     }
 
     /**
-     * Returns the owner of the token's user id.
-     *
-     * @return mixed
-     */
-    public function user() : ?string
-    {
-        die(__METHOD__.' not implement');
-    }
-
-    /**
      * Date the token will current expire.
      *
      * @return DateTime
