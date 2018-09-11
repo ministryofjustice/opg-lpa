@@ -30,8 +30,7 @@ class GoogleAnalyticsServiceTest extends MockeryTestCase
     {
         parent::tearDown();
 
-        if(isset($_COOKIE['_ga']))
-        {
+        if (isset($_COOKIE['_ga'])) {
             unset($_COOKIE['_ga']);
         }
     }
@@ -65,6 +64,7 @@ class GoogleAnalyticsServiceTest extends MockeryTestCase
         $analyticsClient->expects('setProtocolVersion')->withArgs(['1'])->andReturn($analyticsClient)->once();
         $analyticsClient->expects('setTrackingId')->withArgs(['UA-33184303-1'])->andReturn($analyticsClient)->once();
         $analyticsClient->expects('setClientId')->withArgs(['12345678.87654321'])->andReturn($analyticsClient)->once();
+        $analyticsClient->expects('setDocumentHostName')->withArgs(['host name'])->andReturn($analyticsClient)->once();
         $analyticsClient->expects('setDocumentPath')->withArgs(['test/view/path'])->andReturn($analyticsClient)->once();
         $analyticsClient->expects('setDocumentTitle')->withArgs(['Test Title'])->andReturn($analyticsClient)->once();
         $analyticsClient->expects('setAnonymizeIp')->withArgs([true])->andReturn($analyticsClient)->once();
@@ -76,7 +76,7 @@ class GoogleAnalyticsServiceTest extends MockeryTestCase
 
         $this->googleAnalyticsService->setAnalyticsClient($analyticsClient);
 
-        $this->googleAnalyticsService->sendPageView('test/view/path', 'Test Title');
+        $this->googleAnalyticsService->sendPageView('host name', 'test/view/path', 'Test Title');
     }
 
     /**
@@ -91,6 +91,7 @@ class GoogleAnalyticsServiceTest extends MockeryTestCase
         $analyticsClient->expects('setProtocolVersion')->withArgs(['1'])->andReturn($analyticsClient)->once();
         $analyticsClient->expects('setTrackingId')->withArgs(['UA-33184303-1'])->andReturn($analyticsClient)->once();
         $analyticsClient->expects('setClientId')->withArgs(['12345678.87654321'])->andReturn($analyticsClient)->once();
+        $analyticsClient->expects('setDocumentHostName')->withArgs(['host name'])->andReturn($analyticsClient)->once();
         $analyticsClient->expects('setDocumentPath')->withArgs(['test/view/path'])->andReturn($analyticsClient)->once();
         $analyticsClient->expects('setDocumentTitle')->withArgs(['Test Title'])->andReturn($analyticsClient)->once();
         $analyticsClient->expects('setAnonymizeIp')->withArgs([true])->andReturn($analyticsClient)->once();
@@ -100,6 +101,6 @@ class GoogleAnalyticsServiceTest extends MockeryTestCase
 
         $this->googleAnalyticsService->setAnalyticsClient($analyticsClient);
 
-        $this->googleAnalyticsService->sendPageView('test/view/path', 'Test Title');
+        $this->googleAnalyticsService->sendPageView('host name', 'test/view/path', 'Test Title');
     }
 }
