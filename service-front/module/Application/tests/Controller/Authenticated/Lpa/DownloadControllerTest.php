@@ -5,6 +5,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 use Application\Controller\Authenticated\Lpa\DownloadController;
 use Application\Model\Service\Analytics\GoogleAnalyticsService;
 use ApplicationTest\Controller\AbstractControllerTest;
+use DateTime;
 use Exception;
 use Mockery;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
@@ -64,6 +65,32 @@ class DownloadControllerTest extends AbstractControllerTest
             'lpa-id'       => $this->lpa->id,
             'pdf-type'     => $pdfType,
             'pdf-filename' => 'Lasting-Power-of-Attorney-LP1F.pdf',
+        ]])->andReturn($response)->once();
+
+        $result = $controller->indexAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testIndexActionDraftLp1Ready()
+    {
+        /** @var DownloadController $controller */
+        $controller = $this->getController(DownloadController::class);
+
+        $response = new Response();
+
+        $this->lpa->setCompletedAt(null);
+
+        $pdfType = 'lp1';
+        $this->setPdfType($controller, $this->lpa, $pdfType);
+        $this->lpaApplicationService->shouldReceive('getPdf')
+            ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
+        $this->layout->shouldReceive('__invoke')->withArgs(['layout/download.twig'])->once();
+        $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download/file', [
+            'lpa-id'       => $this->lpa->id,
+            'pdf-type'     => $pdfType,
+            'pdf-filename' => 'Draft-Lasting-Power-of-Attorney-LP1F.pdf',
         ]])->andReturn($response)->once();
 
         $result = $controller->indexAction();
@@ -165,10 +192,12 @@ class DownloadControllerTest extends AbstractControllerTest
         $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
 
         $uri = Mockery::mock(Uri::class);
-        $uri->shouldReceive('getPath')->andReturn('/test-path');
+        $uri->shouldReceive('getHost')->andReturn('Test Host')->once();
+        $uri->shouldReceive('getPath')->andReturn('/test-path')->once();
 
         $this->request->shouldReceive('getUri')->andReturn($uri);
-        $googleAnalyticsService->shouldReceive('sendPageView')->withArgs(['/test-path', 'Lasting-Power-of-Attorney-LP1F.pdf']);
+        $googleAnalyticsService->shouldReceive('sendPageView')
+            ->withArgs(['Test Host', '/test-path', 'Lasting-Power-of-Attorney-LP1F.pdf'])->once();
 
         $result = $controller->downloadAction();
 
@@ -217,12 +246,15 @@ class DownloadControllerTest extends AbstractControllerTest
         $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
 
         $uri = Mockery::mock(Uri::class);
-        $uri->shouldReceive('getPath')->andReturn('/test-path');
+        $uri->shouldReceive('getHost')->andReturn('Test Host')->once();
+        $uri->shouldReceive('getPath')->andReturn('/test-path')->once();
 
         $exception = new Exception('Test Exception');
 
         $this->request->shouldReceive('getUri')->andReturn($uri);
-        $googleAnalyticsService->shouldReceive('sendPageView')->withArgs(['/test-path', 'Lasting-Power-of-Attorney-LP1F.pdf'])->andThrowExceptions([$exception]);
+        $googleAnalyticsService->shouldReceive('sendPageView')
+            ->withArgs(['Test Host', '/test-path', 'Lasting-Power-of-Attorney-LP1F.pdf'])
+            ->andThrowExceptions([$exception]);
 
         $this->logger->shouldReceive('err')->withArgs([$exception]);
 

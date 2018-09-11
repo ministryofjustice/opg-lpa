@@ -6,6 +6,7 @@ use Application\Controller\AbstractLpaController;
 use Application\Model\Service\Analytics\GoogleAnalyticsService;
 use Exception;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\ViewModel;
 
 class DownloadController extends AbstractLpaController
@@ -44,7 +45,7 @@ class DownloadController extends AbstractLpaController
             return $this->redirect()->toRoute('lpa/download/file', [
                 'lpa-id'       => $lpa->getId(),
                 'pdf-type'     => $pdfType,
-                'pdf-filename' => $this->getFilename($pdfType),
+                'pdf-filename' => $this->getFilename($pdfType, $this->isDraft($lpa))
             ]);
         }
 
@@ -81,24 +82,37 @@ class DownloadController extends AbstractLpaController
                 ->addHeaderLine('Cache-Control', 'must-revalidate')
                 ->addHeaderLine('Content-Length', strlen($fileContents));
 
+        $fileName = $this->getFilename($pdfType, $this->isDraft($lpa));
+
         $userAgent = $this->getRequest()->getHeaders()->get('User-Agent')->getFieldValue();
         if (stripos($userAgent, 'edge/') !== false) {
             //Microsoft edge. Send the file as an attachment
-            $headers->addHeaderLine('Content-Disposition', 'attachment; filename="' . $this->getFilename($pdfType) .'"');
+            $headers->addHeaderLine('Content-Disposition', 'attachment; filename="' . $fileName . '"');
         } else {
-            $headers->addHeaderLine('Content-Disposition', 'inline; filename="' . $this->getFilename($pdfType) .'"');
+            $headers->addHeaderLine('Content-Disposition', 'inline; filename="' . $fileName . '"');
         }
 
         // Send a page view to the analytics service for the document being provided
         try {
             $uri = $this->getRequest()->getUri();
-            $this->analyticsService->sendPageView($uri->getHost(), $uri->getPath(), $this->getFilename($pdfType));
+            $this->analyticsService->sendPageView($uri->getHost(), $uri->getPath(), $fileName);
         } catch (Exception $ex) {
             // Log the error but don't impact the user because of analytics failures
             $this->getLogger()->err($ex);
         }
 
         return $this->response;
+    }
+
+    /**
+     * Is the document a draft
+     *
+     * @param Lpa $lpa
+     * @return bool
+     */
+    private function isDraft(Lpa $lpa) : bool
+    {
+        return empty($lpa->getCompletedAt());
     }
 
     /**
@@ -123,10 +137,11 @@ class DownloadController extends AbstractLpaController
     /**
      * Get the filename to use for this PDF type
      *
-     * @param $pdfType
+     * @param string $pdfType
+     * @param bool $isDraft
      * @return string
      */
-    private function getFilename($pdfType)
+    private function getFilename(string $pdfType, bool $isDraft) : string
     {
         $lpaTypeChar = '';
 
@@ -135,7 +150,13 @@ class DownloadController extends AbstractLpaController
             $lpaTypeChar = ($this->getLpa()->document->type == Document::LPA_TYPE_PF ? 'F' : 'H');
         }
 
-        return 'Lasting-Power-of-Attorney-' . strtoupper($pdfType) . $lpaTypeChar . '.pdf';
+        $draftString = '';
+
+        if ($isDraft) {
+            $draftString = 'Draft-';
+        }
+
+        return $draftString . 'Lasting-Power-of-Attorney-' . strtoupper($pdfType) . $lpaTypeChar . '.pdf';
     }
 
     /**
