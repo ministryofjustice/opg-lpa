@@ -60,8 +60,6 @@ class Module
             ],
             'invokables' => [
                 HttpClient::class => Guzzle6Client::class,
-                Postgres\UserData::class => Postgres\UserData::class,
-                Postgres\LogData::class => Postgres\LogData::class,
             ],
             'factories' => [
                 'DynamoCronLock' => function (ServiceLocatorInterface $sm) {
@@ -100,6 +98,10 @@ class Module
                     // NonPersistent persists only for the life of the request...
                     return new AuthenticationService(new NonPersistent());
                 },
+
+                // Postgres data factories
+                Postgres\UserData::class    => Postgres\DataFactory::class,
+                Postgres\LogData::class     => Postgres\DataFactory::class,
 
                 //  Mongo database
                 Mongo\DatabaseFactory::class . '-default'   => Mongo\DatabaseFactory::class,
