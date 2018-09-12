@@ -8,7 +8,7 @@ use Application\Model\DataAccess\Repository\User as UserRepository;
 use Application\Model\DataAccess\Repository\Stats as StatsRepository;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
-use Application\Model\Service\UserManagement\Service as UserManagementService;
+use Application\Model\Service\Users\Service as UsersService;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Exception;
@@ -28,10 +28,10 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
      */
     private $additionalServices = [
         AccountCleanup\Service::class => [
-            'setConfig'                 => 'config',
-            'setNotifyClient'           => 'NotifyClient',
-            'setSnsClient'              => 'SnsClient',
-            'setUserManagementService'  => UserManagementService::class,
+            'setConfig'         => 'config',
+            'setNotifyClient'   => 'NotifyClient',
+            'setSnsClient'      => 'SnsClient',
+            'setUsersService'   => UsersService::class,
         ],
         Password\Service::class => [
             'setAuthenticationService' => AuthenticationService::class,
@@ -45,8 +45,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setApplicationsService' => ApplicationsService::class,
         ],
         Users\Service::class => [
-            'setApplicationsService'   => ApplicationsService::class,
-            'setUserManagementService' => UserManagementService::class,
+            'setApplicationsService' => ApplicationsService::class,
         ],
     ];
 

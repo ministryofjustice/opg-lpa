@@ -2,7 +2,7 @@
 
 namespace Application\Controller\Version2\Auth;
 
-use Application\Model\Service\UserManagement\Service;
+use Application\Model\Service\Users\Service;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;

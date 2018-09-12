@@ -4,9 +4,7 @@ namespace Application\ControllerFactory;
 
 use Application\Controller\Version2\Auth as AuthControllers;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
-use Application\Model\Service\Email\Service as EmailService;
-use Application\Model\Service\Password\Service as PasswordService;
-use Application\Model\Service\UserManagement\Service as UserManagementService;
+use Application\Model\Service;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
@@ -17,9 +15,9 @@ class AuthControllerAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $serviceMappings = [
-        AuthControllers\EmailController::class     => EmailService::class,
-        AuthControllers\PasswordController::class  => PasswordService::class,
-        AuthControllers\UsersController::class     => UserManagementService::class,
+        AuthControllers\EmailController::class     => Service\Email\Service::class,
+        AuthControllers\PasswordController::class  => Service\Password\Service::class,
+        AuthControllers\UsersController::class     => Service\Users\Service::class,
     ];
 
     /**

@@ -7,7 +7,7 @@ use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
-use Application\Model\Service\UserManagement\Service as UserManagementService;
+use Application\Model\Service\Users\Service as UsersService;
 use Aws\Sns\SnsClient;
 use DateTime;
 use Exception;
@@ -41,9 +41,9 @@ class Service extends AbstractService
     private $snsClient;
 
     /**
-     * @var UserManagementService
+     * @var UsersService
      */
-    private $userManagementService;
+    private $usersService;
 
     /**
      * Warning type constants
@@ -187,7 +187,7 @@ class Service extends AbstractService
 
         foreach ($iterator as $user) {
             //  Delete the user data
-            $this->userManagementService->delete($user->id(), 'expired');
+            $this->usersService->deleteUM($user->id(), 'expired');
 
             //  Delete the LPAs in the API data for this user
             $lpas = $this->getApplicationRepository()->fetchByUserId($user->id());
@@ -224,7 +224,7 @@ class Service extends AbstractService
 
         foreach ($iterator as $user) {
             // Delete each account...
-            $this->userManagementService->delete($user->id(), 'unactivated');
+            $this->usersService->deleteUM($user->id(), 'unactivated');
 
             $counter++;
         }
@@ -259,10 +259,10 @@ class Service extends AbstractService
     }
 
     /**
-     * @param UserManagementService $userManagementService
+     * @param UsersService $usersService
      */
-    public function setUserManagementService(UserManagementService $userManagementService)
+    public function setUsersService(UsersService $usersService)
     {
-        $this->userManagementService = $userManagementService;
+        $this->usersService = $usersService;
     }
 }
