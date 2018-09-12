@@ -9,6 +9,8 @@ class Registration extends SetPassword
 {
     public function init()
     {
+        parent::init();
+
         $this->setName('registration');
 
         $this->add([
@@ -100,7 +102,5 @@ class Registration extends SetPassword
                 ],
             ],
         ]);
-
-        parent::init();
     }
 }
