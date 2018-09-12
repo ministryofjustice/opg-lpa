@@ -31,7 +31,7 @@ class InstructionsAndPreferencesForm extends AbstractMainFlowForm
     {
         $document = new Document($this->data);
 
-        $validation = $document->validate(['instructions, preferences']);
+        $validation = $document->validate(['instruction', 'preference']);
 
         $messages = [];
 
