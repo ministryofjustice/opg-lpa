@@ -86,7 +86,7 @@ class UsersController extends AbstractAuthController
     {
         $email = $this->params()->fromQuery()['email'];
 
-        $user = $this->getService()->getByUsername($email);
+        $user = $this->getService()->searchByUsername($email);
 
         if ($user === false) {
             return new ApiProblem(404, 'No user found with supplied email address');

@@ -186,15 +186,8 @@ class Service extends AbstractService
         $counter = 0;
 
         foreach ($iterator as $user) {
-            //  Delete the user data
-            $this->usersService->deleteUM($user->id(), 'expired');
-
-            //  Delete the LPAs in the API data for this user
-            $lpas = $this->getApplicationRepository()->fetchByUserId($user->id());
-
-            foreach ($lpas as $lpa) {
-                $this->getApplicationRepository()->deleteById($lpa['_id'], $lpa['user']);
-            }
+            //  Delete the user - this will also delete any LPAs
+            $this->usersService->delete($user->id(), 'expired');
 
             $counter++;
         }
@@ -223,8 +216,8 @@ class Service extends AbstractService
         $counter = 0;
 
         foreach ($iterator as $user) {
-            // Delete each account...
-            $this->usersService->deleteUM($user->id(), 'unactivated');
+            //  Delete the user account
+            $this->usersService->delete($user->id(), 'unactivated');
 
             $counter++;
         }
