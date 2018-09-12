@@ -35,7 +35,7 @@ class ChangePasswordTest extends MockeryTestCase
         $this->assertInstanceOf('Application\Form\User\SetPassword', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractForm', $this->form);
-        $this->assertEquals('set-password', $this->form->getName());    //TODO - To be fixed - should be change-password
+        $this->assertEquals('change-password', $this->form->getName());
     }
 
     public function testElements()
