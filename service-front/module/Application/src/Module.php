@@ -9,6 +9,7 @@ use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
+use Aws\DynamoDb\DynamoDbClient;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\ModuleManager\Feature\FormElementProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
@@ -155,6 +156,8 @@ class Module implements FormElementProviderInterface
                     $config['keyPrefix'] = $sm->get('config')['stack']['name'];
 
                     $dynamoDbAdapter = new DynamoDbKeyValueStore($config);
+
+                    $dynamoDbAdapter->setDynamoDbClient(new DynamoDbClient($config['client']));
 
                     return $dynamoDbAdapter;
                 },
