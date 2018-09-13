@@ -16,6 +16,8 @@ class ChangePassword extends SetPassword
 
     public function init()
     {
+        parent::init();
+
         $this->setName('change-password');
 
         $this->add([
@@ -51,8 +53,6 @@ class ChangePassword extends SetPassword
                 ],
             ],
         ]);
-
-        parent::init();
     }
 
     /**
