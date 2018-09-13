@@ -21,14 +21,16 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
         $sql = new Sql($this->getZendDb());
         $insert = $sql->insert(self::DELETION_LOG_TABLE);
 
-        $insert->columns(['identity_hash','type','reason','loggedAt']);
-
-        $insert->values([
+        $data = [
             'identity_hash' => $details['identity_hash'],
             'type'          => $details['type'],
             'reason'        => $details['reason'],
             'loggedAt'      => $details['loggedAt']->format(self::TIME_FORMAT),
-        ]);
+        ];
+
+        $insert->columns(array_keys($data));
+
+        $insert->values($data);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
 

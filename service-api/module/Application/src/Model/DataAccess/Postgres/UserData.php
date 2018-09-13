@@ -213,9 +213,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         $sql = new Sql($this->getZendDb());
         $insert = $sql->insert(self::USERS_TABLE);
 
-        $insert->columns(['id', 'identity', 'password_hash', 'active', 'activation_token', 'created', 'updated', 'failed_login_attempts']);
-
-        $insert->values([
+        $data = [
             'id'                    => $id,
             'identity'              => $details['identity'],
             'password_hash'         => $details['password_hash'],
@@ -224,7 +222,11 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             'created'               => $details['created']->format(self::TIME_FORMAT),
             'updated'               => $details['last_updated']->format(self::TIME_FORMAT),
             'failed_login_attempts' => $details['failed_login_attempts']
-        ]);
+        ];
+
+        $insert->columns(array_keys($data));
+
+        $insert->values($data);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
 
