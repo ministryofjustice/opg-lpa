@@ -45,4 +45,48 @@ class InstructionsAndPreferencesFormTest extends MockeryTestCase
         $this->assertTrue($this->form->isValid());
         $this->assertEquals([], $this->form->getMessages());
     }
+
+    public function testValidateByModelInstructionsTooLong()
+    {
+        $this->form->setData(array_merge([
+            'instruction' => str_repeat('a', 10001),
+            'preference'  => 'Some preferences here.'
+        ], $this->getCsrfData()));
+
+        $this->assertFalse($this->form->isValid());
+        $this->assertEquals(['instruction' => [0 => 'must-be-less-than-or-equal:10000']], $this->form->getMessages());
+    }
+
+    public function testValidateByModelInstructionsInvalidType()
+    {
+        $this->form->setData(array_merge([
+            'instruction' => 10,
+            'preference'  => 'Some preferences here.'
+        ], $this->getCsrfData()));
+
+        $this->assertFalse($this->form->isValid());
+        $this->assertEquals(['instruction' => [0 => 'expected-type:string-or-bool=false']], $this->form->getMessages());
+    }
+
+    public function testValidateByModelPreferenceTooLong()
+    {
+        $this->form->setData(array_merge([
+            'instruction' => 'Some instructions here.',
+            'preference'  => str_repeat('a', 10001)
+        ], $this->getCsrfData()));
+
+        $this->assertFalse($this->form->isValid());
+        $this->assertEquals(['preference' => [0 => 'must-be-less-than-or-equal:10000']], $this->form->getMessages());
+    }
+
+    public function testValidateByModelPreferenceInvalidType()
+    {
+        $this->form->setData(array_merge([
+            'instruction' => 'Some instructions here.',
+            'preference'  => 10
+        ], $this->getCsrfData()));
+
+        $this->assertFalse($this->form->isValid());
+        $this->assertEquals(['preference' => [0 => 'expected-type:string-or-bool=false']], $this->form->getMessages());
+    }
 }
