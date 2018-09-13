@@ -178,8 +178,7 @@ class Document extends AbstractData
         ]);
 
         // instruction should be string, null or boolean false.
-        $metadata->addPropertyConstraint(
-            'instruction',
+        $metadata->addPropertyConstraint('instruction',
             new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
                 if (is_string($value) && strlen($value) > 10000) {
                     $context->buildViolation('must-be-less-than-or-equal:10000')->addViolation();
@@ -194,8 +193,7 @@ class Document extends AbstractData
         );
 
         // preference should be string, null or boolean false.
-        $metadata->addPropertyConstraint(
-            'preference',
+        $metadata->addPropertyConstraint('preference',
             new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
                 if (is_string($value) && strlen($value) > 10000) {
                     $context->buildViolation('must-be-less-than-or-equal:10000')->addViolation();
