@@ -4,6 +4,7 @@ namespace Application;
 
 use Application\Model\DataAccess\Repository;
 use Application\Model\DataAccess\Mongo;
+use Application\Model\DataAccess\Postgres;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
@@ -97,6 +98,10 @@ class Module
                     // NonPersistent persists only for the life of the request...
                     return new AuthenticationService(new NonPersistent());
                 },
+
+                // Postgres data factories
+                Postgres\UserData::class    => Postgres\DataFactory::class,
+                Postgres\LogData::class     => Postgres\DataFactory::class,
 
                 //  Mongo database
                 Mongo\DatabaseFactory::class . '-default'   => Mongo\DatabaseFactory::class,

@@ -144,7 +144,7 @@ interface UserRepositoryInterface
      * If $withoutFlag is set, accounts that contain the passed flag will be excluded.
      *
      * @param DateTime $since
-     * @param null $excludeFlag
+     * @param string $excludeFlag
      * @return iterable
      */
     public function getAccountsInactiveSince(DateTime $since, ?string $excludeFlag = null) : iterable;

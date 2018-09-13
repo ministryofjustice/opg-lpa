@@ -14,13 +14,6 @@ interface TokenInterface
     public function id() : ?string;
 
     /**
-     * Returns the owner of the token's user details.
-     *
-     * @return string
-     */
-    public function user() : ?string;
-
-    /**
      * Date the token will current expire.
      *
      * @return DateTime

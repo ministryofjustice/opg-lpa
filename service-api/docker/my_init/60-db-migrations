@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd /app
+
+bin/lock acquire --table $OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE  --name db-migrate --ttl 60 \
+--endpoint $OPG_LPA_COMMON_DYNAMODB_ENDPOINT && vendor/robmorgan/phinx/bin/phinx migrate
+
+exit 0

@@ -54,6 +54,11 @@ class AuthLogCollection extends AbstractCollection implements UserRepository\Log
             return null;
         }
 
+        // Map MongoDates to DateTimes
+        $data = array_map(function ($v) {
+            return ($v instanceof MongoDate) ? $v->toDateTime() : $v;
+        }, $data);
+
         return $data;
     }
 }

@@ -101,7 +101,7 @@ class ServiceTest extends AbstractServiceTest
         $this->setUserDataSourceGetByUsernameExpectation('unit@test.com', null);
 
         $this->setLogDataSourceGetLogByIdentityHashExpectation('unit@test.com', [
-            'loggedAt' => new UTCDateTime(new DateTime('2018-01-08 09:10:11')),
+            'loggedAt' => new DateTime('2018-01-08 09:10:11'),
             'reason' => 'expired'
         ]);
 
