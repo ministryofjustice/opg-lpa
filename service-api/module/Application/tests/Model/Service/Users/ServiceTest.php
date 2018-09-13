@@ -3,33 +3,71 @@
 namespace ApplicationTest\Model\Service\Users;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
+use Application\Model\DataAccess\Mongo\Collection\User as CollectionUser;
+use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\DataModelEntity;
-use Application\Model\Service\UserManagement\Service as UserManagementService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Mockery;
+use Mockery\MockInterface;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
 use DateTime;
 
 class ServiceTest extends AbstractServiceTest
 {
+    /**
+     * @var MockInterface|ApplicationsService
+     */
+    private $applicationsService;
+
+    /**
+     * @var MockInterface|LogRepositoryInterface
+     */
+    private $authLogRepository;
+
+    /**
+     * @var MockInterface|UserRepositoryInterface
+     */
+    private $authUserRepository;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        //  Set up the services so they can be enhanced for each test
+        $this->applicationsService = Mockery::mock(ApplicationsService::class);
+
+        $this->authLogRepository = Mockery::mock(LogRepositoryInterface::class);
+
+        $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
+    }
+
+
     public function testFetchDoesNotExist()
     {
         $user = FixturesData::getUser();
 
-        $userManagementService = Mockery::mock(UserManagementService::class);
-        $userManagementService->shouldReceive('get')->andReturn(['username' => $user->getEmail()->getAddress()]);
+        $collectionUser = new CollectionUser(['identity' => $user->getEmail()->getAddress()]);
 
-        $authUserRepository = Mockery::mock(UserRepositoryInterface::class);
-        $authUserRepository->shouldReceive('getProfile')->andReturn(null)->twice();
-        $authUserRepository->shouldReceive('saveProfile')->once();
+        $this->authUserRepository
+            ->shouldReceive('getProfile')
+            ->andReturn(null)
+            ->twice();
+        $this->authUserRepository
+            ->shouldReceive('getById')
+            ->andReturn($collectionUser)
+            ->once();
+        $this->authUserRepository
+            ->shouldReceive('saveProfile')
+            ->once();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUserManagementService($userManagementService)
-            ->withAuthUserRepository($authUserRepository)
+            ->withApplicationsService($this->applicationsService)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $entity = $service->fetch($user->getId());
@@ -49,13 +87,18 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $authUserRepository = Mockery::mock(UserRepositoryInterface::class);
-        $authUserRepository->shouldReceive('getProfile')->andReturn($user)->once();
-        $authUserRepository->shouldNotReceive('saveProfile');
+        $this->authUserRepository
+            ->shouldReceive('getProfile')
+            ->andReturn($user)
+            ->once();
+        $this->authUserRepository
+            ->shouldNotReceive('saveProfile');
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withAuthUserRepository($authUserRepository)
+            ->withApplicationsService($this->applicationsService)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $entity = $service->fetch($user->getId());
@@ -69,17 +112,25 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $authUserRepository = Mockery::mock(UserRepositoryInterface::class);
-        $authUserRepository->shouldReceive('getProfile')->andReturn(null)->once();
-        $authUserRepository->shouldReceive('saveProfile')->once();
+        $collectionUser = new CollectionUser(['identity' => $user->getEmail()->getAddress()]);
 
-        $userManagementService = Mockery::mock(UserManagementService::class);
-        $userManagementService->shouldReceive('get')->andReturn(['username' => $user->getEmail()->getAddress()]);
+        $this->authUserRepository
+            ->shouldReceive('getProfile')
+            ->andReturn(null)
+            ->once();
+        $this->authUserRepository
+            ->shouldReceive('getById')
+            ->andReturn($collectionUser)
+            ->once();
+        $this->authUserRepository
+            ->shouldReceive('saveProfile')
+            ->once();
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUserManagementService($userManagementService)
-            ->withAuthUserRepository($authUserRepository)
+            ->withApplicationsService($this->applicationsService)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $entity = $service->update([], $user->getId());
@@ -99,17 +150,24 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $authUserRepository = Mockery::mock(UserRepositoryInterface::class);
-        $authUserRepository->shouldReceive('getProfile')->andReturn($user)->once();
-        $authUserRepository->shouldNotReceive('saveProfile');
+        $collectionUser = new CollectionUser(['identity' => $user->getEmail()->getAddress()]);
 
-        $userManagementService = Mockery::mock(UserManagementService::class);
-        $userManagementService->shouldReceive('get')->andReturn(['username' => $user->getEmail()->getAddress()]);
+        $this->authUserRepository
+            ->shouldReceive('getProfile')
+            ->andReturn($user)
+            ->once();
+        $this->authUserRepository
+            ->shouldReceive('getById')
+            ->andReturn($collectionUser)
+            ->once();
+        $this->authUserRepository
+            ->shouldNotReceive('saveProfile');
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUserManagementService($userManagementService)
-            ->withAuthUserRepository($authUserRepository)
+            ->withApplicationsService($this->applicationsService)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $userUpdate = FixturesData::getUser();
@@ -132,17 +190,24 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $authUserRepository = Mockery::mock(UserRepositoryInterface::class);
-        $authUserRepository->shouldReceive('getProfile')->andReturn($user)->once();
-        $authUserRepository->shouldReceive('saveProfile');
+        $collectionUser = new CollectionUser(['identity' => $user->getEmail()->getAddress()]);
 
-        $userManagementService = Mockery::mock(UserManagementService::class);
-        $userManagementService->shouldReceive('get')->andReturn(['username' => $user->getEmail()->getAddress()]);
+        $this->authUserRepository
+            ->shouldReceive('getProfile')
+            ->andReturn($user)
+            ->once();
+        $this->authUserRepository
+            ->shouldReceive('getById')
+            ->andReturn($collectionUser)
+            ->once();
+        $this->authUserRepository
+            ->shouldReceive('saveProfile');
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withUserManagementService($userManagementService)
-            ->withAuthUserRepository($authUserRepository)
+            ->withApplicationsService($this->applicationsService)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $userUpdate = FixturesData::getUser();
@@ -160,16 +225,23 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $applicationsService = Mockery::mock(ApplicationsService::class);
-        $applicationsService->shouldReceive('deleteAll')->once();
+        $collectionUser = new CollectionUser(['identity' => $user->getEmail()->getAddress()]);
 
-        $userManagementService = Mockery::mock(UserManagementService::class);
-        $userManagementService->shouldReceive('delete')->once();
+        $this->applicationsService
+            ->shouldReceive('deleteAll')
+            ->once();
+        $this->authUserRepository
+            ->shouldReceive('getById')
+            ->andReturn($collectionUser)
+            ->once();
+        $this->authUserRepository
+            ->shouldReceive('delete');
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
-            ->withApplicationsService($applicationsService)
-            ->withUserManagementService($userManagementService)
+            ->withApplicationsService($this->applicationsService)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
             ->build();
 
         $result = $service->delete($user->getId());
