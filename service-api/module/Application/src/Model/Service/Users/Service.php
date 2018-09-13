@@ -238,7 +238,7 @@ class Service extends AbstractService
 
             return [
                 'isDeleted' => true,
-                'deletedAt' => $deletionLog['loggedAt']->toDateTime(),
+                'deletedAt' => $deletionLog['loggedAt'],
                 'reason'    => $deletionLog['reason']
             ];
         }
