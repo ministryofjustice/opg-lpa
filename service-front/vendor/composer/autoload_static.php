@@ -79,6 +79,7 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         array (
             'Twig\\' => 5,
             'TrueBV\\' => 7,
+            'TheIconic\\Tracking\\GoogleAnalytics\\' => 35,
         ),
         'S' => 
         array (
@@ -305,6 +306,10 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'TrueBV\\' => 
         array (
             0 => __DIR__ . '/..' . '/true/punycode/src',
+        ),
+        'TheIconic\\Tracking\\GoogleAnalytics\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/theiconic/php-ga-measurement-protocol/src',
         ),
         'Symfony\\Polyfill\\Php54\\' => 
         array (

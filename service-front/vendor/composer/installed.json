@@ -3480,6 +3480,49 @@
         "homepage": "https://symfony.com"
     },
     {
+        "name": "theiconic/php-ga-measurement-protocol",
+        "version": "v2.7.1",
+        "version_normalized": "2.7.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/theiconic/php-ga-measurement-protocol.git",
+            "reference": "26c09a43a25235da85131c0fa060ec1fe2b2f16f"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/theiconic/php-ga-measurement-protocol/zipball/26c09a43a25235da85131c0fa060ec1fe2b2f16f",
+            "reference": "26c09a43a25235da85131c0fa060ec1fe2b2f16f",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/guzzle": "^6.0",
+            "php": ">=5.5"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "4.7.*",
+            "satooshi/php-coveralls": "1.0.1"
+        },
+        "time": "2017-06-30T02:41:52+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "TheIconic\\Tracking\\GoogleAnalytics\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "THE ICONIC ENGINEERING TEAM",
+                "email": "engineering@theiconic.com.au"
+            }
+        ],
+        "description": "Send data to Google Analytics from the server using PHP. This library fully implements GA measurement protocol."
+    },
+    {
         "name": "theseer/tokenizer",
         "version": "1.1.0",
         "version_normalized": "1.1.0.0",
