@@ -45,7 +45,7 @@ class DownloadController extends AbstractLpaController
             return $this->redirect()->toRoute('lpa/download/file', [
                 'lpa-id'       => $lpa->getId(),
                 'pdf-type'     => $pdfType,
-                'pdf-filename' => $this->getFilename($pdfType, $this->isDraft($lpa))
+                'pdf-filename' => $this->getFilename($pdfType)
             ]);
         }
 
@@ -82,7 +82,7 @@ class DownloadController extends AbstractLpaController
                 ->addHeaderLine('Cache-Control', 'must-revalidate')
                 ->addHeaderLine('Content-Length', strlen($fileContents));
 
-        $fileName = $this->getFilename($pdfType, $this->isDraft($lpa));
+        $fileName = $this->getFilename($pdfType);
 
         $userAgent = $this->getRequest()->getHeaders()->get('User-Agent')->getFieldValue();
         if (stripos($userAgent, 'edge/') !== false) {
@@ -102,17 +102,6 @@ class DownloadController extends AbstractLpaController
         }
 
         return $this->response;
-    }
-
-    /**
-     * Is the document a draft
-     *
-     * @param Lpa $lpa
-     * @return bool
-     */
-    private function isDraft(Lpa $lpa) : bool
-    {
-        return empty($lpa->getCompletedAt());
     }
 
     /**
@@ -138,21 +127,22 @@ class DownloadController extends AbstractLpaController
      * Get the filename to use for this PDF type
      *
      * @param string $pdfType
-     * @param bool $isDraft
      * @return string
      */
-    private function getFilename(string $pdfType, bool $isDraft) : string
+    private function getFilename(string $pdfType) : string
     {
+        $lpa = $this->getLpa();
+
         $lpaTypeChar = '';
 
         //  If this is an LP1 document then append a type char to the end of the filename
         if ($pdfType == 'lp1') {
-            $lpaTypeChar = ($this->getLpa()->document->type == Document::LPA_TYPE_PF ? 'F' : 'H');
+            $lpaTypeChar = ($lpa->document->type == Document::LPA_TYPE_PF ? 'F' : 'H');
         }
 
         $draftString = '';
 
-        if ($isDraft) {
+        if (!$lpa->isStateCompleted()) {
             $draftString = 'Draft-';
         }
 
