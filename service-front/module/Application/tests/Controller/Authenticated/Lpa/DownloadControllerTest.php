@@ -79,7 +79,8 @@ class DownloadControllerTest extends AbstractControllerTest
 
         $response = new Response();
 
-        $this->lpa->setCompletedAt(null);
+        // Remove payment so that the lpa is incomplete
+        $this->lpa->setPayment(null);
 
         $pdfType = 'lp1';
         $this->setPdfType($controller, $this->lpa, $pdfType);
