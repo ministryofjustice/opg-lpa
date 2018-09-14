@@ -2,6 +2,8 @@
 
 cd /app
 
+COUNTER=0
+
 while : ; do
 
     bin/lock acquire --table $OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE \
@@ -18,6 +20,13 @@ while : ; do
         # Lock not acquired
         break
     else
+        let COUNTER=COUNTER+1
+
+        if [ $COUNTER -gt 10 ]; then
+            echo "Fatal error: Unable to attempt migrations"
+            exit 1
+        fi
+
         echo "Error with lock system; will re-try"
         sleep 2
     fi
