@@ -24,7 +24,7 @@ Once you’ve made the LPA, the online service will take you through the steps t
 5. Post the following things to OPG in one envelope:
     * the signed LPA, including any continuation sheets
     * the ‘fee remissions and exemption form’ and any proof needed, if you’re applying to pay a reduced or no fee
-    * a cheque, if you haven’t paid the fee online
+    * a cheque, if you have not paid the fee online
 
 OPG’s address is on the information sheets downloaded with your LPA.
 
