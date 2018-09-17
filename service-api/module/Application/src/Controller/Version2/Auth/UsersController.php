@@ -2,7 +2,7 @@
 
 namespace Application\Controller\Version2\Auth;
 
-use Application\Model\Service\UserManagement\Service;
+use Application\Model\Service\Users\Service;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
@@ -86,7 +86,7 @@ class UsersController extends AbstractAuthController
     {
         $email = $this->params()->fromQuery()['email'];
 
-        $user = $this->getService()->getByUsername($email);
+        $user = $this->getService()->searchByUsername($email);
 
         if ($user === false) {
             return new ApiProblem(404, 'No user found with supplied email address');
