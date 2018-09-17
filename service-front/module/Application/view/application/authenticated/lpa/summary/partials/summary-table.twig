@@ -337,7 +337,7 @@
                     {% elseif lpa.payment.reducedFeeLowIncome %}
                         Application fee: £{{ lowIncomeFee }} as the donor has an income of less than £12,000
                     {% else %}
-                        Application fee: £{{ fullFee }} as you aren’t claiming a reduction
+                        Application fee: £{{ fullFee }} as you are not claiming a reduction
                     {% endif %}
                 </td>
                 <td class="table-summary-action"><a href="{{ url('lpa/fee-reduction', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: Fee reduction">Edit</a></td>

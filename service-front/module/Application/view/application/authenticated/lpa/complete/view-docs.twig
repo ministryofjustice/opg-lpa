@@ -7,7 +7,7 @@
 
 <div class="text">
 
-    <p>You're now ready to print and sign the complete {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA document for {{ lpa.document.donor.name }}, then post it to the Office of the Public Guardian – if you haven't already done so.</p>
+    <p>You're now ready to print and sign the complete {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA document for {{ lpa.document.donor.name }}, then post it to the Office of the Public Guardian – if you have not already done so.</p>
 
     <p>It’s essential that you sign the parts of the LPA in the right order. If you sign in the wrong order, it will delay your registration.</p>
 
@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    <p>If you can't view the LPA, you'll need to download a PDF reader like <a target="_blank" href="https://get.adobe.com/uk/reader/" data-journey-click="page:link:external: Acrobat Reader">Acrobat Reader</a>.</p>
+    <p>If you can not view the LPA, you'll need to download a PDF reader like <a target="_blank" href="https://get.adobe.com/uk/reader/" data-journey-click="page:link:external: Acrobat Reader">Acrobat Reader</a>.</p>
 
     <p><strong class="bold-small">If you have paid online, the fee will be returned to you if OPG have not received your signed LPA by {{ lpa.completedAt|date_modify("+40 day")|date('d/m/Y') }}. You can still send the LPA to OPG after {{ lpa.completedAt|date_modify("+40 day")|date('d/m/Y') }} but you will be contacted to pay again if you’ve been refunded. If paying by cheque, post this to us with your signed LPA.</strong></p>
 

@@ -15,7 +15,7 @@ Remember that you will need to print the LPA and that everyone named in the LPA,
 
 ## Information you’ll need to make an LPA
 
-We’ll save the LPA as you progress so you don’t need to complete it in one go. You can sign out at any time and come back later.
+We’ll save the LPA as you progress so you do not need to complete it in one go. You can sign out at any time and come back later.
 
 You may find it useful to gather some information before you start.
 
