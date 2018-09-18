@@ -100,8 +100,9 @@ class Module
                 },
 
                 // Postgres data factories
-                Postgres\UserData::class        => Postgres\DataFactory::class,
-                Postgres\LogData::class         => Postgres\DataFactory::class,
+                Postgres\UserData::class    => Postgres\DataFactory::class,
+                Postgres\LogData::class     => Postgres\DataFactory::class,
+                Postgres\StatsData::class     => Postgres\DataFactory::class,
                 Postgres\WhoAreYouData::class   => Postgres\DataFactory::class,
 
                 //  Mongo database
