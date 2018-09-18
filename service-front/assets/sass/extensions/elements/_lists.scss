@@ -22,9 +22,8 @@
 %list-number {
     padding-left: 20px;
     list-style-type: decimal;
-}
 
-%list-alpha {
-    padding-left: 20px;
-    list-style-type: upper-alpha;
+    @include ie-lte(7) {
+        padding-left: 28px;
+    }
 }
