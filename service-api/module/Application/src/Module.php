@@ -102,6 +102,7 @@ class Module
                 // Postgres data factories
                 Postgres\UserData::class    => Postgres\DataFactory::class,
                 Postgres\LogData::class     => Postgres\DataFactory::class,
+                Postgres\StatsData::class     => Postgres\DataFactory::class,
 
                 //  Mongo database
                 Mongo\DatabaseFactory::class . '-default'   => Mongo\DatabaseFactory::class,
