@@ -27,10 +27,7 @@ class Guidance extends AbstractService
             if (preg_match('/^\s+\*\s*(.*\.md)/', $line, $matches)) {
                 $sectionFilename = trim($matches[1]);
 
-                // Cleaning out characters that won't play nicely in a url
-                $sectionTitleClean = str_replace(array('?',','),'',$sectionTitle);
-
-                $sectionId = trim(strtolower(str_replace(' ', '-', $sectionTitleClean)));
+                $sectionId = trim(strtolower(str_replace(' ', '-', $sectionTitle)));
 
                 $sectionArray[] = [
                     'id' => $sectionId,
@@ -62,7 +59,7 @@ class Guidance extends AbstractService
         $html = '<article id="topic-' . $sectionId . '">';
 
         $html .= preg_replace(
-                    '/<a href="\/help\/#topic-([^"]*)">([^"]*)<\/a>/',
+                    '/<a href="\/help\/#topic-(.+)">(.+)<\/a>/',
                     '<a href="/' . self::GUIDANCE_ROUTE . '#topic-${1}" class="js-guidance" data-journey-click="guidance:link:help: ${1}">${2}</a>',
                     $md
                  );
