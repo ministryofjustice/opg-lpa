@@ -150,7 +150,7 @@
                   .after($(tplAlert({
                     'elementJSref': 'js-duplication-alert',
                     'alertType': 'important-small',
-                    'alertMessage': '<p>' + alertStart + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles. By saving this section, you are confirming that these are two different people with the same name.</p>'
+                    'alertMessage': '<p>' + alertStart + duplicateName.firstname + ' ' + duplicateName.lastname + '. You cannot use the same person in multiple roles. By saving this section, you are confirming that these are two different people with the same name.</p>'
                   })));
 
                 // Focus on alert panel for accessibility
