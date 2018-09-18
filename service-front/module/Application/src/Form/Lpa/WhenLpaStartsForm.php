@@ -21,7 +21,7 @@ class WhenLpaStartsForm extends AbstractMainFlowForm
                     ],
                     'no-capacity' => [
                         'value' => 'no-capacity',
-                        'label' => 'only if I don\'t have mental capacity',
+                        'label' => 'only if I do not have mental capacity',
                         'label_attributes' => [
                             'class' => 'block-label',
                         ],
