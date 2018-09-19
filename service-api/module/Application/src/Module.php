@@ -55,7 +55,7 @@ class Module
                 Repository\User\LogRepositoryInterface::class => Mongo\Collection\AuthLogCollection::class,
                 Repository\User\UserRepositoryInterface::class => Mongo\Collection\AuthUserCollection::class,
                 Repository\Stats\StatsRepositoryInterface::class => Mongo\Collection\ApiStatsLpasCollection::class,
-                Repository\Application\WhoRepositoryInterface::class => Mongo\Collection\ApiWhoCollection::class,
+                Repository\Application\WhoRepositoryInterface::class => Postgres\WhoAreYouData::class,
                 Repository\Application\ApplicationRepositoryInterface::class => Mongo\Collection\ApiLpaCollection::class,
             ],
             'invokables' => [
