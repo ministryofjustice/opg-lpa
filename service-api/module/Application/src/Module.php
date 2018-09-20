@@ -54,8 +54,8 @@ class Module
                 // Map the Repository Interfaces to concrete implementations.
                 Repository\User\LogRepositoryInterface::class => Mongo\Collection\AuthLogCollection::class,
                 Repository\User\UserRepositoryInterface::class => Mongo\Collection\AuthUserCollection::class,
-                Repository\Stats\StatsRepositoryInterface::class => Mongo\Collection\ApiStatsLpasCollection::class,
-                Repository\Application\WhoRepositoryInterface::class => Mongo\Collection\ApiWhoCollection::class,
+                Repository\Stats\StatsRepositoryInterface::class => Postgres\StatsData::class,
+                Repository\Application\WhoRepositoryInterface::class => Postgres\WhoAreYouData::class,
                 Repository\Application\ApplicationRepositoryInterface::class => Mongo\Collection\ApiLpaCollection::class,
             ],
             'invokables' => [
@@ -100,9 +100,9 @@ class Module
                 },
 
                 // Postgres data factories
-                Postgres\UserData::class    => Postgres\DataFactory::class,
-                Postgres\LogData::class     => Postgres\DataFactory::class,
-                Postgres\StatsData::class     => Postgres\DataFactory::class,
+                Postgres\UserData::class        => Postgres\DataFactory::class,
+                Postgres\LogData::class         => Postgres\DataFactory::class,
+                Postgres\StatsData::class       => Postgres\DataFactory::class,
                 Postgres\WhoAreYouData::class   => Postgres\DataFactory::class,
 
                 //  Mongo database
