@@ -2,11 +2,12 @@
 
 namespace Application\ControllerFactory;
 
+use Zend\Db\Adapter\Adapter as ZendDbAdapter;
 use Application\Controller\PingController;
 use Application\Model\DataAccess\Mongo\DatabaseFactory;
 use DynamoQueue\Queue\Client as DynamoQueueClient;
 use Interop\Container\ContainerInterface;
-use MongoDB\Database;
+use MongoDB\Database as MongoDatabase;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 class PingControllerFactory implements FactoryInterface
@@ -21,9 +22,13 @@ class PingControllerFactory implements FactoryInterface
     {
         /** @var DynamoQueueClient $dynamoQueueClient */
         $dynamoQueueClient = $container->get('DynamoQueueClient');
-        /** @var Database $database */
-        $database = $container->get(DatabaseFactory::class . '-default');
 
-        return new PingController($dynamoQueueClient, $database);
+        /** @var MongoDatabase $database */
+        $mongo = $container->get(DatabaseFactory::class . '-default');
+
+        /** @var ZendDbAdapter $database */
+        $database = $container->get('ZendDbAdapter');
+
+        return new PingController($dynamoQueueClient, $database, $mongo);
     }
 }

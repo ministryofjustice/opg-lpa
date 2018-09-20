@@ -2,6 +2,8 @@
 
 namespace Application;
 
+use PDO;
+use Zend\Db\Adapter\Adapter as ZendDbAdapter;
 use Application\Model\DataAccess\Repository;
 use Application\Model\DataAccess\Mongo;
 use Application\Model\DataAccess\Postgres;
@@ -92,6 +94,28 @@ class Module
                     $config = $sm->get('Config')['log']['sns'];
 
                     return new SnsClient($config['client']);
+                },
+
+                'ZendDbAdapter' => function (ServiceLocatorInterface $sm) {
+                    $config = $sm->get('config');
+                    if (!isset($config['db']['postgres']['default'])) {
+                        throw new \RuntimeException("Missing Postgres configuration");
+                    }
+
+                    $dbconf = $config['db']['postgres']['default'];
+                    $dsn = "{$dbconf['adapter']}:host={$dbconf['host']};port={$dbconf['port']};dbname={$dbconf['dbname']}";
+
+                    return new ZendDbAdapter([
+                        'dsn' => $dsn,
+                        'driver' => 'pdo',
+                        'username' => $dbconf['username'],
+                        'password' => $dbconf['password'],
+                        'driver_options' => [
+                            // RDS doesn't play well with persistent connections
+                            PDO::ATTR_PERSISTENT => false,
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                        ],
+                    ]);
                 },
 
                 'Zend\Authentication\AuthenticationService' => function ($sm) {
