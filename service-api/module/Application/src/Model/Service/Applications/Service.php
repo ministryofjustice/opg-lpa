@@ -235,7 +235,7 @@ class Service extends AbstractService
         $lpas = $this->getApplicationRepository()->fetchByUserId($userId);
 
         foreach ($lpas as $lpa) {
-            $this->delete($lpa['_id'], $userId);
+            $this->delete($lpa['id'], $userId);
         }
 
         return true;

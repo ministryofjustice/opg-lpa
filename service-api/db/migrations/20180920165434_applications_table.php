@@ -55,7 +55,9 @@ class ApplicationsTable extends AbstractMigration
             ->addColumn('payment', 'jsonb', ['null' => true])
             ->addColumn('metadata', 'jsonb', ['null' => true])
 
-            ->addIndex(['user'])
+            ->addColumn('search', 'text', ['null' => true])
+
+            ->addIndex(['user', 'updatedAt'])
             ->addIndex(['startedAt'])
             ->addIndex(['createdAt'])
             ->addIndex(['completedAt'])

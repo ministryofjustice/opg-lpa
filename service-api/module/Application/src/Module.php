@@ -100,6 +100,7 @@ class Module
                 },
 
                 // Postgres data factories
+                Postgres\ApplicationData::class => Postgres\DataFactory::class,
                 Postgres\UserData::class        => Postgres\DataFactory::class,
                 Postgres\LogData::class         => Postgres\DataFactory::class,
                 Postgres\StatsData::class       => Postgres\DataFactory::class,
