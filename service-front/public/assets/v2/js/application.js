@@ -24149,7 +24149,7 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
                   .after($(tplAlert({
                     'elementJSref': 'js-duplication-alert',
                     'alertType': 'important-small',
-                    'alertMessage': '<p>' + alertStart + duplicateName.firstname + ' ' + duplicateName.lastname + '. You can\'t use the same person in multiple roles. By saving this section, you are confirming that these are two different people with the same name.</p>'
+                    'alertMessage': '<p>' + alertStart + duplicateName.firstname + ' ' + duplicateName.lastname + '. You cannot use the same person in multiple roles. By saving this section, you are confirming that these are two different people with the same name.</p>'
                   })));
 
                 // Focus on alert panel for accessibility
@@ -24948,11 +24948,6 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
 
 (function () {
   'use strict';
-
-  if (typeof(gaConfig) === 'undefined') {
-    moj.log('gaConfig not set. skipping Google Analytics tracking.');
-    return;
-  }
 
   moj.Modules.Analytics = {
 
