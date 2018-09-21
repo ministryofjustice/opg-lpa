@@ -152,12 +152,12 @@ class Service extends AbstractService
 
             // If the string is numeric, assume it's an LPA id.
             if (is_numeric($search)) {
-                $filter['_id'] = (int)$search;
+                $filter['id'] = (int)$search;
             } else {
                 // If it starts with an A and everything that follows after is numeric...
                 if (substr(strtoupper($search), 0, 1) == 'A' && is_numeric($ident = preg_replace('/\s+/', '', substr($search, 1)))) {
                     // Assume it's an LPA id.
-                    $filter['_id'] = (int)$ident;
+                    $filter['id'] = (int)$ident;
                 } elseif (strlen($search) >= 3) {
                     // Otherwise assume it's a name, and only search if 3 chars or longer
                     $filter['search'] = [

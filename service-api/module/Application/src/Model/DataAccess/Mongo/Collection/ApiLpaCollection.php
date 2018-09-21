@@ -65,6 +65,11 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function count(array $criteria) : int
     {
+        if (isset($criteria['id'])) {
+            $criteria['_id'] = $criteria['id'];
+            unset($criteria['id']);
+        }
+
         return $this->collection->count($criteria);
     }
 
@@ -75,6 +80,11 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function fetch(array $criteria, array $options = []) : Traversable
     {
+        if (isset($criteria['id'])) {
+            $criteria['_id'] = $criteria['id'];
+            unset($criteria['id']);
+        }
+
         $result = $this->collection->find($criteria, $options);
 
         foreach ($result as $data) {
