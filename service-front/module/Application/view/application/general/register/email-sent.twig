@@ -14,9 +14,9 @@
     {{ formHidden(form.get('email_confirm')) }}
 
     <div class="text">
-        <p class="lede">We've sent you a link to <span class="bold-medium">{{ email }}</span> that you need to click to verify your email address and activate your account.</p>
-        <p>You'll need to use this link within 24 hours or you'll have to enter your details again.</p>
-        <p>If you have not received the email within a few minutes, please check your spam, bulk or junk email folder &ndash; your email system may have blocked it by mistake &ndash; or <input type="submit" class="button-input-to-link" value="resend activation email">.</p>
+        <p class="lede">We've sent a link to <span class="bold-medium">{{ email }}</span> that you need to click to verify your email address and activate your account.</p>
+        <p>Use this link within 24 hours or you'll have to enter your details again.</p>
+        <p>The email should arrive in a few minutes. If it doesn’t, please check your spam, bulk or junk email folder &ndash; your email system may have blocked it by mistake. If you cannot find the email, we can <input type="submit" class="button-input-to-link" value="resend the activation email">.</p>
         <p>If you've already activated your account, you can <a href="{{ url('login') }}">sign in now</a>.</p>
     </div>
 
