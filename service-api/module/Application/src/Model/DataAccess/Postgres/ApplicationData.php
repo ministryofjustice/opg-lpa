@@ -106,6 +106,11 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         $select->columns(['count' => new Expression('count(*)')]);
 
+        if ($criteria['search']) {
+            $select->where([new Expression("search ~* '{$criteria['search']['$regex']}'")]);
+            unset($criteria['search']);
+        }
+
         $select->where($criteria);
 
         $result = $sql->prepareStatementForSqlObject($select)->execute();
@@ -126,6 +131,11 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     {
         $sql    = new Sql($this->getZendDb());
         $select = $sql->select(self::APPLICATIONS_TABLE);
+
+        if ($criteria['search']) {
+            $select->where([new Expression("search ~* '{$criteria['search']['$regex']}'")]);
+            unset($criteria['search']);
+        }
 
         $select->where($criteria);
 

@@ -62,6 +62,11 @@ class ApplicationsTable extends AbstractMigration
             ->addIndex(['createdAt'])
             ->addIndex(['completedAt'])
 
+            /*
+             * We don't have an index on 'search'. Rows scanned in such queries are already quite small
+             * as they've already been filtered by 'user'.
+             */
+
             ->create();
 
     }
