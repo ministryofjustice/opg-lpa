@@ -7,7 +7,7 @@ The different sections of the LPA must be signed in the right order. If they're 
 Sections must be signed in this order:
 
 1. The donor signs and dates:
-    * any continuation sheets
+    * continuation sheets 1 and 2, if used
     * section 5, if it’s a health and welfare LPA
     * section 9, followed by their witness
 2. The certificate provider signs and dates section 10
@@ -36,6 +36,12 @@ A witness can be:
 Attorneys or replacement attorneys can witness each other’s signature but not the donor’s.
 
 Witnesses must give their full name and address wherever they sign the form.
+
+### If the donor cannot sign or make a mark
+
+If someone is signing a property and financial affairs LPA on the donor’s behalf, they must sign continuation sheet 3 before the certificate provider signs section 10.
+
+If someone is signing a health and welfare LPA on the donor’s behalf, they must sign continuation sheet 3 and section 5 on the same day. This must be done before the certificate provider signs section 10.
 
 ### Check your signing dates
 
