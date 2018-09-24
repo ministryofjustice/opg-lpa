@@ -215,7 +215,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
         $this->assertNotTrue($errors);
 
         $this->assertEquals([
-            'sign-date-applicant-0' => ['The applicant must sign on the same day or after all Section 11\'s have been signed. You need to print and re-sign section 15']
+            'sign-date-applicant-0' => ['The applicant must sign on the same day or after all section 11s have been signed. You need to print and re-sign section 15']
         ], $errors);
     }
 
@@ -243,8 +243,8 @@ class DateCheckTest extends AbstractHttpControllerTestCase
         $this->assertNotTrue($errors);
 
         $this->assertEquals([
-            'sign-date-applicant-0' => ['The applicant must sign on the same day or after all Section 11\'s have been signed. You need to print and re-sign section 15'],
-            'sign-date-applicant-1' => ['The applicant must sign on the same day or after all Section 11\'s have been signed. You need to print and re-sign section 15']
+            'sign-date-applicant-0' => ['The applicant must sign on the same day or after all section 11s have been signed. You need to print and re-sign section 15'],
+            'sign-date-applicant-1' => ['The applicant must sign on the same day or after all section 11s have been signed. You need to print and re-sign section 15']
         ], $errors);
     }
 
