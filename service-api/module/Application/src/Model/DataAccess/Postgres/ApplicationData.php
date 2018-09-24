@@ -1,7 +1,6 @@
 <?php
 namespace Application\Model\DataAccess\Postgres;
 
-use PDOException;
 use DateTime;
 use Traversable;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -11,7 +10,6 @@ use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\Predicate\IsNull;
 use Zend\Db\Sql\Predicate\IsNotNull;
 use Zend\Db\Metadata\Source\Factory as DbMetadataFactory;
-use Opg\Lpa\DataModel\User\User as ProfileUserModel;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Library\DateTime as MillisecondDateTime;
@@ -336,7 +334,10 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countBetween(Datetime $start, Datetime $end, string $timestampFieldName) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->count([
+            new Operator($timestampFieldName, Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $start->format('c')),
+            new Operator($timestampFieldName, Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $end->format('c')),
+        ]);
     }
 
     /**
@@ -347,7 +348,11 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countStartedForType(string $lpaType) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->count([
+            new IsNotNull('startedAt'),
+            new IsNull('createdAt'),
+            new Expression("document ->> 'type' = ?", $lpaType),
+        ]);
     }
 
     /**
@@ -358,7 +363,11 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCreatedForType(string $lpaType) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->count([
+            new IsNotNull('createdAt'),
+            new IsNull('completedAt'),
+            new Expression("document ->> 'type' = ?", $lpaType),
+        ]);
     }
 
     /**
@@ -369,7 +378,10 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedForType(string $lpaType) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->count([
+            new IsNotNull('completedAt'),
+            new Expression("document ->> 'type' = ?", $lpaType),
+        ]);
     }
 
     /**
@@ -379,7 +391,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countDeleted() : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->count([
+            new IsNull('user'),
+        ]);
     }
 
     /**
@@ -393,7 +407,43 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function getLpasPerUser() : array
     {
-        die(__METHOD__." not implemented\n");
+        $adapter = $this->getZendDb();
+
+        /*
+         The query is:
+
+            WITH lpa_counts AS(
+                SELECT "user", count(*) AS "lpa_count" FROM "applications" WHERE "user" IS NOT NULL GROUP BY "user"
+            )
+            SELECT lpa_count, count(*) AS "user_count" FROM lpa_counts GROUP BY lpa_count
+         */
+
+        $sql = new Sql($adapter);
+
+        $selectOne = $sql->select(self::APPLICATIONS_TABLE);
+        $selectOne->columns(['user', 'lpa_count' => new Expression('count(*)')]);
+        $selectOne->where([new IsNotNull('user')]);
+        $selectOne->group('user');
+
+        $selectTwo = $sql->select('lpa_counts');
+        $selectTwo->columns(['lpa_count', 'user_count' => new Expression('count(*)')]);
+        $selectTwo->group('lpa_count');
+        $selectTwo->order('lpa_count DESC');
+
+        $query = 'WITH lpa_counts AS('.$sql->buildSqlString($selectOne).') '.$sql->buildSqlString($selectTwo);
+
+        $results = $adapter->query($query, $adapter::QUERY_MODE_EXECUTE)->toArray();
+
+        /*
+         * This creates an array where:
+         *  key = a number or LPAs
+         *  value = the number of users with that number of LPAs.
+         *
+         */
+        return array_combine(
+            array_column($results, 'lpa_count'),
+            array_column($results, 'user_count')
+        );
     }
 
     /**
@@ -406,7 +456,10 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetween(Datetime $start, Datetime $end, array $additionalCriteria = []) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->count(array_merge([
+            new Operator('completedAt', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $start->format('c')),
+            new Operator('completedAt', Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $end->format('c')),
+        ], $additionalCriteria));
     }
 
     /**
@@ -418,7 +471,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenCorrespondentEmail(Datetime $start, Datetime $end) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("document -> 'correspondent' ->> 'email' IS NOT NULL")
+        ]);
     }
 
     /**
@@ -430,7 +485,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenCorrespondentPhone(Datetime $start, Datetime $end) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("document -> 'correspondent' ->> 'phone' IS NOT NULL")
+        ]);
     }
 
     /**
@@ -442,7 +499,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenCorrespondentPost(Datetime $start, Datetime $end) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("(document -> 'correspondent' ->> 'contactByPost')::BOOLEAN = TRUE")
+        ]);
     }
 
     /**
@@ -454,7 +513,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenCorrespondentEnglish(Datetime $start, Datetime $end) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("(document -> 'correspondent' ->> 'contactInWelsh')::BOOLEAN = FALSE")
+        ]);
     }
 
     /**
@@ -466,7 +527,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenCorrespondentWelsh(Datetime $start, Datetime $end) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("(document -> 'correspondent' ->> 'contactInWelsh')::BOOLEAN = TRUE")
+        ]);
     }
 
     /**
@@ -478,7 +541,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenWithPreferences(Datetime $start, Datetime $end) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("document ->> 'preference' <> ''")
+        ]);
     }
 
     /**
@@ -490,7 +555,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenWithInstructions(Datetime $start, Datetime $end) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("document ->> 'instruction' <> ''")
+        ]);
     }
 
     /**
@@ -503,7 +570,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenByType(Datetime $start, Datetime $end, string $lpaType) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("document ->> 'type' = ?", $lpaType)
+        ]);
     }
 
     /**
@@ -516,7 +585,11 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenByCanSign(Datetime $start, Datetime $end, bool $canSignValue) : int
     {
-        die(__METHOD__." not implemented\n");
+        $canSign = ($canSignValue) ? 'TRUE' : 'FALSE';
+
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("(document -> 'donor' ->> 'canSign')::BOOLEAN = {$canSign}")
+        ]);
     }
 
     /**
@@ -529,7 +602,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenHasActors(Datetime $start, Datetime $end, string $actorType) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("json_array_length((document ->> ?)::JSON) > 0", $actorType)
+        ]);
     }
 
     /**
@@ -542,7 +617,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenHasNoActors(Datetime $start, Datetime $end, string $actorType) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("json_array_length((document ->> ?)::JSON) = 0", $actorType)
+        ]);
     }
 
     /**
@@ -555,7 +632,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenHasMultipleActors(Datetime $start, Datetime $end, string $actorType) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("json_array_length((document ->> ?)::JSON) > 1", $actorType)
+        ]);
     }
 
     /**
@@ -567,7 +646,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenDonorRegistering(Datetime $start, Datetime $end) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("document ->> 'whoIsRegistering' = ?", 'donor')
+        ]);
     }
 
     /**
@@ -579,7 +660,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenAttorneyRegistering(Datetime $start, Datetime $end) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("document ->> 'whoIsRegistering' <> ?", 'donor')
+        ]);
     }
 
     /**
@@ -592,7 +675,15 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenCaseNumber(Datetime $start, Datetime $end, bool $hasCaseNumber) : int
     {
-        die(__METHOD__." not implemented\n");
+        if ($hasCaseNumber) {
+            return $this->countCompletedBetween($start, $end, [
+                new IsNotNull('repeatCaseNumber')
+            ]);
+        } else {
+            return $this->countCompletedBetween($start, $end, [
+                new IsNull('repeatCaseNumber')
+            ]);
+        }
     }
 
     /**
@@ -600,15 +691,26 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      *
      * @param Datetime $start
      * @param Datetime $end
-     * @param ?bool $reducedFeeReceivesBenefits
-     * @param ?bool $reducedFeeAwardedDamages
-     * @param ?bool $reducedFeeLowIncome
-     * @param ?bool $reducedFeeUniversalCredit
+     * @param bool $reducedFeeReceivesBenefits
+     * @param bool $reducedFeeAwardedDamages
+     * @param bool $reducedFeeLowIncome
+     * @param bool $reducedFeeUniversalCredit
      * @return int
      */
     public function countCompletedBetweenFeeType(Datetime $start, Datetime $end, ?bool $reducedFeeReceivesBenefits, ?bool $reducedFeeAwardedDamages, ?bool $reducedFeeLowIncome, ?bool $reducedFeeUniversalCredit) : int
     {
-        die(__METHOD__." not implemented\n");
+        // Map the values
+        $reducedFeeReceivesBenefits = (is_null($reducedFeeReceivesBenefits)) ? 'IS NULL' : (($reducedFeeReceivesBenefits) ? '= TRUE' : '= FALSE');
+        $reducedFeeAwardedDamages   = (is_null($reducedFeeAwardedDamages)) ? 'IS NULL'   : (($reducedFeeAwardedDamages) ? '= TRUE' : '= FALSE');
+        $reducedFeeLowIncome        = (is_null($reducedFeeLowIncome)) ? 'IS NULL'        : (($reducedFeeLowIncome) ? '= TRUE' : '= FALSE');
+        $reducedFeeUniversalCredit  = (is_null($reducedFeeUniversalCredit)) ? 'IS NULL'  : (($reducedFeeUniversalCredit) ? '= TRUE' : '= FALSE');
+
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("(payment ->> 'reducedFeeReceivesBenefits')::BOOLEAN " . $reducedFeeReceivesBenefits),
+            new Expression("(payment ->> 'reducedFeeAwardedDamages')::BOOLEAN " . $reducedFeeAwardedDamages),
+            new Expression("(payment ->> 'reducedFeeLowIncome')::BOOLEAN " . $reducedFeeLowIncome),
+            new Expression("(payment ->> 'reducedFeeUniversalCredit')::BOOLEAN " . $reducedFeeUniversalCredit),
+        ]);
     }
 
     /**
@@ -621,7 +723,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenPaymentType(Datetime $start, Datetime $end, string $paymentType) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("payment ->> 'method' = ?", $paymentType)
+        ]);
     }
 
     /**
@@ -636,7 +740,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenWithAttorneyDecisions(Datetime $start, Datetime $end, string $attorneyDecisionsType, string $decisionType, string $decisionValue) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("document -> '{$attorneyDecisionsType}' ->> '{$decisionType}' = ?", $decisionValue)
+        ]);
     }
 
     /**
@@ -649,7 +755,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenWithTrust(Datetime $start, Datetime $end, string $attorneyType) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("document -> '{$attorneyType}' @> ?", '[{"type": "trust"}]')
+        ]);
     }
 
     /**
@@ -662,7 +770,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedBetweenCertificateProviderSkipped(Datetime $start, Datetime $end, bool $isSkipped) : int
     {
-        die(__METHOD__." not implemented\n");
+        return $this->countCompletedBetween($start, $end, [
+            new Expression("metadata @> ?", json_encode([Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED => true]))
+        ]);
     }
 
 }
