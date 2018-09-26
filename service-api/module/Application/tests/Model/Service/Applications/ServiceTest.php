@@ -472,7 +472,7 @@ class ServiceTest extends AbstractServiceTest
         $this->applicationRepository->shouldReceive('fetchByUserId')
             ->withArgs([$user->getId()])
             ->once()
-            ->andReturn(new \ArrayIterator([['_id' => $lpa->getId()]]));
+            ->andReturn(new \ArrayIterator([['id' => $lpa->getId()]]));
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
@@ -533,7 +533,7 @@ class ServiceTest extends AbstractServiceTest
 
         $user = FixturesData::getUser();
 
-        $this->setFetchAllExpectations(['user' => $user->getId(), '_id' => $lpas[1]->id], [$lpas[1]]);
+        $this->setFetchAllExpectations(['user' => $user->getId(), 'id' => $lpas[1]->id], [$lpas[1]]);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
@@ -563,7 +563,7 @@ class ServiceTest extends AbstractServiceTest
             'search' => $lpas[1]->id,
             'filter' => ['user' => 'missing'],
             'user' => $user->getId(),
-            '_id' => $lpas[1]->id
+            'id' => $lpas[1]->id
         ], []);
 
         $serviceBuilder = new ServiceBuilder();
@@ -583,7 +583,7 @@ class ServiceTest extends AbstractServiceTest
 
         $user = FixturesData::getUser();
 
-        $this->setFetchAllExpectations(['user' => $user->getId(), '_id' => $lpas[0]->id], [$lpas[0]]);
+        $this->setFetchAllExpectations(['user' => $user->getId(), 'id' => $lpas[0]->id], [$lpas[0]]);
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
@@ -727,7 +727,7 @@ class ServiceTest extends AbstractServiceTest
         $this->applicationRepository->shouldReceive('getById')
             ->withArgs([$lpaId, $user->getId()])
             ->once()
-            ->andReturn($isLpa === false ? null : ['_id' => $lpa->getId()]);
+            ->andReturn($isLpa === false ? null : ['id' => $lpa->getId()]);
 
         if ($isLpa === true) {
             $this->applicationRepository->shouldReceive('deleteById')
