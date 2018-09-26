@@ -21,10 +21,6 @@
 
 {% block content %}
 
-<style>
-    .checkme { color: yellow; border: 1px solid yellow; }
-</style>
-
 <div class="text">
 
     <p>Your LPA reference number is <strong class="bold-small">{{ formatLpaId(lpa.id) }}</strong></p>
@@ -96,10 +92,6 @@
                     </a>
                 </li>
 
-                {# Split remissions and exemptions - same link though #}
-                {# Exemptions is fee option 1 #}
-                {# Remission is fee options 2 and 3 #}
-
                 {% if lpa120Url %}
                     {% if feeBenefits %}
                         <li class="iconlinks-item">
@@ -111,9 +103,9 @@
                     {% endif %}
                     {% if feeUC or feeLowIncome %}
                         <li class="iconlinks-item">
-                            <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank" data-journey-click="page:link:download: Download your fee remissions form">
+                            <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank" data-journey-click="page:link:download: Download your fee remission form">
                                 <i class="icon icon-file-download"></i>
-                                <span class="iconlinks-text">Download your fee remissions form</span>
+                                <span class="iconlinks-text">Download your fee remission form</span>
                             </a>
                         </li>
                     {% endif %}
