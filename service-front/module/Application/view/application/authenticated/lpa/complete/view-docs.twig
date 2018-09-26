@@ -13,6 +13,12 @@
     {% set feeFull = true %}
 {% endif %}
 
+{% if lpa.payment.method %}
+    {% set paymentMethod = lpa.payment.method %}
+{% else %}
+    {% set paymentMethod = false %}
+{% endif %}
+
 {% block content %}
 
 <style>
@@ -21,9 +27,7 @@
 
 <div class="text">
 
-    {{ isPaymentSkipped }}
-
-    <h3 class="heading-medium">{{ lpa.document.type == 'property-and-financial' ? 'Property and financial affairs LPA' : 'Health and welfare LPA' }}</h3>
+    <p>Your LPA reference number is <strong class="bold-small">{{ formatLpaId(lpa.id) }}</strong></p>
 
     <p>You're now ready to print and sign the complete {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA document for {{ lpa.document.donor.name }}, then post it to the Office of the Public Guardian – if you have not already done so.</p>
 
@@ -48,16 +52,24 @@
         {% endif %}
 
         {# fee option 4 (no reductions) and cheque #}
-        <li>Post the LPA to OPG, along with a £«fee» cheque for the application fee</li>
+        {% if feeFull and paymentMethod == 'cheque' %}
+            <li>Post the LPA to OPG, along with a £{{ lpa.payment.amount }} cheque for the application fee</li>
+        {% endif %}
 
         {# fee option 4 (no reductions) and paid online #}
-        <li>Post the LPA to OPG</li>
+        {% if feeFull and paymentMethod == 'card' %}
+            <li>Post the LPA to OPG</li>
+        {% endif %}
 
         {# fee option 3 (low income) and cheque #}
-        <li>Post the LPA to OPG, along with the fee remission form, proof of the donor’s low income, and a £«fee» cheque for the application fee</li>
+        {% if feeLowIncome and paymentMethod == 'cheque' %}
+            <li>Post the LPA to OPG, along with the fee remission form, proof of the donor’s low income, and a £{{ lpa.payment.amount }} cheque for the application fee</li>
+        {% endif %}
 
         {# fee option 3 (low income) and paid online #}
-        <li>Post the LPA to OPG, along with the fee remission form and proof of the donor’s low income</li>
+        {% if feeLowIncome and paymentMethod == 'card' %}
+            <li>Post the LPA to OPG, along with the fee remission form and proof of the donor’s low income</li>
+        {% endif %}
 
         {# fee option 2 (UC) #}
         {% if feeUC %}
@@ -89,12 +101,22 @@
                 {# Remission is fee options 2 and 3 #}
 
                 {% if lpa120Url %}
-                    <li class="iconlinks-item">
-                        <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank" data-journey-click="page:link:download: Download your fee remissions and exemption form">
-                            <i class="icon icon-file-download"></i>
-                            <span class="iconlinks-text">Download your fee remissions and exemption form</span>
-                        </a>
-                    </li>
+                    {% if feeBenefits %}
+                        <li class="iconlinks-item">
+                            <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank" data-journey-click="page:link:download: Download your fee exemption form">
+                                <i class="icon icon-file-download"></i>
+                                <span class="iconlinks-text">Download your fee exemption form</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if feeUC or feeLowIncome %}
+                        <li class="iconlinks-item">
+                            <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank" data-journey-click="page:link:download: Download your fee remissions form">
+                                <i class="icon icon-file-download"></i>
+                                <span class="iconlinks-text">Download your fee remissions form</span>
+                            </a>
+                        </li>
+                    {% endif %}
                 {% endif %}
 
                 {% if lp3Url %}
@@ -125,7 +147,7 @@
 
     <p>If you spot a mistake in the LPA, do not cross anything out or write anything on the LPA - if you do, we may not be able to register it.</p>
 
-    <p>Find out what to do if you’ve <a href="#" class="checkme">found a mistake in the LPA</a>.</p>
+    <p>Find out what to do if you’ve <a class="js-guidance" href="/guide#topic-if-you-find-a-mistake" data-journey-click="page:link:help: found a mistake in the LPA">found a mistake in the LPA</a>.</p>
 
 
     <h2 class="heading-large">Post your LPA to the Office of the Public Guardian</h2>
@@ -136,19 +158,29 @@
         <li>the signed LPA (all sections from 1 to 15, including any blank pages)</li>
 
         {# fee options 2 or 3 (UC or low income) #}
-        <li>the signed fee remission form</li>
+        {% if feeUC or feeLowIncome %}
+            <li>the signed fee remission form</li>
+        {% endif %}
 
         {# fee option 1 (benefits) #}
-        <li>the signed fee exemption form</li>
+        {% if feeBenefits %}
+            <li>the signed fee exemption form</li>
+        {% endif %}
 
         {# fee option 3 (low income) #}
-        <li>proof of the donor's low income</li>
+        {% if feeLowIncome %}
+            <li>proof of the donor's low income</li>
+        {% endif %}
 
         {# fee option 1 or 2 (benefits or UC) #}
-        <li>proof of the donor’s benefits</li>
+        {% if feeBenefits or feeUC %}
+            <li>proof of the donor’s benefits</li>
+        {% endif %}
 
         {# cheque #}
-        <li>a cheque for the £«fee» application fee, payable to ‘Office of the Public Guardian'</li>
+        {% if paymentMethod == 'cheque' %}
+            <li>a cheque for the £{{ lpa.payment.amount }} application fee, payable to ‘Office of the Public Guardian'</li>
+        {% endif %}
 
     </ul>
 
@@ -162,7 +194,9 @@
     </p>
 
     {# If paid online #}
-    <p><strong class="bold-small">The application fee will be returned to you if OPG have not received your signed LPA by <span class="checkme">29/09/2018</span>. You can still send the LPA to us after this date, but if you’ve been refunded, we’ll contact you to arrange payment.</strong></p>
+    {% if paymentMethod == 'card' %}
+        <p><strong class="bold-small">The application fee will be returned to you if OPG have not received your signed LPA by {{ lpa.completedAt|date_modify("+40 day")|date('d/m/Y') }}. You can still send the LPA to us after this date, but if you’ve been refunded, we’ll contact you to arrange payment.</strong></p>
+    {% endif %}
 
 
     <h2 class="heading-large">What happens next?</h2>
@@ -184,40 +218,6 @@
             <a href="/user/dashboard/create" data-journey-click="page:link:create new: Make an LPA from scratch">Make an LPA from scratch</a>
         </li>
     </ul>
-
-
-
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-
-
-
-
-
-
-
-
-
-
-    <p><strong class="bold-small">If you have paid online, the fee will be returned to you if OPG have not received your signed LPA by {{ lpa.completedAt|date_modify("+40 day")|date('d/m/Y') }}. You can still send the LPA to OPG after {{ lpa.completedAt|date_modify("+40 day")|date('d/m/Y') }} but you will be contacted to pay again if you’ve been refunded. If paying by cheque, post this to us with your signed LPA.</strong></p>
-
-
 </div>
 
 {% endblock %}
