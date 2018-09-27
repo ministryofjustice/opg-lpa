@@ -14,7 +14,7 @@ You can only make an LPA for England and Wales – your LPA may not be recognise
 
 ## The 3 steps to a registered LPA
 
-1. Make the LPA online and pay the [registration fee](/help/#topic-fees-reductions-and-exemptions)
+1. Make the LPA online and pay the [application fee](/help/#topic-fees-reductions-and-exemptions)
 2. Print the LPA and get all the required people to sign it in the right order
 3. Post the LPA to OPG so we can review and register it
 
