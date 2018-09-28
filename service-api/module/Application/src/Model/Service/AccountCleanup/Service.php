@@ -7,7 +7,7 @@ use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
-use Application\Model\Service\UserManagement\Service as UserManagementService;
+use Application\Model\Service\Users\Service as UsersService;
 use Aws\Sns\SnsClient;
 use DateTime;
 use Exception;
@@ -41,9 +41,9 @@ class Service extends AbstractService
     private $snsClient;
 
     /**
-     * @var UserManagementService
+     * @var UsersService
      */
-    private $userManagementService;
+    private $usersService;
 
     /**
      * Warning type constants
@@ -186,15 +186,8 @@ class Service extends AbstractService
         $counter = 0;
 
         foreach ($iterator as $user) {
-            //  Delete the user data
-            $this->userManagementService->delete($user->id(), 'expired');
-
-            //  Delete the LPAs in the API data for this user
-            $lpas = $this->getApplicationRepository()->fetchByUserId($user->id());
-
-            foreach ($lpas as $lpa) {
-                $this->getApplicationRepository()->deleteById($lpa['_id'], $lpa['user']);
-            }
+            //  Delete the user - this will also delete any LPAs
+            $this->usersService->delete($user->id(), 'expired');
 
             $counter++;
         }
@@ -223,8 +216,8 @@ class Service extends AbstractService
         $counter = 0;
 
         foreach ($iterator as $user) {
-            // Delete each account...
-            $this->userManagementService->delete($user->id(), 'unactivated');
+            //  Delete the user account
+            $this->usersService->delete($user->id(), 'unactivated');
 
             $counter++;
         }
@@ -259,10 +252,10 @@ class Service extends AbstractService
     }
 
     /**
-     * @param UserManagementService $userManagementService
+     * @param UsersService $usersService
      */
-    public function setUserManagementService(UserManagementService $userManagementService)
+    public function setUsersService(UsersService $usersService)
     {
-        $this->userManagementService = $userManagementService;
+        $this->usersService = $usersService;
     }
 }

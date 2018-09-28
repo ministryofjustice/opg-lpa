@@ -14,7 +14,7 @@ class ServiceBuilder extends AbstractServiceBuilder
 
     private $snsClient = null;
 
-    private $userManagementService = null;
+    private $usersService = null;
 
     /**
      * @return Service
@@ -36,8 +36,8 @@ class ServiceBuilder extends AbstractServiceBuilder
             $service->setSnsClient($this->snsClient);
         }
 
-        if ($this->userManagementService !== null) {
-            $service->setUserManagementService($this->userManagementService);
+        if ($this->usersService !== null) {
+            $service->setUsersService($this->usersService);
         }
 
         return $service;
@@ -74,12 +74,12 @@ class ServiceBuilder extends AbstractServiceBuilder
     }
 
     /**
-     * @param MockInterface $userManagementService
+     * @param MockInterface $usersService
      * @return $this
      */
-    public function withUserManagementService($userManagementService)
+    public function withUsersService($usersService)
     {
-        $this->userManagementService = $userManagementService;
+        $this->usersService = $usersService;
         return $this;
     }
 }

@@ -5,7 +5,7 @@ namespace ApplicationTest\Model\Service\AccountCleanup;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Mongo\Collection\User;
-use Application\Model\Service\UserManagement\Service as UserManagementService;
+use Application\Model\Service\Users\Service as UsersService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
@@ -62,9 +62,9 @@ class ServiceTest extends AbstractServiceTest
     private $snsClient;
 
     /**
-     * @var MockInterface|UserManagementService
+     * @var MockInterface|UsersService
      */
-    private $userManagementService;
+    private $usersService;
 
     /**
      * @var MockInterface|Logger
@@ -85,7 +85,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->snsClient = Mockery::mock(SnsClient::class);
 
-        $this->userManagementService = Mockery::mock(UserManagementService::class);
+        $this->usersService = Mockery::mock(UsersService::class);
 
         $this->logger = Mockery::mock(Logger::class);
     }
@@ -109,7 +109,7 @@ class ServiceTest extends AbstractServiceTest
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
-            ->withUserManagementService($this->userManagementService)
+            ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
 
@@ -137,7 +137,7 @@ class ServiceTest extends AbstractServiceTest
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
-            ->withUserManagementService($this->userManagementService)
+            ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
 
@@ -154,7 +154,7 @@ class ServiceTest extends AbstractServiceTest
         $this->snsClient->shouldReceive('publish')
             ->once();
 
-        $this->userManagementService->shouldReceive('delete')
+        $this->usersService->shouldReceive('delete')
             ->withArgs([1, 'expired']);
 
         $this->applicationRepository->shouldReceive('fetchByUserId')
@@ -172,7 +172,7 @@ class ServiceTest extends AbstractServiceTest
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
-            ->withUserManagementService($this->userManagementService)
+            ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
 
@@ -189,7 +189,7 @@ class ServiceTest extends AbstractServiceTest
         $this->snsClient->shouldReceive('publish')
             ->once();
 
-        $this->userManagementService->shouldReceive('delete')
+        $this->usersService->shouldReceive('delete')
             ->withArgs([1, 'expired']);
 
         $this->applicationRepository->shouldReceive('fetchByUserId')
@@ -207,7 +207,7 @@ class ServiceTest extends AbstractServiceTest
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
-            ->withUserManagementService($this->userManagementService)
+            ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
 
@@ -248,7 +248,7 @@ class ServiceTest extends AbstractServiceTest
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
-            ->withUserManagementService($this->userManagementService)
+            ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
 
@@ -287,7 +287,7 @@ class ServiceTest extends AbstractServiceTest
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
-            ->withUserManagementService($this->userManagementService)
+            ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
 
@@ -326,7 +326,7 @@ class ServiceTest extends AbstractServiceTest
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
-            ->withUserManagementService($this->userManagementService)
+            ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
 
@@ -368,7 +368,7 @@ class ServiceTest extends AbstractServiceTest
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
-            ->withUserManagementService($this->userManagementService)
+            ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
 
@@ -385,7 +385,7 @@ class ServiceTest extends AbstractServiceTest
         $this->snsClient->shouldReceive('publish')
             ->once();
 
-        $this->userManagementService->shouldReceive('delete')
+        $this->usersService->shouldReceive('delete')
             ->withArgs([1, 'unactivated']);
 
         $serviceBuilder = new ServiceBuilder();
@@ -395,7 +395,7 @@ class ServiceTest extends AbstractServiceTest
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
             ->withSnsClient($this->snsClient)
-            ->withUserManagementService($this->userManagementService)
+            ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
 

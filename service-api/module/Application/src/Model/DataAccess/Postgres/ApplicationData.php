@@ -1,35 +1,67 @@
 <?php
+namespace Application\Model\DataAccess\Postgres;
 
-namespace Application\Model\DataAccess\Mongo\Collection;
-
-use Traversable;
 use DateTime;
-use Application\Library\DateTime as MillisecondDateTime;
-use Application\Model\DataAccess\Repository\Application\LockedException;
-use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
-use MongoDB\BSON\Javascript as MongoCode;
-use MongoDB\BSON\Regex;
-use MongoDB\BSON\UTCDateTime;
-use MongoDB\Collection as MongoCollection;
-use MongoDB\Driver\Command;
-use MongoDB\Driver\ReadPreference;
+use Traversable;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use RuntimeException;
+use Zend\Db\Sql\Sql;
+use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Predicate\Expression;
+use Zend\Db\Sql\Predicate\IsNull;
+use Zend\Db\Sql\Predicate\IsNotNull;
+use Zend\Db\Metadata\Source\Factory as DbMetadataFactory;
+use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
+use Application\Model\DataAccess\Repository\Application\LockedException;
+use Application\Library\DateTime as MillisecondDateTime;
 
-class ApiLpaCollection extends AbstractCollection implements ApplicationRepositoryInterface
+class ApplicationData extends AbstractBase implements ApplicationRepository\ApplicationRepositoryInterface
 {
-    /**
-     * @var MongoCollection
-     */
-    protected $collection;
+
+    const APPLICATIONS_TABLE = 'applications';
 
     /**
-     * @param MongoCollection $collection
+     * The columns in the Postgres database
      */
-    public function __construct(MongoCollection $collection)
+    const TABLE_COLUMNS = ['id', 'user', 'updatedAt', 'startedAt', 'createdAt', 'completedAt', 'lockedAt', 'locked',
+                            'whoAreYouAnswered', 'seed', 'repeatCaseNumber', 'document', 'payment', 'metadata'];
+
+
+    /**
+     * Maps LPA object fields to Postgres' fields.
+     *
+     * @param Lpa $lpa
+     * @return array
+     */
+    private function mapLpaToPostgres(Lpa $lpa) : array
     {
-        $this->collection = $collection;
+        // Filter out un-allowed columns.
+        $data = array_intersect_key($lpa->toArray(), array_flip(self::TABLE_COLUMNS));
+
+        // Convert these fields to JSON
+        $data['document']   = is_null($data['document']) ? null : json_encode($data['document']);
+        $data['payment']    = is_null($data['payment']) ? null : json_encode($data['payment']);
+        $data['metadata']   = is_null($data['metadata']) ? null : json_encode($data['metadata']);
+
+        return $data;
     }
+
+    /**
+     * Maps data from Postgres back into an array format that the LPA DataModel can consume.
+     *
+     * @param array $data
+     * @return array
+     */
+    private function mapPostgresToLpaCompatible(array $data) : array
+    {
+        return array_merge($data,[
+            'document'  => is_null($data['document']) ? null : json_decode($data['document'], true),
+            'payment'   => is_null($data['payment']) ? null : json_decode($data['payment'], true),
+            'metadata'  => is_null($data['metadata']) ? null : json_decode($data['metadata'], true),
+        ]);
+    }
+
+
+    //------------------------------------------
 
     /**
      * Get an LPA by ID, and user ID if provided
@@ -40,21 +72,23 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function getById(int $id, ?string $userId = null) : ?array
     {
-        $criteria = [
-            '_id' => $id
-        ];
+        $sql    = new Sql($this->getZendDb());
+        $select = $sql->select(self::APPLICATIONS_TABLE);
 
-        if (!is_null($userId)) {
-            $criteria['user'] = $userId;
+        $select->where(['id' => $id]);
+        if (is_string($userId)) {
+            $select->where(['user' => $userId]);
         }
 
-        $result = $this->collection->findOne($criteria);
+        $select->limit(1);
 
-        if (is_array($result) && isset($result['_id'])) {
-            $result = ['id' => $result['_id']] + $result;
+        $result = $sql->prepareStatementForSqlObject($select)->execute();
+
+        if (!$result->isQueryResult() || $result->count() != 1) {
+            return null;
         }
 
-        return $result;
+        return $this->mapPostgresToLpaCompatible($result->current());
     }
 
     /**
@@ -65,12 +99,25 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function count(array $criteria) : int
     {
-        if (isset($criteria['id'])) {
-            $criteria['_id'] = $criteria['id'];
-            unset($criteria['id']);
+        $sql    = new Sql($this->getZendDb());
+        $select = $sql->select(self::APPLICATIONS_TABLE);
+
+        $select->columns(['count' => new Expression('count(*)')]);
+
+        if (isset($criteria['search'])) {
+            $select->where([new Expression("search ~* '{$criteria['search']['$regex']}'")]);
+            unset($criteria['search']);
         }
 
-        return $this->collection->count($criteria);
+        $select->where($criteria);
+
+        $result = $sql->prepareStatementForSqlObject($select)->execute();
+
+        if (!$result->isQueryResult() || $result->count() != 1) {
+            return 0;
+        }
+
+        return $result->current()['count'];
     }
 
     /**
@@ -80,19 +127,35 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function fetch(array $criteria, array $options = []) : Traversable
     {
-        if (isset($criteria['id'])) {
-            $criteria['_id'] = $criteria['id'];
-            unset($criteria['id']);
+        $sql    = new Sql($this->getZendDb());
+        $select = $sql->select(self::APPLICATIONS_TABLE);
+
+        if (isset($criteria['search'])) {
+            $select->where([new Expression("search ~* '{$criteria['search']['$regex']}'")]);
+            unset($criteria['search']);
         }
 
-        $result = $this->collection->find($criteria, $options);
+        $select->where($criteria);
 
-        foreach ($result as $data) {
-            if (isset($data['_id'])) {
-                $data['id'] = $data['_id'];
+        if (isset($options['skip']) && $options['skip'] !== 0) {
+            $select->offset($options['skip']);
+        }
+
+        if (isset($options['limit'])) {
+            $select->limit($options['limit']);
+        }
+
+        if (isset($options['sort'])) {
+            foreach($options['sort'] as $field=>$direction){
+                $direction = ($direction === 1) ? 'ASC' : 'DESC';
+                $select->order("$field $direction");
             }
+        }
 
-            yield $data;
+        $results = $sql->prepareStatementForSqlObject($select)->execute();
+
+        foreach ($results as $result) {
+            yield $this->mapPostgresToLpaCompatible($result);
         }
     }
 
@@ -103,20 +166,29 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function fetchByUserId(string $userId, array $options = []) : Traversable
     {
-        return $this->fetch([
-            'user' => $userId,
-        ], $options);
+        return $this->fetch(['user' => $userId], $options);
     }
 
     /**
      * @param Lpa $lpa
      * @return bool
+     *
      */
     public function insert(Lpa $lpa) : bool
     {
-        $result = $this->collection->insertOne($this->prepare($lpa->toArray(true)));
+        $sql = new Sql($this->getZendDb());
+        $insert = $sql->insert(self::APPLICATIONS_TABLE);
 
-        return ($result->getInsertedCount() == 1);
+        $data = $this->mapLpaToPostgres($lpa);
+        $insert->columns(array_keys($data));
+        $insert->values($data);
+
+        $statement = $sql->prepareStatementForSqlObject($insert);
+
+        // If something goes wrong, allow the exception to be thrown
+        $statement->execute();
+
+        return true;
     }
 
     /**
@@ -146,52 +218,58 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
 
         //  If instrument created, record the date.
         if ($lpa->isStateCreated()) {
-            if (!($lpa->createdAt instanceof DateTime)) {
-                $lpa->createdAt = new MillisecondDateTime();
+            if (!($lpa->getCreatedAt() instanceof DateTime)) {
+                $lpa->setCreatedAt(new MillisecondDateTime());
             }
         } else {
-            $lpa->createdAt = null;
+            $lpa->setCreatedAt(null);
         }
 
         // If completed, record the date.
         if ($lpa->isStateCompleted()) {
             // If we don't already have a complete date and the LPA is locked...
-            if (!($lpa->completedAt instanceof DateTime) && $lpa->locked === true) {
-                $lpa->completedAt = new MillisecondDateTime();
+            if (!($lpa->getCompletedAt() instanceof DateTime) && $lpa->isLocked()) {
+                $lpa->setCompletedAt(new MillisecondDateTime());
             }
         } else {
-            $lpa->completedAt = null;
+            $lpa->setCompletedAt(null);
         }
 
         // If there's a donor, populate the free text search field
         $searchField = null;
 
-        if ($lpa->document->donor != null) {
-            $searchField = (string) $lpa->document->donor->name;
+        if ($lpa->getDocument()->getDonor() != null) {
+            $searchField = (string)$lpa->getDocument()->getDonor()->getName();
         }
 
-        $lastUpdated = new UTCDateTime($lpa->updatedAt);
+        $lastUpdated = $lpa->getUpdatedAt()->format(self::TIME_FORMAT);
 
         if ($updateTimestamp === true) {
             // Record the time we updated the document.
-            $lpa->updatedAt = new MillisecondDateTime();
+            $lpa->setUpdatedAt(new MillisecondDateTime());
         }
 
-        // updatedAt is included in the query so that data isn't overwritten
-        // if the Document has changed since this process loaded it.
-        $result = $this->collection->updateOne(
-            ['_id' => $lpa->id, 'updatedAt' => $lastUpdated ],
-            ['$set' => array_merge($this->prepare($lpa->toArray(true)), ['search' => $searchField])],
-            ['upsert' => false, 'multiple' => false]
-        );
+        //------------------------------------------
 
-        // Ensure that one (and only one) document was updated.
-        // If not, something when wrong.
-        if ($result->getModifiedCount() !== 0 && $result->getModifiedCount() !== 1) {
-            throw new RuntimeException('Unable to update LPA. This might be because "updatedAt" has changed.');
-        }
+        $sql = new Sql($this->getZendDb());
+        $update = $sql->update(self::APPLICATIONS_TABLE);
 
-        return true;
+        $update->where([
+            'id'        => $lpa->getId(),
+            'updatedAt' => $lastUpdated,    // Sense check to ensure we're not working with stale data
+        ]);
+
+        $data = $this->mapLpaToPostgres($lpa);
+        unset($data['id']); // Un-needed
+
+        $data['search'] = $searchField ?: null;
+
+        $update->set($data);
+
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $results = $statement->execute();
+
+        return $results->getAffectedRows() === 1;
     }
 
     /**
@@ -201,15 +279,42 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function deleteById(int $lpaId, string $userId) : bool
     {
-        //  We don't want to remove the document entirely as we need to make sure the same ID isn't reassigned
-        $result = $this->collection->replaceOne([
-            '_id' => (int)$lpaId,
-            'user' => $userId,
-        ], [
-            'updatedAt' => new UTCDateTime(),
+        $sql = new Sql($this->getZendDb());
+        $update = $sql->update(self::APPLICATIONS_TABLE);
+
+        $update->where([
+            'id'    => $lpaId,
+            'user'  => $userId,
         ]);
 
-        return $result->isAcknowledged() && $result->getModifiedCount() === 1;
+        //---
+
+        /**
+         * We pull the full column list from Postgres here to ensure we set all of the to null.
+         * (This isn't efficient for bulk deletes but is fine until we see any issues)
+         */
+        $metadata = DbMetadataFactory::createSourceFromAdapter($this->getZendDb());
+        $table = $metadata->getTable(self::APPLICATIONS_TABLE);
+
+        $data = [];
+
+        // Set every column to null
+        foreach ($table->getColumns() as $column) {
+            $data[$column->getName()] = null;
+        }
+
+
+        unset($data['id']); // We want to keep this
+        $data['updatedAt'] = gmdate(self::TIME_FORMAT); // We want to keep and update this.
+
+        //--
+
+        $update->set($data);
+
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $results = $statement->execute();
+
+        return $results->getAffectedRows() === 1;
     }
 
     /**
@@ -229,17 +334,10 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function countBetween(Datetime $start, Datetime $end, string $timestampFieldName) : int
     {
-        //  Call from stats so (ideally) process on a secondary
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
-        return $this->collection->count([
-            $timestampFieldName => [
-                '$gte' => new UTCDateTime($start),
-                '$lte' => new UTCDateTime($end)
-            ]
-        ], $readPreference);
+        return $this->count([
+            new Operator($timestampFieldName, Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $start->format('c')),
+            new Operator($timestampFieldName, Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $end->format('c')),
+        ]);
     }
 
     /**
@@ -250,18 +348,11 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function countStartedForType(string $lpaType) : int
     {
-        //  Call from stats so (ideally) process on a secondary
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
-        return $this->collection->count([
-            'startedAt' => [
-                '$ne' => null
-            ],
-            'createdAt' => null,
-            'document.type' => $lpaType
-        ], $readPreference);
+        return $this->count([
+            new IsNotNull('startedAt'),
+            new IsNull('createdAt'),
+            new Expression("document ->> 'type' = ?", $lpaType),
+        ]);
     }
 
     /**
@@ -272,18 +363,11 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function countCreatedForType(string $lpaType) : int
     {
-        //  Call from stats so (ideally) process on a secondary
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
-        return $this->collection->count([
-            'createdAt' => [
-                '$ne' => null
-            ],
-            'completedAt' => null,
-            'document.type' => $lpaType
-        ], $readPreference);
+        return $this->count([
+            new IsNotNull('createdAt'),
+            new IsNull('completedAt'),
+            new Expression("document ->> 'type' = ?", $lpaType),
+        ]);
     }
 
     /**
@@ -294,17 +378,10 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function countCompletedForType(string $lpaType) : int
     {
-        //  Call from stats so (ideally) process on a secondary
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
-        return $this->collection->count([
-            'completedAt' => [
-                '$ne' => null
-            ],
-            'document.type' => $lpaType
-        ], $readPreference);
+        return $this->count([
+            new IsNotNull('completedAt'),
+            new Expression("document ->> 'type' = ?", $lpaType),
+        ]);
     }
 
     /**
@@ -314,16 +391,9 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function countDeleted() : int
     {
-        //  Call from stats so (ideally) process on a secondary
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
-        return $this->collection->count([
-            'document' => [
-                '$exists' => false
-            ]
-        ], $readPreference);
+        return $this->count([
+            new IsNull('user'),
+        ]);
     }
 
     /**
@@ -337,67 +407,43 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function getLpasPerUser() : array
     {
-        // Returns the number of LPAs under each userId
-        $map = new MongoCode(
-            'function() {
-                if( this.user ){
-                    emit(this.user,1);
-                }
-            }'
-        );
+        $adapter = $this->getZendDb();
 
-        $reduce = new MongoCode(
-            'function(user, lpas) {
-                return lpas.length;
-            }'
-        );
+        /*
+         The query is:
 
-        $manager = $this->collection->getManager();
+            WITH lpa_counts AS(
+                SELECT "user", count(*) AS "lpa_count" FROM "applications" WHERE "user" IS NOT NULL GROUP BY "user"
+            )
+            SELECT lpa_count, count(*) AS "user_count" FROM lpa_counts GROUP BY lpa_count
+         */
 
-        $command = new Command([
-            'mapreduce' => $this->collection->getCollectionName(),
-            'map' => $map,
-            'reduce' => $reduce,
-            'out' => ['inline'=>1],
-            'query' => [ 'user' => [ '$exists'=>true ] ],
-        ]);
+        $sql = new Sql($adapter);
 
-        // Stats can (ideally) be processed on a secondary.
-        $document = $cursor = $manager->executeCommand(
-            $this->collection->getDatabaseName(),
-            $command,
-            new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        )->toArray()[0];
+        $selectOne = $sql->select(self::APPLICATIONS_TABLE);
+        $selectOne->columns(['user', 'lpa_count' => new Expression('count(*)')]);
+        $selectOne->where([new IsNotNull('user')]);
+        $selectOne->group('user');
+
+        $selectTwo = $sql->select('lpa_counts');
+        $selectTwo->columns(['lpa_count', 'user_count' => new Expression('count(*)')]);
+        $selectTwo->group('lpa_count');
+        $selectTwo->order('lpa_count DESC');
+
+        $query = 'WITH lpa_counts AS('.$sql->buildSqlString($selectOne).') '.$sql->buildSqlString($selectTwo);
+
+        $results = $adapter->query($query, $adapter::QUERY_MODE_EXECUTE)->toArray();
 
         /*
          * This creates an array where:
          *  key = a number or LPAs
          *  value = the number of users with that number of LPAs.
          *
-         * This lets us say:
-         *  N users have X LPAs
          */
-        $lpasPerUser = array_reduce(
-            $document->results,
-            function ($carry, $item) {
-
-                $count = (int)$item->value;
-
-                if (!isset($carry[$count])) {
-                    $carry[$count] = 1;
-                } else {
-                    $carry[$count]++;
-                }
-
-                return $carry;
-            },
-            []
+        return array_combine(
+            array_column($results, 'lpa_count'),
+            array_column($results, 'user_count')
         );
-
-        // Sort by key so they're pre-ordered when sent to Mongo.
-        krsort($lpasPerUser);
-
-        return $lpasPerUser;
     }
 
     /**
@@ -410,23 +456,10 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function countCompletedBetween(Datetime $start, Datetime $end, array $additionalCriteria = []) : int
     {
-        //  Call from stats so (ideally) process on a secondary
-        $readPreference = [
-            'readPreference' => new ReadPreference(ReadPreference::RP_SECONDARY_PREFERRED)
-        ];
-
-        $criteria = [
-            'completedAt' => [
-                '$gte' => new UTCDateTime($start),
-                '$lte' => new UTCDateTime($end)
-            ]
-        ];
-
-        if (!empty($additionalCriteria)) {
-            $criteria = array_merge($criteria, $additionalCriteria);
-        }
-
-        return $this->collection->count($criteria, $readPreference);
+        return $this->count(array_merge([
+            new Operator('completedAt', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $start->format('c')),
+            new Operator('completedAt', Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $end->format('c')),
+        ], $additionalCriteria));
     }
 
     /**
@@ -439,11 +472,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenCorrespondentEmail(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.correspondent' => [
-                '$ne' => null
-            ], 'document.correspondent.email' => [
-                '$ne' => null
-            ]
+            new Expression("document -> 'correspondent' ->> 'email' IS NOT NULL")
         ]);
     }
 
@@ -457,11 +486,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenCorrespondentPhone(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.correspondent' => [
-                '$ne' => null
-            ], 'document.correspondent.phone' => [
-                '$ne' => null
-            ]
+            new Expression("document -> 'correspondent' ->> 'phone' IS NOT NULL")
         ]);
     }
 
@@ -475,9 +500,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenCorrespondentPost(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.correspondent' => [
-                '$ne' => null
-            ], 'document.correspondent.contactByPost' => true
+            new Expression("(document -> 'correspondent' ->> 'contactByPost')::BOOLEAN = TRUE")
         ]);
     }
 
@@ -491,9 +514,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenCorrespondentEnglish(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.correspondent' => [
-                '$ne' => null
-            ], 'document.correspondent.contactInWelsh' => false
+            new Expression("(document -> 'correspondent' ->> 'contactInWelsh')::BOOLEAN = FALSE")
         ]);
     }
 
@@ -507,9 +528,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenCorrespondentWelsh(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.correspondent' => [
-                '$ne' => null
-            ], 'document.correspondent.contactInWelsh' => true
+            new Expression("(document -> 'correspondent' ->> 'contactInWelsh')::BOOLEAN = TRUE")
         ]);
     }
 
@@ -523,7 +542,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenWithPreferences(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.preference' => new Regex('.+', '')
+            new Expression("document ->> 'preference' <> ''")
         ]);
     }
 
@@ -537,7 +556,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenWithInstructions(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.instruction' => new Regex('.+', '')
+            new Expression("document ->> 'instruction' <> ''")
         ]);
     }
 
@@ -552,7 +571,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenByType(Datetime $start, Datetime $end, string $lpaType) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.type' => $lpaType
+            new Expression("document ->> 'type' = ?", $lpaType)
         ]);
     }
 
@@ -566,8 +585,10 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function countCompletedBetweenByCanSign(Datetime $start, Datetime $end, bool $canSignValue) : int
     {
+        $canSign = ($canSignValue) ? 'TRUE' : 'FALSE';
+
         return $this->countCompletedBetween($start, $end, [
-            'document.donor.canSign' => $canSignValue
+            new Expression("(document -> 'donor' ->> 'canSign')::BOOLEAN = {$canSign}")
         ]);
     }
 
@@ -582,9 +603,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenHasActors(Datetime $start, Datetime $end, string $actorType) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.' . $actorType => [
-                '$gt' => []
-            ]
+            new Expression("json_array_length((document ->> ?)::JSON) > 0", $actorType)
         ]);
     }
 
@@ -599,7 +618,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenHasNoActors(Datetime $start, Datetime $end, string $actorType) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.' . $actorType => []
+            new Expression("json_array_length((document ->> ?)::JSON) = 0", $actorType)
         ]);
     }
 
@@ -614,10 +633,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenHasMultipleActors(Datetime $start, Datetime $end, string $actorType) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.' . $actorType => [
-                '$ne' => null
-            ],
-            '$where' => sprintf('this.document.%s.length > 1', $actorType),
+            new Expression("json_array_length((document ->> ?)::JSON) > 1", $actorType)
         ]);
     }
 
@@ -631,7 +647,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenDonorRegistering(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.whoIsRegistering' => 'donor'
+            new Expression("document ->> 'whoIsRegistering' = ?", 'donor')
         ]);
     }
 
@@ -645,9 +661,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenAttorneyRegistering(Datetime $start, Datetime $end) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.whoIsRegistering' => [
-                '$gt' => []
-            ]
+            new Expression("document ->> 'whoIsRegistering' <> ?", 'donor')
         ]);
     }
 
@@ -661,11 +675,15 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      */
     public function countCompletedBetweenCaseNumber(Datetime $start, Datetime $end, bool $hasCaseNumber) : int
     {
-        return $this->countCompletedBetween($start, $end, [
-            'repeatCaseNumber' => ($hasCaseNumber ? [
-                '$ne' => null
-            ] : null),
-        ]);
+        if ($hasCaseNumber) {
+            return $this->countCompletedBetween($start, $end, [
+                new IsNotNull('repeatCaseNumber')
+            ]);
+        } else {
+            return $this->countCompletedBetween($start, $end, [
+                new IsNull('repeatCaseNumber')
+            ]);
+        }
     }
 
     /**
@@ -673,19 +691,25 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
      *
      * @param Datetime $start
      * @param Datetime $end
-     * @param ?bool $reducedFeeReceivesBenefits
-     * @param ?bool $reducedFeeAwardedDamages
-     * @param ?bool $reducedFeeLowIncome
-     * @param ?bool $reducedFeeUniversalCredit
+     * @param bool $reducedFeeReceivesBenefits
+     * @param bool $reducedFeeAwardedDamages
+     * @param bool $reducedFeeLowIncome
+     * @param bool $reducedFeeUniversalCredit
      * @return int
      */
     public function countCompletedBetweenFeeType(Datetime $start, Datetime $end, ?bool $reducedFeeReceivesBenefits, ?bool $reducedFeeAwardedDamages, ?bool $reducedFeeLowIncome, ?bool $reducedFeeUniversalCredit) : int
     {
+        // Map the values
+        $reducedFeeReceivesBenefits = (is_null($reducedFeeReceivesBenefits)) ? 'IS NULL' : (($reducedFeeReceivesBenefits) ? '= TRUE' : '= FALSE');
+        $reducedFeeAwardedDamages   = (is_null($reducedFeeAwardedDamages)) ? 'IS NULL'   : (($reducedFeeAwardedDamages) ? '= TRUE' : '= FALSE');
+        $reducedFeeLowIncome        = (is_null($reducedFeeLowIncome)) ? 'IS NULL'        : (($reducedFeeLowIncome) ? '= TRUE' : '= FALSE');
+        $reducedFeeUniversalCredit  = (is_null($reducedFeeUniversalCredit)) ? 'IS NULL'  : (($reducedFeeUniversalCredit) ? '= TRUE' : '= FALSE');
+
         return $this->countCompletedBetween($start, $end, [
-            'payment.reducedFeeReceivesBenefits' => $reducedFeeReceivesBenefits,
-            'payment.reducedFeeAwardedDamages'   => $reducedFeeAwardedDamages,
-            'payment.reducedFeeLowIncome'        => $reducedFeeLowIncome,
-            'payment.reducedFeeUniversalCredit'  => $reducedFeeUniversalCredit,
+            new Expression("(payment ->> 'reducedFeeReceivesBenefits')::BOOLEAN " . $reducedFeeReceivesBenefits),
+            new Expression("(payment ->> 'reducedFeeAwardedDamages')::BOOLEAN " . $reducedFeeAwardedDamages),
+            new Expression("(payment ->> 'reducedFeeLowIncome')::BOOLEAN " . $reducedFeeLowIncome),
+            new Expression("(payment ->> 'reducedFeeUniversalCredit')::BOOLEAN " . $reducedFeeUniversalCredit),
         ]);
     }
 
@@ -700,7 +724,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenPaymentType(Datetime $start, Datetime $end, string $paymentType) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'payment.method' => $paymentType,
+            new Expression("payment ->> 'method' = ?", $paymentType)
         ]);
     }
 
@@ -717,7 +741,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenWithAttorneyDecisions(Datetime $start, Datetime $end, string $attorneyDecisionsType, string $decisionType, string $decisionValue) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            sprintf('document.%s.%s', $attorneyDecisionsType, $decisionType) => $decisionValue
+            new Expression("document -> '{$attorneyDecisionsType}' ->> '{$decisionType}' = ?", $decisionValue)
         ]);
     }
 
@@ -732,7 +756,7 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenWithTrust(Datetime $start, Datetime $end, string $attorneyType) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'document.' . $attorneyType => ['$elemMatch' => ['type' => 'trust']]
+            new Expression("document -> '{$attorneyType}' @> ?", '[{"type": "trust"}]')
         ]);
     }
 
@@ -747,7 +771,8 @@ class ApiLpaCollection extends AbstractCollection implements ApplicationReposito
     public function countCompletedBetweenCertificateProviderSkipped(Datetime $start, Datetime $end, bool $isSkipped) : int
     {
         return $this->countCompletedBetween($start, $end, [
-            'metadata.' . Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED => ['$exists' => $isSkipped],
+            new Expression("metadata @> ?", json_encode([Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED => true]))
         ]);
     }
+
 }
