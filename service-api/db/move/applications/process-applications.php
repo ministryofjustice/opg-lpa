@@ -2,6 +2,7 @@
 include_once ('../../../vendor/autoload.php');
 
 $output = fopen('php://output', 'wb');
+$errors = fopen('errors.txt', 'w');
 
 // Recursively replace $date array items with the actual date string.
 $map = function ($v) use (&$map) {
@@ -31,6 +32,11 @@ if (($handle = fopen("applications-dump.csv", "r")) !== FALSE) {
 
             if (!empty($data[11])) {
                 $document   = json_decode($data[11], true);
+
+                if (!is_array($document)) {
+                    fwrite($errors, "{$data[0]}\n");
+                    continue;
+                }
 
                 // Map the dates
                 $document = array_map($map, $document);
@@ -69,4 +75,4 @@ if (($handle = fopen("applications-dump.csv", "r")) !== FALSE) {
 
 
 fclose($output);
-
+fclose($errors);
