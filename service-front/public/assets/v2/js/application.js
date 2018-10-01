@@ -24949,6 +24949,11 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
 (function () {
   'use strict';
 
+  if (typeof(gaConfig) === 'undefined') {
+    moj.log('gaConfig not set. skipping Google Analytics tracking.');
+    return;
+  }
+
   moj.Modules.Analytics = {
 
     init: function () {
