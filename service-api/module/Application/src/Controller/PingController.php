@@ -3,12 +3,13 @@
 namespace Application\Controller;
 
 use DynamoQueue\Queue\Client as DynamoQueueClient;
-use MongoDB\Database;
+use MongoDB\Database as MongoDatabase;
 use MongoDB\Driver\Command;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 use Exception;
+use Zend\Db\Adapter\Adapter as ZendDbAdapter;
 
 /**
  * Class PingController
@@ -24,7 +25,12 @@ class PingController extends AbstractRestfulController
     private $dynamoQueueClient;
 
     /**
-     * @var Database
+     * @var MongoDatabase
+     */
+    private $mongo;
+
+    /**
+     * @var ZendDbAdapter
      */
     private $database;
 
@@ -32,12 +38,14 @@ class PingController extends AbstractRestfulController
      * PingController constructor
      *
      * @param DynamoQueueClient $dynamoQueueClient
-     * @param Database $database
+     * @param ZendDbAdapter $database
+     * @param MongoDatabase $mongo
      */
-    public function __construct(DynamoQueueClient $dynamoQueueClient, Database $database)
+    public function __construct(DynamoQueueClient $dynamoQueueClient, ZendDbAdapter $database, MongoDatabase $mongo)
     {
         $this->dynamoQueueClient = $dynamoQueueClient;
         $this->database = $database;
+        $this->mongo = $mongo;
     }
 
     /**
@@ -69,22 +77,25 @@ class PingController extends AbstractRestfulController
     public function indexAction()
     {
         //  Initialise the states as false
-        $databaseOk = false;
-        $queueOk = false;
+        $mongoOk    = false;
+        $queueOk    = false;
+        $zendDbOk   = false;
 
         try {
             $pingCommand = new Command(['ping' => 1]);
-            $manager = $this->database->getManager();
-            $manager->executeCommand($this->database->getDatabaseName(), $pingCommand);
+            $manager = $this->mongo->getManager();
+            $manager->executeCommand($this->mongo->getDatabaseName(), $pingCommand);
 
             foreach ($manager->getServers() as $server) {
                 // If the connection is to primary, all is okay.
                 if ($server->isPrimary()) {
-                    $databaseOk = true;
+                    $mongoOk = true;
                     break;
                 }
             }
         } catch (Exception $ignore) {}
+
+        //---
 
         // Check DynamoDB - initialise the status as false
         $queueDetails = [
@@ -109,11 +120,24 @@ class PingController extends AbstractRestfulController
             $queueOk = ($count < 50);
         } catch (Exception $ignore) {}
 
+        //---
+
+        try {
+            $this->database->getDriver()->getConnection()->connect();
+            $zendDbOk = true;
+
+        } catch (Exception $ignore) {}
+
+        //---
+
         $result = [
-            'database' => [
-                'ok' => $databaseOk,
+            'mongo' => [
+                'ok' => $mongoOk,
             ],
-            'ok' => ($databaseOk && $queueOk),
+            'zend-db' => [
+                'ok' => $zendDbOk,
+            ],
+            'ok' => ($mongoOk && $queueOk && $zendDbOk),
             'queue' => [
                 'details' => $queueDetails,
                 'ok' => $queueOk,
