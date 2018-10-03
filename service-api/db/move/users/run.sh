@@ -8,7 +8,7 @@ echo "Exporting users from Mongo"
 mongoexport --host=mongodb-01,mongodb-02,mongodb-03 --ssl --sslAllowInvalidCertificates --username opglpa-auth \
 --password $OPG_LPA_AUTH_MONGODB_PASSWORD \
 --db opglpa-auth --authenticationDatabase opglpa-auth --collection user --type csv \
---fields _id,identity,password_hash,activation_token,active,failed_login_attempts,created,last_updated,activated,last_login,last_failed_login,deletedAt,inactivity_flags \
+--fields _id,identity,password_hash,activation_token,active,failed_login_attempts,created,last_updated,activated,last_login,last_failed_login,deletedAt,inactivity_flags,password_reset_token,email_update_request \
 > users-dump.csv
 
 echo "Exporting profiles from Mongo"
