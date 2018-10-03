@@ -25,6 +25,7 @@ if (($handle = fopen("profiles-dump.csv", "r")) !== FALSE) {
         $profiles[$id] = $amended;
     }
 }
+fclose($handle);
 
 //--------------
 
@@ -49,6 +50,16 @@ if (($handle = fopen("users-dump.csv", "r")) !== FALSE) {
         $row++;
         if ($row === 1) {
             continue;
+        }
+
+        if ($data[4] === 'Y') {
+            $data[4] = 'true';
+        }
+
+        for ($i = 6; $i <= 11; $i++) {
+            if (is_numeric($data[$i])) {
+                $data[$i] = date('c', $data[$i]);
+            }
         }
 
         if ($row != 1 && !empty($data[12])) {
