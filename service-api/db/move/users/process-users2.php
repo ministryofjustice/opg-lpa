@@ -13,10 +13,10 @@ if (($handle = fopen("profiles-dump.csv", "r")) !== FALSE) {
         $id = $data[0];
 
         $amended = [
-            'name'      => (!empty($data[1])) ? json_decode($data[1], true) : '',
-            'address'   => (!empty($data[2])) ? json_decode($data[2], true) : '',
-            'dob'       => (!empty($data[3])) ? json_decode($data[3], true) : '',
-            'email'     => (!empty($data[4])) ? json_decode($data[4], true) : '',
+            'name'      => (!empty($data[1])) ? json_decode($data[1], true) : null,
+            'address'   => (!empty($data[2])) ? json_decode($data[2], true) : null,
+            'dob'       => (!empty($data[3])) ? json_decode($data[3], true) : null,
+            'email'     => (!empty($data[4])) ? json_decode($data[4], true) : null,
         ];
 
         // Remove Mongo's $date key
