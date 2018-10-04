@@ -34,7 +34,7 @@ if (($handle = fopen("applications-dump.csv", "r")) !== FALSE) {
                 $document   = json_decode($data[11], true);
 
                 if (!is_array($document)) {
-                    fwrite($errors, "{$data[0]}\n");
+                    fwrite($errors, "{$data[0]} : ".var_export($data[11], true)."\n");
                     continue;
                 }
 
