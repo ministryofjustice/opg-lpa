@@ -1,5 +1,5 @@
 TRUNCATE TABLE applications;
-\COPY applications FROM 'applications-converted.csv' DELIMITER ',' CSV
+\COPY applications FROM 'applications-converted.csv' DELIMITER ',' CSV QUOTE '''';
 
 UPDATE applications SET
     "user" = NULL,
