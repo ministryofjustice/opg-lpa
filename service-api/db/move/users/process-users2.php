@@ -38,6 +38,9 @@ $map = function ($v) use (&$map) {
     if (is_array($v) && isset($v['$date'])) {
         return $v['$date'];
 
+    } elseif (is_array($v) && isset($v['$numberLong'])) {
+        return (int)$v['$numberLong'];
+
     } elseif(is_array($v)){
         return array_map($map, $v);
 
