@@ -10,8 +10,6 @@ mongoexport --host=mongodb-01,mongodb-02,mongodb-03 --ssl --sslAllowInvalidCerti
 --db opglpa-api --authenticationDatabase opglpa-api --collection lpa --type json \
 > applications-dump.json
 
-rm -f errors.txt
-
 echo "Exporting list of users"
 export PGPASSWORD=$OPG_LPA_POSTGRES_PASSWORD
 psql --username=$OPG_LPA_POSTGRES_USERNAME --host=$OPG_LPA_POSTGRES_HOSTNAME --dbname=$OPG_LPA_POSTGRES_NAME --file=get.sql
