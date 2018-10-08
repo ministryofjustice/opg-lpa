@@ -19,10 +19,7 @@ mongoexport --host=mongodb-01,mongodb-02,mongodb-03 --ssl --sslAllowInvalidCerti
 > profiles-dump.csv
 
 echo "Converting data Mongo -> Postgres"
-php process-users2.php > users-converted.csv
-
-echo "Appending profiles into user data"
-#php process-profiles.php
+php process-users.php > users-converted.csv
 
 echo "Import the data into Postgres"
 export PGPASSWORD=$OPG_LPA_POSTGRES_PASSWORD

@@ -1,11 +1,45 @@
 <?php
 
+$profiles = [];
+
+$row = 0;
+if (($handle = fopen("profiles-dump.csv", "r")) !== FALSE) {
+    while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
+        $row++;
+        if ($row == 1) {
+            continue;
+        }
+
+        $id = $data[0];
+
+        $amended = [
+            'name'      => (!empty($data[1])) ? json_decode($data[1], true) : null,
+            'address'   => (!empty($data[2])) ? json_decode($data[2], true) : null,
+            'dob'       => (!empty($data[3])) ? json_decode($data[3], true) : null,
+            'email'     => (!empty($data[4])) ? json_decode($data[4], true) : null,
+        ];
+
+        // Remove Mongo's $date key
+        if (isset($amended['dob']['date']['$date'])) {
+            $amended['dob']['date'] = $amended['dob']['date']['$date'];
+        }
+
+        $profiles[$id] = $amended;
+    }
+}
+fclose($handle);
+
+//--------------
+
 $output = fopen('php://output', 'wb');
 
 // Recursively replace $date array items with the actual date string.
 $map = function ($v) use (&$map) {
     if (is_array($v) && isset($v['$date'])) {
         return $v['$date'];
+
+    } elseif (is_array($v) && isset($v['$numberLong'])) {
+        return (int)$v['$numberLong'];
 
     } elseif(is_array($v)){
         return array_map($map, $v);
@@ -21,6 +55,16 @@ if (($handle = fopen("users-dump.csv", "r")) !== FALSE) {
         $row++;
         if ($row === 1) {
             continue;
+        }
+
+        if ($data[4] === 'Y') {
+            $data[4] = 'true';
+        }
+
+        for ($i = 6; $i <= 11; $i++) {
+            if (is_numeric($data[$i])) {
+                $data[$i] = date('c', $data[$i]);
+            }
         }
 
         if ($row != 1 && !empty($data[12])) {
@@ -51,7 +95,14 @@ if (($handle = fopen("users-dump.csv", "r")) !== FALSE) {
 
         // Clear these fields
         $data[13] = '';
-        $data[16] = '';
+
+        // Include profile data
+        if (isset($profiles[$data[0]])) {
+            $data[16] = json_encode($profiles[$data[0]]);
+        } else {
+            $data[16] = '';
+        }
+
 
         fputcsv($output, $data);
 
