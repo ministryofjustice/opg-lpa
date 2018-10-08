@@ -3,6 +3,15 @@ include_once ('../../../vendor/autoload.php');
 
 use League\Csv\Writer;
 
+$validUserIds = [];
+
+$users = file('users.csv');
+foreach($users as $user){
+    $validUserIds[trim($user)] = true;
+}
+
+//---
+
 $output = fopen('php://output', 'wb');
 $errors = fopen('errors.txt', 'w');
 
@@ -25,6 +34,7 @@ $map = function ($v) use (&$map) {
 $writer = Writer::createFromPath('php://output', 'w+');
 $writer->setEnclosure("'");
 
+$removed = 0;
 $row = 0;
 if (($handle = fopen("applications-dump.csv", "r")) !== FALSE) {
 
@@ -38,46 +48,59 @@ if (($handle = fopen("applications-dump.csv", "r")) !== FALSE) {
 
         if (!empty($data[1])) {
 
-            if (!empty($data[11])) {
-                $document   = json_decode($data[11], true);
+            if (!isset($validUserIds[$data[1]])) {
 
-                if (!is_array($document)) {
-                    fwrite($errors, "{$data[0]} : ".var_export($data[11], true)."\n");
-                    continue;
+                // If the user has been deleted, also remove this LPA.
+
+                for ($i=1; $i < count($data); $i++) {
+                    $data[$i] = '';
                 }
 
-                // Map the dates
-                $document = array_map($map, $document);
+                // Set the updated date
+                $data[2] = date('c');
 
-                $data[11] = json_encode($document, JSON_UNESCAPED_SLASHES);
+                $removed++;
+
+            } else {
+
+                if (!empty($data[11])) {
+                    $document = json_decode($data[11], true);
+
+                    if (!is_array($document)) {
+                        fwrite($errors, "{$data[0]} : " . var_export($data[11], true) . "\n");
+                        continue;
+                    }
+
+                    // Map the dates
+                    $document = array_map($map, $document);
+
+                    $data[11] = json_encode($document, JSON_UNESCAPED_SLASHES);
+                }
+
+                if (!empty($data[12])) {
+                    $payment = json_decode($data[12], true);
+
+                    // Map the dates
+                    $payment = array_map($map, $payment);
+
+                    $data[12] = json_encode($payment);
+                }
+
+                if (!empty($data[13])) {
+                    $metadata = json_decode($data[13], true);
+
+                    // Map the dates
+                    $metadata = array_map($map, $metadata);
+
+                    $data[13] = json_encode($metadata);
+                }
+
             }
-
-            if (!empty($data[12])) {
-                $payment   = json_decode($data[12], true);
-
-                // Map the dates
-                $payment = array_map($map, $payment);
-
-                $data[12] = json_encode($payment);
-            }
-
-            if (!empty($data[13])) {
-                $metadata   = json_decode($data[13], true);
-
-                // Map the dates
-                $metadata = array_map($map, $metadata);
-
-                $data[13] = json_encode($metadata);
-            }
-
 
         }
 
         //---
 
-        //var_dump($data);
-
-        //fputcsv($output, $data);
         $writer->insertOne($data);
     }
 
@@ -87,3 +110,6 @@ if (($handle = fopen("applications-dump.csv", "r")) !== FALSE) {
 
 fclose($output);
 fclose($errors);
+
+file_put_contents('removed.txt', "{$removed} removed LPAs\n");
+
