@@ -1,6 +1,18 @@
 <?php
 include_once ('../../../vendor/autoload.php');
 
+use League\Csv\Reader;
+use League\Csv\Writer;
+
+$validUserIds = [];
+
+$users = file('users.csv');
+foreach($users as $user){
+    $validUserIds[trim($user)] = true;
+}
+
+//---
+
 $output = fopen('php://output', 'wb');
 $errors = fopen('errors.txt', 'w');
 
@@ -8,6 +20,9 @@ $errors = fopen('errors.txt', 'w');
 $map = function ($v) use (&$map) {
     if (is_array($v) && isset($v['$date'])) {
         return $v['$date'];
+
+    } elseif (is_array($v) && isset($v['$numberLong'])) {
+        return (int)$v['$numberLong'];
 
     } elseif(is_array($v)){
         return array_map($map, $v);
@@ -17,62 +32,91 @@ $map = function ($v) use (&$map) {
     return $v;
 };
 
-$row = 0;
-if (($handle = fopen("applications-dump.csv", "r")) !== FALSE) {
+$writer = Writer::createFromPath('php://output', 'w+');
+$writer->setEnclosure("'");
 
-    while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
-        $row++;
-        if ($row === 1) {
-            continue;
-        }
+$removed = 0;
 
-        //---
+$handle = fopen("applications-dump.json", "r");
+while (($line = fgets($handle)) !== false) {
 
-        if (!empty($data[1])) {
+    $data = json_decode($line, true);
+    $data = array_map($map, $data);
 
-            if (!empty($data[11])) {
-                $document   = json_decode($data[11], true);
+    //---
 
-                if (!is_array($document)) {
-                    fwrite($errors, "{$data[0]} : ".var_export($data[11], true)."\n");
-                    continue;
+    if (!empty($data['user'])) {
+
+        if (!isset($validUserIds[$data['user']])) {
+
+            // If the user has been deleted, also remove this LPA.
+            foreach($data as $k => &$v){
+                if ($k != '_id') {
+                    $v = '';
                 }
-
-                // Map the dates
-                $document = array_map($map, $document);
-
-                $data[11] = json_encode($document);
             }
 
-            if (!empty($data[12])) {
-                $payment   = json_decode($data[12], true);
-
-                // Map the dates
-                $payment = array_map($map, $payment);
-
-                $data[12] = json_encode($payment);
-            }
-
-            if (!empty($data[13])) {
-                $metadata   = json_decode($data[13], true);
-
-                // Map the dates
-                $metadata = array_map($map, $metadata);
-
-                $data[13] = json_encode($metadata);
-            }
-
-
+            $data['updatedAt'] = date('c');
+            $removed++;
         }
 
-        //---
-
-        fputcsv($output, $data);
     }
 
-    fclose($handle);
+    $data = array_map(function ($v){
+        if (is_array($v)) {
+            return json_encode($v);
+        } else {
+            return $v;
+        }
+    }, $data);
+
+    //---
+
+    /*
+        id bigint PRIMARY KEY,
+        user text,
+        "updatedAt" timestamp with time zone NOT NULL,
+        "startedAt" timestamp with time zone,
+        "createdAt" timestamp with time zone,
+        "completedAt" timestamp with time zone,
+        "lockedAt" timestamp with time zone,
+        locked boolean,
+        "whoAreYouAnswered" boolean,
+        seed bigint,
+        "repeatCaseNumber" bigint,
+        document jsonb,
+        payment jsonb,
+        metadata jsonb,
+        search text
+     */
+
+    $data = [
+        (isset($data['_id'])) ? $data['_id'] : '',
+        (isset($data['user'])) ? $data['user'] : '',
+        (isset($data['updatedAt'])) ? $data['updatedAt'] : '',
+        (isset($data['startedAt'])) ? $data['startedAt'] : '',
+        (isset($data['createdAt'])) ? $data['createdAt'] : '',
+        (isset($data['completedAt'])) ? $data['completedAt'] : '',
+        (isset($data['lockedAt'])) ? $data['lockedAt'] : '',
+        (isset($data['locked'])) ? $data['locked'] : '',
+        (isset($data['whoAreYouAnswered'])) ? $data['whoAreYouAnswered'] : '',
+        (isset($data['seed'])) ? $data['seed'] : '',
+        (isset($data['repeatCaseNumber'])) ? $data['repeatCaseNumber'] : '',
+        (isset($data['document'])) ? $data['document'] : '',
+        (isset($data['payment'])) ? $data['payment'] : '',
+        (isset($data['metadata'])) ? $data['metadata'] : '',
+        (isset($data['search'])) ? $data['search'] : '',
+    ];
+
+    //---
+
+    $writer->insertOne($data);
 }
 
 
+fclose($handle);
 fclose($output);
 fclose($errors);
+
+file_put_contents('removed.txt', "{$removed} removed LPAs\n");
+

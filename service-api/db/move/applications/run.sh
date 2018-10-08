@@ -17,10 +17,11 @@ export PGPASSWORD=$OPG_LPA_POSTGRES_PASSWORD
 psql --username=$OPG_LPA_POSTGRES_USERNAME --host=$OPG_LPA_POSTGRES_HOSTNAME --dbname=$OPG_LPA_POSTGRES_NAME --file=get.sql
 
 echo "Converting data Mongo -> Postgres"
-php process-applications3.php > applications-converted.csv
+php process-applications.php > applications-converted.csv
 
 echo "Import the data into Postgres"
-#psql --username=$OPG_LPA_POSTGRES_USERNAME --host=$OPG_LPA_POSTGRES_HOSTNAME --dbname=$OPG_LPA_POSTGRES_NAME --file=copy.sql
+psql --username=$OPG_LPA_POSTGRES_USERNAME --host=$OPG_LPA_POSTGRES_HOSTNAME --dbname=$OPG_LPA_POSTGRES_NAME --file=copy.sql
 
 echo "Removing CSV files"
-#rm *.csv
+rm *.json
+rm *.csv
