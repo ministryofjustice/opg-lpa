@@ -22,6 +22,6 @@ php process-applications.php > applications-converted.csv
 echo "Import the data into Postgres"
 psql --username=$OPG_LPA_POSTGRES_USERNAME --host=$OPG_LPA_POSTGRES_HOSTNAME --dbname=$OPG_LPA_POSTGRES_NAME --file=copy.sql
 
-echo "Removing CSV files"
+echo "Removing CSV and JSON files"
 rm *.json
 rm *.csv

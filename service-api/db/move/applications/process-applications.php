@@ -1,7 +1,6 @@
 <?php
 include_once ('../../../vendor/autoload.php');
 
-use League\Csv\Reader;
 use League\Csv\Writer;
 
 $validUserIds = [];
@@ -12,9 +11,6 @@ foreach($users as $user){
 }
 
 //---
-
-$output = fopen('php://output', 'wb');
-$errors = fopen('errors.txt', 'w');
 
 // Recursively replace $date array items with the actual date string.
 $map = function ($v) use (&$map) {
@@ -113,10 +109,7 @@ while (($line = fgets($handle)) !== false) {
     $writer->insertOne($data);
 }
 
-
 fclose($handle);
-fclose($output);
-fclose($errors);
 
 file_put_contents('removed.txt', "{$removed} removed LPAs\n");
 
