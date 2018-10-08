@@ -42,6 +42,11 @@ abstract class AbstractPdfTestClass extends TestCase
         }
     }
 
+    protected function getTestDirectory()
+    {
+        return __DIR__ . '/../../../';
+    }
+
     protected function getLpa($isPfLpa = true)
     {
         $lpaDataFileName = __DIR__ . '/../../../fixtures/' . ($isPfLpa ? 'lpa-pf.json' : 'lpa-hw.json');

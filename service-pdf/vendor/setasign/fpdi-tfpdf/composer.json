@@ -1,0 +1,19 @@
+{
+    "name": "setasign/fpdi-tfpdf",
+    "homepage": "https://www.setasign.com/fpdi",
+    "description": "Kind of metadata package for dependencies of the latest versions of FPDI and tFPDF.",
+    "type": "library",
+    "keywords": ["pdf", "fpdi", "tfpdf"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jan Slabon",
+            "email": "jan.slabon@setasign.com",
+            "homepage": "https://www.setasign.com"
+        }
+    ],
+    "require": {
+        "setasign/tfpdf": "^1.25",
+        "setasign/fpdi": "^2.1"
+    }
+}
