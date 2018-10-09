@@ -11,6 +11,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use MongoDB\Database;
+use Zend\Db\Adapter\Adapter;
 
 class PingControllerFactoryTest extends MockeryTestCase
 {
@@ -39,6 +40,10 @@ class PingControllerFactoryTest extends MockeryTestCase
         $this->container->shouldReceive('get')
             ->with(DatabaseFactory::class . '-default')
             ->andReturn(Mockery::mock(Database::class))
+            ->once();
+        $this->container->shouldReceive('get')
+            ->with('ZendDbAdapter')
+            ->andReturn(Mockery::mock(Adapter::class))
             ->once();
 
         $controller = $this->factory->__invoke($this->container, PingController::class);
