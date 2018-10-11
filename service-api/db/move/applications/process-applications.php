@@ -61,6 +61,8 @@ while (($line = fgets($handle)) !== false) {
     $data = array_map(function ($v){
         if (is_array($v)) {
             return json_encode($v);
+        } elseif (is_bool($v)) {
+            return ($v) ? 'true' : 'false';
         } else {
             return $v;
         }
