@@ -30,6 +30,8 @@ class DynamoDbController extends AbstractConsoleController
         $this->createTable($sessionDynamoDb);
         $this->createTable($cronLockDynamoDb);
         $this->createTable($adminDynamoDb);
+
+        $this->updateTimeToLive($sessionDynamoDb);
     }
 
     /**
@@ -89,6 +91,34 @@ class DynamoDbController extends AbstractConsoleController
                 echo "Unable to describe table:\n";
                 echo $ex->getMessage() . "\n";
             }
+        }
+    }
+
+    /**
+     * @param $dynamoDbConfig
+     */
+    private function updateTimeToLive(array $dynamoDbConfig): void
+    {
+        if ($dynamoDbConfig['auto_create'] === false) {
+            echo "DynamoDB table {$dynamoDbConfig['settings']['table_name']} not set to auto create\n";
+            return;
+        }
+
+        $sdk = new Sdk([
+            'endpoint' => $dynamoDbConfig['client']['endpoint'],
+            'region' => $dynamoDbConfig['client']['region'],
+            'version' => $dynamoDbConfig['client']['version']
+        ]);
+
+        $dynamoDb = $sdk->createDynamoDb();
+
+        try {
+            $dynamoDb->updateTimeToLive(['TableName' => $dynamoDbConfig['settings']['table_name'],
+                'TimeToLiveSpecification' => ["Enabled" => $dynamoDbConfig['settings']['ttl_enabled'],
+                    "AttributeName" => "expires"]]);
+        } catch (DynamoDbException $ex) {
+            echo 'Unable to update time to live on table ' . $dynamoDbConfig['settings']['table_name'] . ':\n';
+            echo $ex->getMessage() . "\n";
         }
     }
 }
