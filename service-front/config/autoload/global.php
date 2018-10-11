@@ -116,6 +116,10 @@ return array(
             ],
             'settings' => [
                 'table_name' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE') ?: 'lpa-sessions-shared',
+                // Whether Time To Live is enabled on the sesson table
+                'ttl_enabled' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TTL_ENABLED') ?: true,
+                // The DB field to use for the Time To Live expiry time
+                'ttl_attribute' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TTL_ATTRIBUTE') ?: 'expires',
                 'batch_config' => [
                     // Sleep before each flush to rate limit the garbage collection.
                     'before' => function(){ sleep(1); },
