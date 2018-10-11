@@ -58,6 +58,20 @@ while (($line = fgets($handle)) !== false) {
 
     }
 
+    //---
+
+    // Ensure these are arrays, not objects.
+
+    if (isset($data['document']['primaryAttorneys'])) {
+        $data['document']['primaryAttorneys'] = array_values($data['document']['primaryAttorneys']);
+    }
+
+    if (isset($data['document']['replacementAttorneys'])) {
+        $data['document']['replacementAttorneys'] = array_values($data['document']['replacementAttorneys']);
+    }
+    
+    //---
+
     $data = array_map(function ($v){
         if (is_array($v)) {
             return json_encode($v);
