@@ -69,7 +69,11 @@ while (($line = fgets($handle)) !== false) {
     if (isset($data['document']['replacementAttorneys'])) {
         $data['document']['replacementAttorneys'] = array_values($data['document']['replacementAttorneys']);
     }
-    
+
+    if (isset($data['document']['peopleToNotify'])) {
+        $data['document']['peopleToNotify'] = array_values($data['document']['peopleToNotify']);
+    }
+
     //---
 
     $data = array_map(function ($v){
