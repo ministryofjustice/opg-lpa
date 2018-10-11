@@ -94,6 +94,9 @@ class Service extends AbstractService
             if ($person->id == (int) $id) {
                 unset($lpa->getDocument()->peopleToNotify[$key]);
 
+                // Reset the index sequence. This ensure the value remains an array, not an object, in JSON.
+                $lpa->getDocument()->setPeopleToNotify(array_values($lpa->getDocument()->peopleToNotify));
+
                 $this->updateLpa($lpa);
 
                 return true;
