@@ -5,6 +5,7 @@ namespace Application\Controller\Version2\Auth;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Http\Request as HttpRequest;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Mvc\MvcEvent;
@@ -14,6 +15,8 @@ use ZF\ApiProblem\ApiProblemResponse;
 
 abstract class AbstractAuthController extends AbstractRestfulController
 {
+    use LoggerTrait;
+
     /**
      * @var string
      */

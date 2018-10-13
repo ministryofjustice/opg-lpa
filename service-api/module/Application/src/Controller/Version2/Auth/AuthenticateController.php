@@ -2,14 +2,11 @@
 
 namespace Application\Controller\Version2\Auth;
 
-use Opg\Lpa\Logger\LoggerTrait;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
 
 class AuthenticateController extends AbstractAuthController
 {
-    use LoggerTrait;
-
     /**
      * TODO - Refactor later...
      * NOTE - Present to satisfy requirement in AbstractAuthController

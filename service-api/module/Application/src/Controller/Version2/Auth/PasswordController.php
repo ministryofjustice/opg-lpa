@@ -3,15 +3,12 @@
 namespace Application\Controller\Version2\Auth;
 
 use Application\Model\Service\Password\Service;
-use Opg\Lpa\Logger\LoggerTrait;
 use ZF\ApiProblem\ApiProblem;
 use Zend\View\Model\JsonModel;
 use DateTime;
 
 class PasswordController extends AbstractAuthController
 {
-    use LoggerTrait;
-
     /**
      * Get the service to use
      *

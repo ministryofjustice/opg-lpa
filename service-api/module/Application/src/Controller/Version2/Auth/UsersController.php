@@ -3,14 +3,11 @@
 namespace Application\Controller\Version2\Auth;
 
 use Application\Model\Service\Users\Service;
-use Opg\Lpa\Logger\LoggerTrait;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
 
 class UsersController extends AbstractAuthController
 {
-    use LoggerTrait;
-
     /**
      * Get the service to use
      *
