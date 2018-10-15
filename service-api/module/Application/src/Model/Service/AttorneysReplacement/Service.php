@@ -115,6 +115,9 @@ class Service extends AbstractService
             if ($attorney->id == (int) $id) {
                 unset($lpa->getDocument()->replacementAttorneys[$key]);
 
+                // Reset the index sequence. This ensure the value remains an array, not an object, in JSON.
+                $lpa->getDocument()->setReplacementAttorneys(array_values($lpa->getDocument()->replacementAttorneys));
+
                 $this->updateLpa($lpa);
 
                 return true;
