@@ -4,6 +4,11 @@
 (function () {
   'use strict';
 
+  if (typeof(gaConfig) === 'undefined') {
+    moj.log('gaConfig not set. skipping Google Analytics tracking.');
+    return;
+  }
+
   moj.Modules.Analytics = {
 
     init: function () {
