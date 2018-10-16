@@ -28,7 +28,7 @@ class EmailController extends AbstractAuthController
      */
     public function changeAction()
     {
-        $userId = $this->params('userId');
+        $userId = $this->params()->fromRoute('userId');
 
         $newEmailAddress = $this->getBodyContent('newEmail');
 

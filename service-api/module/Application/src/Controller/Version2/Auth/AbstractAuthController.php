@@ -110,7 +110,7 @@ abstract class AbstractAuthController extends AbstractRestfulController
 
         if (is_string($varName)) {
             //  Try to get the specific variable from the data
-            return ($data[$varName] ? $data[$varName] : null);
+            return (array_key_exists($varName, $data) ? $data[$varName] : null);
         }
 
         return $data;
