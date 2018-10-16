@@ -7,7 +7,7 @@ COUNTER=0
 while : ; do
 
     bin/lock acquire --table $OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE \
-    --name db-migrate --ttl 60 \
+    --name "$OPG_LPA_STACK_NAME/db-migrate" --ttl 60 \
     --endpoint $OPG_LPA_COMMON_DYNAMODB_ENDPOINT
 
     retval=$?
