@@ -2,6 +2,8 @@
 
 $profiles = [];
 
+// Load all profile data into memory
+
 $row = 0;
 if (($handle = fopen("profiles-dump.csv", "r")) !== FALSE) {
     while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
@@ -57,16 +59,19 @@ if (($handle = fopen("users-dump.csv", "r")) !== FALSE) {
             continue;
         }
 
+        // Map data to new format
         if ($data[4] === 'Y') {
             $data[4] = 'true';
         }
 
+        // Map timestamps to datetimes
         for ($i = 6; $i <= 11; $i++) {
             if (is_numeric($data[$i])) {
                 $data[$i] = date('c', $data[$i]);
             }
         }
 
+        // Map account deleting flags
         if ($row != 1 && !empty($data[12])) {
             $json = json_decode($data[12], true);
             $amended = [];

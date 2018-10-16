@@ -28,9 +28,11 @@ $map = function ($v) use (&$map) {
     return $v;
 };
 
+// Output to stdout
 $writer = Writer::createFromPath('php://output', 'w+');
 $writer->setEnclosure("'");
 
+// Count removed LPAs.
 $removed = 0;
 
 $handle = fopen("applications-dump.json", "r");
@@ -41,6 +43,7 @@ while (($line = fgets($handle)) !== false) {
 
     //---
 
+    // Removed LPAs that are not linked to a live user account.
     if (!empty($data['user'])) {
 
         if (!isset($validUserIds[$data['user']])) {
@@ -60,8 +63,7 @@ while (($line = fgets($handle)) !== false) {
 
     //---
 
-    // Ensure these are arrays, not objects.
-
+    // Ensure lists of actors are arrays, not objects.
     if (isset($data['document']['primaryAttorneys'])) {
         $data['document']['primaryAttorneys'] = array_values($data['document']['primaryAttorneys']);
     }
@@ -76,6 +78,7 @@ while (($line = fgets($handle)) !== false) {
 
     //---
 
+    // Map array and boolean data types.
     $data = array_map(function ($v){
         if (is_array($v)) {
             return json_encode($v);
@@ -106,6 +109,7 @@ while (($line = fgets($handle)) !== false) {
         search text
      */
 
+    // Order data correctly for Postgres.
     $data = [
         (isset($data['_id'])) ? $data['_id'] : '',
         (isset($data['user'])) ? $data['user'] : '',
@@ -132,4 +136,3 @@ while (($line = fgets($handle)) !== false) {
 fclose($handle);
 
 file_put_contents('removed.txt', "{$removed} removed LPAs\n");
-
