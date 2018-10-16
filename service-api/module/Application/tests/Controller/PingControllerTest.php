@@ -10,6 +10,7 @@ use Mockery\MockInterface;
 use MongoDB\Database;
 use MongoDB\Driver\Manager;
 use Opg\Lpa\Logger\Logger;
+use Zend\Db\Adapter\Adapter as ZendDbAdapter;
 use Zend\View\Model\JsonModel;
 
 class PingControllerTest extends MockeryTestCase
@@ -25,9 +26,14 @@ class PingControllerTest extends MockeryTestCase
     private $queueClient;
 
     /**
-     * @var Database|MockInterface
+     * @var ZendDbAdapter|MockInterface
      */
     private $database;
+
+    /**
+     * @var Database|MockInterface
+     */
+    private $mongo;
 
     /**
      * @var Logger|MockInterface
@@ -38,9 +44,11 @@ class PingControllerTest extends MockeryTestCase
     {
         $this->queueClient = Mockery::mock(DynamoQueueClient::class);
 
-        $this->database = Mockery::mock(Database::class);
+        $this->database = Mockery::mock(ZendDbAdapter::class);
 
-        $this->controller = new PingController($this->queueClient, $this->database);
+        $this->mongo = Mockery::mock(Database::class);
+
+        $this->controller = new PingController($this->queueClient, $this->database, $this->mongo);
 
         $this->logger = Mockery::mock(Logger::class);
         $this->controller->setLogger($this->logger);
@@ -54,13 +62,16 @@ class PingControllerTest extends MockeryTestCase
         /** @var Manager $manager */
         $manager = Mockery::mock();
 
-        $this->database->shouldReceive('getManager')
+        $this->mongo->shouldReceive('getManager')
             ->andReturn($manager);
-        $this->database->shouldReceive('getDatabaseName')
+        $this->mongo->shouldReceive('getDatabaseName')
             ->andReturn('database-name');
 
         $pingResult = [
-            'database' => [
+            'mongo' => [
+                'ok' => false,
+            ],
+            'zend-db' => [
                 'ok' => false,
             ],
             'ok' => false,
