@@ -5,7 +5,6 @@ namespace Application\Model\Service\Applications;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
-use Application\Library\Random\Csprng;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
@@ -31,12 +30,9 @@ class Service extends AbstractService
             $data = [];
         }
 
-        // Generate an id for the LPA
-        $csprng = new Csprng();
-
         //  Generate a random 11-digit number to use as the LPA id - this loops until we find one that's 'free'.
         do {
-            $id = $csprng->GetInt(1000000, 99999999999);
+            $id = random_int(1000000, 99999999999);
 
             //  Try to get an existing LPA to check if the ID is already used
             $existingLpa = $this->getApplicationRepository()->getById($id);

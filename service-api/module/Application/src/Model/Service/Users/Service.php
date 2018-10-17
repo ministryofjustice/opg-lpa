@@ -54,8 +54,8 @@ class Service extends AbstractService
         //  a clash with the userId or activation_token (despite this being extremely unlikely).
         do {
             // Create a 32 character user id and activation token.
-            $userId = bin2hex(openssl_random_pseudo_bytes(16));
-            $activationToken = bin2hex(openssl_random_pseudo_bytes(16));
+            $userId = bin2hex(random_bytes(16));
+            $activationToken = bin2hex(random_bytes(16));
 
             // Use base62 for shorter tokens
             $activationToken = BigInteger::factory('bcmath')->baseConvert($activationToken, 16, 62);
