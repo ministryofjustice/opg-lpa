@@ -8,7 +8,6 @@ use Application\Model\DataAccess\Repository\User\UserInterface as User;
 use Application\Model\Service\AbstractService;
 use Zend\Math\BigInteger\BigInteger;
 use DateTime;
-use RuntimeException;
 
 class Service extends AbstractService
 {
@@ -89,16 +88,10 @@ class Service extends AbstractService
             $expires = new DateTime("+" . self::TOKEN_TTL . " seconds");
 
             do {
-                $authToken = bin2hex(openssl_random_pseudo_bytes(32, $strong));
+                $authToken = bin2hex(random_bytes(32));
 
                 // Use base62 for shorter tokens
                 $authToken = BigInteger::factory('bcmath')->baseConvert($authToken, 16, 62);
-
-                if ($strong !== true) {
-                    // @codeCoverageIgnoreStart
-                    throw new RuntimeException('Unable to generate a strong token');
-                    // @codeCoverageIgnoreEnd
-                }
 
                 $created = (bool)$this->getUserRepository()->setAuthToken(
                     $user->id(),
