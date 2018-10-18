@@ -26,7 +26,7 @@ class PasswordController extends AbstractAuthController
      */
     public function changeAction()
     {
-        $userId = $this->params('userId');
+        $userId = $userId = $this->params()->fromRoute('userId');
 
         $newPassword = $this->getBodyContent('newPassword');
 

@@ -12,6 +12,7 @@ use Opg\Lpa\Logger\Logger;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\ResponseCollection;
 use Zend\Http\Header\ContentType;
+use Zend\Http\Header\HeaderInterface;
 use Zend\Http\Headers;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\Plugin\Params;
@@ -89,14 +90,12 @@ abstract class AbstractAuthControllerTest extends MockeryTestCase
         //  Set up the request with the content type
         $contentType = Mockery::mock(ContentType::class);
         $contentType->shouldReceive('getFieldValue')
-            ->andReturn('application/json')
-            ->once();
+            ->andReturn('application/json');
 
         $headers = Mockery::mock(Headers::class);
         $headers->shouldReceive('get')
             ->with('content-type')
-            ->andReturn($contentType)
-            ->once();
+            ->andReturn($contentType);
 
         $this->request = Mockery::mock(Request::class);
         $this->request->shouldReceive('getHeaders')
@@ -125,5 +124,25 @@ abstract class AbstractAuthControllerTest extends MockeryTestCase
         $controller->dispatch($this->request);
 
         return $controller;
+    }
+
+    protected function setToken($token, $userId, $authSuccess = true)
+    {
+        $tokenHeader = Mockery::mock(HeaderInterface::class);
+        $tokenHeader->shouldReceive('getFieldValue')
+            ->andReturn($token)
+            ->once();
+
+        $this->request->shouldReceive('getHeader')
+            ->with('Token')
+            ->andReturn($tokenHeader)
+            ->once();
+
+        $this->authenticationService->shouldReceive('withToken')
+            ->with($token, false)
+            ->andReturn(($authSuccess ? [
+                'userId' => $userId,
+            ] : false))
+            ->once();
     }
 }

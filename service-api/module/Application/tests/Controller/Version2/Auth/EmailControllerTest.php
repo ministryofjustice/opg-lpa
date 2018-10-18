@@ -6,7 +6,6 @@ use Application\Controller\Version2\Auth\EmailController;
 use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\Service\Email\Service;
-use Zend\Http\Header\HeaderInterface;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
 use Mockery;
@@ -379,26 +378,6 @@ class EmailControllerTest extends AbstractAuthControllerTest
 
         $this->assertEquals(500, $data['status']);
         $this->assertEquals('Unable to update email address', $data['detail']);
-    }
-
-    private function setToken($token, $userId, $authSuccess = true)
-    {
-        $tokenHeader = Mockery::mock(HeaderInterface::class);
-        $tokenHeader->shouldReceive('getFieldValue')
-            ->andReturn($token)
-            ->once();
-
-        $this->request->shouldReceive('getHeader')
-            ->with('Token')
-            ->andReturn($tokenHeader)
-            ->once();
-
-        $this->authenticationService->shouldReceive('withToken')
-            ->with($token, false)
-            ->andReturn(($authSuccess ? [
-                'userId' => $userId,
-            ] : false))
-            ->once();
     }
 
     private function getUpdateEmailUsingTokenResponse($userId, $errorMessage = null)
