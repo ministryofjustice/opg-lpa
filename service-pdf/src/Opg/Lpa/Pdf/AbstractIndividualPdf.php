@@ -178,10 +178,10 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                 $pdf->setPage($pageNo + 1);
 
                 foreach ($pageDrawingTargets as $pageDrawingTarget) {
-                    $targetStrikeThroughCoordinates = $this->config['strike_throughs'][$pageDrawingTarget];
-
                     //  Get the coordinates for this target from the config (y is inverted)
                     if (isset($this->config['strike_throughs'][$pageDrawingTarget])) {
+                        $targetStrikeThroughCoordinates = $this->config['strike_throughs'][$pageDrawingTarget];
+
                         $pdf->Line($targetStrikeThroughCoordinates['bx'],
                             $pdf->getPageHeight() - $targetStrikeThroughCoordinates['by'],
                             $targetStrikeThroughCoordinates['tx'],
