@@ -3,14 +3,11 @@
 namespace Application\Controller\Version2\Auth;
 
 use Application\Model\Service\Email\Service;
-use Opg\Lpa\Logger\LoggerTrait;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
 
 class EmailController extends AbstractAuthController
 {
-    use LoggerTrait;
-
     /**
      * Get the service to use
      *
@@ -31,7 +28,7 @@ class EmailController extends AbstractAuthController
      */
     public function changeAction()
     {
-        $userId = $this->params('userId');
+        $userId = $this->params()->fromRoute('userId');
 
         $newEmailAddress = $this->getBodyContent('newEmail');
 

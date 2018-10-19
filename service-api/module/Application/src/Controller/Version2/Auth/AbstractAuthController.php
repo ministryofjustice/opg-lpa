@@ -5,6 +5,7 @@ namespace Application\Controller\Version2\Auth;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Http\Request as HttpRequest;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Mvc\MvcEvent;
@@ -14,6 +15,8 @@ use ZF\ApiProblem\ApiProblemResponse;
 
 abstract class AbstractAuthController extends AbstractRestfulController
 {
+    use LoggerTrait;
+
     /**
      * @var string
      */
@@ -107,7 +110,7 @@ abstract class AbstractAuthController extends AbstractRestfulController
 
         if (is_string($varName)) {
             //  Try to get the specific variable from the data
-            return ($data[$varName] ? $data[$varName] : null);
+            return (array_key_exists($varName, $data) ? $data[$varName] : null);
         }
 
         return $data;
