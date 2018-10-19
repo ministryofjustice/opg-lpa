@@ -13,8 +13,8 @@ class ConfigSetUp
         $config = Config::getInstance();
 
         $serviceConfig = $config['service'];
-        $serviceConfig['disable_strike_through_lines'] = true;
-        $serviceConfig['disable_blanks'] = true;
+        $serviceConfig['disable_strike_through_lines'] = false;
+        $serviceConfig['disable_blanks'] = false;
         $serviceConfig['assets']['template_path_on_ram_disk'] = __DIR__ . '/../assets/v2';
         $serviceConfig['assets']['intermediate_file_path'] = '/tmp';
 

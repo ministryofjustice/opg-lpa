@@ -3,6 +3,7 @@
 test-data/
 config/local.php
 test.php
+tests/tmp/
 
 nbproject
 ._*

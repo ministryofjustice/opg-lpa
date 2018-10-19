@@ -4,9 +4,8 @@ namespace Opg\Lpa\Pdf;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use mikehaertl\pdftk\Pdf as PdftkPdf;
-use ZendPdf\PdfDocument as ZendPdfDocument;
 use Exception;
-use ZendPdf\Resource\Image\Png;
+use setasign\Fpdi\Tcpdf\Fpdi;
 
 /**
  * Class AbstractIndividualPdf
@@ -122,6 +121,108 @@ abstract class AbstractIndividualPdf extends AbstractPdf
     }
 
     /**
+     * Draw thick black lines through unused fields and hide extra signatures with a white rectangle
+     *
+     * Loads the PDF file modifies it and rewrites the file
+     *
+     * @throws \setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException
+     * @throws \setasign\Fpdi\PdfParser\Filter\FilterException
+     * @throws \setasign\Fpdi\PdfParser\PdfParserException
+     * @throws \setasign\Fpdi\PdfParser\Type\PdfTypeException
+     * @throws \setasign\Fpdi\PdfReader\PdfReaderException
+     */
+    protected function drawStrikeThroughsAndBlanks() : void
+    {
+        // If no strike throughs and blanks are specified skip the rest of this method
+        if (empty($this->strikeThroughTargets) && empty($this->blankTargets)) {
+            return;
+        }
+
+        // Check to see if drawing cross lines and blanks is disabled or not
+        $disableStrikeThroughLines = false;
+        $disableBlanks = false;
+
+        if (isset($this->config['service']['disable_strike_through_lines'])) {
+            $disableStrikeThroughLines = (bool)$this->config['service']['disable_strike_through_lines'];
+        }
+
+        if (isset($this->config['service']['disable_blanks'])) {
+            $disableBlanks = (bool)$this->config['service']['disable_blanks'];
+        }
+
+        // If strike throughs and blanks are disabled skip the rest of this method
+        if ($disableStrikeThroughLines && $disableBlanks) {
+            return;
+        }
+
+        $pdf = new FPDI('P', 'pt');
+
+        // Turn off line at top of PDF
+        $pdf->setPrintHeader(false);
+
+        $pageCount = $pdf->setSourceFile($this->pdfFile);
+
+        // Import all the pages into the TCPDF pdf object
+        for ($i = 1; $i <= $pageCount; $i++) {
+            $pdf->addPage();
+
+            $pageId = $pdf->importPage($i);
+
+            $pdf->useTemplate($pageId);
+        }
+
+        $changesMade = false;
+
+        if (!$disableStrikeThroughLines) {
+            foreach ($this->strikeThroughTargets as $pageNo => $pageDrawingTargets) {
+                $pdf->setPage($pageNo + 1);
+
+                foreach ($pageDrawingTargets as $pageDrawingTarget) {
+                    //  Get the coordinates for this target from the config (y is inverted)
+                    if (isset($this->config['strike_throughs'][$pageDrawingTarget])) {
+                        $targetStrikeThroughCoordinates = $this->config['strike_throughs'][$pageDrawingTarget];
+
+                        $pdf->Line($targetStrikeThroughCoordinates['bx'],
+                            $pdf->getPageHeight() - $targetStrikeThroughCoordinates['by'],
+                            $targetStrikeThroughCoordinates['tx'],
+                            $pdf->getPageHeight() - $targetStrikeThroughCoordinates['ty'],
+                            ['width' => 10, 'color' => [0, 0, 0]]);
+
+                        $changesMade = true;
+                    }
+                }
+            }
+        }
+
+        if (!$disableBlanks) {
+            foreach ($this->blankTargets as $pageNo => $pageDrawingTargets) {
+                $pdf->setPage($pageNo + 1);
+
+                foreach ($pageDrawingTargets as $pageDrawingTarget) {
+                    //  Get the coordinates for this target from the config (y is inverted)
+                    if (isset($this->config['blanks'][$pageDrawingTarget])) {
+                        $blankCoordinates = $this->config['blanks'][$pageDrawingTarget];
+
+                        $pdf->Rect($blankCoordinates['x1'],
+                            $pdf->getPageHeight() - $blankCoordinates['y2'],
+                            $blankCoordinates['x2'] - $blankCoordinates['x1'],
+                            $blankCoordinates['y2'] - $blankCoordinates['y1'],
+                            'F',
+                            [],
+                            [255, 255, 255]);
+
+                        $changesMade = true;
+                    }
+                }
+            }
+        }
+
+        if ($changesMade) {
+            $pdf->Output($this->pdfFile, 'F');
+        }
+    }
+
+    /**
      * Generate the PDF - this will save a copy to the file system
      *
      * @param bool $protect
@@ -135,79 +236,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
              ->flatten()
              ->saveAs($this->pdfFile);
 
-        //  Draw any strike throughs and/or blanks
-        if (!empty($this->strikeThroughTargets) || !empty($this->blankTargets)) {
-            //  Check to see if drawing cross lines and blanks is disabled or not
-            $disableStrikeThroughLines = false;
-            $disableBlanks = false;
-
-            if (isset($this->config['service']['disable_strike_through_lines'])) {
-                $disableStrikeThroughLines = (bool)$this->config['service']['disable_strike_through_lines'];
-            }
-
-            if (isset($this->config['service']['disable_blanks'])) {
-                $disableBlanks = (bool)$this->config['service']['disable_blanks'];
-            }
-
-            if (!$disableStrikeThroughLines || !$disableBlanks) {
-                //  Get the PDF to manipulate
-                $pdfForDrawings = ZendPdfDocument::load($this->pdfFile);
-                $changesMade = false;
-
-                if (!$disableStrikeThroughLines) {
-                    foreach ($this->strikeThroughTargets as $pageNo => $pageDrawingTargets) {
-                        $page = $pdfForDrawings->pages[$pageNo];
-                        $page->setLineWidth(10);
-
-                        foreach ($pageDrawingTargets as $pageDrawingTarget) {
-                            //  Get the coordinates for this target from the config
-                            if (isset($this->config['strike_throughs'][$pageDrawingTarget])) {
-                                $targetStrikeThroughCoordinates = $this->config['strike_throughs'][$pageDrawingTarget];
-
-                                $page->drawLine(
-                                    $targetStrikeThroughCoordinates['bx'],
-                                    $targetStrikeThroughCoordinates['by'],
-                                    $targetStrikeThroughCoordinates['tx'],
-                                    $targetStrikeThroughCoordinates['ty']
-                                );
-
-                                $changesMade = true;
-                            }
-                        }
-                    }
-                }
-
-                if (!$disableBlanks) {
-                    $blank = new Png($this->config['service']['assets']['source_template_path'] . '/blank.png');
-
-                    foreach ($this->blankTargets as $pageNo => $pageDrawingTargets) {
-                        $page = $pdfForDrawings->pages[$pageNo];
-
-                        foreach ($pageDrawingTargets as $pageDrawingTarget) {
-                            //  Get the coordinates for this target from the config
-                            if (isset($this->config['blanks'][$pageDrawingTarget])) {
-                                $blankCoordinates = $this->config['blanks'][$pageDrawingTarget];
-
-                                $page->drawImage(
-                                    $blank,
-                                    $blankCoordinates['x1'],
-                                    $blankCoordinates['y1'],
-                                    $blankCoordinates['x2'],
-                                    $blankCoordinates['y2']
-                                );
-
-                                $changesMade = true;
-                            }
-                        }
-                    }
-                }
-
-                //  If changes have been made save a copy now
-                if ($changesMade) {
-                    $pdfForDrawings->save($this->pdfFile);
-                }
-            }
-        }
+        $this->drawStrikeThroughsAndBlanks();
 
         //  Process any constituent PDFs
         if (!empty($this->constituentPdfs)) {
