@@ -4,6 +4,10 @@ The donor can give preferences and instructions to guide and direct the way thei
 
 Adding preferences and instructions is optional, and most donors do not add any. Many donors prefer to talk to their attorneys about their wishes in advance, rather than leaving written directions.
 
+When attorneys want to make a decision on the donor’s behalf, they will need to show the registered LPA to organisations, such as banks or care homes. These organisations will check the LPA to see if the donor made any relevant preferences or instructions.
+
+## When instructions must be added
+
 The donor must add instructions if:
 
 * they appointed their attorneys jointly, and want the remaining attorneys to be able to continue make decisions if one of the attorneys dies or is unable to act
