@@ -9,39 +9,39 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'name-title' : {
-        'cannot-be-blank' : 'Please enter the donor\'s title',
+        'cannot-be-blank' : 'Enter the donor\'s title',
         'must-be-less-than-or-equal:5' : 'Title must be five letters or fewer - please abbreviate, if necessary'
     },
     'name-first' : {
-        'cannot-be-blank' : 'Please enter the donor\'s first name',
+        'cannot-be-blank' : 'Enter the donor\'s first name',
         'must-be-less-than-or-equal:53' : 'Donor\'s first names cannot be longer than 53 characters long'
     },
     'name-last' : {
-        'cannot-be-blank' : 'Please enter the donor\'s last name',
+        'cannot-be-blank' : 'Enter the donor\'s last name',
         'must-be-less-than-or-equal:61' : 'Donor\'s last name cannot be longer than 61 characters long'
     },
     'email-address' : {
-        'invalid-email-address' : 'Please enter a valid email address'
+        'invalid-email-address' : 'Enter a valid email address'
     },
     'address-address1' : {
-        'cannot-be-blank' : 'Please enter the donor\'s first line of address',
+        'cannot-be-blank' : 'Enter the donor\'s first line of address',
         'must-be-less-than-or-equal:40' : 'Address line 1 cannot be longer than 40 characters long'
     },
     'address-address2' : {
-        'linked-1-cannot-be-null' : 'Please enter the donor\'s second line of address',
+        'linked-1-cannot-be-null' : 'Enter the donor\'s second line of address',
         'must-be-less-than-or-equal:40' : 'Address line 2 cannot be longer than 40 characters long'
     },
     'address-address3' : {
         'must-be-less-than-or-equal:40' : 'Address line 3 cannot be longer than 40 characters long'
     },
     'address-postcode' : {
-        'linked-1-cannot-be-null' : 'Please enter the donor\'s postcode',
+        'linked-1-cannot-be-null' : 'Enter the donor\'s postcode',
         'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines rather than in the postcode field.'
     },
     'dob-date' : {
-        'cannot-be-blank' : 'Please enter the donor\'s date of birth',
+        'cannot-be-blank' : 'Enter the donor\'s date of birth',
         'must-be-less-than-or-equal-to-today' : 'Date of birth must be before today',
-        'expected-type:DateTime' : 'Please enter a valid date of birth'
+        'expected-type:DateTime' : 'Enter a valid date of birth'
     }
 }) %}
 
@@ -191,8 +191,17 @@
 
         <div class="form-group">
             <details class="flush--bottom" {{ otherNames.getValue() ? 'open' : '' }}>
-                <summary class="summary" role="button" aria-expanded="false">Is this person known by any other names?</summary>
+                <summary class="summary" role="button" aria-expanded="false">Is the donor known by any other names?</summary>
                 <div>
+                    <span class="form-hint summary-text">
+                        {% if lpa.document.type is defined %}
+                            {% if lpa.document.type == 'property-and-financial' %}
+                                For example, does the donor have a bank account in their maiden name or in a name spelt slightly differently?
+                            {% elseif lpa.document.type == 'health-and-welfare' %}
+                                For example, are the donor’s medical records in their maiden name or in a name spelt slightly differently?
+                            {% endif %}
+                        {% endif %}
+                    </span>
                     {{ macros.formGroup(otherNames) }}
                 </div>
             </details>
@@ -268,7 +277,7 @@
             <label class="block-label" for="{{ canSign.getAttribute('id') }}">
                 {{ formElement(canSign) }}
                 {{ canSign.getOption('label') }}
-                <span class="form-hint flush--bottom">We'll add an extra sheet to the LPA so someone can sign on their behalf</span>
+                <span class="form-hint flush--bottom">We'll add an extra sheet to the LPA so someone can sign on the donor's behalf</span>
                 {{ formElementErrorsV2(canSign) }}
             </label>
         </div>
