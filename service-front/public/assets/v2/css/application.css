@@ -3103,6 +3103,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
       width: 252px; } }
   @media (min-width: 641px) {
     .form-popup .summary,
+    .form-popup .summary-text,
     .form-popup .address-type-toggle,
     .form-popup .block-label,
     .form-popup .button,
