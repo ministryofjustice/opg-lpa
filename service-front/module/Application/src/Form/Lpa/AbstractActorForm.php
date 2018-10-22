@@ -124,12 +124,14 @@ abstract class AbstractActorForm extends AbstractLpaForm
     }
 
     /**
-     * Function to set the actor names for all actors associated with the current LPA as a data attribute
+     * Function to set the actor data (existing type and names for duplicate comparisons) for all actors associated with the current LPA as a data attribute
      *
+     * @param $actorType
      * @param array $actorNames
      */
-    public function setExistingActorNamesData(array $actorNames)
+    public function setActorData($actorType, array $actorNames)
     {
+        $this->setAttribute('data-actor-type', $actorType);
         $this->setAttribute('data-actor-names', json_encode($actorNames));
     }
 }

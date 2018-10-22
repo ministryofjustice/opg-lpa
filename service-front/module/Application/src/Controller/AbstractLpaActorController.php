@@ -319,8 +319,8 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
         $lpaDocument = $this->getLpa()->document;
 
-        //  If there is a donor present in the LPA and we are editing it then do NOT include in the actor list
-        if (!$isDonorRoute && $lpaDocument->donor instanceof Donor) {
+        //  If there is a donor present in the LPA and we are editing it, or adding/editing people to notify then do NOT include in the actor list
+        if (!$isDonorRoute && !$isPeopleToModifyRoute && $lpaDocument->donor instanceof Donor) {
             $actorsList[] = $this->getActorDetails($lpaDocument->donor, 'donor');
         }
 
@@ -357,8 +357,8 @@ abstract class AbstractLpaActorController extends AbstractLpaController
             }
         }
 
-        //  Include all of the people to notify unless we adding/editing a certificate provider
-        if (!$isCertificateProviderRoute) {
+        //  Include all of the people to notify unless we adding/editing a donor or certificate provider
+        if (!$isDonorRoute && !$isCertificateProviderRoute) {
             foreach ($lpaDocument->peopleToNotify as $idx => $notifiedPerson) {
                 //  We are editing this person to notify so do not add it to the actor list
                 if ($isPeopleToModifyRoute && $actorIndexToExclude === $idx) {
