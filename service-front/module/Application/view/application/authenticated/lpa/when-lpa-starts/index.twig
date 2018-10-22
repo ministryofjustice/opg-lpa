@@ -9,7 +9,7 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'when' : {
-        "Value is required and can't be empty" : 'Please choose when your LPA can be used',
+        "Value is required and can't be empty" : 'Choose when your LPA can be used',
     }
 }) %}
 
@@ -18,13 +18,13 @@
 
 <li id="when-lpa-starts-section" class="section current">
 
-    <h2 class="heading-medium accordion-header flush--top">When can your LPA be used?</h2>
+    <h2 class="heading-medium accordion-header flush--top">When can the LPA be used?</h2>
 
     <div class="accordion-info">
         <div class="text">
-            <p>If you want help straight away with managing your property and finances, you can say that your LPA can be used as soon as it's registered.</p>
-            <p>Alternatively, you can say that your LPA can only be used if you do not have mental capacity.</p>
-            <p><a href="/guide#topic-when-an-lpa-can-be-used" class="js-guidance" data-journey-click="page:link:help: Find out more about your options">Find out more about your options</a></p>
+            <p>If the donor wants help straight away with managing their property and finances, they can say that their LPA can be used as soon as it's registered.</p>
+            <p>Alternatively, they can say that their LPA can only be used if they do not have <a href="/guide#topic-mental-capacity" class="js-guidance" data-journey-click="page:link:help: Find out more about mental capacity">mental capacity</a>.</p>
+            <p><a href="/guide#topic-when-an-lpa-can-be-used" class="js-guidance" data-journey-click="page:link:help: Find out more about your options">Find out more the donor's options</a></p>
         </div>
     </div>
 
@@ -36,26 +36,26 @@
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
         <fieldset id="when">
-            <legend class="visually-hidden">When can your LPA be used?</legend>
+            <legend class="visually-hidden">When can the LPA be used?</legend>
 
-            <h2 class="heading-medium flush--top">My LPA can be used</h2>
+            <h2 class="heading-medium flush--top">The LPA can be used</h2>
 
             <div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
 
-                {{ formRadio().outputOption(when, 'now', {"data-target":"now-help"} )|raw }}
+                {{ formRadio().outputOption(when, 'now')|raw }}
 
-                <div id="now-help" class="panel panel-border-narrow js-hidden">
+                <div class="panel panel-border-narrow">
                     <div class="text">
-                        <p>Most people choose this option because it is the most practical. While you still have mental capacity, your attorneys can only act with your consent. You will still be in control of all decisions affecting you. If you later lose capacity, your attorneys can continue to act on your behalf for all decisions this LPA covers.</p>
+                        <p>Most donors choose this option because it is the most practical. While the donor still has mental capacity, their attorneys can only act with the donor's permission. The donor will still be in control of all decisions affecting them.</p>
 
-                        <p>This option is useful if you are able to make your own decisions but there’s another reason you want your attorneys to help you – for example, if you’re away on holiday, or if you have a physical condition that makes it difficult to visit the bank, talk on the phone or sign documents.</p>
+                        <p>This option is useful if the donor is able to make their own decisions but there’s another reason they want their attorneys' help – for example, if the donor is away on holiday, or if they have a physical condition that makes it difficult to visit the bank.</p>
                     </div>
                 </div>
 
-                {{ formRadio().outputOption(when, 'no-capacity', {"data-target":"no-capacity-help"})|raw }}
+                {{ formRadio().outputOption(when, 'no-capacity')|raw }}
 
-                <div id="no-capacity-help" class="panel panel-border-narrow js-hidden">
-                    <p class="text">This means your attorneys can make decisions for you only if you do not have mental capacity to make certain decisions yourself. But be careful – this option can make your LPA a lot less useful. Your attorneys might be asked to prove you do not have mental capacity each time they try to use this LPA.</p>
+                <div class="panel panel-border-narrow">
+                    <p class="text">This means the attorneys can only act if the donor does not have mental capacity to make certain decisions themselves. But be careful – this option can make the LPA a lot less useful. Every time the attorneys try to use the LPA, they might be asked to prove that the donor does not have mental capacity.</p>
                 </div>
 
             </div>

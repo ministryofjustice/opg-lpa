@@ -14,14 +14,14 @@ class WhenLpaStartsForm extends AbstractMainFlowForm
                 'value_options' => [
                     'now' => [
                         'value' => 'now',
-                        'label' => 'as soon as it\'s registered (with my consent)',
+                        'label' => 'as soon as it\'s registered (with the donor\'s consent)',
                         'label_attributes' => [
                             'class' => 'block-label',
                         ],
                     ],
                     'no-capacity' => [
                         'value' => 'no-capacity',
-                        'label' => 'only if I do not have mental capacity',
+                        'label' => 'only if the donor does not have mental capacity',
                         'label_attributes' => [
                             'class' => 'block-label',
                         ],
