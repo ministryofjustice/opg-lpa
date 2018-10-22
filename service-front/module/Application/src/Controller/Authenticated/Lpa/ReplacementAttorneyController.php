@@ -79,7 +79,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\AttorneyForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/replacement-attorney/add', ['lpa-id' => $lpa->id]));
-        $form->setExistingActorNamesData($this->getActorsList());
+        $form->setActorData('replacement attorney', $this->getActorsList());
 
         if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
@@ -143,7 +143,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
 
         if ($attorney instanceof Human) {
             $form = $this->getFormElementManager()->get('Application\Form\Lpa\AttorneyForm');
-            $form->setExistingActorNamesData($this->getActorsList($attorneyIdx));
+            $form->setActorData('replacement attorney', $this->getActorsList($attorneyIdx));
             $viewModel->setTemplate('application/authenticated/lpa/replacement-attorney/person-form.twig');
         } else {
             $form = $this->getFormElementManager()->get('Application\Form\Lpa\TrustCorporationForm');

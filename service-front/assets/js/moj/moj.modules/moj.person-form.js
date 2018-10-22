@@ -110,7 +110,7 @@
 
           if (!$target.hasClass('confirmation-validation')) {
             // If the input changed is not a confirmation tick box, then do the form checks...
-
+            var actorType = $form.data('actor-type');
 
             // Are we editing the name fields?
             if (($target.attr('name') === 'name-first') || ($target.attr('name') === 'name-last')) {
@@ -140,9 +140,34 @@
                 var alertStart = 'The ' + duplicateName.type + '\'s name is also ';
 
                 if ($.inArray(duplicateName.type, ['replacement attorney', 'person to notify']) > -1) {
-                  alertStart = 'There is already a ' + duplicateName.type + ' called ';
+                  alertStart = 'There is also a ' + duplicateName.type + ' called ';
                 } else if (duplicateName.type == 'attorney') {
-                  alertStart = 'There is already an ' + duplicateName.type + ' called ';
+                  alertStart = 'There is also an ' + duplicateName.type + ' called ';
+                }
+
+                //  Construct the middle part of the message
+                var alertMiddle = 'The ' + duplicateName.type + ' cannot be ';
+
+                //  If the user is attempting to create an attorney or replacement attorney twice show a specific line
+                if (actorType == duplicateName.type && actorType == 'attorney') {
+                    alertMiddle = 'A person cannot be named as an attorney twice on the same LPA';
+                } else if (actorType == duplicateName.type && actorType == 'replacement attorney') {
+                    alertMiddle = 'A person cannot be named as a replacement attorney twice on the same LPA';
+                } else {
+                    //  Check the rest of the logic
+                    if ($.inArray(duplicateName.type, ['replacement attorney', 'person to notify']) > -1) {
+                        alertMiddle = 'A ' + duplicateName.type + ' cannot be ';
+                    } else if (duplicateName.type == 'attorney') {
+                        alertMiddle = 'An ' + duplicateName.type + ' cannot be ';
+                    }
+
+                    if ($.inArray(actorType, ['replacement attorney', 'person to notify']) > -1) {
+                        alertMiddle += 'a ' + actorType;
+                    } else if (actorType == 'attorney') {
+                        alertMiddle += 'an ' + actorType;
+                    } else {
+                        alertMiddle += 'the ' + actorType;
+                    }
                 }
 
                 $('label[for="name-last"]', $form)
@@ -150,7 +175,7 @@
                   .after($(tplAlert({
                     'elementJSref': 'js-duplication-alert',
                     'alertType': 'important-small',
-                    'alertMessage': '<p>' + alertStart + duplicateName.firstname + ' ' + duplicateName.lastname + '. You cannot use the same person in multiple roles. By saving this section, you are confirming that these are two different people with the same name.</p>'
+                    'alertMessage': '<p>' + alertStart + duplicateName.firstname + ' ' + duplicateName.lastname + '. ' + alertMiddle + '. By saving this section, you are confirming that these are 2 different people with the same name.</p>'
                   })));
 
                 // Focus on alert panel for accessibility
@@ -171,11 +196,21 @@
                 // Display alerts if under 18 or over 100 years old
                 // Under 18 and earlier than today. A server side validation check is in place for dob greater than today.
                 if (dob > minAge && dob < new Date()) {
+                  //  Build up the under 18 warning message
+                  var ageWarningAlertStart = 'The ' + actorType + ' is under 18.';
+                  var ageWarningAlertMiddle = 'the donor';
+
+                  if ($.inArray(actorType, ['attorney', 'replacement attorney', 'person to notify']) > -1) {
+                    ageWarningAlertStart = 'This ' + actorType + ' is under 18.';
+                  } else if (actorType == 'donor') {
+                    ageWarningAlertMiddle = 'they';
+                  }
+
                   $('.dob-element', $form)
                     .after($(tplAlert({
                       'elementJSref': 'js-age-check',
                       'alertType': 'important-small',
-                      'alertMessage': 'This person is under 18. I understand they must be at least 18 <strong class="bold-small">on the date the donor signs the LPA</strong>, otherwise it will be rejected.'
+                      'alertMessage': ageWarningAlertStart + ' I understand that the ' + actorType + ' must be at least 18 <strong class="bold-small">on the date ' + ageWarningAlertMiddle + ' sign the LPA</strong>, otherwise the LPA will be rejected.'
                     })));
                 }
                 // Over 100
