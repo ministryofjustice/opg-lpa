@@ -9,10 +9,10 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form, {
     'how' : {
-        'Value is required and can\'t be empty' : 'Please choose how your replacement attorneys make decisions',
+        'Value is required and can\'t be empty' : 'Choose how the replacement attorneys should make decisions',
     },
     'howDetails': {
-    	'Value is required and can\'t be empty' : 'Please tell us which decisions have to be made jointly, and which can be made jointly and severally'
+    	'Value is required and can\'t be empty' : 'Tell us which decisions have to be made jointly, and which can be made jointly and severally'
 	}
 }) %}
 
@@ -34,7 +34,10 @@
 		attributes: {
 			id: 'how-jointly-attorney-severally'
 		},
-		label: '<strong class="bold-small">Jointly and severally</strong><span class="text form-hint form-hint--strong">Replacement attorneys can make decisions on their own or together. Most people choose this option because it’s the most practical.</span>',
+		label: '<strong class="bold-small">Jointly and severally</strong>
+				<span class="text form-hint form-hint--strong">
+				Replacement attorneys can make decisions on their own or together. Most people choose this option because it’s the most practical.
+				</span>',
 		label_attributes: {
 			for: 'how-jointly-attorney-severally'
 		},
@@ -44,7 +47,10 @@
 		attributes: {
 			id: 'how-jointly'
 		},
-		label: '<strong class="bold-small">Jointly</strong><span class="text form-hint form-hint--strong">Replacement attorneys must agree unanimously on every decision, however big or small. If one of your attorneys can no longer act the others will no longer be able to act, unless you state otherwise in the \'Instructions\' section later.</span>',
+		label: '<strong class="bold-small">Jointly</strong>
+				<span class="text form-hint form-hint--strong">
+				Replacement attorneys must agree unanimously on every decision, however big or small. If one replacement attorney can no longer act, the others will not be able to act either, unless the donor states otherwise in their instructions.
+				</span>',
 		label_attributes: {
 			for: 'how-jointly'
 		},
@@ -54,9 +60,10 @@
 		attributes: {
 			id: 'how-depends'
 		},
-		label: '<strong class="text bold-small">Jointly for some decisions, and jointly and severally
-			for other decisions</strong><span class="text form-hint form-hint--strong">
-			Replacement attorneys must agree unanimously on some decisions, but can make others on their own. You’ll need to state which decisions need to be agreed unanimously.</span>',
+		label: '<strong class="text bold-small">Jointly for some decisions, and jointly and severally for other decisions</strong>
+				<span class="text form-hint form-hint--strong">
+				Replacement attorneys must agree unanimously on some decisions, but can make others on their own. The donor must state which decisions need to be agreed unanimously.
+				</span>',
 		label_attributes: {
 			for: 'how-depends',
 			'data-target': 'decisions-details'
@@ -79,11 +86,11 @@
 
 <li id="replacement-attorney-decision-sections" class="section current">
 
-	<h2 class="heading-medium accordion-header flush--top">How should your replacement attorneys make decisions?</h2>
+	<h2 class="heading-medium accordion-header flush--top">How should the replacement attorneys make decisions?</h2>
 
     <div class="accordion-info">
 		<div class="text">
-			<p>Your choice here is very important as it affects how your LPA can be used. Whichever option you choose, your replacement attorneys must always act in your best interests.</p>
+			<p>The donor’s choice here is very important as it affects how their LPA can be used. Whichever option the donor chooses, their replacement attorneys must always act in the donor’s best interests.</p>
 			<p><a class="js-guidance" href="/guide#topic-how-multiple-attorneys-make-decisions" data-journey-click="page:link:help: Get help with making this decision">Get help with making this decision</a></p>
 		</div>
 	</div>
@@ -104,8 +111,7 @@
                 {{ formElement(how) }}
                 <div id="decisions-details" class="panel panel-border-narrow js-hidden">
                     <p class="text">
-                        Please tell us which decisions have to be made jointly, and which can be made jointly and severally. These decisions will be printed on a extra sheet the donor will need to sign and date.
-                        <a class="js-guidance" href="/guide#topic-how-multiple-attorneys-make-decisions" data-journey-click="page:link:help: Take a look at the guidance">Take a look at the guidance</a> for examples of how to make your wishes clear.
+						Please tell us which decisions the donor wants to be made jointly. These decisions will be printed on a extra sheet that the donor will need to sign and date. <a class="js-guidance" href="/guide#topic-how-multiple-attorneys-make-decisions" data-journey-click="page:link:help: Take a look at the guidance">Take a look at the guidance</a> for examples of how the donor can make their wishes clear.
                     </p>
                     {{ macros.formGroup(howDetails) }}
                 </div>
