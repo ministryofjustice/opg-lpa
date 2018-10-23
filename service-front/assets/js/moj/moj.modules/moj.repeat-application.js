@@ -52,7 +52,7 @@
 
         html = tplDialogConfirm({
           'dialogTitle': 'Confirm',
-          'dialogMessage': 'I confirm that the Office of the Public Guardian has told me that I can apply to make a repeat application for £41 within 3 months.',
+          'dialogMessage': 'I confirm that OPG has said a repeat application can be made within 3 months for half the normal application fee.',
           'acceptButtonText': 'Confirm and continue',
           'cancelButtonText': 'Cancel',
           'acceptClass': 'js-dialog-accept',
