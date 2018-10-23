@@ -50,7 +50,7 @@ class SystemMessageFormTest extends MockeryTestCase
 
         $this->assertEquals([
             'message' => [
-                'stringLengthTooLong' => 'Please limit the message to 8000 chars.'
+                'stringLengthTooLong' => 'Limit the message to 8000 chars.'
             ],
         ], $this->form->getMessages());
     }
