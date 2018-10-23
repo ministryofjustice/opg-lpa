@@ -43,8 +43,6 @@
 {{ instructions.setOptions({label: 'Instructions'}) ? '' }}
 {{ preferences.setOptions({label: 'Preferences'}) ? '' }}
 
-{% set lpaType = (lpa.document.type == 'health-and-welfare') ? 'health and welfare' : 'property and financial affairs' %}
-
 <li id="preferences-and-instructions-section" class="section current">
 
     <h2 class="heading-medium accordion-header flush--top">Preferences and instructions</h2>
@@ -52,15 +50,15 @@
     <div class="accordion-info">
         <div class="text">
 
-            <p>You've entered all the essential information needed for your {{ lpaType }} LPA.</p>
+            <p>You've entered all the essential information needed for the LPA.</p>
 
-            <p>The optional section below lets you add <a class="js-guidance" href="/guide#topic-preferences-and-instructions" data-journey-click="page:link:help: lets you add -preferences or instructions- for your attorneys">preferences or instructions</a> for your attorneys. You do not have to put anything there, but you can state things that the attorneys must or must not do or give guidance that you'd like them to follow.</p>
+            <p>The optional section below lets you add the donor’s <a class="js-guidance" href="/guide#topic-preferences-and-instructions" data-journey-click="page:link:help: lets you add -preferences or instructions- for your attorneys">preferences or instructions</a> for their attorneys. The donor can state things that the attorneys must or must not do, or give guidance that they’d like their attorneys to follow.</p>
 
             <p>
-                {% if isPfLpa %}
-                    For example, you could add preferences about making charitable donations or managing your bank accounts. You could add instructions about giving gifts, managing investments or seeking professional tax advice.
+                {% if lpa.document.type == 'property-and-financial' %}
+                    For example, the donor could add preferences about making charitable donations or managing their bank accounts. The donor could add instructions about giving gifts, managing investments or seeking professional tax advice.
                 {% else %}
-                    For example, you could add preferences about where you'd like to live or taking exercise. You could add instructions about your diet or medical treatment that fits with your beliefs.
+                    For example, the donor could add preferences about where they’d like to live or taking exercise. The donor could add instructions about their diet or medical treatment that fits with their beliefs.
                 {% endif %}
             </p>
         </div>
@@ -79,7 +77,7 @@
             <div>
 
                 <div class="form-group text flush--bottom">
-                    <p>If you'd like to add anything here, please <a class="js-guidance" href="/guide#topic-preferences-and-instructions" data-journey-click="page:link:help: read our help topic on preferences and instructions">read our help topic on preferences and instructions</a>. It contains useful examples and can help you avoid mistakes.</p>
+                    <p>If the donor would like to add anything here, please <a class="js-guidance" href="/guide#topic-preferences-and-instructions" data-journey-click="page:link:help: read our help topic on preferences and instructions">read our help topic on preferences and instructions</a> first. It contains useful examples and can help avoid mistakes.</p>
                 </div>
 
                 <fieldset>
@@ -88,7 +86,7 @@
                     <div class="form-group {{ preferences.getMessages|length >0 ? 'error'}}">
                         <label class="form-label text" for="{{ preferences.getAttribute('id') }}">
                             {{ preferences.getOption('label') }}<br>
-                            <span class="form-hint">These are things you would like attorneys to think about when making decisions. Use words like 'prefer' or 'would like'. <a href="/guide#topic-preferences-and-instructions" class="js-guidance" data-journey-click="page:link:help: Not sure what to put? (Preferences)">Not sure what to put?</a><br></span>
+                            <span class="form-hint">These are things the donor would like their attorneys to think about when making decisions. Use words like 'prefer' or 'would like'. <a href="/guide#topic-preferences-and-instructions" class="js-guidance" data-journey-click="page:link:help: Not sure what to put? (Preferences)">Not sure what to put?</a><br></span>
                             {{ formElementErrorsV2(preferences) }}
                         </label>
                         {{ formElement(preferences) }}
