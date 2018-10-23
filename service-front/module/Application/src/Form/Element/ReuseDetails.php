@@ -22,7 +22,7 @@ class ReuseDetails extends ZFRadio
 
             //  If there is more than one value option then add a none of the above option also
             if (count($reuseDetailsValueOptions) > 1) {
-                $reuseDetailsValueOptions[] = $this->createValueOption('None of the above', -1);
+                $reuseDetailsValueOptions[] = $this->createValueOption('None of the above - I want to add a new person', -1);
             }
 
             $options = $reuseDetailsValueOptions;
