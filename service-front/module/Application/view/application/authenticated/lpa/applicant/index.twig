@@ -9,8 +9,8 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form, {
     'whoIsRegistering' : {
-        'allowed-values:1' : 'Please select the person who is registering the LPA',
-        'allowed-values:donor,Array' : 'Please select the person who is registering the LPA'
+        'allowed-values:1' : 'Select the person who is applying to register the LPA',
+        'allowed-values:donor,Array' : 'Select the person who is applying to register the LPA'
     }
 }) %}
 
@@ -106,9 +106,11 @@
     <div class="accordion-info">
         <div class="text">
 
-            <p>Either the donor, or 1 or more of the attorneys, can apply to register the LPA.</p>
-
-            <p>If the attorneys have been appointed jointly, they must <strong class="bold-small">all</strong> apply.</p>
+            {% if (lpa.document.primaryAttorneyDecisions.how == 'jointly') %}
+                <p>Either the donor or all the attorneys can apply to register the LPA.</p>
+            {% else %}
+                <p>Either the donor or 1 of the attorneys can apply to register the LPA.</p>
+            {% endif %}
 
             <p><a href="/guide#topic-applicant" class="js-guidance" data-journey-click="page:link:help: Find out more about the role of the applicant">Find out more about the role of the applicant</a></p>
 
