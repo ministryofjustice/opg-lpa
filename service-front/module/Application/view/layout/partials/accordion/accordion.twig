@@ -48,8 +48,8 @@
     {% if (item.routeName == 'lpa/when-lpa-starts') %}
         {{ macros.accordionBar({
                 'text' : 'The LPA starts ' ~ (lpa.document.primaryAttorneyDecisions.when == 'now' ?
-                    'as soon as it\'s registered (with my consent)' :
-                    'only if I do not have mental capacity'),
+                    'as soon as it\'s registered (with the donor\'s consent)' :
+                    'only if the donor does not have mental capacity'),
                 'status' : 'Complete',
                 'edit' : url(item.routeName, {'lpa-id': lpa.id}),
                 'journeyClick': 'navigation: Links to ' ~ item.routeName

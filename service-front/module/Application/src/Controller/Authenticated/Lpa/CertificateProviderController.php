@@ -66,7 +66,7 @@ class CertificateProviderController extends AbstractLpaActorController
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\CertificateProviderForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/certificate-provider/add', ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList());
+        $form->setActorData('certificate provider', $this->getActorsList());
 
         if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
@@ -110,7 +110,7 @@ class CertificateProviderController extends AbstractLpaActorController
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\CertificateProviderForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/certificate-provider/edit', ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList());
+        $form->setActorData('certificate provider', $this->getActorsList());
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();

@@ -2,12 +2,12 @@
 
 {% set form = formErrorTextExchange(form,  {
     'email' : {
-        'cannot-be-empty' : 'Please enter your email address',
+        'cannot-be-empty' : 'Enter your email address',
     },
     'email_confirm' : {
-        'cannot-be-empty' : 'Please confirm your email address',
+        'cannot-be-empty' : 'Confirm your email address',
         'did-not-match' : 'The emails did not match'
-    } 
+    }
 }) %}
 
 {{ macros.formErrorSummary(error,form,'There was a problem submitting your email details') }}

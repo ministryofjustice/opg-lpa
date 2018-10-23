@@ -7,15 +7,15 @@
 
 {% set errorMappings = {
     'sign-date-donor-life-sustaining': {
-        'Please enter all the date fields': 'Please enter the donor\'s signature date',
+        'Enter all the date fields': 'Enter the donor\'s signature date',
         'The input does not appear to be a valid date': 'The donor\'s signature date does not appear to be a valid date'
     },
     'sign-date-donor': {
-        'Please enter all the date fields': 'Please enter the donor\'s signature date',
+        'Enter all the date fields': 'Enter the donor\'s signature date',
         'The input does not appear to be a valid date': 'The donor\'s signature date does not appear to be a valid date'
     },
     'sign-date-certificate-provider': {
-        'Please enter all the date fields': 'Please enter the certificate provider\'s signature date',
+        'Enter all the date fields': 'Enter the certificate provider\'s signature date',
         'The input does not appear to be a valid date': 'The certificate provider\'s signature date does not appear to be a valid date'
     }
 } %}
@@ -26,7 +26,7 @@
 
     {% set errorMappings = errorMappings|merge({
         (messageKey) : {
-            'Please enter all the date fields': 'Please enter the attorney\'s signature date',
+            'Enter all the date fields': 'Enter the attorney\'s signature date',
             'The input does not appear to be a valid date': 'The attorney\'s signature date does not appear to be a valid date'
         }
     }) %}
@@ -37,7 +37,7 @@
 
     {% set errorMappings = errorMappings|merge({
         (messageKey) : {
-            'Please enter all the date fields': 'Please enter the replacement attorney\'s signature date',
+            'Enter all the date fields': 'Enter the replacement attorney\'s signature date',
             'The input does not appear to be a valid date': 'The replacement attorney\'s signature date does not appear to be a valid date'
         }
     }) %}
@@ -48,7 +48,7 @@
 
     {% set errorMappings = errorMappings|merge({
         (messageKey) : {
-            'Please enter all the date fields': 'Please enter the applicant\'s signature date',
+            'Enter all the date fields': 'Enter the applicant\'s signature date',
             'The input does not appear to be a valid date': 'The applicant\'s signature date does not appear to be a valid date'
         }
     }) %}

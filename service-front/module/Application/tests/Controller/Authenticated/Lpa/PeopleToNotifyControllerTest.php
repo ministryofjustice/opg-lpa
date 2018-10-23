@@ -234,7 +234,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->twice();
         $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
-        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify');
 
         /** @var ViewModel $result */
@@ -254,7 +254,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setPostInvalid($this->peopleToNotifyForm, [], null, 2);
         $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
-        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify');
 
         /** @var ViewModel $result */
@@ -278,7 +278,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setPostValid($this->peopleToNotifyForm, $this->postData, null, 2);
         $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
-        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('addNotifiedPerson')
             ->withArgs(function ($lpa, $notifiedPerson) {
@@ -300,7 +300,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
         $this->setPostValid($this->peopleToNotifyForm, $this->postData, null, 2, 2);
         $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
-        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('addNotifiedPerson')
             ->withArgs(function ($lpa, $notifiedPerson) {
@@ -326,7 +326,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->twice();
         $this->setPostValid($this->peopleToNotifyForm, $this->postData, null, 2, 1);
         $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
-        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('addNotifiedPerson')
             ->withArgs(function ($lpa, $notifiedPerson) {
@@ -353,7 +353,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->request->shouldReceive('isPost')->andReturn(true)->twice();
         $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add', 2);
-        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify');
         $routeMatch = $this->setReuseDetails($controller, $this->peopleToNotifyForm, $this->user, 'attorney');
         $this->setMatchedRouteName($controller, 'lpa/people-to-notify/add', $routeMatch);
@@ -405,7 +405,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->setFormActionIndex($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/edit', $idx);
-        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $this->peopleToNotifyForm->shouldReceive('bind')
             ->withArgs([$this->lpa->document->peopleToNotify[$idx]->flatten()])->once();
         $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify');
@@ -430,7 +430,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
         $this->setPostInvalid($this->peopleToNotifyForm);
         $this->setFormActionIndex($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/edit', $idx);
-        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/people-to-notify');
 
         /** @var ViewModel $result */
@@ -457,7 +457,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
         $this->setPostValid($this->peopleToNotifyForm, $this->postData);
         $this->setFormActionIndex($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/edit', $idx);
-        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setNotifiedPerson')
             ->withArgs(function ($lpa, $notifiedPerson) {
@@ -480,7 +480,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn($idx)->once();
         $this->setPostValid($this->peopleToNotifyForm, $this->postData);
         $this->setFormActionIndex($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/edit', $idx);
-        $this->peopleToNotifyForm->shouldReceive('setExistingActorNamesData')->once();
+        $this->peopleToNotifyForm->shouldReceive('setActorData')->once();
         $this->peopleToNotifyForm->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setNotifiedPerson')
             ->withArgs(function ($lpa, $notifiedPerson) {

@@ -82,7 +82,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\PeopleToNotifyForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/people-to-notify/add', ['lpa-id' => $lpaId]));
-        $form->setExistingActorNamesData($this->getActorsList());
+        $form->setActorData('person to notify', $this->getActorsList());
 
         if ($this->request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
@@ -141,7 +141,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
 
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\PeopleToNotifyForm');
         $form->setAttribute('action', $this->url()->fromRoute('lpa/people-to-notify/edit', ['lpa-id' => $lpaId, 'idx' => $personIdx]));
-        $form->setExistingActorNamesData($this->getActorsList($personIdx));
+        $form->setActorData('person to notify', $this->getActorsList($personIdx));
 
         if ($this->request->isPost()) {
             $postData = $this->request->getPost();

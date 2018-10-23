@@ -108,7 +108,7 @@ class WhoAreYouController extends AbstractLpaController
         ]);
 
         $whoOptions['charity'] = new Element('who', [
-            'label' => "A Charity made the LPA on the donor's behalf",
+            'label' => "A charity made the LPA on the donor's behalf",
         ]);
         $whoOptions['charity']->setAttributes([
             'type' => 'radio',
