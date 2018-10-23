@@ -79,8 +79,7 @@ class RepeatApplicationController extends AbstractLpaController
         }
 
         return new ViewModel([
-            'form'         => $form,
-            'lpaRepeatFee' => Calculator::getFullFee(true)
+            'form' => $form,
         ]);
     }
 }
