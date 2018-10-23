@@ -10,7 +10,7 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form, {
         'reductionOptions': {
-            'Value is required and can\'t be empty' : 'Please choose one of the options'
+            'Value is required and can\'t be empty' : 'Choose one of the options'
         }
    })
 %}
@@ -20,12 +20,17 @@
 
 <li id="fee-reduction-section" class="section current">
 
-	<h2 class="heading-medium accordion-header flush--top">Do you want to apply to pay a reduced fee?</h2>
+	<h2 class="heading-medium accordion-header flush--top">Does the donor want to apply to pay a reduced fee?</h2>
 
     <div class="accordion-info">
     	<div class="text">
-            <p>If the donor has an income of less than £12,000 a year before tax or receives certain benefits, they might be eligible for a reduced fee, or no fee at all.</p>
-		</div>
+            <p>If the donor receives certain benefits or has an income of less than £12,000 a year before tax, they might be eligible to pay a reduced fee or no fee at all.</p>
+
+            {% if lpa.repeatCaseNumber is defined and lpa.repeatCaseNumber is not null %}
+                <p>To apply, you will need to send us an ‘fee remissions and exemptions form’. If you applied for this reduction on the original LPA and sent that LPA to us in the current tax year (on or after 6 April), you do not need to send us proof of the donor’s income or benefits again.</p>
+            {% endif %}
+
+        </div>
 	</div>
 
     {# begin form #}
@@ -50,12 +55,11 @@
                 </label>
 
                 <div id="receives-benefits" class="panel panel-border-narrow js-hidden">
+                    <p>To apply to pay no fee, you must send us an ‘fee remissions and exemptions form’ and copies of letters from the Department for Work and Pensions (DWP) or the benefit provider as proof that the donor is receiving benefits. Find out more about acceptable proof.</p>
 
-                    <p>To apply for this exemption, you must enclose copies of letters from the Department for Work and Pensions or your benefit provider. The letters must confirm that the benefit was being paid at the time the LPA was sent to us for registration. <a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-journey-click="page:link:help: Receives benefits - Find out more about acceptable proof">Find out more about acceptable proof</a>.</p>
+                    <p>You can download the form on the last page of this service. Sign and date the form and send it to us, along with the proof and completed LPA.</p>
 
-                    <p>If you do not send the right evidence, your application will be delayed. If your claim is rejected, you'll need to pay the rest of the fee.</p>
-
-                    <p>On the final page you will be able to download the application for exemption form along with your LPA, you should sign and date this and send it along with your evidence and LPA to OPG.</p>
+                    <p>If you do not send the right proof, your application will be delayed. If your application to pay a reduced fee is rejected, the donor will have to pay the rest of the fee.</p>
                 </div>
 
                 <label class="text block-label" data-target="universal-credit" for="{{ reductionOptions['reducedFeeUniversalCredit'].getAttribute('id') }}">
@@ -64,14 +68,15 @@
                 </label>
 
                 <div id="universal-credit" class="panel panel-border-narrow js-hidden">
+                    <p>Because Universal Credit is in its trial phase and replaces several existing benefits, we're looking at fee reductions on a case-by-case basis.</p>
 
-                    <p>Because Universal Credit (UC) is in its trial phase and replaces several existing benefits, we're looking at remissions on a case-by-case basis.</p>
+                    <p>This means <strong class="bold-small">you will not be charged for this LPA now</strong>.</p>
 
-                    <p>This means <strong class="bold-small">the service will not charge you for this LPA now.</strong></p>
+                    <p>To apply to pay a reduced fee, you must send us a ‘fee remissions and exemptions form’ and a copy of the donor's benefit award letter.</p>
 
-                    <p>You must still send us the remissions form, which you can download on the final page of this service, along with supporting evidence for your application. This should be a copy of the donor's benefit award letter.</p>
+                    <p>You can download the form on the last page of this service. Sign and date the form and send it to us, along with the award letter and completed LPA.</p>
 
-                    <p>Once we receive your application, we'll contact you to let you know how much you'll have to pay and to arrange payment.</p>
+                    <p>Once we receive your application, we’ll contact you to let you know how much the fee will be and to arrange payment.</p>
                 </div>
 
                 <label class="text block-label" data-target="reduced-fee-low-income" for="{{ reductionOptions['reducedFeeLowIncome'].getAttribute('id') }}">
@@ -80,13 +85,13 @@
                 </label>
 
                 <div id="reduced-fee-low-income" class="panel panel-border-narrow js-hidden">
+                    <p>To apply to pay a reduced fee, you must send us an ‘fee remissions and exemptions form’ and documents that prove the donor has a low income.</p>
 
-                    <p>To apply for this remission you have to send OPG documents that prove you have a low income. These must be documents that have your title, full name, address and postcode printed on them and they must be from the current tax year. (Tax years run from 6 April one year to 5 April the next year.) <a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-journey-click="page:link:help: Low income - Find out more about acceptable proof">Find out more about acceptable proof</a>.</p>
+                    <p>The documents must have the donor’s title, full name, address and postcode printed on them and they must be from the current tax year. Tax years run from 6 April one year to 5 April the next year. <a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-journey-click="page:link:help: Low income - Find out more about acceptable proof">Find out more about acceptable proof</a>.</p>
 
-                    <p>If you do not send the right evidence, your application will be delayed. If your claim is rejected, you'll need to pay the rest of the fee.</p>
+                    <p>You can download the fee remissions and exemptions form on the last page of this service. Sign and date the form and send it to us, along with the proof and completed LPA.</p>
 
-                    <p>On the final page you will be able to download the application for exemption form along with your LPA, you should sign and date this and send it along with your evidence and LPA to OPG.</p>
-
+                    <p>If you do not send the right proof, your application will be delayed. If your application to pay a reduced fee is rejected, the donor will have to pay the rest of the fee</p>
                 </div>
 
                 <label class="text block-label" for="{{ reductionOptions['notApply'].getAttribute('id') }}">
