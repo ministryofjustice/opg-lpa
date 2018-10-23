@@ -17,8 +17,8 @@
 {% set canSustainLife = form.get('canSustainLife') %}
 
 {{ canSustainLife.setValueOptions(
-    {"1": "Option A – Choose this option if you <strong class='bold-small'>want to give your attorneys authority</strong> to give or refuse consent to life-sustaining treatment on your behalf",
-        "0": "Option B – Choose this option if you <strong class='bold-small'>do not want to give your attorneys authority</strong> to give or refuse consent to life-sustaining treatment on your behalf"}
+    {"1": "Option A – <strong class='bold-small'>The donor gives their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf.",
+        "0": "Option B – <strong class='bold-small'>The donor does not give their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf."}
 ) ? ''}}
 
 {# form fields config #}
@@ -34,16 +34,14 @@
 
 <li id="life-sustaining-section" class="section current">
 
-    <h2 class="heading-medium accordion-header flush--top">Who do you (the donor) want to make decisions about life-sustaining treatment?</h2>
+    <h2 class="heading-medium accordion-header flush--top">Who does the donor want to make decisions about life-sustaining treatment?</h2>
 
     <div class="accordion-info">
         <div class="text">
-            <p>This is a very important decision. Read the guidance carefully before you answer.</p>
-            <ul class="list list-bullet">
-                <li>your attorneys can only make decisions about life-sustaining treatment if you do not have mental capacity</li>
-                <li>life-sustaining treatment is any treatment a doctor considers necessary to keep you alive</li>
-            </ul>
-            <p><a href="/guide#topic-life-sustaining-treatment" class="js-guidance" data-journey-click="page:link:help: Read guidance on making this decision">Read guidance on making this decision </a></p>
+            <p class="text">This is a very important decision. The donor should read the guidance carefully before they answer.</p>
+            <p class="text">Life-sustaining treatment is care, surgery, medicine or other help from doctors that's needed to keep someone alive.</p>
+            <p class="text">The donor must choose who they want to make decisions about life-sustaining treatment if they do not have the mental capacity to decide themselves.</p>
+            <p><a href="/guide#topic-life-sustaining-treatment" class="js-guidance" data-journey-click="page:link:help: Read guidance on making this decision">Read guidance on making this decision</a></p>
         </div>
     </div>
 
@@ -57,36 +55,27 @@
         <fieldset id="canSustainLife">
             <legend class="visually-hidden">Life-sustaining treatment decision</legend>
 
-            <h2 class="heading-medium flush--top text">Who do you (the donor) want to make decisions about life-sustaining treatment?</h2>
+            <h2 class="heading-medium flush--top text">Who does the donor want to make decisions about life-sustaining treatment?</h2>
 
             <div class="form-group {{ canSustainLife.getMessages|length > 0 ? 'error'}}">
                 {{ formElementErrorsV2(canSustainLife) }}
-               <!-- {{ formRadio(canSustainLife) }} -->
 
-                        {{ formRadio().outputOption(canSustainLife, "1", {"data-target":"js-can-sustain-life-true"} )|raw }}
+                {{ formRadio().outputOption(canSustainLife, "1")|raw }}
 
-                <div class="panel panel-border-thin js-hidden" id="js-can-sustain-life-true">
-                    <p class="text">
-                        You can give your attorneys preferences and instructions later in your LPA.
-                        This will tell them what you would like them to consider if they have to make
-                        decisions about life-sustaining treatment.
-                    </p>
+                <div class="panel panel-border-thin">
+                    <p class="text">The donor can add preferences and instructions later in the LPA to explain what they would like their attorneys to consider if they have to make decisions about life-sustaining treatment.</p>
                 </div>
 
-                {{ formRadio().outputOption(canSustainLife, "0", {"data-target":"js-can-sustain-life-false"} )|raw }}
+                {{ formRadio().outputOption(canSustainLife, "0")|raw }}
 
-                <div class="panel panel-border-thin js-hidden" id="js-can-sustain-life-false">
-                    <p class="text">
-                        This means that doctors will make life-sustaining treatment decisions for you, taking into account
-                        your best interests, and where possible the views of others involved in your welfare, such as
-                        your attorneys and family members.
-                    </p>
+                <div class="panel panel-border-thin">
+                    <p class="text">Doctors will make any decisions about life-sustaining treatment, taking into account the donor’s best interests and, where possible, the views of others involved in the donor’s welfare, such as their attorneys and family members.</p>
                 </div>
 
             </div>
         </fieldset>
 
-        <p class="text">After the LPA document is printed, the donor will need to sign and date the option they've chosen. This must be witnessed. The witness must also sign and include their full name and address - if not, OPG cannot register the LPA, and you may have to pay the application fee again.</p>
+        <p class="text">After the LPA document is printed, the donor will need to sign and date the option they've chosen. This must be witnessed. The witness must also sign and include their full name and address. If they do not,  OPG cannot register the LPA and the donor may have to pay the application fee again.</p>
 
         <div class="form-group">
             {{ formElement(form.get('save')) }}
