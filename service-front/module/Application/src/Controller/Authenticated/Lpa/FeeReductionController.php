@@ -91,7 +91,7 @@ class FeeReductionController extends AbstractLpaController
         $amount = Calculator::getFullFee( $isRepeatApplication );
         $amount = ( floor( $amount ) == $amount ) ? $amount : money_format('%i', $amount);
         $reductionOptions['notApply'] = new Element('reductionOptions', [
-            'label' => "I'm not applying for a reduced fee<br><strong class='bold-small'>Fee: £".$amount."</strong>",
+            'label' => "The donor is not applying for a reduced fee<br><strong class='bold-small'>Fee: £".$amount."</strong>",
         ]);
         $reductionOptions['notApply']->setAttributes([
             'type' => 'radio',
