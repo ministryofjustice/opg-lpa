@@ -33,16 +33,16 @@ class DynamoCronLock
     /**
      * Get the lock for a period of time (default 60 minutes)
      *
-     * @param $name
+     * @param $lockName
      * @param int $allowedSecondsSinceLastRun
      * @return bool
      */
-    public function getLock($name, $allowedSecondsSinceLastRun = 60 * 60)
+    public function getLock($lockName, $allowedSecondsSinceLastRun = 60 * 60)
     {
         //  Create the command to execute
         $command = 'bin/lock acquire ';
         $command .= sprintf('--table %s ', $this->config['settings']['table_name']);
-        $command .= sprintf('--name "%s/%s" ', $this->keyPrefix, $name);
+        $command .= sprintf('--name "%s/%s" ', $this->keyPrefix, $lockName);
         $command .= sprintf('--ttl %s ', $allowedSecondsSinceLastRun);
         $command .= sprintf('--endpoint %s ', $this->config['client']['endpoint']);
         $command .= sprintf('--version %s ', $this->config['client']['version']);
@@ -56,12 +56,12 @@ class DynamoCronLock
 
         //  Log an appropriate message
         if ($rtnValue === 0) {
-            $this->getLogger()->info(sprintf('This node got the %s cron lock for %s', $name, $name));
+            $this->getLogger()->info(sprintf('This node got the %s cron lock for %s', $lockName, $lockName));
 
             return true;
         }
 
-        $this->getLogger()->info(sprintf('This node did not get the %s cron lock for %s', $name, $name));
+        $this->getLogger()->info(sprintf('This node did not get the %s cron lock for %s', $lockName, $lockName));
 
         return false;
     }

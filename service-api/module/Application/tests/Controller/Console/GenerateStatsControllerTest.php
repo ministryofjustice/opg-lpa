@@ -8,7 +8,6 @@ use Application\Model\Service\System\DynamoCronLock;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Opg\Lpa\Logger\Logger;
 
 class GenerateStatsControllerTest extends MockeryTestCase
 {
@@ -27,11 +26,6 @@ class GenerateStatsControllerTest extends MockeryTestCase
      */
     private $statsService;
 
-    /**
-     * @var Logger|MockInterface
-     */
-    private $logger;
-
     public function setUp()
     {
         $this->cronLock = Mockery::mock(DynamoCronLock::class);
@@ -39,9 +33,6 @@ class GenerateStatsControllerTest extends MockeryTestCase
         $this->statsService = Mockery::mock(StatsService::class);
 
         $this->controller = new GenerateStatsController($this->cronLock, $this->statsService);
-
-        $this->logger = Mockery::mock(Logger::class);
-        $this->controller->setLogger($this->logger);
     }
 
     public function testGenerateActionSuccess()
@@ -52,10 +43,6 @@ class GenerateStatsControllerTest extends MockeryTestCase
         $this->statsService->shouldReceive('generate')
             ->andReturnNull();
 
-        $this->logger->shouldReceive('info')
-            ->with('This node got the GenerateApiStats cron lock for GenerateApiStats')
-            ->once();
-
         $result = $this->controller->generateAction();
 
         $this->assertNull($result);
@@ -65,10 +52,6 @@ class GenerateStatsControllerTest extends MockeryTestCase
     {
         $this->cronLock->shouldReceive('getLock')
             ->andReturnFalse();
-
-        $this->logger->shouldReceive('info')
-            ->with('This node did not get the GenerateApiStats cron lock for GenerateApiStats')
-            ->once();
 
         $result = $this->controller->generateAction();
 
