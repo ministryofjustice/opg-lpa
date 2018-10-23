@@ -4,13 +4,10 @@ namespace Application\Controller\Console;
 
 use Application\Model\Service\AccountCleanup\Service as AccountCleanupService;
 use Application\Model\Service\System\DynamoCronLock;
-use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Console\Controller\AbstractConsoleController;
 
 class AccountCleanupController extends AbstractConsoleController
 {
-    use LoggerTrait;
-
     /**
      * @var DynamoCronLock
      */
@@ -36,19 +33,15 @@ class AccountCleanupController extends AbstractConsoleController
      */
     public function cleanupAction()
     {
-        $lockName = 'AccountCleanup';
+        $consoleMessage = "Did not get the AccountCleanup lock\n";
 
-        // Attempt to get the cron lock...
-        if ($this->cronLock->getLock($lockName, (60 * 60))) {
-            echo "Got the AccountCleanup lock; running Cleanup\n";
-
-            $this->getLogger()->info("This node got the AccountCleanup cron lock for {$lockName}");
+        //  Attempt to get the cron lock before executing the service
+        if ($this->cronLock->getLock('AccountCleanup')) {
+            $consoleMessage = "Got the AccountCleanup lock; running Cleanup\n";
 
             $this->accountCleanupService->cleanup();
-        } else {
-            echo "Did not get the AccountCleanup lock\n";
-
-            $this->getLogger()->info("This node did not get the AccountCleanup cron lock for {$lockName}");
         }
+
+        echo $consoleMessage;
     }
 }

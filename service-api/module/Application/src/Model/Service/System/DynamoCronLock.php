@@ -2,8 +2,6 @@
 
 namespace Application\Model\Service\System;
 
-use Aws\DynamoDb\DynamoDbClient;
-use Aws\DynamoDb\Exception\DynamoDbException;
 use Opg\Lpa\Logger\LoggerTrait;
 
 class DynamoCronLock
@@ -11,18 +9,9 @@ class DynamoCronLock
     use LoggerTrait;
 
     /**
-     * The AWS client
-     *
-     * @var \Aws\DynamoDb\DynamoDbClient
+     * @var array
      */
-    private $client;
-
-    /**
-     * The name of the table holding the key/value store
-     *
-     * @var string
-     */
-    private $tableName;
+    private $config;
 
     /**
      * The namespace to prefix keys with.
@@ -31,61 +20,49 @@ class DynamoCronLock
      */
     private $keyPrefix;
 
-    //---
-
-    public function __construct(array $config)
+    /**
+     * @param array $config
+     * @param string $keyPrefix
+     */
+    public function __construct(array $config, $keyPrefix = 'default')
     {
-        $this->client = new DynamoDbClient($config['client']);
-
-        $this->tableName = $config['settings']['table_name'];
-
-        $this->keyPrefix = ( isset($config['keyPrefix']) ) ? $config['keyPrefix'] : 'default';
+        $this->config = $config;
+        $this->keyPrefix = $keyPrefix;
     }
 
-    public function getLock($name, $allowedSecondsSinceLastRun)
+    /**
+     * Get the lock for a period of time (default 60 minutes)
+     *
+     * @param $name
+     * @param int $allowedSecondsSinceLastRun
+     * @return bool
+     */
+    public function getLock($name, $allowedSecondsSinceLastRun = 60 * 60)
     {
-        // Current time in milliseconds
-        $time = round(microtime(true) * 1000);
+        //  Create the command to execute
+        $command = 'bin/lock acquire ';
+        $command .= sprintf('--table %s ', $this->config['settings']['table_name']);
+        $command .= sprintf('--name "%s/%s" ', $this->keyPrefix, $name);
+        $command .= sprintf('--ttl %s ', $allowedSecondsSinceLastRun);
+        $command .= sprintf('--endpoint %s ', $this->config['client']['endpoint']);
+        $command .= sprintf('--version %s ', $this->config['client']['version']);
+        $command .= sprintf('--region %s ', $this->config['client']['region']);
 
-        // If the existing lock is older than this time, we can take the lock
-        $takeLockIfOlderThan = $time - ( $allowedSecondsSinceLastRun * 1000 );
+        //  Initialise the return value
+        $output = [];
+        $rtnValue = -1;
 
-        try {
-            $this->getClient()->updateItem([
-                'TableName' => $this->tableName,
-                'Key'       => [ 'id' => [ 'S' => "{$this->keyPrefix}/{$name}" ] ],
-                'ExpressionAttributeNames' => [
-                    '#updated' => 'updated',
-                ],
-                'ExpressionAttributeValues' => [
-                    ':updated' => [ 'N' => (string)$time ],
-                    ':diff' => [ 'N' => (string)$takeLockIfOlderThan ],
-                ],
-                // If the lock is old, or the row doesn't exist...
-                'ConditionExpression' => '#updated < :diff or attribute_not_exists(#updated)',
-                'UpdateExpression' => 'SET #updated=:updated',
-                'ReturnValues' => 'NONE',
-                'ReturnConsumedCapacity' => 'NONE'
-            ]);
+        exec($command, $output, $rtnValue);
 
-            // No exception means we got the lock.
-            // Otherwise a ConditionalCheckFailedException is thrown.
+        //  Log an appropriate message
+        if ($rtnValue === 0) {
+            $this->getLogger()->info(sprintf('This node got the %s cron lock for %s', $name, $name));
 
             return true;
-        } catch (DynamoDbException $e) {
-            // We expect a ConditionalCheckFailedException
-            // Anything else is a 'real' exception.
-            if ($e->getAwsErrorCode() !== 'ConditionalCheckFailedException') {
-                // Log the exception...
-                $this->getLogger()->alert('Unexpected exception thrown whilst trying to secure a Dynamo Cron Lock', [ 'exception' => $e->getMessage() ]);
-            }
         }
 
-        return false;
-    }
+        $this->getLogger()->info(sprintf('This node did not get the %s cron lock for %s', $name, $name));
 
-    protected function getClient()
-    {
-        return $this->client;
+        return false;
     }
 }

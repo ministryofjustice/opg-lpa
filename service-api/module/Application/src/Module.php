@@ -65,11 +65,9 @@ class Module
             ],
             'factories' => [
                 'DynamoCronLock' => function (ServiceLocatorInterface $sm) {
-                    $config = $sm->get('config')['cron']['lock']['dynamodb'];
+                    $config = $sm->get('config');
 
-                    $config['keyPrefix'] = $sm->get('config')['stack']['name'];
-
-                    return new DynamoCronLock($config);
+                    return new DynamoCronLock($config['cron']['lock']['dynamodb'], $config['stack']['name']);
                 },
 
                 'DynamoQueueClient' => function (ServiceLocatorInterface $sm) {
