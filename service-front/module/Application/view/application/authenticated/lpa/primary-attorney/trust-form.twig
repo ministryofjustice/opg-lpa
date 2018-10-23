@@ -1,7 +1,6 @@
 {% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
 
 {% block htmlTitle %}Attorney details - {% endblock %}
-{% block pageTitle %}Create a lasting power of attorney{% endblock %}
 
 {% block content %}
 
@@ -10,29 +9,29 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'name' : {
-        'cannot-be-blank' : 'Please enter the company\'s name',
+        'cannot-be-blank' : 'Enter the company\'s name',
         'must-be-less-than-or-equal:40' : 'Company name cannot be longer than 40 characters long'
     },
     'number' : {
-        'cannot-be-blank' : 'Please enter the company\'s registration number',
+        'cannot-be-blank' : 'Enter the company\'s registration number',
         'must-be-less-than-or-equal:40' : 'Registration number cannot be longer than 40 characters long'
     },
     'email-address' : {
-        'invalid-email-address' : 'Please enter a valid email address'
+        'invalid-email-address' : 'Enter a valid email address'
     },
     'address-address1' : {
-        'cannot-be-blank' : 'Please enter the company\'s first line of address',
-        'must-be-less-than-or-equal:40' : 'Address line 1 cannot be longer than 40 characters long'
+        'cannot-be-blank' : 'Enter the company\'s first line of address',
+        'must-be-less-than-or-equal:40' : 'The first line of the company\'s address cannot be longer than 40 characters long'
     },
     'address-address2' : {
-        'linked-1-cannot-be-null' : 'Please enter the company\'s second line of address',
-        'must-be-less-than-or-equal:40' : 'Address line 2 cannot be longer than 40 characters long'
+        'linked-1-cannot-be-null' : 'Enter the company\'s second line of address',
+        'must-be-less-than-or-equal:40' : 'The second line of the company\'s address cannot be longer than 40 characters long'
     },
     'address-address3' : {
-        'must-be-less-than-or-equal:40' : 'Address line 3 cannot be longer than 40 characters long'
+        'must-be-less-than-or-equal:40' : 'The third line of the company\'s address cannot be longer than 40 characters long'
     },
     'address-postcode' : {
-        'linked-1-cannot-be-null' : 'Please enter the company\'s postcode',
+        'linked-1-cannot-be-null' : 'Enter the company\'s postcode',
         'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines rather than in the postcode field.'
     }
 }) %}

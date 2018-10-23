@@ -2683,6 +2683,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
   .form-popup .postcode-input {
     width: 252px; }
   .form-popup .summary,
+  .form-popup .summary-text,
   .form-popup .address-type-toggle,
   .form-popup .block-label,
   .form-popup .button,

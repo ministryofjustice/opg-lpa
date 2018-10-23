@@ -46,7 +46,6 @@ class InstructionsControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals(true, $result->getVariable('isPfLpa'));
     }
 
     public function testIndexActionPostInvalid()
@@ -62,7 +61,6 @@ class InstructionsControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals(true, $result->getVariable('isPfLpa'));
     }
 
     /**
