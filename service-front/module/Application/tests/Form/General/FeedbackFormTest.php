@@ -59,7 +59,7 @@ class FeedbackFormTest extends MockeryTestCase
 
         $this->assertEquals([
             'email' => [
-                0 => 'Please enter a valid email address'
+                0 => 'Enter a valid email address'
             ],
             'details' => [
                 'stringLengthTooLong' => 'max-2000-chars'

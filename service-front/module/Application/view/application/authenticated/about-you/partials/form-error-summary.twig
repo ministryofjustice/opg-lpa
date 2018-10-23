@@ -2,35 +2,35 @@
 
 {% set form = formErrorTextExchange(form,  {
     'name-title' : {
-        'cannot-be-blank' : 'Please enter your title',
+        'cannot-be-blank' : 'Enter your title',
         'must-be-less-than-or-equal:5' : 'Title must be five letters or fewer - please abbreviate, if necessary'
     },
     'name-first' : {
-        'cannot-be-blank' : 'Please enter your first names',
+        'cannot-be-blank' : 'Enter your first names',
         'must-be-less-than-or-equal:32' : 'First names cannot be longer than 32 characters long'
     },
     'name-last' : {
-        'cannot-be-blank' : 'Please enter your last name',
+        'cannot-be-blank' : 'Enter your last name',
         'must-be-less-than-or-equal:40' : 'Last name cannot be longer than 40 characters long'
     },
     'dob-date' : {
-        'cannot-be-blank' : 'Please enter a valid date of birth',
+        'cannot-be-blank' : 'Enter a valid date of birth',
         'must-be-less-than-or-equal-to-today' : 'Date of birth must be before today',
-        'expected-type:DateTime' : 'Please enter a valid date of birth'
+        'expected-type:DateTime' : 'Enter a valid date of birth'
     },
     'address-address1' : {
-        'cannot-be-blank' : 'Please enter the first line of address',
+        'cannot-be-blank' : 'Enter the first line of address',
         'must-be-less-than-or-equal:40' : 'The first line of the address cannot be longer than 40 characters long'
     },
     'address-address2' : {
-        'linked-1-cannot-be-null' : 'Please enter the second line of address',
+        'linked-1-cannot-be-null' : 'Enter the second line of address',
         'must-be-less-than-or-equal:40' : 'The second line of the address cannot be longer than 40 characters long'
     },
     'address-address3' : {
         'must-be-less-than-or-equal:40' : 'The third line of the address cannot be longer than 40 characters long'
     },
     'address-postcode' : {
-        'linked-1-cannot-be-null' : 'Please enter the postcode',
+        'linked-1-cannot-be-null' : 'Enter the postcode',
         'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines rather than in the postcode field.'
     }
 }) %}

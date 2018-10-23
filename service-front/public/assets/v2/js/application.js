@@ -23845,7 +23845,7 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
           $postcodeLabel.children('.error-message').remove();
           $postcodeLabel
             .append($(this.errorMessageTpl({
-              'errorMessage': 'Please enter a postcode'
+              'errorMessage': 'Enter a postcode'
             })));
         }
       }
@@ -23921,7 +23921,7 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
               'errorMessage': 'No address found for this postcode. Please try again or enter the address manually.'
             })));
         } else {
-          alert('Please enter a valid UK postcode');
+          alert('Enter a valid UK postcode');
         }
       } else {
         // successful

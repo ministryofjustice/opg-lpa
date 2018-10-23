@@ -18,7 +18,7 @@ class EmailAddress extends ZfEmailAddressValidator
 
         if ($valid === false && count($this->getMessages()) > 0) {
             $this->abstractOptions['messages'] = [
-                'Please enter a valid email address'
+                'Enter a valid email address'
             ];
         }
 
