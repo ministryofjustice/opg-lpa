@@ -4,7 +4,11 @@ RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8C
 RUN echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.6.list
 
 RUN apt update && apt install -y \
-    php7.1-bcmath mongodb-org-tools
+    php7.1-bcmath
+
+# The following are installed solely for the Mongo -> Postgres migration.
+RUN apt update && apt install -y \
+    mongodb-org-tools python3-venv
 
 RUN groupadd webservice && \
     groupadd supervisor
