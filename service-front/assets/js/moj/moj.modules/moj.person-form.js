@@ -153,6 +153,8 @@
                     alertMiddle = 'A person cannot be named as an attorney twice on the same LPA';
                 } else if (actorType == duplicateName.type && actorType == 'replacement attorney') {
                     alertMiddle = 'A person cannot be named as a replacement attorney twice on the same LPA';
+                } else if (actorType == duplicateName.type && actorType == 'person to notify') {
+                    alertMiddle = 'A person should not be named as a person to notify twice on the same LPA';
                 } else {
                     //  Check the rest of the logic
                     if ($.inArray(duplicateName.type, ['replacement attorney', 'person to notify']) > -1) {
