@@ -49,6 +49,6 @@ Once you’ve completed your LPA, you'll see a link to the ‘check signing date
 
 You can use this service to check the LPA has been signed in the correct order, before you send it for registration.
 
-If you find that the LPA has been signed in the wrong order, you should print the document again and get the relevant people to sign it in the right order. If you make a mistake, do not use correction fluid (Tippex).
+If you find that the LPA has been signed in the wrong order, you should print the document again and get the relevant people to sign it in the right order. [If you make a mistake](/help/#topic-if-you-find-a-mistake), do not use correction fluid (Tippex).
 
 If you send your LPA to us and it’s signed in the wrong order, we cannot register it. You’ll have to complete some or all it again and the donor may have to pay another application fee.
