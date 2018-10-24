@@ -9,8 +9,8 @@ The donor does not have to appoint replacement attorneys, but having them helps 
 Without replacements:
 
 * if there’s only one attorney and that attorney can no longer act, the LPA will stop working
-* if the donor appointed their attorneys to act jointly and one attorney can no longer act, the LPA will stop working, unless the donor has stated otherwise in their instructions
-* if the donor appointed their attorneys to act jointly for some decisions, and one attorney can no longer act, the joint decisions can no longer be made, unless the donor has stated otherwise in their instructions
+* if the donor appointed their attorneys to act jointly and one attorney can no longer act, the LPA will stop working, unless the donor has stated otherwise in their [instructions](/help/#topic-preferences-and-instructions)
+* if the donor appointed their attorneys to act jointly for some decisions, and one attorney can no longer act, the joint decisions can no longer be made, unless the donor has stated otherwise in their [instructions](/help/#topic-preferences-and-instructions)
 
 If the LPA cannot be used and the donor no longer has mental capacity, someone will have to apply to the Court of Protection to get the power to act on the donor’s behalf – this can be expensive and usually takes a long time.
 
@@ -58,7 +58,7 @@ When there are replacement attorneys, if an original attorney dies or can no lon
 * all the replacement attorneys will replace all the original attorneys
 * the remaining original attorneys will not be able to make any decisions on the donor’s behalf anymore
 
-### Change what happens when an attorneys dies or is unable to act
+### Change what happens when an attorney dies or is unable to act
 
 If the original attorneys are appointed jointly, the donor can add instructions to change what happens when an original attorney dies or is unable or unwilling to act.
 
@@ -74,7 +74,7 @@ When there are replacement attorneys, if an attorney dies or can no longer act:
 * the remaining original attorneys will not be able to make the joint decisions anymore
 * the replacement and remaining original attorneys can make all other decisions individually
 
-### Change what happens when an attorneys dies or is unable to act
+### Change what happens when an attorney dies or is unable to act
 
 If the original attorneys are appointed jointly for some decisions, the donor can add instructions to change what happens when an original attorney dies or is unable or unwilling to act.
 
