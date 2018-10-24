@@ -50,7 +50,6 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals(41, $result->getVariable('lpaRepeatFee'));
     }
 
     public function testIndexActionGet()
@@ -70,7 +69,6 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals(41, $result->getVariable('lpaRepeatFee'));
     }
 
     public function testIndexActionPostNoRepeatInvalid()
@@ -87,7 +85,6 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals(41, $result->getVariable('lpaRepeatFee'));
     }
 
     public function testIndexActionPostRepeatInvalid()
@@ -103,7 +100,6 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
         $this->assertEquals($this->form, $result->getVariable('form'));
-        $this->assertEquals(41, $result->getVariable('lpaRepeatFee'));
     }
 
     /**

@@ -145,7 +145,7 @@ class DateTest extends MockeryTestCase
                     'year'  => 1999,
                 ],
                 'errors' => [
-                    'emptyDate' => 'Please enter all the date fields',
+                    'emptyDate' => 'Enter all the date fields',
                 ],
             ],
             [

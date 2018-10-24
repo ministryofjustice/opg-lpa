@@ -8,37 +8,49 @@
 
 <li id="replacement-attorney-section" class="section current">
 
-    <h2 class="heading-medium accordion-header flush--top">Do you want any replacement attorneys?</h2>
+    <h2 class="heading-medium accordion-header flush--top">Does the donor want any replacement attorneys?</h2>
 
     <div class="accordion-info">
         <div class="text">
-            <p>The people you add here step in if your original attorney can no longer act.</p>
-            <p>A replacement attorney must meet the same requirements as an original attorney. This includes being 18 or over when you sign your LPA.</p>
+            <p>Replacement attorneys step in if an original attorney can no longer act.</p>
+            <p>A replacement attorney must meet the same requirements as an original attorney. This includes being 18 or over.</p>
 
             {% if (lpa.document.primaryAttorneyDecisions) %}
                 {% if (lpa.document.primaryAttorneyDecisions.how == 'jointly') %}
                 <div class="alert" role="alert">
                     <i class="icon icon-important-small" role="presentation"></i>
                     <div class="alert-message">
-                        <p>You appointed your original attorneys jointly. This means that:</p>
+                        <h3 class="heading-small flush--top">Replacement attorneys are an important backup when attorneys are appointed to act jointly.</h3>
+                        <p>If the donor does not appoint any replacement attorneys and one of the original attorneys dies or can no longer act, the LPA will stop working.</p>
+                        <p>If the donor does appoint replacement attorneys and one of the original attorneys dies or can no longer act:</p>
                         <ul class="list list-bullet">
                             <li>
-                                <p><strong class="bold">if ANY of your original attorneys can no longer act they will ALL be replaced by your replacement attorney(s)</strong></p>
+                                <p><strong class="bold">ALL the original attorneys will be replaced by the replacement attorneys, unless the donor states otherwise in their instructions</strong></p>
                             </li>
                             <li>
-                                <p><strong class="bold">if you don't add any replacement attorneys and one of your original attorneys can no longer act, then your LPA can no longer be used</strong></p>
+                                <p><strong class="bold">the original attorneys will not be able to make any decisions on the donor’s behalf anymore</strong></p>
                             </li>
                         </ul>
-                        <p>If you don't want the above to happen, you need to state this when you have the opportunity to 'add extra instructions' in the preferences and instructions section.</p>
+                        <p>If the donor wants to change how their replacement attorneys step in, they can explain their wishes in the instructions section.</p>
                     </div>
                 </div>
                 {% elseif (lpa.document.primaryAttorneyDecisions.how == 'depends') %}
                 <div class="alert" role="alert">
                     <i class="icon icon-information" role="presentation"></i>
                     <div class="alert-message">
-                        <h3 class="heading-small flush--top">You appointed your original attorneys to act jointly for some decisions, and jointly and severally for others.</h3>
-                        <p>This means the people you add here will step in once the FIRST of your attorneys can no longer act.<p>
-                        <p>The rest of your original attorneys will no longer be able to make the decisions that you specified must be made jointly.</p>
+                        <h3 class="heading-small flush--top">The donor appointed their attorneys to act jointly for some decisions, and jointly and severally for others.</h3>
+                        <p>This means that if an original attorney dies or can no longer act:</p>
+                        <ul class="list list-bullet">
+                            <li>
+                                <p><strong class="bold">all the replacement attorneys step in and take over making the joint decisions</strong></p>
+                            </li>
+                            <li>
+                                <p><strong class="bold">the remaining original attorneys will not be able to make the joint decisions anymore, unless the donor states otherwise in their instructions</strong></p>
+                            </li>
+                            <li>
+                                <p><strong class="bold">the replacement and remaining original attorneys can make all other decisions together or individually</strong></p>
+                            </li>
+                        </ul>
                     </div>
                 </div>
                 {% endif %}

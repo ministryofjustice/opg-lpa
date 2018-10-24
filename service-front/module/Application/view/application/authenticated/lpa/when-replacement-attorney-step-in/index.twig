@@ -9,10 +9,10 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'when' : {
-        'Value is required and can\'t be empty' : 'Please choose how your replacement attorneys step in',
+        'Value is required and can\'t be empty' : 'Choose how the replacement attorneys should step in',
     },
     'whenDetails': {
-    	'Value is required and can\'t be empty' : 'Please tell us how you\'d like your replacement attorneys to step in'
+    	'Value is required and can\'t be empty' : 'Tell us how you\'d like the replacement attorneys to step in'
 	}
 }) %}
 
@@ -35,7 +35,7 @@
 		attributes: {
 			id: 'one-attorney-cannot-act'
 		},
-		label: 'As soon as one of the original attorneys can no longer act',
+		label: 'As soon as <strong class="bold-small">one</strong> of the original attorneys can no longer act, all the replacement attorneys should step in together',
 		label_attributes: {
 			for: 'one-attorney-cannot-act'
 		},
@@ -45,7 +45,7 @@
 		attributes: {
 			id: 'no-attorney-can-act'
 		},
-		label: 'Only when none of the original attorneys can act',
+		label: 'When <strong class="bold-small">none</strong> of the original attorneys can act, all the replacement attorneys should step in together',
 		label_attributes: {
 			for: 'no-attorney-can-act'
 		},
@@ -79,13 +79,14 @@
 
 <li id="when-replacement-attorney-step-in-section" class="section current">
 
-	<h2 class="heading-medium accordion-header flush--top">How should your replacement attorneys step in?</h2>
+	<h2 class="heading-medium accordion-header flush--top">How should the replacement attorneys step in?</h2>
 
     <div class="accordion-info">
 		<div class="text">
-			<p>You can choose when your replacement attorneys step in, and in what order.</p>
-			<p>Your replacement attorneys will usually all step in together as soon as 1 of your original attorneys can no longer act. They will be able to make any decision jointly and severally along with the other original attorneys.</p>
-			<p>If you'd rather they stepped in later, or you want to choose a specific order, then select 1 of the other 2 options.</p>
+			<p>The donor can choose when their replacement attorneys step in and in what order.</p>
+			<p>Once they’ve stepped in, the replacement attorneys will be able to make any decision jointly and severally along with the remaining original attorneys.</p>
+			<p>Most donors choose for all the replacement attorneys to step in together as soon as 1 of the original attorneys can no longer act.</p>
+			<p>If the donor would prefer the replacement attorneys to step in later or in a specific order, select 1 of the other 2 options.</p>
 		</div>
 	</div>
 
@@ -97,22 +98,18 @@
 		{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
 		<fieldset id="when">
-            <legend class="visually-hidden">How should your replacement attorneys step in?</legend>
-
-            <h2 class="heading-medium flush--top">My replacement attorneys will step in...</h2>
+            <legend class="visually-hidden">How should the replacement attorneys step in?</legend>
 
             <div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
                 {{ formElementErrorsV2(when) }}
                 {{ formElement(when) }}
 
                 <div id="step-in-details" class="panel panel-border-narrow js-hidden">
-			              <p class="text">
-                        Describe below how you'd like this to happen. Be careful - the more specific your instructions, the greater the chance that they won't be able to be followed. Remember, replacements can't replace other replacements. If in doubt, seek legal advice.
-                        <a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="page:link:help: Not sure what to put?">
-                            Not sure what to put?
-                        </a>
-                    </p>
-			              {{ macros.formGroup(whenDetails) }}
+					<p class="text">
+						Describe below how the donor would like this to happen. Be careful - the more specific the instructions, the greater the chance that they will not be able to be followed. If in doubt, seek legal advice.
+                        <a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="page:link:help: Not sure what to put?">Not sure what to put?</a>
+					</p>
+					{{ macros.formGroup(whenDetails) }}
                 </div>
 
             </div>

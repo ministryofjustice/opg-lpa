@@ -152,6 +152,7 @@
 
         .popup & {
             @extend %heading-xlarge;
+            margin-top: 0;
         }
     }
 
@@ -174,6 +175,10 @@
 
     ol {
         @extend %list-number;
+    }
+
+    ol.alpha {
+        @extend %list-alpha;
     }
 }
 

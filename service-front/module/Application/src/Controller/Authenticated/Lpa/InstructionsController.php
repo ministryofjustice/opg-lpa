@@ -54,8 +54,7 @@ class InstructionsController extends AbstractLpaController
         }
 
         return new ViewModel([
-            'form'    => $form,
-            'isPfLpa' => $lpa->document->type == Document::LPA_TYPE_PF,
+            'form' => $form
         ]);
     }
 }

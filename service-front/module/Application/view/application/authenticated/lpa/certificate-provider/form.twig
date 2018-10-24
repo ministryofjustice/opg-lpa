@@ -1,7 +1,6 @@
 {% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
 
 {% block htmlTitle %}Certificate provider details - {% endblock %}
-{% block pageTitle %}Create a lasting power of attorney{% endblock %}
 
 {% block content %}
 
@@ -10,30 +9,30 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'name-title' : {
-        'cannot-be-blank' : 'Please enter the certificate provider\'s title',
+        'cannot-be-blank' : 'Enter the certificate provider\'s title',
         'must-be-less-than-or-equal:5' : 'Title must be five letters or fewer - please abbreviate, if necessary'
     },
     'name-first' : {
-        'cannot-be-blank' : 'Please enter the certificate provider\'s first names',
-        'must-be-less-than-or-equal:32' : 'Certificate provider\'s first names can not be longer than 32 characters long'
+        'cannot-be-blank' : 'Enter the certificate provider\'s first names',
+        'must-be-less-than-or-equal:32' : 'Certificate provider\'s first names cannot be longer than 32 characters long'
     },
     'name-last' : {
-        'cannot-be-blank' : 'Please enter the certificate provider\'s last name',
-        'must-be-less-than-or-equal:40' : 'Certificate provider\'s last name can not be longer than 40 characters long'
+        'cannot-be-blank' : 'Enter the certificate provider\'s last name',
+        'must-be-less-than-or-equal:40' : 'Certificate provider\'s last name cannot be longer than 40 characters long'
     },
     'address-address1' : {
-        'cannot-be-blank' : 'Please enter the certificate provider\'s first line of address',
-        'must-be-less-than-or-equal:40' : 'Address line 1 can not be longer than 40 characters long'
+        'cannot-be-blank' : 'Enter the first line of the certificate provider\'s address',
+        'must-be-less-than-or-equal:40' : 'The first line of the certificate provider\'s address cannot be longer than 40 characters long'
     },
     'address-address2' : {
-        'linked-1-cannot-be-null' : 'Please enter the certificate provider\'s second line of address',
-        'must-be-less-than-or-equal:40' : 'Address line 2 can not be longer than 40 characters long'
+        'linked-1-cannot-be-null' : 'Enter the second line of the certificate provider\'s address',
+        'must-be-less-than-or-equal:40' : 'The second line of the certificate provider\'s address cannot be longer than 40 characters long'
     },
     'address-address3' : {
-        'must-be-less-than-or-equal:40' : 'Address line 3 can not be longer than 40 characters long'
+        'must-be-less-than-or-equal:40' : 'The third line of the certificate provider\'s address cannot be longer than 40 characters long'
     },
     'address-postcode' : {
-        'linked-1-cannot-be-null' : 'Please enter the certificate provider\'s postcode',
+        'linked-1-cannot-be-null' : 'Enter the certificate provider\'s postcode',
         'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines rather than in the postcode field.'
     }
 }) %}

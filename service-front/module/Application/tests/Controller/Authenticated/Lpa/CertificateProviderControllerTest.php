@@ -145,7 +145,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/add');
 
-        $this->form->shouldReceive('setExistingActorNamesData')->once();
+        $this->form->shouldReceive('setActorData')->once();
         $this->url->shouldReceive('fromRoute')->withArgs([
             'lpa/certificate-provider',
             ['lpa-id' => $this->lpa->id]
@@ -169,7 +169,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/add');
-        $this->form->shouldReceive('setExistingActorNamesData')->once();
+        $this->form->shouldReceive('setActorData')->once();
         $this->url->shouldReceive('fromRoute')->withArgs([
             'lpa/certificate-provider',
             ['lpa-id' => $this->lpa->id]
@@ -200,7 +200,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/add');
-        $this->form->shouldReceive('setExistingActorNamesData')->once();
+        $this->form->shouldReceive('setActorData')->once();
         $this->setPostValid($this->form, $postData, null, 2);
 
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData)->once();
@@ -222,7 +222,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/add');
-        $this->form->shouldReceive('setExistingActorNamesData')->once();
+        $this->form->shouldReceive('setActorData')->once();
         $this->setPostValid($this->form, $postData, null, 2, 2);
         $this->metadata->shouldReceive('removeMetadata')->withArgs([$this->lpa, Lpa::CERTIFICATE_PROVIDER_SKIPPED])->once();
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData)->once();
@@ -246,7 +246,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->request->shouldReceive('isPost')->andReturn(true)->twice();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/add', 2);
-        $this->form->shouldReceive('setExistingActorNamesData')->once();
+        $this->form->shouldReceive('setActorData')->once();
         $cancelUrl = $this->setUrlFromRoute($this->lpa, 'lpa/certificate-provider');
         $routeMatch = $this->setReuseDetails($controller, $this->form, $this->user, 'attorney');
         $this->setMatchedRouteName($controller, 'lpa/certificate-provider/add', $routeMatch);
@@ -273,7 +273,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/edit');
-        $this->form->shouldReceive('setExistingActorNamesData')->once();
+        $this->form->shouldReceive('setActorData')->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->form->shouldReceive('bind')->withArgs([$this->lpa->document->certificateProvider->flatten()]);
         $this->url->shouldReceive('fromRoute')->withArgs([
@@ -297,7 +297,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/edit');
-        $this->form->shouldReceive('setExistingActorNamesData')->once();
+        $this->form->shouldReceive('setActorData')->once();
         $this->setPostInvalid($this->form);
         $this->url->shouldReceive('fromRoute')->withArgs([
             'lpa/certificate-provider',
@@ -326,7 +326,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/edit');
-        $this->form->shouldReceive('setExistingActorNamesData')->once();
+        $this->form->shouldReceive('setActorData')->once();
         $this->setPostValid($this->form, $postData);
 
 
@@ -347,7 +347,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
         $this->setFormAction($this->form, $this->lpa, 'lpa/certificate-provider/edit');
-        $this->form->shouldReceive('setExistingActorNamesData')->once();
+        $this->form->shouldReceive('setActorData')->once();
         $this->setPostValid($this->form, $postData);
 
 

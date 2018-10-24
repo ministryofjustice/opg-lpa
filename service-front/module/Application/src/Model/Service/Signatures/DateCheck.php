@@ -91,7 +91,7 @@ class DateCheck
 
                 // Applicants must sign on or after last attorney
                 if ($timestamp < $maxAttorneyDate) {
-                    $errors[$applicantKey][] = 'The applicant must sign on the same day or after all Section 11\'s have been signed. ' . ($isDraft === true ? '' : '') . 'You need to print and re-sign section 15';
+                    $errors[$applicantKey][] = 'The applicant must sign on the same day or after all section 11s have been signed. ' . ($isDraft === true ? '' : '') . 'You need to print and re-sign section 15';
                 }
             }
         }

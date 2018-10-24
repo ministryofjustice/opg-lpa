@@ -2,10 +2,10 @@
 
 {% set form = formErrorTextExchange(form,  {
     'email' : {
-        'cannot-be-empty' : 'Please enter your email address'
+        'cannot-be-empty' : 'Enter your email address'
     },
     'password' : {
-        'cannot-be-empty' : 'Please enter your password'
+        'cannot-be-empty' : 'Enter your password'
     }
 }) %}
 
@@ -24,7 +24,7 @@
       <div class="error-summary-text" data-tracking-context="Signing in">
             {% if authError == 'not-activated' %}
                 <p data-tracking-summary="Account not activated">Your account has not been activated. Click on the link in the email sent to you when you created the account.
-                    If you haven't received an email, check your spam, bulk or junk email folder or <a href="{{ url('register/resend-email') }}">resend activation email</a>.</p>
+                    If you have not received an email, check your spam, bulk or junk email folder or <a href="{{ url('register/resend-email') }}">resend activation email</a>.</p>
             {% elseif authError == 'locked' %}
                <p data-tracking-summary="Account has been locked">This user account has been locked. Please go <a href="{{ url('forgot-password') }}">here</a> to reset your password OR you can attempt again in 15 minutes.</p>
             {% else %}

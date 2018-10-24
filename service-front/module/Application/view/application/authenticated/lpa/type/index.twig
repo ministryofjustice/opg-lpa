@@ -9,7 +9,7 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'type' : {
-        'cannot-be-empty' : 'Please choose a type of LPA',
+        'cannot-be-empty' : 'Choose a type of LPA',
     }
 }) %}
 
@@ -33,11 +33,11 @@
 
 <li id="lpa-type-section" class="section current">
 
-    <h2 class="heading-medium accordion-header">What type of LPA do you want to create?</h2>
+    <h2 class="heading-medium accordion-header">What type of LPA do you want to make?</h2>
 
     <div class="accordion-info">
         <div class="text">
-            <p>You can make an LPA to cover either your property and financial affairs, or your health and welfare.</p>
+            <p>You can make an LPA to cover property and financial affairs, or health and welfare.</p>
             <p><a class="js-guidance" href="/guide#topic-the-2-types-of-lpa" data-journey-click="page:link:help: Find out about the 2 types of LPA">Find out about the 2 types of LPA</a></p>
         </div>
     </div>
@@ -53,7 +53,7 @@
         <fieldset id="type">
             <legend class="visually-hidden">Choose type of LPA</legend>
 
-            <h2 class="heading-medium flush--top">What type of LPA do you want to create?</h2>
+            <h2 class="heading-medium flush--top">What type of LPA do you want to make?</h2>
 
             <div class="form-group {{ type.getMessages|length > 0 ? 'error'}}">
                 {{ formElementErrorsV2(type) }}
@@ -70,10 +70,10 @@
 
             <div class="form-group">
                 <details class="text">
-                    <summary data-journey-click="page:link.reveal:help: What if I want to make more than one LPA?" role="button" aria-expanded="false">What if I want to make more than one LPA?</summary>
+                    <summary data-journey-click="page:link.reveal:help: What if I want to make more than one LPA?" role="button" aria-expanded="false">What if I want to make both types of LPA?</summary>
                     <div>
                         <p>You can only make one LPA at a time.</p>
-                        <p>At the end you can choose to reuse the details from this LPA so that you don't have to enter them again.</p>
+                        <p>Once you’ve finished making this LPA, you can reuse the details you’ve entered to make another one. </p>
                         <p>Remember, there is an application fee for each LPA.</p>
                     </div>
                 </details>

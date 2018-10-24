@@ -670,7 +670,7 @@
                     {% endfor %}
                 </tr>
                 <tr>
-                    <td>Only if I don't have mental capacity</td>
+                    <td>Only if I do not have mental capacity</td>
                     {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.primaryAttorneyDecisions.when['no-capacity'] }}</td>
                     {% endfor %}
@@ -758,7 +758,7 @@
                     {% endfor %}
                 </tr>
                 <tr>
-                    <td>Attorneys can't make decisions about life-sustaining treatment</td>
+                    <td>Attorneys cannot make decisions about life-sustaining treatment</td>
                     {% for month,values in options['by-month'] %}
                         <td class="numeric">{{ values.primaryAttorneyDecisions.canSustainLife.false }}</td>
                     {% endfor %}

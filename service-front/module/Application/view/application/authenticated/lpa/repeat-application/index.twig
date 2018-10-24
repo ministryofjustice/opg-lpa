@@ -9,7 +9,7 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'isRepeatApplication' : {
-        "Value is required and can't be empty": 'Please choose Yes or No',
+        "Value is required and can't be empty": 'Choose Yes or No',
     },
     'repeatCaseNumber': {
         "Value is required and can't be empty": "If you are making a repeat application, you need to enter the case number given to you by the Office of the Public Guardian.",
@@ -69,14 +69,14 @@
 
 <li id="repeat-application-section" class="section current">
 
-    <h2 class="heading-medium accordion-header flush--top">Are you making a repeat application to register your LPA?</h2>
+    <h2 class="heading-medium accordion-header flush--top">Is the donor making a repeat application to register their LPA?</h2>
 
     <div class="accordion-info">
         <div class="text">
             <details class="form-group">
                 <summary data-journey-click="page:link.reveal:help: What is a repeat application?" role="button" aria-expanded="false">What is a repeat application?</summary>
                 <div>
-                    <p>A repeat application is when a previously submitted LPA can’t be registered and has been sent back to you. It will contain instructions on how to submit a repeat application within 3 months for a reduced fee. You will need the case number from OPG’s letter saying that you can make a repeat application.</p>
+                    <p>If an application has already been made to register an LPA for the donor, but OPG could not register it, we will have written to the correspondent to let them know. The letter will explain that if a repeat application is made within 3 months, the donor can pay half the normal application fee.</p>
                 </div>
             </details>
         </div>
@@ -103,9 +103,9 @@
                     {{ macros.formGroup(repeatCaseNumber) }}
 
                     <div class="text">
-                        <p>Your case number is in the letter that came with your returned LPA application.</p>
+                        <p>You can find the case number on the letter that came with the returned LPA application.</p>
 
-                        <p>By clicking on the Save and continue button, you confirm that the Office of the Public Guardian has told you that you can apply to make a repeat application for &pound;{{ lpaRepeatFee }} within 3 months.</p>
+                        <p>By clicking on the save button below, you confirm that OPG has said a repeat application can be made for half the normal application fee.</p>
                     </div>
 
                 </div>

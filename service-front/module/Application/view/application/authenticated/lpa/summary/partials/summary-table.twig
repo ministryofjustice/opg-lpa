@@ -35,7 +35,7 @@
             <tr class="group-single">
                 <th class="table-summary-title" scope="row">Life-sustaining treatment</th>
                 <td class="table-summary-content">
-                    {{ lpa.document.primaryAttorneyDecisions.canSustainLife ? 'Option A - The attorneys can make decisions' : 'Option B - The attorneys cannot make decisions' }}
+                    {{ lpa.document.primaryAttorneyDecisions.canSustainLife ? 'The attorneys can make decisions about life-sustaining treatment' : 'The attorneys cannot make decisions about life-sustaining treatment' }}
                 </td>
                 <td class="table-summary-action"><a href="{{ url('lpa/life-sustaining', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: Life-sustaining treatment">Edit</a></td>
             </tr>
@@ -46,7 +46,7 @@
             <tr class="group-single">
                 <th class="table-summary-title" scope="row">My LPA can be used</th>
                 <td class="table-summary-content">
-                    {{ lpa.document.primaryAttorneyDecisions.when == 'now' ? 'As soon as it\'s registered (with my consent)' : 'Only if I don\'t have mental capacity' }}
+                    {{ lpa.document.primaryAttorneyDecisions.when == 'now' ? 'As soon as it\'s registered (and with the donor\'s consent)' : 'Only if the donor does not have mental capacity' }}
                 </td>
                 <td class="table-summary-action"><a href="{{ url('lpa/when-lpa-starts', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: When LPA starts">Edit</a></td>
             </tr>
@@ -101,7 +101,7 @@
             {# HOW PRIMARY ATTORNEYS MAKE DECISIONS - Details #}
             {% if lpa.document.primaryAttorneyDecisions is defined and lpa.document.primaryAttorneyDecisions.howDetails is not empty %}
                 <tr class="group-end">
-                    <th class="table-summary-title" scope="row">Details</th>
+                    <th class="table-summary-title" scope="row">Decisions that attorneys must make jointly</th>
                     <td class="table-summary-content" itemprop="name">
                         {{ lpa.document.primaryAttorneyDecisions.howDetails }}
                     </td>
@@ -155,12 +155,12 @@
                            or lpa.document.replacementAttorneyDecisions.whenDetails is not empty) ? 'group-element' : 'group-end' }}">
                     <th class="table-summary-title" scope="row">When they step in</th>
                     <td class="table-summary-content" itemprop="name">
-                        {{ 'The replacement attorneys will step in ' ~
+                        {{ 'The replacement attorneys will ' ~
                         ( lpa.document.replacementAttorneyDecisions.when == 'first' ?
-                            'as soon as one of the original attorneys can no longer act' :
+                            'step in as soon as one of the original attorneys can no longer act' :
                             ((lpa.document.replacementAttorneyDecisions.when == 'last' ) ?
-                                'only when none of the original attorneys can act' :
-                                'as per instructions')) }}
+                                'only step in when none of the original attorneys can act' :
+                                'step in according to the donor\'s instructions below')) }}
                     </td>
                     <td class="table-summary-action"><a href="{{ url('lpa/when-replacement-attorney-step-in', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: When replacement attorneys step in">Edit</a></td>
                 </tr>
@@ -170,7 +170,7 @@
             {% if lpa.document.replacementAttorneyDecisions.whenDetails is not empty %}
                 <tr class="{{ (lpa.document.replacementAttorneyDecisions.how is not empty
                            or lpa.document.replacementAttorneyDecisions.howDetails is not empty) ? 'group-element' : 'group-end' }}">
-                    <th class="table-summary-title" scope="row">Details of when</th>
+                    <th class="table-summary-title" scope="row">Donor's instructions on how replacements step in</th>
                     <td class="table-summary-content" itemprop="name">
                         {{ lpa.document.replacementAttorneyDecisions.whenDetails }}
                     </td>
@@ -196,7 +196,7 @@
             {# HOW REPLACEMENT ATTORNEYS MAKE DECISIONS - Details #}
             {% if lpa.document.replacementAttorneyDecisions.howDetails is not empty %}
                 <tr class="{{ lpa.document.replacementAttorneyDecisions.whenDetails is not empty ? 'group-element' : 'group-end' }}">
-                    <th class="table-summary-title" scope="row">Details of how</th>
+                    <th class="table-summary-title" scope="row">Decisions that replacement attorneys must make jointly</th>
                     <td class="table-summary-content" itemprop="name">
                         {{ lpa.document.replacementAttorneyDecisions.howDetails }}
                     </td>
@@ -331,13 +331,13 @@
                 <th class="table-summary-title" scope="row">Application fee</th>
                 <td class="table-summary-content" itemprop="name">
                     {% if lpa.payment.reducedFeeReceivesBenefits %}
-                        Application fee: £0 as you are claiming an eligible benefit
+                        Application fee: £0 as the donor is claiming an eligible benefit
                     {% elseif lpa.payment.reducedFeeUniversalCredit %}
-                        Fee assessed on application as you receive Universal Credit
+                        Fee assessed on application as the donor receives Universal Credit
                     {% elseif lpa.payment.reducedFeeLowIncome %}
-                        Application fee: £{{ lowIncomeFee }} as you have an income of less than £12,000
+                        Application fee: £{{ lowIncomeFee }} as the donor has an income of less than £12,000
                     {% else %}
-                        Application fee: £{{ fullFee }} as you aren’t claiming a reduction
+                        Application fee: £{{ fullFee }} as you are not claiming a reduction
                     {% endif %}
                 </td>
                 <td class="table-summary-action"><a href="{{ url('lpa/fee-reduction', {'lpa-id': lpa.id}) }}" data-journey-click="check your answers:link:navigation: Fee reduction">Edit</a></td>
