@@ -29,6 +29,14 @@ url = "dbname='"+os.environ['OPG_LPA_POSTGRES_NAME']\
 postgres = psycopg2.connect(url)
 cursor = postgres.cursor()
 
+# Cache allowed user IDs
+valid_user_ids = set()
+
+cursor.execute("SELECT id FROM users WHERE identity IS NOT NULL")
+rows = cursor.fetchall()
+for row in rows:
+    valid_user_ids.add(row[0])
+
 # Setup MongoDB
 url = 'mongodb://opglpa-api:%s@mongodb-01,mongodb-02,mongodb-03/opglpa-api' % quote_plus(os.environ['OPG_LPA_API_MONGODB_PASSWORD'])
 url = url + '?ssl=true&ssl_cert_reqs=CERT_NONE'
@@ -40,20 +48,19 @@ collection = db['lpa']
 
 # Return each LPA
 for lpa in collection.find():
-    print("---------------------")
-
-    #pprint.pprint(lpa)
 
     # Return the matching LPA from Postgres
     cursor.execute("SELECT * FROM applications WHERE id = %s", (lpa['_id'],))
     row = cursor.fetchone()
 
-    #pprint.pprint(row)
-
     # If there's a user in Mongo, but not in Postgres, check if that's valid
     if 'user' in lpa and row[1] != lpa['user']:
-        print("User miss-match; ensure delete was deliberate.")
-        continue
+        if lpa['user'] not in valid_user_ids:
+            # print("User has been deleted; skipping")
+            continue
+        else:
+            print('Missing Postgres data for live user')
+            exit(1)
 
     # Check all of the DateTimes
     dateTimes = {2: "updatedAt", 3: "startedAt", 4: "createdAt", 5: "completedAt", 6: "lockedAt"}
