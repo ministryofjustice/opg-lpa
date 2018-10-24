@@ -96,12 +96,12 @@ class CorrespondenceForm extends AbstractMainFlowForm
                 //  Define the message mappings
                 $messageMappings = [
                     'email-address' => [
-                        'cannot-be-blank'       => 'Please enter the correspondent\'s email address',
-                        'invalid-email-address' => 'Please enter a valid email address',
+                        'cannot-be-blank'       => 'Enter the correspondent\'s email address',
+                        'invalid-email-address' => 'Enter a valid email address',
                     ],
                     'phone-number' => [
-                        'cannot-be-blank'       => 'Please enter the correspondent\'s phone number',
-                        'invalid-phone-number'  => 'Please enter a valid phone number',
+                        'cannot-be-blank'       => 'Enter the correspondent\'s phone number',
+                        'invalid-phone-number'  => 'Enter a valid phone number',
                     ],
                 ];
 

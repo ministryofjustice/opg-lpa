@@ -34,7 +34,7 @@ class SystemMessageForm extends AbstractCsrfForm
                     'options' => [
                         'max' => $this->maxMessageLength,
                         'messages' => [
-                             StringLength::TOO_LONG => 'Please limit the message to ' . $this->maxMessageLength . ' chars.',
+                             StringLength::TOO_LONG => 'Limit the message to ' . $this->maxMessageLength . ' chars.',
                          ],
                     ],
                 ],

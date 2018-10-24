@@ -7,15 +7,15 @@
 
 {% set errorMappings = {
     'sign-date-donor-life-sustaining': {
-        'Please enter all the date fields': 'Please enter the donor\'s signature date',
+        'Enter all the date fields': 'Enter the donor\'s signature date',
         'The input does not appear to be a valid date': 'The donor\'s signature date does not appear to be a valid date'
     },
     'sign-date-donor': {
-        'Please enter all the date fields': 'Please enter the donor\'s signature date',
+        'Enter all the date fields': 'Enter the donor\'s signature date',
         'The input does not appear to be a valid date': 'The donor\'s signature date does not appear to be a valid date'
     },
     'sign-date-certificate-provider': {
-        'Please enter all the date fields': 'Please enter the certificate provider\'s signature date',
+        'Enter all the date fields': 'Enter the certificate provider\'s signature date',
         'The input does not appear to be a valid date': 'The certificate provider\'s signature date does not appear to be a valid date'
     }
 } %}
@@ -26,7 +26,7 @@
 
     {% set errorMappings = errorMappings|merge({
         (messageKey) : {
-            'Please enter all the date fields': 'Please enter the attorney\'s signature date',
+            'Enter all the date fields': 'Enter the attorney\'s signature date',
             'The input does not appear to be a valid date': 'The attorney\'s signature date does not appear to be a valid date'
         }
     }) %}
@@ -37,7 +37,7 @@
 
     {% set errorMappings = errorMappings|merge({
         (messageKey) : {
-            'Please enter all the date fields': 'Please enter the replacement attorney\'s signature date',
+            'Enter all the date fields': 'Enter the replacement attorney\'s signature date',
             'The input does not appear to be a valid date': 'The replacement attorney\'s signature date does not appear to be a valid date'
         }
     }) %}
@@ -48,7 +48,7 @@
 
     {% set errorMappings = errorMappings|merge({
         (messageKey) : {
-            'Please enter all the date fields': 'Please enter the applicant\'s signature date',
+            'Enter all the date fields': 'Enter the applicant\'s signature date',
             'The input does not appear to be a valid date': 'The applicant\'s signature date does not appear to be a valid date'
         }
     }) %}
@@ -143,7 +143,7 @@
     <div class="accordion-info">
         <div class="text">
 
-            <p>This page is optional. It can be used to verify that your {{ lpa.document.type == 'health-and-welfare' ? 'health and welfare' : 'property and finance' }} LPA has been <a href="/guide#topic-signing-the-lpa" class="js-guidance" data-journey-click="page:link:help: has been -signed in the correct order- before">signed in the correct order</a> before sending it to us.</p>
+            <p>This page is optional. You can use it to check that your {{ lpa.document.type == 'health-and-welfare' ? 'health and welfare' : 'property and finance' }} LPA has been <a href="/guide#topic-signing-the-lpa" class="js-guidance" data-journey-click="page:link:help: has been -signed in the correct order- before">signed in the correct order</a> before you send it to us.</p>
 
             <p>Please give the date each person below signed the LPA.</p>
         </div>
@@ -167,7 +167,7 @@
                     {{ formElementErrorsV2(donorLifeSustainingElementYear) }}
                     {{ formElementErrorsV2(donorLifeSustainingElement) }}
 
-                    <p>This person signed Section 5 of the LPA on</p>
+                    <p>This person signed section 5 of the LPA on</p>
 
                     <fieldset id="{{ donorLifeSustainingElement.getAttribute('id') }}" class="date-check-dates">
                         <legend class="visually-hidden">Check signature dates for donor</legend>
@@ -199,7 +199,7 @@
                 {{ formElementErrorsV2(donorElementYear) }}
                 {{ formElementErrorsV2(donorElement) }}
 
-                <p>This person signed Section 9 of the LPA on</p>
+                <p>This person signed section 9 of the LPA on</p>
 
                 <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates">
                     <legend class="visually-hidden">Check signature dates for donor</legend>
@@ -222,7 +222,7 @@
             </div>
 
             <div class="panel panel-border-wide text">
-                <p>Remember, if any continuation sheets 1 or 2 were used they must also have been signed by the donor at the same time as or before the donor signed Section 9.</p>
+                <p>Remember, if continuation sheets 1 or 2 were used, the donor must have signed them before, or on the same day as, they signed section 9. </p>
             </div>
         </div>
     </div>
@@ -237,7 +237,7 @@
                 {{ formElementErrorsV2(certificateProviderElementYear) }}
                 {{ formElementErrorsV2(certificateProviderElement) }}
 
-                <p>This person signed Section 10 of the LPA on</p>
+                <p>This person signed section 10 of the LPA on</p>
 
                 <fieldset id="{{ certificateProviderElement.getAttribute('id') }}" class="date-check-dates">
                     <legend class="visually-hidden">Check signature dates for certificate provider</legend>
@@ -288,9 +288,9 @@
 
                     <p>
                         {% if attorney.dob is defined %}
-                            This person signed Section 11 of the LPA on
+                            This person signed section 11 of the LPA on
                         {% else %}
-                            This corporation signed Continuation Sheet 4 of the LPA on
+                            This corporation signed continuation sheet 4 of the LPA on
                         {% endif %}
                     </p>
 
@@ -345,9 +345,9 @@
 
                     <p>
                         {% if attorney.dob is defined %}
-                            This person signed Section 11 of the LPA on
+                            This person signed section 11 of the LPA on
                         {% else %}
-                            This corporation signed Continuation Sheet 4 of the LPA on
+                            This corporation signed continuation sheet 4 of the LPA on
                         {% endif %}
                     </p>
 
@@ -402,9 +402,9 @@
 
                     <p>
                         {% if applicant['isHuman'] %}
-                            This person signed Section 15 of the LPA on
+                            This person signed section 15 of the LPA on
                         {% else %}
-                            This corporation signed Section 15 of the LPA on
+                            This corporation signed section 15 of the LPA on
                         {% endif %}
                     </p>
 

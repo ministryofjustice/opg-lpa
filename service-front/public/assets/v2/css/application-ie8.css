@@ -1714,6 +1714,10 @@ input[type=number] {
   padding-left: 20px;
   list-style-type: decimal; }
 
+.help-sections ol.alpha {
+  padding-left: 20px;
+  list-style-type: upper-alpha; }
+
 .flush {
   margin: 0 !important; }
 
@@ -2024,6 +2028,8 @@ input[type=number] {
   .help-sections article strong {
     font-weight: 700; }
 .help-sections article:first-child h1 {
+  margin-top: 0; }
+.popup .help-sections h1 {
   margin-top: 0; }
 
 .help-footer {
@@ -2677,6 +2683,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
   .form-popup .postcode-input {
     width: 252px; }
   .form-popup .summary,
+  .form-popup .summary-text,
   .form-popup .address-type-toggle,
   .form-popup .block-label,
   .form-popup .button,

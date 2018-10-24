@@ -56,7 +56,7 @@ class ReuseDetailsTest extends MockeryTestCase
                 ],
             ],
             [
-                'label' => 'None of the above',
+                'label' => 'None of the above - I want to add a new person',
                 'value' => -1,
                 'label_attributes' => [
                     'class' => 'text block-label flush--left'

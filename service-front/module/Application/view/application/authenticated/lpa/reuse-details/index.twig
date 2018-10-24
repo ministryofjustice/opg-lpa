@@ -1,7 +1,6 @@
 {% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
 
 {% block htmlTitle %}Reuse details - {% endblock %}
-{% block pageTitle %}Create a lasting power of attorney{% endblock %}
 
 {% block content %}
 
@@ -14,7 +13,7 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'reuse-details': {
-        'cannot-be-empty': 'Please choose the details you would like to reuse',
+        'cannot-be-empty': 'Choose the details you would like to reuse',
     },
 }) %}
 

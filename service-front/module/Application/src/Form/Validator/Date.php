@@ -13,7 +13,7 @@ class Date extends DateValidator
     public function __construct($options = [])
     {
         $this->messageTemplates = array_merge($this->messageTemplates, [
-            self::EMPTY_DATE   => "Please enter all the date fields",
+            self::EMPTY_DATE   => "Enter all the date fields",
         ]);
 
         parent::__construct($options);

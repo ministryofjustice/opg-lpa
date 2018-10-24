@@ -3,6 +3,22 @@
 {% block htmlTitle %}Last steps - {% endblock %}
 {% block pageTitle %}Last steps{% endblock %}
 
+{% if lpa.payment.reducedFeeReceivesBenefits %}
+    {% set feeBenefits = true %}
+{% elseif lpa.payment.reducedFeeUniversalCredit %}
+    {% set feeUC = true %}
+{% elseif lpa.payment.reducedFeeLowIncome %}
+    {% set feeLowIncome = true %}
+{% else %}
+    {% set feeFull = true %}
+{% endif %}
+
+{% if lpa.payment.method %}
+    {% set paymentMethod = lpa.payment.method %}
+{% else %}
+    {% set paymentMethod = false %}
+{% endif %}
+
 {% block content %}
 
 <div class="text">
@@ -11,26 +27,75 @@
 
         <h2 class="heading-large">Payment received</h2>
 
-        <p>Thank you for your payment of <strong class="bold-small">&pound;{{ paymentAmount|number_format(2, '.', ',') }}</strong></p>
+        <p>Thank you for your payment of <strong class="bold-small">&pound;{{ paymentAmount | number_format(2, '.', ',') }}</strong></p>
 
         <p>Your payment reference number is <strong class="bold-small">{{ paymentReferenceNo }}</strong></p>
 
+
+        <h2 class="heading-large">The LPA is ready to print and sign</h2>
+
     {% endif %}
-
-
-    <h2 class="heading-large">Print and sign your LPA</h2>
 
     <p>Your LPA reference number is <strong class="bold-small">{{ formatLpaId(lpa.id) }}</strong></p>
 
-    <p>You’re now ready to print and sign the complete {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA document for {{ lpa.document.donor.name }}, then send it to the Office of the Public Guardian.</p>
+    <p>You're now ready to print and sign the {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA for {{ lpa.document.donor.name }}, then post it to the Office of the Public Guardian.</p>
 
-    <p>It’s essential that you sign the parts of the LPA in the right order. If you sign in the wrong order, it will delay your registration.</p>
+    <p>You can access this page at any time from <a href="/user/dashboard">Your LPAs</a>.</p>
 
-    <p><a class="js-guidance" href="/guide#topic-signing-the-lpa" data-journey-click="page:link:help: -This guide- show you how to sign">This guide</a> shows you how to sign in the right order – you can then use <a href="{{ dateCheckUrl }}" data-journey-click="page:link:navigation: -this tool- to check">this tool</a> to check you’ve got it right.</p>
+    <h3 class="heading-medium">What you need to do</h3>
 
-    <p>If you sign in the wrong order, you’ll need to print and sign the relevant parts of the LPA again.</p>
+    <ol class="list list-number">
+        <li>Download and print the LPA, and get it signed and dated in the right order</li>
 
-    <p><strong class="bold-small">If you have paid online, the fee will be returned to you if OPG have not received your signed LPA by {{ lpa.completedAt|date_modify("+40 day")|date('d/m/Y') }}. You can still send the LPA to OPG after {{ lpa.completedAt|date_modify("+40 day")|date('d/m/Y') }} but you will be contacted to pay again if you’ve been refunded. If paying by cheque, post this to us with your signed LPA.</strong></p>
+        {# fee options 2 or 3 (UC or low income) #}
+        {% if feeUC or feeLowIncome %}
+            <li>Download, print, sign and date the fee remission form, and gather the proof needed</li>
+        {% endif %}
+
+        {# fee option 1 (benefits) #}
+        {% if feeBenefits %}
+            <li>Download, print, sign and date the fee exemption form, and gather the proof needed</li>
+        {% endif %}
+
+        {# If "person to notify" #}
+        {% if peopleToNotify %}
+            <li>Download and print the people to notify form - give one to each person to notify</li>
+        {% endif %}
+
+        {# fee option 4 (no reductions) and cheque #}
+        {% if feeFull and paymentMethod == 'cheque' %}
+            <li>Post the LPA to OPG, along with a £{{ paymentAmount  | number_format(2, '.', ',') }} cheque for the application fee</li>
+        {% endif %}
+
+        {# fee option 4 (no reductions) and paid online #}
+        {% if feeFull and paymentMethod == 'card' %}
+            <li>Post the LPA to OPG</li>
+        {% endif %}
+
+        {# fee option 3 (low income) and cheque #}
+        {% if feeLowIncome and paymentMethod == 'cheque' %}
+            <li>Post the LPA to OPG, along with the fee remission form, proof of the donor’s low income, and a £{{ paymentAmount | number_format(2, '.', ',') }} cheque for the application fee</li>
+        {% endif %}
+
+        {# fee option 3 (low income) and paid online #}
+        {% if feeLowIncome and paymentMethod == 'card' %}
+            <li>Post the LPA to OPG, along with the fee remission form and proof of the donor’s low income</li>
+        {% endif %}
+
+        {# fee option 2 (UC) #}
+        {% if feeUC %}
+            <li>Post the LPA to OPG, along with the fee remission form and proof of the donor’s benefits</li>
+        {% endif %}
+
+        {# fee option 1 (benefits) #}
+        {% if feeBenefits %}
+            <li>Post the LPA to OPG, along with the fee exemption form and proof of the donor’s benefits</li>
+        {% endif %}
+
+    </ol>
+
+
+    <h2 class="heading-large">Documents</h2>
 
     <div class="panel-cta">
         <div class="panel-body">
@@ -43,19 +108,29 @@
                 </li>
 
                 {% if lpa120Url %}
-                    <li class="iconlinks-item">
-                        <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank" data-journey-click="page:link:download: Download your fee remissions and exemption form">
-                            <i class="icon icon-file-download"></i>
-                            <span class="iconlinks-text">Download your fee remissions and exemption form</span>
-                        </a>
-                    </li>
+                    {% if feeBenefits %}
+                        <li class="iconlinks-item">
+                            <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank" data-journey-click="page:link:download: Download your fee exemption form">
+                                <i class="icon icon-file-download"></i>
+                                <span class="iconlinks-text">Download your fee exemption form</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if feeUC or feeLowIncome %}
+                        <li class="iconlinks-item">
+                            <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank" data-journey-click="page:link:download: Download your fee remission form">
+                                <i class="icon icon-file-download"></i>
+                                <span class="iconlinks-text">Download your fee remission form</span>
+                            </a>
+                        </li>
+                    {% endif %}
                 {% endif %}
 
                 {% if lp3Url %}
                     <li class="iconlinks-item">
-                        <a class="iconlinks-link" href="{{ lp3Url }}" target="_blank" data-journey-click="page:link:download: Download the letter to send to your 'people to notify' (PDF)">
+                        <a class="iconlinks-link" href="{{ lp3Url }}" target="_blank" data-journey-click="page:link:download: Download the letter to send to your 'people to notify'">
                             <i class="icon icon-file-download"></i>
-                            <span class="iconlinks-text">Download the letter to send to your 'people to notify' (PDF)</span>
+                            <span class="iconlinks-text">Download the letter to send to your 'people to notify'</span>
                         </a>
                     </li>
                 {% endif %}
@@ -63,29 +138,58 @@
         </div>
     </div>
 
-    <p>If you can't view the LPA, you'll need to download a PDF reader like <a target="_blank" href="https://get.adobe.com/uk/reader/" data-journey-click="page:link:external: Acrobat Reader">Acrobat Reader</a>.</p>
+    <p>If you cannot view the documents, you'll need to download a PDF reader like <a target="_blank" href="https://get.adobe.com/uk/reader/" data-journey-click="page:link:external: Acrobat Reader">Acrobat Reader</a>.</p>
+
+
+    <h2 class="heading-large">Sign the LPA in the right order</h2>
+
+    <p>The different sections of the LPA must be signed in the right order. If they’re not, we cannot register the LPA.</p>
+
+    <p><a class="js-guidance" href="/guide#topic-signing-the-lpa" data-journey-click="page:link:help: -This guide- shows you how to sign">This guide</a> shows you how to sign in the right order.</p>
+
+    <p>Once the LPA has been signed, you can use <a href="{{ dateCheckUrl }}" data-journey-click="page:link:navigation: -this tool- to check">this tool</a> to check you’ve got it right before you send the LPA to us. If you find the LPA has been signed in the wrong order, you'll need to print the relevant sections of the LPA and get them signed again.</p>
+
+
+    <h2 class="heading-large">Found a mistake in the LPA?</h2>
+
+    <p>If you spot a mistake in the LPA, do not cross anything out or write anything on the LPA - if you do, we may not be able to register it.</p>
+
+    <p>Find out what to do if you’ve <a class="js-guidance" href="/guide#topic-if-you-find-a-mistake" data-journey-click="page:link:help: found a mistake in the LPA">found a mistake in the LPA</a>.</p>
+
 
     <h2 class="heading-large">Post your LPA to the Office of the Public Guardian</h2>
 
     <p>You need to send us:</p>
 
     <ul class="list list-bullet">
-        <li>Your signed LPA (all sections, from 1-15)</li>
-        <li>If you're applying for a fee reduction
-            <ul>
-                <li>a completed application form for your exemption (LPA 120A)</li>
-                <li>evidence to support this application</li>
-            </ul>
-        </li>
+        <li>the signed LPA (all sections from 1 to 15, including any blank pages)</li>
+
+        {# fee options 2 or 3 (UC or low income) #}
+        {% if feeUC or feeLowIncome %}
+            <li>the signed fee remission form</li>
+        {% endif %}
+
+        {# fee option 1 (benefits) #}
+        {% if feeBenefits %}
+            <li>the signed fee exemption form</li>
+        {% endif %}
+
+        {# fee option 3 (low income) #}
+        {% if feeLowIncome %}
+            <li>proof of the donor's low income</li>
+        {% endif %}
+
+        {# fee option 1 or 2 (benefits or UC) #}
+        {% if feeBenefits or feeUC %}
+            <li>proof of the donor’s benefits</li>
+        {% endif %}
+
+        {# cheque #}
+        {% if paymentMethod == 'cheque' %}
+            <li>a cheque for the £{{ paymentAmount | number_format(2, '.', ',') }} application fee, payable to ‘Office of the Public Guardian'</li>
+        {% endif %}
+
     </ul>
-
-    <p>And if you're paying by cheque:</p>
-
-    <ul class="list list-bullet">
-        <li>A cheque for the application fee, payable to ‘Office of the Public Guardian’</li>
-    </ul>
-
-    <p>Post all documents to this address:</p>
 
     <p>
         <strong class="bold-small">
@@ -96,19 +200,22 @@
         </strong>
     </p>
 
-    {% if peopleToNotify %}
-        <p>If you've not already done so, remember to send the notification letter to {{ concatNames(peopleToNotify) }} as well.</p>
+    {# If paid online #}
+    {% if paymentMethod == 'card' %}
+        <p><strong class="bold-small">The application fee will be returned to you if OPG have not received your signed LPA by {{ lpa.completedAt|date_modify("+40 day")|date('d/m/Y') }}. You can still send the LPA to us after this date, but if you’ve been refunded, we’ll contact you to arrange payment.</strong></p>
     {% endif %}
 
 
     <h2 class="heading-large">What happens next?</h2>
 
-    <p>The Office of the Public Guardian will send you an acknowledgement letter 2 to 3 weeks after we receive your signed LPA. It will take 8 to 10 weeks in total to register the LPA if there are no mistakes in the application. This includes a waiting period in which anyone entitled to object to the registration of the LPA can lodge their objection. This waiting period is an important safeguard and is required by law.</p>
+    <p>The Office of the Public Guardian will send the donor, the attorneys and the correspondent an acknowledgement letter 2 to 3 weeks after we receive the signed LPA.</p>
 
-    <p>We'll send the registered LPA and any correspondence to {{ correspondentName }}.</p>
+    <p>It will take 8 to 10 weeks to register the LPA if there are no mistakes in the application. This includes a 4 week waiting period during which people can object to the registration of the LPA. This waiting period is an important safeguard and is required by law.</p>
+
+    <p>If there are no problems with the LPA, we'll register it and send it to the correspondent, {{ correspondentName }}. If we cannot register the LPA, we'll write to the correspondent to let them know.</p>
 
 
-    <h2 class="heading-large">Create another LPA?</h2>
+    <h2 class="heading-large">Make another LPA?</h2>
 
     <ul class="list">
         <li>
@@ -116,18 +223,6 @@
         </li>
         <li>
             <a href="/user/dashboard/create" data-journey-click="page:link:create new: Make an LPA from scratch">Make an LPA from scratch</a>
-        </li>
-    </ul>
-
-
-    <h2 class="heading-large">Finished?</h2>
-
-    <ul class="list">
-        <li>
-            <a href="/user/dashboard" data-journey-click="page:link:navigation: View my LPAs">View my LPAs</a>
-        </li>
-        <li>
-            <a href="/logout" data-journey-click="page:link:signout: Sign out of this service">Sign out of this service</a>
         </li>
     </ul>
 

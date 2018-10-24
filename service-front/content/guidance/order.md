@@ -1,9 +1,11 @@
 ## Help topics
 
-* LPA basics
-	* About LPAs_LPA basics.md
-* About this service
-	* Process_About this service.md
+* What is an LPA?
+	* About LPAs_What is an LPA.md
+* Mental capacity
+	* About LPAs_Mental capacity.md
+* How to make an LPA online
+	* Process_How to make an LPA online.md
 * Before you begin
 	* Process_Before you begin.md
 * The 2 types of LPA
@@ -26,17 +28,19 @@
 	* People_People to be told.md
 * Preferences and instructions
 	* Decisions_Preferences and instructions.md
-* How to view a draft of the LPA
-	* Process_How to view a draft of the LPA.md
+* View a draft of the LPA
+	* Process_View a draft of the LPA.md
+* If you find a mistake
+	* Process_If you find a mistake.md
 * Signing the LPA
 	* Process_Signing the LPA.md
-* Registering the LPA
-	* Process_Registering the LPA.md
+* How to register the LPA
+	* Process_How to register the LPA.md
 * Applicant
 	* People_Applicant.md
 * Correspondent
 	* People_Correspondent.md
-* Fees and reductions
-	* Process_Fees and reductions.md
+* Fees, reductions and exemptions
+	* Process_Fees reductions and exemptions.md
 * Glossary
 	* About LPAs_Glossary.md
