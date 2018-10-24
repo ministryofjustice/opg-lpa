@@ -14,20 +14,20 @@ class DynamoCronLock
     private $config;
 
     /**
-     * The namespace to prefix keys with.
+     * Prefix for the lock name
      *
      * @var string
      */
-    private $keyPrefix;
+    private $namePrefix;
 
     /**
      * @param array $config
-     * @param string $keyPrefix
+     * @param string $namePrefix
      */
-    public function __construct(array $config, $keyPrefix = 'default')
+    public function __construct(array $config, $namePrefix = 'default')
     {
         $this->config = $config;
-        $this->keyPrefix = $keyPrefix;
+        $this->namePrefix = $namePrefix;
     }
 
     /**
@@ -41,12 +41,22 @@ class DynamoCronLock
     {
         //  Create the command to execute
         $command = 'bin/lock acquire ';
+        $command .= sprintf('--name "%s/%s" ', $this->namePrefix, $lockName);
         $command .= sprintf('--table %s ', $this->config['settings']['table_name']);
-        $command .= sprintf('--name "%s/%s" ', $this->keyPrefix, $lockName);
         $command .= sprintf('--ttl %s ', $allowedSecondsSinceLastRun);
-        $command .= sprintf('--endpoint %s ', $this->config['client']['endpoint']);
-        $command .= sprintf('--version %s ', $this->config['client']['version']);
-        $command .= sprintf('--region %s ', $this->config['client']['region']);
+
+        //  Add any optional values
+        $paramNames = [
+            'endpoint',
+            'version',
+            'region',
+        ];
+
+        foreach ($paramNames as $paramName) {
+            if (isset($this->config['client'][$paramName]) && !empty($this->config['client'][$paramName])) {
+                $command .= sprintf('--%s %s ', $paramName, $this->config['client'][$paramName]);
+            }
+        }
 
         //  Initialise the return value
         $output = [];
