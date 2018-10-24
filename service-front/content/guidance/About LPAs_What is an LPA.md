@@ -20,7 +20,7 @@ The donor can make one or both of the LPAs. The LPAs do not have to be made at t
 
 ## Registering an LPA
 
-All LPAs must be registered by the Office of the Public Guardian (OPG).
+All LPAs must be [registered](/help/#topic-how-to-register-the-lpa) by the Office of the Public Guardian (OPG).
 Before registering an LPA, OPG:
 
 * checks that the LPA is legally correct
