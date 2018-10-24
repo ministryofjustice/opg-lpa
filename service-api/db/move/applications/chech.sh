@@ -9,3 +9,5 @@ python -m pip install pymongo
 python -m pip install psycopg2-binary
 python -m pip install pytz
 python -m pip install python-dateutil
+
+python confirm.py
