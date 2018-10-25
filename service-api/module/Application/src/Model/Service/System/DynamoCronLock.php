@@ -40,10 +40,10 @@ class DynamoCronLock
     public function getLock($lockName, $allowedSecondsSinceLastRun = 60 * 60)
     {
         //  Create the command to execute
-        $command = 'bin/lock acquire ';
-        $command .= sprintf('--name "%s/%s" ', $this->namePrefix, $lockName);
-        $command .= sprintf('--table %s ', $this->config['settings']['table_name']);
-        $command .= sprintf('--ttl %s ', $allowedSecondsSinceLastRun);
+        $command = 'bin/lock acquire';
+        $command .= ' --name "' . $this->namePrefix . '/' . $lockName . '"';
+        $command .= ' --table ' . $this->config['settings']['table_name'];
+        $command .= ' --ttl ' . $allowedSecondsSinceLastRun;
 
         //  Add any optional values
         $paramNames = [
@@ -54,7 +54,7 @@ class DynamoCronLock
 
         foreach ($paramNames as $paramName) {
             if (isset($this->config['client'][$paramName]) && !empty($this->config['client'][$paramName])) {
-                $command .= sprintf('--%s %s ', $paramName, $this->config['client'][$paramName]);
+                $command .= sprintf(' --%s %s', $paramName, $this->config['client'][$paramName]);
             }
         }
 
