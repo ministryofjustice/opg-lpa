@@ -24,9 +24,10 @@ module.exports = function (grunt) {
       dev: {
         options: {
           loadPath: [
-          'node_modules/govuk_frontend_toolkit/stylesheets',
-          'node_modules/govuk-elements-sass/public/sass'
-          ]
+            'node_modules/govuk_frontend_toolkit/stylesheets',
+            'node_modules/govuk-elements-sass/public/sass'
+          ],
+          sourcemap: 'none'
         },
         files: {
           'public/assets/v2/css/application.css': 'assets/sass/application.scss',
@@ -81,7 +82,7 @@ module.exports = function (grunt) {
     // minifying the css
     cssmin: {
       options: {
-        sourceMap: true
+        sourceMap: false
       },
       target: {
         files: [{
@@ -97,7 +98,7 @@ module.exports = function (grunt) {
     // join the JS files
     concat: {
       options: {
-          sourceMap: true,
+          sourceMap: false,
           separator: ';\n'
       },
       dist: {
@@ -177,7 +178,7 @@ module.exports = function (grunt) {
     // minify for production
     uglify: {
       options: {
-        sourceMap: true
+        sourceMap: false
       },
       build: {
         src: 'public/assets/v2/js/application.js',
