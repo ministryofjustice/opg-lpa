@@ -23,3 +23,5 @@ psql --username=$OPG_LPA_POSTGRES_USERNAME --host=$OPG_LPA_POSTGRES_HOSTNAME --d
 echo "Removing CSV and JSON files"
 rm *.json
 rm *.csv
+
+./check.sh
