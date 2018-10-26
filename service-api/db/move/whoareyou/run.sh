@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Script has already been run. Exiting."
+exit 1
+
 set -e
 
 cd /app/db/move/whoareyou
