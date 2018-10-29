@@ -60,6 +60,10 @@
                 margin-bottom: -3px;
             }
         }
+
+        &:focus {
+            outline: 3px solid $focus-colour;
+        }
     }
 
     .action-delete {

@@ -2641,6 +2641,8 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
       filter: none; }
     .person-actions .action-edit + .spinner {
       margin-bottom: -3px; }
+    .person-actions .action-edit:focus {
+      outline: 3px solid #ffbf47; }
   .person-actions .action-delete {
     display: inline-block;
     margin: 6px 30px 0 0; }
