@@ -5,7 +5,6 @@ namespace ApplicationTest\ControllerFactory;
 use Application\Controller\Console\GenerateStatsController;
 use Application\ControllerFactory\GenerateStatsControllerFactory;
 use Application\Model\Service\System\Stats as StatsService;
-use Application\Model\Service\System\DynamoCronLock;
 use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -31,10 +30,6 @@ class GenerateStatsControllerFactoryTest extends MockeryTestCase
 
     public function testInvoke()
     {
-        $this->container->shouldReceive('get')
-            ->with('DynamoCronLock')
-            ->andReturn(Mockery::mock(DynamoCronLock::class))
-            ->once();
         $this->container->shouldReceive('get')
             ->with(StatsService::class)
             ->andReturn(Mockery::mock(StatsService::class))

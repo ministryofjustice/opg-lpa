@@ -5,7 +5,6 @@ namespace ApplicationTest\ControllerFactory;
 use Application\Controller\Console\AccountCleanupController;
 use Application\ControllerFactory\AccountCleanupControllerFactory;
 use Application\Model\Service\AccountCleanup\Service as AccountCleanupService;
-use Application\Model\Service\System\DynamoCronLock;
 use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -31,10 +30,6 @@ class AccountCleanupControllerFactoryTest extends MockeryTestCase
 
     public function testInvoke()
     {
-        $this->container->shouldReceive('get')
-            ->with('DynamoCronLock')
-            ->andReturn(Mockery::mock(DynamoCronLock::class))
-            ->once();
         $this->container->shouldReceive('get')
             ->with(AccountCleanupService::class)
             ->andReturn(Mockery::mock(AccountCleanupService::class))

@@ -10,7 +10,6 @@ use Application\Model\DataAccess\Postgres;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
-use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Notifications\Client as NotifyClient;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\Sns\SnsClient;
@@ -64,12 +63,6 @@ class Module
                 HttpClient::class => Guzzle6Client::class,
             ],
             'factories' => [
-                'DynamoCronLock' => function (ServiceLocatorInterface $sm) {
-                    $config = $sm->get('config');
-
-                    return new DynamoCronLock($config['cron']['lock']['dynamodb'], $config['stack']['name']);
-                },
-
                 'DynamoQueueClient' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config');
                     $dynamoConfig = $config['pdf']['DynamoQueue'];
