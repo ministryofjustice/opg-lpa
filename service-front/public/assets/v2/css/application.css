@@ -3039,6 +3039,8 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
       height: 120%; }
     .person-actions .action-edit + .spinner {
       margin-bottom: -3px; } }
+.person-actions .action-edit:focus {
+  outline: 3px solid #ffbf47; }
 @media (min-width: 641px) {
   .person-actions .action-delete {
     display: inline-block;
