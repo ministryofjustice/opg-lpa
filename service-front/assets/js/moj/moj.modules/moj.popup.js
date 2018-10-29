@@ -87,6 +87,9 @@
         opts.beforeOpen();
       }
 
+      // prevent tab navigation outside the lightbox
+      self.loopTabKeys(self.$popup);
+
       // Fade in the mask
       this.$mask.fadeTo(200, 1);
 
@@ -94,9 +97,6 @@
       this.$popup.delay(100).fadeIn(200, function () {
         self.$popup.find('h2').attr('tabindex', -1);
         self.$popup.find('.close a').focus(); // for accessibility
-
-        // set tabs
-        self.loopTabKeys(self.$popup);
 
         // callback func
         if (opts.onOpen && typeof(opts.onOpen) === 'function') {
@@ -145,25 +145,41 @@
       }
     },
 
+    tabFocusesOn: function (e) {
+      // on tab set focus
+      if (e.key === 'Tab' && !e.shiftKey) {
+        e.preventDefault();
+        e.data.element.focus();
+      }
+    },
+
+    reverseTabFocusesOn: function (e) {
+      // on tab with shift held set focus
+      if (e.key === 'Tab' && e.shiftKey) {
+        e.preventDefault();
+        e.data.element.focus();
+      }
+    },
+
     loopTabKeys: function (wrap) {
-      var tabbable = 'a, area, button, input, object, select, textarea, [tabindex]',
-          first = wrap.find(tabbable).filter(':first'),
-          last = wrap.find(tabbable).filter(':last');
+      var tabbable = 'a, area, button, input, object, select, textarea, [tabindex]';
+      this.$first = wrap.find(tabbable).filter(':first');
+      this.$last = wrap.find(tabbable).filter(':last');
 
-      first.add(last).keydown(function (e) {
+      this.$first.keydown({'element': this.$last}, this.reverseTabFocusesOn);
+      this.$last.keydown({'element': this.$first}, this.tabFocusesOn);
+    },
 
-        var code = (e.keyCode ? e.keyCode : e.which),
-            shift = e.shiftKey,
-            self = $(this)[0],
-            down = (self === last[0] && !shift),
-            up = (self === first[0] && shift),
-            focusOn = down ? first : (up ? last : null);
+    redoLoopedTabKeys: function () {
+      if (typeof this.$first !== 'undefined') {
+        this.$first.off('keydown', this.reverseTabFocusesOn);
+      }
 
-        if (code === 9 && (down || up)) {
-          e.preventDefault();
-          focusOn.focus();
-        }
-      });
+      if (typeof this.$last !== 'undefined') {
+        this.$last.off('keydown', this.tabFocusesOn);
+      }
+
+      this.loopTabKeys(this.$popup);
     },
 
     isOpen: function () {
