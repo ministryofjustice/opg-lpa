@@ -30,35 +30,35 @@ class Service extends AbstractService
             $data = [];
         }
 
-        //  Generate a random 11-digit number to use as the LPA id - this loops until we find one that's 'free'.
+        /*
+         * A loop is used here to catch any ID clashes. If such a clash happens, a different ID will be tried.
+         */
         do {
             $id = random_int(1000000, 99999999999);
 
-            //  Try to get an existing LPA to check if the ID is already used
-            $existingLpa = $this->getApplicationRepository()->getById($id);
-        } while (!is_null($existingLpa));
+            $lpa = new Lpa([
+                'id'                => $id,
+                'startedAt'         => new DateTime(),
+                'updatedAt'         => new DateTime(),
+                'user'              => $userId,
+                'locked'            => false,
+                'whoAreYouAnswered' => false,
+                'document'          => new Document\Document(),
+            ]);
 
-        $lpa = new Lpa([
-            'id'                => $id,
-            'startedAt'         => new DateTime(),
-            'updatedAt'         => new DateTime(),
-            'user'              => $userId,
-            'locked'            => false,
-            'whoAreYouAnswered' => false,
-            'document'          => new Document\Document(),
-        ]);
+            $data = $this->filterIncomingData($data);
 
-        $data = $this->filterIncomingData($data);
+            if (!empty($data)) {
+                $lpa->populate($data);
+            }
 
-        if (!empty($data)) {
-            $lpa->populate($data);
-        }
+            if ($lpa->validate()->hasErrors()) {
+                throw new RuntimeException('A malformed LPA object was created');
+            }
 
-        if ($lpa->validate()->hasErrors()) {
-            throw new RuntimeException('A malformed LPA object was created');
-        }
+            $created = $this->getApplicationRepository()->insert($lpa);
 
-        $this->getApplicationRepository()->insert($lpa);
+        } while (!$created);
 
         $entity = new DataModelEntity($lpa);
 

@@ -2,6 +2,7 @@
 namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
+use PDOException;
 use Traversable;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Db\Sql\Sql;
@@ -172,7 +173,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     /**
      * @param Lpa $lpa
      * @return bool
-     *
+     * @throws \Exception
      */
     public function insert(Lpa $lpa) : bool
     {
@@ -185,8 +186,24 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         $statement = $sql->prepareStatementForSqlObject($insert);
 
-        // If something goes wrong, allow the exception to be thrown
-        $statement->execute();
+        try {
+
+            $statement->execute();
+
+        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e){
+
+            // If it's a key clash, and not on the identity, re-try with new values.
+            if ($e->getPrevious() instanceof PDOException) {
+                $pdoException = $e->getPrevious();
+
+                if ($pdoException->getCode() == 23505) {
+                    return false;
+                }
+            }
+
+            // Otherwise re-throw the exception
+            throw($e);
+        }
 
         return true;
     }
