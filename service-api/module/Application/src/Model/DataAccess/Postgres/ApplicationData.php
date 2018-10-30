@@ -192,7 +192,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e){
 
-            // If it's a key clash, and not on the identity, re-try with new values.
+            // If it's a key clash, re-try with new values.
             if ($e->getPrevious() instanceof PDOException) {
                 $pdoException = $e->getPrevious();
 
