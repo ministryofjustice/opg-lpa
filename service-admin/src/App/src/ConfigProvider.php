@@ -33,10 +33,11 @@ class ConfigProvider
     {
         return [
             'invokables' => [
+                Handler\HomeHandler::class => Handler\HomeHandler::class,
                 Handler\PingHandler::class => Handler\PingHandler::class,
             ],
-            'factories'  => [
-                Handler\HomePageHandler::class => Handler\HomePageHandlerFactory::class,
+            'initializers' => [
+                Handler\Initializers\TemplatingSupportInitializer::class,
             ],
         ];
     }
