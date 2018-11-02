@@ -35,25 +35,6 @@ return [
         'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : [],
     ],
 
-    'cron' => [
-        'lock' => [
-            'dynamodb' => [
-                'client' => [
-                    'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
-                    'version' => '2012-08-10',
-                    'region' => 'eu-west-1',
-                    'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
-                        'key'    => getenv('AWS_ACCESS_KEY_ID'),
-                        'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
-                    ] : null,
-                ],
-                'settings' => [
-                    'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
-                ],
-            ],
-        ], // lock
-    ], // cron
-
     'db' => [
         'postgres' => [
             'default' => [
