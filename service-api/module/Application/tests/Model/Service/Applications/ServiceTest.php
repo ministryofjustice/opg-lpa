@@ -80,7 +80,6 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $this->setCreateIdExpectations();
         $this->setInsertOneExpectations($user);
 
         $serviceBuilder = new ServiceBuilder();
@@ -98,7 +97,6 @@ class ServiceTest extends AbstractServiceTest
     {
         $user = FixturesData::getUser();
 
-        $this->setCreateIdExpectations();
 
         //So we expect an exception and for no document to be inserted
         $this->expectException(\RuntimeException::class);
@@ -122,7 +120,6 @@ class ServiceTest extends AbstractServiceTest
 
         $user = FixturesData::getUser();
 
-        $this->setCreateIdExpectations();
         $this->setInsertOneExpectations($user);
 
         $serviceBuilder = new ServiceBuilder();
@@ -144,7 +141,6 @@ class ServiceTest extends AbstractServiceTest
 
         $user = FixturesData::getUser();
 
-        $this->setCreateIdExpectations();
         $this->setInsertOneExpectations($user);
 
         $serviceBuilder = new ServiceBuilder();
@@ -642,14 +638,7 @@ class ServiceTest extends AbstractServiceTest
             ->withArgs([$lpa->getId()])
             ->andReturn($lpa->toArray());
     }
-
-    private function setCreateIdExpectations()
-    {
-        $this->applicationRepository->shouldReceive('getById')
-            ->once()
-            ->andReturn(null);
-    }
-
+    
     /**
      * @param User $user
      */
