@@ -5,7 +5,6 @@ namespace Application;
 use PDO;
 use Zend\Db\Adapter\Adapter as ZendDbAdapter;
 use Application\Model\DataAccess\Repository;
-use Application\Model\DataAccess\Mongo;
 use Application\Model\DataAccess\Postgres;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
@@ -120,18 +119,6 @@ class Module
                 Postgres\LogData::class         => Postgres\DataFactory::class,
                 Postgres\StatsData::class       => Postgres\DataFactory::class,
                 Postgres\WhoAreYouData::class   => Postgres\DataFactory::class,
-
-                //  Mongo database
-                Mongo\DatabaseFactory::class . '-default'   => Mongo\DatabaseFactory::class,
-                Mongo\DatabaseFactory::class . '-auth'      => Mongo\DatabaseFactory::class,
-
-                //  Collection wrappers for Mongo collection
-                Mongo\Collection\ApiLpaCollection::class        => Mongo\Collection\CollectionFactory::class,
-                Mongo\Collection\ApiStatsLpasCollection::class  => Mongo\Collection\CollectionFactory::class,
-                Mongo\Collection\ApiUserCollection::class       => Mongo\Collection\CollectionFactory::class,
-                Mongo\Collection\ApiWhoCollection::class        => Mongo\Collection\CollectionFactory::class,
-                Mongo\Collection\AuthLogCollection::class       => Mongo\Collection\CollectionFactory::class,
-                Mongo\Collection\AuthUserCollection::class      => Mongo\Collection\CollectionFactory::class,
 
                 // Get S3Client Client
                 'S3Client' => function ($sm) {
