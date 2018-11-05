@@ -6,6 +6,8 @@ use Mockery\MockInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Interop\Container\ContainerInterface;
 
+use Zend\Db\Adapter\Adapter as ZendDbAdapter;
+
 use Application\Model\DataAccess\Postgres\DataFactory;
 use Application\Model\DataAccess\Postgres\UserData;
 
@@ -37,43 +39,16 @@ class DataFactoryTest extends MockeryTestCase
         $factory($this->container, \stdClass::class);
     }
 
-    public function testMissingPostgresConfig()
-    {
-        $factory = new DataFactory();
-
-        $this->container->shouldReceive('get')
-            ->withArgs(['config'])
-            ->once()
-            ->andReturn([]);
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp( '/Missing Postgres configuration/' );
-
-        $factory($this->container, UserData::class);
-    }
-
-
     public function testWithValidConfiguration()
     {
         $factory = new DataFactory();
 
+        $zendDbAdapter = Mockery::mock(ZendDbAdapter::class);
+
         $this->container->shouldReceive('get')
-            ->withArgs(['config'])
+            ->withArgs(['ZendDbAdapter'])
             ->once()
-            ->andReturn([
-                'db' => [
-                    'postgres' => [
-                        'default' => [
-                            'adapter'   => 'pgsql',
-                            'host'      => 'test-host',
-                            'port'      => 'test-port',
-                            'dbname'    => 'test-dbname',
-                            'username'  => 'test-username',
-                            'password'  => 'test-password',
-                        ],
-                    ],
-                ],
-            ]);
+            ->andReturn($zendDbAdapter);
 
         $result = $factory($this->container, UserData::class);
 
