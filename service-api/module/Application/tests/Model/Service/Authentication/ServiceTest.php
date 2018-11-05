@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\Authentication;
 
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
-use Application\Model\DataAccess\Mongo\Collection\User;
+use Application\Model\DataAccess\Postgres\UserModel as User;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use DateInterval;
@@ -13,6 +13,8 @@ use Mockery\MockInterface;
 
 class ServiceTest extends AbstractServiceTest
 {
+    const TIME_FORMAT = 'Y-m-d\TH:i:s.uO';
+
     /**
      * @var MockInterface|UserRepositoryInterface
      */
@@ -87,7 +89,7 @@ class ServiceTest extends AbstractServiceTest
     public function testWithPasswordMaxLoginAttemptsResetInvalidCredentials()
     {
         $this->setUserDataSourceGetByUsernameExpectation('max@logins.com', new User([
-            '_id' => 1,
+            'id' => 1,
             'active' => true,
             'failed_login_attempts' => AuthenticationService::MAX_ALLOWED_LOGIN_ATTEMPTS,
             'last_failed_login' => (new DateTime())
@@ -113,7 +115,7 @@ class ServiceTest extends AbstractServiceTest
     public function testWithPasswordInvalidCredentialsMaxLoginAttempts()
     {
         $this->setUserDataSourceGetByUsernameExpectation('max@logins.com', new User([
-            '_id' => 1,
+            'id' => 1,
             'active' => true,
             'failed_login_attempts' => AuthenticationService::MAX_ALLOWED_LOGIN_ATTEMPTS - 1
         ]));
@@ -136,7 +138,7 @@ class ServiceTest extends AbstractServiceTest
         $today = new DateTime('today');
 
         $this->setUserDataSourceGetByUsernameExpectation('test@test.com', new User([
-            '_id' => 1,
+            'id' => 1,
             'identity' => 'test@test.com',
             'active' => true,
             'failed_login_attempts' => AuthenticationService::MAX_ALLOWED_LOGIN_ATTEMPTS - 1,
@@ -176,7 +178,7 @@ class ServiceTest extends AbstractServiceTest
         $today = new DateTime('today');
 
         $this->setUserDataSourceGetByUsernameExpectation('test@test.com', new User([
-            '_id' => 1,
+            'id' => 1,
             'identity' => 'test@test.com',
             'active' => true,
             'password_hash' => password_hash('valid', PASSWORD_DEFAULT),
@@ -247,9 +249,9 @@ class ServiceTest extends AbstractServiceTest
     public function testWithTokenTokenExpired()
     {
         $this->setUserDataSourceGetByAuthTokenExpectation('expired', new User([
-            'auth_token' => [
-                'expiresAt' => new DateTime('-1 seconds')
-            ]
+            'auth_token' => json_encode([
+                'expiresAt' => (new DateTime('-1 seconds'))->format(self::TIME_FORMAT)
+            ])
         ]));
 
         $serviceBuilder = new ServiceBuilder();
@@ -268,14 +270,14 @@ class ServiceTest extends AbstractServiceTest
         $expiresAt = new DateTime('+1 seconds');
 
         $this->setUserDataSourceGetByAuthTokenExpectation('valid', new User([
-            '_id' => 1,
+            'id' => 1,
             'identity' => 'test@test.com',
             'last_login' => $today,
-            'auth_token' => [
+            'auth_token' => json_encode([
                 'token' => 'valid',
-                'expiresAt' => $expiresAt,
-                'updatedAt' => new DateTime('-6 seconds')
-            ]
+                'expiresAt' => $expiresAt->format(self::TIME_FORMAT),
+                'updatedAt' => (new DateTime('-6 seconds'))->format(self::TIME_FORMAT)
+            ])
         ]));
 
         $serviceBuilder = new ServiceBuilder();
@@ -301,14 +303,14 @@ class ServiceTest extends AbstractServiceTest
         $expiresAt = new DateTime('+1 seconds');
 
         $this->setUserDataSourceGetByAuthTokenExpectation('valid', new User([
-            '_id' => 1,
+            'id' => '1',
             'identity' => 'test@test.com',
-            'last_login' => $today,
-            'auth_token' => [
+            'last_login' => $today->format(self::TIME_FORMAT),
+            'auth_token' => json_encode([
                 'token' => 'valid',
-                'expiresAt' => $expiresAt,
-                'updatedAt' => new DateTime('-5 seconds')
-            ]
+                'expiresAt' => $expiresAt->format(self::TIME_FORMAT),
+                'updatedAt' => (new DateTime('-5 seconds'))->format(self::TIME_FORMAT)
+            ])
         ]));
 
         $serviceBuilder = new ServiceBuilder();
@@ -320,7 +322,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->assertEquals([
             'token' => 'valid',
-            'userId' => 1,
+            'userId' => '1',
             'username' => 'test@test.com',
             'last_login' => $today,
             'expiresIn' => 1,
@@ -330,18 +332,18 @@ class ServiceTest extends AbstractServiceTest
 
     public function testWithTokenUpdate()
     {
-        $today = new DateTime('today');
-        $expiresAt = new DateTime('+1 seconds');
+        $today = (new DateTime('today'));
+        $expiresAt = (new DateTime('+1 seconds'))->format(self::TIME_FORMAT);
 
         $this->setUserDataSourceGetByAuthTokenExpectation('valid', new User([
-            '_id' => 1,
+            'id' => '1',
             'identity' => 'test@test.com',
-            'last_login' => $today,
-            'auth_token' => [
+            'last_login' => $today->format(self::TIME_FORMAT),
+            'auth_token' => json_encode([
                 'token' => 'valid',
                 'expiresAt' => $expiresAt,
-                'updatedAt' => new DateTime('-6 seconds')
-            ]
+                'updatedAt' => (new DateTime('-6 seconds'))->format(self::TIME_FORMAT)
+            ])
         ]));
 
         $this->authUserRepository->shouldReceive('extendAuthToken')
@@ -367,7 +369,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->assertEquals([
             'token' => 'valid',
-            'userId' => 1,
+            'userId' => '1',
             'username' => 'test@test.com',
             'last_login' => $today
         ] + $this->tokenDetails, $result);
