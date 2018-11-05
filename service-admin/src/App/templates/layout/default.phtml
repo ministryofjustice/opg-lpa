@@ -1,27 +1,20 @@
-<?php
-$this->headLink()
-    ->prependStylesheet('https://use.fontawesome.com/releases/v5.0.6/css/all.css')
-    ->prependStylesheet('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css');
-$this->inlineScript()
-    ->prependFile('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js')
-    ->prependFile('https://code.jquery.com/jquery-3.3.1.min.js');
-?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title><?=$this->e($title)?> - zend-expressive</title>
     <link rel="shortcut icon" href="https://framework.zend.com/ico/favicon.ico" />
-    <?=$this->headTitle('zend-expressive')->setSeparator(' - ')->setAutoEscape(false)?>
-    <?=$this->headMeta()?>
-    <?=$this->headLink()?>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet" />
     <style>
         body { padding-top: 70px; }
         .app { min-height: 100vh; }
         .app-footer { padding-bottom: 1em; }
         .zf-green, h2 a { color: #68b604; }
     </style>
+    <?=$this->section('stylesheets')?>
 </head>
 <body class="app">
     <header class="app-header">
@@ -32,7 +25,7 @@ $this->inlineScript()
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <!-- Brand -->
-                    <a class="navbar-brand" href="<?=$this->url('home')?>">
+                    <a class="navbar-brand" href="/">
                         <img src="https://framework.zend.com/images/logos/zf-logo-mark.png" alt="Zend Expressive" height="28" />
                     </a>
                 </div>
@@ -50,7 +43,7 @@ $this->inlineScript()
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?=$this->url('api.ping')?>" class="nav-link">
+                            <a href="/api/ping" class="nav-link">
                                 Ping Test
                             </a>
                         </li>
@@ -62,19 +55,25 @@ $this->inlineScript()
 
     <div class="app-content">
         <main class="container">
-            <?=$this->content?>
+            <?=$this->section('content')?>
         </main>
     </div>
 
     <footer class="app-footer">
         <div class="container">
             <hr />
-            <p>
-                &copy; 2005 - <?=date('Y')?> by Zend Technologies Ltd. All rights reserved.
-            </p>
+            <?php if ($this->section('footer')): ?>
+                <?=$this->section('footer')?>
+            <?php else: ?>
+                <p>
+                    &copy; 2005 - <?=date('Y')?> by Zend Technologies Ltd. All rights reserved.
+                </p>
+            <?php endif ?>
         </div>
     </footer>
 
-    <?=$this->inlineScript()?>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <?=$this->section('javascript')?>
 </body>
 </html>

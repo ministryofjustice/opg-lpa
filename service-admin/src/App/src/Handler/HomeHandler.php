@@ -23,8 +23,8 @@ class HomeHandler extends AbstractHandler
         $data['routerDocs'] = 'https://github.com/nikic/FastRoute';
 
         //  View data
-        $data['templateName'] = 'Zend View';
-        $data['templateDocs'] = 'https://docs.zendframework.com/zend-view/';
+        $data['templateName'] = 'Plates';
+        $data['templateDocs'] = 'http://platesphp.com/';
 
         return new HtmlResponse($this->getTemplateRenderer()->render('app::home-page', $data));
     }

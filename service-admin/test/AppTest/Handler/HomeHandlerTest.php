@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AppTest\Handler;
 
-use App\Handler\HomePageHandler;
+use App\Handler\HomeHandler;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -15,7 +15,7 @@ use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Template\TemplateRendererInterface;
 
-class HomePageHandlerTest extends TestCase
+class HomeHandlerTest extends TestCase
 {
     /** @var ContainerInterface|ObjectProphecy */
     protected $container;
@@ -31,10 +31,10 @@ class HomePageHandlerTest extends TestCase
 
     public function testReturnsJsonResponseWhenNoTemplateRendererProvided()
     {
-        $homePage = new HomePageHandler(
+        $homePage = new HomeHandler(
+            get_class($this->container->reveal()),
             $this->router->reveal(),
-            null,
-            get_class($this->container->reveal())
+            null
         );
         $response = $homePage->handle(
             $this->prophesize(ServerRequestInterface::class)->reveal()
@@ -50,10 +50,10 @@ class HomePageHandlerTest extends TestCase
             ->render('app::home-page', Argument::type('array'))
             ->willReturn('');
 
-        $homePage = new HomePageHandler(
+        $homePage = new HomeHandler(
+            get_class($this->container->reveal()),
             $this->router->reveal(),
-            $renderer->reveal(),
-            get_class($this->container->reveal())
+            $renderer->reveal()
         );
 
         $response = $homePage->handle(
