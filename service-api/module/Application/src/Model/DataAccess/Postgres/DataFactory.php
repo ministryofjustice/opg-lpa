@@ -25,30 +25,8 @@ class DataFactory implements FactoryInterface
 
         //---
 
-        $config = $container->get('config');
-
-        if (!isset($config['db']['postgres']['default'])) {
-            throw new \RuntimeException("Missing Postgres configuration");
-        }
-
-        //---
-
-        $dbconf = $config['db']['postgres']['default'];
-
-        $dsn = "{$dbconf['adapter']}:host={$dbconf['host']};port={$dbconf['port']};dbname={$dbconf['dbname']}";
-
-        $adapter = new ZendDbAdapter([
-            'dsn' => $dsn,
-            'driver' => 'pdo',
-            'username' => $dbconf['username'],
-            'password' => $dbconf['password'],
-            'driver_options' => [
-                // RDS doesn't play well with persistent connections
-                PDO::ATTR_PERSISTENT => false,
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            ],
-        ]);
-
-        return new $requestedName($adapter);
+        return new $requestedName(
+            $container->get('ZendDbAdapter')
+        );
     }
 }
