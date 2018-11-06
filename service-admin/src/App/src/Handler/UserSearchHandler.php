@@ -16,6 +16,6 @@ class UserSearchHandler extends AbstractHandler
 
         //  TODO...
 
-        return new HtmlResponse($this->getTemplateRenderer()->render('app::user', $data));
+        return new HtmlResponse($this->getTemplateRenderer()->render('app::user-search', $data));
     }
 }

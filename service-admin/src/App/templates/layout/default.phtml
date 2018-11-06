@@ -50,17 +50,17 @@
             <div class="header-proposition">
                 <div class="content">
                     <nav id="proposition-menu">
-                        <a href="<?= '/';//$this->generateUrl('home') ?>" id="proposition-name">LPA Admin</a>
+                        <a href="<?= $this->url('home') ?>" id="proposition-name">LPA Admin</a>
                         <?php if (true || isset($identity)) {  // TODO - Remove this 'true' ?>
                             <ul id="proposition-links">
                                 <li>
-                                    <a href="<?= '/system-message';//$this->generateUrl('system.message') ?>" class="">System Message</a>
+                                    <a href="<?= $this->url('system.message') ?>" class="">System Message</a>
                                 </li>
                                 <li>
-                                    <a href="<?= '/user-feedback';//$this->generateUrl('user.feedback') ?>" class="">User Feedback</a>
+                                    <a href="<?= $this->url('user.feedback') ?>" class="">User Feedback</a>
                                 </li>
                                 <li>
-                                    <a href="<?= '/user-search';//$this->generateUrl('user.search') ?>" class="">User Search</a>
+                                    <a href="<?= $this->url('user.search') ?>" class="">User Search</a>
                                 </li>
                             </ul>
                         <?php } ?>

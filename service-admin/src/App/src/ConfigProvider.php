@@ -38,10 +38,6 @@ class ConfigProvider
                 Handler\UserFeedbackHandler::class  => Handler\UserFeedbackHandler::class,
                 Handler\UserSearchHandler::class    => Handler\UserSearchHandler::class,
             ],
-            'factories' => [
-                // View Helper
-                View\Url\UrlHelperPlatesExtension::class => View\Url\UrlHelperPlatesExtensionFactory::class,
-            ],
             'initializers' => [
                 Handler\Initializers\TemplatingSupportInitializer::class,
             ],

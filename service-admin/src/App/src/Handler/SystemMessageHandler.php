@@ -16,6 +16,6 @@ class SystemMessageHandler extends AbstractHandler
 
         //  TODO...
 
-        return new HtmlResponse($this->getTemplateRenderer()->render('app::message', $data));
+        return new HtmlResponse($this->getTemplateRenderer()->render('app::system-message', $data));
     }
 }
