@@ -33,10 +33,10 @@ class ConfigProvider
     {
         return [
             'invokables' => [
-                Handler\FeedbackHandler::class => Handler\FeedbackHandler::class,
-                Handler\HomeHandler::class => Handler\HomeHandler::class,
-                Handler\MessageHandler::class => Handler\MessageHandler::class,
-                Handler\UserHandler::class => Handler\UserHandler::class,
+                Handler\HomeHandler::class          => Handler\HomeHandler::class,
+                Handler\SystemMessageHandler::class => Handler\SystemMessageHandler::class,
+                Handler\UserFeedbackHandler::class  => Handler\UserFeedbackHandler::class,
+                Handler\UserSearchHandler::class    => Handler\UserSearchHandler::class,
             ],
             'factories' => [
                 // View Helper
