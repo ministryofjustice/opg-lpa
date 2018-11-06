@@ -33,8 +33,14 @@ class ConfigProvider
     {
         return [
             'invokables' => [
+                Handler\FeedbackHandler::class => Handler\FeedbackHandler::class,
                 Handler\HomeHandler::class => Handler\HomeHandler::class,
-                Handler\PingHandler::class => Handler\PingHandler::class,
+                Handler\MessageHandler::class => Handler\MessageHandler::class,
+                Handler\UserHandler::class => Handler\UserHandler::class,
+            ],
+            'factories' => [
+                // View Helper
+                View\Url\UrlHelperPlatesExtension::class => View\Url\UrlHelperPlatesExtensionFactory::class,
             ],
             'initializers' => [
                 Handler\Initializers\TemplatingSupportInitializer::class,

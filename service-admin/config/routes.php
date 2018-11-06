@@ -33,6 +33,8 @@ use Zend\Expressive\MiddlewareFactory;
  * );
  */
 return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container) : void {
+    $app->get('/user-feedback', App\Handler\FeedbackHandler::class, 'user.feedback');
     $app->get('/', App\Handler\HomeHandler::class, 'home');
-    $app->get('/api/ping', App\Handler\PingHandler::class, 'api.ping');
+    $app->get('/system-message', App\Handler\MessageHandler::class, 'system.message');
+    $app->get('/user-search', App\Handler\UserHandler::class, 'user.search');
 };

@@ -6,15 +6,16 @@ namespace App\Handler;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\Response\JsonResponse;
+use Zend\Diactoros\Response\HtmlResponse;
 
-use function time;
-
-class PingHandler implements RequestHandlerInterface
+class UserHandler extends AbstractHandler
 {
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
-        return new JsonResponse(['ack' => time()]);
+        $data = [];
+
+        //  TODO...
+
+        return new HtmlResponse($this->getTemplateRenderer()->render('app::user', $data));
     }
 }

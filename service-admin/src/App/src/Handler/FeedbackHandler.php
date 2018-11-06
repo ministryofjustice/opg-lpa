@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 
-class HomeHandler extends AbstractHandler
+class FeedbackHandler extends AbstractHandler
 {
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
@@ -16,6 +16,6 @@ class HomeHandler extends AbstractHandler
 
         //  TODO...
 
-        return new HtmlResponse($this->getTemplateRenderer()->render('app::home', $data));
+        return new HtmlResponse($this->getTemplateRenderer()->render('app::feedback', $data));
     }
 }
