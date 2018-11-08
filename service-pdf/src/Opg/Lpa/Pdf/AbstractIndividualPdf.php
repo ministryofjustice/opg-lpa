@@ -220,6 +220,8 @@ abstract class AbstractIndividualPdf extends AbstractPdf
         if ($changesMade) {
             $pdf->Output($this->pdfFile, 'F');
         }
+
+        $pdf->_destroy(true);
     }
 
     /**
