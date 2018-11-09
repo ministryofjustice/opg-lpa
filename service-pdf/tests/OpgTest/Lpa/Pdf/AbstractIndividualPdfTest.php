@@ -78,4 +78,29 @@ class AbstractIndividualPdfTest extends AbstractPdfTestClass
         $this->assertNotFalse(strpos($pdfContents, "1.000000 1.000000 1.000000 rg\n" .
             "297.000000 382.000000 263.000000 129.000000 re f\n"));
     }
+
+    public function testForMemoryLeaks() : void
+    {
+        $pdf = new TestableAbstractIndividualPdf();
+
+        $firstTimeMemory = 0;
+
+        for ($x = 0; $x <= 10; $x++) {
+
+            $pdf->setPdfFile($this->testPdfPath);
+
+            $pdf->addStrikeThrough('applicant-2-pf', 17);
+
+            $pdf->drawStrikeThroughsAndBlanks();
+
+            if($x == 0) {
+                $firstTimeMemory = memory_get_usage();
+            }
+        }
+
+        $diff = memory_get_usage() - $firstTimeMemory;
+
+        $this->assertTrue(500000 > $diff && -500000 < $diff,
+            'Difference was greater than 500k bytes at ' . $diff);
+    }
 }
