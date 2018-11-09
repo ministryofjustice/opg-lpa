@@ -76,7 +76,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setStatusService' => 'SiteStatus'
         ],
         PostcodeController::class => [
-            'setAddressLookup' => 'AddressLookupMoj'
+            'setAddressLookup' => 'AddressLookup'
         ],
         PrimaryAttorneyController::class => [
             'setApplicantService' => 'ApplicantService',

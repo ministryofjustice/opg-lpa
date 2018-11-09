@@ -184,6 +184,10 @@ return array(
             'token' => getenv('OPG_LPA_FRONT_POSTCODE_INFO_TOKEN') ?: null,
         ],
 
+        'ordnancesurvey' => [
+            'key' => getenv('OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY') ?: null,
+        ],
+
     ], // address
 
     'alphagov' => [
