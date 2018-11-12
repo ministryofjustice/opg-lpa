@@ -102,12 +102,17 @@ class OrdnanceSurvey {
      */
     private function getAddressLines(array $address)
     {
+
+        // Remove unwanted commas from the address, before we split on the commas. Alternative: '/(\d+),/'
+        $reformattedAddress = preg_replace('/,\s([1-9-]+),/', ', $1', $address['ADDRESS']);
+
+
         // Construct the address into a line
         //-----------------------------------------------------------------------
         //  Get the address lines into an array but remove the postcode from the end of
         //  it so we can parse the address into 3 lines below
         //  We will re-add the postcode as a final step
-        $components = explode(",", $address['ADDRESS']);
+        $components = explode(",", $reformattedAddress);
 
         // We expect the last element to be the postcode which we don't want
         // We'll confirm that it is the postcode and then remove it from the array
@@ -122,8 +127,6 @@ class OrdnanceSurvey {
         //-----------------------------------------------------------------------
         // Convert address to 3 lines plus a postcode
         $count = count($components);
-
-        # TODO - This could be moved out if we wanted to apply it in other classes.
 
         // By default assume there is 1 field per line.
         $numOnLine[1] = $numOnLine[2] = $numOnLine[3] = 1;
