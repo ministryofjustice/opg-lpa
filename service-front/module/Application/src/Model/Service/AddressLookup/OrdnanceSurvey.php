@@ -104,7 +104,8 @@ class OrdnanceSurvey {
     {
 
         // Remove unwanted commas from the address, before we split on the commas. Alternative: '/(\d+),/'
-        $reformattedAddress = preg_replace('/,\s([1-9-]+),/', ', $1', $address['ADDRESS']);
+        $reformattedAddress = preg_replace('/^([0-9-]+),/', '$1', $address['ADDRESS']);
+        $reformattedAddress = preg_replace('/,\s([0-9-]+),/', ', $1', $reformattedAddress);
 
 
         // Construct the address into a line
