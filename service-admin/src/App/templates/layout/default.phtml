@@ -51,7 +51,7 @@
                 <div class="content">
                     <nav id="proposition-menu">
                         <a href="<?= $this->url('home') ?>" id="proposition-name">LPA Admin</a>
-                        <?php if (true || isset($identity)) {  // TODO - Remove this 'true' ?>
+                        <?php if (isset($identity)) { ?>
                             <ul id="proposition-links">
                                 <li>
                                     <a href="<?= $this->url('system.message') ?>" class="">System Message</a>
@@ -68,11 +68,10 @@
                 </div>
             </div>
 
-            <?php if (false || isset($identity)) {  // TODO - Remove this 'false' ?>
+            <?php if (isset($identity)) { ?>
                 <div class="header-profile">
                     <p>
-                        Logged in as <?= $this->e($identity->getName()); ?><br/>
-                        <a href="<?= '';//$this->generateUrl('sign.out') ?>">Sign out</a>
+                        <a href="<?= $this->url('sign.out') ?>">Sign out</a>
                     </p>
                 </div>
             <?php } ?>

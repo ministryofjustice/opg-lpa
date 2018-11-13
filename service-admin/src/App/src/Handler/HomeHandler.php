@@ -8,8 +8,16 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 
+/**
+ * Class HomeHandler
+ * @package App\Handler
+ */
 class HomeHandler extends AbstractHandler
 {
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
         $data = [];

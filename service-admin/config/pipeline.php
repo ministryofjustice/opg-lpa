@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Middleware\ViewData\ViewDataMiddleware;
 use Psr\Container\ContainerInterface;
+use Tuupola\Middleware\JwtAuthentication;
 use Zend\Expressive\Application;
 use Zend\Expressive\Handler\NotFoundHandler;
 use Zend\Expressive\Helper\ServerUrlMiddleware;
@@ -42,6 +44,9 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     // - $app->pipe('/docs', $apiDocMiddleware);
     // - $app->pipe('/files', $filesMiddleware);
 
+    //  Register the JWT authenticator
+    $app->pipe(JwtAuthentication::class);
+
     // Register the routing middleware in the middleware pipeline.
     // This middleware registers the Zend\Expressive\Router\RouteResult request attribute.
     $app->pipe(RouteMiddleware::class);
@@ -59,12 +64,8 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     // Seed the UrlHelper with the routing results:
     $app->pipe(UrlHelperMiddleware::class);
 
-    // Add more middleware here that needs to introspect the routing results; this
-    // might include:
-    //
-    // - route-based authentication
-    // - route-based validation
-    // - etc.
+    // Middleware to set any default data in the template renderer
+    $app->pipe(ViewDataMiddleware::class);
 
     // Register the dispatch middleware in the middleware pipeline
     $app->pipe(DispatchMiddleware::class);

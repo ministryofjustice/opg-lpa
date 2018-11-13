@@ -10,6 +10,10 @@ use Zend\Diactoros\Response\HtmlResponse;
 
 class UserSearchHandler extends AbstractHandler
 {
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
         $data = [];

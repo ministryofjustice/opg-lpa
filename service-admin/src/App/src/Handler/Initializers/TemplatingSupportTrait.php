@@ -11,21 +11,21 @@ use UnexpectedValueException;
  * Getter and Setter, implementing the TemplatingSupportInterface.
  *
  * Class TemplatingSupportTrait
- * @package App\Action\Initializers
+ * @package App\Handler\Initializers
  */
 trait TemplatingSupportTrait
 {
     /**
      * @var TemplateRendererInterface
      */
-    private $template;
+    private $render;
 
     /**
-     * @param TemplateRendererInterface $template
+     * @param TemplateRendererInterface $render
      */
-    public function setTemplateRenderer(TemplateRendererInterface $template)
+    public function setTemplateRenderer(TemplateRendererInterface $render)
     {
-        $this->template = $template;
+        $this->render = $render;
     }
 
     /**
@@ -33,11 +33,10 @@ trait TemplatingSupportTrait
      */
     public function getTemplateRenderer() : TemplateRendererInterface
     {
-
-        if (!( $this->template instanceof TemplateRendererInterface )) {
+        if (!$this->render instanceof TemplateRendererInterface) {
             throw new UnexpectedValueException('TemplateRenderer not set');
         }
 
-        return $this->template;
+        return $this->render;
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App;
 
+use Tuupola\Middleware\JwtAuthentication;
+
 /**
  * The configuration provider for the App module
  *
@@ -33,13 +35,24 @@ class ConfigProvider
     {
         return [
             'invokables' => [
+                //  Handlers
                 Handler\HomeHandler::class          => Handler\HomeHandler::class,
                 Handler\SystemMessageHandler::class => Handler\SystemMessageHandler::class,
                 Handler\UserFeedbackHandler::class  => Handler\UserFeedbackHandler::class,
                 Handler\UserSearchHandler::class    => Handler\UserSearchHandler::class,
             ],
+            'factories' => [
+                //  Handlers
+                Handler\SignInHandler::class  => Handler\SignInHandlerFactory::class,
+                Handler\SignOutHandler::class => Handler\SignOutHandlerFactory::class,
+
+                //  Middleware
+                JwtAuthentication::class                      => Middleware\Auth\AuthenticationFactory::class,
+                Middleware\ViewData\ViewDataMiddleware::class => Middleware\ViewData\ViewDataMiddlewareFactory::class,
+            ],
             'initializers' => [
                 Handler\Initializers\TemplatingSupportInitializer::class,
+                Handler\Initializers\UrlHelperInitializer::class,
             ],
         ];
     }

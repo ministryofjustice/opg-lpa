@@ -5,10 +5,10 @@ namespace App\Handler\Initializers;
 use Zend\Expressive\Template\TemplateRendererInterface;
 
 /**
- * Declares Action Middleware support template rendering.
+ * Declares handler Middleware support template rendering.
  *
  * Interface TemplatingSupportInterface
- * @package App\Action\Initializers
+ * @package App\Handler\Initializers
  */
 interface TemplatingSupportInterface
 {

@@ -14,6 +14,15 @@ return [
     // Enable debugging; typically used to provide debugging information within templates.
     'debug' => false,
 
+    'jwt' => [
+        'secret'    => getenv('OPG_LPA_ADMIN_JWT_SECRET') ?: null,
+        'path'      => '/',
+        'ignore'    => '/sign-in',
+        'cookie'    => 'lpa-admin',
+        'ttl'       => 60 * 60,
+        'algo'      => 'HS256',
+    ],
+
     'zend-expressive' => [
         // Provide templates for the error handling middleware to use when
         // generating responses.

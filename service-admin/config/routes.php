@@ -33,8 +33,10 @@ use Zend\Expressive\MiddlewareFactory;
  * );
  */
 return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container) : void {
-    $app->get('/user-feedback', App\Handler\UserFeedbackHandler::class, 'user.feedback');
     $app->get('/', App\Handler\HomeHandler::class, 'home');
+    $app->route('/sign-in', App\Handler\SignInHandler::class, ['GET', 'POST'], 'sign.in');
+    $app->get('/sign-out', App\Handler\SignOutHandler::class, 'sign.out');
     $app->get('/system-message', App\Handler\SystemMessageHandler::class, 'system.message');
+    $app->get('/user-feedback', App\Handler\UserFeedbackHandler::class, 'user.feedback');
     $app->get('/user-search', App\Handler\UserSearchHandler::class, 'user.search');
 };
