@@ -47,7 +47,7 @@ class ConfigProvider
                 Handler\SignOutHandler::class => Handler\SignOutHandlerFactory::class,
 
                 //  Middleware
-                JwtAuthentication::class                      => Middleware\Auth\AuthenticationFactory::class,
+                JwtAuthentication::class                      => Middleware\Auth\JwtAuthenticationFactory::class,
                 Middleware\ViewData\ViewDataMiddleware::class => Middleware\ViewData\ViewDataMiddlewareFactory::class,
             ],
             'initializers' => [

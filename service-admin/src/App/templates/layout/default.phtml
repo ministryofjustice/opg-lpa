@@ -68,13 +68,15 @@
                 </div>
             </div>
 
-            <?php if (isset($identity)) { ?>
-                <div class="header-profile">
-                    <p>
-                        <a href="<?= $this->url('sign.out') ?>">Sign out</a>
-                    </p>
-                </div>
-            <?php } ?>
+            <div class="header-profile">
+                <p>
+                    <?php if (isset($identity)) { ?>
+                        <a href="<?= $this->url('sign.out') ?>">Sign Out</a>
+                    <?php } else { ?>
+                        <a href="<?= $this->url('sign.in') ?>">Sign In</a>
+                    <?php } ?>
+                </p>
+            </div>
 
         </div>
     </header>

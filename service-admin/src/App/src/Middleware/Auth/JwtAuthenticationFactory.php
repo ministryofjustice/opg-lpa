@@ -7,10 +7,10 @@ use Tuupola\Middleware\JwtAuthentication;
 use DateTime;
 
 /**
- * Class AuthenticationFactory
+ * Class JwtAuthenticationFactory
  * @package App\Middleware\Auth
  */
-class AuthenticationFactory
+class JwtAuthenticationFactory
 {
     /**
      * @param ContainerInterface $container
