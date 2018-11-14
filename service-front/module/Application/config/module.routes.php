@@ -159,6 +159,17 @@ return [
                 ],
             ], // logout
 
+            'session-keep-alive' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route'    => '/session-keep-alive',
+                    'defaults' => [
+                        'controller' => 'Authenticated\SessionKeepAliveController',
+                        'action'     => 'index',
+                    ],
+                ]
+            ],
+
             'deleted' => [
                 'type'    => 'Literal',
                 'options' => [

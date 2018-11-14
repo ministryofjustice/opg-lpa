@@ -117,6 +117,7 @@ module.exports = function (grunt) {
           // OPG Scripts
           'assets/js/opg/jquery-plugin-opg-hascrollbar.js',
           'assets/js/opg/jquery-plugin-opg-spinner.js',
+          'assets/js/opg/session-timeout-dialog.js',
 
           // MoJ Scripts - Base
           'assets/js/moj/moj.js',
