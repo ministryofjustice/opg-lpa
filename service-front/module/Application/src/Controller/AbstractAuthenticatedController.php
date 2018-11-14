@@ -163,6 +163,10 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
 
         if ($view instanceof ViewModel && !$view instanceof JsonModel) {
             $view->setVariable('signedInUser', $this->user);
+            $view->setVariable(
+                'secondsUntilSessionExpires',
+                $this->identity->tokenExpiresAt()->getTimestamp() - (new DateTime())->getTimestamp()
+            );
         }
 
         return $view;
