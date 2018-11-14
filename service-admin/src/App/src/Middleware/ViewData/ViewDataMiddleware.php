@@ -2,6 +2,7 @@
 
 namespace App\Middleware\ViewData;
 
+use App\Handler\Traits\JwtTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -14,6 +15,8 @@ use Zend\Expressive\Plates\PlatesRenderer;
  */
 class ViewDataMiddleware implements MiddlewareInterface
 {
+    use JwtTrait;
+
     /**
      * @var PlatesRenderer
      */
@@ -35,12 +38,11 @@ class ViewDataMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        //  Extract the user details from the request
-        $token = $request->getAttribute('token');
+        $token = $this->getTokenData('token');
 
         //  TODO - Change this later
         if (!is_null($token)) {
-            $user = new \ArrayObject($token);
+            $user = $token;
 
             $this->renderer->addDefaultParam(PlatesRenderer::TEMPLATE_ALL, 'identity', $user);
         }

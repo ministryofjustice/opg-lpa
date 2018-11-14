@@ -17,7 +17,7 @@ return [
     'jwt' => [
         'secret'    => getenv('OPG_LPA_ADMIN_JWT_SECRET') ?: null,
         'path'      => '/',
-        'ignore'    => '/sign-in',
+        'header'    => 'lpa-admin',
         'cookie'    => 'lpa-admin',
         'ttl'       => 60 * 60,
         'algo'      => 'HS256',

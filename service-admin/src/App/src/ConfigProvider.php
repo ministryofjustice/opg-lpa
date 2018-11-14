@@ -25,6 +25,11 @@ class ConfigProvider
         return [
             'dependencies' => $this->getDependencies(),
             'templates'    => $this->getTemplates(),
+            'plates' => [
+                'extensions' => [
+                    View\ErrorMapper\ErrorMapperPlatesExtension::class,
+                ],
+            ],
         ];
     }
 
@@ -37,17 +42,22 @@ class ConfigProvider
             'invokables' => [
                 //  Handlers
                 Handler\HomeHandler::class          => Handler\HomeHandler::class,
+                Handler\SignOutHandler::class       => Handler\SignOutHandler::class,
                 Handler\SystemMessageHandler::class => Handler\SystemMessageHandler::class,
                 Handler\UserFeedbackHandler::class  => Handler\UserFeedbackHandler::class,
                 Handler\UserSearchHandler::class    => Handler\UserSearchHandler::class,
+
+                //  Middleware
+                Middleware\Session\CsrfMiddleware::class      => Middleware\Session\CsrfMiddleware::class,
+                Middleware\Session\SlimFlashMiddleware::class => Middleware\Session\SlimFlashMiddleware::class,
             ],
             'factories' => [
                 //  Handlers
                 Handler\SignInHandler::class  => Handler\SignInHandlerFactory::class,
-                Handler\SignOutHandler::class => Handler\SignOutHandlerFactory::class,
 
                 //  Middleware
                 JwtAuthentication::class                      => Middleware\Auth\JwtAuthenticationFactory::class,
+                Middleware\Session\SessionMiddleware::class   => Middleware\Session\SessionMiddlewareFactory::class,
                 Middleware\ViewData\ViewDataMiddleware::class => Middleware\ViewData\ViewDataMiddlewareFactory::class,
             ],
             'initializers' => [
@@ -64,9 +74,10 @@ class ConfigProvider
     {
         return [
             'paths' => [
-                'app'    => [__DIR__ . '/../templates/app'],
-                'error'  => [__DIR__ . '/../templates/error'],
-                'layout' => [__DIR__ . '/../templates/layout'],
+                'app'     => [__DIR__ . '/../templates/app'],
+                'error'   => [__DIR__ . '/../templates/error'],
+                'layout'  => [__DIR__ . '/../templates/layout'],
+                'snippet' => [__DIR__ . '/../templates/snippet'],
             ],
         ];
     }

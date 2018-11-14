@@ -1,5 +1,70 @@
-<?php $this->layout('layout::default', ['title' => 'Sign In']) ?>
+<?php $this->layout('layout::default', ['title' => 'Sign In']);
 
-<form method="POST">
-    <input type="submit" value="SIGN IN" />
-</form>
+$this->addErrorMap([
+    'email' => [
+        'required' => [
+            'summary'   => 'Please enter a valid gov.uk email address',
+            'field'     => 'Please enter a valid gov.uk email address',
+        ],
+        'invalid-email' => [
+            'summary'   => 'Please enter a valid gov.uk email address',
+            'field'     => 'Please enter a valid gov.uk email address',
+        ],
+        'auth-error' => [
+            'summary'   => 'Email and password combination not recognised',
+            'field'     => 'Email and password combination not recognised',
+        ],
+    ],
+    'password' => [
+        'required' => [
+            'summary'   => 'Please enter a password',
+            'field'     => 'Please enter a password',
+        ],
+    ],
+]);
+?>
+
+<div class="grid-row">
+    <div class="column-full">
+
+        <form method="post" class="form" action="<?= $this->url('sign.in') ?>">
+
+            <fieldset>
+
+                <legend>
+                    <h1 class="heading-xlarge">Sign In</h1>
+                </legend>
+
+                <?php $this->insert('snippet::flash-messages', ['messages' => $messages]) ?>
+
+                <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
+
+                <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
+
+                <?php $this->insert('snippet::input-text', [
+                    'formElement'   => $form->get('email'),
+                    'formLabel'     => 'Email address',
+                    'formType'      => 'text',
+                    'formLabelBold' => false
+                ]) ?>
+
+                <?php $this->insert('snippet::input-text', [
+                    'formElement'         => $form->get('password'),
+                    'formLabel'           => 'Password',
+                    'formType'            => 'password',
+                    'formLabelBold'       => false,
+                    'disableAutocomplete' => true
+                ]) ?>
+
+            </fieldset>
+
+            <div class="form-group">
+                <input class="button" type="submit" value="Continue">
+            </div>
+
+        </form>
+
+        <a href="https://www.lastingpowerofattorney.service.gov.uk/forgot-password" target="_blank">Forgotten your password?</a>
+
+    </div>
+</div>

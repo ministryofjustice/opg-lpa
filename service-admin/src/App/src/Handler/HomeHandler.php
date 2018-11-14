@@ -22,7 +22,7 @@ class HomeHandler extends AbstractHandler
     {
         $data = [];
 
-        //  TODO...
+        //  TODO... If there is no session then go to sign in.....rbac handling this??
 
         return new HtmlResponse($this->getTemplateRenderer()->render('app::home', $data));
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Middleware\ViewData\ViewDataMiddleware;
+use App\Middleware;
 use Psr\Container\ContainerInterface;
 use Tuupola\Middleware\JwtAuthentication;
 use Zend\Expressive\Application;
@@ -45,7 +45,10 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     // - $app->pipe('/files', $filesMiddleware);
 
     //  Register the JWT authenticator
+    $app->pipe(Middleware\Session\SessionMiddleware::class);
     $app->pipe(JwtAuthentication::class);
+    $app->pipe(Middleware\Session\CsrfMiddleware::class);
+    $app->pipe(Middleware\Session\SlimFlashMiddleware::class);
 
     // Register the routing middleware in the middleware pipeline.
     // This middleware registers the Zend\Expressive\Router\RouteResult request attribute.
@@ -65,7 +68,7 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->pipe(UrlHelperMiddleware::class);
 
     // Middleware to set any default data in the template renderer
-    $app->pipe(ViewDataMiddleware::class);
+    $app->pipe(Middleware\ViewData\ViewDataMiddleware::class);
 
     // Register the dispatch middleware in the middleware pipeline
     $app->pipe(DispatchMiddleware::class);

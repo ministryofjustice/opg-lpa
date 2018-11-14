@@ -19,8 +19,9 @@ class SignInHandlerFactory
      */
     public function __invoke(ContainerInterface $container) : RequestHandlerInterface
     {
-        $config = $container->get('config');
+        //  TODO - Pass in the auth service...
+//        $authService = $container->get('?');
 
-        return new SignInHandler($config['jwt']);
+        return new SignInHandler();
     }
 }

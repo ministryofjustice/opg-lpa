@@ -8,7 +8,9 @@ use App\Handler\Initializers\TemplatingSupportInterface;
 use App\Handler\Initializers\TemplatingSupportTrait;
 use App\Handler\Initializers\UrlHelperInterface;
 use App\Handler\Initializers\UrlHelperTrait;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Slim\Flash\Messages;
 use Zend\Diactoros\Response;
 
 /**
@@ -33,5 +35,34 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
         return new Response\RedirectResponse(
             $this->getUrlHelper()->generate($route, $routeParams, $queryParams)
         );
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param $message
+     * @param bool $now
+     */
+    protected function setFlashInfoMessage(ServerRequestInterface $request, $message, bool $now = false)
+    {
+        $this->setFlashMessage($request, 'info', $message, $now);
+    }
+
+    protected function setFlashMessage(ServerRequestInterface $request, $key, $message, bool $now = false)
+    {
+        /** @var Messages $flash */
+        $flash = $request->getAttribute('flash');
+
+        if ($now) {
+            $flash->addMessageNow($key, $message);
+        } else {
+            $flash->addMessage($key, $message);
+        }
+    }
+
+    protected function getFlashMessages(ServerRequestInterface $request)
+    {
+        /** @var Messages $flash */
+        $flash = $request->getAttribute('flash');
+        return $flash->getMessages();
     }
 }
