@@ -1,0 +1,38 @@
+{# Only add the timout popup if the session timout is set, defaults are unlikely to behave correctly #}
+{% if secondsUntilSessionExpires %}
+
+{% set warningPeriodInMinutes = 5 %}
+{% set inactivityInMinutes = ((secondsUntilSessionExpires / 60) - warningPeriodInMinutes) | round %}
+
+<div class="session-timeout-underlay">
+</div>
+<div id="timeoutPopup" data-role="timeout-popup" class="session-timeout js-session-timeout" role="alert">
+    <div class="session-timeout-dialog">
+        <h1 class="heading-large push-half--top">Session timeout</h1>
+
+        <p>You have been inactive for {{ inactivityInMinutes }} minutes and will be automatically
+            signed out in {{ warningPeriodInMinutes }} minutes.
+        </p>
+
+        <p>Click 'OK' to stay signed in and continue with your report.</p>
+
+        <form name="session-timeout-form" action="{{ url('logout', {'force_canonical': true}) }}">
+            <button type="button" name="continue" id="session-timeout-continue" class="button js-ok-button">OK</button>
+            <button type="submit" name="submit" id="session-timeout-logout" class="button-secondary">Sign out</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // instantiate object and attach events on page load ready event
+    $(function () {
+        new SessionTimeoutDialog({
+            'element': $('#timeoutPopup'),
+            'sessionExpiresMs': {{ secondsUntilSessionExpires * 1000 }},
+            'sessionPopupShowAfterMs': {{ (secondsUntilSessionExpires - (warningPeriodInMinutes * 60)) * 1000 }},
+            'keepSessionAliveUrl': '{{ url('session-keep-alive', {'force_canonical': true}) }}'
+        }).startCountdown();
+    });
+</script>
+
+{% endif %}
