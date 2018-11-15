@@ -10,12 +10,26 @@ return [
         ],
     ],
 
+    'queue' => [
+        'sqs' => [
+            'settings' => [
+                'url' => getenv('OPG_LPA_COMMON_PDF_QUEUE_URL') ?: null,
+            ],
+            'client' => [
+                'region' => 'eu-west-1',
+                'version' => '2012-11-05',
+            ],
+        ],
+    ],
+
     'worker' => [
         'testResponse' => [
             'path' => __DIR__ . '/../test-data/output/',
         ],
         's3Response' => [
             'client' => [
+                'endpoint' => getenv('OPG_LPA_COMMON_S3_ENDPOINT') ?: null,
+                'use_path_style_endpoint' => true,
                 'version' => '2006-03-01',
                 'region' => 'eu-west-1',
             ],
