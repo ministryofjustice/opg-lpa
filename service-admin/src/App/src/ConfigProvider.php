@@ -49,8 +49,8 @@ class ConfigProvider
                 Handler\UserSearchHandler::class    => Handler\UserSearchHandler::class,
 
                 //  Middleware
-                Middleware\Session\CsrfMiddleware::class      => Middleware\Session\CsrfMiddleware::class,
-                Middleware\Session\SlimFlashMiddleware::class => Middleware\Session\SlimFlashMiddleware::class,
+                Middleware\Flash\SlimFlashMiddleware::class => Middleware\Flash\SlimFlashMiddleware::class,
+                Middleware\Session\CsrfMiddleware::class    => Middleware\Session\CsrfMiddleware::class,
             ],
             'factories' => [
                 //  Handlers

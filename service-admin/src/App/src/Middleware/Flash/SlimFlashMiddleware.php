@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Middleware\Session;
+namespace App\Middleware\Flash;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,7 +12,7 @@ use Slim\Flash\Messages;
  * http://zendframework.github.io/zend-expressive/cookbook/flash-messengers/
  *
  * Class SlimFlashMiddleware
- * @package App\Middleware\Session
+ * @package App\Middleware\Flash
  */
 class SlimFlashMiddleware implements MiddlewareInterface
 {

@@ -63,7 +63,7 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->pipe(JwtAuthentication::class);
     $app->pipe(Middleware\Auth\AuthorizationMiddleware::class);
     $app->pipe(Middleware\Session\CsrfMiddleware::class);
-    $app->pipe(Middleware\Session\SlimFlashMiddleware::class);
+    $app->pipe(Middleware\Flash\SlimFlashMiddleware::class);
 
     // Seed the UrlHelper with the routing results:
     $app->pipe(UrlHelperMiddleware::class);
