@@ -27,16 +27,22 @@ class FormRadio extends ZFFormRadioHelper
             return '';
         }
 
-        $element->setLabelAttributes($element->getLabelAttributes() + $labelAttributes);
-
         $attributes         = $element->getAttributes();
         $attributes['name'] = $name;
         $attributes['type'] = $this->getInputType();
         $selectedOptions    = (array) $element->getValue();
 
+        if (isset($options[$option]['value'])) {
+            $attributes['id'] = $name . '-' . $options[$option]['value'];
+        }
+
         $options = [
             $option => $options[$option],
         ];
+
+        // Set label attributes
+        $labelAttributes += $element->getLabelAttributes();
+        $element->setLabelAttributes($labelAttributes);
 
         $rendered = $this->renderOptions($element, $options, $selectedOptions, $attributes);
 
