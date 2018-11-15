@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\Service\Authentication\AuthenticationService;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
@@ -19,9 +20,8 @@ class SignInHandlerFactory
      */
     public function __invoke(ContainerInterface $container) : RequestHandlerInterface
     {
-        //  TODO - Pass in the auth service...
-//        $authService = $container->get('?');
+        $authService = $container->get(AuthenticationService::class);
 
-        return new SignInHandler();
+        return new SignInHandler($authService);
     }
 }

@@ -57,10 +57,14 @@ class ConfigProvider
                 Handler\SignInHandler::class  => Handler\SignInHandlerFactory::class,
 
                 //  Middleware
-                JwtAuthentication::class                        => Middleware\Session\JwtAuthenticationFactory::class,
-                Middleware\Auth\AuthorizationMiddleware::class  => Middleware\Auth\AuthorizationMiddlewareFactory::class,
-                Middleware\Session\SessionMiddleware::class     => Middleware\Session\SessionMiddlewareFactory::class,
-                Middleware\ViewData\ViewDataMiddleware::class   => Middleware\ViewData\ViewDataMiddlewareFactory::class,
+                JwtAuthentication::class                                => Middleware\Session\JwtAuthenticationFactory::class,
+                Middleware\Authorization\AuthorizationMiddleware::class => Middleware\Authorization\AuthorizationMiddlewareFactory::class,
+                Middleware\Session\SessionMiddleware::class             => Middleware\Session\SessionMiddlewareFactory::class,
+                Middleware\ViewData\ViewDataMiddleware::class           => Middleware\ViewData\ViewDataMiddlewareFactory::class,
+
+                //  Services
+                Service\ApiClient\Client::class                     => Service\ApiClient\ClientFactory::class,
+                Service\Authentication\AuthenticationService::class => Service\Authentication\AuthenticationServiceFactory::class,
             ],
             'initializers' => [
                 Handler\Initializers\TemplatingSupportInitializer::class,

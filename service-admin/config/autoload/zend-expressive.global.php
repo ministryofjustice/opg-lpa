@@ -14,6 +14,8 @@ return [
     // Enable debugging; typically used to provide debugging information within templates.
     'debug' => false,
 
+    'api_base_uri' => getenv('OPG_LPA_ENDPOINTS_API') ?: 'https://apiv2',
+
     'jwt' => [
         'secret'    => getenv('OPG_LPA_ADMIN_JWT_SECRET') ?: null,
         'path'      => '/',

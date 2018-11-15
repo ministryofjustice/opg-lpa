@@ -61,7 +61,7 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     //  Set up the custom middleware to handle sessions and authorization
     $app->pipe(Middleware\Session\SessionMiddleware::class);
     $app->pipe(JwtAuthentication::class);
-    $app->pipe(Middleware\Auth\AuthorizationMiddleware::class);
+    $app->pipe(Middleware\Authorization\AuthorizationMiddleware::class);
     $app->pipe(Middleware\Session\CsrfMiddleware::class);
     $app->pipe(Middleware\Flash\SlimFlashMiddleware::class);
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Middleware\Auth;
+namespace App\Middleware\Authorization;
 
-use Api\Exception\ApiException;
 use App\Handler\Traits\JwtTrait;
+use App\Service\ApiClient\ApiException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -17,7 +17,7 @@ use Exception;
 
 /**
  * Class AuthorizationMiddleware
- * @package App\Middleware\Auth
+ * @package App\Middleware\Authorization
  */
 class AuthorizationMiddleware implements MiddlewareInterface
 {

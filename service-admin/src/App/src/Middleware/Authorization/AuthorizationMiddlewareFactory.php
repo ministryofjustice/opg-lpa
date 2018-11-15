@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Middleware\Auth;
+namespace App\Middleware\Authorization;
 
 use Interop\Container\ContainerInterface;
 use Zend\Expressive\Handler\NotFoundHandler;
@@ -10,7 +10,7 @@ use Exception;
 
 /**
  * Class AuthorizationMiddlewareFactory
- * @package App\Middleware\Auth
+ * @package App\Middleware\Authorization
  */
 class AuthorizationMiddlewareFactory
 {
