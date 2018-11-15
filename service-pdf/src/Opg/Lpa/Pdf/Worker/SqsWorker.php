@@ -91,6 +91,7 @@ class SqsWorker extends AbstractWorker
 
             } else {
                 echo date('c').": no message found in queue, finishing\n";
+                $this->logger->debug("No message found in queue, finishing");
             }
 
         } catch (\Exception $e) {
