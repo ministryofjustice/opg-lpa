@@ -133,6 +133,8 @@ return [
                     'Bucket' => getenv('OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET') ?: null,
                 ],
                 'client' => [
+                    'endpoint' => getenv('OPG_LPA_COMMON_S3_ENDPOINT') ?: null,
+                    'use_path_style_endpoint' => true,
                     'version' => '2006-03-01',
                     'region' => 'eu-west-1',
                     'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
@@ -143,6 +145,18 @@ return [
             ], // S3
 
         ], // cache
+
+        'queue' => [
+            'sqs' => [
+                'settings' => [
+                    'url' => getenv('OPG_LPA_COMMON_PDF_QUEUE_URL') ?: null,
+                ],
+                'client' => [
+                    'region' => 'eu-west-1',
+                    'version' => '2012-11-05',
+                ],
+            ],
+        ],
 
         'DynamoQueue' => [
             'settings' => [

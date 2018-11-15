@@ -14,6 +14,7 @@ use Alphagov\Notifications\Client as NotifyClient;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
+use Aws\Sqs\SqsClient;
 use DynamoQueue\Queue\Client as DynamoQueue;
 use Http\Adapter\Guzzle6\Client as Guzzle6Client;
 use Http\Client\HttpClient;
@@ -138,6 +139,17 @@ class Module
                     $config = $sm->get('config');
 
                     return new S3Client($config['pdf']['cache']['s3']['client']);
+                },
+
+                // Get S3Client Client
+                'SqsClient' => function ($sm) {
+                    $config = $sm->get('config');
+
+                    if (!isset($config['pdf']['queue']['sqs']['client'])) {
+                        throw new \RuntimeException("Missing SQS configuration");
+                    }
+
+                    return new SqsClient($config['pdf']['queue']['sqs']['client']);
                 },
 
             ], // factories

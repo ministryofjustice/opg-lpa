@@ -8,6 +8,8 @@ use Application\Library\Http\Response\File as FileResponse;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Aws\S3\S3Client;
+use Aws\Sqs\SqsClient;
+
 use DynamoQueue\Queue\Client as DynamoQueue;
 use DynamoQueue\Queue\Job\Job as DynamoQueueJob;
 use Opg\Lpa\DataModel\Lpa\Lpa;
@@ -33,14 +35,14 @@ class Service extends AbstractService
     private $pdfConfig = [];
 
     /**
-     * @var DynamoQueue
-     */
-    private $dynamoQueueClient;
-
-    /**
      * @var S3Client
      */
     private $s3Client;
+
+    /**
+     * @var SqsClient
+     */
+    private $sqsClient;
 
     /**
      * @var array
@@ -157,24 +159,14 @@ class Service extends AbstractService
                 'Key' => $ident,
             ]);
 
-            // If it's in the cache, clean it out of the queue.
-            $this->dynamoQueueClient->deleteJob($ident);
-
             // If we get here it exists in the bucket...
             return self::STATUS_READY;
         } catch (\Aws\S3\Exception\S3Exception $ignore) {}
 
-        // Check for the job status in the queue
-        $status = $this->dynamoQueueClient->checkStatus($ident);
-
-        if (in_array($status, [DynamoQueueJob::STATE_WAITING, DynamoQueueJob::STATE_PROCESSING])) {
-            return self::STATUS_IN_QUEUE;
-        } elseif (in_array($status, [DynamoQueueJob::STATE_DONE, DynamoQueueJob::STATE_ERROR])) {
-            // If we get here something strange has happened because:
-            //  - The PDF should have been in the cache; or
-            //  - An error occurred.
-            $this->dynamoQueueClient->deleteJob($ident);
-        }
+        /*
+         * Technically with SQS we have no way of knowing if a PDF is in the queue, but with
+         * fifo duplication detection, we can assume it's not and attempt to re-submit it.
+         */
 
         return self::STATUS_NOT_QUEUED;
     }
@@ -182,6 +174,7 @@ class Service extends AbstractService
     /**
      * @param Lpa $lpa
      * @param $type
+     * @throws \Exception
      */
     private function addLpaToQueue(Lpa $lpa, $type)
     {
@@ -201,7 +194,7 @@ class Service extends AbstractService
             throw new CryptInvalidArgumentException('Invalid encryption key');
         }
 
-        // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
+        // We use AES encryption with Cipher-block chaining (CBC)
         $blockCipher = BlockCipher::factory('openssl', $this->pdfConfig['encryption']['options']);
 
         // Set the secret key
@@ -210,8 +203,27 @@ class Service extends AbstractService
         // Encrypt the JSON...
         $encryptedMessage = $blockCipher->encrypt($message);
 
+        $jobId = $this->getPdfIdent($lpa, $type);
+
+        //---
+
+        if (!isset($this->pdfConfig['queue']['sqs']['settings']['url'])) {
+            throw new \Exception('SQS URL not configured');
+        }
+
         // Add the message to the queue
-        $this->dynamoQueueClient->enqueue('\Opg\Lpa\Pdf\Worker\DynamoQueueWorker', $encryptedMessage, $this->getPdfIdent($lpa, $type));
+        $this->sqsClient->sendMessage([
+            'QueueUrl' => $this->pdfConfig['queue']['sqs']['settings']['url'],
+            'MessageBody' => json_encode(
+                [
+                    'jobId' => $jobId,
+                    'lpaId' => $lpa->getId(),
+                    'data'  => $encryptedMessage,
+                ]
+            ),
+            'MessageGroupId' => $jobId,
+            'MessageDeduplicationId' => $jobId,
+        ]);
     }
 
     /**
@@ -263,7 +275,7 @@ class Service extends AbstractService
         // $keys are included so a new ident is generated when encryption keys change.
         $keys = $this->pdfConfig['encryption']['keys'];
 
-        $hash = hash('sha512', md5($lpa->toJson()) . $keys['document'] . $keys['queue']);
+        $hash = hash('md5', md5($lpa->toJson()) . $keys['document'] . $keys['queue']);
 
         return strtolower("{$type}-{$hash}");
     }
@@ -281,18 +293,18 @@ class Service extends AbstractService
     }
 
     /**
-     * @param DynamoQueue $dynamoQueueClient
-     */
-    public function setDynamoQueueClient(DynamoQueue $dynamoQueueClient)
-    {
-        $this->dynamoQueueClient = $dynamoQueueClient;
-    }
-
-    /**
      * @param S3Client $s3Client
      */
     public function setS3Client(S3Client $s3Client)
     {
         $this->s3Client = $s3Client;
+    }
+
+    /**
+     * @param SqsClient $sqsClient
+     */
+    public function setSqsClient(SqsClient $sqsClient)
+    {
+        $this->sqsClient = $sqsClient;
     }
 }
