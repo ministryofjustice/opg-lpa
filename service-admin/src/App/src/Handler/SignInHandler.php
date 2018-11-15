@@ -38,6 +38,13 @@ class SignInHandler extends AbstractHandler
     {
         $data = [];
 
+//TODO - Change this...
+        $token = $this->getTokenData('token');
+
+        if (!is_null($token)) {
+            return $this->redirectToRoute('home');
+        }
+
         $form = new SignIn([
             'csrf' => $this->getTokenData('csrf'),
         ]);

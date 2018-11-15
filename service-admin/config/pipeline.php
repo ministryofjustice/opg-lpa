@@ -44,12 +44,6 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     // - $app->pipe('/docs', $apiDocMiddleware);
     // - $app->pipe('/files', $filesMiddleware);
 
-    //  Register the JWT authenticator
-    $app->pipe(Middleware\Session\SessionMiddleware::class);
-    $app->pipe(JwtAuthentication::class);
-    $app->pipe(Middleware\Session\CsrfMiddleware::class);
-    $app->pipe(Middleware\Session\SlimFlashMiddleware::class);
-
     // Register the routing middleware in the middleware pipeline.
     // This middleware registers the Zend\Expressive\Router\RouteResult request attribute.
     $app->pipe(RouteMiddleware::class);
@@ -63,6 +57,13 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->pipe(ImplicitHeadMiddleware::class);
     $app->pipe(ImplicitOptionsMiddleware::class);
     $app->pipe(MethodNotAllowedMiddleware::class);
+
+    //  Set up the custom middleware to handle sessions and authorization
+    $app->pipe(Middleware\Session\SessionMiddleware::class);
+    $app->pipe(JwtAuthentication::class);
+    $app->pipe(Middleware\Auth\AuthorizationMiddleware::class);
+    $app->pipe(Middleware\Session\CsrfMiddleware::class);
+    $app->pipe(Middleware\Session\SlimFlashMiddleware::class);
 
     // Seed the UrlHelper with the routing results:
     $app->pipe(UrlHelperMiddleware::class);

@@ -25,7 +25,8 @@ class ConfigProvider
         return [
             'dependencies' => $this->getDependencies(),
             'templates'    => $this->getTemplates(),
-            'plates' => [
+            'rbac'         => include __DIR__ . '/../../../config/rbac.php',
+            'plates'       => [
                 'extensions' => [
                     View\ErrorMapper\ErrorMapperPlatesExtension::class,
                 ],
@@ -56,9 +57,10 @@ class ConfigProvider
                 Handler\SignInHandler::class  => Handler\SignInHandlerFactory::class,
 
                 //  Middleware
-                JwtAuthentication::class                      => Middleware\Auth\JwtAuthenticationFactory::class,
-                Middleware\Session\SessionMiddleware::class   => Middleware\Session\SessionMiddlewareFactory::class,
-                Middleware\ViewData\ViewDataMiddleware::class => Middleware\ViewData\ViewDataMiddlewareFactory::class,
+                JwtAuthentication::class                        => Middleware\Session\JwtAuthenticationFactory::class,
+                Middleware\Auth\AuthorizationMiddleware::class  => Middleware\Auth\AuthorizationMiddlewareFactory::class,
+                Middleware\Session\SessionMiddleware::class     => Middleware\Session\SessionMiddlewareFactory::class,
+                Middleware\ViewData\ViewDataMiddleware::class   => Middleware\ViewData\ViewDataMiddlewareFactory::class,
             ],
             'initializers' => [
                 Handler\Initializers\TemplatingSupportInitializer::class,

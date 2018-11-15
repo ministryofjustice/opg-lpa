@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <?php $subTitle = 'Power of attorney refunds'; ?>
+    <?php $subTitle = 'LPA Admin'; ?>
     <title><?= (isset($title)) ? $this->e($title).' | ' : '' ?><?= ($title!=$subTitle) ? $subTitle.' | '  : '' ?>GOV.UK</title>
 
     <!--[if gt IE 8]><!--><link href="/assets/govuk_template/stylesheets/govuk-template.css" media="screen" rel="stylesheet" /><!--<![endif]-->
@@ -72,8 +72,6 @@
                 <p>
                     <?php if (isset($identity)) { ?>
                         <a href="<?= $this->url('sign.out') ?>">Sign Out</a>
-                    <?php } else { ?>
-                        <a href="<?= $this->url('sign.in') ?>">Sign In</a>
                     <?php } ?>
                 </p>
             </div>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Middleware\Auth;
+namespace App\Middleware\Session;
 
 use Firebase\JWT\JWT;
 use Interop\Container\ContainerInterface;
@@ -11,7 +11,7 @@ use DateTime;
 
 /**
  * Class JwtAuthenticationFactory
- * @package App\Middleware\Auth
+ * @package App\Middleware\Session
  */
 class JwtAuthenticationFactory
 {

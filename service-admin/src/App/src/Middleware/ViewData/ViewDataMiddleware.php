@@ -38,6 +38,7 @@ class ViewDataMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+//TODO - Get the identity here.....the authorization service shoul
         $token = $this->getTokenData('token');
 
         //  TODO - Change this later
