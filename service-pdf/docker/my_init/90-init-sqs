@@ -1,0 +1,15 @@
+#!/bin/bash
+
+ATTR="MessageRetentionPeriod=3600,\
+FifoQueue=true,\
+ContentBasedDeduplication=false,\
+VisibilityTimeout=30"
+
+AUTO_CREATE="${OPG_LPA_COMMON_SQS_ENDPOINT}"
+
+if [ $AUTO_CREATE != "" ]
+then
+    echo "Auto creating local SQS queue"
+    aws sqs create-queue --endpoint=${OPG_LPA_COMMON_SQS_ENDPOINT} --region=eu-west-1 --queue-name=${OPG_LPA_COMMON_PDF_QUEUE_NAME} --attributes="$ATTR"
+fi
+exit 0

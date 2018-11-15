@@ -1,10 +1,10 @@
 #!/bin/bash
 
-AUTO_CREATE="${OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE:-FALSE}"
+AUTO_CREATE="${OPG_LPA_COMMON_S3_ENDPOINT}"
 
-echo "Auto creating local S3 bucket" $AUTO_CREATE
-if [ $AUTO_CREATE = "TRUE" ]
+if [ $AUTO_CREATE != "" ]
 then
+    echo "Auto creating local SQS queue"
     aws s3api create-bucket --endpoint=${OPG_LPA_COMMON_S3_ENDPOINT} --bucket=${OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET}
 fi
 exit 0
