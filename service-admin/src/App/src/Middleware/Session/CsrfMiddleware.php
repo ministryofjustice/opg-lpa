@@ -24,16 +24,20 @@ class CsrfMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        //  Generate a secret csrf value before proceeding
-//        $secret = BigInteger::factory('bcmath')->baseConvert(
-//            bin2hex(random_bytes(64)),
-//            16,
-//            62
-//        );
-//TODO - To fix...
-        $secret = 'honkhonkhonkhonkhonkhonkhonkhonkhonkhonkhonkhonkhonkhonkhonkhonk';
+        $csrf = $this->getTokenData('csrf');
 
-        $this->addTokenData('csrf', $secret);
+        if (is_null($csrf)) {
+            //  Generate a secret csrf value before proceeding
+//TODO - Fix to use BigInteger
+//            $secret = BigInteger::factory('bcmath')->baseConvert(
+//                bin2hex(random_bytes(64)),
+//                16,
+//                62
+//            );
+            $secret = 'abcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcd' . time();
+
+            $this->addTokenData('csrf', $secret);
+        }
 
         return $handler->handle($request);
     }

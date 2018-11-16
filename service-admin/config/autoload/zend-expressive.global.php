@@ -16,6 +16,8 @@ return [
 
     'api_base_uri' => getenv('OPG_LPA_ENDPOINTS_API') ?: 'https://apiv2',
 
+    'admin_accounts' => (getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : []),
+
     'jwt' => [
         'secret'    => getenv('OPG_LPA_ADMIN_JWT_SECRET') ?: null,
         'path'      => '/',

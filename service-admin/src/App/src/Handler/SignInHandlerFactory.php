@@ -21,7 +21,8 @@ class SignInHandlerFactory
     public function __invoke(ContainerInterface $container) : RequestHandlerInterface
     {
         $authService = $container->get(AuthenticationService::class);
+        $config = $container->get('config');
 
-        return new SignInHandler($authService);
+        return new SignInHandler($authService, $config['admin_accounts']);
     }
 }
