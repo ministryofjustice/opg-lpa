@@ -76,13 +76,13 @@ class OrdnanceSurvey {
         $response = $this->httpClient->sendRequest( $request );
 
         if ($response->getStatusCode() != 200) {
-            throw new \RuntimeException('Error retrieving address details');
+            throw new \RuntimeException('Error retrieving address details: bad status code');
         }
 
         $body = json_decode($response->getBody(), true);
 
         if (!isset($body['results']) || !is_array($body['results'])){
-            throw new \RuntimeException('Error retrieving address details');
+            throw new \RuntimeException('Error retrieving address details: invalid JSON');
         }
 
         return $body['results'];
@@ -102,7 +102,6 @@ class OrdnanceSurvey {
      */
     private function getAddressLines(array $address)
     {
-
         // Remove unwanted commas from the address, before we split on the commas. Alternative: '/(\d+),/'
         $reformattedAddress = preg_replace('/^([0-9-]+\w?),/', '$1', $address['ADDRESS']);
         $reformattedAddress = preg_replace('/,\s([0-9-]+\w?),/', ', $1', $reformattedAddress);
