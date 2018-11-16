@@ -175,15 +175,6 @@ return array(
 
     'address' => [
 
-        'postcodeanywhere' => [
-            'key' => getenv('OPG_LPA_FRONT_POSTCODE_LICENSE_KEY') ?: null,
-        ],
-
-        'postcode_info' => [
-            'uri' => getenv('OPG_LPA_FRONT_POSTCODE_INFO_URI') ?: null,
-            'token' => getenv('OPG_LPA_FRONT_POSTCODE_INFO_TOKEN') ?: null,
-        ],
-
         'ordnancesurvey' => [
             'key' => getenv('OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY') ?: null,
         ],

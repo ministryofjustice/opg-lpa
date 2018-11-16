@@ -107,7 +107,6 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'M' => 
         array (
             'Monolog\\' => 8,
-            'MinistryOfJustice\\PostcodeInfo\\' => 31,
             'Michelf\\' => 8,
         ),
         'J' => 
@@ -370,10 +369,6 @@ class ComposerStaticInitd8c148746e4ee7c0e228f2e0faab0c8e
         'Monolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
-        ),
-        'MinistryOfJustice\\PostcodeInfo\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/ministryofjustice/postcodeinfo-client-php/src',
         ),
         'Michelf\\' => 
         array (
