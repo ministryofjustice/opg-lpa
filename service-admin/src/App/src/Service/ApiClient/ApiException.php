@@ -25,7 +25,7 @@ class ApiException extends RuntimeException
         //  If no message was provided create one from the response data
         if (is_null($message)) {
             //  Try to get the message from the details section of the body
-            $message = $this->getBodyData('details');
+            $message = $this->getBodyData('detail');
 
             //  If there is still no message then compose a standard message
             if (is_null($message)) {

@@ -47,19 +47,18 @@ class AuthenticationService
 
             return new Result(Result::SUCCESS, $user);
         } catch (ApiException $apiEx) {
+            $resultCode = Result::FAILURE;
+
             if ($apiEx->getCode() === 401) {
-                return new Result(Result::FAILURE_CREDENTIAL_INVALID, null, [
-                    $apiEx->getMessage()
-                ]);
-            } elseif ($apiEx->getCode() === 403) {
-                return new Result(Result::FAILURE_ACCOUNT_LOCKED, null, [
-                    $apiEx->getMessage()
-                ]);
+                $resultCode = Result::FAILURE_CREDENTIAL_INVALID;
+
+                //  Check to see if the account is locked
+                if ($apiEx->getMessage() == 'account-locked/max-login-attempts') {
+                    $resultCode = Result::FAILURE_ACCOUNT_LOCKED;
+                }
             }
 
-            return new Result(Result::FAILURE, null, [
-                $apiEx->getMessage()
-            ]);
+            return new Result($resultCode, null, [$apiEx->getMessage()]);
         }
     }
 }

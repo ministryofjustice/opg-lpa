@@ -6,6 +6,7 @@ namespace App\Handler;
 
 use App\Form\SignIn;
 use App\Handler\Traits\JwtTrait;
+use App\Service\Authentication\Result;
 use App\User\User;
 use App\Service\Authentication\AuthenticationService;
 use Psr\Http\Message\ResponseInterface;
@@ -36,8 +37,6 @@ class SignInHandler extends AbstractHandler
      */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
-        $data = [];
-
 //TODO - Change this...
         $token = $this->getTokenData('token');
 
@@ -69,26 +68,7 @@ class SignInHandler extends AbstractHandler
                     return $this->redirectToRoute('home');
                 }
 
-                if ($result->getCode() === Result::FAILURE_ACCOUNT_LOCKED) {
-                    //  Reset the password and set the token in the email to the user
-                    $user = $this->userService->resetPassword($email);
-
-                    //  Generate the change password URL
-                    $host = sprintf('%s://%s', $request->getUri()->getScheme(), $request->getUri()->getAuthority());
-
-                    $changePasswordUrl = $host . $this->getUrlHelper()->generate('password.change', [
-                            'token' => $user->getToken(),
-                        ]);
-
-                    //  Send the set password email to the new user
-                    $this->notifyClient->sendEmail($email, '3346472f-a804-496c-b443-af317f4b16a5', [
-                        'change-password-url' => $changePasswordUrl,
-                    ]);
-
-                    $form->setAuthError('account-locked');
-                } else {
-                    $form->setAuthError('auth-error');
-                }
+                $form->setAuthError($result->getCode() === Result::FAILURE_ACCOUNT_LOCKED ? 'account-locked' : 'auth-error');
             }
         }
 
