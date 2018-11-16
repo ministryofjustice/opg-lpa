@@ -16,10 +16,8 @@ class UserSearchHandler extends AbstractHandler
      */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
-        $data = [];
-
         //  TODO...
 
-        return new HtmlResponse($this->getTemplateRenderer()->render('app::user-search', $data));
+        return new HtmlResponse($this->getTemplateRenderer()->render('app::user-search'));
     }
 }

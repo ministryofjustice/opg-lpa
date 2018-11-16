@@ -16,10 +16,8 @@ class UserFeedbackHandler extends AbstractHandler
      */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
-        $data = [];
-
         //  TODO...
 
-        return new HtmlResponse($this->getTemplateRenderer()->render('app::user-feedback', $data));
+        return new HtmlResponse($this->getTemplateRenderer()->render('app::user-feedback'));
     }
 }

@@ -16,10 +16,8 @@ class SystemMessageHandler extends AbstractHandler
      */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
-        $data = [];
-
         //  TODO...
 
-        return new HtmlResponse($this->getTemplateRenderer()->render('app::system-message', $data));
+        return new HtmlResponse($this->getTemplateRenderer()->render('app::system-message'));
     }
 }
