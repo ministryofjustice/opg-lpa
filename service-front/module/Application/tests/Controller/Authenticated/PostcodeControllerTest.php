@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Controller\Authenticated;
 
+use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Controller\Authenticated\PostcodeController;
 use Application\Model\Service\AddressLookup\PostcodeInfo;
 use ApplicationTest\Controller\AbstractControllerTest;
@@ -24,7 +25,7 @@ class PostcodeControllerTest extends AbstractControllerTest
      */
     private $routeMatch;
     /**
-     * @var MockInterface|PostcodeInfo
+     * @var MockInterface|OrdnanceSurvey
      */
     private $addressLookup;
 
@@ -38,7 +39,7 @@ class PostcodeControllerTest extends AbstractControllerTest
 
         $this->routeMatch = Mockery::mock(RouteMatch::class);
 
-        $this->addressLookup = Mockery::mock(PostcodeInfo::class);
+        $this->addressLookup = Mockery::mock(OrdnanceSurvey::class);
         $controller->setAddressLookup($this->addressLookup);
 
         return $controller;
