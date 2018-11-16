@@ -178,6 +178,7 @@ class Client
         $headerLines = [
             'Accept'        => 'application/json',
             'Content-Type'  => 'application/json',
+            'User-agent'    => 'LPA-ADMIN'
         ];
 
         //TODO - better way to do this?
