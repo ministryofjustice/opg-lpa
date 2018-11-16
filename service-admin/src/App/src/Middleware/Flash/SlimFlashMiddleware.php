@@ -2,6 +2,7 @@
 
 namespace App\Middleware\Flash;
 
+use App\Handler\Traits\JwtTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -16,6 +17,8 @@ use Slim\Flash\Messages;
  */
 class SlimFlashMiddleware implements MiddlewareInterface
 {
+    use JwtTrait;
+
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
@@ -23,6 +26,26 @@ class SlimFlashMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        return $handler->handle($request->withAttribute('flash', new Messages()));
+        $flashMsgsKey = 'flashMsgs';
+        $flashMsgsInnerKey = 'flashMsgsInner';
+
+        $flashStorage = $this->getTokenData($flashMsgsKey);
+
+        if (is_null($flashStorage)) {
+            $flashStorage = [];
+        } elseif (!is_array($flashStorage)) {
+            //  NOTE - Strange bug where arrays are retrieved from JWT data as stdClass
+            $flashStorage = (array) $flashStorage;
+
+            if (!is_array($flashStorage[$flashMsgsInnerKey])) {
+                $flashStorage[$flashMsgsInnerKey] = (array) $flashStorage[$flashMsgsInnerKey];
+            }
+        }
+
+        $response = $handler->handle($request->withAttribute('flash', new Messages($flashStorage, $flashMsgsInnerKey)));
+
+        $this->addTokenData($flashMsgsKey, $flashStorage);
+
+        return $response;
     }
 }

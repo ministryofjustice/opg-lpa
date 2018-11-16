@@ -22,6 +22,8 @@ class HomeHandler extends AbstractHandler
     {
         //  TODO...
 
-        return new HtmlResponse($this->getTemplateRenderer()->render('app::home'));
+        return new HtmlResponse($this->getTemplateRenderer()->render('app::home', [
+            'messages' => $this->getFlashMessages($request)
+        ]));
     }
 }
