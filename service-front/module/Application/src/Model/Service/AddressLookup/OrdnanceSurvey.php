@@ -1,49 +1,95 @@
 <?php
-
 namespace Application\Model\Service\AddressLookup;
 
-use Application\Model\Service\AbstractService;
-use MinistryOfJustice\PostcodeInfo\Client as PostcodeInfoClient;
-use MinistryOfJustice\PostcodeInfo\Response\Address;
+use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\Request;
+use Http\Client\HttpClient as HttpClientInterface;
 
 /**
- * Postcode and address lookup from Postcode Anywhere.
+ * Postcode Lookup service using Ordnance Survey data.
  *
- * Class PostcodeInfo
+ * Class OrdnanceSurvey
  * @package Application\Model\Service\AddressLookup
  */
-class PostcodeInfo extends AbstractService
-{
+class OrdnanceSurvey {
+
     /**
-     * @var PostcodeInfoClient
+     * PSR-7 Compatible HTTP Client
+     *
+     * @var HttpClientInterface
      */
-    private $postCodeInfoClient;
+    private $httpClient;
+
+    /**
+     * @var string
+     */
+    private $apiKey;
+
+    /**
+     * OrdnanceSurvey constructor.
+     * @param HttpClientInterface $client
+     * @param string $apiKey
+     */
+    public function __construct(HttpClientInterface $client, string $apiKey)
+    {
+        $this->httpClient = $client;
+        $this->apiKey = $apiKey;
+    }
 
     /**
      * Return a list of addresses for a given postcode.
      *
-     * @param $postcode string A UK postcode
-     * @return array Address list
+     * @param $postcode
+     * @return array
+     * @throws \Http\Client\Exception
      */
     public function lookupPostcode($postcode)
     {
-        $addressObjs = $this->postCodeInfoClient->lookupPostcodeAddresses($postcode);
-
-        if (empty($addressObjs)) {
-            return [];
-        }
+        $results = $this->getData($postcode);
 
         $addresses = [];
 
-        foreach ($addressObjs as $addressObj) {
-            //  Get the address lines and add a description
-            $address = $this->getAddressLines($addressObj);
+        foreach($results as $addressData){
+            $address = $this->getAddressLines($addressData['DPA']);
             $address['description'] = $this->getDescription($address);
 
             $addresses[] = $address;
         }
 
         return $addresses;
+    }
+
+    /**
+     * @param $postcode
+     * @return mixed
+     * @throws \Http\Client\Exception
+     */
+    private function getData($postcode)
+    {
+        $url = new Uri("https://api.ordnancesurvey.co.uk/places/v1/addresses/postcode");
+        $url = URI::withQueryValue($url, 'key', $this->apiKey );
+        $url = URI::withQueryValue($url, 'postcode', $postcode );
+        $url = URI::withQueryValue($url, 'lr', 'EN' );
+
+        $request = new Request('GET', $url);
+
+        $response = $this->httpClient->sendRequest( $request );
+
+        if ($response->getStatusCode() != 200) {
+            throw new \RuntimeException('Error retrieving address details: bad status code');
+        }
+
+        $body = json_decode($response->getBody(), true);
+
+        if (isset($body['header']['totalresults']) && $body['header']['totalresults'] === 0) {
+            return [];
+        }
+
+        if (!isset($body['results']) || !is_array($body['results'])){
+            throw new \RuntimeException('Error retrieving address details: invalid JSON');
+        }
+
+        return $body['results'];
     }
 
     /**
@@ -55,21 +101,27 @@ class PostcodeInfo extends AbstractService
      *      'postcode' => string
      *  ]
      *
-     * @param Address $address
+     * @param array $address
      * @return array
      */
-    private function getAddressLines(Address $address)
+    private function getAddressLines(array $address)
     {
+        // Remove unwanted commas from the address, before we split on the commas. Alternative: '/(\d+),/'
+        $reformattedAddress = preg_replace('/^([0-9-]+\w?),/', '$1', $address['ADDRESS']);
+        $reformattedAddress = preg_replace('/,\s([0-9-]+\w?),/', ', $1', $reformattedAddress);
+
+
+        // Construct the address into a line
         //-----------------------------------------------------------------------
         //  Get the address lines into an array but remove the postcode from the end of
         //  it so we can parse the address into 3 lines below
         //  We will re-add the postcode as a final step
-        $components = explode("\n", $address->formatted_address);
+        $components = explode(",", $reformattedAddress);
 
         // We expect the last element to be the postcode which we don't want
         // We'll confirm that it is the postcode and then remove it from the array
         $postcodeFromComponents = strtolower(str_replace(' ', '', $components[count($components)-1]));
-        $postcodeFromAddress = strtolower(str_replace(' ', '', $address->postcode));
+        $postcodeFromAddress = strtolower(str_replace(' ', '', $address['POSTCODE']));
 
         if ($postcodeFromAddress == $postcodeFromComponents) {
             array_pop($components);
@@ -79,8 +131,6 @@ class PostcodeInfo extends AbstractService
         //-----------------------------------------------------------------------
         // Convert address to 3 lines plus a postcode
         $count = count($components);
-
-        # TODO - This could be moved out if we wanted to apply it in other classes.
 
         // By default assume there is 1 field per line.
         $numOnLine[1] = $numOnLine[2] = $numOnLine[3] = 1;
@@ -128,7 +178,7 @@ class PostcodeInfo extends AbstractService
 
         //---
 
-        $result['postcode'] = $address->postcode;
+        $result['postcode'] = $address['POSTCODE'];
 
         //---
 
@@ -149,8 +199,4 @@ class PostcodeInfo extends AbstractService
         return trim(implode(', ', $address));
     }
 
-    public function setPostcodeInfoClient(PostcodeInfoClient $postCodeInfoClient)
-    {
-        $this->postCodeInfoClient = $postCodeInfoClient;
-    }
 }

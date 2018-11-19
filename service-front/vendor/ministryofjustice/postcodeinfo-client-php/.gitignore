@@ -1,8 +1,0 @@
-.settings/
-.buildpath
-.project
-vendor/
-spec/api_key
-.idea
-.DS_Store
-tests-local
