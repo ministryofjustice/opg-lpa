@@ -28,12 +28,23 @@ class PostcodeController extends AbstractAuthenticatedController
             return $this->notFoundAction();
         }
 
-        $addresses = $this->addressLookup->lookupPostcode($postcode);
+        try {
+
+            $addresses = $this->addressLookup->lookupPostcode($postcode);
+
+            return new JsonModel([
+                'isPostcodeValid' => true,
+                'success'         => (count($addresses) > 0),
+                'addresses'       => $addresses,
+            ]);
+
+        }catch (\RuntimeException $e) {}
+
 
         return new JsonModel([
-            'isPostcodeValid' => true,
-            'success'         => (count($addresses) > 0),
-            'addresses'       => $addresses,
+            'isPostcodeValid' => false,
+            'success'         => false,
+            'addresses'       => null,
         ]);
     }
 
