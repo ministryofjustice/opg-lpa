@@ -81,6 +81,10 @@ class OrdnanceSurvey {
 
         $body = json_decode($response->getBody(), true);
 
+        if (isset($body['header']['totalresults']) && $body['header']['totalresults'] === 0) {
+            return [];
+        }
+
         if (!isset($body['results']) || !is_array($body['results'])){
             throw new \RuntimeException('Error retrieving address details: invalid JSON');
         }
