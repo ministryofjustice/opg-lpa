@@ -62,7 +62,6 @@ return array(
     'Opg\\Lpa\\Logger\\' => array($vendorDir . '/ministryofjustice/opg-lpa-logger/src/Opg/Lpa/Logger'),
     'Opg\\Lpa\\DataModel\\' => array($vendorDir . '/ministryofjustice/opg-lpa-datamodels/src/Opg/Lpa/DataModel'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
-    'MinistryOfJustice\\PostcodeInfo\\' => array($vendorDir . '/ministryofjustice/postcodeinfo-client-php/src'),
     'Michelf\\' => array($vendorDir . '/michelf/php-markdown/Michelf'),
     'JmesPath\\' => array($vendorDir . '/mtdowling/jmespath.php/src'),
     'Interop\\Container\\' => array($vendorDir . '/container-interop/container-interop/src/Interop/Container'),

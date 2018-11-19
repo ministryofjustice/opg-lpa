@@ -126,13 +126,13 @@ class Module implements FormElementProviderInterface
                 'HttpClient' => false,
             ],
             'aliases' => [
-                'AddressLookupMoj' => 'PostcodeInfo',
+                'AddressLookup' => 'OrdnanceSurvey',
                 'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
             'factories' => [
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
                 'AuthenticationService' => 'Application\Model\Service\Authentication\AuthenticationServiceFactory',
-                'PostcodeInfoClient'    => 'Application\Model\Service\AddressLookup\PostcodeInfoClientFactory',
+                'OrdnanceSurvey'        => 'Application\Model\Service\AddressLookup\OrdnanceSurveyFactory',
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'MailTransport'         => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
 

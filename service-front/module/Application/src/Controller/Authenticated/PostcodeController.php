@@ -2,14 +2,14 @@
 
 namespace Application\Controller\Authenticated;
 
+use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Controller\AbstractAuthenticatedController;
-use Application\Model\Service\AddressLookup\PostcodeInfo;
 use Zend\View\Model\JsonModel;
 
 class PostcodeController extends AbstractAuthenticatedController
 {
     /**
-     * @var PostcodeInfo
+     * @var OrdnanceSurvey
      */
     private $addressLookup;
 
@@ -28,7 +28,14 @@ class PostcodeController extends AbstractAuthenticatedController
             return $this->notFoundAction();
         }
 
-        $addresses = $this->addressLookup->lookupPostcode($postcode);
+        $addresses = [];
+
+        try {
+            $addresses = $this->addressLookup->lookupPostcode($postcode);
+        }catch (\RuntimeException $e) {
+            $this->getLogger()->warn("Exception from postcode lookup: ".$e->getMessage());
+        }
+
 
         return new JsonModel([
             'isPostcodeValid' => true,
@@ -37,7 +44,7 @@ class PostcodeController extends AbstractAuthenticatedController
         ]);
     }
 
-    public function setAddressLookup(PostcodeInfo $addressLookup)
+    public function setAddressLookup(OrdnanceSurvey $addressLookup)
     {
         $this->addressLookup = $addressLookup;
     }

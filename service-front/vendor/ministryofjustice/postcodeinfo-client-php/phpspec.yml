@@ -1,4 +1,0 @@
-suites:
-    postcode_suite:
-        namespace: MinistryOfJustice\PostcodeInfo
-        psr4_prefix: MinistryOfJustice\PostcodeInfo

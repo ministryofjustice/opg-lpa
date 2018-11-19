@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a251e4ea17b253a37d20c208a3acee5",
+    "content-hash": "6c37c579ce4a5d909820a20068775c31",
     "packages": [
         {
             "name": "alphagov/pay-integration-php",
@@ -703,46 +703,6 @@
                 "issues": "https://github.com/ministryofjustice/opg-lpa-logger/issues"
             },
             "time": "2018-04-30T12:35:12+00:00"
-        },
-        {
-            "name": "ministryofjustice/postcodeinfo-client-php",
-            "version": "v4.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ministryofjustice/postcodeinfo-client-php.git",
-                "reference": "bf87ed3674eece4351481765b4016541ee6662f2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/postcodeinfo-client-php/zipball/bf87ed3674eece4351481765b4016541ee6662f2",
-                "reference": "bf87ed3674eece4351481765b4016541ee6662f2",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/psr7": "^1.2",
-                "php": ">=5.4.0",
-                "php-http/client-implementation": "^1.0",
-                "php-http/httplug": "^1.0",
-                "psr/http-message": "^1.0"
-            },
-            "require-dev": {
-                "php-http/curl-client": "*",
-                "php-http/message": "^1.2",
-                "phpspec/phpspec": "~2.0",
-                "phpunit/phpunit": "4.3.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "MinistryOfJustice\\PostcodeInfo\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "PHP API Client wrapper for MoJ Postcode Info API",
-            "time": "2016-05-13T13:40:36+00:00"
         },
         {
             "name": "monolog/monolog",

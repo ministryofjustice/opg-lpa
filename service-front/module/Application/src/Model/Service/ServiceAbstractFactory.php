@@ -2,7 +2,6 @@
 
 namespace Application\Model\Service;
 
-use Application\Model\Service\AddressLookup\PostcodeInfo;
 use Application\Model\Service\Analytics\GoogleAnalyticsService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\Client as ApiClient;
@@ -40,9 +39,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         ],
         Metadata::class => [
             'setLpaApplicationService' => 'LpaApplicationService',
-        ],
-        PostcodeInfo::class => [
-            'setPostcodeInfoClient' => 'PostcodeInfoClient'
         ],
         ReplacementAttorneyCleanup::class => [
             'setLpaApplicationService' => 'LpaApplicationService',
