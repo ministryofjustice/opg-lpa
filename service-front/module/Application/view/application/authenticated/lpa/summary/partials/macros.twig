@@ -1,59 +1,110 @@
-{% macro outputSection(sectionTitle, value, changeUrl, rowStyle) %}
+{% macro outputSection(sectionTitle, value, changeUrl, navigationReference, rowStyle) %}
 
     {% import _self as macros %}
+
+    {% if navigationReference is empty %}
+        {% set navigationReference = sectionTitle %}
+    {% endif %}
 
     <div class="{{ (rowStyle ? rowStyle : '' ) }}">
         <dt class="cya-question">{{ sectionTitle|raw }}</dt>
         <dd class="cya-answer">{{ value|raw }}</dd>
-        {{ macros.outputChangeLink(sectionTitle, changeUrl) }}
+        {{ macros.outputChangeLink(changeUrl, navigationReference) }}
     </div>
 
 {% endmacro %}
 
 
-{% macro outputChangeLink(sectionTitle, changeUrl) %}
+{% macro outputChangeLink(changeUrl, navigationReference) %}
 
     <dd class="cya-change">
         {% if changeUrl is not null %}
-            <a href="{{ changeUrl|raw }}" data-journey-click="check your answers:link:navigation: {{ sectionTitle }}">Edit</a>
+            <a href="{{ changeUrl|raw }}" data-journey-click="check your answers:link:navigation: {{ navigationReference }}">Edit</a>
         {% endif %}
     </dd>
 
 {% endmacro %}
 
 
-{% macro outputActor(data, changeUrl, sectionTitle, sectionHeading) %}
+{% macro outputActor(sectionHeading, data, changeUrl, navigationReference) %}
 
     {% import _self as macros %}
 
-    {{ macros.outputSectionHeading(sectionHeading, changeUrl) }}
+    {% if navigationReference is empty %}
+        {% set navigationReference = sectionHeading %}
+    {% endif %}
 
+    {{ macros.outputSectionHeading(sectionHeading) }}
+
+    {# Add the edit link into the name #}
     {% if data.name is defined and data.name is not empty %}
-        {{ macros.outputSection('Name', data.name, null, 'actor-term') }}
+        {{ macros.outputSection(
+            'Name',
+            data.name,
+            changeUrl,
+            navigationReference,
+            'actor-term'
+        ) }}
     {% endif %}
 
     {% if data.otherNames is defined and data.otherNames is not empty %}
-        {{ macros.outputSection('Other names', data.otherNames, null, 'actor-term') }}
+        {{ macros.outputSection(
+            'Other names',
+            data.otherNames,
+            null,
+            null,
+            'actor-term'
+        ) }}
     {% endif %}
 
     {% if data.number is defined and data.number is not empty %}
-        {{ macros.outputSection('Company number', data.number, null, 'actor-term') }}
+        {{ macros.outputSection(
+            'Company number',
+            data.number,
+            null,
+            null,
+            'actor-term'
+        ) }}
     {% endif %}
 
     {% if data.company is defined and data.company is not empty %}
-        {{ macros.outputSection('Company name', data.company, null, 'actor-term') }}
+        {{ macros.outputSection(
+            'Company name',
+            data.company,
+            null,
+            null,
+            'actor-term'
+        ) }}
     {% endif %}
 
     {% if data.dob is defined %}
-        {{ macros.outputSection('Date of birth', data.dob.date.format('j F Y'), null, 'actor-term') }}
+        {{ macros.outputSection(
+            'Date of birth',
+            data.dob.date.format('j F Y'),
+            null,
+            null,
+            'actor-term'
+        ) }}
     {% endif %}
 
     {% if data.email is defined and data.email is not empty %}
-        {{ macros.outputSection('Email address', data.email, null, 'actor-term') }}
+        {{ macros.outputSection(
+            'Email address',
+            data.email,
+            null,
+            null,
+            'actor-term'
+        ) }}
     {% endif %}
 
     {% if data.phone is defined and data.phone is not empty %}
-        {{ macros.outputSection('Phone number', data.phone.number, null, 'actor-term') }}
+        {{ macros.outputSection(
+            'Phone number',
+            data.phone.number,
+            null,
+            null,
+            'actor-term'
+        ) }}
     {% endif %}
 
     {% if data.address is defined %}
@@ -72,24 +123,32 @@
             {% set addressString = addressString ~ '<div>' ~ data.address.postcode ~ '</div>' %}
         {% endif %}
 
-        {{ macros.outputSection('Address', addressString, null, (data.canSign is defined ? 'actor-term' : 'actor-term-last')) }}
+        {{ macros.outputSection(
+            'Address',
+            addressString,
+            null,
+            null,
+            (data.canSign is defined ? 'actor-term' : 'actor-term-last')
+        ) }}
     {% endif %}
 
     {% if data.canSign is defined %}
-        {{ macros.outputSection('The donor can physically sign or make a mark on the LPA', (data.canSign ? 'Yes' : 'No'), null, 'actor-term-last') }}
+        {{ macros.outputSection(
+            'The donor can physically sign or make a mark on the LPA',
+            (data.canSign ? 'Yes' : 'No'),
+            null,
+            null,
+            'actor-term-last'
+        ) }}
     {% endif %}
 
 {% endmacro %}
 
 
-{% macro outputSectionHeading(sectionHeading, changeUrl) %}
+{% macro outputSectionHeading(sectionHeading) %}
 
     {% import _self as macros %}
 
-    <div>
-        <dt class="cya-question"><h3 class="heading-small">{{ sectionHeading }}</h3></dt>
-        <dd class="cya-answer"></dd>
-        {{ macros.outputChangeLink(sectionHeading, changeUrl) }}
-    </div>
+    {{ macros.outputSection('<h3 class="heading-small">' ~ sectionHeading ~ '</h3>') }}
 
 {% endmacro %}
