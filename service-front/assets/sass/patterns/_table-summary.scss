@@ -84,4 +84,10 @@
         }
     }
 
+    .actor-term {
+        > * {
+            border-bottom: 0;
+        }
+    }
+
 }
