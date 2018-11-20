@@ -179,7 +179,9 @@
         {{ macros.outputSection(
             'Certificate provider',
             'Who is the certificate provider?',
-            url('lpa/certificate-provider', {'lpa-id': lpa.id})
+            url('lpa/certificate-provider', {'lpa-id': lpa.id}),
+            null,
+            'incomplete'
         ) }}
     {% endif %}
 
