@@ -2793,6 +2793,9 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     border-bottom: 0; }
     .govuk-check-your-answers .actor-term > * {
       border-bottom: 0; }
+  .govuk-check-your-answers .incomplete .cya-answer {
+    color: #b10e1e;
+    font-weight: 700; }
 
 .appstatus {
   margin: 30px 0;
