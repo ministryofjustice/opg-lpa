@@ -4,179 +4,177 @@
 
 <dl class="govuk-check-your-answers cya-questions-short">
 
-{#<tbody> MOVE INDENT BACK #}
+    {# LPA TYPE #}
+    {% if lpa.document.type is defined %}
+        {{ macros.outputSection('Type of LPA', (lpa.document.type == 'health-and-welfare' ? 'Health and welfare' : 'Property and finance'), null) }}
+    {% endif %}
 
-        {# LPA TYPE #}
-        {% if lpa.document.type is defined %}
-            {{ macros.outputSection('Type of LPA', (lpa.document.type == 'health-and-welfare' ? 'Health and welfare' : 'Property and finance'), null) }}
-        {% endif %}
+    {# DONOR #}
+    {% if lpa.document.donor is defined %}
+        {{ macros.outputActor(lpa.document.donor, url('lpa/donor', {'lpa-id': lpa.id}), 'Donor', 'Donor') }}
+    {% endif %}
 
-        {# DONOR #}
-        {% if lpa.document.donor is defined %}
-            {{ macros.outputActor(lpa.document.donor, url('lpa/donor', {'lpa-id': lpa.id}), 'Donor', 'Donor') }}
-        {% endif %}
+    {# Can Sustain Life #}
+    {% if lpa.document.primaryAttorneyDecisions is defined and lpa.document.type is defined and lpa.document.type == 'health-and-welfare' %}
+        {{ macros.outputSection('Life-sustaining treatment', (lpa.document.primaryAttorneyDecisions.canSustainLife ? 'The attorneys can make decisions about life-sustaining treatment' : 'The attorneys cannot make decisions about life-sustaining treatment'), url('lpa/life-sustaining', {'lpa-id': lpa.id})) }}
+    {% endif %}
 
-        {# Can Sustain Life #}
-        {% if lpa.document.primaryAttorneyDecisions is defined and lpa.document.type is defined and lpa.document.type == 'health-and-welfare' %}
-            {{ macros.outputSection('Life-sustaining treatment', (lpa.document.primaryAttorneyDecisions.canSustainLife ? 'The attorneys can make decisions about life-sustaining treatment' : 'The attorneys cannot make decisions about life-sustaining treatment'), url('lpa/life-sustaining', {'lpa-id': lpa.id})) }}
-        {% endif %}
+    {# WHEN LPA STARTS #}
+    {% if lpa.document.type is defined and lpa.document.primaryAttorneyDecisions.when is defined and lpa.document.type == 'property-and-financial' %}
+        {{ macros.outputSection('When LPA starts', (lpa.document.primaryAttorneyDecisions.when == 'now' ? 'As soon as it\'s registered (and with the donor\'s consent)' : 'Only if the donor does not have mental capacity'), url('lpa/when-lpa-starts', {'lpa-id': lpa.id})) }}
+    {% endif %}
 
-        {# WHEN LPA STARTS #}
-        {% if lpa.document.type is defined and lpa.document.primaryAttorneyDecisions.when is defined and lpa.document.type == 'property-and-financial' %}
-            {{ macros.outputSection('When LPA starts', (lpa.document.primaryAttorneyDecisions.when == 'now' ? 'As soon as it\'s registered (and with the donor\'s consent)' : 'Only if the donor does not have mental capacity'), url('lpa/when-lpa-starts', {'lpa-id': lpa.id})) }}
-        {% endif %}
+    {# PRIMARY ATTORNEYS #}
+    {% if lpa.document.primaryAttorneys is defined and lpa.document.primaryAttorneys|length > 0 %}
+        {% for key, attorney in lpa.document.primaryAttorneys %}
+            {% set attorneyHeading = 'Attorney' %}
 
-        {# PRIMARY ATTORNEYS #}
-        {% if lpa.document.primaryAttorneys is defined and lpa.document.primaryAttorneys|length > 0 %}
-            {% for key, attorney in lpa.document.primaryAttorneys %}
-                {% set attorneyHeading = 'Attorney' %}
-
-                {% if lpa.document.primaryAttorneys|length > 1 %}
-                    {% set attorneyHeading = ordinalSuffix(loop.index) ~ ' attorney' %}
-                {% endif %}
-
-                {{ macros.outputActor(attorney, url('lpa/primary-attorney', {'lpa-id': lpa.id}), 'Primary attorney', attorneyHeading) }}
-            {% endfor %}
-        {% endif %}
-
-        {# HOW PRIMARY ATTORNEYS MAKE DECISIONS #}
-        {% if lpa.document.primaryAttorneyDecisions is defined and lpa.document.primaryAttorneyDecisions.how is not empty %}
-            {{ macros.outputSectionHeading('Attorney decisions', null) }}
-
-            {% set primaryAttorneyDecisionsHowString = 'The attorneys will act jointly for some decisions, and jointly and severally for other decisions' %}
-
-            {% if lpa.document.primaryAttorneyDecisions.how == 'jointly-attorney-severally' %}
-                {% set primaryAttorneyDecisionsHowString = 'The attorneys will act jointly and severally' %}
-            {% elseif lpa.document.primaryAttorneyDecisions.how == 'jointly' %}
-                {% set primaryAttorneyDecisionsHowString = 'The attorneys will act jointly' %}
+            {% if lpa.document.primaryAttorneys|length > 1 %}
+                {% set attorneyHeading = ordinalSuffix(loop.index) ~ ' attorney' %}
             {% endif %}
 
-            {{ macros.outputSection('How decisions are made', primaryAttorneyDecisionsHowString, url('lpa/how-primary-attorneys-make-decision', {'lpa-id': lpa.id})) }}
+            {{ macros.outputActor(attorney, url('lpa/primary-attorney', {'lpa-id': lpa.id}), 'Primary attorney', attorneyHeading) }}
+        {% endfor %}
+    {% endif %}
 
-            {# HOW PRIMARY ATTORNEYS MAKE DECISIONS - Details #}
-            {% if lpa.document.primaryAttorneyDecisions is defined and lpa.document.primaryAttorneyDecisions.howDetails is not empty %}
-                {{ macros.outputSection('Decisions that attorneys must make jointly', lpa.document.primaryAttorneyDecisions.howDetails, null) }}
-            {% endif %}
+    {# HOW PRIMARY ATTORNEYS MAKE DECISIONS #}
+    {% if lpa.document.primaryAttorneyDecisions is defined and lpa.document.primaryAttorneyDecisions.how is not empty %}
+        {{ macros.outputSectionHeading('Attorney decisions', null) }}
+
+        {% set primaryAttorneyDecisionsHowString = 'The attorneys will act jointly for some decisions, and jointly and severally for other decisions' %}
+
+        {% if lpa.document.primaryAttorneyDecisions.how == 'jointly-attorney-severally' %}
+            {% set primaryAttorneyDecisionsHowString = 'The attorneys will act jointly and severally' %}
+        {% elseif lpa.document.primaryAttorneyDecisions.how == 'jointly' %}
+            {% set primaryAttorneyDecisionsHowString = 'The attorneys will act jointly' %}
         {% endif %}
 
-        {# REPLACEMENT ATTORNEY #}
-        {% if lpa.document.replacementAttorneys is defined and lpa.document.replacementAttorneys|length > 0 %}
-            {% for key, attorney in lpa.document.replacementAttorneys %}
-                {% set attorneyHeading = 'Replacement attorney' %}
+        {{ macros.outputSection('How decisions are made', primaryAttorneyDecisionsHowString, url('lpa/how-primary-attorneys-make-decision', {'lpa-id': lpa.id})) }}
 
-                {% if lpa.document.replacementAttorneys|length > 1 %}
-                    {% set attorneyHeading = ordinalSuffix(loop.index) ~ ' replacement attorney' %}
-                {% endif %}
-
-                {{ macros.outputActor(attorney, url('lpa/replacement-attorney', {'lpa-id': lpa.id}), 'Replacement attorney', attorneyHeading) }}
-            {% endfor %}
-        {% else %}
-            {{ macros.outputSection('Replacement attorney', 'No replacement attorneys', url('lpa/replacement-attorney', {'lpa-id': lpa.id})) }}
+        {# HOW PRIMARY ATTORNEYS MAKE DECISIONS - Details #}
+        {% if lpa.document.primaryAttorneyDecisions is defined and lpa.document.primaryAttorneyDecisions.howDetails is not empty %}
+            {{ macros.outputSection('Decisions that attorneys must make jointly', lpa.document.primaryAttorneyDecisions.howDetails, null) }}
         {% endif %}
+    {% endif %}
 
-        {# WHEN REPLACEMENT ATTORNEYS STEP IN #}
-        {% if lpa.document.replacementAttorneyDecisions is defined and
-            (lpa.document.replacementAttorneyDecisions.when is not empty or lpa.document.replacementAttorneyDecisions.how is not empty) %}
+    {# REPLACEMENT ATTORNEY #}
+    {% if lpa.document.replacementAttorneys is defined and lpa.document.replacementAttorneys|length > 0 %}
+        {% for key, attorney in lpa.document.replacementAttorneys %}
+            {% set attorneyHeading = 'Replacement attorney' %}
 
-            {{ macros.outputSectionHeading('Replacement attorney decisions', null) }}
-
-            {% if lpa.document.replacementAttorneyDecisions.when is not empty %}
-
-                {% set replacementAttorneyDecisionsWhenString = 'The replacement attorneys will step in according to the donor\'s instructions below' %}
-
-                {% if lpa.document.replacementAttorneyDecisions.when == 'first' %}
-                    {% set replacementAttorneyDecisionsWhenString = 'The replacement attorneys will step in as soon as one of the original attorneys can no longer act' %}
-                {% elseif lpa.document.replacementAttorneyDecisions.when == 'last' %}
-                    {% set replacementAttorneyDecisionsWhenString = 'The replacement attorneys will only step in when none of the original attorneys can act' %}
-                {% endif %}
-
-                {{ macros.outputSection('When they step in', replacementAttorneyDecisionsWhenString, url('lpa/when-replacement-attorney-step-in', {'lpa-id': lpa.id})) }}
+            {% if lpa.document.replacementAttorneys|length > 1 %}
+                {% set attorneyHeading = ordinalSuffix(loop.index) ~ ' replacement attorney' %}
             {% endif %}
 
-            {# WHEN REPLACEMENT ATTORNEYS MAKE DECISIONS - Details #}
-            {% if lpa.document.replacementAttorneyDecisions.whenDetails is not empty %}
-                {{ macros.outputSection('Donor\'s instructions on how replacements step in', lpa.document.replacementAttorneyDecisions.whenDetails, null) }}
+            {{ macros.outputActor(attorney, url('lpa/replacement-attorney', {'lpa-id': lpa.id}), 'Replacement attorney', attorneyHeading) }}
+        {% endfor %}
+    {% else %}
+        {{ macros.outputSection('Replacement attorney', 'No replacement attorneys', url('lpa/replacement-attorney', {'lpa-id': lpa.id})) }}
+    {% endif %}
+
+    {# WHEN REPLACEMENT ATTORNEYS STEP IN #}
+    {% if lpa.document.replacementAttorneyDecisions is defined and
+        (lpa.document.replacementAttorneyDecisions.when is not empty or lpa.document.replacementAttorneyDecisions.how is not empty) %}
+
+        {{ macros.outputSectionHeading('Replacement attorney decisions', null) }}
+
+        {% if lpa.document.replacementAttorneyDecisions.when is not empty %}
+
+            {% set replacementAttorneyDecisionsWhenString = 'The replacement attorneys will step in according to the donor\'s instructions below' %}
+
+            {% if lpa.document.replacementAttorneyDecisions.when == 'first' %}
+                {% set replacementAttorneyDecisionsWhenString = 'The replacement attorneys will step in as soon as one of the original attorneys can no longer act' %}
+            {% elseif lpa.document.replacementAttorneyDecisions.when == 'last' %}
+                {% set replacementAttorneyDecisionsWhenString = 'The replacement attorneys will only step in when none of the original attorneys can act' %}
             {% endif %}
 
-            {% if lpa.document.replacementAttorneyDecisions.how is not empty %}
-                {% set replacementAttorneyDecisionsHowString = 'The replacement attorneys will act jointly for some decisions, and jointly and severally for other decisions' %}
+            {{ macros.outputSection('When they step in', replacementAttorneyDecisionsWhenString, url('lpa/when-replacement-attorney-step-in', {'lpa-id': lpa.id})) }}
+        {% endif %}
 
-                {% if lpa.document.replacementAttorneyDecisions.how == 'jointly-attorney-severally' %}
-                    {% set replacementAttorneyDecisionsHowString = 'The replacement attorneys will act jointly and severally' %}
-                {% elseif lpa.document.replacementAttorneyDecisions.how == 'jointly' %}
-                    {% set replacementAttorneyDecisionsHowString = 'The replacement attorneys will act jointly' %}
-                {% endif %}
+        {# WHEN REPLACEMENT ATTORNEYS MAKE DECISIONS - Details #}
+        {% if lpa.document.replacementAttorneyDecisions.whenDetails is not empty %}
+            {{ macros.outputSection('Donor\'s instructions on how replacements step in', lpa.document.replacementAttorneyDecisions.whenDetails, null) }}
+        {% endif %}
 
-                {{ macros.outputSection('How decisions are made', replacementAttorneyDecisionsHowString, url('lpa/how-replacement-attorneys-make-decision', {'lpa-id': lpa.id})) }}
+        {% if lpa.document.replacementAttorneyDecisions.how is not empty %}
+            {% set replacementAttorneyDecisionsHowString = 'The replacement attorneys will act jointly for some decisions, and jointly and severally for other decisions' %}
+
+            {% if lpa.document.replacementAttorneyDecisions.how == 'jointly-attorney-severally' %}
+                {% set replacementAttorneyDecisionsHowString = 'The replacement attorneys will act jointly and severally' %}
+            {% elseif lpa.document.replacementAttorneyDecisions.how == 'jointly' %}
+                {% set replacementAttorneyDecisionsHowString = 'The replacement attorneys will act jointly' %}
             {% endif %}
 
-            {# HOW REPLACEMENT ATTORNEYS MAKE DECISIONS - Details #}
-            {% if lpa.document.replacementAttorneyDecisions.howDetails is not empty %}
-                {{ macros.outputSection('Decisions that replacement attorneys must make jointly', lpa.document.replacementAttorneyDecisions.howDetails, null) }}
+            {{ macros.outputSection('How decisions are made', replacementAttorneyDecisionsHowString, url('lpa/how-replacement-attorneys-make-decision', {'lpa-id': lpa.id})) }}
+        {% endif %}
+
+        {# HOW REPLACEMENT ATTORNEYS MAKE DECISIONS - Details #}
+        {% if lpa.document.replacementAttorneyDecisions.howDetails is not empty %}
+            {{ macros.outputSection('Decisions that replacement attorneys must make jointly', lpa.document.replacementAttorneyDecisions.howDetails, null) }}
+        {% endif %}
+
+    {% endif %}
+
+    {# CERTIFICATE PROVIDER #}
+    {% if ( lpa.document.certificateProvider ) %}
+        {{ macros.outputActor(lpa.document.certificateProvider, url('lpa/certificate-provider', {'lpa-id': lpa.id}), 'Certificate provider', 'Certificate provider') }}
+    {% else %}
+        {{ macros.outputSection('Certificate provider', 'Who is the certificate provider?', url('lpa/certificate-provider', {'lpa-id': lpa.id})) }}
+    {% endif %}
+
+    {# PEOPLE TO NOTIFY #}
+    {% if lpa.document.peopleToNotify is defined and lpa.document.peopleToNotify|length > 0 %}
+        {% for key, personToNotify in lpa.document.peopleToNotify %}
+            {% set personToNotifyHeading = 'Person to notify' %}
+
+            {% if lpa.document.peopleToNotify|length > 1 %}
+                {% set personToNotifyHeading = ordinalSuffix(loop.index) ~ ' person to notify' %}
             {% endif %}
 
+            {{ macros.outputActor(personToNotify, url('lpa/people-to-notify', {'lpa-id': lpa.id}), 'People to notify', personToNotifyHeading) }}
+        {% endfor %}
+    {% else %}
+        {{ macros.outputSection('Person to notify', 'No people to notify', url('lpa/people-to-notify', {'lpa-id': lpa.id})) }}
+    {% endif %}
+
+    {# ATTORNEY PREFERENCES #}
+    {% if lpa.document.preference is defined %}
+        {{ macros.outputSection('Preferences', (lpa.document.preference is empty ? 'No preferences' : lpa.document.preference), url('lpa/instructions', {'lpa-id': lpa.id})) }}
+    {% endif %}
+
+    {# ATTORNEY INSTRUCTIONS #}
+    {% if lpa.document.instruction is defined %}
+        {{ macros.outputSection('Instructions', (lpa.document.instruction is empty ? 'No instructions' : lpa.document.instruction), url('lpa/instructions', {'lpa-id': lpa.id})) }}
+    {% endif %}
+
+    {# Who is Registering #}
+    {% if lpa.document.whoIsRegistering is defined and lpa.document.whoIsRegistering is not empty %}
+        {{ macros.outputSection('Who is registering the LPA', (lpa.document.whoIsRegistering == 'donor' ? 'Donor' : applicantNames(lpa)), url('lpa/applicant', {'lpa-id': lpa.id})) }}
+    {% endif %}
+
+    {# Correspondent #}
+    {% if lpa.document.correspondent is defined %}
+        {{ macros.outputActor(lpa.document.correspondent, url('lpa/correspondent', {'lpa-id': lpa.id}), 'Correspondent', 'Correspondent') }}
+    {% endif %}
+
+    {# Repeat Applicaiton. Correspondent is checked as we only show this post-then #}
+    {% if lpa.metadata['repeat-application-confirmed'] is defined %}
+        {{ macros.outputSection('Repeat application', (lpa.repeatCaseNumber is not empty ? 'This is a repeat application with case number ' ~ lpa.repeatCaseNumber : 'This is not a repeat application'), url('lpa/repeat-application', {'lpa-id': lpa.id})) }}
+    {% endif %}
+
+    {# Fee #}
+    {% if lpa.payment is defined %}
+        {% set applicationFeeText = 'Application fee: £' ~ fullFee ~ ' as you are not claiming a reduction' %}
+
+        {% if lpa.payment.reducedFeeReceivesBenefits %}
+            {% set applicationFeeText = 'Application fee: £0 as the donor is claiming an eligible benefit' %}
+        {% elseif lpa.payment.reducedFeeUniversalCredit %}
+            {% set applicationFeeText = 'Fee assessed on application as the donor receives Universal Credit' %}
+        {% elseif lpa.payment.reducedFeeLowIncome %}
+            {% set applicationFeeText = 'Application fee: £' ~ lowIncomeFee ~ ' as the donor has an income of less than £12,000' %}
         {% endif %}
 
-        {# CERTIFICATE PROVIDER #}
-        {% if ( lpa.document.certificateProvider ) %}
-            {{ macros.outputActor(lpa.document.certificateProvider, url('lpa/certificate-provider', {'lpa-id': lpa.id}), 'Certificate provider', 'Certificate provider') }}
-        {% else %}
-            {{ macros.outputSection('Certificate provider', 'Who is the certificate provider?', url('lpa/certificate-provider', {'lpa-id': lpa.id})) }}
-        {% endif %}
-
-        {# PEOPLE TO NOTIFY #}
-        {% if lpa.document.peopleToNotify is defined and lpa.document.peopleToNotify|length > 0 %}
-            {% for key, personToNotify in lpa.document.peopleToNotify %}
-                {% set personToNotifyHeading = 'Person to notify' %}
-
-                {% if lpa.document.peopleToNotify|length > 1 %}
-                    {% set personToNotifyHeading = ordinalSuffix(loop.index) ~ ' person to notify' %}
-                {% endif %}
-
-                {{ macros.outputActor(personToNotify, url('lpa/people-to-notify', {'lpa-id': lpa.id}), 'People to notify', personToNotifyHeading) }}
-            {% endfor %}
-        {% else %}
-            {{ macros.outputSection('Person to notify', 'No people to notify', url('lpa/people-to-notify', {'lpa-id': lpa.id})) }}
-        {% endif %}
-
-        {# ATTORNEY PREFERENCES #}
-        {% if lpa.document.preference is defined %}
-            {{ macros.outputSection('Preferences', (lpa.document.preference is empty ? 'No preferences' : lpa.document.preference), url('lpa/instructions', {'lpa-id': lpa.id})) }}
-        {% endif %}
-
-        {# ATTORNEY INSTRUCTIONS #}
-        {% if lpa.document.instruction is defined %}
-            {{ macros.outputSection('Instructions', (lpa.document.instruction is empty ? 'No instructions' : lpa.document.instruction), url('lpa/instructions', {'lpa-id': lpa.id})) }}
-        {% endif %}
-
-        {# Who is Registering #}
-        {% if lpa.document.whoIsRegistering is defined and lpa.document.whoIsRegistering is not empty %}
-            {{ macros.outputSection('Who is registering the LPA', (lpa.document.whoIsRegistering == 'donor' ? 'Donor' : applicantNames(lpa)), url('lpa/applicant', {'lpa-id': lpa.id})) }}
-        {% endif %}
-
-        {# Correspondent #}
-        {% if lpa.document.correspondent is defined %}
-            {{ macros.outputActor(lpa.document.correspondent, url('lpa/correspondent', {'lpa-id': lpa.id}), 'Correspondent', 'Correspondent') }}
-        {% endif %}
-
-        {# Repeat Applicaiton. Correspondent is checked as we only show this post-then #}
-        {% if lpa.metadata['repeat-application-confirmed'] is defined %}
-            {{ macros.outputSection('Repeat application', (lpa.repeatCaseNumber is not empty ? 'This is a repeat application with case number ' ~ lpa.repeatCaseNumber : 'This is not a repeat application'), url('lpa/repeat-application', {'lpa-id': lpa.id})) }}
-        {% endif %}
-
-        {# Fee #}
-        {% if lpa.payment is defined %}
-            {% set applicationFeeText = 'Application fee: £' ~ fullFee ~ ' as you are not claiming a reduction' %}
-
-            {% if lpa.payment.reducedFeeReceivesBenefits %}
-                {% set applicationFeeText = 'Application fee: £0 as the donor is claiming an eligible benefit' %}
-            {% elseif lpa.payment.reducedFeeUniversalCredit %}
-                {% set applicationFeeText = 'Fee assessed on application as the donor receives Universal Credit' %}
-            {% elseif lpa.payment.reducedFeeLowIncome %}
-                {% set applicationFeeText = 'Application fee: £' ~ lowIncomeFee ~ ' as the donor has an income of less than £12,000' %}
-            {% endif %}
-
-            {{ macros.outputSection('Application fee', applicationFeeText, url('lpa/fee-reduction', {'lpa-id': lpa.id})) }}
-        {% endif %}
+        {{ macros.outputSection('Application fee', applicationFeeText, url('lpa/fee-reduction', {'lpa-id': lpa.id})) }}
+    {% endif %}
 
 </dl>
