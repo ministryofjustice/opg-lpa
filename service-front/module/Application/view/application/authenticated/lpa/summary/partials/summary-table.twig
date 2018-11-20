@@ -72,7 +72,8 @@
         {{ macros.outputSection(
             'How decisions are made',
             primaryAttorneyDecisionsHowString,
-            url('lpa/how-primary-attorneys-make-decision', {'lpa-id': lpa.id})
+            url('lpa/how-primary-attorneys-make-decision', {'lpa-id': lpa.id}),
+            'How primary attorneys make decisions'
         ) }}
 
         {# HOW PRIMARY ATTORNEYS MAKE DECISIONS - Details #}
@@ -127,7 +128,8 @@
             {{ macros.outputSection(
                 'When they step in',
                 replacementAttorneyDecisionsWhenString,
-                url('lpa/when-replacement-attorney-step-in', {'lpa-id': lpa.id})
+                url('lpa/when-replacement-attorney-step-in', {'lpa-id': lpa.id}),
+                'When replacement attorneys step in'
             ) }}
         {% endif %}
 
@@ -151,7 +153,8 @@
             {{ macros.outputSection(
                 'How decisions are made',
                 replacementAttorneyDecisionsHowString,
-                url('lpa/how-replacement-attorneys-make-decision', {'lpa-id': lpa.id})
+                url('lpa/how-replacement-attorneys-make-decision', {'lpa-id': lpa.id}),
+                'How replacement attorneys make decision'
             ) }}
         {% endif %}
 
@@ -227,7 +230,8 @@
         {{ macros.outputSection(
             'Who is registering the LPA',
             (lpa.document.whoIsRegistering == 'donor' ? 'Donor' : applicantNames(lpa)),
-            url('lpa/applicant', {'lpa-id': lpa.id})
+            url('lpa/applicant', {'lpa-id': lpa.id}),
+            'Applicant'
         ) }}
     {% endif %}
 
@@ -264,7 +268,8 @@
         {{ macros.outputSection(
             'Application fee',
             applicationFeeText,
-            url('lpa/fee-reduction', {'lpa-id': lpa.id})
+            url('lpa/fee-reduction', {'lpa-id': lpa.id}),
+            'Fee reduction'
         ) }}
     {% endif %}
 
