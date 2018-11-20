@@ -2,11 +2,11 @@
 
 <span class="visually-hidden">Summary table</span>
 
-<dl class="govuk-check-your-answers cya-questions-short">
+<dl class="govuk-check-your-answers">
 
     {# LPA TYPE #}
     {% if lpa.document.type is defined %}
-        {{ macros.outputSection('Type of LPA', (lpa.document.type == 'health-and-welfare' ? 'Health and welfare' : 'Property and finance'), null) }}
+        {{ macros.outputSection('Type of LPA', (lpa.document.type == 'health-and-welfare' ? 'Health and welfare' : 'Property and finance')) }}
     {% endif %}
 
     {# DONOR #}
@@ -39,7 +39,7 @@
 
     {# HOW PRIMARY ATTORNEYS MAKE DECISIONS #}
     {% if lpa.document.primaryAttorneyDecisions is defined and lpa.document.primaryAttorneyDecisions.how is not empty %}
-        {{ macros.outputSectionHeading('Attorney decisions', null) }}
+        {{ macros.outputSectionHeading('Attorney decisions') }}
 
         {% set primaryAttorneyDecisionsHowString = 'The attorneys will act jointly for some decisions, and jointly and severally for other decisions' %}
 
@@ -53,7 +53,7 @@
 
         {# HOW PRIMARY ATTORNEYS MAKE DECISIONS - Details #}
         {% if lpa.document.primaryAttorneyDecisions is defined and lpa.document.primaryAttorneyDecisions.howDetails is not empty %}
-            {{ macros.outputSection('Decisions that attorneys must make jointly', lpa.document.primaryAttorneyDecisions.howDetails, null) }}
+            {{ macros.outputSection('Decisions that attorneys must make jointly', lpa.document.primaryAttorneyDecisions.howDetails) }}
         {% endif %}
     {% endif %}
 
@@ -76,7 +76,7 @@
     {% if lpa.document.replacementAttorneyDecisions is defined and
         (lpa.document.replacementAttorneyDecisions.when is not empty or lpa.document.replacementAttorneyDecisions.how is not empty) %}
 
-        {{ macros.outputSectionHeading('Replacement attorney decisions', null) }}
+        {{ macros.outputSectionHeading('Replacement attorney decisions') }}
 
         {% if lpa.document.replacementAttorneyDecisions.when is not empty %}
 
@@ -93,7 +93,7 @@
 
         {# WHEN REPLACEMENT ATTORNEYS MAKE DECISIONS - Details #}
         {% if lpa.document.replacementAttorneyDecisions.whenDetails is not empty %}
-            {{ macros.outputSection('Donor\'s instructions on how replacements step in', lpa.document.replacementAttorneyDecisions.whenDetails, null) }}
+            {{ macros.outputSection('Donor\'s instructions on how replacements step in', lpa.document.replacementAttorneyDecisions.whenDetails) }}
         {% endif %}
 
         {% if lpa.document.replacementAttorneyDecisions.how is not empty %}
@@ -110,7 +110,7 @@
 
         {# HOW REPLACEMENT ATTORNEYS MAKE DECISIONS - Details #}
         {% if lpa.document.replacementAttorneyDecisions.howDetails is not empty %}
-            {{ macros.outputSection('Decisions that replacement attorneys must make jointly', lpa.document.replacementAttorneyDecisions.howDetails, null) }}
+            {{ macros.outputSection('Decisions that replacement attorneys must make jointly', lpa.document.replacementAttorneyDecisions.howDetails) }}
         {% endif %}
 
     {% endif %}
