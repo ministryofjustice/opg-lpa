@@ -2544,6 +2544,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     right: 0; }
 .accordion .accordion-current {
   display: block;
+  visibility: hidden;
   padding-top: 20px;
   margin-top: -20px; }
 
