@@ -2,6 +2,24 @@ Lasting Power of Attorney Front End
 ==============
 The Lasting Power of Attorney front end makes up the user facing views and business logic which, together with our internal APIs, makes up the online Lasting Power of Attorney tool.
 
+Building assets
+-------
+
+Static assets are generated using grunt.
+
+`grunt build`
+
+To setup Grunt within the container
+```bash
+apt-get update && apt-get install nodejs-legacy npm ruby-sass
+
+npm install -g grunt grunt-cli grunt-contrib-sass --save-dev
+
+cd /app
+npm install
+
+```
+
 Tests
 -------
 
