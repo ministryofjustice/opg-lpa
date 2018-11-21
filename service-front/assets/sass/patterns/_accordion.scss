@@ -140,6 +140,7 @@
 
     .accordion-current {
         display: block;
+        visibility: hidden;
         padding-top: 20px;
         margin-top: -20px;
     }
