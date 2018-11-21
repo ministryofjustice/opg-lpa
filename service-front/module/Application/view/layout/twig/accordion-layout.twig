@@ -18,7 +18,7 @@
         {% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionTop, 'lpa':lpa } %}
 
         {% if (accordionTop|last).routeName != 'review-link' %}
-            <li><a id="current" class="accordion-current"></a></li>
+            <li aria-hidden="true"><a id="current" class="accordion-current"></a></li>
         {% endif %}
 
 {% endblock %}
