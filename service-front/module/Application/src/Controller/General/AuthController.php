@@ -83,7 +83,10 @@ class AuthController extends AbstractBaseController
 
                             //  Redirect to next page which needs filling out
                             $lpaId = $pathArray[2];
-                            $lpa = $this->lpaApplicationService->getApplication((int)$lpaId);
+                            $lpa = $this->lpaApplicationService->getApplication(
+                                (int)$lpaId,
+                                $result->getIdentity()->token()
+                            );
 
                             if ($lpa instanceof Lpa) {
                                 $formFlowChecker = new FormFlowChecker($lpa);
