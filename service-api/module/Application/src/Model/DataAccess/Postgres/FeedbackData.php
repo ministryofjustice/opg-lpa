@@ -3,6 +3,7 @@ namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
 use Zend\Db\Sql\Sql;
+use Zend\Db\Sql\Predicate\Operator;
 use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 
 class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRepositoryInterface
@@ -23,7 +24,7 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
 
         $data = [
             'received'  => gmdate(self::TIME_FORMAT),
-            'details'   => json_encode($feedback),
+            'message'   => json_encode($feedback),
         ];
 
         $insert->columns(array_keys($data));
@@ -42,25 +43,57 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
     }
 
     /**
-     * Return all feedback items for the given query.
+     * Return all feedback items for a given date range.
      *
-     * @param array $query
-     * @return array
+     * @param DateTime $from
+     * @param DateTime $to
+     * @return mixed
      */
-    public function get(array $query) : array
+    public function getForDateRange(DateTime $from, DateTime $to) : iterable
     {
-        die(__METHOD__.' not done yet');
+        $sql    = new Sql($this->getZendDb());
+        $select = $sql->select(self::FEEDBACK_TABLE);
+        $select->order('received ASC');
+
+        $select->where([
+            new Operator('received', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $from->format('c')),
+            new Operator('received', Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $to->format('c')),
+        ]);
+
+        $results = $sql->prepareStatementForSqlObject($select)->execute();
+
+        foreach ($results as $result) {
+
+            if (!empty($result['message'])) {
+                $json = json_decode($result['message'], true);
+                $result = array_merge($result, $json);
+                unset($result['message']);
+            }
+
+            $result['received'] = (new DateTime($result['received']))->format('c');
+
+            yield $result;
+        }
     }
 
     /**
-     * Delete all feedback received before teh passed date.
+     * Delete all feedback received before the passed date.
      *
      * @param DateTime $before
      * @return bool
      */
     public function prune(DateTime $before) : bool
     {
-        die(__METHOD__.' not done yet');
+        $sql    = new Sql($this->getZendDb());
+        $delete = $sql->delete(self::FEEDBACK_TABLE);
+
+        $delete->where([
+            new Operator('received', Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $before->format('c')),
+        ]);
+
+        $sql->prepareStatementForSqlObject($delete)->execute();
+
+        return true;
     }
 
 }

@@ -37,7 +37,7 @@ class Feedback extends AbstractMigration
 
         $feedback
             ->addColumn('received', 'datetime', ['timezone'=>true])
-            ->addColumn('details', 'jsonb')
+            ->addColumn('message', 'jsonb')
 
             ->addIndex('received')
 

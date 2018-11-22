@@ -14,12 +14,13 @@ interface FeedbackRepositoryInterface {
     public function insert(array $feedback) : bool;
 
     /**
-     * Return all feedback items for the given query.
+     * Return all feedback items for a given date range.
      *
-     * @param array $query
-     * @return array
+     * @param DateTime $from
+     * @param DateTime $to
+     * @return mixed
      */
-    public function get(array $query);
+    public function getForDateRange(DateTime $from, DateTime $to) : iterable;
 
     /**
      * Delete all feedback received before teh passed date.
