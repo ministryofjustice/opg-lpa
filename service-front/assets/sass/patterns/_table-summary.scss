@@ -2,95 +2,88 @@
 // TABLE SUMMARY
 // Summary table during LPA creation
 
-.table-summary {
-    margin-bottom: 20px;
+// Recommended - Use these styles for the check your answers pattern
+.govuk-check-your-answers {
 
-    tr {
-        @include media($max-width: 400px) {
+    @include media(desktop) {
+        display: table;
+    }
+
+    > * {
+        position: relative;
+        border-bottom: 1px solid $border-colour;
+
+        @include media(desktop) {
+            display: table-row;
+            border-bottom-width: 0;
+        }
+
+        > * {
             display: block;
-            position: relative;
-            z-index: 3;
+
+            @include media(desktop) {
+                display: table-cell;
+                border-bottom: 1px solid $border-colour;
+                padding: em(12, 19) em(20, 19) em(9, 19) 0; // copied from Elements' td padding
+                margin: 0;
+            }
         }
 
-        td.incomplete {
-            color: $red;
-            font-weight: bold;
-        }
-    }
-
-    th,
-    td {
-        vertical-align: top;
-
-        @include media($max-width: 400px) {
-            display: block;
-            width: 100%;
-            padding-right: 0;
-            border: 0;
-        }
-
-        @include ie-lte(8) {
-            width: auto;
+        @include media(desktop) {
+            &:first-child > * {
+                padding-top: 0;
+            }
         }
     }
 
-    th {
-        @include media($max-width: 400px) {
-            padding-right: 40px;
-            padding-bottom: 0;
-            z-index: 3;
-            box-sizing: border-box;
+    .cya-question {
+        font-weight: bold;
+        margin: em(12, 19) 4em em(4,19) 0;
+        // top: from Elements' td
+        // right: due to length of "change" link (adjust if you change the link to be much longer)
+        // bottom: by eye
+        // using margin instead of padding because of easier absolutely positioning of .change
+    }
+
+    > *:first-child .cya-question {
+        margin-top: 0;
+    }
+
+    @include media(desktop) {
+        .cya-question {
+            width: 35%;
         }
     }
 
-    td {
-        @include media($max-width: 400px) {
-            padding-top: 6px;
-        }
+    .cya-answer {
+        padding-bottom: em(9, 19); // from Elements' td
     }
 
-    .table-summary-heading {
-        padding-bottom: 0;
-    }
-
-    .table-summary-title {
-        width: 35%;
-        font-weight: 700;
-    }
-
-    .table-summary-action {
-        padding-right: 0;
+    .cya-change {
         text-align: right;
+        position: absolute;
+        top: 0;
+        right: 0;
 
-        @include media($max-width: 400px) {
-            position: absolute;
-            top: 12px;
-            border: 0;
-        }
-
-        @include ie-lte(8) {
+        @include media(desktop) {
             position: static;
+            padding-right: 0;
         }
     }
 
-    .group-single {
-        padding: 6px 0;
-        border-bottom: 1px solid $border-colour;
+    .actor-term {
+        border-bottom: 0;
 
-        &:first-child {
-            border-top: 1px solid $border-colour;
-        }
-    }
-
-    .group-end {
-        padding-bottom: 6px;
-        border-bottom: 1px solid $border-colour;
-    }
-
-    .group-element {
-        th,
-        td {
+        > * {
             border-bottom: 0;
         }
     }
+
+    .incomplete {
+        .cya-answer {
+            color: #b10e1e;
+            font-weight: 700;
+        }
+    }
+
 }
