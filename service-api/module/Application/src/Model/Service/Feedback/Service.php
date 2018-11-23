@@ -2,6 +2,7 @@
 namespace Application\Model\Service\Feedback;
 
 use DateTime;
+use Traversable;
 use Application\Model\DataAccess\Repository\Feedback\FeedbackRepositoryTrait;
 use Application\Model\Service\AbstractService;
 
@@ -43,7 +44,7 @@ class Service extends AbstractService
      * @param DateTime $to
      * @return iterable
      */
-    public function get(DateTime $from, DateTime $to) : iterable
+    public function get(DateTime $from, DateTime $to) : Traversable
     {
         // Prune old feedback
         $this->getFeedbackRepository()->prune($this->getPruneDate());
