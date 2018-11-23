@@ -1,0 +1,5 @@
+#!/bin/sh
+cd /app
+echo "Auto creating Dynamo DB tables (if enabled)"
+set -e
+/sbin/setuser app php public/index.php dynamodb-init

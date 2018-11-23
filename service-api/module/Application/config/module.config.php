@@ -25,6 +25,16 @@ return [
                         ],
                     ],
                 ],
+                'dynamodb-init' => [
+                    'type'    => 'simple',
+                    'options' => [
+                        'route'    => 'dynamodb-init',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Console\DynamoDbController',
+                            'action'     => 'init'
+                        ],
+                    ],
+                ],
             ],
         ],
     ],
@@ -419,6 +429,7 @@ return [
         ],
         'factories' => [
             'Application\Controller\Console\AccountCleanup' => Application\ControllerFactory\AccountCleanupControllerFactory::class,
+            'Application\Controller\Console\DynamoDbController' => Application\ControllerFactory\DynamoDbControllerFactory::class,
             'Application\Controller\Console\GenerateStats'  => Application\ControllerFactory\GenerateStatsControllerFactory::class,
             'Application\Controller\Ping'                   => Application\ControllerFactory\PingControllerFactory::class,
             'Application\Controller\Stats'                  => Application\ControllerFactory\StatsControllerFactory::class,
