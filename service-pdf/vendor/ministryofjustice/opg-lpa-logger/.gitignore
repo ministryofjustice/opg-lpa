@@ -1,8 +1,0 @@
-vendor
-tests/sentry.key
-tests/sns.credentials
-.idea
-.buildpath
-.settings
-.project
-tests/coverage/
