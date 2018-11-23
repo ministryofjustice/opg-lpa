@@ -2,6 +2,7 @@
 namespace Application\Model\DataAccess\Repository\Feedback;
 
 use DateTime;
+use Traversable;
 
 interface FeedbackRepositoryInterface {
 
@@ -20,7 +21,7 @@ interface FeedbackRepositoryInterface {
      * @param DateTime $to
      * @return mixed
      */
-    public function getForDateRange(DateTime $from, DateTime $to) : iterable;
+    public function getForDateRange(DateTime $from, DateTime $to) : Traversable;
 
     /**
      * Delete all feedback received before teh passed date.

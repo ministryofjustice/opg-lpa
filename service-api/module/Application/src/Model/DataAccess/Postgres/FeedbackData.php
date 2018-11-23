@@ -2,6 +2,7 @@
 namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
+use Traversable;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Predicate\Operator;
 use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
@@ -49,7 +50,7 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
      * @param DateTime $to
      * @return mixed
      */
-    public function getForDateRange(DateTime $from, DateTime $to) : iterable
+    public function getForDateRange(DateTime $from, DateTime $to) : Traversable
     {
         $sql    = new Sql($this->getZendDb());
         $select = $sql->select(self::FEEDBACK_TABLE);
