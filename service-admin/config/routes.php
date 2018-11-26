@@ -38,5 +38,5 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->get('/sign-out', App\Handler\SignOutHandler::class, 'sign.out');
     $app->get('/system-message', App\Handler\SystemMessageHandler::class, 'system.message');
     $app->get('/user-feedback', App\Handler\UserFeedbackHandler::class, 'user.feedback');
-    $app->get('/user-search', App\Handler\UserSearchHandler::class, 'user.search');
+    $app->route('/user-search', App\Handler\UserSearchHandler::class, ['GET', 'POST'], 'user.search');
 };

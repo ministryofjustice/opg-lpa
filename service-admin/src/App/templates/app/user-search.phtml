@@ -1,3 +1,109 @@
-<?php $this->layout('layout::default', ['title' => 'User Search']) ?>
+<?php $this->layout('layout::default', ['title' => 'User Search']);
 
-User Search
+$this->addErrorMap([
+    'email' => [
+        'required' => [
+            'summary'   => 'Enter a valid email address',
+            'field'     => 'Enter a valid email address',
+        ],
+        'invalid-email' => [
+            'summary'   => 'Enter a valid email address',
+            'field'     => 'Enter a valid email address',
+        ],
+    ],
+]);
+?>
+
+<div class="grid-row">
+    <div class="column-full">
+
+        <form method="post" class="form" action="<?= $this->url('user.search') ?>">
+
+            <fieldset>
+
+                <legend>
+                    <h1 class="heading-xlarge">User Details</h1>
+                </legend>
+
+                <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
+
+                <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
+
+                <div class="text">
+                    <p>Search for a user by email address. If found, the user's account status and other details will be displayed.</p>
+                </div>
+
+                <?php $this->insert('snippet::input-text', [
+                    'formElement'   => $form->get('email'),
+                    'formLabel'     => 'Email address',
+                    'formType'      => 'text',
+                    'formLabelBold' => false
+                ]) ?>
+
+            </fieldset>
+
+            <div class="form-group">
+                <input class="button" type="submit" value="Continue">
+            </div>
+
+        </form>
+
+        <?php if (!is_null($user)) { ?>
+
+            <h2 class="heading-medium">User details</h2>
+
+            <ul>
+                <li>
+                    <strong class="bold-small">Account status: </strong>
+
+                    <?php if (array_key_exists('isActive', $user)) { ?>
+                        <span><?= ($user['isActive'] ? 'Activated' : 'Not activated'); ?></span>
+                    <?php } elseif (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
+                        <span>Deleted</span>
+                    <?php } ?>
+                </li>
+
+                <?php if (array_key_exists('lastLoginAt', $user)) { ?>
+                    <li>
+                        <strong class="bold-small">Last login time: </strong>
+                        <span><?= ($user['lastLoginAt'] instanceof DateTime ? ($user['lastLoginAt'])->format('jS M Y \\a\\t g:i:s a') : 'Never logged in'); ?></span>
+                    </li>
+                <?php } ?>
+
+                <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
+                    <li>
+                        <strong class="bold-small">Number of failed login attempts: </strong>
+                        <span><?= $user['failedLoginAttempts']; ?></span>
+                    </li>
+                <?php } ?>
+
+                <?php if (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
+                    <li>
+                        <strong class="bold-small">Deleted on: </strong>
+                        <span><?= ($user['deletedAt'] instanceof DateTime ? ($user['deletedAt'])->format('jS M Y \\a\\t g:i:s a') : 'Unknown'); ?></span>
+                    </li>
+                    <li>
+                        <strong class="bold-small">Due to: </strong>
+
+                        <?php if ($user['reason'] == 'expired') { ?>
+                            <span>Account expired</span>
+                        <?php } elseif ($user['reason'] == 'unactivated') { ?>
+                            <span>User did not activate account</span>
+                        <?php } elseif ($user['reason'] == 'user-initiated') { ?>
+                            <span>User manually deleted their account</span>
+                        <?php } ?>
+                    </li>
+                <?php } ?>
+
+                <?php if (array_key_exists('numberOfLpas', $user)) { ?>
+                    <li>
+                        <strong class="bold-small">Number of LPAs: </strong>
+                        <span><?= $user['numberOfLpas']; ?></span>
+                    </li>
+                <?php } ?>
+            </ul>
+
+        <?php } ?>
+
+    </div>
+</div>

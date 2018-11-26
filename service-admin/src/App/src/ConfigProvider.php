@@ -46,7 +46,6 @@ class ConfigProvider
                 Handler\SignOutHandler::class       => Handler\SignOutHandler::class,
                 Handler\SystemMessageHandler::class => Handler\SystemMessageHandler::class,
                 Handler\UserFeedbackHandler::class  => Handler\UserFeedbackHandler::class,
-                Handler\UserSearchHandler::class    => Handler\UserSearchHandler::class,
 
                 //  Middleware
                 Middleware\Flash\SlimFlashMiddleware::class => Middleware\Flash\SlimFlashMiddleware::class,
@@ -54,7 +53,8 @@ class ConfigProvider
             ],
             'factories' => [
                 //  Handlers
-                Handler\SignInHandler::class  => Handler\SignInHandlerFactory::class,
+                Handler\SignInHandler::class        => Handler\SignInHandlerFactory::class,
+                Handler\UserSearchHandler::class    => Handler\UserSearchHandlerFactory::class,
 
                 //  Middleware
                 JwtAuthentication::class                                => Middleware\Session\JwtAuthenticationFactory::class,
@@ -65,6 +65,7 @@ class ConfigProvider
                 //  Services
                 Service\ApiClient\Client::class                     => Service\ApiClient\ClientFactory::class,
                 Service\Authentication\AuthenticationService::class => Service\Authentication\AuthenticationServiceFactory::class,
+                Service\UserSearch\UserSearch::class                => Service\UserSearch\UserSearchFactory::class,
             ],
             'initializers' => [
                 Handler\Initializers\TemplatingSupportInitializer::class,
