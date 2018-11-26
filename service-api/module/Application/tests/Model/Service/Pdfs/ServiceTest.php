@@ -30,7 +30,6 @@ class ServiceTest extends AbstractServiceTest
                     'client' => [
                         'version' => '2006-03-01',
                         'region' => 'eu-west-1',
-                        'credentials' => null
                     ]
                 ]
             ],
