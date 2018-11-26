@@ -28,13 +28,11 @@ class CsrfMiddleware implements MiddlewareInterface
 
         if (is_null($csrf)) {
             //  Generate a secret csrf value before proceeding
-//TODO - Fix to use BigInteger
-//            $secret = BigInteger::factory('bcmath')->baseConvert(
-//                bin2hex(random_bytes(64)),
-//                16,
-//                62
-//            );
-            $secret = 'abcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcd' . time();
+            $secret = BigInteger::factory('bcmath')->baseConvert(
+                bin2hex(random_bytes(64)),
+                16,
+                62
+            );
 
             $this->addTokenData('csrf', $secret);
         }
