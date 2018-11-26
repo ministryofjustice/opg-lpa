@@ -66,6 +66,16 @@ return [
                 ],
             ],
 
+            'feedback' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/user-feedback',
+                    'defaults' => [
+                        'controller' => 'Application\Controller\Feedback',
+                    ],
+                ],
+            ],
+
             'auth-routes' => [
                 'type'    => 'Segment',
                 'options' => [
@@ -422,6 +432,7 @@ return [
             'Application\Controller\Console\GenerateStats'  => Application\ControllerFactory\GenerateStatsControllerFactory::class,
             'Application\Controller\Ping'                   => Application\ControllerFactory\PingControllerFactory::class,
             'Application\Controller\Stats'                  => Application\ControllerFactory\StatsControllerFactory::class,
+            'Application\Controller\Feedback'               => Application\ControllerFactory\FeedbackControllerFactory::class,
         ],
         'abstract_factories' => [
             'Application\ControllerFactory\AuthControllerAbstractFactory',
