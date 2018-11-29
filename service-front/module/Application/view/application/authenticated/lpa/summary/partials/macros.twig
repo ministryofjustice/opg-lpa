@@ -1,4 +1,4 @@
-{% macro outputSection(sectionTitle, value, changeUrl, navigationReference, rowStyle) %}
+{% macro outputSection(sectionTitle, value, changeUrl, navigationReference, rowStyle, ariaLabelOverride) %}
 
     {% import _self as macros %}
 
@@ -9,24 +9,24 @@
     <div class="{{ (rowStyle ? rowStyle : '' ) }}">
         <dt class="cya-question">{{ sectionTitle|raw }}</dt>
         <dd class="cya-answer">{{ value|raw }}</dd>
-        {{ macros.outputChangeLink(changeUrl, navigationReference) }}
+        {{ macros.outputChangeLink(changeUrl, navigationReference, ariaLabelOverride ? ariaLabelOverride : 'Edit ' ~ sectionTitle) }}
     </div>
 
 {% endmacro %}
 
 
-{% macro outputChangeLink(changeUrl, navigationReference) %}
+{% macro outputChangeLink(changeUrl, navigationReference, ariaLabel) %}
 
     <dd class="cya-change">
         {% if changeUrl is not null %}
-            <a href="{{ changeUrl|raw }}" data-journey-click="check your answers:link:navigation: {{ navigationReference }}">Edit</a>
+            <a href="{{ changeUrl|raw }}" data-journey-click="check your answers:link:navigation: {{ navigationReference }}"{% if ariaLabel %} aria-label="{{ ariaLabel }}"{% endif %}>Edit</a>
         {% endif %}
     </dd>
 
 {% endmacro %}
 
 
-{% macro outputActor(sectionHeading, data, changeUrl, navigationReference) %}
+{% macro outputActor(sectionHeading, data, changeUrl, navigationReference, ariaLabelOverride) %}
 
     {% import _self as macros %}
 
@@ -43,7 +43,8 @@
             data.name,
             changeUrl,
             navigationReference,
-            'actor-term'
+            'actor-term',
+            ariaLabelOverride ? ariaLabelOverride : 'Edit ' ~ sectionHeading
         ) }}
     {% endif %}
 
