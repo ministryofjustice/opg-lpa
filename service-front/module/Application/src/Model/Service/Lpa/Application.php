@@ -31,10 +31,15 @@ class Application extends AbstractService implements ApiClientAwareInterface
      * Get an application by lpaId
      *
      * @param $lpaId
+     * @param string|null $token
      * @return bool|static
      */
-    public function getApplication($lpaId)
+    public function getApplication($lpaId, string $token = null)
     {
+        if ($token) {
+            $this->apiClient->updateToken($token);
+        }
+
         $target = sprintf('/v2/user/%s/applications/%d', $this->getUserId(), $lpaId);
 
         $response = $this->apiClient->httpGet($target);
