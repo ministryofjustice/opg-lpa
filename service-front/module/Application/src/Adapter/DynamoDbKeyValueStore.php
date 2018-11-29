@@ -12,11 +12,11 @@ use Symfony\Component\Intl\Exception\NotImplementedException;
  */
 class DynamoDbKeyValueStore implements StorageInterface
 {
-    
+
     /**
      * The AWS client
      *
-     * @var Aws\DynamoDb\DynamoDbClient
+     * @var DynamoDbClient
      */
     private $client;
 
@@ -47,10 +47,6 @@ class DynamoDbKeyValueStore implements StorageInterface
      *          [
      *              'version' => '2012-08-10',
      *              'region' => 'eu-west-1',
-     *              'credentials' => [
-     *                  'key'    => '',
-     *                  'secret' => '',
-     *              ],
      *          ],
      *      ],
      *      'keyPrefix' => 'stack-name',
@@ -73,14 +69,14 @@ class DynamoDbKeyValueStore implements StorageInterface
     {
         return "{$this->keyPrefix}/{$key}";
     }
-    
+
     /* (non-PHPdoc)
      * @see \Zend\Cache\Storage\StorageInterface::setItem()
      */
     public function setItem($key, $value)
     {
         $key = array('S' => $this->formatKey($key));
-        
+
         if (empty($value)) {
             $value = array('NULL' => true);
         } else {
@@ -95,14 +91,14 @@ class DynamoDbKeyValueStore implements StorageInterface
             )
         ));
     }
-    
+
     /* (non-PHPdoc)
      * @see \Zend\Cache\Storage\StorageInterface::removeItem()
      */
     public function removeItem($key)
     {
         $key = array('S' => $this->formatKey($key));
-        
+
         $this->client->deleteItem(array(
             'TableName' => $this->tableName,
             'Key' => array(
@@ -110,7 +106,7 @@ class DynamoDbKeyValueStore implements StorageInterface
             )
         ));
     }
-    
+
     /* (non-PHPdoc)
      * @see \Zend\Cache\Storage\StorageInterface::getItem()
      */
@@ -135,7 +131,7 @@ class DynamoDbKeyValueStore implements StorageInterface
 
         return null;
     }
-    
+
      /* (non-PHPdoc)
      * @see \Zend\Cache\Storage\StorageInterface::addItem()
      */

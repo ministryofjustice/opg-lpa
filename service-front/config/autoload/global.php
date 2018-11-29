@@ -33,10 +33,6 @@ return array(
                 'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                 'version' => '2012-08-10',
                 'region' => 'eu-west-1',
-                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
-                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
-                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
-                ] : null,
             ],
             'settings' => [
                 'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
@@ -58,10 +54,6 @@ return array(
                     'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                     'version' => '2012-08-10',
                     'region' => 'eu-west-1',
-                    'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
-                        'key'    => getenv('AWS_ACCESS_KEY_ID'),
-                        'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
-                    ] : null,
                 ],
                 'settings' => [
                     'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
@@ -109,10 +101,6 @@ return array(
                 'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                 'version' => '2012-08-10',
                 'region' => 'eu-west-1',
-                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
-                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
-                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
-                ] : null,
             ],
             'settings' => [
                 'table_name' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE') ?: 'lpa-sessions-shared',
