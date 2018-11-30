@@ -15,3 +15,6 @@ nbproject
 .settings
 local.php.old
 tests/coverage/
+vendor/*
+.composer/*
+
