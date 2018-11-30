@@ -71,8 +71,8 @@
         {{ macros.outputSection(
             'Company name',
             data.company,
-            null,
-            null,
+            (data.name is defined and data.name is not empty ? null : changeUrl),
+            (data.name is defined and data.name is not empty ? null : navigationReference),
             'actor-term'
         ) }}
     {% endif %}
