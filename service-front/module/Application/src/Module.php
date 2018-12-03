@@ -4,7 +4,7 @@ namespace Application;
 
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
-use Application\Model\Service\ApiClient\Exception\ResponseException;
+use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\System\DynamoCronLock;
@@ -113,7 +113,7 @@ class Module implements FormElementProviderInterface
                 } else {
                     $auth->clearIdentity();
                 }
-            } catch (ResponseException $rex) {
+            } catch (ApiException $ex) {
                 $auth->clearIdentity();
             }
         }

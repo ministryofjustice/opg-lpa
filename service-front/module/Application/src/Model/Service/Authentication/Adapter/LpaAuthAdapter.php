@@ -3,7 +3,7 @@
 namespace Application\Model\Service\Authentication\Adapter;
 
 use Application\Model\Service\ApiClient\Client;
-use Application\Model\Service\ApiClient\Exception\ResponseException;
+use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\ApiClient\Response\AuthResponse;
 use Application\Model\Service\Authentication\Identity\User;
 use Zend\Authentication\Adapter\Exception\RuntimeException;
@@ -75,16 +75,14 @@ class LpaAuthAdapter implements AdapterInterface
         $response->setErrorDescription('authentication-failed');
 
         try {
-            $postResponse = $this->client->httpPost('/v2/authenticate', [
+            $result = $this->client->httpPost('/v2/authenticate', [
                 'username' => strtolower($this->email),
                 'password' => $this->password,
             ]);
 
-            if ($postResponse->getStatusCode() == 200) {
-                $response = AuthResponse::buildFromResponse($postResponse);
-            }
-        } catch (ResponseException $e) {
-            switch ($e->getDetail()) {
+            $response = AuthResponse::buildFromResponse($result);
+        } catch (ApiException $ex) {
+            switch ($ex->getMessage()) {
                 case 'account-locked/max-login-attempts':
                     $response->setErrorDescription('locked');
                     break;

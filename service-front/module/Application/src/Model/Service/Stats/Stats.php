@@ -5,7 +5,7 @@ namespace Application\Model\Service\Stats;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
-use Psr\Http\Message\ResponseInterface;
+use Application\Model\Service\ApiClient\Exception\ApiException;
 
 class Stats extends AbstractService implements ApiClientAwareInterface
 {
@@ -16,11 +16,9 @@ class Stats extends AbstractService implements ApiClientAwareInterface
      */
     public function getApiStats()
     {
-        $response = $this->apiClient->httpGet('/stats/all');
-
-        if ($response->getStatusCode() == 200) {
-            return json_decode($response->getBody(), true);
-        }
+        try {
+            return $this->apiClient->httpGet('/stats/all');
+        } catch (ApiException $ex) {}
 
         return false;
     }

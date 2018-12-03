@@ -5,8 +5,7 @@ namespace Application\Model\Service\Lpa;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
-use Application\Model\Service\ApiClient\Exception\ResponseException;
-use Application\Model\Service\ApiClient\Response\Lpa as LpaResponse;
+use Application\Model\Service\ApiClient\Exception\ApiException;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
@@ -22,6 +21,7 @@ use DateTime;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use ArrayObject;
+use RuntimeException;
 
 class Application extends AbstractService implements ApiClientAwareInterface
 {
@@ -32,7 +32,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param $lpaId
      * @param string|null $token
-     * @return bool|static
+     * @return array|bool|null
      */
     public function getApplication($lpaId, string $token = null)
     {
@@ -42,11 +42,11 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
         $target = sprintf('/v2/user/%s/applications/%d', $this->getUserId(), $lpaId);
 
-        $response = $this->apiClient->httpGet($target);
+        try {
+            $result = $this->apiClient->httpGet($target);
 
-        if ($response->getStatusCode() == 200) {
-            return LpaResponse::buildFromResponse($response);
-        }
+            return new Lpa($result);
+        } catch (ApiException $ex) {}
 
         return false;
     }
@@ -54,19 +54,11 @@ class Application extends AbstractService implements ApiClientAwareInterface
     /**
      * Create a new LPA application
      *
-     * @return bool|static
+     * @return bool
      */
     public function createApplication()
     {
-        $target = sprintf('/v2/user/%s/applications', $this->getUserId());
-
-        $response = $this->apiClient->httpPost($target);
-
-        if ($response->getStatusCode() == 201) {
-            return LpaResponse::buildFromResponse($response);
-        }
-
-        return false;
+        return $this->executePost(sprintf('/v2/user/%s/applications', $this->getUserId()));
     }
 
     /**
@@ -74,17 +66,17 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param $lpaId
      * @param array $data
-     * @return bool|static
+     * @return bool
      */
     public function updateApplication($lpaId, array $data)
     {
         $target = sprintf('/v2/user/%s/applications/%d', $this->getUserId(), $lpaId);
 
-        $response = $this->apiClient->httpPatch($target, $data);
+        try {
+            $result = $this->apiClient->httpPatch($target, $data);
 
-        if ($response->getStatusCode() == 200) {
-            return LpaResponse::buildFromResponse($response);
-        }
+            return new Lpa($result);
+        } catch (ApiException $ex) {}
 
         return false;
     }
@@ -97,15 +89,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     public function deleteApplication($lpaId)
     {
-        $target = sprintf('/v2/user/%s/applications/%d', $this->getUserId(), $lpaId);
-
-        $response = $this->apiClient->httpDelete($target);
-
-        if ($response->getStatusCode() == 204) {
-            return true;
-        }
-
-        return false;
+        return $this->executeDelete(sprintf('/v2/user/%s/applications/%d', $this->getUserId(), $lpaId));
     }
 
     /**
@@ -133,16 +117,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
         }
 
         //  Get the response and check it's contents
-        $response = $this->apiClient->httpGet(sprintf('/v2/user/%s/applications', $this->getUserId()), $queryParams);
-
-        if ($response->getStatusCode() != 200) {
-            throw new ResponseException('unknown-error', $response->getStatusCode(), $response);
-        }
-
-        $result = json_decode($response->getBody(), true);
+        $result = $this->apiClient->httpGet(sprintf('/v2/user/%s/applications', $this->getUserId()), $queryParams);
 
         if (!isset($result['applications'])) {
-            throw new ResponseException('missing-fields', $response->getStatusCode(), $response);
+            throw new RuntimeException('missing-fields');
         }
 
         //  Loop through the applications in the result, enhance the data and set it in an array object
@@ -212,21 +190,11 @@ class Application extends AbstractService implements ApiClientAwareInterface
      *
      * @param $lpaId
      * @param $pdfType
-     * @return bool|null|\Psr\Http\Message\StreamInterface
+     * @return array|bool|null
      */
     public function getPdfContents($lpaId, $pdfType)
     {
-        $response = $this->apiClient->httpGet(sprintf('/v2/user/%s/applications/%s/pdfs/%s.pdf', $this->getUserId(), $lpaId, $pdfType));
-
-        if ($response->getStatusCode() == 204) {
-            return null;
-        }
-
-        if ($response->getStatusCode() == 200) {
-            return $response->getBody();
-        }
-
-        return false;
+        return $this->executeGet(sprintf('/v2/user/%s/applications/%s/pdfs/%s.pdf', $this->getUserId(), $lpaId, $pdfType));
     }
 
     /**
@@ -830,15 +798,9 @@ class Application extends AbstractService implements ApiClientAwareInterface
      */
     private function executeGet($target)
     {
-        $response = $this->apiClient->httpGet($target);
-
-        if ($response->getStatusCode() == 204) {
-            return null;
-        }
-
-        if ($response->getStatusCode() == 200) {
-            return json_decode($response->getBody(), true);
-        }
+        try {
+            return $this->apiClient->httpGet($target);
+        } catch (ApiException $ex) {}
 
         return false;
     }
@@ -851,12 +813,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
     private function executePost($target, $jsonBody = [])
     {
         try {
-            $response = $this->apiClient->httpPost($target, $jsonBody);
+            $result = $this->apiClient->httpPost($target, $jsonBody);
 
-            if ($response->getStatusCode() == 201) {
-                return json_decode($response->getBody(), true);
-            }
-        } catch (ResponseException $ignore) {}
+            return new Lpa($result);
+        } catch (ApiException $ex) {}
 
         return false;
     }
@@ -869,12 +829,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
     private function executePut($target, $jsonBody)
     {
         try {
-            $response = $this->apiClient->httpPut($target, $jsonBody);
-
-            if (in_array($response->getStatusCode(), [200, 201])) {
-                return json_decode($response->getBody(), true);
-            }
-        } catch (ResponseException $ignore) {}
+            return $this->apiClient->httpPut($target, $jsonBody);
+        } catch (ApiException $ex) {}
 
         return false;
     }
@@ -886,12 +842,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
     private function executeDelete($target)
     {
         try {
-            $response = $this->apiClient->httpDelete($target);
+            $this->apiClient->httpDelete($target);
 
-            if ($response->getStatusCode() == 204) {
-                return true;
-            }
-        } catch (ResponseException $ignore) {}
+            return true;
+        } catch (ApiException $ex) {}
 
         return false;
     }
