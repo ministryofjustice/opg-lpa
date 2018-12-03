@@ -1,6 +1,7 @@
 <?php
 use Opg\Lpa\DataModel\Lpa\Lpa;
-require_once 'vendor/autoload.php';
+use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
+require_once '../vendor/autoload.php';
 include "Randomizer.php";
 
 date_default_timezone_set('UTC');
@@ -177,8 +178,12 @@ class JsonGenerator extends Randomizer
 
         $this->lpa = array();
         $this->lpa['id'] = rand(1, 99999999999);
+
         $updated = time()-rand(0, 864000);
-        $this->lpa['createdAt'] = date('c', $updated - rand(0, 864000));
+        $started = $updated - rand(0, 864000);
+
+        $this->lpa['createdAt'] = date('c', $started);
+        $this->lpa['startedAt'] = date('c', $started);
         $this->lpa['updatedAt'] = date('c', $updated);
         $this->lpa['user'] = $this->rString(32, self::HEX_NUMBER);
         $this->lpa['repeatCaseNumber'] = $this->random(array(null, null, null, $this->rInt('random', array('min'=>10000000, 'max'=>99999999))));
@@ -204,10 +209,10 @@ class JsonGenerator extends Randomizer
                 $this->lpa['payment']['amount'] = (float) 0;
             }
             elseif($this->lpa['payment']['reducedFeeLowIncome']) {
-                $this->lpa['payment']['amount'] = (float) self::STANDARD_FEE/2;
+                $this->lpa['payment']['amount'] = (float) Calculator::STANDARD_FEE/2;
             }
             else {
-                $this->lpa['payment']['amount'] = (float) self::STANDARD_FEE;
+                $this->lpa['payment']['amount'] = (float) Calculator::STANDARD_FEE;
             }
 
             if($this->lpa['repeatCaseNumber'] != null) {
@@ -492,7 +497,7 @@ class JsonGenerator extends Randomizer
             }
 
             $attorney = array(
-                    "id"        => $this->rInt('seq', array('name'=>'attorney_id', 'start'=>0)),
+                    "id"        => $this->rInt('seq', array('name'=>'attorney_id', 'start'=>1)),
                     "address"   => $this->rAddr(),
                     "email"     => $this->random(array(null, array('address' => $this->rEmail()))),
                     'type'      => $type
@@ -534,7 +539,7 @@ class JsonGenerator extends Randomizer
             }
 
             $attorney = array(
-                    "id"        => $this->rInt('seq', array('name'=>'replacement_attorney_id', 'start'=>0)),
+                    "id"        => $this->rInt('seq', array('name'=>'replacement_attorney_id', 'start'=>1)),
                     "address"   => $this->rAddr(),
                     'type'      => $type
             );
@@ -795,7 +800,7 @@ for($i=0; $i<200; $i++) {
         exit;
     }
 
-    if(!$lpa->isComplete()) {
+    if(!$lpa->isStateCompleted()) {
         echo 'incomplete LPA'. PHP_EOL;
     }
 

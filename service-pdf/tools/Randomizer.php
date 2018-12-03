@@ -31,7 +31,7 @@ class Randomizer
     
     protected function rTitle()
     {
-        $list = array('Ms','Ms','Miss','Miss','Miss','Mrs','Mrs','Mrs','Mrs','Mrs','Mr','Mr','Mr','Mr','Mr','Mr','Dr','Prof','Hon','Capt', null);
+        $list = array('Ms','Ms','Miss','Miss','Miss','Mrs','Mrs','Mrs','Mrs','Mrs','Mr','Mr','Mr','Mr','Mr','Mr','Dr','Prof','Hon','Capt');
         $idx = rand(0, count($list)-1);
         return $list[$idx];
     }
