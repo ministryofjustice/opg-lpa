@@ -2,11 +2,8 @@
 namespace Opg\Lpa\Pdf\Worker;
 
 use Opg\Lpa\Pdf\Config\Config;
-use Zend\Crypt\BlockCipher;
-use Zend\Crypt\Symmetric\Exception\InvalidArgumentException;
 use Zend\Filter\Decompress;
 use Aws\Sqs\SqsClient;
-use Aws\Exception\AwsException;
 
 class SqsWorker extends AbstractWorker
 {
@@ -58,8 +55,11 @@ class SqsWorker extends AbstractWorker
                 // Get the encrypted data and metadata
                 $lpaMessage = json_decode($sqsMessage['Body'], true);
 
-                // Decrypt and decompress the body
-                $body = $this->decodeBody($lpaMessage['data']);
+                // Decompress the message's body
+                $body = (new Decompress('Gz'))->filter(base64_decode($lpaMessage['data']));
+
+                // Decode the returned JSON into an array
+                $body = json_decode($body, true);
 
                 $this->logger->info("New job found on queue", [
                     'jobId' => $lpaMessage['jobId'],
@@ -98,28 +98,6 @@ class SqsWorker extends AbstractWorker
             $this->logger->emerg("Exception in SqsWorker: ".$e->getMessage());
         }
 
-    }
-
-    private function decodeBody($message){
-
-        $config = Config::getInstance();
-        $encryptionConfig = $config['pdf']['encryption'];
-        $encryptionKeysQueue = $encryptionConfig['keys']['queue'];
-
-        if (!is_string($encryptionKeysQueue) || strlen($encryptionKeysQueue) != 32) {
-            throw new InvalidArgumentException('Invalid encryption key');
-        }
-
-        //  We use AES encryption with Cipher-block chaining (CBC).
-        $blockCipher = BlockCipher::factory('openssl', $encryptionConfig['options']);
-        $blockCipher->setKey($encryptionKeysQueue);
-
-        //  Get the JSON from the message and decompress it
-        $decompressFilter = new Decompress('Gz');
-        $compressedJson = $blockCipher->decrypt($message);
-        $json = $decompressFilter->filter($compressedJson);
-
-        return json_decode($json, true);
     }
 
 }
