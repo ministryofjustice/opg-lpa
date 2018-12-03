@@ -23019,11 +23019,11 @@ this["lpa"]["templates"]["dialog.confirmRepeatApplication"] = Handlebars.templat
 
   return "<div class=\"dialog-container\">\n\n    <div class=\"dialog-title-block\">"
     + alias4(((helper = (helper = helpers.dialogTitle || (depth0 != null ? depth0.dialogTitle : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"dialogTitle","hash":{},"data":data}) : helper)))
-    + "</div>\n\n    <div class=\"dialog-message-block\"><p>"
+    + "</div>\n\n    <div id=\"dialog-message\" class=\"dialog-message-block\"><p>"
     + alias4(((helper = (helper = helpers.dialogMessage || (depth0 != null ? depth0.dialogMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"dialogMessage","hash":{},"data":data}) : helper)))
     + "</p></div>\n\n    <div class=\"dialog__button-bar\">\n        <a class=\"button dialog__button--accept "
     + alias4(((helper = (helper = helpers.acceptClass || (depth0 != null ? depth0.acceptClass : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"acceptClass","hash":{},"data":data}) : helper)))
-    + "\">"
+    + "\" aria-describedby=\"dialog-message\">"
     + alias4(((helper = (helper = helpers.acceptButtonText || (depth0 != null ? depth0.acceptButtonText : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"acceptButtonText","hash":{},"data":data}) : helper)))
     + "</a>\n        <a class=\"button-secondary dialog__button--cancel  "
     + alias4(((helper = (helper = helpers.cancelClass || (depth0 != null ? depth0.cancelClass : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cancelClass","hash":{},"data":data}) : helper)))
