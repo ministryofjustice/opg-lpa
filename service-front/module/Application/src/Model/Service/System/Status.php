@@ -143,21 +143,17 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
     private function api()
     {
-        $result = array('ok' => false, 'details' => array('200' => false));
+        $result = [
+            'ok'      => false,
+            'details' => [
+                '200' => false,
+            ],
+        ];
 
         try {
-            $response = $this->apiClient->httpGet('/ping');
-
-            // There should be no JSON if we don't get a 200, so return.
-            if ($response->getStatusCode() != 200) {
-                return $result;
-            }
-
-            //---
+            $api = $this->apiClient->httpGet('/ping');
 
             $result['details']['200'] = true;
-
-            $api = json_decode($response->getBody(), true);
 
             $result['ok'] = $api['ok'];
             $result['details'] = $result['details'] + $api;
