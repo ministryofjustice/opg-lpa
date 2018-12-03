@@ -46,8 +46,11 @@ foreach (glob(__DIR__ . '/../test-data/json/*.json') as $filepath) {
         postJob($client, $type . '-' . $fileName, $lpa, $job);
     }
 
-    echo PHP_EOL;
+    echo ".";
 }
+
+echo "\nDone\n";
+
 
 function generateJob(Lpa $lpa, $type){
     $message = json_encode([
