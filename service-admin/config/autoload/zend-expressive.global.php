@@ -23,7 +23,7 @@ return [
         'path'      => '/',
         'header'    => 'lpa-admin',
         'cookie'    => 'lpa-admin',
-        'ttl'       => 60 * 60,
+        'ttl'       => 60 * 15, //  15 minutes
         'algo'      => 'HS256',
     ],
 
