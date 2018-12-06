@@ -191,10 +191,17 @@ class Application extends AbstractService implements ApiClientAwareInterface
      * @param $lpaId
      * @param $pdfType
      * @return array|bool|null
+     * @throws ApiException
      */
     public function getPdfContents($lpaId, $pdfType)
     {
-        return $this->executeGet(sprintf('/v2/user/%s/applications/%s/pdfs/%s.pdf', $this->getUserId(), $lpaId, $pdfType));
+        $target = sprintf('/v2/user/%s/applications/%s/pdfs/%s.pdf', $this->getUserId(), $lpaId, $pdfType);
+
+        try {
+            return $this->apiClient->httpGet($target, [], false);
+        } catch (ApiException $ex) {}
+
+        return false;
     }
 
     /**
