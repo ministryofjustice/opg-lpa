@@ -98,11 +98,11 @@
 {% if lpaTotalCount > 0 %}
 
     {% if shortList %}
-        {{ macros.listLpas(lpas, true, '', 'No type selected') }}
-        {{ macros.listLpas(lpas, true, 'property-and-financial', 'Property and finance LPAs') }}
-        {{ macros.listLpas(lpas, true, 'health-and-welfare', 'Health and welfare LPAs') }}
+        {{ macros.listLpas(lpas, null, null) }}
+        {{ macros.listLpas(lpas, 'property-and-financial', null) }}
+        {{ macros.listLpas(lpas, 'health-and-welfare', null) }}
     {% else %}
-        {{ macros.listLpas(lpas, false, 'all', '') }}
+        {{ macros.listLpas(lpas, 'all', paginationControlData['page']) }}
     {% endif %}
 
     {% include 'application/authenticated/dashboard/pagination.twig' with {data: paginationControlData, route: 'user/dashboard/pagination'} %}

@@ -12,17 +12,16 @@
 
 <div class="form">
     <h2 class="heading-medium">
-        {% if donorName %}
-            {{ donorName }}
+        {% if lpa.document.donor.name is defined %}
+            {{ lpa.document.donor.name }}
         {% else %}
             No donor added
         {% endif %}
     </h2>
-    <p>{{ formatLpaId(lpaId) }}</p>
+    <p>{{ formatLpaId(lpa.id) }}</p>
     <p>This will only delete the information on this website. It will not delete any LPA application you've sent to OPG already, or any registered LPA.</p>
-    <a href="/user/dashboard/delete-lpa/{{ lpaId }}" class="button button-warning flush--left">Delete</a>
+    <a href="/user/dashboard/delete-lpa/{{ lpa.id }}{% if page > 1 %}?page={{ page }}{% endif %}" class="button button-warning flush--left">Delete</a>
     <a href="/user/dashboard" class="button button-secondary js-cancel">Cancel</a>
 </div>
-
 
 {% endblock %}

@@ -12,17 +12,13 @@
 
         <ul class="pager-items">
         {% for pageInRange in data['pagesInRange'] %}
-            {% if pageInRange != currentPage %}
-                <li>
-                    <a href="{{ url(route, {page: pageInRange}) }}">
-                        {{ pageInRange }}
-                    </a>
-                </li>
-            {% else %}
-                <li>
+            <li>
+                {% if pageInRange != currentPage %}
+                    <a href="{{ url(route, {page: pageInRange}) }}">{{ pageInRange }}</a>
+                {% else %}
                     {{ pageInRange }}
-                </li>
-            {%  endif %}
+                {%  endif %}
+            </li>
         {% endfor %}
         </ul>
 
