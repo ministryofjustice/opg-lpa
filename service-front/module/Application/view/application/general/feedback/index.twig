@@ -66,7 +66,7 @@
         <legend class="group text">
         </legend>
 
-        <div class="form-group {{ type.getMessages|length >0 ? 'error'}}">
+        <div class="form-group {{ type.getMessages|length >0 ? 'form-group-error'}}">
             {{ formElementErrorsV2(type) }}
             {{ formElement(type) }}
         </div>
@@ -77,7 +77,7 @@
     <fieldset>
         <legend class="group text">
         </legend>
-        <div class="form-group {{ details.getMessages|length >0 ? 'error'}}">
+        <div class="form-group {{ details.getMessages|length >0 ? 'form-group-error'}}">
             <label class="form-label text" for="{{ details.getAttribute('id') }}">
                 <span class="visually-hidden">Your feedback<br></span>
                 <span class="form-hint">2000 characters max<br></span>
@@ -103,7 +103,7 @@
     <fieldset>
         <legend class="group text">
         </legend>
-        <div class="form-group {{ phone.getMessages|length >0 ? 'error'}}">
+        <div class="form-group {{ phone.getMessages|length >0 ? 'form-group-error'}}">
             <label class="form-label text" for="{{ phone.getAttribute('id') }}">
                 <span class="visually-hidden">Your phone number (optional)</span>
                 {{ formElementErrorsV2(phone) }}

@@ -73,7 +73,7 @@
         <fieldset id="who">
             <legend class="visually-hidden">Who was using the LPA service</legend>
 
-            <div class="form-group {{ who.getMessages|length >0 ? 'error'}}">
+            <div class="form-group {{ who.getMessages|length >0 ? 'form-group-error'}}">
                 {{ formElementErrorsV2(who) }}
 
                 <label class="text block-label" for="{{ whoOptions['donor'].getAttribute('id') }}">

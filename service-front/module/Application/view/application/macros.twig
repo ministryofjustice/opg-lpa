@@ -49,7 +49,7 @@
 {# Text input #}
 {% macro formGroup(element) %}
 
-<div class="form-group{{ element.getMessages|length >0 ? ' error'}}">
+<div class="form-group{{ element.getMessages|length >0 ? ' form-group-error'}}">
     <label class="form-label" for="{{ element.getAttribute('id') }}">
         {{ element.getOption('label') }}
         {{ formElementErrorsV2(element) }}

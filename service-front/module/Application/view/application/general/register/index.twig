@@ -86,7 +86,7 @@
 
         {% include 'application/partials/password-rules.twig' %}
 
-        <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
+        <div class="form-group {{ password.getMessages|length >0 ? 'form-group-error'}}">
             <label class="form-label" for="{{ password.getAttribute('id') }}">
                 {{ password.getOption('label') }}
                 {{ formElementErrorsV2(password) }}
@@ -108,7 +108,7 @@
             <p>LPAs are governed by the laws of England and Wales and can only be made by people with mental capacity aged 18 or older.</p>
         </div>
 
-        <div class="form-group {{ terms.getMessages|length >0 ? 'error'}}">
+        <div class="form-group {{ terms.getMessages|length >0 ? 'form-group-error'}}">
             <label class="block-label" for="{{ terms.getAttribute('id') }}">
                 {{ formElement(terms) }}
                 I agree to the <a href="/terms" target="_blank">terms of use</a>
