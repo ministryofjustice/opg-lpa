@@ -186,6 +186,10 @@
         } else {
           window.location.reload();
         }
+
+        // Get the containing popup to redo the tab limiting as the DOM has changed
+        moj.Modules.Popup.redoLoopedTabKeys();
+
         // stop spinner
         $form.find('input[type="submit"]').spinner('off');
       }
