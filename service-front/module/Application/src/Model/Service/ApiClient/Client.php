@@ -55,10 +55,11 @@ class Client
      *
      * @param $path
      * @param array $query
+     * @param bool $jsonResponse
      * @return array|null
      * @throws Exception\ApiException
      */
-    public function httpGet($path, array $query = [])
+    public function httpGet($path, array $query = [], $jsonResponse = true)
     {
         $url = new Uri($this->apiBaseUri . $path);
 
@@ -72,7 +73,7 @@ class Client
 
         switch ($response->getStatusCode()) {
             case 200:
-                return $this->handleResponse($response);
+                return $this->handleResponse($response, $jsonResponse);
             case 204:
             case 404:
                 return null;
@@ -207,16 +208,21 @@ class Client
      * Successful response processing
      *
      * @param ResponseInterface $response
+     * @param bool $jsonResponse
      * @return array
      * @throws Exception\ApiException
      */
-    private function handleResponse(ResponseInterface $response)
+    private function handleResponse(ResponseInterface $response, $jsonResponse = true)
     {
-        $body = json_decode($response->getBody(), true);
+        $body = $response->getBody();
 
-        //  If the body isn't an array now then it wasn't JSON before
-        if (!is_array($body)) {
-            throw new Exception\ApiException($response, 'Malformed JSON response from server');
+        if ($jsonResponse == true) {
+            $body = json_decode($body, true);
+
+            //  If the body isn't an array now then it wasn't JSON before
+            if (!is_array($body)) {
+                throw new Exception\ApiException($response, 'Malformed JSON response from server');
+            }
         }
 
         return $body;
