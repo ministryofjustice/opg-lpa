@@ -145,6 +145,8 @@ return [
                     'Bucket' => getenv('OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET') ?: null,
                 ],
                 'client' => [
+                    'endpoint' => getenv('OPG_LPA_COMMON_S3_ENDPOINT') ?: null,
+                    'use_path_style_endpoint' => true,
                     'version' => '2006-03-01',
                     'region' => 'eu-west-1',
                 ],
