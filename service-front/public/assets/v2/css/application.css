@@ -1,4 +1,5 @@
-.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after, .form-group:after, .form-block:after, .breadcrumbs ol:after, .list-item--v3:after, .accordion:after, .accordion .accordion-info:after, .iconlinks--right:after {
+.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
+.form-group:after, .form-group-error:after, .breadcrumbs ol:after, .list-item--v3:after, .accordion:after, .accordion .accordion-info:after, .iconlinks--right:after {
   content: "";
   display: block;
   clear: both; }
@@ -16,17 +17,20 @@
 .grid-row {
   margin: 0 -15px; }
 
-.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after, .form-group:after, .form-block:after, .breadcrumbs ol:after, .list-item--v3:after, .accordion:after, .accordion .accordion-info:after, .iconlinks--right:after {
+.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
+.form-group:after, .form-group-error:after, .breadcrumbs ol:after, .list-item--v3:after, .accordion:after, .accordion .accordion-info:after, .iconlinks--right:after {
   content: "";
   display: block;
   clear: both; }
 
-.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after, .form-group:after, .form-block:after, .breadcrumbs ol:after, .list-item--v3:after, .accordion:after, .accordion .accordion-info:after, .iconlinks--right:after {
+.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
+.form-group:after, .form-group-error:after, .breadcrumbs ol:after, .list-item--v3:after, .accordion:after, .accordion .accordion-info:after, .iconlinks--right:after {
   content: "";
   display: block;
   clear: both; }
 
-.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after, .form-group:after, .form-block:after, .breadcrumbs ol:after, .list-item--v3:after, .accordion:after, .accordion .accordion-info:after, .iconlinks--right:after {
+.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
+.form-group:after, .form-group-error:after, .breadcrumbs ol:after, .list-item--v3:after, .accordion:after, .accordion .accordion-info:after, .iconlinks--right:after {
   content: "";
   display: block;
   clear: both; }
@@ -44,21 +48,17 @@
 .grid-row {
   margin: 0 -15px; }
 
-.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after, .form-group:after, .form-block:after, .breadcrumbs ol:after, .list-item--v3:after, .accordion:after, .accordion .accordion-info:after, .iconlinks--right:after {
+.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
+.form-group:after, .form-group-error:after, .breadcrumbs ol:after, .list-item--v3:after, .accordion:after, .accordion .accordion-info:after, .iconlinks--right:after {
   content: "";
   display: block;
   clear: both; }
 
-.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after, .form-group:after, .form-block:after, .breadcrumbs ol:after, .list-item--v3:after, .accordion:after, .accordion .accordion-info:after, .iconlinks--right:after {
+.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
+.form-group:after, .form-group-error:after, .breadcrumbs ol:after, .list-item--v3:after, .accordion:after, .accordion .accordion-info:after, .iconlinks--right:after {
   content: "";
   display: block;
   clear: both; }
-
-.example-highlight-grid .grid-row {
-  background: #bfc1c3; }
-.example-highlight-grid .column-highlight {
-  background: #dee0e2;
-  width: 100%; }
 
 .visually-hidden,
 .visuallyhidden {
@@ -410,6 +410,7 @@ main {
   text-transform: none;
   font-size: 32px;
   line-height: 1.09375;
+  display: block;
   margin-top: 0.46875em;
   margin-bottom: 0.9375em; }
   @media (min-width: 641px) {
@@ -445,9 +446,16 @@ main {
   font-weight: 700;
   text-transform: none;
   font-size: 24px;
+<<<<<<< 62acb21a225de37bf2a811f8e0fdb859980fbf4b
   line-height: 1.0416666667;
   margin-top: 1.0416666667em;
   margin-bottom: 0.4166666667em; }
+=======
+  line-height: 1.04167;
+  display: block;
+  margin-top: 1.04167em;
+  margin-bottom: 0.41667em; }
+>>>>>>> LPA-2945 Form validation fixes required for version 3.0+ of gov-uk-elements
   @media (min-width: 641px) {
     .heading-large {
       font-size: 36px;
@@ -482,6 +490,7 @@ main {
   text-transform: none;
   font-size: 18px;
   line-height: 1.2;
+  display: block;
   margin-top: 1.25em;
   margin-bottom: 0.5em; }
   @media (min-width: 641px) {
@@ -499,6 +508,7 @@ main {
   text-transform: none;
   font-size: 16px;
   line-height: 1.25;
+  display: block;
   margin-top: 0.625em;
   margin-bottom: 0.3125em; }
   @media (min-width: 641px) {
@@ -509,13 +519,24 @@ main {
     .heading-small {
       margin-top: 1.0526315789em; } }
 
-p {
+p,
+.body-text {
   margin-top: 0.3125em;
   margin-bottom: 1.25em; }
   @media (min-width: 641px) {
+<<<<<<< 62acb21a225de37bf2a811f8e0fdb859980fbf4b
     p {
       margin-top: 0.2631578947em;
       margin-bottom: 1.0526315789em; } }
+=======
+    p,
+    .body-text {
+      margin-top: 0.26316em;
+      margin-bottom: 1.05263em; } }
+>>>>>>> LPA-2945 Form validation fixes required for version 3.0+ of gov-uk-elements
+
+.body-text {
+  display: block; }
 
 .lede {
   font-family: "nta", Arial, sans-serif;
@@ -566,7 +587,9 @@ p {
     .link-back {
       font-size: 16px;
       line-height: 1.25; } }
-  .link-back:link, .link-back:visited, .link-back:hover, .link-back:active {
+  .link-back:link, .link-back:visited, .link-back:hover,
+  .link-back a.link-back:focus,
+  .link-back .link-back.button-input-to-link:focus, .link-back:active {
     color: #0b0c0c; }
   .link-back::before {
     content: '';
@@ -683,7 +706,7 @@ hr {
       -webkit-box-shadow: 0 2px 0 #003618;
       -moz-box-shadow: 0 2px 0 #003618;
       box-shadow: 0 2px 0 #003618; }
-  .button:link, .button:hover, .button:focus, .button:visited {
+  .button:link, .button:link:focus, .button:hover, .button:focus, .button:visited {
     color: #fff; }
   .button:before {
     content: "";
@@ -996,12 +1019,12 @@ table {
     line-height: 1.25;
     padding: 0.6315789474em 1.0526315789em 0.4736842105em 0;
     text-align: left;
-    color: #0b0c0c;
     border-bottom: 1px solid #bfc1c3; }
     @media (min-width: 641px) {
       table th,
       table td {
         font-size: 19px;
+<<<<<<< 62acb21a225de37bf2a811f8e0fdb859980fbf4b
         line-height: 1.3157894737; } }
   table th {
     font-weight: 700; }
@@ -1013,11 +1036,20 @@ table {
     text-transform: none;
     font-size: 14px;
     line-height: 1.1428571429;
+=======
+        line-height: 1.31579; } }
+  table thead th {
+    font-weight: 700; }
+  table td:last-child,
+  table th:last-child {
+    padding-right: 0; }
+  table .numeric {
+>>>>>>> LPA-2945 Form validation fixes required for version 3.0+ of gov-uk-elements
     text-align: right; }
-    @media (min-width: 641px) {
-      table td.numeric {
-        font-size: 16px;
-        line-height: 1.25; } }
+  table td.numeric {
+    font-family: "ntatabularnumbers", "nta", Arial, sans-serif; }
+  table caption {
+    text-align: left; }
 
 .table-font-xsmall th {
   font-family: "nta", Arial, sans-serif;
@@ -1051,16 +1083,48 @@ details {
     color: #005ea5;
     cursor: pointer;
     position: relative;
+<<<<<<< 62acb21a225de37bf2a811f8e0fdb859980fbf4b
     margin-bottom: 0.2631578947em; }
+=======
+    margin-bottom: 0.26316em;
+    padding-left: 25px; }
+    details summary:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      margin: auto;
+      display: block;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-color: transparent;
+      -webkit-clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+      clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+      border-width: 7px 0 7px 12.124px;
+      border-left-color: inherit; }
+>>>>>>> LPA-2945 Form validation fixes required for version 3.0+ of gov-uk-elements
     details summary:hover {
       color: #2b8cc4; }
     details summary:focus {
       outline: 3px solid #ffbf47; }
+    details summary::-webkit-details-marker {
+      display: none; }
+  details[open] > summary:before {
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-color: transparent;
+    -webkit-clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+    clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+    border-width: 12.124px 7px 0 7px;
+    border-top-color: inherit; }
   details .summary {
     text-decoration: underline; }
   details .arrow {
-    margin-right: .35em;
-    font-style: normal; }
+    display: none; }
 
 .panel {
   -webkit-box-sizing: border-box;
@@ -1092,36 +1156,41 @@ details {
   margin-top: 10px; }
 
 .form-group .panel-border-narrow:last-child {
-  margin-top: 10px;
+  margin-top: 0;
   margin-bottom: 0; }
 
-.inline .panel-border-narrow {
+.inline .panel-border-narrow,
+.inline .panel-border-narrow:last-child {
   margin-top: 10px;
   margin-bottom: 0; }
 
 fieldset {
   width: 100%; }
+  fieldset.after-error-summary {
+    margin-top: -15px; }
+    @media (min-width: 641px) {
+      fieldset.after-error-summary {
+        margin-top: -30px; } }
+
+legend {
+  overflow: hidden; }
 
 textarea {
   display: block; }
 
-.form-section {
+.form-section,
+.form-group {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  float: left;
-  width: 100%;
+  box-sizing: border-box; }
+
+.form-section {
   margin-bottom: 30px; }
   @media (min-width: 641px) {
     .form-section {
       margin-bottom: 60px; } }
 
 .form-group {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  float: left;
-  width: 100%;
   margin-bottom: 15px; }
   @media (min-width: 641px) {
     .form-group {
@@ -1166,7 +1235,7 @@ textarea {
 
 .form-block {
   float: left;
-  width: 100%;
+  clear: left;
   margin-top: -5px;
   margin-bottom: 5px; }
   @media (min-width: 641px) {
@@ -1206,9 +1275,7 @@ textarea {
   line-height: 1.25;
   width: 100%;
   padding: 5px 4px 4px;
-  color: inherit;
-  background-color: transparent;
-  border: 2px solid; }
+  border: 2px solid #0b0c0c; }
   @media (min-width: 641px) {
     .form-control {
       font-size: 19px;
@@ -1222,19 +1289,9 @@ textarea.form-control {
   -webkit-appearance: none;
   border-radius: 0; }
 
-.form-radio {
-  display: block;
-  margin: 10px 0; }
-  .form-radio input {
-    vertical-align: middle;
-    margin: -4px 5px 0 0; }
-
-.form-checkbox {
-  display: block;
-  margin: 15px 0; }
-  .form-checkbox input {
-    vertical-align: middle;
-    margin: -2px 5px 0 0; }
+textarea.form-control {
+  opacity: 1;
+  background-image: none; }
 
 .form-control-3-4 {
   width: 100%; }
@@ -1272,34 +1329,46 @@ textarea.form-control {
     .form-control-1-8 {
       width: 12.5%; } }
 
-.block-label {
+option:active,
+option:checked,
+select:focus::-ms-value {
+  color: #fff;
+  background-color: #005ea5; }
+
+.multiple-choice {
   display: block;
   float: none;
   clear: left;
   position: relative;
-  padding: 8px 10px 9px 50px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  -ms-touch-action: manipulation;
-  touch-action: manipulation; }
+  padding: 0 0 0 38px;
+  margin-bottom: 10px; }
   @media (min-width: 641px) {
-    .block-label {
-      float: left;
-      padding-top: 7px;
-      padding-bottom: 7px; } }
-  .block-label input {
+    .multiple-choice {
+      float: left; } }
+  .multiple-choice input {
     position: absolute;
     cursor: pointer;
     left: 0;
     top: 0;
     width: 38px;
-    height: 38px; }
-    .js-enabled .block-label input {
-      margin: 0;
-      zoom: 1;
-      filter: alpha(opacity=0);
-      opacity: 0; }
-  .js-enabled .block-label.selection-button-radio::before {
+    height: 38px;
+    z-index: 1;
+    margin: 0;
+    zoom: 1;
+    filter: alpha(opacity=0);
+    opacity: 0; }
+  .multiple-choice label {
+    cursor: pointer;
+    padding: 8px 10px 9px 12px;
+    display: block;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation; }
+    @media (min-width: 641px) {
+      .multiple-choice label {
+        float: left;
+        padding-top: 7px;
+        padding-bottom: 7px; } }
+  .multiple-choice [type=radio] + label::before {
     content: "";
     border: 2px solid;
     background: transparent;
@@ -1311,7 +1380,7 @@ textarea.form-control {
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     border-radius: 50%; }
-  .js-enabled .block-label.selection-button-radio::after {
+  .multiple-choice [type=radio] + label::after {
     content: "";
     border: 10px solid;
     width: 0;
@@ -1325,7 +1394,7 @@ textarea.form-control {
     zoom: 1;
     filter: alpha(opacity=0);
     opacity: 0; }
-  .js-enabled .block-label.selection-button-checkbox::before {
+  .multiple-choice [type=checkbox] + label::before {
     content: "";
     border: 2px solid;
     background: transparent;
@@ -1334,11 +1403,12 @@ textarea.form-control {
     position: absolute;
     top: 0;
     left: 0; }
-  .js-enabled .block-label.selection-button-checkbox::after {
+  .multiple-choice [type=checkbox] + label::after {
     content: "";
     border: solid;
     border-width: 0 0 5px 5px;
     background: transparent;
+    border-top-color: transparent;
     width: 17px;
     height: 7px;
     position: absolute;
@@ -1352,21 +1422,32 @@ textarea.form-control {
     zoom: 1;
     filter: alpha(opacity=0);
     opacity: 0; }
-  .js-enabled .block-label.selection-button-radio.focused::before, .js-enabled .block-label.selection-button-checkbox.focused::before {
-    -webkit-box-shadow: 0 0 0 5px #ffbf47;
-    -moz-box-shadow: 0 0 0 5px #ffbf47;
-    box-shadow: 0 0 0 5px #ffbf47; }
-  .js-enabled .block-label.selection-button-radio.selected::after, .js-enabled .block-label.selection-button-checkbox.selected::after {
+  .multiple-choice [type=radio]:focus + label::before {
+    -webkit-box-shadow: 0 0 0 4px #ffbf47;
+    -moz-box-shadow: 0 0 0 4px #ffbf47;
+    box-shadow: 0 0 0 4px #ffbf47; }
+  .multiple-choice [type=checkbox]:focus + label::before {
+    -webkit-box-shadow: 0 0 0 3px #ffbf47;
+    -moz-box-shadow: 0 0 0 3px #ffbf47;
+    box-shadow: 0 0 0 3px #ffbf47; }
+  .multiple-choice input:checked + label::after {
     zoom: 1;
     filter: alpha(opacity=100);
     opacity: 1; }
-  .block-label:last-child, .block-label:last-of-type {
+  .multiple-choice input:disabled {
+    cursor: default; }
+  .multiple-choice input:disabled + label {
+    zoom: 1;
+    filter: alpha(opacity=50);
+    opacity: 0.5;
+    cursor: default; }
+  .multiple-choice:last-child, .multiple-choice:last-of-type {
     margin-bottom: 0; }
 
-.inline .block-label {
+.inline .multiple-choice {
   clear: none; }
   @media (min-width: 641px) {
-    .inline .block-label {
+    .inline .multiple-choice {
       margin-bottom: 0;
       margin-right: 30px; } }
 
@@ -1392,16 +1473,17 @@ input[type=number] {
 .form-date .form-group-year {
   width: 70px; }
 
-.error {
+.form-group-error {
   margin-right: 15px;
   border-left: 4px solid #b10e1e;
   padding-left: 10px; }
-  .error > .form-control {
-    border: 4px solid #b10e1e; }
   @media (min-width: 641px) {
-    .error {
+    .form-group-error {
       border-left: 5px solid #b10e1e;
       padding-left: 15px; } }
+
+.form-control-error, .form-group-error .form-control {
+  border: 4px solid #b10e1e; }
 
 .error-message {
   font-family: "nta", Arial, sans-serif;
@@ -1574,17 +1656,33 @@ input[type=number] {
     display: table-cell;
     vertical-align: baseline; }
 
+.phase-tag {
+  display: -moz-inline-stack;
+  display: inline-block;
+  margin: 0 8px 0 0;
+  padding: 2px 5px 0;
+  font-family: "nta", Arial, sans-serif;
+  font-weight: 700;
+  text-transform: none;
+  font-size: 14px;
+  line-height: 1.14286;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  color: #fff;
+  background-color: #005ea5; }
+  @media (min-width: 641px) {
+    .phase-tag {
+      font-size: 16px;
+      line-height: 1.25; } }
+
 .govuk-box-highlight {
   margin: 1em 0;
-  padding: 2em 0 1em;
+  padding: 2em 1em;
   color: #fff;
   background: #28a197;
   text-align: center; }
 
-@-moz-document regexp('.*') {
-  details summary:not([tabindex]) {
-    display: list-item;
-    display: revert; } }
 .text {
   overflow-wrap: break-word;
   word-wrap: break-word; }
@@ -2140,7 +2238,7 @@ input[type=number] {
       -webkit-box-shadow: 0 2px 0 #b5babe;
       -moz-box-shadow: 0 2px 0 #b5babe;
       box-shadow: 0 2px 0 #b5babe; }
-  .button-secondary:link, .button-secondary:hover, .button-secondary:focus, .button-secondary:visited {
+  .button-secondary:link, .button-secondary:link:focus, .button-secondary:hover, .button-secondary:focus, .button-secondary:visited {
     color: #0b0c0c; }
   .button-secondary:before {
     content: "";
@@ -2198,7 +2296,7 @@ input[type=number] {
       -webkit-box-shadow: 0 2px 0 #6a0812;
       -moz-box-shadow: 0 2px 0 #6a0812;
       box-shadow: 0 2px 0 #6a0812; }
-  .button-warning:link, .button-warning:hover, .button-warning:focus, .button-warning:visited {
+  .button-warning:link, .button-warning:link:focus, .button-warning:hover, .button-warning:focus, .button-warning:visited {
     color: #fff; }
   .button-warning:before {
     content: "";
@@ -2634,7 +2732,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
       -webkit-box-shadow: 0 2px 0 #b5babe;
       -moz-box-shadow: 0 2px 0 #b5babe;
       box-shadow: 0 2px 0 #b5babe; }
-  .button-secondary:link, .button-secondary:hover, .button-secondary:focus, .button-secondary:visited {
+  .button-secondary:link, .button-secondary:link:focus, .button-secondary:hover, .button-secondary:focus, .button-secondary:visited {
     color: #0b0c0c; }
   .button-secondary:before {
     content: "";
@@ -2692,7 +2790,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
       -webkit-box-shadow: 0 2px 0 #6a0812;
       -moz-box-shadow: 0 2px 0 #6a0812;
       box-shadow: 0 2px 0 #6a0812; }
-  .button-warning:link, .button-warning:hover, .button-warning:focus, .button-warning:visited {
+  .button-warning:link, .button-warning:link:focus, .button-warning:hover, .button-warning:focus, .button-warning:visited {
     color: #fff; }
   .button-warning:before {
     content: "";
@@ -3023,7 +3121,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
         -webkit-box-shadow: 0 2px 0 #b5babe;
         -moz-box-shadow: 0 2px 0 #b5babe;
         box-shadow: 0 2px 0 #b5babe; }
-    .person-actions .action-edit:link, .person-actions .action-edit:hover, .person-actions .action-edit:focus, .person-actions .action-edit:visited {
+    .person-actions .action-edit:link, .person-actions .action-edit:link:focus, .person-actions .action-edit:hover, .person-actions .action-edit:focus, .person-actions .action-edit:visited {
       color: #0b0c0c; }
     .person-actions .action-edit:before {
       content: "";

@@ -139,7 +139,7 @@
 
             <p>Select how the correspondent would like to be contacted. You can choose more than one option.</p>
 
-            <div class="form-group {{ topLevelError ? 'error'}}">
+            <div class="form-group {{ topLevelError ? 'form-group-error'}}">
 
                 <label class="text block-label" for="{{ contactByPost.getAttribute('id') }}">
                     {{ formElement(contactByPost) }}
@@ -151,7 +151,7 @@
                     {{ contactByPhone.getOption('label')|raw }}
                 </label>
                 <div class="panel panel-border-narrow js-hidden" id="contact-by-phone">
-                    <div class="form-group {{ phone.getMessages|length >0 or contactByPhone.getMessages|length >0 ? 'error'}}">
+                    <div class="form-group {{ phone.getMessages|length >0 or contactByPhone.getMessages|length >0 ? 'form-group-error'}}">
                         <label class="form-label" for="{{ phone.getAttribute('id') }}">
                             {{ phone.getOption('label') }}
                             {{ formElementErrorsV2(contactByPhone) }}
@@ -166,7 +166,7 @@
                     {{ contactByEmail.getOption('label')|raw }}
                 </label>
                 <div class="panel panel-border-narrow js-hidden" id="contact-by-email">
-                    <div class="form-group {{ email.getMessages|length >0 or contactByEmail.getMessages|length >0 ? 'error'}}">
+                    <div class="form-group {{ email.getMessages|length >0 or contactByEmail.getMessages|length >0 ? 'form-group-error'}}">
                         <label class="form-label" for="{{ email.getAttribute('id') }}">
                             {{ email.getOption('label') }}
                             {{ formElementErrorsV2(contactByEmail) }}
@@ -184,7 +184,7 @@
 
         <legend class="visually-hidden">Language options</legend>
 
-        <div class="form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'error'}}">
+        <div class="form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'form-group-error'}}">
             {{ formRadio().outputOption(contactInWelsh, 'english')|raw }}
             {{ formRadio().outputOption(contactInWelsh, 'welsh')|raw }}
         </div>

@@ -1,0 +1,8 @@
+// New form-control-error class is required instead of inheriting from form-control-group (formerly error).
+// This will automatically apply the inheritance - changed in version 3.0.0 gov-uk-elements
+.form-group-error {
+	
+	.form-control {
+		@extend .form-control-error;
+	}
+}

@@ -127,7 +127,7 @@
         <fieldset id="whoIsRegistering">
             <legend class="heading-medium flush--top">This LPA is being registered by</legend>
 
-            <div class="form-group {{ whoIsRegistering.getMessages|length > 0 ? 'error'}}">
+            <div class="form-group {{ whoIsRegistering.getMessages|length > 0 ? 'form-group-error'}}">
                 {{ formElementErrorsV2(whoIsRegistering) }}
                 {{ formElement(whoIsRegistering) }}
                 {% if (attorneyList) %}

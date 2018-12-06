@@ -46,7 +46,7 @@
 
             <h2 class="heading-medium flush--top">Reduced fee options</h2>
 
-            <div class="form-group text {{ reductionOptionsElement.getMessages|length >0 ? 'error'}}">
+            <div class="form-group text {{ reductionOptionsElement.getMessages|length >0 ? 'form-group-error'}}">
                 {{ formElementErrorsV2(reductionOptionsElement) }}
 
                 <label class="block-label" data-target="receives-benefits" for="{{ reductionOptions['reducedFeeReceivesBenefits'].getAttribute('id') }}">

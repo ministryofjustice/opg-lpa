@@ -93,7 +93,7 @@
         <fieldset id="isRepeatApplication" class="inline">
             <legend class="visually-hidden">Is this a repeat application?</legend>
 
-            <div class="form-group {{ isRepeatApplication.getMessages|length > 0 ? 'error'}}">
+            <div class="form-group {{ isRepeatApplication.getMessages|length > 0 ? 'form-group-error'}}">
                 {{ formElementErrorsV2(isRepeatApplication) }}
                 {{ formElement(isRepeatApplication) }}
 

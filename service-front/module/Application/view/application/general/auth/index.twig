@@ -43,7 +43,7 @@
 
         {{ macros.formGroup(email) }}
 
-        <div class="form-group {{ password.getMessages|length >0 ? 'error'}}">
+        <div class="form-group {{ password.getMessages|length >0 ? 'form-group-error'}}">
             <label class="form-label" for="{{ password.getAttribute('id') }}">
                 {{ password.getOption('label') }}
                 {{ formElementErrorsV2(password) }}

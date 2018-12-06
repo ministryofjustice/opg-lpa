@@ -55,7 +55,7 @@
 
             <h2 class="heading-medium flush--top">What type of LPA do you want to make?</h2>
 
-            <div class="form-group {{ type.getMessages|length > 0 ? 'error'}}">
+            <div class="form-group {{ type.getMessages|length > 0 ? 'form-group-error'}}">
                 {{ formElementErrorsV2(type) }}
                 {{ formElement(type) }}
             </div>

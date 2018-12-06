@@ -40,7 +40,7 @@
 
             <h2 class="heading-medium flush--top">The LPA can be used</h2>
 
-            <div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
+            <div class="form-group {{ when.getMessages|length > 0 ? 'form-group-error'}}">
 
                 {{ formRadio().outputOption(when, 'now')|raw }}
 
