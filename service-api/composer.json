@@ -16,7 +16,7 @@
     "require": {
         "php": "^7.1",
         "aws/aws-sdk-php": "^3.0",
-        "ministryofjustice/opg-lpa-datamodels": "^12.0",
+        "ministryofjustice/opg-lpa-datamodels": "dev-LPA-2949-allow-null-title",
         "ministryofjustice/opg-lpa-logger": "^4.0",
         "mongodb/mongodb": "^1.2",
         "nsmithuk/dynamo-queue-php": "^1.0",
