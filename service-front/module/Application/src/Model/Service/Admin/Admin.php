@@ -5,9 +5,9 @@ namespace Application\Model\Service\Admin;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
+use Application\Model\Service\ApiClient\Exception\ApiException;
 use DateTime;
 use DateTimeZone;
-use Exception;
 
 class Admin extends AbstractService implements ApiClientAwareInterface
 {
@@ -19,12 +19,10 @@ class Admin extends AbstractService implements ApiClientAwareInterface
      */
     public function searchUsers(string $email)
     {
-        $response = $this->apiClient->httpGet('/v2/users/search', [
-            'email' => $email
-        ]);
-
-        if ($response->getStatusCode() == 200) {
-            $result = json_decode($response->getBody(), true);
+        try {
+            $result = $this->apiClient->httpGet('/v2/users/search', [
+                'email' => $email
+            ]);
 
             if ($result !== false) {
                 $result = $this->parseDateTime($result, 'lastLoginAt');
@@ -37,23 +35,20 @@ class Admin extends AbstractService implements ApiClientAwareInterface
                     $numberOfLpas = 0;
 
                     try {
-                        $response = $this->apiClient->httpGet(sprintf('/v2/user/%s/applications', $result['userId']), [
+                        $applicationsResult = $this->apiClient->httpGet(sprintf('/v2/user/%s/applications', $result['userId']), [
                             'page' => 1,
                             'perPage' => 1,
                         ]);
 
-                        if ($response->getStatusCode() == 200) {
-                            $body = json_decode($response->getBody(), true);
-                            $numberOfLpas = $body['total'];
-                        }
-                    } catch (Exception $ignore) {}
+                        $numberOfLpas = $applicationsResult['total'];
+                    } catch (ApiException $ignore) {}
 
                     $result['numberOfLpas'] = $numberOfLpas;
                 }
-
-                return $result;
             }
-        }
+
+            return $result;
+        } catch (ApiException $ex) {}
 
         return false;
     }

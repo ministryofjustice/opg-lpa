@@ -4,12 +4,11 @@ namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\TypeController;
 use Application\Form\Lpa\TypeForm;
-use Application\Model\Service\ApiClient\Response\Lpa;
 use ApplicationTest\Controller\AbstractControllerTest;
 use DateTime;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\DataModel\Lpa\Document\Document;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
 use Zend\Http\Response;
@@ -119,14 +118,16 @@ class TypeControllerTest extends AbstractControllerTest
         $response = new Response();
 
         $this->setPostValid($this->form, $this->postData);
-        $lpa = new Lpa();
-        $lpa->id = 123;
-        $lpa->document = new Document();
-        $lpa->document->type = $this->postData['type'];
+        $lpa = new Lpa([
+            'id' => 123,
+            'document' => [
+                'type' => $this->postData['type'],
+            ]
+        ]);
         $this->lpaApplicationService->shouldReceive('createApplication')->andReturn($lpa)->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setType')
-            ->andReturn($lpa->id, $this->postData['type'])->andReturn(true)->once();
+            ->andReturn($lpa->getId(), $this->postData['type'])->andReturn(true)->once();
 
         $this->setMatchedRouteName($controller, 'lpa/form-type');
         $this->setRedirectToRoute('lpa/donor', $lpa, $response);

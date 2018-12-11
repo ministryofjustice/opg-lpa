@@ -3,12 +3,13 @@
 namespace ApplicationTest\Model\Service\Lpa;
 
 use Application\Model\Service\ApiClient\Client;
-use Application\Model\Service\ApiClient\Response\Lpa;
+use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Psr\Http\Message\ResponseInterface;
 
 class ApplicationTest extends MockeryTestCase
@@ -44,33 +45,23 @@ class ApplicationTest extends MockeryTestCase
 
     public function testGetApplication()
     {
-        $mockResponse = Mockery::mock(ResponseInterface::class);
-        $mockResponse->shouldReceive('getStatusCode')->andReturn(200)->once();
-        $mockResponse->shouldReceive('getBody')->andReturn('{}')->once();
-
-        $this->apiClient->shouldReceive('httpGet')->andReturn($mockResponse)->once();
+        $this->apiClient->shouldReceive('httpGet')->andReturn([])->once();
 
         $result = $this->service->getApplication(1234);
 
         $expectedResult = new Lpa();
-        $expectedResult->setResponse($mockResponse);
 
         $this->assertEquals($expectedResult, $result);
     }
 
     public function testGetApplicationWithNewToken()
     {
-        $mockResponse = Mockery::mock(ResponseInterface::class);
-        $mockResponse->shouldReceive('getStatusCode')->andReturn(200)->once();
-        $mockResponse->shouldReceive('getBody')->andReturn('{}')->once();
-
-        $this->apiClient->shouldReceive('httpGet')->andReturn($mockResponse)->once();
+        $this->apiClient->shouldReceive('httpGet')->andReturn([])->once();
         $this->apiClient->shouldReceive('updateToken')->withArgs(['new token'])->once();
 
         $result = $this->service->getApplication(1234, 'new token');
 
         $expectedResult = new Lpa();
-        $expectedResult->setResponse($mockResponse);
 
         $this->assertEquals($expectedResult, $result);
     }
@@ -78,13 +69,13 @@ class ApplicationTest extends MockeryTestCase
     public function testGetApplicationFailure()
     {
         $mockResponse = Mockery::mock(ResponseInterface::class);
-        $mockResponse->shouldReceive('getStatusCode')->andReturn(400)->once();
+        $mockResponse->shouldReceive('getStatusCode')->andReturn(400);
+        $mockResponse->shouldReceive('getBody')->andReturn('{}')->once();
 
-        $this->apiClient->shouldReceive('httpGet')->andReturn($mockResponse)->once();
+        $this->apiClient->shouldReceive('httpGet')->andThrow(new ApiException($mockResponse));
 
         $result = $this->service->getApplication(1234);
 
         $this->assertFalse($result);
     }
-
 }
