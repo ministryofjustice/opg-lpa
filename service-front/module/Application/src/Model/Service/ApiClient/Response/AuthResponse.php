@@ -2,37 +2,22 @@
 
 namespace Application\Model\Service\ApiClient\Response;
 
-use Application\Model\Service\ApiClient\Exception\ResponseException;
-use Psr\Http\Message\ResponseInterface;
-
+/**
+ * Class AuthResponse
+ * @package Application\Model\Service\ApiClient\Response
+ */
 class AuthResponse
 {
-    private $response;
-
-    public static function buildFromResponse(ResponseInterface $response)
+    /**
+     * @param array $result
+     * @return static
+     */
+    public static function buildFromResponse(array $result)
     {
-        $body = json_decode($response->getBody(), true);
-
-        // The expected response should always be JSON, thus now an array.
-        if (!is_array($body)) {
-            throw new ResponseException('Malformed JSON response from server', $response->getStatusCode(), $response);
-        }
-
         $authResponse = new static();
-        $authResponse->exchangeArray($body);
-        $authResponse->setResponse($response);
+        $authResponse->exchangeArray($result);
 
         return $authResponse;
-    }
-
-    public function setResponse(ResponseInterface $response)
-    {
-        $this->response = $response;
-    }
-
-    public function getResponse()
-    {
-        return $this->response;
     }
 
     /**
@@ -220,27 +205,13 @@ class AuthResponse
         $this->errorDescription = $errorDescription;
         return $this;
     }
+
+    /**
+     * @return bool
+     */
     public function isAuthenticated()
     {
         return !empty($this->userId) && !empty($this->token) && empty($this->errorDescription);
-    }
-
-    /**
-     * Return an array representation of the object
-     *
-     * @return array
-     */
-    public function getArrayCopy()
-    {
-        return [
-            'userId' => $this->userId,
-            'token' => $this->token,
-            'last_login' => $this->lastLogin,
-            'expires_in' => $this->expiresIn,
-            'expires_at' => $this->expiresAt,
-            'username' => $this->username,
-            'inactivityFlagsCleared' => $this->inactivityFlagsCleared,
-        ];
     }
 
     /**
@@ -257,26 +228,5 @@ class AuthResponse
         $this->expiresIn = isset($array['expiresIn']) ? $array['expiresIn'] : null;
         $this->expiresAt = isset($array['expiresAt']) ? $array['expiresAt'] : null;
         $this->inactivityFlagsCleared = isset($array['inactivityFlagsCleared']) ? $array['inactivityFlagsCleared'] : null;
-    }
-
-    /**
-     * Populate the member variables from a JSON structure
-     * Convert underscore_field_names to be camelCase
-     *
-     * @param string $json
-     */
-    public function exchangeJson($json)
-    {
-        $this->exchangeArray(json_decode($json, true));
-    }
-
-    /**
-     * Return the object as JSON
-     *
-     * @return string
-     */
-    public function getJsonCopy()
-    {
-        return json_encode($this->getArrayCopy());
     }
 }

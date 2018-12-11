@@ -55,33 +55,40 @@ class Client
      *
      * @param $path
      * @param array $query
-     * @return ResponseInterface
+     * @param bool $jsonResponse
+     * @return array|null
+     * @throws Exception\ApiException
      */
-    public function httpGet($path, array $query = [])
+    public function httpGet($path, array $query = [], $jsonResponse = true)
     {
         $url = new Uri($this->apiBaseUri . $path);
 
         foreach ($query as $name => $value) {
-            $url = Uri::withQueryValue($url, $name, urlencode($value));
+            $url = Uri::withQueryValue($url, $name, $value);
         }
 
-        $request = new Request('GET', $url, $this->buildHeaders(), '{}');
+        $request = new Request('GET', $url, $this->buildHeaders());
+
         $response = $this->httpClient->sendRequest($request);
 
-        //  TODO - Confirm why 404 is permitted here before trying to remove it - it has been allowed already for some time
-        if (!in_array($response->getStatusCode(), [200, 404])) {
-            $this->createErrorException($response);
+        switch ($response->getStatusCode()) {
+            case 200:
+                return $this->handleResponse($response, $jsonResponse);
+            case 204:
+            case 404:
+                return null;
+            default:
+                return $this->handleErrorResponse($response);
         }
-
-        return $response;
     }
 
     /**
      * Performs a POST against the API
      *
-     * @param $path
-     * @param array $payload
-     * @return ResponseInterface
+     * @param string $path
+     * @param array  $payload
+     * @return array|null
+     * @throws Exception\ApiException
      */
     public function httpPost($path, array $payload = [])
     {
@@ -91,19 +98,24 @@ class Client
 
         $response = $this->httpClient->sendRequest($request);
 
-        if (!in_array($response->getStatusCode(), [200, 201, 204])) {
-            $this->createErrorException($response);
+        switch ($response->getStatusCode()) {
+            case 200:
+            case 201:
+                return $this->handleResponse($response);
+            case 204:
+                return null;
+            default:
+                return $this->handleErrorResponse($response);
         }
-
-        return $response;
     }
 
     /**
      * Performs a PUT against the API
      *
-     * @param $path
-     * @param array $payload
-     * @return ResponseInterface
+     * @param string $path
+     * @param array  $payload
+     * @return array
+     * @throws Exception\ApiException
      */
     public function httpPut($path, array $payload = [])
     {
@@ -113,19 +125,24 @@ class Client
 
         $response = $this->httpClient->sendRequest($request);
 
-        if (!in_array($response->getStatusCode(), [200, 204])) {
-            $this->createErrorException($response);
+        switch ($response->getStatusCode()) {
+            case 200:
+            case 201:
+                return $this->handleResponse($response);
+            case 204:
+                return null;
+            default:
+                return $this->handleErrorResponse($response);
         }
-
-        return $response;
     }
 
     /**
      * Performs a PATCH against the API
      *
-     * @param $path
-     * @param array $payload
-     * @return ResponseInterface
+     * @param string $path
+     * @param array  $payload
+     * @return array
+     * @throws Exception\ApiException
      */
     public function httpPatch($path, array $payload = [])
     {
@@ -135,32 +152,36 @@ class Client
 
         $response = $this->httpClient->sendRequest($request);
 
-        if ($response->getStatusCode() != 200) {
-            $this->createErrorException($response);
+        switch ($response->getStatusCode()) {
+            case 200:
+            case 201:
+                return $this->handleResponse($response);
+            default:
+                return $this->handleErrorResponse($response);
         }
-
-        return $response;
     }
 
     /**
      * Performs a DELETE against the API
      *
-     * @param $path
-     * @return ResponseInterface
+     * @param string $path
+     * @return null
+     * @throws Exception\ApiException
      */
     public function httpDelete($path)
     {
         $url = new Uri($this->apiBaseUri . $path);
 
-        $request = new Request('DELETE', $url, $this->buildHeaders(), '{}');
+        $request = new Request('DELETE', $url, $this->buildHeaders());
 
         $response = $this->httpClient->sendRequest($request);
 
-        if ($response->getStatusCode() != 204) {
-            $this->createErrorException($response);
+        switch ($response->getStatusCode()) {
+            case 204:
+                return null;
+            default:
+                return $this->handleErrorResponse($response);
         }
-
-        return $response;
     }
 
     /**
@@ -184,18 +205,38 @@ class Client
     }
 
     /**
-     * Called with a response from the API when the response code was unsuccessful. i.e. not 20X.
+     * Successful response processing
      *
      * @param ResponseInterface $response
-     * @throws Exception\ResponseException
+     * @param bool $jsonResponse
+     * @return array
+     * @throws Exception\ApiException
      */
-    protected function createErrorException(ResponseInterface $response)
+    private function handleResponse(ResponseInterface $response, $jsonResponse = true)
     {
-        $body = json_decode($response->getBody(), true);
+        $body = $response->getBody();
 
-        $message = "HTTP:{$response->getStatusCode()} - ";
-        $message .= (is_array($body) ? print_r($body, true) : 'Unexpected response from server');
+        if ($jsonResponse == true) {
+            $body = json_decode($body, true);
 
-        throw new Exception\ResponseException($message, $response->getStatusCode(), $response);
+            //  If the body isn't an array now then it wasn't JSON before
+            if (!is_array($body)) {
+                throw new Exception\ApiException($response, 'Malformed JSON response from server');
+            }
+        }
+
+        return $body;
+    }
+
+    /**
+     * Unsuccessful response processing
+     *
+     * @param ResponseInterface $response
+     * @return null
+     * @throws Exception\ApiException
+     */
+    private function handleErrorResponse(ResponseInterface $response)
+    {
+        throw new Exception\ApiException($response);
     }
 }

@@ -4,6 +4,7 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\AuthController;
 use Application\Form\User\Login;
+use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
@@ -13,6 +14,7 @@ use Zend\Http\Response;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayObject;
 use Zend\View\Model\ViewModel;
+use DateTime;
 
 class AuthControllerTest extends AbstractControllerTest
 {
@@ -175,7 +177,9 @@ class AuthControllerTest extends AbstractControllerTest
     {
         $controller = $this->getController(AuthController::class);
 
-        $authenticationResult = new Result(1, null);
+        $identity = new UserIdentity($this->user->id, 'ABC', 60 * 60, new DateTime('today midnight'));
+
+        $authenticationResult = new Result(1, $identity);
         $response = new Response();
 
         $this->setPreAuthRequestUrl('https://localhost/lpa/3503563157/when-lpa-starts');
@@ -198,7 +202,7 @@ class AuthControllerTest extends AbstractControllerTest
 
         $lpa = new Lpa();
         $lpa->id = 3503563157;
-        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpa->id])->andReturn($lpa);
+        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpa->id, 'ABC'])->andReturn($lpa);
 
         $this->redirect->shouldReceive('toRoute')
             ->withArgs(['lpa/form-type', ['lpa-id' => $lpa->id], []])->andReturn($response)->once();
