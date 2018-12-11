@@ -65,6 +65,17 @@ class CompleteController extends AbstractLpaController
             || ($payment->reducedFeeReceivesBenefits === true && $payment->reducedFeeAwardedDamages === true)
             || $payment->method == Payment::PAYMENT_TYPE_CHEQUE);
 
+        //Array of keys to know which extra notes to show in template for continuation sheets
+        $continuationNotes = array();
+
+        $extraBlocksPeople = $this->getExtraBlocksPeople();
+
+        if($extraBlocksPeople) array_push($extraBlocksPeople, $continuationNotes);
+
+
+
+
+
         $viewParams = [
             'lp1Url'             => $this->url()->fromRoute('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp1']),
             'cloneUrl'           => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id' => $lpa->id]),
@@ -74,6 +85,7 @@ class CompleteController extends AbstractLpaController
             'paymentReferenceNo' => $lpa->payment->reference,
             'hasRemission'       => $lpa->isEligibleForFeeReduction(),
             'isPaymentSkipped'   => $isPaymentSkipped,
+            'continuationNotes'   => $continuationNotes,
         ];
 
         if (count($lpa->document->peopleToNotify) > 0) {
@@ -86,5 +98,45 @@ class CompleteController extends AbstractLpaController
         }
 
         return $viewParams;
+    }
+
+    //Get note keys referred to in templates for continuation sheet information regarding people. Separated to use early return.
+    private function getExtraBlocksPeople() {
+
+        $lpa = $this->getLpa();
+
+        $paCount = count($lpa->document->primaryAttorneys);
+        $raCount = count($lpa->document->replacementAttorneys);
+        $pnCount = count($lpa->document->peopleToNotify);
+        
+        if(paCount > 4 && raCount > 2 &&  pnCount > 4) {
+            return 'ALL_PEOPLE_OVERFLOW';
+        }
+
+        if(paCount > 4 && raCount > 2) {
+            return 'ALL_ATTORNEY_OVERFLOW';
+        } 
+
+        if(paCount > 4 && pnCount > 4) {
+            return 'PRIMARY_ATTORNEY_AND_NOTIFY_OVERFLOW';
+        }               
+
+        if(raCount > 2 &&  pnCount > 4) {
+            return 'REPLACEMENT_ATTORNEY_AND_NOTIFY_OVERFLOW';
+        }
+
+        if(paCount > 4) {
+            return 'PRIMARY_ATTORNEY_OVERFLOW';
+        }  
+
+        if(raCount > 2) {
+            return 'REPLACEMENT_ATTORNEY_OVERFLOW';
+        }
+
+        if(pnCount > 4) {
+            return 'NOTIFY_OVERFLOW';
+        }
+
+        return false;
     }
 }
