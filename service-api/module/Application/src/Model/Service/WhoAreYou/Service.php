@@ -20,7 +20,7 @@ class Service extends AbstractService
      * @param $data
      * @return ApiProblem|ValidationApiProblem|Entity
      */
-    public function create($lpaId, $data)
+    public function update($lpaId, $data)
     {
         $lpa = $this->getLpa($lpaId);
 
@@ -35,14 +35,12 @@ class Service extends AbstractService
         if ($validation->hasErrors()) {
             return new ValidationApiProblem($validation);
         }
-
         $lpa->setWhoAreYouAnswered(true);
 
         if ($lpa->validate()->hasErrors()) {
-            throw new RuntimeException('A malformed LPA object was created');
+            throw new RuntimeException('A malformed LPA object');
         }
 
-        // We update the LPA first as there's a chance a RuntimeException will be thrown if there's an 'updatedAt' mismatch.
         $this->updateLpa($lpa);
 
         $this->getWhoRepository()->insert($answer);

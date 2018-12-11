@@ -20,19 +20,20 @@ class WhoAreYouController extends AbstractLpaController
     }
 
     /**
+     * @param mixed $id
      * @param mixed $data
      * @return JsonResponse|ApiProblem
      */
-    public function create($data)
+    public function update($id, $data)
     {
         $this->checkAccess();
 
-        $result = $this->getService()->create($this->lpaId, $data);
+        $result = $this->getService()->update($this->lpaId, $data);
 
         if ($result instanceof ApiProblem) {
             return $result;
         } elseif ($result instanceof EntityInterface) {
-            return new JsonResponse($result->toArray(), 201);
+            return new JsonResponse($result->toArray());
         }
 
         // If we get here...
