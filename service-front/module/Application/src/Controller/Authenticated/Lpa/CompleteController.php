@@ -72,9 +72,16 @@ class CompleteController extends AbstractLpaController
 
         if($extraBlocksPeople) array_push($extraBlocksPeople, $continuationNotes);
 
+        if(!$lpa->document->donor->canSign) array_push('CANT_SIGN', $continuationNotes);
+
+        $someAttorneyIsTrustCorp = false;
 
 
+        foreach($lpa->document->primaryAttorneys as $attorney) {
+            if(isset($attorney->number)) $someAttorneyIsTrustCorp = true;
+        }
 
+        if($someAttorneyIsTrustCorp) array_push('HAS_TRUST_CORP', $continuationNotes);
 
         $viewParams = [
             'lp1Url'             => $this->url()->fromRoute('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp1']),
@@ -100,7 +107,7 @@ class CompleteController extends AbstractLpaController
         return $viewParams;
     }
 
-    //Get note keys referred to in templates for continuation sheet information regarding people. Separated to use early return.
+    //Get note keys referred to in templates for continuation sheet information regarding people. Separated to use early return instead of nesting.
     private function getExtraBlocksPeople() {
 
         $lpa = $this->getLpa();
