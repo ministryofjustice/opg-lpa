@@ -1,10 +1,10 @@
-{% macro listLpas(lpas, shortList, type, headingText) %}
+{% macro listLpas(lpas, type, page) %}
 
-	{% import _self as macros %}
+    {% import _self as macros %}
 
     <hr class="visually-hidden">
 
-    {{ macros.showTypeHeaderIfLpasExist(lpas, type, headingText) }}
+    {{ macros.showTypeHeaderIfLpasExist(lpas, type) }}
 
     <ul class="track-my-lpa">
 
@@ -65,7 +65,7 @@
                             </li>
                         {% endif %}
                         <li>
-                            <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}" class="js-form-popup" data-journey-click="page:link:delete: Delete">Delete</a>
+                            <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}{% if page > 1 %}?page={{ page }}{% endif %}" class="js-form-popup" data-journey-click="page:link:delete: Delete">Delete</a>
                         </li>
                     </ul>
                 </div>
@@ -78,19 +78,25 @@
 
 {% endmacro %}
 
-{% macro showTypeHeaderIfLpasExist(lpas, type, headingText) %}
+{% macro showTypeHeaderIfLpasExist(lpas, type) %}
 
-	{% set found = false %}
+    {% set found = false %}
 
-	{% for key,lpa in lpas %}
-		{% if not found %}
-    	    {% if (type == lpa.type) %}
-    	    	<h2 class="heading-large">
-                    {{ headingText }}
+    {% for key,lpa in lpas %}
+        {% if not found %}
+            {% if (type == lpa.type) %}
+                <h2 class="heading-large">
+                    {% if lpa.type == '' %}
+                        No type selected
+                    {% elseif lpa.type == 'property-and-financial' %}
+                        Property and finance LPAs
+                    {% elseif lpa.type == 'health-and-welfare' %}
+                        Health and welfare LPAs
+                    {% endif %}
                 </h2>
-    	    	{% set found = true %}
-    	   	{% endif %}
-    	{% endif %}
-	{% endfor %}
+                {% set found = true %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
 
 {% endmacro %}

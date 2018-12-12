@@ -205,6 +205,8 @@ class DashboardControllerTest extends AbstractControllerTest
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
+        $this->params->shouldReceive('fromQuery')->withArgs(['page'])->andReturn(null)->once();
+
         $routeMatch = $this->getRouteMatch($controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $this->lpaApplicationService->shouldReceive('deleteApplication')->andReturn(false)->once();
@@ -217,6 +219,8 @@ class DashboardControllerTest extends AbstractControllerTest
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
+        $this->params->shouldReceive('fromQuery')->withArgs(['page'])->andReturn(null)->once();
+
         $response = new Response();
 
         $event = new MvcEvent();
@@ -225,7 +229,7 @@ class DashboardControllerTest extends AbstractControllerTest
         $controller->setEvent($event);
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $this->lpaApplicationService->shouldReceive('deleteApplication')->andReturn(true)->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard', []])->andReturn($response)->once();
 
         $result = $controller->deleteLpaAction();
 
@@ -237,6 +241,8 @@ class DashboardControllerTest extends AbstractControllerTest
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
 
+        $this->params->shouldReceive('fromQuery')->withArgs(['page'])->andReturn(null)->once();
+
         $routeMatch = $this->getRouteMatch($controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $lpa = FixturesData::getPfLpa();
@@ -245,17 +251,20 @@ class DashboardControllerTest extends AbstractControllerTest
 
         /** @var ViewModel $result */
         $result = $controller->confirmDeleteLpaAction();
+        $lpaOut = $result->getVariable('lpa');
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/dashboard/confirm-delete.twig', $result->getTemplate());
-        $this->assertEquals($lpa->id, $result->getVariable('lpaId'));
-        $this->assertEquals($lpa->document->donor->name, $result->getVariable('donorName'));
+        $this->assertEquals($lpa->id, $lpaOut->id);
+        $this->assertEquals($lpa->document->donor->name, $lpaOut->document->donor->name);
     }
 
     public function testConfirmDeleteLpaActionJs()
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(TestableDashboardController::class);
+
+        $this->params->shouldReceive('fromQuery')->withArgs(['page'])->andReturn(null)->once();
 
         $event = new MvcEvent();
         $routeMatch = Mockery::mock(RouteMatch::class);
@@ -268,11 +277,12 @@ class DashboardControllerTest extends AbstractControllerTest
 
         /** @var ViewModel $result */
         $result = $controller->confirmDeleteLpaAction();
+        $lpaOut = $result->getVariable('lpa');
 
         $this->assertInstanceOf(ViewModel::class, $result);
         $this->assertEquals('application/authenticated/dashboard/confirm-delete.twig', $result->getTemplate());
-        $this->assertEquals($lpa->id, $result->getVariable('lpaId'));
-        $this->assertEquals($lpa->document->donor->name, $result->getVariable('donorName'));
+        $this->assertEquals($lpa->id, $lpaOut->id);
+        $this->assertEquals($lpa->document->donor->name, $lpaOut->document->donor->name);
     }
 
     public function testTermsAction()
