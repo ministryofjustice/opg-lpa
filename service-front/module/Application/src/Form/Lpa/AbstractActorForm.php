@@ -3,9 +3,13 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\AbstractData;
+use Zend\Form\FormInterface;
 
 abstract class AbstractActorForm extends AbstractLpaForm
 {
+
+    const PREFER_NOT_TO_SAY_TITLE = 'Prefer not to say';
+
     /**
      * An actor model object is a Donor, Human, TrustCorporation, CertificateProvider, PeopleToNotify model object.
      *
@@ -25,6 +29,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
                     'Miss',
                     'Ms',
                     'Dr',
+                    self::PREFER_NOT_TO_SAY_TITLE,
                     'Other',
                 ]),
             ];
@@ -120,7 +125,22 @@ abstract class AbstractActorForm extends AbstractLpaForm
             $dataForModel['name'] = null;
         }
 
+        // If they have opted not to enter a title, set it to null
+        if (isset($dataForModel['name']['title']) && ($dataForModel['name']['title'] == self::PREFER_NOT_TO_SAY_TITLE)) {
+            $dataForModel['name']['title'] = null;
+        }
+
         return $dataForModel;
+    }
+
+
+    public function bind($modelizedDataArray, $flags = FormInterface::VALUES_NORMALIZED)
+    {
+        if (array_key_exists('name-title', $modelizedDataArray) && is_null($modelizedDataArray['name-title'])) {
+            $modelizedDataArray['name-title'] = self::PREFER_NOT_TO_SAY_TITLE;
+        }
+
+        return parent::bind($modelizedDataArray);
     }
 
     /**
