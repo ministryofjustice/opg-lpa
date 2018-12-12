@@ -68,12 +68,17 @@
         var $text = $('<input>', {
           'id': $titleInput.attr('id'),
           'name': $titleInput.attr('name'),
-          'class': 'form-control'
+          'class': 'form-control',
+          'type':'text',
+          'placeholder': 'Please specify'
         });
 
         //  Replace the select input with the new text input
         $titleInput.replaceWith($text);
         $titleInput.val(value);
+
+        var modifiedTitleField = $(this.selector);
+        modifiedTitleField.focus();
       }
     }
   };
