@@ -151,23 +151,39 @@ class DashboardController extends AbstractAuthenticatedController
 
     public function deleteLpaAction()
     {
+        $page = $this->params()->fromQuery('page');
+
         $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
 
         if ($this->getLpaApplicationService()->deleteApplication($lpaId) !== true) {
             throw new \RuntimeException('API client failed to delete LPA for id: '.$lpaId);
         }
 
-        return $this->redirect()->toRoute('user/dashboard');
+        $target = 'user/dashboard';
+        $params = [];
+
+        if (is_numeric($page)) {
+            $target .= '/pagination';
+
+            $params = [
+                'page' => $page,
+            ];
+        }
+
+        return $this->redirect()->toRoute($target, $params);
     }
 
     public function confirmDeleteLpaAction()
     {
+        $page = $this->params()->fromQuery('page');
+
         $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
 
         $lpa = $this->getLpaApplicationService()->getApplication($lpaId);
 
         $viewModel = new ViewModel([
-            'lpaId' => $lpa->id,
+            'lpa'  => $lpa,
+            'page' => $page,
         ]);
 
         $viewModel->setTemplate('application/authenticated/dashboard/confirm-delete.twig');
@@ -175,10 +191,6 @@ class DashboardController extends AbstractAuthenticatedController
         if ($this->getRequest()->isXmlHttpRequest()) {
             $viewModel->setTerminal(true);
             $viewModel->isPopup = true;
-        }
-
-        if (isset($lpa->document->donor)) {
-            $viewModel->donorName = $lpa->document->donor->name;
         }
 
         return $viewModel;
