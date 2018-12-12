@@ -187,6 +187,7 @@ class Service extends AbstractService
         // Compress the message - we compress JSON put into the queue with this
         $message = (new Compress('Gz'))->filter($message);
 
+        /*
         // Encrypt the message
         $encryptionKey = $this->pdfConfig['encryption']['keys']['queue'];
 
@@ -202,6 +203,7 @@ class Service extends AbstractService
 
         // Encrypt the JSON...
         $encryptedMessage = $blockCipher->encrypt($message);
+        */
 
         $jobId = $this->getPdfIdent($lpa, $type);
 
@@ -218,7 +220,7 @@ class Service extends AbstractService
                 [
                     'jobId' => $jobId,
                     'lpaId' => $lpa->getId(),
-                    'data'  => $encryptedMessage,
+                    'data'  => base64_encode($message),
                 ]
             ),
             'MessageGroupId' => $jobId,
