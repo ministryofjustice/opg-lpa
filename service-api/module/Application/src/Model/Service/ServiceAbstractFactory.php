@@ -6,6 +6,7 @@ use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 use Application\Model\DataAccess\Repository\Stats as StatsRepository;
+use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\Users\Service as UsersService;
@@ -82,7 +83,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
 
         $traitsUsed = class_uses($service);
 
-        //  Inject the required Mongo collections
+        //  Inject the required data repositories
         if (is_array($traitsUsed)) {
             if (in_array(UserRepository\LogRepositoryTrait::class, $traitsUsed)) {
                 $service->setLogRepository($container->get(UserRepository\LogRepositoryInterface::class));
@@ -102,6 +103,10 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
 
             if (in_array(ApplicationRepository\ApplicationRepositoryTrait::class, $traitsUsed)) {
                 $service->setApplicationRepository($container->get(ApplicationRepository\ApplicationRepositoryInterface::class));
+            }
+
+            if (in_array(FeedbackRepository\FeedbackRepositoryTrait::class, $traitsUsed)) {
+                $service->setFeedbackRepository($container->get(FeedbackRepository\FeedbackRepositoryInterface::class));
             }
         }
 

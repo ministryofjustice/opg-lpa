@@ -59,6 +59,7 @@ class Module
                 Repository\Stats\StatsRepositoryInterface::class => Postgres\StatsData::class,
                 Repository\Application\WhoRepositoryInterface::class => Postgres\WhoAreYouData::class,
                 Repository\Application\ApplicationRepositoryInterface::class => Postgres\ApplicationData::class,
+                Repository\Feedback\FeedbackRepositoryInterface::class => Postgres\FeedbackData::class,
             ],
             'invokables' => [
                 HttpClient::class => Guzzle6Client::class,
@@ -121,6 +122,7 @@ class Module
                 Postgres\LogData::class         => Postgres\DataFactory::class,
                 Postgres\StatsData::class       => Postgres\DataFactory::class,
                 Postgres\WhoAreYouData::class   => Postgres\DataFactory::class,
+                Postgres\FeedbackData::class    => Postgres\DataFactory::class,
 
                 //  Mongo database
                 Mongo\DatabaseFactory::class . '-default'   => Mongo\DatabaseFactory::class,

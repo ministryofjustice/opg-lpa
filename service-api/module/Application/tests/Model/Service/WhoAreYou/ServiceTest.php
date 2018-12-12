@@ -13,7 +13,7 @@ use OpgTest\Lpa\DataModel\FixturesData;
 
 class ServiceTest extends AbstractServiceTest
 {
-    public function testCreateAlreadyAnswered()
+    public function testUpdateAlreadyAnswered()
     {
         $lpa = FixturesData::getPfLpa();
         $lpa->setWhoAreYouAnswered(true);
@@ -25,7 +25,7 @@ class ServiceTest extends AbstractServiceTest
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->build();
 
-        $apiProblem = $service->create($lpa->getId(), null);
+        $apiProblem = $service->update($lpa->getId(), null);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(403, $apiProblem->getStatus());
@@ -34,7 +34,7 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder->verify();
     }
 
-    public function testCreateValidationFailed()
+    public function testUpdateValidationFailed()
     {
         $lpa = FixturesData::getHwLpa();
         $lpa->setWhoAreYouAnswered(false);
@@ -47,7 +47,7 @@ class ServiceTest extends AbstractServiceTest
             ->build();
 
         $whoAreYou = new WhoAreYou();
-        $validationError = $service->create($lpa->getId(), $whoAreYou->toArray());
+        $validationError = $service->update($lpa->getId(), $whoAreYou->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(400, $validationError->getStatus());
@@ -61,7 +61,7 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder->verify();
     }
 
-    public function testCreateMalformedData()
+    public function testUpdateMalformedData()
     {
         //The bad id value on this user will fail validation
         $lpa = FixturesData::getHwLpa();
@@ -81,12 +81,12 @@ class ServiceTest extends AbstractServiceTest
 
         $whoAreYou = new WhoAreYou();
         $whoAreYou->setWho('donor');
-        $service->create($lpa->getId(), $whoAreYou->toArray());
+        $service->update($lpa->getId(), $whoAreYou->toArray());
 
         $serviceBuilder->verify();
     }
 
-    public function testCreate()
+    public function testUpdate()
     {
         $lpa = FixturesData::getHwLpa();
         $lpa->setWhoAreYouAnswered(false);
@@ -104,7 +104,7 @@ class ServiceTest extends AbstractServiceTest
 
         $whoAreYou = new WhoAreYou();
         $whoAreYou->setWho('donor');
-        $entity = $service->create($lpa->getId(), $whoAreYou->toArray());
+        $entity = $service->update($lpa->getId(), $whoAreYou->toArray());
 
         $this->assertEquals(new Entity(true), $entity);
 

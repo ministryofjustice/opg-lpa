@@ -7,6 +7,7 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
+use Application\Model\DataAccess\Repository\Feedback\FeedbackRepositoryInterface;
 use Application\Model\Service\AbstractService;
 use Mockery;
 use Mockery\MockInterface;
@@ -43,6 +44,12 @@ abstract class AbstractServiceBuilder
      * @var MockInterface|ApplicationRepositoryInterface
      */
     private $applicationRepository = null;
+
+    /**
+     * @var MockInterface|FeedbackRepositoryInterface
+     */
+    private $feedbackRepository = null;
+
 
     /**
      * @param $logger
@@ -106,6 +113,13 @@ abstract class AbstractServiceBuilder
         return $this;
     }
 
+    public function withFeedbackRepository($feedbackRepository)
+    {
+        $this->feedbackRepository = $feedbackRepository;
+
+        return $this;
+    }
+
     /**
      * @return AbstractService
      */
@@ -148,6 +162,10 @@ abstract class AbstractServiceBuilder
             $service->setApplicationRepository($this->applicationRepository);
         }
 
+        if ($this->feedbackRepository !== null) {
+            $service->setFeedbackRepository($this->feedbackRepository);
+        }
+
         return $service;
     }
 
@@ -174,6 +192,10 @@ abstract class AbstractServiceBuilder
 
         if ($this->applicationRepository !== null) {
             $this->applicationRepository->mockery_verify();
+        }
+
+        if ($this->feedbackRepository !== null) {
+            $this->feedbackRepository->mockery_verify();
         }
 
         Mockery::close();

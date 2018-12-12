@@ -23,15 +23,27 @@ return [
             'client' => [
                 'version' => '2010-03-31',
                 'region' => 'eu-west-1',
-                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
-                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
-                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
-                ] : null,
             ],
         ], // sns
     ], // log
 
     'admin' => [
+        'dynamodb' => [
+            'client' => [
+                'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
+                'version' => '2012-08-10',
+                'region' => 'eu-west-1',
+                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
+                ] : null,
+            ],
+            'settings' => [
+                'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
+            ],
+            'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
+        ],
+
         'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : [],
     ],
 
@@ -137,10 +149,6 @@ return [
                     'use_path_style_endpoint' => true,
                     'version' => '2006-03-01',
                     'region' => 'eu-west-1',
-                    'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
-                        'key'    => getenv('AWS_ACCESS_KEY_ID'),
-                        'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
-                    ] : null,
                 ],
             ], // S3
 
@@ -166,13 +174,56 @@ return [
                 'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                 'version' => '2012-08-10',
                 'region' => 'eu-west-1',
-                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
-                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
-                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
-                ] : null,
             ],
         ], // DynamoQueue
 
     ], // pdf
 
+
+    'cron' => [
+        'lock' => [
+            'dynamodb' => [
+                'client' => [
+                    'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
+                    'version' => '2012-08-10',
+                    'region' => 'eu-west-1',
+                    'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                        'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                        'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
+                    ] : null,
+                ],
+                'settings' => [
+                    'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
+                ],
+                'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
+            ],
+        ], // lock
+    ], // cron
+
+
+    'session' => [
+        'dynamodb' => [
+            'client' => [
+                'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
+                'version' => '2012-08-10',
+                'region' => 'eu-west-1',
+                'credentials' => ( getenv('AWS_ACCESS_KEY_ID') && getenv('AWS_SECRET_ACCESS_KEY') ) ? [
+                    'key'    => getenv('AWS_ACCESS_KEY_ID'),
+                    'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
+                ] : null,
+            ],
+            'settings' => [
+                'table_name' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE') ?: 'lpa-sessions-shared',
+                // Whether Time To Live is enabled on the sesson table
+                'ttl_enabled' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TTL_ENABLED') ?: true,
+                // The DB field to use for the Time To Live expiry time
+                'ttl_attribute' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TTL_ATTRIBUTE') ?: 'expires',
+                'batch_config' => [
+                    // Sleep before each flush to rate limit the garbage collection.
+                    'before' => function(){ sleep(1); },
+                ]
+            ],
+            'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
+        ],
+    ], // session
 ];
