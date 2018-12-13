@@ -129,7 +129,6 @@ return [
         'encryption' => [
             // Keys MUST be a 32 character ASCII string
             'keys' => [
-                'queue' => getenv('OPG_LPA_API_PDF_ENCRYPTION_KEY_QUEUE') ?: null,       // Key for JSON pushed onto the queue
                 'document' => getenv('OPG_LPA_API_PDF_ENCRYPTION_KEY_DOCUMENT') ?: null, // Key for generated PDFs in the file store
             ],
             'options' => [
