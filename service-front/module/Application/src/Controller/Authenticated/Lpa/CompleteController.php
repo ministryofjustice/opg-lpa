@@ -101,6 +101,10 @@ class CompleteController extends AbstractLpaController
         foreach($lpa->document->primaryAttorneys as $attorney) {
             if(isset($attorney->number)) $someAttorneyIsTrustCorp = true;
         }
+
+        foreach($lpa->document->replacementAttorneys as $attorney) {
+            if(isset($attorney->number)) $someAttorneyIsTrustCorp = true;
+        }        
         
         if($someAttorneyIsTrustCorp) {
             array_push($continuationNoteKeys, 'HAS_TRUST_CORP');
