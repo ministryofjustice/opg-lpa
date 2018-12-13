@@ -68,19 +68,38 @@ class CompleteController extends AbstractLpaController
         //Array of keys to know which extra notes to show in template for continuation sheets
         $continuationNotes = array();
 
-        $extraBlocksPeople = $this->getExtraBlocksPeople();
+        $extraBlocksPeople = null;
+
+        $paCount = count($lpa->document->primaryAttorneys);
+        $raCount = count($lpa->document->replacementAttorneys);
+        $pnCount = count($lpa->document->peopleToNotify);
+        
+        if(paCount > 4 && raCount > 2 &&  pnCount > 4) {
+            $extraBlocksPeople = 'ALL_PEOPLE_OVERFLOW';
+        } elseif (paCount > 4 && raCount > 2) {
+            $extraBlocksPeople =  'ALL_ATTORNEY_OVERFLOW';
+        } elseif(paCount > 4 && pnCount > 4) {
+            $extraBlocksPeople =  'PRIMARY_ATTORNEY_AND_NOTIFY_OVERFLOW';
+        } elseif(raCount > 2 &&  pnCount > 4) {
+            $extraBlocksPeople =  'REPLACEMENT_ATTORNEY_AND_NOTIFY_OVERFLOW';
+        } elseif(paCount > 4) {
+            $extraBlocksPeople =  'PRIMARY_ATTORNEY_OVERFLOW';
+        } elseif(raCount > 2) {
+            $extraBlocksPeople =  'REPLACEMENT_ATTORNEY_OVERFLOW';
+        } elseif(pnCount > 4) {
+            $extraBlocksPeople =  'NOTIFY_OVERFLOW';
+        }
 
         if($extraBlocksPeople) array_push($extraBlocksPeople, $continuationNotes);
 
         if(!$lpa->document->donor->canSign) array_push('CANT_SIGN', $continuationNotes);
 
         $someAttorneyIsTrustCorp = false;
-
-
+        
         foreach($lpa->document->primaryAttorneys as $attorney) {
             if(isset($attorney->number)) $someAttorneyIsTrustCorp = true;
         }
-
+        
         if($someAttorneyIsTrustCorp) array_push('HAS_TRUST_CORP', $continuationNotes);
 
         $viewParams = [
@@ -105,45 +124,5 @@ class CompleteController extends AbstractLpaController
         }
 
         return $viewParams;
-    }
-
-    //Get note keys referred to in templates for continuation sheet information regarding people. Separated to use early return instead of nesting.
-    private function getExtraBlocksPeople() {
-
-        $lpa = $this->getLpa();
-
-        $paCount = count($lpa->document->primaryAttorneys);
-        $raCount = count($lpa->document->replacementAttorneys);
-        $pnCount = count($lpa->document->peopleToNotify);
-        
-        if(paCount > 4 && raCount > 2 &&  pnCount > 4) {
-            return 'ALL_PEOPLE_OVERFLOW';
-        }
-
-        if(paCount > 4 && raCount > 2) {
-            return 'ALL_ATTORNEY_OVERFLOW';
-        } 
-
-        if(paCount > 4 && pnCount > 4) {
-            return 'PRIMARY_ATTORNEY_AND_NOTIFY_OVERFLOW';
-        }               
-
-        if(raCount > 2 &&  pnCount > 4) {
-            return 'REPLACEMENT_ATTORNEY_AND_NOTIFY_OVERFLOW';
-        }
-
-        if(paCount > 4) {
-            return 'PRIMARY_ATTORNEY_OVERFLOW';
-        }  
-
-        if(raCount > 2) {
-            return 'REPLACEMENT_ATTORNEY_OVERFLOW';
-        }
-
-        if(pnCount > 4) {
-            return 'NOTIFY_OVERFLOW';
-        }
-
-        return false;
     }
 }
