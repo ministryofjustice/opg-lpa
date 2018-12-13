@@ -59,7 +59,10 @@
           'cancelClass': 'js-dialog-cancel'
         });
         moj.Modules.Popup.open(html, {
-          ident: 'dialog'
+          ident: 'dialog',
+          beforeOpen: function () {
+              moj.Modules.Popup.redoLoopedTabKeys();
+          }
         });
 
         $('.dialog').on('click', 'a', function (evt) {
