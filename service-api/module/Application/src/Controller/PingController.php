@@ -25,11 +25,6 @@ class PingController extends AbstractRestfulController
     private $dynamoQueueClient;
 
     /**
-     * @var MongoDatabase
-     */
-    private $mongo;
-
-    /**
      * @var ZendDbAdapter
      */
     private $database;
@@ -41,11 +36,10 @@ class PingController extends AbstractRestfulController
      * @param ZendDbAdapter $database
      * @param MongoDatabase $mongo
      */
-    public function __construct(DynamoQueueClient $dynamoQueueClient, ZendDbAdapter $database, MongoDatabase $mongo)
+    public function __construct(DynamoQueueClient $dynamoQueueClient, ZendDbAdapter $database)
     {
         $this->dynamoQueueClient = $dynamoQueueClient;
         $this->database = $database;
-        $this->mongo = $mongo;
     }
 
     /**
@@ -77,23 +71,8 @@ class PingController extends AbstractRestfulController
     public function indexAction()
     {
         //  Initialise the states as false
-        $mongoOk    = false;
         $queueOk    = false;
         $zendDbOk   = false;
-
-        try {
-            $pingCommand = new Command(['ping' => 1]);
-            $manager = $this->mongo->getManager();
-            $manager->executeCommand($this->mongo->getDatabaseName(), $pingCommand);
-
-            foreach ($manager->getServers() as $server) {
-                // If the connection is to primary, all is okay.
-                if ($server->isPrimary()) {
-                    $mongoOk = true;
-                    break;
-                }
-            }
-        } catch (Exception $ignore) {}
 
         //---
 
@@ -131,13 +110,10 @@ class PingController extends AbstractRestfulController
         //---
 
         $result = [
-            'mongo' => [
-                'ok' => $mongoOk,
-            ],
-            'zend-db' => [
+            'database' => [
                 'ok' => $zendDbOk,
             ],
-            'ok' => ($mongoOk && $queueOk && $zendDbOk),
+            'ok' => ($queueOk && $zendDbOk),
             'queue' => [
                 'details' => $queueDetails,
                 'ok' => $queueOk,

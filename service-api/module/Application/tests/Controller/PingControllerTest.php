@@ -8,7 +8,6 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use MongoDB\Database;
-use MongoDB\Driver\Manager;
 use Opg\Lpa\Logger\Logger;
 use Zend\Db\Adapter\Adapter as ZendDbAdapter;
 use Zend\View\Model\JsonModel;
@@ -31,11 +30,6 @@ class PingControllerTest extends MockeryTestCase
     private $database;
 
     /**
-     * @var Database|MockInterface
-     */
-    private $mongo;
-
-    /**
      * @var Logger|MockInterface
      */
     private $logger;
@@ -46,9 +40,7 @@ class PingControllerTest extends MockeryTestCase
 
         $this->database = Mockery::mock(ZendDbAdapter::class);
 
-        $this->mongo = Mockery::mock(Database::class);
-
-        $this->controller = new PingController($this->queueClient, $this->database, $this->mongo);
+        $this->controller = new PingController($this->queueClient, $this->database);
 
         $this->logger = Mockery::mock(Logger::class);
         $this->controller->setLogger($this->logger);
@@ -59,19 +51,8 @@ class PingControllerTest extends MockeryTestCase
         $this->queueClient->shouldReceive('countWaitingJobs')
             ->andReturn(12);
 
-        /** @var Manager $manager */
-        $manager = Mockery::mock();
-
-        $this->mongo->shouldReceive('getManager')
-            ->andReturn($manager);
-        $this->mongo->shouldReceive('getDatabaseName')
-            ->andReturn('database-name');
-
         $pingResult = [
-            'mongo' => [
-                'ok' => false,
-            ],
-            'zend-db' => [
+            'database' => [
                 'ok' => false,
             ],
             'ok' => false,
