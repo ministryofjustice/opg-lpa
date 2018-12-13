@@ -4,7 +4,7 @@ namespace ApplicationTest\Model\Service\AccountCleanup;
 
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
-use Application\Model\DataAccess\Mongo\Collection\User;
+use Application\Model\DataAccess\Postgres\UserModel as User;
 use Application\Model\Service\Users\Service as UsersService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Alphagov\Notifications\Client as NotifyClient;
@@ -149,7 +149,7 @@ class ServiceTest extends AbstractServiceTest
 
     public function testCleanupExpiredAccounts()
     {
-        $this->setAccountsExpectations([new User(['_id' => 1])]);
+        $this->setAccountsExpectations([new User(['id' => 1])]);
 
         $this->snsClient->shouldReceive('publish')
             ->once();
@@ -184,7 +184,7 @@ class ServiceTest extends AbstractServiceTest
 
     public function testCleanupExpiredAccountsException()
     {
-        $this->setAccountsExpectations([new User(['_id' => 1])]);
+        $this->setAccountsExpectations([new User(['id' => 1])]);
 
         $this->snsClient->shouldReceive('publish')
             ->once();
@@ -222,7 +222,7 @@ class ServiceTest extends AbstractServiceTest
         $lastLoginDate = new DateTime('-9 months +1 week');
 
         $this->setAccountsExpectations([], [new User([
-            '_id' => 1,
+            'id' => 1,
             'identity' => 'unit@test.com',
             'last_login' => clone $lastLoginDate
         ])]);
@@ -261,7 +261,7 @@ class ServiceTest extends AbstractServiceTest
     public function testCleanupOneWeekWarningAccountsNotifyException()
     {
         $this->setAccountsExpectations([], [new User([
-            '_id' => 1,
+            'id' => 1,
             'identity' => 'unit@test.com',
             'last_login' => new DateTime('-9 months +1 week')
         ])]);
@@ -300,7 +300,7 @@ class ServiceTest extends AbstractServiceTest
     public function testCleanupOneWeekWarningAccountsException()
     {
         $this->setAccountsExpectations([], [new User([
-            '_id' => 1,
+            'id' => 1,
             'identity' => 'unit@test.com',
             'last_login' => new DateTime('-9 months +1 week')
         ])]);
@@ -341,7 +341,7 @@ class ServiceTest extends AbstractServiceTest
         $lastLoginDate = new DateTime('-8 months');
 
         $this->setAccountsExpectations([], [], [new User([
-            '_id' => 1,
+            'id' => 1,
             'identity' => 'unit@test.com',
             'last_login' => clone $lastLoginDate,
         ])]);
@@ -380,7 +380,7 @@ class ServiceTest extends AbstractServiceTest
 
     public function testCleanupUnactivatedAccounts()
     {
-        $this->setAccountsExpectations([], [], [], [new User(['_id' => 1])]);
+        $this->setAccountsExpectations([], [], [], [new User(['id' => 1])]);
 
         $this->snsClient->shouldReceive('publish')
             ->once();

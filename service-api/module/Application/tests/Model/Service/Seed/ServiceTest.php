@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\Seed;
 
 use Application\Library\ApiProblem\ApiProblem;
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\Service\Seed\Entity;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use ApplicationTest\Model\Service\Applications\ServiceBuilder as ApplicationsServiceBuilder;
@@ -22,7 +22,7 @@ class ServiceTest extends AbstractServiceTest
 
         $user = FixturesData::getUser();
 
-        $apiLpaCollection2 = Mockery::mock(ApiLpaCollection::class);
+        $apiLpaCollection2 = Mockery::mock(ApplicationRepositoryInterface::class);
         $apiLpaCollection2->shouldReceive('getById')
             ->andReturnNull();
 

@@ -2,8 +2,7 @@
 
 namespace ApplicationTest\Model\Service\System;
 
-use Application\Model\DataAccess\Mongo\Collection\ApiLpaCollection;
-use Application\Model\DataAccess\Mongo\Collection\ApiStatsLpasCollection;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
 use Application\Model\DataAccess\Repository\Stats\StatsRepositoryInterface;
 use ApplicationTest\Model\Service\AbstractServiceTest;
@@ -13,7 +12,7 @@ class StatsTest extends AbstractServiceTest
 {
     public function testGenerate()
     {
-        $apiLpaCollection = Mockery::mock(ApiLpaCollection::class);
+        $apiLpaCollection = Mockery::mock(ApplicationRepositoryInterface::class);
 
         //Return 1 for all counts to aid mocking mongo calls
         $apiLpaCollection->shouldReceive('countBetween')->andReturn(1);
