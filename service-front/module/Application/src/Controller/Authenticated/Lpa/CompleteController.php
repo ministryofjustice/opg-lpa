@@ -66,41 +66,45 @@ class CompleteController extends AbstractLpaController
             || $payment->method == Payment::PAYMENT_TYPE_CHEQUE);
 
         //Array of keys to know which extra notes to show in template for continuation sheets
-        $continuationNotes = array();
-
-        $extraBlocksPeople = null;
-
+        $continuationNoteKeys = array();
+        $extraBlockPeople = null;
         $paCount = count($lpa->document->primaryAttorneys);
         $raCount = count($lpa->document->replacementAttorneys);
         $pnCount = count($lpa->document->peopleToNotify);
         
-        if(paCount > 4 && raCount > 2 &&  pnCount > 4) {
-            $extraBlocksPeople = 'ALL_PEOPLE_OVERFLOW';
-        } elseif (paCount > 4 && raCount > 2) {
-            $extraBlocksPeople =  'ALL_ATTORNEY_OVERFLOW';
-        } elseif(paCount > 4 && pnCount > 4) {
-            $extraBlocksPeople =  'PRIMARY_ATTORNEY_AND_NOTIFY_OVERFLOW';
-        } elseif(raCount > 2 &&  pnCount > 4) {
-            $extraBlocksPeople =  'REPLACEMENT_ATTORNEY_AND_NOTIFY_OVERFLOW';
-        } elseif(paCount > 4) {
-            $extraBlocksPeople =  'PRIMARY_ATTORNEY_OVERFLOW';
-        } elseif(raCount > 2) {
-            $extraBlocksPeople =  'REPLACEMENT_ATTORNEY_OVERFLOW';
-        } elseif(pnCount > 4) {
-            $extraBlocksPeople =  'NOTIFY_OVERFLOW';
+        if($paCount > 4 && $raCount > 2 && $pnCount > 4) {
+            $extraBlockPeople = 'ALL_PEOPLE_OVERFLOW';
+        } elseif ($paCount > 4 && $raCount > 2) {
+            $extraBlockPeople =  'ALL_ATTORNEY_OVERFLOW';
+        } elseif($paCount > 4 && $pnCount > 4) {
+            $extraBlockPeople =  'PRIMARY_ATTORNEY_AND_NOTIFY_OVERFLOW';
+        } elseif($raCount > 2 &&  $pnCount > 4) {
+            $extraBlockPeople =  'REPLACEMENT_ATTORNEY_AND_NOTIFY_OVERFLOW';
+        } elseif($paCount > 4) {
+            $extraBlockPeople =  'PRIMARY_ATTORNEY_OVERFLOW';
+        } elseif($raCount > 2) {
+            $extraBlockPeople =  'REPLACEMENT_ATTORNEY_OVERFLOW';
+        } elseif($pnCount > 4) {
+            $extraBlockPeople =  'NOTIFY_OVERFLOW';
         }
 
-        if($extraBlocksPeople) array_push($extraBlocksPeople, $continuationNotes);
+        if($extraBlockPeople != null) {
+            array_push($continuationNoteKeys, $extraBlockPeople);
+        }
 
-        if(!$lpa->document->donor->canSign) array_push('CANT_SIGN', $continuationNotes);
+        if(!$lpa->document->donor->canSign) {
+            array_push($continuationNoteKeys, 'CANT_SIGN');
+        }
 
         $someAttorneyIsTrustCorp = false;
-        
+
         foreach($lpa->document->primaryAttorneys as $attorney) {
             if(isset($attorney->number)) $someAttorneyIsTrustCorp = true;
         }
         
-        if($someAttorneyIsTrustCorp) array_push('HAS_TRUST_CORP', $continuationNotes);
+        if($someAttorneyIsTrustCorp) {
+            array_push($continuationNoteKeys, 'HAS_TRUST_CORP');
+        }
 
         $viewParams = [
             'lp1Url'             => $this->url()->fromRoute('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp1']),
@@ -111,8 +115,8 @@ class CompleteController extends AbstractLpaController
             'paymentReferenceNo' => $lpa->payment->reference,
             'hasRemission'       => $lpa->isEligibleForFeeReduction(),
             'isPaymentSkipped'   => $isPaymentSkipped,
-            'continuationNotes'   => $continuationNotes,
-        ];
+            'continuationNoteKeys'   => $continuationNoteKeys,
+        ]; 
 
         if (count($lpa->document->peopleToNotify) > 0) {
             $viewParams['lp3Url'] = $this->url()->fromRoute('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp3']);

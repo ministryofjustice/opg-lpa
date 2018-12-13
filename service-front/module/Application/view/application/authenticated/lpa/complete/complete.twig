@@ -3,6 +3,8 @@
 {% block htmlTitle %}Last steps - {% endblock %}
 {% block pageTitle %}Last steps{% endblock %}
 
+{% import "application/macros.twig" as macros %}
+
 {% if lpa.payment.reducedFeeReceivesBenefits %}
     {% set feeBenefits = true %}
 {% elseif lpa.payment.reducedFeeUniversalCredit %}
@@ -140,6 +142,7 @@
 
     <p>If you cannot view the documents, you'll need to download a PDF reader like <a target="_blank" href="https://get.adobe.com/uk/reader/" data-journey-click="page:link:external: Acrobat Reader">Acrobat Reader</a>.</p>
 
+    {{ macros.continuationNotes(continuationNoteKeys) }}
 
     <h2 class="heading-large">Sign the LPA in the right order</h2>
 
