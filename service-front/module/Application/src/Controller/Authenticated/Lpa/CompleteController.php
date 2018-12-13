@@ -65,6 +65,51 @@ class CompleteController extends AbstractLpaController
             || ($payment->reducedFeeReceivesBenefits === true && $payment->reducedFeeAwardedDamages === true)
             || $payment->method == Payment::PAYMENT_TYPE_CHEQUE);
 
+        //Array of keys to know which extra notes to show in template for continuation sheets
+        $continuationNoteKeys = array();
+        $extraBlockPeople = null;
+        $paCount = count($lpa->document->primaryAttorneys);
+        $raCount = count($lpa->document->replacementAttorneys);
+        $pnCount = count($lpa->document->peopleToNotify);
+        
+        if($paCount > 4 && $raCount > 2 && $pnCount > 4) {
+            $extraBlockPeople = 'ALL_PEOPLE_OVERFLOW';
+        } elseif ($paCount > 4 && $raCount > 2) {
+            $extraBlockPeople =  'ALL_ATTORNEY_OVERFLOW';
+        } elseif($paCount > 4 && $pnCount > 4) {
+            $extraBlockPeople =  'PRIMARY_ATTORNEY_AND_NOTIFY_OVERFLOW';
+        } elseif($raCount > 2 &&  $pnCount > 4) {
+            $extraBlockPeople =  'REPLACEMENT_ATTORNEY_AND_NOTIFY_OVERFLOW';
+        } elseif($paCount > 4) {
+            $extraBlockPeople =  'PRIMARY_ATTORNEY_OVERFLOW';
+        } elseif($raCount > 2) {
+            $extraBlockPeople =  'REPLACEMENT_ATTORNEY_OVERFLOW';
+        } elseif($pnCount > 4) {
+            $extraBlockPeople =  'NOTIFY_OVERFLOW';
+        }
+
+        if($extraBlockPeople != null) {
+            array_push($continuationNoteKeys, $extraBlockPeople);
+        }
+
+        if(!$lpa->document->donor->canSign) {
+            array_push($continuationNoteKeys, 'CANT_SIGN');
+        }
+
+        $someAttorneyIsTrustCorp = false;
+
+        foreach($lpa->document->primaryAttorneys as $attorney) {
+            if(isset($attorney->number)) $someAttorneyIsTrustCorp = true;
+        }
+
+        foreach($lpa->document->replacementAttorneys as $attorney) {
+            if(isset($attorney->number)) $someAttorneyIsTrustCorp = true;
+        }        
+        
+        if($someAttorneyIsTrustCorp) {
+            array_push($continuationNoteKeys, 'HAS_TRUST_CORP');
+        }
+
         $viewParams = [
             'lp1Url'             => $this->url()->fromRoute('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp1']),
             'cloneUrl'           => $this->url()->fromRoute('user/dashboard/create-lpa', ['lpa-id' => $lpa->id]),
@@ -74,7 +119,8 @@ class CompleteController extends AbstractLpaController
             'paymentReferenceNo' => $lpa->payment->reference,
             'hasRemission'       => $lpa->isEligibleForFeeReduction(),
             'isPaymentSkipped'   => $isPaymentSkipped,
-        ];
+            'continuationNoteKeys'   => $continuationNoteKeys,
+        ]; 
 
         if (count($lpa->document->peopleToNotify) > 0) {
             $viewParams['lp3Url'] = $this->url()->fromRoute('lpa/download', ['lpa-id' => $lpa->id, 'pdf-type' => 'lp3']);
