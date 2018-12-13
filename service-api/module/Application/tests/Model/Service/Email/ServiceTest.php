@@ -4,7 +4,7 @@ namespace ApplicationTest\Model\Service\Email;
 
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
-use Application\Model\DataAccess\Mongo\Collection\User;
+use Application\Model\DataAccess\Postgres\UserModel as User;
 use Application\Model\Service\Email\Service as EmailUpdateService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use DateTime;
@@ -40,10 +40,10 @@ class ServiceTest extends AbstractServiceTest
 
     public function testGenerateTokenUsernameSameAsCurrent()
     {
-        $this->setUserDataSourceGetByIdExpectation(1, new User(['_id' => 1, 'identity' => 'unit@test.com']));
+        $this->setUserDataSourceGetByIdExpectation(1, new User(['id' => 1, 'identity' => 'unit@test.com']));
 
         $this->setUserDataSourceGetByUsernameExpectation('unit@test.com', new User([
-            '_id' => 1,
+            'id' => 1,
             'identity' => 'unit@test.com'
         ]));
 
@@ -59,10 +59,10 @@ class ServiceTest extends AbstractServiceTest
 
     public function testGenerateTokenUsernameAlreadyExists()
     {
-        $this->setUserDataSourceGetByIdExpectation(1, new User(['_id' => 1, 'identity' => 'old@test.com']));
+        $this->setUserDataSourceGetByIdExpectation(1, new User(['id' => 1, 'identity' => 'old@test.com']));
 
         $this->setUserDataSourceGetByUsernameExpectation('unit@test.com', new User([
-            '_id' => 2,
+            'id' => 2,
             'identity' => 'unit@test.com'
         ]));
 
@@ -100,7 +100,7 @@ class ServiceTest extends AbstractServiceTest
 
     public function testGenerateTokenSuccess()
     {
-        $this->setUserDataSourceGetByIdExpectation(1, new User(['_id' => 1, 'identity' => 'old@test.com']));
+        $this->setUserDataSourceGetByIdExpectation(1, new User(['id' => 1, 'identity' => 'old@test.com']));
 
         $this->setUserDataSourceGetByUsernameExpectation('unit@test.com', null);
 

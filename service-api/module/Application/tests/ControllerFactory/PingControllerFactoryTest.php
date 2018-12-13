@@ -38,10 +38,6 @@ class PingControllerFactoryTest extends MockeryTestCase
             ->andReturn(Mockery::mock(DynamoQueueClient::class))
             ->once();
         $this->container->shouldReceive('get')
-            ->with(DatabaseFactory::class . '-default')
-            ->andReturn(Mockery::mock(Database::class))
-            ->once();
-        $this->container->shouldReceive('get')
             ->with('ZendDbAdapter')
             ->andReturn(Mockery::mock(Adapter::class))
             ->once();

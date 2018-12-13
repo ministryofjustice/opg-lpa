@@ -3,7 +3,7 @@
 namespace ApplicationTest\Model\Service\Users;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
-use Application\Model\DataAccess\Mongo\Collection\User as CollectionUser;
+use Application\Model\DataAccess\Postgres\UserModel as CollectionUser;
 use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Applications\Service as ApplicationsService;
