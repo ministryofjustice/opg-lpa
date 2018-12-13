@@ -1,12 +1,12 @@
-<div class="dialog-container">
+<div class="dialog-container" role="dialog" aria-labelledby="dialog-title" aria-describedby="dialog-message">
 
-    <div class="dialog-title-block">{{dialogTitle}}</div>
+    <div id="dialog-title" class="dialog-title-block">{{dialogTitle}}</div>
 
     <div id="dialog-message" class="dialog-message-block"><p>{{dialogMessage}}</p></div>
 
     <div class="dialog__button-bar">
-        <a class="button dialog__button--accept {{acceptClass}}" aria-describedby="dialog-message">{{acceptButtonText}}</a>
-        <a class="button-secondary dialog__button--cancel  {{cancelClass}}">{{cancelButtonText}}</a>
+        <a href="#" class="button dialog__button--accept {{acceptClass}}">{{acceptButtonText}}</a>
+        <a href="#" class="button-secondary dialog__button--cancel  {{cancelClass}}">{{cancelButtonText}}</a>
     </div>
 
 </div>
