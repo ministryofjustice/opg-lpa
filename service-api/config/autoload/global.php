@@ -101,27 +101,7 @@ return [
                 ],
             ],
         ], // mongo
-
-        // Used to access generated PDFs.
-        'redis' => [
-            'default' => [
-                'host' => getenv('OPG_LPA_COMMON_RESQUE_REDIS_HOST') ?: null,
-                'port' => 6379,
-            ],
-        ], // redis
-
-        // The queue for PDFs to be generated.
-        'resque' => [
-
-            'default' => [
-
-                'host' => getenv('OPG_LPA_COMMON_RESQUE_REDIS_HOST') ?: null,
-                'port' => 6379,
-
-            ],
-
-        ], // resque
-
+        
     ],
 
     'pdf' => [
