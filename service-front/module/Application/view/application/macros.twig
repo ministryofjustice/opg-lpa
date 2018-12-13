@@ -107,28 +107,32 @@
 
 {% macro continuationNotes(continuationNoteKeys) %}
 
-    {% for cnote in continuationNoteKeys %}
-        <p>
-            {% if cnote == 'ALL_PEOPLE_OVERFLOW' %}
-                An LPA form only has enough space to add 4 attorneys, 2 replacement attorneys and 4 people to notify. The extra attorneys, replacements and people to notify are listed at the end of the LPA on 'continuation sheet 1'.
-            {% elseif cnote == 'ALL_ATTORNEY_OVERFLOW' %}
-                An LPA form only has enough space to add 4 attorneys and 2 replacement attorneys. The extra attorneys and replacements are listed at the end of the LPA form on 'continuation sheet 1'.
-            {% elseif cnote == 'PRIMARY_ATTORNEY_AND_NOTIFY_OVERFLOW' %}
-                An LPA form only has enough space to add 2 replacement attorneys and 4 people to notify. The extra attorneys and people to notify are listed at the end of the LPA on 'continuation sheet 1'.
-            {% elseif cnote == 'REPLACEMENT_ATTORNEY_AND_NOTIFY_OVERFLOW' %}
-                An LPA form only has enough space to add 2 replacement attorneys and 4 people to notify. The extra attorneys and people to notify are listed at the end of the LPA on 'continuation sheet 1'.
-            {% elseif cnote == 'PRIMARY_ATTORNEY_OVERFLOW' %}
-                An LPA form only has enough space to add 4 attorneys. The extra attorneys are listed at the end of the LPA on 'continuation sheet 1'.
-            {% elseif cnote == 'REPLACEMENT_ATTORNEY_OVERFLOW' %}
-                An LPA form only has enough space to add 2 replacement attorneys. The extra replacement attorneys are listed at the end of the LPA on 'continuation sheet 1'.
-            {% elseif cnote == 'NOTIFY_OVERFLOW' %}
-                An LPA form only has enough space to add 4 people to notify. The extra people to notify are listed at the end of the LPA on 'continuation sheet 1'.
-            {% elseif cnote == 'CANT_SIGN' %}
-                As the donor cannot sign the LPA, a trusted person will need to sign 'continuation sheet 3' on the donor's behalf. The continuation sheet is included at the end of the LPA form.
-            {% elseif cnote == 'HAS_TRUST_CORP' %}
-                As the donor appointed a Trust Corporation as an attorney, an authorised person from the corporation will need to sign 'continuation sheet 4'. The continuation sheet is included at the end of the LPA form.
-            {% endif %}
-        </p>
-    {% endfor %}    
+    {% if continuationNoteKeys|length > 0 %}
+        <h3 class="heading-medium">Continuation sheets</h3>
+
+        {% for cnote in continuationNoteKeys %}
+            <p>
+                {% if cnote == 'ALL_PEOPLE_OVERFLOW' %}
+                    An LPA form only has enough space to add 4 attorneys, 2 replacement attorneys and 4 people to notify. The extra attorneys, replacements and people to notify are listed at the end of the LPA on 'continuation sheet 1'.
+                {% elseif cnote == 'ALL_ATTORNEY_OVERFLOW' %}
+                    An LPA form only has enough space to add 4 attorneys and 2 replacement attorneys. The extra attorneys and replacements are listed at the end of the LPA form on 'continuation sheet 1'.
+                {% elseif cnote == 'PRIMARY_ATTORNEY_AND_NOTIFY_OVERFLOW' %}
+                    An LPA form only has enough space to add 4 attorneys and 4 people to notify. The extra attorneys and people to notify are listed at the end of the LPA on 'continuation sheet 1'.
+                {% elseif cnote == 'REPLACEMENT_ATTORNEY_AND_NOTIFY_OVERFLOW' %}
+                    An LPA form only has enough space to add 2 replacement attorneys and 4 people to notify. The extra attorneys and people to notify are listed at the end of the LPA on 'continuation sheet 1'.
+                {% elseif cnote == 'PRIMARY_ATTORNEY_OVERFLOW' %}
+                    An LPA form only has enough space to add 4 attorneys. The extra attorneys are listed at the end of the LPA on 'continuation sheet 1'.
+                {% elseif cnote == 'REPLACEMENT_ATTORNEY_OVERFLOW' %}
+                    An LPA form only has enough space to add 2 replacement attorneys. The extra replacement attorneys are listed at the end of the LPA on 'continuation sheet 1'.
+                {% elseif cnote == 'NOTIFY_OVERFLOW' %}
+                    An LPA form only has enough space to add 4 people to notify. The extra people to notify are listed at the end of the LPA on 'continuation sheet 1'.
+                {% elseif cnote == 'CANT_SIGN' %}
+                    As the donor cannot sign the LPA, a trusted person will need to sign 'continuation sheet 3' on the donor's behalf. The continuation sheet is included at the end of the LPA form.
+                {% elseif cnote == 'HAS_TRUST_CORP' %}
+                    As the donor appointed a Trust Corporation as an attorney, an authorised person from the corporation will need to sign 'continuation sheet 4'. The continuation sheet is included at the end of the LPA form.
+                {% endif %}
+            </p>
+        {% endfor %}    
+    {% endif %}
 
 {% endmacro %}
