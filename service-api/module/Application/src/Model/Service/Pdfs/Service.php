@@ -10,8 +10,6 @@ use Application\Model\Service\AbstractService;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
 
-use DynamoQueue\Queue\Client as DynamoQueue;
-use DynamoQueue\Queue\Job\Job as DynamoQueueJob;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
@@ -57,6 +55,7 @@ class Service extends AbstractService
      * @param $lpaId
      * @param $id
      * @return ApiProblem|ValidationApiProblem|FileResponse|array
+     * @throws \Exception
      */
     public function fetch($lpaId, $id)
     {
@@ -187,24 +186,6 @@ class Service extends AbstractService
         // Compress the message - we compress JSON put into the queue with this
         $message = (new Compress('Gz'))->filter($message);
 
-        /*
-        // Encrypt the message
-        $encryptionKey = $this->pdfConfig['encryption']['keys']['queue'];
-
-        if (!is_string($encryptionKey) || strlen($encryptionKey) != 32) {
-            throw new CryptInvalidArgumentException('Invalid encryption key');
-        }
-
-        // We use AES encryption with Cipher-block chaining (CBC)
-        $blockCipher = BlockCipher::factory('openssl', $this->pdfConfig['encryption']['options']);
-
-        // Set the secret key
-        $blockCipher->setKey($encryptionKey);
-
-        // Encrypt the JSON...
-        $encryptedMessage = $blockCipher->encrypt($message);
-        */
-
         $jobId = $this->getPdfIdent($lpa, $type);
 
         //---
@@ -254,7 +235,7 @@ class Service extends AbstractService
             throw new CryptInvalidArgumentException('Invalid encryption key');
         }
 
-        // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
+        // We use AES encryption with Cipher-block chaining (CBC); via openssl extension
         $blockCipher = BlockCipher::factory('openssl', $this->pdfConfig['encryption']['options']);
 
         // Set the secret key
@@ -277,7 +258,12 @@ class Service extends AbstractService
         // $keys are included so a new ident is generated when encryption keys change.
         $keys = $this->pdfConfig['encryption']['keys'];
 
-        $hash = hash('md5', md5($lpa->toJson()) . $keys['document'] . $keys['queue']);
+        // A date is included as a fail-safe to ensure stale documents aren't returned.
+        // The date rolls over at 3am to minimise disruption (PDF generation taking slightly longer).
+        $hash = hash(
+            'md5',
+            $lpa->toJson() . date('Y-m-d', strtotime('-3 hours')). $keys['document']
+        );
 
         return strtolower("{$type}-{$hash}");
     }
