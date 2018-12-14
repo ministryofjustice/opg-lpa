@@ -64,15 +64,6 @@ class Module
                 HttpClient::class => Guzzle6Client::class,
             ],
             'factories' => [
-                'DynamoQueueClient' => function (ServiceLocatorInterface $sm) {
-                    $config = $sm->get('config');
-                    $dynamoConfig = $config['pdf']['DynamoQueue'];
-
-                    $dynamoDb = new DynamoDbClient($dynamoConfig['client']);
-
-                    return new DynamoQueue($dynamoDb, $dynamoConfig['settings']);
-                },
-
                 'NotifyClient' => function (ServiceLocatorInterface $sm) {
                     $config = $sm->get('config');
 

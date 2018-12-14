@@ -2,14 +2,12 @@
 
 namespace Application\Controller;
 
-use DynamoQueue\Queue\Client as DynamoQueueClient;
-use MongoDB\Database as MongoDatabase;
-use MongoDB\Driver\Command;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 use Exception;
 use Zend\Db\Adapter\Adapter as ZendDbAdapter;
+use Aws\Sqs\SqsClient;
 
 /**
  * Class PingController
@@ -20,26 +18,31 @@ class PingController extends AbstractRestfulController
     use LoggerTrait;
 
     /**
-     * @var DynamoQueueClient
-     */
-    private $dynamoQueueClient;
-
-    /**
      * @var ZendDbAdapter
      */
     private $database;
 
     /**
-     * PingController constructor
-     *
-     * @param DynamoQueueClient $dynamoQueueClient
-     * @param ZendDbAdapter $database
-     * @param MongoDatabase $mongo
+     * @var SqsClient
      */
-    public function __construct(DynamoQueueClient $dynamoQueueClient, ZendDbAdapter $database)
+    private $sqsClient;
+
+    /**
+     * @var string
+     */
+    private $sqsQueueUrl;
+
+    /**
+     * PingController constructor.
+     *
+     * @param ZendDbAdapter $database
+     * @param SqsClient $sqsClient
+     */
+    public function __construct(ZendDbAdapter $database, SqsClient $sqsClient, string $queueUrl)
     {
-        $this->dynamoQueueClient = $dynamoQueueClient;
         $this->database = $database;
+        $this->sqsClient = $sqsClient;
+        $this->sqsQueueUrl = $queueUrl;
     }
 
     /**
@@ -84,11 +87,22 @@ class PingController extends AbstractRestfulController
         ];
 
         try {
-            $count = $this->dynamoQueueClient->countWaitingJobs();
 
-            if (!is_int($count)) {
+            $result = $this->sqsClient->getQueueAttributes([
+                'QueueUrl' => $this->sqsQueueUrl,
+                'AttributeNames' => ['ApproximateNumberOfMessages', 'ApproximateNumberOfMessagesNotVisible'],
+            ]);
+
+            if (!isset($result['Attributes']['ApproximateNumberOfMessages'])
+                || !isset($result['Attributes']['ApproximateNumberOfMessagesNotVisible'])
+            ) {
                 throw new Exception('Invalid count returned');
             }
+
+
+            $count = (int)$result['Attributes']['ApproximateNumberOfMessages']
+                        + (int)$result['Attributes']['ApproximateNumberOfMessagesNotVisible'];
+
 
             $queueDetails = [
                 'available' => true,
