@@ -41,18 +41,20 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
-        <fieldset id="reductionOptions">
-            <legend class="visually-hidden">Reduced fee options</legend>
+        <div class="form-group text {{ reductionOptionsElement.getMessages|length >0 ? 'form-group-error'}}">
+            <fieldset id="reductionOptions">
+                <legend class="visually-hidden">Reduced fee options</legend>
 
-            <h2 class="heading-medium flush--top">Reduced fee options</h2>
-
-            <div class="form-group text {{ reductionOptionsElement.getMessages|length >0 ? 'form-group-error'}}">
+                <h2 class="heading-medium flush--top">Reduced fee options</h2>
+            
                 {{ formElementErrorsV2(reductionOptionsElement) }}
-
-                <label class="block-label" data-target="receives-benefits" for="{{ reductionOptions['reducedFeeReceivesBenefits'].getAttribute('id') }}">
+                
+                <div class="multiple-choice">
                     {{ formInput(reductionOptions['reducedFeeReceivesBenefits']) }}
-                    {{ reductionOptions['reducedFeeReceivesBenefits'].getOption('label')|raw }}
-                </label>
+                    <label class="block-label" data-target="receives-benefits" for="{{ reductionOptions['reducedFeeReceivesBenefits'].getAttribute('id') }}">
+                        {{ reductionOptions['reducedFeeReceivesBenefits'].getOption('label')|raw }}
+                    </label>
+                </div>
 
                 <div id="receives-benefits" class="panel panel-border-narrow js-hidden">
                     <p>To apply to pay no fee, you must send us an ‘fee remissions and exemptions form’ and copies of letters from the Department for Work and Pensions (DWP) or the benefit provider as proof that the donor is receiving benefits. <a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-journey-click="page:link:help: Low income - Find out more about acceptable proof">Find out more about acceptable proof</a>.</p>
@@ -62,10 +64,12 @@
                     <p>If you do not send the right proof, your application will be delayed. If your application to pay a reduced fee is rejected, the donor will have to pay the rest of the fee.</p>
                 </div>
 
-                <label class="text block-label" data-target="universal-credit" for="{{ reductionOptions['reducedFeeUniversalCredit'].getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formInput(reductionOptions['reducedFeeUniversalCredit']) }}
-                    {{ reductionOptions['reducedFeeUniversalCredit'].getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" data-target="universal-credit" for="{{ reductionOptions['reducedFeeUniversalCredit'].getAttribute('id') }}">
+                        {{ reductionOptions['reducedFeeUniversalCredit'].getOption('label')|raw }}
+                    </label>
+                </div>
 
                 <div id="universal-credit" class="panel panel-border-narrow js-hidden">
                     <p>Because Universal Credit is in its trial phase and replaces several existing benefits, we're looking at fee reductions on a case-by-case basis.</p>
@@ -79,10 +83,12 @@
                     <p>Once we receive your application, we’ll contact you to let you know how much the fee will be and to arrange payment.</p>
                 </div>
 
-                <label class="text block-label" data-target="reduced-fee-low-income" for="{{ reductionOptions['reducedFeeLowIncome'].getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formInput(reductionOptions['reducedFeeLowIncome']) }}
-                    {{ reductionOptions['reducedFeeLowIncome'].getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" data-target="reduced-fee-low-income" for="{{ reductionOptions['reducedFeeLowIncome'].getAttribute('id') }}">
+                        {{ reductionOptions['reducedFeeLowIncome'].getOption('label')|raw }}
+                    </label>
+                </div>
 
                 <div id="reduced-fee-low-income" class="panel panel-border-narrow js-hidden">
                     <p>To apply to pay a reduced fee, you must send us an ‘fee remissions and exemptions form’ and documents that prove the donor has a low income.</p>
@@ -94,14 +100,16 @@
                     <p>If you do not send the right proof, your application will be delayed. If your application to pay a reduced fee is rejected, the donor will have to pay the rest of the fee</p>
                 </div>
 
-                <label class="text block-label" for="{{ reductionOptions['notApply'].getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formInput(reductionOptions['notApply']) }}
-                    {{ reductionOptions['notApply'].getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" for="{{ reductionOptions['notApply'].getAttribute('id') }}">
+                        {{ reductionOptions['notApply'].getOption('label')|raw }}
+                    </label>
+                </div>
 
-		    </div>
+	       </fieldset>
 
-	    </fieldset>
+        </div>
 
         <p class="push--bottom"><a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-journey-click="page:link:help: Find out more about qualifying for a reduction">Find out more about qualifying for a reduction</a></p>
 

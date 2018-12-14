@@ -7,6 +7,7 @@ class FeeReductionForm extends AbstractMainFlowForm
     protected $formElements = [
         'reductionOptions' => [
             'type'      => 'Radio',
+            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
             'required'  => true,
             'options'   => [
                 'value_options' => [

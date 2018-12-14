@@ -39,15 +39,15 @@
     {{ form().openTag(form)|raw }}
         {{ formElement(form.getCsrf) }}
 
-        <fieldset id="reuse-details" class="reuse-details-container">
+        <div class="form-group">
+            <fieldset id="reuse-details" class="reuse-details-container">
 
-            <legend class="heading-medium">Which details would you like to reuse?</legend>
+                <legend class="heading-medium">Which details would you like to reuse?</legend>
 
-            <div class="form-group">
-                {{ formElement(reuseDetails) }}
-            </div>
+                {{ formRadio(reuseDetails) }}
 
-        </fieldset>
+            </fieldset>
+        </div>
 
         {{ formElement(submit) }}
 
