@@ -10,6 +10,7 @@ class ApplicantForm extends AbstractMainFlowForm
     protected $formElements = [
         'whoIsRegistering' => [
             'type' => 'Radio',
+            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
             'options' => [
                 'value_options' => [
                     'donor' => [

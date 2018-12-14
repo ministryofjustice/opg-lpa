@@ -124,21 +124,23 @@
 
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
-        <fieldset id="whoIsRegistering">
-            <legend class="heading-medium flush--top">This LPA is being registered by</legend>
+        <div class="form-group {{ whoIsRegistering.getMessages|length > 0 ? 'form-group-error'}}">
 
-            <div class="form-group {{ whoIsRegistering.getMessages|length > 0 ? 'form-group-error'}}">
-                {{ formElementErrorsV2(whoIsRegistering) }}
-                {{ formElement(whoIsRegistering) }}
-                {% if (attorneyList) %}
-                    <div class="panel js-attorney-list">
-                        {{ formElementErrorsV2(attorneyList) }}
-                        {{ formElement(attorneyList) }}
-                    </div>
-                {% endif %}
-            </div>
+            <fieldset id="whoIsRegistering" class="inline">
+                <legend class="heading-medium flush--top">This LPA is being registered by</legend>
 
-        </fieldset>
+                
+                    {{ formElementErrorsV2(whoIsRegistering) }}
+                    {{ formRadio(whoIsRegistering) }}
+                    {% if (attorneyList) %}
+                        <div class="panel js-attorney-list">
+                            {{ formElementErrorsV2(attorneyList) }}
+                            {{ formElement(attorneyList) }}
+                        </div>
+                    {% endif %}
+
+            </fieldset>
+        </div>
 
         <div class="form-group">
             {{ formElement(form.get('save')) }}

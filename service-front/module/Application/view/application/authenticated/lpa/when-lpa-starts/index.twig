@@ -37,12 +37,13 @@
 
         <div class="form-group {{ when.getMessages|length > 0 ? 'form-group-error'}}">
 
-            <fieldset id="when" class="inline">
-                <legend><h2 class="heading-medium flush--top">The LPA can be used</h2></legend>
+            <fieldset id="when">
+                <legend class="visually-hidden">When can the LPA be used?</legend>
+                <h2 class="heading-medium flush--top">The LPA can be used</h2>
 
                 {{ formRadio().outputOption(when, 'now')|raw }}
 
-                <div class="panel panel-border-narrow panel-margin-bottom">
+                <div class="panel panel-border-narrow">
                     <div class="text">
                         <p>Most donors choose this option because it is the most practical. While the donor still has mental capacity, their attorneys can only act with the donor's permission. The donor will still be in control of all decisions affecting them.</p>
 

@@ -11,6 +11,7 @@ class TypeForm extends AbstractMainFlowForm
             'type'          => 'Application\Form\Element\Type',
             'required'      => true,
             'error_message' => 'cannot-be-empty',
+            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
         ],
     ];
 
