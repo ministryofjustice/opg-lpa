@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c864fcd5a6e77e6f2a2b902bf723da58",
+    "content-hash": "29e759056dee19f2e83e98be8f967a40",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -914,16 +914,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "12.0.0",
+            "version": "13.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "44c6edd1b91398c7c8dde092a9d2c2ebbe34e723"
+                "reference": "bac141efa83d48a52edbe9bcb3a237043e4a1b0b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/44c6edd1b91398c7c8dde092a9d2c2ebbe34e723",
-                "reference": "44c6edd1b91398c7c8dde092a9d2c2ebbe34e723",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/bac141efa83d48a52edbe9bcb3a237043e4a1b0b",
+                "reference": "bac141efa83d48a52edbe9bcb3a237043e4a1b0b",
                 "shasum": ""
             },
             "require": {
@@ -946,10 +946,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/12.0.0",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/13.0.0",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2018-08-30T10:50:05+00:00"
+            "time": "2018-12-11T15:38:36+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",

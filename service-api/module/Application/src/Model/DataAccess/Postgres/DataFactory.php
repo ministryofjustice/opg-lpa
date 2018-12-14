@@ -1,10 +1,8 @@
 <?php
 namespace Application\Model\DataAccess\Postgres;
 
-use PDO;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Db\Adapter\Adapter as ZendDbAdapter;
 
 /**
  * Used to instantiate any class that extents Application\Model\DataAccess\Postgres\AbstractBase

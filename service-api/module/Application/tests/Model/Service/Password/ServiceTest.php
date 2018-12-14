@@ -7,7 +7,7 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\Password\Service as PasswordService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
-use Application\Model\DataAccess\Mongo\Collection\User;
+use Application\Model\DataAccess\Postgres\UserModel as User;
 use ApplicationTest\Model\Service\Password\ServiceBuilder;
 use DateTime;
 use Mockery;
@@ -89,7 +89,7 @@ class ServiceTest extends AbstractServiceTest
     public function testChangePasswordValid()
     {
         $user = new User([
-            '_id' => 1,
+            'id' => 1,
             'identity' => 'test@test.com',
             'password_hash' => password_hash('valid', PASSWORD_DEFAULT)
         ]);
@@ -158,7 +158,7 @@ class ServiceTest extends AbstractServiceTest
     public function testGenerateTokenSuccess()
     {
         $this->setUserDataSourceGetByUsernameExpectation('unit@test.com', new User([
-            '_id' => 1,
+            'id' => 1,
             'active' => true
         ]));
 
@@ -239,7 +239,7 @@ class ServiceTest extends AbstractServiceTest
 
     public function testUpdatePasswordUsingTokenUpdateSuccess()
     {
-        $this->setUserDataSourceGetByResetTokenExpectation('token', new User(['_id' => 1]));
+        $this->setUserDataSourceGetByResetTokenExpectation('token', new User(['id' => 1]));
 
         $this->authUserRepository->shouldReceive('updatePasswordUsingToken')
             ->withArgs(function ($token, $passwordHash) {
