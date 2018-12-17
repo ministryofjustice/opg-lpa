@@ -3,7 +3,7 @@
 ATTR="MessageRetentionPeriod=3600,\
 FifoQueue=true,\
 ContentBasedDeduplication=false,\
-VisibilityTimeout=30"
+VisibilityTimeout=90"
 
 AUTO_CREATE="${OPG_LPA_COMMON_SQS_ENDPOINT}"
 
