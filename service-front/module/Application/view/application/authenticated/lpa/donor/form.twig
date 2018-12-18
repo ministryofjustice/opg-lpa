@@ -271,19 +271,21 @@
         </div>
     </fieldset>
 
-    <fieldset>
-        <legend class="visually-hidden"></legend>
+    <div class="single-checkbox-group form-group {{ canSign.getMessages|length >0 ? 'form-group-error'}}">
+        <fieldset>
+            <legend class="visually-hidden"></legend>
 
-        <div class="form-group {{ canSign.getMessages|length >0 ? 'form-group-error'}}">
-            <label class="block-label" for="{{ canSign.getAttribute('id') }}">
+            <div class="multiple-choice">
                 {{ formElement(canSign) }}
-                {{ canSign.getOption('label') }}
-                <span class="form-hint flush--bottom">We'll add an extra sheet to the LPA so someone can sign on the donor's behalf</span>
-                {{ formElementErrorsV2(canSign) }}
-            </label>
-        </div>
+                <label for="{{ canSign.getAttribute('id') }}">
+                    {{ canSign.getOption('label') }}
+                    <span class="form-hint flush--bottom">We'll add an extra sheet to the LPA so someone can sign on the donor's behalf</span>
+                    {{ formElementErrorsV2(canSign) }}
+                </label>
+            </div>
 
-    </fieldset>
+        </fieldset>
+    </div>
 
     {{ macros.renderFormButtons(cancelUrl, backButtonUrl) }}
 

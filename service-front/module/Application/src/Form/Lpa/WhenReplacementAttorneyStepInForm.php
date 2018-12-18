@@ -9,6 +9,7 @@ class WhenReplacementAttorneyStepInForm extends AbstractMainFlowForm
     protected $formElements = [
         'when' => [
             'type'      => 'Radio',
+            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
             'required'  => true,
             'options'   => [
                 'value_options' => [

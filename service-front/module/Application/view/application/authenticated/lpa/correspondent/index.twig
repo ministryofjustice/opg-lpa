@@ -131,25 +131,28 @@
 
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
-        <fieldset id="correspondence">
+        <div class="form-group {{ topLevelError ? 'form-group-error'}}">
 
-            <h3 class="heading-medium flush--top">How would the person above prefer to be contacted?</h3>
+            <fieldset id="correspondence">
 
-            <legend class="visually-hidden">Contact options</legend>
+                <h3 class="heading-medium flush--top">How would the person above prefer to be contacted?</h3>
+                <legend class="visually-hidden">Contact options</legend>
+                <p>Select how the correspondent would like to be contacted. You can choose more than one option.</p>
 
-            <p>Select how the correspondent would like to be contacted. You can choose more than one option.</p>
-
-            <div class="form-group {{ topLevelError ? 'form-group-error'}}">
-
-                <label class="text block-label" for="{{ contactByPost.getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formElement(contactByPost) }}
-                    {{ contactByPost.getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" for="{{ contactByPost.getAttribute('id') }}">
+                        {{ contactByPost.getOption('label')|raw }}
+                    </label>
+                </div>
 
-                <label class="text block-label" {{ contactPhone ? '' : 'data-target="contact-by-phone"' }} for="{{ contactByPhone.getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formElement(contactByPhone) }}
+                    <label class="text block-label" {{ contactPhone ? '' : 'data-target="contact-by-phone"' }} for="{{ contactByPhone.getAttribute('id') }}">
                     {{ contactByPhone.getOption('label')|raw }}
-                </label>
+                    </label>
+                </div>
+
                 <div class="panel panel-border-narrow js-hidden" id="contact-by-phone">
                     <div class="form-group {{ phone.getMessages|length >0 or contactByPhone.getMessages|length >0 ? 'form-group-error'}}">
                         <label class="form-label" for="{{ phone.getAttribute('id') }}">
@@ -161,10 +164,12 @@
                     </div>
                 </div>
 
-                <label class="text block-label" {{ contactEmail ? '' : 'data-target="contact-by-email"' }} for="{{ contactByEmail.getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formElement(contactByEmail) }}
-                    {{ contactByEmail.getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" {{ contactEmail ? '' : 'data-target="contact-by-email"' }} for="{{ contactByEmail.getAttribute('id') }}">
+                    {{ contactByEmail.getOption('label')|raw }}</label>
+                </div>
+
                 <div class="panel panel-border-narrow js-hidden" id="contact-by-email">
                     <div class="form-group {{ email.getMessages|length >0 or contactByEmail.getMessages|length >0 ? 'form-group-error'}}">
                         <label class="form-label" for="{{ email.getAttribute('id') }}">
@@ -176,9 +181,8 @@
                     </div>
                 </div>
 
-            </div>
-
-        </fieldset>
+            </fieldset>
+        </div>
 
         <div class="form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'form-group-error'}}">
         <h3 class="heading-medium flush--top">Which language should we use in written correspondence?</h3>
