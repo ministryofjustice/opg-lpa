@@ -4,7 +4,7 @@
         <p class="person-address flush--ends">{{ attorney['address'] }}</p>
         <ul class="person-actions">
             <li class="action-item">
-                <a href="{{ editUrl }}" class="action-edit js-form-popup">View/edit details</a>
+                <a href="{{ editUrl }}" class="action-edit js-form-popup" aria-label="View/edit Attorney, {{ attorney['name'] }}">View/edit details</a>
             </li>
             <li class="action-item">
                 <a href="{{ confirmDeleteUrl }}" class="action-delete js-form-popup">Delete</a>
