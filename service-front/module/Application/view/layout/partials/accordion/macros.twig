@@ -12,7 +12,7 @@
         {% if data.edit is defined %}
             <div class="label-and-edit-box">
                 <p class="link flush--ends">
-                    <a href="{{ data.edit|raw }}" class="link-edit" data-journey-click="accordion:link:{{ data.journeyClick }}">
+                    <a href="{{ data.edit|raw }}" class="link-edit" data-journey-click="accordion:link:{{ data.journeyClick }}" {%  if data.ariaLabel %}aria-label="{{ data.readOnly ? 'View' : 'Edit' }} {{ data.ariaLabel }}{% endif %}">
                         {% if data.readOnly is defined and data.readOnly == true %}
                             <span class="tablet-and-up">view</span>
                         {% else %}
