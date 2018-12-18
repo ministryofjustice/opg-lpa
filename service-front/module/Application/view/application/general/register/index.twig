@@ -102,24 +102,26 @@
 
     </fieldset>
 
-    <fieldset>
-        <legend class="visually-hidden">Terms</legend>
-        <div class="text">
-            <p>LPAs are governed by the laws of England and Wales and can only be made by people with mental capacity aged 18 or older.</p>
-        </div>
+    <div class="form-group {{ terms.getMessages|length >0 ? 'form-group-error'}}">
+        <fieldset>
+            <legend class="visually-hidden">Terms</legend>
+            <div class="text">
+                <p>LPAs are governed by the laws of England and Wales and can only be made by people with mental capacity aged 18 or older.</p>
+            </div>
 
-        <div class="form-group {{ terms.getMessages|length >0 ? 'form-group-error'}}">
-            <label class="block-label" for="{{ terms.getAttribute('id') }}">
+            <div class="multiple-choice">
                 {{ formElement(terms) }}
-                I agree to the <a href="/terms" target="_blank">terms of use</a>
-                {{ formElementErrorsV2(terms) }}
-            </label>
-        </div>
+                <label class="block-label" for="{{ terms.getAttribute('id') }}">
+                    I agree to the <a href="/terms" target="_blank">terms of use</a>
+                    {{ formElementErrorsV2(terms) }}
+                </label>
+            </div>
 
-        <div class="form-group">
-            <input type="submit" name="submit" id="signin-form-submit" value="Create account" class="button">
-        </div>
-    </fieldset>
+            <div class="form-group">
+                <input type="submit" name="submit" id="signin-form-submit" value="Create account" class="button">
+            </div>
+        </fieldset>
+    </div>
 
 {{ form().closeTag|raw }}
 

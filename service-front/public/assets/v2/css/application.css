@@ -3206,7 +3206,8 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     .form-popup .address-type-toggle,
     .form-popup .block-label,
     .form-popup .button,
-    .form-popup .alert {
+    .form-popup .alert,
+    .form-popup .single-checkbox-group {
       margin-left: 150px; } }
   @media (min-width: 641px) {
     .form-popup .postcode-button,

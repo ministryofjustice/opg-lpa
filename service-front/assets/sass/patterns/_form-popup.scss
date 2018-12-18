@@ -93,7 +93,8 @@
     .address-type-toggle,
     .block-label,
     .button,
-    .alert {
+    .alert,
+    .single-checkbox-group {
         @include media(tablet) {
             margin-left: 150px;
         }
