@@ -181,7 +181,6 @@ class Client
             'User-agent'    => 'LPA-ADMIN'
         ];
 
-        //TODO - better way to do this?
         $apiToken = $this->getTokenData('token');
 
         //  If the logged in user has an auth token already then set that in the header

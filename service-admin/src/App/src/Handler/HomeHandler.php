@@ -20,10 +20,6 @@ class HomeHandler extends AbstractHandler
      */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
-        //  TODO...
-
-        return new HtmlResponse($this->getTemplateRenderer()->render('app::home', [
-            'messages' => $this->getFlashMessages($request)
-        ]));
+        return new HtmlResponse($this->getTemplateRenderer()->render('app::home'));
     }
 }

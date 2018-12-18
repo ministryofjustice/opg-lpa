@@ -17,7 +17,6 @@ class ClientFactory
      */
     public function __invoke(ContainerInterface $container)
     {
-        //  TODO - Stop certificate verification temporarily until we have fixed the self signing cert issue - then use $container->get(\Http\Client\HttpClient::class),
         $httpClient = GuzzleClient::createWithConfig([
             'verify' => false,
         ]);

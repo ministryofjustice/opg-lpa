@@ -43,7 +43,6 @@ class SignInHandler extends AbstractHandler
      */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
-//TODO - Change this...
         $token = $this->getTokenData('token');
 
         if (!is_null($token)) {
