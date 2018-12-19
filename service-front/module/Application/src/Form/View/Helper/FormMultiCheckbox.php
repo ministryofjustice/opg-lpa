@@ -39,11 +39,8 @@ class FormMultiCheckbox extends ZFFormMultiCheckbox
         $combinedMarkup = [];
         $count          = 0;
 
-        // Setup div opening
-        $divOpen = '<div>';
-
-        if (isset($attributes['div-attributes']['class'])) {
-            $divOpen = '<div class="' . $attributes['div-attributes']['class'] . '">';
+        if (isset($options['attributes']['div-attributes']['class'])) {
+            $divOpen = '<div class="' . $options['attributes']['div-attributes']['class'] . '">';
         }
 
         foreach ($options as $key => $optionSpec) {
@@ -112,6 +109,13 @@ class FormMultiCheckbox extends ZFFormMultiCheckbox
 
             if (! $element instanceof LabelAwareInterface || ! $element->getLabelOption('disable_html_escape')) {
                 $label = $escapeHtmlHelper($label);
+            }
+
+            // Setup div opening
+            $divOpen = '<div>';
+
+            if (isset($optionSpec['attributes']['div-attributes']['class'])) {
+                $divOpen = '<div class="' . $optionSpec['attributes']['div-attributes']['class'] . '">';
             }
 
             $markup = $divOpen .
