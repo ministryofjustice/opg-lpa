@@ -214,7 +214,7 @@ legend {
 .column-third,
 .column-one-third {
   float: left;
-  width: 33.3333333333%;
+  width: 33.33333%;
   padding: 0 15px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -222,7 +222,7 @@ legend {
 
 .column-two-thirds {
   float: left;
-  width: 66.6666666667%;
+  width: 66.66667%;
   padding: 0 15px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -243,7 +243,7 @@ main {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.3157894737;
+  line-height: 1.31579;
   -webkit-font-smoothing: antialiased; }
 
 .font-xxlarge {
@@ -251,7 +251,7 @@ main {
   font-weight: 400;
   text-transform: none;
   font-size: 53px;
-  line-height: 1.0377358491;
+  line-height: 1.03774;
   font-size: 80px;
   line-height: 1; }
 
@@ -262,16 +262,16 @@ main {
   font-size: 32px;
   line-height: 1.09375;
   font-size: 48px;
-  line-height: 1.0416666667; }
+  line-height: 1.04167; }
 
 .font-large {
   font-family: "nta", Arial, sans-serif;
   font-weight: 400;
   text-transform: none;
   font-size: 24px;
-  line-height: 1.0416666667;
+  line-height: 1.04167;
   font-size: 36px;
-  line-height: 1.1111111111; }
+  line-height: 1.11111; }
 
 .font-medium {
   font-family: "nta", Arial, sans-serif;
@@ -289,14 +289,14 @@ main {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.3157894737; }
+  line-height: 1.31579; }
 
 .font-xsmall {
   font-family: "nta", Arial, sans-serif;
   font-weight: 400;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.1428571429;
+  line-height: 1.14286;
   font-size: 16px;
   line-height: 1.25; }
 
@@ -305,7 +305,7 @@ main {
   font-weight: 700;
   text-transform: none;
   font-size: 53px;
-  line-height: 1.0377358491;
+  line-height: 1.03774;
   font-size: 80px;
   line-height: 1; }
 
@@ -316,16 +316,16 @@ main {
   font-size: 32px;
   line-height: 1.09375;
   font-size: 48px;
-  line-height: 1.0416666667; }
+  line-height: 1.04167; }
 
 .bold-large {
   font-family: "nta", Arial, sans-serif;
   font-weight: 700;
   text-transform: none;
   font-size: 24px;
-  line-height: 1.0416666667;
+  line-height: 1.04167;
   font-size: 36px;
-  line-height: 1.1111111111; }
+  line-height: 1.11111; }
 
 .bold-medium {
   font-family: "nta", Arial, sans-serif;
@@ -343,14 +343,14 @@ main {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.3157894737; }
+  line-height: 1.31579; }
 
 .bold-xsmall {
   font-family: "nta", Arial, sans-serif;
   font-weight: 700;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.1428571429;
+  line-height: 1.14286;
   font-size: 16px;
   line-height: 1.25; }
 
@@ -364,12 +364,8 @@ main {
   font-size: 32px;
   line-height: 1.09375;
   font-size: 48px;
-<<<<<<< 62acb21a225de37bf2a811f8e0fdb859980fbf4b
-  line-height: 1.0416666667;
-=======
   line-height: 1.04167;
   display: block;
->>>>>>> LPA-2945 Form validation fixes required for version 3.0+ of gov-uk-elements
   margin-top: 0.46875em;
   margin-bottom: 0.9375em;
   margin-top: 0.625em;
@@ -379,9 +375,9 @@ main {
     font-weight: 400;
     text-transform: none;
     font-size: 20px;
-    line-height: 1.1111111111;
+    line-height: 1.11111;
     font-size: 27px;
-    line-height: 1.1111111111;
+    line-height: 1.11111;
     display: block;
     padding-top: 8px;
     padding-bottom: 7px;
@@ -395,20 +391,14 @@ main {
   font-weight: 700;
   text-transform: none;
   font-size: 24px;
-  line-height: 1.0416666667;
+  line-height: 1.04167;
   font-size: 36px;
-<<<<<<< 62acb21a225de37bf2a811f8e0fdb859980fbf4b
-  line-height: 1.1111111111;
-  margin-top: 1.0416666667em;
-  margin-bottom: 0.4166666667em;
-=======
   line-height: 1.11111;
   display: block;
   margin-top: 1.04167em;
   margin-bottom: 0.41667em;
->>>>>>> LPA-2945 Form validation fixes required for version 3.0+ of gov-uk-elements
   margin-top: 1.25em;
-  margin-bottom: 0.5555555556em; }
+  margin-bottom: 0.55556em; }
   .heading-large .heading-secondary {
     font-family: "nta", Arial, sans-serif;
     font-weight: 400;
@@ -437,7 +427,7 @@ main {
   margin-top: 1.25em;
   margin-bottom: 0.5em;
   margin-top: 1.875em;
-  margin-bottom: 0.8333333333em; }
+  margin-bottom: 0.83333em; }
 
 .heading-small {
   font-family: "nta", Arial, sans-serif;
@@ -446,22 +436,18 @@ main {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-<<<<<<< 62acb21a225de37bf2a811f8e0fdb859980fbf4b
-  line-height: 1.3157894737;
-=======
   line-height: 1.31579;
   display: block;
->>>>>>> LPA-2945 Form validation fixes required for version 3.0+ of gov-uk-elements
   margin-top: 0.625em;
   margin-bottom: 0.3125em;
-  margin-top: 1.0526315789em; }
+  margin-top: 1.05263em; }
 
 p,
 .body-text {
   margin-top: 0.3125em;
   margin-bottom: 1.25em;
-  margin-top: 0.2631578947em;
-  margin-bottom: 1.0526315789em; }
+  margin-top: 0.26316em;
+  margin-bottom: 1.05263em; }
 
 .body-text {
   display: block; }
@@ -502,7 +488,7 @@ p,
   font-weight: 400;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.1428571429;
+  line-height: 1.14286;
   font-size: 16px;
   line-height: 1.25;
   margin-top: 15px;
@@ -575,8 +561,8 @@ hr {
 .data {
   margin-top: 0.3125em;
   margin-bottom: 1.25em;
-  margin-top: 0.2631578947em;
-  margin-bottom: 1.0526315789em; }
+  margin-top: 0.26316em;
+  margin-bottom: 1.05263em; }
 
 .data-item {
   display: block;
@@ -675,7 +661,7 @@ hr {
   background-image: url("/assets/v2/images/icons/icon-pointer.png");
   background-repeat: no-repeat;
   background-position: 100% 50%;
-  padding: 0.3684210526em 2.1578947368em 0.2105263158em 0.8421052632em; }
+  padding: 0.36842em 2.15789em 0.21053em 0.84211em; }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .button-start,
     .button-get-started {
@@ -940,29 +926,16 @@ table {
     font-size: 16px;
     line-height: 1.25;
     font-size: 19px;
-    line-height: 1.3157894737;
-    padding: 0.6315789474em 1.0526315789em 0.4736842105em 0;
+    line-height: 1.31579;
+    padding: 0.63158em 1.05263em 0.47368em 0;
     text-align: left;
     border-bottom: 1px solid #bfc1c3; }
   table thead th {
     font-weight: 700; }
-<<<<<<< 62acb21a225de37bf2a811f8e0fdb859980fbf4b
-    table th.numeric {
-      text-align: right; }
-  table td.numeric {
-    font-family: "ntatabularnumbers", "nta", Arial, sans-serif;
-    font-weight: 400;
-    text-transform: none;
-    font-size: 14px;
-    line-height: 1.1428571429;
-    font-size: 16px;
-    line-height: 1.25;
-=======
   table td:last-child,
   table th:last-child {
     padding-right: 0; }
   table .numeric {
->>>>>>> LPA-2945 Form validation fixes required for version 3.0+ of gov-uk-elements
     text-align: right; }
   table td.numeric {
     font-family: "ntatabularnumbers", "nta", Arial, sans-serif; }
@@ -974,7 +947,7 @@ table {
   font-weight: 700;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.1428571429;
+  line-height: 1.14286;
   font-size: 16px;
   line-height: 1.25; }
 .table-font-xsmall td {
@@ -982,7 +955,7 @@ table {
   font-weight: 400;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.1428571429;
+  line-height: 1.14286;
   font-size: 16px;
   line-height: 1.25; }
 .table-font-xsmall th,
@@ -997,9 +970,6 @@ details {
     color: #005ea5;
     cursor: pointer;
     position: relative;
-<<<<<<< 62acb21a225de37bf2a811f8e0fdb859980fbf4b
-    margin-bottom: 0.2631578947em; }
-=======
     margin-bottom: 0.26316em;
     padding-left: 25px; }
     details summary:before {
@@ -1018,7 +988,6 @@ details {
       clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
       border-width: 7px 0 7px 12.124px;
       border-left-color: inherit; }
->>>>>>> LPA-2945 Form validation fixes required for version 3.0+ of gov-uk-elements
     details summary:hover {
       color: #2b8cc4; }
     details summary:focus {
@@ -1047,8 +1016,8 @@ details {
   clear: both;
   border-left-style: solid;
   border-color: #bfc1c3;
-  padding: 0.7894736842em;
-  margin-bottom: 0.7894736842em; }
+  padding: 0.78947em;
+  margin-bottom: 0.78947em; }
   .panel :first-child {
     margin-top: 0; }
   .panel :only-child,
@@ -1124,7 +1093,7 @@ textarea {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.3157894737; }
+  line-height: 1.31579; }
 
 .form-label-bold {
   font-family: "nta", Arial, sans-serif;
@@ -1133,7 +1102,7 @@ textarea {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.3157894737; }
+  line-height: 1.31579; }
 
 .form-block {
   float: left;
@@ -1150,7 +1119,7 @@ textarea {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.3157894737;
+  line-height: 1.31579;
   display: block;
   color: #6f777b;
   font-weight: normal;
@@ -1172,7 +1141,7 @@ textarea {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.3157894737;
+  line-height: 1.31579;
   width: 100%;
   padding: 5px 4px 4px;
   border: 2px solid #0b0c0c;
@@ -1362,7 +1331,7 @@ input[type=number] {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.3157894737;
+  line-height: 1.31579;
   color: #b10e1e;
   display: block;
   clear: both;
@@ -1406,7 +1375,7 @@ input[type=number] {
     font-weight: 400;
     text-transform: none;
     font-size: 14px;
-    line-height: 1.1428571429;
+    line-height: 1.14286;
     font-size: 16px;
     line-height: 1.25;
     float: left;
@@ -1440,7 +1409,7 @@ input[type=number] {
     font-weight: 400;
     text-transform: none;
     font-size: 14px;
-    line-height: 1.1428571429;
+    line-height: 1.14286;
     font-size: 16px;
     line-height: 1.25; }
   .phase-banner .phase-tag {
@@ -1452,7 +1421,7 @@ input[type=number] {
     font-weight: 700;
     text-transform: none;
     font-size: 14px;
-    line-height: 1.1428571429;
+    line-height: 1.14286;
     font-size: 16px;
     line-height: 1.25;
     text-transform: uppercase;
@@ -1478,7 +1447,7 @@ input[type=number] {
     font-weight: 400;
     text-transform: none;
     font-size: 14px;
-    line-height: 1.1428571429;
+    line-height: 1.14286;
     font-size: 16px;
     line-height: 1.25; }
   .phase-banner-alpha .phase-tag,
@@ -1491,7 +1460,7 @@ input[type=number] {
     font-weight: 700;
     text-transform: none;
     font-size: 14px;
-    line-height: 1.1428571429;
+    line-height: 1.14286;
     font-size: 16px;
     line-height: 1.25;
     text-transform: uppercase;
@@ -1546,7 +1515,7 @@ input[type=number] {
   font-size: 32px;
   line-height: 1.09375;
   font-size: 48px;
-  line-height: 1.0416666667;
+  line-height: 1.04167;
   margin-top: 0.9375em;
   margin-bottom: 0.46875em;
   margin-top: 1.25em;
@@ -1556,9 +1525,9 @@ input[type=number] {
     font-weight: 400;
     text-transform: none;
     font-size: 20px;
-    line-height: 1.1111111111;
+    line-height: 1.11111;
     font-size: 27px;
-    line-height: 1.1111111111;
+    line-height: 1.11111;
     display: block;
     padding-top: 8px;
     padding-bottom: 7px;
@@ -1572,13 +1541,13 @@ input[type=number] {
   font-weight: 700;
   text-transform: none;
   font-size: 24px;
-  line-height: 1.0416666667;
+  line-height: 1.04167;
   font-size: 36px;
-  line-height: 1.1111111111;
-  margin-top: 1.0416666667em;
-  margin-bottom: 0.4166666667em;
+  line-height: 1.11111;
+  margin-top: 1.04167em;
+  margin-bottom: 0.41667em;
   margin-top: 1.25em;
-  margin-bottom: 0.5555555556em; }
+  margin-bottom: 0.55556em; }
   .help-sections h1 .heading-secondary, .dialog-title-block .heading-secondary, .no-js .popup-header-title.heading-small .heading-secondary {
     font-family: "nta", Arial, sans-serif;
     font-weight: 400;
@@ -1606,7 +1575,7 @@ input[type=number] {
   margin-top: 1.25em;
   margin-bottom: 0.5em;
   margin-top: 1.875em;
-  margin-bottom: 0.8333333333em; }
+  margin-bottom: 0.83333em; }
 
 .help-sections h3 {
   font-family: "nta", Arial, sans-serif;
@@ -1615,10 +1584,10 @@ input[type=number] {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.3157894737;
+  line-height: 1.31579;
   margin-top: 0.625em;
   margin-bottom: 0.3125em;
-  margin-top: 1.0526315789em; }
+  margin-top: 1.05263em; }
 
 [disabled="disabled"],
 .disabled {
@@ -2029,7 +1998,7 @@ input[type=number] {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  padding: 0.5263157895em 0.7894736842em 0.2631578947em;
+  padding: 0.52632em 0.78947em 0.26316em;
   vertical-align: top; }
 
 .button-link {
@@ -2475,7 +2444,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  padding: 0.5263157895em 0.7894736842em 0.2631578947em;
+  padding: 0.52632em 0.78947em 0.26316em;
   vertical-align: top; }
 
 .button-link {
@@ -2652,12 +2621,14 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     margin-bottom: 20px;
     padding-bottom: 4px; }
 
-.person-name, .person-address {
+.person-name,
+.person-address {
   padding-right: 300px; }
-  .person--wider .person-name,
-  .person--wider .person-address {
+  .person--wider .person-name, .person--wider
+  .person-address {
     padding-right: 175px; }
-  .person--full .person-name, .person--full .person-address {
+  .person--full .person-name, .person--full
+  .person-address {
     padding-right: 0; }
 
 .person-actions {
@@ -2747,7 +2718,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.3157894737;
+  line-height: 1.31579;
   -webkit-font-smoothing: antialiased; }
   .form-popup.popup {
     max-width: 600px;
@@ -2803,10 +2774,15 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
       font-size: 22px; }
     .form-popup .error-summary p {
       margin-bottom: 4px; }
-  .form-popup .error {
+  .form-popup .form-group-error {
     position: relative;
     padding-left: 0;
-    border-left: 0; }
+    border-left: 0;
+    margin-right: 0; }
+    .form-date .form-popup .form-group-error {
+      margin-right: 20px; }
+  .form-popup .form-date .form-group-error {
+    margin-right: 20px; }
   .form-popup .error-message {
     position: relative;
     top: 13px;
@@ -2836,7 +2812,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.3157894737;
+  line-height: 1.31579;
   -webkit-font-smoothing: antialiased; }
   .dialog.popup {
     max-width: 600px;
@@ -2859,19 +2835,19 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
       display: block;
       display: table-cell;
       border-bottom: 1px solid #bfc1c3;
-      padding: 0.6315789474em 1.0526315789em 0.4736842105em 0;
+      padding: 0.63158em 1.05263em 0.47368em 0;
       margin: 0; }
     .govuk-check-your-answers > *:first-child > * {
       padding-top: 0; }
   .govuk-check-your-answers .cya-question {
     font-weight: bold;
-    margin: 0.6315789474em 4em 0.2105263158em 0; }
+    margin: 0.63158em 4em 0.21053em 0; }
   .govuk-check-your-answers > *:first-child .cya-question {
     margin-top: 0; }
   .govuk-check-your-answers .cya-question {
     width: 35%; }
   .govuk-check-your-answers .cya-answer {
-    padding-bottom: 0.4736842105em; }
+    padding-bottom: 0.47368em; }
   .govuk-check-your-answers .cya-change {
     text-align: right;
     position: absolute;
@@ -2981,11 +2957,11 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
   font-weight: 400;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.1428571429;
+  line-height: 1.14286;
   font-size: 16px;
   line-height: 1.25;
   color: #6f777b;
-  margin-top: 3.1578947368em; }
+  margin-top: 3.15789em; }
 
 .noscroll {
   position: relative;
@@ -3068,7 +3044,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     font-weight: 400;
     text-transform: none;
     font-size: 14px;
-    line-height: 1.1428571429;
+    line-height: 1.14286;
     font-size: 16px;
     line-height: 1.25; }
 
