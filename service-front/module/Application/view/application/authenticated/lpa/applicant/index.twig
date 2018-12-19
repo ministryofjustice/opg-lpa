@@ -129,13 +129,12 @@
             <fieldset id="whoIsRegistering" class="inline">
                 <legend class="heading-medium flush--top">This LPA is being registered by</legend>
 
-                
                     {{ formElementErrorsV2(whoIsRegistering) }}
                     {{ formRadio(whoIsRegistering) }}
                     {% if (attorneyList) %}
                         <div class="panel js-attorney-list">
                             {{ formElementErrorsV2(attorneyList) }}
-                            {{ formElement(attorneyList) }}
+                            {{ formCheckbox(attorneyList) }}
                         </div>
                     {% endif %}
 
