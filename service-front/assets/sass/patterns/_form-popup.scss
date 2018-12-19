@@ -150,11 +150,24 @@
         }
     }
 
-    .error {
+    .form-group-error {
         @include media(tablet) {
             position: relative;
             padding-left: 0;
             border-left: 0;
+            margin-right: 0;
+
+            .form-date & {
+                margin-right: 20px;
+            }
+        }
+    }
+
+    .form-date {
+        .form-group-error {
+            @include media(tablet) {
+                margin-right: 20px;
+            }
         }
     }
 
