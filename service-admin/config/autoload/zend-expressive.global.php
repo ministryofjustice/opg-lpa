@@ -14,6 +14,11 @@ return [
     // Enable debugging; typically used to provide debugging information within templates.
     'debug' => false,
 
+    'stack' => [
+        'name' => getenv('OPG_LPA_STACK_NAME') ?: 'local',
+        'environment' => getenv('OPG_LPA_STACK_ENVIRONMENT') ?: 'dev',
+    ],
+
     'api_base_uri' => getenv('OPG_LPA_ENDPOINTS_API') ?: 'https://apiv2',
 
     'admin_accounts' => (getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : []),
@@ -25,6 +30,20 @@ return [
         'cookie'    => 'lpa-admin',
         'ttl'       => 60 * 15, //  15 minutes
         'algo'      => 'HS256',
+    ],
+
+    'cache' => [
+        'dynamodb' => [
+            'client' => [
+                'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
+                'version' => '2012-08-10',
+                'region' => 'eu-west-1',
+            ],
+            'settings' => [
+                'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
+            ],
+            'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
+        ],
     ],
 
     'zend-expressive' => [

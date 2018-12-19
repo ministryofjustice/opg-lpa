@@ -72,11 +72,6 @@ class SignInHandler extends AbstractHandler
 
                         $this->addTokenData('token', $user->getToken());
 
-
-                        //  Temp to test flash messaging...
-                        $this->setFlashInfoMessage($request, 'Login success');
-
-
                         return $this->redirectToRoute('home');
                     }
 

@@ -44,7 +44,6 @@ class ConfigProvider
                 //  Handlers
                 Handler\HomeHandler::class          => Handler\HomeHandler::class,
                 Handler\SignOutHandler::class       => Handler\SignOutHandler::class,
-                Handler\SystemMessageHandler::class => Handler\SystemMessageHandler::class,
                 Handler\UserFeedbackHandler::class  => Handler\UserFeedbackHandler::class,
 
                 //  Middleware
@@ -54,6 +53,7 @@ class ConfigProvider
             'factories' => [
                 //  Handlers
                 Handler\SignInHandler::class        => Handler\SignInHandlerFactory::class,
+                Handler\SystemMessageHandler::class => Handler\SystemMessageHandlerFactory::class,
                 Handler\UserSearchHandler::class    => Handler\UserSearchHandlerFactory::class,
 
                 //  Middleware
@@ -63,6 +63,7 @@ class ConfigProvider
                 Middleware\ViewData\ViewDataMiddleware::class           => Middleware\ViewData\ViewDataMiddlewareFactory::class,
 
                 //  Services
+                Service\Cache\Cache::class                          => Service\Cache\CacheFactory::class,
                 Service\ApiClient\Client::class                     => Service\ApiClient\ClientFactory::class,
                 Service\Authentication\AuthenticationService::class => Service\Authentication\AuthenticationServiceFactory::class,
                 Service\UserSearch\UserSearch::class                => Service\UserSearch\UserSearchFactory::class,

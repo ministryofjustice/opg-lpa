@@ -2,21 +2,21 @@
 
 namespace App\Form;
 
-use App\Validator;
-use App\Filter\StandardInput as StandardInputFilter;
-use Zend\Filter;
-use Zend\Form\Element\Text;
+use Zend\Form\Element\Textarea;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
+use Zend\Validator\StringLength;
 
 /**
- * Class UserSearch
+ * Class SystemMessage
  * @package App\Form
  */
-class UserSearch extends AbstractForm
+class SystemMessage extends AbstractForm
 {
+    private $maxMessageLength = 8000;
+
     /**
-     * UserSearch constructor
+     * SystemMessage constructor
      *
      * @param array $options
      */
@@ -27,19 +27,20 @@ class UserSearch extends AbstractForm
         $inputFilter = new InputFilter();
         $this->setInputFilter($inputFilter);
 
-        //  Email field
-        $field = new Text('email');
+        //  Message field
+        $field = new Textarea('message');
         $input = new Input($field->getName());
+        $input->setRequired(false);
 
-        $input->getFilterChain()
-            ->attach(new StandardInputFilter())
-            ->attach(new Filter\StringToLower());
+        $validator = new StringLength([
+            'max' => $this->maxMessageLength,
+            'messages' => [
+                StringLength::TOO_LONG => 'Limit the message to ' . $this->maxMessageLength . ' characters',
+            ],
+        ]);
 
         $input->getValidatorChain()
-            ->attach(new Validator\NotEmpty(), true)
-            ->attach(new Validator\Email());
-
-        $input->setRequired(true);
+            ->attach($validator);
 
         $this->add($field);
         $inputFilter->add($input);
