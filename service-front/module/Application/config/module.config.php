@@ -102,6 +102,7 @@ return [
             'applicantNames'        => 'Application\View\Helper\ApplicantNames',
             'moneyFormat'           => 'Application\View\Helper\MoneyFormat',
             'formRadio'             => 'Application\Form\View\Helper\FormRadio',
+            'formCheckbox'          => 'Application\Form\View\Helper\FormMultiCheckbox',
             'finalCheckAccessible'  => 'Application\View\Helper\FinalCheckAccessible',
         ],
         'factories' => [
