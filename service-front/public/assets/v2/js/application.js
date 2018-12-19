@@ -23708,16 +23708,7 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
         .on('click.moj.Modules.FormPopup', this.settings.selector, this.btnClick)
         // submit form
         .on('submit.moj.Modules.FormPopup', '#popup.form-popup form', this.submitForm);
-        moj.Events.on('FormPopup.renderSelectionButtons', this.renderSelectionButtons);
         moj.Events.on('FormPopup.checkReusedDetails', this.checkReusedDetails);
-    },
-
-    renderSelectionButtons: function() {
-        //switch checkboxes on (usually only happens on page load so need to manually do this step when opening lightbox)
-        // Use GOV.UK selection-buttons.js to set selected
-        // and focused states for block labels
-        var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']");
-        new GOVUK.SelectionButtons($blockLabels); // eslint-disable-line
     },
 
     btnClick: function (e) {
@@ -23788,7 +23779,6 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
         }
       });
 
-      this.renderSelectionButtons();
     },
 
     submitForm: function (e) {
@@ -23849,7 +23839,6 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
           moj.Events.trigger('PostcodeLookup.render', {wrap: '#popup'});
           // trigger validation accessibility method
           moj.Events.trigger('Validation.render', {wrap: '#popup'});
-          moj.Events.trigger('FormPopup.renderSelectionButtons');
           //  If the form submitted a reuse details parameter then execute the check details
           if ($form.serialize().indexOf('reuse-details') !== -1) {
             moj.Events.trigger('FormPopup.checkReusedDetails');
@@ -25341,11 +25330,6 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
 
 // ====================================================================================
 // INITITALISE ALL GOVUK MODULES
-
-// Initiating the SelectionButtons GOVUK module
-var $blockLabels = $(".block-label input[type='radio'], .block-label input[type='checkbox']");
-new GOVUK.SelectionButtons($blockLabels);
-
 
 // Where .block-label uses the data-target attribute
 // to toggle hidden content
