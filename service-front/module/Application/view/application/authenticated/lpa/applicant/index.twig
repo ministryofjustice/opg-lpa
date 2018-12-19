@@ -131,14 +131,15 @@
 
                     {{ formElementErrorsV2(whoIsRegistering) }}
                     {{ formRadio(whoIsRegistering) }}
-                    {% if (attorneyList) %}
-                        <div class="panel js-attorney-list">
-                            {{ formElementErrorsV2(attorneyList) }}
-                            {{ formCheckbox(attorneyList) }}
-                        </div>
-                    {% endif %}
-
             </fieldset>
+            {% if (attorneyList) %}
+                <fieldset>
+                    <div class="panel js-attorney-list">
+                        {{ formElementErrorsV2(attorneyList) }}
+                        {{ formCheckbox(attorneyList) }}
+                    </div>
+                </fieldset>
+            {% endif %}            
         </div>
 
         <div class="form-group">
