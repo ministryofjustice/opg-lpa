@@ -42,6 +42,10 @@ class FormMultiCheckbox extends ZFFormMultiCheckbox
         // Setup div opening
         $divOpen = '<div>';
 
+        if (isset($attributes['div-attributes']['class'])) {
+            $divOpen = '<div class="' . $attributes['div-attributes']['class'] . '">';
+        }
+
         foreach ($options as $key => $optionSpec) {
             $count++;
             if ($count > 1 && array_key_exists('id', $attributes)) {
