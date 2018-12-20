@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c7c207c790cd5ac303d1aa60ff1875ae",
+    "content-hash": "93a349de2f1a5caa9637de3912b7eb4f",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -523,16 +523,16 @@
         },
         {
             "name": "ministryofjustice/opg-lpa-datamodels",
-            "version": "dev-LPA-3055-formatting-logic",
+            "version": "13.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ministryofjustice/opg-lpa-datamodels.git",
-                "reference": "d26145e50013f456d3b95672f61f968a4270e114"
+                "reference": "83015ed1109b3b149604121165ce70207161c87f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/d26145e50013f456d3b95672f61f968a4270e114",
-                "reference": "d26145e50013f456d3b95672f61f968a4270e114",
+                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-datamodels/zipball/83015ed1109b3b149604121165ce70207161c87f",
+                "reference": "83015ed1109b3b149604121165ce70207161c87f",
                 "shasum": ""
             },
             "require": {
@@ -555,10 +555,10 @@
             ],
             "description": "PHP data models that represent a Lasting Power of Attorney",
             "support": {
-                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/LPA-3055-formatting-logic",
+                "source": "https://github.com/ministryofjustice/opg-lpa-datamodels/tree/13.1.0",
                 "issues": "https://github.com/ministryofjustice/opg-lpa-datamodels/issues"
             },
-            "time": "2018-12-19T10:51:06+00:00"
+            "time": "2018-12-20T08:47:06+00:00"
         },
         {
             "name": "ministryofjustice/opg-lpa-logger",
@@ -3774,9 +3774,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "ministryofjustice/opg-lpa-datamodels": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
