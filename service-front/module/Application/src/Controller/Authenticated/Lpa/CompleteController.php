@@ -5,6 +5,7 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Common\LongName;
+use Opg\Lpa\DataModel\Lpa\Formatter as LpaFormatter;
 use Zend\View\Model\ViewModel;
 
 class CompleteController extends AbstractLpaController
@@ -108,6 +109,15 @@ class CompleteController extends AbstractLpaController
         
         if($someAttorneyIsTrustCorp) {
             array_push($continuationNoteKeys, 'HAS_TRUST_CORP');
+        }
+
+        // The following line is taken from the PDF service.
+        $allowedChars = (LpaFormatter::INSTRUCTIONS_PREFERENCES_ROW_WIDTH + 2) * LpaFormatter::INSTRUCTIONS_PREFERENCES_ROW_COUNT;
+        if (
+            strlen(LpaFormatter::flattenInstructionsOrPreferences($lpa->getDocument()->getPreference())) > $allowedChars ||
+            strlen(LpaFormatter::flattenInstructionsOrPreferences($lpa->getDocument()->getInstruction())) > $allowedChars
+        ) {
+            array_push($continuationNoteKeys, 'LONG_INSTRUCTIONS_OR_PREFERENCES');
         }
 
         $viewParams = [
