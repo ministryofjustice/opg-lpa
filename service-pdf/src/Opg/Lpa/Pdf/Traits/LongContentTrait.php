@@ -2,6 +2,7 @@
 
 namespace Opg\Lpa\Pdf\Traits;
 
+use Opg\Lpa\DataModel\Lpa\Formatter As LpaFormatter;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
@@ -15,12 +16,12 @@ trait LongContentTrait
     /**
      * @var int
      */
-    private $fullWidthNumberOfChars = 84;
+    private $fullWidthNumberOfChars = LpaFormatter::INSTRUCTIONS_PREFERENCES_ROW_WIDTH;
 
     /**
      * @var int
      */
-    private $instructionsPreferencesBoxRows = 6;
+    private $instructionsPreferencesBoxRows = LpaFormatter::INSTRUCTIONS_PREFERENCES_ROW_COUNT;
 
     /**
      * @var int
@@ -105,32 +106,7 @@ trait LongContentTrait
      */
     private function flattenTextContent($contentIn)
     {
-        $content = '';
-
-        foreach (explode("\r\n", trim($contentIn)) as $contentLine) {
-            $content .= wordwrap($contentLine, $this->fullWidthNumberOfChars, "\r\n", false);
-            $content .= "\r\n";
-        }
-
-        $paragraphs = explode("\r\n", $content);
-
-        for ($i = 0; $i < count($paragraphs); $i++) {
-            $paragraphs[$i] = trim($paragraphs[$i]);
-
-            if (strlen($paragraphs[$i]) == 0) {
-                unset($paragraphs[$i]);
-            } else {
-                // calculate how many space chars to be appended to replace the new line in this paragraph.
-                if (strlen($paragraphs[$i]) % $this->fullWidthNumberOfChars) {
-                    $noOfSpaces = $this->fullWidthNumberOfChars - strlen($paragraphs[$i]) % $this->fullWidthNumberOfChars;
-                    if ($noOfSpaces > 0) {
-                        $paragraphs[$i] .= str_repeat(" ", $noOfSpaces);
-                    }
-                }
-            }
-        }
-
-        return implode("\r\n", $paragraphs);
+        return LpaFormatter::flattenInstructionsOrPreferences($contentIn);
     }
 
     /**
