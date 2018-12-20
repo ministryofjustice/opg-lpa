@@ -106,7 +106,7 @@ trait LongContentTrait
      */
     private function flattenTextContent($contentIn)
     {
-        return LpaFormatter::flattenInstructionsOrPreferences($contentIn, $this->fullWidthNumberOfChars);
+        return LpaFormatter::flattenInstructionsOrPreferences($contentIn);
     }
 
     /**
