@@ -130,6 +130,8 @@
                     As the donor cannot sign the LPA, a trusted person will need to sign 'continuation sheet 3' on the donor's behalf. The continuation sheet is included at the end of the LPA form.
                 {% elseif cnote == 'HAS_TRUST_CORP' %}
                     As the donor appointed a Trust Corporation as an attorney, an authorised person from the corporation will need to sign 'continuation sheet 4'. The continuation sheet is included at the end of the LPA form.
+                {% elseif cnote == 'LONG_INSTRUCTIONS_OR_PREFERENCES' %}
+                    An LPA form only has a small amount of space for the donor's preferences and instructions. Preferences and instructions that would not fit on the form are included at the end of the LPA on 'continuation sheet 2'.
                 {% endif %}
             </p>
         {% endfor %}    
