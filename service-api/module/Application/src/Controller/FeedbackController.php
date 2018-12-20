@@ -37,25 +37,6 @@ class FeedbackController extends AbstractRestfulController
         $this->authorizationService = $authorizationService;
     }
 
-
-    /**
-     * Execute the request
-     *
-     * @param MvcEvent $event
-     * @return mixed|ApiProblem|ApiProblemResponse
-     */
-    public function onDispatch(MvcEvent $event)
-    {
-        if (!$this->authorizationService->isGranted('authenticated')) {
-            return new ApiProblemResponse(
-                new ApiProblem(401, 'You need to be authenticated to access this service.')
-            );
-        }
-
-        return parent::onDispatch($event);
-    }
-
-
     /**
      * Returns all feedback for the given date range
      *
@@ -63,6 +44,13 @@ class FeedbackController extends AbstractRestfulController
      */
     public function getList()
     {
+        if (!$this->authorizationService->isGranted('authenticated')) {
+            return new ApiProblemResponse(
+                new ApiProblem(401, 'You need to be authenticated to access this service.')
+            );
+        }
+
+        //---
 
         $query = $this->params()->fromQuery();
 
