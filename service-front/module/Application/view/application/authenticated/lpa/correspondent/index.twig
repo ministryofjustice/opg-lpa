@@ -146,9 +146,9 @@
                     </label>
                 </div>
 
-                <div class="multiple-choice">
+                <div class="multiple-choice" {{ contactPhone ? '' : 'data-target="contact-by-phone"' }}>
                     {{ formElement(contactByPhone) }}
-                    <label class="text block-label" {{ contactPhone ? '' : 'data-target="contact-by-phone"' }} for="{{ contactByPhone.getAttribute('id') }}">
+                    <label class="text block-label" for="{{ contactByPhone.getAttribute('id') }}">
                     {{ contactByPhone.getOption('label')|raw }}
                     </label>
                 </div>
@@ -164,9 +164,9 @@
                     </div>
                 </div>
 
-                <div class="multiple-choice">
+                <div class="multiple-choice" {{ contactEmail ? '' : 'data-target="contact-by-email"' }}>
                     {{ formElement(contactByEmail) }}
-                    <label class="text block-label" {{ contactEmail ? '' : 'data-target="contact-by-email"' }} for="{{ contactByEmail.getAttribute('id') }}">
+                    <label class="text block-label" for="{{ contactByEmail.getAttribute('id') }}">
                     {{ contactByEmail.getOption('label')|raw }}</label>
                 </div>
 
