@@ -151,10 +151,11 @@
     }
 
     .form-group-error {
+        border-left: 0;
+        
         @include media(tablet) {
             position: relative;
             padding-left: 0;
-            border-left: 0;
             margin-right: 0;
 
             .form-date & {

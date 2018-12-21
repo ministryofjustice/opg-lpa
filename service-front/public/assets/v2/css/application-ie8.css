@@ -2775,9 +2775,9 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     .form-popup .error-summary p {
       margin-bottom: 4px; }
   .form-popup .form-group-error {
+    border-left: 0;
     position: relative;
     padding-left: 0;
-    border-left: 0;
     margin-right: 0; }
     .form-date .form-popup .form-group-error {
       margin-right: 20px; }
