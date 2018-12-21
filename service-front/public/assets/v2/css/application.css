@@ -3210,14 +3210,15 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
           font-size: 22px; } }
     .form-popup .error-summary p {
       margin-bottom: 4px; }
-  @media (min-width: 641px) {
-    .form-popup .form-group-error {
-      position: relative;
-      padding-left: 0;
-      border-left: 0;
-      margin-right: 0; }
-      .form-date .form-popup .form-group-error {
-        margin-right: 20px; } }
+  .form-popup .form-group-error {
+    border-left: 0; }
+    @media (min-width: 641px) {
+      .form-popup .form-group-error {
+        position: relative;
+        padding-left: 0;
+        margin-right: 0; }
+        .form-date .form-popup .form-group-error {
+          margin-right: 20px; } }
   @media (min-width: 641px) {
     .form-popup .form-date .form-group-error {
       margin-right: 20px; } }
