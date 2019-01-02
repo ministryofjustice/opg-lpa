@@ -108,7 +108,11 @@
     }
 
     .form-date {
-        margin-bottom: 0;
+        margin-bottom: 15px;
+
+        .form-group { 
+            margin-bottom: 0; 
+        }
 
         .form-hint {
             @include media(tablet) {
@@ -151,11 +155,9 @@
     }
 
     .form-group-error {
-        border-left: 0;
         
         @include media(tablet) {
             position: relative;
-            padding-left: 0;
             margin-right: 0;
 
             .form-date & {
@@ -186,7 +188,7 @@
 
         .error-message {
             @include media(tablet) {
-                top: -11px;
+                top: 0;
                 left: 0;
                 width: 100%;
             }

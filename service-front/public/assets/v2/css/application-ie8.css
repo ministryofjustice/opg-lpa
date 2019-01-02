@@ -2757,7 +2757,9 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
   .form-popup .button-secondary {
     margin-left: 0; }
   .form-popup .form-date {
-    margin-bottom: 0; }
+    margin-bottom: 15px; }
+    .form-popup .form-date .form-group {
+      margin-bottom: 0; }
     .form-popup .form-date .form-hint {
       display: none; }
   .form-popup .postcodelookup {
@@ -2775,9 +2777,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     .form-popup .error-summary p {
       margin-bottom: 4px; }
   .form-popup .form-group-error {
-    border-left: 0;
     position: relative;
-    padding-left: 0;
     margin-right: 0; }
     .form-date .form-popup .form-group-error {
       margin-right: 20px; }
@@ -2789,7 +2789,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     left: 150px;
     width: 280%; }
   .form-popup .form-date .error-message {
-    top: -11px;
+    top: 0;
     left: 0;
     width: 100%; }
   .form-popup .form-date .error-group {

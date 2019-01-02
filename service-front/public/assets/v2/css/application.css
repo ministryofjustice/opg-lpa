@@ -3186,7 +3186,9 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     .form-popup .button-secondary {
       margin-left: 0; } }
   .form-popup .form-date {
-    margin-bottom: 0; }
+    margin-bottom: 15px; }
+    .form-popup .form-date .form-group {
+      margin-bottom: 0; }
     @media (min-width: 641px) {
       .form-popup .form-date .form-hint {
         display: none; } }
@@ -3210,15 +3212,12 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
           font-size: 22px; } }
     .form-popup .error-summary p {
       margin-bottom: 4px; }
-  .form-popup .form-group-error {
-    border-left: 0; }
-    @media (min-width: 641px) {
-      .form-popup .form-group-error {
-        position: relative;
-        padding-left: 0;
-        margin-right: 0; }
-        .form-date .form-popup .form-group-error {
-          margin-right: 20px; } }
+  @media (min-width: 641px) {
+    .form-popup .form-group-error {
+      position: relative;
+      margin-right: 0; }
+      .form-date .form-popup .form-group-error {
+        margin-right: 20px; } }
   @media (min-width: 641px) {
     .form-popup .form-date .form-group-error {
       margin-right: 20px; } }
@@ -3230,7 +3229,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
       width: 280%; } }
   @media (min-width: 641px) {
     .form-popup .form-date .error-message {
-      top: -11px;
+      top: 0;
       left: 0;
       width: 100%; } }
   .form-popup .form-date .error-group {
@@ -3480,6 +3479,10 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     opacity: .3;
     background-color: #0b0c0c;
     color: #fff; }
+
+.form-date .form-group-error {
+  border-left: 0;
+  padding-left: 0; }
 
 .noscroll {
   position: relative;
