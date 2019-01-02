@@ -50,7 +50,8 @@ abstract class AbstractActorForm extends AbstractLpaForm
             throw new \RuntimeException('Actor model in the actor form must be set before the data can be validated by model');
         }
 
-        $dataForModel = $this->convertFormDataForModel($this->data);
+        // This merge ensured filtered data is returned without losing the metadata.
+        $dataForModel = $this->convertFormDataForModel(array_merge($this->data, $this->getData()));
         $this->actorModel->populate($dataForModel);
         $validation = $this->actorModel->validate();
 
@@ -100,7 +101,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
     protected function convertFormDataForModel($formData)
     {
         //  If it exists transfer the dob array into a string
-        if (array_key_exists('dob-date', $formData)) {
+        if (array_key_exists('dob-date', $formData) && is_array($formData['dob-date'])) {
             $dobDateArr = $formData['dob-date'];
             $dobDateStr = null;
 
