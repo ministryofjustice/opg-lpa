@@ -2777,8 +2777,10 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     .form-popup .error-summary p {
       margin-bottom: 4px; }
   .form-popup .form-group-error {
+    border-left: 0;
     position: relative;
-    margin-right: 0; }
+    margin-right: 0;
+    padding-left: 0; }
     .form-date .form-popup .form-group-error {
       margin-right: 20px; }
   .form-popup .form-date .form-group-error {
@@ -2789,7 +2791,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     left: 150px;
     width: 280%; }
   .form-popup .form-date .error-message {
-    top: 0;
+    top: 3px;
     left: 0;
     width: 100%; }
   .form-popup .form-date .error-group {

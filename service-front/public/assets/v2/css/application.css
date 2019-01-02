@@ -3212,12 +3212,15 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
           font-size: 22px; } }
     .form-popup .error-summary p {
       margin-bottom: 4px; }
-  @media (min-width: 641px) {
-    .form-popup .form-group-error {
-      position: relative;
-      margin-right: 0; }
-      .form-date .form-popup .form-group-error {
-        margin-right: 20px; } }
+  .form-popup .form-group-error {
+    border-left: 0; }
+    @media (min-width: 641px) {
+      .form-popup .form-group-error {
+        position: relative;
+        margin-right: 0;
+        padding-left: 0; }
+        .form-date .form-popup .form-group-error {
+          margin-right: 20px; } }
   @media (min-width: 641px) {
     .form-popup .form-date .form-group-error {
       margin-right: 20px; } }
@@ -3229,7 +3232,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
       width: 280%; } }
   @media (min-width: 641px) {
     .form-popup .form-date .error-message {
-      top: 0;
+      top: 3px;
       left: 0;
       width: 100%; } }
   .form-popup .form-date .error-group {
