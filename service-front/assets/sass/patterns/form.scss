@@ -6,3 +6,11 @@
 		@extend .form-control-error;
 	}
 }
+
+.form-date {
+
+	.form-group-error {
+		border-left: 0;
+		padding-left: 0;
+	}
+}
