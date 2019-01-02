@@ -62,15 +62,14 @@
 
     <h2 class="heading-medium flush--top">How would you rate your experience with this service?</h2>
 
-    <fieldset>
-        <legend class="group text">
-        </legend>
-
-        <div class="form-group {{ type.getMessages|length >0 ? 'form-group-error'}}">
-            {{ formElementErrorsV2(type) }}
-            {{ formElement(type) }}
-        </div>
-    </fieldset>
+    <div class="form-group {{ type.getMessages|length >0 ? 'form-group-error'}}">
+        <fieldset>
+            <legend class="visually-hidden">Experience rating</legend>
+                {{ formElementErrorsV2(type) }}
+                {{ formRadio(type) }}
+            </div>
+        </fieldset>
+    </div>
 
     <h2 class="heading-medium text">Please take a moment to tell us about your experience, what worked and what did not.</h2>
 
