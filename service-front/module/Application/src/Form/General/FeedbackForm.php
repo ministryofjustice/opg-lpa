@@ -29,52 +29,22 @@ class FeedbackForm extends AbstractCsrfForm
                     'very-satisfied' => [
                         'label' => 'Very satisfied',
                         'value' => 'very-satisfied',
-                        'label_attributes' => [
-                            'for' => 'very_satisfied_radio',
-                        ],
-                        'attributes' => [
-                            'id' => 'very_satisfied_radio',
-                        ],
                     ],
                     'satisfied' => [
                         'label' => 'Satisfied',
                         'value' => 'satisfied',
-                        'label_attributes' => [
-                            'for' => 'satisfied_radio',
-                        ],
-                        'attributes' => [
-                            'id' => 'satisfied_radio',
-                        ],                        
                     ],
                     'neither-satisfied-or-dissatisfied' => [
                         'label' => 'Neither satisfied nor dissatisfied',
                         'value' => 'neither-satisfied-or-dissatisfied',
-                        'label_attributes' => [
-                            'for' => 'neither_satisfied_radio',
-                        ],
-                        'attributes' => [
-                            'id' => 'neither_satisfied_radio',
-                        ],                        
                     ],
                     'dissatisfied' => [
                         'label' => 'Dissatisfied',
                         'value' => 'dissatisfied',
-                        'label_attributes' => [
-                            'for' => 'dissatisfied_radio',
-                        ],
-                        'attributes' => [
-                            'id' => 'dissatisfied_radio',
-                        ],                        
                     ],
                     'very-dissatisfied' => [
                         'label' => 'Very dissatisfied',
                         'value' => 'very-dissatisfied',
-                        'label_attributes' => [
-                            'for' => 'very_dissatisfied_radio',
-                        ],
-                        'attributes' => [
-                            'id' => 'very_dissatisfied_radio',
-                        ],                        
                     ],
                 ],
                 'disable_inarray_validator' => true,
