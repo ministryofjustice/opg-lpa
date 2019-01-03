@@ -16,14 +16,7 @@ class ApplicantForm extends AbstractMainFlowForm
                     'donor' => [
                         'value' => 'donor',
                     ],
-                    'attorney' => [
-                        'label_attributes' => [
-                            'for' => 'attorney_option_radio',
-                        ],
-                        'attributes' => [
-                            'id' => 'attorney_option_radio',
-                        ]
-                    ],
+                    'attorney' => [],
                 ],
             ],
         ],
