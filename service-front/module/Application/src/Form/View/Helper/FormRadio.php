@@ -36,6 +36,8 @@ class FormRadio extends ZFFormRadioHelper
 
         if (isset($options[$option]['value'])) {
             $attributes['id'] = $name . '-' . $options[$option]['value'];
+        } else {
+            $attributes['id'] = $name . '-' . $option;
         }
 
         $options = [
@@ -97,20 +99,18 @@ class FormRadio extends ZFFormRadioHelper
         $combinedMarkup = [];
         $count          = 0;
 
+        // If multiple options are being rendered unset the id as it can't be the same for all of them
+        if (count($options) > 1 && array_key_exists('id', $attributes)) {
+            unset($attributes['id']);
+        }
+
         foreach ($options as $key => $optionSpec) {
             $count++;
-            if ($count > 1 && array_key_exists('id', $attributes)) {
-                unset($attributes['id']);
-            }
 
             $value           = '';
             $label           = '';
             $inputAttributes = $attributes;
             $labelAttributes = $globalLabelAttributes;
-
-            if (isset($attributes['id'])) {
-                $labelAttributes['for'] = $attributes['id'];
-            }
 
             $selected        = (isset($inputAttributes['selected'])
                 && $inputAttributes['type'] != 'radio'
@@ -152,6 +152,11 @@ class FormRadio extends ZFFormRadioHelper
             $inputAttributes['value']    = $value;
             $inputAttributes['checked']  = $selected;
             $inputAttributes['disabled'] = $disabled;
+            $inputAttributes['id'] = isset($attributes['id']) ?
+                $attributes['id'] :
+                $element->getName() . '-' . $value;
+
+            $labelAttributes['for'] = $inputAttributes['id'];
 
             $input = sprintf(
                 '<input %s%s',
