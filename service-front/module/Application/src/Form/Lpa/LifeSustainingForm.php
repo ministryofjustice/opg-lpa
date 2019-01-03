@@ -9,6 +9,7 @@ class LifeSustainingForm extends AbstractMainFlowForm
     protected $formElements = [
         'canSustainLife' => [
             'type'      => 'Radio',
+            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
             'required'  => true,
             'options'   => [
                 'value_options' => [
