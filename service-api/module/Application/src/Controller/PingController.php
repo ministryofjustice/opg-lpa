@@ -3,8 +3,6 @@
 namespace Application\Controller;
 
 use DynamoQueue\Queue\Client as DynamoQueueClient;
-use MongoDB\Database as MongoDatabase;
-use MongoDB\Driver\Command;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
@@ -34,7 +32,6 @@ class PingController extends AbstractRestfulController
      *
      * @param DynamoQueueClient $dynamoQueueClient
      * @param ZendDbAdapter $database
-     * @param MongoDatabase $mongo
      */
     public function __construct(DynamoQueueClient $dynamoQueueClient, ZendDbAdapter $database)
     {

@@ -16,7 +16,7 @@ use DateTime;
 use Exception;
 
 /**
- * Generate LPA stats and saves the results back into MongoDB.
+ * Generate LPA stats and saves the results back into the Database.
  * To run, bash into apiv2, cd to app and run 'php public/index.php generate-stats'
  *
  * Class Stats

@@ -4,13 +4,11 @@ namespace ApplicationTest\ControllerFactory;
 
 use Application\Controller\PingController;
 use Application\ControllerFactory\PingControllerFactory;
-use Application\Model\DataAccess\Mongo\DatabaseFactory;
 use DynamoQueue\Queue\Client as DynamoQueueClient;
 use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use MongoDB\Database;
 use Zend\Db\Adapter\Adapter;
 
 class PingControllerFactoryTest extends MockeryTestCase
