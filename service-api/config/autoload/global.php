@@ -58,69 +58,6 @@ return [
                 'password'  => getenv('OPG_LPA_POSTGRES_PASSWORD') ?: null,
             ],
         ],
-        'mongo' => [
-            'default' => [
-                'hosts' => [
-                    'mongodb-01:27017',
-                    'mongodb-02:27017',
-                    'mongodb-03:27017'
-                ],
-                'options' => [
-                    'db' => 'opglpa-api',
-                    'username' => 'opglpa-api',
-                    'replicaSet' => 'rs0',
-                    'connect' => false,
-                    'connectTimeoutMS' => 1000,
-                    'socketTimeoutMS' => 600000,
-                    'w' => 'majority',
-                    'ssl' => true,
-                    'password' => getenv('OPG_LPA_API_MONGODB_PASSWORD') ?: null,
-                ],
-                'driverOptions' => [
-                    'weak_cert_validation' => true //Allows usage of self signed certificates
-                ],
-            ],
-            'auth' => [
-                'hosts' => [
-                    'mongodb-01:27017',
-                    'mongodb-02:27017',
-                    'mongodb-03:27017'
-                ],
-                'options' => [
-                    'db' => 'opglpa-auth',
-                    'username' => 'opglpa-auth',
-                    'replicaSet' => 'rs0',
-                    'connect' => false,
-                    'connectTimeoutMS' => 1000,
-                    'w' => 'majority',
-                    'ssl' => true,
-                    'password' => getenv('OPG_LPA_AUTH_MONGODB_PASSWORD') ?: null,
-                ],
-                'driverOptions' => [
-                    'weak_cert_validation' => true //Allows usage of self signed certificates
-                ],
-            ],
-        ], // mongo
-
-        // Used to access generated PDFs.
-        'redis' => [
-            'default' => [
-                'host' => getenv('OPG_LPA_COMMON_RESQUE_REDIS_HOST') ?: null,
-                'port' => 6379,
-            ],
-        ], // redis
-
-        // The queue for PDFs to be generated.
-        'resque' => [
-
-            'default' => [
-
-                'host' => getenv('OPG_LPA_COMMON_RESQUE_REDIS_HOST') ?: null,
-                'port' => 6379,
-
-            ],
-
-        ], // resque
 
     ],
 

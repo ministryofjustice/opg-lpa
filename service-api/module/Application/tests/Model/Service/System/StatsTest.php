@@ -14,7 +14,7 @@ class StatsTest extends AbstractServiceTest
     {
         $apiLpaCollection = Mockery::mock(ApplicationRepositoryInterface::class);
 
-        //Return 1 for all counts to aid mocking mongo calls
+        //Return 1 for all counts to aid mocking db calls
         $apiLpaCollection->shouldReceive('countBetween')->andReturn(1);
         $apiLpaCollection->shouldReceive('countStartedForType')->andReturn(1);
         $apiLpaCollection->shouldReceive('countCreatedForType')->andReturn(1);

@@ -7,7 +7,6 @@ use DynamoQueue\Queue\Client as DynamoQueueClient;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use MongoDB\Database;
 use Opg\Lpa\Logger\Logger;
 use Zend\Db\Adapter\Adapter as ZendDbAdapter;
 use Zend\View\Model\JsonModel;
