@@ -21,12 +21,6 @@
 {% set whoIsRegisteringValueOptions = {
 	'donor' : {
         label: "The donor - " ~ lpa.document.donor.name,
-        label_attributes: {
-            for: 'whoIsRegistering-donor',
-        },
-        attributes: {
-            id: 'whoIsRegistering-donor'
-        },
         value: whoIsRegisteringValueOptions['donor'].value
 		},
 	'attorney' : whoIsRegisteringValueOptions['attorney']

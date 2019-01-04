@@ -141,9 +141,9 @@
                 </div>
                 {{ formElementErrorsV2(whoOptions['organisation']) }}
 
-                <div class="multiple-choice">
+                <div class="multiple-choice" data-target="other-input">
                     {{ formInput(whoOptions['other']) }}
-                    <label class="text block-label" data-target="other-input" for="{{ whoOptions['other'].getAttribute('id') }}">
+                    <label class="text block-label" for="{{ whoOptions['other'].getAttribute('id') }}">
                         {{ whoOptions['other'].getOption('label')|raw }}
                     </label>
                 </div>
