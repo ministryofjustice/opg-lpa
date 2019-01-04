@@ -49,9 +49,9 @@
             
                 {{ formElementErrorsV2(reductionOptionsElement) }}
                 
-                <div class="multiple-choice">
+                <div class="multiple-choice" data-target="receives-benefits">
                     {{ formInput(reductionOptions['reducedFeeReceivesBenefits']) }}
-                    <label class="block-label" data-target="receives-benefits" for="{{ reductionOptions['reducedFeeReceivesBenefits'].getAttribute('id') }}">
+                    <label class="block-label" for="{{ reductionOptions['reducedFeeReceivesBenefits'].getAttribute('id') }}">
                         {{ reductionOptions['reducedFeeReceivesBenefits'].getOption('label')|raw }}
                     </label>
                 </div>
@@ -64,9 +64,9 @@
                     <p>If you do not send the right proof, your application will be delayed. If your application to pay a reduced fee is rejected, the donor will have to pay the rest of the fee.</p>
                 </div>
 
-                <div class="multiple-choice">
+                <div class="multiple-choice" data-target="universal-credit">
                     {{ formInput(reductionOptions['reducedFeeUniversalCredit']) }}
-                    <label class="text block-label" data-target="universal-credit" for="{{ reductionOptions['reducedFeeUniversalCredit'].getAttribute('id') }}">
+                    <label class="text block-label" for="{{ reductionOptions['reducedFeeUniversalCredit'].getAttribute('id') }}">
                         {{ reductionOptions['reducedFeeUniversalCredit'].getOption('label')|raw }}
                     </label>
                 </div>
@@ -83,9 +83,9 @@
                     <p>Once we receive your application, we’ll contact you to let you know how much the fee will be and to arrange payment.</p>
                 </div>
 
-                <div class="multiple-choice">
+                <div class="multiple-choice" data-target="reduced-fee-low-income">
                     {{ formInput(reductionOptions['reducedFeeLowIncome']) }}
-                    <label class="text block-label" data-target="reduced-fee-low-income" for="{{ reductionOptions['reducedFeeLowIncome'].getAttribute('id') }}">
+                    <label class="text block-label" for="{{ reductionOptions['reducedFeeLowIncome'].getAttribute('id') }}">
                         {{ reductionOptions['reducedFeeLowIncome'].getOption('label')|raw }}
                     </label>
                 </div>

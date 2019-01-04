@@ -31,44 +31,28 @@
 
 {% set howValueOptions = {
 	'jointly-attorney-severally' :{
-		attributes: {
-			id: 'how-jointly-attorney-severally'
-		},
 		label: '<strong class="bold-small">Jointly and severally</strong>
 				<span class="text form-hint form-hint--strong">
 				Replacement attorneys can make decisions on their own or together. Most people choose this option because it’s the most practical.
 				</span>',
-		label_attributes: {
-			for: 'how-jointly-attorney-severally'
-		},
 		value: currentHowValueOptions['jointly-attorney-severally'].value
 	},
 	'jointly' : {
-		attributes: {
-			id: 'how-jointly'
-		},
 		label: '<strong class="bold-small">Jointly</strong>
 				<span class="text form-hint form-hint--strong">
 				Replacement attorneys must agree unanimously on every decision, however big or small. If one replacement attorney can no longer act, the others will not be able to act either, unless the donor states otherwise in their instructions.
 				</span>',
-		label_attributes: {
-			for: 'how-jointly'
-		},
 		value: currentHowValueOptions['jointly'].value
 	},
 	'depends' : {
-		attributes: {
-			id: 'how-depends'
-		},
 		label: '<strong class="text bold-small">Jointly for some decisions, and jointly and severally for other decisions</strong>
 				<span class="text form-hint form-hint--strong">
 				Replacement attorneys must agree unanimously on some decisions, but can make others on their own. The donor must state which decisions need to be agreed unanimously.
 				</span>',
-		label_attributes: {
-			for: 'how-depends',
+		value: currentHowValueOptions['depends'].value,
+		'div-attributes': {
 			'data-target': 'decisions-details'
-		},
-		value: currentHowValueOptions['depends'].value
+		}
 	}
 }%}
 
@@ -102,11 +86,11 @@
 
 	{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
+	<div class="form-group {{ how.getMessages|length > 0 ? 'form-group-error'}}">
 	<fieldset id="how">
         <legend class="visually-hidden">How should the replacement attorneys make decisions?</legend>
             <h2 class="heading-medium flush--top">How should the replacement attorneys make decisions?</h2>
-
-            <div class="form-group {{ how.getMessages|length > 0 ? 'form-group-error'}}">
+            
                 {{ formElementErrorsV2(how) }}
                 {{ formRadio(how) }}
                 <div id="decisions-details" class="panel panel-border-narrow js-hidden">
@@ -115,8 +99,8 @@
                     </p>
                     {{ macros.formGroup(howDetails) }}
                 </div>
-            </div>
-    </fieldset>
+	    </fieldset>
+	</div>
 
     <div class="form-group">
         {{ formElement(form.get('save')) }}
