@@ -64,7 +64,7 @@
 
     <div class="form-group {{ type.getMessages|length >0 ? 'form-group-error'}}">
         <fieldset>
-            <legend class="visually-hidden">Experience rating</legend>
+            <legend class="visually-hidden" id="rating">Experience rating</legend>
                 {{ formElementErrorsV2(type) }}
                 {{ formRadio(type) }}
             </div>
