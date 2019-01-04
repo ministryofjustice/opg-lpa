@@ -93,6 +93,55 @@ class FormRadioTest extends MockeryTestCase
         $this->assertEquals($expected, $html);
     }
 
+    public function testRenderGroupAndIndividualDivAttributes()
+    {
+        $options = [
+            'first'  => [
+                'value' => 'one',
+                'label' => 'One',
+                'div-attributes' => [
+                    'class' => 'another-class',
+                    'data-target' => 'target-one',
+                ],
+            ],
+            'second'  => [
+                'value' => 'two',
+                'label' => 'Two',
+            ],
+            'third'  => [
+                'value' => 'three',
+                'label' => 'Three',
+                'div-attributes' => [
+                    'data-target' => 'target-three',
+                ]
+            ],
+        ];
+
+        $radio = new Radio();
+        $radio->setName('test-name');
+        $radio->setAttributes(['div-attributes' => ['class' => 'all-class']]);
+        $radio->setValueOptions($options);
+
+        $helper = new FormRadio();
+
+        $html = $helper($radio);
+
+        $expected = '<div class="another-class" data-target="target-one">' .
+            '<input type="radio" name="test-name" value="one" id="test-name-one">' .
+            '<label for="test-name-one">One</label>' .
+            '</div>' .
+            '<div class="all-class">' .
+            '<input type="radio" name="test-name" value="two" id="test-name-two">' .
+            '<label for="test-name-two">Two</label>' .
+            '</div>' .
+            '<div class="all-class" data-target="target-three">' .
+            '<input type="radio" name="test-name" value="three" id="test-name-three">' .
+            '<label for="test-name-three">Three</label>' .
+            '</div>';
+
+        $this->assertEquals($expected, $html);
+    }
+
     public function testOutputOption()
     {
         $options = [

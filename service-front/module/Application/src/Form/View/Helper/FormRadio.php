@@ -80,13 +80,6 @@ class FormRadio extends ZFFormRadioHelper
         $globalLabelAttributes = [];
         $closingBracket   = $this->getInlineClosingBracket();
 
-        // Setup div opening
-        $divOpen = '<div>';
-
-        if (isset($attributes['div-attributes']['class'])) {
-            $divOpen = '<div class="' . $attributes['div-attributes']['class'] . '">';
-        }
-
         // Setup label attributes common to all options
         if ($element instanceof LabelAwareInterface) {
             $globalLabelAttributes = $element->getLabelAttributes();
@@ -173,6 +166,21 @@ class FormRadio extends ZFFormRadioHelper
 
             if (! $element instanceof LabelAwareInterface || ! $element->getLabelOption('disable_html_escape')) {
                 $label = $escapeHtmlHelper($label);
+            }
+
+
+            // Setup wrapping div opening
+            $divAttributes = isset($attributes['div-attributes']) ? $attributes['div-attributes'] : [];
+
+            // If this option has it's own div attributes add them in
+            if (isset($optionSpec['div-attributes'])) {
+                $divAttributes = array_merge($divAttributes, $optionSpec['div-attributes']);
+            }
+
+            $divOpen = '<div>';
+
+            if (count($divAttributes)) {
+                $divOpen = '<div ' . $this->createAttributesString($divAttributes) . '>';
             }
 
             $markup  = $divOpen .
