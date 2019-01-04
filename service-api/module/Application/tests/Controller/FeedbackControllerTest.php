@@ -62,6 +62,8 @@ class FeedbackControllerTest extends MockeryTestCase
 
         $this->pluginManager->shouldReceive('get')->andReturn($paramsPlugin);
 
+        $this->authorizationServiceService->shouldReceive('isGranted')->andReturn(true);
+
         //----------------------------------
 
         $this->feedbackService->shouldReceive('get');
@@ -81,11 +83,32 @@ class FeedbackControllerTest extends MockeryTestCase
 
         $this->pluginManager->shouldReceive('get')->andReturn($paramsPlugin);
 
+        $this->authorizationServiceService->shouldReceive('isGranted')->andReturn(true);
+
         //----------------------------------
 
         $result = $this->controller->getList();
 
         $this->assertInstanceOf(ApiProblemResponse::class, $result);
+        $this->assertEquals(400, $result->getStatusCode());
+    }
+
+    public function testWithoutAuthorisation()
+    {
+        $paramsPlugin = Mockery::mock(Params::class);
+        $paramsPlugin->shouldReceive('__invoke')->andReturn($paramsPlugin);
+        $paramsPlugin->shouldReceive('fromQuery')->andReturn([]);
+
+        $this->pluginManager->shouldReceive('get')->andReturn($paramsPlugin);
+
+        $this->authorizationServiceService->shouldReceive('isGranted')->andReturn(false);
+
+        //----------------------------------
+
+        $result = $this->controller->getList();
+
+        $this->assertInstanceOf(ApiProblemResponse::class, $result);
+        $this->assertEquals(401, $result->getStatusCode());
     }
 
     public function testCreateWithNoData()
