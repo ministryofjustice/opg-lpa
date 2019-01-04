@@ -32,34 +32,15 @@
 
 {% set whenOptions = {
 	'first' : {
-		attributes: {
-			id: 'one-attorney-cannot-act'
-		},
 		label: 'As soon as <strong class="bold-small">one</strong> of the original attorneys can no longer act, all the replacement attorneys should step in together',
-		label_attributes: {
-			for: 'one-attorney-cannot-act'
-		},
 		value: currentWhenOptions['first'].value
 	},
 	'last' : {
-		attributes: {
-			id: 'no-attorney-can-act'
-		},
 		label: 'When <strong class="bold-small">none</strong> of the original attorneys can act, all the replacement attorneys should step in together',
-		label_attributes: {
-			for: 'no-attorney-can-act'
-		},
 		value: currentWhenOptions['last'].value
 	},
 	'depends' : {
-		attributes: {
-			id: 'when-depends'
-		},
 		label: 'In some other way...',
-		label_attributes: {
-			for: 'when-depends',
-			'data-target': 'step-in-details'
-		},
 		value: currentWhenOptions['depends'].value,
 		'div-attributes': {
 			'data-target': 'step-in-details'
@@ -115,8 +96,6 @@
 						</p>
 						{{ macros.formGroup(whenDetails) }}
 	                </div>
-
-	            </div>
 	        </fieldset>
 	    </div>
 
