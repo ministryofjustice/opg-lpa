@@ -21,24 +21,11 @@
     bindEvents: function () {
       moj.Events.on('RepeatApplication.render', this.render);
     },
-    displayCaseNumber: function (duration) {
-      if ($('#is-repeat-application:checked').length) {
-          $('.js-case-number').removeClass('js-hidden');
-      }
-      else {
-          $('.js-case-number').addClass('js-hidden');
-      }
-
-    },
     render: function () {
-      this.displayCaseNumber(0);
       this.initialiseEvents();
 
     },
-    onRepeatApplicationFormChangeHandler: function () {
-      this.displayCaseNumber(500);
-    },
-    onRepeatApplicationFormClickHandler: function (evt) {
+     onRepeatApplicationFormClickHandler: function (evt) {
       var tplDialogConfirm = lpa.templates['dialog.confirmRepeatApplication'],
         html,
         formToSubmit,
@@ -87,10 +74,6 @@
     },
     initialiseEvents: function () {
       var self = this;
-
-      $('form#form-repeat-application').on('change', 'input[type="radio"]', function (evt) {
-        self.onRepeatApplicationFormChangeHandler(evt);
-      });
 
       $('form#form-repeat-application').on('click', 'input[type="submit"]', function (evt) {
         self.onRepeatApplicationFormClickHandler(evt);

@@ -24,22 +24,13 @@
 {% set isRepeatApplicationValueOptions = {
     'is-repeat': {
         label: "Yes",
-        label_attributes: {
-            for: 'is-repeat-application'
-        },
-        attributes: {
-             id: 'is-repeat-application'
-        },
-        value: isRepeatApplicationValueOptions['is-repeat'].value
+        value: isRepeatApplicationValueOptions['is-repeat'].value,
+        'div-attributes': {
+            'data-target': 'repeat-application-details'
+        }        
     },
     'is-new': {
         label: "No",
-        label_attributes: {
-            for: 'is-new'
-        },
-       attributes: {
-            id: 'is-new'
-        },
         value: isRepeatApplicationValueOptions['is-new'].value
     }
 } %}
@@ -97,7 +88,7 @@
                     {{ formElementErrorsV2(isRepeatApplication) }}
                     {{ formRadio(isRepeatApplication) }}
 
-                    <div class="panel panel-border-narrow js-case-number js-hidden">
+                    <div class="panel panel-border-narrow js-hidden" id="repeat-application-details">
                         <h3 class="visually-hidden">Repeat application details</h3>
 
                         {{ macros.formGroup(repeatCaseNumber) }}
