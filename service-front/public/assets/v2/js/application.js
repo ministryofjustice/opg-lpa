@@ -24572,30 +24572,17 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
     bindEvents: function () {
       moj.Events.on('RepeatApplication.render', this.render);
     },
-    displayCaseNumber: function (duration) {
-      if ($('#is-repeat-application:checked').length) {
-          $('.js-case-number').removeClass('js-hidden');
-      }
-      else {
-          $('.js-case-number').addClass('js-hidden');
-      }
-
-    },
     render: function () {
-      this.displayCaseNumber(0);
       this.initialiseEvents();
 
     },
-    onRepeatApplicationFormChangeHandler: function () {
-      this.displayCaseNumber(500);
-    },
-    onRepeatApplicationFormClickHandler: function (evt) {
+     onRepeatApplicationFormClickHandler: function (evt) {
       var tplDialogConfirm = lpa.templates['dialog.confirmRepeatApplication'],
         html,
         formToSubmit,
         formSubmitted = false;
 
-      if ($('#is-repeat-application:checked').length) {
+      if ($('#isRepeatApplication-is-repeat:checked').length) {
 
         formToSubmit = evt.target.form;
         evt.preventDefault();
@@ -24638,10 +24625,6 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
     },
     initialiseEvents: function () {
       var self = this;
-
-      $('form#form-repeat-application').on('change', 'input[type="radio"]', function (evt) {
-        self.onRepeatApplicationFormChangeHandler(evt);
-      });
 
       $('form#form-repeat-application').on('click', 'input[type="submit"]', function (evt) {
         self.onRepeatApplicationFormClickHandler(evt);
