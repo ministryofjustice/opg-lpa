@@ -662,7 +662,7 @@ class ServiceTest extends AbstractServiceTest
 
     private function setUpdateOneLpaExpectations(User $user, Lpa $lpa, Lpa $existingLpa = null)
     {
-        //  If an existing (from Mongo) version of the LPA has not been provided then just use the LPA passed
+        //  If an existing (from the DB) version of the LPA has not been provided then just use the LPA passed
         if (is_null($existingLpa)) {
             $existingLpa = $lpa;
         }
