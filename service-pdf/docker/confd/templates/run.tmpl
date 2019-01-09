@@ -1,4 +1,4 @@
 #!/bin/sh
 
 rm -rf /tmp/pdf_ramdisk/*
-exec su -c "/app/vendor/bin/dynamo-queue --endpoint {{getv "/opg/lpa/common/dynamodb/endpoint"}} --region eu-west-1 --table {{getv "/opg/lpa/common/queue/dynamodb/table"}} >> /var/log/app/queue.log 2>&1" app
+exec su -c "/app/bin/start.sh >> /var/log/app/queue.log 2>&1" app
