@@ -3,10 +3,10 @@
 namespace ApplicationTest\Form\View\Helper;
 
 use Application\Form\View\Helper\FormRadio;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
+use PHPUnit\Framework\TestCase;
 use Zend\Form\Element\Radio;
 
-class FormRadioTest extends MockeryTestCase
+class FormRadioTest extends TestCase
 {
     public function testRender()
     {
