@@ -58,7 +58,6 @@ return [
                 'password'  => getenv('OPG_LPA_POSTGRES_PASSWORD') ?: null,
             ],
         ],
-
     ],
 
     'pdf' => [
@@ -66,7 +65,6 @@ return [
         'encryption' => [
             // Keys MUST be a 32 character ASCII string
             'keys' => [
-                'queue' => getenv('OPG_LPA_API_PDF_ENCRYPTION_KEY_QUEUE') ?: null,       // Key for JSON pushed onto the queue
                 'document' => getenv('OPG_LPA_API_PDF_ENCRYPTION_KEY_DOCUMENT') ?: null, // Key for generated PDFs in the file store
             ],
             'options' => [
@@ -90,6 +88,18 @@ return [
             ], // S3
 
         ], // cache
+
+        'queue' => [
+            'sqs' => [
+                'settings' => [
+                    'url' => getenv('OPG_LPA_COMMON_PDF_QUEUE_URL') ?: null,
+                ],
+                'client' => [
+                    'region' => 'eu-west-1',
+                    'version' => '2012-11-05',
+                ],
+            ],
+        ],
 
         'DynamoQueue' => [
             'settings' => [

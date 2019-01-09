@@ -4,12 +4,12 @@ namespace ApplicationTest\ControllerFactory;
 
 use Application\Controller\PingController;
 use Application\ControllerFactory\PingControllerFactory;
-use DynamoQueue\Queue\Client as DynamoQueueClient;
 use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Zend\Db\Adapter\Adapter;
+use Aws\Sqs\SqsClient;
 
 class PingControllerFactoryTest extends MockeryTestCase
 {
@@ -32,12 +32,16 @@ class PingControllerFactoryTest extends MockeryTestCase
     public function testInvoke()
     {
         $this->container->shouldReceive('get')
-            ->with('DynamoQueueClient')
-            ->andReturn(Mockery::mock(DynamoQueueClient::class))
-            ->once();
-        $this->container->shouldReceive('get')
             ->with('ZendDbAdapter')
             ->andReturn(Mockery::mock(Adapter::class))
+            ->once();
+        $this->container->shouldReceive('get')
+            ->with('SqsClient')
+            ->andReturn(Mockery::mock(SqsClient::class))
+            ->once();
+        $this->container->shouldReceive('get')
+            ->with('config')
+            ->andReturn(['pdf'=>['queue'=>['sqs'=>['settings'=>['url'=>'http://test']]]]])
             ->once();
 
         $controller = $this->factory->__invoke($this->container, PingController::class);

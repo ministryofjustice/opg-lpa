@@ -3,10 +3,10 @@
 namespace ApplicationTest\Controller;
 
 use Application\Controller\PingController;
-use DynamoQueue\Queue\Client as DynamoQueueClient;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use Aws\Sqs\SqsClient;
 use Opg\Lpa\Logger\Logger;
 use Zend\Db\Adapter\Adapter as ZendDbAdapter;
 use Zend\View\Model\JsonModel;
@@ -19,14 +19,14 @@ class PingControllerTest extends MockeryTestCase
     private $controller;
 
     /**
-     * @var DynamoQueueClient|MockInterface
-     */
-    private $queueClient;
-
-    /**
      * @var ZendDbAdapter|MockInterface
      */
     private $database;
+
+    /**
+     * @var SqsClient|MockInterface
+     */
+    private $sqsClient;
 
     /**
      * @var Logger|MockInterface
@@ -35,11 +35,11 @@ class PingControllerTest extends MockeryTestCase
 
     public function setUp()
     {
-        $this->queueClient = Mockery::mock(DynamoQueueClient::class);
-
         $this->database = Mockery::mock(ZendDbAdapter::class);
 
-        $this->controller = new PingController($this->queueClient, $this->database);
+        $this->sqsClient = Mockery::mock(SqsClient::class);
+
+        $this->controller = new PingController($this->database, $this->sqsClient, 'http://test');
 
         $this->logger = Mockery::mock(Logger::class);
         $this->controller->setLogger($this->logger);
@@ -47,8 +47,13 @@ class PingControllerTest extends MockeryTestCase
 
     public function testIndexActionSuccess()
     {
-        $this->queueClient->shouldReceive('countWaitingJobs')
-            ->andReturn(12);
+        $this->sqsClient->shouldReceive('getQueueAttributes')
+            ->andReturn([
+                'Attributes' => [
+                    'ApproximateNumberOfMessages' => 1,
+                    'ApproximateNumberOfMessagesNotVisible' => 2,
+                ]
+            ]);
 
         $pingResult = [
             'database' => [
@@ -58,7 +63,7 @@ class PingControllerTest extends MockeryTestCase
             'queue' => [
                 'details' => [
                     'available' => true,
-                    'length' => 12,
+                    'length' => 3,
                     'lengthAcceptable' => true,
                 ],
                 'ok' => true,

@@ -39,8 +39,8 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         ],
         Pdfs\Service::class => [
             'setPdfConfig'         => 'config',
-            'setDynamoQueueClient' => 'DynamoQueueClient',
             'setS3Client'          => 'S3Client',
+            'setSqsClient'         => 'SqsClient',
         ],
         Seed\Service::class => [
             'setApplicationsService' => ApplicationsService::class,
