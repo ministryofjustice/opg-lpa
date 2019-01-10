@@ -3,6 +3,9 @@
 namespace ApplicationTest\Controller\Version2\Auth;
 
 use Application\Controller\Version2\Auth\AuthenticateController;
+use DateTime;
+use Mockery;
+use Zend\Http\Header\HeaderInterface;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
 
@@ -195,5 +198,101 @@ class AuthenticateControllerTest extends AbstractAuthControllerTest
 
         $this->assertEquals(400, $data['status']);
         $this->assertEquals('Either token or username & password must be passed', $data['detail']);
+    }
+
+    public function testSessionExpiryAction()
+    {
+        $header = Mockery::mock(HeaderInterface::class);
+        $header->shouldReceive('getFieldValue')->once()->andReturn('asdfgh123456');
+
+        $this->request->shouldReceive('getHeader')->withArgs(['CheckedToken'])->once()->andReturn($header);
+
+        $this->authenticationService->shouldReceive('withToken')
+            ->once()
+            ->withArgs(['asdfgh123456', false])
+            ->andReturn(['expiresIn' => 123,  'expiresAt' => new DateTime('2018-2-1 00:00:00')]);
+
+        $controller = $this->getController(AuthenticateController::class);
+
+        $result = $controller->sessionExpiryAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals(['valid' => true, 'remainingSeconds' => 123], $result->getVariables());
+    }
+
+    public function testSessionExpiryActionExpired()
+    {
+        $header = Mockery::mock(HeaderInterface::class);
+        $header->shouldReceive('getFieldValue')->once()->andReturn('asdfgh123456');
+
+        $this->request->shouldReceive('getHeader')->withArgs(['CheckedToken'])->once()->andReturn($header);
+
+        $this->authenticationService->shouldReceive('withToken')
+            ->once()
+            ->withArgs(['asdfgh123456', false])
+            ->andReturn('token-has-expired');
+
+        $controller = $this->getController(AuthenticateController::class);
+
+        $result = $controller->sessionExpiryAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals(['valid' => false, 'problem' => 'token-has-expired'], $result->getVariables());
+    }
+
+    public function testSessionExpiryActionTokenInvalid()
+    {
+        $header = Mockery::mock(HeaderInterface::class);
+        $header->shouldReceive('getFieldValue')->once()->andReturn('asdfgh123456');
+
+        $this->request->shouldReceive('getHeader')->withArgs(['CheckedToken'])->once()->andReturn($header);
+
+        $this->authenticationService->shouldReceive('withToken')
+            ->once()
+            ->withArgs(['asdfgh123456', false])
+            ->andReturn('invalid-token');
+
+        $controller = $this->getController(AuthenticateController::class);
+
+        $result = $controller->sessionExpiryAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals(['valid' => false, 'problem' => 'invalid-token'], $result->getVariables());
+    }
+
+    public function testSessionExpiryActionNoToken()
+    {
+        $this->request->shouldReceive('getHeader')->withArgs(['CheckedToken'])->once()->andReturn(null);
+
+        $controller = $this->getController(AuthenticateController::class);
+
+        $result = $controller->sessionExpiryAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals([
+            'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+            'title' => 'Bad Request',
+            'status' => 400,
+            'detail' => 'No CheckedToken was specified in the header'], $result->toArray());
+    }
+
+    public function testSessionExpiryActionAuthenticationServiceApiProblem()
+    {
+        $header = Mockery::mock(HeaderInterface::class);
+        $header->shouldReceive('getFieldValue')->once()->andReturn('asdfgh123456');
+
+        $this->request->shouldReceive('getHeader')->withArgs(['CheckedToken'])->once()->andReturn($header);
+
+        $this->authenticationService->shouldReceive('withToken')
+            ->once()
+            ->withArgs(['asdfgh123456', false])
+            ->andReturn(new ApiProblem(500, 'Test problem'));
+
+        $controller = $this->getController(AuthenticateController::class);
+
+        $result = $controller->sessionExpiryAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals((new ApiProblem(500, 'Test problem'))->toArray(), $result->toArray());
     }
 }

@@ -102,4 +102,31 @@ class AuthenticateController extends AbstractAuthController
 
         return new JsonModel($result);
     }
+
+    /**
+     * The token to be is in the header rather than the URL so that it is encrypted by ssl and still conforms
+     * to being a standard GET request (no body)
+     *
+     * @return JsonModel|ApiProblem
+     */
+    public function sessionExpiryAction()
+    {
+        $token = $this->getRequest()->getHeader('CheckedToken');
+
+        if($token == null) {
+            return new ApiProblem(400, 'No CheckedToken was specified in the header');
+        }
+
+        $result = $this->authenticationService->withToken(trim($token->getFieldValue()), false);
+
+        if ($result instanceof ApiProblem) {
+            return $result;
+        }
+
+        if (is_string($result)) {
+            return new JsonModel(['valid' => false, 'problem' => $result]);
+        }
+
+        return new JsonModel(['valid' => true, 'remainingSeconds' => $result['expiresIn']]);
+    }
 }
