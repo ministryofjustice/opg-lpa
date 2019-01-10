@@ -140,7 +140,7 @@
     <fieldset id="{{ dob.getAttribute('name') }}">
         <legend class="visually-hidden">Date of birth</legend>
 
-        <div class="form-date {{ dob.getMessages|length >0 ? 'error'}}">
+        <div class="form-date {{ dob.getMessages|length >0 ? 'form-group-error'}}">
             <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
             <div class="error-group">
@@ -150,17 +150,17 @@
                 {{ formElementErrorsV2(dob) }}
             </div>
 
-            <div class="form-group form-group-day {{ dob.getMessages|length > 0 ? 'error'}}">
+            <div class="form-group form-group-day {{ dob.getMessages|length > 0 ? 'form-group-error'}}">
                 <label for="dob-date-day">Day</label>
                 {{ formElement(dayOfBirth) }}
             </div>
 
-            <div class="form-group form-group-month {{ dob.getMessages|length > 0 ? 'error'}}">
+            <div class="form-group form-group-month {{ dob.getMessages|length > 0 ? 'form-group-error'}}">
                 <label for="dob-date-month">Month</label>
                 {{ formElement(monthOfBirth) }}
             </div>
 
-            <div class="form-group form-group-year {{ dob.getMessages|length > 0 ? 'error'}}">
+            <div class="form-group form-group-year {{ dob.getMessages|length > 0 ? 'form-group-error'}}">
                 <label for="dob-date-year">Year</label>
                 {{ formElement(yearOfBirth) }}
             </div>

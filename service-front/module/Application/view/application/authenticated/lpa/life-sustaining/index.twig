@@ -57,7 +57,7 @@
 
             <h2 class="heading-medium flush--top text">Who does the donor want to make decisions about life-sustaining treatment?</h2>
 
-            <div class="form-group {{ canSustainLife.getMessages|length > 0 ? 'error'}}">
+            <div class="form-group {{ canSustainLife.getMessages|length > 0 ? 'form-group-error'}}">
                 {{ formElementErrorsV2(canSustainLife) }}
 
                 {{ formRadio().outputOption(canSustainLife, "1")|raw }}

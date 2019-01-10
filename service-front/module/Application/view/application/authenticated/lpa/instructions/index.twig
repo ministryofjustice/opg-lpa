@@ -83,7 +83,7 @@
                 <fieldset>
                     <legend class="visually-hidden">Preferences and instructions</legend>
 
-                    <div class="form-group {{ preferences.getMessages|length >0 ? 'error'}}">
+                    <div class="form-group {{ preferences.getMessages|length >0 ? 'form-group-error'}}">
                         <label class="form-label text" for="{{ preferences.getAttribute('id') }}">
                             {{ preferences.getOption('label') }}<br>
                             <span class="form-hint">These are things the donor would like their attorneys to think about when making decisions. Use words like 'prefer' or 'would like'. <a href="/guide#topic-preferences-and-instructions" class="js-guidance" data-journey-click="page:link:help: Not sure what to put? (Preferences)">Not sure what to put?</a><br></span>
@@ -92,7 +92,7 @@
                         {{ formElement(preferences) }}
                     </div>
 
-                    <div class="form-group {{ instructions.getMessages|length >0 ? 'error'}} flush--bottom">
+                    <div class="form-group {{ instructions.getMessages|length >0 ? 'form-group-error'}} flush--bottom">
                         <label class="form-label text" for="{{ instructions.getAttribute('id') }}">
                             {{ instructions.getOption('label') }}<br>
                             <span class="form-hint">These are things that the attorneys MUST or MUST NOT do. Use words like 'must' or 'have to'. <a href="/guide#topic-preferences-and-instructions" class="js-guidance" data-journey-click="page:link:help: Not sure what to put? (Instructions)">Not sure what to put?</a><br></span>

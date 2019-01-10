@@ -9,6 +9,7 @@ class CorrespondenceForm extends AbstractMainFlowForm
     protected $formElements = [
         'contactInWelsh' => [
             'type' => 'Radio',
+            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
             'required' => true,
             'options' => [
                 'value_options' => [

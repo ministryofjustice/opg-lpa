@@ -9,6 +9,7 @@ class HowAttorneysMakeDecisionForm extends AbstractMainFlowForm
     protected $formElements = [
         'how' => [
             'type'     => 'Radio',
+            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
             'required' => true,
             'options'  => [
                 'value_options' => [

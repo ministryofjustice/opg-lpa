@@ -10,6 +10,7 @@ class WhenLpaStartsForm extends AbstractMainFlowForm
         'when' => [
             'type'      => 'Radio',
             'required'  => true,
+            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
             'options'   => [
                 'value_options' => [
                     'now' => [
