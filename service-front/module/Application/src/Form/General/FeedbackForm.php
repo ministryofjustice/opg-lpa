@@ -23,6 +23,7 @@ class FeedbackForm extends AbstractCsrfForm
         $this->add([
             'name'    => 'rating',
             'type'    => 'Radio',
+            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
             'options' => [
                 'value_options' => [
                     'very-satisfied' => [

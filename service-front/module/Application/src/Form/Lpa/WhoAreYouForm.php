@@ -10,6 +10,7 @@ class WhoAreYouForm extends AbstractMainFlowForm
     protected $formElements = [
         'who' => [
             'type' => 'Radio',
+            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
             'options' => [
                 'value_options' => [
                     'donor' => [

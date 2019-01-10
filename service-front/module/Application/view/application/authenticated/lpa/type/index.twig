@@ -50,36 +50,37 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
-        <fieldset id="type">
-            <legend class="visually-hidden">Choose type of LPA</legend>
+        <div class="form-group {{ type.getMessages|length > 0 ? 'form-group-error'}}">
+            <fieldset id="type">
+                    <legend class="visually-hidden">Choose type of LPA</legend>
 
-            <h2 class="heading-medium flush--top">What type of LPA do you want to make?</h2>
+                    <h2 class="heading-medium flush--top">What type of LPA do you want to make?</h2>
 
-            <div class="form-group {{ type.getMessages|length > 0 ? 'error'}}">
-                {{ formElementErrorsV2(type) }}
-                {{ formElement(type) }}
-            </div>
+                    {{ formElementErrorsV2(type) }}
+                    {{ formRadio(type) }}
+               </fieldset>
+        </div>
 
-            {% if not (isChangeAllowed) %}
-            <div class="text">
-                <p>You cannot change the type of your lasting power of attorney at this stage. If you want to make a
-                {{ (lpa.document.type == 'health-and-welfare' ? 'property and financial affairs' : 'health and welfare') }}
-                LPA based on the current one, click <a href="{{ cloneUrl }}">here</a>.</p>
-            </div>
-            {% endif %}
+        {% if not (isChangeAllowed) %}
+        <div class="text">
+            <p>You cannot change the type of your lasting power of attorney at this stage. If you want to make a
+            {{ (lpa.document.type == 'health-and-welfare' ? 'property and financial affairs' : 'health and welfare') }}
+            LPA based on the current one, click <a href="{{ cloneUrl }}">here</a>.</p>
+        </div>
+        {% endif %}
 
-            <div class="form-group">
-                <details class="text">
-                    <summary data-journey-click="page:link.reveal:help: What if I want to make more than one LPA?" role="button" aria-expanded="false">What if I want to make both types of LPA?</summary>
-                    <div>
-                        <p>You can only make one LPA at a time.</p>
-                        <p>Once you’ve finished making this LPA, you can reuse the details you’ve entered to make another one. </p>
-                        <p>Remember, there is an application fee for each LPA.</p>
-                    </div>
-                </details>
-            </div>
+        <div class="form-group">
+            <details class="text">
+                <summary data-journey-click="page:link.reveal:help: What if I want to make more than one LPA?" role="button" aria-expanded="false">What if I want to make both types of LPA?</summary>
+                <div>
+                    <p>You can only make one LPA at a time.</p>
+                    <p>Once you’ve finished making this LPA, you can reuse the details you’ve entered to make another one. </p>
+                    <p>Remember, there is an application fee for each LPA.</p>
+                </div>
+            </details>
+        </div>
 
-        </fieldset>
+
 
         <div class="form-group">
             {% if (isChangeAllowed) %}

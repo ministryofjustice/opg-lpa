@@ -3,70 +3,18 @@
 namespace Application\Form\View\Helper;
 
 use Zend\Form\Element\MultiCheckbox;
-use Zend\Form\Element\Radio;
 use Zend\Form\LabelAwareInterface;
-use Zend\Form\View\Helper\FormRadio as ZFFormRadioHelper;
+use Zend\Form\View\Helper\FormMultiCheckbox as ZFFormMultiCheckbox;
 
-class FormRadio extends ZFFormRadioHelper
+class FormMultiCheckbox extends ZFFormMultiCheckbox
 {
-    /**
-     * This allows us to output a single Radio option from an Radio Element's available options.
-     *
-     * @param   Radio   $element
-     * @param   string  $option
-     * @param   array   $labelAttributes
-     * @return  string
-     */
-    public function outputOption(Radio $element, $option, $labelAttributes = [])
-    {
-        $element = clone $element;
-
-        $name = static::getName($element);
-
-        $options = $element->getValueOptions();
-
-        if (!isset($options[$option])) {
-            return '';
-        }
-
-        $attributes         = $element->getAttributes();
-        $attributes['name'] = $name;
-        $attributes['type'] = $this->getInputType();
-        $selectedOptions    = (array) $element->getValue();
-
-        if (isset($options[$option]['value'])) {
-            $attributes['id'] = $name . '-' . $options[$option]['value'];
-        } else {
-            $attributes['id'] = $name . '-' . $option;
-        }
-
-        $options = [
-            $option => $options[$option],
-        ];
-
-        // Set label attributes
-        $labelAttributes += $element->getLabelAttributes();
-        $element->setLabelAttributes($labelAttributes);
-
-        $rendered = $this->renderOptions($element, $options, $selectedOptions, $attributes);
-
-        //  If applicable render a hidden element
-        if ($element->useHiddenElement() || $this->useHiddenElement) {
-            $rendered = $this->renderHiddenElement($element, $attributes) . $rendered;
-        }
-
-        return $rendered;
-    }
-
     /**
      * Render options
      *
-     * To add a class to the div set $attributes['div-attributes']['class']
-     *
      * @param  MultiCheckbox $element
-     * @param  array         $options
-     * @param  array         $selectedOptions
-     * @param  array         $attributes
+     * @param  array                $options
+     * @param  array                $selectedOptions
+     * @param  array                $attributes
      * @return string
      */
     protected function renderOptions(
@@ -80,7 +28,6 @@ class FormRadio extends ZFFormRadioHelper
         $globalLabelAttributes = [];
         $closingBracket   = $this->getInlineClosingBracket();
 
-        // Setup label attributes common to all options
         if ($element instanceof LabelAwareInterface) {
             $globalLabelAttributes = $element->getLabelAttributes();
         }
@@ -92,19 +39,20 @@ class FormRadio extends ZFFormRadioHelper
         $combinedMarkup = [];
         $count          = 0;
 
-        // If multiple options are being rendered unset the id as it can't be the same for all of them
-        if (count($options) > 1 && array_key_exists('id', $attributes)) {
-            unset($attributes['id']);
+        if (isset($options['attributes']['div-attributes']['class'])) {
+            $divOpen = '<div class="' . $options['attributes']['div-attributes']['class'] . '">';
         }
 
         foreach ($options as $key => $optionSpec) {
             $count++;
+            if ($count > 1 && array_key_exists('id', $attributes)) {
+                unset($attributes['id']);
+            }
 
             $value           = '';
             $label           = '';
             $inputAttributes = $attributes;
             $labelAttributes = $globalLabelAttributes;
-
             $selected        = (isset($inputAttributes['selected'])
                 && $inputAttributes['type'] != 'radio'
                 && $inputAttributes['selected']);
@@ -145,11 +93,6 @@ class FormRadio extends ZFFormRadioHelper
             $inputAttributes['value']    = $value;
             $inputAttributes['checked']  = $selected;
             $inputAttributes['disabled'] = $disabled;
-            $inputAttributes['id'] = isset($attributes['id']) ?
-                $attributes['id'] :
-                $element->getName() . '-' . $value;
-
-            $labelAttributes['for'] = $inputAttributes['id'];
 
             $input = sprintf(
                 '<input %s%s',
@@ -168,27 +111,19 @@ class FormRadio extends ZFFormRadioHelper
                 $label = $escapeHtmlHelper($label);
             }
 
-
-            // Setup wrapping div opening
-            $divAttributes = isset($attributes['div-attributes']) ? $attributes['div-attributes'] : [];
-
-            // If this option has it's own div attributes add them in
-            if (isset($optionSpec['div-attributes'])) {
-                $divAttributes = array_merge($divAttributes, $optionSpec['div-attributes']);
-            }
-
+            // Setup div opening
             $divOpen = '<div>';
 
-            if (count($divAttributes)) {
-                $divOpen = '<div ' . $this->createAttributesString($divAttributes) . '>';
+            if (isset($optionSpec['attributes']['div-attributes']['class'])) {
+                $divOpen = '<div class="' . $optionSpec['attributes']['div-attributes']['class'] . '">';
             }
 
-            $markup  = $divOpen .
-                $input .
-                $labelHelper->openTag($labelAttributes) .
-                $label .
-                $labelHelper->closeTag() .
-                '</div>';
+            $markup = $divOpen .
+            $input .
+            $labelHelper->openTag($labelAttributes) .
+            $label .
+            $labelHelper->closeTag() .
+            '</div>';
 
             $combinedMarkup[] = $markup;
         }

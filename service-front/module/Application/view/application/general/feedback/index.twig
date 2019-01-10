@@ -62,22 +62,20 @@
 
     <h2 class="heading-medium flush--top">How would you rate your experience with this service?</h2>
 
-    <fieldset>
-        <legend class="group text">
-        </legend>
-
-        <div class="form-group {{ type.getMessages|length >0 ? 'error'}}">
-            {{ formElementErrorsV2(type) }}
-            {{ formElement(type) }}
-        </div>
-    </fieldset>
+    <div class="form-group {{ type.getMessages|length >0 ? 'form-group-error'}}">
+        <fieldset>
+            <legend class="visually-hidden" id="rating">Experience rating</legend>
+                {{ formElementErrorsV2(type) }}
+                {{ formRadio(type) }}
+        </fieldset>
+    </div>
 
     <h2 class="heading-medium text">Please take a moment to tell us about your experience, what worked and what did not.</h2>
 
     <fieldset>
         <legend class="group text">
         </legend>
-        <div class="form-group {{ details.getMessages|length >0 ? 'error'}}">
+        <div class="form-group {{ details.getMessages|length >0 ? 'form-group-error'}}">
             <label class="form-label text" for="{{ details.getAttribute('id') }}">
                 <span class="visually-hidden">Your feedback<br></span>
                 <span class="form-hint">2000 characters max<br></span>
@@ -103,7 +101,7 @@
     <fieldset>
         <legend class="group text">
         </legend>
-        <div class="form-group {{ phone.getMessages|length >0 ? 'error'}}">
+        <div class="form-group {{ phone.getMessages|length >0 ? 'form-group-error'}}">
             <label class="form-label text" for="{{ phone.getAttribute('id') }}">
                 <span class="visually-hidden">Your phone number (optional)</span>
                 {{ formElementErrorsV2(phone) }}

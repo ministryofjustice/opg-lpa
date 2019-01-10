@@ -32,35 +32,19 @@
 
 {% set whenOptions = {
 	'first' : {
-		attributes: {
-			id: 'one-attorney-cannot-act'
-		},
 		label: 'As soon as <strong class="bold-small">one</strong> of the original attorneys can no longer act, all the replacement attorneys should step in together',
-		label_attributes: {
-			for: 'one-attorney-cannot-act'
-		},
 		value: currentWhenOptions['first'].value
 	},
 	'last' : {
-		attributes: {
-			id: 'no-attorney-can-act'
-		},
 		label: 'When <strong class="bold-small">none</strong> of the original attorneys can act, all the replacement attorneys should step in together',
-		label_attributes: {
-			for: 'no-attorney-can-act'
-		},
 		value: currentWhenOptions['last'].value
 	},
 	'depends' : {
-		attributes: {
-			id: 'when-depends'
-		},
 		label: 'In some other way...',
-		label_attributes: {
-			for: 'when-depends',
+		value: currentWhenOptions['depends'].value,
+		'div-attributes': {
 			'data-target': 'step-in-details'
-		},
-		value: currentWhenOptions['depends'].value
+		}
 	}
 }
 %}
@@ -97,23 +81,23 @@
 
 		{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
-		<fieldset id="when">
-            <legend class="visually-hidden">How should the replacement attorneys step in?</legend>
+		<div class="form-group {{ when.getMessages|length > 0 ? 'form-group-error'}}">
+			<fieldset id="when">
+	            <legend class="visually-hidden">How should the replacement attorneys step in?</legend>
 
-            <div class="form-group {{ when.getMessages|length > 0 ? 'error'}}">
-                {{ formElementErrorsV2(when) }}
-                {{ formElement(when) }}
+	            
+	                {{ formElementErrorsV2(when) }}
+	                {{ formRadio(when) }}
 
-                <div id="step-in-details" class="panel panel-border-narrow js-hidden">
-					<p class="text">
-						Describe below how the donor would like this to happen. Be careful - the more specific the instructions, the greater the chance that they will not be able to be followed. If in doubt, seek legal advice.
-                        <a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="page:link:help: Not sure what to put?">Not sure what to put?</a>
-					</p>
-					{{ macros.formGroup(whenDetails) }}
-                </div>
-
-            </div>
-        </fieldset>
+	                <div id="step-in-details" class="panel panel-border-narrow js-hidden">
+						<p class="text">
+							Describe below how the donor would like this to happen. Be careful - the more specific the instructions, the greater the chance that they will not be able to be followed. If in doubt, seek legal advice.
+	                        <a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="page:link:help: Not sure what to put?">Not sure what to put?</a>
+						</p>
+						{{ macros.formGroup(whenDetails) }}
+	                </div>
+	        </fieldset>
+	    </div>
 
 
 		<div class="form-group">

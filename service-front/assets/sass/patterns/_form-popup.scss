@@ -93,7 +93,8 @@
     .address-type-toggle,
     .block-label,
     .button,
-    .alert {
+    .alert,
+    .single-checkbox-group {
         @include media(tablet) {
             margin-left: 150px;
         }
@@ -107,7 +108,11 @@
     }
 
     .form-date {
-        margin-bottom: 0;
+        margin-bottom: 15px;
+
+        .form-group { 
+            margin-bottom: 0; 
+        }
 
         .form-hint {
             @include media(tablet) {
@@ -149,11 +154,25 @@
         }
     }
 
-    .error {
+    .form-group-error {
+        border-left: 0;
+        
         @include media(tablet) {
             position: relative;
+            margin-right: 0;
             padding-left: 0;
-            border-left: 0;
+
+            .form-date & {
+                margin-right: 20px;
+            }
+        }
+    }
+
+    .form-date {
+        .form-group-error {
+            @include media(tablet) {
+                margin-right: 20px;
+            }
         }
     }
 
@@ -171,7 +190,7 @@
 
         .error-message {
             @include media(tablet) {
-                top: -11px;
+                top: 3px;
                 left: 0;
                 width: 100%;
             }

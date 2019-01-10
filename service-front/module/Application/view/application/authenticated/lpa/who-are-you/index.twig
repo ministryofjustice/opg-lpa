@@ -70,64 +70,83 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
-        <fieldset id="who">
-            <legend class="visually-hidden">Who was using the LPA service</legend>
+        <div class="form-group {{ who.getMessages|length >0 ? 'form-group-error'}}">
+            <fieldset id="who">
 
-            <div class="form-group {{ who.getMessages|length >0 ? 'error'}}">
+                <legend class="visually-hidden">Who was using the LPA service</legend>
+
                 {{ formElementErrorsV2(who) }}
 
-                <label class="text block-label" for="{{ whoOptions['donor'].getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formInput(whoOptions['donor']) }}
-                    {{ whoOptions['donor'].getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" for="{{ whoOptions['donor'].getAttribute('id') }}">
+                        {{ whoOptions['donor'].getOption('label')|raw }}
+                    </label>
+                </div>
                 {{ formElementErrorsV2(whoOptions['donor']) }}
 
-                <label class="text block-label" for="{{ whoOptions['friend-or-family'].getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formInput(whoOptions['friend-or-family']) }}
-                    {{ whoOptions['friend-or-family'].getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" for="{{ whoOptions['friend-or-family'].getAttribute('id') }}">
+                        {{ whoOptions['friend-or-family'].getOption('label')|raw }}
+                    </label>
+                </div>
                 {{ formElementErrorsV2(whoOptions['friend-or-family']) }}
 
-                <label class="text block-label" for="{{ whoOptions['finance-professional'].getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formInput(whoOptions['finance-professional']) }}
-                    {{ whoOptions['finance-professional'].getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" for="{{ whoOptions['finance-professional'].getAttribute('id') }}">
+                        {{ whoOptions['finance-professional'].getOption('label')|raw }}
+                    </label>
+                </div>
                 {{ formElementErrorsV2(whoOptions['finance-professional']) }}
 
-                <label class="text block-label" for="{{ whoOptions['legal-professional'].getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formInput(whoOptions['legal-professional']) }}
-                    {{ whoOptions['legal-professional'].getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" for="{{ whoOptions['legal-professional'].getAttribute('id') }}">
+                        {{ whoOptions['legal-professional'].getOption('label')|raw }}
+                    </label>
+                </div>
                 {{ formElementErrorsV2(whoOptions['legal-professional']) }}
 
-                <label class="text block-label" for="{{ whoOptions['estate-planning-professional'].getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formInput(whoOptions['estate-planning-professional']) }}
-                    {{ whoOptions['estate-planning-professional'].getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" for="{{ whoOptions['estate-planning-professional'].getAttribute('id') }}">
+                        {{ whoOptions['estate-planning-professional'].getOption('label')|raw }}
+                    </label>
+                </div>
                 {{ formElementErrorsV2(whoOptions['estate-planning-professional']) }}
 
-                <label class="text block-label" for="{{ whoOptions['digital-partner'].getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formInput(whoOptions['digital-partner']) }}
-                    {{ whoOptions['digital-partner'].getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" for="{{ whoOptions['digital-partner'].getAttribute('id') }}">
+                        {{ whoOptions['digital-partner'].getOption('label')|raw }}
+                    </label>
+                </div>
                 {{ formElementErrorsV2(whoOptions['digital-partner']) }}
 
-                <label class="text block-label" for="{{ whoOptions['charity'].getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formInput(whoOptions['charity']) }}
-                    {{ whoOptions['charity'].getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" for="{{ whoOptions['charity'].getAttribute('id') }}">
+                        {{ whoOptions['charity'].getOption('label')|raw }}
+                    </label>
+                </div>
                 {{ formElementErrorsV2(whoOptions['charity']) }}
 
-                <label class="text block-label" for="{{ whoOptions['organisation'].getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formInput(whoOptions['organisation']) }}
-                    {{ whoOptions['organisation'].getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" for="{{ whoOptions['organisation'].getAttribute('id') }}">
+                        {{ whoOptions['organisation'].getOption('label')|raw }}
+                    </label>
+                </div>
                 {{ formElementErrorsV2(whoOptions['organisation']) }}
 
-                <label class="text block-label" data-target="other-input" for="{{ whoOptions['other'].getAttribute('id') }}">
+                <div class="multiple-choice" data-target="other-input">
                     {{ formInput(whoOptions['other']) }}
-                    {{ whoOptions['other'].getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" for="{{ whoOptions['other'].getAttribute('id') }}">
+                        {{ whoOptions['other'].getOption('label')|raw }}
+                    </label>
+                </div>
                 {{ formElementErrorsV2(whoOptions['other']) }}
 
                 <div class="panel panel-border-narrow js-hidden" id="other-input">
@@ -138,15 +157,18 @@
                     {{ formText(other) }}
                 </div>
 
-                <label class="text block-label" for="{{ whoOptions['notSaid'].getAttribute('id') }}">
+                <div class="multiple-choice">
                     {{ formInput(whoOptions['notSaid']) }}
-                    {{ whoOptions['notSaid'].getOption('label')|raw }}
-                </label>
+                    <label class="text block-label" for="{{ whoOptions['notSaid'].getAttribute('id') }}">
+                        {{ whoOptions['notSaid'].getOption('label')|raw }}
+                    </label>
+                </div>
                 {{ formElementErrorsV2(whoOptions['notSaid']) }}
 
-            </div>
+         
 
-        </fieldset>
+            </fieldset>
+        </div>
 
         <div class="form-group">
             {{ formElement(form.get('save')) }}

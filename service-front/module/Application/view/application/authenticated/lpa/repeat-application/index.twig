@@ -24,22 +24,13 @@
 {% set isRepeatApplicationValueOptions = {
     'is-repeat': {
         label: "Yes",
-        label_attributes: {
-            for: 'is-repeat-application'
-        },
-        attributes: {
-             id: 'is-repeat-application'
-        },
-        value: isRepeatApplicationValueOptions['is-repeat'].value
+        value: isRepeatApplicationValueOptions['is-repeat'].value,
+        'div-attributes': {
+            'data-target': 'repeat-application-details'
+        }        
     },
     'is-new': {
         label: "No",
-        label_attributes: {
-            for: 'is-new'
-        },
-       attributes: {
-            id: 'is-new'
-        },
         value: isRepeatApplicationValueOptions['is-new'].value
     }
 } %}
@@ -90,29 +81,27 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
 
-        <fieldset id="isRepeatApplication" class="inline">
-            <legend class="visually-hidden">Is this a repeat application?</legend>
+        <div class="form-group {{ isRepeatApplication.getMessages|length > 0 ? 'form-group-error'}}">
+            <fieldset id="isRepeatApplication" class="inline">
+                <legend class="visually-hidden">Is this a repeat application?</legend>
+                
+                    {{ formElementErrorsV2(isRepeatApplication) }}
+                    {{ formRadio(isRepeatApplication) }}
 
-            <div class="form-group {{ isRepeatApplication.getMessages|length > 0 ? 'error'}}">
-                {{ formElementErrorsV2(isRepeatApplication) }}
-                {{ formElement(isRepeatApplication) }}
+                    <div class="panel panel-border-narrow js-hidden" id="repeat-application-details">
+                        <h3 class="visually-hidden">Repeat application details</h3>
 
-                <div class="panel panel-border-narrow js-case-number js-hidden">
-                    <h3 class="visually-hidden">Repeat application details</h3>
+                        {{ macros.formGroup(repeatCaseNumber) }}
 
-                    {{ macros.formGroup(repeatCaseNumber) }}
+                        <div class="text">
+                            <p>You can find the case number on the letter that came with the returned LPA application.</p>
 
-                    <div class="text">
-                        <p>You can find the case number on the letter that came with the returned LPA application.</p>
+                            <p>By clicking on the save button below, you confirm that OPG has said a repeat application can be made for half the normal application fee.</p>
+                        </div>
 
-                        <p>By clicking on the save button below, you confirm that OPG has said a repeat application can be made for half the normal application fee.</p>
                     </div>
-
-                </div>
-
-            </div>
-
-        </fieldset>
+            </fieldset>
+        </div>
 
         <div class="form-group">
             {{ formElement(form.get('save')) }}
