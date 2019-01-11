@@ -113,4 +113,23 @@ class LpaAuthAdapter implements AdapterInterface
 
         return new Result(Result::SUCCESS, $identity, $messages);
     }
+
+    /**
+     * @param $token string
+     * @return array|null
+     * @throws \Http\Client\Exception
+     */
+    public function getSessionExpiry(string $token)
+    {
+        $result = $this->client->httpGet(
+            '/v2/session-expiry',
+            [],
+            true,
+            true,
+            ['CheckedToken' => $token]
+        );
+
+        return $result;
+    }
+
 }

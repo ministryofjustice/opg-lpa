@@ -56,18 +56,35 @@ class Client
      * @param $path
      * @param array $query
      * @param bool $jsonResponse
+     * @param bool $anonymous
+     * @param array|null $additionalHeaders
      * @return array|null
-     * @throws Exception\ApiException
+     * @throws \Http\Client\Exception
      */
-    public function httpGet($path, array $query = [], $jsonResponse = true)
-    {
+    public function httpGet(
+        $path,
+        array $query = [],
+        $jsonResponse = true,
+        $anonymous = false,
+        $additionalHeaders = null
+    ) {
         $url = new Uri($this->apiBaseUri . $path);
 
         foreach ($query as $name => $value) {
             $url = Uri::withQueryValue($url, $name, $value);
         }
 
-        $request = new Request('GET', $url, $this->buildHeaders());
+        $headers = $this->buildHeaders();
+
+        if ($anonymous) {
+            unset($headers['Token']);
+        }
+
+        if ($additionalHeaders) {
+            $headers += $additionalHeaders;
+        }
+
+        $request = new Request('GET', $url, $headers);
 
         $response = $this->httpClient->sendRequest($request);
 
