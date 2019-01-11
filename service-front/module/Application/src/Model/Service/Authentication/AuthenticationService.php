@@ -26,7 +26,13 @@ class AuthenticationService extends ZFAuthenticationService
     {
         //  Assert that we are using an LPA authentication adapter specifically
         if (!$adapter instanceof LpaAdapterInterface) {
-            throw new RuntimeException(sprintf('An %s authentication adapter must be injected into %s at instantiation', LpaAdapterInterface::class, get_class($this)));
+            throw new RuntimeException(
+                sprintf(
+                    'An %s authentication adapter must be injected into %s at instantiation',
+                    LpaAdapterInterface::class,
+                    get_class($this)
+                )
+            );
         }
 
         parent::__construct($storage, $adapter);
@@ -79,5 +85,37 @@ class AuthenticationService extends ZFAuthenticationService
         $adapter->setPassword($password);
 
         return $this;
+    }
+
+    /**
+     * Get the seconds until the session expires
+     *
+     * @return int|null null if the session is not active/timed out, otherwise returns the remaining seconds until expiry
+     */
+    public function getSessionExpiry() : ?int
+    {
+        $this->getStorage();
+
+        $identity = $this->getIdentity();
+        if (!$identity) {
+            return null;
+        }
+
+        $token = $identity->token();
+        if (!$token) {
+            return null;
+        }
+
+        $adapter = $this->adapter;
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        // the constructor makes sure we're using the LPA Authentication/AdapterInterface
+        $result = $adapter->getSessionExpiry($token);
+
+        if ($result == null || !isset($result['valid']) || !$result['valid']) {
+            return null;
+        }
+
+        return $result['remainingSeconds'];
     }
 }

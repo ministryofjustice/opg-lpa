@@ -159,6 +159,17 @@ return [
                 ],
             ], // logout
 
+            'session-expiry' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/session-state',
+                    'defaults' => [
+                        'controller' => 'General\AuthController',
+                        'action' => 'session-expiry',
+                    ]
+                ],
+            ], // session state
+
             'session-keep-alive' => [
                 'type' => 'Literal',
                 'options' => [
