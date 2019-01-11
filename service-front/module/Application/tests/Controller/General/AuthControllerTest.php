@@ -13,6 +13,7 @@ use Zend\Authentication\Result;
 use Zend\Http\Response;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayObject;
+use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use DateTime;
 
@@ -213,6 +214,34 @@ class AuthControllerTest extends AbstractControllerTest
         Container::setDefaultManager(null);
 
         $this->assertEquals($response, $result);
+    }
+
+    public function testSessionExpiryAction()
+    {
+        $controller = $this->getController(AuthController::class);
+
+        $this->authenticationService->shouldReceive('getSessionExpiry')->once()->andReturn(100);
+
+        /** @var JsonModel $result */
+        $result = $controller->sessionExpiryAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals('{"remainingSeconds":100}', $result->serialize());
+    }
+
+    public function testSessionExpiryActionExpired()
+    {
+        $controller = $this->getController(AuthController::class);
+
+        $this->authenticationService->shouldReceive('getSessionExpiry')->once()->andReturn(null);
+
+        /** @var Response $result */
+        $result = $controller->sessionExpiryAction();
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(204, $result->getStatusCode());
+        $this->assertEquals([], $result->getHeaders()->toArray());
+        $this->assertEquals('', $result->getBody());
     }
 
     public function testLogoutAction()
