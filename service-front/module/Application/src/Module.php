@@ -51,15 +51,17 @@ class Module implements FormElementProviderInterface
         $request = $e->getApplication()->getServiceManager()->get('Request');
 
         if (!$request instanceof \Zend\Console\Request) {
+            $path = $request->getUri()->getPath();
+
             // Only bootstrap the session if it's *not* PHPUnit AND is not an excluded url.
             if (!strstr($request->getServer('SCRIPT_NAME'), 'phpunit') &&
-                !in_array($request->getUri()->getPath(), [
+                !in_array($path, [
                     // URLs excluded from creating a session
                     '/ping/elb',
                     '/ping/json',
                 ])) {
                 $this->bootstrapSession($e);
-                $this->bootstrapIdentity($e);
+                $this->bootstrapIdentity($e, $path != '/session-state');
             }
         }
     }
@@ -94,7 +96,7 @@ class Module implements FormElementProviderInterface
      *
      * @param MvcEvent $e
      */
-    private function bootstrapIdentity(MvcEvent $e)
+    private function bootstrapIdentity(MvcEvent $e, bool $updateToken = true)
     {
         $sm = $e->getApplication()->getServiceManager();
 
@@ -103,7 +105,7 @@ class Module implements FormElementProviderInterface
         $identity = $auth->getIdentity();
 
         //  If there is an identity (logged in user) then get the token details and check to see if it has expired
-        if (!is_null($identity)) {
+        if (!is_null($identity) && $updateToken) {
             try {
                 $info = $sm->get('UserService')->getTokenInfo($identity->token());
 
