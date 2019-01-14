@@ -174,7 +174,7 @@
 
 {# If applicable display the Use my details link #}
 {% if displayReuseSessionUserLink %}
-    {{ macros.displayUseMyDetailsLink() }}
+    {{ macros.displayUseMyDetailsLink('Donor - Use my details') }}
 {% endif %}
 
 {# begin form #}
@@ -192,7 +192,7 @@
 
         <div class="form-group">
             <details class="flush--bottom" {{ otherNames.getValue() ? 'open' : '' }}>
-                <summary class="summary" role="button" aria-expanded="false">Is the donor known by any other names?</summary>
+                <summary class="summary" role="button" aria-expanded="false"  data-journey-click="page:link.reveal:data: Donor known by other names">Is the donor known by any other names?</summary>
                 <div>
                     <span class="form-hint summary-text">
                         {% if lpa.document.type is defined %}
@@ -290,5 +290,9 @@
     {{ macros.renderFormButtons(cancelUrl, backButtonUrl) }}
 
 {{ form().closeTag|raw }}
+
+    <script>
+        GOVUK.performance.stageprompt.setupForGoogleAnalytics();
+    </script>
 
 {% endblock %}

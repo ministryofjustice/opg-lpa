@@ -110,7 +110,7 @@
 
 {# If applicable display the Use my details link #}
 {% if displayReuseSessionUserLink %}
-    {{ macros.displayUseMyDetailsLink() }}
+    {{ macros.displayUseMyDetailsLink('Person to notify - Use my details') }}
 {% endif %}
 
 {# begin form #}
@@ -144,5 +144,9 @@
     {{ macros.renderFormButtons(cancelUrl, backButtonUrl) }}
 
 {{ form().closeTag|raw }}
+
+    <script>
+        GOVUK.performance.stageprompt.setupForGoogleAnalytics();
+    </script>
 
 {% endblock %}
