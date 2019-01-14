@@ -71,7 +71,7 @@ module.exports = function (grunt) {
             'node_modules/govuk_template_mustache/assets/stylesheets/fonts.css',
             'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-ie8.css',
             'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css',
-            'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css',
+            'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css'
           ],
           dest: 'public/assets/v2/css/',
           flatten: true

@@ -151,7 +151,7 @@
 
 {# If applicable display the Use my details link #}
 {% if displayReuseSessionUserLink %}
-    {{ macros.displayUseMyDetailsLink() }}
+    {{ macros.displayUseMyDetailsLink('Replacement attorney - Use my details') }}
 {% endif %}
 
 {# Add switch attorney type link #}
@@ -230,5 +230,9 @@
     {{ macros.renderFormButtons(cancelUrl, backButtonUrl) }}
 
 {{ form().closeTag|raw }}
+
+    <script>
+        GOVUK.performance.stageprompt.setupForGoogleAnalytics();
+    </script>
 
 {% endblock %}
