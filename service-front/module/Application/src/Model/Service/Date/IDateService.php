@@ -15,14 +15,4 @@ interface IDateService
      * @return DateTime
      */
     public function getToday();
-
-    /**
-     * @return DateTime
-     */
-    public function getUtcNow();
-
-    /**
-     * @return DateTime
-     */
-    public function getUtcToday();
 }
