@@ -89,7 +89,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
         $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey);
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp( '/bad status code/' );
+        $this->expectExceptionMessageRegExp('/bad status code/');
 
         $lookup->lookupPostcode('SW1A 2AA');
     }
@@ -106,7 +106,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
         $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey);
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp( '/invalid JSON/' );
+        $this->expectExceptionMessageRegExp('/invalid JSON/');
 
         $lookup->lookupPostcode('SW1A 2AA');
     }
@@ -158,7 +158,8 @@ class OrdnanceSurveyTest extends MockeryTestCase
         $results = [];
         foreach ($this->testData as $address) {
             $results[] = [
-                'DPA' => ['ADDRESS' => "{$address['address']}, {$address['postcode']}", 'POSTCODE'=>$address['postcode']]
+                'DPA' =>
+                    ['ADDRESS' => "{$address['address']}, {$address['postcode']}", 'POSTCODE'=>$address['postcode']]
             ];
         }
 
@@ -168,7 +169,8 @@ class OrdnanceSurveyTest extends MockeryTestCase
         ]));
     }
 
-    public function testFormatting(){
+    public function testFormatting()
+    {
         $this->setupResponse();
         $this->httpClient->shouldReceive('sendRequest')->once()->andReturn($this->response);
 
@@ -180,17 +182,15 @@ class OrdnanceSurveyTest extends MockeryTestCase
 
         // Loop over each entry in the test data
         foreach ($this->testData as $address) {
-
             // Get the relating entry from the result
             $result = array_shift($results);
 
             // For each expected line of formatted address
-            foreach($address['formatted'] as $line) {
+            foreach ($address['formatted'] as $line) {
                 // Check it matches the returned formatted line
                 $this->assertEquals($line, array_shift($result));
             }
         }
-
     }
 
 }

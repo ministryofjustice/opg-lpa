@@ -35,20 +35,25 @@ class Admin extends AbstractService implements ApiClientAwareInterface
                     $numberOfLpas = 0;
 
                     try {
-                        $applicationsResult = $this->apiClient->httpGet(sprintf('/v2/user/%s/applications', $result['userId']), [
+                        $applicationsResult = $this->apiClient->httpGet(
+                            sprintf('/v2/user/%s/applications', $result['userId']),
+                            [
                             'page' => 1,
                             'perPage' => 1,
-                        ]);
+                            ]
+                        );
 
                         $numberOfLpas = $applicationsResult['total'];
-                    } catch (ApiException $ignore) {}
+                    } catch (ApiException $ignore) {
+                    }
 
                     $result['numberOfLpas'] = $numberOfLpas;
                 }
             }
 
             return $result;
-        } catch (ApiException $ex) {}
+        } catch (ApiException $ex) {
+        }
 
         return false;
     }
