@@ -37,7 +37,7 @@ class OrdnanceSurveyFactoryTest extends MockeryTestCase
 
         $factory = new OrdnanceSurveyFactory();
         $this->expectException(\UnexpectedValueException::class);
-        $this->expectExceptionMessageRegExp( '/Ordnance Survey API key not configured/' );
+        $this->expectExceptionMessageRegExp('/Ordnance Survey API key not configured/');
 
         $factory($this->container, null);
     }
@@ -55,6 +55,7 @@ class OrdnanceSurveyFactoryTest extends MockeryTestCase
             ->andReturn(Mockery::mock(HttpClientInterface::class));
 
         $factory = new OrdnanceSurveyFactory();
+
         $result = $factory($this->container, null);
 
         $this->assertInstanceOf(OrdnanceSurvey::class, $result);
