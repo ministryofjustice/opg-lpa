@@ -11,8 +11,7 @@ use Aws\Command;
 use Aws\Result;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
-use DynamoQueue\Queue\Client as DynamoQueue;
-use DynamoQueue\Queue\Job\Job as DynamoQueueJob;
+use Aws\Sqs\SqsClient;
 use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
 use Zend\Crypt\BlockCipher;
@@ -35,14 +34,24 @@ class ServiceTest extends AbstractServiceTest
             ],
             'encryption' => [
                 'keys' => [
-                    'queue' => 'teststringlongenoughtobevalid123',
                     'document' => 'teststringlongenoughtobevalid123'
                 ],
                 'options' => [
                     'algorithm' => 'aes',
                     'mode' => 'cbc'
                 ]
-            ]
+            ],
+            'queue' => [
+                'sqs' => [
+                    'settings' => [
+                        'url' => 'https://testing',
+                    ],
+                    'client' => [
+                        'region' => 'eu-west-1',
+                        'version' => '2012-11-05',
+                    ],
+                ],
+            ],
         ]
     ];
 
@@ -142,8 +151,8 @@ class ServiceTest extends AbstractServiceTest
 
         $user = FixturesData::getUser();
 
-        $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
-        $dynamoQueueClient->shouldReceive('checkStatus')->andReturn(DynamoQueueJob::STATE_WAITING)->once();
+        $sqsClient = Mockery::mock(SqsClient::class);
+        $sqsClient->shouldReceive('sendMessage')->once();
 
         $s3Client = Mockery::mock(S3Client::class);
         $s3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
@@ -152,7 +161,7 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->withPdfConfig($this->config)
-            ->withDynamoQueueClient($dynamoQueueClient)
+            ->withSqsClient($sqsClient)
             ->withS3Client($s3Client)
             ->build();
 
@@ -173,8 +182,7 @@ class ServiceTest extends AbstractServiceTest
 
         $user = FixturesData::getUser();
 
-        $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
-        $dynamoQueueClient->shouldReceive('deleteJob')->once();
+        $sqsClient = Mockery::mock(SqsClient::class);
 
         $s3Client = Mockery::mock(S3Client::class);
         $s3Client->shouldReceive('headObject')->once();
@@ -183,7 +191,7 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->withPdfConfig($this->config)
-            ->withDynamoQueueClient($dynamoQueueClient)
+            ->withSqsClient($sqsClient)
             ->withS3Client($s3Client)
             ->build();
 
@@ -204,10 +212,8 @@ class ServiceTest extends AbstractServiceTest
 
         $user = FixturesData::getUser();
 
-        $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
-        $dynamoQueueClient->shouldReceive('checkStatus')->andReturn(DynamoQueueJob::STATE_DONE)->once();
-        $dynamoQueueClient->shouldReceive('deleteJob')->once();
-        $dynamoQueueClient->shouldReceive('enqueue')->once();
+        $sqsClient = Mockery::mock(SqsClient::class);
+        $sqsClient->shouldReceive('sendMessage')->once();
 
         $s3Client = Mockery::mock(S3Client::class);
         $s3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
@@ -216,7 +222,7 @@ class ServiceTest extends AbstractServiceTest
         $service = $serviceBuilder
             ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
             ->withPdfConfig($this->config)
-            ->withDynamoQueueClient($dynamoQueueClient)
+            ->withSqsClient($sqsClient)
             ->withS3Client($s3Client)
             ->build();
 
@@ -230,38 +236,7 @@ class ServiceTest extends AbstractServiceTest
 
         $serviceBuilder->verify();
     }
-
-    public function testFetchLp1CryptInvalidArgumentException()
-    {
-        $lpa = FixturesData::getHwLpa();
-
-        $user = FixturesData::getUser();
-
-        $config = $this->config;
-        $config['pdf']['encryption']['keys']['queue'] = 'Invalid';
-
-        $dynamoQueueClient = Mockery::mock(DynamoQueue::class);
-        $dynamoQueueClient->shouldReceive('checkStatus')->andReturn(DynamoQueueJob::STATE_DONE)->once();
-        $dynamoQueueClient->shouldReceive('deleteJob')->once();
-
-        $s3Client = Mockery::mock(S3Client::class);
-        $s3Client->shouldReceive('headObject')->andThrow(new S3Exception('Test', new Command('Test')))->once();
-
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->withPdfConfig($config)
-            ->withDynamoQueueClient($dynamoQueueClient)
-            ->withS3Client($s3Client)
-            ->build();
-
-        $this->expectException(CryptInvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid encryption key');
-        $service->fetch($lpa->getId(), 'lp1');
-
-        $serviceBuilder->verify();
-    }
-
+    
     public function testFetchLpa120PdfNotAvailable()
     {
         $lpa = FixturesData::getHwLpa();

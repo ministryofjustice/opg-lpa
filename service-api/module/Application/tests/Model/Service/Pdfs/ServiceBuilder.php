@@ -10,9 +10,9 @@ class ServiceBuilder extends AbstractServiceBuilder
 {
     private $pdfConfig = null;
 
-    private $dynamoQueueClient = null;
-
     private $s3Client = null;
+
+    private $sqsClient = null;
 
     /**
      * @return Service
@@ -26,12 +26,12 @@ class ServiceBuilder extends AbstractServiceBuilder
             $service->setPdfConfig($this->pdfConfig);
         }
 
-        if ($this->dynamoQueueClient !== null) {
-            $service->setDynamoQueueClient($this->dynamoQueueClient);
-        }
-
         if ($this->s3Client !== null) {
             $service->setS3Client($this->s3Client);
+        }
+
+        if ($this->sqsClient !== null) {
+            $service->setSqsClient($this->sqsClient);
         }
 
         return $service;
@@ -66,4 +66,15 @@ class ServiceBuilder extends AbstractServiceBuilder
         $this->s3Client = $s3Client;
         return $this;
     }
+
+    /**
+     * @param MockInterface $sqsClient
+     * @return $this
+     */
+    public function withSqsClient($sqsClient)
+    {
+        $this->sqsClient = $sqsClient;
+        return $this;
+    }
+
 }
