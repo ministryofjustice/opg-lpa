@@ -36,11 +36,6 @@ class Service extends AbstractService
     private $notifyClient;
 
     /**
-     * @var SnsClient
-     */
-    private $snsClient;
-
-    /**
      * @var UsersService
      */
     private $usersService;
@@ -82,6 +77,8 @@ class Service extends AbstractService
         //  Remove accounts that have not been activated
         $unactivatedAccountsDeletedCount = $this->deleteUnactivatedAccounts();
 
+
+        // Send Account Cleanup notifications to site admins.
         if (isset($this->config['admin']['account_cleanup_notification_recipients']) &&
             is_array($this->config['admin']['account_cleanup_notification_recipients'])) {
 
@@ -243,14 +240,6 @@ class Service extends AbstractService
     public function setNotifyClient(NotifyClient $notifyClient)
     {
         $this->notifyClient = $notifyClient;
-    }
-
-    /**
-     * @param SnsClient $snsClient
-     */
-    public function setSnsClient(SnsClient $snsClient)
-    {
-        $this->snsClient = $snsClient;
     }
 
     /**
