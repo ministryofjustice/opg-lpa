@@ -8,7 +8,6 @@ use Alphagov\Notifications\Exception\NotifyException;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Users\Service as UsersService;
-use Aws\Sns\SnsClient;
 use DateTime;
 use Exception;
 
@@ -24,6 +23,11 @@ class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
     use UserRepositoryTrait;
+
+    /**
+     * GOV Notify template ID
+     */
+    const CLEANUP_NOTIFICATION_TEMPLATE = '1acdd1fa-b463-4dac-847b-299e0ba3acb6';
 
     /**
      * @var array
@@ -85,7 +89,7 @@ class Service extends AbstractService
             foreach ($this->config['admin']['account_cleanup_notification_recipients'] as $recipient) {
                 try {
 
-                    $this->notifyClient->sendEmail($recipient, '1acdd1fa-b463-4dac-847b-299e0ba3acb6', [
+                    $this->notifyClient->sendEmail($recipient, self::CLEANUP_NOTIFICATION_TEMPLATE, [
                         'stack'                             => $this->config['stack']['name'],
                         'expiredAccountsDeletedCount'       => $expiredAccountsDeletedCount,
                         'expiryAccountsWarning1WeekCount'   => $expiryAccountsWarning1WeekCount,

@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\AccountCleanup;
 
+use Application\Model\Service\AccountCleanup\Service as AccountCleanupService;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\DataAccess\Postgres\UserModel as User;
@@ -9,7 +10,6 @@ use Application\Model\Service\Users\Service as UsersService;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
-use Aws\Sns\SnsClient;
 use DateInterval;
 use DateTime;
 use Exception;
@@ -48,18 +48,20 @@ class ServiceTest extends AbstractServiceTest
                 ],
                 'client' => []
             ]
-        ]
+        ],
+        'admin' => [
+            'account_cleanup_notification_recipients' => [
+                'test1@example.com',
+                'test2@example.com',
+                'test3@example.com',
+            ],
+        ],
     ];
 
     /**
      * @var MockInterface|NotifyClient
      */
     private $notifyClient;
-
-    /**
-     * @var MockInterface|SnsClient
-     */
-    private $snsClient;
 
     /**
      * @var MockInterface|UsersService
@@ -76,14 +78,11 @@ class ServiceTest extends AbstractServiceTest
         parent::setUp();
 
         //  Set up the services so they can be enhanced for each test
-
         $this->applicationRepository = Mockery::mock(ApplicationRepositoryInterface::class);
 
         $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
 
         $this->notifyClient = Mockery::mock(NotifyClient::class);
-
-        $this->snsClient = Mockery::mock(SnsClient::class);
 
         $this->usersService = Mockery::mock(UsersService::class);
 
@@ -94,13 +93,10 @@ class ServiceTest extends AbstractServiceTest
     {
         $this->setAccountsExpectations();
 
-        $this->snsClient->shouldReceive('publish')
-            ->withArgs(function ($message) {
-                return $message['TopicArn'] === 'info_endpoint' && empty($message['Message']) === false
-                    && $message['Subject'] === 'LPA Account Cleanup Notification'
-                    && $message['MessageStructure'] === 'string';
-            })
-            ->once();
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'))
+            // Should be called once per admin email address.
+            ->times(count($this->config['admin']['account_cleanup_notification_recipients']));
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
@@ -108,7 +104,6 @@ class ServiceTest extends AbstractServiceTest
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
-            ->withSnsClient($this->snsClient)
             ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
@@ -123,12 +118,12 @@ class ServiceTest extends AbstractServiceTest
     {
         $this->setAccountsExpectations();
 
-        $this->snsClient->shouldReceive('publish')->once()
-            ->andThrow(new Exception('Test exception'));
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->andThrow(new NotifyException('Test exception'));
 
         $this->logger->shouldReceive('alert')->withArgs(function ($message, $extra) {
-            return $message === 'Unable to send AWS SNS notification' && array_key_exists('exception', $extra);
-        })->once();
+            return $message === 'Unable to send admin notification message' && array_key_exists('exception', $extra);
+        });
 
         $serviceBuilder = new ServiceBuilder();
         $service = $serviceBuilder
@@ -136,7 +131,6 @@ class ServiceTest extends AbstractServiceTest
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
-            ->withSnsClient($this->snsClient)
             ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
@@ -151,8 +145,8 @@ class ServiceTest extends AbstractServiceTest
     {
         $this->setAccountsExpectations([new User(['id' => 1])]);
 
-        $this->snsClient->shouldReceive('publish')
-            ->once();
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
 
         $this->usersService->shouldReceive('delete')
             ->withArgs([1, 'expired']);
@@ -171,7 +165,6 @@ class ServiceTest extends AbstractServiceTest
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
-            ->withSnsClient($this->snsClient)
             ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
@@ -186,8 +179,8 @@ class ServiceTest extends AbstractServiceTest
     {
         $this->setAccountsExpectations([new User(['id' => 1])]);
 
-        $this->snsClient->shouldReceive('publish')
-            ->once();
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
 
         $this->usersService->shouldReceive('delete')
             ->withArgs([1, 'expired']);
@@ -206,7 +199,6 @@ class ServiceTest extends AbstractServiceTest
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
-            ->withSnsClient($this->snsClient)
             ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
@@ -227,7 +219,8 @@ class ServiceTest extends AbstractServiceTest
             'last_login' => clone $lastLoginDate
         ])]);
 
-        $this->snsClient->shouldReceive('publish')->once();
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
 
         $lastLoginDate->add(DateInterval::createFromDateString('+9 months'));
 
@@ -247,7 +240,6 @@ class ServiceTest extends AbstractServiceTest
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
-            ->withSnsClient($this->snsClient)
             ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
@@ -266,8 +258,8 @@ class ServiceTest extends AbstractServiceTest
             'last_login' => new DateTime('-9 months +1 week')
         ])]);
 
-        $this->snsClient->shouldReceive('publish')
-            ->once();
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
 
         $this->notifyClient->shouldReceive('sendEmail')
             ->once()
@@ -286,7 +278,6 @@ class ServiceTest extends AbstractServiceTest
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
-            ->withSnsClient($this->snsClient)
             ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
@@ -305,8 +296,8 @@ class ServiceTest extends AbstractServiceTest
             'last_login' => new DateTime('-9 months +1 week')
         ])]);
 
-        $this->snsClient->shouldReceive('publish')
-            ->once();
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
 
         $this->notifyClient->shouldReceive('sendEmail')
             ->once()
@@ -325,7 +316,6 @@ class ServiceTest extends AbstractServiceTest
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
-            ->withSnsClient($this->snsClient)
             ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
@@ -346,8 +336,8 @@ class ServiceTest extends AbstractServiceTest
             'last_login' => clone $lastLoginDate,
         ])]);
 
-        $this->snsClient->shouldReceive('publish')
-            ->once();
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
 
         $lastLoginDate->add(DateInterval::createFromDateString('+9 months'));
 
@@ -367,7 +357,6 @@ class ServiceTest extends AbstractServiceTest
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
-            ->withSnsClient($this->snsClient)
             ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();
@@ -382,8 +371,8 @@ class ServiceTest extends AbstractServiceTest
     {
         $this->setAccountsExpectations([], [], [], [new User(['id' => 1])]);
 
-        $this->snsClient->shouldReceive('publish')
-            ->once();
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(Mockery::type('string'), AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE, Mockery::type('array'));
 
         $this->usersService->shouldReceive('delete')
             ->withArgs([1, 'unactivated']);
@@ -394,7 +383,6 @@ class ServiceTest extends AbstractServiceTest
             ->withAuthUserRepository($this->authUserRepository)
             ->withConfig($this->config)
             ->withNotifyClient($this->notifyClient)
-            ->withSnsClient($this->snsClient)
             ->withUsersService($this->usersService)
             ->withLogger($this->logger)
             ->build();

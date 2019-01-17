@@ -12,8 +12,6 @@ class ServiceBuilder extends AbstractServiceBuilder
 
     private $notifyClient = null;
 
-    private $snsClient = null;
-
     private $usersService = null;
 
     /**
@@ -30,10 +28,6 @@ class ServiceBuilder extends AbstractServiceBuilder
 
         if ($this->notifyClient !== null) {
             $service->setNotifyClient($this->notifyClient);
-        }
-
-        if ($this->snsClient !== null) {
-            $service->setSnsClient($this->snsClient);
         }
 
         if ($this->usersService !== null) {
@@ -60,16 +54,6 @@ class ServiceBuilder extends AbstractServiceBuilder
     public function withNotifyClient($notifyClient)
     {
         $this->notifyClient = $notifyClient;
-        return $this;
-    }
-
-    /**
-     * @param MockInterface $snsClient
-     * @return $this
-     */
-    public function withSnsClient($snsClient)
-    {
-        $this->snsClient = $snsClient;
         return $this;
     }
 
