@@ -4,7 +4,8 @@ namespace Application\Model\Service\AddressLookup;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class OrdnanceSurveyFactory implements FactoryInterface {
+class OrdnanceSurveyFactory implements FactoryInterface
+{
 
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
