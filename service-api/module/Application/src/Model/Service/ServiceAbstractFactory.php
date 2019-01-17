@@ -31,7 +31,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         AccountCleanup\Service::class => [
             'setConfig'         => 'config',
             'setNotifyClient'   => 'NotifyClient',
-            'setSnsClient'      => 'SnsClient',
             'setUsersService'   => UsersService::class,
         ],
         Password\Service::class => [

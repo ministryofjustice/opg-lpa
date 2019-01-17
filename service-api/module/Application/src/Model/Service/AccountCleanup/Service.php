@@ -8,7 +8,6 @@ use Alphagov\Notifications\Exception\NotifyException;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Users\Service as UsersService;
-use Aws\Sns\SnsClient;
 use DateTime;
 use Exception;
 
@@ -26,6 +25,11 @@ class Service extends AbstractService
     use UserRepositoryTrait;
 
     /**
+     * GOV Notify template ID
+     */
+    const CLEANUP_NOTIFICATION_TEMPLATE = '1acdd1fa-b463-4dac-847b-299e0ba3acb6';
+
+    /**
      * @var array
      */
     private $config;
@@ -34,11 +38,6 @@ class Service extends AbstractService
      * @var NotifyClient
      */
     private $notifyClient;
-
-    /**
-     * @var SnsClient
-     */
-    private $snsClient;
 
     /**
      * @var UsersService
@@ -82,27 +81,31 @@ class Service extends AbstractService
         //  Remove accounts that have not been activated
         $unactivatedAccountsDeletedCount = $this->deleteUnactivatedAccounts();
 
-        $message = "Unactivated accounts deleted: $unactivatedAccountsDeletedCount\n";
-        $message .= "One month's notice emails sent: $expiryAccountsWarning1MonthCount\n";
-        $message .= "One week's notice emails sent: $expiryAccountsWarning1WeekCount\n";
-        $message .= "Expired accounts deleted: $expiredAccountsDeletedCount\n";
-        $message .= "\nLove,\n" . $this->config['stack']['name'];
 
-        try {
-            $config = $this->config['log']['sns'];
+        // Send Account Cleanup notifications to site admins.
+        if (isset($this->config['admin']['account_cleanup_notification_recipients']) &&
+            is_array($this->config['admin']['account_cleanup_notification_recipients'])) {
 
-            $this->snsClient->publish(array(
-                'TopicArn' => $config['endpoints']['info'],
-                'Message' => $message,
-                'Subject' => 'LPA Account Cleanup Notification',
-                'MessageStructure' => 'string',
-            ));
-        } catch (Exception $e) {
-            $this->getLogger()->alert(
-                'Unable to send AWS SNS notification',
-                ['exception' => $e->getMessage()]
-            );
-        }
+            foreach ($this->config['admin']['account_cleanup_notification_recipients'] as $recipient) {
+                try {
+
+                    $this->notifyClient->sendEmail($recipient, self::CLEANUP_NOTIFICATION_TEMPLATE, [
+                        'stack'                             => $this->config['stack']['name'],
+                        'expiredAccountsDeletedCount'       => $expiredAccountsDeletedCount,
+                        'expiryAccountsWarning1WeekCount'   => $expiryAccountsWarning1WeekCount,
+                        'expiryAccountsWarning1MonthCount'  => $expiryAccountsWarning1MonthCount,
+                        'unactivatedAccountsDeletedCount'   => $unactivatedAccountsDeletedCount,
+                    ]);
+
+                } catch (NotifyException $e) {
+                    // Other types of exception are worse; things still might not work tomorrow.
+                    $this->getLogger()->alert('Unable to send admin notification message', [
+                        'exception' => $e->getMessage()
+                    ]);
+                }
+            }
+
+        } // if
     }
 
     /**
@@ -241,14 +244,6 @@ class Service extends AbstractService
     public function setNotifyClient(NotifyClient $notifyClient)
     {
         $this->notifyClient = $notifyClient;
-    }
-
-    /**
-     * @param SnsClient $snsClient
-     */
-    public function setSnsClient(SnsClient $snsClient)
-    {
-        $this->snsClient = $snsClient;
     }
 
     /**
