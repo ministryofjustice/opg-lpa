@@ -27,7 +27,7 @@
     .accordion-header {
         display: block;
         padding: $gutter-half;
-        background-color: $turquoise;
+        background-color: $turquoise-with-contrast;
         color: $white;
 
         @include media(mobile) {
@@ -64,9 +64,9 @@
             margin: 16px 22px 0 0;
             padding: 2px 5px 0;
             float: right;
-            border: 2px solid $turquoise;
+            border: 2px solid $turquoise-with-contrast;
             border-radius: 5px;
-            color: $turquoise;
+            color: $turquoise-with-contrast;
             font-size: 13px;
             font-weight: 700;
             text-align: center;

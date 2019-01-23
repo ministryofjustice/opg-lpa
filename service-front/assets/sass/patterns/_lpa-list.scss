@@ -205,10 +205,10 @@
                }
           }
           &.status-4 {
-               border-left: 10px solid $turquoise;
+               border-left: 10px solid $turquoise-with-contrast;
                .status {
                     color: $white;
-                    background: $turquoise;
+                    background: $turquoise-with-contrast;
                }
           }
           &.status-started, &.status-created, &.status-ready {
