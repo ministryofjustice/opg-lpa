@@ -43,6 +43,7 @@ var paths = {};
 paths.home = '/home';
 paths.login = '/login';
 paths.logout = '/logout';
+paths.sessionState = '/session-state';
 paths.signup = '/signup';
 paths.terms = '/terms';
 paths.passwordReset = '/forgot-password';
