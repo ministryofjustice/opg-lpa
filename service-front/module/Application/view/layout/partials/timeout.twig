@@ -24,15 +24,13 @@
 </div>
 
 <script>
-    // instantiate object and attach events on page load ready event
-    $(function () {
-        new SessionTimeoutDialog({
-            'element': $('#timeoutPopup'),
-            'sessionExpiresMs': {{ secondsUntilSessionExpires * 1000 }},
-            'sessionPopupShowAfterMs': {{ (secondsUntilSessionExpires - (warningPeriodInMinutes * 60)) * 1000 }},
-            'keepSessionAliveUrl': '{{ url('session-keep-alive', {'force_canonical': true}) }}'
-        }).startCountdown();
-    });
+    if(typeof window.timeoutWarningDialog === 'undefined') {
+        // instantiate object and attach events on page load ready event
+        $(window.timeoutWarningDialog = new SessionTimeoutDialog({
+            element: $('#timeoutPopup'),
+            warningPeriodMs: {{ warningPeriodInMinutes * 60000 }}
+        }));
+    }
 </script>
 
 {% endif %}
