@@ -2263,10 +2263,10 @@ input[type=number] {
       color: #fff;
       background: #2b8cc4; }
   .track-my-lpa li.status-4 {
-    border-left: 10px solid #28a197; }
+    border-left: 10px solid #218278; }
     .track-my-lpa li.status-4 .status {
       color: #fff;
-      background: #28a197; }
+      background: #218278; }
   .track-my-lpa li.status-started, .track-my-lpa li.status-created, .track-my-lpa li.status-ready {
     border-left: 10px solid #ecedee; }
     .track-my-lpa li.status-started .status, .track-my-lpa li.status-created .status, .track-my-lpa li.status-ready .status {
@@ -2554,7 +2554,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
 .accordion .accordion-header {
   display: block;
   padding: 15px;
-  background-color: #28a197;
+  background-color: #218278;
   color: #fff; }
 .accordion .accordion-info {
   margin-bottom: 30px;
@@ -2571,9 +2571,9 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     margin: 16px 22px 0 0;
     padding: 2px 5px 0;
     float: right;
-    border: 2px solid #28a197;
+    border: 2px solid #218278;
     border-radius: 5px;
-    color: #28a197;
+    color: #218278;
     font-size: 13px;
     font-weight: 700;
     text-align: center;
@@ -2868,7 +2868,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
 .appstatus {
   margin: 30px 0;
   padding: 45px;
-  background-color: #28a197;
+  background-color: #218278;
   color: #fff;
   text-align: center; }
   .appstatus.warning {
