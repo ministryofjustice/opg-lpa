@@ -51,6 +51,15 @@ class Application extends AbstractService implements ApiClientAwareInterface
         return false;
     }
 
+    public function getStatuses($ids)
+    {
+        $target = sprintf('/v2/user/%s/applications/statuses/%s', $this->getUserId(), $ids);
+
+        $result = $this->apiClient->httpGet($target);
+
+        return $result;
+    }
+
     /**
      * Create a new LPA application
      *
