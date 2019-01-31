@@ -9,11 +9,11 @@
 namespace ApplicationTest\View\Helper;
 
 
-class AccountInfoTest extends MockeryTestCase
-{
-    public function testInvoke() : void
-    {
-
-    }
-
-}
+//class AccountInfoTest extends MockeryTestCase
+//{
+//    public function testInvoke() : void
+//    {
+//
+//    }
+//
+//}
