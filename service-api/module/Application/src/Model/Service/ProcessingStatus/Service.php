@@ -14,6 +14,17 @@ use RuntimeException;
 class Service extends AbstractService
 {
 
+    private const SIRIUS_STATUS_TO_LPA = [
+            'Pending' => 'Received',
+            'Perfect' => 'Checking',
+            'Imperfect' => 'Checking',
+            'Invalid' => 'Concluded',
+            'Rejected' => 'Concluded',
+            'Withdrawn' => 'Concluded',
+            'Registered' => 'Concluded',
+            'Cancelled' => 'Concluded',
+            'Revoked' => 'Concluded'];
+
     /**
      * @var $httpClient HttpClient
      */
@@ -78,25 +89,22 @@ class Service extends AbstractService
 
     private function handleResponse(ResponseInterface $response)
     {
-        $map = ['Pending' => 'Received',
-            'Perfect' => 'Checking',
-            'Imperfect' => 'Checking',
-            'Invalid' => 'Concluded',
-            'Rejected' => 'Concluded',
-            'Withdrawn' => 'Concluded',
-            'Registered' => 'Concluded',
-            'Cancelled' => 'Concluded',
-            'Revoked' => 'Concluded'];
 
             $status = json_decode($response->getBody(), true);
 
-            // TODO - check if found?
+            if (is_null($status)){
+                return null;
+            }
 
             //  If the body isn't an array now then it wasn't JSON before
             if (!is_array($status)) {
                 throw new ApiProblemException($response, 'Malformed JSON response from server');
             }
 
-            return $map[$status['status']];
+            if (!$status['found']) {
+                return null;
+            }
+
+            return self::SIRIUS_STATUS_TO_LPA[$status['status']];
     }
 }

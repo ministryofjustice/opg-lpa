@@ -30,12 +30,12 @@ class StatusController extends AbstractRestfulController
     private $service;
 
     /**
-     * @var $authorizationService Service
+     * @var AuthorizationService Service
      */
     private $authorizationService;
 
     /**
-     * @var $processingStatusService ProcessingStatusService
+     * @var ProcessingStatusService ProcessingStatusService
      */
     private $processingStatusService;
 

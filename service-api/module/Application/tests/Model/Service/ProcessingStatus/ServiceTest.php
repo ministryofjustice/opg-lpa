@@ -80,4 +80,13 @@ class ServiceTest extends MockeryTestCase
 
         $this->service->getStatus(12);
     }
+
+    public function testGetStatusNotFound()
+    {
+        $this->setUpRequest(200, '{"found": false}');
+
+        $result = $this->service->getStatus(12);
+        $this->assertNull($result);
+    }
+
 }
