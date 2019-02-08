@@ -10,6 +10,7 @@ use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\Users\Service as UsersService;
+use Http\Client\HttpClient;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Exception;
@@ -47,6 +48,10 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         Users\Service::class => [
             'setApplicationsService' => ApplicationsService::class,
         ],
+        ProcessingStatus\Service::class => [
+            'setClient' => HttpClient::class,
+            'setConfig' => 'config'
+        ]
     ];
 
     /**

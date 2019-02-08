@@ -224,11 +224,13 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         if (!is_null($inDbLpa)) {
             $inDbLpa = new Lpa($inDbLpa);
 
-            if ($inDbLpa->isLocked()) {
+            $noDataChanged = $lpa->equalsIgnoreMetadata($inDbLpa);
+
+            if (!$noDataChanged && $inDbLpa->isLocked()) {
                 throw new LockedException('LPA has already been locked.');
             }
 
-            $updateTimestamp = !$lpa->equalsIgnoreMetadata($inDbLpa);
+            $updateTimestamp = !$noDataChanged;
         }
 
         //------------------------------------------
