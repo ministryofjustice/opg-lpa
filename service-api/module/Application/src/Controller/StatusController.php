@@ -148,22 +148,22 @@ class StatusController extends AbstractRestfulController
             $metaData = $lpa->getMetaData();
 
             // If application has already reached the last stage of processing ('Concluded') do not check for updates
-            if ($metaData[LPA::PROCESSING_STATUS] == 'Concluded') {
+            if ($metaData[LPA::SIRIUS_PROCESSING_STATUS] == 'Concluded') {
                 $results[$id] = ['found'=>true, 'status'=>'Concluded'];
                 continue;
             }
 
             $result = $this->processingStatusService->getStatus($id);
 
-            if($result != null && $result != $metaData[LPA::PROCESSING_STATUS]) {
+            if($result != null && $result != $metaData[LPA::SIRIUS_PROCESSING_STATUS]) {
 
                 // Update metadata in DB
-                $metaData[LPA::PROCESSING_STATUS] = $result;
+                $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $result;
 
                 $this->getService()->patch(['metadata' => $metaData], $id, $this->routeUserId);
             }
 
-            $results[$id] = ['found'=>true, 'status'=>$metaData[LPA::PROCESSING_STATUS]];
+            $results[$id] = ['found'=>true, 'status'=>$metaData[LPA::SIRIUS_PROCESSING_STATUS]];
         }
         
         return new Json($results);

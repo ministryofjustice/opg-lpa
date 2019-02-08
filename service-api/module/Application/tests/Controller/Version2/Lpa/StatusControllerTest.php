@@ -53,7 +53,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
-            'metadata' => [Lpa::PROCESSING_STATUS => 'Checking']]);
+            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Checking']]);
 
         $dataModel = new DataModelEntity($lpa);
 
@@ -79,7 +79,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
-            'metadata' => [Lpa::PROCESSING_STATUS => 'Checking']]);
+            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Checking']]);
 
         $dataModel = new DataModelEntity($lpa);
 
@@ -102,7 +102,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
-            'metadata' => [Lpa::PROCESSING_STATUS => 'Checking']]);
+            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Checking']]);
 
         $dataModel = new DataModelEntity($lpa);
 
@@ -153,7 +153,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
-            'metadata' => [Lpa::PROCESSING_STATUS => 'Concluded']]);
+            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Concluded']]);
 
         $dataModel = new DataModelEntity($lpa);
 
