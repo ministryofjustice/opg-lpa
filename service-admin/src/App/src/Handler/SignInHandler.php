@@ -6,8 +6,8 @@ namespace App\Handler;
 
 use App\Form\SignIn;
 use App\Handler\Traits\JwtTrait;
+use App\Service\Authentication\Identity;
 use App\Service\Authentication\Result;
-use App\User\User;
 use App\Service\Authentication\AuthenticationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -67,10 +67,10 @@ class SignInHandler extends AbstractHandler
 
                     if ($result->isValid()) {
                         //  Update the JWT data with the user data
-                        /** @var User $user */
-                        $user = $result->getIdentity();
+                        /** @var Identity $identity */
+                        $identity = $result->getIdentity();
 
-                        $this->addTokenData('token', $user->getToken());
+                        $this->addTokenData('token', $identity->getToken());
 
                         return $this->redirectToRoute('home');
                     }

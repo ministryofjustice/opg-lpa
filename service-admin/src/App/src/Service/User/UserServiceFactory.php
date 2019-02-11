@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Service\UserSearch;
+namespace App\Service\User;
 
 use App\Service\ApiClient\Client as ApiClient;
 use Interop\Container\ContainerInterface;
 
 /**
- * Class UserSearchFactory
- * @package App\Service\UserSearch
+ * Class UserServiceFactory
+ * @package App\Service\User
  */
-class UserSearchFactory
+class UserServiceFactory
 {
     /**
      * @param ContainerInterface $container
-     * @return UserSearch
+     * @return UserService
      */
     public function __invoke(ContainerInterface $container)
     {
-        return new UserSearch($container->get(ApiClient::class));
+        return new UserService($container->get(ApiClient::class));
     }
 }

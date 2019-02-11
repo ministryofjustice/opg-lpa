@@ -2,6 +2,8 @@
 
 namespace App\Middleware\Authorization;
 
+use App\Service\Authentication\AuthenticationService;
+use App\Service\User\UserService;
 use Interop\Container\ContainerInterface;
 use Zend\Expressive\Handler\NotFoundHandler;
 use Zend\Expressive\Helper\UrlHelper;
@@ -46,9 +48,11 @@ class AuthorizationMiddlewareFactory
             }
         }
 
+        $authenticationService = $container->get(AuthenticationService::class);
+        $userService = $container->get(UserService::class);
         $urlHelper = $container->get(UrlHelper::class);
         $notFoundHandler = $container->get(NotFoundHandler::class);
 
-        return new AuthorizationMiddleware($urlHelper, $rbac, $notFoundHandler);
+        return new AuthorizationMiddleware($authenticationService, $userService, $urlHelper, $rbac, $notFoundHandler);
     }
 }

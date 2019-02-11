@@ -4,7 +4,6 @@ namespace App\Service\Authentication;
 
 use App\Service\ApiClient\ApiException;
 use App\Service\ApiClient\Client as ApiClient;
-use App\User\User;
 
 /**
  * Class AuthenticationService
@@ -43,9 +42,9 @@ class AuthenticationService
             ]);
 
             //  If no exception has been thrown then this is OK - transfer the details to the success result
-            $user = new User($userData);
+            $identity = new Identity($userData);
 
-            return new Result(Result::SUCCESS, $user);
+            return new Result(Result::SUCCESS, $identity);
         } catch (ApiException $apiEx) {
             $resultCode = Result::FAILURE;
 
@@ -59,6 +58,28 @@ class AuthenticationService
             }
 
             return new Result($resultCode, null, [$apiEx->getMessage()]);
+        }
+    }
+
+    /**
+     * Verify the user with the token value
+     *
+     * @param $token
+     * @return Result
+     */
+    public function verify($token)
+    {
+        try {
+            $userData = $this->client->httpPost('/v2/authenticate', [
+                'authToken' => $token,
+            ]);
+
+            //  If no exception has been thrown then this is OK - transfer the details to the success result
+            $identity = new Identity($userData);
+
+            return new Result(Result::SUCCESS, $identity);
+        } catch (ApiException $apiEx) {
+            return new Result(Result::FAILURE, null, [$apiEx->getMessage()]);
         }
     }
 }

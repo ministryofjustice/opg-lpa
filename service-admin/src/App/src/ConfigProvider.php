@@ -66,7 +66,7 @@ class ConfigProvider
                 Service\Cache\Cache::class                          => Service\Cache\CacheFactory::class,
                 Service\ApiClient\Client::class                     => Service\ApiClient\ClientFactory::class,
                 Service\Authentication\AuthenticationService::class => Service\Authentication\AuthenticationServiceFactory::class,
-                Service\UserSearch\UserSearch::class                => Service\UserSearch\UserSearchFactory::class,
+                Service\User\UserService::class                     => Service\User\UserServiceFactory::class,
             ],
             'initializers' => [
                 Handler\Initializers\TemplatingSupportInitializer::class,
