@@ -165,7 +165,7 @@ return [
     ], // session
 
     'processing-status' => [
-        'track-from-date' => getenv('OPG_LPA_TRACK_FROM_DATE')?: '2015-01-01',
+        'track-from-date' => getenv('OPG_LPA_TRACK_FROM_DATE')?: '2019-02-13',
         'endpoint' => getenv('OPG_LPA_PROCESSING_STATUS_ENDPOINT') ?: 'http://thing/processing-status/'
     ]
 ];

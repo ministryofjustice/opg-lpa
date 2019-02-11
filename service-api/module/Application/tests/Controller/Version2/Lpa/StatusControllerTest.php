@@ -67,7 +67,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->andReturn('Concluded');
 
         $this->service->shouldReceive('patch')
-            ->withArgs([['metadata' => ['processing-status' => 'Concluded']], '98765', '12345'])->once();
+            ->withArgs([['metadata' => ['sirius-processing-status' => 'Concluded']], '98765', '12345'])->once();
 
         $result = $this->statusController->get('98765');
 

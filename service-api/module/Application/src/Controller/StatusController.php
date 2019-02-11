@@ -25,17 +25,17 @@ class StatusController extends AbstractRestfulController
     protected $identifierName = 'lpaIds';
 
     /**
-     * @var AuthorizationService AuthorizationService
+     * @var $service Service
      */
     private $service;
 
     /**
-     * @var AuthorizationService Service
+     * @var $authorizationService AuthorizationService
      */
     private $authorizationService;
 
     /**
-     * @var ProcessingStatusService ProcessingStatusService
+     * @var $processingStatusService ProcessingStatusService
      */
     private $processingStatusService;
 
@@ -115,6 +115,7 @@ class StatusController extends AbstractRestfulController
      * @param string $ids
      * @return Json
      * @throws Exception
+     * @throws \Http\Client\Exception
      */
     public function get($ids)
     {

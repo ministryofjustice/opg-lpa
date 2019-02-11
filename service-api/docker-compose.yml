@@ -2,7 +2,7 @@ version: '2'
 
 services:
   api:
-    container_name: apiv3
+    container_name: apiv2
     build: .
     volumes:
       - .:/app
