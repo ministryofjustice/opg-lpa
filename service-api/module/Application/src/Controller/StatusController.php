@@ -20,11 +20,6 @@ use ZfcRbac\Service\AuthorizationService;
 class StatusController extends AbstractRestfulController
 {
     /**
-     * @var string
-     */
-    protected $identifierName = 'lpaIds';
-
-    /**
      * @var $service Service
      */
     private $service;
