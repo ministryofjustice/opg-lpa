@@ -3,8 +3,9 @@
 namespace ApplicationTest\Model\Service\Date;
 
 use Application\Model\Service\Date\DateService;
-use DateInterval;
+use ApplicationTest\Model\Service\ServiceTestHelper;
 use DateTime;
+use Exception;
 use PHPUnit\Framework\TestCase;
 
 class DateServiceTest extends TestCase
@@ -20,17 +21,20 @@ class DateServiceTest extends TestCase
         $this->dateService = new DateService();
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetNow() : void
     {
-        $nowish = new DateTime('now');
-
         $result = $this->dateService->getNow();
 
         $this->assertInstanceOf(DateTime::class, $result);
-        $this->assertGreaterThanOrEqual($nowish, $result);
-        $this->assertLessThanOrEqual($nowish->add(new DateInterval('PT1S')), $result);
+        ServiceTestHelper::assertTimeNear(new DateTime('now'), $result);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetToday() : void
     {
         $this->assertEquals(new DateTime('today'), $this->dateService->getToday());
