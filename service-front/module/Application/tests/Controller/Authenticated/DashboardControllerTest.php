@@ -29,7 +29,7 @@ class DashboardControllerTest extends AbstractControllerTest
             'total' => 0
         ];
 
-        $this->params-> shouldReceive('fromQuery')->withArgs(['search', null])->andReturn(null)->once();
+        $this->params->shouldReceive('fromQuery')->withArgs(['search', null])->andReturn(null)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['page', 1])->andReturn(1)->once();
         $this->lpaApplicationService->shouldReceive('getLpaSummaries')
             ->withArgs([null, 1, 50])->andReturn($lpasSummary)->once();

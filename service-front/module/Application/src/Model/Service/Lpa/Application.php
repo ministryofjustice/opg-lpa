@@ -65,6 +65,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
             $result = null;
         }
 
+        // if an ApiException is returned, we set result to null and return found false for the id's
         if ($result == null) {
             $result = [];
 
