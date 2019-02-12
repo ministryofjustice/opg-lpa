@@ -163,4 +163,9 @@ return [
             'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
         ],
     ], // session
+
+    'processing-status' => [
+        'track-from-date' => getenv('OPG_LPA_TRACK_FROM_DATE')?: '2019-02-13',
+        'endpoint' => getenv('OPG_LPA_PROCESSING_STATUS_ENDPOINT') ?: 'http://thing/processing-status/'
+    ]
 ];

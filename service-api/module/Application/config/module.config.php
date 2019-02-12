@@ -86,6 +86,8 @@ return [
                 ],
             ],
 
+
+
             'auth-routes' => [
                 'type'    => 'Segment',
                 'options' => [
@@ -116,6 +118,7 @@ return [
                             ],
                         ],
                     ],
+
                     'users' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -199,7 +202,6 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
-
                     'user' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -213,6 +215,19 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
+                            'statuses' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/statuses/:lpaIds',
+                                    'constraints' => [
+                                        'lpaIds' => '[0-9,]+',
+                                    ],
+                                    'defaults' => [
+                                        '__NAMESPACE__' => '',
+                                        'controller' => Application\Controller\StatusController::class,
+                                    ],
+                                ],
+                            ],
 
                             'applications' => [
                                 'type'    => 'Segment',
@@ -402,7 +417,6 @@ return [
                                             ],
                                         ],
                                     ],
-
                                 ],
                             ],
 
@@ -445,7 +459,7 @@ return [
 
     'controllers' => [
         'invokables' => [
-            'Application\Controller\Index' => 'Application\Controller\IndexController',
+            'Application\Controller\Index' => 'Application\Controller\IndexController'
         ],
         'factories' => [
             'Application\Controller\Console\AccountCleanup' => Application\ControllerFactory\AccountCleanupControllerFactory::class,
@@ -454,6 +468,7 @@ return [
             'Application\Controller\Ping'                   => Application\ControllerFactory\PingControllerFactory::class,
             'Application\Controller\Stats'                  => Application\ControllerFactory\StatsControllerFactory::class,
             'Application\Controller\Feedback'               => Application\ControllerFactory\FeedbackControllerFactory::class,
+            Application\Controller\StatusController::class  => Application\ControllerFactory\StatusControllerFactory::class
         ],
         'abstract_factories' => [
             'Application\ControllerFactory\AuthControllerAbstractFactory',
