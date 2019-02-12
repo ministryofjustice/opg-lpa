@@ -7,13 +7,14 @@ use Application\Model\Service\Authentication\AuthenticationService;
 use Exception;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
 use TheIconic\Tracking\GoogleAnalytics\Analytics;
 use TheIconic\Tracking\GoogleAnalytics\AnalyticsResponse;
 
 class GoogleAnalyticsServiceTest extends MockeryTestCase
 {
     /**
-     * MockInterface|GoogleAnalyticsService
+     * @var $googleAnalyticsService GoogleAnalyticsService|MockInterface
      */
     private $googleAnalyticsService;
 
@@ -21,6 +22,7 @@ class GoogleAnalyticsServiceTest extends MockeryTestCase
     {
         parent::setUp();
 
+        /** @var $authenticationService AuthenticationService */
         $authenticationService = Mockery::mock(AuthenticationService::class);
 
         $this->googleAnalyticsService = new GoogleAnalyticsService($authenticationService, []);
@@ -56,10 +58,14 @@ class GoogleAnalyticsServiceTest extends MockeryTestCase
         $this->assertEquals('12345678.87654321', $clientId);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testSendPageViewSuccess() : void
     {
         $_COOKIE['_ga'] = 'padding.more-padding.12345678.87654321';
 
+        /** @var $analyticsClient Analytics|MockInterface */
         $analyticsClient = Mockery::mock(Analytics::class);
         $analyticsClient->expects('setProtocolVersion')->withArgs(['1'])->andReturn($analyticsClient)->once();
         $analyticsClient->expects('setTrackingId')->withArgs(['UA-33184303-1'])->andReturn($analyticsClient)->once();
@@ -87,6 +93,7 @@ class GoogleAnalyticsServiceTest extends MockeryTestCase
     {
         $_COOKIE['_ga'] = 'padding.more-padding.12345678.87654321';
 
+        /** @var $analyticsClient Analytics|MockInterface */
         $analyticsClient = Mockery::mock(Analytics::class);
         $analyticsClient->expects('setProtocolVersion')->withArgs(['1'])->andReturn($analyticsClient)->once();
         $analyticsClient->expects('setTrackingId')->withArgs(['UA-33184303-1'])->andReturn($analyticsClient)->once();

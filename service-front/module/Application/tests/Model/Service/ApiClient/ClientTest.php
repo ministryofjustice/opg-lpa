@@ -238,16 +238,6 @@ class ClientTest extends MockeryTestCase
 
         $result = $this->client->httpPost('path', ['a'=>1]);
 
-        $r = new Request(
-            'POST',
-            new Uri('base_url/path'),
-            ['Accept' => 'application/json',
-                'Content-type' => 'application/json',
-                'User-agent' => 'LPA-FRONT',
-                'Token' => 'test token'],
-            '{"a":1}'
-        );
-
         $this->assertEquals(['test' => 'value'], $result);
     }
 

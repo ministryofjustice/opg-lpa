@@ -6,12 +6,12 @@ use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\User\Details;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
+use ApplicationTest\Model\Service\ServiceTestHelper;
 use Exception;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
-use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Zend\Session\Container;
 
@@ -54,16 +54,6 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->authenticationService->shouldReceive('getIdentity')->times($getIdentityTimes)->andReturn($identity);
 
         return $identity;
-    }
-
-    public function createApiException(string $message = 'Test error', int $status = 500, $body = '{}') : ApiException
-    {
-        /** @var ResponseInterface|MockInterface $response */
-        $response = Mockery::mock(ResponseInterface::class);
-        $response->shouldReceive('getBody')->andReturn($body);
-        $response->shouldReceive('getStatusCode')->andReturn($status);
-
-        return new ApiException($response, $message);
     }
 
     public function testGetUserDetails() : void
@@ -302,7 +292,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/test-id/email', ['newEmail' => 'new@email.address']])
             ->once()
-            ->andThrow($this->createApiException('User already has this email'));
+            ->andThrow(ServiceTestHelper::createApiException('User already has this email'));
 
         $result = $this->service->requestEmailUpdate('new@email.address', 'old@email.address');
 
@@ -318,7 +308,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/test-id/email', ['newEmail' => 'new@email.address']])
             ->once()
-            ->andThrow($this->createApiException('Email already exists for another user'));
+            ->andThrow(ServiceTestHelper::createApiException('Email already exists for another user'));
 
         $result = $this->service->requestEmailUpdate('new@email.address', 'old@email.address');
 
@@ -334,7 +324,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/test-id/email', ['newEmail' => 'new@email.address']])
             ->once()
-            ->andThrow($this->createApiException());
+            ->andThrow(ServiceTestHelper::createApiException());
 
         $result = $this->service->requestEmailUpdate('new@email.address', 'old@email.address');
 
@@ -357,7 +347,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/email', ['emailUpdateToken' => 'test-token']])
             ->once()
-            ->andThrow($this->createApiException());
+            ->andThrow(ServiceTestHelper::createApiException());
 
         $result = $this->service->updateEmailUsingToken('test-token');
 
@@ -446,7 +436,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('updateToken')
             ->withArgs(['test-token'])
             ->once()
-            ->andThrow($this->createApiException());
+            ->andThrow(ServiceTestHelper::createApiException());
 
         $result = $this->service->updatePassword('old-password', 'new-password');
 
@@ -470,7 +460,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/authenticate', ['authToken' => 'test-token']])
             ->once()
-            ->andThrow($this->createApiException());
+            ->andThrow(ServiceTestHelper::createApiException());
 
         $result = $this->service->getTokenInfo('test-token');
 
@@ -497,7 +487,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpDelete')
             ->withArgs(['/v2/user/test-id'])
             ->once()
-            ->andThrow($this->createApiException());
+            ->andThrow(ServiceTestHelper::createApiException());
 
         $result = $this->service->delete();
 
@@ -553,7 +543,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
-            ->andThrow($this->createApiException());
+            ->andThrow(ServiceTestHelper::createApiException());
 
         $result = $this->service->requestPasswordResetEmail('test@email.com');
 
@@ -565,7 +555,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
-            ->andThrow($this->createApiException('Not found', 404));
+            ->andThrow(ServiceTestHelper::createApiException('Not found', 404));
 
         $this->mailTransport->shouldReceive('sendMessageFromTemplate')
             ->withArgs(['test@email.com', 'email-password-reset-no-account'])
@@ -581,7 +571,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
-            ->andThrow($this->createApiException('Not found', 404));
+            ->andThrow(ServiceTestHelper::createApiException('Not found', 404));
 
         $this->mailTransport->shouldReceive('sendMessageFromTemplate')
             ->withArgs(['test@email.com', 'email-password-reset-no-account'])
@@ -621,7 +611,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password', ['passwordToken' => 'test-token', 'newPassword' => 'test-password']])
             ->once()
-            ->andThrow($this->createApiException());
+            ->andThrow(ServiceTestHelper::createApiException());
 
         $result = $this->service->setNewPassword('test-token', 'test-password');
 
@@ -633,7 +623,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password', ['passwordToken' => 'test-token', 'newPassword' => 'test-password']])
             ->once()
-            ->andThrow($this->createApiException('Invalid passwordToken'));
+            ->andThrow(ServiceTestHelper::createApiException('Invalid passwordToken'));
 
         $result = $this->service->setNewPassword('test-token', 'test-password');
 
@@ -690,7 +680,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
-            ->andThrow($this->createApiException());
+            ->andThrow(ServiceTestHelper::createApiException());
 
         $result = $this->service->registerAccount('test@email.com', 'test-password');
 
@@ -702,7 +692,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
-            ->andThrow($this->createApiException('username-already-exists'));
+            ->andThrow(ServiceTestHelper::createApiException('username-already-exists'));
 
         $result = $this->service->registerAccount('test@email.com', 'test-password');
 
@@ -742,7 +732,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users/password-reset', ['username' => 'test@email.com']])
             ->once()
-            ->andThrow($this->createApiException());
+            ->andThrow(ServiceTestHelper::createApiException());
 
         $result = $this->service->resendActivateEmail('test@email.com');
 
@@ -766,7 +756,7 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['activationToken' => 'test-token']])
             ->once()
-            ->andThrow($this->createApiException());
+            ->andThrow(ServiceTestHelper::createApiException());
 
         $result = $this->service->activateAccount('test-token');
 

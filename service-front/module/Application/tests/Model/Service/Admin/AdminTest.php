@@ -7,10 +7,10 @@ use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\Authentication\AuthenticationService;
 use DateTime;
 use DateTimeZone;
+use Exception;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use phpDocumentor\Reflection\Types\Array_;
 
 class AdminTest extends MockeryTestCase
 {
@@ -52,6 +52,9 @@ class AdminTest extends MockeryTestCase
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     public function testSearchUsersFoundIsActiveWithLpas() : void
     {
         $this->apiClient->shouldReceive('httpGet')
@@ -80,6 +83,9 @@ class AdminTest extends MockeryTestCase
         ], $result);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testSearchUsersFoundIsActiveNoLpas() : void
     {
         $this->apiClient->shouldReceive('httpGet')
@@ -106,6 +112,9 @@ class AdminTest extends MockeryTestCase
         ], $result);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testSearchUsersFoundNotActive() : void
     {
         $searchResponse = [
