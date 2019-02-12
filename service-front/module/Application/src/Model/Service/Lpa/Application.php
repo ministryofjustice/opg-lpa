@@ -21,11 +21,13 @@ use DateTime;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use ArrayObject;
+use Opg\Lpa\Logger\LoggerTrait;
 use RuntimeException;
 
 class Application extends AbstractService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
+    use LoggerTrait;
 
     /**
      * Get an application by lpaId
@@ -49,6 +51,34 @@ class Application extends AbstractService implements ApiClientAwareInterface
         } catch (ApiException $ex) {}
 
         return false;
+    }
+
+    public function getStatuses($ids)
+    {
+        $target = sprintf('/v2/user/%s/statuses/%s', $this->getUserId(), $ids);
+
+        try {
+            $result = $this->apiClient->httpGet($target);
+        } catch (ApiException $ex) {
+            $this->getLogger()->err($ex->getMessage());
+
+            $result = null;
+        }
+
+        // if an ApiException is returned, we set result to null and return found false for the id's
+        if ($result == null) {
+            $result = [];
+
+            $exploded_ids = explode(',', $ids);
+
+            foreach ($exploded_ids as $id) {
+                $result[$id] = ['found' => false];
+            }
+
+            return $result;
+        }
+
+        return $result;
     }
 
     /**

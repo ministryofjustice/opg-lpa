@@ -78,4 +78,41 @@ class ApplicationTest extends MockeryTestCase
 
         $this->assertFalse($result);
     }
+
+    public function testGetStatuses()
+    {
+        $this->apiClient->shouldReceive('httpGet')
+            ->once()
+            ->andReturn(['4321' => ['found'=>true, 'status'=>'Concluded']]);
+
+        $result = $this->service->getStatuses(4321);
+
+        $this->assertEquals(['4321' => ['found'=>true, 'status'=>'Concluded']], $result);
+    }
+
+    public function testGetStatusesNull()
+    {
+        $this->apiClient->shouldReceive('httpGet')
+            ->once()
+            ->andReturn(null);
+
+        $result = $this->service->getStatuses('4321');
+
+        $this->assertEquals(['4321' => ['found'=>false]], $result);
+
+    }
+
+    public function testGetStatusesException()
+    {
+        $mockResponse = Mockery::mock(ResponseInterface::class);
+        $mockResponse->shouldReceive('getStatusCode')->andReturn(400);
+        $mockResponse->shouldReceive('getBody')->andReturn('{}')->once();
+        $this->apiClient->shouldReceive('httpGet')
+            ->once()
+            ->andThrow(new ApiException($mockResponse));
+
+        $result = $this->service->getStatuses(4321);
+
+        $this->assertEquals(['4321' => ['found'=>false]], $result);
+    }
 }

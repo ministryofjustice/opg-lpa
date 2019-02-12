@@ -430,6 +430,18 @@ return [
                                     ],
                                 ],
                             ],
+                            'statuses' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/statuses/:lpa-ids',
+                                    'constraints' => [
+                                        'lpa-id' => '[0-9,]+',
+                                    ],
+                                    'defaults' => [
+                                        'action'     => 'statuses',
+                                    ],
+                                ],
+                            ],
                             'terms-changed' => [
                                 'type'    => 'Segment',
                                 'options' => [
