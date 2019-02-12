@@ -4,6 +4,7 @@ namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\DashboardController;
 use ApplicationTest\Controller\AbstractControllerTest;
+use ApplicationTest\Library\View\Model\JsonModelTest;
 use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
@@ -12,6 +13,7 @@ use Zend\Mvc\MvcEvent;
 use Zend\Router\RouteMatch;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayObject;
+use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class DashboardControllerTest extends AbstractControllerTest
@@ -318,4 +320,25 @@ class DashboardControllerTest extends AbstractControllerTest
 
         $this->assertEquals($response, $result);
     }
+
+    public function testStatusesAction()
+    {
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
+        $event = new MvcEvent();
+        $routeMatch = Mockery::mock(RouteMatch::class);
+        $event->setRouteMatch($routeMatch);
+        $controller->setEvent($event);
+        $routeMatch->shouldReceive('getParam')->withArgs(['lpa-ids'])->andReturn(1);
+
+        $this->lpaApplicationService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn(['1' => ['found'=>true, 'status'=>'Concluded']]);
+
+        $result = $controller->statusesAction();
+
+        $this->assertEquals(new JsonModel(['1' => ['found'=>true, 'status'=>'Concluded']]), $result);
+    }
+
 }

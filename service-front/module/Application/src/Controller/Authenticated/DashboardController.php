@@ -4,6 +4,7 @@ namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
 use Opg\Lpa\DataModel\Lpa\Lpa;
+use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class DashboardController extends AbstractAuthenticatedController
@@ -216,5 +217,15 @@ class DashboardController extends AbstractAuthenticatedController
     protected function checkAuthenticated($allowRedirect = true)
     {
         return parent::checkAuthenticated(false);
+    }
+
+
+    public function statusesAction()
+    {
+        $lpaIds = $this->getEvent()->getRouteMatch()->getParam('lpa-ids');
+
+        $statuses = $this->getLpaApplicationService()->getStatuses($lpaIds);
+
+        return new JsonModel($statuses);
     }
 }
