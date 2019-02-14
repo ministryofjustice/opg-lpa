@@ -92,8 +92,9 @@ class Client
             case 200:
                 return $this->handleResponse($response, $jsonResponse);
             case 204:
+                return $this->handleErrorResponse($response);
             case 404:
-                return null;
+                return $this->handleErrorResponse($response);
             default:
                 return $this->handleErrorResponse($response);
         }
@@ -120,7 +121,7 @@ class Client
             case 201:
                 return $this->handleResponse($response);
             case 204:
-                return null;
+                return $this->handleErrorResponse($response);
             default:
                 return $this->handleErrorResponse($response);
         }
