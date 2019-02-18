@@ -24698,7 +24698,6 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
     init: function () {
       this.changeMobileActions();
       this.searchFocus();
-      this.ie8NthChildFix();
     },
     changeMobileActions: function(){
       // In list view on mobile, disable DETAILS and show all actions
@@ -24726,11 +24725,6 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
           $(this).removeClass('focus');
         }
       });
-    },
-    ie8NthChildFix: function(){
-      if ($('html').hasClass('lte-ie8')) {
-        $('.lpa-cards tr:nth-child(2n-1)').addClass('odd');
-      }
     }
   };
   
