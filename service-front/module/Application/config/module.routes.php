@@ -715,6 +715,15 @@ return [
                                     ],
                                 ],
                             ],
+                            'check' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/check',
+                                    'defaults' => [
+                                        'action' => 'check',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                     'form-type' => [

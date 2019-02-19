@@ -6,7 +6,6 @@ use Application\Controller\AbstractLpaController;
 use Application\Model\Service\Analytics\GoogleAnalyticsService;
 use Exception;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\ViewModel;
 
 class DownloadController extends AbstractLpaController
@@ -42,7 +41,7 @@ class DownloadController extends AbstractLpaController
 
         if ($this->pdfIsReady($lpa->getId(), $pdfType)) {
             //  Redirect to download action
-            return $this->redirect()->toRoute('lpa/download/file', [
+            return $this->redirect()->toRoute('lpa/download/check', [
                 'lpa-id'       => $lpa->getId(),
                 'pdf-type'     => $pdfType,
                 'pdf-filename' => $this->getFilename($pdfType)
@@ -50,6 +49,36 @@ class DownloadController extends AbstractLpaController
         }
 
         return false;
+    }
+
+    public function checkAction()
+    {
+        $lpa = $this->getLpa();
+
+        $pdfType = $this->getEvent()->getRouteMatch()->getParam('pdf-type');
+
+        if (!$this->pdfIsReady($lpa->getId(), $pdfType)) {
+            // If the PDF is not ready, direct the user back to index.
+            return $this->redirect()->toRoute('lpa/download', [
+                'lpa-id'   => $lpa->getId(),
+                'pdf-type' => $pdfType
+            ]);
+        }
+
+        $model = new ViewModel([
+            'lpa-id'       => 12344,
+            'pdf-type'     => $pdfType,
+            'pdf-filename' => $this->getFilename($pdfType)
+        ]);
+        $model->setVariables([
+            'lpa-id'       => 12344,
+            'pdf-type'     => $pdfType,
+            'pdf-filename' => $this->getFilename($pdfType)
+        ]);
+        $model->setTemplate('layout/downloading.twig');
+
+        return $model;
+
     }
 
     public function downloadAction()

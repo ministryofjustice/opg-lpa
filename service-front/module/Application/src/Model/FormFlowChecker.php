@@ -47,6 +47,7 @@ class FormFlowChecker
         'lpa/instructions'                              => 'isInstructionsAccessible',
         'lpa/download'                                  => 'isDownloadAccessible',
         'lpa/download/draft'                            => 'isDownloadAccessible',
+        'lpa/download/check'                            => 'isDownloadAccessible',
         'lpa/download/file'                             => 'isDownloadAccessible',
         'lpa/applicant'                                 => 'isApplicantAccessible',
         'lpa/correspondent'                             => 'isCorrespondentAccessible',
@@ -202,6 +203,7 @@ class FormFlowChecker
             && $currentRouteName != 'lpa/complete'
             && strpos($currentRouteName, 'lpa/date-check') === false
             && $currentRouteName != 'lpa/download'
+            && $currentRouteName != 'lpa/download/check'
             && $currentRouteName != 'lpa/download/file') {
             return 'lpa/view-docs';
         }
