@@ -70,11 +70,6 @@ class DownloadController extends AbstractLpaController
                 'pdftype'     => $pdfType,
                 'pdffilename' => $this->getFilename($pdfType)
             ]]);
-//        $model->setVariables([
-//            'lpa-id'       => 12344,
-//            'pdf-type'     => $pdfType,
-//            'pdf-filename' => $this->getFilename($pdfType)
-//        ]);
         $model->setTemplate('layout/downloading.twig');
 
         return $model;

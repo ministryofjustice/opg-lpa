@@ -61,7 +61,7 @@ class DownloadControllerTest extends AbstractControllerTest
             ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
         $this->layout->shouldReceive('__invoke')->withArgs(['layout/download.twig'])->once();
         $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download/file', [
+        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download/check', [
             'lpa-id'       => $this->lpa->id,
             'pdf-type'     => $pdfType,
             'pdf-filename' => 'Lasting-Power-of-Attorney-LP1F.pdf',
@@ -88,7 +88,7 @@ class DownloadControllerTest extends AbstractControllerTest
             ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
         $this->layout->shouldReceive('__invoke')->withArgs(['layout/download.twig'])->once();
         $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download/file', [
+        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download/check', [
             'lpa-id'       => $this->lpa->id,
             'pdf-type'     => $pdfType,
             'pdf-filename' => 'Draft-Lasting-Power-of-Attorney-LP1F.pdf',
@@ -116,7 +116,7 @@ class DownloadControllerTest extends AbstractControllerTest
             ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'ready'])->once();
         $this->layout->shouldReceive('__invoke')->withArgs(['layout/download.twig'])->once();
         $this->logger->shouldReceive('info')->withArgs(['PDF status is ready', ['lpaId' => $this->lpa->id]])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download/file', [
+        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download/check', [
             'lpa-id'       => $this->lpa->id,
             'pdf-type'     => $pdfType,
             'pdf-filename' => 'Lasting-Power-of-Attorney-LP3.pdf',
