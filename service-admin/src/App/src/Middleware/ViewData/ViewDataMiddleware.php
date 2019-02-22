@@ -20,12 +20,18 @@ class ViewDataMiddleware implements MiddlewareInterface
     private $renderer;
 
     /**
-     * ViewDataMiddleware constructor.
-     * @param PlatesRenderer $renderer
+     * @var string
      */
-    public function __construct(PlatesRenderer $renderer)
+    private $dockerTag;
+
+    /**
+     * @param PlatesRenderer $renderer
+     * @param $dockerTag
+     */
+    public function __construct(PlatesRenderer $renderer, $dockerTag)
     {
         $this->renderer = $renderer;
+        $this->dockerTag = $dockerTag;
     }
 
     /**
@@ -37,6 +43,7 @@ class ViewDataMiddleware implements MiddlewareInterface
     {
         $user = $request->getAttribute('user');
 
+        $this->renderer->addDefaultParam(PlatesRenderer::TEMPLATE_ALL, 'dockerTag', $this->dockerTag);
         $this->renderer->addDefaultParam(PlatesRenderer::TEMPLATE_ALL, 'user', $user);
 
         return $handler->handle($request);

@@ -19,6 +19,10 @@ return [
         'environment' => getenv('OPG_LPA_STACK_ENVIRONMENT') ?: 'dev',
     ],
 
+    'version' => [
+        'tag' => getenv('OPG_DOCKER_TAG'),
+    ],
+
     'api_base_uri' => getenv('OPG_LPA_ENDPOINTS_API') ?: 'https://apiv2',
 
     'admin_accounts' => (getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : []),

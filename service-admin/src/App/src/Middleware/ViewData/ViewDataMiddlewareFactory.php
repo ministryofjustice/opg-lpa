@@ -17,8 +17,8 @@ class ViewDataMiddlewareFactory
      */
     public function __invoke(ContainerInterface $container)
     {
-        return new ViewDataMiddleware(
-            $container->get(TemplateRendererInterface::class)
-        );
+        $config = $container->get('config');
+
+        return new ViewDataMiddleware($container->get(TemplateRendererInterface::class), $config['version']['tag']);
     }
 }
