@@ -3,9 +3,9 @@ namespace Application\Adapter;
 
 use Exception;
 
+use RuntimeException;
 use Zend\Cache\Storage\StorageInterface;
 use Aws\DynamoDb\DynamoDbClient;
-use Symfony\Component\Intl\Exception\NotImplementedException;
 
 /**
  * An adapter to use DynamoDB as a simple key/value store
@@ -137,7 +137,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function addItem($key, $value)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -145,7 +145,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function addItems(array $keyValuePairs)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -153,7 +153,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function checkAndSetItem($token, $key, $value)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -161,7 +161,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function decrementItem($key, $value)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -169,7 +169,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function decrementItems(array $keyValuePairs)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -177,7 +177,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function getCapabilities()
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -185,7 +185,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function getItems(array $keys)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -193,7 +193,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function getMetadata($key)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -201,7 +201,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function getMetadatas(array $keys)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -209,7 +209,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function getOptions()
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -217,7 +217,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function hasItem($key)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -225,7 +225,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function hasItems(array $keys)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -233,7 +233,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function incrementItem($key, $value)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -241,7 +241,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function incrementItems(array $keyValuePairs)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -249,7 +249,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function removeItems(array $keys)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -257,7 +257,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function replaceItem($key, $value)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -265,7 +265,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function replaceItems(array $keyValuePairs)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -273,7 +273,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function setItems(array $keyValuePairs)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -281,7 +281,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function setOptions($options)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -289,7 +289,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function touchItem($key)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
      /* (non-PHPdoc)
@@ -297,7 +297,7 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function touchItems(array $keys)
     {
-        throw new NotImplementedException('The ' . __FUNCTION__ . ' method has not been implemented.');
+        throw new RuntimeException('The ' . __FUNCTION__ . ' method has not been implemented.');
     }
 
     /**
@@ -307,5 +307,4 @@ class DynamoDbKeyValueStore implements StorageInterface
     {
         $this->client = $dynamoDbClient;
     }
-
 }
