@@ -133,27 +133,29 @@ class ClientTest extends MockeryTestCase
     }
 
     /**
-     * @throws \Http\Client\Exception
+     * @expectedException  Application\Model\Service\ApiClient\Exception\ApiException
+     * @expectedExceptionMessage HTTP:204 - Unexpected API response
      */
     public function testHttpGetNoContent() : void
     {
         $this->setUpRequest(204, null);
+        $this->response->shouldReceive('getBody')->once();
+        $this->response->shouldReceive('getStatusCode')->twice()->andReturn(204);
 
-        $result = $this->client->httpGet('path');
-
-        $this->assertNull($result);
+        $this->client->httpGet('path');
     }
 
     /**
-     * @throws \Http\Client\Exception
+     * @expectedException  Application\Model\Service\ApiClient\Exception\ApiException
+     * @expectedExceptionMessage HTTP:404 - Unexpected API response
      */
     public function testHttpGetNotFound() : void
     {
         $this->setUpRequest(404, null);
+        $this->response->shouldReceive('getBody')->once();
+        $this->response->shouldReceive('getStatusCode')->twice()->andReturn(404);
+        $this->client->httpGet('path');
 
-        $result = $this->client->httpGet('path');
-
-        $this->assertNull($result);
     }
 
     /**
