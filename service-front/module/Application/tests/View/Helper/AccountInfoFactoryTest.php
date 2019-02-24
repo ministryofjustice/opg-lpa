@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: seemamenon
- * Date: 28/01/2019
- * Time: 14:08
- */
 
 namespace ApplicationTest\View\Helper;
 
