@@ -16,7 +16,7 @@ class UserService
     private $client;
 
     /**
-     * AuthenticationService constructor
+     * UserService constructor
      *
      * @param ApiClient $client
      */

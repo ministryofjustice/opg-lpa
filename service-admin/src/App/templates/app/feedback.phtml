@@ -1,43 +1,62 @@
-<?php $this->layout('layout::default', ['title' => 'User Search']);
+<?php $this->layout('layout::default', ['title' => 'Feedback']);
 
 $this->addErrorMap([
-    'email' => [
-        'required' => [
-            'summary'   => 'Enter a valid email address',
-            'field'     => 'Enter a valid email address',
+    'start-date' => [
+        'empty-string' => [
+            'summary'   => 'You didn\'t enter a start date',
+            'field'     => 'Enter the start date'
         ],
-        'invalid-email' => [
-            'summary'   => 'Enter a valid email address',
-            'field'     => 'Enter a valid email address',
+        'invalid-date' => [
+            'summary'   => 'You didn\'t enter a valid start date',
+            'field'     => 'Enter a valid start date in the past'
+        ],
+        'future-date' => [
+            'summary'   => 'The start date is in the future',
+            'field'     => 'Enter a valid start date in the past'
         ],
     ],
+    'end-date' => [
+        'empty-string' => [
+            'summary'   => 'You didn\'t enter an end date',
+            'field'     => 'Enter the end date'
+        ],
+        'invalid-date' => [
+            'summary'   => 'You didn\'t enter a valid end date',
+            'field'     => 'Enter a valid end date in the past'
+        ],
+        'future-date' => [
+            'summary'   => 'The end date is in the future',
+            'field'     => 'Enter a valid end date in the past'
+        ],
+    ]
 ]);
 ?>
 
 <div class="grid-row">
     <div class="column-full">
 
-        <form method="post" class="form" action="<?= $this->url('user.search') ?>">
+        <form method="post" class="form" action="<?= $this->url('feedback') ?>">
 
             <fieldset>
 
                 <legend>
-                    <h1 class="heading-xlarge">User Details</h1>
+                    <h1 class="heading-xlarge">Feedback</h1>
                 </legend>
 
                 <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
 
                 <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
 
-                <div class="text">
-                    <p>Search for a user by email address. If found, the user's account status and other details will be displayed.</p>
-                </div>
+                <?php $this->insert('snippet::input-date', [
+                    'formLabel'     => 'Start date',
+                    'formElement'   => $form->get('start-date'),
+                    'formLabelBold' => true,
+                ]) ?>
 
-                <?php $this->insert('snippet::input-text', [
-                    'formLabel'     => 'Email address',
-                    'formElement'   => $form->get('email'),
-                    'formType'      => 'text',
-                    'formLabelBold' => false
+                <?php $this->insert('snippet::input-date', [
+                    'formLabel'     => 'End date',
+                    'formElement'   => $form->get('end-date'),
+                    'formLabelBold' => true,
                 ]) ?>
 
             </fieldset>
@@ -48,7 +67,7 @@ $this->addErrorMap([
 
         </form>
 
-        <?php if (!is_null($user)) { ?>
+        <?php /* if (!is_null($user)) { ?>
 
             <h2 class="heading-medium">User details</h2>
 
@@ -103,7 +122,7 @@ $this->addErrorMap([
                 <?php } ?>
             </ul>
 
-        <?php } ?>
+        <?php } */ ?>
 
     </div>
 </div>
