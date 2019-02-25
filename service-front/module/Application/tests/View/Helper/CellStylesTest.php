@@ -2,7 +2,6 @@
 
 namespace ApplicationTest\View\Helper;
 
-
 use Application\View\Helper\CellStyles;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
@@ -18,5 +17,4 @@ class CellStylesTest extends MockeryTestCase
 
         $this->assertEquals($expectedResult, $result);
     }
-
 }

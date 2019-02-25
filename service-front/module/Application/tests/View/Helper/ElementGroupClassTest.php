@@ -9,7 +9,6 @@ use Zend\Form\ElementInterface;
 
 class ElementGroupClassTest extends MockeryTestCase
 {
-
     public function testInvoke():void
     {
         $elementInterface = Mockery::mock(ElementInterface::class);
@@ -17,6 +16,5 @@ class ElementGroupClassTest extends MockeryTestCase
 
         $elementGroup = new ElementGroupClass();
         $elementGroup($elementInterface);
-
     }
 }

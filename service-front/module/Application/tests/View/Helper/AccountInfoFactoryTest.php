@@ -42,9 +42,6 @@ class AccountInfoFactoryTest extends MockeryTestCase
         $container->shouldReceive('get')->withArgs(['UserDetailsSession'])->once()->andReturn($userDetailsSession);
         $container->shouldReceive('get')->withArgs(['AuthenticationService'])->once()->andReturn($authenticationService);
 
-
-
-
         $accountInfoFactory = new AccountInfoFactory();
         $result = $accountInfoFactory($container, null, null);
 

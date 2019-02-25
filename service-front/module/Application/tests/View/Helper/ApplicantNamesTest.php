@@ -1,18 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: seemamenon
- * Date: 14/02/2019
- * Time: 11:54
- */
 
 namespace ApplicationTest\View\Helper;
-
 
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Application\View\Helper\Traits\ConcatNamesTrait;
-
 
 class ApplicantNamesTest extends MockeryTestCase
 {
