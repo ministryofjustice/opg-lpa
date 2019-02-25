@@ -1,0 +1,8 @@
+#feedback-table th {
+    font-weight: bold;
+}
+
+#feedback-table th.feedback-field-wide {
+    width: 25%;
+}
+

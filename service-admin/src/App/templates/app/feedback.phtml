@@ -51,17 +51,63 @@ $this->addErrorMap([
 
                 <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
 
-                <?php $this->insert('snippet::input-date', [
-                    'formLabel'     => 'Start date',
-                    'formElement'   => $form->get('start-date'),
-                    'formLabelBold' => true,
-                ]) ?>
+                <div class="grid-row">
+                    <div class="column-one-fifth">
 
-                <?php $this->insert('snippet::input-date', [
-                    'formLabel'     => 'End date',
-                    'formElement'   => $form->get('end-date'),
-                    'formLabelBold' => true,
-                ]) ?>
+                        <?php $this->insert('snippet::input-date', [
+                            'formLabel'     => 'Start date',
+                            'formElement'   => $form->get('start-date'),
+                            'formLabelBold' => true,
+                        ]) ?>
+
+                        <?php $this->insert('snippet::input-date', [
+                            'formLabel'     => 'End date',
+                            'formElement'   => $form->get('end-date'),
+                            'formLabelBold' => true,
+                        ]) ?>
+
+                    </div>
+                    <div class="column-four-fifths">
+
+                        <?php if (is_array($feedback)) { ?>
+
+                            <?php if (empty($feedback)) { ?>
+                                <h3 class="heading-medium">No results</h3>
+                            <?php } else {
+                                $feedbackFields = array_keys($feedback);
+
+                                $largeFields = [
+                                    'Details',
+                                    'Browser',
+                                ]; ?>
+
+                                <table id="feedback-table">
+                                    <tr>
+                                        <?php foreach ($feedbackFields as $feedbackField) { ?>
+                                            <th class="<?= (in_array($feedbackField, $largeFields) ? 'feedback-field-wide' : ''); ?>"><?= $feedbackField; ?></th>
+                                        <?php } ?>
+                                    </tr>
+
+                                    <?php for ($i = 0; $i < count($feedback[$feedbackFields[0]]); $i++) { ?>
+                                        <tr>
+                                            <?php foreach ($feedbackFields as $feedbackField) { ?>
+                                                <td><?= $feedback[$feedbackField][$i]; ?></td>
+                                            <?php } ?>
+                                        </tr>
+                                    <?php } ?>
+
+                                </table>
+
+                            <?php
+
+                                //TODO - export button here...
+
+                            } ?>
+
+                        <?php } ?>
+
+                    </div>
+                </div>
 
             </fieldset>
 
@@ -70,63 +116,6 @@ $this->addErrorMap([
             </div>
 
         </form>
-
-        <?php /* if (!is_null($user)) { ?>
-
-            <h2 class="heading-medium">User details</h2>
-
-            <ul>
-                <li>
-                    <strong class="bold-small">Account status: </strong>
-
-                    <?php if (array_key_exists('isActive', $user)) { ?>
-                        <span><?= ($user['isActive'] ? 'Activated' : 'Not activated'); ?></span>
-                    <?php } elseif (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
-                        <span>Deleted</span>
-                    <?php } ?>
-                </li>
-
-                <?php if (array_key_exists('lastLoginAt', $user)) { ?>
-                    <li>
-                        <strong class="bold-small">Last login time: </strong>
-                        <span><?= ($user['lastLoginAt'] instanceof DateTime ? ($user['lastLoginAt'])->format('jS M Y \\a\\t g:i:s a') : 'Never logged in'); ?></span>
-                    </li>
-                <?php } ?>
-
-                <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
-                    <li>
-                        <strong class="bold-small">Number of failed login attempts: </strong>
-                        <span><?= $user['failedLoginAttempts']; ?></span>
-                    </li>
-                <?php } ?>
-
-                <?php if (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
-                    <li>
-                        <strong class="bold-small">Deleted on: </strong>
-                        <span><?= ($user['deletedAt'] instanceof DateTime ? ($user['deletedAt'])->format('jS M Y \\a\\t g:i:s a') : 'Unknown'); ?></span>
-                    </li>
-                    <li>
-                        <strong class="bold-small">Due to: </strong>
-
-                        <?php if ($user['reason'] == 'expired') { ?>
-                            <span>Account expired</span>
-                        <?php } elseif ($user['reason'] == 'unactivated') { ?>
-                            <span>User did not activate account</span>
-                        <?php } elseif ($user['reason'] == 'user-initiated') { ?>
-                            <span>User manually deleted their account</span>
-                        <?php } ?>
-                    </li>
-                <?php } ?>
-
-                <?php if (array_key_exists('numberOfLpas', $user)) { ?>
-                    <li>
-                        <strong class="bold-small">Number of LPAs: </strong>
-                        <span><?= $user['numberOfLpas']; ?></span>
-                    </li>
-                <?php } ?>
-            </ul>
-
-        <?php } */ ?>
 
     </div>
 </div>

@@ -158,7 +158,7 @@ class Date extends Fieldset
     }
 
     /**
-     * @return mixed
+     * @return DateTime|null
      */
     public function getDateValue()
     {

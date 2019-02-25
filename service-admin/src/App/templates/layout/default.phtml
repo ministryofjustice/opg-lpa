@@ -1,21 +1,15 @@
 <!DOCTYPE html>
-<!--[if lt IE 9]><html class="lte-ie8" lang="en"><![endif]-->
-<!--[if gt IE 8]><!--><html lang="en"><!--<![endif]-->
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <?php $subTitle = 'LPA Admin'; ?>
     <title><?= (isset($title)) ? $this->e($title).' | ' : '' ?><?= ($title!=$subTitle) ? $subTitle.' | '  : '' ?>GOV.UK</title>
 
-    <!--[if gt IE 8]><!--><link href="/assets/govuk_template/stylesheets/govuk-template.css" media="screen" rel="stylesheet" /><!--<![endif]-->
-    <!--[if IE 6]><link href="/assets/govuk_template/stylesheets/govuk-template-ie6.css" media="screen" rel="stylesheet" /><![endif]-->
-    <!--[if IE 7]><link href="/assets/govuk_template/stylesheets/govuk-template-ie7.css" media="screen" rel="stylesheet" /><![endif]-->
-    <!--[if IE 8]><link href="/assets/govuk_template/stylesheets/govuk-template-ie8.css" media="screen" rel="stylesheet" /><![endif]-->
+    <link href="/assets/govuk_template/stylesheets/govuk-template.css" media="screen" rel="stylesheet" />
     <link href="/assets/govuk_template/stylesheets/govuk-template-print.css" media="print" rel="stylesheet" />
 
-    <!--[if IE 8]><link href="/assets/govuk_template/stylesheets/fonts-ie8.css" media="all" rel="stylesheet" /><![endif]-->
-    <!--[if gte IE 9]><!--><link href="/assets/govuk_template/stylesheets/fonts.css" media="all" rel="stylesheet" /><!--<![endif]-->
-    <!--[if lt IE 9]><script src="/assets/govuk_template/javascripts/ie.js"></script><![endif]-->
+    <link href="/assets/govuk_template/stylesheets/fonts.css" media="all" rel="stylesheet" />
 
     <link rel="shortcut icon" href="/assets/govuk_template/images/favicon.ico" type="image/x-icon" />
 
@@ -31,6 +25,7 @@
     <meta property="og:image" content="/assets/govuk_template/images/opengraph-image.png">
 
     <link href="/assets/styles/app.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/styles/admin.css" rel="stylesheet" type="text/css" />
 
 </head>
 
