@@ -37,4 +37,35 @@ class Feedback extends AbstractForm
         //  Csrf field
         $this->addCsrfElement($inputFilter);
     }
+
+    /**
+     * @return bool
+     */
+    public function isValid()
+    {
+        if (parent::isValid()) {
+            /** @var Fieldset\Date $startDateInput */
+            $startDateInput = $this->get('start-date');
+            $startDate = $startDateInput->getDateValue();
+
+            /** @var Fieldset\Date $endDateInput */
+            $endDateInput = $this->get('end-date');
+            $endDate = $endDateInput->getDateValue();
+
+            if ($startDate <= $endDate) {
+                return true;
+            }
+
+            //  Add error to the end date
+            $this->setMessages([
+                'end-date' => [
+                    [
+                        'end-before-start',
+                    ],
+                ],
+            ]);
+        }
+
+        return false;
+    }
 }

@@ -156,4 +156,20 @@ class Date extends Fieldset
 
         return $validator;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getDateValue()
+    {
+        $day = $this->get('day')->getValue();
+        $month = $this->get('month')->getValue();
+        $year = $this->get('year')->getValue();
+
+        if (is_numeric($day) && is_numeric($month) && is_numeric($year)) {
+            return new DateTime(sprintf('%s-%s-%s', $year, $month, $day));
+        }
+
+        return null;
+    }
 }
