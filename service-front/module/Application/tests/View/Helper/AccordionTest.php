@@ -97,7 +97,7 @@ class AccordionTest extends MockeryTestCase
             'lpa/fee-reduction',
         ];
 
-        $this->assertAccordionRoutes($lpa, 'lpa/lpa/how-primary-attorneys-make-decision', $expectedTopRoutes, $expectedBottomRoutes);
+        $this->assertAccordionRoutes($lpa, 'lpa/life-sustaining', $expectedTopRoutes, $expectedBottomRoutes);
     }
 
     public function testWhenLpaStarts()
