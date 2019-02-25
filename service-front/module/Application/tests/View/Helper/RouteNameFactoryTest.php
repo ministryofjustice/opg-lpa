@@ -14,7 +14,6 @@ class RouteNameFactoryTest extends MockeryTestCase
 {
     public function testInvoke():void
     {
-
         $routeMatch = Mockery::mock(RouteMatch::class);
         $mvcEvent = Mockery::mock(RouteMatch::class);
         $mvcEvent->shouldReceive('getRouteMatch')->withArgs([])->once()->andReturn($routeMatch);
@@ -30,5 +29,4 @@ class RouteNameFactoryTest extends MockeryTestCase
 
         $this->assertInstanceOf(RouteName::class, $result);
     }
-
 }

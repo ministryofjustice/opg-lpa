@@ -7,7 +7,6 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class MoneyFormatTest extends MockeryTestCase
 {
-
     public function testInvokeFloor():void
     {
         $amount= 50;
@@ -15,7 +14,6 @@ class MoneyFormatTest extends MockeryTestCase
         $result = $moneyFormat($amount);
 
         $this->assertEquals($amount, $result);
-
     }
 
     public function testInvokeCeil():void
@@ -25,8 +23,5 @@ class MoneyFormatTest extends MockeryTestCase
         $result = $moneyFormat($amount);
 
         $this->assertEquals($amount, $result);
-
     }
-
-
 }

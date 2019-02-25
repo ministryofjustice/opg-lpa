@@ -8,7 +8,6 @@
 
 namespace ApplicationTest\View\Helper;
 
-
 use Application\Model\Service\Authentication\AuthenticationService;
 use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\User\User;
@@ -25,10 +24,8 @@ use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 
-
 class AccountInfoTest extends MockeryTestCase
 {
-
     /**
      * @var AuthenticationService|MockInterface
      */
@@ -98,7 +95,6 @@ class AccountInfoTest extends MockeryTestCase
         $this->expectOutputString("test content");
 
         $accountInfo();
-
     }
 
     public function testInvokeNoIdentity():void {
@@ -123,8 +119,6 @@ class AccountInfoTest extends MockeryTestCase
         $this->expectOutputString("test content");
 
         $accountInfo();
-
-
     }
 
     public function testInvokeLastLogin():void {
@@ -146,8 +140,6 @@ class AccountInfoTest extends MockeryTestCase
         $this->expectOutputString("test content");
 
         $accountInfo();
-
-
     }
 
     public function testInvokeRouteMatch():void {
@@ -166,8 +158,6 @@ class AccountInfoTest extends MockeryTestCase
         $this->expectOutputString("test content");
 
         $accountInfo();
-
-
     }
 
     public function testInvokeHasMoreThanOneLpa():void {
@@ -185,8 +175,6 @@ class AccountInfoTest extends MockeryTestCase
         $this->expectOutputString("test content");
 
         $accountInfo();
-
-
     }
 
 }

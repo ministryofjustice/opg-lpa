@@ -18,7 +18,5 @@ class FinalCheckAccessibleTest extends MockeryTestCase
         $result = $finalCheckAccessible($lpa);
 
         $this->assertFalse($result);
-
     }
-
 }
