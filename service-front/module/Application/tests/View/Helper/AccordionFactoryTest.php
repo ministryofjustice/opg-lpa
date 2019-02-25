@@ -26,9 +26,9 @@ class AccordionFactoryTest extends MockeryTestCase
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('get')->withArgs(['Application'])->once()->andReturn($application);
 
-         $accordianFactory = new AccordionFactory();
-         $result = $accordianFactory($container, null,null);
+        $accordianFactory = new AccordionFactory();
+        $result = $accordianFactory($container, null,null);
 
-         $this->assertInstanceOf(Accordion::class, $result);
+        $this->assertInstanceOf(Accordion::class, $result);
     }
 }
