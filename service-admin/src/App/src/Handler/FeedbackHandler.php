@@ -60,7 +60,7 @@ class FeedbackHandler extends AbstractHandler
                     ]]);
                 } else {
                     $feedback = $this->parseFeedbackResults($result['results']);
-                    $earliestAvailableTime = $result['prunedBefore'];
+                    $earliestAvailableTime = new DateTime($result['prunedBefore']);
                 }
             }
         }

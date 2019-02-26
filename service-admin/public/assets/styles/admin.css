@@ -1,3 +1,11 @@
+.feedback-container {
+    margin-top: 20px;
+}
+
+.feedback-container .earliest-available {
+    float: right;
+}
+
 #feedback-table th {
     font-weight: bold;
 }

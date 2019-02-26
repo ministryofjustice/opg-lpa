@@ -43,16 +43,16 @@ $this->addErrorMap([
 
             <fieldset>
 
-                <legend>
-                    <h1 class="heading-xlarge">Feedback</h1>
-                </legend>
-
                 <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
 
                 <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
 
                 <div class="grid-row">
                     <div class="column-one-fifth">
+
+                        <legend>
+                            <h1 class="heading-xlarge">Feedback</h1>
+                        </legend>
 
                         <?php $this->insert('snippet::input-date', [
                             'formLabel'     => 'Start date',
@@ -73,38 +73,57 @@ $this->addErrorMap([
 
                             <?php if (empty($feedback)) { ?>
                                 <h3 class="heading-medium">No results</h3>
-                            <?php } else {
-                                $feedbackFields = array_keys($feedback);
+                            <?php } else { ?>
 
-                                $largeFields = [
-                                    'Details',
-                                    'Browser',
-                                ]; ?>
+                                <div class="grid-row feedback-container">
+                                    <div class="column-full">
 
-                                <table id="feedback-table">
-                                    <tr>
-                                        <?php foreach ($feedbackFields as $feedbackField) { ?>
-                                            <th class="<?= (in_array($feedbackField, $largeFields) ? 'feedback-field-wide' : ''); ?>"><?= $feedbackField; ?></th>
-                                        <?php } ?>
-                                    </tr>
+                                        <div class="grid-row">
+                                            <div class="column-full">
+                                                <a class="button" href="#">Export</a>
 
-                                    <?php for ($i = 0; $i < count($feedback[$feedbackFields[0]]); $i++) { ?>
-                                        <tr>
-                                            <?php foreach ($feedbackFields as $feedbackField) { ?>
-                                                <td><?= $feedback[$feedbackField][$i]; ?></td>
-                                            <?php } ?>
-                                        </tr>
-                                    <?php } ?>
+                                                <?php if ($earliestAvailableTime instanceof DateTime) { ?>
+                                                    <span class="earliest-available">Feedback results are available from <?= $earliestAvailableTime->format('l jS F Y'); ?> onwards</span>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
 
-                                </table>
+                                        <div class="grid-row">
+                                            <div class="column-full">
 
-                            <?php
+                                                <?php
+                                                    $feedbackFields = array_keys($feedback);
 
-                                //TODO - export button here...
+                                                    $largeFields = [
+                                                        'Details',
+                                                        'Browser',
+                                                    ];
+                                                ?>
 
-                            } ?>
+                                                <table id="feedback-table">
+                                                    <tr>
+                                                        <?php foreach ($feedbackFields as $feedbackField) { ?>
+                                                            <th class="<?= (in_array($feedbackField, $largeFields) ? 'feedback-field-wide' : ''); ?>"><?= $feedbackField; ?></th>
+                                                        <?php } ?>
+                                                    </tr>
 
-                        <?php } ?>
+                                                    <?php for ($i = 0; $i < count($feedback[$feedbackFields[0]]); $i++) { ?>
+                                                        <tr>
+                                                            <?php foreach ($feedbackFields as $feedbackField) { ?>
+                                                                <td><?= $feedback[$feedbackField][$i]; ?></td>
+                                                            <?php } ?>
+                                                        </tr>
+                                                    <?php } ?>
+                                                </table>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            <?php }
+                        } ?>
 
                     </div>
                 </div>
@@ -112,7 +131,7 @@ $this->addErrorMap([
             </fieldset>
 
             <div class="form-group">
-                <input class="button" type="submit" value="Search">
+                <input class="button" type="submit" value="Search" />
             </div>
 
         </form>
