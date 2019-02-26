@@ -12,7 +12,8 @@ class SystemMessageTest extends MockeryTestCase
     public function testInvoke():void
     {
         $cache = Mockery::mock(DynamoDbKeyValueStore::class);
-        $cache->shouldReceive('getItem')->withArgs(['system-message'])->once()->andReturn("test message  ");
+        $cache->shouldReceive('getItem')
+                ->withArgs(['system-message'])->once()->andReturn("test message  ");
 
         $systemMessage = new SystemMessage($cache);
         $systemMessage();
