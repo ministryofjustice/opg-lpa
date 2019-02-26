@@ -36,6 +36,25 @@ $this->addErrorMap([
 ]);
 ?>
 
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $('#export-feedback').click(function () {
+            //  Append the export instruction and submit the form
+            var form = $('form');
+            var action = form.attr('action');
+
+            form.attr('action', action + '?export=true');
+
+            form.submit();
+
+            //  Replace the original action
+            form.attr('action', action);
+        });
+
+    });
+</script>
+
 <div class="grid-row">
     <div class="column-full">
 
@@ -80,7 +99,7 @@ $this->addErrorMap([
 
                                         <div class="grid-row">
                                             <div class="column-full">
-                                                <a class="button" href="#">Export</a>
+                                                <a id="export-feedback" class="button">Export</a>
 
                                                 <?php if ($earliestAvailableTime instanceof DateTime) { ?>
                                                     <span class="earliest-available">Feedback results are available from <?= $earliestAvailableTime->format('l jS F Y'); ?> onwards</span>
