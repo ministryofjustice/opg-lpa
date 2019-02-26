@@ -12,7 +12,8 @@ class ElementGroupClassTest extends MockeryTestCase
     public function testInvoke():void
     {
         $elementInterface = Mockery::mock(ElementInterface::class);
-        $elementInterface->shouldReceive('getMessages')->withArgs([])->once()->andReturn("This is test failure message");
+        $elementInterface->shouldReceive('getMessages')
+                            ->withArgs([])->once()->andReturn("This is test failure message");
 
         $elementGroup = new ElementGroupClass();
         $elementGroup($elementInterface);

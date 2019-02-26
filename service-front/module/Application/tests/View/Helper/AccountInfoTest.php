@@ -17,7 +17,6 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Twig_Environment;
 use Twig_Template;
-use DateTime;
 use Zend\Mvc\Console\View\Renderer;
 use Zend\Router\RouteMatch;
 use Zend\Session\Container;
@@ -86,10 +85,23 @@ class AccountInfoTest extends MockeryTestCase
         $this->authenticationService->shouldReceive('hasIdentity')->once()->andReturn($this->identity);
         $this->userDetailSession["user"] = json_decode('{"name":{"title":"Mr","first":"Test","last":"User"}}');
         $this->lpaApplicationService->shouldReceive('getLpaSummaries')->once()->andReturn(['total'=>0]);
-        $this->twigTemplate->shouldReceive('render')->once()->withArgs([['view' => $view, 'hasOneOrMoreLPAs'=>false]])->andReturn("test content");
-        $this->viewRenderer->shouldReceive('loadTemplate')->once()->withArgs(['account-info/account-info.twig'])->andReturn($this->twigTemplate);
+        $this->twigTemplate->shouldReceive('render')
+                            ->once()
+                            ->withArgs([['view' => $view, 'hasOneOrMoreLPAs'=>false]])
+                            ->andReturn("test content");
+        $this->viewRenderer->shouldReceive('loadTemplate')
+                            ->once()
+                            ->withArgs(['account-info/account-info.twig'])
+                            ->andReturn($this->twigTemplate);
 
-        $accountInfo = new AccountInfo($this->authenticationService, $this->userDetailSession,$this->viewModel, null, $this->lpaApplicationService, $this->viewRenderer);
+        $accountInfo = new AccountInfo(
+            $this->authenticationService,
+            $this->userDetailSession,
+            $this->viewModel,
+            null,
+            $this->lpaApplicationService,
+            $this->viewRenderer
+        );
 
         $accountInfo->setView($view);
         $this->expectOutputString("test content");
@@ -97,33 +109,52 @@ class AccountInfoTest extends MockeryTestCase
         $accountInfo();
     }
 
-    public function testInvokeNoIdentity():void {
-
+    public function testInvokeNoIdentity():void
+    {
         $this->authenticationService->shouldReceive('hasIdentity')->once()->andReturn(false);
-        $accountInfo = new AccountInfo($this->authenticationService, $this->userDetailSession,$this->viewModel, null, $this->lpaApplicationService, $this->viewRenderer);
-        $accountInfo();
+        $accountInfo = new AccountInfo(
+            $this->authenticationService,
+            $this->userDetailSession,
+            $this->viewModel,
+            null,
+            $this->lpaApplicationService,
+            $this->viewRenderer
+        );
+            $accountInfo();
     }
 
-    public function testInvokeUsername():void {
+    public function testInvokeUsername():void
+    {
 
         $this->authenticationService->shouldReceive('hasIdentity')->once()->andReturn($this->identity);
         $this->userDetailSession["user"] = new User(['name'=>new Name(['first'=>'firstname', 'last'=>'lastname'])]);
 
         $this->lpaApplicationService->shouldReceive('getLpaSummaries')->once()->andReturn(['total'=>1]);
-        $this->twigTemplate->shouldReceive('render')->once()->withArgs([['view' => null, 'name'=>'firstname lastname', 'hasOneOrMoreLPAs' => true]])->andReturn("test content");
-        $this->viewRenderer->shouldReceive('loadTemplate')->once()->withArgs(['account-info/account-info.twig'])->andReturn($this->twigTemplate);
+        $this->twigTemplate->shouldReceive('render')
+                            ->once()
+                            ->withArgs([['view' => null, 'name'=>'firstname lastname', 'hasOneOrMoreLPAs' => true]])
+                            ->andReturn("test content");
+        $this->viewRenderer->shouldReceive('loadTemplate')
+                            ->once()->withArgs(['account-info/account-info.twig'])
+                            ->andReturn($this->twigTemplate);
 
 
-        $accountInfo = new AccountInfo($this->authenticationService, $this->userDetailSession,$this->viewModel, null, $this->lpaApplicationService, $this->viewRenderer);
+        $accountInfo = new AccountInfo(
+            $this->authenticationService,
+            $this->userDetailSession,
+            $this->viewModel,
+            null,
+            $this->lpaApplicationService,
+            $this->viewRenderer
+        );
 
         $this->expectOutputString("test content");
 
         $accountInfo();
     }
 
-    public function testInvokeLastLogin():void {
-
-
+    public function testInvokeLastLogin():void
+    {
         $layoutChildren = new ViewModel();
         $layoutChildren->setVariable("user", ['lastLogin'=>'2019-02-19']);
         $this->viewModel->addChild($layoutChildren, null, null);
@@ -131,50 +162,83 @@ class AccountInfoTest extends MockeryTestCase
         $this->userDetailSession["user"] = json_decode('{"name":{"title":"Mr","first":"Test","last":"User"}}');
         $this->authenticationService->shouldReceive('hasIdentity')->once()->andReturn($this->identity);
         $this->lpaApplicationService->shouldReceive('getLpaSummaries')->once()->andReturn(['total'=>1]);
-        $this->twigTemplate->shouldReceive('render')->once()->withArgs([['view' => null, 'lastLogin'=>'2019-02-19', 'hasOneOrMoreLPAs' => true]])->andReturn("test content");
-        $this->viewRenderer->shouldReceive('loadTemplate')->once()->withArgs(['account-info/account-info.twig'])->andReturn($this->twigTemplate);
+        $this->twigTemplate->shouldReceive('render')
+            ->once()->withArgs([['view' => null, 'lastLogin'=>'2019-02-19', 'hasOneOrMoreLPAs' => true]])
+            ->andReturn("test content");
+        $this->viewRenderer->shouldReceive('loadTemplate')
+            ->once()->withArgs(['account-info/account-info.twig'])
+            ->andReturn($this->twigTemplate);
 
 
-        $accountInfo = new AccountInfo($this->authenticationService, $this->userDetailSession,$this->viewModel, null , $this->lpaApplicationService, $this->viewRenderer);
+        $accountInfo = new AccountInfo(
+            $this->authenticationService,
+            $this->userDetailSession,
+            $this->viewModel,
+            null,
+            $this->lpaApplicationService,
+            $this->viewRenderer
+        );
 
         $this->expectOutputString("test content");
 
         $accountInfo();
     }
 
-    public function testInvokeRouteMatch():void {
+    public function testInvokeRouteMatch():void
+    {
 
         $this->authenticationService->shouldReceive('hasIdentity')->once()->andReturn($this->identity);
         $this->userDetailSession["user"] = new User(['name'=>new Name(['first'=>'firstname', 'last'=>'lastname'])]);
 
         $this->routeMatch->shouldReceive('getMatchedRouteName')->once()->andReturn("test");
         $this->lpaApplicationService->shouldReceive('getLpaSummaries')->once()->andReturn(['total'=>1]);
-        $this->twigTemplate->shouldReceive('render')->once()->withArgs([['view' => null, 'name'=>'firstname lastname', 'route' => 'test', 'hasOneOrMoreLPAs' => true]])->andReturn("test content");
-        $this->viewRenderer->shouldReceive('loadTemplate')->once()->withArgs(['account-info/account-info.twig'])->andReturn($this->twigTemplate);
+        $this->twigTemplate->shouldReceive('render')
+            ->once()
+            ->withArgs([['view' => null, 'name'=>'firstname lastname', 'route' => 'test', 'hasOneOrMoreLPAs' => true]])
+            ->andReturn("test content");
+        $this->viewRenderer->shouldReceive('loadTemplate')->once()
+                            ->withArgs(['account-info/account-info.twig'])
+                            ->andReturn($this->twigTemplate);
 
 
-        $accountInfo = new AccountInfo($this->authenticationService, $this->userDetailSession,$this->viewModel, $this->routeMatch, $this->lpaApplicationService, $this->viewRenderer);
+        $accountInfo = new AccountInfo(
+            $this->authenticationService,
+            $this->userDetailSession,
+            $this->viewModel,
+            $this->routeMatch,
+            $this->lpaApplicationService,
+            $this->viewRenderer
+        );
 
         $this->expectOutputString("test content");
 
         $accountInfo();
     }
 
-    public function testInvokeHasMoreThanOneLpa():void {
-
+    public function testInvokeHasMoreThanOneLpa():void
+    {
         $this->authenticationService->shouldReceive('hasIdentity')->once()->andReturn($this->identity);
         $this->userDetailSession["user"] = new User(['name'=>new Name(['first'=>'firstname', 'last'=>'lastname'])]);
 
         $this->lpaApplicationService->shouldReceive('getLpaSummaries')->once()->andReturn(['total'=>2]);
-        $this->twigTemplate->shouldReceive('render')->once()->withArgs([['view' => null, 'name'=>'firstname lastname', 'hasOneOrMoreLPAs' => true]])->andReturn("test content");
-        $this->viewRenderer->shouldReceive('loadTemplate')->once()->withArgs(['account-info/account-info.twig'])->andReturn($this->twigTemplate);
+        $this->twigTemplate->shouldReceive('render')->once()
+                            ->withArgs([['view' => null, 'name'=>'firstname lastname', 'hasOneOrMoreLPAs' => true]])
+                            ->andReturn("test content");
+        $this->viewRenderer->shouldReceive('loadTemplate')->once()->withArgs(['account-info/account-info.twig'])
+                            ->andReturn($this->twigTemplate);
 
 
-        $accountInfo = new AccountInfo($this->authenticationService, $this->userDetailSession,$this->viewModel, null, $this->lpaApplicationService, $this->viewRenderer);
+        $accountInfo = new AccountInfo(
+            $this->authenticationService,
+            $this->userDetailSession,
+            $this->viewModel,
+            null,
+            $this->lpaApplicationService,
+            $this->viewRenderer
+        );
 
         $this->expectOutputString("test content");
 
         $accountInfo();
     }
-
 }

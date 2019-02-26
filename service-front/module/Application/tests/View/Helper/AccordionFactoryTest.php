@@ -2,7 +2,6 @@
 
 namespace ApplicationTest\View\Helper;
 
-
 use Application\Model\Service\Lpa\Application;
 use Application\View\Helper\Accordion;
 use Application\View\Helper\AccordionFactory;
@@ -27,7 +26,7 @@ class AccordionFactoryTest extends MockeryTestCase
         $container->shouldReceive('get')->withArgs(['Application'])->once()->andReturn($application);
 
         $accordianFactory = new AccordionFactory();
-        $result = $accordianFactory($container, null,null);
+        $result = $accordianFactory($container, null, null);
 
         $this->assertInstanceOf(Accordion::class, $result);
     }

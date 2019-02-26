@@ -2,7 +2,6 @@
 
 namespace ApplicationTest\View\Helper;
 
-use Application\Model\FormFlowChecker;
 use Application\View\Helper\FinalCheckAccessible;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Opg\Lpa\DataModel\Lpa\Lpa;
