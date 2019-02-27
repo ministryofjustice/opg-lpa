@@ -5,10 +5,14 @@ namespace Application\Model\Service\ApiClient;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\HttpClient as HttpClientInterface;
+use Opg\Lpa\Logger\LoggerTrait;
 use Psr\Http\Message\ResponseInterface;
 
 class Client
 {
+
+    use LoggerTrait;
+
     /**
      * @var HttpClientInterface
      */
@@ -92,8 +96,9 @@ class Client
             case 200:
                 return $this->handleResponse($response, $jsonResponse);
             case 204:
-            case 404:
                 return null;
+            case 404:
+                return $this->handleErrorResponse($response);
             default:
                 return $this->handleErrorResponse($response);
         }
@@ -254,6 +259,7 @@ class Client
      */
     private function handleErrorResponse(ResponseInterface $response)
     {
+        $this->getLogger()->info($response->getBody());
         throw new Exception\ApiException($response);
     }
 }
