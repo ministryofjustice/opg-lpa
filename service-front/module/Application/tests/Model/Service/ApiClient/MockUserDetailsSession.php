@@ -5,7 +5,7 @@ namespace ApplicationTest\Model\Service\ApiClient;
 use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Symfony\Component\Intl\Exception\NotImplementedException;
+use RuntimeException;
 
 /**
  * Mock for the UserDetailsSession as Mockery has poor support for the magic method used to get identity
@@ -29,7 +29,7 @@ class MockUserDetailsSession implements ContainerInterface
      */
     public function get($id)
     {
-        throw new NotImplementedException('get($id) Not implemented');
+        throw new RuntimeException('get($id) Not implemented');
     }
 
     /**
@@ -45,6 +45,6 @@ class MockUserDetailsSession implements ContainerInterface
      */
     public function has($id)
     {
-        throw new NotImplementedException('has($id) Not implemented');
+        throw new RuntimeException('has($id) Not implemented');
     }
 }
