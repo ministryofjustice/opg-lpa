@@ -153,7 +153,12 @@ class Application extends AbstractService implements ApiClientAwareInterface
         }
 
         //  Get the response and check it's contents
-        $result = $this->apiClient->httpGet(sprintf('/v2/user/%s/applications', $this->getUserId()), $queryParams);
+        try {
+            $result = $this->apiClient->httpGet(sprintf('/v2/user/%s/applications',
+                $this->getUserId()), $queryParams);
+        } catch (ApiException $ex) {
+            throw new RuntimeException('missing-fields');
+        }
 
         if (!isset($result['applications'])) {
             throw new RuntimeException('missing-fields');
