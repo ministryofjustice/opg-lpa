@@ -8,6 +8,7 @@ use Exception;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use RuntimeException;
 
 class DynamoDbKeyValueStoreTest extends MockeryTestCase
 {
@@ -101,7 +102,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The addItem method has not been implemented.
      */
     public function testAddItem()
@@ -110,7 +111,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The addItems method has not been implemented.
      */
     public function testAddItems()
@@ -119,7 +120,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The checkAndSetItem method has not been implemented.
      */
     public function testCheckAndSetItem()
@@ -128,7 +129,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The decrementItem method has not been implemented.
      */
     public function testDecrementItem()
@@ -137,7 +138,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The decrementItems method has not been implemented.
      */
     public function testDecrementItems()
@@ -146,7 +147,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The getCapabilities method has not been implemented.
      */
     public function testGetCapabilities()
@@ -155,7 +156,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The getItems method has not been implemented.
      */
     public function testGetItems()
@@ -164,16 +165,16 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The getMetadata method has not been implemented.
      */
     public function testGetMetadata()
     {
-        $this->dynamoDbKeyValueStore->getMetadata(['items']);
+        $this->dynamoDbKeyValueStore->getMetadata('items');
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The getMetadatas method has not been implemented.
      */
     public function testGetMetadatas()
@@ -182,7 +183,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The getOptions method has not been implemented.
      */
     public function testGetOptions()
@@ -191,16 +192,16 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The hasItem method has not been implemented.
      */
     public function testHasItem()
     {
-        $this->dynamoDbKeyValueStore->hasItem(['items']);
+        $this->dynamoDbKeyValueStore->hasItem('items');
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The hasItems method has not been implemented.
      */
     public function testHasItems()
@@ -209,7 +210,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The incrementItem method has not been implemented.
      */
     public function testIncrementItem()
@@ -218,7 +219,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The incrementItems method has not been implemented.
      */
     public function testIncrementItems()
@@ -227,7 +228,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The removeItems method has not been implemented.
      */
     public function testRemoveItems()
@@ -236,7 +237,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The replaceItem method has not been implemented.
      */
     public function testReplaceItem()
@@ -245,7 +246,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The replaceItems method has not been implemented.
      */
     public function testReplaceItems()
@@ -254,7 +255,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The setItems method has not been implemented.
      */
     public function testSetItems()
@@ -263,16 +264,16 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The setOptions method has not been implemented.
      */
     public function testSetOptions()
     {
-        $this->dynamoDbKeyValueStore->setOptions('options');
+        $this->dynamoDbKeyValueStore->setOptions(['options']);
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The touchItem method has not been implemented.
      */
     public function testTouchItem()
@@ -281,7 +282,7 @@ class DynamoDbKeyValueStoreTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Intl\Exception\NotImplementedException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The touchItems method has not been implemented.
      */
     public function testTouchItems()
