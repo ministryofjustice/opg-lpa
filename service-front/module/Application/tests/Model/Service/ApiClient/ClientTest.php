@@ -10,6 +10,7 @@ use Http\Client\HttpClient;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use Opg\Lpa\Logger\Logger;
 use Psr\Http\Message\ResponseInterface;
 
 class ClientTest extends MockeryTestCase
@@ -25,6 +26,11 @@ class ClientTest extends MockeryTestCase
     private $response;
 
     /**
+     * @var Logger|MockInterface
+     */
+    private $logger;
+
+    /**
      * @var Client
      */
     private $client;
@@ -32,8 +38,10 @@ class ClientTest extends MockeryTestCase
     public function setUp() : void
     {
         $this->httpClient = Mockery::mock(HttpClient::class);
+        $this->logger = Mockery::mock(Logger::class);
 
         $this->client = new Client($this->httpClient, 'base_url/', 'test token');
+        $this->client->setLogger($this->logger);
     }
 
     public function setUpRequest(
@@ -133,29 +141,31 @@ class ClientTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException  Application\Model\Service\ApiClient\Exception\ApiException
-     * @expectedExceptionMessage HTTP:204 - Unexpected API response
+     * @throws \Http\Client\Exception
      */
     public function testHttpGetNoContent() : void
     {
         $this->setUpRequest(204, null);
-        $this->response->shouldReceive('getBody')->once();
-        $this->response->shouldReceive('getStatusCode')->twice()->andReturn(204);
 
-        $this->client->httpGet('path');
+        $result = $this->client->httpGet('path');
+
+        $this->assertNull($result);
     }
 
     /**
      * @expectedException  Application\Model\Service\ApiClient\Exception\ApiException
      * @expectedExceptionMessage HTTP:404 - Unexpected API response
+     * @throws \Http\Client\Exception
      */
     public function testHttpGetNotFound() : void
     {
         $this->setUpRequest(404, null);
-        $this->response->shouldReceive('getBody')->once();
         $this->response->shouldReceive('getStatusCode')->twice()->andReturn(404);
-        $this->client->httpGet('path');
+        $this->response->shouldReceive('getBody')->once()->andReturn(null);
 
+        $this->logger->shouldReceive('info')->withArgs(['HTTP:404 - Unexpected API response'])->once();
+
+        $this->client->httpGet('path');
     }
 
     /**
@@ -167,6 +177,8 @@ class ClientTest extends MockeryTestCase
     {
         $this->setUpRequest(500, 'An error');
         $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
+
+        $this->logger->shouldReceive('info')->withArgs(['HTTP:500 - Unexpected API response'])->once();
 
         $this->client->httpGet('path');
     }
@@ -188,6 +200,8 @@ class ClientTest extends MockeryTestCase
     {
         $this->setUpRequest(500, 'An error', 'DELETE');
         $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
+
+        $this->logger->shouldReceive('info')->withArgs(['HTTP:500 - Unexpected API response'])->once();
 
         $this->client->httpDelete('path');
     }
@@ -231,6 +245,8 @@ class ClientTest extends MockeryTestCase
         $this->setUpRequest(500, 'An error', 'PATCH', 'base_url/path', '{"a":1}');
         $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
 
+        $this->logger->shouldReceive('info')->withArgs(['HTTP:500 - Unexpected API response'])->once();
+
         $this->client->httpPatch('path');
     }
 
@@ -261,6 +277,8 @@ class ClientTest extends MockeryTestCase
         $this->setUpRequest(500, 'An error', 'POST', 'base_url/path', '{"a":1}');
         $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
 
+        $this->logger->shouldReceive('info')->withArgs(['HTTP:500 - Unexpected API response'])->once();
+
         $this->client->httpPost('path');
     }
 
@@ -290,6 +308,8 @@ class ClientTest extends MockeryTestCase
     {
         $this->setUpRequest(500, 'An error', 'PUT', 'base_url/path', '{"a":1}');
         $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
+
+        $this->logger->shouldReceive('info')->withArgs(['HTTP:500 - Unexpected API response'])->once();
 
         $this->client->httpPut('path');
     }

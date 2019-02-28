@@ -43,9 +43,9 @@ class Client
     }
 
     /**
-     * This method is required to allow the token value to be updated manually during a single user action where necessary
-     * Currently this is required during the change password and change email address flows, as those action trigger a
-     * user authentication which updates the auth token in the backend
+     * This method is required to allow the token value to be updated manually during a single user action where
+     * necessary. Currently this is required during the change password and change email address flows, as those action
+     * trigger a user authentication which updates the auth token in the backend
      *
      * @param $token
      */
@@ -108,9 +108,10 @@ class Client
      * Performs a POST against the API
      *
      * @param string $path
-     * @param array  $payload
+     * @param array $payload
      * @return array|null
      * @throws Exception\ApiException
+     * @throws \Http\Client\Exception
      */
     public function httpPost($path, array $payload = [])
     {
@@ -135,9 +136,10 @@ class Client
      * Performs a PUT against the API
      *
      * @param string $path
-     * @param array  $payload
+     * @param array $payload
      * @return array
      * @throws Exception\ApiException
+     * @throws \Http\Client\Exception
      */
     public function httpPut($path, array $payload = [])
     {
@@ -162,9 +164,10 @@ class Client
      * Performs a PATCH against the API
      *
      * @param string $path
-     * @param array  $payload
+     * @param array $payload
      * @return array
      * @throws Exception\ApiException
+     * @throws \Http\Client\Exception
      */
     public function httpPatch($path, array $payload = [])
     {
@@ -189,6 +192,7 @@ class Client
      * @param string $path
      * @return null
      * @throws Exception\ApiException
+     * @throws \Http\Client\Exception
      */
     public function httpDelete($path)
     {
@@ -259,7 +263,8 @@ class Client
      */
     private function handleErrorResponse(ResponseInterface $response)
     {
-        $this->getLogger()->info($response->getBody());
-        throw new Exception\ApiException($response);
+        $exception = new Exception\ApiException($response);
+        $this->getLogger()->info($exception->getMessage());
+        throw $exception;
     }
 }
