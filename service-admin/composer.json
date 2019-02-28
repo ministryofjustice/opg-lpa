@@ -8,6 +8,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/ministryofjustice/opg-lpa-datamodels"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/ministryofjustice/opg-lpa-logger"
         }
     ],
     "config": {
@@ -18,6 +22,7 @@
         "aws/aws-sdk-php": "^3.81",
         "guzzlehttp/guzzle": "^6.3",
         "ministryofjustice/opg-lpa-datamodels": "^13.3",
+        "ministryofjustice/opg-lpa-logger": "^4.0",
         "php-http/guzzle6-adapter": "^2.0",
         "slim/flash": "^0.4.0",
         "tuupola/slim-jwt-auth": "^3.1",
