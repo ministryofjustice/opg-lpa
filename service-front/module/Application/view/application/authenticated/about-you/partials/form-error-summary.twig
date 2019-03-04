@@ -2,7 +2,8 @@
 
 {% set form = formErrorTextExchange(form,  {
     'name-title' : {
-        'cannot-be-blank' : 'Enter your title',
+        'cannot-be-blank' : 'Select a title or choose ‘Prefer not to say’',
+        'cannot-be-identical-to:""': 'Select a title or choose ‘Prefer not to say’',
         'must-be-less-than-or-equal:5' : 'Title must be five letters or fewer - please abbreviate, if necessary'
     },
     'name-first' : {
@@ -14,9 +15,9 @@
         'must-be-less-than-or-equal:50' : 'Last name cannot be longer than 50 characters long'
     },
     'dob-date' : {
-        'cannot-be-blank' : 'Enter a valid date of birth',
-        'must-be-less-than-or-equal-to-today' : 'Date of birth must be before today',
-        'expected-type:DateTime' : 'Enter a valid date of birth'
+        'cannot-be-blank' : 'Enter your date of birth and include a day, month and year',
+        'must-be-less-than-or-equal-to-today' : 'Enter a date of birth that’s in the past',
+        'expected-type:DateTime' : 'Enter a real date of birth'
     },
     'address-address1' : {
         'cannot-be-blank' : 'Enter the first line of address',
@@ -31,7 +32,7 @@
     },
     'address-postcode' : {
         'linked-1-cannot-be-null' : 'Enter the postcode',
-        'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines rather than in the postcode field.'
+        'must-be-less-than-or-equal:8' : 'Enter a real postcode. If you live overseas, enter the postcode in the ‘Address line 3’ box, instead of the postcode box'
     }
 }) %}
 
