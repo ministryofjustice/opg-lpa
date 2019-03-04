@@ -10,6 +10,7 @@ use Exception;
 use Mockery;
 use Mockery\MockInterface;
 use Zend\Http\Header\Referer;
+use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
 class FeedbackControllerTest extends AbstractControllerTest
@@ -18,12 +19,14 @@ class FeedbackControllerTest extends AbstractControllerTest
      * @var MockInterface|FeedbackForm
      */
     private $form;
+
     private $postData = [
         'rating' => '5',
         'details' => 'Awesome!',
         'email' => 'unit@test.com',
         'phone' => '0123456789',
     ];
+
     /**
      * @var MockInterface|Feedback
      */
@@ -76,7 +79,7 @@ class FeedbackControllerTest extends AbstractControllerTest
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
-        $this->feedbackService->shouldReceive('sendMail')->andReturn(false)->once();
+        $this->feedbackService->shouldReceive('add')->andReturn(false)->once();
 
         $controller->indexAction();
     }
@@ -88,15 +91,14 @@ class FeedbackControllerTest extends AbstractControllerTest
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
-        $this->feedbackService->shouldReceive('sendMail')->andReturn(true)->once();
-        $this->url->shouldReceive('fromRoute')->withArgs(['home'])->andReturn('home')->once();
+        $this->feedbackService->shouldReceive('add')->andReturn(true)->once();
 
-        /** @var ViewModel $result */
+        $response = new Response();
+        $this->redirect->shouldReceive('toRoute')->andReturn($response)->once();
+
         $result = $controller->indexAction();
 
-        $this->assertInstanceOf(ViewModel::class, $result);
-        $this->assertEquals('application/general/feedback/thankyou.twig', $result->getTemplate());
-        $this->assertEquals(false, $result->getVariable('strictVars'));
+        $this->assertEquals($result, $response);
     }
 
     public function testSendFeedbackFormGetReferer()
