@@ -166,7 +166,7 @@
           $postcodeLabel.children('.error-message').remove();
           $postcodeLabel
             .append($(this.errorMessageTpl({
-              'errorMessage': 'No address found for this postcode. Please try again or enter the address manually.'
+              'errorMessage': 'Enter a real postcode. If you live overseas, enter your address manually instead of using the postcode lookup'
             })));
         } else {
           alert('Enter a valid UK postcode');
