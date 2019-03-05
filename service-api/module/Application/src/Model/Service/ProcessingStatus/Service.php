@@ -58,6 +58,10 @@ class Service extends AbstractService
      */
     public function getStatus($id)
     {
+        if (is_numeric($id)) {
+            $id = 'A' . sprintf("%011d", $id);
+        }
+
         $url = new Uri($this->processingStatusServiceUri . $id);
 
         $request = new Request('GET', $url, $this->buildHeaders());
@@ -101,7 +105,7 @@ class Service extends AbstractService
                 throw new ApiProblemException($response, 'Malformed JSON response from server');
             }
 
-            if (!$status['found']) {
+            if (!$status['status']) {
                 return null;
             }
 
