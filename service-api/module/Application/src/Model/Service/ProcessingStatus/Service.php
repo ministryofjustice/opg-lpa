@@ -71,6 +71,9 @@ class Service extends AbstractService
         switch ($response->getStatusCode()) {
             case 200:
                 return $this->handleResponse($response);
+            case 404:
+                // A 404 represents that details for the passed ID could not be found.
+                return null;
             default:
                 throw new ApiProblemException($response);
         }
