@@ -177,6 +177,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/date-check/valid',
             'lpa/download',
             'lpa/download/file',
+            'lpa/download/check',
         ];
 
         //  Set up the LPA
@@ -1128,6 +1129,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/download',
             'lpa/download/draft',
             'lpa/download/file',
+            'lpa/download/check',
             'lpa/reuse-details',
         ]);
 
