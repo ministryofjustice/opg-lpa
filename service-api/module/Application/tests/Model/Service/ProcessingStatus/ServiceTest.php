@@ -34,7 +34,7 @@ class ServiceTest extends MockeryTestCase
     }
 
     public function setUpRequest($returnStatus = 200,
-        $returnBody = '{"found": true, "status": "Registered"}')
+        $returnBody = '{"status": "Registered"}')
     {
         $this->response = Mockery::mock(ResponseInterface::class);
         $this->response->shouldReceive('getStatusCode')->once()->andReturn($returnStatus);
@@ -48,7 +48,7 @@ class ServiceTest extends MockeryTestCase
                 [Matchers::equalTo(
                     new Request(
                         'GET',
-                        new Uri('http://thing/processing-status/12'),
+                        new Uri('http://thing/processing-status/A01000000000'),
                         ['Accept' => 'application/json', 'Content-type' => 'application/json']
                     )
                 )]
@@ -63,7 +63,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->setUpRequest();
 
-        $result = $this->service->getStatus(12);
+        $result = $this->service->getStatus(1000000000);
 
         $this->assertEquals('Concluded', $result);
 
@@ -78,14 +78,14 @@ class ServiceTest extends MockeryTestCase
     {
         $this->setUpRequest(400, null);
 
-        $this->service->getStatus(12);
+        $this->service->getStatus(1000000000);
     }
 
     public function testGetStatusNotFound()
     {
-        $this->setUpRequest(200, '{"found": false}');
+        $this->setUpRequest(404, null);
 
-        $result = $this->service->getStatus(12);
+        $result = $this->service->getStatus(1000000000);
         $this->assertNull($result);
     }
 

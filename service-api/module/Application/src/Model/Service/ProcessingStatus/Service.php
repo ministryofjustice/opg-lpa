@@ -58,6 +58,10 @@ class Service extends AbstractService
      */
     public function getStatus($id)
     {
+        if (is_numeric($id)) {
+            $id = 'A' . sprintf("%011d", $id);
+        }
+
         $url = new Uri($this->processingStatusServiceUri . $id);
 
         $request = new Request('GET', $url, $this->buildHeaders());
@@ -67,6 +71,9 @@ class Service extends AbstractService
         switch ($response->getStatusCode()) {
             case 200:
                 return $this->handleResponse($response);
+            case 404:
+                // A 404 represents that details for the passed ID could not be found.
+                return null;
             default:
                 throw new ApiProblemException($response);
         }
@@ -101,7 +108,7 @@ class Service extends AbstractService
                 throw new ApiProblemException($response, 'Malformed JSON response from server');
             }
 
-            if (!$status['found']) {
+            if (!$status['status']) {
                 return null;
             }
 
