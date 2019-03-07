@@ -70,7 +70,7 @@ class AccountInfoTest extends MockeryTestCase
         parent::setUp();
         $this->identity = Mockery::mock();
         $this->viewModel = new ViewModel();
-        $this->userDetailSession = new Container();
+        $this->userDetailSession = new MockContainer();
         $this->routeMatch = Mockery::mock(RouteMatch::class);
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
@@ -158,7 +158,6 @@ class AccountInfoTest extends MockeryTestCase
         $layoutChildren = new ViewModel();
         $layoutChildren->setVariable("user", ['lastLogin'=>'2019-02-19']);
         $this->viewModel->addChild($layoutChildren, null, null);
-
         $this->userDetailSession["user"] = json_decode('{"name":{"title":"Mr","first":"Test","last":"User"}}');
         $this->authenticationService->shouldReceive('hasIdentity')->once()->andReturn($this->identity);
         $this->lpaApplicationService->shouldReceive('getLpaSummaries')->once()->andReturn(['total'=>1]);
@@ -168,7 +167,6 @@ class AccountInfoTest extends MockeryTestCase
         $this->viewRenderer->shouldReceive('loadTemplate')
             ->once()->withArgs(['account-info/account-info.twig'])
             ->andReturn($this->twigTemplate);
-
 
         $accountInfo = new AccountInfo(
             $this->authenticationService,
@@ -220,7 +218,8 @@ class AccountInfoTest extends MockeryTestCase
         $this->authenticationService->shouldReceive('hasIdentity')->once()->andReturn($this->identity);
         $this->userDetailSession["user"] = new User(['name'=>new Name(['first'=>'firstname', 'last'=>'lastname'])]);
 
-        $this->lpaApplicationService->shouldReceive('getLpaSummaries')->once()->andReturn(['total'=>2]);
+        $lpaApplicationService = Mockery::mock(LpaApplicationService::class);
+        $lpaApplicationService->shouldReceive('getLpaSummaries')->once()->andReturn(['total'=>2]);
         $this->twigTemplate->shouldReceive('render')->once()
                             ->withArgs([['view' => null, 'name'=>'firstname lastname', 'hasOneOrMoreLPAs' => true]])
                             ->andReturn("test content");
@@ -233,7 +232,7 @@ class AccountInfoTest extends MockeryTestCase
             $this->userDetailSession,
             $this->viewModel,
             null,
-            $this->lpaApplicationService,
+            $lpaApplicationService,
             $this->viewRenderer
         );
 
