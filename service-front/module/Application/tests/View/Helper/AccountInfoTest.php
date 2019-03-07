@@ -80,7 +80,6 @@ class AccountInfoTest extends MockeryTestCase
 
     public function testInvoke():void
     {
-
         $view = Mockery::mock(Renderer::class);
         $this->authenticationService->shouldReceive('hasIdentity')->once()->andReturn($this->identity);
         $this->userDetailSession["user"] = json_decode('{"name":{"title":"Mr","first":"Test","last":"User"}}');
@@ -125,7 +124,6 @@ class AccountInfoTest extends MockeryTestCase
 
     public function testInvokeUsername():void
     {
-
         $this->authenticationService->shouldReceive('hasIdentity')->once()->andReturn($this->identity);
         $this->userDetailSession["user"] = new User(['name'=>new Name(['first'=>'firstname', 'last'=>'lastname'])]);
 
@@ -137,7 +135,6 @@ class AccountInfoTest extends MockeryTestCase
         $this->viewRenderer->shouldReceive('loadTemplate')
                             ->once()->withArgs(['account-info/account-info.twig'])
                             ->andReturn($this->twigTemplate);
-
 
         $accountInfo = new AccountInfo(
             $this->authenticationService,
@@ -184,7 +181,6 @@ class AccountInfoTest extends MockeryTestCase
 
     public function testInvokeRouteMatch():void
     {
-
         $this->authenticationService->shouldReceive('hasIdentity')->once()->andReturn($this->identity);
         $this->userDetailSession["user"] = new User(['name'=>new Name(['first'=>'firstname', 'last'=>'lastname'])]);
 
@@ -197,7 +193,6 @@ class AccountInfoTest extends MockeryTestCase
         $this->viewRenderer->shouldReceive('loadTemplate')->once()
                             ->withArgs(['account-info/account-info.twig'])
                             ->andReturn($this->twigTemplate);
-
 
         $accountInfo = new AccountInfo(
             $this->authenticationService,
@@ -218,21 +213,19 @@ class AccountInfoTest extends MockeryTestCase
         $this->authenticationService->shouldReceive('hasIdentity')->once()->andReturn($this->identity);
         $this->userDetailSession["user"] = new User(['name'=>new Name(['first'=>'firstname', 'last'=>'lastname'])]);
 
-        $lpaApplicationService = Mockery::mock(LpaApplicationService::class);
-        $lpaApplicationService->shouldReceive('getLpaSummaries')->once()->andReturn(['total'=>2]);
+        $this->lpaApplicationService->shouldReceive('getLpaSummaries')->once()->andReturn(['total'=>2]);
         $this->twigTemplate->shouldReceive('render')->once()
                             ->withArgs([['view' => null, 'name'=>'firstname lastname', 'hasOneOrMoreLPAs' => true]])
                             ->andReturn("test content");
         $this->viewRenderer->shouldReceive('loadTemplate')->once()->withArgs(['account-info/account-info.twig'])
                             ->andReturn($this->twigTemplate);
 
-
         $accountInfo = new AccountInfo(
             $this->authenticationService,
             $this->userDetailSession,
             $this->viewModel,
             null,
-            $lpaApplicationService,
+            $this->lpaApplicationService,
             $this->viewRenderer
         );
 
