@@ -231,24 +231,24 @@
                          }
                     }
                     span {
-                         color: $secondary-text-colour;
-                         font-size: 1.6rem;
+                      font-size: 19px;
+                      color: black;
                     }
                }
                .extra-info {
-                    float: right;
-                    width: 7.25em;
-                    margin: 0 0 0 1.5em;
+                   float: right !important;
+                   clear: none;
+                   margin: 5px 0 0 1.5em !important;
                     p {
-                         color: $secondary-text-colour;
-                         font-size: 1.6rem;
-                         width: auto;
-                         float: left;
-                         clear: both;
-                         margin: 0;
+                      font-size: 19px;
+                      color: black;
+                      width: auto;
+                      float: left;
+                      clear: both;
+                      margin: 0;
                          &.main-text {
-                              font-size: 2.4rem;
-                              font-weight: bold;
+                           font-size: 19px;
+                           color: black;
                               .icon {
                                    width: 1.15em;
                                    height: 1.15em;

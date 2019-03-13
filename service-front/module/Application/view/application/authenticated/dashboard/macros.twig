@@ -25,18 +25,15 @@
                     </div>
 
                     <div class="list-item_status">
-                        <span>
-                            {% if lpa.progress == 'Started' %}
-                                {% set statusClass = 'status-6' %}
-                            {% elseif lpa.progress == 'Created' %}
-                                {% set statusClass = 'status-5' %}
-                            {% elseif lpa.progress == 'Completed' %}
-                                {% set statusClass = 'status-4' %}
-                            {% endif %}
-                            <i class="icon {{ statusClass }}"></i>
-                            <br>
-                            {{ lpa.progress }}
-                        </span>
+                        <p class="opg-application-status-text">Application status</p>
+                        {% if lpa.progress == 'Started' %}
+                            {% set statusClass = 'opg-status--default' %}
+                        {% elseif lpa.progress == 'Created' %}
+                            {% set statusClass = 'opg-status--default' %}
+                        {% elseif lpa.progress == 'Completed' %}
+                            {% set statusClass = 'opg-status--default' %}
+                        {% endif %}
+                        <div class="opg-status {{ statusClass }}">{{ lpa.progress }}</div>
                     </div>
 
                     <div class="extra-info">
