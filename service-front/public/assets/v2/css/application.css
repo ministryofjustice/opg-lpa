@@ -2957,8 +2957,9 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     padding: 2px 5px 0;
     float: right;
     border: 2px solid #218278;
+    background: #218278;
     border-radius: 5px;
-    color: #218278;
+    color: #fff;
     font-size: 13px;
     font-weight: 700;
     text-align: center;
