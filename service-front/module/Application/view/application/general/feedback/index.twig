@@ -15,7 +15,7 @@
 
 {% import "application/macros.twig" as macros %}
 
-{{ form.setAttribute('class', 'form') ? '' }}
+{{ form.setAttribute('class', 'form js-single-use') ? '' }}
 
 {% set type = form.get('rating') %}
 {% set details = form.get('details') %}
