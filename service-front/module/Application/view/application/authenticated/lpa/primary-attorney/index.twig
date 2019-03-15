@@ -44,7 +44,7 @@
     {% endif %}
 
     <div class="{% if (attorneys) %}action-item{% endif %} form-group">
-        <a href="{{ addUrl }}" class="{% if not (attorneys) %}button{% endif %} js-form-popup" >
+        <a href="{{ addUrl }}" role="button" class="{% if not (attorneys) %}button{% endif %} js-form-popup" >
             {% if (attorneys) %}
                 Add another attorney?
             {% else %}
@@ -56,7 +56,7 @@
     {% if (attorneys) %}
 
         <div class="form-group">
-            <a href="{{ nextUrl }}" class="button">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
+            <a href="{{ nextUrl }}" role="button" class="button">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
 
     {% endif %}
