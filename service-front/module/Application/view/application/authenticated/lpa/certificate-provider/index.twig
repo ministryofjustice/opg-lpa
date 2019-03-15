@@ -97,7 +97,7 @@
         {{ formElement(form.getCsrf) }}
 
         <div class="form-group">
-            <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" class="button js-form-popup">Add a certificate provider</a>
+            <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" role="button" class="button js-form-popup">Add a certificate provider</a>
             <input type="submit" name="submit" class="button-link button-input-to-link" value="Skip this question for now" data-journey-click="page:link:skip: Skip this question for now" />
         </div>
 

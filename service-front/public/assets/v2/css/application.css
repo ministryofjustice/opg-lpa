@@ -2925,7 +2925,7 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
     color: #b10e1e;
     border-color: #b10e1e; }
 .accordion .not-started .accordion-summary .label {
-  color: #6f777b;
+  color: #fff;
   border-color: #6f777b; }
 .accordion .accordion-header {
   display: block;
