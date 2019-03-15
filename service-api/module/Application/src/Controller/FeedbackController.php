@@ -60,8 +60,10 @@ class FeedbackController extends AbstractRestfulController
             );
         }
 
-        $from   = new DateTime($query['from']);
-        $to     = new DateTime($query['to']);
+        //  Create the date limits and ensure that the to date is adjsuted to the end of the day
+        $from = new DateTime($query['from']);
+        $to = new DateTime($query['to']);
+        $to->setTime(23, 59, 59, 999999);
 
         $results = $this->service->get($from, $to);
 
