@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Service\UserSearch;
+namespace App\Service\User;
 
 use App\Service\ApiClient\Client as ApiClient;
+use Opg\Lpa\DataModel\User\User;
 use DateTime;
 use DateTimeZone;
 use Exception;
 
-class UserSearch
+class UserService
 {
     /**
      * @var ApiClient
@@ -15,13 +16,28 @@ class UserSearch
     private $client;
 
     /**
-     * AuthenticationService constructor
+     * UserService constructor
      *
      * @param ApiClient $client
      */
     public function __construct(ApiClient $client)
     {
         $this->client = $client;
+    }
+
+    /**
+     * @param $id
+     * @return null|User
+     */
+    public function fetch($id)
+    {
+        $userData = $this->client->httpGet('/v2/user/' . $id);
+
+        if (is_array($userData)) {
+            return new User($userData);
+        }
+
+        return null;
     }
 
     /**

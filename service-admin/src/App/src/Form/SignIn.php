@@ -58,7 +58,6 @@ class SignIn extends AbstractForm
         $inputFilter->add($input);
 
         //  Csrf field
-        //  TODO - Add this in the constructor if the options contain 'csrf' value
         $this->addCsrfElement($inputFilter);
     }
 

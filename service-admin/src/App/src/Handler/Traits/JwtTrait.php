@@ -61,7 +61,6 @@ trait JwtTrait
      */
     private function verifyTokenDataExists()
     {
-        //  TODO - Change this to not use session?
         if (!array_key_exists('jwt-payload', $_SESSION)) {
             throw new RuntimeException('JWT token not available');
         }

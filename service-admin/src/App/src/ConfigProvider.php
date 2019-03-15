@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Logging\LoggingErrorListenerDelegatorFactory;
 use Tuupola\Middleware\JwtAuthentication;
+use Zend\Stratigility\Middleware\ErrorHandler;
 
 /**
  * The configuration provider for the App module
@@ -42,10 +44,8 @@ class ConfigProvider
         return [
             'invokables' => [
                 //  Handlers
-                Handler\HomeHandler::class          => Handler\HomeHandler::class,
-                Handler\SignOutHandler::class       => Handler\SignOutHandler::class,
-                Handler\SystemMessageHandler::class => Handler\SystemMessageHandler::class,
-                Handler\UserFeedbackHandler::class  => Handler\UserFeedbackHandler::class,
+                Handler\HomeHandler::class      => Handler\HomeHandler::class,
+                Handler\SignOutHandler::class   => Handler\SignOutHandler::class,
 
                 //  Middleware
                 Middleware\Flash\SlimFlashMiddleware::class => Middleware\Flash\SlimFlashMiddleware::class,
@@ -53,7 +53,9 @@ class ConfigProvider
             ],
             'factories' => [
                 //  Handlers
+                Handler\FeedbackHandler::class      => Handler\FeedbackHandlerFactory::class,
                 Handler\SignInHandler::class        => Handler\SignInHandlerFactory::class,
+                Handler\SystemMessageHandler::class => Handler\SystemMessageHandlerFactory::class,
                 Handler\UserSearchHandler::class    => Handler\UserSearchHandlerFactory::class,
 
                 //  Middleware
@@ -63,13 +65,20 @@ class ConfigProvider
                 Middleware\ViewData\ViewDataMiddleware::class           => Middleware\ViewData\ViewDataMiddlewareFactory::class,
 
                 //  Services
+                Service\Cache\Cache::class                          => Service\Cache\CacheFactory::class,
                 Service\ApiClient\Client::class                     => Service\ApiClient\ClientFactory::class,
                 Service\Authentication\AuthenticationService::class => Service\Authentication\AuthenticationServiceFactory::class,
-                Service\UserSearch\UserSearch::class                => Service\UserSearch\UserSearchFactory::class,
+                Service\Feedback\FeedbackService::class             => Service\Feedback\FeedbackServiceFactory::class,
+                Service\User\UserService::class                     => Service\User\UserServiceFactory::class,
             ],
             'initializers' => [
                 Handler\Initializers\TemplatingSupportInitializer::class,
                 Handler\Initializers\UrlHelperInitializer::class,
+            ],
+            'delegators' => [
+                ErrorHandler::class => [
+                    LoggingErrorListenerDelegatorFactory::class,
+                ],
             ],
         ];
     }

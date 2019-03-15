@@ -1,21 +1,15 @@
 <!DOCTYPE html>
-<!--[if lt IE 9]><html class="lte-ie8" lang="en"><![endif]-->
-<!--[if gt IE 8]><!--><html lang="en"><!--<![endif]-->
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <?php $subTitle = 'LPA Admin'; ?>
     <title><?= (isset($title)) ? $this->e($title).' | ' : '' ?><?= ($title!=$subTitle) ? $subTitle.' | '  : '' ?>GOV.UK</title>
 
-    <!--[if gt IE 8]><!--><link href="/assets/govuk_template/stylesheets/govuk-template.css" media="screen" rel="stylesheet" /><!--<![endif]-->
-    <!--[if IE 6]><link href="/assets/govuk_template/stylesheets/govuk-template-ie6.css" media="screen" rel="stylesheet" /><![endif]-->
-    <!--[if IE 7]><link href="/assets/govuk_template/stylesheets/govuk-template-ie7.css" media="screen" rel="stylesheet" /><![endif]-->
-    <!--[if IE 8]><link href="/assets/govuk_template/stylesheets/govuk-template-ie8.css" media="screen" rel="stylesheet" /><![endif]-->
+    <link href="/assets/govuk_template/stylesheets/govuk-template.css" media="screen" rel="stylesheet" />
     <link href="/assets/govuk_template/stylesheets/govuk-template-print.css" media="print" rel="stylesheet" />
 
-    <!--[if IE 8]><link href="/assets/govuk_template/stylesheets/fonts-ie8.css" media="all" rel="stylesheet" /><![endif]-->
-    <!--[if gte IE 9]><!--><link href="/assets/govuk_template/stylesheets/fonts.css" media="all" rel="stylesheet" /><!--<![endif]-->
-    <!--[if lt IE 9]><script src="/assets/govuk_template/javascripts/ie.js"></script><![endif]-->
+    <link href="/assets/govuk_template/stylesheets/fonts.css" media="all" rel="stylesheet" />
 
     <link rel="shortcut icon" href="/assets/govuk_template/images/favicon.ico" type="image/x-icon" />
 
@@ -31,6 +25,9 @@
     <meta property="og:image" content="/assets/govuk_template/images/opengraph-image.png">
 
     <link href="/assets/styles/app.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/styles/admin.css" rel="stylesheet" type="text/css" />
+
+    <script src="/assets/libs/jquery.min.js"></script>
 
 </head>
 
@@ -51,13 +48,13 @@
                 <div class="content">
                     <nav id="proposition-menu">
                         <a href="<?= $this->url('home') ?>" id="proposition-name">LPA Admin</a>
-                        <?php if (isset($identity)) { ?>
+                        <?php if (isset($user)) { ?>
                             <ul id="proposition-links">
                                 <li>
                                     <a href="<?= $this->url('system.message') ?>" class="">System Message</a>
                                 </li>
                                 <li>
-                                    <a href="<?= $this->url('user.feedback') ?>" class="">User Feedback</a>
+                                    <a href="<?= $this->url('feedback') ?>" class="">Feedback</a>
                                 </li>
                                 <li>
                                     <a href="<?= $this->url('user.search') ?>" class="">User Search</a>
@@ -68,13 +65,14 @@
                 </div>
             </div>
 
-            <div class="header-profile">
-                <p>
-                    <?php if (isset($identity)) { ?>
+            <?php if (isset($user)) { ?>
+                <div class="header-profile">
+                    <p>
+                        Logged in as <?= $user->getName(); ?><br/>
                         <a href="<?= $this->url('sign.out') ?>">Sign Out</a>
-                    <?php } ?>
-                </p>
-            </div>
+                    </p>
+                </div>
+            <?php } ?>
 
         </div>
     </header>
@@ -95,9 +93,8 @@
 
                     <div class="open-government-licence">
                         <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence</a></p>
-
                         <p>All content is available under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated</p>
-
+                        <?= ((isset($dockerTag) && !empty($dockerTag)) ? sprintf('<p>v%s</p>', $dockerTag) : ''); ?>
                     </div>
                 </div>
 

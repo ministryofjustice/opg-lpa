@@ -12,8 +12,8 @@ return [
             'sign.in',
         ],
         'authenticated-user' => [
+            'feedback',
             'home',
-            'user.feedback',
             'user.search',
             'sign.out',
             'system.message',

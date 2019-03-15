@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use App\Service\User\UserService;
+use App\Service\Feedback\FeedbackService;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Class UserSearchHandlerFactory
+ * Class FeedbackHandlerFactory
  * @package App\Handler
  */
-class UserSearchHandlerFactory
+class FeedbackHandlerFactory
 {
     /**
      * @param ContainerInterface $container
@@ -20,8 +20,8 @@ class UserSearchHandlerFactory
      */
     public function __invoke(ContainerInterface $container) : RequestHandlerInterface
     {
-        $userSearchService = $container->get(UserService::class);
+        $feedbackService = $container->get(FeedbackService::class);
 
-        return new UserSearchHandler($userSearchService);
+        return new FeedbackHandler($feedbackService);
     }
 }

@@ -4,6 +4,10 @@ namespace App\Middleware\Authorization;
 
 use App\Handler\Traits\JwtTrait;
 use App\Service\ApiClient\ApiException;
+use App\Service\Authentication\AuthenticationService;
+use App\Service\Authentication\Identity;
+use App\Service\User\UserService;
+use Opg\Lpa\DataModel\User\User;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -24,6 +28,16 @@ class AuthorizationMiddleware implements MiddlewareInterface
     use JwtTrait;
 
     /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
+
+    /**
+     * @var UserService
+     */
+    private $userService;
+
+    /**
      * @var UrlHelper
      */
     private $urlHelper;
@@ -41,12 +55,16 @@ class AuthorizationMiddleware implements MiddlewareInterface
     /**
      * AuthorizationMiddleware constructor.
      *
+     * @param AuthenticationService $authenticationService
+     * @param UserService $userService
      * @param UrlHelper $urlHelper
      * @param Rbac $rbac
      * @param NotFoundHandler $notFoundHandler
      */
-    public function __construct(UrlHelper $urlHelper, Rbac $rbac, NotFoundHandler $notFoundHandler)
+    public function __construct(AuthenticationService $authenticationService, UserService $userService, UrlHelper $urlHelper, Rbac $rbac, NotFoundHandler $notFoundHandler)
     {
+        $this->authenticationService = $authenticationService;
+        $this->userService = $userService;
         $this->urlHelper = $urlHelper;
         $this->rbac = $rbac;
         $this->notFoundHandler = $notFoundHandler;
@@ -60,16 +78,36 @@ class AuthorizationMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-//TODO - Change this...
         $token = $this->getTokenData('token');
 
-//TODO - get the roles out of the identity when this bit is wired up
+        $user = null;
+
         $roles = ['guest'];
+
         if (!is_null($token)) {
-            $roles[] = 'authenticated-user';
+            //  Attempt to get a user with the token value
+            $result = $this->authenticationService->verify($token);
+
+            $identity = $result->getIdentity();
+
+            if ($identity instanceof Identity) {
+                //  Try to get the user details
+                $user = $this->userService->fetch($identity->getUserId());
+
+                //  There is something wrong with the user here so throw an exception
+                if (!$user instanceof User) {
+                    throw new Exception('Can not find a user for ID ' . $identity->getUserId());
+                }
+
+                $roles[] = 'authenticated-user';
+            } else {
+                //  Clear the bad token
+                $this->clearTokenData();
+            }
         }
 
         //  Determine the route was are attempting to access
+        /** @var RouteResult $route */
         $route = $request->getAttribute(RouteResult::class);
         $matchedRoute = $route->getMatchedRoute();
 
@@ -80,13 +118,10 @@ class AuthorizationMiddleware implements MiddlewareInterface
         //  Check each role to see if the user has access to the route
         foreach ($roles as $role) {
             if ($this->rbac->hasRole($role) && $this->rbac->isGranted($role, $matchedRoute->getName())) {
+
                 //  Catch any unauthorized exceptions and trigger a sign out if required
                 try {
-//TODO - Pass the identity down...
-//                    return $delegate->process(
-//                        $request->withAttribute('identity', $identity)
-//                    );
-                    return $handler->handle($request);
+                    return $handler->handle($request->withAttribute('user', $user));
                 } catch (ApiException $ae) {
                     if ($ae->getCode() === 401) {
                         return new RedirectResponse($this->urlHelper->generate('sign.out'));
@@ -97,9 +132,8 @@ class AuthorizationMiddleware implements MiddlewareInterface
             }
         }
 
-        //  If there is no identity (not logged in) then redirect to the sign in screen
-//TODO - Change this when we know what identity will look like???
-        if (is_null($token)) {
+        //  If there is no user (not logged in) then redirect to the sign in screen
+        if (is_null($user)) {
             return new RedirectResponse($this->urlHelper->generate('sign.in'));
         }
 

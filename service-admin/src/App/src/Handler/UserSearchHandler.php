@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Form\UserSearch;
-use App\Service\UserSearch\UserSearch as UserSearchService;
+use App\Service\User\UserService;
 use App\Handler\Traits\JwtTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -16,17 +16,17 @@ class UserSearchHandler extends AbstractHandler
     use JwtTrait;
 
     /**
-     * @var UserSearchService
+     * @var UserService
      */
-    private $userSearchService;
+    private $userService;
 
     /**
      * UserSearchHandler constructor.
-     * @param UserSearchService $userSearchService
+     * @param UserService $userService
      */
-    public function __construct(UserSearchService $userSearchService)
+    public function __construct(UserService $userService)
     {
-        $this->userSearchService = $userSearchService;
+        $this->userService = $userService;
     }
 
     /**
@@ -48,7 +48,7 @@ class UserSearchHandler extends AbstractHandler
                 //  Get the data from the form
                 $email = $form->get('email')->getValue();
 
-                $result = $this->userSearchService->search($email);
+                $result = $this->userService->search($email);
 
                 if ($result === false) {
                     // Set error message

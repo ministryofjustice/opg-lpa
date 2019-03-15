@@ -2,7 +2,6 @@
 
 namespace App\Middleware\ViewData;
 
-use App\Handler\Traits\JwtTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -15,20 +14,24 @@ use Zend\Expressive\Plates\PlatesRenderer;
  */
 class ViewDataMiddleware implements MiddlewareInterface
 {
-    use JwtTrait;
-
     /**
      * @var PlatesRenderer
      */
     private $renderer;
 
     /**
-     * ViewDataMiddleware constructor.
-     * @param PlatesRenderer $renderer
+     * @var string
      */
-    public function __construct(PlatesRenderer $renderer)
+    private $dockerTag;
+
+    /**
+     * @param PlatesRenderer $renderer
+     * @param $dockerTag
+     */
+    public function __construct(PlatesRenderer $renderer, $dockerTag)
     {
         $this->renderer = $renderer;
+        $this->dockerTag = $dockerTag;
     }
 
     /**
@@ -38,15 +41,10 @@ class ViewDataMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-//TODO - Get the identity here.....the authorization service shoul
-        $token = $this->getTokenData('token');
+        $user = $request->getAttribute('user');
 
-        //  TODO - Change this later
-        if (!is_null($token)) {
-            $user = $token;
-
-            $this->renderer->addDefaultParam(PlatesRenderer::TEMPLATE_ALL, 'identity', $user);
-        }
+        $this->renderer->addDefaultParam(PlatesRenderer::TEMPLATE_ALL, 'dockerTag', $this->dockerTag);
+        $this->renderer->addDefaultParam(PlatesRenderer::TEMPLATE_ALL, 'user', $user);
 
         return $handler->handle($request);
     }

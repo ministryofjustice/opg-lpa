@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use App\Service\User\UserService;
+use App\Service\Cache\Cache;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Class UserSearchHandlerFactory
+ * Class SystemMessageHandlerFactory
  * @package App\Handler
  */
-class UserSearchHandlerFactory
+class SystemMessageHandlerFactory
 {
     /**
      * @param ContainerInterface $container
@@ -20,8 +20,8 @@ class UserSearchHandlerFactory
      */
     public function __invoke(ContainerInterface $container) : RequestHandlerInterface
     {
-        $userSearchService = $container->get(UserService::class);
+        $cache = $container->get(Cache::class);
 
-        return new UserSearchHandler($userSearchService);
+        return new SystemMessageHandler($cache);
     }
 }

@@ -1,12 +1,8 @@
 <?php
 
-namespace App\User;
+namespace App\Service\Authentication;
 
-/**
- * Class User
- * @package App\User
- */
-class User
+class Identity
 {
     /**
      * @var string
@@ -24,7 +20,7 @@ class User
     private $token;
 
     /**
-     * User constructor.
+     * Identity constructor.
      * @param array $data
      */
     public function __construct(array $data)

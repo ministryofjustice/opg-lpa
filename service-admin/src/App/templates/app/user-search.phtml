@@ -34,8 +34,8 @@ $this->addErrorMap([
                 </div>
 
                 <?php $this->insert('snippet::input-text', [
-                    'formElement'   => $form->get('email'),
                     'formLabel'     => 'Email address',
+                    'formElement'   => $form->get('email'),
                     'formType'      => 'text',
                     'formLabelBold' => false
                 ]) ?>
@@ -43,7 +43,7 @@ $this->addErrorMap([
             </fieldset>
 
             <div class="form-group">
-                <input class="button" type="submit" value="Continue">
+                <input class="button" type="submit" value="Search">
             </div>
 
         </form>
