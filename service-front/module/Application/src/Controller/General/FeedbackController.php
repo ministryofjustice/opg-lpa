@@ -14,6 +14,10 @@ class FeedbackController extends AbstractBaseController
      */
     private $feedbackService;
 
+    /**
+     * @return \Zend\Http\Response|ViewModel
+     * @throws \Exception
+     */
     public function indexAction()
     {
         $container = new Container('feedback');
@@ -27,31 +31,23 @@ class FeedbackController extends AbstractBaseController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $feedbackService = $this->feedbackService;
-
                 $data = $form->getData();
 
                 //  Inject extra details into the data before passing to the feedback service to send in an email
                 $data['agent'] = $_SERVER['HTTP_USER_AGENT'];
                 $data['fromPage'] = (is_string($container->feedbackLinkClickedFromPage) ? $container->feedbackLinkClickedFromPage : 'Unknown');
 
-                $result = $feedbackService->sendMail($data);
+                $result = $this->feedbackService->add($data);
 
                 if ($result === true) {
-                    //  Determine the return target to go to from the thank you page
-                    $returnTarget = $container->feedbackLinkClickedFromPage;
-
-                    if (is_null($returnTarget)) {
-                        $returnTarget = $this->url()->fromRoute('home');
-                    }
-
-                    $successView = new ViewModel([
-                        'returnTarget' => $returnTarget,
+                    //  Add any return target to the query params and redirect to thank you page
+                    $options = (is_null($container->feedbackLinkClickedFromPage) ? [] : [
+                        'query' => [
+                            'returnTarget' => urlencode($container->feedbackLinkClickedFromPage),
+                        ],
                     ]);
 
-                    $successView->setTemplate('application/general/feedback/thankyou.twig');
-
-                    return $successView;
+                    return $this->redirect()->toRoute('feedback-thanks', [], $options);
                 } else {
                     throw new \Exception('Error sending feedback email');
                 }
@@ -68,6 +64,23 @@ class FeedbackController extends AbstractBaseController
 
         return new ViewModel([
             'form' => $form
+        ]);
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function thanksAction()
+    {
+        $returnTarget = urldecode($this->params()->fromQuery('returnTarget'));
+
+        if (empty($returnTarget)) {
+            //  Default to home
+            $returnTarget = $this->url()->fromRoute('home');
+        }
+
+        return new ViewModel([
+            'returnTarget' => $returnTarget,
         ]);
     }
 

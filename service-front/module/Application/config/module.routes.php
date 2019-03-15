@@ -100,6 +100,17 @@ return [
                 ],
             ], // send-feedback
 
+            'feedback-thanks' => [
+                'type' => 'Zend\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/feedback-thanks',
+                    'defaults' => [
+                        'controller' => 'General\FeedbackController',
+                        'action'     => 'thanks',
+                    ],
+                ],
+            ], // feedback-thanks
+
             'sendgrid-bounce' => [
                 'type' => 'Zend\Router\Http\Segment',
                 'options' => [
