@@ -23108,7 +23108,7 @@ this["lpa"]["templates"]["input.checkbox"] = Handlebars.template({"compiler":[7,
 },"useData":true});
 
 this["lpa"]["templates"]["popup.close"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<p class=\"close\">\n  <a href=\"#\" class=\"js-popup-close button-close\" title=\"Click or press escape to close this window\">Close</a>\n</p>";
+    return "<p class=\"close\">\n  <a href=\"#\" class=\"js-popup-close button-close\" title=\"Click or press escape to close this window\">Close layer</a>\n</p>";
 },"useData":true});
 
 this["lpa"]["templates"]["popup.container"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
