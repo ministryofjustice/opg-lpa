@@ -86,7 +86,7 @@
             {% if (isChangeAllowed) %}
                 {{ formElement(form.get('save')) }}
             {% else %}
-                <a href="{{ nextUrl }}" class="button">{{ (finalCheckAccessible(lpa) ? 'Return to final check' : 'Continue') }}</a>
+                <a href="{{ nextUrl }}" role="button" class="button">{{ (finalCheckAccessible(lpa) ? 'Return to final check' : 'Continue') }}</a>
             {% endif %}
         </div>
 

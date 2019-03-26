@@ -106,7 +106,7 @@
         {% if lpa.payment.amount == 0 %}
 
             {# -- Nothing to pay -- #}
-            <p class="divorced"><a href="{{ url('lpa/checkout/confirm', {'lpa-id': lpa.id}) }}" class="button">Confirm and finish</a></p>
+            <p class="divorced"><a href="{{ url('lpa/checkout/confirm', {'lpa-id': lpa.id}) }}" role="button" class="button">Confirm and finish</a></p>
 
         {% else %}
 

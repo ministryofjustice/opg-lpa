@@ -77,7 +77,7 @@
             <p class="person-address flush--ends">{{ lpa.document.certificateProvider.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
-                    <a href="{{ url('lpa/certificate-provider/edit', {'lpa-id': lpa.id}) }}" data-form="certificateprovider1" class="action-edit js-form-popup" aria-label="View/edit Certificate Provider details">View/edit details</a>
+                    <a href="{{ url('lpa/certificate-provider/edit', {'lpa-id': lpa.id}) }}" data-form="certificateprovider1" role="button" class="action-edit js-form-popup" aria-label="View/edit Certificate Provider details">View/edit details</a>
                 </li>
                 <li class="action-item">
                     <a href="{{ url('lpa/certificate-provider/confirm-delete', {'lpa-id': lpa.id}) }}" class="action-delete js-form-popup">Delete</a>
@@ -97,7 +97,7 @@
         {{ formElement(form.getCsrf) }}
 
         <div class="form-group">
-            <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" class="button js-form-popup">Add a certificate provider</a>
+            <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" role="button" class="button js-form-popup">Add a certificate provider</a>
             <input type="submit" name="submit" class="button-link button-input-to-link" value="Skip this question for now" data-journey-click="page:link:skip: Skip this question for now" />
         </div>
 
