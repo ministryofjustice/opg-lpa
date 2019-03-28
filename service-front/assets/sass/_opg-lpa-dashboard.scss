@@ -2,6 +2,7 @@ $opg-status-waiting: #2e358b;
 $opg-status-received: #005ea5;
 $opg-status-checking: #2b8cc4;
 $opg-status-returned: #28a197;
+$opg-status-completed: #dee0e2;
 
 .opg-status {
   display: inline-block;
@@ -40,6 +41,12 @@ $opg-status-returned: #28a197;
 .opg-status--returned {
   background-color: $opg-status-returned;
   color: #fff;
+  font-weight: bold;
+}
+
+.opg-status--completed {
+  background-color: $opg-status-completed;
+  color: #0b0c0c;
   font-weight: bold;
 }
 
