@@ -33,8 +33,7 @@
                         {% elseif lpa.progress == 'Completed' %}
                             {% set statusClass = 'opg-status--default' %}
                         {% endif %}
-                        {#<div class="opg-status {{ statusClass }}">{{ lpa.progress }}</div>#}
-                        <a href="/user/dashboard/status-description/{{ lpa.id }}/{{ lpa.progress }}" role="button" class="opg-status {{ statusClass }}">{{ lpa.progress }}</a>
+                        <div class="opg-status {{ statusClass }}">{{ lpa.progress }}</div>
                     </div>
 
                     <div class="extra-info">
