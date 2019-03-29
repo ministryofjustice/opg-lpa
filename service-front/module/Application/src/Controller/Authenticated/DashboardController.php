@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
+use http\Exception\RuntimeException;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
@@ -236,48 +237,26 @@ class DashboardController extends AbstractAuthenticatedController
         $lpaStatus = $this->getEvent()->getRouteMatch()->getParam('lpa-status');
         $lpa = $this->getLpaApplicationService()->getApplication($lpaId);
 
-//        var_dump($lpa);
-//        die;
+        $viewModel = new ViewModel([
+            'lpa'  => $lpa,
+            'page' => $page,
+        ]);
 
         if ($lpaStatus === "Completed") {
-            $viewModel = new ViewModel([
-                'lpa'  => $lpa,
-                'page' => $page,
-            ]);
-            //$viewModel->setTemplate('application/authenticated/dashboard/status-completed.twig'); //actual
-            $viewModel->setTemplate('application/authenticated/dashboard/status-returned.twig'); //just for testing
-            return $viewModel;
+            $viewModel->setTemplate('application/authenticated/lpa/status/status-completed.twig');
         } elseif ($lpaStatus === "Returned") {
-            $viewModel = new ViewModel([
-                'lpa'  => $lpa,
-                'page' => $page,
-            ]);
-            $viewModel->setTemplate('application/authenticated/dashboard/status-returned.twig');
-            return $viewModel;
+            $viewModel->setTemplate('application/authenticated/lpa/status/status-returned.twig');
         } elseif ($lpaStatus === "Checking") {
-            $viewModel = new ViewModel([
-                'lpa'  => $lpa,
-                'page' => $page,
-            ]);
-            $viewModel->setTemplate('application/authenticated/dashboard/status-checking.twig');
-            return $viewModel;
+            $viewModel->setTemplate('application/authenticated/lpa/status/status-checking.twig');
         } elseif ($lpaStatus === "Received") {
-            $viewModel = new ViewModel([
-                'lpa'  => $lpa,
-                'page' => $page,
-            ]);
-            $viewModel->setTemplate('application/authenticated/dashboard/status-received.twig');
-            return $viewModel;
+            $viewModel->setTemplate('application/authenticated/lpa/status/status-received.twig');
         } elseif ($lpaStatus === "Waiting") {
-            $viewModel = new ViewModel([
-                'lpa'  => $lpa,
-                'page' => $page,
-            ]);
-            $viewModel->setTemplate('application/authenticated/dashboard/status-waiting.twig');
-            return $viewModel;
+            $viewModel->setTemplate('application/authenticated/lpa/status/status-waiting.twig');
+        } else {
+            // If the status has no information page, redirect the user back to the dashboard
+            return $this->redirect()->toRoute('user/dashboard');
         }
 
-       // $viewModel->setTemplate('application/authenticated/lpa/status/status-completed.twig');
-        return new ViewModel();
+        return $viewModel;
     }
 }
