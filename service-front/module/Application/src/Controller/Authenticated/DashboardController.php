@@ -228,4 +228,56 @@ class DashboardController extends AbstractAuthenticatedController
 
         return new JsonModel($statuses);
     }
+
+    public function statusDescriptionAction()
+    {
+        $page = $this->params()->fromQuery('page');
+        $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
+        $lpaStatus = $this->getEvent()->getRouteMatch()->getParam('lpa-status');
+        $lpa = $this->getLpaApplicationService()->getApplication($lpaId);
+
+//        var_dump($lpa);
+//        die;
+
+        if ($lpaStatus === "Completed") {
+            $viewModel = new ViewModel([
+                'lpa'  => $lpa,
+                'page' => $page,
+            ]);
+            //$viewModel->setTemplate('application/authenticated/dashboard/status-completed.twig'); //actual
+            $viewModel->setTemplate('application/authenticated/dashboard/status-returned.twig'); //just for testing
+            return $viewModel;
+        } elseif ($lpaStatus === "Returned") {
+            $viewModel = new ViewModel([
+                'lpa'  => $lpa,
+                'page' => $page,
+            ]);
+            $viewModel->setTemplate('application/authenticated/dashboard/status-returned.twig');
+            return $viewModel;
+        } elseif ($lpaStatus === "Checking") {
+            $viewModel = new ViewModel([
+                'lpa'  => $lpa,
+                'page' => $page,
+            ]);
+            $viewModel->setTemplate('application/authenticated/dashboard/status-checking.twig');
+            return $viewModel;
+        } elseif ($lpaStatus === "Received") {
+            $viewModel = new ViewModel([
+                'lpa'  => $lpa,
+                'page' => $page,
+            ]);
+            $viewModel->setTemplate('application/authenticated/dashboard/status-received.twig');
+            return $viewModel;
+        } elseif ($lpaStatus === "Waiting") {
+            $viewModel = new ViewModel([
+                'lpa'  => $lpa,
+                'page' => $page,
+            ]);
+            $viewModel->setTemplate('application/authenticated/dashboard/status-waiting.twig');
+            return $viewModel;
+        }
+
+       // $viewModel->setTemplate('application/authenticated/lpa/status/status-completed.twig');
+        return new ViewModel();
+    }
 }
