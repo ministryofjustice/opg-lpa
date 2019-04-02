@@ -12,6 +12,7 @@ use Application\Model\Service\Applications\Service;
 use Exception;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -19,6 +20,8 @@ use ZfcRbac\Service\AuthorizationService;
 
 class StatusController extends AbstractRestfulController
 {
+    use LoggerTrait;
+
     /**
      * Name of the identifier used in the routes to this RESTful controller
      *
@@ -126,49 +129,48 @@ class StatusController extends AbstractRestfulController
             throw new ApiProblemException('User identifier missing from URL', 400);
         }
 
-        $lpasTrackableFrom = new DateTime($this->config['track-from-date']);
         $exploded_ids = explode(',', $ids);
-        $results =  [];
+        $results = [];
 
         foreach ($exploded_ids as $id) {
-            $result = $this->getService()->fetch($id, $this->routeUserId);
+            $this->getLogger()->debug('Checking Sirius status for ' . $id);
+
+            $lpaResult = $this->getService()->fetch($id, $this->routeUserId);
 
             // if the id isn't found, return false.
-            if ($result instanceof ApiProblem) {
-                $results[$id] = ['found'=>false];
+            if ($lpaResult instanceof ApiProblem) {
+                $this->getLogger()->err('Error accessing LPA data: ' . $lpaResult->getDetail());
+
+                $results[$id] = ['found' => false];
                 continue;
             }
 
             /** @var Lpa $lpa */
-            $lpa = $result->getData();
-
-            // if the LPA was made before lpasTrackableFrom return default status.
-            if ($lpa->getCompletedAt() < $lpasTrackableFrom) {
-                $results[$id] = ['found'=>false];
-                continue;
-            }
+            $lpa = $lpaResult->getData();
 
             $metaData = $lpa->getMetaData();
 
             // If application has already reached the last stage of processing ('Concluded') do not check for updates
             if ($metaData[LPA::SIRIUS_PROCESSING_STATUS] == 'Concluded') {
-                $results[$id] = ['found'=>true, 'status'=>'Concluded'];
+                $results[$id] = ['found' => true, 'status' => 'Concluded'];
                 continue;
             }
 
-            $result = $this->processingStatusService->getStatus($id);
+            $siriusStatusResult = $this->processingStatusService->getStatus($id);
 
-            if($result != null && $result != $metaData[LPA::SIRIUS_PROCESSING_STATUS]) {
+            if ($siriusStatusResult != null && $siriusStatusResult != $metaData[LPA::SIRIUS_PROCESSING_STATUS]) {
 
                 // Update metadata in DB
-                $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $result;
+                $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $siriusStatusResult;
 
                 $this->getService()->patch(['metadata' => $metaData], $id, $this->routeUserId);
             }
 
-            $results[$id] = ['found'=>true, 'status'=>$metaData[LPA::SIRIUS_PROCESSING_STATUS]];
+            $results[$id] = ['found' => true, 'status' => $metaData[LPA::SIRIUS_PROCESSING_STATUS]];
         }
-        
+
+
         return new Json($results);
     }
+
 }
