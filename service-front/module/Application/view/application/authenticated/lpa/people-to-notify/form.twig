@@ -9,28 +9,28 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'name-title' : {
-        'cannot-be-blank' : 'Enter the donor\'s title',
-        'cannot-be-identical-to:""' : 'Enter the donor\'s title',
+        'cannot-be-blank' : 'Enter the title of the person to notify',
+        'cannot-be-identical-to:""' : 'Enter the title of the person to notify',
         'must-be-less-than-or-equal:5' : 'Title must be five letters or fewer - please abbreviate, if necessary'
     },
     'name-first' : {
-        'cannot-be-blank' : 'Enter first names',
-        'must-be-less-than-or-equal:50' : 'First names cannot be longer than 50 characters long'
+        'cannot-be-blank' : 'Enter the first names',
+        'must-be-less-than-or-equal:50' : 'Enter a first name that\'s less than 51 characters long'
     },
     'name-last' : {
         'cannot-be-blank' : 'Enter the last name',
-        'must-be-less-than-or-equal:50' : 'Last name cannot be longer than 50 characters long'
+        'must-be-less-than-or-equal:50' : 'Enter a last name that\'s less than 51 characters long'
     },
     'address-address1' : {
         'cannot-be-blank' : 'Enter the first line of the address',
-        'must-be-less-than-or-equal:50' : 'The first line of the address cannot be longer than 50 characters long'
+        'must-be-less-than-or-equal:50' : 'Change address line 1 so that it has fewer than 51 characters'
     },
     'address-address2' : {
         'linked-1-cannot-be-null' : 'Enter the second line of the address',
-        'must-be-less-than-or-equal:50' : 'The second line of the address cannot be longer than 50 characters long'
+        'must-be-less-than-or-equal:50' : 'Change address line 2 so that it has fewer than 51 characters'
     },
     'address-address3' : {
-        'must-be-less-than-or-equal:50' : 'The third line of the address cannot be longer than 50 characters long'
+        'must-be-less-than-or-equal:50' : 'Change address line 3 so that it has fewer than 51 characters'
     },
     'address-postcode' : {
         'linked-1-cannot-be-null' : 'Enter the postcode',
