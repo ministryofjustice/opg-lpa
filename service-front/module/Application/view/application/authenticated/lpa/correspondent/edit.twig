@@ -9,34 +9,35 @@
 {# Error messages #}
 {% set form = formErrorTextExchange(form,  {
     'name-title' : {
-        'cannot-be-blank' : 'Enter the donor\'s title',
-        'cannot-be-identical-to:""' : 'Enter the donor\'s title',
+        'cannot-be-blank' : 'Enter the correspondent\'s title',
+        'cannot-be-identical-to:""' : 'Enter the correspondent\'s title',
         'must-be-less-than-or-equal:5' : 'Title must be five letters or fewer - please abbreviate, if necessary',
         'linked-1-cannot-be-null' : 'Enter the correspondent\'s title or company name'
     },
     'name-first' : {
         'cannot-be-blank' : 'Enter the correspondent\'s first names',
-        'must-be-less-than-or-equal:53' : 'Correspondent\'s first names cannot be longer than 53 characters long',
+        'must-be-less-than-or-equal:53' : 'Enter a first name that\'s less than 54 characters long',
         'linked-1-cannot-be-null' : 'Enter the correspondent\'s first names or company name'
     },
     'name-last' : {
         'cannot-be-blank' : 'Enter the correspondent\'s last name',
-        'must-be-less-than-or-equal:61' : 'Correspondent\'s last name cannot be longer than 61 characters long',
+        'must-be-less-than-or-equal:61' : 'Enter a last name that\'s less than 62 characters long',
         'linked-1-cannot-be-null' : 'Enter the correspondent\'s last name or company name'
     },
     'company' : {
-        'linked-1-cannot-be-null' : 'Enter the correspondent\'s name or company name'
+        'linked-1-cannot-be-null' : 'Enter the correspondent\'s name or company name',
+        'must-be-less-than-or-equal:75' : 'Enter a company name that\'s less than 76 characters long'
     },
     'address-address1' : {
         'cannot-be-blank' : 'Enter the first line of the correspondent\'s address',
-        'must-be-less-than-or-equal:50' : 'The first line of the correspondent\'s address cannot be longer than 50 characters long'
+        'must-be-less-than-or-equal:50' : 'Change address line 1 so that it has fewer than 51 characters'
     },
     'address-address2' : {
         'linked-1-cannot-be-null' : 'Enter the second line of the correspondent\'s address',
-        'must-be-less-than-or-equal:50' : 'The second line of the correspondent\'s address cannot be longer than 50 characters long'
+        'must-be-less-than-or-equal:50' : 'Change address line 2 so that it has fewer than 51 characters'
     },
     'address-address3' : {
-        'must-be-less-than-or-equal:50' : 'The third line of the correspondent\'s address cannot be longer than 50 characters long'
+        'must-be-less-than-or-equal:50' : 'Change address line 3 so that it has fewer than 51 characters'
     },
     'address-postcode' : {
         'linked-1-cannot-be-null' : 'Enter the correspondent\'s postcode',
