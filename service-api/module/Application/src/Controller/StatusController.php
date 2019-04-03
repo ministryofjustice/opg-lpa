@@ -44,11 +44,6 @@ class StatusController extends AbstractRestfulController
     private $processingStatusService;
 
     /**
-     * @var $config array
-     */
-    private $config;
-
-    /**
      * @var $routeUserId string
      */
     private $routeUserId;
@@ -72,13 +67,11 @@ class StatusController extends AbstractRestfulController
     public function __construct(
         AuthorizationService $authorizationService,
         Service $service,
-        ProcessingStatusService $processingStatusService,
-        array $config
+        ProcessingStatusService $processingStatusService
     ) {
         $this->authorizationService = $authorizationService;
         $this->service = $service;
         $this->processingStatusService = $processingStatusService;
-        $this->config = $config;
     }
 
     /**

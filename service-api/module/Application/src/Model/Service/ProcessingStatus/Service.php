@@ -13,7 +13,6 @@ use RuntimeException;
 
 class Service extends AbstractService
 {
-
     private const SIRIUS_STATUS_TO_LPA = [
             'Pending' => 'Received',
             'Perfect' => 'Checking',
@@ -97,7 +96,6 @@ class Service extends AbstractService
 
     private function handleResponse(ResponseInterface $response)
     {
-
             $status = json_decode($response->getBody(), true);
 
             if (is_null($status)){
