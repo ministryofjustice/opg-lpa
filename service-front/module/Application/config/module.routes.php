@@ -302,28 +302,6 @@ return [
             //--------------------------------------------------
             // Signed in User routes
 
-            'admin-system-message' => [
-                'type' => 'Zend\Router\Http\Literal',
-                'options' => [
-                    'route'    => '/admin/system-message',
-                    'defaults' => [
-                        'controller' => 'Authenticated\AdminController',
-                        'action'     => 'system-message',
-                    ],
-                ],
-            ],
-
-            'admin-user-search' => [
-                'type' => 'Zend\Router\Http\Literal',
-                'options' => [
-                    'route'    => '/admin/user',
-                    'defaults' => [
-                        'controller' => 'Authenticated\AdminController',
-                        'action'     => 'user-search',
-                    ],
-                ],
-            ],
-
             'postcode' => [
                 'type'    => 'Zend\Router\Http\Literal',
                 'options' => [

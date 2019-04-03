@@ -6,7 +6,6 @@ use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
 use Application\Controller\Authenticated\AboutYouController;
-use Application\Controller\Authenticated\AdminController;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
 use Application\Controller\Authenticated\Lpa\DownloadController;
 use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
@@ -46,9 +45,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
     private $additionalServices = [
         AboutYouController::class => [
             'setUserDetailsSession' => 'UserDetailsSession',
-        ],
-        AdminController::class => [
-            'setAdminService' => 'AdminService'
         ],
         AuthController::class => [
             'setLpaApplicationService' => 'LpaApplicationService'
@@ -140,7 +136,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         $sessionManager = $container->get('SessionManager');
         $authenticationService = $container->get('AuthenticationService');
         $config = $container->get('Config');
-        $cache = $container->get('Cache');
 
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
             $userDetailsSession = $container->get('UserDetailsSession');
@@ -161,7 +156,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $sessionManager,
                     $authenticationService,
                     $config,
-                    $cache,
                     $userDetailsSession,
                     $lpaApplicationService,
                     $userService,
@@ -174,7 +168,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $sessionManager,
                     $authenticationService,
                     $config,
-                    $cache,
                     $userDetailsSession,
                     $lpaApplicationService,
                     $userService
@@ -185,8 +178,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                 $formElementManager,
                 $sessionManager,
                 $authenticationService,
-                $config,
-                $cache
+                $config
             );
         }
 

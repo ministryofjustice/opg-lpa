@@ -25,11 +25,9 @@ class DynamoDbController extends AbstractConsoleController
     {
         $sessionDynamoDb = $this->config['session']['dynamodb'];
         $cronLockDynamoDb = $this->config['cron']['lock']['dynamodb'];
-        $adminDynamoDb = $this->config['admin']['dynamodb'];
 
         $this->createTable($sessionDynamoDb);
         $this->createTable($cronLockDynamoDb);
-        $this->createTable($adminDynamoDb);
 
         $this->updateTimeToLive($sessionDynamoDb);
     }
