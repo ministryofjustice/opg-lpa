@@ -31,7 +31,6 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\Logger;
 use OpgTest\Lpa\DataModel\FixturesData;
-use Zend\Cache\Storage\Adapter\Memory;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\ResponseCollection;
 use Zend\Http\Request;
@@ -160,10 +159,6 @@ abstract class AbstractControllerTest extends MockeryTestCase
      */
     protected $apiClient;
     /**
-     * @var MockInterface|StorageInterface
-     */
-    protected $cache;
-    /**
      * @var MockInterface|Metadata
      */
     protected $metadata;
@@ -238,9 +233,6 @@ abstract class AbstractControllerTest extends MockeryTestCase
             'terms' => [
                 'lastUpdated' => '2015-02-17 14:00 UTC',
             ],
-            'admin' => [
-                'accounts' => ['admin@test.com'],
-            ],
             'session' => [
                 'native_settings' => [
                     'name' => 'lpa'
@@ -269,8 +261,6 @@ abstract class AbstractControllerTest extends MockeryTestCase
                 ],
             ]
         ];
-
-        $this->cache = Mockery::mock(StorageInterface::class);
 
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
 
@@ -333,7 +323,6 @@ abstract class AbstractControllerTest extends MockeryTestCase
                     $this->sessionManager,
                     $this->authenticationService,
                     $this->config,
-                    $this->cache,
                     $this->userDetailsSession,
                     $this->lpaApplicationService,
                     $this->userDetails,
@@ -346,7 +335,6 @@ abstract class AbstractControllerTest extends MockeryTestCase
                     $this->sessionManager,
                     $this->authenticationService,
                     $this->config,
-                    $this->cache,
                     $this->userDetailsSession,
                     $this->lpaApplicationService,
                     $this->userDetails
@@ -357,8 +345,7 @@ abstract class AbstractControllerTest extends MockeryTestCase
                 $this->formElementManager,
                 $this->sessionManager,
                 $this->authenticationService,
-                $this->config,
-                $this->cache
+                $this->config
             );
         }
 
@@ -578,7 +565,7 @@ abstract class AbstractControllerTest extends MockeryTestCase
     }
 
     /**
-     * @param MockInterface $controller
+     * @param MockInterface|AbstractController $controller
      * @param MockInterface $form
      * @param $user
      * @param $who
@@ -724,6 +711,7 @@ abstract class AbstractControllerTest extends MockeryTestCase
      *
      * @param bool $newDetails
      * @return User
+     * @throws \Exception
      */
     private function getUserDetails($newDetails = false)
     {

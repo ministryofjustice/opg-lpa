@@ -8,7 +8,6 @@ use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\User\Details as UserService;
 use Opg\Lpa\DataModel\User\User;
-use Zend\Cache\Storage\StorageInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\Session\Container;
@@ -57,7 +56,6 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
      * @param SessionManager $sessionManager
      * @param AuthenticationService $authenticationService
      * @param array $config
-     * @param StorageInterface $cache
      * @param Container $userDetailsSession
      * @param LpaApplicationService $lpaApplicationService
      * @param UserService $userService
@@ -67,12 +65,11 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         SessionManager $sessionManager,
         AuthenticationService $authenticationService,
         array $config,
-        StorageInterface $cache,
         Container $userDetailsSession,
         LpaApplicationService $lpaApplicationService,
         UserService $userService
     ) {
-        parent::__construct($formElementManager, $sessionManager, $authenticationService, $config, $cache);
+        parent::__construct($formElementManager, $sessionManager, $authenticationService, $config);
 
         $this->lpaApplicationService = $lpaApplicationService;
         $this->userService = $userService;
@@ -96,8 +93,9 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     /**
      * Do some pre-dispatch checks...
      *
-     * @param  MvcEvent $e
-     * @return mixed
+     * @param MvcEvent $e
+     * @return bool|mixed|\Zend\Http\Response
+     * @throws \Exception
      */
     public function onDispatch(MvcEvent $e)
     {

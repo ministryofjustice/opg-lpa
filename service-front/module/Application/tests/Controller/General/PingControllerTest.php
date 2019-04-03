@@ -24,7 +24,6 @@ class PingControllerTest extends AbstractControllerTest
                 'details' =>
                     array (
                         'sessions' => true,
-                        'properties' => true,
                         'locks' => true,
                     ),
             ),
