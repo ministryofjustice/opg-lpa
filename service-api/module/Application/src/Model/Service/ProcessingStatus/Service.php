@@ -18,12 +18,13 @@ class Service extends AbstractService
             'Pending' => 'Received',
             'Perfect' => 'Checking',
             'Imperfect' => 'Checking',
-            'Invalid' => 'Concluded',
-            'Rejected' => 'Concluded',
-            'Withdrawn' => 'Concluded',
-            'Registered' => 'Concluded',
-            'Cancelled' => 'Concluded',
-            'Revoked' => 'Concluded'];
+            'Invalid' => 'Returned',
+            'Rejected' => 'Returned',
+            'Withdrawn' => 'Returned',
+            'Registered' => 'Returned',
+            'Cancelled' => 'Returned',
+            'Revoked' => 'Returned'
+    ];
 
     /**
      * @var $httpClient HttpClient
