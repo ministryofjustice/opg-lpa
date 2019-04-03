@@ -23,17 +23,10 @@ class StatusControllerFactory
         $applicationsService = $container->get(ApplicationService::class);
         $processingStatusService = $container->get(ProcessingStatusService::class);
 
-        $config = $container->get('config');
-
-        if (!isset($config['processing-status']['track-from-date'])) {
-            throw new RuntimeException("Missing config: ['processing-status']['track-from-date']");
-        }
-
         return new StatusController(
             $authorizationService,
             $applicationsService,
-            $processingStatusService,
-            $config['processing-status']
+            $processingStatusService
         );
     }
 }
