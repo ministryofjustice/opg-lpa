@@ -341,4 +341,67 @@ class DashboardControllerTest extends AbstractControllerTest
         $this->assertEquals(new JsonModel(['1' => ['found'=>true, 'status'=>'Concluded']]), $result);
     }
 
+    /**
+     * @param $status
+     * @param $template
+     * @dataProvider  statusAndTemplateProvider
+     */
+    public function testStatusDescriptionActionWithValidStatus($status, $template)
+    {
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
+        $event = new MvcEvent();
+        $routeMatch = Mockery::mock(RouteMatch::class);
+        $event->setRouteMatch($routeMatch);
+        $controller->setEvent($event);
+        $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
+
+        $routeMatch->shouldReceive('getParam')->withArgs(['lpa-status'])->andReturn($status)->once();
+
+        $lpa = FixturesData::getPfLpa();
+        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
+
+        $result = $controller->statusDescriptionAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+
+        $this->assertEquals($template, $result->getTemplate());
+    }
+
+    public function statusAndTemplateProvider()
+    {
+        return[
+            ['Waiting','application/authenticated/lpa/status/status-waiting.twig'],
+            ['Received','application/authenticated/lpa/status/status-received.twig'],
+            ['Checking','application/authenticated/lpa/status/status-checking.twig'],
+            ['Returned','application/authenticated/lpa/status/status-returned.twig'],
+            ['Completed','application/authenticated/lpa/status/status-completed.twig']
+        ];
+    }
+
+    public function testStatusDescriptionActionInvalidStatus()
+    {
+        /** @var DashboardController $controller */
+        $controller = $this->getController(TestableDashboardController::class);
+
+        $event = new MvcEvent();
+        $routeMatch = Mockery::mock(RouteMatch::class);
+        $event->setRouteMatch($routeMatch);
+        $controller->setEvent($event);
+        $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
+
+        $status = "InvalidStatus";
+        $routeMatch->shouldReceive('getParam')->withArgs(['lpa-status'])->andReturn($status)->once();
+
+        $lpa = FixturesData::getPfLpa();
+        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
+
+        $response = new Response();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
+
+        $result = $controller->statusDescriptionAction();
+
+        $this->assertEquals($response, $result);
+    }
 }

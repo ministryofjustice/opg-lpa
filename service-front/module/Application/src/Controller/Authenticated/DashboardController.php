@@ -232,14 +232,12 @@ class DashboardController extends AbstractAuthenticatedController
 
     public function statusDescriptionAction()
     {
-        $page = $this->params()->fromQuery('page');
         $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
         $lpaStatus = $this->getEvent()->getRouteMatch()->getParam('lpa-status');
         $lpa = $this->getLpaApplicationService()->getApplication($lpaId);
 
         $viewModel = new ViewModel([
-            'lpa'  => $lpa,
-            'page' => $page,
+            'lpa'  => $lpa
         ]);
 
         if ($lpaStatus === "Completed") {
