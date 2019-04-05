@@ -10,7 +10,6 @@ use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\User\Details as UserService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\Cache\Storage\StorageInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\Router\Http\RouteMatch;
 use Zend\ServiceManager\AbstractPluginManager;
@@ -48,7 +47,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
      * @param SessionManager $sessionManager
      * @param AuthenticationService $authenticationService
      * @param array $config
-     * @param StorageInterface $cache
      * @param Container $userDetailsSession
      * @param LpaApplicationService $lpaApplicationService
      * @param UserService $userService
@@ -61,7 +59,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         SessionManager $sessionManager,
         AuthenticationService $authenticationService,
         array $config,
-        StorageInterface $cache,
         Container $userDetailsSession,
         LpaApplicationService $lpaApplicationService,
         UserService $userService,
@@ -73,7 +70,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
             $sessionManager,
             $authenticationService,
             $config,
-            $cache,
             $userDetailsSession,
             $lpaApplicationService,
             $userService
