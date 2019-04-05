@@ -41,7 +41,6 @@ class StatusTest
 //                'ok' => false,
 //                'details' => [
 //                    'sessions' => false,
-//                    'properties' => false,
 //                    'locks' => false
 //                ]
 //            ],

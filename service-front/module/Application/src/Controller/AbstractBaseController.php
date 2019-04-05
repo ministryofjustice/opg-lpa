@@ -5,7 +5,6 @@ namespace Application\Controller;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\SessionManager;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Cache\Storage\StorageInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\ServiceManager\AbstractPluginManager;
 
@@ -33,31 +32,23 @@ abstract class AbstractBaseController extends AbstractActionController
      */
     private $config;
 
-    /**
-     * @var StorageInterface
-     */
-    private $cache;
-
     /**§
      * AbstractBaseController constructor.
      * @param AbstractPluginManager $formElementManager
      * @param SessionManager $sessionManager
      * @param AuthenticationService $authenticationService
      * @param array $config
-     * @param StorageInterface $cache
      */
     public function __construct(
         AbstractPluginManager $formElementManager,
         SessionManager $sessionManager,
         AuthenticationService $authenticationService,
-        array $config,
-        StorageInterface $cache
+        array $config
     ) {
         $this->formElementManager = $formElementManager;
         $this->sessionManager = $sessionManager;
         $this->authenticationService = $authenticationService;
         $this->config = $config;
-        $this->cache = $cache;
     }
 
     /**
@@ -77,10 +68,10 @@ abstract class AbstractBaseController extends AbstractActionController
      * @param $routeName string The route name for the current page for if a redirect is needed.
      * @return bool|\Zend\Http\Response Iff bool true is returned, all is good. Otherwise the calling controller should return the response.
      */
-    protected function checkCookie( $routeName ){
-
+    protected function checkCookie($routeName)
+    {
         // Only do a cookie check on GETs
-        if( $this->getRequest()->getMethod() !== 'GET' ){
+        if ($this->getRequest()->getMethod() !== 'GET') {
             return true;
         }
 
@@ -92,15 +83,14 @@ abstract class AbstractBaseController extends AbstractActionController
         $cookies = $this->getRequest()->getCookie();
 
         // If there cookies...
-        if( $cookies !== false ){
+        if ($cookies !== false) {
             // Check for the session cookie...
-            $cookieExists = $cookies->offsetExists( $sessionCookieName );
+            $cookieExists = $cookies->offsetExists($sessionCookieName);
         }
 
         //---
 
-        if( !$cookies || !$cookieExists ){
-
+        if (!$cookies || !$cookieExists) {
             /*
              * Redirect them back to the same page, appending ?cookie=1 to the URL.
              *  A - If they have cookies enabled, they should now have the session cookie, so all is well.
@@ -109,23 +99,17 @@ abstract class AbstractBaseController extends AbstractActionController
 
             $cookieRedirect = (bool)$this->params()->fromQuery('cookie');
 
-            if( !$cookieRedirect ){
-
+            if (!$cookieRedirect) {
                 // Cannot see a cookie, so redirect them back to this page (which will set one), ready to check again.
-                return $this->redirect()->toRoute($routeName, array(), [ 'query' => ['cookie' => '1'] ]);
-
+                return $this->redirect()->toRoute($routeName, array(), ['query' => ['cookie' => '1']]);
             } else {
-
                 // Cookie is not set even after we've done a redirect, so assume the client doesn't support cookies.
-                return $this->redirect()->toRoute( 'enable-cookie' );
-
+                return $this->redirect()->toRoute('enable-cookie');
             }
-
-        } // if
+        }
 
         return true;
-
-    } // function
+    }
 
     /**
      * Checks if a user is logged in and redirects them to the dashboard if they are.
@@ -136,17 +120,16 @@ abstract class AbstractBaseController extends AbstractActionController
      *
      * @return bool|\Zend\Http\Response
      */
-    protected function preventAuthenticatedUser(){
-
+    protected function preventAuthenticatedUser()
+    {
         $identity = $this->authenticationService->getIdentity();
 
-        if( !is_null($identity) ){
-            return $this->redirect()->toRoute( 'user/dashboard' );
+        if (!is_null($identity)) {
+            return $this->redirect()->toRoute('user/dashboard');
         }
 
         return true;
-
-    } // function
+    }
 
     /**
      * @return AbstractPluginManager
@@ -181,15 +164,4 @@ abstract class AbstractBaseController extends AbstractActionController
     {
         return $this->config;
     }
-
-    /**
-     * Returns the cache object.
-     *
-     * @return StorageInterface
-     */
-    protected function cache(): StorageInterface
-    {
-        return $this->cache;
-    }
-
-} // class
+}

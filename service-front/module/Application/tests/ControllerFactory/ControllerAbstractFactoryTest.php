@@ -10,11 +10,7 @@ use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use RuntimeException;
-use Zend\Cache\Storage\StorageInterface;
 use Zend\ServiceManager\AbstractPluginManager;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ControllerAbstractFactoryTest extends MockeryTestCase
 {
@@ -22,6 +18,7 @@ class ControllerAbstractFactoryTest extends MockeryTestCase
      * @var ControllerAbstractFactory
      */
     private $factory;
+
     /**
      * @var MockInterface|ContainerInterface
      */
@@ -56,8 +53,6 @@ class ControllerAbstractFactoryTest extends MockeryTestCase
         $this->container->shouldReceive('get')->withArgs(['AuthenticationService'])
             ->andReturn(Mockery::mock(AuthenticationService::class))->once();
         $this->container->shouldReceive('get')->withArgs(['Config'])->andReturn([])->once();
-        $this->container->shouldReceive('get')->withArgs(['Cache'])
-            ->andReturn(Mockery::mock(StorageInterface::class))->once();
 
         $controller = $this->factory->__invoke($this->container, 'General\HomeController');
 

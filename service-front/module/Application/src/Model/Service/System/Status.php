@@ -67,7 +67,6 @@ class Status extends AbstractService implements ApiClientAwareInterface
     {
         $result = array('ok' => false, 'details' => [
             'sessions' => false,
-            'properties' => false,
             'locks' => false,
         ]);
 
@@ -86,24 +85,6 @@ class Status extends AbstractService implements ApiClientAwareInterface
             if ($details['@metadata']['statusCode'] === 200 && in_array($details['Table']['TableStatus'], ['ACTIVE', 'UPDATING'])) {
                 // Table is okay
                 $result['details']['sessions'] = true;
-            }
-        } catch (Exception $e) {}
-
-        //------------------
-        // Properties
-
-        try {
-            $config = $this->getConfig()['admin']['dynamodb'];
-
-            $client = new DynamoDbClient($config['client']);
-
-            $details = $client->describeTable([
-                'TableName' => $config['settings']['table_name']
-            ]);
-
-            if ($details['@metadata']['statusCode'] === 200 && in_array($details['Table']['TableStatus'], ['ACTIVE', 'UPDATING'])) {
-                // Table is okay
-                $result['details']['properties'] = true;
             }
         } catch (Exception $e) {}
 

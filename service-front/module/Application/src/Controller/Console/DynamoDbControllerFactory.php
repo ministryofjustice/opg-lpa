@@ -2,7 +2,6 @@
 
 namespace Application\Controller\Console;
 
-use Application\Controller\Console\DynamoDbController;
 use Aws\Sdk;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -61,13 +60,6 @@ class DynamoDbControllerFactory implements FactoryInterface
       --endpoint-url http://localhost:8000 \
       --attribute-definitions AttributeName=id,AttributeType=S \
       --table-name ${OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE} \
-      --key-schema AttributeName=id,KeyType=HASH \
-      --provisioned-throughput ReadCapacityUnits=10,WriteCapacityUnits=10
-
-    aws dynamodb create-table \
-      --endpoint-url http://localhost:8000 \
-      --attribute-definitions AttributeName=id,AttributeType=S \
-      --table-name ${OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE} \
       --key-schema AttributeName=id,KeyType=HASH \
       --provisioned-throughput ReadCapacityUnits=10,WriteCapacityUnits=10
 
