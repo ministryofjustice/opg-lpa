@@ -107,7 +107,6 @@
 
     {% include 'application/authenticated/dashboard/pagination.twig' with {data: paginationControlData, route: 'user/dashboard/pagination'} %}
 
-    <p>
 {% endif %}
 
 <div class="panel-cta mobile">
@@ -120,4 +119,42 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $( document ).ready(function() {
+            // Get an array of the LPA IDs to check for a status update
+            const ids = $('li[data-refresh-id]').map(function () { return this.getAttribute('data-refresh-id'); }).get();
+
+            $.getJSON( "/user/dashboard/statuses/"+ids.join(), function( results ) {
+                // Loop through all the ids that were requested and update the text css style to the new status
+                ids.forEach(function (lpaId) {
+                    const lpaResult = results[lpaId];
+
+                    if (lpaResult['found']) {
+                        const li = $('li[data-refresh-id='+lpaId+']');
+
+                        // Get the status from the returned data
+                        const newStatus = lpaResult['status'].toLowerCase();
+
+                        // Store current status then update style on the status indicator
+                        const statusIndicator = li.find(".opg-status");
+                        const currentStatus = statusIndicator.html().toLowerCase();
+
+                        statusIndicator.html(newStatus);
+
+                        statusIndicator.removeClass('opg-status--' + currentStatus);
+                        statusIndicator.addClass('opg-status--' + newStatus);
+
+                        // Update style on status container
+                        li.removeClass('status-container--' + currentStatus);
+                        li.addClass('status-container--' + newStatus);
+                    }
+                });
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.error(textStatus + " " + errorThrown);
+            });
+        });
+    </script>
 {% endblock %}

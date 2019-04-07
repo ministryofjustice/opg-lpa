@@ -8,7 +8,6 @@
     padding-right: 20px !important;
 
     .info{
-        //float:left;
     }
 
     .main-info
@@ -29,11 +28,9 @@
         width:6.25em !important;
 
         @media (min-width: 720px) {
-
             float:right !important;
             clear: none;
             margin: 5px 0 0 1.5em !important;
-
         }
 
         p:first-of-type{
@@ -49,10 +46,7 @@
     }
 
     .list-item_cta{
-
-        //float:left;
         clear:left;
-
     }
 
     .list-item_secondary_actions {
@@ -63,10 +57,6 @@
         @media (min-width: 640px) {
             margin-left: 15px;
         }
-
-        //@media (min-width: 740px) {
-        //    margin-left: 0;
-        //}
 
         li{
             padding:0;
@@ -87,16 +77,9 @@
             }
 
             @media (min-width: 740px) {
-                //font-size: .8em;
                 margin-right: 6px;
                 padding-right: 10px;
             }
-
-            //@media (min-width: 850px) {
-            //    margin-right: 10px;
-            //    padding-right: 10px;
-            //    font-size: 1em;
-            //}
         }
 
         a {
@@ -111,65 +94,12 @@
     }
 
     .list-item_status{
-
         float:right;
         min-width: 95px;
         margin-left: 10px;
         text-align: right;
         z-index: 1;
         position: relative;
-
-        a, span{
-            padding: 10px;
-            display: inline-block;
-            color: #0b0c0c;
-            border-radius: 5px;
-            background: #dee0e2;
-            text-align: center;
-            min-width: 95px;
-        }
-
-        a {
-            text-decoration: none;
-
-            &:hover{
-                border-radius: 5px;
-                box-shadow: 0 2px 0 rgba(11, 12, 12, 0.3);
-                background:#d0d3d6;
-            }
-        }
-
-        .icon {
-            width: 2.5em;
-            height: 2.5em;
-            margin: 0 0 0 0;
-
-            // &.status-1 {
-            //     background: url("../images/custom/waiting-v1.svg") 50% 50% no-repeat;
-            //     background-size: contain;
-            // }
-            // &.status-2 {
-            //     background: url("../images/custom/received-v1.svg") 50% 50% no-repeat;
-            //     background-size: contain;
-            // }
-            // &.status-3 {
-            //     background: url("../images/custom/checking-v1.svg") 50% 50% no-repeat;
-            //     background-size: contain;
-            // }
-            &.status-4 {
-                background: url("../images/custom/tick-v1.svg") 50% 50% no-repeat;
-                background-size: contain;
-            }
-            &.status-5 {
-                background: url("../images/custom/percentage-65-v1.svg") 50% 50% no-repeat;
-                background-size: contain;
-            }
-            &.status-6 {
-                background: url("../images/custom/percentage-25-v1.svg") 50% 50% no-repeat;
-                background-size: contain;
-            }
-        }
-
     }
 
 }
@@ -180,44 +110,8 @@
           background: $highlight-colour;
           position: relative;
           border-radius: 5px;
-          // display: inline-block;
-          // width: 100%;
           padding: 1em 11.5em 1em 1.5em;
-          &.status-1 {
-               border-left: 10px solid $purple;
-               .status {
-                    color: $white;
-                    background: $purple;
-               }
-          }
-          &.status-2 {
-               border-left: 10px solid $govuk-blue;
-               .status {
-                    color: $white;
-                    background: $govuk-blue;
-               }
-          }
-          &.status-3 {
-               border-left: 10px solid $light-blue;
-               .status {
-                    color: $white;
-                    background: $light-blue;
-               }
-          }
-          &.status-4 {
-               border-left: 10px solid $turquoise-with-contrast;
-               .status {
-                    color: $white;
-                    background: $turquoise-with-contrast;
-               }
-          }
-          &.status-started, &.status-created, &.status-ready {
-               border-left: 10px solid lighten($panel-colour,5%);
-               .status {
-                    color: $secondary-text-colour;
-                    background: lighten($panel-colour,5%);
-               }
-          }
+
           .info {
                .main-info {
                     display: inline-block;
@@ -259,22 +153,6 @@
                }
           }
      }
-}
-
-ul.track-my-lpa li{
-    //background: red;
-    //box-shadow: 0px 4px 70px -18px #707070;
-
-    &.list-item--v3 {
-        border-bottom: 4px solid #dee0e2;
-    }
-
-    &.list-item--v3.status-4,
-    &.list-item--v3.status-created,
-    &.list-item--v3.status-started,
-    &.list-item--v3.status-ready{
-        border-left: 10px solid #dee0e2;
-    }
 }
 
 .supporting-info {
