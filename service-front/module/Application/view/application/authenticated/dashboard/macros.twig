@@ -10,36 +10,44 @@
 
     {% for key,lpa in lpas %}
         {% if (type == 'all' or type == lpa.type) %}
-            <li class="list-item list-item--v3 status-started">
+            {% set status = lpa.progress|lower %}
 
+            <li class="list-item list-item--v3 status-container--{{ status }}" {% if lpa.refreshId %}data-refresh-id="{{ lpa.refreshId }}"{% endif %}>
                 <div class="info">
                     <div class="main-info">
                         <h1 class="list-item_title">
-                            {% if lpa.donor|length > 0 %}
+                            {%- if lpa.donor|length > 0 -%}
                                 {{ lpa.donor }}
-                            {% else %}
+                            {%- else -%}
                                 No donor added
-                            {% endif %}
+                            {%- endif -%}
                         </h1>
                         <span class="lpa-number">{{ formatLpaId(lpa.id) }}</span>
                     </div>
 
                     <div class="list-item_status">
                         <p class="opg-application-status-text">Application status</p>
-                        {% if lpa.progress == 'Started' %}
-                            {% set statusClass = 'opg-status--default' %}
-                        {% elseif lpa.progress == 'Created' %}
-                            {% set statusClass = 'opg-status--default' %}
-                        {% elseif lpa.progress == 'Completed' %}
-                            {% set statusClass = 'opg-status--default' %}
-                        {% endif %}
-                        <div class="opg-status {{ statusClass }}">{{ lpa.progress }}</div>
+                        <div class="opg-status opg-status--{{ status }}">{{ lpa.progress }}</div>
+                        <br/>
+
+                        {# TODO - Move to macro #}
+                        {% if (status == 'completed') -%}
+                            <a href="dashboard/status-description/{{ lpa.id }}/Completed">View Completed message</a>
+                        {%- elseif (status == 'waiting') -%}
+                            <a href="dashboard/status-description/{{ lpa.id }}/Waiting">View Waiting message</a>
+                        {%- elseif (status == 'received') -%}
+                            <a href="dashboard/status-description/{{ lpa.id }}/Received">View Received message</a>
+                        {%- elseif (status == 'checking') -%}
+                            <a href="dashboard/status-description/{{ lpa.id }}/Checking">View Checking message</a>
+                        {%- elseif (status == 'returned') -%}
+                            <a href="dashboard/status-description/{{ lpa.id }}/Returned">View Returned message</a>
+                        {%- endif %}
                     </div>
 
                     <div class="extra-info">
                         <p>LPA type:</p>
                         <p class="main-text">
-                            {{ lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : 'Not selected') }}
+                            {{- lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : 'Not selected') -}}
                         </p>
                     </div>
 
