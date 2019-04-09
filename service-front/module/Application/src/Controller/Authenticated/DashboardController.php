@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
+use http\Exception\RuntimeException;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
@@ -227,5 +228,33 @@ class DashboardController extends AbstractAuthenticatedController
         $statuses = $this->getLpaApplicationService()->getStatuses($lpaIds);
 
         return new JsonModel($statuses);
+    }
+
+    public function statusDescriptionAction()
+    {
+        $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
+        $lpaStatus = $this->getEvent()->getRouteMatch()->getParam('lpa-status');
+        $lpa = $this->getLpaApplicationService()->getApplication($lpaId);
+
+        $viewModel = new ViewModel([
+            'lpa'  => $lpa
+        ]);
+
+        if ($lpaStatus === "Completed") {
+            $viewModel->setTemplate('application/authenticated/lpa/status/status-completed.twig');
+        } elseif ($lpaStatus === "Returned") {
+            $viewModel->setTemplate('application/authenticated/lpa/status/status-returned.twig');
+        } elseif ($lpaStatus === "Checking") {
+            $viewModel->setTemplate('application/authenticated/lpa/status/status-checking.twig');
+        } elseif ($lpaStatus === "Received") {
+            $viewModel->setTemplate('application/authenticated/lpa/status/status-received.twig');
+        } elseif ($lpaStatus === "Waiting") {
+            $viewModel->setTemplate('application/authenticated/lpa/status/status-waiting.twig');
+        } else {
+            // If the status has no information page, redirect the user back to the dashboard
+            return $this->redirect()->toRoute('user/dashboard');
+        }
+
+        return $viewModel;
     }
 }
