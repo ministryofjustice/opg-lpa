@@ -56,3 +56,5 @@
         fastcgi_param   APPLICATION_ENV production;
     }
 
+# Comply with https://ministryofjustice.github.io/security-guidance/contact/implement-security-txt/#implementing-securitytxt
+    rewrite ^/.well_known/security.txt$ https://raw.githubusercontent.com/ministryofjustice/security-guidance/master/contact/vulnerability-disclosure-security.txt permanent;
