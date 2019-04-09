@@ -3652,6 +3652,11 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
   color: #fff;
   font-weight: bold; }
 
+.opg-status--completed {
+  background-color: #dee0e2;
+  color: #0b0c0c;
+  font-weight: bold; }
+
 .opg-application-status-text {
   margin-bottom: 0px;
   margin-right: 5px; }
