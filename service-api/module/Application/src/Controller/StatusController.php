@@ -62,7 +62,6 @@ class StatusController extends AbstractRestfulController
      * @param AuthorizationService $authorizationService
      * @param Service $service
      * @param ProcessingStatusService $processingStatusService
-     * @param array $config
      */
     public function __construct(
         AuthorizationService $authorizationService,
@@ -142,16 +141,18 @@ class StatusController extends AbstractRestfulController
 
             $metaData = $lpa->getMetaData();
 
-            // If application has already reached the last stage of processing ('Concluded') do not check for updates
-            if ($metaData[LPA::SIRIUS_PROCESSING_STATUS] == 'Returned') {
-                $results[$id] = ['found' => true, 'status' => 'Returned'];
+            $currentProcessingStatus = array_key_exists(LPA::SIRIUS_PROCESSING_STATUS, $metaData) ?
+                $metaData[LPA::SIRIUS_PROCESSING_STATUS] : null;
+
+            // If application has already reached the last stage of processing do not check for updates
+            if ($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED) {
+                $results[$id] = ['found' => true, 'status' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED];
                 continue;
             }
 
             $siriusStatusResult = $this->processingStatusService->getStatus($id);
 
-            if ($siriusStatusResult != null && $siriusStatusResult != $metaData[LPA::SIRIUS_PROCESSING_STATUS]) {
-
+            if ($siriusStatusResult != null && $siriusStatusResult != $currentProcessingStatus) {
                 // Update metadata in DB
                 $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $siriusStatusResult;
 
