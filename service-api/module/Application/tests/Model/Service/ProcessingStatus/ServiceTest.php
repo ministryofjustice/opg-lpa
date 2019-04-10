@@ -4,6 +4,7 @@ namespace Application\Model\Service\ProcessingStatus;
 
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
+use Aws\Signature\SignatureV4;
 use Hamcrest\Matchers;
 use Http\Client\HttpClient;
 use Mockery;
@@ -28,7 +29,15 @@ class ServiceTest extends MockeryTestCase
     public function setUp()
     {
         $this->httpClient = Mockery::mock(HttpClient::class);
+        $awsSignature = Mockery::mock(SignatureV4::class);
+
+        // We want to return the GuzzleHttp\Psr7\Request which was passed in teh first argument.
+        $awsSignature->shouldReceive('signRequest')->once()->andReturnUsing(function($request){
+            return $request;
+        });
+
         $this->service = new Service();
+        $this->service->setAwsSignatureV4($awsSignature);
         $this->service->setClient($this->httpClient);
         $this->service->setConfig(['processing-status' => ['endpoint' => 'http://thing/processing-status/']]);
     }

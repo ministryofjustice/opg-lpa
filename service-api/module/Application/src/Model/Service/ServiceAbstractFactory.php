@@ -50,7 +50,8 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         ],
         ProcessingStatus\Service::class => [
             'setClient' => HttpClient::class,
-            'setConfig' => 'config'
+            'setConfig' => 'config',
+            'setAwsSignatureV4' => 'AwsApiGatewaySignature',
         ]
     ];
 
