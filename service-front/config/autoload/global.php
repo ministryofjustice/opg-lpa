@@ -2,7 +2,7 @@
 
 $commit = ( is_readable('GITREF') ) ? trim(file_get_contents('GITREF')) : null;
 
-return array(
+return [
 
     'version' => [
         'commit' => $commit,
@@ -29,11 +29,7 @@ return array(
     'admin' => [
 
         'dynamodb' => [
-            'client' => [
-                'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
-                'version' => '2012-08-10',
-                'region' => 'eu-west-1',
-            ],
+            'client' => getDynamoClientConfig(),
             'settings' => [
                 'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
             ],
@@ -47,11 +43,7 @@ return array(
         'lock' => [
 
             'dynamodb' => [
-                'client' => [
-                    'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
-                    'version' => '2012-08-10',
-                    'region' => 'eu-west-1',
-                ],
+                'client' => getDynamoClientConfig(),
                 'settings' => [
                     'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
                 ],
@@ -94,11 +86,7 @@ return array(
         ],
 
         'dynamodb' => [
-            'client' => [
-                'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
-                'version' => '2012-08-10',
-                'region' => 'eu-west-1',
-            ],
+            'client' => getDynamoClientConfig(),
             'settings' => [
                 'table_name' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE') ?: 'lpa-sessions-shared',
                 // Whether Time To Live is enabled on the sesson table
@@ -183,4 +171,13 @@ return array(
 
     'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gov.uk',
 
-);
+];
+
+function getDynamoClientConfig()
+{
+    return [
+        'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
+        'version' => '2012-08-10',
+        'region' => 'eu-west-1',
+    ];
+}
