@@ -10,21 +10,22 @@ use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception;
 use Http\Client\HttpClient;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
 class Service extends AbstractService
 {
     private const SIRIUS_STATUS_TO_LPA = [
-            'Pending' => 'Received',
-            'Perfect' => 'Checking',
-            'Imperfect' => 'Checking',
-            'Invalid' => 'Returned',
-            'Rejected' => 'Returned',
-            'Withdrawn' => 'Returned',
-            'Registered' => 'Returned',
-            'Cancelled' => 'Returned',
-            'Revoked' => 'Returned'
+            'Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,
+            'Perfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
+            'Imperfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
+            'Invalid' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Rejected' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Withdrawn' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Registered' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Cancelled' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Revoked' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED
     ];
 
     /**

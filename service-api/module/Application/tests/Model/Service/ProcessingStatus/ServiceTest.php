@@ -43,7 +43,7 @@ class ServiceTest extends MockeryTestCase
     }
 
     public function setUpRequest($returnStatus = 200,
-        $returnBody = '{"status": "Registered"}')
+        $returnBody = '{"status": "Pending"}')
     {
         $this->response = Mockery::mock(ResponseInterface::class);
         $this->response->shouldReceive('getStatusCode')->once()->andReturn($returnStatus);
@@ -69,14 +69,11 @@ class ServiceTest extends MockeryTestCase
 
     public function testGetStatus()
     {
-
         $this->setUpRequest();
 
         $result = $this->service->getStatus(1000000000);
 
-        $this->assertEquals('Concluded', $result);
-
-
+        $this->assertEquals('Received', $result);
     }
 
     /**
