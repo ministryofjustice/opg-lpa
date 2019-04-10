@@ -88,7 +88,8 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
             [ProcessingStatusService::class,
                 [
                     HttpClient::class => Mockery::mock(HttpClient::class),
-                    'config' => ['processing-status' => ['endpoint' => 'test endpoint']]
+                    'config' => ['processing-status' => ['endpoint' => 'test endpoint']],
+                    'AwsApiGatewaySignature' => Mockery::mock(\Aws\Signature\SignatureV4::class),
                 ]
             ]
         ];
