@@ -19,6 +19,16 @@ class Status extends AbstractService implements ApiClientAwareInterface
     use ApiClientTrait;
 
     /**
+     * @var DynamoDbClient
+     */
+    private $dynamoDbSessionClient;
+
+    /**
+     * @var DynamoDbClient
+     */
+    private $dynamoDbCronClient;
+
+    /**
      * Services:
      *  - API 2
      *  - RedisFront
@@ -74,12 +84,8 @@ class Status extends AbstractService implements ApiClientAwareInterface
         // Sessions
 
         try {
-            $config = $this->getConfig()['session']['dynamodb'];
-
-            $client = new DynamoDbClient($config['client']);
-
-            $details = $client->describeTable([
-                'TableName' => $config['settings']['table_name']
+            $details = $this->dynamoDbSessionClient->describeTable([
+                'TableName' => $this->getConfig()['session']['dynamodb']['settings']['table_name']
             ]);
 
             if ($details['@metadata']['statusCode'] === 200 && in_array($details['Table']['TableStatus'], ['ACTIVE', 'UPDATING'])) {
@@ -92,12 +98,8 @@ class Status extends AbstractService implements ApiClientAwareInterface
         // Locks
 
         try {
-            $config = $this->getConfig()['cron']['lock']['dynamodb'];
-
-            $client = new DynamoDbClient($config['client']);
-
-            $details = $client->describeTable([
-                'TableName' => $config['settings']['table_name']
+            $details = $this->dynamoDbCronClient->describeTable([
+                'TableName' => $this->getConfig()['cron']['lock']['dynamodb']['settings']['table_name']
             ]);
 
             if ($details['@metadata']['statusCode'] === 200 && in_array($details['Table']['TableStatus'], ['ACTIVE', 'UPDATING'])) {
@@ -141,5 +143,21 @@ class Status extends AbstractService implements ApiClientAwareInterface
         } catch (Exception $e) {}   //  Don't throw exceptions; we just return ok==false
 
         return $result;
+    }
+
+    /**
+     * @param DynamoDbClient $dynamoDbSessionClient
+     */
+    public function setDynamoDbSessionClient(DynamoDbClient $dynamoDbSessionClient)
+    {
+        $this->dynamoDbSessionClient = $dynamoDbSessionClient;
+    }
+
+    /**
+     * @param DynamoDbClient $dynamoDbCronClient
+     */
+    public function setDynamoDbCronClient(DynamoDbClient $dynamoDbCronClient)
+    {
+        $this->dynamoDbCronClient = $dynamoDbCronClient;
     }
 }
