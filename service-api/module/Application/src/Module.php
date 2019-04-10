@@ -10,11 +10,10 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
 use Alphagov\Notifications\Client as NotifyClient;
-use Aws\DynamoDb\DynamoDbClient;
 use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
-use DynamoQueue\Queue\Client as DynamoQueue;
+use Aws\Signature\SignatureV4;
 use Http\Adapter\Guzzle6\Client as Guzzle6Client;
 use Http\Client\HttpClient;
 use Opg\Lpa\Logger\Logger;
@@ -130,6 +129,10 @@ class Module
                     }
 
                     return new SqsClient($config['pdf']['queue']['sqs']['client']);
+                },
+
+                'AwsApiGatewaySignature' => function ($sm) {
+                    return new SignatureV4('execute-api', 'eu-west-1');
                 },
 
             ], // factories

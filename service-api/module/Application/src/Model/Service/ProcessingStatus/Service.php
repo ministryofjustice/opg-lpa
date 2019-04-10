@@ -4,6 +4,8 @@ namespace Application\Model\Service\ProcessingStatus;
 
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Service\AbstractService;
+use Aws\Credentials\CredentialProvider;
+use Aws\Signature\SignatureV4;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception;
@@ -35,6 +37,10 @@ class Service extends AbstractService
      */
     private $processingStatusServiceUri;
 
+    /**
+     * @var $awsSignature SignatureV4
+     */
+    private $awsSignature;
 
     public function setClient(HttpClient $httpClient)
     {
@@ -48,6 +54,11 @@ class Service extends AbstractService
         }
 
         $this->processingStatusServiceUri = $config['processing-status']['endpoint'];
+    }
+
+    public function setAwsSignatureV4(SignatureV4 $awsSignature)
+    {
+        $this->awsSignature = $awsSignature;
     }
 
     /**
@@ -66,7 +77,16 @@ class Service extends AbstractService
 
         $request = new Request('GET', $url, $this->buildHeaders());
 
-        $response = $this->httpClient->sendRequest($request);
+        //---
+
+        $provider = CredentialProvider::defaultProvider();
+
+        // Sign the request with an AWS Authorization header.
+        $signed_request = $this->awsSignature->signRequest($request, $provider()->wait());
+
+        //---
+
+        $response = $this->httpClient->sendRequest($signed_request);
 
         switch ($response->getStatusCode()) {
             case 200:
