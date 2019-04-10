@@ -45,44 +45,10 @@ class StatusControllerFactoryTest extends MockeryTestCase
             ->with(ProcessingStatusService::class)
             ->andReturn(Mockery::mock(ProcessingStatusService::class))
             ->once();
-        $this->container->shouldReceive('get')
-            ->with('config')
-            ->andReturn(['processing-status' => ['track-from-date' => '2000-01-01']])
-            ->once();
 
         $controller = $this->factory->__invoke($this->container, StatusController::class);
 
         $this->assertNotNull($controller);
         $this->assertInstanceOf(StatusController::class, $controller);
     }
-
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Missing config: ['processing-status']['track-from-date']
-     */
-    public function testInvokeMissingConfig()
-    {
-        $this->container->shouldReceive('get')
-            ->with(AuthorizationService::class)
-            ->andReturn(Mockery::mock(AuthorizationService::class))
-            ->once();
-        $this->container->shouldReceive('get')
-            ->with(ApplicationsService::class)
-            ->andReturn(Mockery::mock(ApplicationsService::class))
-            ->once();
-        $this->container->shouldReceive('get')
-            ->with(ProcessingStatusService::class)
-            ->andReturn(Mockery::mock(ProcessingStatusService::class))
-            ->once();
-        $this->container->shouldReceive('get')
-            ->with('config')
-            ->andReturn([])
-            ->once();
-
-        $controller = $this->factory->__invoke($this->container, StatusController::class);
-
-        $this->assertNotNull($controller);
-        $this->assertInstanceOf(StatusController::class, $controller);
-    }
-
 }
