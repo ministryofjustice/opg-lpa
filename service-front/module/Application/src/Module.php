@@ -170,6 +170,20 @@ class Module implements FormElementProviderInterface
                     return $dynamoDbAdapter;
                 },
 
+                'DynamoDbSessionClient' => function (ServiceLocatorInterface $sm) {
+
+                    $config = $sm->get('config')['session']['dynamodb']['client'];
+
+                    return new DynamoDbClient($config);
+                },
+
+                'DynamoDbCronClient' => function (ServiceLocatorInterface $sm) {
+
+                    $config = $sm->get('config')['cron']['lock']['dynamodb']['client'];
+
+                    return new DynamoDbClient($config);
+                },
+
                 'DynamoCronLock' => function (ServiceLocatorInterface $sm) {
 
                     $config = $sm->get('config')['cron']['lock']['dynamodb'];
