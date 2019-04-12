@@ -39,8 +39,9 @@
     },
 
     btnClick: function (e) {
-      var source = $(e.target),
-        href = source.attr('href');
+      // if our clicked element is not a link traverse up the dom to find the parent that is one.
+      var source = $(e.target).closest('a'),
+          href = source.attr('href');
 
       // set original source to be the original link clicked form the body to be able to return to it when the popup is closed
       // fixes when links inside a popup load another form. User should be focused back to original content button when closing
