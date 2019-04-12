@@ -24,6 +24,9 @@ class ServiceTest extends MockeryTestCase
      */
     private $response;
 
+    /**
+     * @var Service
+     */
     private $service;
 
     public function setUp()
