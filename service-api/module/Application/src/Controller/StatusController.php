@@ -150,18 +150,29 @@ class StatusController extends AbstractRestfulController
                 continue;
             }
 
+            // Get status update from Sirius
             $siriusStatusResult = $this->processingStatusService->getStatus($id);
 
-            if ($siriusStatusResult != null && $siriusStatusResult != $currentProcessingStatus) {
-                // Update metadata in DB
-                $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $siriusStatusResult;
+            // If there was a status returned
+            if ($siriusStatusResult != null)
+            {
+                // If it doesn't match what we already have update the database
+                if($siriusStatusResult != $currentProcessingStatus) {
+                    // Update metadata in DB
+                    $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $siriusStatusResult;
 
-                $this->getService()->patch(['metadata' => $metaData], $id, $this->routeUserId);
+                    $this->getService()->patch(['metadata' => $metaData], $id, $this->routeUserId);
+                }
+
+                $results[$id] = ['found' => true, 'status' => $siriusStatusResult];
+            } else if ($currentProcessingStatus != null) {
+                // If we get nothing from Sirius but there's an existing status use that
+                $results[$id] = ['found' => true, 'status' => $currentProcessingStatus];
+            } else {
+                // If both sirius and the LPA DB have no status set a not found response
+                $results[$id] = ['found' => false];
             }
-
-            $results[$id] = ['found' => true, 'status' => $metaData[LPA::SIRIUS_PROCESSING_STATUS]];
         }
-
 
         return new Json($results);
     }

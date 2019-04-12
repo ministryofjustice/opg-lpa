@@ -123,6 +123,28 @@ class StatusControllerTest extends AbstractControllerTest
 
     }
 
+    public function testGetWithNoUpdateOnValidCaseWithNoPreviousStatus()
+    {
+        $this->statusController->onDispatch($this->mvcEvent);
+        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
+            'metadata' => []]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->service->shouldReceive('fetch')
+            ->withArgs(['98765', '12345'])
+            ->once()
+            ->andReturn($dataModel);
+
+        $this->processingStatusService->shouldReceive('getStatus')
+            ->once()
+            ->andReturn(null);
+
+        $result = $this->statusController->get('98765');
+
+        $this->assertEquals(new Json(['98765' => ['found' => false]]), $result);
+    }
+
     public function testGetWithSameStatus()
     {
         $this->statusController->onDispatch($this->mvcEvent);
