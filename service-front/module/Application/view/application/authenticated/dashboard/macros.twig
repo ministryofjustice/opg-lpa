@@ -1,4 +1,4 @@
-{% macro listLpas(lpas, type, page) %}
+{% macro listLpas(lpas, type, page, trackingEnabled) %}
 
     {% import _self as macros %}
 
@@ -30,18 +30,7 @@
                         <div class="opg-status opg-status--{{ status }}">{{ lpa.progress }}</div>
                         <br/>
 
-                        {# TODO - Move to macro #}
-                        {% if (status == 'completed') -%}
-                            <a href="dashboard/status-description/{{ lpa.id }}/Completed">View Completed message</a>
-                        {%- elseif (status == 'waiting') -%}
-                            <a href="dashboard/status-description/{{ lpa.id }}/Waiting">View Waiting message</a>
-                        {%- elseif (status == 'received') -%}
-                            <a href="dashboard/status-description/{{ lpa.id }}/Received">View Received message</a>
-                        {%- elseif (status == 'checking') -%}
-                            <a href="dashboard/status-description/{{ lpa.id }}/Checking">View Checking message</a>
-                        {%- elseif (status == 'returned') -%}
-                            <a href="dashboard/status-description/{{ lpa.id }}/Returned">View Returned message</a>
-                        {%- endif %}
+                        {{ macros.showStatusDescriptionLinksIfEnabled(trackingEnabled, status, lpa.id) }}
                     </div>
 
                     <div class="extra-info">
@@ -104,4 +93,12 @@
         {% endif %}
     {% endfor %}
 
+{% endmacro %}
+
+{% macro showStatusDescriptionLinksIfEnabled(trackingEnabled, status, id) %}
+    {% if trackingEnabled %}
+        {% if status in ['completed', 'waiting', 'received', 'checking', 'returned'] %}
+            <a id="status-description-link-{{ id }}" href="dashboard/status-description/{{ id }}/{{ status }}">View {{ status }} message</a>
+        {% endif %}
+    {% endif %}
 {% endmacro %}

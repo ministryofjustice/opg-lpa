@@ -98,11 +98,11 @@
 {% if lpaTotalCount > 0 %}
 
     {% if shortList %}
-        {{ macros.listLpas(lpas, null, null) }}
-        {{ macros.listLpas(lpas, 'property-and-financial', null) }}
-        {{ macros.listLpas(lpas, 'health-and-welfare', null) }}
+        {{ macros.listLpas(lpas, null, null, trackingEnabled) }}
+        {{ macros.listLpas(lpas, 'property-and-financial', null, trackingEnabled) }}
+        {{ macros.listLpas(lpas, 'health-and-welfare', null, trackingEnabled) }}
     {% else %}
-        {{ macros.listLpas(lpas, 'all', paginationControlData['page']) }}
+        {{ macros.listLpas(lpas, 'all', paginationControlData['page'], trackingEnabled) }}
     {% endif %}
 
     {% include 'application/authenticated/dashboard/pagination.twig' with {data: paginationControlData, route: 'user/dashboard/pagination'} %}
@@ -122,39 +122,48 @@
 {% endblock %}
 
 {% block scripts %}
+    {% if trackingEnabled %}
     <script>
         $( document ).ready(function() {
             // Get an array of the LPA IDs to check for a status update
             const ids = $('li[data-refresh-id]').map(function () { return this.getAttribute('data-refresh-id'); }).get();
 
-            $.getJSON( "/user/dashboard/statuses/"+ids.join(), function( results ) {
-                // Loop through all the ids that were requested and update the text css style to the new status
-                ids.forEach(function (lpaId) {
-                    const lpaResult = results[lpaId];
+            if(ids.length > 0) {
+                $.getJSON("/user/dashboard/statuses/" + ids.join(), function (results) {
+                    // Loop through all the ids that were requested and update the text css style to the new status
+                    ids.forEach(function (lpaId) {
+                        const lpaResult = results[lpaId];
 
-                    if (lpaResult['found']) {
-                        const li = $('li[data-refresh-id='+lpaId+']');
+                        if (lpaResult['found']) {
+                            const li = $('li[data-refresh-id=' + lpaId + ']');
 
-                        // Get the status from the returned data
-                        const newStatus = lpaResult['status'].toLowerCase();
+                            // Get the status from the returned data
+                            const newStatus = lpaResult['status'].toLowerCase();
 
-                        // Store current status then update style on the status indicator
-                        const statusIndicator = li.find(".opg-status");
-                        const currentStatus = statusIndicator.html().toLowerCase();
+                            // Store current status then update style on the status indicator
+                            const statusIndicator = li.find(".opg-status");
+                            const currentStatus = statusIndicator.html().toLowerCase();
 
-                        statusIndicator.html(newStatus);
+                            statusIndicator.html(newStatus);
 
-                        statusIndicator.removeClass('opg-status--' + currentStatus);
-                        statusIndicator.addClass('opg-status--' + newStatus);
+                            statusIndicator.removeClass('opg-status--' + currentStatus);
+                            statusIndicator.addClass('opg-status--' + newStatus);
 
-                        // Update style on status container
-                        li.removeClass('status-container--' + currentStatus);
-                        li.addClass('status-container--' + newStatus);
-                    }
-                });
-            }).fail(function (jqXHR, textStatus, errorThrown) {
+                            // Update style on status container
+                            li.removeClass('status-container--' + currentStatus);
+                            li.addClass('status-container--' + newStatus);
+
+                            // Update the status link
+                            const link = $('a[id=status-description-link-' + lpaId + ']');
+                            link.attr('href', 'dashboard/status-description/' + lpaId + '/' + newStatus);
+                            link.text('View ' + newStatus + ' message');
+                        }
+                    });
+                }).fail(function (jqXHR, textStatus, errorThrown) {
                     console.error(textStatus + " " + errorThrown);
-            });
+                });
+            }
         });
     </script>
+    {% endif %}
 {% endblock %}

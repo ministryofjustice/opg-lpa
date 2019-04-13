@@ -40,6 +40,7 @@ class DashboardController extends AbstractAuthenticatedController
             'user'                  => [
                 'lastLogin' => $this->getIdentity()->lastLogin(),
             ],
+            'trackingEnabled' => $lpasSummary['trackingEnabled'],
         ]);
     }
 
@@ -240,19 +241,19 @@ class DashboardController extends AbstractAuthenticatedController
         ]);
 
         switch ($lpaStatus) {
-            case "Completed":
+            case "completed":
                 $viewModel->setTemplate('application/authenticated/lpa/status/status-completed.twig');
                 return $viewModel;
-            case "Returned":
+            case "returned":
                 $viewModel->setTemplate('application/authenticated/lpa/status/status-returned.twig');
                 return $viewModel;
-            case "Checking":
+            case "checking":
                 $viewModel->setTemplate('application/authenticated/lpa/status/status-checking.twig');
                 return $viewModel;
-            case "Received":
+            case "received":
                 $viewModel->setTemplate('application/authenticated/lpa/status/status-received.twig');
                 return $viewModel;
-            case "Waiting":
+            case "waiting":
                 $viewModel->setTemplate('application/authenticated/lpa/status/status-waiting.twig');
                 return $viewModel;
             default:
