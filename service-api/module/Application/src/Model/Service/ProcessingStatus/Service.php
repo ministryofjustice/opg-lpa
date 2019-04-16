@@ -96,7 +96,10 @@ class Service extends AbstractService
                 // A 404 represents that details for the passed ID could not be found.
                 return null;
             default:
-                throw new ApiProblemException($response);
+                $this->getLogger()
+                    ->err('Unexpected response from Sirius gateway: ' . print_r($response, true));
+                throw new ApiProblemException('Unexpected response from Sirius gateway: ' .
+                    print_r($response, true));
         }
     }
 
