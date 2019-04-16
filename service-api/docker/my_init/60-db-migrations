@@ -15,6 +15,7 @@ while : ; do
     if [ $retval -eq 0 ]; then
         # Acquired lock
         vendor/robmorgan/phinx/bin/phinx migrate
+        vendor/robmorgan/phinx/bin/phinx seed:run
         break
     elif [ $retval -eq 1 ]; then
         # Lock not acquired

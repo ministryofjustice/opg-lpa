@@ -12,11 +12,11 @@ class ApplicationsSeeder extends AbstractSeed
         ];
     }
 
-    public function run()
+    private function createApplication($id, $user, $email, $title, $firstName, $lastName)
     {
-        $data = [
-            'id' => '39721583862',
-            'user' => '90e60becf3d5f385a9c07691109701f6',
+        $application = [
+            'id' => $id,
+            'user' => $user,
             'updatedAt' => '2019-03-08 11:59:20.804744+00',
             'startedAt' => '2019-03-08 11:59:20.804744+00',
             'createdAt' => '2019-03-08 11:59:20.804744+00',
@@ -30,8 +30,8 @@ class ApplicationsSeeder extends AbstractSeed
                 "type": "property-and-financial",
                 "donor": {"dob": {
                     "date": "1980-01-01T00:00:00.000000+0000"},
-                    "name": {"last": "Bobson", "first": "Bob", "title": "Mr"},
-                    "email": {"address": "test@digital.justice.gov.uk"},
+                    "name": {"last": "' . $lastName . '", "first": "' . $firstName . '", "title": "' . $title . '"},
+                    "email": {"address": "' . $email . '"},
                     "address": {"address1": "34 A Road", "address2": "", "address3": "", "postcode": "T56 6TY"},
                     "canSign": true,
                     "otherNames": ""
@@ -40,8 +40,8 @@ class ApplicationsSeeder extends AbstractSeed
                 "instruction": "",
                 "correspondent": {
                     "who": "donor",
-                    "name": {"last": "Bobson", "first": "Bob", "title": "Mr"},
-                    "email": {"address": "test@digital.justice.gov.uk"},
+                    "name": {"last": "' . $lastName . '", "first": "' . $firstName . '", "title": "' . $title . '"},
+                    "email": {"address": "' . $email . '"},
                     "phone": null,
                     "address": {"address1": "34 A Road", "address2": "", "address3": "", "postcode": "T56 6TY"},
                     "company": null,
@@ -82,13 +82,33 @@ class ApplicationsSeeder extends AbstractSeed
                 "reducedFeeReceivesBenefits": true
             }',
             'metadata' => null,
-            'search' => 'Mr Bob Bobson',
+            'search' => $title . ' ' . $firstName . ' ' . $lastName,
+        ];
+
+        return $application;
+    }
+
+    public function run()
+    {
+        $data = [
+            $this->createApplication('1','90e60becf3d5f385a9c07691109701f6', 'opgcasper@gmail.com',
+                'Mrs', 'Anne', 'Anneson'),
+            $this->createApplication('2','90e60becf3d5f385a9c07691109701f6', 'opgcasper@gmail.com',
+                'Mr', 'Bob', 'Bobson'),
+            $this->createApplication('3','90e60becf3d5f385a9c07691109701f6', 'opgcasper@gmail.com',
+                'Mr', 'Carl', 'Carlson'),
         ];
 
         $users = $this->table('applications');
 
-        if(!$this->fetchRow("SELECT * FROM applications a WHERE a.id='" . $data['id'] . "'")) {
-            $users->insert($data)->save();
+        foreach ($data as $application) {
+            if (!$this->fetchRow("SELECT * FROM applications a WHERE a.id='" . $application['id'] . "'")) {
+                $users->insert($application)->save();
+
+                print('Seeded application ' . $application['id'] . "\n");
+            } else {
+                print('Application already exists with ID ' . $application['id'] . "\n");
+            }
         }
     }
 }

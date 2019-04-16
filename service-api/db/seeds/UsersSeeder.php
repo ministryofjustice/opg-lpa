@@ -9,7 +9,7 @@ class UsersSeeder extends AbstractSeed
     {
         $data = [
             'id' => '90e60becf3d5f385a9c07691109701f6',
-            'identity' => 'test@digital.justice.gov.uk',
+            'identity' => 'opgcasper@gmail.com',
             'password_hash' => '$2y$10$LrPjdZqhojxq6etVitrQa.aL0TBef8ikyi7TP7egxblFKxNtAmANi',
             'activation_token' => '',
             'active' => true,
@@ -27,7 +27,7 @@ class UsersSeeder extends AbstractSeed
             'profile' => '{
                 "dob": {"date": "1980-01-01T00:00:00.000000+0000"},
                 "name": {"last": "Bobson", "first": "Bob", "title": "Mr"},
-                "email": {"address": "test@digital.justice.gov.uk"},
+                "email": {"address": "opgcasper@gmail.com"},
                 "address": {"address1": "34 A Road", "address2": "", "address3": "", "postcode": "T56 6TY"}
             }',
         ];
