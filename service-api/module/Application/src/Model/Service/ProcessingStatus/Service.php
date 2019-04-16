@@ -91,9 +91,13 @@ class Service extends AbstractService
 
         switch ($response->getStatusCode()) {
             case 200:
+                $status = $this->handleResponse($response);
+
+                $this->getLogger()->debug('Status ' . $status . ' returned from Sirius gateway for ID ' . $id);
                 return $this->handleResponse($response);
             case 404:
-                // A 404 represents that details for the passed ID could not be found.
+                // A 404 represents that details for the passed ID could not be found
+                $this->getLogger()->debug('No application status from Sirius gateway for ID ' . $id);
                 return null;
             default:
                 $this->getLogger()
