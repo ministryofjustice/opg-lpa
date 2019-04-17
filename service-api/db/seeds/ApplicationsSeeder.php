@@ -12,16 +12,17 @@ class ApplicationsSeeder extends AbstractSeed
         ];
     }
 
-    private function createApplication($id, $user, $email, $title, $firstName, $lastName)
+    private function createApplication($id, $user, $email, $title, $firstName, $lastName,
+                                       $completedAt='2019-03-08 11:59:20.804744+00')
     {
         $application = [
             'id' => $id,
             'user' => $user,
-            'updatedAt' => '2019-03-08 11:59:20.804744+00',
-            'startedAt' => '2019-03-08 11:59:20.804744+00',
-            'createdAt' => '2019-03-08 11:59:20.804744+00',
-            'completedAt' => '2019-03-08 11:59:20.804744+00',
-            'lockedAt' => '2019-03-08 11:59:20.804744+00',
+            'updatedAt' => $completedAt,
+            'startedAt' => $completedAt,
+            'createdAt' => $completedAt,
+            'completedAt' => $completedAt,
+            'lockedAt' => $completedAt,
             'locked' => true,
             'whoAreYouAnswered' => true,
             'seed' => null,
@@ -91,6 +92,8 @@ class ApplicationsSeeder extends AbstractSeed
     public function run()
     {
         $data = [
+            $this->createApplication('100','90e60becf3d5f385a9c07691109701f6', 'opgcasper@gmail.com',
+                'Mr', 'Old', 'Oldson', '2018-01-01 11:59:20.804744+00'),
             $this->createApplication('1','90e60becf3d5f385a9c07691109701f6', 'opgcasper@gmail.com',
                 'Mrs', 'Anne', 'Anneson'),
             $this->createApplication('2','90e60becf3d5f385a9c07691109701f6', 'opgcasper@gmail.com',
