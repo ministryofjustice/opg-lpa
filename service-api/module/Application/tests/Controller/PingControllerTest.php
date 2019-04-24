@@ -10,6 +10,7 @@ use Aws\Sqs\SqsClient;
 use Opg\Lpa\Logger\Logger;
 use Zend\Db\Adapter\Adapter as ZendDbAdapter;
 use Zend\View\Model\JsonModel;
+use Http\Client\HttpClient;
 
 class PingControllerTest extends MockeryTestCase
 {
@@ -39,7 +40,13 @@ class PingControllerTest extends MockeryTestCase
 
         $this->sqsClient = Mockery::mock(SqsClient::class);
 
-        $this->controller = new PingController($this->database, $this->sqsClient, 'http://test');
+        $this->httpClient = Mockery::mock(HttpClient::class);
+
+        $this->controller = new PingController($this->database,
+            $this->sqsClient,
+            'http://test',
+            'http://test',
+            $this->httpClient);
 
         $this->logger = Mockery::mock(Logger::class);
         $this->controller->setLogger($this->logger);
@@ -57,6 +64,9 @@ class PingControllerTest extends MockeryTestCase
 
         $pingResult = [
             'database' => [
+                'ok' => false,
+            ],
+            'gateway' => [
                 'ok' => false,
             ],
             'ok' => false,

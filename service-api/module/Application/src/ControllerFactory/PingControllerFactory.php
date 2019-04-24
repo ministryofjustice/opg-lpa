@@ -7,6 +7,7 @@ use Application\Controller\PingController;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Aws\Sqs\SqsClient;
+use Http\Client\HttpClient;
 
 class PingControllerFactory implements FactoryInterface
 {
@@ -30,10 +31,16 @@ class PingControllerFactory implements FactoryInterface
             throw new \RuntimeException('Missing config: SQS URL');
         }
 
+        if (!isset($config['processing-status']['endpoint'])) {
+            throw new \RuntimeException('Missing config: Track my LPA endpoint');
+        }
+
         return new PingController(
             $database,
             $sqs,
-            $config['pdf']['queue']['sqs']['settings']['url']
+            $config['pdf']['queue']['sqs']['settings']['url'],
+            $config['processing-status']['endpoint'],
+            $container->get(HttpClient::class)
         );
     }
 }

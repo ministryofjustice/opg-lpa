@@ -2,6 +2,11 @@
 
 namespace Application\Controller;
 
+use Aws\Credentials\CredentialProvider;
+use Aws\Signature\SignatureV4;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Uri;
+use Http\Client\HttpClient;
 use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
@@ -33,16 +38,36 @@ class PingController extends AbstractRestfulController
     private $sqsQueueUrl;
 
     /**
+     * @var HttpClient
+     */
+    private $httpClient;
+
+    /**
+     * @var string
+     */
+    private $trackMyLpaEndpoint;
+
+    /**
      * PingController constructor.
-     *
      * @param ZendDbAdapter $database
      * @param SqsClient $sqsClient
+     * @param string $queueUrl
+     * @param string $trackMyLpaEndpoint
+     * @param HttpClient $httpClient
      */
-    public function __construct(ZendDbAdapter $database, SqsClient $sqsClient, string $queueUrl)
+    public function __construct(
+        ZendDbAdapter $database,
+        SqsClient $sqsClient,
+        string $queueUrl,
+        string $trackMyLpaEndpoint,
+        HttpClient $httpClient
+    )
     {
         $this->database = $database;
         $this->sqsClient = $sqsClient;
         $this->sqsQueueUrl = $queueUrl;
+        $this->trackMyLpaEndpoint = $trackMyLpaEndpoint;
+        $this->httpClient = $httpClient;
     }
 
     /**
@@ -70,12 +95,14 @@ class PingController extends AbstractRestfulController
 
     /**
      * @return JsonModel
+     * @throws \Http\Client\Exception
      */
     public function indexAction()
     {
         //  Initialise the states as false
         $queueOk    = false;
         $zendDbOk   = false;
+        $opgGateway   = false;
 
         //---
 
@@ -85,6 +112,9 @@ class PingController extends AbstractRestfulController
             'length' => null,
             'lengthAcceptable' => false,
         ];
+
+        //---------------------------------------------
+        // PDF Queue / SQS
 
         try {
 
@@ -113,7 +143,8 @@ class PingController extends AbstractRestfulController
             $queueOk = ($count < 50);
         } catch (Exception $ignore) {}
 
-        //---
+        //---------------------------------------------
+        // Main database
 
         try {
             $this->database->getDriver()->getConnection()->connect();
@@ -121,13 +152,44 @@ class PingController extends AbstractRestfulController
 
         } catch (Exception $ignore) {}
 
-        //---
+        //---------------------------------------------
+        // OPG Gateway
+
+        try {
+
+            $url = new Uri($this->trackMyLpaEndpoint . 'A00000000000');
+
+            $request = new Request('GET', $url, $headers = [
+                'Accept'        => 'application/json',
+                'Content-type'  => 'application/json'
+            ]);
+
+            $provider = CredentialProvider::defaultProvider();
+
+            $signer = new SignatureV4('execute-api', 'eu-west-1');
+
+            // Sign the request with an AWS Authorization header.
+            $signed_request = $signer->signRequest($request, $provider()->wait());
+
+            $response = $this->httpClient->sendRequest($signed_request);
+
+            // We're looking up a non-existing LPA, thus we expect a 404.
+            if ($response->getStatusCode() === 404) {
+                $opgGateway = true;
+            }
+
+        } catch (Exception $ignore) {}
+
+        //---------------------------------------------
 
         $result = [
             'database' => [
                 'ok' => $zendDbOk,
             ],
-            'ok' => ($queueOk && $zendDbOk),
+            'gateway' => [
+                'ok' => $opgGateway,
+            ],
+            'ok' => ($queueOk && $zendDbOk && $opgGateway),
             'queue' => [
                 'details' => $queueDetails,
                 'ok' => $queueOk,
