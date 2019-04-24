@@ -47,6 +47,14 @@ class PingController extends AbstractRestfulController
      */
     private $trackMyLpaEndpoint;
 
+    /**
+     * PingController constructor.
+     * @param ZendDbAdapter $database
+     * @param SqsClient $sqsClient
+     * @param string $queueUrl
+     * @param string $trackMyLpaEndpoint
+     * @param HttpClient $httpClient
+     */
     public function __construct(
         ZendDbAdapter $database,
         SqsClient $sqsClient,
@@ -87,6 +95,7 @@ class PingController extends AbstractRestfulController
 
     /**
      * @return JsonModel
+     * @throws \Http\Client\Exception
      */
     public function indexAction()
     {
