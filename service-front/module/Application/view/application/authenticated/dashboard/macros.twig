@@ -48,7 +48,9 @@
                 </div>
 
                 <div class="list-item_cta">
-                    <a class="button button-secondary" role="button" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
+                    <a class="button button-secondary" role="button" href="/lpa/{{ lpa.id }}">
+                        {% if lpa.progress in ['Started', 'Created'] %}Continue{% else %}View LPA{% endif %}
+                    </a>
                     <ul class="list-item_secondary_actions">
                         {% if lpa.progress != 'Started' %}
                             <li>
