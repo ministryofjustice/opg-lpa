@@ -30,6 +30,13 @@ OPG’s address is on the information sheets downloaded with your LPA.
 
 You need a PDF reader like Adobe Reader (<a href="http://www.adobe.com/uk/products/reader.html" rel="external" target="_blank">www.adobe.com/uk/products/reader.html</a>) to view and print the LPA form.
 
+### Track the progress of the LPA after you've posted it
+
+Once you've posted the LPA to us, you can track its progress from the [Your LPAs](/user/dashboard) page. This will let you know when we've received the LPA, when we're checking it, and when we've returned it.
+
+It’s not possible to track the progress of LPAs made before 1 May 2019.
+
+
 ### What happens when OPG gets your LPA
 
 If the donor is applying to register the LPA, we write to the attorneys to let them know about the application. If an attorney is applying, we write to the donor and any other attorneys.
@@ -40,6 +47,6 @@ This 4 week wait is set by law. It gives people time to raise concerns about the
 
 We also use the time to check that the LPA has been made correctly and there's nothing that would make it invalid or unworkable. If there is something that must be corrected before the LPA can be registered, we’ll contact [the correspondent](/help/#topic-correspondent).
 
-Once we’ve registered the LPA, we’ll stamp the LPA form you sent us and post it to the correspondent.
+Once we’ve registered the LPA, we’ll stamp the LPA form you sent us and return it to the correspondent by post.
 
 It takes 8 to 10 weeks in total to register the LPA if there are no mistakes in the application.
