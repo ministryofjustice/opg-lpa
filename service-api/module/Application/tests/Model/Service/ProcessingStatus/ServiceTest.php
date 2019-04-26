@@ -4,6 +4,7 @@ namespace Application\Model\Service\ProcessingStatus;
 
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
+use Aws\Signature\SignatureV4;
 use Hamcrest\Matchers;
 use Http\Client\HttpClient;
 use Mockery;
@@ -23,18 +24,29 @@ class ServiceTest extends MockeryTestCase
      */
     private $response;
 
+    /**
+     * @var Service
+     */
     private $service;
 
     public function setUp()
     {
         $this->httpClient = Mockery::mock(HttpClient::class);
+        $awsSignature = Mockery::mock(SignatureV4::class);
+
+        // We want to return the GuzzleHttp\Psr7\Request which was passed in teh first argument.
+        $awsSignature->shouldReceive('signRequest')->once()->andReturnUsing(function($request){
+            return $request;
+        });
+
         $this->service = new Service();
+        $this->service->setAwsSignatureV4($awsSignature);
         $this->service->setClient($this->httpClient);
         $this->service->setConfig(['processing-status' => ['endpoint' => 'http://thing/processing-status/']]);
     }
 
     public function setUpRequest($returnStatus = 200,
-        $returnBody = '{"status": "Registered"}')
+        $returnBody = '{"status": "Pending"}')
     {
         $this->response = Mockery::mock(ResponseInterface::class);
         $this->response->shouldReceive('getStatusCode')->once()->andReturn($returnStatus);
@@ -60,14 +72,11 @@ class ServiceTest extends MockeryTestCase
 
     public function testGetStatus()
     {
-
         $this->setUpRequest();
 
         $result = $this->service->getStatus(1000000000);
 
-        $this->assertEquals('Concluded', $result);
-
-
+        $this->assertEquals('Received', $result);
     }
 
     /**
@@ -76,7 +85,7 @@ class ServiceTest extends MockeryTestCase
      */
     public function testGetStatus400()
     {
-        $this->setUpRequest(400, null);
+        $this->setUpRequest(400, '{}');
 
         $this->service->getStatus(1000000000);
     }

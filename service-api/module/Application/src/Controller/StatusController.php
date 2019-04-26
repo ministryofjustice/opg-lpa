@@ -5,13 +5,13 @@ namespace Application\Controller;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\Authorization\UnauthorizedException;
-use Application\Library\DateTime;
 use Application\Library\Http\Response\Json;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\Service\Applications\Service;
 use Exception;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
+use Opg\Lpa\Logger\LoggerTrait;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -19,6 +19,8 @@ use ZfcRbac\Service\AuthorizationService;
 
 class StatusController extends AbstractRestfulController
 {
+    use LoggerTrait;
+
     /**
      * Name of the identifier used in the routes to this RESTful controller
      *
@@ -42,11 +44,6 @@ class StatusController extends AbstractRestfulController
     private $processingStatusService;
 
     /**
-     * @var $config array
-     */
-    private $config;
-
-    /**
      * @var $routeUserId string
      */
     private $routeUserId;
@@ -65,18 +62,15 @@ class StatusController extends AbstractRestfulController
      * @param AuthorizationService $authorizationService
      * @param Service $service
      * @param ProcessingStatusService $processingStatusService
-     * @param array $config
      */
     public function __construct(
         AuthorizationService $authorizationService,
         Service $service,
-        ProcessingStatusService $processingStatusService,
-        array $config
+        ProcessingStatusService $processingStatusService
     ) {
         $this->authorizationService = $authorizationService;
         $this->service = $service;
         $this->processingStatusService = $processingStatusService;
-        $this->config = $config;
     }
 
     /**
@@ -126,49 +120,61 @@ class StatusController extends AbstractRestfulController
             throw new ApiProblemException('User identifier missing from URL', 400);
         }
 
-        $lpasTrackableFrom = new DateTime($this->config['track-from-date']);
         $exploded_ids = explode(',', $ids);
-        $results =  [];
+        $results = [];
 
         foreach ($exploded_ids as $id) {
-            $result = $this->getService()->fetch($id, $this->routeUserId);
+            $this->getLogger()->debug('Checking Sirius status for ' . $id);
+
+            $lpaResult = $this->getService()->fetch($id, $this->routeUserId);
 
             // if the id isn't found, return false.
-            if ($result instanceof ApiProblem) {
-                $results[$id] = ['found'=>false];
+            if ($lpaResult instanceof ApiProblem) {
+                $this->getLogger()->err('Error accessing LPA data: ' . $lpaResult->getDetail());
+
+                $results[$id] = ['found' => false];
                 continue;
             }
 
             /** @var Lpa $lpa */
-            $lpa = $result->getData();
-
-            // if the LPA was made before lpasTrackableFrom return default status.
-            if ($lpa->getCompletedAt() < $lpasTrackableFrom) {
-                $results[$id] = ['found'=>false];
-                continue;
-            }
+            $lpa = $lpaResult->getData();
 
             $metaData = $lpa->getMetaData();
 
-            // If application has already reached the last stage of processing ('Concluded') do not check for updates
-            if ($metaData[LPA::SIRIUS_PROCESSING_STATUS] == 'Concluded') {
-                $results[$id] = ['found'=>true, 'status'=>'Concluded'];
+            $currentProcessingStatus = array_key_exists(LPA::SIRIUS_PROCESSING_STATUS, $metaData) ?
+                $metaData[LPA::SIRIUS_PROCESSING_STATUS] : null;
+
+            // If application has already reached the last stage of processing do not check for updates
+            if ($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED) {
+                $results[$id] = ['found' => true, 'status' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED];
                 continue;
             }
 
-            $result = $this->processingStatusService->getStatus($id);
+            // Get status update from Sirius
+            $siriusStatusResult = $this->processingStatusService->getStatus($id);
 
-            if($result != null && $result != $metaData[LPA::SIRIUS_PROCESSING_STATUS]) {
+            // If there was a status returned
+            if ($siriusStatusResult != null)
+            {
+                // If it doesn't match what we already have update the database
+                if($siriusStatusResult != $currentProcessingStatus) {
+                    // Update metadata in DB
+                    $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $siriusStatusResult;
 
-                // Update metadata in DB
-                $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $result;
+                    $this->getService()->patch(['metadata' => $metaData], $id, $this->routeUserId);
+                }
 
-                $this->getService()->patch(['metadata' => $metaData], $id, $this->routeUserId);
+                $results[$id] = ['found' => true, 'status' => $siriusStatusResult];
+            } else if ($currentProcessingStatus != null) {
+                // If we get nothing from Sirius but there's an existing status use that
+                $results[$id] = ['found' => true, 'status' => $currentProcessingStatus];
+            } else {
+                // If both sirius and the LPA DB have no status set a not found response
+                $results[$id] = ['found' => false];
             }
-
-            $results[$id] = ['found'=>true, 'status'=>$metaData[LPA::SIRIUS_PROCESSING_STATUS]];
         }
-        
+
         return new Json($results);
     }
+
 }

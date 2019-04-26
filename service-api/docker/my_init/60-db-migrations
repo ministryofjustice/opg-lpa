@@ -2,6 +2,8 @@
 
 cd /app
 
+seedData="${OPG_LPA_SEED_DATA:-false}"
+
 COUNTER=0
 
 while : ; do
@@ -15,6 +17,9 @@ while : ; do
     if [ $retval -eq 0 ]; then
         # Acquired lock
         vendor/robmorgan/phinx/bin/phinx migrate
+        if ${seedData}; then
+            vendor/robmorgan/phinx/bin/phinx seed:run
+        fi
         break
     elif [ $retval -eq 1 ]; then
         # Lock not acquired

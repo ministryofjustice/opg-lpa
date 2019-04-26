@@ -4,26 +4,29 @@ namespace Application\Model\Service\ProcessingStatus;
 
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Service\AbstractService;
+use Aws\Credentials\CredentialProvider;
+use Aws\Signature\SignatureV4;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception;
 use Http\Client\HttpClient;
+use Opg\Lpa\DataModel\Lpa\Lpa;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
 class Service extends AbstractService
 {
-
     private const SIRIUS_STATUS_TO_LPA = [
-            'Pending' => 'Received',
-            'Perfect' => 'Checking',
-            'Imperfect' => 'Checking',
-            'Invalid' => 'Concluded',
-            'Rejected' => 'Concluded',
-            'Withdrawn' => 'Concluded',
-            'Registered' => 'Concluded',
-            'Cancelled' => 'Concluded',
-            'Revoked' => 'Concluded'];
+            'Pending' => Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED,
+            'Perfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
+            'Imperfect' => Lpa::SIRIUS_PROCESSING_STATUS_CHECKING,
+            'Invalid' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Rejected' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Withdrawn' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Registered' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Cancelled' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED,
+            'Revoked' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED
+    ];
 
     /**
      * @var $httpClient HttpClient
@@ -35,6 +38,10 @@ class Service extends AbstractService
      */
     private $processingStatusServiceUri;
 
+    /**
+     * @var $awsSignature SignatureV4
+     */
+    private $awsSignature;
 
     public function setClient(HttpClient $httpClient)
     {
@@ -48,6 +55,11 @@ class Service extends AbstractService
         }
 
         $this->processingStatusServiceUri = $config['processing-status']['endpoint'];
+    }
+
+    public function setAwsSignatureV4(SignatureV4 $awsSignature)
+    {
+        $this->awsSignature = $awsSignature;
     }
 
     /**
@@ -66,16 +78,33 @@ class Service extends AbstractService
 
         $request = new Request('GET', $url, $this->buildHeaders());
 
-        $response = $this->httpClient->sendRequest($request);
+        //---
 
-        switch ($response->getStatusCode()) {
+        $provider = CredentialProvider::defaultProvider();
+
+        // Sign the request with an AWS Authorization header.
+        $signed_request = $this->awsSignature->signRequest($request, $provider()->wait());
+
+        //---
+
+        $response = $this->httpClient->sendRequest($signed_request);
+
+        $statusCode = $response->getStatusCode();
+
+        switch ($statusCode) {
             case 200:
-                return $this->handleResponse($response);
+                $status = $this->handleResponse($response);
+
+                $this->getLogger()->debug('Status ' . $status . ' returned from Sirius gateway for ID ' . $id);
+                return $status;
             case 404:
-                // A 404 represents that details for the passed ID could not be found.
+                // A 404 represents that details for the passed ID could not be found
+                $this->getLogger()->debug('No application status from Sirius gateway for ID ' . $id);
                 return null;
             default:
-                throw new ApiProblemException($response);
+                $this->getLogger()
+                    ->err('Unexpected response from Sirius gateway: ' . (string)$response->getBody());
+                throw new ApiProblemException('Unexpected response from Sirius gateway: ' . $statusCode);
         }
     }
 
@@ -96,7 +125,6 @@ class Service extends AbstractService
 
     private function handleResponse(ResponseInterface $response)
     {
-
             $status = json_decode($response->getBody(), true);
 
             if (is_null($status)){
