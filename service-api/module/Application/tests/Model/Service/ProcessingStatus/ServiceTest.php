@@ -85,7 +85,7 @@ class ServiceTest extends MockeryTestCase
      */
     public function testGetStatus400()
     {
-        $this->setUpRequest(400, null);
+        $this->setUpRequest(400, '{}');
 
         $this->service->getStatus(1000000000);
     }
