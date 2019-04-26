@@ -26,7 +26,8 @@ class DashboardControllerTest extends AbstractControllerTest
         $response = new Response();
         $lpasSummary = [
             'applications' => [],
-            'total' => 0
+            'total' => 0,
+            'trackingEnabled' => true,
         ];
 
         $this->params->shouldReceive('fromQuery')->withArgs(['search', null])->andReturn(null)->once();
@@ -48,7 +49,8 @@ class DashboardControllerTest extends AbstractControllerTest
 
         $lpasSummary = [
             'applications' => [FixturesData::getHwLpa()->abbreviatedToArray()],
-            'total' => 1
+            'total' => 1,
+            'trackingEnabled' => true,
         ];
 
         $this->params->shouldReceive('fromQuery')->withArgs(['search', null])->andReturn(null)->once();
@@ -84,7 +86,8 @@ class DashboardControllerTest extends AbstractControllerTest
 
         $lpasSummary = [
             'applications' => [],
-            'total' => 0
+            'total' => 0,
+            'trackingEnabled' => true,
         ];
 
         $lpa = FixturesData::getHwLpa();
@@ -125,7 +128,8 @@ class DashboardControllerTest extends AbstractControllerTest
 
         $lpasSummary = [
             'applications' => [],
-            'total' => 0
+            'total' => 0,
+            'trackingEnabled' => true,
         ];
 
         $lpa = FixturesData::getHwLpa();
@@ -372,11 +376,11 @@ class DashboardControllerTest extends AbstractControllerTest
     public function statusAndTemplateProvider()
     {
         return[
-            ['Waiting','application/authenticated/lpa/status/status-waiting.twig'],
-            ['Received','application/authenticated/lpa/status/status-received.twig'],
-            ['Checking','application/authenticated/lpa/status/status-checking.twig'],
-            ['Returned','application/authenticated/lpa/status/status-returned.twig'],
-            ['Completed','application/authenticated/lpa/status/status-completed.twig']
+            ['waiting','application/authenticated/lpa/status/status-waiting.twig'],
+            ['received','application/authenticated/lpa/status/status-received.twig'],
+            ['checking','application/authenticated/lpa/status/status-checking.twig'],
+            ['returned','application/authenticated/lpa/status/status-returned.twig'],
+            ['completed','application/authenticated/lpa/status/status-completed.twig']
         ];
     }
 
