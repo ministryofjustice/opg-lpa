@@ -133,7 +133,7 @@ class ApplicationTest extends MockeryTestCase
 
         $result = $this->service->getLpaSummaries();
 
-        $this->assertEquals(['applications' => []], $result);
+        $this->assertEquals(['applications' => [],'trackingEnabled' => true], $result);
     }
 
     private function modifiedLPA($id = 5531003157, $completedAt = null, $processingStatus = null)
@@ -193,7 +193,7 @@ class ApplicationTest extends MockeryTestCase
                 'progress' => 'Completed',
                 'refreshId' => null
             ])
-        ]], $result);
+        ], 'trackingEnabled' => true], $result);
     }
 
     /**
@@ -218,7 +218,7 @@ class ApplicationTest extends MockeryTestCase
                 'progress' => 'Waiting',
                 'refreshId' => 5531003157
             ])
-        ]], $result);
+        ], 'trackingEnabled' => true], $result);
     }
 
     /**
@@ -243,6 +243,6 @@ class ApplicationTest extends MockeryTestCase
                 'progress' => 'Checking',
                 'refreshId' => 5531003157
             ])
-        ]], $result);
+        ], 'trackingEnabled' => true], $result);
     }
 }
