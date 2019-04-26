@@ -2560,33 +2560,6 @@ input[type=number] {
     text-align: right;
     z-index: 1;
     position: relative; }
-    .list-item--v3 .list-item_status a, .list-item--v3 .list-item_status .button-input-to-link, .list-item--v3 .list-item_status span {
-      padding: 10px;
-      display: inline-block;
-      color: #0b0c0c;
-      border-radius: 5px;
-      background: #dee0e2;
-      text-align: center;
-      min-width: 95px; }
-    .list-item--v3 .list-item_status a, .list-item--v3 .list-item_status .button-input-to-link {
-      text-decoration: none; }
-      .list-item--v3 .list-item_status a:hover, .list-item--v3 .list-item_status .button-input-to-link:hover {
-        border-radius: 5px;
-        box-shadow: 0 2px 0 rgba(11, 12, 12, 0.3);
-        background: #d0d3d6; }
-    .list-item--v3 .list-item_status .icon {
-      width: 2.5em;
-      height: 2.5em;
-      margin: 0 0 0 0; }
-      .list-item--v3 .list-item_status .icon.status-4 {
-        background: url("../images/custom/tick-v1.svg") 50% 50% no-repeat;
-        background-size: contain; }
-      .list-item--v3 .list-item_status .icon.status-5 {
-        background: url("../images/custom/percentage-65-v1.svg") 50% 50% no-repeat;
-        background-size: contain; }
-      .list-item--v3 .list-item_status .icon.status-6 {
-        background: url("../images/custom/percentage-25-v1.svg") 50% 50% no-repeat;
-        background-size: contain; }
 
 .track-my-lpa li {
   margin: 0 0 1em 0;
@@ -2594,31 +2567,6 @@ input[type=number] {
   position: relative;
   border-radius: 5px;
   padding: 1em 11.5em 1em 1.5em; }
-  .track-my-lpa li.status-1 {
-    border-left: 10px solid #2e358b; }
-    .track-my-lpa li.status-1 .status {
-      color: #fff;
-      background: #2e358b; }
-  .track-my-lpa li.status-2 {
-    border-left: 10px solid #005ea5; }
-    .track-my-lpa li.status-2 .status {
-      color: #fff;
-      background: #005ea5; }
-  .track-my-lpa li.status-3 {
-    border-left: 10px solid #2b8cc4; }
-    .track-my-lpa li.status-3 .status {
-      color: #fff;
-      background: #2b8cc4; }
-  .track-my-lpa li.status-4 {
-    border-left: 10px solid #218278; }
-    .track-my-lpa li.status-4 .status {
-      color: #fff;
-      background: #218278; }
-  .track-my-lpa li.status-started, .track-my-lpa li.status-created, .track-my-lpa li.status-ready {
-    border-left: 10px solid #ecedee; }
-    .track-my-lpa li.status-started .status, .track-my-lpa li.status-created .status, .track-my-lpa li.status-ready .status {
-      color: #6f777b;
-      background: #ecedee; }
   .track-my-lpa li .info .main-info {
     display: inline-block;
     width: auto;
@@ -2649,11 +2597,6 @@ input[type=number] {
           width: 1.15em;
           height: 1.15em;
           margin: 0 0.15em -0.25em 0; }
-
-ul.track-my-lpa li.list-item--v3 {
-  border-bottom: 4px solid #dee0e2; }
-ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.status-created, ul.track-my-lpa li.list-item--v3.status-started, ul.track-my-lpa li.list-item--v3.status-ready {
-  border-left: 10px solid #dee0e2; }
 
 .supporting-info {
   font-size: 16px;
@@ -3628,9 +3571,15 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
   padding: 5px 8px 2px 8px;
   margin: 10px 0px 12px 0px; }
 
-.opg-status--default {
-  background: #dee0e2;
+.opg-status--created,
+.opg-status--started {
+  background-color: #dee0e2;
   color: #0b0c0c; }
+
+.opg-status--completed {
+  background-color: #dee0e2;
+  color: #0b0c0c;
+  font-weight: bold; }
 
 .opg-status--waiting {
   background-color: #2e358b;
@@ -3652,10 +3601,30 @@ ul.track-my-lpa li.list-item--v3.status-4, ul.track-my-lpa li.list-item--v3.stat
   color: #fff;
   font-weight: bold; }
 
-.opg-status--completed {
-  background-color: #dee0e2;
-  color: #0b0c0c;
-  font-weight: bold; }
+ul.track-my-lpa li.list-item--v3 {
+  border-bottom: 4px solid #dee0e2; }
+
+.status-container--created,
+.status-container--started,
+.status-container--completed {
+  border-left: 10px solid;
+  border-left-color: #dee0e2; }
+
+.status-container--waiting {
+  border-left: 10px solid;
+  border-left-color: #2e358b; }
+
+.status-container--received {
+  border-left: 10px solid;
+  border-left-color: #005ea5; }
+
+.status-container--checking {
+  border-left: 10px solid;
+  border-left-color: #2b8cc4; }
+
+.status-container--returned {
+  border-left: 10px solid;
+  border-left-color: #28a197; }
 
 .opg-application-status-text {
   margin-bottom: 0px;

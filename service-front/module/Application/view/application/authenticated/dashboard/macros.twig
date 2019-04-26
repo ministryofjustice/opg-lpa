@@ -1,4 +1,4 @@
-{% macro listLpas(lpas, type, page) %}
+{% macro listLpas(lpas, type, page, trackingEnabled) %}
 
     {% import _self as macros %}
 
@@ -10,36 +10,33 @@
 
     {% for key,lpa in lpas %}
         {% if (type == 'all' or type == lpa.type) %}
-            <li class="list-item list-item--v3 status-started">
+            {% set status = lpa.progress|lower %}
 
+            <li class="list-item list-item--v3 status-container--{{ status }}" {% if lpa.refreshId %}data-refresh-id="{{ lpa.refreshId }}"{% endif %}>
                 <div class="info">
                     <div class="main-info">
                         <h1 class="list-item_title">
-                            {% if lpa.donor|length > 0 %}
+                            {%- if lpa.donor|length > 0 -%}
                                 {{ lpa.donor }}
-                            {% else %}
+                            {%- else -%}
                                 No donor added
-                            {% endif %}
+                            {%- endif -%}
                         </h1>
                         <span class="lpa-number">{{ formatLpaId(lpa.id) }}</span>
                     </div>
 
                     <div class="list-item_status">
                         <p class="opg-application-status-text">Application status</p>
-                        {% if lpa.progress == 'Started' %}
-                            {% set statusClass = 'opg-status--default' %}
-                        {% elseif lpa.progress == 'Created' %}
-                            {% set statusClass = 'opg-status--default' %}
-                        {% elseif lpa.progress == 'Completed' %}
-                            {% set statusClass = 'opg-status--default' %}
-                        {% endif %}
-                        <div class="opg-status {{ statusClass }}">{{ lpa.progress }}</div>
+                        <div class="opg-status opg-status--{{ status }}">{{ lpa.progress }}</div>
+                        <br/>
+
+                        {{ macros.showStatusDescriptionLinksIfEnabled(trackingEnabled, status, lpa.id) }}
                     </div>
 
                     <div class="extra-info">
                         <p>LPA type:</p>
                         <p class="main-text">
-                            {{ lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : 'Not selected') }}
+                            {{- lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : 'Not selected') -}}
                         </p>
                     </div>
 
@@ -51,7 +48,9 @@
                 </div>
 
                 <div class="list-item_cta">
-                    <a class="button button-secondary" role="button" href="/lpa/{{ lpa.id }}">{{ lpa.progress == 'Completed' ? 'View LPA' : 'Continue' }}</a>
+                    <a class="button button-secondary" role="button" href="/lpa/{{ lpa.id }}">
+                        {% if lpa.progress in ['Started', 'Created'] %}Continue{% else %}View LPA{% endif %}
+                    </a>
                     <ul class="list-item_secondary_actions">
                         {% if lpa.progress != 'Started' %}
                             <li>
@@ -96,4 +95,12 @@
         {% endif %}
     {% endfor %}
 
+{% endmacro %}
+
+{% macro showStatusDescriptionLinksIfEnabled(trackingEnabled, status, id) %}
+    {% if trackingEnabled %}
+        {% if status in ['completed', 'waiting', 'received', 'checking', 'returned'] %}
+            <a id="status-description-link-{{ id }}" href="dashboard/status-description/{{ id }}/{{ status }}">View {{ status }} message</a>
+        {% endif %}
+    {% endif %}
 {% endmacro %}

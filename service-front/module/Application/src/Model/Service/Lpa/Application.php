@@ -6,6 +6,7 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
 use Application\Model\Service\ApiClient\Exception\ApiException;
+use Http\Client\Exception;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
@@ -136,6 +137,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
      * @param int $page
      * @param int $itemsPerPage
      * @return array
+     * @throws Exception
      */
     public function getLpaSummaries($search = null, $page = null, $itemsPerPage = null)
     {
@@ -154,8 +156,10 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
         //  Get the response and check it's contents
         try {
-            $result = $this->apiClient->httpGet(sprintf('/v2/user/%s/applications',
-                $this->getUserId()), $queryParams);
+            $result = $this->apiClient->httpGet(
+                sprintf('/v2/user/%s/applications', $this->getUserId()),
+                $queryParams
+            );
         } catch (ApiException $ex) {
             throw new RuntimeException('missing-fields');
         }
@@ -163,6 +167,11 @@ class Application extends AbstractService implements ApiClientAwareInterface
         if (!isset($result['applications'])) {
             throw new RuntimeException('missing-fields');
         }
+
+        $trackFromDate = new DateTime($this->getConfig()['processing-status']['track-from-date']);
+        $trackingEnabled = $trackFromDate <= new DateTime('now');
+
+        $result['trackingEnabled'] = $trackingEnabled;
 
         //  Loop through the applications in the result, enhance the data and set it in an array object
         foreach ($result['applications'] as $applicationIdx => $applicationData) {
@@ -183,20 +192,44 @@ class Application extends AbstractService implements ApiClientAwareInterface
             //  Get the progress string
             $progress = 'Started';
 
-            if ($lpa->completedAt instanceof DateTime) {
+
+            // If tracking is active update 'Completed' to 'Waiting for eligible applications, and add tracking update
+            // id for any in 'Waiting',
+            $refreshTracking = false;
+
+            if ($lpa->getCompletedAt() instanceof DateTime) {
                 $progress = 'Completed';
-            } elseif ($lpa->createdAt instanceof DateTime) {
+
+                if ($trackingEnabled && $trackFromDate <= $lpa->getCompletedAt()) {
+                    $progress = 'Waiting';
+
+                    // If we already have a processing status use that instead of "Waiting" status
+                    $metadata = $lpa->getMetadata();
+
+                    if ($metadata != null &&
+                        array_key_exists(Lpa::SIRIUS_PROCESSING_STATUS, $metadata) &&
+                        $metadata[Lpa::SIRIUS_PROCESSING_STATUS] != null) {
+                        $progress = $metadata[Lpa::SIRIUS_PROCESSING_STATUS];
+                    }
+
+                    // Only refresh tracking if the application is past completed and not at the final status
+                    if ($progress != 'Returned') {
+                        $refreshTracking = true;
+                    }
+                }
+            } elseif ($lpa->getCreatedAt() instanceof DateTime) {
                 $progress = 'Created';
             }
 
             //  Create a record for the returned LPA in an array object
             $result['applications'][$applicationIdx] = new ArrayObject([
-                'id'        => $lpa->id,
-                'version'   => 2,
-                'donor'     => $donorName,
-                'type'      => $lpaType,
-                'updatedAt' => $lpa->updatedAt,
-                'progress'  => $progress,
+                'id'         => $lpa->getId(),
+                'version'    => 2,
+                'donor'      => $donorName,
+                'type'       => $lpaType,
+                'updatedAt'  => $lpa->getUpdatedAt(),
+                'progress'   => $progress,
+                'refreshId' => $refreshTracking ? $lpa->getId() : null
             ]);
         }
 
