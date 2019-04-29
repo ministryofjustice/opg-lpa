@@ -4,8 +4,8 @@
 {% block pageTitle %}{{ lpa.document.donor.name }}{% endblock %}
 {% block supportTitleBottom %}
     <span class="heading-secondary">
-        {{ lpa.type == 'property-and-financial' ? 'Property and finance' :
-        ((lpa.type == 'health-and-welfare') ? 'Health and welfare' : 'Not selected') }}:
+        {{ lpa.document.type == 'property-and-financial' ? 'Property and finance' :
+        (( lpa.document.type == 'health-and-welfare') ? 'Health and welfare' : 'Not selected') }}:
         {{ formatLpaId(lpa.id) }}
     </span>
 {% endblock %}
