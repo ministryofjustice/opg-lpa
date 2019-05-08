@@ -73,6 +73,12 @@ class EncryptedDynamoDB extends DynamoDB {
 
     //-----------------------
 
+    /**
+     * TODO: Decryption left in to facilitate moving to DynamoDB encryption. Once moved, it can be stripped out.
+     *
+     * @param string $id
+     * @return array|string|null
+     */
     public function read($id){
 
         // Return the data from the DynamoDB
@@ -89,16 +95,8 @@ class EncryptedDynamoDB extends DynamoDB {
         // If not key ident was found.
         if( count($data) != 2 ){
 
-            // For now, assume it's an old style session value, and default to the oldest key.
-
-            // @todo - this should just return null once no old values exist anymore.
-
-            // Ensure keys are sorted, newest to oldest.
-            krsort($this->keys);
-
-            // Try the last (oldest) key/value
-            $sessionKey = end($this->keys);
-            $sessionData = $data[0];
+            // Then we used DynamoDB for encryption, thus we only need to decompress.
+            return  (new Decompress( self::COMPRESSION_ADAPTER ))->filter(base64_decode($data[0]));
 
         } else {
 
@@ -124,26 +122,11 @@ class EncryptedDynamoDB extends DynamoDB {
 
     public function write($id, $data){
 
-        // Ensure keys are sorted, oldest to newest.
-        ksort($this->keys);
-
-        // Use the last (newest) key/value
-        $keyValue = end($this->keys);
-        $keyIdent = key($this->keys);
-
-        //---
-
         // Compress the data.
         $compressedData = (new Compress( self::COMPRESSION_ADAPTER ))->filter( $data );
 
-        // Encrypt the data
-        $encryptedData = $this->getBlockCipher()->setKey( $keyValue )->encrypt( $compressedData );
-
-        // Add the encryption key ident that was used, separated with a period.
-        $encryptedDataWithIdent = $keyIdent . '.' . $encryptedData;
-
         // Save it to DynamoDB
-        return parent::write( $id, $encryptedDataWithIdent );
+        return parent::write( $id, base64_encode($compressedData) );
 
     }
 
