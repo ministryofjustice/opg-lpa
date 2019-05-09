@@ -6,8 +6,6 @@ use Interop\Container\Exception\ContainerException;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Crypt\BlockCipher;
-use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
 use Zend\Session\Exception\RuntimeException;
 use Aws\DynamoDb\DynamoDbClient;
 
@@ -78,54 +76,9 @@ class SessionFactory implements FactoryInterface {
         //----------------------------------------
         // Setup the DynamoDb save handler
 
-        if( $config['encryption']['enabled'] !== true ){
-
-            // Use the standard SaveHandler...
-            $saveHandler = SaveHandler\DynamoDB::fromClient( $dynamoDb, $config['dynamodb']['settings'] );
-
-        } else {
-
-            $keys = $config['encryption']['keys'];
-
-            /*
-             * Keys are in the format:
-             *      array( <int ident> => <string key>, ... )
-             */
-
-            //---
-
-            // Validate the keys
-
-            if( !is_array($keys) || empty($keys) ){
-                throw new RuntimeException('At least one session encryption key must be set');
-            }
-
-            foreach( $keys as $ident => $key ){
-
-                // AES is rijndael-128 with a 32 character (256 bit) key.
-                if( strlen( $key ) != 32 ){
-                    throw new CryptInvalidArgumentException("Key ($ident) must be a string of 32 characters");
-                }
-
-            }
-
-            //---
-
-            // We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
-            $blockCipher = BlockCipher::factory('openssl', [
-                'algorithm' => 'aes',
-                'mode' => 'cbc',
-            ]);
-
-            //---
-
-            $saveHandler = new SaveHandler\EncryptedDynamoDB(
-                new SaveHandler\HashedKeyDynamoDbSessionConnection( $dynamoDb, $config['dynamodb']['settings'] )
-            );
-
-            $saveHandler->setBlockCipher( $blockCipher, $keys );
-
-        } // if
+        $saveHandler = new SaveHandler\CompressedDynamoDB(
+            new SaveHandler\HashedKeyDynamoDbSessionConnection( $dynamoDb, $config['dynamodb']['settings'] )
+        );
 
         //-------------------------------
 
@@ -135,4 +88,5 @@ class SessionFactory implements FactoryInterface {
 
         return $manager;
     }
+
 } // class
