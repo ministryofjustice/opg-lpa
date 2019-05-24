@@ -2,6 +2,7 @@
 
 namespace Application;
 
+use GuzzleHttp\Client;
 use PDO;
 use Zend\Db\Adapter\Adapter as ZendDbAdapter;
 use Application\Model\DataAccess\Repository;
@@ -61,6 +62,7 @@ class Module
             ],
             'invokables' => [
                 HttpClient::class => Guzzle6Client::class,
+                Client::class => Client::class,
             ],
             'factories' => [
                 'NotifyClient' => function (ServiceLocatorInterface $sm) {

@@ -10,6 +10,7 @@ use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\Users\Service as UsersService;
+use GuzzleHttp\Client;
 use Http\Client\HttpClient;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
@@ -49,7 +50,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setApplicationsService' => ApplicationsService::class,
         ],
         ProcessingStatus\Service::class => [
-            'setClient' => HttpClient::class,
+            'setClient' => Client::class,
             'setConfig' => 'config',
             'setAwsSignatureV4' => 'AwsApiGatewaySignature',
         ]

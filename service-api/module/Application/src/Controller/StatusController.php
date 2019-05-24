@@ -101,6 +101,83 @@ class StatusController extends AbstractRestfulController
         }
     }
 
+//    /**
+//     * Checks whether we have a status from Sirius for a list of applications
+//     *
+//     * Returns an array of results, one for each application. Will return {"found": false} for an application if it is
+//     * not found, does not have a processing status, or does not belong to this user. Otherwise returns
+//     * {"found": true, "status": "<processing status>"}
+//     *
+//     * @param string $ids
+//     * @return Json
+//     * @throws Exception
+//     * @throws \Http\Client\Exception
+//     */
+//    public function get($ids)
+//    {
+//        if (empty($this->routeUserId)) {
+//            //  userId MUST be present in the URL
+//            throw new ApiProblemException('User identifier missing from URL', 400);
+//        }
+//
+//        $exploded_ids = explode(',', $ids);
+//        $results = [];
+//
+//        foreach ($exploded_ids as $id) {
+//            $this->getLogger()->debug('Checking Sirius status for ' . $id);
+//
+//            $lpaResult = $this->getService()->fetch($id, $this->routeUserId);
+//
+//            // if the id isn't found, return false.
+//            if ($lpaResult instanceof ApiProblem) {
+//                $this->getLogger()->err('Error accessing LPA data: ' . $lpaResult->getDetail());
+//
+//                $results[$id] = ['found' => false];
+//                continue;
+//            }
+//
+//            /** @var Lpa $lpa */
+//            $lpa = $lpaResult->getData();
+//
+//            $metaData = $lpa->getMetaData();
+//
+//            $currentProcessingStatus = array_key_exists(LPA::SIRIUS_PROCESSING_STATUS, $metaData) ?
+//                $metaData[LPA::SIRIUS_PROCESSING_STATUS] : null;
+//
+//            // If application has already reached the last stage of processing do not check for updates
+//            if ($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED) {
+//                $results[$id] = ['found' => true, 'status' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED];
+//                continue;
+//            }
+//
+//            // Get status update from Sirius
+//            $siriusStatusResult = $this->processingStatusService->getStatus($id);
+//
+//            // If there was a status returned
+//            if ($siriusStatusResult != null)
+//            {
+//                // If it doesn't match what we already have update the database
+//                if($siriusStatusResult != $currentProcessingStatus) {
+//                    // Update metadata in DB
+//                    $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $siriusStatusResult;
+//
+//                    $this->getService()->patch(['metadata' => $metaData], $id, $this->routeUserId);
+//                }
+//
+//                $results[$id] = ['found' => true, 'status' => $siriusStatusResult];
+//            } else if ($currentProcessingStatus != null) {
+//                // If we get nothing from Sirius but there's an existing status use that
+//                $results[$id] = ['found' => true, 'status' => $currentProcessingStatus];
+//            } else {
+//                // If both sirius and the LPA DB have no status set a not found response
+//                $results[$id] = ['found' => false];
+//            }
+//        }
+//
+//        return new Json($results);
+//    }
+
+    // LPA-3230 NEW
     /**
      * Checks whether we have a status from Sirius for a list of applications
      *
@@ -122,9 +199,11 @@ class StatusController extends AbstractRestfulController
 
         $exploded_ids = explode(',', $ids);
         $results = [];
+        $idsToCheckInSirius = [];
+        $siriusStatusResult = [];
 
         foreach ($exploded_ids as $id) {
-            $this->getLogger()->debug('Checking Sirius status for ' . $id);
+            $this->getLogger()->debug('Checking existing status in the lpa DB for the lpa application' . $id);
 
             $lpaResult = $this->getService()->fetch($id, $this->routeUserId);
 
@@ -138,7 +217,6 @@ class StatusController extends AbstractRestfulController
 
             /** @var Lpa $lpa */
             $lpa = $lpaResult->getData();
-
             $metaData = $lpa->getMetaData();
 
             $currentProcessingStatus = array_key_exists(LPA::SIRIUS_PROCESSING_STATUS, $metaData) ?
@@ -148,31 +226,60 @@ class StatusController extends AbstractRestfulController
             if ($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED) {
                 $results[$id] = ['found' => true, 'status' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED];
                 continue;
-            }
-
-            // Get status update from Sirius
-            $siriusStatusResult = $this->processingStatusService->getStatus($id);
-
-            // If there was a status returned
-            if ($siriusStatusResult != null)
+            } else
+            if($currentProcessingStatus == null)
             {
-                // If it doesn't match what we already have update the database
-                if($siriusStatusResult != $currentProcessingStatus) {
-                    // Update metadata in DB
-                    $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $siriusStatusResult;
-
-                    $this->getService()->patch(['metadata' => $metaData], $id, $this->routeUserId);
-                }
-
-                $results[$id] = ['found' => true, 'status' => $siriusStatusResult];
-            } else if ($currentProcessingStatus != null) {
-                // If we get nothing from Sirius but there's an existing status use that
-                $results[$id] = ['found' => true, 'status' => $currentProcessingStatus];
-            } else {
-                // If both sirius and the LPA DB have no status set a not found response
                 $results[$id] = ['found' => false];
             }
+
+            // Add the id's to the array to check for updates in Sirius DB
+            $idsToCheckInSirius[] = $id;
+
+            $this->getLogger()->debug('-------------- checkingggggggg' . print_r($idsToCheckInSirius, true));
+
         }
+
+
+        // Get status update from Sirius
+         $siriusStatusResult = $this->processingStatusService->getStatuses($idsToCheckInSirius);
+
+        // updates the results for the status received back from Sirius
+        foreach ($siriusStatusResult  as $lpaId => $lpaStatus) {
+
+            $currentResult = $results[$lpaId];
+            $currentProcessingStatus = $currentResult['found'] ? $currentResult['status'] : null;
+
+            $lpaResult = $this->getService()->fetch($lpaId, $this->routeUserId);
+            // if the id isn't found, return false.
+            if ($lpaResult instanceof ApiProblem) {
+                $this->getLogger()->err('Error accessing LPA data: ' . $lpaResult->getDetail());
+                continue;
+            }
+            /** @var Lpa $lpa */
+            $lpa = $lpaResult->getData();
+            $metaData = $lpa->getMetaData();
+
+            // If there was a status returned
+            if ($lpaStatus != null) {
+                $this->getLogger()->debug('-------------- lpa status' . $lpaStatus);
+
+
+                // If it doesn't match what we already have update the database
+                if ($lpaStatus != $currentProcessingStatus) {
+
+                    $this->getLogger()->debug('-------------- Inside loop');
+                    $this->getLogger()->debug('-------------- showing currentProcessingStatus2' . var_export($currentProcessingStatus, true));
+                    // Update metadata in DB
+                    $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $lpaStatus;
+
+                    $this->getLogger()->debug('-------------- metadata' . var_export($metaData, true));
+
+                    $this->getService()->patch(['metadata' => $metaData], $lpaId, $this->routeUserId);
+                }
+                $results[$lpaId] = ['found' => true, 'status' => $lpaStatus];
+            }
+        } //end for
+
 
         return new Json($results);
     }

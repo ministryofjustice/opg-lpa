@@ -9,10 +9,11 @@ use Aws\Signature\SignatureV4;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception;
-use Http\Client\HttpClient;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use GuzzleHttp\Pool;
+use GuzzleHttp\Client as HttpClient;
 
 class Service extends AbstractService
 {
@@ -70,6 +71,7 @@ class Service extends AbstractService
      */
     public function getStatus($id)
     {
+
         if (is_numeric($id)) {
             $id = 'A' . sprintf("%011d", $id);
         }
@@ -96,6 +98,7 @@ class Service extends AbstractService
                 $status = $this->handleResponse($response);
 
                 $this->getLogger()->debug('Status ' . $status . ' returned from Sirius gateway for ID ' . $id);
+
                 return $status;
             case 404:
                 // A 404 represents that details for the passed ID could not be found
@@ -106,6 +109,89 @@ class Service extends AbstractService
                     ->err('Unexpected response from Sirius gateway: ' . (string)$response->getBody());
                 throw new ApiProblemException('Unexpected response from Sirius gateway: ' . $statusCode);
         }
+    }
+
+    /**
+     * @param $ids
+     * @return mixed
+     * @throws ApiProblemException
+     * @throws Exception
+     */
+    public function getStatuses($ids)
+    {
+        $this->getLogger()->debug('**************Checking Statuses for ' . join($glue = ", ", $ids));
+
+        // build request loop
+        $requests = [];
+        $successStatus = [];
+
+        $provider = CredentialProvider::defaultProvider();
+        $credentials = $provider()->wait();
+
+        foreach ($ids as $id) {
+
+            $prefixedId = $id;
+
+            if (is_numeric($id)) {
+                $prefixedId = 'A' . sprintf("%011d", $id);
+            }
+
+            $url = new Uri($this->processingStatusServiceUri . $prefixedId);
+            $requests[$id] = new Request('GET', $url, $this->buildHeaders());
+            $requests[$id] = $this->awsSignature->signRequest($requests[$id], $credentials);
+        } //end of request loop
+
+        // build pool
+        $results = [];
+
+        $pool = new Pool($this->httpClient, $requests, [
+            'concurrency' => 2,
+            'fulfilled' => function ($response, $id) use (&$results) {
+                // this is delivered each successful response
+                $this->getLogger()->debug('We have a result for:' . $id);
+
+                $results[$id] = $response;
+
+            },
+            'rejected' => function ($reason, $id){
+                $this->getLogger()->debug('Failed to get result for :' . $id .$reason);
+            },
+        ]);
+
+        // Initiate transfers and create a promise
+        $promise = $pool->promise();
+
+        // Force the pool of requests to complete
+        $promise->wait();
+
+
+        // Handle all request response now
+        foreach ($results as $lpaId=>$result) {
+
+           // $this->getLogger()->debug('Showing the results inside forloop:' . print_r($results, true));
+
+            $statusCode = $result->getStatusCode();
+
+            switch ($statusCode) {
+                case 200:
+                    $status = $this->handleResponse($result);
+                    $successStatus[$lpaId] = $status;
+                    break;
+
+                case 404:
+                    // A 404 represents that details for the passed ID could not be found
+                    $successStatus[$lpaId] = null;
+                    break;
+
+                default:
+                    $this->getLogger()
+                        ->err('Unexpected response from Sirius gateway: ' . (string)$result->getBody());
+                    throw new ApiProblemException('Unexpected response from Sirius gateway: ' . $statusCode);
+            } //end switch
+        } //end for
+
+        $this->getLogger()->debug('***************** Showing the success status for the ids checked in SIRIUS:' . print_r($successStatus, true));
+        return $successStatus;
     }
 
     /**
@@ -123,9 +209,9 @@ class Service extends AbstractService
         return $headers;
     }
 
-    private function handleResponse(ResponseInterface $response)
+    private function handleResponse(ResponseInterface $result)
     {
-            $status = json_decode($response->getBody(), true);
+            $status = json_decode($result->getBody(), true);
 
             if (is_null($status)){
                 return null;
@@ -133,13 +219,12 @@ class Service extends AbstractService
 
             //  If the body isn't an array now then it wasn't JSON before
             if (!is_array($status)) {
-                throw new ApiProblemException($response, 'Malformed JSON response from server');
+                throw new ApiProblemException($result, 'Malformed JSON response from server');
             }
 
             if (!$status['status']) {
                 return null;
             }
-
             return self::SIRIUS_STATUS_TO_LPA[$status['status']];
     }
 }
