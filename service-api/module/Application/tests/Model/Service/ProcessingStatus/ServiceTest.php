@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\ProcessingStatus;
 
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Aws\Signature\SignatureV4;
@@ -11,6 +12,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Pool;
 
 class ServiceTest extends MockeryTestCase
 {
@@ -31,7 +33,8 @@ class ServiceTest extends MockeryTestCase
 
     public function setUp()
     {
-        $this->httpClient = Mockery::mock(HttpClient::class);
+        //$this->httpClient = Mockery::mock(HttpClient::class);
+        $this->httpClient = Mockery::mock(Client::class);
         $awsSignature = Mockery::mock(SignatureV4::class);
 
         // We want to return the GuzzleHttp\Psr7\Request which was passed in teh first argument.
@@ -74,7 +77,7 @@ class ServiceTest extends MockeryTestCase
     {
         $this->setUpRequest();
 
-        $result = $this->service->getStatus(1000000000);
+        $result = $this->service->getStatuses([1000000000,10000000001]);
 
         $this->assertEquals('Received', $result);
     }

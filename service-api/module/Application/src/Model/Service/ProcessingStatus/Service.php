@@ -119,7 +119,9 @@ class Service extends AbstractService
      */
     public function getStatuses($ids)
     {
-        $this->getLogger()->debug('**************Checking Statuses for ' . join($glue = ", ", $ids));
+        print_r($ids);
+
+       // $this->getLogger()->debug('**************Checking Statuses for ' . join($glue = ", ", $ids));
 
         // build request loop
         $requests = [];
@@ -128,8 +130,11 @@ class Service extends AbstractService
         $provider = CredentialProvider::defaultProvider();
         $credentials = $provider()->wait();
 
+       // print_r($credentials);
+
         foreach ($ids as $id) {
 
+            print_r($id);
             $prefixedId = $id;
 
             if (is_numeric($id)) {
@@ -139,13 +144,14 @@ class Service extends AbstractService
             $url = new Uri($this->processingStatusServiceUri . $prefixedId);
             $requests[$id] = new Request('GET', $url, $this->buildHeaders());
             $requests[$id] = $this->awsSignature->signRequest($requests[$id], $credentials);
+
         } //end of request loop
 
         // build pool
         $results = [];
 
         $pool = new Pool($this->httpClient, $requests, [
-            'concurrency' => 2,
+            'concurrency' => 5,
             'fulfilled' => function ($response, $id) use (&$results) {
                 // this is delivered each successful response
                 $this->getLogger()->debug('We have a result for:' . $id);
@@ -160,16 +166,10 @@ class Service extends AbstractService
 
         // Initiate transfers and create a promise
         $promise = $pool->promise();
-
         // Force the pool of requests to complete
         $promise->wait();
-
-
         // Handle all request response now
         foreach ($results as $lpaId=>$result) {
-
-           // $this->getLogger()->debug('Showing the results inside forloop:' . print_r($results, true));
-
             $statusCode = $result->getStatusCode();
 
             switch ($statusCode) {
