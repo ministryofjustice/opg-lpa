@@ -89,7 +89,6 @@ class Service extends AbstractService
             $url = new Uri($this->processingStatusServiceUri . $prefixedId);
             $requests[$id] = new Request('GET', $url, $this->buildHeaders());
             $requests[$id] = $this->awsSignature->signRequest($requests[$id], $credentials);
-
         } //end of request loop
 
         // build pool
@@ -98,12 +97,11 @@ class Service extends AbstractService
         $pool = new Pool($this->httpClient, $requests, [
             'concurrency' => 10,
             'fulfilled' => function ($response, $id) use (&$results) {
-                // this is delivered each successful response
+                // Each successful response
                 $this->getLogger()->debug('We have a result for:' . $id);
 
                 $results[$id] = $response;
-
-            },
+                },
             'rejected' => function ($reason, $id){
                 $this->getLogger()->debug('Failed to get result for :' . $id .$reason);
             },
