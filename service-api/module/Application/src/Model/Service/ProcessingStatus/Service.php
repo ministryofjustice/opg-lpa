@@ -64,54 +64,6 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $id
-     * @return mixed
-     * @throws ApiProblemException
-     * @throws Exception
-     */
-    public function getStatus($id)
-    {
-
-        if (is_numeric($id)) {
-            $id = 'A' . sprintf("%011d", $id);
-        }
-
-        $url = new Uri($this->processingStatusServiceUri . $id);
-
-        $request = new Request('GET', $url, $this->buildHeaders());
-
-        //---
-
-        $provider = CredentialProvider::defaultProvider();
-
-        // Sign the request with an AWS Authorization header.
-        $signed_request = $this->awsSignature->signRequest($request, $provider()->wait());
-
-        //---
-
-        $response = $this->httpClient->sendRequest($signed_request);
-
-        $statusCode = $response->getStatusCode();
-
-        switch ($statusCode) {
-            case 200:
-                $status = $this->handleResponse($response);
-
-                $this->getLogger()->debug('Status ' . $status . ' returned from Sirius gateway for ID ' . $id);
-
-                return $status;
-            case 404:
-                // A 404 represents that details for the passed ID could not be found
-                $this->getLogger()->debug('No application status from Sirius gateway for ID ' . $id);
-                return null;
-            default:
-                $this->getLogger()
-                    ->err('Unexpected response from Sirius gateway: ' . (string)$response->getBody());
-                throw new ApiProblemException('Unexpected response from Sirius gateway: ' . $statusCode);
-        }
-    }
-
-    /**
      * @param $ids
      * @return mixed
      * @throws ApiProblemException
@@ -119,10 +71,6 @@ class Service extends AbstractService
      */
     public function getStatuses($ids)
     {
-        print_r($ids);
-
-       // $this->getLogger()->debug('**************Checking Statuses for ' . join($glue = ", ", $ids));
-
         // build request loop
         $requests = [];
         $successStatus = [];
@@ -130,11 +78,8 @@ class Service extends AbstractService
         $provider = CredentialProvider::defaultProvider();
         $credentials = $provider()->wait();
 
-       // print_r($credentials);
-
         foreach ($ids as $id) {
 
-            print_r($id);
             $prefixedId = $id;
 
             if (is_numeric($id)) {
@@ -151,7 +96,7 @@ class Service extends AbstractService
         $results = [];
 
         $pool = new Pool($this->httpClient, $requests, [
-            'concurrency' => 5,
+            'concurrency' => 10,
             'fulfilled' => function ($response, $id) use (&$results) {
                 // this is delivered each successful response
                 $this->getLogger()->debug('We have a result for:' . $id);
@@ -190,7 +135,6 @@ class Service extends AbstractService
             } //end switch
         } //end for
 
-        $this->getLogger()->debug('***************** Showing the success status for the ids checked in SIRIUS:' . print_r($successStatus, true));
         return $successStatus;
     }
 

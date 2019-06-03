@@ -46,7 +46,6 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->statusController = new StatusController($this->authorizationService,
             $this->service, $this->processingStatusService, $this->config);
-
     }
 
     public function testGetWithFirstUpdateOnValidCase()
@@ -115,7 +114,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
-            ->andReturn(null);
+            ->andReturn(['98765' => null]);
 
         $result = $this->statusController->get('98765');
 
@@ -138,7 +137,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
-            ->andReturn(null);
+            ->andReturn(['98765' => null]);
 
         $result = $this->statusController->get('98765');
 
@@ -155,7 +154,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->twice()
+            ->once()
             ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
@@ -179,7 +178,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json(['98765' => ['found' => false]]), $result);
     }
 
-    public function testGetLpaAlreadyConcluded()
+    public function testGetLpaAlreadyReturned()
     {
         $this->statusController->onDispatch($this->mvcEvent);
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
@@ -239,5 +238,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json([98765 => ['found' => true, 'status' => 'Returned'], 98766 => ['found' => true, 'status' => 'Returned']]), $result);
 
     }
+
+
 
 }
