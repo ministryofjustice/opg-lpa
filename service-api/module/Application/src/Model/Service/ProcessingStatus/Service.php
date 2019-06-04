@@ -96,6 +96,9 @@ class Service extends AbstractService
 
         $pool = new Pool($this->httpClient, $requests, [
             'concurrency' => 10,
+            'options' => [
+                'http_errors' => false,
+            ],
             'fulfilled' => function ($response, $id) use (&$results) {
                 // Each successful response
                 $this->getLogger()->debug('We have a result for:' . $id);

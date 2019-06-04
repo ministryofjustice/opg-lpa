@@ -183,11 +183,11 @@ class StatusController extends AbstractRestfulController
             }
         }
         // Get status update from Sirius
-        if ($idsToCheckInSirius != null) {
+        if (!empty($idsToCheckInSirius )) {
 
             $siriusStatusResult = $this->processingStatusService->getStatuses($idsToCheckInSirius);
 
-            if ($siriusStatusResult != null)
+            if (!empty($siriusStatusResult))
             {
                 // updates the results for the status received back from Sirius
                 foreach ($siriusStatusResult as $lpaId => $lpaStatus)
