@@ -95,7 +95,7 @@ class Service extends AbstractService
         $results = [];
 
         $pool = new Pool($this->httpClient, $requests, [
-            'concurrency' => 10,
+            'concurrency' => 50,
             'options' => [
                 'http_errors' => false,
             ],
