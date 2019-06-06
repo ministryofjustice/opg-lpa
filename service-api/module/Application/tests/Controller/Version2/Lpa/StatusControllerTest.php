@@ -46,7 +46,6 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->statusController = new StatusController($this->authorizationService,
             $this->service, $this->processingStatusService, $this->config);
-
     }
 
     public function testGetWithFirstUpdateOnValidCase()
@@ -58,12 +57,12 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->once()
+            ->twice()
             ->andReturn($dataModel);
 
-        $this->processingStatusService->shouldReceive('getStatus')
+        $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
-            ->andReturn('Returned');
+            ->andReturn(['98765' => 'Returned']);
 
         $this->service->shouldReceive('patch')
             ->withArgs([['metadata' => ['sirius-processing-status' => 'Returned']], '98765', '12345'])->once();
@@ -84,12 +83,12 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->once()
+            ->twice()
             ->andReturn($dataModel);
 
-        $this->processingStatusService->shouldReceive('getStatus')
+        $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
-            ->andReturn('Returned');
+            ->andReturn(['98765' => 'Returned']);
 
         $this->service->shouldReceive('patch')
             ->withArgs([['metadata' => ['sirius-processing-status' => 'Returned']], '98765', '12345'])->once();
@@ -113,9 +112,9 @@ class StatusControllerTest extends AbstractControllerTest
             ->once()
             ->andReturn($dataModel);
 
-        $this->processingStatusService->shouldReceive('getStatus')
+        $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
-            ->andReturn(null);
+            ->andReturn(['98765' => null]);
 
         $result = $this->statusController->get('98765');
 
@@ -136,9 +135,9 @@ class StatusControllerTest extends AbstractControllerTest
             ->once()
             ->andReturn($dataModel);
 
-        $this->processingStatusService->shouldReceive('getStatus')
+        $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
-            ->andReturn(null);
+            ->andReturn(['98765' => null]);
 
         $result = $this->statusController->get('98765');
 
@@ -158,9 +157,9 @@ class StatusControllerTest extends AbstractControllerTest
             ->once()
             ->andReturn($dataModel);
 
-        $this->processingStatusService->shouldReceive('getStatus')
+        $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
-            ->andReturn('Checking');
+            ->andReturn(['98765' =>'Checking']);
 
         $result = $this->statusController->get('98765');
 
@@ -179,7 +178,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json(['98765' => ['found' => false]]), $result);
     }
 
-    public function testGetLpaAlreadyConcluded()
+    public function testGetLpaAlreadyReturned()
     {
         $this->statusController->onDispatch($this->mvcEvent);
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
@@ -189,7 +188,9 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->once()->andReturn($dataModel);
+
         $result = $this->statusController->get('98765');
+
 
         $this->assertEquals(new Json(['98765' => ['found'=>true, 'status'=>'Returned']]), $result);
     }
@@ -202,5 +203,42 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->get('98765');
     }
+
+    public function testMultipleStatusUpdateOnValidCases()
+    {
+        $this->statusController->onDispatch($this->mvcEvent);
+        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'), 'metadata' => []]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->service->shouldReceive('fetch')
+            ->withArgs(['98765', '12345'])
+            ->twice()
+            ->andReturn($dataModel);
+
+        $this->service->shouldReceive('fetch')
+            ->withArgs(['98766', '12345'])
+            ->twice()
+            ->andReturn($dataModel);
+
+        $this->processingStatusService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn(['98765' => 'Returned', '98766' => 'Returned']);
+
+        $this->service->shouldReceive('patch')
+            ->withArgs([['metadata' => ['sirius-processing-status' => 'Returned']], '98765', '12345'])->once();
+
+        $this->service->shouldReceive('patch')
+            ->withArgs([['metadata' => ['sirius-processing-status' => 'Returned']], '98766', '12345'])->once();
+
+        $result = $this->statusController->get('98765,98766');
+
+        //print_r($result);
+
+        $this->assertEquals(new Json([98765 => ['found' => true, 'status' => 'Returned'], 98766 => ['found' => true, 'status' => 'Returned']]), $result);
+
+    }
+
+
 
 }

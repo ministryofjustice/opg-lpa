@@ -9,10 +9,11 @@ use Aws\Signature\SignatureV4;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception;
-use Http\Client\HttpClient;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use GuzzleHttp\Pool;
+use GuzzleHttp\Client as HttpClient;
 
 class Service extends AbstractService
 {
@@ -63,49 +64,79 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $id
+     * @param $ids
      * @return mixed
      * @throws ApiProblemException
      * @throws Exception
      */
-    public function getStatus($id)
+    public function getStatuses($ids)
     {
-        if (is_numeric($id)) {
-            $id = 'A' . sprintf("%011d", $id);
-        }
-
-        $url = new Uri($this->processingStatusServiceUri . $id);
-
-        $request = new Request('GET', $url, $this->buildHeaders());
-
-        //---
+        // build request loop
+        $requests = [];
+        $successStatus = [];
 
         $provider = CredentialProvider::defaultProvider();
+        $credentials = $provider()->wait();
 
-        // Sign the request with an AWS Authorization header.
-        $signed_request = $this->awsSignature->signRequest($request, $provider()->wait());
+        foreach ($ids as $id) {
 
-        //---
+            $prefixedId = $id;
 
-        $response = $this->httpClient->sendRequest($signed_request);
+            if (is_numeric($id)) {
+                $prefixedId = 'A' . sprintf("%011d", $id);
+            }
 
-        $statusCode = $response->getStatusCode();
+            $url = new Uri($this->processingStatusServiceUri . $prefixedId);
+            $requests[$id] = new Request('GET', $url, $this->buildHeaders());
+            $requests[$id] = $this->awsSignature->signRequest($requests[$id], $credentials);
+        } //end of request loop
 
-        switch ($statusCode) {
-            case 200:
-                $status = $this->handleResponse($response);
+        // build pool
+        $results = [];
 
-                $this->getLogger()->debug('Status ' . $status . ' returned from Sirius gateway for ID ' . $id);
-                return $status;
-            case 404:
-                // A 404 represents that details for the passed ID could not be found
-                $this->getLogger()->debug('No application status from Sirius gateway for ID ' . $id);
-                return null;
-            default:
-                $this->getLogger()
-                    ->err('Unexpected response from Sirius gateway: ' . (string)$response->getBody());
-                throw new ApiProblemException('Unexpected response from Sirius gateway: ' . $statusCode);
-        }
+        $pool = new Pool($this->httpClient, $requests, [
+            'concurrency' => 50,
+            'options' => [
+                'http_errors' => false,
+            ],
+            'fulfilled' => function ($response, $id) use (&$results) {
+                // Each successful response
+                $this->getLogger()->debug('We have a result for:' . $id);
+
+                $results[$id] = $response;
+                },
+            'rejected' => function ($reason, $id){
+                $this->getLogger()->debug('Failed to get result for :' . $id .$reason);
+            },
+        ]);
+
+        // Initiate transfers and create a promise
+        $promise = $pool->promise();
+        // Force the pool of requests to complete
+        $promise->wait();
+        // Handle all request response now
+        foreach ($results as $lpaId=>$result) {
+            $statusCode = $result->getStatusCode();
+
+            switch ($statusCode) {
+                case 200:
+                    $status = $this->handleResponse($result);
+                    $successStatus[$lpaId] = $status;
+                    break;
+
+                case 404:
+                    // A 404 represents that details for the passed ID could not be found
+                    $successStatus[$lpaId] = null;
+                    break;
+
+                default:
+                    $this->getLogger()
+                        ->err('Unexpected response from Sirius gateway: ' . (string)$result->getBody());
+                    throw new ApiProblemException('Unexpected response from Sirius gateway: ' . $statusCode);
+            } //end switch
+        } //end for
+
+        return $successStatus;
     }
 
     /**
@@ -123,9 +154,9 @@ class Service extends AbstractService
         return $headers;
     }
 
-    private function handleResponse(ResponseInterface $response)
+    private function handleResponse(ResponseInterface $result)
     {
-            $status = json_decode($response->getBody(), true);
+            $status = json_decode($result->getBody(), true);
 
             if (is_null($status)){
                 return null;
@@ -133,13 +164,12 @@ class Service extends AbstractService
 
             //  If the body isn't an array now then it wasn't JSON before
             if (!is_array($status)) {
-                throw new ApiProblemException($response, 'Malformed JSON response from server');
+                throw new ApiProblemException($result, 'Malformed JSON response from server');
             }
 
             if (!$status['status']) {
                 return null;
             }
-
             return self::SIRIUS_STATUS_TO_LPA[$status['status']];
     }
 }
