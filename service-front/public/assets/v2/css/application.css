@@ -3629,3 +3629,152 @@ ul.track-my-lpa li.list-item--v3 {
 .opg-application-status-text {
   margin-bottom: 0px;
   margin-right: 5px; }
+
+/* progress bar changes */
+
+.progress-bar {
+  list-style: none;
+  overflow: hidden; /* necessary to cut off top and bottom parts of triangles*/
+  font: 19px Helvetica;
+  font-weight: 600;
+  display: flex;
+  counter-reset: li;}/* necessary to insert numbers before text*/
+
+.progress-bar__steps {
+  background: #dadada;
+  color: #555;
+  width: calc((100%/4) - (10px*((4 - 1)/4)));
+  position: relative;
+  cursor: default;
+  /* remove default ordered list number styles*/
+  list-style-image: none;
+  list-style-type: none;
+  padding: 20px 5px;
+  text-align: center;}
+
+  @media (min-width: 641px) {
+    .progress-bar__steps {
+        padding: 20px 0 20px 65px; /* create padding-left to position text */
+        text-align: left;
+    }
+  }
+
+  @media screen and (min-width: 641px) {
+    .progress-bar__steps:first-child {
+        padding: 20px 0 20px 30px;
+    }
+  }
+
+  /* appended triangle*/
+  @media screen and (min-width: 800px) {
+    .progress-bar__steps::after {
+      border-bottom: 50px solid transparent;
+      border-top: 50px solid transparent;
+      content: " ";
+      display: block;
+      height: 0;
+      left: 100%;
+      margin-top: -50px;
+      position: absolute;
+      top: 50%;
+      width: 0;
+      border-left: 30px solid #ddd;
+      z-index: 2;
+    }
+  }
+
+  /*prepend triangle cutout to create separation border */
+  @media (min-width: 800px) {
+    .progress-bar__steps::before {
+      border-bottom: 50px solid transparent;
+      border-top: 50px solid transparent;
+      content: " ";
+      display: block;
+      height: 0;
+      left: 100%;
+      margin-top: -50px;
+      position: absolute;
+      top: 50%;
+      width: 0;
+      border-left: 30px solid #fff;
+      z-index: 1;
+      margin-left: 8px;
+    }
+  }
+
+  .current-waiting {
+    background: #2e358b;
+    color: #fff;}
+
+    .current-waiting::after {
+      border-left: 30px solid #2e358b;
+    }
+
+  .current-received {
+    background: #005ea5;
+    color: #fff;}
+
+    .current-received::after {
+    border-left: 30px solid #005ea5;
+    }
+
+  .current-checking {
+    background: #2b8cc4;
+      color: #fff;}
+
+    .current-checking::after {
+    border-left: 30px solid #2b8cc4;
+    }
+
+  .current-returned {
+    background: #28a197;
+      color: #fff;}
+
+    .current-returned::after {
+        border-left: 30px solid #28a197;
+        }
+
+  @media screen and (min-width: 641px) {
+  .progress-bar__steps--numbers::before {
+    /* add numbers to the list items */
+    content: counter(li) " ";
+    counter-increment: li;
+    /* separate the numbers from the text */
+    margin-right: 5px;
+    /* add background circles */
+    background: transparent;
+    border: 2px solid #555;
+    border-radius: 50%;
+    display: inline-block;
+    height: 30px;
+    line-height: 30px; /* make the line-height the same as the height so that number aligns vertically*/
+    text-align: center;
+    width: 30px;
+  }
+  }
+
+  .current-waiting ::before {
+  // background: white;
+    background: #2e358b;
+    border: 2px solid #fff;
+    color: #fff;
+  }
+
+  .current-received ::before {
+    background: #005ea5;
+    border: 2px solid #fff;
+    color: #fff;
+  }
+
+  .current-checking ::before {
+    background: #2b8cc4;
+    border: 2px solid #fff;
+    color: #fff;
+  }
+
+  .current-returned ::before {
+   background: #28a197;
+    border: 2px solid #fff;
+    color: #fff;
+  }
+
