@@ -11,17 +11,35 @@
 {% endblock %}
 
 {% block content %}
+    <ol class="progress-bar">
+        <li class="progress-bar__steps not-current">
+            <span class="progress-bar__steps--completed"></span>
+            <span class="progress-bar__steps--text">Waiting</span>
+        </li>
+        <li class="progress-bar__steps current-received">
+            <span class="progress-bar__steps--numbers"></span>
+            <span class="progress-bar__steps--text">Received</span>
+        </li>
+        <li class="progress-bar__steps not-current">
+            <span class="progress-bar__steps--numbers"></span>
+            <span class="progress-bar__steps--text">Checking</span>
+        </li>
+        <li class="progress-bar__steps not-current">
+            <span class="progress-bar__steps--numbers"></span>
+            <span class="progress-bar__steps--text">Returned</span>
+        </li>
+    </ol>
 
-    <div class="govuk-box-highlight opg-status--received">
+    <div class="opg-status--received">
         <div class="">
             <h2 class="heading-xlarge">We’ve received the LPA</h2>
         </div>
         <div>
             <p class="lede">When we've checked the LPA, we'll send a letter to the donor, the attorneys and the correspondent to let them know what happens next.</p>
-            <p class="lede">It will take 8 to 10 weeks to register the LPA if there are no mistakes in the application.</p>
+            <p>It will take 8 to 10 weeks to register the LPA if there are no mistakes in the application.</p>
         </div>
         <div>
-            <a class="heading-medium" style="color: #fff; display: inline-block" href="/user/dashboard">Back to your LPAs</a>
+            <a href="/user/dashboard">Back to your LPAs</a>
         </div>
     </div>
 
