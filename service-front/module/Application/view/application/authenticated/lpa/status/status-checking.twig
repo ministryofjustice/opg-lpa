@@ -11,18 +11,36 @@
 {% endblock %}
 
 {% block content %}
+    <ol class="progress-bar">
+        <li class="progress-bar__steps not-current">
+            <span class="progress-bar__steps--completed"></span>
+            <span class="progress-bar__steps--text">Waiting</span>
+        </li>
+        <li class="progress-bar__steps not-current">
+            <span class="progress-bar__steps--completed"></span>
+            <span class="progress-bar__steps--text">Received</span>
+        </li>
+        <li class="progress-bar__steps current-checking">
+            <span class="progress-bar__steps--numbers"></span>
+            <span class="progress-bar__steps--text">Checking</span>
+        </li>
+        <li class="progress-bar__steps not-current">
+            <span class="progress-bar__steps--numbers"></span>
+            <span class="progress-bar__steps--text">Returned</span>
+        </li>
+    </ol>
 
-    <div class="govuk-box-highlight opg-status--checking">
+    <div class="opg-status--checking">
         <div class="">
             <h2 class="heading-xlarge">We’re checking the LPA</h2>
         </div>
         <div>
             <p class="lede">We’re checking the LPA to make sure it’s been made correctly. Once we’ve checked it, we'll write to the donor, attorneys and correspondent to let them know what happens next.</p>
-            <p class="lede">If there is something that must be corrected before the LPA can be registered, we'll contact {{ lpa.document.donor.name }}.</p>
-            <p class="lede">The law says there must be a 4 week wait between the date OPG sent the ‘Notice of application’ letter to the donor and attorneys and the date the LPA is registered.</p>
+            <p>If there is something that must be corrected before the LPA can be registered, we'll contact {{ lpa.document.donor.name }}.</p>
+            <p>The law says there must be a 4 week wait between the date OPG sent the ‘Notice of application’ letter to the donor and attorneys and the date the LPA is registered.</p>
         </div>
         <div>
-            <a class="heading-medium" style="color: #fff; display: inline-block" href="/user/dashboard">Back to your LPAs</a>
+            <a href="/user/dashboard">Back to your LPAs</a>
         </div>
     </div>
 

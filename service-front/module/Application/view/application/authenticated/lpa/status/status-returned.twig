@@ -11,8 +11,26 @@
 {% endblock %}
 
 {% block content %}
+    <ol class="progress-bar">
+        <li class="progress-bar__steps not-current">
+            <span class="progress-bar__steps--completed"></span>
+            <span class="progress-bar__steps--text">Waiting</span>
+        </li>
+        <li class="progress-bar__steps not-current">
+            <span class="progress-bar__steps--completed"></span>
+            <span class="progress-bar__steps--text">Received</span>
+        </li>
+        <li class="progress-bar__steps not-current">
+            <span class="progress-bar__steps--completed"></span>
+            <span class="progress-bar__steps--text">Checking</span>
+        </li>
+        <li class="progress-bar__steps current-returned">
+            <span class="progress-bar__steps--numbers"></span>
+            <span class="progress-bar__steps--text">Returned</span>
+        </li>
+    </ol>
 
-    <div class="govuk-box-highlight opg-status--returned">
+    <div class="opg-status--returned">
         <div class="">
             <h2 class="heading-xlarge">The LPA has been returned</h2>
         </div>
@@ -23,7 +41,7 @@
             <p>Opening times: Monday, Tuesday, Thursday, Friday 9am to 5pm. Wednesday 10am to 5pm</p>
         </div>
         <div>
-            <a class="heading-medium" style="color: #fff; display: inline-block" href="/user/dashboard">Back to your LPAs</a>
+            <a class="heading-small" href="/user/dashboard">Back to your LPAs</a>
         </div>
     </div>
 

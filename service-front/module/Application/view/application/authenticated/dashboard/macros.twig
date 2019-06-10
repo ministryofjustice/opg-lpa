@@ -27,7 +27,7 @@
 
                     <div class="list-item_status">
                         <p class="opg-application-status-text">Application status</p>
-                        <div class="opg-status opg-status--{{ status }}">{{ lpa.progress }}</div>
+                        <div class="opg-status opg-lozenge-status--{{ status }}">{{ lpa.progress }}</div>
                         <br/>
 
                         {{ macros.showStatusDescriptionLinksIfEnabled(trackingEnabled, status, lpa.id) }}

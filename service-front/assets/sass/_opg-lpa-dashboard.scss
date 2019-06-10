@@ -13,35 +13,72 @@
 // Styles for information about LPA statuses
 .opg-status--created,
 .opg-status--started {
+  background-color: $white;
+  color: $black;
+}
+
+.opg-status--completed {
+  background-color: $white;
+  color: $black;
+  font-weight: bold;
+}
+
+.opg-status--waiting {
+  background-color: $white;
+  color: $black;
+  font-weight: bold;
+}
+
+.opg-status--received {
+  background-color: $white;
+  color: $black;
+  font-weight: bold;
+}
+
+.opg-status--checking {
+  background-color: $white;
+  color: $black;
+  font-weight: bold;
+}
+
+.opg-status--returned {
+  background-color: $white;
+  color: $black;
+  font-weight: bold;
+}
+
+// Lozenge styles for information about LPA statuses
+.opg-lozenge-status--created,
+.opg-lozenge-status--started {
   background-color: $status-default-colour;
   color: #0b0c0c;
 }
 
-.opg-status--completed {
+.opg-lozenge-status--completed {
   background-color: $status-default-colour;
   color: #0b0c0c;
   font-weight: bold;
 }
 
-.opg-status--waiting {
+.opg-lozenge-status--waiting {
   background-color: $status-waiting-colour;
   color: #fff;
   font-weight: bold;
 }
 
-.opg-status--received {
+.opg-lozenge-status--received {
   background-color: $status-received-colour;
   color: #fff;
   font-weight: bold;
 }
 
-.opg-status--checking {
+.opg-lozenge-status--checking {
   background-color: $status-checking-colour;
   color: #fff;
   font-weight: bold;
 }
 
-.opg-status--returned {
+.opg-lozenge-status--returned {
   background-color: $status-returned-colour;
   color: #fff;
   font-weight: bold;
