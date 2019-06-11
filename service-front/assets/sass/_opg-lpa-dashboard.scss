@@ -14,36 +14,36 @@
 .opg-status--created,
 .opg-status--started {
   background-color: $white;
-  color: $black;
+  color: $dark-grey;
 }
 
 .opg-status--completed {
   background-color: $white;
-  color: $black;
+  color: $dark-grey;
   font-weight: bold;
 }
 
 .opg-status--waiting {
   background-color: $white;
-  color: $black;
+  color: $dark-grey;
   font-weight: bold;
 }
 
 .opg-status--received {
   background-color: $white;
-  color: $black;
+  color: $dark-grey;
   font-weight: bold;
 }
 
 .opg-status--checking {
   background-color: $white;
-  color: $black;
+  color: $dark-grey;
   font-weight: bold;
 }
 
 .opg-status--returned {
   background-color: $white;
-  color: $black;
+  color: $dark-grey;
   font-weight: bold;
 }
 
@@ -51,36 +51,36 @@
 .opg-lozenge-status--created,
 .opg-lozenge-status--started {
   background-color: $status-default-colour;
-  color: #0b0c0c;
+  color: $dark-grey;
 }
 
 .opg-lozenge-status--completed {
   background-color: $status-default-colour;
-  color: #0b0c0c;
+  color: $dark-grey;
   font-weight: bold;
 }
 
 .opg-lozenge-status--waiting {
   background-color: $status-waiting-colour;
-  color: #fff;
+  color: $white;
   font-weight: bold;
 }
 
 .opg-lozenge-status--received {
   background-color: $status-received-colour;
-  color: #fff;
+  color: $white;
   font-weight: bold;
 }
 
 .opg-lozenge-status--checking {
   background-color: $status-checking-colour;
-  color: #fff;
+  color: $white;
   font-weight: bold;
 }
 
 .opg-lozenge-status--returned {
   background-color: $status-returned-colour;
-  color: #fff;
+  color: $white;
   font-weight: bold;
 }
 
