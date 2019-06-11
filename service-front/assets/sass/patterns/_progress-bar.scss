@@ -1,7 +1,10 @@
 /* progress bar changes */
 
 /* creates the triangle appended to the rectangles in the progress bar*/
-@mixin arrow() {
+@mixin arrow($arrow-color, $z-idx, $margin-left) {
+  border-left: 30px solid $arrow-color;
+  z-index: $z-idx;
+  margin-left: $margin-left;
   border-bottom: 50px solid transparent;
   border-top: 50px solid transparent;
   content: " ";
@@ -14,155 +17,102 @@
   width: 0;
 }
 
+@mixin current-style($status-color) {
+  background: $status-color;
+  color: $white;
+
+  ::before {
+    border: 2px solid $white !important;
+  }
+
+  &::after {
+    border-left: 30px solid $status-color;
+  }
+}
+
+@mixin steps-markers($marker-content) {
+  /* add ticks to the list items */
+  content: $marker-content;
+  counter-increment: li;
+  /* separate the numbers from the text */
+  margin-right: 5px;
+  /* add background circles */
+  background: transparent;
+  border: 2px solid $progress-bar-font-default;
+  border-radius: 50%;
+  display: inline-block;
+  height: 30px;
+  line-height: 30px; /* make the line-height the same as the height so that number aligns vertically */
+  text-align: center;
+  width: 30px;
+}
+
 .progress-bar {
   height: 50px;
   list-style: none;
-  overflow: hidden; /* necessary to cut off top and bottom parts of triangles*/
+  overflow: hidden; /* necessary to cut off top and bottom parts of triangles */
   font: 19px Helvetica;
   font-weight: 600;
   display: flex;
-  counter-reset: li;}/* necessary to insert numbers before text*/
+  counter-reset: li;  /* necessary to insert numbers before text */
 
-.progress-bar__steps {
-  background: $progress-bar-background;
-  color: $progress-bar-font-default;
-  width: calc((100%/4) - (10px*((4 - 1)/4)));
-  position: relative;
-  cursor: default;
-  /* remove default ordered list number styles*/
-  list-style-image: none;
-  list-style-type: none;
-  padding: 20px 5px;
-  text-align: center;}
+  .progress-bar__steps {
+    background: $progress-bar-background;
+    color: $progress-bar-font-default;
+    width: calc((100%/4) - (10px*((4 - 1)/4)));
+    position: relative;
+    cursor: default;
+    /* remove default ordered list number styles */
+    list-style-image: none;
+    list-style-type: none;
+    padding: 20px 5px;
+    text-align: center;
 
-.progress-bar__steps {
-  @media screen and(min-width: 641px) {
-    padding: 10px 0 20px 65px; /* create padding-left to position text */
-    text-align: left;
-  }
-}
+    &.current-waiting {
+      @include current-style($status-waiting-colour);
+    }
 
-.progress-bar__steps:first-child {
-  @media screen and (min-width: 641px) {
-    padding: 10px 0 20px 30px;
-  }
-}
+    &.current-received {
+      @include current-style($status-received-colour);
+    }
 
-/* appended triangle*/
-.progress-bar__steps::after {
-  @media screen and (min-width: 641px) {
-    @include arrow();
-    border-left: 30px solid $progress-bar-background;
-    z-index: 2;
-  }
-}
+    &.current-checking {
+      @include current-style($status-checking-colour);
+    }
 
-/*prepend triangle cutout to create separation border */
-.progress-bar__steps::before {
-  @media screen and(min-width: 641px) {
-      @include arrow();
-      border-left: 30px solid $white;
-      z-index: 1;
-      margin-left: 8px;
-  }
-}
+    &.current-returned {
+      @include current-style($status-returned-colour);
+    }
 
-.current-waiting {
-  background: $status-waiting-colour;
-  color: $white;}
-
-.current-waiting::after {
-  border-left: 30px solid $status-waiting-colour;
-}
-
-.current-received {
-  background: $status-received-colour;
-  color: $white;}
-
-.current-received::after {
-  border-left: 30px solid $status-received-colour;
-}
-
-.current-checking {
-  background: $status-checking-colour;
-  color: $white;}
-
-.current-checking::after {
-  border-left: 30px solid $status-checking-colour;
-}
-
-.current-returned {
-  background: $status-returned-colour;
-  color: $white;}
-
-.current-returned::after {
-  border-left: 30px solid $status-returned-colour;
-}
-
-.progress-bar__steps--numbers {
-  &:before {
     @media screen and (min-width: 641px) {
-      /* add numbers to the list items */
-      content: counter(li) " ";
-      counter-increment: li;
-      /* separate the numbers from the text */
-      margin-right: 5px;
-      /* add background circles */
-      background: transparent;
-      border: 2px solid $progress-bar-font-default;
-      border-radius: 50%;
-      display: inline-block;
-      height: 30px;
-      line-height: 30px; /* make the line-height the same as the height so that number aligns vertically*/
-      text-align: center;
-      width: 30px;
+      padding: 8px 0 8px 65px; /* create padding-left to position text */
+      text-align: left;
+
+      &:first-child {
+        padding-left: 30px;
+      }
+
+      /*prepend triangle cutout to create separation border */
+      &:before {
+        @include arrow($white, 1, 8px);
+      }
+
+      /* appended triangle */
+      &:after {
+        @include arrow($progress-bar-background, 2, 0px);
+      }
+
+      .progress-bar__steps--numbers {
+        &:before {
+          @include steps-markers(counter(li) " ");
+        }
+      }
+
+      .progress-bar__steps--completed {
+        &:before {
+          @include steps-markers("\2714");
+        }
+      }
     }
   }
 }
-
-.progress-bar__steps--completed{
-  &:before {
-    @media screen and (min-width: 641px) {
-      // add numbers to the list items
-      content: "\2714";
-      counter-increment: li;
-      // separate the numbers from the text
-      margin-right: 5px;
-      // add background circles
-      background: transparent;
-      border: 2px solid $progress-bar-font-default;
-      border-radius: 50%;
-      display: inline-block;
-      height: 30px;
-      line-height: 30px; // make the line-height the same as the height so that number aligns vertically
-      text-align: center;
-      width: 30px;
-    }
-  }
-}
-
-.current-waiting ::before {
-  background: $status-waiting-colour;
-  border: 2px solid $white;
-  color: $white;
-}
-
-.current-received ::before {
-  background: $status-received-colour;
-  border: 2px solid $white;
-  color: $white;
-}
-
-.current-checking ::before {
-  background: $status-checking-colour;
-  border: 2px solid $white;
-  color: $white;
-}
-
-.current-returned ::before {
-  background: $status-returned-colour;
-  border: 2px solid $white;
-  color: $white;
-}
-
-
