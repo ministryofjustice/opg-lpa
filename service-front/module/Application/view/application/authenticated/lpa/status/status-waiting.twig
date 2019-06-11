@@ -11,19 +11,38 @@
 {% endblock %}
 
 {% block content %}
+    <ol class="progress-bar">
+        <li class="progress-bar__steps current-waiting">
+            <span class="progress-bar__steps--numbers"></span>
+            <span class="progress-bar__steps--text">Waiting</span>
+        </li>
+        <li class="progress-bar__steps not-current">
+            <span class="progress-bar__steps--numbers"></span>
+            <span class="progress-bar__steps--text">Received</span>
+        </li>
+        <li class="progress-bar__steps not-current">
+            <span class="progress-bar__steps--numbers"></span>
+            <span class="progress-bar__steps--text">Checking</span>
+        </li>
+        <li class="progress-bar__steps not-current">
+            <span class="progress-bar__steps--numbers"></span>
+            <span class="progress-bar__steps--text">Returned</span>
+        </li>
+    </ol>
 
-    <div class="govuk-box-highlight opg-status--waiting">
+    <div class="opg-status--waiting">
         <div class="">
             <h2 class="heading-xlarge">We're waiting to receive the LPA</h2>
         </div>
         <div>
-            <p class="lede">If you have not posted your LPA yet, <a class="bold" href="/contact#postal-address" style="color: #fff">here's the address to send it to</a>.</p>
-            <p class="lede">Please take postage time into account. Allow 5 working days for OPG to receive the LPA.</p>
+            <p class="lede">You've completed the online application and we're now waiting to receive the LPA.</p>
+            <p>If you have not posted the LPA to us yet, <a href="/contact#postal-address">here's the address to send it to</a>.</p>
+            <p>Please take postage and processing time into account. Allow 10 working days for us to receive the LPA, enter it onto our system and update this message.</p>
             <p>If you think we should have received your LPA by now, please call 0300 456 0300</p>
             <p>Opening times: Monday, Tuesday, Thursday, Friday 9am to 5pm. Wednesday 10am to 5pm</p>
         </div>
         <div>
-            <a class="heading-medium" style="color: #fff; display: inline-block" href="/user/dashboard">Back to your LPAs</a>
+            <a href="/user/dashboard">Back to your LPAs</a>
         </div>
     </div>
 

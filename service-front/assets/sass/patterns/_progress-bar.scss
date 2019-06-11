@@ -1,0 +1,118 @@
+/* progress bar changes */
+
+/* creates the triangle appended to the rectangles in the progress bar*/
+@mixin arrow($arrow-color, $z-idx, $margin-left) {
+  border-left: 30px solid $arrow-color;
+  z-index: $z-idx;
+  margin-left: $margin-left;
+  border-bottom: 50px solid transparent;
+  border-top: 50px solid transparent;
+  content: " ";
+  display: block;
+  height: 0;
+  left: 100%;
+  margin-top: -50px;
+  position: absolute;
+  top: 50%;
+  width: 0;
+}
+
+@mixin current-style($status-color) {
+  background: $status-color;
+  color: $white;
+
+  ::before {
+    border: 2px solid $white !important;
+  }
+
+  &::after {
+    border-left: 30px solid $status-color;
+  }
+}
+
+@mixin steps-markers($marker-content) {
+  /* add ticks to the list items */
+  content: $marker-content;
+  counter-increment: li;
+  /* separate the numbers from the text */
+  margin-right: 5px;
+  /* add background circles */
+  background: transparent;
+  border: 2px solid $progress-bar-font-default;
+  border-radius: 50%;
+  display: inline-block;
+  height: 30px;
+  line-height: 30px; /* make the line-height the same as the height so that number aligns vertically */
+  text-align: center;
+  width: 30px;
+}
+
+.progress-bar {
+  height: 50px;
+  list-style: none;
+  overflow: hidden; /* necessary to cut off top and bottom parts of triangles */
+  font: 19px Helvetica;
+  font-weight: 600;
+  display: flex;
+  counter-reset: li;  /* necessary to insert numbers before text */
+
+  .progress-bar__steps {
+    background: $progress-bar-background;
+    color: $progress-bar-font-default;
+    width: calc((100%/4) - (10px*((4 - 1)/4)));
+    position: relative;
+    cursor: default;
+    /* remove default ordered list number styles */
+    list-style-image: none;
+    list-style-type: none;
+    padding: 20px 5px;
+    text-align: center;
+
+    &.current-waiting {
+      @include current-style($status-waiting-colour);
+    }
+
+    &.current-received {
+      @include current-style($status-received-colour);
+    }
+
+    &.current-checking {
+      @include current-style($status-checking-colour);
+    }
+
+    &.current-returned {
+      @include current-style($status-returned-colour);
+    }
+
+    @media screen and (min-width: 641px) {
+      padding: 8px 0 8px 65px; /* create padding-left to position text */
+      text-align: left;
+
+      &:first-child {
+        padding-left: 30px;
+      }
+
+      /*prepend triangle cutout to create separation border */
+      &:before {
+        @include arrow($white, 1, 8px);
+      }
+
+      /* appended triangle */
+      &:after {
+        @include arrow($progress-bar-background, 2, 0px);
+      }
+
+      .progress-bar__steps--numbers {
+        &:before {
+          @include steps-markers(counter(li) " ");
+        }
+      }
+
+      .progress-bar__steps--completed {
+        &:before {
+          @include steps-markers("\2714");
+        }
+      }
+    }
+  }
+}
