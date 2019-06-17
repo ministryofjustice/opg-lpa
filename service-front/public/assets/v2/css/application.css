@@ -3438,26 +3438,29 @@ input[type=number] {
 /* progress bar changes */
 /* creates the triangle appended to the rectangles in the progress bar*/
 .progress-bar {
-  height: 50px;
   list-style: none;
-  overflow: hidden;
-  /* necessary to cut off top and bottom parts of triangles */
   font: 19px Helvetica;
   font-weight: 600;
-  display: flex;
   counter-reset: li;
-  /* necessary to insert numbers before text */ }
+  /* necessary to insert numbers before text */
+  width: 100%; }
+  @media screen and (min-width: 768px) {
+    .progress-bar {
+      height: 50px;
+      overflow: hidden;
+      /* necessary to cut off top and bottom parts of triangles */
+      display: flex; } }
   .progress-bar .progress-bar__steps {
     background: #dadada;
     color: #555;
-    width: calc((100%/4) - (10px*((4 - 1)/4)));
     position: relative;
     cursor: default;
     /* remove default ordered list number styles */
     list-style-image: none;
     list-style-type: none;
-    padding: 20px 5px;
-    text-align: center; }
+    padding: 8px 20px;
+    text-align: left;
+    margin-bottom: 7px; }
     .progress-bar .progress-bar__steps.current-waiting {
       background: #2e358b;
       color: #fff; }
@@ -3486,15 +3489,48 @@ input[type=number] {
         border: 2px solid #fff !important; }
       .progress-bar .progress-bar__steps.current-returned::after {
         border-left: 30px solid #28a197; }
-    @media screen and (min-width: 641px) {
+    .progress-bar .progress-bar__steps .progress-bar__steps--numbers:before {
+      /* add ticks to the list items */
+      content: counter(li) " ";
+      counter-increment: li;
+      /* separate the numbers from the text */
+      margin-right: 5px;
+      /* add background circles */
+      background: transparent;
+      border: 2px solid #555;
+      border-radius: 50%;
+      display: inline-block;
+      height: 30px;
+      line-height: 30px;
+      /* make the line-height the same as the height so that number aligns vertically */
+      text-align: center;
+      width: 30px; }
+    .progress-bar .progress-bar__steps .progress-bar__steps--completed:before {
+      /* add ticks to the list items */
+      content: "✔";
+      counter-increment: li;
+      /* separate the numbers from the text */
+      margin-right: 5px;
+      /* add background circles */
+      background: transparent;
+      border: 2px solid #555;
+      border-radius: 50%;
+      display: inline-block;
+      height: 30px;
+      line-height: 30px;
+      /* make the line-height the same as the height so that number aligns vertically */
+      text-align: center;
+      width: 30px; }
+    @media screen and (min-width: 768px) {
       .progress-bar .progress-bar__steps {
-        padding: 8px 0 8px 65px;
-        /* create padding-left to position text */
-        text-align: left;
+        width: calc((100%/4) - (10px*((4 - 1)/4)));
+        padding: 8px 0 8px 45px;
+        text-align: center;
+        margin-bottom: 0;
         /*prepend triangle cutout to create separation border */
         /* appended triangle */ }
         .progress-bar .progress-bar__steps:first-child {
-          padding-left: 30px; }
+          padding-left: 10px; }
         .progress-bar .progress-bar__steps:before {
           border-left: 30px solid #fff;
           z-index: 1;
@@ -3523,38 +3559,8 @@ input[type=number] {
           position: absolute;
           top: 50%;
           width: 0; }
-        .progress-bar .progress-bar__steps .progress-bar__steps--numbers:before {
-          /* add ticks to the list items */
-          content: counter(li) " ";
-          counter-increment: li;
-          /* separate the numbers from the text */
-          margin-right: 5px;
-          /* add background circles */
-          background: transparent;
-          border: 2px solid #555;
-          border-radius: 50%;
-          display: inline-block;
-          height: 30px;
-          line-height: 30px;
-          /* make the line-height the same as the height so that number aligns vertically */
-          text-align: center;
-          width: 30px; }
-        .progress-bar .progress-bar__steps .progress-bar__steps--completed:before {
-          /* add ticks to the list items */
-          content: "✔";
-          counter-increment: li;
-          /* separate the numbers from the text */
-          margin-right: 5px;
-          /* add background circles */
-          background: transparent;
-          border: 2px solid #555;
-          border-radius: 50%;
-          display: inline-block;
-          height: 30px;
-          line-height: 30px;
-          /* make the line-height the same as the height so that number aligns vertically */
-          text-align: center;
-          width: 30px; } }
+        .progress-bar .progress-bar__steps:last-child {
+          padding-right: 10px; } }
 
 .noscroll {
   position: relative;
