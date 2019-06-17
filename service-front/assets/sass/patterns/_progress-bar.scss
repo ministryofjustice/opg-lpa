@@ -48,25 +48,29 @@
 }
 
 .progress-bar {
-  height: 50px;
   list-style: none;
-  overflow: hidden; /* necessary to cut off top and bottom parts of triangles */
   font: 19px Helvetica;
   font-weight: 600;
-  display: flex;
   counter-reset: li;  /* necessary to insert numbers before text */
+  width: 100%;
+
+  @media screen and (min-width: 768px) {
+    height: 50px;
+    overflow: hidden; /* necessary to cut off top and bottom parts of triangles */
+    display: flex;
+  }
 
   .progress-bar__steps {
     background: $progress-bar-background;
     color: $progress-bar-font-default;
-    width: calc((100%/4) - (10px*((4 - 1)/4)));
     position: relative;
     cursor: default;
     /* remove default ordered list number styles */
     list-style-image: none;
     list-style-type: none;
-    padding: 20px 5px;
-    text-align: center;
+    padding: 8px 20px;
+    text-align: left;
+    margin-bottom: 7px;
 
     &.current-waiting {
       @include current-style($status-waiting-colour);
@@ -84,12 +88,26 @@
       @include current-style($status-returned-colour);
     }
 
-    @media screen and (min-width: 641px) {
-      padding: 8px 0 8px 65px; /* create padding-left to position text */
-      text-align: left;
+    .progress-bar__steps--numbers {
+      &:before {
+        @include steps-markers(counter(li) " ");
+      }
+    }
+
+    .progress-bar__steps--completed {
+      &:before {
+        @include steps-markers("\2714");
+      }
+    }
+
+    @media screen and (min-width: 768px) {
+      width: calc((100%/4) - (10px*((4 - 1)/4)));
+      padding: 8px 0 8px 45px;
+      text-align: center;
+      margin-bottom: 0;
 
       &:first-child {
-        padding-left: 30px;
+        padding-left: 10px;
       }
 
       /*prepend triangle cutout to create separation border */
@@ -102,16 +120,8 @@
         @include arrow($progress-bar-background, 2, 0px);
       }
 
-      .progress-bar__steps--numbers {
-        &:before {
-          @include steps-markers(counter(li) " ");
-        }
-      }
-
-      .progress-bar__steps--completed {
-        &:before {
-          @include steps-markers("\2714");
-        }
+      &:last-child {
+        padding-right: 10px;
       }
     }
   }
