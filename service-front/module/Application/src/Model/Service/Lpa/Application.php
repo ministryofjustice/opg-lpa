@@ -208,12 +208,17 @@ class Application extends AbstractService implements ApiClientAwareInterface
                         array_key_exists(Lpa::SIRIUS_PROCESSING_STATUS, $metadata) &&
                         $metadata[Lpa::SIRIUS_PROCESSING_STATUS] != null) {
                         $progress = $metadata[Lpa::SIRIUS_PROCESSING_STATUS];
+
                     }
                     // If the application is rejected, there should be a  rejected date
                     if ($metadata != null &&
                         array_key_exists(Lpa::SIRIUS_PROCESSING_STATUS, $metadata) &&
-                        ($metadata['application-rejected-date'] != null)) {
-                            $applicationRejectedDate = $metadata['application-rejected-date'];
+                        ($metadata[Lpa::SIRIUS_PROCESSING_STATUS] == 'Returned') &&
+                        ($metadata[Lpa::SIRIUS_APPLICATION_REJECTED_DATE] != null)) {
+                            $applicationRejectedDate = $metadata[Lpa::SIRIUS_APPLICATION_REJECTED_DATE];
+                    }
+                    else {
+                            $applicationRejectedDate = null;
                     }
                 }
             } elseif ($lpa->getCreatedAt() instanceof DateTime) {
