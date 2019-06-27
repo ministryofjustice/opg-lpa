@@ -184,8 +184,6 @@ class ApplicationTest extends MockeryTestCase
 
         $result = $this->service->getLpaSummaries();
 
-        var_dump('Inside test ++++++++++++++++++++++++++++++ 3:' . var_export($result, true));
-
         $this->assertEquals(['applications' => [
             new ArrayObject([
                 'id' => 5531003156,
@@ -194,6 +192,7 @@ class ApplicationTest extends MockeryTestCase
                 'type' => 'health-and-welfare',
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
                 'progress' => 'Completed',
+                'rejectedDate' => null,
                 'refreshId' => null
             ]),
             new ArrayObject([
@@ -203,6 +202,7 @@ class ApplicationTest extends MockeryTestCase
                 'type' => 'health-and-welfare',
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
                 'progress' => 'Completed',
+                'rejectedDate' => null,
                 'refreshId' => null
             ])
         ], 'trackingEnabled' => true], $result);
@@ -211,52 +211,52 @@ class ApplicationTest extends MockeryTestCase
     /**
      * @throws Exception
      */
-//    public function testGetLpaSummariesCanTrackWithNoTrackingStatus()
-//    {
-//        $this->apiClient->shouldReceive('httpGet')
-//            ->withArgs(['/v2/user/4321/applications', ['search' => null]])
-//            ->once()
-//            ->andReturn(['applications' => [$this->modifiedLPA(5531003157, '2019-01-02', 'Waiting')]]);
-//
-//        $result = $this->service->getLpaSummaries();
-//
-//        $this->assertEquals(['applications' => [
-//            new ArrayObject([
-//                'id' => 5531003157,
-//                'version' => 2,
-//                'donor' => 'Hon Ayden Armstrong',
-//                'type' => 'health-and-welfare',
-//                'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
-//                'progress' => 'Waiting',
-//                'rejectedDate' => null,
-//                'refreshId' => 5531003157
-//            ])
-//        ], 'trackingEnabled' => true], $result);
-//    }
+    public function testGetLpaSummariesCanTrackWithNoTrackingStatus()
+    {
+        $this->apiClient->shouldReceive('httpGet')
+            ->withArgs(['/v2/user/4321/applications', ['search' => null]])
+            ->once()
+            ->andReturn(['applications' => [$this->modifiedLPA(5531003157, '2019-01-02', 'Waiting')]]);
+
+        $result = $this->service->getLpaSummaries();
+
+        $this->assertEquals(['applications' => [
+            new ArrayObject([
+                'id' => 5531003157,
+                'version' => 2,
+                'donor' => 'Hon Ayden Armstrong',
+                'type' => 'health-and-welfare',
+                'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
+                'progress' => 'Waiting',
+                'rejectedDate' => null,
+                'refreshId' => 5531003157
+            ])
+        ], 'trackingEnabled' => true], $result);
+    }
 
     /**
      * @throws Exception
      */
-//    public function testGetLpaSummariesCanTrackWithTrackingStatus()
-//    {
-//        $this->apiClient->shouldReceive('httpGet')
-//            ->withArgs(['/v2/user/4321/applications', ['search' => null]])
-//            ->once()
-//            ->andReturn(['applications' => [$this->modifiedLPA(5531003157, '2019-01-2', 'Returned', '2019-01-2')]]);
-//
-//        $result = $this->service->getLpaSummaries();
-//
-//        $this->assertEquals(['applications' => [
-//            new ArrayObject([
-//                'id' => 5531003157,
-//                'version' => 2,
-//                'donor' => 'Hon Ayden Armstrong',
-//                'type' => 'health-and-welfare',
-//                'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
-//                'progress' => 'Returned',
-//                'rejectedDate' => '2019-01-2',
-//                'refreshId' => 5531003157
-//            ])
-//        ], 'trackingEnabled' => true], $result);
-//    }
+    public function testGetLpaSummariesCanTrackWithTrackingStatus()
+    {
+        $this->apiClient->shouldReceive('httpGet')
+            ->withArgs(['/v2/user/4321/applications', ['search' => null]])
+            ->once()
+            ->andReturn(['applications' => [$this->modifiedLPA(5531003157, '2019-01-2', 'Returned', '2019-01-2')]]);
+
+        $result = $this->service->getLpaSummaries();
+
+        $this->assertEquals(['applications' => [
+            new ArrayObject([
+                'id' => 5531003157,
+                'version' => 2,
+                'donor' => 'Hon Ayden Armstrong',
+                'type' => 'health-and-welfare',
+                'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
+                'progress' => 'Returned',
+                'rejectedDate' => '2019-01-2',
+                'refreshId' => 5531003157
+            ])
+        ], 'trackingEnabled' => true], $result);
+    }
 }
