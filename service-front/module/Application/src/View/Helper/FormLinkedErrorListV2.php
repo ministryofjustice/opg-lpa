@@ -17,9 +17,6 @@ class FormLinkedErrorListV2 extends AbstractHelper
 
         foreach( $form->getMessages() as $field=>$errors ){
 
-          //  print_r($form->getMessages());
-          //  print_r($field);
-
             foreach( $errors as $error ){
 
                 if( is_array( $error ) ){
