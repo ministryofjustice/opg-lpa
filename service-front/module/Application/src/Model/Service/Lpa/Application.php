@@ -193,7 +193,8 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
             // If tracking is active update 'Completed' to 'Waiting for eligible applications, and add tracking update
             // id for any in 'Waiting',
-            $refreshTracking = true;
+            //$refreshTracking = true;
+            $refreshTracking = false;
 
             if ($lpa->getCompletedAt() instanceof DateTime) {
                 $progress = 'Completed';
@@ -217,8 +218,9 @@ class Application extends AbstractService implements ApiClientAwareInterface
                         ($metadata[Lpa::SIRIUS_APPLICATION_REJECTED_DATE] != null)) {
                             $applicationRejectedDate = $metadata[Lpa::SIRIUS_APPLICATION_REJECTED_DATE];
                     }
-                    else {
-                            $applicationRejectedDate = null;
+
+                    if ($progress != 'Completed') {
+                        $refreshTracking = true;
                     }
                 }
             } elseif ($lpa->getCreatedAt() instanceof DateTime) {
@@ -233,7 +235,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
                 'type'       => $lpaType,
                 'updatedAt'  => $lpa->getUpdatedAt(),
                 'progress'   => $progress,
-                'rejectedDate' => $applicationRejectedDate,
+                'rejectedDate' => isset($applicationRejectedDate) ? $applicationRejectedDate : null,
                 'refreshId' => $refreshTracking ? $lpa->getId() : null
             ]);
         }
