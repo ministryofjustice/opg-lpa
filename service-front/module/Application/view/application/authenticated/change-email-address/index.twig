@@ -12,16 +12,11 @@
 {% import "application/macros.twig" as macros %}
 
 {# Set form fields variables #}
-{% set password = form.get('password_current') %}
 {% set email = form.get('email') %}
 {% set email_confirm = form.get('email_confirm') %}
+{% set password = form.get('password_current') %}
 
 {# form fields config #}
-{{ password.setAttributes({
-    id: 'password_current',
-    class: 'form-control'
-}) ? ''}}
-
 {{ email.setAttributes({
     id: 'email',
     class: 'form-control'
@@ -33,10 +28,16 @@
     class: 'form-control'
 }) ? ''}}
 
+{{ password.setAttributes({
+id: 'password_current',
+class: 'form-control'
+}) ? ''}}
+
+
 {# form fields labels #}
-{{ password.setOptions({ label: 'Your account password' }) ? '' }}
 {{ email.setOptions({ label: 'New email address' }) ? '' }}
 {{ email_confirm.setOptions({ label: 'Confirm new email address' }) ? '' }}
+{{ password.setOptions({ label: 'Your account password' }) ? '' }}
 
 {# begin form #}
 {{ form.prepare() ? '' }}
@@ -51,9 +52,9 @@
             <input type="text" name="email_current" id="email_current" autocomplete="off" class="form-control disabled" value="{{ currentEmailAddress }}" disabled="disabled">
         </div>
 
-        {{ macros.formGroup(password) }}
         {{ macros.formGroup(email) }}
         {{ macros.formGroup(email_confirm) }}
+        {{ macros.formGroup(password) }}
 
         <div class="form-group">
             <input type="submit" name="submit" id="signin-form-submit" class="button" value="Save new email address">
