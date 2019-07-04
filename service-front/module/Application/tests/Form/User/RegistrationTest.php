@@ -24,7 +24,7 @@ class RegistrationTest extends MockeryTestCase
         $this->assertInstanceOf('Application\Form\User\SetPassword', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
         $this->assertInstanceOf('Application\Form\AbstractForm', $this->form);
-        $this->assertEquals('set-password', $this->form->getName());
+        $this->assertEquals('registration', $this->form->getName());
     }
 
     public function testElements()

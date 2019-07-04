@@ -9,8 +9,6 @@ class Registration extends SetPassword
 {
     public function init()
     {
-        $this->setName('registration');
-
         $this->add([
             'name' => 'email',
             'type' => 'Email',
@@ -23,6 +21,7 @@ class Registration extends SetPassword
 
         //Put in here to align the error summary with the order of the form as part of LPA-3169
         parent::init();
+        $this->setName('registration');
 
         $this->add([
             'name'    => 'terms',
@@ -85,7 +84,6 @@ class Registration extends SetPassword
             ],
         ]);
 
-
         $this->addToInputFilter([
             'name'          => 'terms',
             'required'      => true,
@@ -104,7 +102,5 @@ class Registration extends SetPassword
                 ],
             ],
         ]);
-
     }
-
 }
