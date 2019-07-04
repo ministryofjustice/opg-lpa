@@ -37,7 +37,7 @@
         <div>
             <p class="lede">We've written to the donor and the attorneys to let them know whether we were able to register the LPA.</p>
             <p>We have returned the LPA to {{ lpa.document.donor.name }}. This will be either the registered LPA or the unregistered LPA along with a letter explaining why we could not register it.</p>
-            <p>The letters were sent by second class post on  {{ lpa.metadata['application-rejected-date']|date("d M Y") }}.</p>
+            <p>The letters were sent by second class post on  {{ lpa.metadata['application-rejected-date']|date("d F Y") }}.</p>
             <p>If they have not arrived after 10 working days, please call 0300 456 0300.</p>
             <p>Opening times: Monday, Tuesday, Thursday, Friday 9am to 5pm. Wednesday 10am to 5pm.</p>
         </div>
