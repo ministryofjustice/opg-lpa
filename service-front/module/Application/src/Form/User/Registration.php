@@ -9,10 +9,6 @@ class Registration extends SetPassword
 {
     public function init()
     {
-        parent::init();
-
-        $this->setName('registration');
-
         $this->add([
             'name' => 'email',
             'type' => 'Email',
@@ -22,6 +18,10 @@ class Registration extends SetPassword
             'name' => 'email_confirm',
             'type' => 'Email',
         ]);
+
+        //Put in here to align the error summary with the order of the form as part of LPA-3169
+        parent::init();
+        $this->setName('registration');
 
         $this->add([
             'name'    => 'terms',
