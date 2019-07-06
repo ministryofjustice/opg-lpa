@@ -11,7 +11,6 @@ workflows:
           name: lint terraform with fmt
       - infrastructure_and_deployment/validate_terraform:
           name: validate terraform
-          workspace: tf-stack-ecs
 orbs:
   build_containers_and_push_to_ecr:
     commands:
@@ -106,10 +105,6 @@ orbs:
         #
         executor: terraform
         parameters:
-          workspace:
-            description: Terraform workspace name
-            type: string
-            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
           container_version:
             description: Container version
             type: string
@@ -120,24 +115,22 @@ orbs:
               name: Lint Account Terraform
               command: |
                 terraform --version
-                pwd
-                ls -al
                 cd project/terraform/terraform_account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate
-          - run:
-              name: Lint Environment Terraform
-              command: |
-                ENV_NAME=<<parameters.workspace>>
-                export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
-                echo $SHORT_HASH
-                cd project/terraform/terraform_environment
-                terraform init -lock-timeout=300s
-                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
-                echo $TF_WORKSPACE
-                terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
+          # - run:
+          #     name: Lint Environment Terraform
+          #     command: |
+          #       ENV_NAME=<<parameters.workspace>>
+          #       export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+          #       echo $SHORT_HASH
+          #       cd project/terraform/terraform_environment
+          #       terraform init -lock-timeout=300s
+          #       export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+          #       echo $TF_WORKSPACE
+          #       terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
 
       apply_account_terraform:
         #
