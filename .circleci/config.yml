@@ -123,7 +123,8 @@ orbs:
               name: Lint Account Terraform
               command: |
                 terraform --version
-                cd terraform/terraform_account
+                pwd
+                cd project/terraform/terraform_account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
@@ -134,7 +135,7 @@ orbs:
                 ENV_NAME=<<parameters.workspace>>
                 export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
                 echo $SHORT_HASH
-                cd terraform/terraform_environment
+                cd project/terraform/terraform_environment
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
