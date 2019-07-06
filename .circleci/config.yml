@@ -120,10 +120,10 @@ orbs:
               name: terraform lint
               command: terraform fmt -diff -check -recursive
           - run:
-              name: Lint Shared Terraform
+              name: Lint Account Terraform
               command: |
                 terraform --version
-                cd terraform/terraform_shared
+                cd terraform/terraform_account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
@@ -143,7 +143,7 @@ orbs:
       apply_account_terraform:
         #
         # Apply the shared terraform configuration. This:
-        #   - Updates the shared infrastructure;
+        #   - Updates the account infrastructure;
         #
         executor: terraform
         parameters:
