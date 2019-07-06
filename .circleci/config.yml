@@ -117,13 +117,11 @@ orbs:
         steps:
           - checkout
           - run:
-              name: terraform lint
-              command: terraform fmt -diff -check -recursive
-          - run:
               name: Lint Account Terraform
               command: |
                 terraform --version
                 pwd
+                ls -al
                 cd project/terraform/terraform_account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=development >> $BASH_ENV
