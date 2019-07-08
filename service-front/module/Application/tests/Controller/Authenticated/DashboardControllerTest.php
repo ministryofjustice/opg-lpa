@@ -361,7 +361,9 @@ class DashboardControllerTest extends AbstractControllerTest
         $controller->setEvent($event);
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
 
-        $routeMatch->shouldReceive('getParam')->withArgs(['lpa-status'])->andReturn($status)->once();
+        $this->lpaApplicationService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn(['1' => ['found'=>true, 'status'=>$status]]);
 
         $lpa = FixturesData::getPfLpa();
         $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
@@ -396,7 +398,9 @@ class DashboardControllerTest extends AbstractControllerTest
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
 
         $status = "InvalidStatus";
-        $routeMatch->shouldReceive('getParam')->withArgs(['lpa-status'])->andReturn($status)->once();
+        $this->lpaApplicationService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn(['1' => ['found'=>true, 'status'=>$status]]);
 
         $lpa = FixturesData::getPfLpa();
         $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
