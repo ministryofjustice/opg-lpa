@@ -224,7 +224,6 @@ class DashboardController extends AbstractAuthenticatedController
     public function statusesAction()
     {
         $lpaIds = $this->getEvent()->getRouteMatch()->getParam('lpa-ids');
-
         $statuses = $this->getLpaApplicationService()->getStatuses($lpaIds);
 
         return new JsonModel($statuses);
@@ -233,7 +232,10 @@ class DashboardController extends AbstractAuthenticatedController
     public function statusDescriptionAction()
     {
         $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
-        $lpaStatus = $this->getEvent()->getRouteMatch()->getParam('lpa-status');
+
+        $lpaStatusDetails = $this->getLpaApplicationService()->getStatuses($lpaId);
+        $lpaStatus = strtolower($lpaStatusDetails[$lpaId]['status']);
+
         $lpa = $this->getLpaApplicationService()->getApplication($lpaId);
 
         $viewModel = new ViewModel([
