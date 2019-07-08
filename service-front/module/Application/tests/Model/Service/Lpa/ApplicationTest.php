@@ -136,7 +136,7 @@ class ApplicationTest extends MockeryTestCase
         $this->assertEquals(['applications' => [],'trackingEnabled' => true], $result);
     }
 
-    private function modifiedLPA($id = 5531003157, $completedAt = null, $processingStatus = null)
+    private function modifiedLPA($id = 5531003157, $completedAt = null, $processingStatus = null, $rejectedDate = null)
     {
         $lpaJson = FixturesData::getHwLpaJson();
 
@@ -158,6 +158,16 @@ class ApplicationTest extends MockeryTestCase
                 $lpaJson
             );
         }
+
+        if ($rejectedDate != null) {
+            $lpaJson = str_replace(
+                '"metadata" : {',
+                '"metadata" : {
+                 "' . Lpa::SIRIUS_APPLICATION_REJECTED_DATE . '" : "' . $rejectedDate . '",',
+                $lpaJson
+            );
+        }
+
 
         return $lpaJson;
     }
@@ -182,6 +192,7 @@ class ApplicationTest extends MockeryTestCase
                 'type' => 'health-and-welfare',
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
                 'progress' => 'Completed',
+                'rejectedDate' => null,
                 'refreshId' => null
             ]),
             new ArrayObject([
@@ -191,6 +202,7 @@ class ApplicationTest extends MockeryTestCase
                 'type' => 'health-and-welfare',
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
                 'progress' => 'Completed',
+                'rejectedDate' => null,
                 'refreshId' => null
             ])
         ], 'trackingEnabled' => true], $result);
@@ -204,7 +216,7 @@ class ApplicationTest extends MockeryTestCase
         $this->apiClient->shouldReceive('httpGet')
             ->withArgs(['/v2/user/4321/applications', ['search' => null]])
             ->once()
-            ->andReturn(['applications' => [$this->modifiedLPA(5531003157, '2019-01-02')]]);
+            ->andReturn(['applications' => [$this->modifiedLPA(5531003157, '2019-01-02', 'Waiting')]]);
 
         $result = $this->service->getLpaSummaries();
 
@@ -216,6 +228,7 @@ class ApplicationTest extends MockeryTestCase
                 'type' => 'health-and-welfare',
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
                 'progress' => 'Waiting',
+                'rejectedDate' => null,
                 'refreshId' => 5531003157
             ])
         ], 'trackingEnabled' => true], $result);
@@ -229,7 +242,7 @@ class ApplicationTest extends MockeryTestCase
         $this->apiClient->shouldReceive('httpGet')
             ->withArgs(['/v2/user/4321/applications', ['search' => null]])
             ->once()
-            ->andReturn(['applications' => [$this->modifiedLPA(5531003157, '2019-01-2', 'Checking')]]);
+            ->andReturn(['applications' => [$this->modifiedLPA(5531003157, '2019-01-2', 'Returned', '2019-01-2')]]);
 
         $result = $this->service->getLpaSummaries();
 
@@ -240,7 +253,8 @@ class ApplicationTest extends MockeryTestCase
                 'donor' => 'Hon Ayden Armstrong',
                 'type' => 'health-and-welfare',
                 'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
-                'progress' => 'Checking',
+                'progress' => 'Returned',
+                'rejectedDate' => '2019-01-2',
                 'refreshId' => 5531003157
             ])
         ], 'trackingEnabled' => true], $result);
