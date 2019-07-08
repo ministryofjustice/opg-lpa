@@ -20,6 +20,7 @@ class DashboardController extends AbstractAuthenticatedController
         //  Get the LPA list summary using a query if provided
         $lpasSummary = $this->getLpaApplicationService()->getLpaSummaries($search, $page, $lpasPerPage);
         $lpas = $lpasSummary['applications'];
+
         $lpasTotalCount = $lpasSummary['total'];
 
         //  If there are no LPAs and this is NOT a query, redirect them to create one...
@@ -219,7 +220,6 @@ class DashboardController extends AbstractAuthenticatedController
     {
         return parent::checkAuthenticated(false);
     }
-
 
     public function statusesAction()
     {
