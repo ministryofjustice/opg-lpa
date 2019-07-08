@@ -434,7 +434,7 @@ return [
                             'status-description' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/status-description/:lpa-id/:lpa-status',
+                                    'route'    => '/status-description/:lpa-id',
                                     'constraints' => [
                                         'lpa-id' => '[0-9]+',
                                     ],
