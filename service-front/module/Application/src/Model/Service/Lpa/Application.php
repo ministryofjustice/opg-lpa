@@ -47,7 +47,6 @@ class Application extends AbstractService implements ApiClientAwareInterface
 
         try {
             $result = $this->apiClient->httpGet($target);
-
             return new Lpa($result);
         } catch (ApiException $ex) {}
 
@@ -192,9 +191,9 @@ class Application extends AbstractService implements ApiClientAwareInterface
             //  Get the progress string
             $progress = 'Started';
 
-
             // If tracking is active update 'Completed' to 'Waiting for eligible applications, and add tracking update
             // id for any in 'Waiting',
+            //$refreshTracking = true;
             $refreshTracking = false;
 
             if ($lpa->getCompletedAt() instanceof DateTime) {
@@ -210,10 +209,17 @@ class Application extends AbstractService implements ApiClientAwareInterface
                         array_key_exists(Lpa::SIRIUS_PROCESSING_STATUS, $metadata) &&
                         $metadata[Lpa::SIRIUS_PROCESSING_STATUS] != null) {
                         $progress = $metadata[Lpa::SIRIUS_PROCESSING_STATUS];
+
+                    }
+                    // If the application is rejected, there should be a  rejected date
+                    if ($metadata != null &&
+                        array_key_exists(Lpa::SIRIUS_PROCESSING_STATUS, $metadata) &&
+                        ($metadata[Lpa::SIRIUS_PROCESSING_STATUS] == 'Returned') &&
+                        ($metadata[Lpa::SIRIUS_APPLICATION_REJECTED_DATE] != null)) {
+                            $applicationRejectedDate = $metadata[Lpa::SIRIUS_APPLICATION_REJECTED_DATE];
                     }
 
-                    // Only refresh tracking if the application is past completed and not at the final status
-                    if ($progress != 'Returned') {
+                    if ($progress != 'Completed') {
                         $refreshTracking = true;
                     }
                 }
@@ -229,6 +235,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
                 'type'       => $lpaType,
                 'updatedAt'  => $lpa->getUpdatedAt(),
                 'progress'   => $progress,
+                'rejectedDate' => isset($applicationRejectedDate) ? $applicationRejectedDate : null,
                 'refreshId' => $refreshTracking ? $lpa->getId() : null
             ]);
         }
