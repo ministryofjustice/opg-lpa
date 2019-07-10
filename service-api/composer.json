@@ -17,7 +17,7 @@
         "php": "^7.1",
         "aws/aws-sdk-php": "^3.0",
         "ministryofjustice/opg-lpa-datamodels": "^13.4",
-        "ministryofjustice/opg-lpa-logger": "^4.0",
+        "ministryofjustice/opg-lpa-logger": "^5.0",
         "zendframework/zend-authentication": "^2.5",
         "zendframework/zend-cache": "^2.7",
         "zendframework/zend-component-installer": "^1.1",
