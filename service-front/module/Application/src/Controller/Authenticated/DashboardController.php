@@ -258,6 +258,9 @@ class DashboardController extends AbstractAuthenticatedController
             case "waiting":
                 $viewModel->setTemplate('application/authenticated/lpa/status/status-waiting.twig');
                 return $viewModel;
+            case null:
+                $viewModel->setTemplate('application/authenticated/lpa/status/status-waiting.twig');
+                return $viewModel;
             default:
                 // If the status has no information page, redirect the user back to the dashboard
                 return $this->redirect()->toRoute('user/dashboard');
