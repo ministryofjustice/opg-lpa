@@ -253,29 +253,23 @@ class DashboardController extends AbstractAuthenticatedController
             }
         }
 
+        //  Keep these statues in workflow order
+        $statuses = ['waiting', 'received', 'checking', 'returned', 'completed'];
+        if (!in_array($lpaStatus, $statuses)) {
+            return $this->redirect()->toRoute('user/dashboard');
+        }
+
+        //  Determine what statuses should trigger the current status to display as 'done'
+        $doneStatuses = array_slice($statuses, 0, array_search($lpaStatus, $statuses));
+
         $viewModel = new ViewModel([
-            'lpa'  => $lpa
+            'lpa'          => $lpa,
+            'status'       => $lpaStatus,
+            'doneStatuses' => $doneStatuses,
         ]);
 
-        switch ($lpaStatus) {
-            case "completed":
-                $viewModel->setTemplate('application/authenticated/lpa/status/status-completed.twig');
-                return $viewModel;
-            case "returned":
-                $viewModel->setTemplate('application/authenticated/lpa/status/status-returned.twig');
-                return $viewModel;
-            case "checking":
-                $viewModel->setTemplate('application/authenticated/lpa/status/status-checking.twig');
-                return $viewModel;
-            case "received":
-                $viewModel->setTemplate('application/authenticated/lpa/status/status-received.twig');
-                return $viewModel;
-            case "waiting":
-                $viewModel->setTemplate('application/authenticated/lpa/status/status-waiting.twig');
-                return $viewModel;
-            default:
-                // If the status has no information page, redirect the user back to the dashboard
-                return $this->redirect()->toRoute('user/dashboard');
-        }
+        $viewModel->setTemplate('application/authenticated/lpa/status/status.twig');
+
+        return $viewModel;
     }
 }
