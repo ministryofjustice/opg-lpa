@@ -1,0 +1,107 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block htmlTitle %}Track your LPA - {% endblock %}
+
+{% block pageTitle %}{{ lpa.document.donor.name }}{% endblock %}
+
+{% block supportTitleBottom %}
+
+    <span class="heading-secondary">
+        {{ lpa.document.type == 'property-and-financial' ? 'Property and finance' :
+        (( lpa.document.type == 'health-and-welfare') ? 'Health and welfare' : 'Not selected') }}:
+        {{ formatLpaId(lpa.id) }}
+    </span>
+
+{% endblock %}
+
+{% block content %}
+
+    {% if status != 'completed' %}
+
+        <ol class="progress-bar">
+            <li class="progress-bar__steps {{ status == 'waiting' ? 'current-waiting' : '' }}">
+                <span class="{{ 'waiting' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
+                <span class="progress-bar__steps--text">Waiting</span>
+            </li>
+            <li class="progress-bar__steps {{ status == 'received' ? 'current-received' : '' }}">
+                <span class="{{ 'received' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
+                <span class="progress-bar__steps--text">Received</span>
+            </li>
+            <li class="progress-bar__steps {{ status == 'checking' ? 'current-checking' : '' }}">
+                <span class="{{ 'checking' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
+                <span class="progress-bar__steps--text">Checking</span>
+            </li>
+            <li class="progress-bar__steps {{ status == 'returned' ? 'current-returned' : '' }}">
+                <span class="{{ 'returned' in doneStatuses ? 'progress-bar__steps--completed' : 'progress-bar__steps--numbers' }}"></span>
+                <span class="progress-bar__steps--text">Returned</span>
+            </li>
+        </ol>
+
+    {% endif %}
+
+    <div class="opg-status--{{ status }}">
+
+        {% if status == 'checking' %}
+
+            <div>
+                <h2 class="heading-xlarge">We’re checking the LPA</h2>
+            </div>
+            <div>
+                <p class="lede">We’re checking the LPA to make sure it’s been made correctly. Once we’ve checked it, we'll write to the donor, attorneys and correspondent to let them know what happens next.</p>
+                <p>If there is something that must be corrected before the LPA can be registered, we'll contact {{ lpa.document.donor.name }}.</p>
+                <p>The law says there must be a 4 week wait between the date OPG sent the ‘Notice of application’ letter to the donor and attorneys and the date the LPA is registered.</p>
+            </div>
+
+        {% elseif status == 'waiting' %}
+
+            <div>
+                <h2 class="heading-xlarge">We're waiting to receive the LPA</h2>
+            </div>
+            <div>
+                <p class="lede">You've completed the online application and we're now waiting to receive the LPA.</p>
+                <p>If you have not posted the LPA to us yet, <a href="/contact#postal-address">here's the address to send it to</a>.</p>
+                <p>Please take postage and processing time into account. Allow 10 working days for us to receive the LPA, enter it onto our system and update this message.</p>
+                <p>If you think we should have received your LPA by now, please call 0300 456 0300</p>
+                <p>Opening times: Monday, Tuesday, Thursday, Friday 9am to 5pm. Wednesday 10am to 5pm</p>
+            </div>
+
+        {% elseif status == 'returned' %}
+
+            <div>
+                <h2 class="heading-xlarge">The LPA has been returned</h2>
+            </div>
+            <div>
+                <p class="lede">We've written to the donor and the attorneys to let them know whether we were able to register the LPA.</p>
+                <p>We have returned the LPA to {{ lpa.document.donor.name }}. This will be either the registered LPA or the unregistered LPA along with a letter explaining why we could not register it.</p>
+                <p>The letters were sent by second class post on  {{ lpa.metadata['application-rejected-date']|date("d F Y") }}.</p>
+                <p>If they have not arrived after 10 working days, please call 0300 456 0300.</p>
+                <p>Opening times: Monday, Tuesday, Thursday, Friday 9am to 5pm. Wednesday 10am to 5pm.</p>
+            </div>
+
+        {% elseif status == 'received' %}
+
+            <div>
+                <h2 class="heading-xlarge">We’ve received the LPA</h2>
+            </div>
+            <div>
+                <p class="lede">When we've checked the LPA, we'll send a letter to the donor, the attorneys and the correspondent to let them know what happens next.</p>
+                <p>It will take 8 to 10 weeks to register the LPA if there are no mistakes in the application.</p>
+            </div>
+
+        {% elseif status == 'completed' %}
+
+            <div>
+                <h2 class="heading-xlarge">You have completed the LPA application</h2>
+            </div>
+            <div>
+                <p class="lede">This LPA was made before it was possible to track the progress of an LPA application online.</p>
+                <p class="lede">If you have not posted the LPA to us yet, <a href="/contact#postal-address">here's the address to send it to</a>.</p>
+            </div>
+
+        {% endif %}
+
+        <div>
+            <a href="/user/dashboard">Back to your LPAs</a>
+        </div>
+    </div>
+{% endblock content %}
