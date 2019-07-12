@@ -217,7 +217,7 @@ class Application extends AbstractService implements ApiClientAwareInterface
                         ($metadata[Lpa::SIRIUS_PROCESSING_STATUS] == 'Returned') &&
                         ($metadata[Lpa::APPLICATION_REJECTED_DATE] != null)) {
                             $applicationRejectedDate = $metadata[Lpa::APPLICATION_REJECTED_DATE];
-
+                    }
 
                     if ($progress != 'Completed') {
                         $refreshTracking = true;
