@@ -7,6 +7,8 @@ use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\User\Details as UserService;
+use Exception;
+use http\Client\Response;
 use Opg\Lpa\DataModel\User\User;
 use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\AbstractPluginManager;
@@ -172,9 +174,8 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     }
 
     /**
-     * Return the track date from config
-     *
      * @return DateTime
+     *
      */
     public function getTrackFromDate()
     {
