@@ -74,6 +74,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         $this->lpaApplicationService = $lpaApplicationService;
         $this->userService = $userService;
 
+
         //  If there is a user identity set up the user - if this is missing the request will be bounced in the onDispatch function
         if ($authenticationService->hasIdentity()) {
             $this->identity = $authenticationService->getIdentity();
@@ -168,6 +169,17 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         }
 
         return $view;
+    }
+
+    /**
+     * Return the track date from config
+     *
+     * @return DateTime
+     */
+    public function getTrackFromDate()
+    {
+        $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
+        return $trackFromDate;
     }
 
     /**
