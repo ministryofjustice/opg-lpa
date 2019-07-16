@@ -7,10 +7,10 @@ workflows:
       #     name: docker_build_lpa_api
       #     ecr_repository_name: online-lpa/api
       #     github_repository_name: opg-lpa-api
-      - infrastructure_and_deployment/lint_terraform_fmt:
-          name: lint terraform with fmt
-      - infrastructure_and_deployment/validate_terraform:
-          name: validate terraform
+      # - infrastructure_and_deployment/lint_terraform_fmt:
+      #     name: lint terraform with fmt
+      # - infrastructure_and_deployment/validate_terraform:
+      #     name: validate terraform
 orbs:
   build_containers_and_push_to_ecr:
     commands:
