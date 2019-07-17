@@ -431,19 +431,6 @@ return [
                                     ],
                                 ],
                             ],
-                            'status-description' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/status-description/:lpa-id',
-                                    'constraints' => [
-                                        'lpa-id' => '[0-9]+',
-                                    ],
-                                    'defaults' => [
-                                        'controller' => 'Authenticated\DashboardController',
-                                        'action'     => 'status-description',
-                                    ],
-                                ],
-                            ],
                             'terms-changed' => [
                                 'type'    => 'Segment',
                                 'options' => [
@@ -1089,6 +1076,16 @@ return [
                             'defaults' => [
                                 'controller' => 'Authenticated\Lpa\ReuseDetailsController',
                                 'action' => 'index',
+                            ],
+                        ],
+                    ],
+                    'status' => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/status',
+                            'defaults' => [
+                                'controller' => 'Authenticated\Lpa\StatusController',
+                                'action'     => 'index',
                             ],
                         ],
                     ],
