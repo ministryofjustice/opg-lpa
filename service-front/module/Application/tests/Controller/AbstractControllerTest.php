@@ -259,6 +259,9 @@ abstract class AbstractControllerTest extends MockeryTestCase
                         'address' => 'unit@test.com',
                     ]
                 ],
+            ],
+            'processing-status' => [
+                'track-from-date' => '2017-01-01'
             ]
         ];
 
