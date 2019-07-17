@@ -7,8 +7,6 @@ use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\User\Details as UserService;
-use Exception;
-use http\Client\Response;
 use Opg\Lpa\DataModel\User\User;
 use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\AbstractPluginManager;
@@ -75,7 +73,6 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
 
         $this->lpaApplicationService = $lpaApplicationService;
         $this->userService = $userService;
-
 
         //  If there is a user identity set up the user - if this is missing the request will be bounced in the onDispatch function
         if ($authenticationService->hasIdentity()) {
@@ -171,16 +168,6 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         }
 
         return $view;
-    }
-
-    /**
-     * @return DateTime
-     *
-     */
-    public function getTrackFromDate()
-    {
-        $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
-        return $trackFromDate;
     }
 
     /**
