@@ -68,6 +68,7 @@ class FormFlowChecker
         'lpa/summary'                                   => 'isInstructionsAccessible',
         'lpa/view-docs'                                 => 'isViewDocsAccessible',
         'lpa/reuse-details'                             => 'isReuseDetailsAccessible',
+        'lpa/status'                                    => 'isStatusAccessible',
     ];
 
     private $nextRouteMap = [
@@ -204,7 +205,8 @@ class FormFlowChecker
             && strpos($currentRouteName, 'lpa/date-check') === false
             && $currentRouteName != 'lpa/download'
             && $currentRouteName != 'lpa/download/check'
-            && $currentRouteName != 'lpa/download/file') {
+            && $currentRouteName != 'lpa/download/file'
+            && $currentRouteName != 'lpa/status'){
             return 'lpa/view-docs';
         }
 
@@ -792,6 +794,12 @@ class FormFlowChecker
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
     private function isReuseDetailsAccessible()
+    {
+        return true;
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+    private function isStatusAccessible()
     {
         return true;
     }
