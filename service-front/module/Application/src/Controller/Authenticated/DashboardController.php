@@ -233,7 +233,7 @@ class DashboardController extends AbstractAuthenticatedController
     public function statusDescriptionAction()
     {
         $lpaStatus = null;
-        $trackFromDate = $this->getTrackFromDate();
+        $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
         $trackingEnabled = $trackFromDate <= new DateTime('now');
 
         $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
