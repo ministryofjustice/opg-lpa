@@ -163,7 +163,7 @@ class ApplicationTest extends MockeryTestCase
             $lpaJson = str_replace(
                 '"metadata" : {',
                 '"metadata" : {
-                 "' . Lpa::SIRIUS_APPLICATION_REJECTED_DATE . '" : "' . $rejectedDate . '",',
+                 "' . Lpa::APPLICATION_REJECTED_DATE . '" : "' . $rejectedDate . '",',
                 $lpaJson
             );
         }

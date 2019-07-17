@@ -4,7 +4,6 @@ namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\DashboardController;
 use ApplicationTest\Controller\AbstractControllerTest;
-use ApplicationTest\Library\View\Model\JsonModelTest;
 use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;

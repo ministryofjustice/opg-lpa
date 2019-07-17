@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
+use DateTime;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
@@ -232,11 +233,25 @@ class DashboardController extends AbstractAuthenticatedController
     public function statusDescriptionAction()
     {
         $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
-
-        $lpaStatusDetails = $this->getLpaApplicationService()->getStatuses($lpaId);
-        $lpaStatus = strtolower($lpaStatusDetails[$lpaId]['status']);
-
         $lpa = $this->getLpaApplicationService()->getApplication($lpaId);
+
+        $lpaStatus = null;
+
+        if ($lpa->getCompletedAt() instanceof DateTime) {
+            $lpaStatus = 'completed';
+
+            $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
+
+            if ($trackFromDate <= new DateTime('now') && $trackFromDate <= $lpa->getCompletedAt()) {
+                $lpaStatus = 'waiting';
+
+                $lpaStatusDetails = $this->getLpaApplicationService()->getStatuses($lpaId);
+
+                if ($lpaStatusDetails[$lpaId]['found'] == true) {
+                    $lpaStatus = strtolower($lpaStatusDetails[$lpaId]['status']);
+                }
+            }
+        }
 
         $viewModel = new ViewModel([
             'lpa'  => $lpa
@@ -256,9 +271,6 @@ class DashboardController extends AbstractAuthenticatedController
                 $viewModel->setTemplate('application/authenticated/lpa/status/status-received.twig');
                 return $viewModel;
             case "waiting":
-                $viewModel->setTemplate('application/authenticated/lpa/status/status-waiting.twig');
-                return $viewModel;
-            case null:
                 $viewModel->setTemplate('application/authenticated/lpa/status/status-waiting.twig');
                 return $viewModel;
             default:
