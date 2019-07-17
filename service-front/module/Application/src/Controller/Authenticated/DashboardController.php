@@ -232,24 +232,25 @@ class DashboardController extends AbstractAuthenticatedController
 
     public function statusDescriptionAction()
     {
-        $lpaStatus = null;
-        $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
-        $trackingEnabled = $trackFromDate <= new DateTime('now');
-
         $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
         $lpa = $this->getLpaApplicationService()->getApplication($lpaId);
 
-        $lpaStatusDetails = $this->getLpaApplicationService()->getStatuses($lpaId);
-        if($lpaStatusDetails[$lpaId]['found'] == true) {
-            $lpaStatus = strtolower($lpaStatusDetails[$lpaId]['status']);
-        }
+        $lpaStatus = null;
 
-        if(is_null($lpaStatus) && $trackingEnabled && $trackFromDate <= $lpa->getCompletedAt()){
-            $lpaStatus='waiting';
-        }
+        if ($lpa->getCompletedAt() instanceof DateTime) {
+            $lpaStatus = 'completed';
 
-        if(is_null($lpaStatus) && !$trackingEnabled && $lpa->getCompletedAt() instanceof DateTime){
-            $lpaStatus='completed';
+            $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
+
+            if ($trackFromDate <= new DateTime('now') && $trackFromDate <= $lpa->getCompletedAt()) {
+                $lpaStatus = 'waiting';
+
+                $lpaStatusDetails = $this->getLpaApplicationService()->getStatuses($lpaId);
+
+                if ($lpaStatusDetails[$lpaId]['found'] == true) {
+                    $lpaStatus = strtolower($lpaStatusDetails[$lpaId]['status']);
+                }
+            }
         }
 
         $viewModel = new ViewModel([
