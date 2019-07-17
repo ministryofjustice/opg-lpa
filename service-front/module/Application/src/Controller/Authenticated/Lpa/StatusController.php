@@ -14,9 +14,7 @@ class StatusController extends AbstractLpaController
 {
     public function indexAction()
     {
-        $lpaId = $this->getEvent()->getRouteMatch()->getParam('lpa-id');
-        $lpa = $this->getLpaApplicationService()->getApplication($lpaId);
-
+        $lpa = $this->getLpa();
         $lpaStatus = null;
 
         if ($lpa->getCompletedAt() instanceof DateTime) {
@@ -27,10 +25,10 @@ class StatusController extends AbstractLpaController
             if ($trackFromDate <= new DateTime('now') && $trackFromDate <= $lpa->getCompletedAt()) {
                 $lpaStatus = 'waiting';
 
-                $lpaStatusDetails = $this->getLpaApplicationService()->getStatuses($lpaId);
+                $lpaStatusDetails = $this->getLpaApplicationService()->getStatuses($lpa->getId());
 
-                if ($lpaStatusDetails[$lpaId]['found'] == true) {
-                    $lpaStatus = strtolower($lpaStatusDetails[$lpaId]['status']);
+                if ($lpaStatusDetails[$lpa->getId()]['found'] == true) {
+                    $lpaStatus = strtolower($lpaStatusDetails[$lpa->getId()]['status']);
                 }
             }
         }
