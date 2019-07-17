@@ -6,6 +6,10 @@ use Application\Controller\AbstractLpaController;
 use Zend\View\Model\ViewModel;
 use DateTime;
 
+/**
+ * Class StatusController
+ * @package Application\Controller\Authenticated\Lpa
+ */
 class StatusController extends AbstractLpaController
 {
     public function indexAction()
@@ -32,7 +36,7 @@ class StatusController extends AbstractLpaController
         }
 
         //  Keep these statues in workflow order
-        $statuses = ['waiting', 'received', 'checking', 'returned', 'completed'];
+        $statuses = ['completed', 'waiting', 'received', 'checking', 'returned'];
         if (!in_array($lpaStatus, $statuses)) {
             return $this->redirect()->toRoute('user/dashboard');
         }
@@ -40,14 +44,10 @@ class StatusController extends AbstractLpaController
         //  Determine what statuses should trigger the current status to display as 'done'
         $doneStatuses = array_slice($statuses, 0, array_search($lpaStatus, $statuses));
 
-        $viewModel = new ViewModel([
+        return new ViewModel([
             'lpa'          => $lpa,
             'status'       => $lpaStatus,
             'doneStatuses' => $doneStatuses,
         ]);
-
-        $viewModel->setTemplate('application/authenticated/lpa/status/status.twig');
-
-        return $viewModel;
     }
 }
