@@ -1,0 +1,213 @@
+version: 2.1
+
+workflows:
+  pr-build-and-test:
+    jobs:
+      # - build_containers_and_push_to_ecr/checkout_docker_build_push:
+      #     name: docker_build_lpa_api
+      #     ecr_repository_name: online-lpa/api
+      #     github_repository_name: opg-lpa-api
+      - infrastructure_and_deployment/lint_terraform_fmt:
+          name: lint terraform with fmt
+      # - infrastructure_and_deployment/validate_terraform:
+      #     name: validate terraform
+orbs:
+  build_containers_and_push_to_ecr:
+    commands:
+      install_aws_cli:
+        steps:
+          - run:
+              name: Install AWS CLI
+              command: sudo pip3 install awscli --upgrade
+      docker_login:
+        steps:
+          - run:
+              name: Login to Private Docker Registry
+              command: |
+                docker login https://registry.service.opg.digital -u $DOCKER_USER -p $DOCKER_PASS
+      ecr_login:
+        steps:
+          - run:
+              name: Login to ECR
+              command: |
+                temp_role=$(aws sts assume-role --role-arn arn:aws:iam::311462405659:role/ci --role-session-name ci)
+                export AWS_ACCESS_KEY_ID=$(echo $temp_role | jq .Credentials.AccessKeyId | xargs)
+                export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | jq .Credentials.SecretAccessKey | xargs)
+                export AWS_SESSION_TOKEN=$(echo $temp_role | jq .Credentials.SessionToken | xargs)
+                eval $(aws ecr get-login --no-include-email --region=eu-west-1)
+    executors:
+      python:
+        docker: 
+          - image: circleci/python
+    jobs:
+      checkout_docker_build_push:
+        executor: python
+        parameters:
+          ecr_url:
+            type: string
+            default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com  
+          ecr_repository_name:
+            type: string
+          github_repository_name:
+            type: string
+        steps:
+          - checkout
+          - install_aws_cli
+          - setup_remote_docker:
+              version: 18.06.0-ce
+              docker_layer_caching: false
+          - run:
+              name: checkout lpa repository
+              command: |
+                git clone --branch LPA-3261-lpa-front-container-for-ecs git@github.com:ministryofjustice/<< parameters.github_repository_name >> ../<< parameters.github_repository_name >>
+          - run:
+              name: Build
+              command: |
+                cd ../<< parameters.github_repository_name >>
+                docker build -f Dockerfile.ecs --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name >> .
+          - ecr_login
+          - run:
+              name: Push container
+              command: |
+                export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+                docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name >> << parameters.ecr_url >>/<< parameters.ecr_repository_name >>:latest
+                docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name >>:latest << parameters.ecr_url >>/<< parameters.ecr_repository_name >>:$CIRCLE_BRANCH-$SHORT_HASH
+                docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name >>
+
+  infrastructure_and_deployment:
+    commands:
+      install_aws_cli:
+        steps:
+          - run:
+              name: Install AWS CLI
+              command: sudo pip3 install awscli --upgrade
+    executors:
+      python:
+        docker: [image: circleci/python]
+      python-browsers:
+        docker: [image: circleci/python:3.6-stretch-browsers]
+      terraform:
+        docker: [image: hashicorp/terraform:0.12.3]
+    jobs:
+      #----------------------------------------------------
+      # Terraform
+      lint_terraform_fmt:
+        executor: terraform
+        steps:
+          - checkout
+          - run:
+              name: terraform lint
+              command: terraform fmt -diff -check -recursive
+
+      validate_terraform:
+        #
+        # Validate the Terraform with true 
+        #
+        executor: terraform
+        parameters:
+          container_version:
+            description: Container version
+            type: string
+            default: ${CIRCLE_BRANCH}-${CIRCLE_BUILD_NUM}
+        steps:
+          - checkout
+          - run:
+              name: Lint Account Terraform
+              command: |
+                terraform --version
+                cd project/terraform/terraform_account
+                terraform init -lock-timeout=300s
+                export TF_WORKSPACE=development >> $BASH_ENV
+                echo $TF_WORKSPACE
+                terraform validate
+          # - run:
+          #     name: Lint Environment Terraform
+          #     command: |
+          #       ENV_NAME=<<parameters.workspace>>
+          #       export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+          #       echo $SHORT_HASH
+          #       cd project/terraform/terraform_environment
+          #       terraform init -lock-timeout=300s
+          #       export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+          #       echo $TF_WORKSPACE
+          #       terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
+
+      apply_account_terraform:
+        #
+        # Apply the shared terraform configuration. This:
+        #   - Updates the account infrastructure;
+        #
+        executor: terraform
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: development
+        environment:
+          TF_WORKSPACE: "<<parameters.workspace>>"
+        steps:
+          - checkout
+          - run:
+              name: Apply Account Terraform
+              command: |
+                cd terraform/terraform_account
+                terraform init -lock-timeout=300s
+                terraform apply -lock-timeout=300s --auto-approve
+      apply_environment_terraform:
+        #
+        # Apply the environment terraform configuration. This:
+        #   - Updates per environment infrastructure; and
+        #   - Triggers a deploy of the updated container (if changed)
+        #
+        executor: terraform
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        steps:
+          - checkout
+          - run:
+              name: Apply Environment Terraform
+              command: |
+                ENV_NAME=<<parameters.workspace>>
+                export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+                echo $SHORT_HASH
+                cd terraform/terraform_environment
+                terraform init -lock-timeout=300s
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE
+                terraform apply -lock-timeout=300s --auto-approve -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
+          #       mv cluster_config.json /tmp/
+          # - persist_to_workspace:
+          #     root: /tmp
+          #     paths:
+          #       - cluster_config.json
+
+      destroy_dev_environment:
+        #
+        # Destroys a development environment after testing and approval
+        # Cannot be run on master branch
+        #
+        executor: terraform
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        steps:
+          - checkout
+          - run:
+              name: Destroy Development Environment
+              command: |
+                ENV_NAME=<<parameters.workspace>>
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE
+                if [ "${CIRCLE_BRANCH}" != "master" ]; then
+                  cd terraform/terraform_environment
+                  terraform init -lock-timeout=300s
+                  export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                  echo $TF_WORKSPACE
+                  terraform destroy -lock-timeout=300s -auto-approve
+                fi      
+
