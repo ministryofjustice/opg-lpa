@@ -271,5 +271,5 @@ class DashboardController extends AbstractAuthenticatedController
         $viewModel->setTemplate('application/authenticated/lpa/status/status.twig');
 
         return $viewModel;
-    }
+   }
 }

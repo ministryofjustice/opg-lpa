@@ -315,7 +315,7 @@ class DashboardControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('getUri')->never();
 
         $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['login', [ 'state'=>'timeout' ]])->andReturn($response)->once();
+            ->withArgs(['login', ['state' => 'timeout']])->andReturn($response)->once();
 
         Container::setDefaultManager($this->sessionManager);
         $result = $controller->testCheckAuthenticated(true);
@@ -337,78 +337,10 @@ class DashboardControllerTest extends AbstractControllerTest
 
         $this->lpaApplicationService->shouldReceive('getStatuses')
             ->once()
-            ->andReturn(['1' => ['found'=>true, 'status'=>'Concluded']]);
+            ->andReturn(['1' => ['found' => true, 'status' => 'Concluded']]);
 
         $result = $controller->statusesAction();
 
-        $this->assertEquals(new JsonModel(['1' => ['found'=>true, 'status'=>'Concluded']]), $result);
-    }
-
-    /**
-     * @param $status
-     * @param $template
-     * @dataProvider  statusAndTemplateProvider
-     */
-    public function testStatusDescriptionActionWithValidStatus($status, $template)
-    {
-        /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
-
-        $event = new MvcEvent();
-        $routeMatch = Mockery::mock(RouteMatch::class);
-        $event->setRouteMatch($routeMatch);
-        $controller->setEvent($event);
-        $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
-
-        $this->lpaApplicationService->shouldReceive('getStatuses')
-            ->once()
-            ->andReturn(['1' => ['found'=>true, 'status'=>$status]]);
-
-        $lpa = FixturesData::getPfLpa();
-        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
-
-        $result = $controller->statusDescriptionAction();
-
-        $this->assertInstanceOf(ViewModel::class, $result);
-
-        $this->assertEquals($template, $result->getTemplate());
-    }
-
-    public function statusAndTemplateProvider()
-    {
-        return[
-            ['waiting','application/authenticated/lpa/status/status-waiting.twig'],
-            ['received','application/authenticated/lpa/status/status-received.twig'],
-            ['checking','application/authenticated/lpa/status/status-checking.twig'],
-            ['returned','application/authenticated/lpa/status/status-returned.twig'],
-            ['completed','application/authenticated/lpa/status/status-completed.twig']
-        ];
-    }
-
-    public function testStatusDescriptionActionInvalidStatus()
-    {
-        /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
-
-        $event = new MvcEvent();
-        $routeMatch = Mockery::mock(RouteMatch::class);
-        $event->setRouteMatch($routeMatch);
-        $controller->setEvent($event);
-        $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
-
-        $status = "InvalidStatus";
-        $this->lpaApplicationService->shouldReceive('getStatuses')
-            ->once()
-            ->andReturn(['1' => ['found'=>true, 'status'=>$status]]);
-
-        $lpa = FixturesData::getPfLpa();
-        $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([1])->andReturn($lpa)->once();
-
-        $response = new Response();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
-
-        $result = $controller->statusDescriptionAction();
-
-        $this->assertEquals($response, $result);
+        $this->assertEquals(new JsonModel(['1' => ['found' => true, 'status' => 'Concluded']]), $result);
     }
 }
