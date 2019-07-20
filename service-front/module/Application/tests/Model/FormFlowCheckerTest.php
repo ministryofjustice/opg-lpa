@@ -178,6 +178,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/download',
             'lpa/download/file',
             'lpa/download/check',
+            'lpa/status'
         ];
 
         //  Set up the LPA
@@ -204,6 +205,7 @@ class FormFlowCheckerTest extends MockeryTestCase
         $permittedRoutes = [
             'lpa',
             'lpa-type-no-id',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/form-type', $permittedRoutes);
@@ -220,6 +222,8 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/form-type',
             'lpa/donor',
             'lpa/donor/add',
+            'lpa/status',
+
         ];
 
         $this->runAssertions('lpa/donor', $permittedRoutes);
@@ -239,6 +243,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/donor/add',
             'lpa/donor/edit',
             'lpa/when-lpa-starts',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/when-lpa-starts', $permittedRoutes);
@@ -258,6 +263,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/donor/add',
             'lpa/donor/edit',
             'lpa/life-sustaining',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/life-sustaining', $permittedRoutes);
@@ -281,6 +287,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/primary-attorney',
             'lpa/primary-attorney/add',
             'lpa/primary-attorney/add-trust',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/primary-attorney', $permittedRoutes);
@@ -304,6 +311,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/primary-attorney',
             'lpa/primary-attorney/add',
             'lpa/primary-attorney/add-trust',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/primary-attorney', $permittedRoutes);
@@ -344,6 +352,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/primary-attorney/edit',
             'lpa/primary-attorney/confirm-delete',
             'lpa/primary-attorney/delete',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/how-primary-attorneys-make-decision', $permittedRoutes);
@@ -374,6 +383,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/replacement-attorney',
             'lpa/replacement-attorney/add',
             'lpa/replacement-attorney/add-trust',
+            'lpa/status',
         ];
 
         //  Set any special cases for redirects
@@ -447,6 +457,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/replacement-attorney/edit',
             'lpa/replacement-attorney/confirm-delete',
             'lpa/replacement-attorney/delete',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/when-replacement-attorney-step-in', $permittedRoutes);
@@ -487,6 +498,8 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/replacement-attorney/confirm-delete',
             'lpa/replacement-attorney/delete',
             'lpa/when-replacement-attorney-step-in',
+            'lpa/status',
+
         ];
 
         $this->runAssertions('lpa/how-replacement-attorneys-make-decision', $permittedRoutes);
@@ -531,6 +544,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/how-replacement-attorneys-make-decision',
             'lpa/certificate-provider',
             'lpa/certificate-provider/add',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/certificate-provider', $permittedRoutes);
@@ -581,6 +595,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/certificate-provider/delete',
             'lpa/people-to-notify',
             'lpa/people-to-notify/add',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/people-to-notify', $permittedRoutes);
@@ -636,6 +651,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/people-to-notify/confirm-delete',
             'lpa/people-to-notify/delete',
             'lpa/summary',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/instructions', $permittedRoutes);
@@ -696,6 +712,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/instructions',
             'lpa/date-check',
             'lpa/date-check/valid',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/applicant', $permittedRoutes);
@@ -760,6 +777,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/applicant',
             'lpa/correspondent',
             'lpa/correspondent/edit',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/correspondent', $permittedRoutes);
@@ -825,6 +843,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/applicant',
             'lpa/correspondent',
             'lpa/correspondent/edit',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/who-are-you', $permittedRoutes);
@@ -892,6 +911,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/correspondent',
             'lpa/correspondent/edit',
             'lpa/who-are-you',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/repeat-application', $permittedRoutes);
@@ -961,6 +981,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/correspondent/edit',
             'lpa/who-are-you',
             'lpa/repeat-application',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/fee-reduction', $permittedRoutes);
@@ -1036,6 +1057,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/checkout/pay',
             'lpa/checkout/pay/response',
             'lpa/checkout/confirm',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/checkout', $permittedRoutes);
@@ -1116,6 +1138,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/checkout/pay/response',
             'lpa/checkout/confirm',
             'lpa/view-docs',
+            'lpa/status',
         ];
 
         $this->runAssertions('lpa/complete', $permittedRoutes);
@@ -1131,6 +1154,7 @@ class FormFlowCheckerTest extends MockeryTestCase
             'lpa/download/file',
             'lpa/download/check',
             'lpa/reuse-details',
+            'lpa/status'
         ]);
 
         //  Set up any special cases for all tests against specific types of LPA
