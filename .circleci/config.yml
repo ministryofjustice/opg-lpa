@@ -3,10 +3,12 @@ version: 2.1
 workflows:
   pr-build-and-test:
     jobs:
-      # - build_containers_and_push_to_ecr/checkout_docker_build_push:
-      #     name: docker_build_lpa_api
-      #     ecr_repository_name: online-lpa/api
-      #     github_repository_name: opg-lpa-api
+      - build_containers_and_push_to_ecr/checkout_docker_build_push:
+          name: docker_build_lpa_api
+          ecr_repository_name: online-lpa/api
+          github_repository_name: opg-lpa-api
+          github_branch_name: LPA-3289-ecs-container
+          dockerfile_path: docker/app/Dockerfile
       - infrastructure_and_deployment/lint_terraform_fmt:
           name: lint terraform with fmt
       # - infrastructure_and_deployment/validate_terraform:
@@ -50,6 +52,12 @@ orbs:
             type: string
           github_repository_name:
             type: string
+          github_branch_name:
+            type: string
+            default: master
+          dockerfile_path:
+            type: string
+            default: Dockerfile.ecs
         steps:
           - checkout
           - install_aws_cli
@@ -59,12 +67,13 @@ orbs:
           - run:
               name: checkout lpa repository
               command: |
-                git clone --branch LPA-3261-lpa-front-container-for-ecs git@github.com:ministryofjustice/<< parameters.github_repository_name >> ../<< parameters.github_repository_name >>
+                git clone --branch << parameters.github_branch_name >> git@github.com:ministryofjustice/<< parameters.github_repository_name >>
+                #  ../<< parameters.github_repository_name >>
           - run:
               name: Build
               command: |
-                cd ../<< parameters.github_repository_name >>
-                docker build -f Dockerfile.ecs --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name >> .
+                # cd ../<< parameters.github_repository_name >>
+                docker build -f << parameters.github_repository_name >>/<< parameters.dockerfile_path >> --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name >> .
           - ecr_login
           - run:
               name: Push container
