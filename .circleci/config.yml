@@ -66,9 +66,12 @@ orbs:
               command: |
                 git clone --branch << parameters.github_branch_name >> git@github.com:ministryofjustice/<< parameters.github_repository_name >>
           - run:
-              name: Build
+              name: Build web container
               command: |
                 docker build -f << parameters.github_repository_name >>/docker/web/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web .
+          - run:
+              name: Build app container
+              command: |
                 docker build -f << parameters.github_repository_name >>/docker/app/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
           - ecr_login
           - run:
