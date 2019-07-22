@@ -14,7 +14,7 @@ services:
 
   api-app:
     container_name: api-app
-    image: api-app
+    image: api_app
     build:
       context: .
       dockerfile: opg-lpa-api/docker/app/Dockerfile
