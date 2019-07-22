@@ -126,11 +126,11 @@ orbs:
           - run:
               name: Build web container
               command: |
-                docker-compose build << parameters.service_name >>_web
+                docker-compose build << parameters.service_name >>-web
           - run:
               name: Build app container
               command: |
-                docker-compose build << parameters.service_name >>_app
+                docker-compose build << parameters.service_name >>-app
           - ecr_login
           - run:
               name: Push web container
