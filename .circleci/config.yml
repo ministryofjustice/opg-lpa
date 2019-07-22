@@ -3,10 +3,11 @@ version: 2.1
 workflows:
   pr-build-and-test:
     jobs:
-      # - build_containers_and_push_to_ecr/checkout_docker_build_push:
-      #     name: docker_build_lpa_api
-      #     ecr_repository_name: online-lpa/api
-      #     github_repository_name: opg-lpa-api
+      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+          name: docker_build_lpa_api
+          ecr_repository_name_prefix: online-lpa/api
+          github_repository_name: opg-lpa-api
+          github_branch_name: LPA-3289-ecs-container
       - infrastructure_and_deployment/lint_terraform_fmt:
           name: lint terraform with fmt
       # - infrastructure_and_deployment/validate_terraform:
@@ -19,12 +20,6 @@ orbs:
           - run:
               name: Install AWS CLI
               command: sudo pip3 install awscli --upgrade
-      docker_login:
-        steps:
-          - run:
-              name: Login to Private Docker Registry
-              command: |
-                docker login https://registry.service.opg.digital -u $DOCKER_USER -p $DOCKER_PASS
       ecr_login:
         steps:
           - run:
@@ -40,16 +35,20 @@ orbs:
         docker: 
           - image: circleci/python
     jobs:
-      checkout_docker_build_push:
+      checkout_docker_build_push_web-app:
         executor: python
         parameters:
           ecr_url:
             type: string
             default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com  
-          ecr_repository_name:
+          ecr_repository_name_prefix:
             type: string
+            description: The ecr repo name up to _app or _web. These will be assumed to be present and added by the job.
           github_repository_name:
             type: string
+          github_branch_name:
+            type: string
+            default: master
         steps:
           - checkout
           - install_aws_cli
@@ -59,20 +58,32 @@ orbs:
           - run:
               name: checkout lpa repository
               command: |
-                git clone --branch LPA-3261-lpa-front-container-for-ecs git@github.com:ministryofjustice/<< parameters.github_repository_name >> ../<< parameters.github_repository_name >>
+                git clone --branch << parameters.github_branch_name >> git@github.com:ministryofjustice/<< parameters.github_repository_name >>
           - run:
-              name: Build
+              name: Build web container
               command: |
-                cd ../<< parameters.github_repository_name >>
-                docker build -f Dockerfile.ecs --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name >> .
+                docker build -f << parameters.github_repository_name >>/docker/web/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web .
+          - run:
+              name: Build app container
+              command: |
+                docker build -f << parameters.github_repository_name >>/docker/app/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
           - ecr_login
           - run:
-              name: Push container
+              name: Push web container
+              command: |
+                if [ << parameters.github_repository_name >> != "opg-lpa-pdf" ]; then
+                  export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+                  docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:latest
+                  docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:latest << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:$CIRCLE_BRANCH-$SHORT_HASH
+                  docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web
+                fi
+          - run:
+              name: Push app container
               command: |
                 export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
-                docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name >> << parameters.ecr_url >>/<< parameters.ecr_repository_name >>:latest
-                docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name >>:latest << parameters.ecr_url >>/<< parameters.ecr_repository_name >>:$CIRCLE_BRANCH-$SHORT_HASH
-                docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name >>
+                docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
+                docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:$CIRCLE_BRANCH-$SHORT_HASH
+                docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app
 
   infrastructure_and_deployment:
     commands:
