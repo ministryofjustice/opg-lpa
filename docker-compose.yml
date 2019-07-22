@@ -1,0 +1,21 @@
+version: "2.1"
+
+services:
+
+  # ---------------------------
+  # API
+
+  api-web:
+    container_name: api-web
+    image: api_web
+    build:
+      context: .
+      dockerfile: opg-lpa-api/docker/web/Dockerfile
+
+  api-app:
+    container_name: api-app
+    image: api-app
+    build:
+      context: .
+      dockerfile: opg-lpa-api/docker/app/Dockerfile
+
