@@ -8,6 +8,13 @@ workflows:
           ecr_repository_name_prefix: online-lpa/api
           github_repository_name: opg-lpa-api
           github_branch_name: LPA-3289-ecs-container
+      - build_containers_and_push_to_ecr/checkout_docker-compose_build_push_web-app:
+          name: docker_build_lpa_api
+          service_name: api
+          ecr_repository_name_prefix: online-lpa/api
+          github_repository_name: opg-lpa-api
+          github_branch_name: LPA-3289-ecs-container
+
       - infrastructure_and_deployment/lint_terraform_fmt:
           name: lint terraform with fmt
       # - infrastructure_and_deployment/validate_terraform:
@@ -87,6 +94,59 @@ orbs:
               name: Push app container
               command: |
                 export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+                docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
+                docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:$CIRCLE_BRANCH-$SHORT_HASH
+                docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app
+      checkout_docker-compose_build_push_web-app:
+        executor: python
+        parameters:
+          ecr_url:
+            type: string
+            default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com  
+          ecr_repository_name_prefix:
+            type: string
+            description: The ecr repo name up to _app or _web. These will be assumed to be present and added by the job.
+          github_repository_name:
+            type: string
+          github_branch_name:
+            type: string
+            default: master
+          service_name:
+            type: string
+        steps:
+          - checkout
+          - install_aws_cli
+          - setup_remote_docker:
+              version: 18.06.0-ce
+              docker_layer_caching: false
+          - run:
+              name: checkout lpa repository
+              command: |
+                git clone --branch << parameters.github_branch_name >> git@github.com:ministryofjustice/<< parameters.github_repository_name >>
+          - run:
+              name: Build web container
+              command: |
+                docker-compose build << parameters.service_name >>_web
+          - run:
+              name: Build app container
+              command: |
+                docker-compose build << parameters.service_name >>_app
+          - ecr_login
+          - run:
+              name: Push web container
+              command: |
+                if [ << parameters.github_repository_name >> != "opg-lpa-pdf" ]; then
+                  export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+                  docker tag << parameters.service_name >>_web << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web
+                  docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:latest
+                  docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:latest << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:$CIRCLE_BRANCH-$SHORT_HASH
+                  docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web
+                fi
+          - run:
+              name: Push app container
+              command: |
+                export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+                docker tag << parameters.service_name >>_app << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app
                 docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
                 docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:$CIRCLE_BRANCH-$SHORT_HASH
                 docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app
