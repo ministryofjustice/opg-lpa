@@ -100,7 +100,7 @@
 {% macro showStatusDescriptionLinksIfEnabled(trackingEnabled, status, id) %}
     {% if trackingEnabled %}
         {% if status in ['completed', 'waiting', 'received', 'checking', 'returned'] %}
-            <a id="status-description-link-{{ id }}" href="dashboard/status-description/{{ id }}">View {{ status }} message</a>
+            <a id="status-description-link-{{ id }}" href="/lpa/{{ id }}/status">View {{ status }} message</a>
         {% endif %}
     {% endif %}
 {% endmacro %}
