@@ -155,7 +155,7 @@
 
                             // Update the status link
                             const link = $('a[id=status-description-link-' + lpaId + ']');
-                            link.attr('href', 'dashboard/status-description/' + lpaId);
+                            link.attr('href', '/lpa/' + lpaId + '/status');
                             link.text('View ' + newStatus + ' message');
                         }
                     });
