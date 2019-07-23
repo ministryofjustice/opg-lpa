@@ -46,6 +46,7 @@ class StatusController extends AbstractLpaController
             'lpa'          => $lpa,
             'status'       => $lpaStatus,
             'doneStatuses' => $doneStatuses,
+            'canGenerateLPA120' => $lpa->canGenerateLPA120(),
         ]);
     }
 }
