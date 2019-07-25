@@ -6,11 +6,13 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels"
+            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels",
+            "no-api": true
         },
         {
             "type": "vcs",
-            "url": "https://github.com/ministryofjustice/opg-lpa-logger"
+            "url": "https://github.com/ministryofjustice/opg-lpa-logger",
+            "no-api": true
         }
     ],
     "require": {
