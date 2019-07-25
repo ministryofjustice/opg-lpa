@@ -60,10 +60,19 @@
             <div>
                 <p class="lede">You've completed the online application and we're now waiting to receive the LPA.</p>
                 <p>If you have not posted the LPA to us yet, <a href="/contact#postal-address">here's the address to send it to</a>.</p>
-                <p>Please take postage and processing time into account. Allow 10 working days for us to receive the LPA, enter it onto our system and update this message.</p>
+
+                {% if canGenerateLPA120 == 'true' %}
+                    <p>Please take postage and processing time into account. Allow 10 working days for us to receive the LPA, check the application to pay a reduced or no fee, and update this message.</p>
+                    <p>If we need more information about the application to pay a reduced or no fee, we'll write to {{ lpa.document.donor.name }}. We will not start processing the LPA or update this message until
+                        we've heard back from {{ lpa.document.donor.name }}.</p>
+                {% else %}
+                    <p>Please take postage and processing time into account. Allow 10 working days for us to receive the LPA, enter it onto our system and update this message.</p>
+                {% endif %}
+
                 <p>If you think we should have received your LPA by now, please call 0300 456 0300</p>
                 <p>Opening times: Monday, Tuesday, Thursday, Friday 9am to 5pm. Wednesday 10am to 5pm</p>
             </div>
+
 
         {% elseif status == 'returned' %}
 
