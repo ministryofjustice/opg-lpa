@@ -16,7 +16,7 @@ resource "aws_cloudtrail" "cloudtrail" {
 }
 
 resource "aws_s3_bucket" "cloudtrail" {
-  bucket        = "online_lpa_cloudtrail_${terraform.workspace}"
+  bucket        = "online-lpa-cloudtrail-${terraform.workspace}"
   force_destroy = true
 
   policy = data.aws_iam_policy_document.cloudtrail_bucket_policy.json
