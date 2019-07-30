@@ -118,7 +118,7 @@ orbs:
               name: Lint Account Terraform
               command: |
                 terraform --version
-                cd project/terraform/terraform_account
+                cd $CIRCLE_WORKING_DIRECTORY/terraform/terraform_account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
