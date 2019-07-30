@@ -6,4 +6,5 @@ geckodriver.log
 .vscode/
 **__pycache__
 **/cluster_config.json
-opg-lpa-api/
+node_modules/
+**functional/casperesults.xml

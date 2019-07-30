@@ -3,15 +3,46 @@ version: 2.1
 workflows:
   pr-build-and-test:
     jobs:
-      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: docker_build_lpa_api
-          ecr_repository_name_prefix: online-lpa/api
-          github_repository_name: opg-lpa-api
-          github_branch_name: LPA-3289-ecs-container
+      # - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+      #     name: docker_build_lpa_api
+      #     ecr_repository_name_prefix: online-lpa/api
+      #     github_repository_name: opg-lpa-api
+      #     github_branch_name: LPA-3289-ecs-container
       - infrastructure_and_deployment/lint_terraform_fmt:
-          name: lint terraform with fmt
-      # - infrastructure_and_deployment/validate_terraform:
-      #     name: validate terraform
+          name: lint_terraform_with_fmt
+          filters:
+            branches:
+              ignore: master
+      - infrastructure_and_deployment/validate_account_terraform:
+          name: validate_account_terraform
+          filters:
+            branches:
+              ignore: master
+
+      - infrastructure_and_deployment/apply_account_terraform:
+          name: dev_apply_account_terraform
+          workspace: development
+          requires: [lint_terraform_with_fmt, validate_account_terraform]
+          filters:
+            branches:
+              ignore: master
+
+      - infrastructure_and_deployment/apply_account_terraform:
+          name: preprod_apply_account_terraform
+          workspace: preproduction
+          filters:
+            branches:
+              only: master
+
+      - infrastructure_and_deployment/apply_account_terraform:
+          name: prod_apply_account_terraform
+          workspace: production
+          requires: [preprod_apply_account_terraform]
+          filters:
+            branches:
+              only: master
+              
+
 orbs:
   build_containers_and_push_to_ecr:
     commands:
@@ -98,7 +129,7 @@ orbs:
       python-browsers:
         docker: [image: circleci/python:3.6-stretch-browsers]
       terraform:
-        docker: [image: hashicorp/terraform:0.12.3]
+        docker: [image: hashicorp/terraform:0.12.5]
     jobs:
       #----------------------------------------------------
       # Terraform
@@ -110,7 +141,7 @@ orbs:
               name: terraform lint
               command: terraform fmt -diff -check -recursive
 
-      validate_terraform:
+      validate_account_terraform:
         #
         # Validate the Terraform with true 
         #
@@ -123,10 +154,10 @@ orbs:
         steps:
           - checkout
           - run:
-              name: Lint Account Terraform
+              name: Validate Account Terraform
               command: |
                 terraform --version
-                cd project/terraform/terraform_account
+                cd ~/project/terraform/terraform_account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
@@ -154,15 +185,15 @@ orbs:
             description: Terraform workspace name
             type: string
             default: development
-        environment:
-          TF_WORKSPACE: "<<parameters.workspace>>"
         steps:
           - checkout
           - run:
               name: Apply Account Terraform
               command: |
-                cd terraform/terraform_account
+                cd ~/project/terraform/terraform_account
                 terraform init -lock-timeout=300s
+                export TF_WORKSPACE=<<parameters.workspace>>
+                echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
       apply_environment_terraform:
         #
