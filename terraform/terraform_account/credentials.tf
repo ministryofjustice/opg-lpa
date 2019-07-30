@@ -13,7 +13,7 @@ provider "aws" {
   region = "eu-west-1"
 
   assume_role {
-    role_arn     = "arn:aws:iam::${local.opg_account_id}:role/${var.default_role}"
+    role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
   }
 }
@@ -23,7 +23,7 @@ provider "aws" {
   region = "us-east-1"
 
   assume_role {
-    role_arn     = "arn:aws:iam::${local.opg_account_id}:role/${var.default_role}"
+    role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
   }
 }
@@ -45,4 +45,3 @@ provider "aws" {
     session_name = "terraform-session"
   }
 }
-
