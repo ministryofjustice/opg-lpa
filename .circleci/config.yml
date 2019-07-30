@@ -13,8 +13,8 @@ workflows:
           filters:
             branches:
               ignore: master
-      - infrastructure_and_deployment/validate_terraform:
-          name: validate_terraform
+      - infrastructure_and_deployment/validate_account_terraform:
+          name: validate_account_terraform
           filters:
             branches:
               ignore: master
@@ -22,7 +22,7 @@ workflows:
       - infrastructure_and_deployment/apply_account_terraform:
           name: dev_apply_account_terraform
           workspace: development
-          requires: [lint_terraform_with_fmt, validate_terraform]
+          requires: [lint_terraform_with_fmt, validate_account_terraform]
           filters:
             branches:
               ignore: master
@@ -141,7 +141,7 @@ orbs:
               name: terraform lint
               command: terraform fmt -diff -check -recursive
 
-      validate_terraform:
+      validate_account_terraform:
         #
         # Validate the Terraform with true 
         #
