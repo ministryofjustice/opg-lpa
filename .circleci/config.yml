@@ -185,8 +185,6 @@ orbs:
             description: Terraform workspace name
             type: string
             default: development
-        # environment:
-        #   TF_WORKSPACE: "<<parameters.workspace>>"
         steps:
           - checkout
           - run:
