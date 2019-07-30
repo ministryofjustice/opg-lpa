@@ -2,11 +2,14 @@
 variable "account_mapping" {
   type = "map"
 }
-variable "account_ids" {
-  type = "map"
-}
-variable "is_production" {
-  type = "map"
+
+variable "accounts" {
+  type = map(
+    object({
+      account_id    = string
+      is_production = string
+    })
+  )
 }
 
 locals {
@@ -14,7 +17,7 @@ locals {
 
   account_name = lookup(var.account_mapping, terraform.workspace, "development")
 
-  account_id = lookup(var.account_ids, local.account_name)
+  account_id = var.accounts[local.account_name].account_id
 
   # vpc_cidr_ranges = {
   #   development = "10.172.0.0/16"
@@ -30,17 +33,15 @@ locals {
   # domain               = lookup(local.domains, local.account_name)
   # opg_hosted_zone_name = "${lookup(local.domains, local.account_name)}."
 
-  opg_account_id = local.account_id
-
   mandatory_moj_tags = {
     business-unit = "OPG"
     application   = "Online LPA Service"
     owner         = "Amy Wilson: amy.wilson@digital.justice.gov.uk"
-    is-production = lookup(var.is_production, local.account_name)
+    is-production = var.accounts[local.account_name].is_production
   }
 
   optional_tags = {
-    environment-name       = terraform.workspace
+    environment-name       = local.account_name
     infrastructure-support = "OPG LPA Product Team: opgteam+online-lpa@digital.justice.gov.uk"
     runbook                = "https://github.com/ministryofjustice/opg-webops-runbooks/tree/master/LPA"
     source-code            = "https://github.com/ministryofjustice/opg-lpa"
