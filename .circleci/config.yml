@@ -3,11 +3,11 @@ version: 2.1
 workflows:
   pr-build-and-test:
     jobs:
-      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: docker_build_lpa_api
-          ecr_repository_name_prefix: online-lpa/api
-          github_repository_name: opg-lpa-api
-          github_branch_name: LPA-3289-ecs-container
+      # - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+      #     name: docker_build_lpa_api
+      #     ecr_repository_name_prefix: online-lpa/api
+      #     github_repository_name: opg-lpa-api
+      #     github_branch_name: LPA-3289-ecs-container
       - infrastructure_and_deployment/lint_terraform_fmt:
           name: lint_terraform_with_fmt
           filters:
@@ -185,8 +185,6 @@ orbs:
             description: Terraform workspace name
             type: string
             default: development
-        # environment:
-        #   TF_WORKSPACE: "<<parameters.workspace>>"
         steps:
           - checkout
           - run:
