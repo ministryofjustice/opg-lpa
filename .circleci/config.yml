@@ -9,8 +9,11 @@ workflows:
       #     github_repository_name: opg-lpa-api
       - infrastructure_and_deployment/lint_terraform_fmt:
           name: lint terraform with fmt
-      # - infrastructure_and_deployment/validate_terraform:
-      #     name: validate terraform
+      - infrastructure_and_deployment/validate_terraform:
+          name: validate terraform
+      - infrastructure_and_deployment/apply_account_terraform:
+          name: apply account terraform
+          workspace: development
 orbs:
   build_containers_and_push_to_ecr:
     commands:
