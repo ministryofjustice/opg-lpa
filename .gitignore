@@ -6,3 +6,5 @@ geckodriver.log
 .vscode/
 **__pycache__
 **/cluster_config.json
+node_modules/
+**functional/casperesults.xml
