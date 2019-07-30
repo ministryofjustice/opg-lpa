@@ -9,13 +9,39 @@ workflows:
       #     github_repository_name: opg-lpa-api
       - infrastructure_and_deployment/lint_terraform_fmt:
           name: lint_terraform_with_fmt
+          filters:
+            branches:
+              ignore: master
       - infrastructure_and_deployment/validate_terraform:
           name: validate_terraform
-          requires: [lint_terraform_with_fmt]
+          filters:
+            branches:
+              ignore: master
+
       - infrastructure_and_deployment/apply_account_terraform:
-          name: development_apply_account_terraform
+          name: dev_apply_account_terraform
           workspace: development
-          requires: [validate_terraform]
+          requires: [lint_terraform_with_fmt, validate_terraform]
+          filters:
+            branches:
+              ignore: master
+
+      - infrastructure_and_deployment/apply_account_terraform:
+          name: preprod_apply_account_terraform
+          workspace: preproduction
+          filters:
+            branches:
+              only: master
+
+      - infrastructure_and_deployment/apply_account_terraform:
+          name: prod_apply_account_terraform
+          workspace: production
+          requires: [preprod_apply_account_terraform]
+          filters:
+            branches:
+              only: master
+              
+
 orbs:
   build_containers_and_push_to_ecr:
     commands:
