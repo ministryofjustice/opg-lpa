@@ -8,12 +8,14 @@ workflows:
       #     ecr_repository_name: online-lpa/api
       #     github_repository_name: opg-lpa-api
       - infrastructure_and_deployment/lint_terraform_fmt:
-          name: lint terraform with fmt
+          name: lint_terraform_with_fmt
       - infrastructure_and_deployment/validate_terraform:
-          name: validate terraform
+          name: validate_terraform
+          requires: [lint_terraform_with_fmt]
       - infrastructure_and_deployment/apply_account_terraform:
-          name: apply account terraform
+          name: development_apply_account_terraform
           workspace: development
+          requires: [validate_terraform]
 orbs:
   build_containers_and_push_to_ecr:
     commands:
@@ -115,7 +117,7 @@ orbs:
         steps:
           - checkout
           - run:
-              name: Lint Account Terraform
+              name: Validate Account Terraform
               command: |
                 terraform --version
                 cd ~/project/terraform/terraform_account
@@ -153,7 +155,7 @@ orbs:
           - run:
               name: Apply Account Terraform
               command: |
-                cd terraform/terraform_account
+                cd ~/project/terraform/terraform_account
                 terraform init -lock-timeout=300s
                 terraform apply -lock-timeout=300s --auto-approve
       apply_environment_terraform:
