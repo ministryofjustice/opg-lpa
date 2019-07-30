@@ -148,8 +148,8 @@ orbs:
             description: Terraform workspace name
             type: string
             default: development
-        environment:
-          TF_WORKSPACE: "<<parameters.workspace>>"
+        # environment:
+        #   TF_WORKSPACE: "<<parameters.workspace>>"
         steps:
           - checkout
           - run:
@@ -157,6 +157,8 @@ orbs:
               command: |
                 cd ~/project/terraform/terraform_account
                 terraform init -lock-timeout=300s
+                export TF_WORKSPACE=<<parameters.workspace>>
+                echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
       apply_environment_terraform:
         #
