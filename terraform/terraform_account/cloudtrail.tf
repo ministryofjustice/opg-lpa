@@ -3,8 +3,9 @@ data "aws_caller_identity" "current" {}
 resource "aws_cloudtrail" "cloudtrail" {
   name                          = "online_lpa_cloudtrail_${terraform.workspace}"
   s3_bucket_name                = aws_s3_bucket.cloudtrail.id
-  s3_key_prefix                 = "prefix"
   include_global_service_events = true
+  is_multi_region_trail         = true
+  cloud_watch_logs_group_arn    = aws_cloudwatch_log_group.cloudtrail_logs.arn
   event_selector {
     read_write_type           = "All"
     include_management_events = true
@@ -12,6 +13,47 @@ resource "aws_cloudtrail" "cloudtrail" {
       type   = "AWS::S3::Object"
       values = ["arn:aws:s3:::"]
     }
+  }
+}
+
+resource "aws_cloudwatch_log_group" "cloudtrail_logs" {
+  name = "cloudtrail_logs"
+}
+
+resource "aws_iam_role" "cloudtrail_logs" {
+  name               = "cloudtrail_logs"
+  assume_role_policy = data.aws_iam_policy_document.cloudtrail_logs_role_assume_role_policy.json
+}
+
+data "aws_iam_policy_document" "cloudtrail_logs_role_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudtrail.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "cloudtrail_logs" {
+  name   = "cloudtrail_logs"
+  role   = aws_iam_role.cloudtrail_logs.id
+  policy = data.aws_iam_policy_document.cloudtrail_logs_role_policy.json
+}
+
+data "aws_iam_policy_document" "cloudtrail_logs_role_policy" {
+  statement {
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams"
+    ]
+
+    resources = ["*"]
+    effect    = "Allow"
   }
 }
 
