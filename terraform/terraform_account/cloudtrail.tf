@@ -2,7 +2,7 @@ data "aws_caller_identity" "current" {}
 
 resource "aws_cloudtrail" "cloudtrail" {
   name                          = "online_lpa_cloudtrail_${terraform.workspace}"
-  s3_bucket_name                = "${aws_s3_bucket.cloudtrail.id}"
+  s3_bucket_name                = aws_s3_bucket.cloudtrail.id
   s3_key_prefix                 = "prefix"
   include_global_service_events = true
   event_selector {
@@ -27,7 +27,7 @@ resource "aws_s3_bucket" "cloudtrail" {
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
-        kms_master_key_id = "${aws_kms_key.cloudtrail_bucket_key.arn}"
+        kms_master_key_id = aws_kms_key.cloudtrail_bucket_key.arn
         sse_algorithm     = "aws:kms"
       }
     }
