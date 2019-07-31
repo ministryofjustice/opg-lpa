@@ -1,4 +1,4 @@
-FROM registry.service.opg.digital/opg-php-fpm-71-ppa-1604
+FROM registry.service.opg.digital/opg-php-fpm-71-ppa-1604:0.0.318
 
 RUN groupadd supervisor
 
