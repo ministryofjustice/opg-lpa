@@ -2,7 +2,8 @@ data "aws_caller_identity" "current" {}
 
 resource "aws_cloudtrail" "cloudtrail" {
   name                          = "online_lpa_cloudtrail_${terraform.workspace}"
-  s3_bucket_name                = aws_s3_bucket.cloudtrail.id
+  s3_bucket_name                = aws_s3_bucket.cloudtrail_logs.id
+  s3_key_prefix                 = "prefix"
   include_global_service_events = true
   is_multi_region_trail         = true
   cloud_watch_logs_group_arn    = aws_cloudwatch_log_group.cloudtrail_logs.arn
@@ -63,7 +64,7 @@ resource "aws_kms_key" "cloudtrail_bucket_key" {
   deletion_window_in_days = 10
 }
 
-resource "aws_s3_bucket" "cloudtrail" {
+resource "aws_s3_bucket" "cloudtrail_logs" {
   bucket        = "online-lpa-cloudtrail-${terraform.workspace}"
   force_destroy = true
   acl           = "private"
