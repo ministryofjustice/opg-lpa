@@ -6,8 +6,10 @@ variable "account_mapping" {
 variable "accounts" {
   type = map(
     object({
-      account_id    = string
-      is_production = string
+      account_id                    = string
+      is_production                 = string
+      front_certificate_domain_name = string
+      admin_certificate_domain_name = string
     })
   )
 }
