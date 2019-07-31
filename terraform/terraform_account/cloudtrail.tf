@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "cloudtrail_bucket_policy" {
   statement {
     sid       = "AWSCloudTrailAclCheck"
     actions   = ["s3:GetBucketAcl"]
-    resources = ["arn:aws:s3:::online_lpa_cloudtrail_${terraform.workspace}"]
+    resources = ["arn:aws:s3:::online-lpa-cloudtrail-${terraform.workspace}"]
 
     principals {
       type        = "Service"
@@ -36,7 +36,7 @@ data "aws_iam_policy_document" "cloudtrail_bucket_policy" {
   statement {
     sid       = "AWSCloudTrailWrite"
     actions   = ["s3:PutObject"]
-    resources = ["arn:aws:s3:::online_lpa_cloudtrail_${terraform.workspace}/prefix/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
+    resources = ["arn:aws:s3:::online-lpa-cloudtrail-${terraform.workspace}/prefix/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
 
     principals {
       type        = "Service"
