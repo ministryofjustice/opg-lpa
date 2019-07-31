@@ -15,9 +15,23 @@ resource "aws_cloudtrail" "cloudtrail" {
   }
 }
 
+resource "aws_kms_key" "cloudtrail_bucket_key" {
+  description             = "This key is used to encrypt cloudtrail bucket objects"
+  deletion_window_in_days = 10
+}
+
 resource "aws_s3_bucket" "cloudtrail" {
   bucket        = "online-lpa-cloudtrail-${terraform.workspace}"
   force_destroy = true
+  acl           = "private"
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        kms_master_key_id = "${aws_kms_key.cloudtrail_bucket_key.arn}"
+        sse_algorithm     = "aws:kms"
+      }
+    }
+  }
 
   policy = data.aws_iam_policy_document.cloudtrail_bucket_policy.json
 }
