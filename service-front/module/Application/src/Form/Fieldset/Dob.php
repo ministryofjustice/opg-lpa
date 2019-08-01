@@ -37,7 +37,7 @@ class Dob extends Fieldset
         return parent::setMessages($messages);
     }
 
-    public function getMessages()
+    public function getMessages($elementName = null)
     {
         return $this->messages;
     }

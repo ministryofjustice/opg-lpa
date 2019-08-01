@@ -3,7 +3,7 @@
 namespace Application\Form\Lpa;
 
 use Zend\Form\Fieldset;
-use Zend\Hydrator\ClassMethods as ClassMethodsHydrator;
+use Zend\Hydrator\ClassMethodsHydrator as ClassMethodsHydrator;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 
 class CorrespondenceFieldset extends Fieldset
@@ -64,7 +64,7 @@ class CorrespondenceFieldset extends Fieldset
         parent::setMessages($messages);
     }
 
-    public function getMessages()
+    public function getMessages($elementName = null)
     {
         return $this->messages;
     }
