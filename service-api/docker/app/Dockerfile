@@ -24,4 +24,5 @@ COPY opg-lpa-api/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 WORKDIR /app
 
 CMD ([[ -z "${ENABLE_XDEBUG}" ]] || docker-php-ext-enable xdebug) \
+    && chmod +x /app/docker/app/db-migrations.sh && /app/docker/app/db-migrations.sh \
     && php-fpm
