@@ -6,11 +6,13 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels"
+            "url": "https://github.com/ministryofjustice/opg-lpa-datamodels",
+            "no-api": true
         },
         {
             "type": "vcs",
-            "url": "https://github.com/ministryofjustice/opg-lpa-logger"
+            "url": "https://github.com/ministryofjustice/opg-lpa-logger",
+            "no-api": true
         }
     ],
     "require": {
@@ -21,8 +23,7 @@
         "zendframework/zend-crypt": "^3.3",
         "zendframework/zend-filter": "^2.5",
         "ministryofjustice/opg-lpa-datamodels": "^13.2",
-        "ministryofjustice/opg-lpa-logger": "^4.0",
-        "NSmithUK/dynamo-queue-php": "^1.1",
+        "ministryofjustice/opg-lpa-logger": "^5.0",
         "zendframework/zend-barcode": "^2.5",
         "tecnickcom/tcpdf": "6.2.25",
         "setasign/fpdi-tcpdf": "^2.0"
