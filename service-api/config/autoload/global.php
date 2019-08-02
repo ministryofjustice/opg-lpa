@@ -13,19 +13,6 @@ return [
         ],
     ],
 
-    'log' => [
-        'sns' => [
-            'endpoints' => [
-                'major' => getenv('OPG_LPA_COMMON_LOGGING_SNS_ENDPOINTS_MAJOR') ?: null,
-                'minor' => getenv('OPG_LPA_COMMON_LOGGING_SNS_ENDPOINTS_MINOR') ?: null,
-                'info' => getenv('OPG_LPA_COMMON_LOGGING_SNS_ENDPOINTS_INFO') ?: null,
-            ],
-            'client' => [
-                'version' => '2010-03-31',
-                'region' => 'eu-west-1',
-            ],
-        ], // sns
-    ], // log
 
     'admin' => [
         'dynamodb' => [
@@ -41,7 +28,6 @@ return [
             'settings' => [
                 'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
             ],
-            'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
         ],
 
         'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : [],
@@ -63,17 +49,6 @@ return [
     ],
 
     'pdf' => [
-
-        'encryption' => [
-            // Keys MUST be a 32 character ASCII string
-            'keys' => [
-                'document' => getenv('OPG_LPA_API_PDF_ENCRYPTION_KEY_DOCUMENT') ?: null, // Key for generated PDFs in the file store
-            ],
-            'options' => [
-                'algorithm' => 'aes',
-                'mode' => 'cbc',
-            ],
-        ],
 
         'cache' => [
 
@@ -103,17 +78,6 @@ return [
             ],
         ],
 
-        'DynamoQueue' => [
-            'settings' => [
-                'table_name' => getenv('OPG_LPA_COMMON_QUEUE_DYNAMODB_TABLE') ?: 'lpa-pdf-queue-shared',
-            ],
-            'client' => [
-                'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
-                'version' => '2012-08-10',
-                'region' => 'eu-west-1',
-            ],
-        ], // DynamoQueue
-
     ], // pdf
 
 
@@ -132,7 +96,6 @@ return [
                 'settings' => [
                     'table_name' => getenv('OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE') ?: 'lpa-locks-shared',
                 ],
-                'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
             ],
         ], // lock
     ], // cron
@@ -160,7 +123,6 @@ return [
                     'before' => function(){ sleep(1); },
                 ]
             ],
-            'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
         ],
     ], // session
 

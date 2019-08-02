@@ -10,8 +10,6 @@ use Application\Model\Service\AbstractService;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\Crypt\BlockCipher;
-use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
 use Zend\Filter\Compress;
 
 class Service extends AbstractService
@@ -225,24 +223,7 @@ class Service extends AbstractService
             return false;
         }
 
-        $file = $file['Body']->getContents();
-
-        // Decrypt the PDF
-        $encryptionKeysConfig = $this->pdfConfig['encryption']['keys']['document'];
-
-        if (!is_string($encryptionKeysConfig) || strlen($encryptionKeysConfig) != 32) {
-            throw new CryptInvalidArgumentException('Invalid encryption key');
-        }
-
-        // We use AES encryption with Cipher-block chaining (CBC); via openssl extension
-        $blockCipher = BlockCipher::factory('openssl', $this->pdfConfig['encryption']['options']);
-
-        // Set the secret key
-        $blockCipher->setKey($encryptionKeysConfig);
-        $blockCipher->setBinaryOutput(true);
-
-        // Encrypt the JSON and return
-        return $blockCipher->decrypt($file);
+        return $file['Body']->getContents();
     }
 
     /**
@@ -254,14 +235,11 @@ class Service extends AbstractService
      */
     private function getPdfIdent(Lpa $lpa, $type)
     {
-        // $keys are included so a new ident is generated when encryption keys change.
-        $keys = $this->pdfConfig['encryption']['keys'];
-
         // A date is included as a fail-safe to ensure stale documents aren't returned.
         // The date rolls over at 3am to minimise disruption (PDF generation taking slightly longer).
         $hash = hash(
             'md5',
-            $lpa->toJson() . date('Y-m-d', strtotime('-3 hours')). $keys['document']
+            $lpa->toJson() . date('Y-m-d', strtotime('-3 hours'))
         );
 
         return strtolower("{$type}-{$hash}");
