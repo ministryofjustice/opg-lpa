@@ -35,7 +35,7 @@ resource "aws_ecs_task_definition" "pdf" {
   network_mode             = "awsvpc"
   cpu                      = 512
   memory                   = 1024
-  container_definitions    = "[${local.pdf_web}, ${local.pdf_app}]"
+  container_definitions    = "[${local.pdf_app}]"
   task_role_arn            = aws_iam_role.pdf_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.default_tags
@@ -61,10 +61,8 @@ resource "aws_iam_role_policy" "pdf_permissions_role" {
 */
 data "aws_iam_policy_document" "pdf_permissions_role" {
   statement {
-    sid = "DynamoDBAccess"
-
+    sid    = "DynamoDBAccess"
     effect = "Allow"
-
     actions = [
       "dynamodb:BatchGetItem",
       "dynamodb:BatchWriteItem",
@@ -85,9 +83,42 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
 
     resources = [
       aws_dynamodb_table.lpa-locks.arn,
-      aws_dynamodb_table.lpa-properties.arn,
-      aws_dynamodb_table.lpa-sessions.arn,
     ]
+  }
+  statement {
+    sid = "S3AccessWrite"
+    actions = [
+      "s3:PutObject",
+      "s3:GetObject",
+      "s3:DeleteObject",
+      "s3:ListObject",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.lpa_pdf_cache.arn}*",
+    ]
+  }
+  statement {
+    sid = "s3AccessRead"
+    actions = [
+      "s3:ListObject",
+      "s3:ListBucket",
+      "s3:GetObject",
+    ]
+
+    resources = [
+      aws_s3_bucket.lpa_pdf_cache.arn,
+    ]
+  }
+
+  statement {
+    sid    = "Decrypt"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+    ]
+    resources = [aws_kms_key.lpa_pdf_cache.arn]
   }
 }
 
@@ -124,15 +155,13 @@ locals {
         }
     },
     "secrets": [
-      { "name": "OPG_LPA_PDF_ENCRYPTION_KEY_QUEUE", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_pdf_encryption_key_queue.name}" },
-      { "name": "OPG_LPA_PDF_ENCRYPTION_KEY_DOCUMENT", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_pdf_encryption_key_document.name}" },
-      { "name": "OPG_LPA_PDF_OWNER_PASSWORD", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_pdf_owner_password.name}" },
+      { "name": "OPG_LPA_PDF_OWNER_PASSWORD", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_pdf_owner_password.name}" }
     ],
     "environment": [
 
       {
         "name": "OPG_LPA_STACK_NAME",
-        "value": "${local.opg_stackname}"
+        "value": "${local.environment}"
       },
       {
         "name": "OPG_DOCKER_TAG",
@@ -140,7 +169,7 @@ locals {
       },
       {
         "name": "OPG_LPA_STACK_ENVIRONMENT",
-        "value": "${local.opg_environment}"
+        "value": "${local.account_name}"
       },
       {
         "name": "OPG_LPA_COMMON_APPLICATION_LOG_PATH",
@@ -184,12 +213,13 @@ locals {
       },
       {
         "name": "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET",
-        "value": "${aws_s3_bucket.lpa-pdf-cache.bucket}"
+        "value": "${aws_s3_bucket.lpa_pdf_cache.bucket}"
       },
       {
         "name": "OPG_LPA_COMMON_PDF_QUEUE_URL",
-        "value": "${aws_sqs_queue.pdf_fifo_queue.id}"
+        "value": ""
       }]
   }
   EOF
 }
+# ${aws_sqs_queue.pdf_fifo_queue.id}
