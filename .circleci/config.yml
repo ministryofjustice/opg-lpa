@@ -201,8 +201,9 @@ orbs:
                 ls -al
                 terraform init -lock-timeout=300s
                 ls -al
-                # export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
-                # echo $TF_WORKSPACE
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE
+                terraform validate
                 # terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
 
       apply_environment_terraform:
