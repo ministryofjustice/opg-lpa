@@ -18,6 +18,11 @@ workflows:
           filters:
             branches:
               ignore: master
+      - infrastructure_and_deployment/validate_environment_terraform:
+          name: validate_environment_terraform
+          filters:
+            branches:
+              ignore: master
 
       - infrastructure_and_deployment/apply_account_terraform:
           name: dev_apply_account_terraform
@@ -143,14 +148,9 @@ orbs:
 
       validate_account_terraform:
         #
-        # Validate the Terraform with true 
+        # Validate the Account Terraform
         #
         executor: terraform
-        parameters:
-          container_version:
-            description: Container version
-            type: string
-            default: ${CIRCLE_BRANCH}-${CIRCLE_BUILD_NUM}
         steps:
           - checkout
           - run:
@@ -162,17 +162,8 @@ orbs:
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate
-          # - run:
-          #     name: Lint Environment Terraform
-          #     command: |
-          #       ENV_NAME=<<parameters.workspace>>
-          #       export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
-          #       echo $SHORT_HASH
-          #       cd project/terraform/terraform_environment
-          #       terraform init -lock-timeout=300s
-          #       export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
-          #       echo $TF_WORKSPACE
-          #       terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
+
+
 
       apply_account_terraform:
         #
@@ -195,6 +186,25 @@ orbs:
                 export TF_WORKSPACE=<<parameters.workspace>>
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
+
+      validate_environment_terraform:
+        #
+        # Validate the Environment Terraform
+        #
+        executor: terraform
+        steps:
+          - checkout
+          - run:
+              name: Lint Environment Terraform
+              command: |
+                export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+                echo $SHORT_HASH
+                cd project/terraform/terraform_environment
+                terraform init -lock-timeout=300s
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE
+                terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
+
       apply_environment_terraform:
         #
         # Apply the environment terraform configuration. This:
