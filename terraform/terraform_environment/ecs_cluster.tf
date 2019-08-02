@@ -60,6 +60,16 @@ data "aws_iam_policy_document" "execution_role" {
     resources = ["*"]
     actions   = ["ssm:GetParameters"]
   }
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:Decrypt",
+      "secretsmanager:GetSecretValue",
+    ]
+
+    resources = ["*"]
+  }
 }
 
 
