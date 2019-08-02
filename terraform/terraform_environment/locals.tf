@@ -28,6 +28,12 @@ locals {
   environment       = terraform.workspace
   dns_namespace_env = local.account_name != "development" ? "" : "${terraform.workspace}."
 
+  lpa_locks_read_capacity       = local.account_name != "development" ? 2 : 5
+  lpa_locks_write_capacity      = local.account_name != "development" ? 2 : 5
+  lpa_properties_read_capacity  = local.account_name != "development" ? 20 : 5
+  lpa_properties_write_capacity = local.account_name != "development" ? 1 : 5
+  lpa_sessions_read_capacity    = local.account_name != "development" ? 20 : 5
+  lpa_sessions_write_capacity   = local.account_name != "development" ? 40 : 5
 
   opg_project = "lpa"
   mandatory_moj_tags = {
