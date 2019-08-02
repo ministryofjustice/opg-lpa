@@ -47,6 +47,8 @@ locals {
   sirius_api_gateway_endpoint = var.accounts[local.account_name].sirius_api_gateway_endpoint
   sirius_api_gateway_arn      = var.accounts[local.account_name].sirius_api_gateway_arn
 
+  ecs_task_count = 0
+
   opg_project = "lpa"
   mandatory_moj_tags = {
     business-unit = "OPG"
