@@ -36,29 +36,13 @@ return [
             'settings' => [
                 'ACL' => 'private',
                 'Bucket' => getenv('OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET') ?: null,
+                'ServerSideEncryption' => 'aws:kms',
             ],
         ],
-    ],
-
-    'log' => [
-        'path' => getenv('OPG_LPA_COMMON_APPLICATION_LOG_PATH') ?: '/var/log/opg-lpa-pdf2/application.log',
-        'sentry-uri' => getenv('OPG_LPA_COMMON_SENTRY_API_URI') ?: '',
     ],
 
     'pdf' => [
-        'encryption' => [
-            // Keys MUST be a 32 character ASCII string
-            'keys' => [
-                'queue'     => getenv('OPG_LPA_PDF_ENCRYPTION_KEY_QUEUE') ?: null,
-                'document'  => getenv('OPG_LPA_PDF_ENCRYPTION_KEY_DOCUMENT') ?: null,
-            ],
-            'options' => [
-                'algorithm' => 'aes',
-                'mode' => 'cbc',
-            ],
-        ],
         'password' => getenv('OPG_LPA_PDF_OWNER_PASSWORD') ?: 'default-password',
-        'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
     ],
 
     'strike_throughs' => [

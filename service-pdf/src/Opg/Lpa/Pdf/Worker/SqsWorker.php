@@ -90,7 +90,7 @@ class SqsWorker extends AbstractWorker
                 ]);
 
             } else {
-                $this->logger->debug("No message found in queue, finishing");
+                $this->logger->debug("No message found in queue for this poll, finishing thread.");
             }
 
         } catch (\Exception $e) {
