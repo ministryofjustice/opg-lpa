@@ -3,6 +3,10 @@ resource "aws_ecs_cluster" "online-lpa-tool" {
   tags = local.default_tags
 }
 
+data "aws_cloudwatch_log_group" "online-lpa-tool" {
+  name = "online-lpa-tool"
+}
+
 resource "aws_iam_role" "execution_role" {
   name               = "${local.environment}-execution-role-ecs-cluster"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
