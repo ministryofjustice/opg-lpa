@@ -14,6 +14,13 @@ variable "accounts" {
   )
 }
 
+# run-time variables
+variable "container_version" {
+  type    = "string"
+  default = "latest"
+}
+
+
 locals {
   account_name = lookup(var.account_mapping, terraform.workspace, "development")
   account_id   = var.accounts[local.account_name].account_id
