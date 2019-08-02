@@ -159,67 +159,22 @@ locals {
     ],
     "environment": [
 
-      {
-        "name": "OPG_LPA_STACK_NAME",
-        "value": "${local.environment}"
-      },
-      {
-        "name": "OPG_DOCKER_TAG",
-        "value": "${var.container_version}"
-      },
-      {
-        "name": "OPG_LPA_STACK_ENVIRONMENT",
-        "value": "${local.account_name}"
-      },
-      {
-        "name": "OPG_LPA_COMMON_APPLICATION_LOG_PATH",
-        "value": "/var/log/app/application.log"
-      },
-      {
-        "name": "OPG_LPA_COMMON_DYNAMODB_ENDPOINT",
-        "value": ""
-      },
-      {
-        "name": "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE",
-        "value": "${aws_dynamodb_table.lpa-locks.name}"
-      },
-      {
-        "name": "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE",
-        "value": "${aws_dynamodb_table.lpa-sessions.name}"
-      },
-      {
-        "name": "OPG_LPA_COMMON_pdf2_DYNAMODB_TABLE",
-        "value": "${aws_dynamodb_table.lpa-properties.name}"
-      },
-      {
-        "name": "OPG_PHP_POOL_CHILDREN_MAX",
-        "value": "20"
-      },
-      {
-        "name": "OPG_PHP_POOL_REQUESTS_MAX",
-        "value": "500"
-      },
-      {
-        "name": "OPG_NGINX_SSL_HSTS_AGE",
-        "value": "31536000"
-      },
-      {
-        "name": "OPG_NGINX_SSL_FORCE_REDIRECT",
-        "value": "TRUE"
-      },
-      {
-        "name": "OPG_LPA_COMMON_RESQUE_REDIS_HOST",
-        "value": "redisback"
-      },
-      {
-        "name": "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET",
-        "value": "${aws_s3_bucket.lpa_pdf_cache.bucket}"
-      },
-      {
-        "name": "OPG_LPA_COMMON_PDF_QUEUE_URL",
-        "value": ""
-      }]
+      {"name": "OPG_LPA_STACK_NAME", "value": "${local.environment}"},
+      {"name": "OPG_DOCKER_TAG", "value": "${var.container_version}"},
+      {"name": "OPG_LPA_STACK_ENVIRONMENT", "value": "${local.account_name}"},
+      {"name": "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value": "/var/log/app/application.log"},
+      {"name": "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value": ""},
+      {"name": "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value": "${aws_dynamodb_table.lpa-locks.name}"},
+      {"name": "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", "value": "${aws_dynamodb_table.lpa-sessions.name}"},
+      {"name": "OPG_LPA_COMMON_pdf2_DYNAMODB_TABLE", "value": "${aws_dynamodb_table.lpa-properties.name}"},
+      {"name": "OPG_PHP_POOL_CHILDREN_MAX", "value": "20"},
+      {"name": "OPG_PHP_POOL_REQUESTS_MAX", "value": "500"},
+      {"name": "OPG_NGINX_SSL_HSTS_AGE", "value": "31536000"},
+      {"name": "OPG_NGINX_SSL_FORCE_REDIRECT", "value": "TRUE"},
+      {"name": "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value": "redisback"},
+      {"name": "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value": "${aws_s3_bucket.lpa_pdf_cache.bucket}"},
+      {"name": "OPG_LPA_COMMON_PDF_QUEUE_URL", "value": "${aws_sqs_queue.pdf_fifo_queue.id}"}
+      ]
   }
   EOF
 }
-# ${aws_sqs_queue.pdf_fifo_queue.id}

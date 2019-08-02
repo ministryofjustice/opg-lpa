@@ -155,22 +155,11 @@ locals {
         }
     },
     "environment": [
-    {
-      "name": "APP_HOST",
-      "value": "127.0.0.1"
-    },
-    {
-      "name": "APP_PORT",
-      "value": "9000"
-    },
-    {
-      "name": "TIMEOUT",
-      "value": "60"
-    },
-    {
-      "name": "CONTAINER_VERSION",
-      "value": "${var.container_version}"
-    }]
+    {"name": "APP_HOST", "value": "127.0.0.1"},
+    {"name": "APP_PORT", "value": "9000"},
+    {"name": "TIMEOUT", "value": "60"},
+    {"name": "CONTAINER_VERSION", "value": "${var.container_version}"}
+    ]
   }
   EOF
 
@@ -206,81 +195,26 @@ locals {
     { "name": "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
     { "name": "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
   ],   
-  "environment": [
-    {
-      "name": "OPG_LPA_FRONT_NGINX_FRONTENDDOMAIN",
-      "value": "${local.dns_namespace_env}${var.accounts[local.account_name].front_dns}"
-    },
-    {
-      "name": "OPG_NGINX_SERVER_NAMES",
-      "value": "${local.dns_namespace_env}${var.accounts[local.account_name].front_dns} localhost 127.0.0.1"
-    },
-    {
-      "name": "OPG_LPA_FRONT_TRACK_FROM_DATE",
-      "value": "2019-02-01"
-    },
-    {
-      "name": "OPG_LPA_STACK_NAME",
-      "value": "${local.environment}"
-    },
-    {
-      "name": "OPG_DOCKER_TAG",
-      "value": "${var.container_version}"
-    },
-    {
-      "name": "OPG_LPA_STACK_ENVIRONMENT",
-      "value": "${local.account_name}"
-    },
-    {
-      "name": "OPG_LPA_COMMON_APPLICATION_LOG_PATH",
-      "value": "/var/log/app/application.log"
-    },
-    {
-      "name": "OPG_LPA_COMMON_DYNAMODB_ENDPOINT",
-      "value": ""
-    },
-    {
-      "name": "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE",
-      "value": "${aws_dynamodb_table.lpa-locks.name}"
-    },
-    {
-      "name": "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE",
-      "value": "${aws_dynamodb_table.lpa-sessions.name}"
-    },
-    {
-      "name": "OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE",
-      "value": "${aws_dynamodb_table.lpa-properties.name}"
-    },
-    {
-      "name": "OPG_PHP_POOL_CHILDREN_MAX",
-      "value": "20"
-    },
-    {
-      "name": "OPG_PHP_POOL_REQUESTS_MAX",
-      "value": "500"
-    },
-    {
-      "name": "OPG_NGINX_SSL_HSTS_AGE",
-      "value": "31536000"
-    },
-    {
-      "name": "OPG_NGINX_SSL_FORCE_REDIRECT",
-      "value": "TRUE"
-    },
-    {
-      "name": "OPG_LPA_COMMON_RESQUE_REDIS_HOST",
-      "value": "redisback"
-    },
-    {
-      "name": "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET",
-      "value": "${aws_s3_bucket.lpa_pdf_cache.bucket}"
-    }]
+    "environment": [
+      {"name": "OPG_LPA_FRONT_NGINX_FRONTENDDOMAIN", "value": "${local.dns_namespace_env}${var.accounts[local.account_name].front_dns}"},
+      {"name": "OPG_NGINX_SERVER_NAMES", "value": "${local.dns_namespace_env}${var.accounts[local.account_name].front_dns} localhost 127.0.0.1"},
+      {"name": "OPG_LPA_FRONT_TRACK_FROM_DATE", "value": "2019-02-01"},
+      {"name": "OPG_LPA_STACK_NAME", "value": "${local.environment}"},
+      {"name": "OPG_DOCKER_TAG", "value": "${var.container_version}"},
+      {"name": "OPG_LPA_STACK_ENVIRONMENT", "value": "${local.account_name}"},
+      {"name": "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value": "/var/log/app/application.log"},
+      {"name": "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value": ""},
+      {"name": "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value": "${aws_dynamodb_table.lpa-locks.name}"},
+      {"name": "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", "value": "${aws_dynamodb_table.lpa-sessions.name}"},
+      {"name": "OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE", "value": "${aws_dynamodb_table.lpa-properties.name}"},
+      {"name": "OPG_PHP_POOL_CHILDREN_MAX", "value": "20"},
+      {"name": "OPG_PHP_POOL_REQUESTS_MAX", "value": "500"},
+      {"name": "OPG_NGINX_SSL_HSTS_AGE", "value": "31536000"},
+      {"name": "OPG_NGINX_SSL_FORCE_REDIRECT", "value": "TRUE"},
+      {"name": "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value": "redisback"},
+      {"name": "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value": "${aws_s3_bucket.lpa_pdf_cache.bucket}"},
+      {"name": "OPG_LPA_COMMON_PDF_QUEUE_URL", "value": "${aws_sqs_queue.pdf_fifo_queue.id}"}
+      ]
   }
   EOF
 }
-
-
-    # },
-    # {
-    #   "name": "OPG_LPA_COMMON_PDF_QUEUE_URL",
-    #   "value": "${aws_sqs_queue.pdf_fifo_queue.id}"
