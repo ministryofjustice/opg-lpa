@@ -22,12 +22,12 @@ workflows:
             branches:
               ignore: master
 
-      - infrastructure_and_deployment/apply_environment_terraform:
-          name: dev_apply_environment_terraform
-          requires: [dev_apply_account_terraform]
-          filters:
-            branches:
-              ignore: master
+      # - infrastructure_and_deployment/apply_environment_terraform:
+      #     name: dev_apply_environment_terraform
+      #     requires: [dev_apply_account_terraform]
+      #     filters:
+      #       branches:
+      #         ignore: master
 
       - infrastructure_and_deployment/apply_account_terraform:
           name: preprod_apply_account_terraform
