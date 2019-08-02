@@ -274,12 +274,13 @@ locals {
     {
       "name": "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET",
       "value": "${aws_s3_bucket.lpa_pdf_cache.bucket}"
-    },
-    {
-      "name": "OPG_LPA_COMMON_PDF_QUEUE_URL",
-      "value": "${aws_sqs_queue.pdf_fifo_queue.id}"
     }]
   }
   EOF
 }
 
+
+    # },
+    # {
+    #   "name": "OPG_LPA_COMMON_PDF_QUEUE_URL",
+    #   "value": "${aws_sqs_queue.pdf_fifo_queue.id}"

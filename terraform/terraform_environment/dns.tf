@@ -1,31 +1,31 @@
-# data "aws_route53_zone" "opg_service_justice_gov_uk" {
-#   provider = "aws.management"
-#   name     = "opg.service.justice.gov.uk"
-# }
+data "aws_route53_zone" "opg_service_justice_gov_uk" {
+  provider = "aws.management"
+  name     = "opg.service.justice.gov.uk"
+}
 
-# //-------------------------------------------------------------
-# // front
+//-------------------------------------------------------------
+// front
 
-# resource "aws_route53_record" "front" {
-#   provider = "aws.management"
-#   zone_id  = "${data.aws_route53_zone.opg_service_justice_gov_uk.zone_id}"
-#   name     = "${local.dns_namespace_env}${var.accounts[local.account_name].front_dns}"
-#   type     = "A"
+resource "aws_route53_record" "front" {
+  provider = "aws.management"
+  zone_id  = "${data.aws_route53_zone.opg_service_justice_gov_uk.zone_id}"
+  name     = "${local.dns_namespace_env}${var.accounts[local.account_name].front_dns}"
+  type     = "A"
 
-#   alias {
-#     evaluate_target_health = false
-#     name                   = "${aws_lb.front.dns_name}"
-#     zone_id                = "${aws_lb.front.zone_id}"
-#   }
+  alias {
+    evaluate_target_health = false
+    name                   = "${aws_lb.front.dns_name}"
+    zone_id                = "${aws_lb.front.zone_id}"
+  }
 
-#   lifecycle {
-#     create_before_destroy = true
-#   }
-# }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 
-# output "front-domain" {
-#   value = "https://${aws_route53_record.front.fqdn}"
-# }
+output "front-domain" {
+  value = "https://${aws_route53_record.front.fqdn}"
+}
 
 
 # //-------------------------------------------------------------
