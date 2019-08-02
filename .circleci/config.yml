@@ -174,7 +174,6 @@ orbs:
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate
-<<<<<<< HEAD
           - run:
               name: Lint Environment Terraform
               command: |
@@ -185,18 +184,6 @@ orbs:
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
-=======
-          # - run:
-          #     name: Lint Environment Terraform
-          #     command: |
-          #       export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
-          #       echo $SHORT_HASH
-          #       cd ~/project/terraform/terraform_environment
-          #       terraform init -lock-timeout=300s
-          #       export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
-          #       echo $TF_WORKSPACE
-          #       terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
->>>>>>> master
 
       apply_account_terraform:
         #
@@ -219,7 +206,6 @@ orbs:
                 export TF_WORKSPACE=<<parameters.workspace>>
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
-
 
       apply_environment_terraform:
         #
