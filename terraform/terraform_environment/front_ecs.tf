@@ -10,7 +10,7 @@ resource "aws_ecs_service" "front" {
 
   network_configuration {
     security_groups  = [aws_security_group.front_ecs_service.id]
-    subnets          = data.aws_subnet_ids.private.ids
+    subnets          = data.aws_subnet_ids.public.ids
     assign_public_ip = false
   }
 
