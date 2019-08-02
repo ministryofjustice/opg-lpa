@@ -119,12 +119,12 @@ data "aws_iam_policy_document" "front_permissions_role" {
 
 data "aws_ecr_repository" "lpa_front_web" {
   provider = "aws.management"
-  name     = "online-lpa/front"
+  name     = "online-lpa/front_web"
 }
 
 data "aws_ecr_repository" "lpa_front_app" {
   provider = "aws.management"
-  name     = "online-lpa/front"
+  name     = "online-lpa/front_app"
 }
 
 //-----------------------------------------------
@@ -135,7 +135,7 @@ locals {
   {
     "cpu": 1,
     "essential": true,
-    "image": "python:${var.container_version}",
+    "image": "${data.aws_ecr_repository.lpa_front_web.repository_url}:${var.container_version}",
     "mountPoints": [],
     "name": "web",
     "portMappings": [
@@ -178,7 +178,7 @@ locals {
   {
     "cpu": 1,
     "essential": true,
-    "image": "python:${var.container_version}",
+    "image": "${data.aws_ecr_repository.lpa_front_app.repository_url}:${var.container_version}",
     "mountPoints": [],
     "name": "app",
     "portMappings": [
