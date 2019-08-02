@@ -28,26 +28,26 @@ output "front-domain" {
 }
 
 
-# //-------------------------------------------------------------
-# // admin
+//-------------------------------------------------------------
+// admin
 
-# resource "aws_route53_record" "admin" {
-#   provider = "aws.management"
-#   zone_id  = "${data.aws_route53_zone.opg_service_justice_gov_uk.zone_id}"
-#   name     = "${local.dns_namespace_env}${var.accounts[local.account_name].admin_dns}"
-#   type     = "A"
+resource "aws_route53_record" "admin" {
+  provider = "aws.management"
+  zone_id  = "${data.aws_route53_zone.opg_service_justice_gov_uk.zone_id}"
+  name     = "${local.dns_namespace_env}${var.accounts[local.account_name].admin_dns}"
+  type     = "A"
 
-#   alias {
-#     evaluate_target_health = false
-#     name                   = "${aws_lb.admin.dns_name}"
-#     zone_id                = "${aws_lb.admin.zone_id}"
-#   }
+  alias {
+    evaluate_target_health = false
+    name                   = "${aws_lb.admin.dns_name}"
+    zone_id                = "${aws_lb.admin.zone_id}"
+  }
 
-#   lifecycle {
-#     create_before_destroy = true
-#   }
-# }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 
-# output "admin-domain" {
-#   value = "https://${aws_route53_record.admin.fqdn}"
-# }
+output "admin-domain" {
+  value = "https://${aws_route53_record.admin.fqdn}"
+}
