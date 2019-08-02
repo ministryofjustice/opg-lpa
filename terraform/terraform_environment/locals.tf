@@ -12,6 +12,8 @@ variable "accounts" {
       admin_dns                     = string
       front_certificate_domain_name = string
       admin_certificate_domain_name = string
+      sirius_api_gateway_endpoint   = string
+      sirius_api_gateway_arn        = string
     })
   )
 }
@@ -41,6 +43,9 @@ locals {
   lpa_properties_write_capacity = local.account_name != "development" ? 1 : 5
   lpa_sessions_read_capacity    = local.account_name != "development" ? 20 : 5
   lpa_sessions_write_capacity   = local.account_name != "development" ? 40 : 5
+
+  sirius_api_gateway_endpoint = var.accounts[local.account_name].sirius_api_gateway_endpoint
+  sirius_api_gateway_arn      = var.accounts[local.account_name].sirius_api_gateway_arn
 
   opg_project = "lpa"
   mandatory_moj_tags = {
