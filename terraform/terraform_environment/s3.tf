@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "lpa_pdf_cache" {
-  bucket        = "online-lpa-pdf-cache-${local.environment}"
+  bucket        = lower("online-lpa-pdf-cache-${local.environment}")
   acl           = "private"
   force_destroy = local.environment != "production" ? true : false
 
