@@ -8,18 +8,8 @@ workflows:
       #     ecr_repository_name_prefix: online-lpa/api
       #     github_repository_name: opg-lpa-api
       #     github_branch_name: LPA-3289-ecs-container
-      - infrastructure_and_deployment/lint_terraform_fmt:
+      - infrastructure_and_deployment/lint_and_validate_terraform:
           name: lint_terraform_with_fmt
-          filters:
-            branches:
-              ignore: master
-      - infrastructure_and_deployment/validate_account_terraform:
-          name: validate_account_terraform
-          filters:
-            branches:
-              ignore: master
-      - infrastructure_and_deployment/validate_environment_terraform:
-          name: validate_environment_terraform
           filters:
             branches:
               ignore: master
@@ -138,21 +128,18 @@ orbs:
     jobs:
       #----------------------------------------------------
       # Terraform
-      lint_terraform_fmt:
+      lint_and_validate_terraform:
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
         executor: terraform
         steps:
           - checkout
           - run:
               name: terraform lint
               command: terraform fmt -diff -check -recursive
-
-      validate_account_terraform:
-        #
-        # Validate the Account Terraform
-        #
-        executor: terraform
-        steps:
-          - checkout
           - run:
               name: Validate Account Terraform
               command: |
@@ -162,6 +149,16 @@ orbs:
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate
+          - run:
+              name: Lint Environment Terraform
+              command: |
+                export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+                echo $SHORT_HASH
+                cd ~/project/terraform/terraform_environment
+                terraform init -lock-timeout=300s
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE
+                terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
 
       apply_account_terraform:
         #
@@ -185,25 +182,6 @@ orbs:
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
 
-      validate_environment_terraform:
-        #
-        # Validate the Environment Terraform
-        #
-        executor: terraform
-        steps:
-          - checkout
-          - run:
-              name: Lint Environment Terraform
-              command: |
-                export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
-                echo $SHORT_HASH
-                cd ~/project/terraform/terraform_environment
-                ls -al
-                terraform init -lock-timeout=300s
-                ls -al
-                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
-                echo $TF_WORKSPACE
-                terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
 
       apply_environment_terraform:
         #
