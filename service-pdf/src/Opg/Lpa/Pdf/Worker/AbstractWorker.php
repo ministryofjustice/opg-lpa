@@ -141,8 +141,6 @@ abstract class AbstractWorker
         } else {
             $this->logger->info($message, $loggingParams);
         }
-
-        echo $message . "\n";
     }
 
     /**

@@ -49,7 +49,7 @@ class SqsWorker extends AbstractWorker
                 'WaitTimeSeconds' => 20,    // Max value is 20 (seconds)
             ]);
 
-            if (count($result->get('Messages')) > 0) {
+            if ($result->hasKey('Messages') && count($result->get('Messages')) > 0) {
                 $sqsMessage = $result->get('Messages')[0];
 
                 // Get the encrypted data and metadata
@@ -90,12 +90,12 @@ class SqsWorker extends AbstractWorker
                 ]);
 
             } else {
-                echo date('c').": no message found in queue, finishing\n";
                 $this->logger->debug("No message found in queue, finishing");
             }
 
         } catch (\Exception $e) {
             $this->logger->emerg("Exception in SqsWorker: ".$e->getMessage());
+            sleep(5);
         }
 
     }

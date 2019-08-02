@@ -23,25 +23,10 @@ class S3Response extends AbstractResponse
      */
     public function save(SplFileInfo $file)
     {
-        $this->logToConsole('Response received: ' . $file->getRealPath());
+        $this->logger->info('Response received: ' . $file->getRealPath());
 
         //  Get the file contents and encrypt them
         $fileContents = file_get_contents($file->getRealPath());
-
-        $encryptionConfig = $this->config['pdf']['encryption'];
-        $encryptionKeysDocument = $encryptionConfig['keys']['document'];
-
-        if (!is_string($encryptionKeysDocument) || strlen($encryptionKeysDocument) != 32) {
-            throw new InvalidArgumentException('Invalid encryption key');
-        }
-
-        //  We use AES encryption with Cipher-block chaining (CBC); via PHPs mcrypt extension
-        $blockCipher = BlockCipher::factory('openssl', $encryptionConfig['options']);
-        $blockCipher->setKey($encryptionKeysDocument);
-        $blockCipher->setBinaryOutput(true);
-
-        //  Encrypt the PDF...
-        $fileContentsEncrypted = $blockCipher->encrypt($fileContents);
 
         //  Create the S3 client
         $workerConfig = $this->config['worker']['s3Response'];
@@ -49,19 +34,20 @@ class S3Response extends AbstractResponse
         $s3 = new S3Client($workerConfig['client']);
 
         try {
+
             //  Put the encrypted file to S3
             $file = $workerSettingsConfig + [
                 'Key'  => (string)$this->docId,
-                'Body' => $fileContentsEncrypted,
+                'Body' => $fileContents,
             ];
 
             $s3->putObject($file);
-        } catch (S3Exception $e) {
-            $this->logToConsole('ERROR: Failed to save to S3 in ' . $workerSettingsConfig['Bucket']);
 
+        } catch (S3Exception $e) {
+            $this->logger->emerg('ERROR: Failed to save to S3 in ' . $workerSettingsConfig['Bucket']);
             throw $e;
         }
 
-        $this->logToConsole('Saved to S3 in ' . $workerSettingsConfig['Bucket']);
+        $this->logger->info('Saved to S3 in ' . $workerSettingsConfig['Bucket']);
     }
 }
