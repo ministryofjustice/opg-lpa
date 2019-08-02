@@ -22,6 +22,13 @@ workflows:
             branches:
               ignore: master
 
+      - infrastructure_and_deployment/apply_environment_terraform:
+          name: dev_apply_environment_terraform
+          requires: [dev_apply_account_terraform]
+          filters:
+            branches:
+              ignore: master
+
       - infrastructure_and_deployment/apply_account_terraform:
           name: preprod_apply_account_terraform
           workspace: preproduction
@@ -203,7 +210,7 @@ orbs:
                 ENV_NAME=<<parameters.workspace>>
                 export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
                 echo $SHORT_HASH
-                cd terraform/terraform_environment
+                cd ~/project/terraform/terraform_account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
