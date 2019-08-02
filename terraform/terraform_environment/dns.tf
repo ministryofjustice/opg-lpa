@@ -3,6 +3,11 @@ data "aws_route53_zone" "opg_service_justice_gov_uk" {
   name     = "opg.service.justice.gov.uk"
 }
 
+resource "aws_service_discovery_private_dns_namespace" "internal" {
+  name = "${local.environment}-internal"
+  vpc  = "${data.aws_vpc.default.id}"
+}
+
 //-------------------------------------------------------------
 // front
 
