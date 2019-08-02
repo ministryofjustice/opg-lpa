@@ -135,7 +135,7 @@ locals {
   {
     "cpu": 1,
     "essential": true,
-    "image": "${data.aws_ecr_repository.lpa_front_web.repository_url}:${var.container_version}",
+    "image": "python:${var.container_version}",
     "mountPoints": [],
     "name": "web",
     "portMappings": [
@@ -178,7 +178,7 @@ locals {
   {
     "cpu": 1,
     "essential": true,
-    "image": "${data.aws_ecr_repository.lpa_front_app.repository_url}:${var.container_version}",
+    "image": "python:${var.container_version}",
     "mountPoints": [],
     "name": "app",
     "portMappings": [
