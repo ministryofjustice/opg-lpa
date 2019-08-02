@@ -16,7 +16,7 @@ variable "accounts" {
 
 # run-time variables
 variable "container_version" {
-  type    = "string"
+  type    = string
   default = "latest"
 }
 
