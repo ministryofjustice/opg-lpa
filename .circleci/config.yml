@@ -9,7 +9,7 @@ workflows:
       #     github_repository_name: opg-lpa-api
       #     github_branch_name: LPA-3289-ecs-container
       - infrastructure_and_deployment/lint_and_validate_terraform:
-          name: lint_terraform_with_fmt
+          name: lint_and_validate_terraform
           filters:
             branches:
               ignore: master
@@ -17,7 +17,7 @@ workflows:
       - infrastructure_and_deployment/apply_account_terraform:
           name: dev_apply_account_terraform
           workspace: development
-          requires: [lint_terraform_with_fmt, validate_account_terraform]
+          requires: [lint_and_validate_terraform]
           filters:
             branches:
               ignore: master
