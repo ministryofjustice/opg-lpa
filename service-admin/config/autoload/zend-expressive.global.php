@@ -23,7 +23,7 @@ return [
         'tag' => getenv('OPG_DOCKER_TAG'),
     ],
 
-    'api_base_uri' => getenv('OPG_LPA_ENDPOINTS_API') ?: 'https://apiv2',
+    'api_base_uri' => getenv('OPG_LPA_ENDPOINTS_API') ?: null,
 
     'admin_accounts' => (getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ? explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : []),
 
@@ -44,9 +44,8 @@ return [
                 'region' => 'eu-west-1',
             ],
             'settings' => [
-                'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
+                'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: null,
             ],
-            'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
         ],
     ],
 
