@@ -40,7 +40,8 @@ workflows:
 
       - infrastructure_and_deployment/apply_environment_terraform:
           name: dev_apply_environment_terraform
-          requires: [dev_apply_account_terraform, docker_build_lpa_front, docker_build_lpa_admin, docker_build_lpa_api, docker_build_lpa_pdf]
+          requires: [dev_apply_account_terraform]
+          # requires: [dev_apply_account_terraform, docker_build_lpa_front, docker_build_lpa_admin, docker_build_lpa_api, docker_build_lpa_pdf]
           filters:
             branches:
               ignore: master
