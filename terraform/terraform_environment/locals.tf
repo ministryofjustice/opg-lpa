@@ -28,10 +28,10 @@ locals {
   environment       = terraform.workspace
   dns_namespace_env = local.account_name != "development" ? "" : "${terraform.workspace}."
 
-  multi_az_db             = local.opg_stackname == "production" ? true : false
-  backup_retention_period = local.opg_stackname == "production" ? 14 : 0
-  asg_desired             = local.opg_stackname == "production" ? 3 : 2
-  asg_max                 = local.opg_stackname == "production" ? 6 : 4
+  multi_az_db             = local.account_name != "development" ? true : false
+  backup_retention_period = local.account_name != "development" ? 14 : 0
+  asg_desired             = local.account_name != "development" ? 3 : 2
+  asg_max                 = local.account_name != "development" ? 6 : 4
 
   lpa_locks_read_capacity       = local.account_name != "development" ? 2 : 5
   lpa_locks_write_capacity      = local.account_name != "development" ? 2 : 5
