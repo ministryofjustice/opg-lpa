@@ -1,0 +1,195 @@
+//----------------------------------
+// pdf ECS Service level config
+
+resource "aws_ecs_service" "pdf" {
+  name            = "pdf"
+  cluster         = aws_ecs_cluster.online-lpa.id
+  task_definition = aws_ecs_task_definition.pdf.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    security_groups  = [aws_security_group.pdf_ecs_service.id]
+    subnets          = data.aws_subnet_ids.private.ids
+    assign_public_ip = false
+  }
+
+  depends_on = [aws_iam_role.pdf_task_role, aws_iam_role.execution_role]
+}
+
+//----------------------------------
+// The service's Security Groups
+
+resource "aws_security_group" "pdf_ecs_service" {
+  name_prefix = "${local.environment}-pdf-ecs-service"
+  vpc_id      = data.aws_vpc.default.id
+  tags        = local.default_tags
+}
+
+//--------------------------------------
+// pdf ECS Service Task level config
+
+resource "aws_ecs_task_definition" "pdf" {
+  family                   = "${local.environment}-pdf"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = 512
+  memory                   = 1024
+  container_definitions    = "[${local.pdf_web}, ${local.pdf_app}]"
+  task_role_arn            = aws_iam_role.pdf_task_role.arn
+  execution_role_arn       = aws_iam_role.execution_role.arn
+  tags                     = local.default_tags
+}
+
+//----------------
+// Permissions
+
+resource "aws_iam_role" "pdf_task_role" {
+  name               = "${local.environment}-pdf-task-role"
+  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
+  tags               = local.default_tags
+}
+
+resource "aws_iam_role_policy" "pdf_permissions_role" {
+  name   = "${local.environment}-pdfApplicationPermissions"
+  policy = data.aws_iam_policy_document.pdf_permissions_role.json
+  role   = aws_iam_role.pdf_task_role.id
+}
+
+/*
+  Defines permissions that the application running within the task has.
+*/
+data "aws_iam_policy_document" "pdf_permissions_role" {
+  statement {
+    sid = "DynamoDBAccess"
+
+    effect = "Allow"
+
+    actions = [
+      "dynamodb:BatchGetItem",
+      "dynamodb:BatchWriteItem",
+      "dynamodb:DeleteItem",
+      "dynamodb:DescribeStream",
+      "dynamodb:DescribeTable",
+      "dynamodb:GetItem",
+      "dynamodb:GetRecords",
+      "dynamodb:GetShardIterator",
+      "dynamodb:ListStreams",
+      "dynamodb:ListTables",
+      "dynamodb:PutItem",
+      "dynamodb:Query",
+      "dynamodb:Scan",
+      "dynamodb:UpdateItem",
+      "dynamodb:UpdateTable",
+    ]
+
+    resources = [
+      aws_dynamodb_table.lpa-locks.arn,
+      aws_dynamodb_table.lpa-properties.arn,
+      aws_dynamodb_table.lpa-sessions.arn,
+    ]
+  }
+}
+
+data "aws_ecr_repository" "lpa_pdf_app" {
+  provider = "aws.management"
+  name     = "online-lpa/pdf_app"
+}
+
+//-----------------------------------------------
+// pdf ECS Service Task Container level config
+
+locals {
+  pdf_app = <<EOF
+  {
+    "cpu": 1,
+    "essential": true,
+    "image": "${data.aws_ecr_repository.lpa_pdf_app.repository_url}:${var.container_version}",
+    "mountPoints": [],
+    "name": "app",
+    "portMappings": [
+        {
+            "containerPort": 9000,
+            "hostPort": 9000,
+            "protocol": "tcp"
+        }
+    ],
+    "volumesFrom": [],
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
+            "awslogs-region": "eu-west-1",
+            "awslogs-stream-prefix": "pdf-app.online-lpa"
+        }
+    },
+    "secrets": [
+      { "name": "OPG_LPA_PDF_ENCRYPTION_KEY_QUEUE", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_pdf_encryption_key_queue.name}" },
+      { "name": "OPG_LPA_PDF_ENCRYPTION_KEY_DOCUMENT", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_pdf_encryption_key_document.name}" },
+      { "name": "OPG_LPA_PDF_OWNER_PASSWORD", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_pdf_owner_password.name}" },
+    ],
+    "environment": [
+
+      {
+        "name": "OPG_LPA_STACK_NAME",
+        "value": "${local.opg_stackname}"
+      },
+      {
+        "name": "OPG_DOCKER_TAG",
+        "value": "${var.container_version}"
+      },
+      {
+        "name": "OPG_LPA_STACK_ENVIRONMENT",
+        "value": "${local.opg_environment}"
+      },
+      {
+        "name": "OPG_LPA_COMMON_APPLICATION_LOG_PATH",
+        "value": "/var/log/app/application.log"
+      },
+      {
+        "name": "OPG_LPA_COMMON_DYNAMODB_ENDPOINT",
+        "value": ""
+      },
+      {
+        "name": "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE",
+        "value": "${aws_dynamodb_table.lpa-locks.name}"
+      },
+      {
+        "name": "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE",
+        "value": "${aws_dynamodb_table.lpa-sessions.name}"
+      },
+      {
+        "name": "OPG_LPA_COMMON_pdf2_DYNAMODB_TABLE",
+        "value": "${aws_dynamodb_table.lpa-properties.name}"
+      },
+      {
+        "name": "OPG_PHP_POOL_CHILDREN_MAX",
+        "value": "20"
+      },
+      {
+        "name": "OPG_PHP_POOL_REQUESTS_MAX",
+        "value": "500"
+      },
+      {
+        "name": "OPG_NGINX_SSL_HSTS_AGE",
+        "value": "31536000"
+      },
+      {
+        "name": "OPG_NGINX_SSL_FORCE_REDIRECT",
+        "value": "TRUE"
+      },
+      {
+        "name": "OPG_LPA_COMMON_RESQUE_REDIS_HOST",
+        "value": "redisback"
+      },
+      {
+        "name": "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET",
+        "value": "${aws_s3_bucket.lpa-pdf-cache.bucket}"
+      },
+      {
+        "name": "OPG_LPA_COMMON_PDF_QUEUE_URL",
+        "value": "${aws_sqs_queue.pdf_fifo_queue.id}"
+      }]
+  }
+  EOF
+}
