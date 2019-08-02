@@ -44,5 +44,9 @@ locals {
     source-code            = "https://github.com/ministryofjustice/opg-lpa"
   }
 
-  default_tags = merge(local.mandatory_moj_tags, local.optional_tags)
+  default_tags = merge(local.mandatory_moj_tags, local.optional_tags, {
+    "Name" = "${local.environment}-online-lpa-tool"
+  }, )
+
 }
+# tags = local.default_tags

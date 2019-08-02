@@ -1,22 +1,12 @@
 resource "aws_ecs_cluster" "online-lpa-tool" {
   name = "${local.environment}-online-lpa-tool"
-  tags = merge(
-    local.default_tags,
-    {
-      "Name" = "${local.environment}-online-lpa-tool"
-    },
-  )
+  tags = local.default_tags
 }
 
 resource "aws_iam_role" "execution_role" {
   name               = "${local.environment}-execution-role-ecs-cluster"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags = merge(
-    local.default_tags,
-    {
-      "Name" = "${local.environment}-online-lpa-tool"
-    },
-  )
+  tags               = local.default_tags
 }
 
 data "aws_iam_policy_document" "ecs_assume_policy" {
