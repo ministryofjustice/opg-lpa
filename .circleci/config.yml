@@ -198,10 +198,12 @@ orbs:
                 export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
                 echo $SHORT_HASH
                 cd ~/project/terraform/terraform_environment
+                ls -al
                 terraform init -lock-timeout=300s
-                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
-                echo $TF_WORKSPACE
-                terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
+                ls -al
+                # export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                # echo $TF_WORKSPACE
+                # terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
 
       apply_environment_terraform:
         #
