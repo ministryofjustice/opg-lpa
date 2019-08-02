@@ -8,10 +8,6 @@ resource "aws_sqs_queue" "pdf_fifo_queue" {
   kms_data_key_reuse_period_seconds = "300"
   max_message_size                  = "262144"
   tags                              = local.default_tags
-  # depends_on = [
-  #   aws_autoscaling_group.api2,
-  #   aws_autoscaling_group.pdf2,
-  # ]
 }
 
 resource "aws_sqs_queue_policy" "queue_policy" {
@@ -38,7 +34,7 @@ data "aws_iam_policy_document" "queue_policy_document" {
   statement {
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::${local.account_id}:role/pdf2.${local.environment}"]
+      identifiers = ["arn:aws:iam::${local.account_id}:role/pdf.${local.environment}"]
     }
 
     effect    = "Allow"
