@@ -3,11 +3,27 @@ version: 2.1
 workflows:
   pr-build-and-test:
     jobs:
-      # - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-      #     name: docker_build_lpa_api
-      #     ecr_repository_name_prefix: online-lpa/api
-      #     github_repository_name: opg-lpa-api
-      #     github_branch_name: LPA-3289-ecs-container
+      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+          name: docker_build_lpa_front
+          ecr_repository_name_prefix: online-lpa/front
+          github_repository_name: opg-lpa-front
+          github_branch_name: LPA-3289-ecs-container
+      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+          name: docker_build_lpa_admin
+          ecr_repository_name_prefix: online-lpa/admin
+          github_repository_name: opg-lpa-admin
+          github_branch_name: LPA-3289-ecs-container
+      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+          name: docker_build_lpa_api
+          ecr_repository_name_prefix: online-lpa/api
+          github_repository_name: opg-lpa-api
+          github_branch_name: LPA-3289-ecs-container
+      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+          name: docker_build_lpa_pdf
+          ecr_repository_name_prefix: online-lpa/pdf
+          github_repository_name: opg-lpa-pdf
+          github_branch_name: LPA-3289-ecs-container
+
       - infrastructure_and_deployment/lint_and_validate_terraform:
           name: lint_and_validate_terraform
           filters:
@@ -95,7 +111,9 @@ orbs:
           - run:
               name: Build web container
               command: |
-                docker build -f << parameters.github_repository_name >>/docker/web/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web .
+                if [ << parameters.github_repository_name >> != "opg-lpa-pdf" ]; then
+                  docker build -f << parameters.github_repository_name >>/docker/web/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web .
+                fi
           - run:
               name: Build app container
               command: |
@@ -156,6 +174,7 @@ orbs:
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate
+<<<<<<< HEAD
           - run:
               name: Lint Environment Terraform
               command: |
@@ -166,6 +185,18 @@ orbs:
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
+=======
+          # - run:
+          #     name: Lint Environment Terraform
+          #     command: |
+          #       export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+          #       echo $SHORT_HASH
+          #       cd ~/project/terraform/terraform_environment
+          #       terraform init -lock-timeout=300s
+          #       export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+          #       echo $TF_WORKSPACE
+          #       terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
+>>>>>>> master
 
       apply_account_terraform:
         #
