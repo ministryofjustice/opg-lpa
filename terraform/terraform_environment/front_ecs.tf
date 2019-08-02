@@ -273,7 +273,7 @@ locals {
     },
     {
       "name": "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET",
-      "value": "${aws_s3_bucket.lpa-pdf-cache.bucket}"
+      "value": "${aws_s3_bucket.lpa_pdf_cache.bucket}"
     },
     {
       "name": "OPG_LPA_COMMON_PDF_QUEUE_URL",
