@@ -30,7 +30,7 @@ resource "aws_security_group" "pdf_ecs_service" {
 // pdf ECS Service Task level config
 
 resource "aws_ecs_task_definition" "pdf" {
-  family                   = "${local.environment}-pdf"
+  family                   = "${local.environment}-pdf-${local.timestamp}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 512
