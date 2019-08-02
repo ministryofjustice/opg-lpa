@@ -1,10 +1,10 @@
-resource "aws_ecs_cluster" "online-lpa-tool" {
-  name = "${local.environment}-online-lpa-tool"
+resource "aws_ecs_cluster" "online-lpa" {
+  name = "${local.environment}-online-lpa"
   tags = local.default_tags
 }
 
-data "aws_cloudwatch_log_group" "online-lpa-tool" {
-  name = "online-lpa-tool"
+data "aws_cloudwatch_log_group" "online-lpa" {
+  name = "online-lpa"
 }
 
 resource "aws_iam_role" "execution_role" {
