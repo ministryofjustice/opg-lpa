@@ -26,6 +26,14 @@ data "aws_s3_bucket" "access_log" {
   bucket = "online-lpa-${local.account_name}-lb-access-logs"
 }
 
+data "aws_s3_bucket" "lpa_pdf_cache" {
+  bucket = lower("online-lpa-pdf-cache-${local.account_name}")
+}
+
+data "aws_kms_key" "lpa_pdf_cache" {
+  key_id = "alias/lpa_pdf_cache-${local.account_name}"
+}
+
 data "aws_acm_certificate" "certificate_front" {
   domain = var.accounts[local.account_name].front_certificate_domain_name
 }

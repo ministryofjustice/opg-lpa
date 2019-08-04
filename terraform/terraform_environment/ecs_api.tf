@@ -179,7 +179,7 @@ data "aws_iam_policy_document" "api_permissions_role" {
     ]
 
     resources = [
-      "${aws_s3_bucket.lpa_pdf_cache.arn}*",
+      "${data.aws_s3_bucket.lpa_pdf_cache.arn}*",
     ]
   }
   statement {
@@ -191,7 +191,7 @@ data "aws_iam_policy_document" "api_permissions_role" {
     ]
 
     resources = [
-      aws_s3_bucket.lpa_pdf_cache.arn,
+      data.aws_s3_bucket.lpa_pdf_cache.arn,
     ]
   }
 }
@@ -290,7 +290,7 @@ locals {
       { "name": "OPG_NGINX_SSL_HSTS_AGE", "value": "31536000"},
       { "name": "OPG_NGINX_SSL_FORCE_REDIRECT", "value": "TRUE"},
       { "name": "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value": "redisback"},
-      { "name": "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value": "${aws_s3_bucket.lpa_pdf_cache.bucket}"},
+      { "name": "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value": "${data.aws_s3_bucket.lpa_pdf_cache.bucket}"},
       { "name": "OPG_LPA_COMMON_PDF_QUEUE_URL", "value": "${aws_sqs_queue.pdf_fifo_queue.id}"}
       ]
     }
