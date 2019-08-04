@@ -44,6 +44,12 @@ workflows:
           filters:
             branches:
               ignore: master
+      - infrastructure_and_deployment/slack_notification_domain:
+          name: slack_notification_domain_dev
+          requires: [dev_apply_environment_terraform]
+          filters:
+            branches:
+              ignore: master
 
       - infrastructure_and_deployment/apply_account_terraform:
           name: preprod_apply_account_terraform
@@ -235,6 +241,7 @@ orbs:
                 terraform apply -lock-timeout=300s --auto-approve -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
                 export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
                 echo $ENV_DOMAINS
+
       slack_notification_domain:
         executor: terraform
         parameters:
