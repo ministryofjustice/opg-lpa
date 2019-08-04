@@ -45,7 +45,7 @@ workflows:
             branches:
               ignore: master
       - slack_notify_domain:
-          name: slack_notification_domain_dev
+          name: post_environment_domains
           requires: [dev_apply_environment_terraform]
           filters:
             branches:
@@ -316,6 +316,7 @@ jobs:
             echo $TF_WORKSPACE
             export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
             echo $ENV_DOMAINS
+            apk add bash
       - slack/notify:
           title: Environment Ready
           message: '${ENV_DOMAINS}'
