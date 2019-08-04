@@ -62,6 +62,7 @@ workflows:
               
 
 orbs:
+  slack: circleci/slack@3.3.0
   build_containers_and_push_to_ecr:
     commands:
       install_aws_cli:
@@ -232,6 +233,14 @@ orbs:
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
+                export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
+                echo $ENV_DOMAINS
+          # - slack/notify:
+          #     title: Environment Ready
+          #     color: '#42e2f4'
+          #     only_for_branches: only_for_branches
+          #     message: '${ENV_DOMAINS}'
+          #     webhook: '${SLACK_WEBHOOK}'
           #       mv cluster_config.json /tmp/
           # - persist_to_workspace:
           #     root: /tmp
