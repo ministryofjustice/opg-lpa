@@ -1,7 +1,7 @@
 resource "aws_dynamodb_table" "lpa-locks" {
-  name           = "lpa-locks-${local.environment}"
+  name         = "lpa-locks-${local.environment}"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key       = "id"
+  hash_key     = "id"
 
   attribute {
     name = "id"
@@ -12,9 +12,9 @@ resource "aws_dynamodb_table" "lpa-locks" {
 }
 
 resource "aws_dynamodb_table" "lpa-properties" {
-  name           = "lpa-properties-${local.environment}"
+  name         = "lpa-properties-${local.environment}"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key       = "id"
+  hash_key     = "id"
 
   attribute {
     name = "id"
@@ -25,9 +25,9 @@ resource "aws_dynamodb_table" "lpa-properties" {
 }
 
 resource "aws_dynamodb_table" "lpa-sessions" {
-  name           = "lpa-sessions-${local.environment}"
+  name         = "lpa-sessions-${local.environment}"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key       = "id"
+  hash_key     = "id"
 
   attribute {
     name = "id"
