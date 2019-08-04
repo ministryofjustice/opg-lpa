@@ -160,7 +160,6 @@ data "aws_iam_policy_document" "api_permissions_role" {
 
   statement {
     sid = "APIGatewayAccess"
-
     actions = [
       "execute-api:Invoke",
     ]
@@ -192,6 +191,18 @@ data "aws_iam_policy_document" "api_permissions_role" {
 
     resources = [
       data.aws_s3_bucket.lpa_pdf_cache.arn,
+    ]
+  }
+  statement {
+    sid    = "lpaCacheDecrypt"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+    ]
+    resources = [
+      data.aws_s3_bucket.lpa_pdf_cache.arn,
+      data.aws_kms.lpa_pdf_cache.arn,
     ]
   }
 }

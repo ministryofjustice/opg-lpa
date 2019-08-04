@@ -115,6 +115,18 @@ data "aws_iam_policy_document" "front_permissions_role" {
       aws_dynamodb_table.lpa-sessions.arn,
     ]
   }
+  statement {
+    sid    = "lpaCacheDecrypt"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+    ]
+    resources = [
+      data.aws_s3_bucket.lpa_pdf_cache.arn,
+      data.aws_kms.lpa_pdf_cache.arn,
+    ]
+  }
 }
 
 data "aws_ecr_repository" "lpa_front_web" {

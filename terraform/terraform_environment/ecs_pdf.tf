@@ -112,7 +112,7 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
   }
 
   statement {
-    sid    = "Decrypt"
+    sid    = "lpaCacheDecrypt"
     effect = "Allow"
     actions = [
       "kms:Decrypt",
@@ -120,6 +120,7 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
     ]
     resources = [
       data.aws_s3_bucket.lpa_pdf_cache.arn,
+      data.aws_kms.lpa_pdf_cache.arn,
     ]
   }
 }
