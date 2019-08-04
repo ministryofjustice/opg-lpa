@@ -44,7 +44,7 @@ workflows:
           filters:
             branches:
               ignore: master
-      - infrastructure_and_deployment/slack_notification_domain:
+      - slack_notify_domain:
           name: slack_notification_domain_dev
           requires: [dev_apply_environment_terraform]
           filters:
@@ -293,4 +293,29 @@ orbs:
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
                 fi      
-
+jobs:
+  slack_notify_domain:
+    docker:
+      - image: "hashicorp/terraform:0.12.5"
+    parameters:
+      workspace:
+        description: Terraform workspace name
+        type: string
+        default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+    steps:
+      - checkout
+      - run:
+          name: Slack Notification
+          command: |
+            ENV_NAME=<<parameters.workspace>>
+            export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+            echo $SHORT_HASH
+            cd ~/project/terraform/terraform_environment
+            terraform init -lock-timeout=300s
+            export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+            echo $TF_WORKSPACE
+            export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
+            echo $ENV_DOMAINS
+      - slack/notify:
+          title: Environment Ready
+          message: '${ENV_DOMAINS}'
