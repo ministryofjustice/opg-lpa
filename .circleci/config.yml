@@ -235,16 +235,30 @@ orbs:
                 terraform apply -lock-timeout=300s --auto-approve -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
                 export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
                 echo $ENV_DOMAINS
+      slack_notification_domain:
+        executor: terraform
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        steps:
+          - checkout
+          - run:
+              name: Slack Notification
+              command: |
+                ENV_NAME=<<parameters.workspace>>
+                export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+                echo $SHORT_HASH
+                cd ~/project/terraform/terraform_environment
+                terraform init -lock-timeout=300s
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE
+                export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
+                echo $ENV_DOMAINS
           - slack/notify:
               title: Environment Ready
-              color: '#42e2f4'
               message: '${ENV_DOMAINS}'
-              webhook: '${SLACK_WEBHOOK}'
-          #       mv cluster_config.json /tmp/
-          # - persist_to_workspace:
-          #     root: /tmp
-          #     paths:
-          #       - cluster_config.json
 
       destroy_dev_environment:
         #
