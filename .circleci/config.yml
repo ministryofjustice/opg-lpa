@@ -316,8 +316,8 @@ jobs:
             export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
             echo $TF_WORKSPACE
             export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
-            echo $ENV_DOMAINS
             apk add bash
+            bash
       - slack/notify:
           title: Environment Ready
           message: '${ENV_DOMAINS}'
