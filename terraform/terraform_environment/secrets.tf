@@ -42,6 +42,8 @@ data "aws_secretsmanager_secret" "opg_lpa_front_ordnance_survey_license_key" {
 data "aws_secretsmanager_secret" "opg_lpa_pdf_owner_password" {
   name = "${local.account_name}/opg_lpa_pdf_owner_password"
 }
+
+# database secrets
 data "aws_secretsmanager_secret" "api_rds_username" {
   name = "${local.account_name}/api_rds_username"
 }
@@ -49,6 +51,7 @@ data "aws_secretsmanager_secret" "api_rds_username" {
 data "aws_secretsmanager_secret" "api_rds_password" {
   name = "${local.account_name}/api_rds_password"
 }
+
 data "aws_secretsmanager_secret_version" "api_rds_username" {
   secret_id = data.aws_secretsmanager_secret.api_rds_username.id
 }
