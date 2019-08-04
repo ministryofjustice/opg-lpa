@@ -202,7 +202,7 @@ data "aws_iam_policy_document" "api_permissions_role" {
     ]
     resources = [
       data.aws_s3_bucket.lpa_pdf_cache.arn,
-      data.aws_kms.lpa_pdf_cache.arn,
+      data.aws_kms_key.lpa_pdf_cache.arn,
     ]
   }
 }
