@@ -16,7 +16,7 @@ resource "aws_db_instance" "api" {
   vpc_security_group_ids     = [aws_security_group.rds-api.id]
   auto_minor_version_upgrade = true
   maintenance_window         = "sun:01:00-sun:01:30"
-  multi_az                   = local.multi_az_db
+  multi_az                   = true
   backup_retention_period    = local.backup_retention_period
   tags                       = local.default_tags
 }
