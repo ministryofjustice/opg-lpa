@@ -26,11 +26,23 @@ resource "aws_security_group" "pdf_ecs_service" {
   tags        = local.default_tags
 }
 
+//----------------------------------
+// Anything out
+resource "aws_security_group_rule" "pdf_ecs_service_egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = "${aws_security_group.pdf_ecs_service.id}"
+}
+
 //--------------------------------------
 // pdf ECS Service Task level config
 
 resource "aws_ecs_task_definition" "pdf" {
-  family                   = "${local.environment}-pdf-${local.timestamp}"
+  # family                   = "${local.environment}-pdf-${local.timestamp}"
+  family                   = "${local.environment}-pdf"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 512

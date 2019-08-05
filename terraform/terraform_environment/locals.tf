@@ -47,7 +47,7 @@ locals {
   sirius_api_gateway_endpoint = var.accounts[local.account_name].sirius_api_gateway_endpoint
   sirius_api_gateway_arn      = var.accounts[local.account_name].sirius_api_gateway_arn
 
-  ecs_task_count = 0
+  ecs_task_count = 2
   timestamp      = lower(formatdate("YYYYMMDDhhmmss", timestamp()))
 
   opg_project = "lpa"

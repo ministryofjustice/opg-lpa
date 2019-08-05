@@ -10,7 +10,7 @@ resource "aws_ecs_service" "front" {
 
   network_configuration {
     security_groups  = [aws_security_group.front_ecs_service.id]
-    subnets          = data.aws_subnet_ids.public.ids
+    subnets          = data.aws_subnet_ids.private.ids
     assign_public_ip = false
   }
 
@@ -56,7 +56,8 @@ resource "aws_security_group_rule" "front_ecs_service_egress" {
 // front ECS Service Task level config
 
 resource "aws_ecs_task_definition" "front" {
-  family                   = "${local.environment}-front-${local.timestamp}"
+  # family                   = "${local.environment}-front-${local.timestamp}"
+  family                   = "${local.environment}-front"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 512

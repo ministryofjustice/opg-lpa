@@ -5,8 +5,16 @@ resource "aws_lb_target_group" "admin" {
   target_type          = "ip"
   vpc_id               = data.aws_vpc.default.id
   deregistration_delay = 0
-  depends_on           = ["aws_lb.admin"]
-  tags                 = local.default_tags
+  health_check {
+    enabled             = true
+    interval            = 30
+    path                = "/robots.txt"
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    matcher             = 200
+  }
+  depends_on = ["aws_lb.admin"]
+  tags       = local.default_tags
 }
 
 resource "aws_lb" "admin" {
