@@ -7,6 +7,9 @@ Notes, remarks and reminders for the migration of stack resource management from
       I think this could be placed in the vpc level 
 
 ## Tech Debt
+### Build
+Run unit tests before push?
+
 ### Account
 in credentials, replace local.account_id with a variable
 
