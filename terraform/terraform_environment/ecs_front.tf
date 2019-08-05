@@ -56,7 +56,6 @@ resource "aws_security_group_rule" "front_ecs_service_egress" {
 // front ECS Service Task level config
 
 resource "aws_ecs_task_definition" "front" {
-  # family                   = "${local.environment}-front-${local.timestamp}"
   family                   = "${local.environment}-front"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"

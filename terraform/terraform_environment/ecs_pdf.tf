@@ -41,7 +41,6 @@ resource "aws_security_group_rule" "pdf_ecs_service_egress" {
 // pdf ECS Service Task level config
 
 resource "aws_ecs_task_definition" "pdf" {
-  # family                   = "${local.environment}-pdf-${local.timestamp}"
   family                   = "${local.environment}-pdf"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"

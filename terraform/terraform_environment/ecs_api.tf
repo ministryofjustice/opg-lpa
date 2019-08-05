@@ -97,7 +97,6 @@ resource "aws_security_group_rule" "api_ecs_service_egress" {
 // Api ECS Service Task level config
 
 resource "aws_ecs_task_definition" "api" {
-  # family                   = "${terraform.workspace}-api-${local.timestamp}"
   family                   = "${terraform.workspace}-api"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
