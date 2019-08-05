@@ -16,3 +16,5 @@ COPY opg-lpa-pdf /app
 COPY --from=composer /app/vendor /app/vendor
 
 WORKDIR /app
+
+CMD /app/bin/start.sh
