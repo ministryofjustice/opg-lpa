@@ -54,6 +54,22 @@ workflows:
       #       branches:
       #         ignore: master
 
+      - hold-for-destruction:
+          name: hold_env_for_destruction
+          type: approval 
+          requires: [dev_environment_apply_terraform]
+          filters:
+            branches:
+              ignore: master
+
+      - infrastructure_and_deployment/destroy_dev_environment:
+          name: dev_destroy_environment
+          requires: [hold_env_for_destruction]
+          filters:
+            branches:
+              ignore: master
+
+
       - infrastructure_and_deployment/apply_account_terraform:
           name: preprod_account_apply_terraform
           workspace: preproduction
@@ -264,7 +280,7 @@ orbs:
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
                 if [ "${CIRCLE_BRANCH}" != "master" ]; then
-                  cd terraform/terraform_environment
+                  cd ~/project/terraform/terraform_environment
                   terraform init -lock-timeout=300s
                   export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                   echo $TF_WORKSPACE
