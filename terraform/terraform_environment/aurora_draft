@@ -1,0 +1,43 @@
+
+
+resource "aws_rds_cluster" "api" {
+  cluster_identifier      = lower("api-${local.environment}")
+  engine                  = "aurora-postgresql"
+  deletion_protection     = local.account == "production" ? true : false
+  availability_zones      = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+  database_name           = lower("api-${local.environment}")
+  master_username         = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
+  master_password         = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
+  backup_retention_period = 5
+  preferred_backup_window =  "sun:01:00-sun:01:30"
+  backtrack_window
+
+  port                       = "5432"
+  vpc_security_group_ids     = [aws_security_group.rds-api.id]
+  skip_final_snapshot = true
+  storage_encrypted = true
+  # apply_immediately = local.account == "production" ? false : true
+  db_subnet_group_name = data.aws_subnet_ids.private.ids
+  db_cluster_parameter_group_name = aws_db_parameter_group.postgres-db-params.name
+
+  # kms_key_id 
+  # iam_roles
+  # iam_database_authentication_enabled
+
+  engine_mode = serverless
+  engine_version = 10.7.postgres_aurora.2.3.2
+  source_region = "eu-west-1"
+  # enabled_cloudwatch_logs_exports
+  scaling_configuration {
+    auto_pause               = true
+    max_capacity             = 256
+    min_capacity             = 2
+    seconds_until_auto_pause = 300
+    timeout_action           = "ForceApplyCapacityChange"
+  }
+
+  tags = local.default_tags
+  copy_tags_to_snapshot = true
+}
+
+
