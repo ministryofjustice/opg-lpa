@@ -4,26 +4,25 @@ workflows:
   pr-build-and-test:
     jobs:
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: docker_build_lpa_front
+          name: front_docker_build
           ecr_repository_name_prefix: online-lpa/front
           github_repository_name: opg-lpa-front
           github_branch_name: LPA-3289-ecs-container
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: docker_build_lpa_admin
+          name: admin_docker_build
           ecr_repository_name_prefix: online-lpa/admin
           github_repository_name: opg-lpa-admin
           github_branch_name: LPA-3289-ecs-container
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: docker_build_lpa_api
+          name: api_docker_build
           ecr_repository_name_prefix: online-lpa/api
           github_repository_name: opg-lpa-api
           github_branch_name: LPA-3289-ecs-container
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: docker_build_lpa_pdf
+          name: pdf_docker_build
           ecr_repository_name_prefix: online-lpa/pdf
           github_repository_name: opg-lpa-pdf
           github_branch_name: LPA-3289-ecs-container
-
 
       - infrastructure_and_deployment/lint_and_validate_terraform:
           name: lint_and_validate_terraform
@@ -32,37 +31,63 @@ workflows:
               ignore: master
 
       - infrastructure_and_deployment/apply_account_terraform:
-          name: dev_apply_account_terraform
+          name: dev_account_apply_terraform
           workspace: development
           requires: [lint_and_validate_terraform]
           filters:
             branches:
               ignore: master
 
-      # - infrastructure_and_deployment/apply_environment_terraform:
-      #     name: dev_apply_environment_terraform
-      #     requires: [dev_apply_account_terraform]
+      - infrastructure_and_deployment/apply_environment_terraform:
+          name: dev_environment_apply_terraform
+          requires: [dev_account_apply_terraform, front_docker_build, admin_docker_build, api_docker_build, pdf_docker_build]
+          # requires: [dev_apply_account_terraform]
+          filters:
+            branches:
+              ignore: master
+      # This step is commented out at the moment because of a bug in the
+      #  slack orb. PR to fix this is https://github.com/CircleCI-Public/slack-orb/pull/72
+      # - slack_notify_domain:
+      #     name: post_environment_domains
+      #     requires: [dev_apply_environment_terraform]
       #     filters:
       #       branches:
       #         ignore: master
 
+      - hold-for-destruction:
+          name: hold_env_for_destruction
+          type: approval 
+          requires: [dev_environment_apply_terraform]
+          filters:
+            branches:
+              ignore: master
+
+      - infrastructure_and_deployment/destroy_dev_environment:
+          name: dev_destroy_environment
+          requires: [hold_env_for_destruction]
+          filters:
+            branches:
+              ignore: master
+
+
       - infrastructure_and_deployment/apply_account_terraform:
-          name: preprod_apply_account_terraform
+          name: preprod_account_apply_terraform
           workspace: preproduction
           filters:
             branches:
               only: master
 
       - infrastructure_and_deployment/apply_account_terraform:
-          name: prod_apply_account_terraform
+          name: prod_account_apply_terraform
           workspace: production
-          requires: [preprod_apply_account_terraform]
+          requires: [preprod_account_apply_terraform]
           filters:
             branches:
               only: master
               
 
 orbs:
+  slack: circleci/slack@3.3.0
   build_containers_and_push_to_ecr:
     commands:
       install_aws_cli:
@@ -175,16 +200,16 @@ orbs:
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate
-          # - run:
-          #     name: Lint Environment Terraform
-          #     command: |
-          #       export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
-          #       echo $SHORT_HASH
-          #       cd ~/project/terraform/terraform_environment
-          #       terraform init -lock-timeout=300s
-          #       export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
-          #       echo $TF_WORKSPACE
-          #       terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
+          - run:
+              name: Lint Environment Terraform
+              command: |
+                export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+                echo $SHORT_HASH
+                cd ~/project/terraform/terraform_environment
+                terraform init -lock-timeout=300s
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE
+                terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
 
       apply_account_terraform:
         #
@@ -207,7 +232,6 @@ orbs:
                 export TF_WORKSPACE=<<parameters.workspace>>
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
-
 
       apply_environment_terraform:
         #
@@ -234,11 +258,7 @@ orbs:
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
-          #       mv cluster_config.json /tmp/
-          # - persist_to_workspace:
-          #     root: /tmp
-          #     paths:
-          #       - cluster_config.json
+                export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
 
       destroy_dev_environment:
         #
@@ -260,10 +280,36 @@ orbs:
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
                 if [ "${CIRCLE_BRANCH}" != "master" ]; then
-                  cd terraform/terraform_environment
+                  cd ~/project/terraform/terraform_environment
                   terraform init -lock-timeout=300s
                   export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
                 fi      
-
+jobs:
+  slack_notify_domain:
+    docker:
+      - image: "hashicorp/terraform:0.12.5"
+    parameters:
+      workspace:
+        description: Terraform workspace name
+        type: string
+        default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+    steps:
+      - checkout
+      - run:
+          name: Slack Notification
+          command: |
+            ENV_NAME=<<parameters.workspace>>
+            export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+            echo $SHORT_HASH
+            cd ~/project/terraform/terraform_environment
+            terraform init -lock-timeout=300s
+            export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+            echo $TF_WORKSPACE
+            export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
+            apk add bash
+            bash
+      - slack/notify:
+          title: Environment Ready
+          message: '${ENV_DOMAINS}'
