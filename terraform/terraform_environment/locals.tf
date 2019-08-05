@@ -30,25 +30,15 @@ locals {
   account_id   = var.accounts[local.account_name].account_id
 
   environment       = terraform.workspace
-  dns_namespace_env = local.account_name != "development" ? "" : "${terraform.workspace}."
+  dns_namespace_env = local.account_name != "development" ? "" : "${local.environment}."
 
-  multi_az_db             = local.account_name != "development" ? true : false
   backup_retention_period = local.account_name != "development" ? 14 : 0
-  asg_desired             = local.account_name != "development" ? 3 : 2
-  asg_max                 = local.account_name != "development" ? 6 : 4
-
-  lpa_locks_read_capacity       = local.account_name != "development" ? 2 : 5
-  lpa_locks_write_capacity      = local.account_name != "development" ? 2 : 5
-  lpa_properties_read_capacity  = local.account_name != "development" ? 20 : 5
-  lpa_properties_write_capacity = local.account_name != "development" ? 1 : 5
-  lpa_sessions_read_capacity    = local.account_name != "development" ? 20 : 5
-  lpa_sessions_write_capacity   = local.account_name != "development" ? 40 : 5
 
   sirius_api_gateway_endpoint = var.accounts[local.account_name].sirius_api_gateway_endpoint
   sirius_api_gateway_arn      = var.accounts[local.account_name].sirius_api_gateway_arn
 
   ecs_task_count = 2
-  timestamp      = lower(formatdate("YYYYMMDDhhmmss", timestamp()))
+  # timestamp      = lower(formatdate("YYYYMMDDhhmmss", timestamp()))
 
   opg_project = "lpa"
   mandatory_moj_tags = {
@@ -70,4 +60,3 @@ locals {
   }, )
 
 }
-# tags = local.default_tags
