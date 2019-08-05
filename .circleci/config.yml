@@ -88,7 +88,7 @@ workflows:
               only: master
       - infrastructure_and_deployment/apply_environment_terraform:
           name: prod_environment_apply_terraform
-          requires: [preprod_account_apply_terraform]
+          requires: [prod_account_apply_terraform]
           workspace: production
           filters:
             branches:
