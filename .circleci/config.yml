@@ -4,22 +4,22 @@ workflows:
   pr-build-and-test:
     jobs:
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: docker_build_lpa_front
+          name: front_docker_build
           ecr_repository_name_prefix: online-lpa/front
           github_repository_name: opg-lpa-front
           github_branch_name: LPA-3289-ecs-container
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: docker_build_lpa_admin
+          name: admin_docker_build
           ecr_repository_name_prefix: online-lpa/admin
           github_repository_name: opg-lpa-admin
           github_branch_name: LPA-3289-ecs-container
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: docker_build_lpa_api
+          name: api_docker_build
           ecr_repository_name_prefix: online-lpa/api
           github_repository_name: opg-lpa-api
           github_branch_name: LPA-3289-ecs-container
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: docker_build_lpa_pdf
+          name: pdf_docker_build
           ecr_repository_name_prefix: online-lpa/pdf
           github_repository_name: opg-lpa-pdf
           github_branch_name: LPA-3289-ecs-container
@@ -31,7 +31,7 @@ workflows:
               ignore: master
 
       - infrastructure_and_deployment/apply_account_terraform:
-          name: dev_apply_account_terraform
+          name: dev_account_apply_terraform
           workspace: development
           requires: [lint_and_validate_terraform]
           filters:
@@ -39,8 +39,8 @@ workflows:
               ignore: master
 
       - infrastructure_and_deployment/apply_environment_terraform:
-          name: dev_apply_environment_terraform
-          requires: [dev_apply_account_terraform, docker_build_lpa_front, docker_build_lpa_admin, docker_build_lpa_api, docker_build_lpa_pdf]
+          name: dev_environment_apply_terraform
+          requires: [dev_account_apply_terraform, front_docker_build, admin_docker_build, api_docker_build, pdf_docker_build]
           # requires: [dev_apply_account_terraform]
           filters:
             branches:
@@ -55,16 +55,16 @@ workflows:
       #         ignore: master
 
       - infrastructure_and_deployment/apply_account_terraform:
-          name: preprod_apply_account_terraform
+          name: preprod_account_apply_terraform
           workspace: preproduction
           filters:
             branches:
               only: master
 
       - infrastructure_and_deployment/apply_account_terraform:
-          name: prod_apply_account_terraform
+          name: prod_account_apply_terraform
           workspace: production
-          requires: [preprod_apply_account_terraform]
+          requires: [preprod_account_apply_terraform]
           filters:
             branches:
               only: master
