@@ -38,7 +38,6 @@ locals {
   sirius_api_gateway_arn      = var.accounts[local.account_name].sirius_api_gateway_arn
 
   ecs_task_count = 2
-  # timestamp      = lower(formatdate("YYYYMMDDhhmmss", timestamp()))
 
   opg_project = "lpa"
   mandatory_moj_tags = {
