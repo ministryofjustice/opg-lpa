@@ -56,7 +56,7 @@ resource "aws_security_group_rule" "admin_ecs_service_egress" {
 // admin ECS Service Task level config
 
 resource "aws_ecs_task_definition" "admin" {
-  family                   = "${local.environment}-admin-${local.timestamp}"
+  family                   = "${local.environment}-admin"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 512
