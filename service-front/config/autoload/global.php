@@ -110,7 +110,7 @@ return [
 
 
     'api_client' => [
-        'api_uri' => getenv('OPG_LPA_ENDPOINTS_API') ?: 'https://apiv2',
+        'api_uri' => getenv('OPG_LPA_ENDPOINTS_API') ?: null,
     ],
 
     'email' => [
