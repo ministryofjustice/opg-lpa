@@ -37,11 +37,9 @@ workflows:
           filters:
             branches:
               ignore: master
-
       - infrastructure_and_deployment/apply_environment_terraform:
           name: dev_environment_apply_terraform
           requires: [dev_account_apply_terraform, front_docker_build, admin_docker_build, api_docker_build, pdf_docker_build]
-          # requires: [dev_apply_account_terraform]
           filters:
             branches:
               ignore: master
@@ -53,7 +51,6 @@ workflows:
       #     filters:
       #       branches:
       #         ignore: master
-
       - hold-for-destruction:
           name: hold_env_for_destruction
           type: approval 
@@ -61,7 +58,6 @@ workflows:
           filters:
             branches:
               ignore: master
-
       - infrastructure_and_deployment/destroy_dev_environment:
           name: dev_destroy_environment
           requires: [hold_env_for_destruction]
@@ -69,13 +65,19 @@ workflows:
             branches:
               ignore: master
 
-
       - infrastructure_and_deployment/apply_account_terraform:
           name: preprod_account_apply_terraform
           workspace: preproduction
           filters:
             branches:
               only: master
+      - infrastructure_and_deployment/apply_environment_terraform:
+          name: preprod_environment_apply_terraform
+          requires: [preprod_account_apply_terraform, front_docker_build, admin_docker_build, api_docker_build, pdf_docker_build]
+          workspace: preproduction
+          filters:
+            branches:
+              only: master              
 
       - infrastructure_and_deployment/apply_account_terraform:
           name: prod_account_apply_terraform
@@ -84,6 +86,13 @@ workflows:
           filters:
             branches:
               only: master
+      - infrastructure_and_deployment/apply_environment_terraform:
+          name: prod_environment_apply_terraform
+          requires: [preprod_account_apply_terraform]
+          workspace: production
+          filters:
+            branches:
+              only: master                       
               
 
 orbs:
@@ -257,7 +266,7 @@ orbs:
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
-                terraform apply -lock-timeout=300s --auto-approve -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
+                terraform apply -lock-timeout=300s -auto-approve -parallelism=15 -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
                 export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
 
       destroy_dev_environment:
