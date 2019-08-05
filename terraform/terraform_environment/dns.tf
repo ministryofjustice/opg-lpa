@@ -29,7 +29,7 @@ resource "aws_route53_record" "front" {
 }
 
 output "front-domain" {
-  value = "https://${aws_route53_record.front.fqdn}"
+  value = "https://${aws_route53_record.front.fqdn}/home"
 }
 
 
