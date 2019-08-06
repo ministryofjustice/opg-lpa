@@ -55,7 +55,24 @@ resource "aws_s3_bucket" "lpa_pdf_cache" {
     }
   }
 
+  # Clear items out teh cache after 1 day.
+  lifecycle_rule {
+    enabled = true
+    expiration {
+      days = 1
+    }
+  }
+
   tags = local.default_tags
+}
+
+resource "aws_s3_bucket_public_access_block" "lpa_pdf_cache" {
+  bucket = aws_s3_bucket.lpa_pdf_cache.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_kms_key" "lpa_pdf_cache" {
