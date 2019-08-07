@@ -57,6 +57,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_target" {
     task_count          = 1
     task_definition_arn = aws_ecs_task_definition.api.arn
     launch_type         = "FARGATE"
+    platform_version    = "LATEST"
 
     network_configuration {
       security_groups = [
@@ -73,7 +74,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_target" {
   "containerOverrides": [
     {
       "name": "app",
-      "command": ["php", "/app/public/index.php", "account-cleanup"]
+      "command": ["php /app/public/index.php account-cleanup"]
     },
     {
       "name": "web",
