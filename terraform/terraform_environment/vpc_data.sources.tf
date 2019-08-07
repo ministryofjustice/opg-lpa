@@ -41,3 +41,7 @@ data "aws_acm_certificate" "certificate_front" {
 data "aws_acm_certificate" "certificate_admin" {
   domain = var.accounts[local.account_name].admin_certificate_domain_name
 }
+
+data "aws_acm_certificate" "certificate_live_service" {
+  domain = "*.lastingpowerofattorney.service.gov.uk"
+}
