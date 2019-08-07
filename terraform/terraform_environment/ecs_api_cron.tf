@@ -24,19 +24,19 @@ resource "aws_iam_role" "cloudwatch_events_ecs_role" {
 data "aws_iam_policy_document" "cloudwatch_events_role_policy" {
   statement {
     effect    = "Allow"
-    actions = ["ecs:RunTask"]
+    actions   = ["ecs:RunTask"]
     resources = ["*"]
   }
   statement {
     effect    = "Allow"
-    actions = ["iam:PassRole"]
+    actions   = ["iam:PassRole"]
     resources = ["*"]
   }
 }
 
 // The assumed role's permissions
 resource "aws_iam_role_policy" "ecs_events_run_task_with_any_role" {
-  role = aws_iam_role.cloudwatch_events_ecs_role.id
+  role   = aws_iam_role.cloudwatch_events_ecs_role.id
   policy = data.aws_iam_policy_document.cloudwatch_events_role_policy.json
 }
 
@@ -44,7 +44,7 @@ resource "aws_iam_role_policy" "ecs_events_run_task_with_any_role" {
 
 resource "aws_cloudwatch_event_rule" "very_early_morning" {
   name                = "${local.environment}-early-morning-cron"
-  schedule_expression = "cron(0 3 * * *)"   // 3am UTC, every day.
+  schedule_expression = "cron(0 3 * * *)" // 3am UTC, every day.
 }
 
 resource "aws_cloudwatch_event_target" "api_ecs_cron_event_target" {
@@ -54,9 +54,9 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_target" {
   role_arn  = aws_iam_role.cloudwatch_events_ecs_role.arn
 
   ecs_target {
-    task_count = 1
+    task_count          = 1
     task_definition_arn = aws_ecs_task_definition.api.arn
-    launch_type     = "FARGATE"
+    launch_type         = "FARGATE"
 
     network_configuration {
       security_groups = [
