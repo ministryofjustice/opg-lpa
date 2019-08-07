@@ -42,16 +42,15 @@ resource "aws_iam_role_policy" "ecs_events_run_task_with_any_role" {
 
 //---
 
-resource "aws_cloudwatch_event_rule" "very_early_morning" {
+resource "aws_cloudwatch_event_rule" "early_morning" {
   name                = "${local.environment}-early-morning-cron"
-  schedule_expression = "rate(5 minutes)"
-  //schedule_expression = "cron(0 3 * * ? *)" // 3am UTC, every day.
+  schedule_expression = "cron(0 9 * * ? *)" // 9am UTC, every day.
 }
 
 resource "aws_cloudwatch_event_target" "api_ecs_cron_event_target" {
   target_id = "account-cleanup"
   arn       = aws_ecs_cluster.online-lpa.arn
-  rule      = aws_cloudwatch_event_rule.very_early_morning.name
+  rule      = aws_cloudwatch_event_rule.early_morning.name
   role_arn  = aws_iam_role.cloudwatch_events_ecs_role.arn
 
   ecs_target {
