@@ -72,8 +72,12 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_target" {
 {
   "containerOverrides": [
     {
-      "name": "name-of-container-to-override",
+      "name": "app",
       "command": ["php", "/app/public/index.php", "account-cleanup"]
+    },
+    {
+      "name": "web",
+      "command": ["sh"]
     }
   ]
 }
