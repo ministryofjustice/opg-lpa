@@ -76,10 +76,6 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_target" {
     {
       "name": "app",
       "command": ["php /app/public/index.php account-cleanup"]
-    },
-    {
-      "name": "web",
-      "command": ["sh"]
     }
   ]
 }
