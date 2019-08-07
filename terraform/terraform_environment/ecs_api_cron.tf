@@ -44,7 +44,7 @@ resource "aws_iam_role_policy" "ecs_events_run_task_with_any_role" {
 
 resource "aws_cloudwatch_event_rule" "very_early_morning" {
   name                = "${local.environment}-early-morning-cron"
-  schedule_expression = "cron(0 3 * * *)" // 3am UTC, every day.
+  schedule_expression = "cron(0 3 * * ? *)" // 3am UTC, every day.
 }
 
 resource "aws_cloudwatch_event_target" "api_ecs_cron_event_target" {
