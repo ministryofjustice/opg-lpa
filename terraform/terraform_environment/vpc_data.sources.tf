@@ -43,5 +43,6 @@ data "aws_acm_certificate" "certificate_admin" {
 }
 
 data "aws_acm_certificate" "certificate_live_service" {
+  count  = terraform.workspace == "production" ? 1 : 0
   domain = "*.lastingpowerofattorney.service.gov.uk"
 }
