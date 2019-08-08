@@ -29,11 +29,6 @@ data "aws_iam_policy_document" "cloudwatch_events_role_policy" {
       aws_ecs_task_definition.api.arn
     ]
   }
-  statement {
-    effect    = "Allow"
-    actions   = ["iam:PassRole"]
-    resources = ["*"]
-  }
 }
 
 // The assumed role's permissions
