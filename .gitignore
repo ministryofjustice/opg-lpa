@@ -8,3 +8,4 @@ geckodriver.log
 **/cluster_config.json
 node_modules/
 **functional/casperesults.xml
+*.iml
