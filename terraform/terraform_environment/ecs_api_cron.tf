@@ -25,7 +25,10 @@ data "aws_iam_policy_document" "cloudwatch_events_role_policy" {
   statement {
     effect    = "Allow"
     actions   = ["ecs:RunTask"]
-    resources = ["*"]
+    resources = [
+      "${replace(aws_ecs_task_definition.api.arn, "/:\\d+$/", ":*")}",
+      aws_ecs_task_definition.api.arn
+    ]
   }
   statement {
     effect    = "Allow"
@@ -45,7 +48,7 @@ resource "aws_iam_role_policy" "ecs_events_run_task_with_any_role" {
 resource "aws_cloudwatch_event_rule" "early_morning" {
   name                = "${local.environment}-early-morning-cron"
   schedule_expression = "rate(5 minutes)" // 9am UTC, every day.
-  //schedule_expression = "cron(0 9 * * ? *)" // 9am UTC, every day.
+  //schedule_expression = "cron(0 10 * * ? *)" // 10am UTC, every day.
 }
 
 resource "aws_cloudwatch_event_target" "api_ecs_cron_event_target" {
