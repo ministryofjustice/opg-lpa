@@ -30,15 +30,15 @@ data "aws_iam_policy_document" "cloudwatch_events_role_policy" {
     ]
   }
   statement {
-    effect    = "Allow"
-    actions   = ["iam:PassRole"]
+    effect  = "Allow"
+    actions = ["iam:PassRole"]
     resources = [
       aws_iam_role.execution_role.arn,
       aws_iam_role.api_task_role.arn
     ]
     condition {
-      test = "StringLike"
-      values = ["ecs-tasks.amazonaws.com"]
+      test     = "StringLike"
+      values   = ["ecs-tasks.amazonaws.com"]
       variable = "iam:PassedToService"
     }
   }
