@@ -23,8 +23,8 @@ resource "aws_iam_role" "cloudwatch_events_ecs_role" {
 
 data "aws_iam_policy_document" "cloudwatch_events_role_policy" {
   statement {
-    effect    = "Allow"
-    actions   = ["ecs:RunTask"]
+    effect  = "Allow"
+    actions = ["ecs:RunTask"]
     resources = [
       "${replace(aws_ecs_task_definition.api.arn, "/:\\d+$/", ":*")}",
       aws_ecs_task_definition.api.arn
