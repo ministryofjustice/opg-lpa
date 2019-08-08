@@ -32,6 +32,8 @@ data "aws_iam_policy_document" "cloudwatch_events_role_policy" {
   statement {
     effect  = "Allow"
     actions = ["iam:PassRole"]
+
+    # This needs both the execution role and the task role.
     resources = [
       aws_iam_role.execution_role.arn,
       aws_iam_role.api_task_role.arn
@@ -54,7 +56,8 @@ resource "aws_iam_role_policy" "ecs_events_run_task_with_any_role" {
 
 resource "aws_cloudwatch_event_rule" "early_morning" {
   name                = "${local.environment}-early-morning-cron"
-  schedule_expression = "rate(5 minutes)" // 9am UTC, every day.
+  //schedule_expression = "rate(5 minutes)"
+  schedule_expression = "cron(0 4 * * ? *)"
   //schedule_expression = "cron(0 10 * * ? *)" // 10am UTC, every day.
 }
 
