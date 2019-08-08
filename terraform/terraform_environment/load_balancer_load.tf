@@ -83,3 +83,9 @@ resource "aws_security_group_rule" "front_loadbalancer_egress" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_loadbalancer.id
 }
+
+resource "aws_lb_listener_certificate" "front_loadbalancer_live_service_certificate" {
+  count           = terraform.workspace == "production" ? 1 : 0
+  listener_arn    = aws_lb_listener.front_loadbalancer.arn
+  certificate_arn = data.aws_acm_certificate.certificate_live_service[count.index].arn
+}
