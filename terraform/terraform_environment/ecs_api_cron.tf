@@ -57,14 +57,12 @@ resource "aws_iam_role_policy" "ecs_events_run_task_with_any_role" {
 
 resource "aws_cloudwatch_event_rule" "middle_of_the_night" {
   name                = "${local.environment}-middle-of-the-night-cron"
-  schedule_expression = "rate(10 minutes)"
-  //schedule_expression = "cron(0 3 * * ? *)" // 3am UTC, every day.
+  schedule_expression = "cron(0 3 * * ? *)" // 3am UTC, every day.
 }
 
 resource "aws_cloudwatch_event_rule" "early_morning" {
-  name = "${local.environment}-early-morning-cron"
-  //schedule_expression = "rate(5 minutes)"
-  schedule_expression = "cron(0 4 * * ? *)"
+  name                = "${local.environment}-early-morning-cron"
+  schedule_expression = "cron(0 4 * * ? *)" // Testing Thursday night / Friday morning
   //schedule_expression = "cron(0 10 * * ? *)" // 10am UTC, every day.
 }
 
