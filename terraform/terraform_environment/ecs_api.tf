@@ -5,7 +5,7 @@ resource "aws_ecs_service" "api" {
   name            = "api"
   cluster         = "${aws_ecs_cluster.online-lpa.id}"
   task_definition = "${aws_ecs_task_definition.api.arn}"
-  desired_count   = local.ecs_task_count
+  desired_count   = local.ecs_minimum_task_count_api
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -100,8 +100,8 @@ resource "aws_ecs_task_definition" "api" {
   family                   = "${terraform.workspace}-api"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 512
-  memory                   = 1024
+  cpu                      = 1024
+  memory                   = 2048
   container_definitions    = "[${local.api_web}, ${local.api_app}]"
   task_role_arn            = "${aws_iam_role.api_task_role.arn}"
   execution_role_arn       = "${aws_iam_role.execution_role.arn}"
