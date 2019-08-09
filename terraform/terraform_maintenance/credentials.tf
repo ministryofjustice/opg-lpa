@@ -29,6 +29,16 @@ provider "aws" {
 }
 
 provider "aws" {
+  alias  = "new_lpa_prod_ecs"
+  region = "eu-west-1"
+
+  assume_role {
+    role_arn     = "arn:aws:iam::980242665824:role/${var.default_role}"
+    session_name = "terraform-session"
+  }
+}
+
+provider "aws" {
   alias  = "eu_central_1"
   region = "eu-central-1"
 
