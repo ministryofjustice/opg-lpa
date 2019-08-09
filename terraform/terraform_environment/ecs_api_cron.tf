@@ -61,7 +61,7 @@ resource "aws_cloudwatch_event_rule" "middle_of_the_night" {
 }
 
 resource "aws_cloudwatch_event_rule" "mid_morning" {
-  name                = "${local.environment}-mid-morning-cron"
+  name = "${local.environment}-mid-morning-cron"
   //schedule_expression = "cron(0 10 * * ? *)" // 10am UTC, every day.
   schedule_expression = "rate(2 minutes)"
 }
