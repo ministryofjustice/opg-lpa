@@ -86,6 +86,8 @@ resource "aws_ecs_task_definition" "api_crons" {
 // Account Cleanup Task
 
 resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
+  count = 0
+
   target_id = "account-cleanup"
   arn       = aws_ecs_cluster.online-lpa.arn
   rule      = aws_cloudwatch_event_rule.mid_morning.name
