@@ -18,7 +18,7 @@ resource "aws_cloudfront_distribution" "maintenance" {
     origin_id   = local.s3_origin_id
   }
 
-  enabled             = false
+  enabled             = true
   is_ipv6_enabled     = false
   http_version        = "http1.1"
   comment             = "Managed by opg-lpa/terraform/terraform_maintenance"
