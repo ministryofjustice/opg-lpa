@@ -93,7 +93,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
 
   ecs_target {
     task_count          = 1
-    task_definition_arn = aws_ecs_task_definition.api_crons.arn
+    task_definition_arn = aws_ecs_task_definition.api.arn
     launch_type         = "FARGATE"
     platform_version    = "LATEST"
 
@@ -130,7 +130,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
 
   ecs_target {
     task_count = 1
-    task_definition_arn = aws_ecs_task_definition.api_crons.arn
+    task_definition_arn = aws_ecs_task_definition.api.arn
     launch_type = "FARGATE"
     platform_version = "LATEST"
 
