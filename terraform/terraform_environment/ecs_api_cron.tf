@@ -66,6 +66,21 @@ resource "aws_cloudwatch_event_rule" "mid_morning" {
   schedule_expression = "rate(2 minutes)"
 }
 
+//------------------------------------------------
+// Task defernition for Cron
+
+resource "aws_ecs_task_definition" "api_crons" {
+  family                   = "${terraform.workspace}-api-crons"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = 512
+  memory                   = 1024
+  container_definitions    = "[${local.api_app}]"
+  task_role_arn            = "${aws_iam_role.api_task_role.arn}"
+  execution_role_arn       = "${aws_iam_role.execution_role.arn}"
+  tags                     = "${local.default_tags}"
+}
+
 
 //------------------------------------------------
 // Account Cleanup Task
@@ -77,8 +92,8 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
   role_arn  = aws_iam_role.cloudwatch_events_ecs_role.arn
 
   ecs_target {
-    task_count          = 0
-    task_definition_arn = aws_ecs_task_definition.api.arn
+    task_count          = 1
+    task_definition_arn = aws_ecs_task_definition.api_crons.arn
     launch_type         = "FARGATE"
     platform_version    = "LATEST"
 
@@ -115,7 +130,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
 
   ecs_target {
     task_count = 1
-    task_definition_arn = aws_ecs_task_definition.api.arn
+    task_definition_arn = aws_ecs_task_definition.api_crons.arn
     launch_type = "FARGATE"
     platform_version = "LATEST"
 
