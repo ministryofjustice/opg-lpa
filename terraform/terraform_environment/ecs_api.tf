@@ -32,7 +32,7 @@ resource "aws_service_discovery_service" "api" {
     namespace_id = "${aws_service_discovery_private_dns_namespace.internal.id}"
 
     dns_records {
-      ttl  = 10
+      ttl  = 120
       type = "A"
     }
 
