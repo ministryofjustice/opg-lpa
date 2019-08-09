@@ -62,8 +62,7 @@ resource "aws_cloudwatch_event_rule" "middle_of_the_night" {
 
 resource "aws_cloudwatch_event_rule" "mid_morning" {
   name = "${local.environment}-mid-morning-cron"
-  //schedule_expression = "cron(0 10 * * ? *)" // 10am UTC, every day.
-  schedule_expression = "rate(2 minutes)"
+  schedule_expression = "cron(0 10 * * ? *)" // 10am UTC, every day.
 }
 
 //------------------------------------------------
@@ -86,7 +85,11 @@ resource "aws_ecs_task_definition" "api_crons" {
 // Account Cleanup Task
 
 resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
-  count = 0
+  count = local.account_name != "development" ? 0 : 1
+  # don't run crons on preprod and prod
+  # This will need to change to
+  //count = local.account_name == "preproduction" ? 0 : 1
+  # don't run crons on preprod
 
   target_id = "account-cleanup"
   arn       = aws_ecs_cluster.online-lpa.arn
