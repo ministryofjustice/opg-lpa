@@ -5,7 +5,7 @@ resource "aws_ecs_service" "pdf" {
   name            = "pdf"
   cluster         = aws_ecs_cluster.online-lpa.id
   task_definition = aws_ecs_task_definition.pdf.arn
-  desired_count   = local.ecs_task_count
+  desired_count   = local.ecs_minimum_task_count_pdf
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -45,7 +45,7 @@ resource "aws_ecs_task_definition" "pdf" {
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 1024
-  memory                   = 4096
+  memory                   = 2048
   container_definitions    = "[${local.pdf_app}]"
   task_role_arn            = aws_iam_role.pdf_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
