@@ -66,6 +66,7 @@ resource "aws_cloudwatch_event_rule" "mid_morning" {
   schedule_expression = "rate(2 minutes)"
 }
 
+
 //------------------------------------------------
 // Account Cleanup Task
 
