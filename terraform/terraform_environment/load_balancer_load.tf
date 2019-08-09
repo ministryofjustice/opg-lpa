@@ -89,3 +89,23 @@ resource "aws_lb_listener_certificate" "front_loadbalancer_live_service_certific
   listener_arn    = aws_lb_listener.front_loadbalancer.arn
   certificate_arn = data.aws_acm_certificate.certificate_live_service[count.index].arn
 }
+
+
+//------------------------------------------------
+// HTTP Redirect
+
+resource "aws_lb_listener" "front_loadbalancer_http_redirect" {
+  load_balancer_arn = aws_lb.front.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
