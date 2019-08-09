@@ -32,7 +32,7 @@ resource "aws_service_discovery_service" "api" {
     namespace_id = "${aws_service_discovery_private_dns_namespace.internal.id}"
 
     dns_records {
-      ttl  = 120
+      ttl  = 10
       type = "A"
     }
 
@@ -100,8 +100,8 @@ resource "aws_ecs_task_definition" "api" {
   family                   = "${terraform.workspace}-api"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 2048
-  memory                   = 4096
+  cpu                      = 4096
+  memory                   = 8192
   container_definitions    = "[${local.api_web}, ${local.api_app}]"
   task_role_arn            = "${aws_iam_role.api_task_role.arn}"
   execution_role_arn       = "${aws_iam_role.execution_role.arn}"
