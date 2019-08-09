@@ -66,7 +66,7 @@ resource "aws_cloudwatch_event_rule" "mid_morning" {
 }
 
 //------------------------------------------------
-// Task defernition for Cron
+// Task definition for Cron
 
 resource "aws_ecs_task_definition" "api_crons" {
   family                   = "${terraform.workspace}-api-crons"
