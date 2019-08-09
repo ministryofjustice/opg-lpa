@@ -13,8 +13,9 @@ resource "aws_s3_bucket" "lastingpowerofattorney_service_gov_uk" {
 }
 
 resource "aws_s3_bucket_policy" "lastingpowerofattorney_service_gov_uk" {
-  bucket = aws_s3_bucket.lastingpowerofattorney_service_gov_uk.id
-  policy = data.aws_iam_policy_document.lastingpowerofattorney_service_gov_uk.json
+  provider = aws.eu_central_1
+  bucket   = aws_s3_bucket.lastingpowerofattorney_service_gov_uk.id
+  policy   = data.aws_iam_policy_document.lastingpowerofattorney_service_gov_uk.json
 }
 
 data "aws_iam_policy_document" "lastingpowerofattorney_service_gov_uk" {

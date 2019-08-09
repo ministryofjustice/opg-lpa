@@ -11,6 +11,7 @@ output "s3_bucket" {
 locals {
   s3_origin_id = "S3-lastingpowerofattorney.service.gov.uk"
 }
+# https://www.terraform.io/docs/providers/aws/r/cloudfront_origin_access_identity.html
 
 resource "aws_cloudfront_distribution" "maintenance" {
   origin {
