@@ -39,10 +39,10 @@ locals {
 
   // Minimum count for each service.
   // Autoscaling may increase these values.
-  ecs_minimum_task_count_front = 2
-  ecs_minimum_task_count_api   = 2
-  ecs_minimum_task_count_pdf   = 2
-  ecs_minimum_task_count_admin = 1
+  ecs_minimum_task_count_front = 0
+  ecs_minimum_task_count_api   = 0
+  ecs_minimum_task_count_pdf   = 0
+  ecs_minimum_task_count_admin = 0
 
   opg_project = "lpa"
   mandatory_moj_tags = {
