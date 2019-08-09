@@ -75,6 +75,16 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
   security_group_id = aws_security_group.front_loadbalancer.id
 }
 
+// Allow http traffic in to be redirected to https
+resource "aws_security_group_rule" "front_loadbalancer_ingress_http" {
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.front_loadbalancer.id
+}
+
 resource "aws_security_group_rule" "front_loadbalancer_egress" {
   type              = "egress"
   from_port         = 0
@@ -88,4 +98,24 @@ resource "aws_lb_listener_certificate" "front_loadbalancer_live_service_certific
   count           = terraform.workspace == "production" ? 1 : 0
   listener_arn    = aws_lb_listener.front_loadbalancer.arn
   certificate_arn = data.aws_acm_certificate.certificate_live_service[count.index].arn
+}
+
+
+//------------------------------------------------
+// HTTP Redirect
+
+resource "aws_lb_listener" "front_loadbalancer_http_redirect" {
+  load_balancer_arn = aws_lb.front.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = 443
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
 }
