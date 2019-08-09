@@ -77,7 +77,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
   role_arn  = aws_iam_role.cloudwatch_events_ecs_role.arn
 
   ecs_target {
-    task_count          = 1
+    task_count          = 0
     task_definition_arn = aws_ecs_task_definition.api.arn
     launch_type         = "FARGATE"
     platform_version    = "LATEST"
