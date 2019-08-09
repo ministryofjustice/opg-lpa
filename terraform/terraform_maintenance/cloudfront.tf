@@ -29,6 +29,7 @@ resource "aws_cloudfront_distribution" "maintenance" {
     "lastingpowerofattorney.service.gov.uk",
     "lastingpowerofattorney.service.gov.uk.s3-website.eu-central-1.amazonaws.com",
     "www.lastingpowerofattorney.service.gov.uk",
+    "maintenance.lastingpowerofattorney.service.gov.uk",
   ]
   custom_error_response {
     error_caching_min_ttl = 300
@@ -73,7 +74,7 @@ resource "aws_cloudfront_distribution" "maintenance" {
   }
 
   viewer_certificate {
-    acm_certificate_arn            = aws_acm_certificate.certificate_maintenance_cloudfront.arn
+    acm_certificate_arn            = aws_acm_certificate.maintenance_cloudfront.arn
     cloudfront_default_certificate = false
     minimum_protocol_version       = "TLSv1.1_2016"
     ssl_support_method             = "sni-only"
