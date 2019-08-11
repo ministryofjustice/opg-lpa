@@ -10,10 +10,8 @@ output "old_production04_front" {
 # data source for new production application load balancer
 data "aws_lb" "new_lpa_production_front" {
   provider = aws.new_lpa_prod_ecs
-  # arn  = "${var.lb_arn}"
-  name = "production-front"
+  name     = "production-front"
 }
-
 
 resource "aws_route53_record" "lastingpowerofattorney_service_gov_uk" {
   zone_id = "${data.aws_route53_zone.lastingpowerofattorney_service_gov_uk.zone_id}"
