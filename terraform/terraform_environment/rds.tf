@@ -1,6 +1,6 @@
 resource "aws_db_instance" "api" {
   identifier          = lower("api-${local.environment}")
-  name                = "api"
+  name                = "api2"
   allocated_storage   = 10
   storage_type        = "gp2"
   storage_encrypted   = true
