@@ -36,7 +36,6 @@ return [
             'settings' => [
                 'ACL' => 'private',
                 'Bucket' => getenv('OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET') ?: null,
-                #'ServerSideEncryption' => 'aws:kms',
             ],
         ],
     ],
