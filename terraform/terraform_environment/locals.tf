@@ -42,7 +42,7 @@ locals {
   ecs_minimum_task_count_front = local.account_name == "development" ? 1 : 3
   ecs_minimum_task_count_api   = local.account_name == "development" ? 1 : 3
   ecs_minimum_task_count_pdf   = local.account_name == "development" ? 1 : 2
-  ecs_minimum_task_count_admin = local.account_name == "development" ? 1 : 2
+  ecs_minimum_task_count_admin = local.account_name == "development" ? 1 : 1
 
   opg_project = "lpa"
   mandatory_moj_tags = {
