@@ -13,11 +13,15 @@ RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-d
         && pecl clear-cache \
         && docker-php-ext-install intl \
         && docker-php-ext-install bcmath \
+        && docker-php-ext-install opcache \
         && apk del .build-dependencies
 
 COPY opg-lpa-front /app
 COPY --from=composer /app/vendor /app/vendor
 COPY opg-lpa-front/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+
+# Default for AWS. Should be set to 1 for local development.
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
 WORKDIR /app
 
