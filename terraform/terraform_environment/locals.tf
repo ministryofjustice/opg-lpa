@@ -37,7 +37,11 @@ locals {
   sirius_api_gateway_endpoint = var.accounts[local.account_name].sirius_api_gateway_endpoint
   sirius_api_gateway_arn      = var.accounts[local.account_name].sirius_api_gateway_arn
 
-  ecs_task_count = 2
+  // Set minimum count for each service.
+  ecs_minimum_task_count_front = local.account_name == "development" ? 1 : 3
+  ecs_minimum_task_count_api   = local.account_name == "development" ? 1 : 3
+  ecs_minimum_task_count_pdf   = local.account_name == "development" ? 1 : 2
+  ecs_minimum_task_count_admin = local.account_name == "development" ? 1 : 2
 
   opg_project = "lpa"
   mandatory_moj_tags = {

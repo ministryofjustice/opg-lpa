@@ -5,7 +5,7 @@ resource "aws_ecs_service" "api" {
   name            = "api"
   cluster         = "${aws_ecs_cluster.online-lpa.id}"
   task_definition = "${aws_ecs_task_definition.api.arn}"
-  desired_count   = local.ecs_task_count
+  desired_count   = local.ecs_minimum_task_count_api
   launch_type     = "FARGATE"
 
   network_configuration {
