@@ -52,6 +52,7 @@ resource "aws_ecs_task_definition" "pdf" {
   tags                     = local.default_tags
 }
 
+
 //----------------
 // Permissions
 
