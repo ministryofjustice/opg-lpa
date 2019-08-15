@@ -76,11 +76,11 @@ resource "aws_route53_record" "certificate_validation_live_service_root" {
 }
 
 resource "aws_acm_certificate_validation" "certificate_live_service" {
-  count                   = terraform.workspace == "production" ? 1 : 0
-  certificate_arn         = aws_acm_certificate.certificate_live_service[count.index].arn
+  count           = terraform.workspace == "production" ? 1 : 0
+  certificate_arn = aws_acm_certificate.certificate_live_service[count.index].arn
   validation_record_fqdns = [
     aws_route53_record.certificate_validation_live_service[count.index].fqdn,
-    aws_route53_record.certificate_validation_live_service_root[count.index].fqdn
+    aws_route53_record.certificate_validation_live_service_root[count.index].fqdn,
   ]
 }
 
