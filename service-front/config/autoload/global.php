@@ -6,7 +6,7 @@ return [
 
     'version' => [
         'commit' => $commit,
-        'cache' => ( !is_null($commit) ) ? abs( crc32( $commit ) ) : time(),
+        'cache' => ( getenv('OPG_DOCKER_TAG') !== false ) ? abs( crc32( getenv('OPG_DOCKER_TAG') ) ) : time(),
         'tag' => getenv('OPG_DOCKER_TAG'),
     ],
 
