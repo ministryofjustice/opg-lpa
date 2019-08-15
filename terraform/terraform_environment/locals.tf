@@ -14,6 +14,7 @@ variable "accounts" {
       admin_certificate_domain_name = string
       sirius_api_gateway_endpoint   = string
       sirius_api_gateway_arn        = string
+      prevent_db_destroy            = string
     })
   )
 }
@@ -36,6 +37,7 @@ locals {
 
   sirius_api_gateway_endpoint = var.accounts[local.account_name].sirius_api_gateway_endpoint
   sirius_api_gateway_arn      = var.accounts[local.account_name].sirius_api_gateway_arn
+  prevent_db_destroy          = var.accounts[local.account_name].prevent_db_destroy
 
   // Set minimum count for each service.
   ecs_minimum_task_count_front = local.account_name == "development" ? 1 : 3
