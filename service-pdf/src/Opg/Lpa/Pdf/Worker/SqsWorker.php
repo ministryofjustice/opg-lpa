@@ -69,8 +69,12 @@ class SqsWorker extends AbstractWorker
                 //---
 
                 try {
+                    $startTime = microtime(true);
+
                     // Generate the PDF
                     $this->run($lpaMessage['jobId'], $body['type'], $body['lpa']);
+
+                    $this->logger->info( "Generation time: ". (microtime(true) - $startTime) ." seconds");
 
                 } catch (\Exception $e) {
                     $this->logger->err("Error generating PDF", [
