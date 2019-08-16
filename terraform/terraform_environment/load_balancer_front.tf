@@ -119,3 +119,27 @@ resource "aws_lb_listener" "front_loadbalancer_http_redirect" {
     }
   }
 }
+
+//------------------------------------------------
+// WWW Redirect
+
+resource "aws_lb_listener_rule" "www_redirect" {
+  listener_arn = aws_lb_listener.front_loadbalancer.arn
+  priority     = 100
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "www.${aws_route53_record.front.name}"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    field = "host-header"
+    values = [aws_route53_record.front.name]
+  }
+}
