@@ -139,7 +139,7 @@ resource "aws_lb_listener_rule" "www_redirect" {
   }
 
   condition {
-    field = "host-header"
+    field  = "host-header"
     values = [aws_route53_record.front.name]
   }
 }
