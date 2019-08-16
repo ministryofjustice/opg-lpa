@@ -139,7 +139,7 @@ resource "aws_lb_listener_rule" "www_redirect" {
   }
 
   condition {
-    field = "host-header"
+    field  = "host-header"
     values = ["lastingpowerofattorney.service.gov.uk"]
   }
 }
