@@ -131,7 +131,8 @@ resource "aws_lb_listener_rule" "www_redirect" {
     type = "redirect"
 
     redirect {
-      host        = "www.${aws_route53_record.front.name}"
+      #host        = "www.lastingpowerofattorney.service.gov.uk"
+      host        = "www.${aws_route53_record.front.fqdn}"
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_301"
@@ -140,6 +141,7 @@ resource "aws_lb_listener_rule" "www_redirect" {
 
   condition {
     field  = "host-header"
-    values = [aws_route53_record.front.name]
+    #values = ["lastingpowerofattorney.service.gov.uk"]
+    values = [aws_route53_record.front.fqdn]
   }
 }
