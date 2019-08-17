@@ -24,8 +24,14 @@ workflows:
           github_repository_name: opg-lpa-pdf
           github_branch_name: LPA-3289-ecs-container
 
+      - infrastructure_and_deployment/package_lambda_artifact:
+          name: package_lambda_artifact
+          filters:
+            branches:
+              ignore: master
       - infrastructure_and_deployment/lint_and_validate_terraform:
           name: lint_and_validate_terraform
+          requires: [package_lambda_artifact]
           filters:
             branches:
               ignore: master
