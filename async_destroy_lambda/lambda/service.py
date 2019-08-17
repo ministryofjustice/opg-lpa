@@ -82,9 +82,9 @@ def clone_repo():
             if os.path.exists(TF_CONFIG_FULL_PATH):
                 print("{} already exists, updating...".format(REPO_DIR))
                 print("git pull master")
+                # TODO: git pull here
                 # repo = Repo('repo_name')
                 # repo.remotes.origin.pull()
-                # TODO: git pull here
             else:
                 Repo.clone_from(GIT_URL, REPO_DIR)
                 print("cloned {0} to {1}".format(GIT_URL, REPO_DIR))

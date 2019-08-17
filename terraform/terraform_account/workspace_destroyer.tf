@@ -97,7 +97,8 @@ resource "aws_lambda_function" "workspace_destroyer" {
   timeout                        = 900
   memory_size                    = 128
   reserved_concurrent_executions = 1
-  layers                         = ["arn:aws:lambda:eu-west-1:553035198032:layer:git:6"]
+  # https://github.com/lambci/git-lambda-layer
+  layers = ["arn:aws:lambda:eu-west-1:553035198032:layer:git:6"]
   tracing_config {
     mode = "Active"
   }
