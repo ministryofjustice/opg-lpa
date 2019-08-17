@@ -19,6 +19,7 @@ locals {
 }
 
 resource "aws_iam_role" "iam_for_workspace_destroyer_lambda" {
+  count              = local.account_name == "development" ? 1 : 0
   name               = "iam_for_workspace_destroyer_lambda"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
   tags               = local.default_tags
@@ -35,9 +36,10 @@ data "aws_iam_policy_document" "lambda_assume_role_policy" {
 }
 
 resource "aws_iam_role_policy" "iam_for_workspace_destroyer_lambda_execution_role" {
+  count  = local.account_name == "development" ? 1 : 0
   name   = "WorkspaceDeestroyerPermissions"
   policy = data.aws_iam_policy_document.iam_for_workspace_destroyer_lambda_inline_execution_role.json
-  role   = aws_iam_role.iam_for_workspace_destroyer_lambda.id
+  role   = aws_iam_role.iam_for_workspace_destroyer_lambda[0].id
 }
 
 data "aws_iam_policy_document" "iam_for_workspace_destroyer_lambda_inline_execution_role" {
@@ -54,14 +56,16 @@ data "aws_iam_policy_document" "iam_for_workspace_destroyer_lambda_inline_execut
 }
 
 resource "aws_lambda_function" "workspace_destroyer" {
-  filename         = "/tmp/lambda_function_payload.zip"
-  function_name    = "workspace_destroyer"
-  role             = aws_iam_role.iam_for_workspace_destroyer_lambda.arn
-  handler          = "service.lambda_handler"
-  source_code_hash = "${filebase64sha256("/tmp/lambda_function_payload.zip")}"
-  runtime          = "python3.7"
-  timeout          = 900
-  memory_size      = 128
+  count                          = local.account_name == "development" ? 1 : 0
+  filename                       = "/tmp/lambda_function_payload.zip"
+  function_name                  = "workspace_destroyer"
+  role                           = aws_iam_role.iam_for_workspace_destroyer_lambda[0].arn
+  handler                        = "service.lambda_handler"
+  source_code_hash               = "${filebase64sha256("/tmp/lambda_function_payload.zip")}"
+  runtime                        = "python3.7"
+  timeout                        = 900
+  memory_size                    = 128
+  reserved_concurrent_executions = 1
   # TODO: provide credentials for terraform to the lambda function
   environment {
     variables = {
@@ -75,6 +79,7 @@ resource "aws_lambda_function" "workspace_destroyer" {
 }
 
 resource "aws_lambda_event_source_mapping" "workspace_destroyer" {
-  event_source_arn = "${aws_sqs_queue.workspace_destroyer.arn}"
-  function_name    = "${aws_lambda_function.workspace_destroyer.arn}"
+  count            = local.account_name == "development" ? 1 : 0
+  event_source_arn = "${aws_sqs_queue.workspace_destroyer[0].arn}"
+  function_name    = "${aws_lambda_function.workspace_destroyer[0].arn}"
 }
