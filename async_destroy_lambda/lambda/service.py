@@ -115,7 +115,7 @@ def terraform_destroy(workspace):
         execute_terraform([TERRAFORM_PATH, 'workspace', 'delete', workspace])
 
 
-def handler(event, context):
+def lambda_handler(event, context):
     for record in event['Records']:
         workspace = record["body"]
 
