@@ -58,7 +58,7 @@ resource "aws_lambda_function" "workspace_destroyer" {
   function_name    = "workspace_destroyer"
   role             = aws_iam_role.iam_for_workspace_destroyer_lambda.arn
   handler          = "service.lambda_handler"
-  source_code_hash = "${filebase64sha256("lambda_function_payload.zip")}"
+  source_code_hash = "${filebase64sha256("/tmp/lambda_function_payload.zip")}"
   runtime          = "python3.7"
   timeout          = 900
   memory_size      = 128
