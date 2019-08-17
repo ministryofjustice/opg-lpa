@@ -196,9 +196,10 @@ orbs:
       # Lambda      
       package_lambda_artifact:
         executor: python
-        working_directory: ~/project/async_destroy_lambda/lambda
+        working_directory: 
         steps:
           - checkout
+          - run: cd ~/project/async_destroy_lambda/lambda
           - run: pip3 install -r requirements.txt  --target ./vendor
           - run: zip -r9 /tmp/lambda_function_payload.zip .
           - persist_to_workspace:
