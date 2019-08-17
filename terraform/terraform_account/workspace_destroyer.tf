@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "iam_for_workspace_destroyer_lambda_inline_execut
     ]
   }
   statement {
-    sid = CloudwatchLogging
+    sid = "CloudwatchLogging"
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
@@ -65,6 +65,17 @@ data "aws_iam_policy_document" "iam_for_workspace_destroyer_lambda_inline_execut
 
     resources = [
       "arn:aws:logs:::*",
+    ]
+  }
+  statement {
+    effect    = "Allow"
+    resources = ["*"]
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:GetSamplingStatisticSummaries",
     ]
   }
 }
