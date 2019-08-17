@@ -65,7 +65,8 @@ data "aws_iam_policy_document" "iam_for_workspace_destroyer_lambda_inline_execut
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
-      "logs:PutLogEvents"
+      "logs:PutLogEvents",
+      "logs:DescribeLogStreams",
     ]
 
     resources = [
