@@ -1,0 +1,18 @@
+working notes for async destroy
+
+cleanup commands for testing
+rm -rf /tmp/terraform_0.12.5 /tmp/terraform.zip /tmp/opg-lpa
+
+Exmaple of global varibales set
+'GIT_URL': 'https://github.com/ministryofjustice/opg-use-an-lpa.git',
+'PROTECTED_WORKSPACES': ['default', 'preproduction', 'production'],
+'REPO_DIR': '/tmp/use-an-lpa',
+'TERRAFORM_DIR': '/tmp/terraform_0.11.14',
+'TERRAFORM_DOWNLOAD_URL': 'https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_darwin_amd64.zip',
+'TERRAFORM_PATH': '/tmp/terraform_0.11.14/terraform',
+'TERRAFORM_VERSION': '0.11.14',
+'TF_CONFIG_FULL_PATH': '/tmp/use-an-lpa/terraform_environment',
+
+download url for mac
+# TERRAFORM_DOWNLOAD_URL = 'https://releases.hashicorp.com/terraform/{0}/terraform_{0}_darwin_amd64.zip'.format(
+#     TERRAFORM_VERSION)

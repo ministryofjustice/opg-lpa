@@ -1,100 +1,131 @@
-# -*- coding: utf-8 -*-
-
 import os
-import subprocess
-import urllib
-
-import boto3
+from subprocess import Popen, PIPE, CalledProcessError
+import wget
+from zipfile import ZipFile
+import stat
+from git import Repo
 
 
 # Version of Terraform that we're using
-TERRAFORM_VERSION = '0.12.6'
+TERRAFORM_VERSION = os.getenv('TERRAFORM_VERSION')
 
 # Download URL for Terraform
-TERRAFORM_DOWNLOAD_URL = (
-    'https://releases.hashicorp.com/terraform/%s/terraform_%s_linux_amd64.zip'
-    % (TERRAFORM_VERSION, TERRAFORM_VERSION))
+TERRAFORM_DOWNLOAD_URL = 'https://releases.hashicorp.com/terraform/{0}/terraform_{0}_linux_amd64.zip'.format(
+    TERRAFORM_VERSION)
+# TERRAFORM_DOWNLOAD_URL = 'https://releases.hashicorp.com/terraform/{0}/terraform_{0}_darwin_amd64.zip'.format(
+# TERRAFORM_VERSION)
 
 # Paths where Terraform should be installed
-TERRAFORM_DIR = os.path.join('/tmp', 'terraform_%s' % TERRAFORM_VERSION)
+TERRAFORM_DIR = os.path.join('/tmp', 'terraform_{}'.format(TERRAFORM_VERSION))
 TERRAFORM_PATH = os.path.join(TERRAFORM_DIR, 'terraform')
 
+# Git repository to work with, and where to clone it to
+GIT_URL = os.getenv('GIT_URL')
+REPO_DIR = os.getenv('REPO_DIR', "/tmp")
 
-def check_call(args):
-    """Wrapper for subprocess that checks if a process runs correctly,
-    and if not, prints stdout and stderr.
+# Terraform config to work with
+TF_CONFIG_FULL_PATH = os.path.join(REPO_DIR, os.getenv(
+    'TF_CONFIG_PATH', 'terraform_environment'))
+
+PROTECTED_WORKSPACES = ['default', 'preproduction', 'production']
+
+
+def execute_terraform(args):
+    """Terraform executor wrapper for subprocess that checks if a process runs correctly,
+    and if not, returns error. Sets working directory to be
+    the Terraform Config Path.
     """
-    proc = subprocess.Popen(args,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
-                            cwd='/tmp')
-    stdout, stderr = proc.communicate()
-    if proc.returncode != 0:
-        print(stdout)
-        print(stderr)
-        raise subprocess.CalledProcessError(
-            returncode=proc.returncode,
-            cmd=args)
+    with Popen(args,
+               stdout=PIPE,
+               bufsize=1,
+               universal_newlines=True,
+               cwd=TF_CONFIG_FULL_PATH) as p:
+        for line in p.stdout:
+            print(line, end='')  # process line here
+
+    if p.returncode != 0:
+        raise CalledProcessError(p.returncode, p.args)
 
 
 def install_terraform():
-    """Install Terraform on the Lambda instance."""
-    # Most of a Lambda's disk is read-only, but some transient storage is
-    # provided in /tmp, so we install Terraform here.  This storage may
-    # persist between invocations, so we skip downloading a new version if
-    # it already exists.
-    # http://docs.aws.amazon.com/lambda/latest/dg/lambda-introduction.html
+    """Install Terraform."""
     if os.path.exists(TERRAFORM_PATH):
         return
+    else:
+        print('downloading {} to /tmp/terraform.zip'.format(TERRAFORM_DOWNLOAD_URL))
+        wget.download(TERRAFORM_DOWNLOAD_URL, '/tmp/terraform.zip')
+        print(" ")
 
-    urllib.urlretrieve(TERRAFORM_DOWNLOAD_URL, '/tmp/terraform.zip')
-
-    # Flags:
-    #   '-o' = overwrite existing files without prompting
-    #   '-d' = output directory
-    check_call(['unzip', '-o', '/tmp/terraform.zip', '-d', TERRAFORM_DIR])
-
-    check_call([TERRAFORM_PATH, '--version'])
+        with ZipFile('/tmp/terraform.zip', 'r') as zipObj:
+            zipObj.extractall(TERRAFORM_DIR)
+        st = os.stat(TERRAFORM_PATH)
+        os.chmod(TERRAFORM_PATH, st.st_mode | stat.S_IEXEC)
+        os.remove('/tmp/terraform.zip')
+        print("download complete")
 
 
-def apply_terraform_init(s3_bucket, path):
-    """Download a Terraform plan from S3 and run a 'terraform apply'.
-    :param s3_bucket: Name of the S3 bucket where the plan is stored.
-    :param path: Path to the Terraform planfile in the S3 bucket.
+def check_terraform_version():
+    print("check_terraform_version...")
+    execute_terraform([TERRAFORM_PATH, '--version'])
+
+
+def clone_repo():
+    """Clone repository to get terraform config.
+    :param GIT_URL: Repository with terraform configuration.
+    :param REPO_DIR: Path to clone repository to.
     """
-    # Although the /tmp directory may persist between invocations, we always
-    # download a new copy of the planfile, as it may have changed externally.
-    check_call([TERRAFORM_PATH, 'init'])
+    print("Cloning repo {}...".format(GIT_URL))
+    if (GIT_URL):
+        if os.path.exists(TF_CONFIG_FULL_PATH):
+            print("{} already exists, updating...".format(REPO_DIR))
+            print("git pull master")
+            # TODO: git pull here
+        else:
+            Repo.clone_from(GIT_URL, REPO_DIR)
+            print("cloned {0} to {1}".format(GIT_URL, REPO_DIR))
+    else:
+        print("no repository passed")
+        exit(1)
 
-    def apply_terraform_workspace_select(s3_bucket, path):
-    """Download a Terraform plan from S3 and run a 'terraform apply'.
-    :param s3_bucket: Name of the S3 bucket where the plan is stored.
-    :param path: Path to the Terraform planfile in the S3 bucket.
-    """
-    # Although the /tmp directory may persist between invocations, we always
-    # download a new copy of the planfile, as it may have changed externally.
-    check_call([TERRAFORM_PATH, 'workspace'])
 
-    def apply_terraform_destroy(s3_bucket, path):
-    """Download a Terraform plan from S3 and run a 'terraform apply'.
-    :param s3_bucket: Name of the S3 bucket where the plan is stored.
-    :param path: Path to the Terraform planfile in the S3 bucket.
+def terraform_init():
+    """Initialise Terraform to configure remote state.
     """
-    # Although the /tmp directory may persist between invocations, we always
-    # download a new copy of the planfile, as it may have changed externally.
+    execute_terraform([TERRAFORM_PATH, 'init'])
 
-    def apply_terraform_workspace_destroy(s3_bucket, path):
-    """Download a Terraform plan from S3 and run a 'terraform apply'.
-    :param s3_bucket: Name of the S3 bucket where the plan is stored.
-    :param path: Path to the Terraform planfile in the S3 bucket.
+
+def terraform_destroy(workspace):
+    """Terraform Destroy, Destroys all resources in a terraform workspace.
+    Also removes the workspace.
+    :param workspace: Name of the S3 bucket where the plan is stored.
     """
-    # Although the /tmp directory may persist between invocations, we always
-    # download a new copy of the planfile, as it may have changed externally.
+    print("Destroying workspace {}...".format(workspace))
+    if workspace == 'test_workspace':
+        print("TEST MODE:")
+        print("    terraform workspace select test_workspace")
+        print("    terraform destroy test_workspace -lock-timeout=30s")
+        print("    terraform workspace select default")
+        print("    terraform workspace delete test_workspace")
+        print("TEST MODE ENDS")
+    elif workspace != 'test_workspace':
+        execute_terraform([TERRAFORM_PATH, 'workspace', 'select', workspace])
+        execute_terraform([TERRAFORM_PATH, 'destroy',
+                           '--auto-approve', '-lock-timeout=30s'])
+        execute_terraform([TERRAFORM_PATH, 'workspace', 'select', 'default'])
+        execute_terraform([TERRAFORM_PATH, 'workspace', 'delete', workspace])
 
 
 def handler(event, context):
-    s3_bucket = event['Records'][0]['s3']['bucket']['name']
-    path = event['Records'][0]['s3']['object']['key']
+    for record in event['Records']:
+        workspace = record["body"]
 
-    install_terraform()
-    apply_terraform_plan(s3_bucket=s3_bucket, path=path)
+        # exit early if workspace is protected
+        if not workspace in PROTECTED_WORKSPACES:
+            clone_repo()
+            install_terraform()
+            check_terraform_version()
+            terraform_init()
+            terraform_destroy(workspace)
+        else:
+            print("Workspace {} is protected. Terraform destroy steps skipped").format(
+                str(workspace))
