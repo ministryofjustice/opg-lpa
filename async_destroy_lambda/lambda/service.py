@@ -56,8 +56,6 @@ def install_terraform():
     else:
         print('downloading {} to /tmp/terraform.zip'.format(TERRAFORM_DOWNLOAD_URL))
         wget.download(TERRAFORM_DOWNLOAD_URL, '/tmp/terraform.zip')
-        print(" ")
-
         with ZipFile('/tmp/terraform.zip', 'r') as zipObj:
             zipObj.extractall(TERRAFORM_DIR)
         st = os.stat(TERRAFORM_PATH)
@@ -84,8 +82,8 @@ def clone_repo():
             if os.path.exists(TF_CONFIG_FULL_PATH):
                 print("{} already exists, updating...".format(REPO_DIR))
                 print("git pull master")
-                repo = Repo('repo_name')
-                repo.remotes.origin.pull()
+                # repo = Repo('repo_name')
+                # repo.remotes.origin.pull()
                 # TODO: git pull here
             else:
                 Repo.clone_from(GIT_URL, REPO_DIR)
