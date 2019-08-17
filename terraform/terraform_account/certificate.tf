@@ -66,13 +66,16 @@ resource "aws_route53_record" "certificate_validation_live_service" {
 }
 
 resource "aws_acm_certificate_validation" "certificate_live_service" {
-  count                   = terraform.workspace == "production" ? 1 : 0
-  certificate_arn         = aws_acm_certificate.certificate_live_service[count.index].arn
-  validation_record_fqdns = [aws_route53_record.certificate_validation_live_service[count.index].fqdn]
+  count           = terraform.workspace == "production" ? 1 : 0
+  certificate_arn = aws_acm_certificate.certificate_live_service[count.index].arn
+  validation_record_fqdns = [
+    aws_route53_record.certificate_validation_live_service[count.index].fqdn,
+  ]
 }
 
 resource "aws_acm_certificate" "certificate_live_service" {
-  count             = terraform.workspace == "production" ? 1 : 0
-  domain_name       = "*.lastingpowerofattorney.service.gov.uk"
-  validation_method = "DNS"
+  count                     = terraform.workspace == "production" ? 1 : 0
+  domain_name               = "*.lastingpowerofattorney.service.gov.uk"
+  validation_method         = "DNS"
+  subject_alternative_names = ["lastingpowerofattorney.service.gov.uk"]
 }
