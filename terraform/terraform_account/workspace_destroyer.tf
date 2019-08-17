@@ -45,6 +45,7 @@ resource "aws_iam_role_policy" "iam_for_workspace_destroyer_lambda_execution_rol
 
 data "aws_iam_policy_document" "iam_for_workspace_destroyer_lambda_inline_execution_role" {
   statement {
+    sid = "QueueAccess"
     actions = [
       "sqs:ReceiveMessage",
       "sqs:DeleteMessage",
@@ -52,6 +53,18 @@ data "aws_iam_policy_document" "iam_for_workspace_destroyer_lambda_inline_execut
     ]
     resources = [
       aws_sqs_queue.workspace_destroyer[0].arn,
+    ]
+  }
+  statement {
+    sid = CloudwatchLogging
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+
+    resources = [
+      "arn:aws:logs:::*",
     ]
   }
 }
@@ -67,6 +80,9 @@ resource "aws_lambda_function" "workspace_destroyer" {
   timeout                        = 900
   memory_size                    = 128
   reserved_concurrent_executions = 1
+  tracing_config {
+    mode = "Active"
+  }
   # TODO: provide credentials for terraform to the lambda function
   environment {
     variables = {
