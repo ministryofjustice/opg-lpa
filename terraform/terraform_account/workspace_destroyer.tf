@@ -8,7 +8,7 @@ resource "aws_sqs_queue" "workspace_destroyer" {
 resource "local_file" "queue_config" {
   count    = local.account_name == "development" ? 1 : 0
   content  = "${jsonencode(local.queue_config)}"
-  filename = "${path.module}/queue_config.json"
+  filename = "/tmp/queue_config.json"
 }
 
 locals {
@@ -54,7 +54,7 @@ data "aws_iam_policy_document" "iam_for_workspace_destroyer_lambda_inline_execut
 }
 
 resource "aws_lambda_function" "workspace_destroyer" {
-  filename         = "lambda_function_payload.zip"
+  filename         = "/tmp/lambda_function_payload.zip"
   function_name    = "workspace_destroyer"
   role             = aws_iam_role.iam_for_workspace_destroyer_lambda.arn
   handler          = "service.lambda_handler"

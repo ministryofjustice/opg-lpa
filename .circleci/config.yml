@@ -187,6 +187,20 @@ orbs:
         docker: [image: hashicorp/terraform:0.12.5]
     jobs:
       #----------------------------------------------------
+      # Lambda      
+      package_lambda_artifact:
+        executor: python
+        working_directory: ~/project/async_destroy_lambda/lambda
+        steps:
+          - checkout
+          - run: apk add zip
+          - run: pip3 install -r requirements.txt  --target ./vendor
+          - run: zip -r9 /tmp/lambda_function_payload.zip .
+          - persist_to_workspace:
+              root: /tmp
+              paths:
+                - lambda_function_payload.zip
+      #----------------------------------------------------
       # Terraform
       lint_and_validate_terraform:
         parameters:
@@ -197,6 +211,8 @@ orbs:
         executor: terraform
         steps:
           - checkout
+          - attach_workspace:
+              at: /tmp
           - run:
               name: terraform lint
               command: terraform fmt -diff -check -recursive
@@ -233,6 +249,8 @@ orbs:
             default: development
         steps:
           - checkout
+          - attach_workspace:
+              at: /tmp
           - run:
               name: Apply Account Terraform
               command: |
@@ -241,6 +259,10 @@ orbs:
                 export TF_WORKSPACE=<<parameters.workspace>>
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
+          - persist_to_workspace:
+              root: /tmp
+              paths:
+                - queue_config.json
 
       apply_environment_terraform:
         #
