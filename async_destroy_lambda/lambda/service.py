@@ -10,3 +10,7 @@ def lambda_handler(event, context):
     for record in event['Records']:
         workspace = record["body"]
         print(workspace)
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Success')
+    }
