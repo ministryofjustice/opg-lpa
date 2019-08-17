@@ -73,3 +73,8 @@ resource "aws_lambda_function" "workspace_destroyer" {
   }
   tags = local.default_tags
 }
+
+resource "aws_lambda_event_source_mapping" "workspace_destroyer" {
+  event_source_arn = "${aws_sqs_queue.workspace_destroyer.arn}"
+  function_name    = "${aws_lambda_function.workspace_destroyer.arn}"
+}
