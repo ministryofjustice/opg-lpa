@@ -107,6 +107,7 @@ resource "aws_lambda_function" "workspace_destroyer" {
       REPO_DIR          = "/tmp/opg-lpa"
       TF_CONFIG_PATH    = "terraform/terraform_environment"
       TERRAFORM_VERSION = "0.12.5"
+      TEST              = "True"
     }
   }
   tags = local.default_tags
