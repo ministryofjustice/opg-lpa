@@ -1,3 +1,2 @@
 gitpython
 wget
-boto3
