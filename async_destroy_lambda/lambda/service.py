@@ -132,8 +132,8 @@ def lambda_handler(event, context):
 
         # exit early if workspace is protected
         if not workspace in PROTECTED_WORKSPACES:
-            print("Starting lambda and destroying workspace {}.").format(
-                str(workspace))
+            print("Starting lambda and destroying workspace {}.".format(
+                str(workspace)))
             try:
                 clone_repo()
                 install_terraform()
