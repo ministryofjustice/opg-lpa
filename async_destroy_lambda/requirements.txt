@@ -1,3 +1,4 @@
 gitpython
 wget
 zipfile
+boto3
