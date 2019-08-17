@@ -202,7 +202,8 @@ orbs:
           - checkout
           - run: apk add zip
           - run: pip3 install -r ~/project/async_destroy_lambda/lambda/requirements.txt  --target ~/project/async_destroy_lambda/lambda/vendor
-          - run: cd ~/project/async_destroy_lambda/lambda; zip -r9 /tmp/lambda_function_payload.zip .
+          - run: cd ~/project/async_destroy_lambda/lambda/vendor; zip -r9 /tmp/lambda_function_payload.zip .
+          - run: cd ~/project/async_destroy_lambda/lambda; zip -g /tmp/lambda_function_payload.zip service.py
           - persist_to_workspace:
               root: /tmp
               paths:
