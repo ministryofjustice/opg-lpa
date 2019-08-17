@@ -157,4 +157,3 @@ def lambda_handler(event, context):
                 'body': json.dumps("Workspace {} is protected. Terraform destroy steps skipped.").format(
                     str(workspace))
             }
-# TODO: handle responses successfully
