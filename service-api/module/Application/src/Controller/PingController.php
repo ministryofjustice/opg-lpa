@@ -8,8 +8,6 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Http\Client\HttpClient;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Db\Sql\Predicate\Expression;
-use Zend\Db\Sql\Sql;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 use Exception;
@@ -148,36 +146,9 @@ class PingController extends AbstractRestfulController
         //---------------------------------------------
         // Main database
 
-        $dbDetails = [
-            'users' => 0,
-            'applications' => 0,
-            'deletion_log' => 0,
-            'who_are_you' => 0,
-            'feedback' => 0,
-            'stats' => 0,
-        ];
-
         try {
 
             $this->database->getDriver()->getConnection()->connect();
-
-            //---
-
-            foreach($dbDetails as $table=>$v) {
-                $sql    = new Sql($this->database);
-                $select = $sql->select($table);
-                $select->columns(['count' => new Expression('count(*)')]);
-                $result = $sql->prepareStatementForSqlObject($select)->execute();
-
-                if (!$result->isQueryResult() || $result->count() != 1) {
-                    $dbDetails[$table] = 0;
-                } else {
-                    $dbDetails[$table] = $result->current()['count'];
-                }
-
-            }
-
-            //---
 
             $zendDbOk = true;
 
@@ -216,7 +187,6 @@ class PingController extends AbstractRestfulController
         $result = [
             'database' => [
                 'ok' => $zendDbOk,
-                'details' => $dbDetails,
             ],
             'gateway' => [
                 'ok' => $opgGateway,
