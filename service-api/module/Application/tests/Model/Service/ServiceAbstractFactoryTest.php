@@ -23,6 +23,7 @@ use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use GuzzleHttp\Client as GuzzleHttpClient;
 
 class ServiceAbstractFactoryTest extends MockeryTestCase
 {
@@ -87,7 +88,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
             ],
             [ProcessingStatusService::class,
                 [
-                    HttpClient::class => Mockery::mock(HttpClient::class),
+                    GuzzleHttpClient::class => Mockery::mock(GuzzleHttpClient::class),
                     'config' => ['processing-status' => ['endpoint' => 'test endpoint']],
                     'AwsApiGatewaySignature' => Mockery::mock(\Aws\Signature\SignatureV4::class),
                 ]

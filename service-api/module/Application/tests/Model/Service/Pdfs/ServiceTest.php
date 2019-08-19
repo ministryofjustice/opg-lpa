@@ -262,36 +262,6 @@ class ServiceTest extends AbstractServiceTest
         $serviceBuilder->verify();
     }
 
-    public function testFetchLp1PdfCryptInvalidArgumentException()
-    {
-        $lpa = FixturesData::getHwLpa();
-
-        $user = FixturesData::getUser();
-
-        $config = $this->config;
-        $config['pdf']['encryption']['keys']['document'] = 'Invalid';
-
-        $s3Client = Mockery::mock(S3Client::class);
-        $s3ResultBody = Mockery::mock();
-        $s3ResultBody->shouldReceive('getContents')->once();
-        $s3Result = new Result();
-        $s3Result['Body'] = $s3ResultBody;
-        $s3Client->shouldReceive('getObject')->andReturn($s3Result)->once();
-
-        $serviceBuilder = new ServiceBuilder();
-        $service = $serviceBuilder
-            ->withApplicationRepository($this->getApplicationRepository($lpa, $user))
-            ->withPdfConfig($config)
-            ->withS3Client($s3Client)
-            ->build();
-
-        $this->expectException(CryptInvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid encryption key');
-        $service->fetch($lpa->getId(), 'lp1.pdf');
-
-        $serviceBuilder->verify();
-    }
-
     public function testFetchLp1Pdf()
     {
         $lpa = FixturesData::getHwLpa();
