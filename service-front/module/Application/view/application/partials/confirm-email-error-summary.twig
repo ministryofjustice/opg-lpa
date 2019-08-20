@@ -1,0 +1,13 @@
+{% import "application/macros.twig" as macros %}
+
+{% set form = formErrorTextExchange(form,  {
+    'email' : {
+        'cannot-be-empty' : 'Enter your email address',
+    },
+    'email_confirm' : {
+        'cannot-be-empty' : 'Confirm your email address',
+        'did-not-match' : 'The emails did not match'
+    }
+}) %}
+
+{{ macros.formErrorSummary(error,form,'There was a problem submitting your email details') }}

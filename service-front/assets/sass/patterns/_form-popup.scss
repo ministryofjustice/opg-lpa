@@ -1,0 +1,240 @@
+// =======================================================
+// FORM INSIDE POPUP (CONDENSED)
+
+.form-popup {
+    // Taken from main (elements/elements_typography line 7) instead of extending
+    @include core-19;
+    -webkit-font-smoothing: antialiased;
+
+    &.popup {
+        max-width: 600px;
+
+        @include media($max-width: 1000px) {
+            margin: 2em auto;
+        }
+
+        @include media(mobile) {
+            margin: 2em .5em 10em;
+        }
+    }
+
+    .form {
+        padding: $gutter $gutter-half;
+
+        @include media(mobile) {
+            padding-top: 0;
+        }
+
+        > .heading-medium {
+            @include media(tablet) {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+        }
+
+        // For hiding in the popup on tablets and up
+        // Used for .heading-medium primarily
+        .popup-exclude {
+            @include media(tablet) {
+                display: none;
+            }
+        }
+
+        &.reuse-details-form {
+            .heading-medium {
+                @include media(tablet) {
+                    margin-top: 0;
+                }
+            }
+        }
+    }
+
+    .form-group {
+        margin-top: 0;
+        margin-bottom: $gutter-half;
+
+        &.read-only {
+            label {
+                @include media(mobile) {
+                    display: none;
+                }
+            }
+
+            .read-only-value {
+                @include media(tablet) {
+                    margin-top: 7px;
+                }
+            }
+        }
+    }
+
+    .form-label {
+        @include media(tablet) {
+            width: 150px;
+            margin-top: 6px;
+            float: left;
+        }
+    }
+
+    .form-control {
+        @include media(tablet) {
+            width: 420px;
+        }
+    }
+
+    .postcode-input {
+        @include media(tablet) {
+            width: 252px;
+        }
+    }
+
+    .summary,
+    .summary-text,
+    .address-type-toggle,
+    .block-label,
+    .button,
+    .alert,
+    .single-checkbox-group {
+        @include media(tablet) {
+            margin-left: 150px;
+        }
+    }
+
+    .postcode-button,
+    .button-secondary {
+        @include media(tablet) {
+            margin-left: 0;
+        }
+    }
+
+    .form-date {
+        margin-bottom: 15px;
+
+        .form-group { 
+            margin-bottom: 0; 
+        }
+
+        .form-hint {
+            @include media(tablet) {
+                display: none;
+            }
+        }
+    }
+
+    .postcodelookup {
+        position: relative;
+
+        .spinner {
+            @include media(tablet) {
+                position: absolute;
+                top: 10px;
+                right: 182px;
+            }
+        }
+    }
+
+    .error-summary {
+        margin: $gutter-half $gutter-half 0;
+        padding: 10px 10px 4px;
+
+        @include media(mobile) {
+            padding-bottom: 8px;
+        }
+
+        .heading-medium {
+            margin-bottom: 10px;
+
+            @include media(tablet) {
+                font-size: 22px;
+            }
+        }
+
+        p {
+            margin-bottom: 4px;
+        }
+    }
+
+    .form-group-error {
+        border-left: 0;
+        
+        @include media(tablet) {
+            position: relative;
+            margin-right: 0;
+            padding-left: 0;
+
+            .form-date & {
+                margin-right: 20px;
+            }
+        }
+    }
+
+    .form-date {
+        .form-group-error {
+            @include media(tablet) {
+                margin-right: 20px;
+            }
+        }
+    }
+
+    .error-message {
+        @include media(tablet) {
+            position: relative;
+            top: 13px;
+            left: 150px;
+            width: 280%;
+        }
+    }
+
+    // scss-lint:disable MergeableSelector
+    .form-date {
+
+        .error-message {
+            @include media(tablet) {
+                top: 3px;
+                left: 0;
+                width: 100%;
+            }
+        }
+
+        // Hide the normal placement of error messages inside popup
+        .error-group {
+            display: none;
+        }
+
+        // Show new placement of error messages within popup
+        .error-group-popup {
+            display: block;
+        }
+    }
+    // scss-lint:enable MergeableSelector
+
+    .dob-label {
+        @include media(mobile) {
+            display: none;
+        }
+    }
+
+    .use-details-link-panel {
+        padding: 15px;
+
+        @include media($min-width: 641px) {
+            padding-left: 165px;
+        }
+    }
+}
+
+// No-js hidden button spacing fix for reuse details
+.no-js {
+    .form-group {
+        + .form-group.js-hidden {
+            margin-top: 30px;
+        }
+
+        &.read-only {
+            label {
+                display: none;
+            }
+        }
+    }
+}
+

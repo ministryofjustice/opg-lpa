@@ -1,0 +1,28 @@
+// =======================================================
+// APPSTATUS
+// Page wide large panel with status messages
+
+.appstatus {
+    margin: $gutter 0;
+    padding: ($gutter*1.5);
+    background-color: $turquoise-with-contrast;
+    color: $white;
+    text-align: center;
+
+    @include media(mobile) {
+        padding: 30px;
+    }
+
+    &.warning {
+        background-color: $yellow;
+        color: $black;
+    }
+
+    .heading-xlarge {
+        margin: 0 0 10px;
+    }
+
+    .heading-medium {
+        margin: 0;
+    }
+}

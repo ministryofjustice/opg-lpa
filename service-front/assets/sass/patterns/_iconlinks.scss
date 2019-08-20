@@ -1,0 +1,52 @@
+// =======================================================
+// ICON LINKS
+// List of links with icons (downloads, documents, etc)
+
+.iconlinks {
+    padding: $gutter $gutter-half;
+
+    @include media(mobile) {
+        padding: $gutter-half 0;
+    }
+
+    .iconlinks-item {
+        margin-bottom: $gutter;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &--right {
+        @extend %contain-floats;
+
+        .iconlinks-item {
+            float: right;
+
+            @include media(mobile) {
+                float: none;
+            }
+        }
+    }
+}
+
+.iconlinks-item {
+    position: relative;
+
+    .icon {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        margin-top: -19px;
+    }
+
+    .iconlinks-link {
+        width: 100%;
+        margin-bottom: $gutter;
+    }
+
+    .iconlinks-text {
+        display: inline-block;
+        padding-left: 40px;
+    }
+}

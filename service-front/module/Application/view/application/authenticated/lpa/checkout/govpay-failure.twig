@@ -1,0 +1,31 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block htmlTitle %}Online payment failed - {% endblock %}
+{% block pageTitle %}Online payment failed{% endblock %}
+
+{% block content %}
+
+    <h2 class="heading-medium flush--top">Amount due: &pound;{{ moneyFormat(lpa.payment.amount) }}</h2>
+
+    <div class="text">
+
+        <p>There appears to be a problem with this payment. You could try paying online again or <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">pay by cheque</a>.</p>
+
+    </div>
+
+    <div class="text">
+        <p class="divorced">
+            {# begin form #}
+            {{ form.prepare() ? '' }}
+            {{ form().openTag( form )|raw }}
+            {{ formElement(form.getCsrf) }}
+
+            <div class="form-group">
+                {{ formElement(form.get('submit')) }}
+            </div>
+
+            {{ form().closeTag|raw }}
+        </p>
+    </div>
+
+{% endblock %}

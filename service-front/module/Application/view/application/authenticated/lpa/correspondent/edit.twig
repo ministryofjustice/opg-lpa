@@ -1,0 +1,223 @@
+{% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
+
+{% block htmlTitle %}Edit correspondent - {% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Error messages #}
+{% set form = formErrorTextExchange(form,  {
+    'name-title' : {
+        'cannot-be-blank' : 'Enter the correspondent\'s title',
+        'cannot-be-identical-to:""' : 'Enter the correspondent\'s title',
+        'must-be-less-than-or-equal:5' : 'Title must be five letters or fewer - please abbreviate, if necessary',
+        'linked-1-cannot-be-null' : 'Enter the correspondent\'s title or company name'
+    },
+    'name-first' : {
+        'cannot-be-blank' : 'Enter the correspondent\'s first names',
+        'must-be-less-than-or-equal:53' : 'Enter a first name that\'s less than 54 characters long',
+        'linked-1-cannot-be-null' : 'Enter the correspondent\'s first names or company name'
+    },
+    'name-last' : {
+        'cannot-be-blank' : 'Enter the correspondent\'s last name',
+        'must-be-less-than-or-equal:61' : 'Enter a last name that\'s less than 62 characters long',
+        'linked-1-cannot-be-null' : 'Enter the correspondent\'s last name or company name'
+    },
+    'company' : {
+        'linked-1-cannot-be-null' : 'Enter the correspondent\'s name or company name',
+        'must-be-less-than-or-equal:75' : 'Enter a company name that\'s less than 76 characters long'
+    },
+    'address-address1' : {
+        'cannot-be-blank' : 'Enter the first line of the correspondent\'s address',
+        'must-be-less-than-or-equal:50' : 'Change address line 1 so that it has fewer than 51 characters'
+    },
+    'address-address2' : {
+        'linked-1-cannot-be-null' : 'Enter the second line of the correspondent\'s address',
+        'must-be-less-than-or-equal:50' : 'Change address line 2 so that it has fewer than 51 characters'
+    },
+    'address-address3' : {
+        'must-be-less-than-or-equal:50' : 'Change address line 3 so that it has fewer than 51 characters'
+    },
+    'address-postcode' : {
+        'linked-1-cannot-be-null' : 'Enter the correspondent\'s postcode',
+        'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines rather than in the postcode field.'
+    },
+    'email-address' : {
+        'invalid-email-address' : 'Enter a valid email address'
+    }
+}) %}
+
+{% set title = form.get('name-title') %}
+{% set firstname = form.get('name-first') %}
+{% set lastname = form.get('name-last') %}
+{% set company = form.get('company') %}
+{% set address1 = form.get('address-address1') %}
+{% set address2 = form.get('address-address2') %}
+{% set address3 = form.get('address-address3') %}
+{% set postcode = form.get('address-postcode') %}
+{% set email = form.get('email-address') %}
+{% set phone = form.get('phone-number') %}
+
+{# form fields config #}
+{{ form.setAttributes({
+    'class':'form js-PersonForm js-PostcodeLookup'
+}) ? '' }}
+
+{{ title.setAttributes({
+    id:'name-title',
+    class: 'form-control'
+}) ? '' }}
+
+{{ firstname.setAttributes({
+    id: 'name-first',
+    class: 'form-control'
+}) ? '' }}
+
+{{ lastname.setAttributes({
+    id: 'name-last',
+    class: 'form-control'
+}) ? '' }}
+
+{{ company.setAttributes({
+    id:'company-name',
+    class: 'form-control'
+}) ? '' }}
+
+{{ address1.setAttributes({
+    id:'address-address1',
+    class: 'form-control'
+}) ? '' }}
+
+{{ address2.setAttributes({
+    id:'address-address2',
+    class: 'form-control'
+}) ? '' }}
+
+{{ address3.setAttributes({
+    id:'address-address3',
+    class: 'form-control'
+}) ? '' }}
+
+{{ postcode.setAttributes({
+    id: 'address-postcode',
+    class: 'form-control'
+}) ? ''}}
+
+{{ email.setAttributes({
+    id: 'email-address',
+    class: 'form-control'
+}) ? ''}}
+
+{{ phone.setAttributes({
+    id: 'phone-number',
+    class: 'form-control'
+}) ? ''}}
+
+{# form fields labels #}
+{{ title.setOptions({label:'Title'}) ? '' }}
+{{ firstname.setOptions({label:'First names'}) ? '' }}
+{{ lastname.setOptions({label:'Last name'}) ? '' }}
+{{ company.setOptions({label:'Company name'}) ? '' }}
+{{ address1.setOptions({label:'Address line 1'}) ? '' }}
+{{ address2.setOptions({label:'Address line 2'}) ? '' }}
+{{ address3.setOptions({label:'Address line 3'}) ? '' }}
+{{ postcode.setOptions({label:'Postcode'}) ? '' }}
+{{ email.setOptions({label:'Email'}) ? '' }}
+{{ phone.setOptions({label:'Phone number'}) ? '' }}
+
+<header class="popup-header">
+    <i class="icon icon-person"></i>
+    <h2 class="heading-small popup-header-title">Correspondent details</h2>
+</header>
+
+{{ form.prepare() ? '' }}
+
+{############################ correspondent form ##########################}
+
+{# Error summary #}
+{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
+
+{# begin form #}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.getCsrf) }}
+    {{ formElement(form.get('who')) }}
+
+    <h2 class="heading-medium popup-exclude">Correspondent's details?</h2>
+
+    <fieldset>
+        <legend class="visually-hidden">Add correspondent's details</legend>
+
+        {{ macros.formGroup(title) }}
+        {{ macros.formGroup(firstname) }}
+        {{ macros.formGroup(lastname) }}
+
+    </fieldset>
+
+    <h2 class="heading-medium popup-exclude">Correspondent's company name{{ form.trustSelected() ? '' : '?' }}</h2>
+
+    <fieldset>
+        <legend class="visually hidden">Add company name</legend>
+        {% if form.trustSelected() %}
+            {{ formHidden(company) }}
+            <div class="form-group read-only">
+                <label class="form-label">{{ company.getOption('label') }}</label>
+                <div class="read-only-value">{{ company.getValue() }}</div>
+            </div>
+        {% else %}
+            {{ macros.formGroup(company) }}
+        {% endif %}
+    </fieldset>
+
+    <h2 class="heading-medium popup-exclude">{{ form.trustSelected() ? 'Correspondent\'s address' : 'What is the correspondent\'s address?' }}</h2>
+
+    <fieldset class="postcodelookup">
+        <legend class="visually-hidden">Add address details</legend>
+
+        {% if form.trustSelected() %}
+            {{ formHidden(address1) }}
+            {{ formHidden(address2) }}
+            {{ formHidden(address3) }}
+            {{ formHidden(postcode) }}
+
+            {% set addressString = address1.getValue() %}
+            {% if address2.getValue() %}
+                {% set addressString = addressString ~ ', ' ~ address2.getValue() %}
+            {% endif %}
+            {% if address3.getValue() %}
+                {% set addressString = addressString ~ ', ' ~ address3.getValue() %}
+            {% endif %}
+            {% if postcode.getValue() %}
+                {% set addressString = addressString ~ ', ' ~ postcode.getValue() %}
+            {% endif %}
+
+            <div class="form-group read-only">
+                <label class="form-label">Address</label>
+                <div class="read-only-value">{{ addressString }}</div>
+            </div>
+        {% else %}
+            <div class="js-PostcodeLookup__postal-add">
+                {{ macros.formGroup(address1) }}
+                {{ macros.formGroup(address2) }}
+                {{ macros.formGroup(address3) }}
+                {{ macros.formGroup(postcode) }}
+            </div>
+        {% endif %}
+
+    </fieldset>
+
+    <h2 class="heading-medium popup-exclude">Correspondent's contact details?</h2>
+
+    <fieldset>
+        <legend class="visually-hidden">Add correspondent's contact details</legend>
+
+        {{ macros.formGroup(email) }}
+        {{ macros.formGroup(phone) }}
+
+    </fieldset>
+
+    {{ macros.renderFormButtons(cancelUrl, backButtonUrl) }}
+
+{{ form().closeTag|raw }}
+
+{% endblock %}

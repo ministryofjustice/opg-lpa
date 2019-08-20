@@ -1,0 +1,59 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block errorSummary %}
+    {% include 'application/partials/confirm-email-error-summary.twig' %}
+{% endblock %}
+
+{% block htmlTitle %}Reset your password - {% endblock %}
+{% block pageTitle %}Reset your password{% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Set form fields variables #}
+{% set email = form.get('email') %}
+{% set email_confirm = form.get('email_confirm') %}
+
+{# form fields config #}
+{{ email.setAttributes({
+    id: 'email',
+    type: 'email',
+    class: 'form-control'
+}) ? ''}}
+
+{{ email_confirm.setAttributes({
+    id: 'email_confirm',
+    type: 'email',
+    autocomplete: 'off',
+    class: 'form-control'
+}) ? ''}}
+
+{# form fields labels #}
+{{ email.setOptions({ label: 'Email address' }) ? '' }}
+{{ email_confirm.setOptions({ label: 'Confirm your email address' }) ? '' }}
+
+<div class="text">
+    <p>Enter your email address below. If there's an account associated with the address, we'll send you a link to reset your password.</p>
+</div>
+
+{# begin form #}
+{{ form.prepare() ? '' }}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.getCsrf) }}
+
+    <fieldset>
+        <legend class="visually-hidden">Reset your password</legend>
+
+        {{ macros.formGroup(email) }}
+        {{ macros.formGroup(email_confirm) }}
+
+        <div class="form-group">
+            <input type="submit" name="submit" id="form-submit" class="button" value="Email me the link">
+        </div>
+
+    </fieldset>
+
+{{ form().closeTag|raw }}
+
+{% endblock content %}

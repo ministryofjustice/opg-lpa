@@ -1,0 +1,66 @@
+{% extends 'layout/twig/accordion-layout.twig' %}
+
+{% block htmlTitle %}Attorneys - {% endblock %}
+
+{% block content %}
+
+<li id="primary-attorney-section" class="section current">
+
+    <h2 class="heading-medium accordion-header flush--top">Who are the attorneys?</h2>
+
+    <div class="accordion-info">
+        <div class="text">
+            <p>Attorneys are people the donor appoints to make decisions on their behalf.</p>
+
+            <ul class="list list-bullet">
+                <li>A donor can have 1 or more attorneys</li>
+                <li>Attorneys must be 18 or over</li>
+                <li>Attorneys must have <a href="/guide#topic-mental-capacity" class="js-guidance" data-journey-click="page:link:help: Find out more about mental capacity">mental capacity</a> – the ability to make decisions</li>
+                {% if lpa.document.type == 'property-and-financial' %}
+                    <li>An attorney must not be bankrupt or subject to a debt relief order</li>
+                {% endif %}
+            </ul>
+
+            <p>The most important thing is that the attorneys are people the donor can trust to respect their wishes and act in their best interests.</p>
+
+            <p>You will be asked if the donor would like to add <a class="js-guidance" href="/guide#topic-replacement-attorneys" data-journey-click="page:link:help: add -replacement attorneys- in a separate question">replacement attorneys</a> in a separate question. These would step in if the original attorneys are unable or unwilling to continue.</p>
+
+            <p><a class="js-guidance" href="/guide#topic-attorneys" data-journey-click="page:link:help: Find out more about attorneys">Find out more about attorneys</a></p>
+        </div>
+    </div>
+
+    {% if (attorneys) %}
+
+        <h3 class="heading-medium flush--top">
+            The attorney{% if attorneys|length > 1 %}s{% endif %}
+        </h3>
+
+        <ul>
+            {% for attorney in attorneys %}
+                {% include 'application/authenticated/lpa/primary-attorney/partials/attorney.twig' with attorney %}
+            {% endfor %}
+        </ul>
+
+    {% endif %}
+
+    <div class="{% if (attorneys) %}action-item{% endif %} form-group">
+        <a href="{{ addUrl }}" role="button" class="{% if not (attorneys) %}button{% endif %} js-form-popup" >
+            {% if (attorneys) %}
+                Add another attorney?
+            {% else %}
+                Add an attorney
+            {% endif %}
+        </a>
+    </div>
+
+    {% if (attorneys) %}
+
+        <div class="form-group">
+            <a href="{{ nextUrl }}" role="button" class="button">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
+        </div>
+
+    {% endif %}
+
+</li>
+
+{% endblock %}

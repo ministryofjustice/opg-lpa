@@ -1,0 +1,162 @@
+// =======================================================
+// LPA CARDS
+
+.list-item--v3{
+
+    @extend %contain-floats;
+
+    padding-right: 20px !important;
+
+    .info{
+    }
+
+    .main-info
+    ,.extra-info{
+        margin-bottom: 10px !important;
+
+        p{
+            float:none !important;
+        }
+
+    }
+
+    .extra-info{
+
+        float:left !important;
+        clear:left;
+        margin-left: 0 !important;
+        width:6.25em !important;
+
+        @media (min-width: 720px) {
+            float:right !important;
+            clear: none;
+            margin: 5px 0 0 1.5em !important;
+        }
+
+        p:first-of-type{
+            color: #0b0c0c !important;
+        }
+
+    }
+
+    .list-item_title {
+        font-size: 2.4rem;
+        font-weight: bold;
+        color: #0b0c0c;
+    }
+
+    .list-item_cta{
+        clear:left;
+    }
+
+    .list-item_secondary_actions {
+
+        display: inline-block;
+        margin: 10px 0 0 0;
+
+        @media (min-width: 640px) {
+            margin-left: 15px;
+        }
+
+        li{
+            padding:0;
+            border-radius: 0;
+
+            @media (min-width: 400px) {
+
+                display: inline-block;
+                border-right: 2px solid rgba($black,0.3);
+                margin-right: 10px;
+                padding-right: 10px;
+
+                &:last-of-type{
+                    border-right: 0;
+                    padding-right: 0;
+                }
+
+            }
+
+            @media (min-width: 740px) {
+                margin-right: 6px;
+                padding-right: 10px;
+            }
+        }
+
+        a {
+            color: #005ea5;
+
+            &:hover {
+                color: #2b8cc4;
+            }
+
+        }
+
+    }
+
+    .list-item_status{
+        float:right;
+        min-width: 95px;
+        margin-left: 10px;
+        text-align: right;
+        z-index: 1;
+        position: relative;
+    }
+
+}
+
+.track-my-lpa {
+     li {
+          margin: 0 0 1em 0;
+          background: $highlight-colour;
+          position: relative;
+          border-radius: 5px;
+          padding: 1em 11.5em 1em 1.5em;
+
+          .info {
+               .main-info {
+                    display: inline-block;
+                    width: auto;
+                    float: left;
+                    a {
+                         font-size: 2.4rem;
+                         font-weight: bold;
+                         &:hover {
+                              cursor: pointer;
+                         }
+                    }
+                    span {
+                      font-size: 19px;
+                      color: black;
+                    }
+               }
+               .extra-info {
+                   float: right !important;
+                   clear: none;
+                   margin: 5px 0 0 1.5em !important;
+                    p {
+                      font-size: 19px;
+                      color: black;
+                      width: auto;
+                      float: left;
+                      clear: both;
+                      margin: 0;
+                         &.main-text {
+                           font-size: 19px;
+                           color: black;
+                              .icon {
+                                   width: 1.15em;
+                                   height: 1.15em;
+                                   margin: 0 0.15em -0.25em 0;
+                              }
+                         }
+                    }
+               }
+          }
+     }
+}
+
+.supporting-info {
+    font-size: 16px;
+    color: #6F777B;
+}
+

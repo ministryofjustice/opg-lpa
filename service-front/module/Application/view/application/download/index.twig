@@ -1,0 +1,13 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block htmlTitle %}Problem creating your LPA document - {% endblock %}
+{% block pageTitle %}Problem creating your LPA document{% endblock %}
+
+{% block content %}
+
+<div class="text">
+	<p class="lede">Sorry we had a problem creating a PDF version of your LPA for you to download.</p>
+	<p>Please try again later or <a href="{{ url('user/dashboard') }}">return to your LPA dashboard</a>.</p>
+</div>
+
+{% endblock %}
