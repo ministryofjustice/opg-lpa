@@ -1,0 +1,4 @@
+#!/bin/sh
+
+rm -rf /tmp/pdf_ramdisk/*
+exec su -c "/app/bin/start.sh >> /var/log/app/queue.log 2>&1" app
