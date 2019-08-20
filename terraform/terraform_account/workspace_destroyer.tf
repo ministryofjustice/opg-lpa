@@ -37,6 +37,7 @@ data "aws_iam_policy_document" "lambda_assume_role_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "aws_lambda_vpc_access_execution_role" {
+  count      = local.account_name == "development" ? 1 : 0
   role       = aws_iam_role.iam_for_workspace_destroyer_lambda[0].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
