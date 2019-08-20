@@ -1,0 +1,14 @@
+<phpunit bootstrap="./Bootstrap.php" colors="true" strict="false" syntaxCheck="false" verbose="false">
+    <testsuite name="OpgLpaPdf">
+        <directory>./OpgTest</directory>
+    </testsuite>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./../src</directory>
+        </whitelist>
+    </filter>
+    <php>
+        <server name="SERVER_NAME" value="phpunit"/>
+        <server name="APPLICATION_ENV" value="development"/>
+    </php>
+</phpunit>
