@@ -219,8 +219,6 @@ orbs:
         executor: terraform
         steps:
           - checkout
-          - attach_workspace:
-              at: /tmp
           - run:
               name: terraform lint
               command: terraform fmt -diff -check -recursive
@@ -257,8 +255,6 @@ orbs:
             default: development
         steps:
           - checkout
-          - attach_workspace:
-              at: /tmp
           - run:
               name: Apply Account Terraform
               command: |
@@ -267,10 +263,6 @@ orbs:
                 export TF_WORKSPACE=<<parameters.workspace>>
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
-          - persist_to_workspace:
-              root: /tmp
-              paths:
-                - queue_config.json
 
       apply_environment_terraform:
         #
