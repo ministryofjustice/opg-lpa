@@ -1,0 +1,20 @@
+// =======================================================
+// DATE CHECKER
+
+// Custom form styling
+
+@include media(desktop) {
+    .date-check-dates{
+        width: auto;
+        position: absolute;
+        top: -25px;
+        right: 0px;
+    }
+    .date-check-person .form-date {
+        margin-bottom:0px!important;
+    }
+    .date-check-person .person-address {
+        position: relative;
+    }
+}
+

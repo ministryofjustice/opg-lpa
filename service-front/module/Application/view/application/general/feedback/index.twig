@@ -1,0 +1,119 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% set hideFeedbackLink = true %}
+
+{% block htmlTitle %}Send us feedback - {% endblock %}
+{% block pageTitle %}Send us feedback{% endblock %}
+
+{% set type = form.get('rating').setOptions({ label: 'Rate your experience' }) %}
+
+{% block errorSummary %}
+    {% include 'application/general/feedback/partials/index-error-summary.twig' %}
+{% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{{ form.setAttribute('class', 'form js-single-use') ? '' }}
+
+{% set type = form.get('rating') %}
+{% set details = form.get('details') %}
+{% set email = form.get('email') %}
+{% set phone = form.get('phone') %}
+
+{{ details.setAttributes({
+    id: 'details',
+    rows: 10,
+    cols: 67,
+    maxlength: 2000,
+    class: 'form-control'
+}) ? ''}}
+
+{{ email.setAttributes({
+    id: 'email',
+    type: 'email',
+    maxlength: 100,
+    class: 'form-control'
+}) ? ''}}
+
+{{ phone.setAttributes({
+    id: 'phone',
+    type: 'phone',
+    maxlength: 15,
+    class: 'form-control'
+}) ? ''}}
+
+{% set allOptions = type.getOptions() %}
+{% set typeValueOptions = allOptions['value_options'] %}
+
+{{ type.setOptions({
+    label_attributes: {'class': 'block-label'}
+}) ? ''}}
+
+{{ form().openTag( form )|raw }}
+
+    {{ formElement(form.getCsrf) }}
+
+    <div class="text">
+        <p>We will not respond to your feedback directly but will use it to improve this service. If you're happy to be contacted to give further feedback, please leave your email address or phone number.</p>
+        <p>If you have a question about your LPA, please email <a href="mailto:customerservices@publicguardian.gov.uk">customerservices@publicguardian.gov.uk</a> who will be able to help.</p>
+    </div>
+
+    <h2 class="heading-medium flush--top">How would you rate your experience with this service?</h2>
+
+    <div class="form-group {{ type.getMessages|length >0 ? 'form-group-error'}}">
+        <fieldset>
+            <legend class="visually-hidden" id="rating">Experience rating</legend>
+                {{ formElementErrorsV2(type) }}
+                {{ formRadio(type) }}
+        </fieldset>
+    </div>
+
+    <h2 class="heading-medium text">Please take a moment to tell us about your experience, what worked and what did not.</h2>
+
+    <fieldset>
+        <legend class="group text">
+        </legend>
+        <div class="form-group {{ details.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="form-label text" for="{{ details.getAttribute('id') }}">
+                <span class="visually-hidden">Your feedback<br></span>
+                <span class="form-hint">2000 characters max<br></span>
+                {{ formElementErrorsV2(details) }}
+            </label>
+            {{ formElement(details) }}
+        </div>
+    </fieldset>
+
+
+    <h2 class="heading-medium flush--top">Your email address (optional)</h2>
+
+    <fieldset>
+        <legend class="group text">
+        </legend>
+
+        {{ macros.formGroup(email) }}
+
+    </fieldset>
+
+    <h2 class="heading-medium flush--top">Your phone number (optional)</h2>
+
+    <fieldset>
+        <legend class="group text">
+        </legend>
+        <div class="form-group {{ phone.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="form-label text" for="{{ phone.getAttribute('id') }}">
+                <span class="visually-hidden">Your phone number (optional)</span>
+                {{ formElementErrorsV2(phone) }}
+            </label>
+            {{ formElement(phone) }}
+        </div>
+    </fieldset>
+
+    <input type="submit" name="send" id="send" class="button" value="Send feedback">
+
+{{ form().closeTag|raw }}
+
+{% endblock content %}
+
+

@@ -1,0 +1,29 @@
+// =======================================================
+// PANELS
+
+.panel-cta {
+    padding: $gutter $gutter-half;
+    background-color: $panel-colour;
+    text-align: center;
+    margin-bottom: 20px;
+
+    .panel-heading {
+        font-weight: 700;
+        margin-top: 0;
+        margin-bottom: 0.5em;
+    }
+
+    .panel-body {
+        p:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.panel-actions {
+    .js-enabled & {
+        padding: $gutter-half;
+        border-bottom: 1px solid $border-colour;
+        background-color: $grey-4;
+    }
+}

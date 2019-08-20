@@ -1,0 +1,129 @@
+.opg-status {
+  display: inline-block;
+  text-transform: uppercase;
+  border-radius: 4px;
+  font-size: 16px;
+  text-align: center;
+  position: relative;
+  padding: 5px 8px 2px 8px;
+  margin: 10px 0px 12px 0px;
+}
+
+
+// Styles for information about LPA statuses
+.opg-status--created,
+.opg-status--started {
+  background-color: $white;
+  color: $dark-grey;
+}
+
+.opg-status--completed {
+  background-color: $white;
+  color: $dark-grey;
+  font-weight: bold;
+}
+
+.opg-status--waiting {
+  background-color: $white;
+  color: $dark-grey;
+  font-weight: bold;
+}
+
+.opg-status--received {
+  background-color: $white;
+  color: $dark-grey;
+  font-weight: bold;
+}
+
+.opg-status--checking {
+  background-color: $white;
+  color: $dark-grey;
+  font-weight: bold;
+}
+
+.opg-status--returned {
+  background-color: $white;
+  color: $dark-grey;
+  font-weight: bold;
+}
+
+// Lozenge styles for information about LPA statuses
+.opg-lozenge-status--created,
+.opg-lozenge-status--started {
+  background-color: $status-default-colour;
+  color: $dark-grey;
+}
+
+.opg-lozenge-status--completed {
+  background-color: $status-default-colour;
+  color: $dark-grey;
+  font-weight: bold;
+}
+
+.opg-lozenge-status--waiting {
+  background-color: $status-waiting-colour;
+  color: $white;
+  font-weight: bold;
+}
+
+.opg-lozenge-status--received {
+  background-color: $status-received-colour;
+  color: $white;
+  font-weight: bold;
+}
+
+.opg-lozenge-status--checking {
+  background-color: $status-checking-colour;
+  color: $white;
+  font-weight: bold;
+}
+
+.opg-lozenge-status--returned {
+  background-color: $status-returned-colour;
+  color: $white;
+  font-weight: bold;
+}
+
+
+ul.track-my-lpa li{
+  &.list-item--v3 {
+    border-bottom: 4px solid #dee0e2;
+  }
+}
+
+.status-container--created,
+.status-container--started,
+.status-container--completed
+{
+  border-left: 10px solid;
+  border-left-color: $status-default-colour;
+}
+
+.status-container--waiting
+{
+  border-left: 10px solid;
+  border-left-color: $status-waiting-colour;
+}
+
+.status-container--received
+{
+  border-left: 10px solid;
+  border-left-color: $status-received-colour;
+}
+
+.status-container--checking
+{
+  border-left: 10px solid;
+  border-left-color: $status-checking-colour;
+}
+
+.status-container--returned
+{
+  border-left: 10px solid;
+  border-left-color: $status-returned-colour;
+}
+
+.opg-application-status-text {
+  margin-bottom: 0px;
+  margin-right: 5px;
+}

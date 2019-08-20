@@ -1,0 +1,106 @@
+{% macro listLpas(lpas, type, page, trackingEnabled) %}
+
+    {% import _self as macros %}
+
+    <hr class="visually-hidden">
+
+    {{ macros.showTypeHeaderIfLpasExist(lpas, type) }}
+
+    <ul class="track-my-lpa">
+
+    {% for key,lpa in lpas %}
+        {% if (type == 'all' or type == lpa.type) %}
+            {% set status = lpa.progress|lower %}
+
+            <li class="list-item list-item--v3 status-container--{{ status }}" {% if lpa.refreshId %}data-refresh-id="{{ lpa.refreshId }}"{% endif %}>
+                <div class="info">
+                    <div class="main-info">
+                        <h1 class="list-item_title">
+                            {%- if lpa.donor|length > 0 -%}
+                                {{ lpa.donor }}
+                            {%- else -%}
+                                No donor added
+                            {%- endif -%}
+                        </h1>
+                        <span class="lpa-number">{{ formatLpaId(lpa.id) }}</span>
+                    </div>
+
+                    <div class="list-item_status">
+                        <p class="opg-application-status-text">Application status</p>
+                        <div class="opg-status opg-lozenge-status--{{ status }}">{{ lpa.progress }}</div>
+                        <br/>
+
+                        {{ macros.showStatusDescriptionLinksIfEnabled(trackingEnabled, status, lpa.id) }}
+                    </div>
+
+                    <div class="extra-info">
+                        <p>LPA type:</p>
+                        <p class="main-text">
+                            {{- lpa.type == 'property-and-financial' ? 'PF' : ((lpa.type == 'health-and-welfare') ? 'HW' : 'Not selected') -}}
+                        </p>
+                    </div>
+
+                    <div class="extra-info">
+                        <p>Last saved:</p>
+                        <p class="main-text">{{ lpa.updatedAt|date('d/m/y') }}</p>
+                    </div>
+
+                </div>
+
+                <div class="list-item_cta">
+                    <a class="button button-secondary" role="button" href="/lpa/{{ lpa.id }}">
+                        {% if lpa.progress in ['Started', 'Created'] %}Continue{% else %}View LPA{% endif %}
+                    </a>
+                    <ul class="list-item_secondary_actions">
+                        {% if lpa.progress != 'Started' %}
+                            <li>
+                                <a href="/lpa/{{ lpa.id }}/date-check" data-journey-click="page:link:navigation: Check signing dates">Check <span class="extra-text">signing</span> dates</a>
+                            </li>
+                            <li>
+                                <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}" data-journey-click="page:link:reuse: Reuse LPA details">Reuse <span class="extra-text">LPA</span> details</a>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}{% if page > 1 %}?page={{ page }}{% endif %}" class="js-form-popup" data-journey-click="page:link:delete: Delete">Delete <span class="extra-text">LPA</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+        {% endif %}
+    {% endfor %}
+
+    </ul>
+
+{% endmacro %}
+
+{% macro showTypeHeaderIfLpasExist(lpas, type) %}
+
+    {% set found = false %}
+
+    {% for key,lpa in lpas %}
+        {% if not found %}
+            {% if (type == lpa.type) %}
+                <h2 class="heading-large">
+                    {% if lpa.type == '' %}
+                        No type selected
+                    {% elseif lpa.type == 'property-and-financial' %}
+                        Property and finance LPAs
+                    {% elseif lpa.type == 'health-and-welfare' %}
+                        Health and welfare LPAs
+                    {% endif %}
+                </h2>
+                {% set found = true %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+{% endmacro %}
+
+{% macro showStatusDescriptionLinksIfEnabled(trackingEnabled, status, id) %}
+    {% if trackingEnabled %}
+        {% if status in ['completed', 'waiting', 'received', 'checking', 'returned'] %}
+            <a id="status-description-link-{{ id }}" href="/lpa/{{ id }}/status">View {{ status }} message</a>
+        {% endif %}
+    {% endif %}
+{% endmacro %}

@@ -1,0 +1,63 @@
+// Forms
+// ==========================================================================
+
+[disabled="disabled"],
+.disabled {
+    opacity: .5 !important;
+    cursor: default !important;
+}
+
+// Disabled selection button (new style) reveal the hidden radio buttons.
+// This removes them from view.
+.disabled {
+    [disabled="disabled"] {
+        display: none;
+    }
+}
+
+.form-date {
+    margin-bottom: 30px;
+    overflow: hidden;
+
+    // Hide a new placement of error messages only for within popup
+    .error-group-popup {
+        display: none;
+    }
+}
+
+.form-group-day,
+.form-group-month,
+.form-group-year {
+
+    &.error {
+        padding-left: 0;
+        border-left: 0;
+    }
+}
+
+.form-control {
+    border-radius: 0;
+}
+
+.form-hint--strong {
+    margin-top: 10px;
+    color: $black;
+}
+
+.form-group-checkbox {
+    width: 100%;
+    float: left;
+
+    &.error {
+        margin-bottom: 10px;
+    }
+}
+
+.error {
+    .form-group-checkbox {
+        .block-label:last-child {
+            margin-bottom: 10px;
+        }
+    }
+}
+

@@ -1,0 +1,445 @@
+<?php
+
+namespace ApplicationTest\Controller\Authenticated\Lpa;
+
+use Application\Controller\Authenticated\Lpa\CheckoutController;
+use Application\Form\Lpa\BlankMainFlowForm;
+use Application\Model\Service\Lpa\Communication;
+use ApplicationTest\Controller\AbstractControllerTest;
+use Mockery;
+use Mockery\MockInterface;
+use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
+use RuntimeException;
+use Zend\Form\ElementInterface;
+use Zend\Http\Response;
+use Zend\Stdlib\ArrayObject;
+use Zend\View\Model\ViewModel;
+use Alphagov\Pay\Client as GovPayClient;
+use Alphagov\Pay\Response\Payment as GovPayPayment;
+
+class CheckoutControllerTest extends AbstractControllerTest
+{
+    /**
+     * @var MockInterface|Communication
+     */
+    private $communication;
+    /**
+     * @var MockInterface|GovPayClient
+     */
+    private $govPayClient;
+    /**
+     * @var MockInterface|BlankMainFlowForm
+     */
+    private $blankMainFlowForm;
+    /**
+     * @var MockInterface|ElementInterface
+     */
+    private $submitButton;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->blankMainFlowForm = Mockery::mock(BlankMainFlowForm::class);
+        $this->submitButton = Mockery::mock(ElementInterface::class);
+    }
+
+    /**
+     * @param string $controllerName
+     * @return CheckoutController
+     */
+    protected function getController(string $controllerName)
+    {
+        $controller = parent::getController($controllerName);
+
+        $this->communication = Mockery::mock(Communication::class);
+        $controller->setCommunicationService($this->communication);
+
+        $this->govPayClient = Mockery::mock(GovPayClient::class);
+        $controller->setPaymentClient($this->govPayClient);
+
+        return $controller;
+    }
+
+    public function testIndexActionGet()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+        $this->setPayByCardExpectations('Confirm and pay by card');
+
+        /** @var ViewModel $result */
+        $result = $controller->indexAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+        $this->assertEquals($this->blankMainFlowForm, $result->getVariable('form'));
+        $this->assertEquals(41, $result->getVariable('lowIncomeFee'));
+        $this->assertEquals(82, $result->getVariable('fullFee'));
+    }
+
+    public function testIndexActionPostIncompleteLpa()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $response = new Response();
+        $controller->dispatch($this->request, $response);
+
+        $this->request->shouldReceive('isPost')->andReturn(true)->once();
+        $this->setRedirectToRoute('lpa/more-info-required', $this->lpa, $response);
+
+        $result = $controller->indexAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testChequeActionIncompleteLpa()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $response = new Response();
+        $controller->dispatch($this->request, $response);
+
+        $this->setRedirectToRoute('lpa/more-info-required', $this->lpa, $response);
+
+        $result = $controller->chequeAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage API client failed to set payment details for id: 91333263035 in CheckoutController
+     */
+    public function testChequeActionFailed()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $this->lpa->payment->method = null;
+        $this->lpa->payment->amount = 82;
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs([$this->lpa, $this->lpa->payment])->andReturn(false)->once();
+
+        $controller->chequeAction();
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage API client failed to set payment details for id: 91333263035 in CheckoutController
+     */
+    public function testChequeActionIncorrectAmountFailed()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $this->lpa->payment->method = null;
+        $this->lpa->payment->amount = 182;
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs([$this->lpa, $this->lpa->payment])->andReturn(false)->once();
+
+        $controller->chequeAction();
+    }
+
+    public function testChequeActionSuccess()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $response = new Response();
+
+        $this->lpa->payment->method = null;
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs([$this->lpa, $this->lpa->payment])->andReturn(true)->twice();
+        $this->lpaApplicationService->shouldReceive('lockLpa')
+            ->withArgs([$this->lpa])->andReturn(true)->once();
+        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->withArgs([$this->lpa])->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['lpa/complete', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
+
+        $result = $controller->chequeAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testConfirmActionIncompleteLpa()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $response = new Response();
+        $controller->dispatch($this->request, $response);
+
+        $this->setRedirectToRoute('lpa/more-info-required', $this->lpa, $response);
+
+        $result = $controller->confirmAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage Invalid option
+     */
+    public function testConfirmActionInvalidAmount()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $this->lpa->payment->method = null;
+        $this->lpa->payment->amount = 82;
+
+        $controller->confirmAction();
+    }
+
+    public function testConfirmActionSuccess()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $response = new Response();
+
+        $this->lpa->payment->amount = 0;
+        $this->lpa->payment->reducedFeeUniversalCredit = true;
+        $this->lpa->completedAt = null;
+
+        $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa])->andReturn(true)->once();
+        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->withArgs([$this->lpa])->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['lpa/complete', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
+
+        $result = $controller->confirmAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testPayActionIncompleteLpa()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $response = new Response();
+        $controller->dispatch($this->request, $response);
+
+        $this->setRedirectToRoute('lpa/more-info-required', $this->lpa, $response);
+
+        $result = $controller->payAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testPayActionNoExistingPayment()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $response = new Response();
+        $controller->dispatch($this->request, $response);
+
+        $this->lpa->payment->method = null;
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+        $this->lpaApplicationService->shouldReceive('setPayment')
+            ->withArgs([$this->lpa, $this->lpa->payment])->andReturn(true)->once();
+        $responseUrl = "lpa/{$this->lpa->id}/checkout/pay/response";
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/checkout/pay/response', ['lpa-id' => $this->lpa->id]])->andReturn($responseUrl)->once();
+        $payment = Mockery::mock(GovPayPayment::class);
+
+        $this->govPayClient->shouldReceive('createPayment')->andReturn($payment)->once();
+
+        $payment->payment_id = 'PAYMENT COMPLETE';
+        $this->lpaApplicationService->shouldReceive('updateApplication')->andReturn(true)->once();
+        $payment->shouldReceive('getPaymentPageUrl')->andReturn($responseUrl)->once();
+        $this->redirect->shouldReceive('toUrl')->withArgs([$responseUrl])->andReturn($response)->once();
+
+        $result = $controller->payAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage Invalid GovPay payment reference: existing
+     */
+    public function testPayActionExistingPaymentNull()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $response = new Response();
+        $controller->dispatch($this->request, $response);
+
+        Calculator::calculate($this->lpa);
+        $this->lpa->payment->method = null;
+        $this->lpa->payment->gatewayReference = 'existing';
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+        $this->govPayClient->shouldReceive('getPayment')
+            ->withArgs([$this->lpa->payment->gatewayReference])->andReturn(null)->once();
+
+        $controller->payAction();
+    }
+
+    public function testPayActionExistingPaymentSuccessful()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $response = new Response();
+        $controller->dispatch($this->request, $response);
+
+        Calculator::calculate($this->lpa);
+        $this->lpa->payment->method = null;
+        $this->lpa->payment->gatewayReference = 'existing';
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+        $payment = Mockery::mock(GovPayPayment::class);
+        $this->govPayClient->shouldReceive('getPayment')
+            ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->twice();
+        $payment->shouldReceive('isSuccess')->andReturn(true)->twice();
+        $payment->reference = 'existing';
+        $payment->email = 'unit@TEST.com';
+        $this->lpaApplicationService->shouldReceive('updateApplication')->andReturn(true)->once();
+        $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa])->andReturn(true)->once();
+        $this->communication->shouldReceive('sendRegistrationCompleteEmail')->withArgs([$this->lpa])->once();
+        $this->redirect->shouldReceive('toRoute')
+            ->withArgs(['lpa/complete', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
+
+        $result = $controller->payAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testPayActionExistingPaymentNotFinished()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $response = new Response();
+        $controller->dispatch($this->request, $response);
+
+        Calculator::calculate($this->lpa);
+        $this->lpa->payment->method = null;
+        $this->lpa->payment->gatewayReference = 'existing';
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+        $payment = Mockery::mock(GovPayPayment::class);
+        $this->govPayClient->shouldReceive('getPayment')
+            ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
+        $payment->shouldReceive('isSuccess')->andReturn(false)->once();
+        $payment->shouldReceive('isFinished')->andReturn(false)->once();
+        $payment->shouldReceive('getPaymentPageUrl')->andReturn('http://unit.test.com')->once();
+        $this->redirect->shouldReceive('toUrl')->withArgs(['http://unit.test.com'])->andReturn($response)->once();
+
+        $result = $controller->payAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    public function testPayActionExistingPaymentFinishedNotSuccessful()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $response = new Response();
+        $controller->dispatch($this->request, $response);
+
+        Calculator::calculate($this->lpa);
+        $this->lpa->payment->method = null;
+        $this->lpa->payment->gatewayReference = 'existing';
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+        $payment = Mockery::mock(GovPayPayment::class);
+        $this->govPayClient->shouldReceive('getPayment')
+            ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
+        $payment->shouldReceive('isSuccess')->andReturn(false)->once();
+        $payment->shouldReceive('isFinished')->andReturn(true)->once();
+
+        $responseUrl = "lpa/{$this->lpa->id}/checkout/pay/response";
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/checkout/pay/response', ['lpa-id' => $this->lpa->id]])->andReturn($responseUrl)->once();
+        $payment = Mockery::mock(GovPayPayment::class);
+        $this->govPayClient->shouldReceive('createPayment')->andReturn($payment)->once();
+        $payment->payment_id = 'PAYMENT COMPLETE';
+        $this->lpaApplicationService->shouldReceive('updateApplication')->andReturn(true)->once();
+        $payment->shouldReceive('getPaymentPageUrl')->andReturn($responseUrl)->once();
+        $this->redirect->shouldReceive('toUrl')->withArgs([$responseUrl])->andReturn($response)->once();
+
+        $result = $controller->payAction();
+
+        $this->assertEquals($response, $result);
+    }
+
+    /**
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage Payment id needed
+     */
+    public function testPayResponseActionNoGatewayReference()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $this->lpa->payment->gatewayReference = null;
+
+        $controller->payResponseAction();
+    }
+
+    public function testPayResponseActionNotSuccessfulCancelled()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $this->lpa->payment->gatewayReference = 'unsuccessful';
+        $payment = Mockery::mock(GovPayPayment::class);
+        $this->govPayClient->shouldReceive('getPayment')
+            ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
+        $payment->shouldReceive('isSuccess')->andReturn(false)->once();
+        $payment->state = new ArrayObject();
+        $payment->state->code = 'P0030';
+        $this->setPayByCardExpectations('Retry online payment');
+
+        /** @var ViewModel $result */
+        $result = $controller->payResponseAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('application/authenticated/lpa/checkout/govpay-cancel.twig', $result->getTemplate());
+    }
+
+    public function testPayResponseActionNotSuccessfulOther()
+    {
+        $controller = $this->getController(CheckoutController::class);
+
+        $this->lpa->payment->gatewayReference = 'unsuccessful';
+        $payment = Mockery::mock(GovPayPayment::class);
+        $this->govPayClient->shouldReceive('getPayment')
+            ->withArgs([$this->lpa->payment->gatewayReference])->andReturn($payment)->once();
+        $payment->shouldReceive('isSuccess')->andReturn(false)->once();
+        $payment->state = new ArrayObject();
+        $payment->state->code = 'OTHER';
+        $this->setPayByCardExpectations('Retry online payment');
+
+        /** @var ViewModel $result */
+        $result = $controller->payResponseAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('application/authenticated/lpa/checkout/govpay-failure.twig', $result->getTemplate());
+    }
+
+    private function setPayByCardExpectations($submitButtonValue)
+    {
+        $this->formElementManager->shouldReceive('get')
+            ->withArgs(['Application\Form\Lpa\BlankMainFlowForm', ['lpa' => $this->lpa]])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->url->shouldReceive('fromRoute')
+            ->withArgs(['lpa/checkout/pay', ['lpa-id' => $this->lpa->id]])
+            ->andReturn("lpa/{$this->lpa->id}/checkout/pay")->once();
+        $this->blankMainFlowForm->shouldReceive('setAttribute')
+            ->withArgs(['action', "lpa/{$this->lpa->id}/checkout/pay"])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->blankMainFlowForm->shouldReceive('setAttribute')
+            ->withArgs(['class', 'js-single-use'])
+            ->andReturn($this->blankMainFlowForm)->once();
+        $this->blankMainFlowForm->shouldReceive('get')
+            ->withArgs(['submit'])->andReturn($this->submitButton)->once();
+        $this->submitButton->shouldReceive('setAttribute')
+            ->withArgs(['value', $submitButtonValue])
+            ->andReturn($this->submitButton)->once();
+    }
+}

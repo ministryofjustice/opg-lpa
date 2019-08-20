@@ -1,0 +1,66 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block errorSummary %}
+    {% include 'application/authenticated/change-email-address/partials/index-error-summary.twig' %}
+{% endblock %}
+
+{% block htmlTitle %}Change your sign-in email address - {% endblock %}
+{% block pageTitle %}Change your sign-in email address{% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Set form fields variables #}
+{% set password = form.get('password_current') %}
+{% set email = form.get('email') %}
+{% set email_confirm = form.get('email_confirm') %}
+
+{# form fields config #}
+{{ password.setAttributes({
+    id: 'password_current',
+    class: 'form-control'
+}) ? ''}}
+
+{{ email.setAttributes({
+    id: 'email',
+    class: 'form-control'
+}) ? ''}}
+
+{{ email_confirm.setAttributes({
+    id: 'email_confirm',
+    autocomplete: 'off',
+    class: 'form-control'
+}) ? ''}}
+
+{# form fields labels #}
+{{ password.setOptions({ label: 'Your account password' }) ? '' }}
+{{ email.setOptions({ label: 'New email address' }) ? '' }}
+{{ email_confirm.setOptions({ label: 'Confirm new email address' }) ? '' }}
+
+{# begin form #}
+{{ form.prepare() ? '' }}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.getCsrf) }}
+
+    <fieldset>
+        <legend class="visually-hidden">Change email address</legend>
+
+        <div class="form-group">
+            <label class="form-label" for="email_current">Current email address</label>
+            <input type="text" name="email_current" id="email_current" autocomplete="off" class="form-control disabled" value="{{ currentEmailAddress }}" disabled="disabled">
+        </div>
+
+        {{ macros.formGroup(password) }}
+        {{ macros.formGroup(email) }}
+        {{ macros.formGroup(email_confirm) }}
+
+        <div class="form-group">
+            <input type="submit" name="submit" id="signin-form-submit" class="button" value="Save new email address">
+        </div>
+
+    </fieldset>
+
+{{ form().closeTag|raw }}
+
+{% endblock content %}
