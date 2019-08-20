@@ -1,0 +1,15 @@
+<?php foreach ($messages as $messageKey => $messageValues) { ?>
+    <?php if ($messageKey === 'info') { ?>
+
+        <div class="flash" role="alert" aria-labelledby="flash-summary-heading-example-1" tabindex="-1">
+
+            <h2 class="heading-medium flash-heading" id="flash-heading-example-1">
+                <?php foreach ($messageValues as $messageValue) { ?>
+                    <?= $this->e($messageValue) ?>
+                <?php } ?>
+            </h2>
+
+        </div>
+
+    <?php } ?>
+<?php } ?>

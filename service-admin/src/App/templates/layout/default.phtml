@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <?php $subTitle = 'LPA Admin'; ?>
+    <title><?= (isset($title)) ? $this->e($title).' | ' : '' ?><?= ($title!=$subTitle) ? $subTitle.' | '  : '' ?>GOV.UK</title>
+
+    <link href="/assets/govuk_template/stylesheets/govuk-template.css" media="screen" rel="stylesheet" />
+    <link href="/assets/govuk_template/stylesheets/govuk-template-print.css" media="print" rel="stylesheet" />
+
+    <link href="/assets/govuk_template/stylesheets/fonts.css" media="all" rel="stylesheet" />
+
+    <link rel="shortcut icon" href="/assets/govuk_template/images/favicon.ico" type="image/x-icon" />
+
+    <link rel="mask-icon" href="/assets/govuk_template/images/gov.uk_logotype_crown.svg" color="#0b0c0c">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/govuk_template/images/apple-touch-icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/assets/govuk_template/images/apple-touch-icon-167x167.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/govuk_template/images/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" href="/assets/govuk_template/images/apple-touch-icon.png">
+
+    <meta name="theme-color" content="#0b0c0c" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:image" content="/assets/govuk_template/images/opengraph-image.png">
+
+    <link href="/assets/styles/app.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/styles/admin.css" rel="stylesheet" type="text/css" />
+
+    <script src="/assets/libs/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+
+    <header role="banner" id="global-header" class="with-proposition">
+        <div class="header-wrapper">
+            <div class="header-global">
+                <div class="header-logo">
+                    <a href="https://www.gov.uk" title="Go to the GOV.UK homepage" id="logo" class="content">
+                        <img src="/assets/govuk_template/images/gov.uk_logotype_crown_invert_trans.png" width="36" height="32" alt=""> GOV.UK
+                    </a>
+                </div>
+            </div>
+
+            <div class="header-proposition">
+                <div class="content">
+                    <nav id="proposition-menu">
+                        <a href="<?= $this->url('home') ?>" id="proposition-name">LPA Admin</a>
+                        <?php if (isset($user)) { ?>
+                            <ul id="proposition-links">
+                                <li>
+                                    <a href="<?= $this->url('system.message') ?>" class="">System Message</a>
+                                </li>
+                                <li>
+                                    <a href="<?= $this->url('feedback') ?>" class="">Feedback</a>
+                                </li>
+                                <li>
+                                    <a href="<?= $this->url('user.search') ?>" class="">User Search</a>
+                                </li>
+                            </ul>
+                        <?php } ?>
+                    </nav>
+                </div>
+            </div>
+
+            <?php if (isset($user)) { ?>
+                <div class="header-profile">
+                    <p>
+                        Logged in as <?= $user->getName(); ?><br/>
+                        <a href="<?= $this->url('sign.out') ?>">Sign Out</a>
+                    </p>
+                </div>
+            <?php } ?>
+
+        </div>
+    </header>
+
+    <div id="global-header-bar"></div>
+
+    <main id="content" role="main">
+
+        <?=$this->section('content')?>
+
+    </main>
+
+    <footer class="group js-footer" id="footer" role="contentinfo">
+        <div class="footer-wrapper">
+
+            <div class="footer-meta">
+                <div class="footer-meta-inner">
+
+                    <div class="open-government-licence">
+                        <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence</a></p>
+                        <p>All content is available under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated</p>
+                        <?= ((isset($dockerTag) && !empty($dockerTag)) ? sprintf('<p>v%s</p>', $dockerTag) : ''); ?>
+                    </div>
+                </div>
+
+                <div class="copyright">
+                    <a href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">© Crown copyright</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="global-app-error" class="app-error hidden"></div>
+    <script src="/assets/govuk_template/javascripts/govuk-template.js"></script>
+
+    <script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>
+
+    </body>
+</html>

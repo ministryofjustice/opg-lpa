@@ -1,0 +1,39 @@
+<?php $this->layout('layout::default', ['title' => 'System Message']); ?>
+
+<div class="grid-row">
+    <div class="column-full">
+
+        <form method="post" class="form" action="<?= $this->url('system.message') ?>">
+
+            <fieldset>
+
+                <legend>
+                    <h1 class="heading-xlarge">System Message</h1>
+                </legend>
+
+                <?php $this->insert('snippet::flash-messages', ['messages' => $messages]) ?>
+
+                <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
+
+                <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
+
+                <div class="text">
+                    <p>System messages will be seen by all visitors to the LPA service. They should be used to inform users of scheduled periods of maintenance or changes to the LPA service.</p>
+                </div>
+
+                <?php $this->insert('snippet::input-text', [
+                    'formElement'   => $form->get('message'),
+                    'formLabel'     => 'Message',
+                    'formType'      => 'textarea',
+                ]) ?>
+
+            </fieldset>
+
+            <div class="form-group">
+                <input class="button" type="submit" value="Set system message">
+            </div>
+
+        </form>
+
+    </div>
+</div>

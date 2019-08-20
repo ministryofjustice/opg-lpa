@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Handler\Initializers;
+
+use Zend\Expressive\Helper\UrlHelper;
+
+/**
+ * Declares handler Middleware support for UrlHelper
+ *
+ * Interface UrlHelperInterface
+ * @package App\handler\Initializers
+ */
+interface UrlHelperInterface
+{
+    /**
+     * @param UrlHelper $template
+     * @return mixed
+     */
+    public function setUrlHelper(UrlHelper $template);
+
+    /**
+     * @return UrlHelper
+     */
+    public function getUrlHelper() : UrlHelper;
+}
