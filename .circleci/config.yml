@@ -24,8 +24,14 @@ workflows:
           github_repository_name: opg-lpa-pdf
           github_branch_name: LPA-3289-ecs-container
 
+      - infrastructure_and_deployment/package_lambda_artifact:
+          name: package_lambda_artifact
+          filters:
+            branches:
+              ignore: master
       - infrastructure_and_deployment/lint_and_validate_terraform:
           name: lint_and_validate_terraform
+          requires: [package_lambda_artifact]
           filters:
             branches:
               ignore: master
@@ -181,11 +187,27 @@ orbs:
     executors:
       python:
         docker: [image: circleci/python]
+      python-build:
+        docker: [image: python:alpine]
       python-browsers:
         docker: [image: circleci/python:3.6-stretch-browsers]
       terraform:
         docker: [image: hashicorp/terraform:0.12.5]
     jobs:
+      #----------------------------------------------------
+      # Lambda      
+      package_lambda_artifact:
+        executor: python-build
+        steps:
+          - checkout
+          - run: apk add zip
+          - run: pip3 install -r ~/project/async_destroy_lambda/lambda/requirements.txt  --target ~/project/async_destroy_lambda/lambda/vendor
+          - run: cd ~/project/async_destroy_lambda/lambda/vendor; zip -r9 /tmp/lambda_function_payload.zip .
+          - run: cd ~/project/async_destroy_lambda/lambda; zip -g /tmp/lambda_function_payload.zip service.py
+          - persist_to_workspace:
+              root: /tmp
+              paths:
+                - lambda_function_payload.zip
       #----------------------------------------------------
       # Terraform
       lint_and_validate_terraform:
@@ -197,6 +219,8 @@ orbs:
         executor: terraform
         steps:
           - checkout
+          - attach_workspace:
+              at: /tmp
           - run:
               name: terraform lint
               command: terraform fmt -diff -check -recursive
@@ -233,6 +257,8 @@ orbs:
             default: development
         steps:
           - checkout
+          - attach_workspace:
+              at: /tmp
           - run:
               name: Apply Account Terraform
               command: |
@@ -241,6 +267,10 @@ orbs:
                 export TF_WORKSPACE=<<parameters.workspace>>
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
+          - persist_to_workspace:
+              root: /tmp
+              paths:
+                - queue_config.json
 
       apply_environment_terraform:
         #
