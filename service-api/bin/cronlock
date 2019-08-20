@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+cd /app
+
+bin/lock acquire --name $1 --table $2 --ttl $3 && php public/index.php $4
