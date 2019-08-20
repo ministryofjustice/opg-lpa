@@ -1,0 +1,66 @@
+<?php
+/*
+Without error
+Mandatory: formLabel
+Optional: formHint (default: no span.form-hint outputted)
+Optional: formLabelBold true|false (default: no wrapper span.form-label-bold outputted)
+Optional: formType (default: text)
+Optional: formSizeClass
+*/
+
+/**
+ * @var \Zend\Form\ElementInterface $formElement
+ * @var string $formLabel
+ * @var string $formHint
+ * @var bool $formLabelBold
+ * @var string $formType
+ * @var string $formSizeClass
+ * @var bool $disableAutocomplete
+ */
+
+$formId = "id-{$formElement->getName()}";
+$formName = $formElement->getName();
+
+if(isset($formSet)){
+    $formId = "{$formId}-{$formSet}";
+    $formName = "{$formSet}[{$formName}]";
+}
+
+$hasErrors = !empty($formElement->getMessages());
+$hasParentErrors = isset($hasParentErrors) && $hasParentErrors;
+
+$formGroup = 'form-group';
+$formGroup .= ($hasErrors && !$hasParentErrors) ? ' form-group-error' : '';
+$formGroup .= (isset($additionalFormGroupClasses)) ? " {$additionalFormGroupClasses}" : '';
+
+$formControlClasses = 'form-control';
+$formControlClasses .= ($hasErrors) ? " form-control-error" : '';
+$formControlClasses .= (isset($additionFormControlClass)) ? " {$additionFormControlClass}" : '';
+
+?>
+
+<div class="<?= $this->e($formGroup) ?>">
+    <label class="form-label" for="<?= $formId ?>">
+
+        <?php if (isset($formLabelBold) && $formLabelBold): ?><span class="form-label-bold"><?php endif ?>
+            <?= $this->e($formLabel) ?>
+            <?php if (isset($formLabelBold) && $formLabelBold): ?></span><?php endif ?>
+
+        <?php if (isset($formHint)): ?>
+            <span class="form-hint"><?= $this->e($formHint) ?></span>
+        <?php endif ?>
+
+        <?php if (!$hasParentErrors): ?>
+            <?php foreach($formElement->getMessages() as $message): ?>
+                <span class="error-message"><?=$this->e($this->fieldError($formElement->getName(), $message))?></span>
+            <?php endforeach ?>
+        <?php endif ?>
+
+    </label>
+
+    <?php if ($formType === 'textarea') { ?>
+        <textarea class="<?= $this->e($formControlClasses) ?>" name="<?=$this->e( $formName )?>" type="<?= $this->e($formType) ?>" id="<?= $formId ?>" rows="5"<?= isset($disableAutocomplete) && $disableAutocomplete === true ? ' autocomplete="off"' : '' ?>><?= $this->e( $formElement->getValue() ) ?></textarea>
+    <?php } else { ?>
+        <input class="<?= $this->e($formControlClasses) ?>" name="<?=$this->e( $formName )?>" type="<?= $this->e($formType) ?>" id="<?= $formId ?>" value="<?= (strtolower($formType) == 'password' ? '' : $this->e( $formElement->getValue() )) ?>"<?= isset($disableAutocomplete) && $disableAutocomplete === true ? ' autocomplete="off"' : '' ?>>
+    <?php } ?>
+</div>

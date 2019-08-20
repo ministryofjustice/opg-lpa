@@ -1,0 +1,76 @@
+<?php $this->layout('layout::default', ['title' => 'Sign In']);
+
+$this->addErrorMap([
+    'email' => [
+        'required' => [
+            'summary'   => 'Enter a valid gov.uk email address',
+            'field'     => 'Enter a valid gov.uk email address',
+        ],
+        'invalid-email' => [
+            'summary'   => 'Enter a valid gov.uk email address',
+            'field'     => 'Enter a valid gov.uk email address',
+        ],
+        'authentication-error' => [
+            'summary'   => 'Email and password combination not recognised',
+            'field'     => 'Email and password combination not recognised',
+        ],
+        'authorization-error' => [
+            'summary'   => 'You are not permitted to access this service',
+            'field'     => 'You are not permitted to access this service',
+        ],
+        'account-locked' => [
+            'summary'   => 'This user account has been locked. Go the LPA Online service to reset your password OR you can attempt again in 15 minutes',
+            'field'     => 'This user account has been locked. Go the LPA Online service to reset your password OR you can attempt again in 15 minutes',
+        ],
+    ],
+    'password' => [
+        'required' => [
+            'summary'   => 'Enter a password',
+            'field'     => 'Enter a password',
+        ],
+    ],
+]);
+?>
+
+<div class="grid-row">
+    <div class="column-full">
+
+        <form method="post" class="form" action="<?= $this->url('sign.in') ?>">
+
+            <fieldset>
+
+                <legend>
+                    <h1 class="heading-xlarge">Sign In</h1>
+                </legend>
+
+                <?php $this->insert('snippet::flash-messages', ['messages' => $messages]) ?>
+
+                <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
+
+                <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
+
+                <?php $this->insert('snippet::input-text', [
+                    'formElement'   => $form->get('email'),
+                    'formLabel'     => 'Email address',
+                    'formType'      => 'text',
+                    'formLabelBold' => false
+                ]) ?>
+
+                <?php $this->insert('snippet::input-text', [
+                    'formElement'         => $form->get('password'),
+                    'formLabel'           => 'Password',
+                    'formType'            => 'password',
+                    'formLabelBold'       => false,
+                    'disableAutocomplete' => true
+                ]) ?>
+
+            </fieldset>
+
+            <div class="form-group">
+                <input class="button" type="submit" value="Continue">
+            </div>
+
+        </form>
+
+    </div>
+</div>

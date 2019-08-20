@@ -1,0 +1,162 @@
+<?php $this->layout('layout::default', ['title' => 'Feedback']);
+
+$this->addErrorMap([
+    'start-date' => [
+        'empty-string' => [
+            'summary'   => 'You didn\'t enter a start date',
+            'field'     => 'Enter the start date'
+        ],
+        'invalid-date' => [
+            'summary'   => 'You didn\'t enter a valid start date',
+            'field'     => 'Enter a valid start date in the past'
+        ],
+        'future-date' => [
+            'summary'   => 'The start date is in the future',
+            'field'     => 'Enter a valid start date in the past'
+        ],
+    ],
+    'end-date' => [
+        'empty-string' => [
+            'summary'   => 'You didn\'t enter an end date',
+            'field'     => 'Enter the end date'
+        ],
+        'invalid-date' => [
+            'summary'   => 'You didn\'t enter a valid end date',
+            'field'     => 'Enter a valid end date in the past'
+        ],
+        'future-date' => [
+            'summary'   => 'The end date is in the future',
+            'field'     => 'Enter a valid end date in the past'
+        ],
+        'end-before-start' => [
+            'summary'   => 'The end date is before the start date',
+            'field'     => 'Enter a valid end date that is not before the start date'
+        ]
+    ]
+]);
+?>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $('#export-feedback').click(function () {
+            //  Append the export instruction and submit the form
+            var form = $('form');
+            var action = form.attr('action');
+
+            form.attr('action', action + '?export=true');
+
+            form.submit();
+
+            //  Replace the original action
+            form.attr('action', action);
+        });
+
+    });
+</script>
+
+<div class="grid-row">
+    <div class="column-full">
+
+        <form method="post" class="form" action="<?= $this->url('feedback') ?>">
+
+            <fieldset>
+
+                <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
+
+                <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
+
+                <div class="grid-row">
+                    <div class="column-one-quarter">
+
+                        <legend>
+                            <h1 class="heading-xlarge">Feedback</h1>
+                        </legend>
+
+                        <?php $this->insert('snippet::input-date', [
+                            'formLabel'     => 'Start date',
+                            'formElement'   => $form->get('start-date'),
+                            'formLabelBold' => true,
+                        ]) ?>
+
+                        <?php $this->insert('snippet::input-date', [
+                            'formLabel'     => 'End date',
+                            'formElement'   => $form->get('end-date'),
+                            'formLabelBold' => true,
+                        ]) ?>
+
+                        <div class="form-group">
+                            <input class="button" type="submit" value="Search" />
+                        </div>
+
+                    </div>
+                    <div class="column-three-quarters feedback-container">
+
+                        <?php if (is_array($feedback)) { ?>
+
+                            <div class="grid-row">
+                                <div class="column-full">
+
+                                    <div class="grid-row">
+                                        <div class="column-one-third">
+                                            <?php if (empty($feedback)) { ?>
+                                                <p>No results</p>
+                                            <?php } else { ?>
+                                                <a id="export-feedback" class="button">Export</a>
+                                            <?php } ?>
+                                        </div>
+
+                                        <div class="column-two-thirds">
+                                            <?php if ($earliestAvailableTime instanceof DateTime) { ?>
+                                                <p class="earliest-available">Feedback results are available from <?= $earliestAvailableTime->format('D jS M Y'); ?> onwards</p>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <?php
+                                if (!empty($feedback)) {
+                                    $feedbackFields = array_keys($feedback);
+
+                                    $largeFields = [
+                                        'Details',
+                                        'Browser',
+                                    ];
+                            ?>
+
+                                <div class="grid-row">
+                                    <div class="column-full">
+
+                                        <table id="feedback-table">
+                                            <tr>
+                                                <?php foreach ($feedbackFields as $feedbackField) { ?>
+                                                    <th class="<?= (in_array($feedbackField, $largeFields) ? 'feedback-field-wide' : ''); ?>"><?= $feedbackField; ?></th>
+                                                <?php } ?>
+                                            </tr>
+
+                                            <?php for ($i = 0; $i < count($feedback[$feedbackFields[0]]); $i++) { ?>
+                                                <tr>
+                                                    <?php foreach ($feedbackFields as $feedbackField) { ?>
+                                                        <td><?= $feedback[$feedbackField][$i]; ?></td>
+                                                    <?php } ?>
+                                                </tr>
+                                            <?php } ?>
+                                        </table>
+
+                                    </div>
+                                </div>
+
+                            <?php }
+                        } ?>
+
+                    </div>
+                </div>
+
+            </fieldset>
+
+        </form>
+
+    </div>
+</div>
