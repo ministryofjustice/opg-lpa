@@ -46,25 +46,8 @@ class HomeHandlerTest extends TestCase
 
     public function testReturnsHtmlResponseWhenTemplateRendererProvided()
     {
-//        $renderer = $this->prophesize(TemplateRendererInterface::class);
-//        $renderer
-//            ->render('app::home-page', Argument::type('array'))
-//            ->willReturn('');
-//
-//        $homePage = new HomeHandler(
-//            get_class($this->container->reveal()),
-//            $this->router->reveal(),
-//            $renderer->reveal()
-//        );
-//
-//        $response = $homePage->handle(
-//            $this->prophesize(ServerRequestInterface::class)->reveal()
-//        );
-//
-//        $this->assertInstanceOf(HtmlResponse::class, $response);
-
         $rendererProphecy = $this->prophesize(TemplateRendererInterface::class);
-        $rendererProphecy->render('app::home-page')
+        $rendererProphecy->render('app::home')
             ->willReturn('');
 
         $urlHelperProphecy = $this->prophesize(UrlHelper::class);
