@@ -1,0 +1,59 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block errorSummary %}
+    {% include 'application/partials/confirm-email-error-summary.twig' %}
+{% endblock %}
+
+{% block htmlTitle %}Resend your activation email - {% endblock %}
+{% block pageTitle %}Resend your activation email{% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Set form fields variables #}
+{% set email = form.get('email') %}
+{% set email_confirm = form.get('email_confirm') %}
+
+{# form fields config #}
+{{ email.setAttributes({
+    id: 'email',
+    type: 'email',
+    class: 'form-control'
+}) ? ''}}
+
+{{ email_confirm.setAttributes({
+    id: 'email_confirm',
+    type: 'email',
+    autocomplete: 'off',
+    class: 'form-control'
+}) ? ''}}
+
+{# form fields labels #}
+{{ email.setOptions({ label: 'Email address' }) ? '' }}
+{{ email_confirm.setOptions({ label: 'Confirm your email address' }) ? '' }}
+
+<div class="text">
+    <p>Enter your email address below. If there's an unactivated account associated with the address, we'll send you the activation email.</p>
+</div>
+
+{# begin form #}
+{{ form.prepare() ? '' }}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.getCsrf) }}
+
+    <fieldset>
+        <legend class="visually-hidden">Resend your activation email</legend>
+
+        {{ macros.formGroup(email) }}
+        {{ macros.formGroup(email_confirm) }}
+
+        <div class="form-group">
+            <input type="submit" name="submit" id="form-submit" class="button" value="Send me the email">
+        </div>
+
+    </fieldset>
+
+{{ form().closeTag|raw }}
+
+{% endblock content %}

@@ -1,0 +1,60 @@
+<?php
+
+namespace ApplicationTest\Form\Lpa;
+
+use Application\Form\Lpa\LifeSustainingForm;
+use ApplicationTest\Form\FormTestSetupTrait;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+
+class LifeSustainingFormTest extends MockeryTestCase
+{
+    use FormTestSetupTrait;
+
+    /**
+     * Set up the form to test
+     */
+    public function setUp()
+    {
+        $this->setUpMainFlowForm(new LifeSustainingForm());
+    }
+
+    public function testNameAndInstances()
+    {
+        $this->assertInstanceOf('Application\Form\Lpa\LifeSustainingForm', $this->form);
+        $this->assertInstanceOf('Application\Form\Lpa\AbstractMainFlowForm', $this->form);
+        $this->assertInstanceOf('Application\Form\Lpa\AbstractLpaForm', $this->form);
+        $this->assertInstanceOf('Application\Form\AbstractCsrfForm', $this->form);
+        $this->assertInstanceOf('Application\Form\AbstractForm', $this->form);
+        $this->assertEquals('form-life-sustaining', $this->form->getName());
+    }
+
+    public function testElements()
+    {
+        $this->assertInstanceOf('Zend\Form\Element\Radio', $this->form->get('canSustainLife'));
+        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('save'));
+    }
+
+    public function testValidateByModelOK()
+    {
+        $this->form->setData(array_merge([
+            'canSustainLife' => true,
+        ], $this->getCsrfData()));
+
+        $this->assertTrue($this->form->isValid());
+        $this->assertEquals([], $this->form->getMessages());
+    }
+
+    public function testValidateByModelInvalid()
+    {
+        $this->form->setData(array_merge([
+            'canSustainLife' => null,
+        ], $this->getCsrfData()));
+
+        $this->assertFalse($this->form->isValid());
+        $this->assertEquals([
+            'canSustainLife' => [
+                'isEmpty' => 'Value is required and can\'t be empty'
+            ]
+        ], $this->form->getMessages());
+    }
+}

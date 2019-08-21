@@ -1,0 +1,238 @@
+{% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
+
+{% block htmlTitle %}Replacement attorney details - {% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Error messages #}
+{% set form = formErrorTextExchange(form,  {
+    'name-title' : {
+        'cannot-be-blank' : 'Enter the replacement attorney\'s title',
+        'cannot-be-identical-to:""' : 'Enter the replacement attorney\'s title',
+        'must-be-less-than-or-equal:5' : 'Title must be five letters or fewer - please abbreviate, if necessary'
+    },
+    'name-first' : {
+        'cannot-be-blank' : 'Enter the replacement attorney\'s first names',
+        'must-be-less-than-or-equal:50' : 'Enter a first name that\'s less than 51 characters long'
+    },
+    'name-last' : {
+        'cannot-be-blank' : 'Enter the replacement attorney\'s last name',
+        'must-be-less-than-or-equal:50' : 'Enter a last name that\'s less than 51 characters long'
+    },
+    'address-address1' : {
+        'cannot-be-blank' : 'Enter the replacement attorney\'s first line of address',
+        'must-be-less-than-or-equal:50' : 'Change address line 1 so that it has fewer than 51 characters'
+    },
+    'address-address2' : {
+        'linked-1-cannot-be-null' : 'Enter the replacement attorney\'s second line of address',
+        'must-be-less-than-or-equal:50' : 'Change address line 2 so that it has fewer than 51 characters'
+    },
+    'address-address3' : {
+        'must-be-less-than-or-equal:50' : 'Change address line 3 so that it has fewer than 51 characters'
+    },
+    'address-postcode' : {
+        'linked-1-cannot-be-null' : 'Enter the replacement attorney\'s postcode',
+        'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines rather than in the postcode field.'
+    },
+    'dob-date' : {
+        'cannot-be-blank' : 'Enter the replacement attorney\'s date of birth',
+        'must-be-less-than-or-equal-to-today' : 'Date of birth must be before today',
+        'expected-type:DateTime' : 'Enter a valid date of birth'
+    }
+}) %}
+
+{# Set form fields variables #}
+{% set title = form.get('name-title') %}
+{% set firstname = form.get('name-first') %}
+{% set lastname = form.get('name-last') %}
+{% set address1 = form.get('address-address1') %}
+{% set address2 = form.get('address-address2') %}
+{% set address3 = form.get('address-address3') %}
+{% set postcode = form.get('address-postcode') %}
+{% set dob = form.get('dob-date') %}
+{% set dobDay = dob.get('day') %}
+{% set dobMonth = dob.get('month') %}
+{% set dobYear = dob.get('year') %}
+
+{# form fields config #}
+{{ form.setAttributes({
+    'class':'form js-PersonForm js-PostcodeLookup'
+}) ? '' }}
+
+{{ title.setAttributes({
+    id: 'name-title',
+    class: 'form-control'
+}) ? '' }}
+
+{{ firstname.setAttributes({
+    id: 'name-first',
+    class: 'form-control'
+}) ? '' }}
+
+{{ lastname.setAttributes({
+    id: 'name-last',
+    class: 'form-control'
+}) ? '' }}
+
+{{ dobDay.setAttributes({
+    id: 'dob-date-day',
+    type: 'tel',
+    class: 'form-control',
+    maxlength: '2',
+    min: '1',
+    max: '31',
+    pattern: '[0-9]*'
+}) ? ''}}
+
+{{ dobMonth.setAttributes({
+    id: 'dob-date-month',
+    type: 'tel',
+    class: 'form-control',
+    maxlength: '2',
+    min: '1',
+    max: '12',
+    pattern: '[0-9]*'
+ }) ? ''}}
+
+{{ dobYear.setAttributes({
+    id: 'dob-date-year',
+    type: 'tel',
+    class: 'form-control',
+    maxlength: '4',
+    pattern: '[0-9]*'
+})  ? ''}}
+
+{{ address1.setAttributes({
+    id: 'address-address1',
+    class: 'form-control'
+}) ? ''}}
+
+{{ address2.setAttributes({
+    id: 'address-address2',
+    class: 'form-control'
+}) ? ''}}
+
+{{ address3.setAttributes({
+    id: 'address-address3',
+    class: 'form-control'
+}) ? ''}}
+
+{{ postcode.setAttributes({
+    id: 'address-postcode',
+    class: 'form-control'
+}) ? ''}}
+
+{# form fields labels #}
+{{ title.setOptions({label:'Title'}) ? '' }}
+{{ firstname.setOptions({label:'First names'}) ? '' }}
+{{ lastname.setOptions({label:'Last name'}) ? '' }}
+{{ dob.setOptions({label:'Date of Birth'}) ? '' }}
+{{ dobDay.setOptions({label:'Day'}) ? '' }}
+{{ dobMonth.setOptions({label:'Month'}) ? '' }}
+{{ dobYear.setOptions({label:'Year'}) ? '' }}
+{{ address1.setOptions({label:'Address line 1'}) ? '' }}
+{{ address2.setOptions({label:'Address line 2'}) ? '' }}
+{{ address3.setOptions({label:'Address line 3'}) ? '' }}
+{{ postcode.setOptions({label:'Postcode'}) ? '' }}
+
+<header class="popup-header">
+    <i class="icon icon-person"></i>
+    <h2 class="heading-small popup-header-title">Replacement attorney details</h2>
+</header>
+
+{{ form.prepare() ? '' }}
+
+{################# replacement attorney form #####################}
+
+{# Error summary #}
+{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
+
+{# If applicable display the Use my details link #}
+{% if displayReuseSessionUserLink %}
+    {{ macros.displayUseMyDetailsLink('Replacement attorney - Use my details') }}
+{% endif %}
+
+{# Add switch attorney type link #}
+{{ macros.addSwitchAttorneyTypeLink(switchAttorneyTypeRoute, lpa, true) }}
+
+{# begin form #}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.getCsrf) }}
+    {{ formElementErrorsV2(form.getCsrf) }}
+
+    <h2 class="heading-medium popup-exclude">What is the replacement attorney's name?</h2>
+
+    <fieldset>
+        <legend class="visually-hidden">Add replacement attorney's name</legend>
+
+        {{ macros.formGroup(title) }}
+        {{ macros.formGroup(firstname) }}
+        {{ macros.formGroup(lastname) }}
+
+    </fieldset>
+
+    <h2 class="heading-medium popup-exclude">What is the replacement attorney's date of birth?</h2>
+
+    <fieldset id="{{ dob.getAttribute('name') }}">
+        <legend class="form-label dob-label">Date of birth</legend>
+
+        <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'form-group-error'}}">
+            <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
+
+            <div class="error-group">
+                {{ formElementErrorsV2(dobYear) }}
+                {{ formElementErrorsV2(dobMonth) }}
+                {{ formElementErrorsV2(dobDay) }}
+                {{ formElementErrorsV2(dob) }}
+            </div>
+
+
+            <div class="form-group form-group-day {{ dob.getMessages|length >0 ? 'form-group-error'}}">
+                <label class="form-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
+                {{ formElement(dobDay) }}
+            </div>
+
+            <div class="form-group form-group-month {{ dob.getMessages|length >0 ? 'form-group-error'}}">
+                <label class="form-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
+                {{ formElement(dobMonth) }}
+            </div>
+
+            <div class="form-group form-group-year {{ dob.getMessages|length >0 ? 'form-group-error'}}">
+                <label class="form-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
+                {{ formElement(dobYear) }}
+            </div>
+
+            <div class="error-group-popup">
+                {{ formElementErrorsV2(dobYear) }}
+                {{ formElementErrorsV2(dobMonth) }}
+                {{ formElementErrorsV2(dobDay) }}
+                {{ formElementErrorsV2(dob) }}
+            </div>
+
+        </div>
+
+    </fieldset>
+
+    <h2 class="heading-medium popup-exclude">What is the replacement attorney's address?</h2>
+
+    <fieldset class="postcodelookup">
+        <legend class="visually-hidden">Replacement attorney's address</legend>
+        <div class="js-PostcodeLookup__postal-add">
+            {{ macros.formGroup(address1) }}
+            {{ macros.formGroup(address2) }}
+            {{ macros.formGroup(address3) }}
+            {{ macros.formGroup(postcode) }}
+        </div>
+    </fieldset>
+
+    {{ macros.renderFormButtons(cancelUrl, backButtonUrl) }}
+
+{{ form().closeTag|raw }}
+
+    <script>
+        GOVUK.performance.stageprompt.setupForGoogleAnalytics();
+    </script>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+// =======================================================
+// LOADING SPINNER
+
+.spinner {
+    width: 18px;
+    margin: 0 5px -13px 8px;
+
+    .action-item & {
+        margin-bottom: -3px;
+    }
+
+    @include media(mobile) {
+        display: block;
+        margin: $gutter-half auto $gutter-half;
+        // special cases with action links - needs to be
+        // next to the link instead of under
+        .action-item & {
+            display: inline;
+            margin: -3px 6px;
+        }
+    }
+}
+
+.loading {
+    text-align: center;
+
+    .spinner {
+        display: block;
+        margin: 20px auto 6px;
+    }
+}

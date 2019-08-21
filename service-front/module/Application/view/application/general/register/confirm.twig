@@ -1,0 +1,43 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block htmlTitle %}
+    {% if (error is empty) %}Account activated{% else %}Account activation problem{% endif %} -
+{% endblock %}
+
+{% block pageTitle %}
+    {% if (error is empty) %}Account activated{% else %}Account activation problem{% endif %}
+{% endblock %}
+
+{% block content %}
+
+{% if (error is empty) %}
+
+    <div class="text">
+        <p class="lede">Thank you. We've now activated your account.</p>
+        <p>Please <a href="{{ url('login') }}">sign in</a></p>
+    </div>
+
+{% else %}
+
+    <div class="text">
+        <p class="lede">Sorry, we had a problem activating your account. This could be because:</p>
+
+        <ul class="list list-bullet">
+            <li>
+                <p class="bold-small">You already have an active account</p>
+                <p>If so, you can sign in to the <a href="{{ url('login') }}">LPA online service</a> to create or complete an LPA.</p>
+            </li>
+            <li>
+                <p class="bold-small">You created the account more than 24 hours ago</p>
+                <p>You need to activate your account within 24 hours of creating it. If you do not activate it within that time, we'll automatically delete it.</p>
+                <p>You should return to <a href="{{ url('register') }}">create an account</a> and complete again.</p>
+            </li>
+        </ul>
+
+        <p>If you need more help activating your account, email <a href="mailto:customerservices@publicguardian.gov.uk ">customerservices@publicguardian.gov.uk</a> or call 0300 456 0300.</p>
+
+    </div>
+
+{% endif %}
+
+{% endblock content %}

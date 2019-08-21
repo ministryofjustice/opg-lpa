@@ -1,0 +1,114 @@
+{% extends 'layout/twig/accordion-layout.twig' %}
+
+{% block htmlTitle %}Repeat application - {% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Error messages #}
+{% set form = formErrorTextExchange(form,  {
+    'isRepeatApplication' : {
+        "Value is required and can't be empty": 'Choose Yes or No',
+    },
+    'repeatCaseNumber': {
+        "Value is required and can't be empty": "If you are making a repeat application, you need to enter the case number given to you by the Office of the Public Guardian.",
+    }
+}) %}
+
+{# Set form fields variables #}
+{% set repeatCaseNumber = form.get('repeatCaseNumber') %}
+{% set isRepeatApplication = form.get('isRepeatApplication') %}
+{% set isRepeatApplicationValueOptions = isRepeatApplication.getOptions()['value_options'] %}
+
+{% set isRepeatApplicationValueOptions = {
+    'is-repeat': {
+        label: "Yes",
+        value: isRepeatApplicationValueOptions['is-repeat'].value,
+        'div-attributes': {
+            'data-target': 'repeat-application-details'
+        }        
+    },
+    'is-new': {
+        label: "No",
+        value: isRepeatApplicationValueOptions['is-new'].value
+    }
+} %}
+
+{# form fields config #}
+{{ isRepeatApplication.setOptions({
+    value_options: isRepeatApplicationValueOptions
+}) ? '' }}
+
+{{ isRepeatApplication.setLabelOptions({
+    disable_html_escape: true
+}) ? '' }}
+
+{{ isRepeatApplication.setOptions({
+    label_attributes: {'class': 'block-label'}
+}) ? ''}}
+
+{{ repeatCaseNumber.setAttributes({
+    id: 'repeatCaseNumber',
+    class: 'form-control'
+}) ? '' }}
+
+{# form fields labels #}
+{{ repeatCaseNumber.setOptions({
+    label: 'Case number'
+}) ? '' }}
+
+<li id="repeat-application-section" class="section current">
+
+    <h2 class="heading-medium accordion-header flush--top">Is the donor making a repeat application to register their LPA?</h2>
+
+    <div class="accordion-info">
+        <div class="text">
+            <details class="form-group">
+                <summary data-journey-click="page:link.reveal:help: What is a repeat application?" role="button" aria-expanded="false">What is a repeat application?</summary>
+                <div>
+                    <p>If an application has already been made to register an LPA for the donor, but OPG could not register it, we will have written to the correspondent to let them know. The letter will explain that if a repeat application is made within 3 months, the donor can pay half the normal application fee.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    {# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+        {{ formElement(form.getCsrf) }}
+
+        {# Error summary #}
+        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+
+        <div class="form-group {{ isRepeatApplication.getMessages|length > 0 ? 'form-group-error'}}">
+            <fieldset id="isRepeatApplication" class="inline">
+                <legend class="visually-hidden">Is this a repeat application?</legend>
+                
+                    {{ formElementErrorsV2(isRepeatApplication) }}
+                    {{ formRadio(isRepeatApplication) }}
+
+                    <div class="panel panel-border-narrow js-hidden" id="repeat-application-details">
+                        <h3 class="visually-hidden">Repeat application details</h3>
+
+                        {{ macros.formGroup(repeatCaseNumber) }}
+
+                        <div class="text">
+                            <p>You can find the case number on the letter that came with the returned LPA application.</p>
+
+                            <p>By clicking on the save button below, you confirm that OPG has said a repeat application can be made for half the normal application fee.</p>
+                        </div>
+
+                    </div>
+            </fieldset>
+        </div>
+
+        <div class="form-group">
+            {{ formElement(form.get('save')) }}
+        </div>
+
+    {{ form().closeTag|raw }}
+
+</li>
+
+{% endblock %}

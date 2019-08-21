@@ -1,0 +1,6 @@
+[template]
+src = "opg-lpa-front2.conf.tmpl"
+dest = "/etc/nginx/app.conf.d/opg-lpa-front2.conf"
+keys = [
+    "/opg/lpa/front/nginx",
+]
