@@ -219,7 +219,7 @@ services:
     depends_on:
       - admin-app
     volumes:
-      - ./admin-front/public:/web
+      - ./service-admin/public:/web
     build:
       context: ./
       dockerfile: service-admin/docker/web/Dockerfile
