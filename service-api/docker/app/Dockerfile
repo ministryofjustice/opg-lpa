@@ -1,6 +1,6 @@
 FROM composer AS composer
 
-COPY opg-lpa-api /app
+COPY service-api /app
 
 RUN composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
 
@@ -18,9 +18,9 @@ RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postg
         && docker-php-ext-install opcache \
         && apk del .build-dependencies
 
-COPY opg-lpa-api /app
+COPY service-api /app
 COPY --from=composer /app/vendor /app/vendor
-COPY opg-lpa-api/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY service-api/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
