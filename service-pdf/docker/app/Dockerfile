@@ -1,6 +1,6 @@
 FROM composer AS composer
 
-COPY opg-lpa-pdf /app
+COPY service-pdf /app
 
 RUN composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
 
@@ -12,7 +12,7 @@ RUN apt-get -y update \
     && apt-get -y install pdftk \
     && apt-get -y clean
 
-COPY opg-lpa-pdf /app
+COPY service-pdf /app
 COPY --from=composer /app/vendor /app/vendor
 
 WORKDIR /app
