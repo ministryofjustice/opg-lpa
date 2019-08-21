@@ -162,9 +162,15 @@ orbs:
               name: Push app container
               command: |
                 export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
-                docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
-                docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:$CIRCLE_BRANCH-$SHORT_HASH
-                docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app
+                  docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:$CIRCLE_BRANCH-$SHORT_HASH
+                if [ "${CIRCLE_BRANCH}" == "master" ]; then
+                  # If master, push branch tag and latest
+                  docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:$CIRCLE_BRANCH-$SHORT_HASH << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
+                  docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app
+                else
+                  # Else, push branch tag only
+                  docker push << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:$CIRCLE_BRANCH-$SHORT_HASH
+                fi
 
   infrastructure_and_deployment:
     commands:
