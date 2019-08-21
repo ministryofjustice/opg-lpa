@@ -1,0 +1,33 @@
+// =======================================================
+// DIALOG POPUP
+
+.dialog {
+    // Taken from main (elements/elements_typography line 7) instead of extending
+    @include core-19;
+    -webkit-font-smoothing: antialiased;
+
+    &.popup {
+        max-width: 600px;
+
+        @include media($max-width: 1000px) {
+            margin: 2em auto;
+        }
+
+        @include media(mobile) {
+            margin: 2em .5em 10em;
+        }
+    }
+}
+
+.dialog-container {
+    padding: 0 $gutter $gutter;
+}
+
+.dialog-title-block {
+    @extend %heading-large;
+}
+
+.dialog-message-block {
+    margin-bottom: $gutter;
+}
+

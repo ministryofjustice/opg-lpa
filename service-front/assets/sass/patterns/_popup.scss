@@ -1,0 +1,129 @@
+// =======================================================
+// POPUPS
+
+@mixin popup($width: 70%, $height: 26em) {
+    // Helper styles for popups
+    .noscroll {
+        position: relative;
+        overflow: hidden;
+
+        @include media(tablet) {
+            padding-right: 15px;
+        }
+    }
+
+    .popover-mask {
+        display: none;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        outline: 0;
+        background-color: rgba(0, 0, 0, .5);
+        z-index: 60;
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        @include ie-lte(8) {
+            background-color: $grey-1;
+        }
+    }
+
+    .popup {
+        display: none;
+        position: relative;
+        width: $width;
+        max-width: 1100px;
+        margin: 4em auto;
+        border: .5em solid $black;
+        background-color: $white;
+        z-index: 999999;
+
+        @include ie-lte(8) {
+            margin: 0 auto;
+        }
+
+        @include media($max-width: 1200px) {
+            width: 960px;
+        }
+
+        @include media($max-width: 1000px) {
+            width: auto;
+            margin: 2em .5em 10em;
+        }
+
+        @include media(mobile) {
+            border-width: .2em;
+        }
+
+        // 'X' Close button
+        .close {
+            position: absolute;
+            top: .5em;
+            right: .5em;
+            margin: 0;
+            z-index: 2;
+        }
+
+        .button-close {
+            display: block;
+            width: 2em;
+            height: 2em;
+            background-image: url('/assets/v2/images/icons/icon-close.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            text-indent: -9999px;
+            overflow: hidden;
+
+            &:hover {
+                background-color: $grey-2;
+            }
+        }
+    }
+
+    .popup-header {
+        position: relative;
+        padding: $gutter-half;
+        border-bottom: 1px solid $border-colour;
+
+        .icon {
+            position: absolute;
+        }
+
+        .no-js & {
+            padding: 0;
+            border-bottom: 0;
+
+            .icon {
+                display: none;
+            }
+        }
+    }
+
+    .popup-header-title {
+        display: block;
+        padding-left: 35px;
+
+        @include media(mobile) {
+            padding-right: 40px;
+        }
+
+        .no-js & {
+            padding-left: 0;
+
+            &.heading-small {
+                @extend %heading-large;
+            }
+        }
+
+        .js-enabled & {
+            margin-top: 2px;
+        }
+    }
+}
+
+// IE specific fix for popup scrollbars. From https://github.com/twbs/bootstrap/issues/21780
+@-ms-viewport {
+    width: auto;
+}

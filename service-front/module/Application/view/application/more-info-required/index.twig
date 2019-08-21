@@ -1,0 +1,20 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block htmlTitle %}Please tell us more - {% endblock %}
+{% block pageTitle %}Please tell us more{% endblock %}
+
+{% block content %}
+
+    <p class="lede">
+        You need to fill in some missing answers.
+    </p>
+
+    <p>
+        Click the link below to continue and complete the information we need.
+    </p>
+
+    <p><br></p>
+
+    <a href="{{ url('lpa', {'lpa-id': lpaId}) }}" value="Continue your LPA" class="button">Continue your LPA</a>
+
+{% endblock %}
