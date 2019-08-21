@@ -58,6 +58,8 @@ services:
     image: lpa-front-web
     depends_on:
       - front-app
+    volumes:
+      - ./service-front/public:/web
     build:
       context: ./
       dockerfile: service-front/docker/web/Dockerfile
@@ -217,7 +219,7 @@ services:
     depends_on:
       - admin-app
     volumes:
-      - ./service-admin:/app
+      - ./service-admin/public:/web
     build:
       context: ./
       dockerfile: service-admin/docker/web/Dockerfile
