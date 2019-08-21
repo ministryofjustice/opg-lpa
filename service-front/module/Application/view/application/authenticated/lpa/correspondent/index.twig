@@ -1,0 +1,208 @@
+{% extends 'layout/twig/accordion-layout.twig' %}
+
+{% block htmlTitle %}Correspondent - {% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Error messages #}
+
+{% set form = formErrorTextExchange(form, {
+    'contactInWelsh' : {
+        'Value is required and can\'t be empty': 'A language must be selected'
+    },
+    'correspondence' : {
+        "at-least-one-option-needs-to-be-selected" : "Select at least one option"
+    }
+}) %}
+
+{# Set form fields variables #}
+{% set contactInWelsh = form.get('contactInWelsh') %}
+{% set correspondence = form.get('correspondence') %}
+{% set contactByEmail = correspondence.get('contactByEmail') %}
+{% set contactByPhone = correspondence.get('contactByPhone') %}
+{% set contactByPost  = correspondence.get('contactByPost') %}
+{% set email = correspondence.get('email-address') %}
+{% set phone = correspondence.get('phone-number') %}
+
+{# We have a top level error when the form has a message, but it's not related to the email of phone fields. #}
+{% set topLevelError = correspondence.getMessages|length >0
+    and not ( phone.getMessages|length >0 or contactByPhone.getMessages|length >0 or email.getMessages|length >0 or contactByEmail.getMessages|length >0) %}
+
+{# form fields config #}
+{{ contactByPost.setAttributes({
+    id: 'contactByPost'
+}) ? '' }}
+
+{{ contactByPost.setOptions({
+    use_hidden_element: true
+}) ? '' }}
+
+{{ contactByPhone.setAttributes({
+    id: 'contactByPhone'
+}) ? '' }}
+
+{{ contactByPhone.setOptions({
+    use_hidden_element: true
+}) ? '' }}
+
+{{ contactByEmail.setAttributes({
+    id: 'contactByEmail'
+}) ? '' }}
+
+{{ contactByEmail.setOptions({
+    use_hidden_element: true
+}) ? '' }}
+
+{{ contactInWelsh.setAttributes({
+    id: 'contactInWelsh'
+}) ? '' }}
+
+{{ phone.setAttributes({
+    id: 'phone-number',
+    class: 'form-control'
+}) ? '' }}
+
+{{ email.setAttributes({
+    id: 'email-address',
+    class: 'form-control'
+}) ? '' }}
+
+{# form fields labels #}
+{{ contactByPost.setOptions({
+    label: 'Post'
+}) ? '' }}
+
+{{ contactByPhone.setOptions({
+    label: (contactPhone ? 'Phone (' ~ contactPhone ~ ')' : 'Phone')
+}) ? '' }}
+
+{{ contactByEmail.setOptions({
+    label: (contactEmail ? 'Email (' ~ contactEmail ~ ')' : 'Email')
+}) ? '' }}
+
+{{ phone.setOptions({
+    label: 'Phone number'
+}) ? '' }}
+
+{{ email.setOptions({
+    label: 'Email address'
+}) ? '' }}
+
+<li id="correspondent-section" class="section current">
+
+    <h2 class="heading-medium accordion-header flush--top">Where should we send the registered LPA and any correspondence?</h2>
+
+    <div class="accordion-info">
+
+        <div class="text">
+
+            <p>The person below will be the ‘correspondent’. We’ll send them the registered LPA and contact them if we have any questions about the LPA application.</p>
+
+            <p>If you want someone else to be the correspondent, change the details below.</p>
+
+            <p><a href="/guide#topic-correspondent" class="js-guidance" data-journey-click="page:link:help: Find out more about the role of the correspondent">Find out more about the role of the correspondent</a></p>
+        </div>
+    </div>
+
+    <h3 class="heading-medium flush--top">The correspondent</h3>
+
+    <div class="person">
+        <h3 class="person-name heading-small flush--ends">{{ correspondentName }}</h3>
+        <p class="person-address flush--ends">{{ correspondentAddress }}</p>
+        <ul class="person-actions">
+            {% if allowEditButton %}
+                <li class="action-item">
+                    <a href="{{ changeRoute }}?reuse-details=existing-correspondent" class="action-edit js-form-popup">Edit</a>
+                </li>
+            {% endif %}
+            <li class="action-item">
+                <a href="{{ changeRoute }}" role="button" class="action-edit js-form-popup">Change correspondent</a>
+            </li>
+        </ul>
+    </div>
+
+    {# begin form #}
+    {{ form.prepare() ? '' }}
+
+    {{ form().openTag( form )|raw }}
+        {{ formElement(form.getCsrf) }}
+
+        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+
+        <div class="form-group {{ topLevelError ? 'form-group-error'}}">
+
+            <fieldset id="correspondence">
+
+                <legend class="visually-hidden">Contact options</legend>
+                <h3 class="heading-medium flush--top">How would the person above prefer to be contacted?</h3>
+                
+                <p>Select how the correspondent would like to be contacted. You can choose more than one option.</p>
+
+                <div class="multiple-choice">
+                    {{ formElement(contactByPost) }}
+                    <label class="text block-label" for="{{ contactByPost.getAttribute('id') }}">
+                        {{ contactByPost.getOption('label')|raw }}
+                    </label>
+                </div>
+
+                <div class="multiple-choice" {{ contactPhone ? '' : 'data-target="contact-by-phone"' }}>
+                    {{ formElement(contactByPhone) }}
+                    <label class="text block-label" for="{{ contactByPhone.getAttribute('id') }}">
+                    {{ contactByPhone.getOption('label')|raw }}
+                    </label>
+                </div>
+
+                <div class="panel panel-border-narrow js-hidden" id="contact-by-phone">
+                    <div class="form-group {{ phone.getMessages|length >0 or contactByPhone.getMessages|length >0 ? 'form-group-error'}}">
+                        <label class="form-label" for="{{ phone.getAttribute('id') }}">
+                            {{ phone.getOption('label') }}
+                            {{ formElementErrorsV2(contactByPhone) }}
+                            {{ formElementErrorsV2(phone) }}
+                        </label>
+                        {{ formText(phone) }}
+                    </div>
+                </div>
+
+                <div class="multiple-choice" {{ contactEmail ? '' : 'data-target="contact-by-email"' }}>
+                    {{ formElement(contactByEmail) }}
+                    <label class="text block-label" for="{{ contactByEmail.getAttribute('id') }}">
+                    {{ contactByEmail.getOption('label')|raw }}</label>
+                </div>
+
+                <div class="panel panel-border-narrow js-hidden" id="contact-by-email">
+                    <div class="form-group {{ email.getMessages|length >0 or contactByEmail.getMessages|length >0 ? 'form-group-error'}}">
+                        <label class="form-label" for="{{ email.getAttribute('id') }}">
+                            {{ email.getOption('label') }}
+                            {{ formElementErrorsV2(contactByEmail) }}
+                            {{ formElementErrorsV2(email) }}
+                        </label>
+                        {{ formText(email) }}
+                    </div>
+                </div>
+
+            </fieldset>
+        </div>
+
+        <div class="form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'form-group-error'}}">
+        <h3 class="heading-medium flush--top">Which language should we use in written correspondence?</h3>
+
+            <fieldset class="inline">
+                <legend class="visually-hidden">Language options</legend>
+
+            
+                {{ formRadio().outputOption(contactInWelsh, 'english')|raw }}
+                {{ formRadio().outputOption(contactInWelsh, 'welsh')|raw }}
+            </fieldset>
+        </div>
+
+        <div class="form-group">
+            {{ formElement(form.get('save')) }}
+        </div>
+
+    {{ form().closeTag|raw }}
+
+</li>
+
+{% endblock %}

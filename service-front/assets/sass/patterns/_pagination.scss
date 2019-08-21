@@ -1,0 +1,56 @@
+// =======================================================
+// PAGER
+// Borrowed from RPA Styleguide (http://rural-payments-styleguide.herokuapp.com/pagination/)
+
+.pager {
+    margin-top: $gutter-half;
+    margin-bottom: $gutter;
+}
+
+.pager-items {
+    display: none;
+
+    @include media($min-width: 641px) {
+        display: inline;
+
+        li {
+            display: inline;
+            margin: 0 5px;
+
+            &:first-child {
+                margin-left: 0;
+            }
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}
+
+.pager-prev,
+.pager-next {
+    margin-right: 10px;
+    
+    @include media($min-width: 641px) {
+        margin-right: 0;
+    }  
+}
+
+.pager-prev {
+    @include media($min-width: 641px) {
+        margin-right: 10px;
+    }
+}
+
+.pager-next {
+    @include media($min-width: 641px) {
+        margin-left: 10px;
+    }
+}
+
+.pager-controls {
+    @include media($min-width: 641px) {
+        float: right;
+    }
+}

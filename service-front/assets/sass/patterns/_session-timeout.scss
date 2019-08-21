@@ -1,0 +1,36 @@
+.session-timeout {
+	visibility: hidden;
+	position: fixed;
+	z-index: 9999;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+
+	&-dialog {
+		@include core-19();
+		width: 480px;
+		margin: 100px auto 0;
+		padding: 0 30px 30px 30px;
+		border: 10px solid $black;
+		opacity: 1;
+		background-color: $white;
+
+		.button {
+			margin-right: 20px;
+		}
+	}
+
+	&-underlay {
+		visibility: hidden;
+		position: absolute;
+		z-index: 9999;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;    // This is also updated in JS to the px value
+		opacity: .3;
+		background-color: $black;
+		color: $white;
+	}
+}

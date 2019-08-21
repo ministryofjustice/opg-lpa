@@ -1,0 +1,128 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block errorSummary %}
+    {% include 'application/general/register/partials/index-error-summary.twig' %}
+{% endblock %}
+
+{% block htmlTitle %}Create an account - {% endblock %}
+{% block pageTitle %}Create an account{% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Set form fields variables #}
+{% set email = form.get('email') %}
+{% set email_confirm = form.get('email_confirm') %}
+{% set password = form.get('password') %}
+{% set password_confirm = form.get('password_confirm') %}
+{% set terms = form.get('terms') %}
+{% set skip_confirm_password = form.get('skip_confirm_password') %}
+
+{# form fields config #}
+{{ email.setAttributes({
+    id: 'email',
+    type: 'email',
+    class: 'form-control'
+}) ? ''}}
+
+{{ email_confirm.setAttributes({
+    id: 'email_confirm',
+    type: 'email',
+    autocomplete: 'off',
+    class: 'form-control'
+}) ? ''}}
+
+{{ password.setAttributes({
+    id: 'password',
+    class: 'form-control'
+}) ? ''}}
+
+{{ password_confirm.setAttributes({
+    id: 'password_confirm',
+    class: 'form-control'
+}) ? ''}}
+
+{{ terms.setAttributes({
+    id: 'terms'
+}) ? ''}}
+
+{{ skip_confirm_password.setAttributes({
+    id: 'js-skipConfirmPassword'
+}) ? ''}}
+
+
+{# form fields labels #}
+{{ email.setOptions( { label: 'Enter your email address' }) ? '' }}
+{{ email_confirm.setOptions( { label: 'Confirm your email address' }) ? '' }}
+{{ password.setOptions( { label: 'Password' }) ? '' }}
+{{ password_confirm.setOptions( { label: 'Confirm password' }) ? '' }}
+
+<div class="text">
+    <p class="lede">You need to enter your email address and create a password. This will allow you to make, save and retrieve LPAs.</p>
+    <p>You can create an account in your name to help someone else make an LPA. But they must make all the decisions about the LPA themselves.</p>
+    <p>If you already have an account, please <a href="{{ url('login') }}">sign in</a>.</p>
+</div>
+
+{# begin form #}
+{{ form.prepare() ? '' }}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.getCsrf) }}
+
+    <h2 class="heading-medium">Email address</h2>
+
+    <fieldset>
+        <legend class="visually-hidden">Email</legend>
+
+        {{ macros.formGroup(email) }}
+        {{ macros.formGroup(email_confirm) }}
+
+    </fieldset>
+
+    <h2 class="heading-medium">Create password</h2>
+
+    <fieldset>
+        <legend class="visually-hidden">Password</legend>
+
+        {% include 'application/partials/password-rules.twig' %}
+
+        <div class="form-group {{ password.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="form-label" for="{{ password.getAttribute('id') }}">
+                {{ password.getOption('label') }}
+                {{ formElementErrorsV2(password) }}
+            </label>
+            {{ formElement(password) }}
+            <div>
+                <a href="#" class="hidden js-showHidePassword" data-for="password" data-alsoHideConfirm="true">Show password</a>
+            </div>
+            {{ formElement(skip_confirm_password) }}
+        </div>
+
+        {{ macros.formGroup(password_confirm) }}
+
+    </fieldset>
+
+    <div class="form-group {{ terms.getMessages|length >0 ? 'form-group-error'}}">
+        <fieldset>
+            <legend class="visually-hidden">Terms</legend>
+            <div class="text">
+                <p>LPAs are governed by the laws of England and Wales and can only be made by people with mental capacity aged 18 or older.</p>
+            </div>
+
+            <div class="multiple-choice">
+                {{ formElement(terms) }}
+                <label class="block-label" for="{{ terms.getAttribute('id') }}">
+                    I agree to the <a href="/terms" target="_blank">terms of use</a>
+                    {{ formElementErrorsV2(terms) }}
+                </label>
+            </div>
+        </fieldset>
+    </div>
+    
+    <div class="form-group">
+        <input type="submit" name="submit" id="signin-form-submit" value="Create account" class="button">
+    </div>    
+
+{{ form().closeTag|raw }}
+
+{% endblock content %}

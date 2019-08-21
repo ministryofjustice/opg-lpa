@@ -1,0 +1,78 @@
+// =======================================================
+// PERSON PROFILE
+
+.person {
+    position: relative;
+    margin-bottom: $gutter;
+    padding: 7px 0 28px 75px;
+    border-bottom: 1px solid $border-colour;
+    background-image: url('../images/custom/person.svg');
+    background-repeat: no-repeat;
+    background-size: 60px;
+    overflow: hidden;
+
+    @include media(mobile) {
+        padding: 0 0 $gutter 55px;
+        background-size: 40px;
+    }
+
+    &.person--full {
+        margin-bottom: 20px;
+        padding-bottom: 4px;
+    }
+}
+
+.person-name,
+.person-address {
+    @include media(tablet) {
+        padding-right: 300px;
+    }
+
+    .person--wider & {
+        @include media(tablet) {
+            padding-right: 175px;
+        }
+    }
+
+    .person--full & {
+        padding-right: 0;
+    }
+}
+
+.person-actions {
+    @include media(tablet) {
+        position: absolute;
+        top: 10px;
+        right: 0;
+    }
+
+    .action-item {
+        @include media(tablet) {
+            margin-left: 8px;
+            float: right;
+        }
+    }
+
+    .action-edit {
+        @include media(tablet) {
+            @include button($grey-3);
+            + .spinner {
+                margin-bottom: -3px;
+            }
+        }
+
+        &:focus {
+            outline: 3px solid $focus-colour;
+        }
+    }
+
+    .action-delete {
+        @include media(tablet) {
+            display: inline-block;
+            margin: 6px $gutter 0 0;
+            + .spinner {
+                margin: 0 16px -3px -16px;
+            }
+        }
+    }
+}

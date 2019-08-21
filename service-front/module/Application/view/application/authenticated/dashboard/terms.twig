@@ -1,0 +1,17 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block errorSummary %}
+    {% include 'application/authenticated/about-you/partials/form-error-summary.twig' %}
+{% endblock %}
+
+{% block htmlTitle %}Terms of use - {% endblock %}
+{% block pageTitle %}Terms of use{% endblock %}
+
+
+{% block content %}
+<div class="text">
+	<p class="lede">The terms of use for the digital lasting power of attorney service have changed.</p>
+	<p><a href="/terms">Find out more</a> or <a href="{{ url('user/dashboard') }}">continue using the service</a>.</p>
+</div>
+
+{% endblock %}
