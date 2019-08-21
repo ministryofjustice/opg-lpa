@@ -1,0 +1,91 @@
+// =======================================================
+// HELPERS
+
+// scss-lint:disable ImportantRule
+// These are all proactive importants
+
+// scss-lint:disable SpaceBeforeBrace, SpaceAfterPropertyColon
+// Special formatting here
+
+// Negating spacing
+// Remove margins
+.flush          { margin:       0 !important; }
+.flush--top     { margin-top:   0 !important; }
+.flush--right   { margin-right: 0 !important; }
+.flush--bottom  { margin-bottom:0 !important; }
+.flush--left    { margin-left:  0 !important; }
+.flush--ends    { margin-top:   0 !important; margin-bottom: 0 !important; }
+.flush--sides   { margin-right: 0 !important; margin-left:  0 !important; }
+
+// Remove paddings
+.hard           { padding:       0 !important; }
+.hard--top      { padding-top:   0 !important; }
+.hard--right    { padding-right: 0 !important; }
+.hard--bottom   { padding-bottom:0 !important; }
+.hard--left     { padding-left:  0 !important; }
+.hard--ends     { padding-top:   0 !important; padding-bottom:0 !important; }
+.hard--sides    { padding-right: 0 !important; padding-left:  0 !important; }
+
+// Adding spacing
+// Add margins
+.push           { margin:       $gutter !important; }
+.push--top      { margin-top:   $gutter !important; }
+.push--right    { margin-right: $gutter !important; }
+.push--bottom   { margin-bottom:$gutter !important; }
+.push--left     { margin-left:  $gutter !important; }
+.push--ends     { margin-top:   $gutter !important; margin-bottom:$gutter !important; }
+.push--sides    { margin-right: $gutter !important; margin-left:  $gutter !important; }
+
+// scss-lint:enable SpaceBeforeBrace, SpaceAfterPropertyColon
+
+//Further down
+.divorced {
+    margin-top: $gutter;
+}
+
+// Simple handling of overflowing tables on mobile
+.mobile-scroll {
+    @include media(mobile) {
+        overflow: auto;
+
+        table {
+            min-width: 460px;
+        }
+    }
+}
+
+// Responsive helper classes
+.mobile {
+    @include media(tablet) {
+        display: none !important;
+    }
+}
+
+.tablet-and-up {
+    @include media(mobile) {
+        display: none !important;
+    }
+}
+
+// Text align helper styles
+.text-left {
+    text-align: left !important;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+// Hide when no javascript
+.no-js {
+    .hide-if-no-js {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+
+// scss-lint:enable ImportantRule

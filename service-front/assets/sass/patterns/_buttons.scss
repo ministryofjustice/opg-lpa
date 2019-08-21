@@ -1,0 +1,70 @@
+// =======================================================
+// BUTTONS
+
+
+.button-secondary {
+    @extend %button-extended;
+    @include button($panel-colour);
+}
+
+.button-warning {
+    @extend %button-extended;
+    @include button($error-colour);
+}
+
+%button-extended {
+    @include box-sizing (border-box);
+    padding: em(10) em(15) em(5);
+    vertical-align: top;
+
+    @include media (mobile) {
+        width: 100%;
+    }
+}
+
+.button,
+.button-secondary {
+    @include media(mobile) {
+        text-align: center;
+    }
+
+    + .button,
+    + .button-secondary {
+        @include media(mobile) {
+            margin-top: 15px;
+        }
+    }
+}
+
+.button-link {
+    margin-left: $gutter;
+    line-height: 2.5em;
+
+    @include media(mobile) {
+        margin-left: 0;
+    }
+}
+
+.reuse-details-button {
+    @include media(tablet) {
+        margin-right: 4px;
+    }
+}
+
+.button-input-to-link {
+    @extend a;
+
+    color: $link-colour;
+    background-color: transparent;
+    cursor: pointer;
+    text-decoration: underline;
+
+    &::-moz-focus-inner {
+        padding: 0;
+        border: 0
+    }
+
+    + .spinner {
+        margin-bottom: -3px;
+    }
+}

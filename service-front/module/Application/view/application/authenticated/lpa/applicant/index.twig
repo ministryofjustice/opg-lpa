@@ -1,0 +1,141 @@
+{% extends 'layout/twig/accordion-layout.twig' %}
+
+{% block htmlTitle %}Applicant - {% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Error messages #}
+{% set form = formErrorTextExchange(form, {
+    'whoIsRegistering' : {
+        'allowed-values:1' : 'Select the person who is applying to register the LPA',
+        'allowed-values:donor,Array' : 'Select the person who is applying to register the LPA'
+    }
+}) %}
+
+{# Set form fields variables #}
+{% set whoIsRegistering = form.get('whoIsRegistering') %}
+{% set whoIsRegisteringValueOptions = whoIsRegistering.getOptions()['value_options'] %}
+
+{% set whoIsRegisteringValueOptions = {
+	'donor' : {
+        label: "The donor - " ~ lpa.document.donor.name,
+        value: whoIsRegisteringValueOptions['donor'].value
+		},
+	'attorney' : whoIsRegisteringValueOptions['attorney']
+} %}
+
+{% if form.has('attorneyList') %}
+
+    {% set whoIsRegisteringValueOptions = {
+		'donor' : whoIsRegisteringValueOptions['donor'],
+		'attorney' : {
+            label: "The attorneys -",
+            label_attributes: whoIsRegisteringValueOptions['attorney'].label_attributes,
+            attributes: whoIsRegisteringValueOptions['attorney'].attributes,
+            value: whoIsRegisteringValueOptions['attorney'].value
+ 		}
+	} %}
+
+    {% set attorneyList = form.get('attorneyList') %}
+
+{% else %}
+
+	{% if lpa.document.primaryAttorneys|length > 1 %}
+		{% set concatNames = concatNames(lpa.document.primaryAttorneys) %}
+	  	{% set whoIsRegisteringValueOptions = {
+			'donor' : whoIsRegisteringValueOptions['donor'],
+			'attorney' : {
+                label: "The attorneys - " ~ concatNames,
+                value: whoIsRegisteringValueOptions['attorney'].value
+	 		}
+		} %}
+
+    {% else %}
+    	{% set attorney = lpa.document.primaryAttorneys|first %}
+    	{% set whoIsRegisteringValueOptions = {
+			'donor' : whoIsRegisteringValueOptions['donor'],
+			'attorney' : {
+                label: "The attorney - " ~ attorney.name,
+                value: whoIsRegisteringValueOptions['attorney'].value
+	 		}
+		} %}
+
+    {% endif %}
+
+    {% set whoIsRegisteringValueOptions = {
+		'donor' : whoIsRegisteringValueOptions['donor'],
+		'attorney' : {
+            label: whoIsRegisteringValueOptions['attorney'].label,
+            value: whoIsRegisteringValueOptions['attorney'].value
+        }
+	} %}
+
+{% endif %}
+
+{{ whoIsRegistering.setOptions({
+    value_options: whoIsRegisteringValueOptions,
+    label_attributes: {'class': 'text block-label'}
+}) ? '' }}
+
+{{ attorneyList.setOptions({
+    label_attributes: {'class': 'text block-label'}
+}) ? '' }}
+
+{{ whoIsRegistering.setLabelOptions({
+    disable_html_escape: true
+}) ? '' }}
+
+<li id="applicant-section" class="section current">
+
+    <h2 class="heading-medium accordion-header flush--top">Who’s applying to register the LPA?</h2>
+
+    <div class="accordion-info">
+        <div class="text">
+
+            {% if (lpa.document.primaryAttorneyDecisions.how == 'jointly') %}
+                <p>Either the donor or all the attorneys can apply to register the LPA.</p>
+            {% else %}
+                <p>Either the donor or one or more of the attorneys can apply to register the LPA.</p>
+            {% endif %}
+
+            <p><a href="/guide#topic-applicant" class="js-guidance" data-journey-click="page:link:help: Find out more about the role of the applicant">Find out more about the role of the applicant</a></p>
+
+        </div>
+    </div>
+
+    {# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+        {{ formElement(form.getCsrf) }}
+
+        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+
+        <div class="form-group {{ whoIsRegistering.getMessages|length > 0 ? 'form-group-error'}}">
+
+            <fieldset id="whoIsRegistering">
+                <legend class="heading-medium flush--top">This LPA is being registered by</legend>
+
+                    {{ formElementErrorsV2(whoIsRegistering) }}
+                    {{ formRadio(whoIsRegistering) }}
+            </fieldset>
+            {% if (attorneyList) %}
+                <fieldset>
+                    <div class="panel js-attorney-list">
+                        {{ formElementErrorsV2(attorneyList) }}
+                        {{ formCheckbox(attorneyList) }}
+                    </div>
+                </fieldset>
+            {% endif %}            
+        </div>
+
+        <div class="form-group">
+            {{ formElement(form.get('save')) }}
+        </div>
+
+	{{ form().closeTag|raw }}
+
+</li>
+
+{% endblock %}

@@ -1,0 +1,132 @@
+// Icons
+// ==========================================================================
+// Information (27x27)
+// File download (30x39)
+// Question (52x50)
+// Tick (22x22)
+// Cross (22x22)
+// Important small (27x27)
+// Person (27x27)
+// Phone (36x36)
+// Email (36x36)
+// Post (36x36)
+// Fax (36x36)
+
+// Handling icons within headings
+%icon-with-heading-base {
+    display: inline-block;
+    position: relative;
+    top: 0.4em;
+    width: 1.5em;
+    height: 1.5em;
+    margin: 0 0.25em 0 0;
+}
+
+.icon {
+    .heading-medium & {
+        @extend %icon-with-heading-base;
+    }
+}
+
+.icon-information {
+    @include icon(icon-information, 27, 27);
+}
+
+.icon-file-download {
+    @include icon(icon-file-download, 30, 39);
+}
+
+.icon-question {
+    @include icon(icon-question, 52, 50);
+    margin-right: 10px;
+
+    @include media(mobile) {
+        @include icon(icon-question, 31, 30);
+        margin-right: 6px;
+        background-size: contain;
+    }
+
+    @include media($max-width: 360px) {
+        display: none;
+    }
+}
+
+.icon-tick {
+    @include icon(icon-tick, 22, 22);
+    @include media(mobile) {
+        @include icon(icon-tick, 16, 16);
+        margin-right: 6px;
+        background-size: contain;
+    }
+}
+
+.icon-cross {
+    @include icon(icon-cross, 22, 22);
+    @include media(mobile) {
+        @include icon(icon-cross, 16, 16);
+        margin-right: 6px;
+        background-size: contain;
+    }
+}
+
+.icon-important-small {
+    @include icon(icon-important, 27, 27);
+    background-size: contain;
+}
+
+.icon-person {
+    @include icon(icon-person, 27, 27);
+    @include media(mobile) {
+        @include icon(icon-person, 27, 27);
+        margin-right: 6px;
+        background-size: contain;
+    }
+}
+
+.icon-phone {
+    @include icon(icon-phone, 36, 36);
+    @include media(mobile) {
+        @include icon(icon-phone, 27, 27);
+        background-size: contain;
+    }
+}
+
+.icon-email {
+    @include icon(icon-email, 36, 36);
+    @include media(mobile) {
+        @include icon(icon-email, 27, 27);
+        background-size: contain;
+    }
+}
+
+.icon-post {
+    @include icon(icon-post, 36, 36);
+    @include media(mobile) {
+        @include icon(icon-post, 27, 27);
+        background-size: contain;
+    }
+}
+
+.icon-fax {
+    @include icon(icon-fax, 36, 36);
+    @include media(mobile) {
+        @include icon(icon-fax, 27, 27);
+        background-size: contain;
+    }
+}
+
+.icon-bin {
+    @include icon(icon-bin, 27, 27);
+    @include media(mobile) {
+        @include icon(icon-bin, 27, 27);
+        background-size: contain;
+    }
+}
+
+.icon-print {
+    @include icon(icon-print, 36, 36);
+    @include media(mobile) {
+        @include icon(icon-print, 27, 27);
+        background-size: contain;
+    }
+}

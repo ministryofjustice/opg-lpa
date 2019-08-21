@@ -1,0 +1,70 @@
+// =======================================================
+// GLOBAL NAVIGATION
+
+@mixin global-nav {
+    .global-nav {
+        border-bottom: 1px solid $border-colour;
+        overflow: hidden;
+
+        .lastsigned {
+            @include media(tablet) {
+                padding: 10px 8px;
+                float: left;
+            }
+        }
+
+        nav {
+            @include core-16;
+            @include media(mobile) {
+                padding: 6px 0;
+            }
+        }
+    }
+
+    .navigation {
+        @include media(tablet) {
+            float: right;
+        }
+
+        a,
+        .user {
+            @include media(tablet) {
+                padding: 10px 8px;
+            }
+        }
+
+        .user {
+            @include media(mobile) {
+                display: block;
+            }
+        }
+
+        a {
+            display: inline-block;
+
+            @include media(mobile) {
+                padding: 10px;
+            }
+
+            @include media($max-width: 300px) {
+                padding: 10px 5px;
+            }
+        }
+    }
+
+    .navigation-item {
+        @include media(mobile) {
+            display: inline;
+
+            &:nth-child(2) {
+                a {
+                    padding-left: 0;
+                }
+            }
+        }
+        
+        @include media(tablet) {
+            display: inline;
+        }
+    }
+}

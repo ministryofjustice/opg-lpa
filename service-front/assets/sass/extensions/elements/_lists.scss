@@ -1,0 +1,30 @@
+// Lists
+// ==========================================================================
+
+// Duplicating list classes as placeholders to enable proper extending
+%list {
+    margin-top: 5px;
+    margin-bottom: 20px;
+    padding: 0;
+
+    li {
+        margin-bottom: 5px;
+    }
+}
+
+// Bulleted lists
+%list-bullet {
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+// Numbered lists
+%list-number {
+    padding-left: 20px;
+    list-style-type: decimal;
+}
+
+%list-alpha {
+    padding-left: 20px;
+    list-style-type: upper-alpha;
+}

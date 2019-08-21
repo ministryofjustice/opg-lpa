@@ -1,0 +1,18 @@
+// =======================================================
+// LAYOUT
+
+// General layout
+.content-body {
+    @include media(tablet) {
+        min-height: 400px;
+    }
+}
+
+// Accordion layout
+.current {
+    + .complete,
+    + .incomplete {
+        margin-top: $gutter;
+        clear: left;
+    }
+}

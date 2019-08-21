@@ -1,0 +1,121 @@
+{% extends 'layout/twig/accordion-layout.twig' %}
+
+{% block htmlTitle %}How primary attorneys make decisions - {% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Error messages #}
+{% set form = formErrorTextExchange(form, {
+    'how' : {
+        'Value is required and can\'t be empty' : 'Choose how the attorneys should make decisions',
+    },
+    'howDetails': {
+    	'Value is required and can\'t be empty' : 'Tell us which decisions have to be made jointly, and which can be made jointly and severally'
+	}
+}) %}
+
+{# Set form fields variables #}
+{% set how = form.get('how') %}
+{% set howDetails = form.get('howDetails') %}
+{% set currentHowValueOptions = how.getOptions()['value_options'] %}
+
+{# form fields config #}
+{{ howDetails.setAttributes({
+    id: 'howDetails',
+    rows: 10,
+    cols: 67,
+    maxlength: 2000,
+    class: 'form-control'
+}) ? ''}}
+
+{% set howValueOptions = {
+	'jointly-attorney-severally' :{
+		attributes: {
+			id: 'how-jointly-attorney-severally'
+		},
+		label: '<strong class="bold-small">Jointly and severally</strong>
+			<span class="text form-hint form-hint--strong">
+			Attorneys can make decisions on their own or together. Most people choose this option because it’s the most practical.
+			</span>',
+		label_attributes: {
+			for: 'how-jointly-attorney-severally'
+		},
+		value: currentHowValueOptions['jointly-attorney-severally'].value
+	},
+	'jointly' : {
+		label: '<strong class="bold-small">Jointly</strong>
+			<span class="text form-hint form-hint--strong">
+			Attorneys must agree unanimously on every decision, however big or small. Be careful - if one of the attorneys can no longer act, none of the other attorneys will be able to act either, unless the donor states otherwise in their instructions.
+			</span>',
+		value: currentHowValueOptions['jointly'].value
+	},
+	'depends' : {
+		label: '<strong class="text bold-small">Jointly for some decisions, and jointly and severally for other decisions</strong>
+			<span class="text form-hint form-hint--strong">
+			Attorneys must agree unanimously on some decisions, but can make others on their own. The donor must state which decisions need to be agreed unanimously.
+			</span>',
+		value: currentHowValueOptions['depends'].value,
+		'div-attributes': {
+			'data-target': 'decisions-details'
+		}
+	}
+}%}
+
+{{ how.setOptions({
+	value_options: howValueOptions,
+	label_attributes: {'class': 'text block-label'}
+}) ? '' }}
+
+{{ how.setLabelOptions({
+	disable_html_escape: true
+}) ? '' }}
+
+{# form fields labels #}
+{{ howDetails.setOptions({label:'Details'}) ? '' }}
+
+<li id="primary-attorney-decision-sections" class="section current">
+
+	<h2 class="heading-medium accordion-header flush--top">How should the attorneys make decisions?</h2>
+
+    <div class="accordion-info">
+		<div class="text">
+			<p>The donor’s choice here is very important as it affects how their LPA can be used. Whichever option the donor chooses, the attorneys must always act in the donor’s best interests.</p>
+			<p><a class="js-guidance" href="/guide#topic-how-multiple-attorneys-make-decisions" data-journey-click="page:link:help: Get help with making this decision">Get help with making this decision</a></p>
+		</div>
+	</div>
+
+	{# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+        {{ formElement(form.getCsrf) }}
+
+		{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+
+		<div class="form-group {{ how.getMessages|length > 0 ? 'form-group-error'}}">
+			<fieldset id="how">
+	            <legend class="visually-hidden">How should the attorneys make decisions?</legend>
+
+	            <h2 class="heading-medium flush--top">How should the attorneys make decisions?</h2>
+	            
+                {{ formElementErrorsV2(how) }}
+                {{ formRadio(how) }}
+                <div id="decisions-details" class="panel panel-border-narrow js-hidden">
+                    <p class="text">
+						Please tell us which decisions the donor wants to be made jointly. These decisions will be printed on a extra sheet that the donor will need to sign and date. <a class="js-guidance" href="/guide#topic-how-multiple-attorneys-make-decisions" data-journey-click="page:link:help: Take a look at the guidance">Take a look at the guidance</a> for examples of how the donor can make their wishes clear.
+                    </p>
+                    {{ macros.formGroup(howDetails) }}
+                </div>
+	        </fieldset>
+	    </div>
+
+        <div class="form-group">
+            {{ formElement(form.get('save')) }}
+        </div>
+
+    {{ form().closeTag|raw }}
+
+</li>
+
+{% endblock %}

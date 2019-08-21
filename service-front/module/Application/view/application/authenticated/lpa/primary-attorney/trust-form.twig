@@ -1,0 +1,143 @@
+{% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
+
+{% block htmlTitle %}Attorney details - {% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Error messages #}
+{% set form = formErrorTextExchange(form,  {
+    'name' : {
+        'cannot-be-blank' : 'Enter the company\'s name',
+        'must-be-less-than-or-equal:75' : 'Enter a company name that\'s less than 76 characters long'
+    },
+    'number' : {
+        'cannot-be-blank' : 'Enter the company\'s registration number',
+        'must-be-less-than-or-equal:75' : 'Enter a registration number that\'s less than 76 characters long'
+    },
+    'email-address' : {
+        'invalid-email-address' : 'Enter a valid email address'
+    },
+    'address-address1' : {
+        'cannot-be-blank' : 'Enter the company\'s first line of address',
+        'must-be-less-than-or-equal:50' : 'Change address line 1 so that it has fewer than 51 characters'
+    },
+    'address-address2' : {
+        'linked-1-cannot-be-null' : 'Enter the company\'s second line of address',
+        'must-be-less-than-or-equal:50' : 'Change address line 2 so that it has fewer than 51 characters'
+    },
+    'address-address3' : {
+        'must-be-less-than-or-equal:50' : 'Change address line 3 so that it has fewer than 51 characters'
+    },
+    'address-postcode' : {
+        'linked-1-cannot-be-null' : 'Enter the company\'s postcode',
+        'must-be-less-than-or-equal:8' : 'This is an invalid postcode. If it\'s an overseas postcode, please include it in the address lines rather than in the postcode field.'
+    }
+}) %}
+
+{# Set form fields variables #}
+{% set companyName = form.get('name') %}
+{% set registrationNumber = form.get('number') %}
+{% set email = form.get('email-address') %}
+{% set address1 = form.get('address-address1') %}
+{% set address2 = form.get('address-address2') %}
+{% set address3 = form.get('address-address3') %}
+{% set postcode = form.get('address-postcode') %}
+
+{# form fields config #}
+{{ form.setAttributes({
+    'class':'form js-PersonForm js-PostcodeLookup'
+}) ? '' }}
+
+{{ companyName.setAttributes({
+    id: 'name',
+    class: 'form-control'
+}) ? '' }}
+
+{{ registrationNumber.setAttributes({
+    id: 'number',
+    class: 'form-control'
+}) ? '' }}
+
+{{ email.setAttributes({
+    id: 'email-address',
+    class: 'form-control'
+}) ? '' }}
+
+{{ address1.setAttributes({
+    id: 'address-address1',
+    class: 'form-control'
+}) ? ''}}
+
+{{ address2.setAttributes({
+    id: 'address-address2',
+    class: 'form-control'
+}) ? ''}}
+
+{{ address3.setAttributes({
+    id: 'address-address3',
+    class: 'form-control'
+}) ? ''}}
+
+{{ postcode.setAttributes({
+    id: 'address-postcode',
+    class: 'form-control'
+}) ? ''}}
+
+{# form fields labels #}
+{{ companyName.setOptions({label:'Company name'}) ? '' }}
+{{ registrationNumber.setOptions({label:'Registration No.'}) ? '' }}
+{{ email.setOptions({label:'Email address'}) ? '' }}
+{{ address1.setOptions({label:'Address line 1'}) ? '' }}
+{{ address2.setOptions({label:'Address line 2'}) ? '' }}
+{{ address3.setOptions({label:'Address line 3'}) ? '' }}
+{{ postcode.setOptions({label:'Postcode'}) ? '' }}
+
+<header class="popup-header">
+    <i class="icon icon-person"></i>
+    <h2 class="heading-small popup-header-title">Trust corporation details</h2>
+</header>
+
+{{ form.prepare() ? '' }}
+
+{############################ trust corp form ############################}
+
+{# Error summary #}
+{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
+
+{# Add switch attorney type link #}
+{{ macros.addSwitchAttorneyTypeLink(switchAttorneyTypeRoute, lpa, false) }}
+
+{# begin form #}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.getCsrf) }}
+
+    <h2 class="heading-medium popup-exclude">Company's details</h2>
+
+    <fieldset>
+        <legend class="visually-hidden">Add company details</legend>
+
+        {{ macros.formGroup(companyName) }}
+        {{ macros.formGroup(registrationNumber) }}
+        {{ macros.formGroup(email) }}
+
+    </fieldset>
+
+    <h2 class="heading-medium popup-exclude">What is the company's address?</h2>
+
+    <fieldset class="postcodelookup">
+        <legend class="visually-hidden">Address</legend>
+        <div class="js-PostcodeLookup__postal-add">
+            {{ macros.formGroup(address1) }}
+            {{ macros.formGroup(address2) }}
+            {{ macros.formGroup(address3) }}
+            {{ macros.formGroup(postcode) }}
+        </div>
+    </fieldset>
+
+    {{ macros.renderFormButtons(cancelUrl, backButtonUrl) }}
+
+{{ form().closeTag|raw }}
+
+{% endblock %}

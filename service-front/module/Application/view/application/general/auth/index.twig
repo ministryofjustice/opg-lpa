@@ -1,0 +1,69 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block errorSummary %}
+    {% include 'application/general/auth/partials/error-summary.twig' %}
+{% endblock %}
+
+{% block htmlTitle %}Sign in - {% endblock %}
+{% block pageTitle %}Sign in{% endblock %}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Set form fields variables #}
+{% set email = form.get('email') %}
+{% set password = form.get('password') %}
+
+{# form fields config #}
+{{ email.setAttributes({
+    id: 'email',
+    class: 'form-control'
+}) ? ''}}
+
+{{ password.setAttributes({
+    id: 'password',
+    class: 'form-control'
+}) ? '' }}
+
+{# form fields labels #}
+{{ email.setOptions({ label: 'Email address' }) ? '' }}
+{{ password.setOptions( { label: 'Password' }) ? '' }}
+
+<p>Sign in or <a href="{{ url('register') }}">create an account</a> to get started.</p>
+
+{{ systemMessage() }}
+
+{# begin form #}
+{{ form.prepare() ? '' }}
+{{ form().openTag( form )|raw }}
+
+    <fieldset>
+        <legend class="visually-hidden">Sign in</legend>
+
+        {{ macros.formGroup(email) }}
+
+        <div class="form-group {{ password.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="form-label" for="{{ password.getAttribute('id') }}">
+                {{ password.getOption('label') }}
+                {{ formElementErrorsV2(password) }}
+            </label>
+            {{ formElement(password) }}
+            <div>
+                <a href="#" class="hidden js-showHidePassword" data-for="password">Show password</a>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" name="submit" id="signin-form-submit" value="Sign in" class="button">
+        </div>
+
+    </fieldset>
+
+{{ form().closeTag|raw }}
+
+<p>
+    <a href="{{ url('forgot-password') }}">Forgotten your password?</a>
+</p>
+
+{% endblock content %}
