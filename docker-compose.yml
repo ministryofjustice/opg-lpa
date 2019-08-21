@@ -51,6 +51,86 @@ services:
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: 'LpaCache'
 
   # ---------------------------
+  # Front
+
+  front-web:
+    container_name: lpa-front-web
+    image: lpa-front-web
+    depends_on:
+      - front-app
+    build:
+      context: ./
+      dockerfile: service-front/docker/web/Dockerfile
+    environment:
+      APP_HOST: front-app
+      APP_PORT: 9000
+      NGINX_LOG_LEVEL: warn
+
+  front-app:
+    container_name: lpa-front-app
+    image: lpa-front-app
+    build:
+      context: ./
+      dockerfile: service-front/docker/app/Dockerfile
+    volumes:
+      - ./service-front:/app
+    depends_on:
+      - dynamodb
+      - localstack
+      - local-config
+    environment:
+      OPG_LPA_STACK_NAME: 'local'
+      OPG_LPA_STACK_ENVIRONMENT: 'dev'
+
+      OPG_LPA_ENDPOINTS_API: 'http://api-web'
+
+      OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE: 'Properties'
+      OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: 'Locks'
+      OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: 'Sessions'
+
+      OPG_LPA_FRONT_CSRF_SALT: 'test'
+
+      # Local only
+      AWS_ACCESS_KEY_ID: '-'
+      AWS_SECRET_ACCESS_KEY: '-'
+
+      OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
+
+      PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
+      #ENABLE_XDEBUG: 'true'
+      PHP_IDE_CONFIG: serverName=lpa-front-app
+      XDEBUG_CONFIG: remote_host=host.docker.internal remote_enable=1
+
+  front-composer:
+    image: composer
+    volumes:
+      - ./service-front:/app
+    command:
+      - install
+      - --prefer-dist
+      - --no-suggest
+      - --no-interaction
+      - --no-scripts
+      - --optimize-autoloader
+
+  front-ssl:
+    container_name: lpa-front-ssl
+    image: fsouza/docker-ssl-proxy
+    depends_on:
+      - front-web
+    ports:
+      - 7002:443
+    volumes:
+      - ./local-ssl/certs:/etc/nginx/certs
+    environment:
+      DOMAIN: 'localhost'
+      TARGET_HOST_HEADER: 'localhost:7002'
+      SSL_PORT: '443'
+      TARGET_HOST: 'front-web'
+      TARGET_PORT: '80'
+
+
+  # ---------------------------
   # API
 
   api-web:
@@ -201,7 +281,7 @@ services:
     ports:
       - 7003:443
     volumes:
-      - ./localhost-ssl/certs:/etc/nginx/certs
+      - ./local-ssl/certs:/etc/nginx/certs
     environment:
       DOMAIN: 'localhost'
       TARGET_HOST_HEADER: 'localhost:7003'
