@@ -18,7 +18,7 @@ docker-compose run pdf-composer
 docker-compose up
 ```
 
-And then after:
+After the first time, you bring up the environment with:
 ```
 docker-compose up
 ```
