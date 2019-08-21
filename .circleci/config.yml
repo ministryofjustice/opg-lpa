@@ -162,7 +162,7 @@ orbs:
           - run:
               name: Run unit tests
               command: |
-                docker run -d --name tests << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>:latest
+                docker run -d --name tests << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
                 docker exec tests docker-php-ext-enable xdebug
                 docker exec tests /app/vendor/bin/phpunit
           - ecr_login
