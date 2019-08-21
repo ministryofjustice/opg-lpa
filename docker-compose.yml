@@ -59,7 +59,7 @@ services:
     depends_on:
       - front-app
     volumes:
-      - ./service-front:/app
+      - ./service-front/public:/web
     build:
       context: ./
       dockerfile: service-front/docker/web/Dockerfile
@@ -219,7 +219,7 @@ services:
     depends_on:
       - admin-app
     volumes:
-      - ./service-admin:/app
+      - ./admin-front/public:/web
     build:
       context: ./
       dockerfile: service-admin/docker/web/Dockerfile
