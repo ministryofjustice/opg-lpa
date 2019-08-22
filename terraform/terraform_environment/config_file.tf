@@ -10,5 +10,6 @@ locals {
     account_id   = local.account_id
     cluster_name = aws_ecs_cluster.online-lpa.name
     front_fqdn   = local.front_fqdn
+    tag          = var.container_version
   }
 }
