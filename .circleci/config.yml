@@ -359,7 +359,7 @@ orbs:
           - run:
               name: Install python dependencies
               command: |
-                pip install -r ~/project/pipeline_scripts/requirements.txt
+                pip install -r ~/project/pipeline_scripts/requirements.txt --user
           - run:
               name: Wait for new tasks in services to be running
               command: |
