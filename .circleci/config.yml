@@ -311,6 +311,10 @@ orbs:
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s -auto-approve -parallelism=15 -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
                 export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
+          - persist_to_workspace:
+              root: /tmp
+              paths:
+                - environment_pipeline_tasks_config.json
 
       destroy_dev_environment:
         #
@@ -350,7 +354,6 @@ orbs:
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
         steps:
           - checkout
-          - install_webdriver
           - attach_workspace:
               at: /tmp
           - run:
