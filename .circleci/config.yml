@@ -333,21 +333,38 @@ orbs:
           - attach_workspace:
               at: /tmp
           - run:
+              name: Install python dependencies
+              command: |
+                pip install -r ~/project/pipeline_scripts/requirements.txt
+          - run:
+              name: Allow CircleCI ingress to environment
+              command: |
+                ENV_NAME=<<parameters.workspace>>
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE
+                if [ "${TF_WORKSPACE}" != "production" ]; then
+                  python ~/project/pipeline_scripts/ci_ingress_manager.py --add
+                fi              
+          - run:
               name: Wait for new tasks in services to be running
               command: |
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE              
-                sudo pip3 install boto3
-                python features/aws_ecs_task.py /tmp/cluster_config.json
+                python ~/project/pipeline_scripts/ecs_monitor.py
           - run:
               name: Run test
               command: |
-                front_fqdn=$(cat /tmp/environment_pipeline_tasks_config.json | jq .front_fqdn | xargs)
-                healthcheck_response=$(curl --write-out %{http_code} --silent --output /dev/null https://$front_fqdn/ping/json)
-                [[ $healthcheck_response == 200 ]] || (echo "Error with viewer health check. HTTP status: ${healthcheck_response}" && exit 1)
-
-
-
+                python ~/project/pipeline_scripts/healthcheck_test.py
+          - run:
+              name: Remove CircleCI ingress to environment
+              command: |
+                ENV_NAME=<<parameters.workspace>>
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE
+                if [ "${TF_WORKSPACE}" != "production" ]; then
+                  python ~/project/pipeline_scripts/ci_ingress_manager.py
+                fi
+              when: always
 
 jobs:
   slack_notify_domain:
