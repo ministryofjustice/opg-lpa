@@ -337,6 +337,12 @@ orbs:
               command: |
                 pip install -r ~/project/pipeline_scripts/requirements.txt
           - run:
+              name: Wait for new tasks in services to be running
+              command: |
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE              
+                python ~/project/pipeline_scripts/ecs_monitor.py
+          - run:
               name: Allow CircleCI ingress to environment
               command: |
                 ENV_NAME=<<parameters.workspace>>
@@ -345,12 +351,6 @@ orbs:
                 if [ "${TF_WORKSPACE}" != "production" ]; then
                   python ~/project/pipeline_scripts/ci_ingress_manager.py --add
                 fi              
-          - run:
-              name: Wait for new tasks in services to be running
-              command: |
-                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
-                echo $TF_WORKSPACE              
-                python ~/project/pipeline_scripts/ecs_monitor.py
           - run:
               name: Run test
               command: |
