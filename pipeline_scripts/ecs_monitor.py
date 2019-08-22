@@ -45,7 +45,7 @@ class ECSMonitor:
         )
         self.aws_iam_session = session
 
-    def get_task_status():
+    def get_task_status(self):
         try:
             print("Checking for services to settle...")
             waiter = self.aws_ecs_client.get_waiter('services_stable')
@@ -70,7 +70,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="Wait for services in an ECS cluster to become stable.")
 
-    parser.add_argument("config_file_path", type=str,
+    parser.add_argument("config_file_path", nargs='?', default="/tmp/environment_pipeline_tasks_config.json", type=str,
                         help="Path to config file produced by terraform")
 
     args = parser.parse_args()
