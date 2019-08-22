@@ -49,6 +49,12 @@ workflows:
           filters:
             branches:
               ignore: master
+      - infrastructure_and_deployment/run_healthcheck_test:
+          name: test_healthcheck
+          requires: [dev_environment_apply_terraform]
+          filters:
+            branches:
+              ignore: master
       # This step is commented out at the moment because of a bug in the
       #  slack orb. PR to fix this is https://github.com/CircleCI-Public/slack-orb/pull/72
       # - slack_notify_domain:
@@ -85,6 +91,14 @@ workflows:
             branches:
               only: master              
 
+      - infrastructure_and_deployment/run_healthcheck_test:
+          name: test_healthcheck_preprod
+          requires: [preprod_environment_apply_terraform]
+          workspace: preproduction
+          filters:
+            branches:
+              only: master              
+
       - infrastructure_and_deployment/apply_account_terraform:
           name: prod_account_apply_terraform
           workspace: production
@@ -100,6 +114,13 @@ workflows:
             branches:
               only: master                       
               
+      - infrastructure_and_deployment/run_healthcheck_test:
+          name: test_healthcheck_prod
+          requires: [preprod_environment_apply_terraform]
+          workspace: production
+          filters:
+            branches:
+              only: master              
 
 orbs:
   slack: circleci/slack@3.3.0
