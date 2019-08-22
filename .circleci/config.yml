@@ -148,7 +148,7 @@ orbs:
               name: Build app container
               command: |
                 docker build -f << parameters.service_path >>/docker/app/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
-
+          
           - ecr_login
           - run:
               name: Push web container
