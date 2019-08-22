@@ -148,12 +148,6 @@ orbs:
               name: Build app container
               command: |
                 docker build -f << parameters.service_path >>/docker/app/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
-          - run:
-            name: Run unit tests
-            command: |
-                docker run -d --name tests << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
-                docker exec tests docker-php-ext-enable xdebug
-                docker exec tests /app/vendor/bin/phpunit
 
           - ecr_login
           - run:
