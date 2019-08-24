@@ -445,4 +445,4 @@ jobs:
             export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)" >> $BASH_ENV
       - slack/notify:
           title: "$TF_WORKSPACE Environment Ready"
-          message: "front url: https://${FRONT_DOMAIN}, \nadmin url: https://${ADMIN_DOMAIN}"
+          message: "front url: https://$FRONT_DOMAIN, \nadmin url: https://$ADMIN_DOMAIN"
