@@ -219,6 +219,18 @@ orbs:
           - run:
               name: Install AWS CLI
               command: sudo pip3 install awscli --upgrade
+      install_terraform:
+        steps:
+          - run:
+              name: Install Terraform
+              command: |
+                export TERRAFORM_VERSION=0.12.5
+                export TERRAFORM_SHA256SUM=babb4a30b399fb6fc87a6aa7435371721310c2e2102a95a763ef2c979ab06ce2
+                curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+                echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS
+                sha256sum -c --status terraform_${TERRAFORM_VERSION}_SHA256SUMS
+                sudo unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /bin
+                rm -f terraform_${TERRAFORM_VERSION}_linux_amd64.zip
     executors:
       python:
         docker: [image: circleci/python]
@@ -360,11 +372,7 @@ orbs:
         #
         # Checks the health check is returning 200
         #
-        docker:
-          # Primary container image where all steps run.
-          - image: circleci/python
-          # Secondary container image on common network.
-          - image: hashicorp/terraform:0.12.5
+        executor: python
         parameters:
           workspace:
             description: Terraform workspace name
@@ -378,6 +386,7 @@ orbs:
               name: Install python dependencies
               command: |
                 pip install -r ~/project/pipeline_scripts/requirements.txt --user
+          - install_terraform
           - run:
               name: Wait for new tasks in services to be running
               command: |
