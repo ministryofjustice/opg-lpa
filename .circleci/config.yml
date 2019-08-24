@@ -249,9 +249,9 @@ orbs:
         steps:
           - checkout
           - run: apk add zip
-          - run: pip3 install -r ~/project/terraform/workspace_destroyer/lambda/requirements.txt  --target ~/project/terraform/workspace_destroyer/lambda/vendor
-          - run: cd ~/project/terraform/workspace_destroyer/lambda/vendor; zip -r9 /tmp/lambda_function_payload.zip .
-          - run: cd ~/project/terraform/workspace_destroyer/lambda; zip -g /tmp/lambda_function_payload.zip service.py
+          - run: pip3 install -r ~/project/workspace_destroyer_lambda/lambda/requirements.txt  --target ~/project/workspace_destroyer_lambda/lambda/vendor
+          - run: cd ~/project/workspace_destroyer_lambda/lambda/vendor; zip -r9 /tmp/lambda_function_payload.zip .
+          - run: cd ~/project/workspace_destroyer_lambda/lambda; zip -g /tmp/lambda_function_payload.zip service.py
           - persist_to_workspace:
               root: /tmp
               paths:
@@ -274,7 +274,7 @@ orbs:
               name: Validate Account Terraform
               command: |
                 terraform --version
-                cd ~/project/terraform/account
+                cd ~/project/terraform/terraform_account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
@@ -284,7 +284,7 @@ orbs:
               command: |
                 export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
                 echo $SHORT_HASH
-                cd ~/project/terraform/environment
+                cd ~/project/terraform/terraform_environment
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
@@ -306,7 +306,7 @@ orbs:
           - run:
               name: Apply Account Terraform
               command: |
-                cd ~/project/terraform/account
+                cd ~/project/terraform/terraform_account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=<<parameters.workspace>>
                 echo $TF_WORKSPACE
@@ -332,7 +332,7 @@ orbs:
                 ENV_NAME=<<parameters.workspace>>
                 export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
                 echo $SHORT_HASH
-                cd ~/project/terraform/environment
+                cd ~/project/terraform/terraform_environment
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
@@ -363,7 +363,7 @@ orbs:
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
                 if [ "${CIRCLE_BRANCH}" != "master" ]; then
-                  cd ~/project/terraform/environment
+                  cd ~/project/terraform/terraform_environment
                   terraform init -lock-timeout=300s
                   export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                   echo $TF_WORKSPACE
@@ -399,7 +399,7 @@ orbs:
               command: |
                 if [ <<parameters.workspace>> != "production" ]; then
                   ENV_NAME=<<parameters.workspace>>
-                  cd ~/project/terraform/ingress
+                  cd ~/project/terraform/account_ingress
                   terraform init -lock-timeout=300s
                   export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                   echo $TF_WORKSPACE
@@ -414,7 +414,7 @@ orbs:
               command: |
                 if [ <<parameters.workspace>> != "production" ]; then
                   ENV_NAME=<<parameters.workspace>>
-                  cd ~/project/terraform/ingress
+                  cd ~/project/terraform/account_ingress
                   terraform init -lock-timeout=300s
                   export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                   echo $TF_WORKSPACE
