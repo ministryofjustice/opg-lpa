@@ -347,6 +347,7 @@ orbs:
         # Checks the health check is returning 200
         #
         executor: python
+        executor: terraform
         parameters:
           workspace:
             description: Terraform workspace name
@@ -367,14 +368,16 @@ orbs:
                 echo $TF_WORKSPACE              
                 python ~/project/pipeline_scripts/ecs_monitor.py
           - run:
-              name: Allow CircleCI ingress to environment
+              name: Add CircleCI ingress to environment
               command: |
-                ENV_NAME=<<parameters.workspace>>
-                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
-                echo $TF_WORKSPACE
-                if [ "${TF_WORKSPACE}" != "production" ]; then
-                  python ~/project/pipeline_scripts/ci_ingress_manager.py --add
-                fi              
+                if [ <<parameters.workspace>> != "production" ]; then
+                  ENV_NAME=<<parameters.workspace>>
+                  cd ~/project/terraform/account_ingress
+                  terraform init -lock-timeout=300s
+                  export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                  echo $TF_WORKSPACE
+                  terraform apply -lock-timeout=300s -auto-approve
+                fi
           - run:
               name: Run test
               command: |
@@ -382,11 +385,13 @@ orbs:
           - run:
               name: Remove CircleCI ingress to environment
               command: |
-                ENV_NAME=<<parameters.workspace>>
-                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
-                echo $TF_WORKSPACE
-                if [ "${TF_WORKSPACE}" != "production" ]; then
-                  python ~/project/pipeline_scripts/ci_ingress_manager.py
+                if [ <<parameters.workspace>> != "production" ]; then
+                  ENV_NAME=<<parameters.workspace>>
+                  cd ~/project/terraform/account_ingress
+                  terraform init -lock-timeout=300s
+                  export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                  echo $TF_WORKSPACE
+                  terraform destroy -lock-timeout=300s -auto-approve
                 fi
               when: always
 
