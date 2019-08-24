@@ -45,7 +45,14 @@ workflows:
               ignore: master
       - infrastructure_and_deployment/apply_environment_terraform:
           name: dev_environment_apply_terraform
-          requires: [dev_account_apply_terraform, front_docker_build, admin_docker_build, api_docker_build, pdf_docker_build]
+          requires:
+            [
+              dev_account_apply_terraform,
+              front_docker_build,
+              admin_docker_build,
+              api_docker_build,
+              pdf_docker_build,
+            ]
           filters:
             branches:
               ignore: master
@@ -65,7 +72,7 @@ workflows:
       #         ignore: master
       - hold-for-destruction:
           name: hold_env_for_destruction
-          type: approval 
+          type: approval
           requires: [dev_environment_apply_terraform]
           filters:
             branches:
@@ -85,11 +92,18 @@ workflows:
               only: master
       - infrastructure_and_deployment/apply_environment_terraform:
           name: preprod_environment_apply_terraform
-          requires: [preprod_account_apply_terraform, front_docker_build, admin_docker_build, api_docker_build, pdf_docker_build]
+          requires:
+            [
+              preprod_account_apply_terraform,
+              front_docker_build,
+              admin_docker_build,
+              api_docker_build,
+              pdf_docker_build,
+            ]
           workspace: preproduction
           filters:
             branches:
-              only: master              
+              only: master
 
       - infrastructure_and_deployment/run_healthcheck_test:
           name: test_healthcheck_preprod
@@ -97,7 +111,7 @@ workflows:
           workspace: preproduction
           filters:
             branches:
-              only: master              
+              only: master
 
       - infrastructure_and_deployment/apply_account_terraform:
           name: prod_account_apply_terraform
@@ -112,15 +126,15 @@ workflows:
           workspace: production
           filters:
             branches:
-              only: master                       
-              
+              only: master
+
       - infrastructure_and_deployment/run_healthcheck_test:
           name: test_healthcheck_prod
           requires: [preprod_environment_apply_terraform]
           workspace: production
           filters:
             branches:
-              only: master              
+              only: master
 
 orbs:
   slack: circleci/slack@3.3.0
@@ -143,7 +157,7 @@ orbs:
                 eval $(aws ecr get-login --no-include-email --region=eu-west-1)
     executors:
       python:
-        docker: 
+        docker:
           - image: circleci/python
     jobs:
       checkout_docker_build_push_web-app:
@@ -151,7 +165,7 @@ orbs:
         parameters:
           ecr_url:
             type: string
-            default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com  
+            default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com
           ecr_repository_name_prefix:
             type: string
             description: The ecr repo name up to _app or _web. These will be assumed to be present and added by the job.
@@ -216,7 +230,7 @@ orbs:
         docker: [image: hashicorp/terraform:0.12.5]
     jobs:
       #----------------------------------------------------
-      # Lambda      
+      # Lambda
       package_lambda_artifact:
         executor: python-build
         steps:
@@ -341,13 +355,16 @@ orbs:
                   export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
-                fi      
+                fi
       run_healthcheck_test:
         #
         # Checks the health check is returning 200
         #
-        executor: python
-        executor: terraform
+        docker:
+          # Primary container image where all steps run.
+          - image: circleci/python
+          # Secondary container image on common network.
+          - image: hashicorp/terraform:0.12.5
         parameters:
           workspace:
             description: Terraform workspace name
@@ -421,4 +438,4 @@ jobs:
             bash
       - slack/notify:
           title: Environment Ready
-          message: '${ENV_DOMAINS}'
+          message: "${ENV_DOMAINS}"
