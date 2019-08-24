@@ -439,10 +439,10 @@ jobs:
           name: Get URLs
           command: |
             ENV_NAME=<<parameters.workspace>>
-            'export TF_WORKSPACE=${ENV_NAME:0:13}' >> $BASH_ENV
-            'echo '$TF_WORKSPACE
-            'export FRONT_DOMAIN="$(jq -r .front_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
-            'export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
+            echo 'export TF_WORKSPACE=${ENV_NAME:0:13}' >> $BASH_ENV
+            echo $TF_WORKSPACE
+            echo 'export FRONT_DOMAIN="$(jq -r .front_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
+            echo 'export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
       - slack/notify:
           title: "$TF_WORKSPACE Environment Ready"
           message: "front url: https://$FRONT_DOMAIN \nadmin url: https://$ADMIN_DOMAIN"
