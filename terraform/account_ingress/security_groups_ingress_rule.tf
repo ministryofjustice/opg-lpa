@@ -15,7 +15,7 @@ data "aws_security_group" "admin_loadbalancer" {
 }
 
 resource "aws_security_group_rule" "admin_ci_ingress" {
-  count             = local.environment == "production" ? 0 : 1
+  count             = local.account.allow_ingress_modification ? 1 : 0
   type              = "ingress"
   from_port         = 443
   to_port           = 443
@@ -30,7 +30,7 @@ data "aws_security_group" "front_loadbalancer" {
 }
 
 resource "aws_security_group_rule" "front_ci_ingress" {
-  count             = local.environment == "production" ? 0 : 1
+  count             = local.account.allow_ingress_modification ? 1 : 0
   type              = "ingress"
   from_port         = 443
   to_port           = 443
