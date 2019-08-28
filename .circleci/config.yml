@@ -127,7 +127,7 @@ workflows:
 
       - infrastructure_and_deployment/run_healthcheck_test:
           name: test_healthcheck_prod
-          requires: [preprod_environment_apply_terraform]
+          requires: [prod_environment_apply_terraform]
           workspace: production
           filters:
             branches:
