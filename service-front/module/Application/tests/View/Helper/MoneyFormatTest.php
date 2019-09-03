@@ -18,7 +18,7 @@ class MoneyFormatTest extends MockeryTestCase
 
     public function testInvokeCeil():void
     {
-        $amount= 50.55;
+        $amount= 50.54;
         $moneyFormat = new MoneyFormat();
         $result = $moneyFormat($amount);
 
