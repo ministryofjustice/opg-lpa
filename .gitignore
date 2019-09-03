@@ -13,3 +13,4 @@ node_modules/
 **queue_config.json
 async_destroy_lambda/lambdas/vendor
 **lambda_function_payload.zip
+terraform/account_ingress/terraform.tfstate*
