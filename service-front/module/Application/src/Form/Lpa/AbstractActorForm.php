@@ -57,8 +57,6 @@ abstract class AbstractActorForm extends AbstractLpaForm
 
         $messages = [];
 
-
-
         //  If there are any errors then map them across if required
         if ($validation->hasErrors()) {
             // set validation message for form elements
@@ -127,7 +125,6 @@ abstract class AbstractActorForm extends AbstractLpaForm
         if (isset($dataForModel['name']) && is_array($dataForModel['name']) && ($dataForModel['name']['title'] == "") && ($dataForModel['name']['first'] == "") && ($dataForModel['name']['last'] == "")) {
             $dataForModel['name'] = null;
         }
-
 
         // If they have opted not to enter a title, set it to null
         if (isset($dataForModel['name']['title']) && ($dataForModel['name']['title'] == self::PREFER_NOT_TO_SAY_TITLE)) {
