@@ -16,6 +16,10 @@ class StatsTest extends AbstractServiceTest
 
         //Return 1 for all counts to aid mocking db calls
         $apiLpaCollection->shouldReceive('countBetween')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countWaitingBetween')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countReceivedBetween')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countCheckedBetween')->andReturn(1);
+        $apiLpaCollection->shouldReceive('countReturnedBetween')->andReturn(1);
         $apiLpaCollection->shouldReceive('countStartedForType')->andReturn(1);
         $apiLpaCollection->shouldReceive('countCreatedForType')->andReturn(1);
         $apiLpaCollection->shouldReceive('countWaitingForType')->andReturn(1);

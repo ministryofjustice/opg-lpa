@@ -141,9 +141,27 @@
                         {% endfor %}
                     </tr>
                     <tr>
-                        <td>Completed LPAs</td>
+                        <td>Waiting LPAs</td>
                         {% for month,values in lpas['by-month'] %}
-                            <td class="numeric">{{ values.completed }}</td>
+                            <td class="numeric">{{ values.waiting }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Received LPAs</td>
+                        {% for month,values in lpas['by-month'] %}
+                            <td class="numeric">{{ values.received }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>LPAs being checked</td>
+                        {% for month,values in lpas['by-month'] %}
+                            <td class="numeric">{{ values.checking }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Returned LPAs</td>
+                        {% for month,values in lpas['by-month'] %}
+                            <td class="numeric">{{ values.returned }}</td>
                         {% endfor %}
                     </tr>
                 </tbody>
