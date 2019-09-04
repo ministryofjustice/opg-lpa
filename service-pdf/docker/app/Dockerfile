@@ -10,7 +10,9 @@ FROM php:7-cli
 RUN apt-get -y update \
     && mkdir -p /usr/share/man/man1 \
     && apt-get -y install pdftk \
-    && apt-get -y clean
+    && apt-get -y clean \
+    && pecl install xdebug \ 
+    && pecl clear-cache
 
 COPY service-pdf /app
 COPY --from=composer /app/vendor /app/vendor
