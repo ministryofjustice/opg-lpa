@@ -8,6 +8,6 @@ class MoneyFormat extends AbstractHelper
     public function __invoke( $amount )
     {
         // If the amount it a round number, just output pounds. Otherwise include pence.
-        return ( floor( $amount ) == $amount ) ? $amount : money_format('%i', $amount);
+        return ( floor( $amount ) == $amount ) ? $amount : number_format( $amount, 2);
     }
 }
