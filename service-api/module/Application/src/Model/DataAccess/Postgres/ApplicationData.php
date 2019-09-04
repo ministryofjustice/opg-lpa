@@ -390,6 +390,22 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     }
 
     /**
+     * Count the number of LPAs waiting for a given LPA type
+     *
+     * @param $lpaType
+     * @return int
+     */
+    public function countWaitingForType(string $lpaType) : int
+    {
+        $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
+        return $this->count([
+            new IsNotNull('completedAt'),
+            new Operator('completedAt', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $trackFromDate->format('c')),
+            new Expression("document ->> 'type' = ?", $lpaType),
+        ]);
+    }
+
+    /**
      * Count the number of LPAs completed for a given LPA type
      *
      * @param $lpaType
@@ -397,8 +413,58 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function countCompletedForType(string $lpaType) : int
     {
+        {
+            $trackFromDate = new DateTime($this->config()['processing-status']['track-from-date']);
+            return $this->count([
+                new IsNotNull('completedAt'),
+                new Operator('completedAt', Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $trackFromDate->format('c')),
+                new Expression("document ->> 'type' = ?", $lpaType),
+            ]);
+        }
+    }
+
+    /**
+     * Count the number of LPAs being checked for a given LPA type
+     *
+     * @param $lpaType
+     * @return int
+     */
+    public function countCheckingForType(string $lpaType) : int
+    {
         return $this->count([
             new IsNotNull('completedAt'),
+            new Expression("metadata ->> 'sirius-processing-status' = ?", Lpa::SIRIUS_PROCESSING_STATUS_CHECKING),
+            new Expression("document ->> 'type' = ?", $lpaType),
+        ]);
+    }
+
+    /**
+     * Count the number of LPAs received for a given LPA type
+     *
+     * @param $lpaType
+     * @return int
+     */
+    public function countReceivedForType(string $lpaType) : int
+    {
+        return $this->count([
+            new IsNotNull('completedAt'),
+            new Expression("metadata ->> 'sirius-processing-status' = ?", Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED),
+            new Expression("document ->> 'type' = ?", $lpaType),
+        ]);
+    }
+
+    /**
+     * Count the number of LPAs returned for a given LPA type
+     *
+     * @param $lpaType
+     * @return int
+     */
+    public function countReturnedForType(string $lpaType) : int
+    {
+        return $this->count([
+            new IsNotNull('completedAt'),
+            new Expression("metadata ->> 'sirius-processing-status' = ?", Lpa::SIRIUS_PROCESSING_STATUS_RETURNED),
+            new Expression("metadata ->> 'application-rejected-date' IS NOT NULL"),
             new Expression("document ->> 'type' = ?", $lpaType),
         ]);
     }

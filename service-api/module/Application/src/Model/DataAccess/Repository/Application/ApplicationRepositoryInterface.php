@@ -93,6 +93,38 @@ interface ApplicationRepositoryInterface {
     public function countCreatedForType(string $lpaType) : int;
 
     /**
+     * Count the number of LPAs waiting for a given LPA type
+     *
+     * @param $lpaType
+     * @return int
+     */
+    public function countWaitingForType(string $lpaType) : int;
+
+    /**
+     * Count the number of LPAs being checked for a given LPA type
+     *
+     * @param $lpaType
+     * @return int
+     */
+    public function countCheckingForType(string $lpaType) : int;
+
+    /**
+     * Count the number of LPAs received for a given LPA type
+     *
+     * @param $lpaType
+     * @return int
+     */
+    public function countReceivedForType(string $lpaType) : int;
+
+    /**
+     * Count the number of LPAs returned for a given LPA type
+     *
+     * @param $lpaType
+     * @return int
+     */
+    public function countReturnedForType(string $lpaType) : int;
+
+    /**
      * Count the number of LPAs completed for a given LPA type
      *
      * @param $lpaType

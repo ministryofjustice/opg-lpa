@@ -101,8 +101,6 @@ class StatusController extends AbstractRestfulController
         }
     }
 
-
-
     public function getCurrentProcessingStatus($id)
     {
         $lpaResult = $this->getService()->fetch($id, $this->routeUserId);
@@ -121,7 +119,22 @@ class StatusController extends AbstractRestfulController
         return $currentProcessingStatus;
     }
 
-    private function updateMetadata($lpaId, $lpaStatus)
+    public function getApplicationRejectedDate($id)
+    {
+        $lpaResult = $this->getService()->fetch($id, $this->routeUserId);
+        if ($lpaResult instanceof ApiProblem) {
+            $this->getLogger()->err('Error accessing LPA data: ' . $lpaResult->getDetail());
+            return $lpaResult;
+        }
+        /** @var Lpa $lpa */
+        $metaData = $lpaResult->getData()->getMetaData();
+
+        $applicationRejectedDate = array_key_exists(LPA::APPLICATION_REJECTED_DATE, $metaData) ?
+            $metaData[LPA::APPLICATION_REJECTED_DATE] : null;
+        return $applicationRejectedDate;
+    }
+
+    private function updateMetadata($lpaId, $lpaStatus, $rejectedDate = null)
     {
         $lpaResult = $this->getService()->fetch($lpaId, $this->routeUserId);
 
@@ -136,6 +149,7 @@ class StatusController extends AbstractRestfulController
 
         // Update metadata in DB
         $metaData[LPA::SIRIUS_PROCESSING_STATUS] = $lpaStatus;
+        $metaData[LPA::APPLICATION_REJECTED_DATE] = $rejectedDate;
         $this->getService()->patch(['metadata' => $metaData], $lpaId, $this->routeUserId);
 
     }
@@ -165,6 +179,7 @@ class StatusController extends AbstractRestfulController
 
         foreach ($exploded_ids as $id) {
             $currentProcessingStatus = $this->getCurrentProcessingStatus($id);
+            $rejectedDate = $this->getApplicationRejectedDate($id);
 
             if ($currentProcessingStatus instanceof ApiProblem) {
                 $results[$id] = ['found' => false];
@@ -177,33 +192,50 @@ class StatusController extends AbstractRestfulController
                 $results[$id] = ['found' => true, 'status' => $currentProcessingStatus];
             }
 
-            //Add id's to array, to check updates in Sirius for applications that has not reached the last stage of processing.
-            if ($currentProcessingStatus != Lpa::SIRIUS_PROCESSING_STATUS_RETURNED) {
+            //Add id's to array, to check updates in Sirius for applications. Only add to array if rejected date is empty for Returned applications.
+            if (($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED && is_null($rejectedDate)) ||
+                $currentProcessingStatus != Lpa::SIRIUS_PROCESSING_STATUS_RETURNED ) {
                 $idsToCheckInSirius[] = $id;
+            }
+            else{
+                $results[$id] = ['found' => true, 'status' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED];
+                continue;
             }
         }
         // Get status update from Sirius
         if (!empty($idsToCheckInSirius )) {
 
-            $siriusStatusResult = $this->processingStatusService->getStatuses($idsToCheckInSirius);
+            $this->getLogger()->debug('Ids to check in Sirius :' . var_export($idsToCheckInSirius, true));
+            $siriusResponseArray = $this->processingStatusService->getStatuses($idsToCheckInSirius);
 
-            if (!empty($siriusStatusResult))
+            if (!empty($siriusResponseArray))
             {
                 // updates the results for the status received back from Sirius
-                foreach ($siriusStatusResult as $lpaId => $lpaStatus)
+                foreach ($siriusResponseArray as $lpaId => $lpaDetail)
                 {
                     // If there was a status returned
-                    if ($lpaStatus != null) {
+                    if (count($lpaDetail) > 0 ) {
+
                         $currentResult = $results[$lpaId];
                         $currentProcessingStatus = $currentResult['found'] ? $currentResult['status'] : null;
 
+                        $rejectDate = isset($lpaDetail['rejectedDate']) ? $lpaDetail['rejectedDate'] : null;
+
                         // If it doesn't match what we already have update the database
-                        if ($lpaStatus != $currentProcessingStatus) {
+                        if ((!is_null($lpaDetail['status']) && $lpaDetail['status'] != $currentProcessingStatus) || !is_null($rejectDate)) {
 
-                            $this->updateMetadata($lpaId, $lpaStatus);
+                            $this->updateMetadata($lpaId, $lpaDetail['status'],$rejectDate);
+                            $results[$lpaId] = ['found' => true, 'status' => $lpaDetail['status'], 'rejectedDate' => $rejectDate];
                         }
-
-                        $results[$lpaId] = ['found' => true, 'status' => $lpaStatus];
+                        else if (!is_null($lpaDetail['status']) && $lpaDetail['status'] == $currentProcessingStatus){
+                            $results[$lpaId] = ['found' => true, 'status' => $currentProcessingStatus, 'rejectedDate' => $rejectDate];
+                        }
+                        else if(is_null($lpaDetail['status']) && !is_null($currentProcessingStatus) && is_null($rejectDate)){
+                            $results[$lpaId] = ['found' => true, 'status' => $currentProcessingStatus, 'rejectedDate' => null];
+                        }
+                        else {
+                            $results[$lpaId] = ['found' => false];
+                        }
                     }
                 }
             }

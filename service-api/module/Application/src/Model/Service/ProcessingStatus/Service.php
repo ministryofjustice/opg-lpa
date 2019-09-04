@@ -73,7 +73,7 @@ class Service extends AbstractService
     {
         // build request loop
         $requests = [];
-        $successStatus = [];
+        $siriusResponseArray = [];
 
         $provider = CredentialProvider::defaultProvider();
         $credentials = $provider()->wait();
@@ -120,13 +120,13 @@ class Service extends AbstractService
 
             switch ($statusCode) {
                 case 200:
-                    $status = $this->handleResponse($result);
-                    $successStatus[$lpaId] = $status;
+                    $response = $this->handleResponse($result);
+                    $siriusResponseArray[$lpaId] = $response;
                     break;
 
                 case 404:
                     // A 404 represents that details for the passed ID could not be found
-                    $successStatus[$lpaId] = null;
+                    $siriusResponseArray[$lpaId] = null;
                     break;
 
                 default:
@@ -136,7 +136,7 @@ class Service extends AbstractService
             } //end switch
         } //end for
 
-        return $successStatus;
+        return $siriusResponseArray;
     }
 
     /**
@@ -156,20 +156,25 @@ class Service extends AbstractService
 
     private function handleResponse(ResponseInterface $result)
     {
-            $status = json_decode($result->getBody(), true);
+        $responseBody = json_decode($result->getBody(), true);
 
-            if (is_null($status)){
-                return null;
-            }
+        if (is_null($responseBody)){
+            return null;
+        }
 
-            //  If the body isn't an array now then it wasn't JSON before
-            if (!is_array($status)) {
-                throw new ApiProblemException($result, 'Malformed JSON response from server');
-            }
+        //  If the body isn't an array now then it wasn't JSON before
+        if (!is_array($responseBody)) {
+            throw new ApiProblemException($result, 'Malformed JSON response from server');
+        }
 
-            if (!$status['status']) {
-                return null;
-            }
-            return self::SIRIUS_STATUS_TO_LPA[$status['status']];
+        $return = [];
+        if (isset($responseBody['rejectedDate'])){
+            $return['rejectedDate'] = $responseBody['rejectedDate'];
+        }
+        if (isset($responseBody['status'])) {
+            $return['status'] = self::SIRIUS_STATUS_TO_LPA[$responseBody['status']];
+        }
+        return $return;
+
     }
 }
