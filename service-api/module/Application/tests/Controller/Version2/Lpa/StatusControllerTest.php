@@ -71,6 +71,8 @@ class StatusControllerTest extends AbstractControllerTest
                 [
                     'metadata' => [
                         'sirius-processing-status' => 'Returned',
+                        'application-receipt-date' => null,
+                        'application-registration-date' => null,
                         'application-rejected-date' => new DateTime('2019-02-11')
                     ]
                 ], '98765', '12345'
@@ -81,7 +83,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json(
             [
                 98765 => [
-                    'found' => true, 'status' => 'Returned', 'rejectedDate'  => new DateTime('2019-02-11')
+                    'found' => true, 'status' => 'Returned','receiptDate' => null, 'registrationDate' => null, 'rejectedDate'  => new DateTime('2019-02-11')
                 ]
             ]
         ), $result);
@@ -109,6 +111,8 @@ class StatusControllerTest extends AbstractControllerTest
                 [
                     'metadata' => [
                         'sirius-processing-status' => 'Returned',
+                        'application-registration-date' => null,
+                        'application-receipt-date' => null,
                         'application-rejected-date' => new DateTime('2019-02-11')
                     ]
                 ], '98765', '12345'
@@ -117,7 +121,93 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json(
             [
                 98765 => [
-                    'found' => true, 'status' => 'Returned', 'rejectedDate'  => new DateTime('2019-02-11')
+                    'found' => true, 'status' => 'Returned', 'receiptDate' => null, 'registrationDate' => null,'rejectedDate'  => new DateTime('2019-02-11')
+                ]
+            ]
+        ), $result);
+    }
+
+    public function testGetWithUpdatesOnValidCaseWithSameStatusDateReturn()
+    {
+        $this->statusController->onDispatch($this->mvcEvent);
+
+        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
+            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Received']]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->service->shouldReceive('fetch')
+            ->withArgs(['98765', '12345'])
+            ->atMost()->times(3)
+            ->andReturn($dataModel);
+
+        $this->processingStatusService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn([
+                '98765' => ['status' => 'Received' , 'receiptDate' => new DateTime('2019-02-11')]
+            ]);
+
+        $this->service->shouldReceive('patch')
+            ->withArgs([
+                [
+                    'metadata' => [
+                        'sirius-processing-status' => 'Received',
+                        'application-registration-date' => null ,
+                        'application-receipt-date' => new DateTime('2019-02-11'),
+                        'application-rejected-date' => null
+                    ]
+                ], '98765', '12345'
+            ])->once();
+
+        $result = $this->statusController->get('98765');
+
+        $this->assertEquals(new Json(
+            [
+                98765 => [
+                    'found' => true, 'status' => 'Received', 'receiptDate'  => new DateTime('2019-02-11'), 'registrationDate' => null, 'rejectedDate' => null
+                ]
+            ]
+        ), $result);
+    }
+
+    public function testGetWithUpdatesOnValidCaseWithDateReturn()
+    {
+        $this->statusController->onDispatch($this->mvcEvent);
+
+        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
+            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Checking']]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->service->shouldReceive('fetch')
+            ->withArgs(['98765', '12345'])
+            ->atMost()->times(3)
+            ->andReturn($dataModel);
+
+        $this->processingStatusService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn([
+                '98765' => ['status' => 'Checking' , 'registrationDate' => new DateTime('2019-02-11')]
+            ]);
+
+        $this->service->shouldReceive('patch')
+            ->withArgs([
+                [
+                    'metadata' => [
+                        'sirius-processing-status' => 'Checking',
+                        'application-registration-date' => new DateTime('2019-02-11'),
+                        'application-receipt-date' => null,
+                        'application-rejected-date' => null
+                    ]
+                ], '98765', '12345'
+            ])->once();
+
+        $result = $this->statusController->get('98765');
+
+        $this->assertEquals(new Json(
+            [
+                98765 => [
+                    'found' => true, 'status' => 'Checking','receiptDate' => null,'registrationDate'  => new DateTime('2019-02-11'), 'rejectedDate' => null
                 ]
             ]
         ), $result);
@@ -126,23 +216,30 @@ class StatusControllerTest extends AbstractControllerTest
     public function testGetWithUpdatesOnRejectDateForReturnedCase()
     {
         $this->statusController->onDispatch($this->mvcEvent);
+
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
             'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Returned']]);
+
         $dataModel = new DataModelEntity($lpa);
+
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
             ->atMost()->times(3)
             ->andReturn($dataModel);
+
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
                 '98765' => ['status' => 'Returned' , 'rejectedDate' => new DateTime('2019-02-11')]
             ]);
+
         $this->service->shouldReceive('patch')
             ->withArgs([
                 [
                     'metadata' => [
                         'sirius-processing-status' => 'Returned',
+                        'application-registration-date' => null,
+                        'application-receipt-date' => null,
                         'application-rejected-date' => new DateTime('2019-02-11')
                     ]
                 ], '98765', '12345'
@@ -153,7 +250,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json(
             [
                 98765 => [
-                    'found' => true, 'status' => 'Returned', 'rejectedDate'  => new DateTime('2019-02-11')
+                    'found' => true, 'status' => 'Returned','receiptDate' => null, 'registrationDate' => null,  'rejectedDate'  => new DateTime('2019-02-11')
                 ]
             ]
         ), $result);
@@ -219,18 +316,30 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->twice()
+            ->atMost()->times(3)
             ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Checking','rejectedDate' => null]
+                '98765' => ['status' => 'Checking','registrationDate' => new DateTime('2019-02-11')]
             ]);
+
+        $this->service->shouldReceive('patch')
+            ->withArgs([
+                [
+                    'metadata' => [
+                        'sirius-processing-status' => 'Checking',
+                        'application-registration-date' => new DateTime('2019-02-11') ,
+                        'application-receipt-date' => null,
+                        'application-rejected-date' => null
+                    ]
+                ], '98765', '12345'
+            ])->once();
 
         $result = $this->statusController->get('98765');
 
-        $this->assertEquals(new Json(['98765' => ['found' => true, 'status' => 'Checking', 'rejectedDate' => null ]]), $result);
+        $this->assertEquals(new Json(['98765' => ['found' => true, 'status' => 'Checking', 'receiptDate' => null,'registrationDate' => new DateTime('2019-02-11'), 'rejectedDate' => null ]]), $result);
     }
 
     public function testGetNotFoundInDB()
@@ -240,7 +349,6 @@ class StatusControllerTest extends AbstractControllerTest
             ->twice()
             ->andReturn(new ApiProblem(500, 'Test error'));
         $result = $this->statusController->get('98765');
-
         $this->assertEquals(new Json(['98765' => ['found' => false]]), $result);
     }
 
@@ -272,7 +380,9 @@ class StatusControllerTest extends AbstractControllerTest
     public function testMultipleStatusUpdateOnValidCases()
     {
         $this->statusController->onDispatch($this->mvcEvent);
-        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'), 'metadata' => []]);
+
+        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
+            'metadata' => []]);
 
         $dataModel = new DataModelEntity($lpa);
 
@@ -290,7 +400,7 @@ class StatusControllerTest extends AbstractControllerTest
             ->once()
             ->andReturn([
                 '98765' => ['status' => 'Returned', 'rejectedDate' => new DateTime('2019-02-11')],
-                '98766' => ['status' => 'Received', 'rejectedDate' => null]
+                '98766' => ['status' => 'Received', 'receiptDate' => new DateTime('2019-02-11')]
             ]);
 
         $this->service->shouldReceive('patch')
@@ -298,6 +408,8 @@ class StatusControllerTest extends AbstractControllerTest
                 [
                     'metadata' => [
                         'sirius-processing-status' => 'Returned',
+                        'application-registration-date' => null,
+                        'application-receipt-date' => null,
                         'application-rejected-date' => new DateTime('2019-02-11')
                     ]
                 ], '98765', '12345'])->once();
@@ -307,6 +419,8 @@ class StatusControllerTest extends AbstractControllerTest
                 [
                     'metadata' => [
                         'sirius-processing-status' => 'Received',
+                        'application-registration-date' => null,
+                        'application-receipt-date' => new DateTime('2019-02-11'),
                         'application-rejected-date' => null
                     ]
                 ], '98766', '12345'])->once();
@@ -314,11 +428,8 @@ class StatusControllerTest extends AbstractControllerTest
         $result = $this->statusController->get('98765,98766');
 
         $this->assertEquals(new Json([
-            98765 => ['found' => true, 'status' => 'Returned', 'rejectedDate' => new DateTime('2019-02-11')],
-            98766 => ['found' => true, 'status' => 'Received', 'rejectedDate' => null]
+            98765 => ['found' => true, 'status' => 'Returned', 'receiptDate' => null, 'registrationDate' => null, 'rejectedDate' => new DateTime('2019-02-11')],
+            98766 => ['found' => true, 'status' => 'Received', 'receiptDate' => new DateTime('2019-02-11'), 'registrationDate' => null,'rejectedDate' => null]
         ]), $result);
     }
-
-
-
 }

@@ -356,4 +356,69 @@ interface ApplicationRepositoryInterface {
      */
     public function countCompletedBetweenCertificateProviderSkipped(Datetime $start, Datetime $end, bool $isSkipped) : int;
 
+    /**
+     * Get the number of returned LPAs
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @return int
+     */
+    public function countReturnedBetween(Datetime $start, Datetime $end) : int;
+
+    /**
+     * Get the number of returned LPAs
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param array $additionalCriteria
+     * @return int
+     */
+    public function countReturned(Datetime $start, Datetime $end, array $additionalCriteria = []) : int;
+
+    /**
+     * Get the number of LPAs being checked
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @return int
+     */
+    public function countCheckedBetween(Datetime $start, Datetime $end) : int;
+
+    /**
+     * Get the number of LPAs being checked
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param array $additionalCriteria
+     * @return int
+     */
+    public function countChecking(Datetime $start, Datetime $end, array $additionalCriteria = []) : int;
+
+    /**
+     * Get the number of LPAs received
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @return int
+     */
+    public function countReceivedBetween(Datetime $start, Datetime $end) : int;
+
+    /**
+     * Get the number of LPAs received
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param array $additionalCriteria
+     * @return int
+     */
+    public function countReceived(Datetime $start, Datetime $end, array $additionalCriteria = []) : int;
+
+    /**
+     * Get the number of LPAs waiting
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @return int
+     */
+    public function countWaitingBetween(Datetime $start, Datetime $end) : int;
 }

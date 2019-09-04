@@ -112,6 +112,9 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         $select->where($criteria);
 
+        // Below echo left purposely to view the prepared sql query for test
+        //  echo $select->getSqlString($this->getZendDb()->getPlatform())."\n";
+
         $result = $sql->prepareStatementForSqlObject($select)->execute();
 
         if (!$result->isQueryResult() || $result->count() != 1) {
@@ -795,6 +798,115 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
             new Expression("(payment ->> 'reducedFeeAwardedDamages')::BOOLEAN " . $reducedFeeAwardedDamages),
             new Expression("(payment ->> 'reducedFeeLowIncome')::BOOLEAN " . $reducedFeeLowIncome),
             new Expression("(payment ->> 'reducedFeeUniversalCredit')::BOOLEAN " . $reducedFeeUniversalCredit),
+        ]);
+    }
+
+    /**
+     * Get the number of LPAs being returned
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @return int
+     */
+    public function countReturnedBetween(Datetime $start, Datetime $end): int
+    {
+        return $this->countReturned($start, $end, [
+            new Expression("metadata->>'application-rejected-date' IS NOT NULL"),
+        ]);
+    }
+
+    /**
+     * Get the number of returned LPAs - with additional criteria if provided
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param array $additionalCriteria
+     * @return int
+     */
+    public function countReturned(Datetime $start, Datetime $end, array $additionalCriteria = []): int
+    {
+        return $this->count(array_merge([
+            new Expression("metadata->>'application-rejected-date' >= ?", $start->format('Y-m-d')),
+            new Expression("metadata->>'application-rejected-date' <= ?", $end->format('Y-m-d')),
+        ], $additionalCriteria));
+    }
+
+    /**
+     * Get the number of LPAs being checked
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @return int
+     */
+    public function countCheckedBetween(Datetime $start, Datetime $end): int
+    {
+        return $this->countChecking($start, $end, [
+            new Expression("metadata->>'application-registration-date' IS NOT NULL"),
+        ]);
+    }
+
+    /**
+     * Get the number of  LPAs being checked- with additional criteria if provided
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param array $additionalCriteria
+     * @return int
+     */
+    public function countChecking(Datetime $start, Datetime $end, array $additionalCriteria = []): int
+    {
+        return $this->count(array_merge([
+            new Expression("metadata->>'application-registration-date' >= ?", $start->format('Y-m-d')),
+            new Expression("metadata->>'application-registration-date' <= ?", $end->format('Y-m-d')),
+        ], $additionalCriteria));
+    }
+
+    /**
+     * Get the number of LPAs received
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @return int
+     */
+    public function countReceivedBetween(Datetime $start, Datetime $end): int
+    {
+        return $this->countReceived($start, $end, [
+            new Expression("metadata->>'application-receipt-date' IS NOT NULL"),
+        ]);
+    }
+
+    /**
+     * Get the number of  LPAs received - with additional criteria if provided
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param array $additionalCriteria
+     * @return int
+     */
+    public function countReceived(Datetime $start, Datetime $end, array $additionalCriteria = []): int
+    {
+        return $this->count(array_merge([
+            new Expression("metadata->>'application-receipt-date' >= ?", $start->format('Y-m-d')),
+            new Expression("metadata->>'application-receipt-date' <= ?", $end->format('Y-m-d')),
+        ], $additionalCriteria));
+    }
+
+    /**
+     * Get the number of LPAs waiting
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @return int
+     */
+    public function countWaitingBetween(Datetime $start, Datetime $end): int
+    {
+        return $this->count([
+            new IsNotNull('completedAt'),
+            new Operator('completedAt', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $start->format('Y-m-d')),
+            new Operator('completedAt', Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $end->format('Y-m-d')),
+            new Expression("metadata->> 'application-receipt-date' IS  NULL"),
+            new Expression("metadata ->> 'application-registration-date' IS NULL"),
+            new Expression("metadata ->> 'application-rejected-date' IS NULL"),
         ]);
     }
 
