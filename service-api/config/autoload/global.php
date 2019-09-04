@@ -127,6 +127,7 @@ return [
     ], // session
 
     'processing-status' => [
+        'track-from-date' => getenv('OPG_LPA_FRONT_TRACK_FROM_DATE') ?: '2019-02-01',
         'endpoint' => getenv('OPG_LPA_PROCESSING_STATUS_ENDPOINT') ?: 'http://gateway:5000/v1/lpa-online-tool/lpas/'
     ]
 ];

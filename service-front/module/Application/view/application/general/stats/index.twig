@@ -68,6 +68,30 @@
                         <td class="numeric">{{ lpas['property-and-finance'].created }}</td>
                     </tr>
                     <tr>
+                        <td>Waiting</td>
+                        <td class="numeric">{{ lpas.all.waiting }}</td>
+                        <td class="numeric">{{ lpas['health-and-welfare'].waiting }}</td>
+                        <td class="numeric">{{ lpas['property-and-finance'].waiting }}</td>
+                    </tr>
+                    <tr>
+                        <td>Checking</td>
+                        <td class="numeric">{{ lpas.all.checking }}</td>
+                        <td class="numeric">{{ lpas['health-and-welfare'].checking }}</td>
+                        <td class="numeric">{{ lpas['property-and-finance'].checking }}</td>
+                    </tr>
+                    <tr>
+                        <td>Received</td>
+                        <td class="numeric">{{ lpas.all.received }}</td>
+                        <td class="numeric">{{ lpas['health-and-welfare'].received }}</td>
+                        <td class="numeric">{{ lpas['property-and-finance'].received }}</td>
+                    </tr>
+                    <tr>
+                        <td>Returned</td>
+                        <td class="numeric">{{ lpas.all.returned }}</td>
+                        <td class="numeric">{{ lpas['health-and-welfare'].returned }}</td>
+                        <td class="numeric">{{ lpas['property-and-finance'].returned }}</td>
+                    </tr>
+                    <tr>
                         <td>Completed</td>
                         <td class="numeric">{{ lpas.all.completed }}</td>
                         <td class="numeric">{{ lpas['health-and-welfare'].completed }}</td>
@@ -75,9 +99,11 @@
                     </tr>
                     <tr>
                         <td><strong>Total</strong></td>
-                        <td class="numeric">{{ lpas.all.started + lpas.all.created + lpas.all.completed }}</td>
-                        <td class="numeric">{{ lpas['health-and-welfare'].started + lpas['health-and-welfare'].created + lpas['health-and-welfare'].completed }}</td>
-                        <td class="numeric">{{ lpas['property-and-finance'].started + lpas['property-and-finance'].created + lpas['property-and-finance'].completed }}</td>
+                        <td class="numeric">{{ lpas.all.started + lpas.all.created + lpas.all.waiting + lpas.all.checking + lpas.all.received + lpas.all.returned + lpas.all.completed }}</td>
+                        <td class="numeric">{{ lpas['health-and-welfare'].started + lpas['health-and-welfare'].created + lpas['health-and-welfare'].waiting + lpas['health-and-welfare'].checking  +
+                            lpas['health-and-welfare'].received  + lpas['health-and-welfare'].returned + lpas['health-and-welfare'].completed }}</td>
+                        <td class="numeric">{{ lpas['property-and-finance'].started + lpas['property-and-finance'].created + lpas['property-and-finance'].waiting + lpas['property-and-finance'].checking
+                            + lpas['property-and-finance'].received + lpas['property-and-finance'].returned + lpas['property-and-finance'].completed }}</td>
                     </tr>
                     <tr>
                         <td>Deleted</td>
