@@ -14,6 +14,7 @@ use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Template\TemplateRendererInterface;
+use Zend\Expressive\Helper\UrlHelper;
 
 class HomeHandlerTest extends TestCase
 {
@@ -29,36 +30,34 @@ class HomeHandlerTest extends TestCase
         $this->router    = $this->prophesize(RouterInterface::class);
     }
 
-    public function testReturnsJsonResponseWhenNoTemplateRendererProvided()
-    {
-        $homePage = new HomeHandler(
-            get_class($this->container->reveal()),
-            $this->router->reveal(),
-            null
-        );
-        $response = $homePage->handle(
-            $this->prophesize(ServerRequestInterface::class)->reveal()
-        );
-
-        $this->assertInstanceOf(JsonResponse::class, $response);
-    }
+//    public function testReturnsJsonResponseWhenNoTemplateRendererProvided()
+//    {
+//        $homePage = new HomeHandler(
+//            get_class($this->container->reveal()),
+//            $this->router->reveal(),
+//            null
+//        );
+//        $response = $homePage->handle(
+//            $this->prophesize(ServerRequestInterface::class)->reveal()
+//        );
+//
+//        $this->assertInstanceOf(JsonResponse::class, $response);
+//    }
 
     public function testReturnsHtmlResponseWhenTemplateRendererProvided()
     {
-        $renderer = $this->prophesize(TemplateRendererInterface::class);
-        $renderer
-            ->render('app::home-page', Argument::type('array'))
+        $rendererProphecy = $this->prophesize(TemplateRendererInterface::class);
+        $rendererProphecy->render('app::home')
             ->willReturn('');
 
-        $homePage = new HomeHandler(
-            get_class($this->container->reveal()),
-            $this->router->reveal(),
-            $renderer->reveal()
-        );
+        $urlHelperProphecy = $this->prophesize(UrlHelper::class);
 
-        $response = $homePage->handle(
-            $this->prophesize(ServerRequestInterface::class)->reveal()
-        );
+        //  Set up the handler
+        $handler = new HomeHandler($rendererProphecy->reveal(), $urlHelperProphecy->reveal());
+
+        $requestProphecy = $this->prophesize(ServerRequestInterface::class);
+
+        $response = $handler->handle($requestProphecy->reveal());
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
