@@ -110,5 +110,10 @@ class AboutYou extends AbstractActorForm
         if (empty($data['address-address1']) && empty($data['address-address2']) && empty($data['address-address3']) && empty($data['address-postcode'])) {
             $data['address'] = null;
         }
+
+        // If the user selected 'Prefer not to say' as their title, then save their title value as null
+        if ($data['name-title'] == self::PREFER_NOT_TO_SAY_TITLE) {
+            $data['name-title'] = null;
+        }
     }
 }
