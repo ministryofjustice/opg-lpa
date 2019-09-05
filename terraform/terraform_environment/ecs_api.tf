@@ -288,6 +288,7 @@ locals {
       { "name": "OPG_LPA_POSTGRES_PORT", "value": "${aws_db_instance.api.port}"},
       { "name": "OPG_LPA_POSTGRES_NAME", "value": "${aws_db_instance.api.name}"},
       { "name": "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value": "${local.sirius_api_gateway_endpoint}"},
+      { "name": "OPG_LPA_API_TRACK_FROM_DATE", "value": "2019-02-01"},
       { "name": "OPG_LPA_SEED_DATA", "value": "true"},
       { "name": "OPG_LPA_STACK_NAME", "value": "${local.environment}"},
       { "name": "OPG_DOCKER_TAG", "value": "${var.container_version}"},
