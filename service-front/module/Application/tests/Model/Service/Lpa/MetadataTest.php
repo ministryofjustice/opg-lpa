@@ -45,13 +45,9 @@ class MetadataTest extends AbstractServiceTest
 
     public function testSetCertificateProviderSkipped() : void
     {
-        $this->applicationService->shouldReceive('updateApplication')
-            ->withArgs([null, ['metadata' => ['certificate-provider-was-skipped' => true]]])
-            ->once();
 
         $this->applicationService->shouldReceive('updateApplication')
             ->withArgs([null, ['metadata' => [
-                'certificate-provider-was-skipped' => true,
                 'certificate-provider-skipped' => true
                 ]]])
             ->once();
