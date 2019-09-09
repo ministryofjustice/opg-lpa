@@ -127,12 +127,18 @@ function grabEmails($inbox, $subject, $type, $linkRegex)
  */
 function getInbox($emailConfig)
 {
+    echo 'server:' .$emailConfig['server'];
+    echo 'username:' .$emailConfig['username'];
+    echo 'password:' .$emailConfig['password'];
+
+
     $inbox = imap_open(
         $emailConfig['server'],
         $emailConfig['username'],
         $emailConfig['password']
     );
-    
+
+    echo 'inbox' .$inbox;
     return $inbox;
 }
 

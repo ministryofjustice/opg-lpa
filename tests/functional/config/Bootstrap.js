@@ -20,7 +20,7 @@ casper.options.waitTimeout = 20000;
 casper.start();
 
 // Password is committed to repo on purpose, this is not a mistake
-casper.setHttpAuth('opg', 'monkeytrousers');
+// casper.setHttpAuth('opg', 'monkeytrousers');
 
 casper.options.viewportSize = {width: 960, height: 600};
 

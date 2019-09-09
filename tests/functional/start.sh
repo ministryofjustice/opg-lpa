@@ -5,8 +5,8 @@ xunitfile=/mnt/test/casperesults.xml
 echo Starting Email Monitor
 php /mnt/test/service/EmailMonitor.php &
 
-echo Removing ${xunitfile}
-rm -f ${xunitfile}
+# echo Removing ${xunitfile}
+# rm -f ${xunitfile}
 
 echo Starting CasperJS Tests
 /usr/local/bin/casperjs test /mnt/test/$1 --ignore-ssl-errors=true --ssl-protocol=any --includes=/mnt/test/config/Bootstrap.js  --xunit=${xunitfile}
