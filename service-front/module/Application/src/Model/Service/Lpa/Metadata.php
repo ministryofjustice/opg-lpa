@@ -27,8 +27,6 @@ class Metadata extends AbstractService
 
     public function setCertificateProviderSkipped(Lpa $lpa)
     {
-        $this->setMetadataByKey($lpa, Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED);
-
         return $this->setMetadataByKey($lpa, Lpa::CERTIFICATE_PROVIDER_SKIPPED);
     }
 
