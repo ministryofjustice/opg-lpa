@@ -1,4 +1,4 @@
-FROM php:7-cli
+FROM php:7.1-cli
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
@@ -9,7 +9,10 @@ RUN apt-get update && \
     libfontconfig \
     python \
     libc-client-dev \
-    libkrb5-dev
+    libkrb5-dev \
+    openssl \
+    libssl-dev
+    # libssl-dev
     # phpenmod
 
 
