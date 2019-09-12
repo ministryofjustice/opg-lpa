@@ -404,6 +404,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         return $this->count([
             new IsNotNull('completedAt'),
             new Operator('completedAt', Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $trackFromDate->format('c')),
+            new Expression("metadata ->> 'sirius-processing-status' IS NULL"),
             new Expression("document ->> 'type' = ?", $lpaType),
         ]);
     }
