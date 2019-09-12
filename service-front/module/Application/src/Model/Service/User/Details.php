@@ -349,6 +349,11 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             }
         } catch (ApiException $ex) {
             if ($ex->getMessage() == 'username-already-exists') {
+                try{
+                    $this->getMailTransport()->sendMessageFromTemplate($email, MailTransport::EMAIL_ACCOUNT_DUPLICATION_WARNING, []);
+                }catch (Exception $e) {
+                    return "failed-sending-warning-email";
+                }
                 return 'address-already-registered';
             }
 
