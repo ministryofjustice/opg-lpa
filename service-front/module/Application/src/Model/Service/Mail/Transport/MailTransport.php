@@ -59,6 +59,7 @@ class MailTransport implements TransportInterface
     const EMAIL_PASSWORD_RESET                  = 'email-password-reset';
     const EMAIL_PASSWORD_RESET_NO_ACCOUNT       = 'email-password-reset-no-account';
     const EMAIL_SENDGRID_BOUNCE                 = 'email-sendgrid-bounce';
+    const EMAIL_ACCOUNT_DUPLICATION_WARNING     = 'email-account-duplication-warning';
 
     private $emailTemplatesConfig = [
         self::EMAIL_ACCOUNT_ACTIVATE => [
@@ -143,6 +144,14 @@ class MailTransport implements TransportInterface
                 'opg',
                 'opg-lpa',
                 'opg-lpa-autoresponse',
+            ],
+        ],
+        self::EMAIL_ACCOUNT_DUPLICATION_WARNING => [
+            'template' => 'email-duplication-warning.twig',
+            'categories' => [
+                'opg',
+                'opg-lpa',
+                'opg-lpa-signup-email-duplication',
             ],
         ],
     ];
