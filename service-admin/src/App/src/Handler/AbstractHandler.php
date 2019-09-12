@@ -33,17 +33,6 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
     protected $urlHelper;
 
     /**
-     * AbstractHandler constructor.
-     * @param TemplateRendererInterface $renderer
-     * @param UrlHelper $urlHelper
-     */
-    public function __construct(TemplateRendererInterface $renderer, UrlHelper $urlHelper)
-    {
-        $this->renderer = $renderer;
-        $this->urlHelper = $urlHelper;
-    }
-
-    /**
      * Handles a request and produces a response
      *
      * @param ServerRequestInterface $request
