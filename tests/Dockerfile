@@ -1,4 +1,4 @@
-FROM php:7.1-cli
+FROM php:7-cli
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
@@ -12,10 +12,7 @@ RUN apt-get update && \
     libkrb5-dev \
     openssl \
     libssl-dev
-    # libssl-dev
-    # phpenmod
-
-
+   
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
     docker-php-ext-install -j$(nproc) imap
 
