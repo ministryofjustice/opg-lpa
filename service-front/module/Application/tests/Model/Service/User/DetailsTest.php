@@ -687,16 +687,34 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('Test error', $result);
     }
 
-    public function testRegisterAccountApiExceptionAlreadyRegistered() : void
+    public function testDuplicateRegisterAccountWarningEmailSend() : void
     {
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
             ->once()
             ->andThrow(ServiceTestHelper::createApiException('username-already-exists'));
 
+        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
+            ->withArgs(['test@email.com', 'email-account-duplication-warning', []])
+            ->once();
+
         $result = $this->service->registerAccount('test@email.com', 'test-password');
 
         $this->assertEquals('address-already-registered', $result);
+    }
+
+    public function testDuplicateRegisterAccountWarningEmailSendApiException() : void
+    {
+        $this->apiClient->shouldReceive('httpPost')
+            ->withArgs(['/v2/users', ['username' => 'test@email.com', 'password' => 'test-password']])
+            ->once()
+            ->andThrow(ServiceTestHelper::createApiException('username-already-exists'));
+        $this->mailTransport->shouldReceive('sendMessageFromTemplate')
+            ->withArgs(['test@email.com', 'email-account-duplication-warning', []])
+            ->once()
+            ->andThrow(new Exception());
+        $result = $this->service->registerAccount('test@email.com', 'test-password');
+        $this->assertEquals('failed-sending-warning-email', $result);
     }
 
     public function testResendActivationEmail() : void
