@@ -59,7 +59,7 @@ class RegisterController extends AbstractBaseController
 
                 $result = $this->userService->registerAccount($email, $password);
 
-                if ($result === true) {
+                if ($result === true || $result == "address-already-registered") {
                     //  Change the view to be the email sent template with the email address and resend email form
                     //  Set up a form so the resend can be triggered again easily from a link
                     $form = $this->getFormElementManager()->get('Application\Form\User\ConfirmEmail');
