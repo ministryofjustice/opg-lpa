@@ -1,6 +1,7 @@
 import os
 from subprocess import Popen, PIPE, CalledProcessError
-import wget
+# import wget
+from package import wget
 import json
 from zipfile import ZipFile
 import stat
