@@ -4,8 +4,6 @@ import wget
 import json
 from zipfile import ZipFile
 import stat
-from git import Repo
-
 
 # Version of Terraform that we're using
 TERRAFORM_VERSION = os.getenv('TERRAFORM_VERSION')
@@ -20,14 +18,9 @@ TERRAFORM_PATH = os.path.join(TERRAFORM_DIR, 'terraform')
 
 # Git repository to work with, and where to clone it to
 GIT_URL = os.getenv('GIT_URL')
-REPO_DIR = os.getenv('REPO_DIR', "/tmp")
 
 if os.getenv('TEST') == 'True':
     TEST = True
-
-# Terraform config to work with
-TF_CONFIG_FULL_PATH = os.path.join(REPO_DIR, os.getenv(
-    'TF_CONFIG_PATH', 'terraform_environment'))
 
 PROTECTED_WORKSPACES = ['default', 'preproduction', 'production']
 
@@ -40,8 +33,7 @@ def execute_terraform(args):
     with Popen(args,
                stdout=PIPE,
                bufsize=1,
-               universal_newlines=True,
-               cwd=TF_CONFIG_FULL_PATH) as p:
+               universal_newlines=True) as p:
         for line in p.stdout:
             print(line, end='')  # process line here
 
@@ -67,30 +59,6 @@ def install_terraform():
 def check_terraform_version():
     print("check_terraform_version...")
     execute_terraform([TERRAFORM_PATH, '--version'])
-
-
-def clone_repo():
-    """Clone repository to get terraform config.
-    :param GIT_URL: Repository with terraform configuration.
-    :param REPO_DIR: Path to clone repository to.
-    """
-    print("Cloning repo {}...".format(GIT_URL))
-    if TEST:
-        print("Git clone {}".format(GIT_URL))
-    else:
-        if (GIT_URL):
-            if os.path.exists(TF_CONFIG_FULL_PATH):
-                print("{} already exists, updating...".format(REPO_DIR))
-                print("git pull master")
-                # TODO: git pull here
-                # repo = Repo('repo_name')
-                # repo.remotes.origin.pull()
-            else:
-                Repo.clone_from(GIT_URL, REPO_DIR)
-                print("cloned {0} to {1}".format(GIT_URL, REPO_DIR))
-        else:
-            print("no repository passed")
-            exit(1)
 
 
 def terraform_init():
@@ -135,7 +103,6 @@ def lambda_handler(event, context):
             print("Starting lambda and destroying workspace {}.".format(
                 str(workspace)))
             try:
-                clone_repo()
                 install_terraform()
                 check_terraform_version()
                 terraform_init()

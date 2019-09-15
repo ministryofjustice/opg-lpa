@@ -1,0 +1,3 @@
+wget
+boto3
+botocore==1.12.171
