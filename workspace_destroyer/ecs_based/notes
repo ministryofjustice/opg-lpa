@@ -1,0 +1,4 @@
+docker build . --tag workspace_destroyer
+docker run -it -v ${PWD}/app:/app workspace_destroyer:latest sh 
+
+avei python app/service.py

@@ -10,7 +10,7 @@ locals {
 
   mandatory_moj_tags = {
     business-unit = "OPG"
-    application   = "Online LPA Service"
+    application   = "Online LPA Service Development Workspace Destroyer"
     owner         = "Amy Wilson: amy.wilson@digital.justice.gov.uk"
     is-production = false
   }

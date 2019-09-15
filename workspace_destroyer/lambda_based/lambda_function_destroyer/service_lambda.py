@@ -72,6 +72,19 @@ def terraform_init():
         execute_terraform([TERRAFORM_PATH, 'init'])
 
 
+def terraform_workspace_show(workspace):
+    """Initialise Terraform to configure remote state.
+    """
+    if TEST:
+        print("TEST MODE:")
+        print("    terraform workspace show")
+        print(workspace)
+        print("TEST MODE ENDS")
+    else:
+        execute_terraform([TERRAFORM_PATH, 'workspace', 'select', workspace])
+        execute_terraform([TERRAFORM_PATH, 'workspace', 'show'])
+
+
 def terraform_destroy(workspace):
     """Terraform Destroy, Destroys all resources in a terraform workspace.
     Also removes the workspace.
@@ -106,7 +119,8 @@ def lambda_handler(event, context):
                 install_terraform()
                 check_terraform_version()
                 terraform_init()
-                terraform_destroy(workspace)
+                terraform_workspace_show(workspace)
+                # terraform_destroy(workspace)
                 return {
                     'statusCode': 200,
                     'body': json.dumps("Workspace {} has been destroyed.").format(
