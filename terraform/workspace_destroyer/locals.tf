@@ -1,5 +1,12 @@
+variable container_version {
+  default = "latest"
+}
+
 locals {
-  opg_project = "lpa"
+  opg_project  = "lpa-workspace-destroyer"
+  account_name = "development"
+  environment  = "workspace_destroyer"
+  account_id   = "050256574573"
 
   mandatory_moj_tags = {
     business-unit = "OPG"
