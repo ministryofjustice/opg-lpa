@@ -483,3 +483,4 @@ jobs:
       - slack/notify:
           title: "Online LPA Production Release Successful"
           message: "By user: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN \nbuild url: $CIRCLE_BUILD_URL"
+          webhook: ${PROD_RELEASE_SLACK_WEBHOOK}
