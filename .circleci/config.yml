@@ -132,6 +132,12 @@ workflows:
           filters:
             branches:
               only: master
+      - slack_notify_production_release:
+          name: post_production_release_message
+          requires: [prod_account_apply_terraform]
+          filters:
+            branches:
+              only: master
 
 orbs:
   slack: circleci/slack@3.3.0
@@ -453,4 +459,27 @@ jobs:
             echo 'export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
       - slack/notify:
           title: "Online LPA Development Environment Ready"
-          message: "front url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN \nbuild url: $CIRCLE_BUILD_URL"
+          message: "User: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN \nbuild url: $CIRCLE_BUILD_URL"
+  slack_notify_production_release:
+    docker:
+      - image: circleci/python
+    parameters:
+      workspace:
+        description: Terraform workspace name
+        type: string
+        default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: Get URLs
+          command: |
+            ENV_NAME=<<parameters.workspace>>
+            echo 'export TF_WORKSPACE=${ENV_NAME:0:13}' >> $BASH_ENV
+            echo $TF_WORKSPACE
+            echo 'export FRONT_DOMAIN="$(jq -r .front_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
+            echo 'export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
+      - slack/notify:
+          title: "Online LPA Production Release Successful"
+          message: "By user: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN \nbuild url: $CIRCLE_BUILD_URL"
