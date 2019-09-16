@@ -42,3 +42,9 @@ To login to the docker container.
     make shell
 
 Note that once inside anything you do is ephemeral; when you exit and re-enter the state of the container will have been reset.
+
+To run the old functional test suite
+docker run -t -e "CASPER_EMAIL_USER=opgcasper@gmail.com" -e "CASPER_EMAIL_PASSWORD=yZ6BTEQJ7hwUgQ" -e "BASE_DOMAIN=53-lpa3302add.front.development.lpa.opg.service.justice.gov.uk" --net=host --rm  casperjs_old:latest  ./start.sh 'tests/'
+
+To run the new functional test suite
+docker run -t -e "CASPER_EMAIL_USER=opgcasper@gmail.com" -e "CASPER_EMAIL_PASSWORD=yZ6BTEQJ7hwUgQ" -e "BASE_DOMAIN=53-lpa3302add.front.development.lpa.opg.service.justice.gov.uk" --net=host --rm  casperjs:latest  ./start.sh 'tests/'

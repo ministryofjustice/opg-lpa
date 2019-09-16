@@ -405,8 +405,7 @@ casper.test.begin("Checking Checkout page", {
 
             casper.fill('form#card-details', form);
 
-        }).thenClick('input[name="submitCardDetails"][type="submit"]', function() {
-
+        }).thenClick('button[id="submit-card-details"]', function(){
 
         }).waitForText('Your payment has been declined', function() {
 
@@ -450,7 +449,7 @@ casper.test.begin("Checking Checkout page", {
                 'email': 'opglpademo+AmyWheeler@gmail.com'
             });
 
-        }).thenClick('input[name="submitCardDetails"][type="submit"]', function() {
+        }).thenClick('button[id="submit-card-details"]', function(){
 
             test.info("Clicked 'Submit'");
 

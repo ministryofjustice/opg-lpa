@@ -1,6 +1,11 @@
 <?php
 
-include '/mnt/test/config/email_config.php';
+$emailConfig = [
+    //'server' => '{imap.gmail.com:993/ssl}INBOX',
+    'server' => '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX',
+    'username' => getenv('CASPER_EMAIL_USER'),
+    'password' => getenv('CASPER_EMAIL_PASSWORD')
+];
 
 $runTimeSeconds = 6000;
 $pauseSeconds = 6;
@@ -81,7 +86,7 @@ function monitorInbox($emailConfig)
 function grabEmails($inbox, $subject, $type, $linkRegex)
 {
     $emails = imap_search($inbox, 'SUBJECT "' . $subject . '"');
-    
+
     if ($emails) {
          
         foreach($emails as $email_number) {
@@ -127,18 +132,12 @@ function grabEmails($inbox, $subject, $type, $linkRegex)
  */
 function getInbox($emailConfig)
 {
-    echo 'server:' .$emailConfig['server'];
-    echo 'username:' .$emailConfig['username'];
-    echo 'password:' .$emailConfig['password'];
-
-
     $inbox = imap_open(
         $emailConfig['server'],
         $emailConfig['username'],
         $emailConfig['password']
     );
 
-    echo 'inbox' .$inbox;
     return $inbox;
 }
 
