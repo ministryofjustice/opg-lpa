@@ -459,7 +459,7 @@ jobs:
             echo 'export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
       - slack/notify:
           title: "Online LPA Development Environment Ready"
-          message: "User: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN \nbuild url: $CIRCLE_BUILD_URL"
+          message: "User: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
   slack_notify_production_release:
     docker:
       - image: circleci/python
@@ -482,5 +482,5 @@ jobs:
             echo 'export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
       - slack/notify:
           title: "Online LPA Production Release Successful"
-          message: "By user: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN \nbuild url: $CIRCLE_BUILD_URL"
+          message: "By user: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
           webhook: ${PROD_RELEASE_SLACK_WEBHOOK}
