@@ -22,7 +22,6 @@ workflows:
 
       - infrastructure_and_deployment/lint_and_validate_terraform:
           name: lint_and_validate_terraform
-          requires: [package_lambda_artifact]
           filters:
             branches:
               ignore: master
