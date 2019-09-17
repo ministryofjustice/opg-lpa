@@ -13,6 +13,7 @@
     .main-info
     ,.extra-info{
         margin-bottom: 10px !important;
+        margin-right: 5px;
 
         p{
             float:none !important;
@@ -96,7 +97,7 @@
     .list-item_status{
         float:right;
         min-width: 95px;
-        margin-left: 10px;
+        margin-left: 30px;
         text-align: right;
         z-index: 1;
         position: relative;
@@ -130,9 +131,8 @@
                     }
                }
                .extra-info {
-                   float: right !important;
                    clear: none;
-                   margin: 5px 0 0 1.5em !important;
+                   margin: 5px 1.5em 0 0 !important;
                     p {
                       font-size: 19px;
                       color: black;
