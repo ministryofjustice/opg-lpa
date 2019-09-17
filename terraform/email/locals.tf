@@ -17,7 +17,7 @@ locals {
 
   mandatory_moj_tags = {
     business-unit = "OPG"
-    application   = "Online LPA Service"
+    application   = "Online LPA Service - Functional Testing Mailbox"
     owner         = "Amy Wilson: amy.wilson@digital.justice.gov.uk"
     is-production = var.accounts[local.account_name].is_production
   }
