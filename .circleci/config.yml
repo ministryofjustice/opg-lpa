@@ -33,6 +33,13 @@ workflows:
           filters:
             branches:
               ignore: master
+      - infrastructure_and_deployment/apply_email_terraform:
+          name: email_apply_terraform
+          workspace: development
+          requires: [lint_and_validate_terraform]
+          filters:
+            branches:
+              ignore: master
       - infrastructure_and_deployment/apply_environment_terraform:
           name: dev_environment_apply_terraform
           requires:
@@ -282,7 +289,7 @@ orbs:
               name: Validate Account Terraform
               command: |
                 terraform --version
-                cd ~/project/terraform/terraform_account
+                cd ~/project/terraform/account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
@@ -297,6 +304,28 @@ orbs:
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
+
+      apply_email_terraform:
+        #
+        # Apply the email terraform configuration. This:
+        #   - Creates a mailbox used for functional testing;
+        #
+        executor: terraform
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: development
+        steps:
+          - checkout
+          - run:
+              name: Apply Email Terraform
+              command: |
+                cd ~/project/terraform/email
+                terraform init -lock-timeout=300s
+                export TF_WORKSPACE=<<parameters.workspace>>
+                echo $TF_WORKSPACE
+                terraform apply -lock-timeout=300s --auto-approve
 
       apply_account_terraform:
         #
@@ -314,7 +343,7 @@ orbs:
           - run:
               name: Apply Account Terraform
               command: |
-                cd ~/project/terraform/terraform_account
+                cd ~/project/terraform/account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=<<parameters.workspace>>
                 echo $TF_WORKSPACE
