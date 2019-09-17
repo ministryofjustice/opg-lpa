@@ -22,7 +22,9 @@ Set up your environment
 
 Run the following command to run all the tests
 
-    make testall
+    docker run -d -e "CASPER_EMAIL_USER=CASPER_EMAIL_USER" -e "CASPER_EMAIL_PASSWORD=CASPER_EMAIL_PASSWORD" -e "BASE_DOMAIN=BASE_DOMAIN" --name casperjs casperjs:latest
+
+    docker exec casperjs ./start.sh 'tests/'
 
 To run an individual test
 
@@ -42,9 +44,3 @@ To login to the docker container.
     make shell
 
 Note that once inside anything you do is ephemeral; when you exit and re-enter the state of the container will have been reset.
-
-To run the old functional test suite
-docker run -t -e "CASPER_EMAIL_USER=opgcasper@gmail.com" -e "CASPER_EMAIL_PASSWORD=yZ6BTEQJ7hwUgQ" -e "BASE_DOMAIN=53-lpa3302add.front.development.lpa.opg.service.justice.gov.uk" --net=host --rm  casperjs_old:latest  ./start.sh 'tests/'
-
-To run the new functional test suite
-docker run -t -e "CASPER_EMAIL_USER=opgcasper@gmail.com" -e "CASPER_EMAIL_PASSWORD=yZ6BTEQJ7hwUgQ" -e "BASE_DOMAIN=53-lpa3302add.front.development.lpa.opg.service.justice.gov.uk" --net=host --rm  casperjs:latest  ./start.sh 'tests/'

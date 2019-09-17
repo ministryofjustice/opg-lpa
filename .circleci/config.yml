@@ -59,12 +59,12 @@ workflows:
           filters:
             branches:
               ignore: master
-      - infrastructure_and_deployment/run_functional_test:
-          name: run_functional_test
-          requires: [dev_environment_apply_terraform]
-          filters:
-            branches:
-              ignore: master
+      # - infrastructure_and_deployment/run_functional_test:
+      #     name: run_functional_test
+      #     requires: [dev_environment_apply_terraform]
+      #     filters:
+      #       branches:
+      #         ignore: master
       # This step is commented out at the moment because of a bug in the
       #  slack orb. PR to fix this is https://github.com/CircleCI-Public/slack-orb/pull/72
       - slack_notify_domain:
