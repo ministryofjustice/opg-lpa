@@ -29,25 +29,26 @@ class AbstractLpaControllerTest extends AbstractControllerTest
 
         $this->assertEquals($result, $response);
     }
-
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Invalid LPA
-     */
+    
     public function testOnDispatchNoLpaException()
     {
-        $this->lpa = null;
+        $this->lpa = false;
 
         $controller = $this->getController(TestableAbstractLpaController::class);
 
         $response = new Response();
-        $event = new MvcEvent();
+        $event = Mockery::mock(MvcEvent::class);
+        $controller->setEvent($event);
 
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
+        $routeMatch = Mockery::mock(RouteMatch::class);
+        $event->shouldReceive('getRouteMatch')->andReturn($routeMatch);
+        $event->shouldReceive('getResponse')->andReturn($response);
+        $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->andReturn(null)->once();
 
         $result = $controller->onDispatch($event);
 
-        $this->assertEquals($result, $response);
+        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals('Page not found', $result->content);
     }
 
     public function testOnDispatchNoMethod()
