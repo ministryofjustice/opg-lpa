@@ -41,7 +41,7 @@ resource "aws_s3_bucket" "mailbox" {
     id      = "expiremessages"
     enabled = true
     expiration {
-      days = 2
+      days = 1
     }
   }
 
