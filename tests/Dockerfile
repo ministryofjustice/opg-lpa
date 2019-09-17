@@ -34,4 +34,5 @@ RUN mkdir -p /mnt/test
 COPY tests/functional /mnt/test
 
 WORKDIR /mnt/test
+CMD php
 
