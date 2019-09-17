@@ -79,19 +79,9 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         if ($authenticationService->hasIdentity()) {
             $lpa = $lpaApplicationService->getApplication((int) $lpaId);
 
-            if (!$lpa instanceof Lpa) {
-                throw new RuntimeException('Invalid LPA');
-            }
-
             $this->lpa = $lpa;
             $this->replacementAttorneyCleanup = $replacementAttorneyCleanup;
             $this->metadata = $metadata;
-
-            //  If there is an identity then confirm that the LPA belongs to the user
-
-            if ($this->getIdentity()->id() !== $lpa->user) {
-                throw new RuntimeException('Invalid LPA - current user can not access it');
-            }
         }
     }
 
@@ -101,6 +91,20 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         if (($authenticated = $this->checkAuthenticated()) !== true) {
             return $authenticated;
         }
+
+        //---
+
+        if (!$this->lpa instanceof Lpa) {
+            //404 error returned as either the LPA does not exist in the database, or is not associated with the user
+            return $this->notFoundAction();
+        }
+
+        //  If there is an identity then confirm that the LPA belongs to the user
+        if ($this->getIdentity()->id() !== $this->lpa->user) {
+            throw new RuntimeException('Invalid LPA - current user can not access it');
+        }
+
+        //---
 
         # inject lpa into layout.
         $this->layout()->lpa = $this->lpa;
