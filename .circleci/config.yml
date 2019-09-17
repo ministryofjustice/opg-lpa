@@ -282,7 +282,7 @@ orbs:
               name: Validate Account Terraform
               command: |
                 terraform --version
-                cd ~/project/terraform/terraform_account
+                cd ~/project/terraform/account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
@@ -314,7 +314,7 @@ orbs:
           - run:
               name: Apply Account Terraform
               command: |
-                cd ~/project/terraform/terraform_account
+                cd ~/project/terraform/account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=<<parameters.workspace>>
                 echo $TF_WORKSPACE
