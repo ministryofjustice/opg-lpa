@@ -69,7 +69,7 @@ workflows:
       #  slack orb. PR to fix this is https://github.com/CircleCI-Public/slack-orb/pull/72
       - slack_notify_domain:
           name: post_environment_domains
-          requires: [test_healthcheck, run_functional_test]
+          requires: [test_healthcheck]
           filters:
             branches:
               ignore: master
