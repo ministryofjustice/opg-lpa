@@ -28,7 +28,7 @@ resource "aws_route53_record" "casper_amazonses_mx" {
   name     = aws_ses_domain_identity.casper.domain
   type     = "MX"
   ttl      = "600"
-  records  = ["inbound-smtp.eu-west-1.amazonaws.com"]
+  records  = ["10 inbound-smtp.eu-west-1.amazonaws.com"]
   provider = "aws.management"
 }
 
@@ -54,6 +54,7 @@ resource "aws_s3_bucket_policy" "mailbox" {
 
 data "aws_iam_policy_document" "mailbox" {
   statement {
+    sid    = "AllowSESPuts"
     effect = "Allow"
     principals {
       type        = "Service"
