@@ -9,6 +9,14 @@ terraform {
   }
 }
 
+variable "default_role" {
+  default = "ci"
+}
+
+variable "legacy_account_role" {
+  default = "ci"
+}
+
 provider "aws" {
   region = "eu-west-1"
 
@@ -28,20 +36,12 @@ provider "aws" {
   }
 }
 
-variable "default_role" {
-  default = "ci"
-}
-
-variable "management_role" {
-  default = "ci"
-}
-
 provider "aws" {
   region = "eu-west-1"
   alias  = "management"
 
   assume_role {
-    role_arn     = "arn:aws:iam::311462405659:role/${var.management_role}"
+    role_arn     = "arn:aws:iam::311462405659:role/${var.default_role}"
     session_name = "terraform-session"
   }
 }
@@ -51,7 +51,7 @@ provider "aws" {
   alias  = "opg-lpa-prod"
 
   assume_role {
-    role_arn     = "arn:aws:iam::550790013665:role/${var.default_role}"
+    role_arn     = "arn:aws:iam::550790013665:role/${var.legacy_account_role}"
     session_name = "terraform-session"
   }
 }
