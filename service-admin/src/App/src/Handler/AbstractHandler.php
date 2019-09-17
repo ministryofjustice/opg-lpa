@@ -12,6 +12,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Flash\Messages;
 use Zend\Diactoros\Response;
+use Zend\Expressive\Helper\UrlHelper;
+use Zend\Expressive\Template\TemplateRendererInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class AbstractHandler
@@ -21,6 +24,22 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
 {
     use TemplatingSupportTrait;
     use UrlHelperTrait;
+
+    //
+    /** @var TemplateRendererInterface */
+    protected $renderer;
+
+    /** @var UrlHelper */
+    protected $urlHelper;
+
+    /**
+     * Handles a request and produces a response
+     *
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
+    abstract public function handle(ServerRequestInterface $request): ResponseInterface;
+    //
 
     /**
      * Redirect to the specified route
