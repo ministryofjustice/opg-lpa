@@ -34,7 +34,7 @@ resource "aws_route53_record" "casper_amazonses_mx" {
 
 # Create S3 bucket for SES mail storage
 resource "aws_s3_bucket" "mailbox" {
-  bucket = "mailbox"
+  bucket = "opg_lpa_casper_mailbox"
   acl    = "private"
   tags   = local.default_tags
 }
