@@ -10,7 +10,7 @@ locals {
   receiver_address = "caspertests@${aws_ses_domain_identity.casper.domain}"
 }
 resource "aws_route53_record" "casper_amazonses_verification_record" {
-  zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.name
+  zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.id
   name     = "_amazonses.${aws_ses_domain_identity.casper.id}"
   type     = "TXT"
   ttl      = "600"
@@ -24,7 +24,7 @@ resource "aws_ses_domain_identity_verification" "casper_verification" {
 }
 
 resource "aws_route53_record" "casper_amazonses_mx" {
-  zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.name
+  zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.id
   name     = aws_ses_domain_identity.casper.domain
   type     = "MX"
   ttl      = "600"
@@ -34,7 +34,7 @@ resource "aws_route53_record" "casper_amazonses_mx" {
 
 # Create S3 bucket for SES mail storage
 resource "aws_s3_bucket" "mailbox" {
-  bucket = "opg_lpa_casper_mailbox"
+  bucket = "opg-lpa-casper-mailbox"
   acl    = "private"
   tags   = local.default_tags
   lifecycle_rule {
