@@ -106,9 +106,8 @@ module.exports = function (grunt) {
           'assets/js/govuk/stageprompt.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/govuk-tracker.js',
-          'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/google-analytics-universal-tracker.js',
+          'assets/js/moj/moj.ga-tracker.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/analytics.js',
-
 
           // OPG Scripts
           'assets/js/opg/jquery-plugin-opg-hascrollbar.js',
