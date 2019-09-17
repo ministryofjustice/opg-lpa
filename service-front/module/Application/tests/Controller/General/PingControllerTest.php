@@ -110,7 +110,6 @@ class PingControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(JsonModel::class, $result);
         $this->assertEquals('', $result->getTemplate());
-        $this->assertEquals('unknown', $result->getVariable('commit'));
         $this->assertEquals('1.2.3.4-test', $result->getVariable('tag'));
     }
 
