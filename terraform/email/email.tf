@@ -37,6 +37,14 @@ resource "aws_s3_bucket" "mailbox" {
   bucket = "opg_lpa_casper_mailbox"
   acl    = "private"
   tags   = local.default_tags
+  lifecycle_rule {
+    id      = "expiremessages"
+    enabled = true
+    expiration {
+      days = 2
+    }
+  }
+
 }
 
 resource "aws_s3_bucket_policy" "mailbox" {
