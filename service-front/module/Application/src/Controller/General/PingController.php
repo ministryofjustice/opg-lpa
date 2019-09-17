@@ -60,8 +60,6 @@ class PingController extends AbstractBaseController
 
         $result = $this->statusService->check();
 
-        $result['commit'] = ( is_readable('GITREF') ) ? trim(file_get_contents('GITREF')) : 'unknown';
-
         $result['tag'] = $this->config()['version']['tag'];
 
         return new JsonModel( $result );
