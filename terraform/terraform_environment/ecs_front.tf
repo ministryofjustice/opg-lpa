@@ -210,7 +210,7 @@ locals {
     "environment": [
       {"name": "OPG_LPA_FRONT_NGINX_FRONTENDDOMAIN", "value": "${local.dns_namespace_env}${var.accounts[local.account_name].front_dns}"},
       {"name": "OPG_NGINX_SERVER_NAMES", "value": "${local.dns_namespace_env}${var.accounts[local.account_name].front_dns} localhost 127.0.0.1"},
-      {"name": "OPG_LPA_FRONT_TRACK_FROM_DATE", "value": "2019-02-01"},
+      {"name": "OPG_LPA_FRONT_TRACK_FROM_DATE", "value": "2019-04-01"},
       {"name": "OPG_LPA_STACK_NAME", "value": "${local.environment}"},
       {"name": "OPG_DOCKER_TAG", "value": "${var.container_version}"},
       {"name": "OPG_LPA_STACK_ENVIRONMENT", "value": "${local.account_name}"},

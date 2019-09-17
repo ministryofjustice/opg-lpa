@@ -41,21 +41,35 @@ workflows:
               ignore: master
       - infrastructure_and_deployment/apply_environment_terraform:
           name: dev_environment_apply_terraform
-          requires: [dev_account_apply_terraform, front_docker_build, admin_docker_build, api_docker_build, pdf_docker_build]
+          requires:
+            [
+              dev_account_apply_terraform,
+              front_docker_build,
+              admin_docker_build,
+              api_docker_build,
+              pdf_docker_build,
+            ]
+          filters:
+            branches:
+              ignore: master
+      - infrastructure_and_deployment/run_healthcheck_test:
+          name: test_healthcheck
+          requires: [dev_environment_apply_terraform]
           filters:
             branches:
               ignore: master
       # This step is commented out at the moment because of a bug in the
       #  slack orb. PR to fix this is https://github.com/CircleCI-Public/slack-orb/pull/72
-      # - slack_notify_domain:
-      #     name: post_environment_domains
-      #     requires: [dev_apply_environment_terraform]
-      #     filters:
-      #       branches:
-      #         ignore: master
+      - slack_notify_domain:
+          name: post_environment_domains
+          requires: [test_healthcheck]
+          filters:
+            branches:
+              ignore: master
+
       - hold-for-destruction:
           name: hold_env_for_destruction
-          type: approval 
+          type: approval
           requires: [dev_environment_apply_terraform]
           filters:
             branches:
@@ -75,16 +89,31 @@ workflows:
               only: master
       - infrastructure_and_deployment/apply_environment_terraform:
           name: preprod_environment_apply_terraform
-          requires: [preprod_account_apply_terraform, front_docker_build, admin_docker_build, api_docker_build, pdf_docker_build]
+          requires:
+            [
+              preprod_account_apply_terraform,
+              front_docker_build,
+              admin_docker_build,
+              api_docker_build,
+              pdf_docker_build,
+            ]
           workspace: preproduction
           filters:
             branches:
-              only: master              
+              only: master
+
+      - infrastructure_and_deployment/run_healthcheck_test:
+          name: test_healthcheck_preprod
+          requires: [preprod_environment_apply_terraform]
+          workspace: preproduction
+          filters:
+            branches:
+              only: master
 
       - infrastructure_and_deployment/apply_account_terraform:
           name: prod_account_apply_terraform
           workspace: production
-          requires: [preprod_environment_apply_terraform]
+          requires: [test_healthcheck_preprod]
           filters:
             branches:
               only: master
@@ -94,8 +123,15 @@ workflows:
           workspace: production
           filters:
             branches:
-              only: master                       
-              
+              only: master
+
+      - infrastructure_and_deployment/run_healthcheck_test:
+          name: test_healthcheck_prod
+          requires: [prod_environment_apply_terraform]
+          workspace: production
+          filters:
+            branches:
+              only: master
 
 orbs:
   slack: circleci/slack@3.3.0
@@ -118,7 +154,7 @@ orbs:
                 eval $(aws ecr get-login --no-include-email --region=eu-west-1)
     executors:
       python:
-        docker: 
+        docker:
           - image: circleci/python
     jobs:
       checkout_docker_build_push_web-app:
@@ -126,7 +162,7 @@ orbs:
         parameters:
           ecr_url:
             type: string
-            default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com  
+            default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com
           ecr_repository_name_prefix:
             type: string
             description: The ecr repo name up to _app or _web. These will be assumed to be present and added by the job.
@@ -148,6 +184,13 @@ orbs:
               name: Build app container
               command: |
                 docker build -f << parameters.service_path >>/docker/app/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app .
+          - run:
+              name: Run unit tests
+              command: |
+                docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
+                docker exec tests docker-php-ext-enable xdebug
+                docker exec tests /app/vendor/bin/phpunit
+
           - ecr_login
           - run:
               name: Push web container
@@ -185,6 +228,18 @@ orbs:
           - run:
               name: Install AWS CLI
               command: sudo pip3 install awscli --upgrade
+      install_terraform:
+        steps:
+          - run:
+              name: Install Terraform
+              command: |
+                export TERRAFORM_VERSION=0.12.8
+                export TERRAFORM_SHA256SUM=43806e68f7af396449dd4577c6e5cb63c6dc4a253ae233e1dddc46cf423d808b
+                curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+                echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS
+                sha256sum -c --status terraform_${TERRAFORM_VERSION}_SHA256SUMS
+                sudo unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /bin
+                rm -f terraform_${TERRAFORM_VERSION}_linux_amd64.zip
     executors:
       python:
         docker: [image: circleci/python]
@@ -193,10 +248,10 @@ orbs:
       python-browsers:
         docker: [image: circleci/python:3.6-stretch-browsers]
       terraform:
-        docker: [image: hashicorp/terraform:0.12.5]
+        docker: [image: hashicorp/terraform:0.12.8]
     jobs:
       #----------------------------------------------------
-      # Lambda      
+      # Lambda
       package_lambda_artifact:
         executor: python-build
         steps:
@@ -291,6 +346,10 @@ orbs:
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s -auto-approve -parallelism=15 -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
                 export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
+          - persist_to_workspace:
+              root: /tmp
+              paths:
+                - environment_pipeline_tasks_config.json
 
       destroy_dev_environment:
         #
@@ -317,11 +376,64 @@ orbs:
                   export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
-                fi      
+                fi
+      run_healthcheck_test:
+        #
+        # Checks the health check is returning 200
+        #
+        executor: python
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        steps:
+          - checkout
+          - attach_workspace:
+              at: /tmp
+          - run:
+              name: Install python dependencies
+              command: |
+                pip install -r ~/project/pipeline_scripts/requirements.txt --user
+          - install_terraform
+          - run:
+              name: Wait for new tasks in services to be running
+              command: |
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE              
+                python ~/project/pipeline_scripts/ecs_monitor.py
+          - run:
+              name: Add CircleCI ingress to environment
+              command: |
+                if [ <<parameters.workspace>> != "production" ]; then
+                  ENV_NAME=<<parameters.workspace>>
+                  cd ~/project/terraform/account_ingress
+                  terraform init -lock-timeout=300s
+                  export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                  echo $TF_WORKSPACE
+                  terraform apply -lock-timeout=300s -auto-approve
+                fi
+          - run:
+              name: Run test
+              command: |
+                python ~/project/pipeline_scripts/healthcheck_test.py
+          - run:
+              name: Remove CircleCI ingress to environment
+              command: |
+                if [ <<parameters.workspace>> != "production" ]; then
+                  ENV_NAME=<<parameters.workspace>>
+                  cd ~/project/terraform/account_ingress
+                  terraform init -lock-timeout=300s
+                  export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                  echo $TF_WORKSPACE
+                  terraform destroy -lock-timeout=300s -auto-approve
+                fi
+              when: always
+
 jobs:
   slack_notify_domain:
     docker:
-      - image: "hashicorp/terraform:0.12.5"
+      - image: circleci/python
     parameters:
       workspace:
         description: Terraform workspace name
@@ -329,19 +441,16 @@ jobs:
         default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
     steps:
       - checkout
+      - attach_workspace:
+          at: /tmp
       - run:
-          name: Slack Notification
+          name: Get URLs
           command: |
             ENV_NAME=<<parameters.workspace>>
-            export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
-            echo $SHORT_HASH
-            cd ~/project/terraform/terraform_environment
-            terraform init -lock-timeout=300s
-            export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+            echo 'export TF_WORKSPACE=${ENV_NAME:0:13}' >> $BASH_ENV
             echo $TF_WORKSPACE
-            export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
-            apk add bash
-            bash
+            echo 'export FRONT_DOMAIN="$(jq -r .front_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
+            echo 'export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
       - slack/notify:
-          title: Environment Ready
-          message: '${ENV_DOMAINS}'
+          title: "Online LPA Development Environment Ready"
+          message: "front url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN \nbuild url: $CIRCLE_BUILD_URL"
