@@ -135,7 +135,7 @@ workflows:
               only: master
       - slack_notify_production_release:
           name: post_production_release_message
-          requires: [prod_account_apply_terraform]
+          requires: [test_healthcheck_prod]
           filters:
             branches:
               only: master
