@@ -27,8 +27,16 @@
         universalId: gaConfig.universalId  || '',
         cookieDomain: cookieDomain,
         allowLinker: true,
-        allowAnchor: true
+        allowAnchor: true,
+
+        //TODO are we tracking this within lpa
+        stripPostcodePII: true,
+        stripDatePII: true
       });
+
+      if (document.domain === 'lastingpowerofattorney.service.justice.gov.uk') {
+        GOVUK.analytics.addLinkedTrackerDomain(gaConfig.govId, 'govuk_shared', ['www.gov.uk', '.payments.service.gov.uk']);
+      }
 
       // Track initial pageview
       if (typeof GOVUK.pageviewOptions !== 'undefined') {
