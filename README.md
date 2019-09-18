@@ -60,3 +60,5 @@ Packages can be removed with:
 ```bash
 docker-compose run <service>-composer composer remove author/package
 ```
+To run the S3Monitor on terminal
+aws-vault exec identity -- php S3Monitor.php
