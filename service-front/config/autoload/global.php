@@ -1,11 +1,8 @@
 <?php
 
-$commit = ( is_readable('GITREF') ) ? trim(file_get_contents('GITREF')) : null;
-
 return [
 
     'version' => [
-        'commit' => $commit,
         'cache' => ( getenv('OPG_DOCKER_TAG') !== false ) ? abs( crc32( getenv('OPG_DOCKER_TAG') ) ) : time(),
         'tag' => getenv('OPG_DOCKER_TAG'),
     ],
