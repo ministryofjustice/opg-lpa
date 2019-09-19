@@ -45,6 +45,8 @@ locals {
   ecs_minimum_task_count_pdf   = local.account_name == "development" ? 1 : 2
   ecs_minimum_task_count_admin = local.account_name == "development" ? 1 : 2
 
+  track_from_date = "2019-04-01"
+
   opg_project = "lpa"
   mandatory_moj_tags = {
     business-unit = "OPG"
