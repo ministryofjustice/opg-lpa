@@ -92,22 +92,32 @@ function grabEmails($inbox, $subject, $type, $linkRegex)
         foreach($emails as $email_number) {
     
             $overview = imap_fetch_overview($inbox, $email_number, 0);
+            echo "Overview  is ............." .$overview . "\n";
     
             $subject = $overview[0]->subject;
+            echo "Subject  is ............." .$subject . "\n";
     
             $message = imap_fetchbody($inbox, $email_number, 1);
+            echo "Message is ............." .$message . "\n";
 
             $regex = '|(https:\/\/\S+' . $linkRegex . '\/[a-zA-Z0-9]+)|sim';
+            echo "Regex is........." .$regex . "\n";
 
             $message = stripEmailLineBreaks($message);
+            echo "Message after stripping line breaks is.........." .$message . "\n";
             
             if (preg_match($regex, $message, $matches) > 0) {
                 $activationLink = $matches[1];
+                echo "ActivationLink is........." .$activationLink . "\n";
    
                 $toEmail = $overview[0]->to;
+                echo "toEmail is........." .$toEmail . "\n";
+
                 $userId = getPlusPartFromEmailAddress($toEmail);
+                echo "User ID .............." .$userId . "\n";
    
                 $contents = $toEmail . ',' . $activationLink;
+                echo "Contents is.............." .$contents . "\n";
    
                 file_put_contents('/mnt/test/activation_emails/' . $userId . '.' . $type, $contents);
                 
