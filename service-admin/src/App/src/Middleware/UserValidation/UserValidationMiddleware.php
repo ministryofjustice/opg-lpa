@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Middleware\UserValidation;
 
 use Psr\Http\Message\ResponseInterface;
