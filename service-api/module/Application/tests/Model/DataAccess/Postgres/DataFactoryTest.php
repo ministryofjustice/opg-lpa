@@ -44,11 +44,17 @@ class DataFactoryTest extends MockeryTestCase
         $factory = new DataFactory();
 
         $zendDbAdapter = Mockery::mock(ZendDbAdapter::class);
+        $config = [];
 
         $this->container->shouldReceive('get')
             ->withArgs(['ZendDbAdapter'])
             ->once()
-            ->andReturn($zendDbAdapter);
+            ->andReturn($zendDbAdapter );
+
+        $this->container->shouldReceive('get')
+            ->withArgs(['Config'])
+            ->once()
+            ->andReturn($config);
 
         $result = $factory($this->container, UserData::class);
 
