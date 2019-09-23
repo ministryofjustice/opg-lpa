@@ -144,6 +144,18 @@ class Stats extends AbstractService
             // Count all the LPAs that have a completedAt...
             $month['completed'] = $this->getApplicationRepository()->countBetween($start, $end, 'completedAt');
 
+            // Count all the LPAs has a receipt date...
+            $month['waiting'] = $this->getApplicationRepository()->countWaitingBetween($start, $end);
+
+            // Count all the LPAs has a receipt date...
+            $month['received'] = $this->getApplicationRepository()->countReceivedBetween($start, $end);
+
+            // Count all the LPAs has a registration date...
+            $month['checking'] = $this->getApplicationRepository()->countCheckedBetween($start, $end);
+
+            // Count all the LPAs that have rejected date...
+            $month['returned'] = $this->getApplicationRepository()->countReturnedBetween($start, $end);
+
             $byMonth[date('Y-m', $start->getTimestamp())] = $month;
 
             // Modify dates, going back on month...
@@ -162,6 +174,18 @@ class Stats extends AbstractService
         // Created if we have a createdAt, but no completedAt...
         $summary['created'] = $pf['created'] = $this->getApplicationRepository()->countCreatedForType(Document::LPA_TYPE_PF);
 
+        // Count all the LPAs that have been received
+        $summary['waiting'] = $pf['waiting'] = $this->getApplicationRepository()->countWaitingForType(Document::LPA_TYPE_PF);
+
+        // Count all the LPAs that have been received
+        $summary['checking'] = $pf['checking'] = $this->getApplicationRepository()->countCheckingForType(Document::LPA_TYPE_PF);
+
+        // Count all the LPAs that have been received
+        $summary['received'] = $pf['received'] = $this->getApplicationRepository()->countReceivedForType(Document::LPA_TYPE_PF);
+
+        // Count all the LPAs that have been returned
+        $summary['returned'] = $pf['returned'] = $this->getApplicationRepository()->countReturnedForType(Document::LPA_TYPE_PF);
+
         // Count all the LPAs that have a completedAt...
         $summary['completed'] = $pf['completed'] = $this->getApplicationRepository()->countCompletedForType(Document::LPA_TYPE_PF);
 
@@ -172,6 +196,18 @@ class Stats extends AbstractService
 
         // Created if we have a createdAt, but no completedAt...
         $summary['created'] += $hw['created'] = $this->getApplicationRepository()->countCreatedForType(Document::LPA_TYPE_HW);
+
+        // Count all the LPAs that have been received
+        $summary['waiting'] += $hw['waiting'] = $this->getApplicationRepository()->countWaitingForType(Document::LPA_TYPE_HW);
+
+        // Count all the LPAs that have been received
+        $summary['checking'] += $hw['checking'] = $this->getApplicationRepository()->countCheckingForType(Document::LPA_TYPE_HW);
+
+        // Count all the LPAs that have been received
+        $summary['received'] += $hw['received'] = $this->getApplicationRepository()->countReceivedForType(Document::LPA_TYPE_HW);
+
+        // Count all the LPAs that have been returned
+        $summary['returned'] += $hw['returned'] = $this->getApplicationRepository()->countReturnedForType(Document::LPA_TYPE_HW);
 
         // Count all the LPAs that have a completedAt...
         $summary['completed'] += $hw['completed'] = $this->getApplicationRepository()->countCompletedForType(Document::LPA_TYPE_HW);
