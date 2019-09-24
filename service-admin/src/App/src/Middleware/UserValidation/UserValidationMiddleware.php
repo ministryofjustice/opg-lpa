@@ -11,7 +11,6 @@ use Zend\Expressive\Template\TemplateRendererInterface;
 
 class UserValidationMiddleware implements MiddlewareInterface
 {
-
     /**
      * @var TemplateRendererInterface
      */
@@ -33,9 +32,9 @@ class UserValidationMiddleware implements MiddlewareInterface
     {
         $user = $request->getAttribute('user');
 
-        try{
+        try {
             $user->getName();
-        }catch(\Throwable $throwable){
+        } catch(\Throwable $throwable) {
             return new HtmlResponse($this->renderer->render('error::no-user-details-error'));
         }
 
