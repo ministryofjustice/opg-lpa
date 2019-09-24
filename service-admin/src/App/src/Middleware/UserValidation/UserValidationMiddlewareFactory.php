@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Middleware\UserValidation;
 
 use Psr\Container\ContainerInterface;
