@@ -37,7 +37,7 @@ class UserValidationMiddleware implements MiddlewareInterface
         } catch (\Throwable $throwable) {
             return new HtmlResponse($this->renderer->render('error::no-user-details-error'));
         }
-        
+
         return $handler->handle($request);
     }
 }
