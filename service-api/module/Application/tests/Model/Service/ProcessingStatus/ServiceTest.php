@@ -54,13 +54,13 @@ class ServiceTest extends MockeryTestCase
     }
 
     public function setUpRequest($returnStatus = 200,
-        $returnBody = '{"status": "Pending"}')
+                                 $returnBody = '{"status": "Pending","rejectedDate": null}')
     {
         $this->response = Mockery::mock(ResponseInterface::class);
         $this->response->shouldReceive('getStatusCode')->once()->andReturn($returnStatus);
 
         if ($returnBody != null) {
-            $this->response->shouldReceive('getBody')->once()->andReturn($returnBody);
+            $this->response->shouldReceive('getBody')->andReturn($returnBody);
         }
 
         $this->httpClient->shouldReceive('sendAsync')
@@ -79,7 +79,7 @@ class ServiceTest extends MockeryTestCase
 
         $result = $this->service->getStatuses([1000000000]);
 
-        $this->assertEquals([1000000000 => "Received"], $result);
+        $this->assertEquals([1000000000 => ['status' => 'Received']], $result);
     }
 
     /**
@@ -92,9 +92,14 @@ class ServiceTest extends MockeryTestCase
         $this->setUpRequest();
         $this->setUpRequest();
 
-        $result = $this->service->getStatuses([1000000000,1000000001]);
+        $statusResult = $this->service->getStatuses([1000000000,1000000001]);
 
-        $this->assertEquals([1000000000 => "Received", 1000000001 => "Received"], $result);
+        $this->assertEquals(
+            [
+                1000000000 => ['status' => 'Received'],
+                1000000001 => ['status' => 'Received']
+            ], $statusResult
+        );
     }
 
     /**
@@ -121,8 +126,28 @@ class ServiceTest extends MockeryTestCase
 
         $this->setUpRequest(404, null);
 
-        $result = $this->service->getStatuses([1000000000]);
+        $statusResultArray  = $this->service->getStatuses([1000000000]);
 
-        $this->assertEquals([1000000000 => null], $result);
+        $this->assertEquals(
+            [
+                1000000000 => null
+            ]
+            , $statusResultArray
+        );
+    }
+
+    /**
+     * @throws ApiProblemException
+     * @throws Exception
+     */
+    public function testGetReturnedStatus()
+    {
+        $this->setUpSigning();
+        $returnStatus = 200;
+        $returnBody = '{"status": "Rejected","rejectedDate": "2019-02-11"}';
+        $this->setUpRequest($returnStatus, $returnBody);
+        $statusResult = $this->service->getStatuses([1000000000]);
+
+        $this->assertEquals([1000000000 => ['status' => 'Returned', 'rejectedDate' => '2019-02-11']], $statusResult);
     }
 }
