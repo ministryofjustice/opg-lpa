@@ -16,7 +16,7 @@ casper.test.begin('Checking password reset email', {
 
         function getPasswordResetLink(){
 
-        	var filename = '/mnt/test/activation_emails/' + userNumber + '.passwordreset';
+        	var filename = '/mnt/test/functional/activation_emails/' + userNumber + '.passwordreset';
 
             if( fs.isReadable( filename ) ){
 

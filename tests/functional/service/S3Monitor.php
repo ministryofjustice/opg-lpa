@@ -38,14 +38,13 @@ $client = new StsClient([
     'version' => 'latest'
 ]);
 
-//AWS Info
-//assumed current role - arn:aws:iam::050256574573:role/operator
-
-//TO-DO
-//check for env variable CI
-//$roleToAssumeArn = 'arn:aws:iam::050256574573:role/ci';
-
-$roleToAssumeArn = 'arn:aws:iam::050256574573:role/operator';
+    //check for env variable CI
+    if (true === (getenv('CI'))) {
+        $roleToAssumeArn = 'arn:aws:iam::050256574573:role/ci';
+    }
+    else{
+        $roleToAssumeArn = 'arn:aws:iam::050256574573:role/operator';
+    }
 
 try {
     $result = $client->assumeRole([
@@ -70,7 +69,7 @@ try {
     while(true) {
         $iterator = $s3Client->getIterator('ListObjects', array('Bucket' => $bucketName));
 
-        echo "Starting loop...". "\n";
+        echo "Checking objects in S3.......". "\n";
 
         foreach ($iterator as $object) {
             if (in_array($object['Key'], $seenKeys)) {
@@ -83,7 +82,7 @@ try {
 
             //The content of email is in Quoted-Printable encoding and uses = as an escape character. Hence decoding to match regex
             $bodyContent = quoted_printable_decode($result["Body"]);
-            echo "body is ..." . $bodyContent . "\n";
+
             parseBody(
                 $bodyContent,
                 'Activate your lasting power of attorney account',
@@ -99,9 +98,6 @@ try {
             );
 
             $seenKeys[] = $object['Key'];
-
-            print_r($seenKeys);
-            echo "-------------------------------------------------------------" . "\n";
         }
         sleep(5);
     }
@@ -126,39 +122,25 @@ try {
 
 function parseBody($bodyContent, $subject, $type, $linkRegex)
 {
-    //echo "Body Content is : -> " .$bodyContent . "\n";
-    //echo "Subject to be searched  is : -> " .$subject . "\n";
-    //echo "Type is : -> " .$type . "\n";
-
     $regex = '|(https:\/\/\S+' . $linkRegex . '\/[a-zA-Z0-9]+)|sim';
-    //echo "Regex is........." .$regex . "\n";
 
     if (preg_match($regex, $bodyContent, $matches) > 0) {
         $activationLink = $matches[1];
-        echo "Activation link is ......: ->" . $activationLink . "\n";
-
 
         if (!is_null($activationLink)) {
-            //caspertests+" + userNumber + "@lpa.opg.service.justice.gov.uk";
             $emailRegex = '|To: (.+)|m'; //to change and add regex
-            echo "toEmail-------------------" . $emailRegex . "\n";
 
             if (preg_match($emailRegex, $bodyContent, $emailMatches) > 0) {
                 $toEmail = $emailMatches[1];
-                echo "To Email is........." . $toEmail . "\n";
             }
 
             $userId = getPlusPartFromEmailAddress($toEmail);
-            echo "User ID .............." .$userId . "\n";
-
             $contents = $toEmail . ',' . $activationLink;
-            echo "Contents is.............." .$contents . "\n";
 
             if (!is_null($contents)) {
-                echo "i am here......". "\n";
                 //TO-DO : CORRECT PATH HERE
-                // file_put_contents('/mnt/test/functional/activation_emails/' . $userId . '.' . $type, $contents);
-                file_put_contents('/Users/seemamenon/OPG/opg-lpa/lpa-online/opg-lpa/tests/functional/activation_emails/' . $userId . '.' . $type, $contents);
+                file_put_contents('/mnt/test/functional/activation_emails/' . $userId . '.' . $type, $contents);
+                //file_put_contents('/Users/seemamenon/OPG/opg-lpa/lpa-online/opg-lpa/tests/functional/activation_emails/' . $userId . '.' . $type, $contents);
             }
             echo 'Found email for user ' . $userId . PHP_EOL;
 
@@ -186,20 +168,6 @@ function getPlusPartFromEmailAddress($email)
     return $userId;
 }
 
-//**************************************************************************
-//Connect to AWS [based on role]
-
-// Iterate through objects in bucket passing bucket name
-//Get list of each object within the bucket using key
-//Get body of each object
-    //Parse through body of each object to find activation link
-    //fetch body of email using regex
-    //check activation link + activation token present in the email body for the user
-    //file put contents [write string to file]
-
-//store key in array
-//iterate ech time based on value in array
-//**************************************************************************
 
 
 

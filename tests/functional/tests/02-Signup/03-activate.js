@@ -16,7 +16,7 @@ casper.test.begin('Checking account activation', {
 
         function getActivationLink(){
 
-        	var filename = '/mnt/test/activation_emails/' + userNumber + '.activation';
+        	var filename = '/mnt/test/functional/activation_emails/' + userNumber + '.activation';
         	
             if( fs.isReadable( filename ) ){
 
