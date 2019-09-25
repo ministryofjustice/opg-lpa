@@ -36,7 +36,11 @@ $client = new StsClient([
 ]);
 
     //check for env variable CI
+     $envVar = getenv('CI');
+     echo "The environmanet variable is ......". $envVar . "\n";
+
     if (true === (getenv('CI'))) {
+        echo " Inside IF ......" . "\n";
         $roleToAssumeArn = 'arn:aws:iam::050256574573:role/ci';
     }
     else{
