@@ -53,12 +53,12 @@ workflows:
           filters:
             branches:
               ignore: master
-      - infrastructure_and_deployment/run_healthcheck_test:
-          name: test_healthcheck
-          requires: [dev_environment_apply_terraform]
-          filters:
-            branches:
-              ignore: master
+#      - infrastructure_and_deployment/run_healthcheck_test:
+#          name: test_healthcheck
+#          requires: [dev_environment_apply_terraform]
+#          filters:
+#            branches:
+#              ignore: master
 
       - infrastructure_and_deployment/run_functional_test:
            name: run_functional_test
@@ -69,7 +69,7 @@ workflows:
 
       - slack_notify_domain:
           name: post_environment_domains
-          requires: [test_healthcheck, run_functional_test]
+          requires: [run_functional_test]
           filters:
             branches:
               ignore: master
@@ -109,13 +109,13 @@ workflows:
             branches:
               only: master
 
-      - infrastructure_and_deployment/run_healthcheck_test:
-          name: test_healthcheck_preprod
-          requires: [preprod_environment_apply_terraform]
-          workspace: preproduction
-          filters:
-            branches:
-              only: master
+#      - infrastructure_and_deployment/run_healthcheck_test:
+#          name: test_healthcheck_preprod
+#          requires: [preprod_environment_apply_terraform]
+#          workspace: preproduction
+#          filters:
+#            branches:
+#              only: master
 
       - infrastructure_and_deployment/run_functional_test:
           name: test_functional_preprod
@@ -128,7 +128,7 @@ workflows:
       - infrastructure_and_deployment/apply_account_terraform:
           name: prod_account_apply_terraform
           workspace: production
-          requires: [test_healthcheck_preprod, test_functional_preprod]
+          requires: [test_functional_preprod]
           filters:
             branches:
               only: master
