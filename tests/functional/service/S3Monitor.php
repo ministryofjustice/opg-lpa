@@ -16,9 +16,6 @@
  *
  */
 
-//require '../../vendor/autoload.php';// - for local
-//require dirname(__DIR__). './../vendor/autoload.php';
-
 require '../vendor/autoload.php';
 
 use Aws\Sts\StsClient;
@@ -45,6 +42,7 @@ $client = new StsClient([
     else{
         $roleToAssumeArn = 'arn:aws:iam::050256574573:role/operator';
     }
+    echo "the role is .................. " . $roleToAssumeArn . "\n";
 
 try {
     $result = $client->assumeRole([
