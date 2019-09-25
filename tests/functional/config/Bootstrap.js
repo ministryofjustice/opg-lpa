@@ -10,7 +10,7 @@ var random = Math.floor(Math.random() * 999999999);
 var date = new Date();
 var userNumber = date.getTime() + "" + random;
 
-var email = "opgcasper+" + userNumber + "@gmail.com";
+var email = "caspertests+" + userNumber + "@lpa.opg.service.justice.gov.uk";
 var password = "Casper" + userNumber;
 
 var suppressGovUkPayErrors = true;

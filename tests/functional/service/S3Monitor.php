@@ -16,8 +16,10 @@
  *
  */
 
-require '../../vendor/autoload.php';
+//require '../../vendor/autoload.php';// - for local
+//require dirname(__DIR__). './../vendor/autoload.php';
 
+require '../vendor/autoload.php';
 
 use Aws\Sts\StsClient;
 use Aws\Exception\AwsException;
@@ -65,39 +67,45 @@ try {
 
     $bucketName = 'opg-lpa-casper-mailbox';
 
-    $iterator = $s3Client->getIterator('ListObjects', array('Bucket' => $bucketName));
+    while(true) {
+        $iterator = $s3Client->getIterator('ListObjects', array('Bucket' => $bucketName));
 
-    foreach ($iterator as $object) {
-        if(in_array($object['Key'], $seenKeys)){
-            continue;
+        echo "Starting loop...". "\n";
+
+        foreach ($iterator as $object) {
+            if (in_array($object['Key'], $seenKeys)) {
+                continue;
+            }
+            $result = $s3Client->getObject([
+                'Bucket' => $bucketName,
+                'Key' => $object['Key'],
+            ]);
+
+            //The content of email is in Quoted-Printable encoding and uses = as an escape character. Hence decoding to match regex
+            $bodyContent = quoted_printable_decode($result["Body"]);
+            echo "body is ..." . $bodyContent . "\n";
+            parseBody(
+                $bodyContent,
+                'Activate your lasting power of attorney account',
+                'activation',
+                'signup\/confirm'
+            );
+
+            parseBody(
+                $bodyContent,
+                'Password reset request',
+                'passwordreset',
+                'forgot-password\/reset'
+            );
+
+            $seenKeys[] = $object['Key'];
+
+            print_r($seenKeys);
+            echo "-------------------------------------------------------------" . "\n";
         }
-        $result = $s3Client->getObject([
-            'Bucket' => $bucketName,
-            'Key' => $object['Key'],
-        ]);
-
-        //The content of email is in Quoted-Printable encoding and uses = as an escape character. Hence decoding to match regex
-        $bodyContent = quoted_printable_decode($result["Body"]);
-
-        parseBody(
-            $bodyContent,
-            'Activate your lasting power of attorney account',
-            'activation',
-            'signup\/confirm'
-        );
-
-        parseBody(
-            $bodyContent,
-            'Password reset request',
-            'passwordreset',
-            'forgot-password\/reset'
-        );
-
-        $seenKeys[] = $object['Key'];
-
-        print_r($seenKeys);
-        echo "-------------------------------------------------------------" . "\n";
+        sleep(5);
     }
+
 
 } catch (AwsException $e) {
     // output error message if fails
@@ -132,11 +140,11 @@ function parseBody($bodyContent, $subject, $type, $linkRegex)
 
         if (!is_null($activationLink)) {
             //caspertests+" + userNumber + "@lpa.opg.service.justice.gov.uk";
-            $toEmail = 'caspertests+1234@lpa.opg.service.justice.gov.uk'; //to change and add regex
-            echo "toEmail-------------------" . $toEmail . "\n";
+            $emailRegex = '|To: (.+)|m'; //to change and add regex
+            echo "toEmail-------------------" . $emailRegex . "\n";
 
-            if (preg_match($toEmail, $bodyContent, $matches) > 0) {
-                $toEmail = $matches[1];
+            if (preg_match($emailRegex, $bodyContent, $emailMatches) > 0) {
+                $toEmail = $emailMatches[1];
                 echo "To Email is........." . $toEmail . "\n";
             }
 
@@ -146,10 +154,12 @@ function parseBody($bodyContent, $subject, $type, $linkRegex)
             $contents = $toEmail . ',' . $activationLink;
             echo "Contents is.............." .$contents . "\n";
 
-            //TO-DO : CORRECT PATH HERE
-            // file_put_contents('/mnt/test/activation_emails/' . $userId . '.' . $type, $contents);
-            file_put_contents('/Users/seemamenon/OPG/opg-lpa/lpa-online/opg-lpa/tests/functional/activation_emails/' . $userId . '.' . $type, $contents);
-
+            if (!is_null($contents)) {
+                echo "i am here......". "\n";
+                //TO-DO : CORRECT PATH HERE
+                // file_put_contents('/mnt/test/functional/activation_emails/' . $userId . '.' . $type, $contents);
+                file_put_contents('/Users/seemamenon/OPG/opg-lpa/lpa-online/opg-lpa/tests/functional/activation_emails/' . $userId . '.' . $type, $contents);
+            }
             echo 'Found email for user ' . $userId . PHP_EOL;
 
         } else {

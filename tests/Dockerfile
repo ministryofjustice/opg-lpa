@@ -31,8 +31,10 @@ RUN git clone https://github.com/n1k0/casperjs.git /usr/local/casperjs && \
   ln -sf /usr/local/casperjs/bin/casperjs /usr/local/bin/casperjs
 
 RUN mkdir -p /mnt/test
-COPY tests/functional /mnt/test
+#COPY tests/functional /mnt/test
+COPY tests /mnt/test
 
-WORKDIR /mnt/test
+WORKDIR /mnt/test/functional/
 CMD php
+
 
