@@ -96,7 +96,7 @@ resource "aws_s3_bucket" "static_email_assets" {
 
 resource "aws_s3_bucket_object" "govuk_logo" {
   count        = terraform.workspace == "production" ? 1 : 0
-  bucket       = aws_s3_bucket.static_email_assets.id
+  bucket       = aws_s3_bucket.static_email_assets.0.id
   key          = "govuk-logo-v1.png"
   source       = "../../email-assets/govuk-logo-v1.png"
   etag         = filemd5("../../email-assets/govuk-logo-v1.png")
@@ -105,7 +105,7 @@ resource "aws_s3_bucket_object" "govuk_logo" {
 
 resource "aws_s3_bucket_object" "opg_logo" {
   count        = terraform.workspace == "production" ? 1 : 0
-  bucket       = aws_s3_bucket.static_email_assets.id
+  bucket       = aws_s3_bucket.static_email_assets.0.id
   key          = "opg-logo-v1.png"
   source       = "../../email-assets/opg-logo-v1.png"
   etag         = filemd5("../../email-assets/opg-logo-v1.png")
@@ -119,12 +119,12 @@ data "aws_iam_policy_document" "static_email_assets_policy" {
       type        = "AWS"
     }
     actions   = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.static_email_assets.arn}/*"]
+    resources = ["${aws_s3_bucket.static_email_assets.0.arn}/*"]
   }
 }
 
 resource "aws_s3_bucket_policy" "static_email_assets_policy" {
   count  = terraform.workspace == "production" ? 1 : 0
-  bucket = aws_s3_bucket.static_email_assets.id
+  bucket = aws_s3_bucket.static_email_assets.0.id
   policy = data.aws_iam_policy_document.static_email_assets_policy.json
 }
