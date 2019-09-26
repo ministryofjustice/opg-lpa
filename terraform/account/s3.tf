@@ -113,6 +113,7 @@ resource "aws_s3_bucket_object" "opg_logo" {
 }
 
 data "aws_iam_policy_document" "static_email_assets_policy" {
+  count = terraform.workspace == "production" ? 1 : 0
   statement {
     principals {
       identifiers = ["*"]
