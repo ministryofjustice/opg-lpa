@@ -18,7 +18,11 @@ chmod 777 ${xunitfile}
 
 RETVAL=$?
 
-echo Killing Email Monitor
+echo printing RETVAL
+echo $RETVAL
+
+echo Killing S3 Monitor
+kill $(ps aux | grep '[p]hp' | awk '{print $2}')
 killall php
 
 exit ${RETVAL}
