@@ -53,19 +53,19 @@ workflows:
           filters:
             branches:
               ignore: master
-#      - infrastructure_and_deployment/run_healthcheck_test:
-#          name: test_healthcheck
-#          requires: [dev_environment_apply_terraform]
-#          filters:
-#            branches:
-#              ignore: master
+      #      - infrastructure_and_deployment/run_healthcheck_test:
+      #          name: test_healthcheck
+      #          requires: [dev_environment_apply_terraform]
+      #          filters:
+      #            branches:
+      #              ignore: master
 
       - infrastructure_and_deployment/run_functional_test:
-           name: run_functional_test
-           requires: [dev_environment_apply_terraform]
-           filters:
-             branches:
-               ignore: master
+          name: run_functional_test
+          requires: [dev_environment_apply_terraform]
+          filters:
+            branches:
+              ignore: master
 
       - slack_notify_domain:
           name: post_environment_domains
@@ -109,13 +109,13 @@ workflows:
             branches:
               only: master
 
-#      - infrastructure_and_deployment/run_healthcheck_test:
-#          name: test_healthcheck_preprod
-#          requires: [preprod_environment_apply_terraform]
-#          workspace: preproduction
-#          filters:
-#            branches:
-#              only: master
+      #      - infrastructure_and_deployment/run_healthcheck_test:
+      #          name: test_healthcheck_preprod
+      #          requires: [preprod_environment_apply_terraform]
+      #          workspace: preproduction
+      #          filters:
+      #            branches:
+      #              only: master
 
       - infrastructure_and_deployment/run_functional_test:
           name: test_functional_preprod
@@ -473,7 +473,6 @@ orbs:
                 fi
               when: always
 
-
       run_functional_test:
         #
         # Runs user journey tests using casper JS
@@ -495,6 +494,9 @@ orbs:
               name: Build casper JS container
               command: |
                 docker build -f ~/project/tests/Dockerfile  -t casperjs:latest .
+                echo 'export DOCKER_REMOTE_IP="$(docker run casperjs:latest curl --silent https://icanhazip.com/)"' >> $BASH_ENV
+                echo DOCKER_REMOTE_IP
+
           - run:
               name: Install python dependencies
               command: |
@@ -522,7 +524,7 @@ orbs:
                   terraform init -lock-timeout=300s
                   export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                   echo $TF_WORKSPACE
-                  terraform apply -lock-timeout=300s -auto-approve
+                  terraform apply -lock-timeout=300s -auto-approve -var docker_remote_ip=$DOCKER_REMOTE_IP
                 fi
           - run:
               name: Run test
