@@ -495,7 +495,7 @@ orbs:
               command: |
                 docker build -f ~/project/tests/Dockerfile  -t casperjs:latest .
                 echo 'export DOCKER_REMOTE_IP="$(docker run casperjs:latest curl --silent https://icanhazip.com/)"' >> $BASH_ENV
-                echo DOCKER_REMOTE_IP
+                echo $DOCKER_REMOTE_IP
 
           - run:
               name: Install python dependencies
