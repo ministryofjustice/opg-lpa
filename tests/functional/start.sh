@@ -19,11 +19,9 @@ chmod 777 ${xunitfile}
 RETVAL=$?
 
 echo printing RETVAL
-echo $RETVAL
 
 echo Killing S3 Monitor
-pkill php-fpm
-#kill $(ps aux | grep '[p]hp' | awk '{print $2}')
+kill $(ps aux | grep '[p]hp' | awk '{print $2}')
 #killall php
 
 exit ${RETVAL}

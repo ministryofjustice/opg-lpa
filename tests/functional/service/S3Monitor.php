@@ -17,7 +17,6 @@
  */
 
 require_once '/mnt/test/vendor/autoload.php';
-//require '../vendor/autoload.php';
 
 use Aws\Sts\StsClient;
 use Aws\Exception\AwsException;
@@ -37,16 +36,12 @@ try {
         'version' => 'latest'
     ]);
 
-    //check for env variable CI
     if (getenv('CI')) {
-        echo " Inside IF ......" . "\n";
         $roleToAssumeArn = 'arn:aws:iam::050256574573:role/ci';
     }
     else{
-        echo " Inside ELSE ......" . "\n";
         $roleToAssumeArn = 'arn:aws:iam::050256574573:role/operator';
     }
-    echo "the role is .................. " . $roleToAssumeArn . "\n";
 
     try{
         $result = $client->assumeRole([
@@ -106,7 +101,6 @@ try {
         }
         sleep(5);
     }
-
 
 } catch (AwsException $e) {
     // output error message if fails
