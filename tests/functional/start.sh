@@ -2,6 +2,8 @@
 
 xunitfile=/mnt/test/casperesults.xml
 
+echo The base domain is $BASE_DOMAIN
+
 echo Starting S3 Monitor
 php /mnt/test/functional/service/S3Monitor.php &
 
@@ -19,6 +21,7 @@ chmod 777 ${xunitfile}
 RETVAL=$?
 
 echo printing RETVAL
+
 
 echo Killing S3 Monitor
 kill $(ps aux | grep '[p]hp' | awk '{print $2}')
