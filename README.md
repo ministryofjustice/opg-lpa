@@ -62,3 +62,8 @@ docker-compose run <service>-composer composer remove author/package
 ```
 To run the S3Monitor on terminal
 aws-vault exec identity -- php S3Monitor.php
+
+To run the casper tests in local environment
+```bash
+aws-vault exec identity -- docker run -it -v ${PWD}/tests:/mnt/test -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=53-lpa3302add.front.development.lpa.opg.service.justice.gov.uk" --net=host --rm casperjs:latest ./start.sh 'tests/'
+```

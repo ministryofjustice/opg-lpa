@@ -31,10 +31,14 @@ $seenKeys = [];
  * This code expects that you have AWS credentials set up per:
  * https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials.html
  */
-$client = new StsClient([
-    'region' => 'eu-west-1',
-    'version' => 'latest'
-]);
+try {
+    $client = new StsClient([
+        'region' => 'eu-west-1',
+        'version' => 'latest'
+    ]);
+
+    $session_token = getenv("AWS_SESSION_TOKEN");
+    echo "The session token is........  " . $session_token . "\n";
 
     //check for env variable CI
     if (getenv('CI')) {
@@ -47,25 +51,28 @@ $client = new StsClient([
     }
     echo "the role is .................. " . $roleToAssumeArn . "\n";
 
-try {
-    $result = $client->assumeRole([
-        'RoleArn' => $roleToAssumeArn,
-        'RoleSessionName' => 'session1'
-    ]);
-    // output AssumedRole credentials, you can use these credentials
-    // to initiate a new AWS Service client with the IAM Role's permissions
+    try{
+        $result = $client->assumeRole([
+            'RoleArn' => $roleToAssumeArn,
+            'RoleSessionName' => 'session1'
+        ]);
+        // output AssumedRole credentials, you can use these credentials
+        // to initiate a new AWS Service client with the IAM Role's permissions
 
-    echo " The result is ......." . $result['Credentials']['SessionToken'] . "\n";
+        echo " The result is ......." . $result['Credentials']['SessionToken'] . "\n";
 
-    $s3Client = new S3Client([
-        'version'     => 'latest',
-        'region'      => 'eu-west-1',
-        'credentials' =>  [
-            'key'    => $result['Credentials']['AccessKeyId'],
-            'secret' => $result['Credentials']['SecretAccessKey'],
-            'token'  => $result['Credentials']['SessionToken']
-        ]
-    ]);
+        $s3Client = new S3Client([
+            'version'     => 'latest',
+            'region'      => 'eu-west-1',
+            'credentials' =>  [
+                'key'    => $result['Credentials']['AccessKeyId'],
+                'secret' => $result['Credentials']['SecretAccessKey'],
+                'token'  => $result['Credentials']['SessionToken']
+            ]
+        ]);
+    }catch (Exception $e) {
+        exit($e->getMessage());
+    }
 
     $bucketName = 'opg-lpa-casper-mailbox';
 
