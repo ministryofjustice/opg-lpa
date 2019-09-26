@@ -16,7 +16,8 @@
  *
  */
 
-require '../vendor/autoload.php';
+require_once '/mnt/test/vendor/autoload.php';
+//require '../vendor/autoload.php';
 
 use Aws\Sts\StsClient;
 use Aws\Exception\AwsException;
@@ -36,14 +37,12 @@ $client = new StsClient([
 ]);
 
     //check for env variable CI
-     $envVar = getenv('CI');
-     echo "The environmanet variable is ......". $envVar . "\n";
-
     if (getenv('CI')) {
         echo " Inside IF ......" . "\n";
-        $roleToAssumeArn = 'arn:aws:iam::050256574573:role/ci';
+        $roleToAssumeArn = 'arn:aws:iam::050256574573:role/opg-lpa-ci';
     }
     else{
+        echo " Inside ELSE ......" . "\n";
         $roleToAssumeArn = 'arn:aws:iam::050256574573:role/operator';
     }
     echo "the role is .................. " . $roleToAssumeArn . "\n";
