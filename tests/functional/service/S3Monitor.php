@@ -55,6 +55,8 @@ try {
     // output AssumedRole credentials, you can use these credentials
     // to initiate a new AWS Service client with the IAM Role's permissions
 
+    echo " The result is ......." . $result['Credentials']['SessionToken'] . "\n";
+
     $s3Client = new S3Client([
         'version'     => 'latest',
         'region'      => 'eu-west-1',
