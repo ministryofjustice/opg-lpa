@@ -527,7 +527,7 @@ orbs:
           - run:
               name: Run test
               command: |
-                docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name casperjs casperjs:latest
+                docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=www.lastingpowerofattorney.service.gov.uk" --name casperjs casperjs:latest
                 docker exec casperjs ./start.sh 'tests/'
           - run:
               name: Remove CircleCI ingress to environment
