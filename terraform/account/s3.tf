@@ -127,5 +127,5 @@ data "aws_iam_policy_document" "static_email_assets_policy" {
 resource "aws_s3_bucket_policy" "static_email_assets_policy" {
   count  = terraform.workspace == "production" ? 1 : 0
   bucket = aws_s3_bucket.static_email_assets.0.id
-  policy = data.aws_iam_policy_document.static_email_assets_policy.json
+  policy = data.aws_iam_policy_document.static_email_assets_policy.0.json
 }
