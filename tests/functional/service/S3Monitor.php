@@ -37,13 +37,10 @@ try {
         'version' => 'latest'
     ]);
 
-    $session_token = getenv("AWS_SESSION_TOKEN");
-    echo "The session token is........  " . $session_token . "\n";
-
     //check for env variable CI
     if (getenv('CI')) {
         echo " Inside IF ......" . "\n";
-        $roleToAssumeArn = 'arn:aws:iam::050256574573:role/opg-lpa-ci';
+        $roleToAssumeArn = 'arn:aws:iam::050256574573:role/ci';
     }
     else{
         echo " Inside ELSE ......" . "\n";
@@ -58,9 +55,7 @@ try {
         ]);
         // output AssumedRole credentials, you can use these credentials
         // to initiate a new AWS Service client with the IAM Role's permissions
-
-        echo " The result is ......." . $result['Credentials']['SessionToken'] . "\n";
-
+        
         $s3Client = new S3Client([
             'version'     => 'latest',
             'region'      => 'eu-west-1',
