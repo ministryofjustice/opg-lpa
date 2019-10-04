@@ -117,6 +117,7 @@ module.exports = function (grunt) {
           // MoJ Scripts - Base
           'assets/js/moj/moj.js',
           'assets/js/moj/moj.helpers.js',
+          'assets/js/moj/moj.cookie-functions.js',
 
           // LPA Scripts - Templates
           'assets/js/lpa/lpa.templates.js',
@@ -143,6 +144,7 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.single-use.js',
           'assets/js/moj/moj.modules/moj.analytics.js',
           'assets/js/moj/moj.modules/moj.form-error-tracker.js',
+          'assets/js/moj/moj.modules/moj.cookie-consent.js',
 
           // Init Script
           'assets/js/main.js',
