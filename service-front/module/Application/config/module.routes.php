@@ -63,6 +63,17 @@ return [
                 ],
             ], // contact
 
+            'cookies' => [
+                'type' => 'Zend\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/cookies',
+                    'defaults' => [
+                        'controller' => 'General\CookiesController',
+                        'action'     => 'index',
+                    ],
+                ],
+            ], // contact
+
             'forgot-password' => [
                 'type' => 'Segment',
                 'options' => [
