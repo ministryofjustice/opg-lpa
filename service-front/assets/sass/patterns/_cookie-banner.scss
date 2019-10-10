@@ -1,0 +1,32 @@
+#global-cookie-message {
+  .global-cookie-message__text {
+    font-size: 19px;
+    line-height: 1.315;
+  }
+
+  .global-cookie-message__buttons {
+    max-width: 960px;
+    margin: 15px 15px;
+  }
+
+  .global-cookie-message__button {
+    @include button($button-colour);
+    margin-right: 15px;
+  }
+}
+
+@media (min-width: 641px) {
+  #global-cookie-message {
+    .global-cookie-message__buttons {
+      margin: 15px 30px;
+    }
+  }
+}
+
+@media (min-width: 1020px) {
+  #global-cookie-message {
+    .global-cookie-message__buttons {
+      margin: 15px auto;
+    }
+  }
+}

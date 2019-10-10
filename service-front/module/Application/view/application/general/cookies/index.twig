@@ -1,0 +1,61 @@
+{% extends 'layout/twig/layout.twig' %}
+
+{% block htmlTitle %}Cookies - {% endblock %}
+{% block pageTitle %}Cookies{% endblock %}
+
+{% import "application/macros.twig" as macros %}
+
+{% set usageCookies = form.get('usageCookies') %}
+
+{% block content %}
+
+    <p>Cookies are files saved on your phone, tablet or computer when you visit a website.</p>
+
+    <p>
+        We use cookies to store information about how you use the Claim a power of attorney refund service, such as the
+        pages you visit.
+    </p>
+
+
+    {# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+        {{ formElement(form.getCsrf) }}
+
+        <h2 class="heading-large">Cookie settings</h2>
+
+        <p>We use two types of cookie. One type is strictly necessary and the other type of cookie is optional.</p>
+
+        <h3 class="heading-medium">Cookies that measure website use</h3>
+
+        <p>
+            OPG and Government Digital Services use Google Analytics to measure how you use the service so we can improve it
+            based on user needs. Google Analytics sets cookies that store anonymised information about:
+        </p>
+
+        <ul class="list list-bullet">
+            <li>what pages you visit and how long you spend on each</li>
+            <li>what you click on while you're visiting the site</li>
+        </ul>
+
+        <p>We do not allow Google to use or share the data about how you use this site.</p>
+
+        <div class="form-group">
+            <legend id="id-usage-cookies">
+                <span class="visually-hidden question-text">Allow use of non-essential Cookies?</span>
+            </legend>
+            <fieldset>
+                {{ formRadio(usageCookies) }}
+            </fieldset>
+        </div>
+
+        <h3 class="heading-medium">Strictly necessary cookies</h3>
+        <p>These essential cookies allow you to log in to the service. They always need to be on.</p>
+
+        <div class="form-group">
+            <input class="button" type="submit" value="Save changes">
+        </div>
+
+    {{ form().closeTag|raw }}
+
+{% endblock content %}
