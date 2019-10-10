@@ -3560,6 +3560,77 @@ input[type=number] {
         .progress-bar .progress-bar__steps:last-child {
           padding-right: 10px; } }
 
+#global-cookie-message .global-cookie-message__text {
+  font-size: 19px;
+  line-height: 1.315; }
+#global-cookie-message .global-cookie-message__buttons {
+  max-width: 960px;
+  margin: 15px 15px; }
+#global-cookie-message .global-cookie-message__button {
+  background-color: #00823b;
+  position: relative;
+  display: -moz-inline-stack;
+  display: inline-block;
+  padding: .526315em .789473em .263157em;
+  border: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  outline: 1px solid transparent;
+  outline-offset: -1px;
+  -webkit-appearance: none;
+  -webkit-box-shadow: 0 2px 0 #003618;
+  -moz-box-shadow: 0 2px 0 #003618;
+  box-shadow: 0 2px 0 #003618;
+  font-size: 1em;
+  line-height: 1.25;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  cursor: pointer;
+  color: #fff;
+  margin-right: 15px; }
+  #global-cookie-message .global-cookie-message__button:visited {
+    background-color: #00823b; }
+  #global-cookie-message .global-cookie-message__button:hover, #global-cookie-message .global-cookie-message__button:focus {
+    background-color: #00692f; }
+  #global-cookie-message .global-cookie-message__button:active {
+    top: 2px;
+    -webkit-box-shadow: 0 0 0 #00823b;
+    -moz-box-shadow: 0 0 0 #00823b;
+    box-shadow: 0 0 0 #00823b; }
+  #global-cookie-message .global-cookie-message__button.disabled, #global-cookie-message .global-cookie-message__button[disabled="disabled"], #global-cookie-message .global-cookie-message__button[disabled] {
+    zoom: 1;
+    filter: alpha(opacity=50);
+    opacity: 0.5; }
+    #global-cookie-message .global-cookie-message__button.disabled:hover, #global-cookie-message .global-cookie-message__button[disabled="disabled"]:hover, #global-cookie-message .global-cookie-message__button[disabled]:hover {
+      cursor: default;
+      background-color: #00823b; }
+    #global-cookie-message .global-cookie-message__button.disabled:active, #global-cookie-message .global-cookie-message__button[disabled="disabled"]:active, #global-cookie-message .global-cookie-message__button[disabled]:active {
+      top: 0;
+      -webkit-box-shadow: 0 2px 0 #003618;
+      -moz-box-shadow: 0 2px 0 #003618;
+      box-shadow: 0 2px 0 #003618; }
+  #global-cookie-message .global-cookie-message__button:link, #global-cookie-message .global-cookie-message__button:link:focus, #global-cookie-message .global-cookie-message__button:hover, #global-cookie-message .global-cookie-message__button:focus, #global-cookie-message .global-cookie-message__button:visited {
+    color: #fff; }
+  #global-cookie-message .global-cookie-message__button:before {
+    content: "";
+    height: 110%;
+    width: 100%;
+    display: block;
+    background: transparent;
+    position: absolute;
+    top: 0;
+    left: 0; }
+  #global-cookie-message .global-cookie-message__button:active:before {
+    top: -10%;
+    height: 120%; }
+
+@media (min-width: 641px) {
+  #global-cookie-message .global-cookie-message__buttons {
+    margin: 15px 30px; } }
+@media (min-width: 1020px) {
+  #global-cookie-message .global-cookie-message__buttons {
+    margin: 15px auto; } }
 .noscroll {
   position: relative;
   overflow: hidden; }
