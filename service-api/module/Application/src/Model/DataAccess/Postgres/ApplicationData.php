@@ -468,7 +468,6 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         return $this->count([
             new IsNotNull('completedAt'),
             new Expression("metadata ->> 'sirius-processing-status' = ?", Lpa::SIRIUS_PROCESSING_STATUS_RETURNED),
-            new Expression("metadata ->> 'application-rejected-date' IS NOT NULL"),
             new Expression("document ->> 'type' = ?", $lpaType),
         ]);
     }
