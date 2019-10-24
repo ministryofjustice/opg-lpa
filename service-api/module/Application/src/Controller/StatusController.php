@@ -196,9 +196,17 @@ class StatusController extends AbstractRestfulController
         $idsToCheckInSirius = [];
 
         foreach ($exploded_ids as $id) {
+            var_dump($id);
+
             $currentProcessingStatus = $this->getCurrentProcessingStatus($id);
+            var_dump($currentProcessingStatus);
+
             $rejectedDate = $this->getApplicationRejectedDate($id);
+            var_dump($rejectedDate);
+
             $registrationDate = $this->getApplicationRegistrationDate($id);
+            var_dump($registrationDate);
+
 
             if ($currentProcessingStatus instanceof ApiProblem) {
                 $results[$id] = ['found' => false];
@@ -212,11 +220,19 @@ class StatusController extends AbstractRestfulController
             }
 
             //Add id's to array, to check updates in Sirius for applications. Only add to array if rejected date is empty for Returned applications.
-            if (($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED && is_null($rejectedDate) || is_null($registrationDate)) ||
-                $currentProcessingStatus != Lpa::SIRIUS_PROCESSING_STATUS_RETURNED ) {
+            if (($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED && is_null($rejectedDate)) ||
+                    ($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED && is_null($registrationDate)) ||
+                    $currentProcessingStatus != Lpa::SIRIUS_PROCESSING_STATUS_RETURNED ) {
                 $idsToCheckInSirius[] = $id;
+
+                var_dump("hello1");
+
+                var_dump($idsToCheckInSirius);
+                die;
             }
             else{
+                var_dump("hello2");
+                die;
                 $results[$id] = ['found' => true, 'status' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED];
                 continue;
             }
@@ -224,6 +240,7 @@ class StatusController extends AbstractRestfulController
         // Get status update from Sirius
         if (!empty($idsToCheckInSirius )) {
 
+            var_dump("hello3");
             $this->getLogger()->debug('Ids to check in Sirius :' . var_export($idsToCheckInSirius, true));
             $siriusResponseArray = $this->processingStatusService->getStatuses($idsToCheckInSirius);
 

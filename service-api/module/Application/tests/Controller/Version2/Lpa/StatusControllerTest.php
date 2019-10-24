@@ -57,7 +57,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->atMost()->times(3)
+            ->atMost()->times(4)
             ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
@@ -99,7 +99,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->atMost()->times(3)
+            ->atMost()->times(4)
             ->andReturn($dataModel);
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
@@ -138,7 +138,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->atMost()->times(3)
+            ->atMost()->times(4)
             ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
@@ -181,7 +181,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->atMost()->times(3)
+            ->atMost()->times(4)
             ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
@@ -224,7 +224,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->atMost()->times(3)
+            ->atMost()->times(4)
             ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
@@ -266,7 +266,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->twice()
+            ->times(3)
             ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
@@ -291,7 +291,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->twice()
+            ->times(3)
             ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
@@ -316,7 +316,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->atMost()->times(3)
+            ->atMost()->times(4)
             ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
@@ -346,7 +346,7 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
         $this->service->shouldReceive('fetch')->withArgs(['98765', '12345'])
-            ->twice()
+            ->times(3)
             ->andReturn(new ApiProblem(500, 'Test error'));
         $result = $this->statusController->get('98765');
         $this->assertEquals(new Json(['98765' => ['found' => false]]), $result);
@@ -355,13 +355,15 @@ class StatusControllerTest extends AbstractControllerTest
     public function testGetLpaAlreadyReturned()
     {
         $this->statusController->onDispatch($this->mvcEvent);
-        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
-            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Returned', Lpa::APPLICATION_REJECTED_DATE => new DateTime('2019-02-10')]]);
+        $lpa = new Lpa(['completedAt' => new DateTime('2019-08-01'),
+            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Returned', Lpa::APPLICATION_REJECTED_DATE_DATE => new DateTime('2019-08-10'), Lpa::APPLICATION_REGISTRATION_DATE => null]]);
 
         $dataModel = new DataModelEntity($lpa);
 
         $this->service->shouldReceive('fetch')
-            ->twice()->andReturn($dataModel);
+            ->withArgs(['98765'])
+            ->atMost()->times(3)
+            ->andReturn($dataModel);
 
         $result = $this->statusController->get('98765');
 
@@ -388,12 +390,12 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->atMost()->times(3)
+            ->atMost()->times(4)
             ->andReturn($dataModel);
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98766', '12345'])
-            ->atMost()->times(3)
+            ->atMost()->times(4)
             ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
