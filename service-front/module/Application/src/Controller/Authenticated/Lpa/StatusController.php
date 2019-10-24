@@ -52,7 +52,6 @@ class StatusController extends AbstractLpaController
         else
             $returnDate = null;
 
-
         return new ViewModel([
             'returnDate'   => $returnDate,
             'lpa'          => $lpa,

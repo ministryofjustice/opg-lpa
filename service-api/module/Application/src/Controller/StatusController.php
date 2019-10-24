@@ -119,7 +119,7 @@ class StatusController extends AbstractRestfulController
         return $currentProcessingStatus;
     }
 
-    public function getApplicationRejectedDate($id)
+    public function getApplicationReturnDate($id)
     {
         $lpaResult = $this->getService()->fetch($id, $this->routeUserId);
         if ($lpaResult instanceof ApiProblem) {
@@ -129,24 +129,10 @@ class StatusController extends AbstractRestfulController
         /** @var Lpa $lpa */
         $metaData = $lpaResult->getData()->getMetaData();
 
-        $applicationRejectedDate = array_key_exists(LPA::APPLICATION_REJECTED_DATE, $metaData) ?
-            $metaData[LPA::APPLICATION_REJECTED_DATE] : null;
-        return $applicationRejectedDate;
-    }
+        $applicationReturnDate = array_key_exists(LPA::APPLICATION_REJECTED_DATE, $metaData) ?
+            $metaData[LPA::APPLICATION_REJECTED_DATE] : $metaData[LPA::APPLICATION_REGISTRATION_DATE];
 
-    public function getApplicationRegistrationDate($id)
-    {
-        $lpaResult = $this->getService()->fetch($id, $this->routeUserId);
-        if ($lpaResult instanceof ApiProblem) {
-            $this->getLogger()->err('Error accessing LPA data: ' . $lpaResult->getDetail());
-            return $lpaResult;
-        }
-        /** @var Lpa $lpa */
-        $metaData = $lpaResult->getData()->getMetaData();
-
-        $applicationRegistrationDate = array_key_exists(LPA::APPLICATION_REGISTRATION_DATE, $metaData) ?
-            $metaData[LPA::APPLICATION_REGISTRATION_DATE] : null;
-        return $applicationRegistrationDate;
+        return $applicationReturnDate;
     }
 
     private function updateMetadata($lpaId, $lpaStatus, $receiptDate = null, $registrationDate = null, $rejectedDate = null)
@@ -194,19 +180,14 @@ class StatusController extends AbstractRestfulController
         $exploded_ids = explode(',', $ids);
         $results = [];
         $idsToCheckInSirius = [];
+        $returnDate = "";
 
         foreach ($exploded_ids as $id) {
-            var_dump($id);
-
             $currentProcessingStatus = $this->getCurrentProcessingStatus($id);
-            var_dump($currentProcessingStatus);
-
-            $rejectedDate = $this->getApplicationRejectedDate($id);
-            var_dump($rejectedDate);
-
-            $registrationDate = $this->getApplicationRegistrationDate($id);
-            var_dump($registrationDate);
-
+            if ($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED)
+            {
+                $returnDate = $this->getApplicationReturnDate($id);
+            }
 
             if ($currentProcessingStatus instanceof ApiProblem) {
                 $results[$id] = ['found' => false];
@@ -220,27 +201,17 @@ class StatusController extends AbstractRestfulController
             }
 
             //Add id's to array, to check updates in Sirius for applications. Only add to array if rejected date is empty for Returned applications.
-            if (($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED && is_null($rejectedDate)) ||
-                    ($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED && is_null($registrationDate)) ||
-                    $currentProcessingStatus != Lpa::SIRIUS_PROCESSING_STATUS_RETURNED ) {
+            if (($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED && is_null($returnDate)) ||
+                $currentProcessingStatus != Lpa::SIRIUS_PROCESSING_STATUS_RETURNED ) {
                 $idsToCheckInSirius[] = $id;
-
-                var_dump("hello1");
-
-                var_dump($idsToCheckInSirius);
-                die;
             }
             else{
-                var_dump("hello2");
-                die;
                 $results[$id] = ['found' => true, 'status' => Lpa::SIRIUS_PROCESSING_STATUS_RETURNED];
                 continue;
             }
         }
         // Get status update from Sirius
         if (!empty($idsToCheckInSirius )) {
-
-            var_dump("hello3");
             $this->getLogger()->debug('Ids to check in Sirius :' . var_export($idsToCheckInSirius, true));
             $siriusResponseArray = $this->processingStatusService->getStatuses($idsToCheckInSirius);
 
