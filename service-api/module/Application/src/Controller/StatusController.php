@@ -134,6 +134,21 @@ class StatusController extends AbstractRestfulController
         return $applicationRejectedDate;
     }
 
+    public function getApplicationRegistrationDate($id)
+    {
+        $lpaResult = $this->getService()->fetch($id, $this->routeUserId);
+        if ($lpaResult instanceof ApiProblem) {
+            $this->getLogger()->err('Error accessing LPA data: ' . $lpaResult->getDetail());
+            return $lpaResult;
+        }
+        /** @var Lpa $lpa */
+        $metaData = $lpaResult->getData()->getMetaData();
+
+        $applicationRegistrationDate = array_key_exists(LPA::APPLICATION_REGISTRATION_DATE, $metaData) ?
+            $metaData[LPA::APPLICATION_REGISTRATION_DATE] : null;
+        return $applicationRegistrationDate;
+    }
+
     private function updateMetadata($lpaId, $lpaStatus, $receiptDate = null, $registrationDate = null, $rejectedDate = null)
     {
         $lpaResult = $this->getService()->fetch($lpaId, $this->routeUserId);
@@ -183,6 +198,7 @@ class StatusController extends AbstractRestfulController
         foreach ($exploded_ids as $id) {
             $currentProcessingStatus = $this->getCurrentProcessingStatus($id);
             $rejectedDate = $this->getApplicationRejectedDate($id);
+            $registrationDate = $this->getApplicationRegistrationDate($id);
 
             if ($currentProcessingStatus instanceof ApiProblem) {
                 $results[$id] = ['found' => false];
@@ -196,7 +212,7 @@ class StatusController extends AbstractRestfulController
             }
 
             //Add id's to array, to check updates in Sirius for applications. Only add to array if rejected date is empty for Returned applications.
-            if (($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED && is_null($rejectedDate)) ||
+            if (($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED && is_null($rejectedDate) || is_null($registrationDate)) ||
                 $currentProcessingStatus != Lpa::SIRIUS_PROCESSING_STATUS_RETURNED ) {
                 $idsToCheckInSirius[] = $id;
             }
