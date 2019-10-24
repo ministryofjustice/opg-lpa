@@ -187,7 +187,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Checking' , 'registrationDate' => new DateTime('2019-02-11')]
+                '98765' => ['status' => 'Checking' , 'registrationDate' => null]
             ]);
 
         $this->service->shouldReceive('patch')
@@ -322,7 +322,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->processingStatusService->shouldReceive('getStatuses')
             ->once()
             ->andReturn([
-                '98765' => ['status' => 'Checking','registrationDate' => new DateTime('2019-02-11')]
+                '98765' => ['status' => 'Checking','registrationDate' => null]
             ]);
 
         $this->service->shouldReceive('patch')
