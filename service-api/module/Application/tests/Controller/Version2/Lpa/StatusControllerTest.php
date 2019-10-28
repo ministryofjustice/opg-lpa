@@ -218,7 +218,7 @@ class StatusControllerTest extends AbstractControllerTest
         $this->statusController->onDispatch($this->mvcEvent);
 
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
-            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Returned']]);
+            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Returned', Lpa::APPLICATION_REJECTED_DATE => null, Lpa::APPLICATION_REGISTRATION_DATE => null ]]);
 
         $dataModel = new DataModelEntity($lpa);
 
@@ -266,7 +266,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->twice()
+            ->once()
             ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
@@ -291,7 +291,7 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->service->shouldReceive('fetch')
             ->withArgs(['98765', '12345'])
-            ->twice()
+            ->times(1)
             ->andReturn($dataModel);
 
         $this->processingStatusService->shouldReceive('getStatuses')
@@ -346,13 +346,29 @@ class StatusControllerTest extends AbstractControllerTest
     {
         $this->statusController->onDispatch($this->mvcEvent);
         $this->service->shouldReceive('fetch')->withArgs(['98765', '12345'])
-            ->twice()
+            ->once()
             ->andReturn(new ApiProblem(500, 'Test error'));
         $result = $this->statusController->get('98765');
         $this->assertEquals(new Json(['98765' => ['found' => false]]), $result);
     }
 
-    public function testGetLpaAlreadyReturned()
+    public function testGetLpaAlreadyReturnedWithRegistrationDateSet()
+    {
+        $this->statusController->onDispatch($this->mvcEvent);
+        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
+            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Returned', Lpa::APPLICATION_REGISTRATION_DATE => new DateTime('2019-02-20')]]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->service->shouldReceive('fetch')
+            ->twice()->andReturn($dataModel);
+
+        $result = $this->statusController->get('98765');
+
+        $this->assertEquals(new Json(['98765' => ['found'=>true, 'status'=>'Returned']]), $result);
+    }
+
+    public function testGetLpaAlreadyReturnedWithRejectedDateSet()
     {
         $this->statusController->onDispatch($this->mvcEvent);
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
