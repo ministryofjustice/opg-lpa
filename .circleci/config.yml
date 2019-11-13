@@ -20,20 +20,21 @@ workflows:
           ecr_repository_name_prefix: online-lpa/pdf
           service_path: service-pdf
 
-      - infrastructure_and_deployment/package_lambda_artifact:
-          name: package_lambda_artifact
-          filters:
-            branches:
-              ignore: master
       - infrastructure_and_deployment/lint_and_validate_terraform:
           name: lint_and_validate_terraform
-          requires: [package_lambda_artifact]
           filters:
             branches:
               ignore: master
 
       - infrastructure_and_deployment/apply_account_terraform:
           name: dev_account_apply_terraform
+          workspace: development
+          requires: [lint_and_validate_terraform]
+          filters:
+            branches:
+              ignore: master
+      - infrastructure_and_deployment/apply_email_terraform:
+          name: email_apply_terraform
           workspace: development
           requires: [lint_and_validate_terraform]
           filters:
@@ -129,6 +130,12 @@ workflows:
           name: test_healthcheck_prod
           requires: [prod_environment_apply_terraform]
           workspace: production
+          filters:
+            branches:
+              only: master
+      - slack_notify_production_release:
+          name: post_production_release_message
+          requires: [test_healthcheck_prod]
           filters:
             branches:
               only: master
@@ -282,7 +289,7 @@ orbs:
               name: Validate Account Terraform
               command: |
                 terraform --version
-                cd ~/project/terraform/terraform_account
+                cd ~/project/terraform/account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
@@ -297,6 +304,28 @@ orbs:
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate -var container_version=$CIRCLE_BRANCH-$SHORT_HASH
+
+      apply_email_terraform:
+        #
+        # Apply the email terraform configuration. This:
+        #   - Creates a mailbox used for functional testing;
+        #
+        executor: terraform
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: development
+        steps:
+          - checkout
+          - run:
+              name: Apply Email Terraform
+              command: |
+                cd ~/project/terraform/email
+                terraform init -lock-timeout=300s
+                export TF_WORKSPACE=<<parameters.workspace>>
+                echo $TF_WORKSPACE
+                terraform apply -lock-timeout=300s --auto-approve
 
       apply_account_terraform:
         #
@@ -314,7 +343,7 @@ orbs:
           - run:
               name: Apply Account Terraform
               command: |
-                cd ~/project/terraform/terraform_account
+                cd ~/project/terraform/account
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=<<parameters.workspace>>
                 echo $TF_WORKSPACE
@@ -453,4 +482,28 @@ jobs:
             echo 'export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
       - slack/notify:
           title: "Online LPA Development Environment Ready"
-          message: "front url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN \nbuild url: $CIRCLE_BUILD_URL"
+          message: "User: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
+  slack_notify_production_release:
+    docker:
+      - image: circleci/python
+    parameters:
+      workspace:
+        description: Terraform workspace name
+        type: string
+        default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: Get URLs
+          command: |
+            ENV_NAME=<<parameters.workspace>>
+            echo 'export TF_WORKSPACE=${ENV_NAME:0:13}' >> $BASH_ENV
+            echo $TF_WORKSPACE
+            echo 'export FRONT_DOMAIN="$(jq -r .front_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
+            echo 'export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
+      - slack/notify:
+          title: "Online LPA Production Release Successful"
+          message: "By user: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
+          webhook: ${PROD_RELEASE_SLACK_WEBHOOK}
