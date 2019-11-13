@@ -93,6 +93,38 @@ interface ApplicationRepositoryInterface {
     public function countCreatedForType(string $lpaType) : int;
 
     /**
+     * Count the number of LPAs waiting for a given LPA type
+     *
+     * @param $lpaType
+     * @return int
+     */
+    public function countWaitingForType(string $lpaType) : int;
+
+    /**
+     * Count the number of LPAs being checked for a given LPA type
+     *
+     * @param $lpaType
+     * @return int
+     */
+    public function countCheckingForType(string $lpaType) : int;
+
+    /**
+     * Count the number of LPAs received for a given LPA type
+     *
+     * @param $lpaType
+     * @return int
+     */
+    public function countReceivedForType(string $lpaType) : int;
+
+    /**
+     * Count the number of LPAs returned for a given LPA type
+     *
+     * @param $lpaType
+     * @return int
+     */
+    public function countReturnedForType(string $lpaType) : int;
+
+    /**
      * Count the number of LPAs completed for a given LPA type
      *
      * @param $lpaType
@@ -324,4 +356,69 @@ interface ApplicationRepositoryInterface {
      */
     public function countCompletedBetweenCertificateProviderSkipped(Datetime $start, Datetime $end, bool $isSkipped) : int;
 
+    /**
+     * Get the number of returned LPAs
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @return int
+     */
+    public function countReturnedBetween(Datetime $start, Datetime $end) : int;
+
+    /**
+     * Get the number of returned LPAs
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param array $additionalCriteria
+     * @return int
+     */
+    public function countReturned(Datetime $start, Datetime $end, array $additionalCriteria = []) : int;
+
+    /**
+     * Get the number of LPAs being checked
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @return int
+     */
+    public function countCheckedBetween(Datetime $start, Datetime $end) : int;
+
+    /**
+     * Get the number of LPAs being checked
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param array $additionalCriteria
+     * @return int
+     */
+    public function countChecking(Datetime $start, Datetime $end, array $additionalCriteria = []) : int;
+
+    /**
+     * Get the number of LPAs received
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @return int
+     */
+    public function countReceivedBetween(Datetime $start, Datetime $end) : int;
+
+    /**
+     * Get the number of LPAs received
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @param array $additionalCriteria
+     * @return int
+     */
+    public function countReceived(Datetime $start, Datetime $end, array $additionalCriteria = []) : int;
+
+    /**
+     * Get the number of LPAs waiting
+     *
+     * @param Datetime $start
+     * @param Datetime $end
+     * @return int
+     */
+    public function countWaitingBetween(Datetime $start, Datetime $end) : int;
 }

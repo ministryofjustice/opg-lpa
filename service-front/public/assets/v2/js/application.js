@@ -22322,180 +22322,183 @@ GOVUK.performance.sendGoogleAnalyticsEvent = function (category, event, label) {
 })(window)
 ;
 ;(function (global) {
-  'use strict'
+    'use strict'
 
-  var $ = global.jQuery
-  var GOVUK = global.GOVUK || {}
+    var $ = global.jQuery
+    var GOVUK = global.GOVUK || {}
 
-  var GoogleAnalyticsUniversalTracker = function (trackingId, fieldsObject) {
-    function configureProfile () {
-      // https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#create
-      sendToGa('create', trackingId, fieldsObject)
+    var GoogleAnalyticsUniversalTracker = function (trackingId, fieldsObject) {
+        this.trackerDomains = []
+
+        function configureProfile () {
+            // https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#create
+            sendToGa('create', trackingId, fieldsObject)
+        }
+
+        function anonymizeIp () {
+            // https://developers.google.com/analytics/devguides/collection/analyticsjs/advanced#anonymizeip
+            sendToGa('set', 'anonymizeIp', true)
+        }
+
+        function disableAdTracking () {
+            // https://support.google.com/analytics/answer/2444872?hl=en
+            sendToGa('set', 'displayFeaturesTask', null)
+        }
+
+        // Support legacy cookieDomain param
+        if (typeof fieldsObject === 'string') {
+            fieldsObject = { cookieDomain: fieldsObject }
+        }
+
+        configureProfile()
+        anonymizeIp()
+        disableAdTracking()
     }
 
-    function anonymizeIp () {
-      // https://developers.google.com/analytics/devguides/collection/analyticsjs/advanced#anonymizeip
-      sendToGa('set', 'anonymizeIp', true)
+    GoogleAnalyticsUniversalTracker.load = function () {
+        /* eslint-disable */
+        (function (i, s, o, g, r, a, m) { i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(global, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga')
+        /* eslint-enable */
     }
 
-    function disableAdTracking () {
-      // https://support.google.com/analytics/answer/2444872?hl=en
-      sendToGa('set', 'displayFeaturesTask', null)
+    // https://developers.google.com/analytics/devguides/collection/analyticsjs/pages
+    GoogleAnalyticsUniversalTracker.prototype.trackPageview = function (path, title, options) {
+        var pageviewObject
+
+        if (typeof path === 'string') {
+            pageviewObject = { page: path }
+        }
+
+        if (typeof title === 'string') {
+            pageviewObject = pageviewObject || {}
+            pageviewObject.title = title
+        }
+
+        // Set an options object for the pageview (e.g. transport, sessionControl)
+        // https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#transport
+        if (typeof options === 'object') {
+            pageviewObject = $.extend(pageviewObject || {}, options)
+        }
+
+        if (!$.isEmptyObject(pageviewObject)) {
+            sendToGa('send', 'pageview', pageviewObject)
+            for (var i = 0, l = this.trackerDomains.length; i < l; i++) {
+                var domain = this.trackerDomains[i]
+                sendToGa(domain +'.send', 'pageview', pageviewObject)
+            }
+        } else {
+            sendToGa('send', 'pageview')
+            for (var i = 0, l = this.trackerDomains.length; i < l; i++) {
+                var domain = this.trackerDomains[i]
+                sendToGa(domain +'.send', 'pageview')
+            }
+        }
     }
 
-    function stripLocationPII () {
-      sendToGa('set', 'location', stripEmailAddressesFromString(window.location.href))
+    // https://developers.google.com/analytics/devguides/collection/analyticsjs/events
+    GoogleAnalyticsUniversalTracker.prototype.trackEvent = function (category, action, options) {
+        options = options || {}
+        var value
+        var evt = {
+            hitType: 'event',
+            eventCategory: category,
+            eventAction: action
+        }
+
+        // Label is optional
+        if (typeof options.label === 'string') {
+            evt.eventLabel = options.label
+            delete options.label
+        }
+
+        // Value is optional, but when used must be an
+        // integer, otherwise the event will be invalid
+        // and not logged
+        if (options.value || options.value === 0) {
+            value = parseInt(options.value, 10)
+            if (typeof value === 'number' && !isNaN(value)) {
+                options.eventValue = value
+            }
+            delete options.value
+        }
+
+        // Prevents an event from affecting bounce rate
+        // https://developers.google.com/analytics/devguides/collection/analyticsjs/events#implementation
+        if (options.nonInteraction) {
+            options.nonInteraction = 1
+        }
+
+        if (typeof options === 'object') {
+            $.extend(evt, options)
+        }
+
+        sendToGa('send', evt)
     }
 
-    // Support legacy cookieDomain param
-    if (typeof fieldsObject === 'string') {
-      fieldsObject = { cookieDomain: fieldsObject }
+    /*
+      https://developers.google.com/analytics/devguides/collection/analyticsjs/social-interactions
+      network – The network on which the action occurs (e.g. Facebook, Twitter)
+      action – The type of action that happens (e.g. Like, Send, Tweet)
+      target – Specifies the target of a social interaction.
+               This value is typically a URL but can be any text.
+    */
+    GoogleAnalyticsUniversalTracker.prototype.trackSocial = function (network, action, target, options) {
+        var trackingOptions = {
+            'hitType': 'social',
+            'socialNetwork': network,
+            'socialAction': action,
+            'socialTarget': target
+        }
+
+        $.extend(trackingOptions, options)
+
+        sendToGa('send', trackingOptions)
     }
 
-    configureProfile()
-    anonymizeIp()
-    disableAdTracking()
-    stripLocationPII()
-  }
+    /*
+     https://developers.google.com/analytics/devguides/collection/analyticsjs/cross-domain
+     trackerId - the UA account code to track the domain against
+     name      - name for the tracker
+     domain    - the domain to track
+    */
+    GoogleAnalyticsUniversalTracker.prototype.addLinkedTrackerDomain = function (trackerId, name, domain) {
+        this.trackerDomains.push([name])
 
-  GoogleAnalyticsUniversalTracker.load = function () {
-    /* eslint-disable */
-    (function (i, s, o, g, r, a, m) { i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-      (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o),
-                             m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-    })(global, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga')
-    /* eslint-enable */
-  }
+        sendToGa('create', {
+            'trackingId': trackerId,
+            'cookieDomain': 'auto',
+            'name': name,
+            'allowLinker': true
+        })
 
-  // https://developers.google.com/analytics/devguides/collection/analyticsjs/pages
-  GoogleAnalyticsUniversalTracker.prototype.trackPageview = function (path, title, options) {
-    var pageviewObject
+        // Load the plugin.
+        sendToGa(name + '.require', 'linker')
 
-    if (typeof path === 'string') {
-      pageviewObject = { page: path }
+        // Define which domains to autoLink.
+        domain = Array.isArray(domain) ? domain : [domain]
+        sendToGa(name + '.linker:autoLink', domain)
+
+        sendToGa(name + '.set', 'anonymizeIp', true)
+        sendToGa(name + '.set', 'displayFeaturesTask', null)
     }
 
-    if (typeof title === 'string') {
-      pageviewObject = pageviewObject || {}
-      pageviewObject.title = title
+    // https://developers.google.com/analytics/devguides/collection/analyticsjs/custom-dims-mets
+    GoogleAnalyticsUniversalTracker.prototype.setDimension = function (index, value) {
+        sendToGa('set', 'dimension' + index, String(value))
     }
 
-    // Set an options object for the pageview (e.g. transport, sessionControl)
-    // https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#transport
-    if (typeof options === 'object') {
-      pageviewObject = $.extend(pageviewObject || {}, options)
+    function sendToGa () {
+        if (typeof global.ga === 'function') {
+            global.ga.apply(global, arguments)
+        }
     }
 
-    if (!$.isEmptyObject(pageviewObject)) {
-      sendToGa('send', 'pageview', pageviewObject)
-    } else {
-      sendToGa('send', 'pageview')
-    }
-  }
+    GOVUK.GoogleAnalyticsUniversalTracker = GoogleAnalyticsUniversalTracker
 
-  // https://developers.google.com/analytics/devguides/collection/analyticsjs/events
-  GoogleAnalyticsUniversalTracker.prototype.trackEvent = function (category, action, options) {
-    options = options || {}
-    var value
-    var evt = {
-      hitType: 'event',
-      eventCategory: category,
-      eventAction: action
-    }
-
-    // Label is optional
-    if (typeof options.label === 'string') {
-      evt.eventLabel = options.label
-      delete options.label
-    }
-
-    // Value is optional, but when used must be an
-    // integer, otherwise the event will be invalid
-    // and not logged
-    if (options.value || options.value === 0) {
-      value = parseInt(options.value, 10)
-      if (typeof value === 'number' && !isNaN(value)) {
-        options.eventValue = value
-      }
-      delete options.value
-    }
-
-    // Prevents an event from affecting bounce rate
-    // https://developers.google.com/analytics/devguides/collection/analyticsjs/events#implementation
-    if (options.nonInteraction) {
-      options.nonInteraction = 1
-    }
-
-    if (typeof options === 'object') {
-      $.extend(evt, options)
-    }
-
-    sendToGa('send', evt)
-  }
-
-  /*
-    https://developers.google.com/analytics/devguides/collection/analyticsjs/social-interactions
-    network – The network on which the action occurs (e.g. Facebook, Twitter)
-    action – The type of action that happens (e.g. Like, Send, Tweet)
-    target – Specifies the target of a social interaction.
-             This value is typically a URL but can be any text.
-  */
-  GoogleAnalyticsUniversalTracker.prototype.trackSocial = function (network, action, target, options) {
-    var trackingOptions = {
-      'hitType': 'social',
-      'socialNetwork': network,
-      'socialAction': action,
-      'socialTarget': target
-    }
-
-    $.extend(trackingOptions, options)
-
-    sendToGa('send', trackingOptions)
-  }
-
-  /*
-   https://developers.google.com/analytics/devguides/collection/analyticsjs/cross-domain
-   trackerId - the UA account code to track the domain against
-   name      - name for the tracker
-   domain    - the domain to track
-  */
-  GoogleAnalyticsUniversalTracker.prototype.addLinkedTrackerDomain = function (trackerId, name, domain) {
-    sendToGa('create',
-             trackerId,
-             'auto',
-             {'name': name})
-    // Load the plugin.
-    sendToGa('require', 'linker')
-    sendToGa(name + '.require', 'linker')
-
-    // Define which domains to autoLink.
-    sendToGa('linker:autoLink', [domain])
-    sendToGa(name + '.linker:autoLink', [domain])
-
-    sendToGa(name + '.set', 'anonymizeIp', true)
-    sendToGa(name + '.set', 'displayFeaturesTask', null)
-    sendToGa(name + '.send', 'pageview')
-  }
-
-  // https://developers.google.com/analytics/devguides/collection/analyticsjs/custom-dims-mets
-  GoogleAnalyticsUniversalTracker.prototype.setDimension = function (index, value) {
-    sendToGa('set', 'dimension' + index, String(value))
-  }
-
-  function sendToGa () {
-    if (typeof global.ga === 'function') {
-      global.ga.apply(global, arguments)
-    }
-  }
-
-  function stripEmailAddressesFromString (string) {
-    var stripped = string.replace(/[^\s=/?&]+(?:@|%40)[^\s=/?&]+/g, '[email]')
-    return stripped
-  }
-
-  GOVUK.GoogleAnalyticsUniversalTracker = GoogleAnalyticsUniversalTracker
-
-  global.GOVUK = GOVUK
+    global.GOVUK = GOVUK
 })(window)
 ;
 ;(function (global) {
@@ -23038,6 +23041,190 @@ var SessionTimeoutDialog = function (options) {
     }
   };
 })();;
+// https://github.com/alphagov/govuk_publishing_components/master/app/assets/javascripts/govuk_publishing_components/lib/cookie-functions.js
+// used by the cookie banner component
+
+;(function (global) {
+    'use strict'
+
+    var GOVUK = global.GOVUK || {}
+
+    var DEFAULT_COOKIE_CONSENT = {
+        'essential': true,
+        'usage': false
+    }
+
+    var COOKIE_CATEGORIES = {
+        'cookie_policy': 'essential',
+        'seen_cookie_message': 'essential',
+        '_ga': 'usage',
+        '_gid': 'usage',
+        '_gat': 'usage'
+    }
+
+    /*
+      Cookie methods
+      ==============
+
+      Usage:
+
+        Setting a cookie:
+        GOVUK.cookie('hobnob', 'tasty', { days: 30 });
+
+        Reading a cookie:
+        GOVUK.cookie('hobnob');
+
+        Deleting a cookie:
+        GOVUK.cookie('hobnob', null);
+    */
+    GOVUK.cookie = function (name, value, options) {
+        if (typeof value !== 'undefined') {
+            if (value === false || value === null) {
+                return GOVUK.setCookie(name, '', { days: -1 })
+            } else {
+                // Default expiry date of 30 days
+                if (typeof options === 'undefined') {
+                    options = { days: 30 }
+                }
+                return GOVUK.setCookie(name, value, options)
+            }
+        } else {
+            return GOVUK.getCookie(name)
+        }
+    }
+
+    GOVUK.setDefaultConsentCookie = function () {
+        GOVUK.setCookie('cookie_policy', JSON.stringify(DEFAULT_COOKIE_CONSENT), { days: 365 })
+    }
+
+    GOVUK.approveAllCookieTypes = function () {
+        var approvedConsent = {
+            'essential': true,
+            'usage': true
+        }
+
+        GOVUK.setCookie('cookie_policy', JSON.stringify(approvedConsent), { days: 365 })
+    }
+
+    GOVUK.getConsentCookie = function () {
+        var consentCookie = GOVUK.cookie('cookie_policy')
+        var consentCookieObj
+
+        if (consentCookie) {
+            try {
+                consentCookieObj = JSON.parse(consentCookie)
+            } catch (err) {
+                return null
+            }
+
+            if (typeof consentCookieObj !== 'object' && consentCookieObj !== null) {
+                consentCookieObj = JSON.parse(consentCookieObj)
+            }
+        } else {
+            return null
+        }
+
+        return consentCookieObj
+    }
+
+    GOVUK.setConsentCookie = function (options) {
+        var cookieConsent = GOVUK.getConsentCookie()
+
+        if (!cookieConsent) {
+            cookieConsent = JSON.parse(JSON.stringify(DEFAULT_COOKIE_CONSENT))
+        }
+
+        for (var cookieType in options) {
+            cookieConsent[cookieType] = options[cookieType]
+
+            // Delete cookies of that type if consent being set to false
+            if (!options[cookieType]) {
+                for (var cookie in COOKIE_CATEGORIES) {
+                    if (COOKIE_CATEGORIES[cookie] === cookieType) {
+                        GOVUK.cookie(cookie, null)
+
+                        if (GOVUK.cookie(cookie)) {
+                            document.cookie = cookie + '=;expires=' + new Date() + ';domain=.' + window.location.hostname + ';path=/'
+                        }
+                    }
+                }
+            }
+        }
+
+        GOVUK.setCookie('cookie_policy', JSON.stringify(cookieConsent), { days: 365 })
+    }
+
+    GOVUK.checkConsentCookieCategory = function (cookieName, cookieCategory) {
+        var currentConsentCookie = GOVUK.getConsentCookie()
+
+        // If the consent cookie doesn't exist, but the cookie is in our known list, return true
+        if (currentConsentCookie === null) {
+            return false
+        }
+
+        currentConsentCookie = GOVUK.getConsentCookie()
+
+        // Sometimes currentConsentCookie is malformed in some of the tests, so we need to handle these
+        try {
+            return currentConsentCookie[cookieCategory]
+        } catch (e) {
+            console.error(e + ' when checking ' + cookieName + ' and ' + cookieCategory)
+            return false
+        }
+    }
+
+    GOVUK.checkConsentCookie = function (cookieName, cookieValue) {
+        // If we're setting the consent cookie OR deleting a cookie, allow by default
+        if (cookieName === 'cookie_policy' || (cookieValue === null || cookieValue === false)) {
+            return true
+        }
+
+        if (COOKIE_CATEGORIES[cookieName]) {
+            var cookieCategory = COOKIE_CATEGORIES[cookieName]
+
+            return GOVUK.checkConsentCookieCategory(cookieName, cookieCategory)
+        } else {
+            // Deny the cookie if it is not known to us
+            return false
+        }
+    }
+
+    GOVUK.setCookie = function (name, value, options) {
+        if (GOVUK.checkConsentCookie(name, value)) {
+            if (typeof options === 'undefined') {
+                options = {}
+            }
+            var cookieString = name + '=' + value + '; path=/'
+            if (options.days) {
+                var date = new Date()
+                date.setTime(date.getTime() + (options.days * 24 * 60 * 60 * 1000))
+                cookieString = cookieString + '; expires=' + date.toGMTString()
+            }
+            if (document.location.protocol === 'https:') {
+                cookieString = cookieString + '; Secure'
+            }
+            document.cookie = cookieString
+        }
+    }
+
+    GOVUK.getCookie = function (name) {
+        var nameEQ = name + '='
+        var cookies = document.cookie.split(';')
+        for (var i = 0, len = cookies.length; i < len; i++) {
+            var cookie = cookies[i]
+            while (cookie.charAt(0) === ' ') {
+                cookie = cookie.substring(1, cookie.length)
+            }
+            if (cookie.indexOf(nameEQ) === 0) {
+                return decodeURIComponent(cookie.substring(nameEQ.length))
+            }
+        }
+        return null
+    }
+
+    global.GOVUK = GOVUK
+}(window))
+;
 this["lpa"] = this["lpa"] || {};
 this["lpa"]["templates"] = this["lpa"]["templates"] || {};
 
@@ -25116,14 +25303,26 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
   moj.Modules.Analytics = {
 
     init: function () {
-      GOVUK.Analytics.load();
-      this.setup();
+      this.bindEvents();
+
+      // Check if we have permission to enable tracking
+      if (typeof GOVUK.checkConsentCookieCategory === 'function'
+          && GOVUK.checkConsentCookieCategory('analytics', 'usage')) {
+          this.setup();
+      }
+    },
+
+    bindEvents: function() {
+      moj.Events.on('Analytics.start', this.setup)
     },
 
     setup: function() {
+      GOVUK.Analytics.load();
+
       // Use document.domain in dev, preview and staging so that tracking works
       // Otherwise explicitly set the domain as lastingpowerofattorney.service.justice.gov.uk.
-      var cookieDomain = (document.domain === 'lastingpowerofattorney.service.justice.gov.uk') ? '.lastingpowerofattorney.service.justice.gov.uk' : document.domain;
+      var prodDomain = new RegExp('^(www\.)*lastingpowerofattorney\.service\.gov\.uk$')
+      var cookieDomain = prodDomain.test(document.domain) ? '.lastingpowerofattorney.service.gov.uk' : document.domain;
 
       // Configure profiles and make interface public
       // for custom dimensions, virtual pageviews and events
@@ -25131,8 +25330,16 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
         universalId: gaConfig.universalId  || '',
         cookieDomain: cookieDomain,
         allowLinker: true,
-        allowAnchor: true
+        allowAnchor: true,
+
+        //TODO are we tracking this within lpa
+        stripPostcodePII: true,
+        stripDatePII: true
       });
+
+      if (prodDomain.test(document.domain)) {
+        GOVUK.analytics.addLinkedTrackerDomain(gaConfig.govId, 'govuk_shared', ['www.gov.uk', '.payments.service.gov.uk']);
+      }
 
       // Track initial pageview
       if (typeof GOVUK.pageviewOptions !== 'undefined') {
@@ -25237,6 +25444,49 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
       return questionText
     }
   };
+})();;
+(function() {
+    'use strict';
+
+    moj.Modules.CookieConsent = {
+        init: function () {
+            if (!this.isInCookiesPage() && !this.isInIframe() && 'true' !== window.GOVUK.cookie('seen_cookie_message')) {
+                this.displayCookieMessage(true);
+                window.GOVUK.cookie('cookie_policy') || window.GOVUK.setDefaultConsentCookie()
+            }
+
+            this.enableAllCookies = this.enableAllCookies.bind(this);
+            var acceptButton = document.querySelector('.global-cookie-message__button_accept');
+            acceptButton.addEventListener('click', this.enableAllCookies);
+        },
+
+        displayCookieMessage: function(show) {
+            var message = document.getElementById('global-cookie-message');
+
+            if (show) {
+                message.style.display = 'block';
+            } else {
+                message.removeAttribute('style');
+            }
+        },
+
+        enableAllCookies: function(evt) {
+            window.GOVUK.approveAllCookieTypes();
+            window.GOVUK.cookie('seen_cookie_message', 'true');
+            this.displayCookieMessage(false);
+
+            // enable analytics and fire off a pageview
+            moj.Events.trigger('Analytics.start');
+        },
+
+        isInCookiesPage: function() {
+            return '/cookies' === window.location.pathname
+        },
+
+        isInIframe: function () {
+            return window.parent && window.location !== window.parent.location
+        }
+    }
 })();;
 // ====================================================================================
 // INITITALISE ALL MOJ MODULES
