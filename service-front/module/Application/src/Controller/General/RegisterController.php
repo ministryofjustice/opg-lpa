@@ -9,6 +9,7 @@ use Zend\View\Model\ViewModel;
 
 class RegisterController extends AbstractBaseController
 {
+
     /**
      * @var UserService
      */
@@ -26,9 +27,11 @@ class RegisterController extends AbstractBaseController
         //  gov.uk is not allowed to point users directly at this page
         $referer = $request->getHeader('Referer');
 
+        $ga = $this->params()->fromQuery('_ga');
+
         if ($referer != false) {
             if ($referer->uri()->getHost() === 'www.gov.uk') {
-                return $this->redirect()->toRoute('home');
+                return $this->redirect()->toRoute('home', ['action' => 'index'], ['query' => ['_ga' => $ga]]);
             }
         }
 
