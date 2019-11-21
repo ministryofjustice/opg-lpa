@@ -106,9 +106,8 @@ module.exports = function (grunt) {
           'assets/js/govuk/stageprompt.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/govuk-tracker.js',
-          'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/google-analytics-universal-tracker.js',
+          'assets/js/moj/moj.ga-tracker.js',
           'node_modules/govuk_frontend_toolkit/javascripts/govuk/analytics/analytics.js',
-
 
           // OPG Scripts
           'assets/js/opg/jquery-plugin-opg-hascrollbar.js',
@@ -118,6 +117,7 @@ module.exports = function (grunt) {
           // MoJ Scripts - Base
           'assets/js/moj/moj.js',
           'assets/js/moj/moj.helpers.js',
+          'assets/js/moj/moj.cookie-functions.js',
 
           // LPA Scripts - Templates
           'assets/js/lpa/lpa.templates.js',
@@ -144,6 +144,7 @@ module.exports = function (grunt) {
           'assets/js/moj/moj.modules/moj.single-use.js',
           'assets/js/moj/moj.modules/moj.analytics.js',
           'assets/js/moj/moj.modules/moj.form-error-tracker.js',
+          'assets/js/moj/moj.modules/moj.cookie-consent.js',
 
           // Init Script
           'assets/js/main.js',

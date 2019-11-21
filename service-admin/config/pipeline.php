@@ -68,6 +68,9 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     // Seed the UrlHelper with the routing results:
     $app->pipe(UrlHelperMiddleware::class);
 
+    //This checks that the user has completed their details in the front end
+    $app->pipe(Middleware\UserValidation\UserValidationMiddleware::class);
+
     // Middleware to set any default data in the template renderer
     $app->pipe(Middleware\ViewData\ViewDataMiddleware::class);
 

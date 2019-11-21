@@ -1,11 +1,8 @@
 <?php
 
-$commit = ( is_readable('GITREF') ) ? trim(file_get_contents('GITREF')) : null;
-
 return [
 
     'version' => [
-        'commit' => $commit,
         'cache' => ( getenv('OPG_DOCKER_TAG') !== false ) ? abs( crc32( getenv('OPG_DOCKER_TAG') ) ) : time(),
         'tag' => getenv('OPG_DOCKER_TAG'),
     ],
@@ -161,7 +158,7 @@ return [
 
     'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gov.uk',
     'processing-status' => [
-        'track-from-date' => getenv('OPG_LPA_FRONT_TRACK_FROM_DATE') ?: '2030-01-01',
+        'track-from-date' => getenv('OPG_LPA_FRONT_TRACK_FROM_DATE') ?: '2019-04-01',
         'endpoint' => getenv('OPG_LPA_PROCESSING_STATUS_ENDPOINT') ?: 'http://gateway:5000/v1/lpa-online-tool/lpas/'
     ],
 ];
