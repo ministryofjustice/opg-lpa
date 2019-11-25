@@ -18,6 +18,7 @@ use Zend\View\Model\ViewModel;
 
 class RegisterControllerTest extends AbstractControllerTest
 {
+    const GA = 987654321987654321;
     /**
      * @var MockInterface|Registration
      */
@@ -68,8 +69,9 @@ class RegisterControllerTest extends AbstractControllerTest
         $referer = new Referer();
         $referer->setUri('http://www.gov.uk');
 
+        $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['home'])->andReturn($response)->once();
+        $this->redirect->shouldReceive('toRoute')->withArgs(['home', ['action' => 'index'], ['query' => ['_ga' => self::GA]]])->andReturn($response)->once();
 
         $result = $controller->indexAction();
 
@@ -84,6 +86,7 @@ class RegisterControllerTest extends AbstractControllerTest
 
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
+        $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
         $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
         $this->logger->shouldReceive('info')
@@ -102,6 +105,7 @@ class RegisterControllerTest extends AbstractControllerTest
 
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
+        $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
         $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
@@ -122,6 +126,7 @@ class RegisterControllerTest extends AbstractControllerTest
 
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
+        $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
         $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
@@ -142,6 +147,7 @@ class RegisterControllerTest extends AbstractControllerTest
 
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
+        $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
         $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();
@@ -167,6 +173,7 @@ class RegisterControllerTest extends AbstractControllerTest
 
         $referer = new Referer();
         $referer->setUri('https://localhost/home');
+        $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
         $this->url->shouldReceive('fromRoute')->withArgs(['register'])->andReturn('register')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'register'])->once();

@@ -27,7 +27,7 @@ class RegisterController extends AbstractBaseController
         //  gov.uk is not allowed to point users directly at this page
         $referer = $request->getHeader('Referer');
 
-        $ga = $this->params()->fromQuery('_ga');
+        $ga = $request->getQuery('_ga');
 
         if ($referer != false) {
             if ($referer->uri()->getHost() === 'www.gov.uk') {
