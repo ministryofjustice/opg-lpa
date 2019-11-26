@@ -62,7 +62,7 @@ workflows:
 
       - infrastructure_and_deployment/run_functional_test:
           name: run_functional_test
-          #requires: [dev_environment_apply_terraform]
+          requires: [dev_environment_apply_terraform]
           filters:
             branches:
               ignore: master
