@@ -16,7 +16,8 @@ echo Starting CasperJS Tests
 if [ $? -eq 0 ]; then
     echo OK
 else
-    echo FAIL
+    echo FAILLLLLL
+    exit(1);
 fi
 
 echo Changing permissions on ${xunitfile}
