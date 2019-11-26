@@ -54,7 +54,7 @@ class AboutYouTest extends MockeryTestCase
             'dob-date'         => [
                 'year'  => '1984',
                 'month' => '05',
-                'day'   => '20'
+               // 'day'   => '20'
             ],
         ], $this->getCsrfData()));
 
