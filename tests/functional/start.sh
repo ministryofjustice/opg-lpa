@@ -25,7 +25,7 @@ else
     exit 1
 fi
 
-stop_processes () {
+stop_processes() {
 echo Changing permissions on ${xunitfile}
 # We are running as root so make xunit results deletable
 # in the local mapped filesystem.
