@@ -19,6 +19,19 @@ if [ $? -eq 0 ]; then
     echo OK
 else
     echo FAILLLLLL
+
+    echo Changing permissions on ${xunitfile}
+    # We are running as root so make xunit results deletable
+    # in the local mapped filesystem.
+    chmod 777 ${xunitfile}
+
+    RETVAL=$?
+    echo printing RETVAL
+
+    echo Killing S3 Monitor
+    kill $(ps aux | grep '[p]hp' | awk '{print $2}')
+    #killall php
+    
     exit 1
 fi
 
@@ -28,9 +41,7 @@ echo Changing permissions on ${xunitfile}
 chmod 777 ${xunitfile}
 
 RETVAL=$?
-
 echo printing RETVAL
-
 
 echo Killing S3 Monitor
 kill $(ps aux | grep '[p]hp' | awk '{print $2}')
