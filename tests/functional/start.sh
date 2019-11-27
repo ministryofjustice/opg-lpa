@@ -1,5 +1,7 @@
 #!/bin/bash
 
+whoami
+
 xunitfile=/mnt/test/casperesults.xml
 
 echo The base domain is $BASE_DOMAIN
@@ -17,7 +19,7 @@ if [ $? -eq 0 ]; then
     echo OK
 else
     echo FAILLLLLL
-    exit(1);
+    exit 1
 fi
 
 echo Changing permissions on ${xunitfile}

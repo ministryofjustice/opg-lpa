@@ -15,11 +15,12 @@ casper.test.begin('Checking the guidance popup', {
 
             test.info("Clicked guidance button");
 
-        }).waitFor(function check() {
 
-            // waiting for lightbox loading
-            // use #help-system rather than #popup to ensure content is also loaded.
-            return this.exists('#help-system');
+        // }).waitFor(function check() {
+        //
+        //     // waiting for lightbox loading
+        //     // use #help-system rather than #popup to ensure content is also loaded.
+        //     return this.exists('#help-system');
 
         }, function then() {
 
