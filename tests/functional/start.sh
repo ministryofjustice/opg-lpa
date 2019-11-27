@@ -17,15 +17,24 @@ echo Starting CasperJS Tests
 
 if [ $? -eq 0 ]; then
     echo OK
-    stop_processes
 else
     echo FAIL
-    stop_processes
+
+    echo Changing permissions on ${xunitfile}
+    # We are running as root so make xunit results deletable
+    # in the local mapped filesystem.
+    chmod 777 ${xunitfile}
+
+    RETVAL=$?
+    echo printing RETVAL
+
+    echo Killing S3 Monitor
+    kill $(ps aux | grep '[p]hp' | awk '{print $2}')
+    #killall php
 
     exit 1
 fi
 
-stop_processes() {
 echo Changing permissions on ${xunitfile}
 # We are running as root so make xunit results deletable
 # in the local mapped filesystem.
@@ -37,6 +46,5 @@ echo printing RETVAL
 echo Killing S3 Monitor
 kill $(ps aux | grep '[p]hp' | awk '{print $2}')
 #killall php
-}
 
 exit ${RETVAL}
