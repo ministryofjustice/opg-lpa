@@ -7,6 +7,7 @@ namespace App\Handler;
 use App\Service\Authentication\AuthenticationService;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use App\Service\User\UserService;
 
 /**
  * Class SignInHandlerFactory
@@ -22,7 +23,8 @@ class SignInHandlerFactory
     {
         $authService = $container->get(AuthenticationService::class);
         $config = $container->get('config');
+        $userSearchService = $container->get(UserService::class);
 
-        return new SignInHandler($authService, $config['admin_accounts']);
+        return new SignInHandler($authService, $config['admin_accounts'], $userSearchService);
     }
 }
