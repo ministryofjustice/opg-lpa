@@ -60,7 +60,7 @@ class GoogleAnalyticsService extends AbstractService
             $contents = array('version' => $version, 'domainDepth' => $domainDepth, 'cid' => $cid1 . '.' . $cid2);
             $cid = $contents['cid'];
         } else {
-            throw new Exception('Could not find google analytics cookie');
+            $this->getLogger()->notice('Could not find google analytics cookie - user likely has tracking blocked in their browser');
         }
 
         return $cid;
