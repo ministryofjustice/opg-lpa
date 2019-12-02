@@ -12,6 +12,7 @@ use App\Service\Authentication\AuthenticationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
+use App\Service\User\UserService;
 
 /**
  * Class SignInHandler
@@ -20,6 +21,11 @@ use Zend\Diactoros\Response\HtmlResponse;
 class SignInHandler extends AbstractHandler
 {
     use JwtTrait;
+
+    /**
+     * @var UserService
+     */
+    private $userService;
 
     /**
      * @var AuthenticationService
@@ -31,10 +37,11 @@ class SignInHandler extends AbstractHandler
      */
     private $adminUsers;
 
-    public function __construct(AuthenticationService $authService, array $adminUsers)
+    public function __construct(AuthenticationService $authService, array $adminUsers, UserService $userService)
     {
         $this->authService = $authService;
         $this->adminUsers = $adminUsers;
+        $this->userService = $userService;
     }
 
     /**
@@ -69,10 +76,18 @@ class SignInHandler extends AbstractHandler
                         //  Update the JWT data with the user data
                         /** @var Identity $identity */
                         $identity = $result->getIdentity();
-
                         $this->addTokenData('token', $identity->getToken());
 
-                        return $this->redirectToRoute('home');
+                        $user = $this->userService->fetch($identity->getUserId());
+
+                        if(!isset($user->name)){
+                            return new HtmlResponse($this->getTemplateRenderer()->render('error::no-user-details-error', [
+                                'user'         => $user,
+                            ]));
+                        }
+                        else {
+                            return $this->redirectToRoute('home');
+                        }
                     }
 
                     $form->setAuthError($result->getCode() === Result::FAILURE_ACCOUNT_LOCKED ? 'account-locked' : 'authentication-error');
