@@ -55,6 +55,7 @@ class GoogleAnalyticsService extends AbstractService
     /**
      * Get the client ID from the cookie
      *
+     * @return string|null
      */
     public function getAnalyticsClientId() : ?string
     {
