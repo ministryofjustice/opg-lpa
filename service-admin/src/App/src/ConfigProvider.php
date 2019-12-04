@@ -63,7 +63,6 @@ class ConfigProvider
                 Middleware\Authorization\AuthorizationMiddleware::class => Middleware\Authorization\AuthorizationMiddlewareFactory::class,
                 Middleware\Session\SessionMiddleware::class             => Middleware\Session\SessionMiddlewareFactory::class,
                 Middleware\ViewData\ViewDataMiddleware::class           => Middleware\ViewData\ViewDataMiddlewareFactory::class,
-                Middleware\UserValidation\UserValidationMiddleware::class => Middleware\UserValidation\UserValidationMiddlewareFactory::class,
 
                 //  Services
                 Service\Cache\Cache::class                          => Service\Cache\CacheFactory::class,
