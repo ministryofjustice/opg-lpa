@@ -73,6 +73,9 @@ class ServiceTest extends AbstractServiceTest
             ->build();
 
         $attorney = FixturesData::getAttorneyTrust();
+
+        print_r($attorney);
+
         $entity = $service->create($lpa->getId(), $attorney->toArray());
 
         $this->assertEquals(new DataModelEntity($attorney), $entity);
