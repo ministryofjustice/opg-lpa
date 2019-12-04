@@ -5,9 +5,16 @@
 
         <h2 class="heading-medium">LPA Admin Home</h2>
 
-        <div class="text">
-            <p>Please select an option from the top of the screen.</p>
-        </div>
+        <?php if (isset($user->name)) { ?>
+            <div class="text">
+                <p>Please select an option from the top of the screen.</p>
+            </div>
+        <?php } else {?>
+            <p>You need to complete your LPA account details first!</p>
+            <p>
+                You must <a href="https://www.lastingpowerofattorney.service.gov.uk/login">sign in using your account</a> on the LPA online service and fill in your details.
+            </p>
 
+        <?php } ?>
     </div>
 </div>
