@@ -139,7 +139,6 @@ function parseBody($bodyContent, $subject, $type, $linkRegex)
             if (!is_null($contents)) {
                 //TO-DO : CORRECT PATH HERE
                 file_put_contents('/mnt/test/functional/activation_emails/' . $userId . '.' . $type, $contents);
-                //file_put_contents('/Users/seemamenon/OPG/opg-lpa/lpa-online/opg-lpa/tests/functional/activation_emails/' . $userId . '.' . $type, $contents);
             }
             echo 'Found email for user ' . $userId . PHP_EOL;
 
