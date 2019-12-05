@@ -13,7 +13,7 @@ RUN apt-get update && \
   openssl \
   procps
 
-RUN docker-php-ext-configure imap --with-kerberos  && \
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
   docker-php-ext-install -j$(nproc) imap
 
 
