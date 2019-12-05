@@ -38,12 +38,13 @@ class GoogleAnalyticsServiceTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Could not find google analytics cookie
+     * @return null
      */
     public function testGetClientIdWithNoCookieSet() : void
     {
-        $this->googleAnalyticsService->getAnalyticsClientId();
+        $clientId = $this->googleAnalyticsService->getAnalyticsClientId();
+
+        $this->assertNull($clientId);
     }
 
     /**
