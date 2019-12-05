@@ -3,6 +3,8 @@ version: 2.1
 workflows:
   pr-build-and-test:
     jobs:
+      - build_containers_and_push_to_ecr/checkout_docker_build_email_validation:
+          name: email_validation_build
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
           name: front_docker_build
           ecr_repository_name_prefix: online-lpa/front
@@ -164,6 +166,22 @@ orbs:
         docker:
           - image: circleci/python
     jobs:
+      checkout_docker_build_email_validation:
+        executor: python
+        steps:
+          - checkout
+          - install_aws_cli
+          - setup_remote_docker:
+              version: 18.06.0-ce
+              docker_layer_caching: false
+          - run:
+              name: Build app container
+              command: |
+                docker build -f service-email-validation-temp/Dockerfile --progress=plain --no-cache -t email-validation .
+          - run:
+              name: Run unit tests
+              command: |
+                docker run -d --name email-validation email-validation:latest
       checkout_docker_build_push_web-app:
         executor: python
         parameters:
