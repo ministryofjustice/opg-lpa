@@ -480,9 +480,12 @@ jobs:
             echo $TF_WORKSPACE
             echo 'export FRONT_DOMAIN="$(jq -r .front_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
             echo 'export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
+            echo 'export COMMIT_MESSAGE="$(git log -1 --pretty=%B)"' >> $BASH_ENV
       - slack/notify:
           title: "Online LPA Development Environment Ready"
+          color: "#508c18"
           message: "User: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
+          footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
   slack_notify_production_release:
     docker:
       - image: circleci/python
@@ -503,7 +506,10 @@ jobs:
             echo $TF_WORKSPACE
             echo 'export FRONT_DOMAIN="$(jq -r .front_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
             echo 'export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
+            echo 'export COMMIT_MESSAGE="$(git log -1 --pretty=%B)"' >> $BASH_ENV
       - slack/notify:
           title: "Online LPA Production Release Successful"
+          color: "#508c18"
           message: "By user: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
+          footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
           webhook: ${PROD_RELEASE_SLACK_WEBHOOK}
