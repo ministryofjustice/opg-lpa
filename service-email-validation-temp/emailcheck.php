@@ -17,4 +17,13 @@ $multipleValidations = new MultipleValidationWithAnd([
                  
 $result = $validator->isValid("opglpademo+trustcorp@gmail.com", new NoRFCWarningsValidation());
 print_r($result);
-echo $result;
+if($result) 
+ { 
+    //terminating script with a message using exit() 
+    exit('validation passed'); 
+ } 
+else
+ { 
+   //terminating script with a message using exit() 
+    exit('vaidation failed');  
+ } 
