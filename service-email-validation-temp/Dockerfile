@@ -1,4 +1,4 @@
-FROM php:7.3-alpine
+FROM php:7-fpm-alpine
 
 RUN apk add composer \
   zlib-dev \
