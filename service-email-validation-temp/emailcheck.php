@@ -17,3 +17,4 @@ $multipleValidations = new MultipleValidationWithAnd([
                  
 $result = $validator->isValid("opglpademo+trustcorp@gmail.com", new NoRFCWarningsValidation());
 print_r($result);
+echo $result;
