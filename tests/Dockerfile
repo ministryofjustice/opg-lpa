@@ -10,7 +10,7 @@ RUN apt-get update && \
   python \
   libc-client-dev \
   libkrb5-dev \
-  openssl \
+  #openssl \
   procps
 
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
