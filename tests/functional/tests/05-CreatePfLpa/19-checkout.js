@@ -330,7 +330,7 @@ casper.test.begin("Checking Checkout page", {
         }).thenClick('input[type="submit"][name="submit"]', function() {
 
             test.info("Clicked, 'Pay now with GOV Pay'");
-        })
+        //})
 
         // }).waitForText('Enter card details', function() {
         //
@@ -463,13 +463,13 @@ casper.test.begin("Checking Checkout page", {
         //
         //     test.info("Clicked 'Confirm Payment'");
         //
-        // }).waitForText('Last steps', function() {
-        //
-        //     test.info('Current URL: ' + this.getCurrentUrl());
-        //     test.assertUrlMatch(new RegExp('^' + basePath + paths.complete.replace('\\d+', lpaId) + '$'), 'Page is on the expected URL.');
-        //
-        //     test.info("Payment completed and back on LPA site on the Complete page");
-        // });
+        }).waitForText('Last steps', function() {
+
+            test.info('Current URL: ' + this.getCurrentUrl());
+            test.assertUrlMatch(new RegExp('^' + basePath + paths.complete.replace('\\d+', lpaId) + '$'), 'Page is on the expected URL.');
+
+            test.info("Payment completed and back on LPA site on the Complete page");
+        });
 
         // End testing the successful card payment flow
 
