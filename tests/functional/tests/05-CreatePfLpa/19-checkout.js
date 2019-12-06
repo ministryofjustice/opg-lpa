@@ -330,145 +330,146 @@ casper.test.begin("Checking Checkout page", {
         }).thenClick('input[type="submit"][name="submit"]', function() {
 
             test.info("Clicked, 'Pay now with GOV Pay'");
+        })
 
-        }).waitForText('Enter card details', function() {
-
-            test.info('Current URL: ' + this.getCurrentUrl());
-
-            test.assertUrlMatch( govPayUrlRegExp, 'On Gov Pay payment page as expected');
-
-            test.assertTextExists('£20.50', "Correct fee shown");
-            test.assertTextExists('Property and financial affairs LPA for Mrs Nancy Garrison', "Correct description found");
-
-            test.assertExists('input[name="email"]', 'Email field found');
-            test.assertExists('#submit-card-details', 'Continue button found');
-            test.assertExists('input[name="cancel"]', 'Cancel button found');
-
-        // Start testing the cancel card payment flow
-
-        }).thenClick('input[name="cancel"][type="submit"]', function() {
-
-            test.info('Clicked on on [cancel payment] on GOV Pay page');
-
-        }).waitForText('Your payment has been cancelled', function() {
-
-            test.info('Current URL: ' + this.getCurrentUrl());
-
-            test.assertUrlMatch( govPayCancelUrlRegExp, 'On the expected cancel page');
-
-            test.assertExists('a[id="return-url"]', "'Go back to the service' link found");
-
-        }).thenClick('a[id="return-url"]', function() {
-
-            test.info("Clicked 'Go back to the service'");
-
-        }).waitForText('Online payment cancelled', function() {
-
-            test.info('Current URL: ' + this.getCurrentUrl());
-
-            test.assertUrlMatch(new RegExp('^' + basePath + paths.checkout_pay_return.replace('\\d+', lpaId) + '$'), 'Page is on the expected URL.');
-
-            test.assertTextExists('Amount due: £20.50', "Correct amount due shown");
-            test.assertExists('input[type="submit"][name="submit"]', 'Retry GOV Pay submit button found');
-
-            test.assertExists('a[href="' + paths.checkout_cheque.replace('\\d+', lpaId) + '"]', 'Pay by cheque link instead found');
-
-        }).thenClick('input[name="submit"][type="submit"]', function() {
-
-            test.info("Clicked 'Retry online payment'");
-
-        // End testing the cancel card payment flow
-        // Start testing the rejected/failed card payment flow
-
-        }).waitForText('Enter card details', function() {
-
-            // Skipping checking rest of the elements as we've done this in an earlier step
-
-            test.info('Current URL: ' + this.getCurrentUrl());
-            test.assertUrlMatch( govPayUrlRegExp, 'On Gov Pay payment page as expected');
-
-            test.info('Enter details for test card that will be declined');
-
-            var form = {
-                'cardNo' : '4000000000000002',
-                'expiryMonth': '01',
-                'expiryYear': '22',
-                'cardholderName': 'MR CARD HOLDERSON',
-                'cvc': '123',
-                'addressCountry': 'GB',
-                'addressLine1': '23 Boundary House',
-                'addressLine2': 'Boundary Lane',
-                'addressCity': 'Welwyn Garden City',
-                'addressPostcode': 'AL7 4EH',
-                'email': 'opglpademo+AmyWheeler@gmail.com'
-            };
-
-            casper.fill('form#card-details', form);
-
-        }).thenClick('button[id="submit-card-details"]', function(){
-
-        }).waitForText('Your payment has been declined', function() {
-
-            test.info('Current URL: ' + this.getCurrentUrl());
-            test.assertUrlMatch( govPayUrlRegExp, 'On the expected declined page');
-
-        }).thenClick('a[id="return-url"]', function() {
-
-            test.info("Clicked 'Go back and try payment again'");
-
-        }).waitForText('Online payment failed', function() {
-
-            test.info('Current URL: ' + this.getCurrentUrl());
-            test.assertUrlMatch(new RegExp('^' + basePath + paths.checkout_pay_return.replace('\\d+', lpaId) + '$'), 'On the expected failed page');
-
-        }).thenClick('input[name="submit"][type="submit"]', function() {
-
-            test.info("Clicked 'Retry online payment'");
-
-        // End testing the rejected/failed card payment flow
-        // Start testing the successful card payment flow
-
-        }).waitForText('Enter card details', function() {
-
-            // Skipping checking rest of the elements as we've done this in an earlier step
-            test.info('Current URL: ' + this.getCurrentUrl());
-            test.assertUrlMatch( govPayUrlRegExp, 'On Gov Pay payment page as expected');
-
-            test.info('Enter details for test card that will be accepted');
-            casper.fill('form#card-details', {
-                'cardNo' : '4444333322221111',
-                'expiryMonth': '01',
-                'expiryYear': '22',
-                'cardholderName': 'MR CARD HOLDERSON',
-                'cvc': '123',
-                'addressCountry': 'GB',
-                'addressLine1': '23 Boundary House',
-                'addressLine2': 'Boundary Lane',
-                'addressCity': 'Welwyn Garden City',
-                'addressPostcode': 'AL7 4EH',
-                'email': 'opglpademo+AmyWheeler@gmail.com'
-            });
-
-        }).thenClick('button[id="submit-card-details"]', function(){
-
-            test.info("Clicked 'Submit'");
-
-        }).waitForText('Confirm your payment', function() {
-
-            test.info('Current URL: ' + this.getCurrentUrl());
-            test.assertUrlMatch(govPayConfirmUrlRegExp, 'On Gov Pay payment page as expected');
-
-        }).thenClick('button[id="confirm"]', function() {
-
-            test.info("Clicked 'Confirm Payment'");
-
-        }).waitForText('Last steps', function() {
-
-            test.info('Current URL: ' + this.getCurrentUrl());
-            test.assertUrlMatch(new RegExp('^' + basePath + paths.complete.replace('\\d+', lpaId) + '$'), 'Page is on the expected URL.');
-
-            test.info("Payment completed and back on LPA site on the Complete page");
-        });
+        // }).waitForText('Enter card details', function() {
+        //
+        //     test.info('Current URL: ' + this.getCurrentUrl());
+        //
+        //     test.assertUrlMatch( govPayUrlRegExp, 'On Gov Pay payment page as expected');
+        //
+        //     test.assertTextExists('£20.50', "Correct fee shown");
+        //     test.assertTextExists('Property and financial affairs LPA for Mrs Nancy Garrison', "Correct description found");
+        //
+        //     test.assertExists('input[name="email"]', 'Email field found');
+        //     test.assertExists('#submit-card-details', 'Continue button found');
+        //     test.assertExists('input[name="cancel"]', 'Cancel button found');
+        //
+        // // Start testing the cancel card payment flow
+        //
+        // }).thenClick('input[name="cancel"][type="submit"]', function() {
+        //
+        //     test.info('Clicked on on [cancel payment] on GOV Pay page');
+        //
+        // }).waitForText('Your payment has been cancelled', function() {
+        //
+        //     test.info('Current URL: ' + this.getCurrentUrl());
+        //
+        //     test.assertUrlMatch( govPayCancelUrlRegExp, 'On the expected cancel page');
+        //
+        //     test.assertExists('a[id="return-url"]', "'Go back to the service' link found");
+        //
+        // }).thenClick('a[id="return-url"]', function() {
+        //
+        //     test.info("Clicked 'Go back to the service'");
+        //
+        // }).waitForText('Online payment cancelled', function() {
+        //
+        //     test.info('Current URL: ' + this.getCurrentUrl());
+        //
+        //     test.assertUrlMatch(new RegExp('^' + basePath + paths.checkout_pay_return.replace('\\d+', lpaId) + '$'), 'Page is on the expected URL.');
+        //
+        //     test.assertTextExists('Amount due: £20.50', "Correct amount due shown");
+        //     test.assertExists('input[type="submit"][name="submit"]', 'Retry GOV Pay submit button found');
+        //
+        //     test.assertExists('a[href="' + paths.checkout_cheque.replace('\\d+', lpaId) + '"]', 'Pay by cheque link instead found');
+        //
+        // }).thenClick('input[name="submit"][type="submit"]', function() {
+        //
+        //     test.info("Clicked 'Retry online payment'");
+        //
+        // // End testing the cancel card payment flow
+        // // Start testing the rejected/failed card payment flow
+        //
+        // }).waitForText('Enter card details', function() {
+        //
+        //     // Skipping checking rest of the elements as we've done this in an earlier step
+        //
+        //     test.info('Current URL: ' + this.getCurrentUrl());
+        //     test.assertUrlMatch( govPayUrlRegExp, 'On Gov Pay payment page as expected');
+        //
+        //     test.info('Enter details for test card that will be declined');
+        //
+        //     var form = {
+        //         'cardNo' : '4000000000000002',
+        //         'expiryMonth': '01',
+        //         'expiryYear': '22',
+        //         'cardholderName': 'MR CARD HOLDERSON',
+        //         'cvc': '123',
+        //         'addressCountry': 'GB',
+        //         'addressLine1': '23 Boundary House',
+        //         'addressLine2': 'Boundary Lane',
+        //         'addressCity': 'Welwyn Garden City',
+        //         'addressPostcode': 'AL7 4EH',
+        //         'email': 'opglpademo+AmyWheeler@gmail.com'
+        //     };
+        //
+        //     casper.fill('form#card-details', form);
+        //
+        // }).thenClick('button[id="submit-card-details"]', function(){
+        //
+        // }).waitForText('Your payment has been declined', function() {
+        //
+        //     test.info('Current URL: ' + this.getCurrentUrl());
+        //     test.assertUrlMatch( govPayUrlRegExp, 'On the expected declined page');
+        //
+        // }).thenClick('a[id="return-url"]', function() {
+        //
+        //     test.info("Clicked 'Go back and try payment again'");
+        //
+        // }).waitForText('Online payment failed', function() {
+        //
+        //     test.info('Current URL: ' + this.getCurrentUrl());
+        //     test.assertUrlMatch(new RegExp('^' + basePath + paths.checkout_pay_return.replace('\\d+', lpaId) + '$'), 'On the expected failed page');
+        //
+        // }).thenClick('input[name="submit"][type="submit"]', function() {
+        //
+        //     test.info("Clicked 'Retry online payment'");
+        //
+        // // End testing the rejected/failed card payment flow
+        // // Start testing the successful card payment flow
+        //
+        // }).waitForText('Enter card details', function() {
+        //
+        //     // Skipping checking rest of the elements as we've done this in an earlier step
+        //     test.info('Current URL: ' + this.getCurrentUrl());
+        //     test.assertUrlMatch( govPayUrlRegExp, 'On Gov Pay payment page as expected');
+        //
+        //     test.info('Enter details for test card that will be accepted');
+        //     casper.fill('form#card-details', {
+        //         'cardNo' : '4444333322221111',
+        //         'expiryMonth': '01',
+        //         'expiryYear': '22',
+        //         'cardholderName': 'MR CARD HOLDERSON',
+        //         'cvc': '123',
+        //         'addressCountry': 'GB',
+        //         'addressLine1': '23 Boundary House',
+        //         'addressLine2': 'Boundary Lane',
+        //         'addressCity': 'Welwyn Garden City',
+        //         'addressPostcode': 'AL7 4EH',
+        //         'email': 'opglpademo+AmyWheeler@gmail.com'
+        //     });
+        //
+        // }).thenClick('button[id="submit-card-details"]', function(){
+        //
+        //     test.info("Clicked 'Submit'");
+        //
+        // }).waitForText('Confirm your payment', function() {
+        //
+        //     test.info('Current URL: ' + this.getCurrentUrl());
+        //     test.assertUrlMatch(govPayConfirmUrlRegExp, 'On Gov Pay payment page as expected');
+        //
+        // }).thenClick('button[id="confirm"]', function() {
+        //
+        //     test.info("Clicked 'Confirm Payment'");
+        //
+        // }).waitForText('Last steps', function() {
+        //
+        //     test.info('Current URL: ' + this.getCurrentUrl());
+        //     test.assertUrlMatch(new RegExp('^' + basePath + paths.complete.replace('\\d+', lpaId) + '$'), 'Page is on the expected URL.');
+        //
+        //     test.info("Payment completed and back on LPA site on the Complete page");
+        // });
 
         // End testing the successful card payment flow
 
