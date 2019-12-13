@@ -1,3 +1,9 @@
+FROM composer AS composer
+
+COPY tests /app
+
+RUN composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
+
 FROM php:7.3-cli
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -32,8 +38,13 @@ RUN git clone https://github.com/n1k0/casperjs.git /usr/local/casperjs && \
   ln -sf /usr/local/casperjs/bin/casperjs /usr/local/bin/casperjs
 
 RUN mkdir -p /mnt/test
+
 #COPY tests/functional /mnt/test
 COPY tests /mnt/test
+COPY --from=composer /app/vendor /mnt/test/vendor
+
+RUN cd /mnt/test && \
+    /usr/bin/composer install
 
 WORKDIR /mnt/test/functional/
 CMD php
