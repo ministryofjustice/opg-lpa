@@ -43,9 +43,6 @@ RUN mkdir -p /mnt/test
 COPY tests /mnt/test
 COPY --from=composer /app/vendor /mnt/test/vendor
 
-RUN cd /mnt/test && \
-    /usr/bin/composer install
-
 WORKDIR /mnt/test/functional/
 CMD php
 
