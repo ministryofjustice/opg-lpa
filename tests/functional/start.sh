@@ -1,7 +1,5 @@
 #!/bin/bash
 
-whoami
-
 xunitfile=/mnt/test/casperesults.xml
 
 echo The base domain is $BASE_DOMAIN

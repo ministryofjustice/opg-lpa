@@ -23,7 +23,7 @@ Set up your environment
 Run the following command to run all the tests
 
 ```bash
-aws-vault exec identity -- docker run -it -v ${PWD}/tests:/mnt/test -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=53-lpa3302add.front.development.lpa.opg.service.justice.gov.uk" --net=host --rm casperjs:latest ./start.sh 'tests/'
+aws-vault exec identity -- docker run -it -v ${PWD}/tests:/mnt/test -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=<PUBLIC_FRONT_URL>" --net=host --rm casperjs:latest ./start.sh 'tests/'
 ```
 
 To run the S3Monitor on terminal
