@@ -44,6 +44,6 @@ suites to activate accounts and reset passwords. The email account needs to be s
 
 To login to the docker container.
 
-    make shell
+aws-vault exec identity -- docker run -it -v ${PWD}/tests:/mnt/test -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=<PUBLIC_FRONT_URL>" --net=host --rm casperjs:latest /usr/bin/env bash
 
 Note that once inside anything you do is ephemeral; when you exit and re-enter the state of the container will have been reset.
