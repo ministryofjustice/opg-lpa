@@ -53,17 +53,23 @@ workflows:
           filters:
             branches:
               ignore: master
-      - infrastructure_and_deployment/run_healthcheck_test:
-          name: test_healthcheck
+      #      - infrastructure_and_deployment/run_healthcheck_test:
+      #          name: test_healthcheck
+      #          requires: [dev_environment_apply_terraform]
+      #          filters:
+      #            branches:
+      #              ignore: master
+
+      - infrastructure_and_deployment/run_functional_test:
+          name: run_functional_test
           requires: [dev_environment_apply_terraform]
           filters:
             branches:
               ignore: master
-      # This step is commented out at the moment because of a bug in the
-      #  slack orb. PR to fix this is https://github.com/CircleCI-Public/slack-orb/pull/72
+
       - slack_notify_domain:
           name: post_environment_domains
-          requires: [test_healthcheck]
+          requires: [run_functional_test]
           filters:
             branches:
               ignore: master
@@ -103,8 +109,16 @@ workflows:
             branches:
               only: master
 
-      - infrastructure_and_deployment/run_healthcheck_test:
-          name: test_healthcheck_preprod
+      #      - infrastructure_and_deployment/run_healthcheck_test:
+      #          name: test_healthcheck_preprod
+      #          requires: [preprod_environment_apply_terraform]
+      #          workspace: preproduction
+      #          filters:
+      #            branches:
+      #              only: master
+
+      - infrastructure_and_deployment/run_functional_test:
+          name: test_functional_preprod
           requires: [preprod_environment_apply_terraform]
           workspace: preproduction
           filters:
@@ -114,7 +128,7 @@ workflows:
       - infrastructure_and_deployment/apply_account_terraform:
           name: prod_account_apply_terraform
           workspace: production
-          requires: [test_healthcheck_preprod]
+          requires: [test_functional_preprod]
           filters:
             branches:
               only: master
@@ -446,6 +460,77 @@ orbs:
               name: Run test
               command: |
                 python ~/project/pipeline_scripts/healthcheck_test.py
+          - run:
+              name: Remove CircleCI ingress to environment
+              command: |
+                if [ <<parameters.workspace>> != "production" ]; then
+                  ENV_NAME=<<parameters.workspace>>
+                  cd ~/project/terraform/account_ingress
+                  terraform init -lock-timeout=300s
+                  export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                  echo $TF_WORKSPACE
+                  terraform destroy -lock-timeout=300s -auto-approve
+                fi
+              when: always
+
+      run_functional_test:
+        #
+        # Runs user journey tests using casper JS
+        #
+        executor: python
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        steps:
+          - checkout
+          - setup_remote_docker:
+              version: 18.06.0-ce
+              docker_layer_caching: false
+          - attach_workspace:
+              at: /tmp
+          - run:
+              name: Build casper JS container
+              command: |
+                docker build -f ~/project/tests/Dockerfile  -t casperjs:latest .
+                echo 'export DOCKER_REMOTE_IP="$(docker run casperjs:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
+                echo $DOCKER_REMOTE_IP
+
+          - run:
+              name: Install python dependencies
+              command: |
+                pip install -r ~/project/pipeline_scripts/requirements.txt --user
+          - install_terraform
+          - run:
+              name: Get URLs
+              command: |
+                ENV_NAME=<<parameters.workspace>>
+                echo 'export TF_WORKSPACE=${ENV_NAME:0:13}' >> $BASH_ENV
+                echo $TF_WORKSPACE
+                echo 'export FRONT_DOMAIN="$(jq -r .front_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
+          - run:
+              name: Wait for new tasks in services to be running
+              command: |
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE
+                python ~/project/pipeline_scripts/ecs_monitor.py
+          - run:
+              name: Add CircleCI ingress to environment
+              command: |
+                if [ <<parameters.workspace>> != "production" ]; then
+                  ENV_NAME=<<parameters.workspace>>
+                  cd ~/project/terraform/account_ingress
+                  terraform init -lock-timeout=300s
+                  export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                  echo $TF_WORKSPACE
+                  terraform apply -lock-timeout=300s -auto-approve -var docker_remote_ip=$DOCKER_REMOTE_IP
+                fi
+          - run:
+              name: Run test
+              command: |
+                docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name casperjs casperjs:latest
+                docker exec casperjs ./start.sh 'tests/'
           - run:
               name: Remove CircleCI ingress to environment
               command: |
