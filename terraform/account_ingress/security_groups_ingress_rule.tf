@@ -1,13 +1,14 @@
-data "http" "icanhazip" {
-  url = "https://icanhazip.com"
-}
-
 output "public_ip" {
   value = local.local_ip_cidr
 }
 
 locals {
-  local_ip_cidr = "${chomp(data.http.icanhazip.body)}/32"
+  local_ip_cidr = "${chomp(var.docker_remote_ip)}/32"
+}
+
+variable "docker_remote_ip" {
+  description = "IP address for CircleCI docker remote"
+  default     = ""
 }
 
 data "aws_security_group" "admin_loadbalancer" {

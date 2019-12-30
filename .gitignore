@@ -14,3 +14,9 @@ node_modules/
 async_destroy_lambda/lambdas/vendor
 **lambda_function_payload.zip
 terraform/account_ingress/terraform.tfstate*
+vendor/
+tests/vendor/
+tests/functional/complete.png
+tests/functional/download.pdf
+tests/functional/out.png
+tests/functional/summary.png
