@@ -245,4 +245,5 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     {
         return $this->metadata;
     }
+    
 }
