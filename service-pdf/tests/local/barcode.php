@@ -25,4 +25,3 @@ $imageResource = $renderer->draw();
 
 $imageResource->save( 'new.pdf' );
 
-//imagepng( $imageResource, 'out.png' );
