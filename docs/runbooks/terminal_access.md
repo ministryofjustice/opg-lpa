@@ -88,13 +88,14 @@ amazon-linux-extras install postgresql10
 
 ```bash
 export ENV_NAME=production
+export AWS_DEFAULT_REGION=eu-west-1
 export API_DB_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier api-${ENV_NAME} | jq -r .'DBInstances'[0].'Endpoint'.'Address')
 export DB_PASSWORD=$(aws secretsmanager get-secret-value --secret-id ${ENV_NAME}/api_rds_password | jq -r .'SecretString')
 export DB_USERNAME=$(aws secretsmanager get-secret-value --secret-id ${ENV_NAME}/api_rds_username | jq -r .'SecretString')
 export API_OPTS="--host=${API_DB_ENDPOINT} --username=${DB_USERNAME}"
 ```
 
-9. Connect to the database
+1. Connect to the database
 
 ```bash
 PGPASSWORD=${DB_PASSWORD} psql ${API_OPTS} postgres
