@@ -1,28 +1,32 @@
-#!/usr/bin/env bash
-# replace variables with env vars from the container
-ACCOUNT_NAME=development
-ENV_NAME=88-LPA3507ec2-online-lpa
+#!/usr/bin/env sh
+# The following variables aree set from docker-compose when run locally,
+# from ECS container definitions when run as a task in AWS,
+# or from scripts/non_live_seeding/.envrc when executed manually from a SSH terminal.
+# OPG_LPA_STACK_NAME
+# OPG_LPA_STACK_ENVIRONMENT
+# OPG_LPA_POSTGRES_HOSTNAME
+# OPG_LPA_POSTGRES_PORT
+# OPG_LPA_POSTGRES_NAME
+# OPG_LPA_POSTGRES_USERNAME
+# OPG_LPA_POSTGRES_PASSWORD
+
 AWS_DEFAULT_REGION=eu-west-1
 
-if ${ENV_NAME:0:13} == "production" then
+if ${OPG_LPA_STACK_NAME} == "production"; then
   echo "These scripts must not be run on production."
-  # Terminate our shell script with success message
   exit 0
 fi
 
-API_DB_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier api-${ENV_NAME:0:13} | jq -r .'DBInstances'[0].'Endpoint'.'Address')
-DB_PASSWORD=$(aws secretsmanager get-secret-value --secret-id ${ACCOUNT_NAME}/api_rds_password | jq -r .'SecretString')
-DB_USERNAME=$(aws secretsmanager get-secret-value --secret-id ${ACCOUNT_NAME}/api_rds_username | jq -r .'SecretString')
-API_OPTS="--host=${API_DB_ENDPOINT} --username=${DB_USERNAME}"
+API_OPTS="--host=${OPG_LPA_POSTGRES_HOSTNAME} --username=${OPG_LPA_POSTGRES_USERNAME}"
 
-PGPASSWORD=${DB_PASSWORD} psql ${API_OPTS} \
-  api2 \
-  -f clear_tables.sql  
+PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
+  ${OPG_LPA_POSTGRES_NAME} \
+  -f clear_tables.sql
 
-PGPASSWORD=${DB_PASSWORD} psql ${API_OPTS} \
-  api2 \
+PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
+  ${OPG_LPA_POSTGRES_NAME} \
   -f seed_test_users.sql
 
-PGPASSWORD=${DB_PASSWORD} psql ${API_OPTS} \
-  api2 \
+PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
+  ${OPG_LPA_POSTGRES_NAME} \
   -f seed_test_applications.sql
