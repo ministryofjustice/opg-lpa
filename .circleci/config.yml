@@ -55,6 +55,7 @@ workflows:
               admin_docker_build,
               api_docker_build,
               pdf_docker_build,
+              seeding_docker_build,
             ]
           filters:
             branches:
