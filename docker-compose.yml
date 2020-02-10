@@ -324,18 +324,14 @@ services:
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
-
   # ---------------------------
   # Seeding
-
   seeding:
     container_name: seeding
     image: seeding
     build:
       context: ./
       dockerfile: service-seeding/docker/app/Dockerfile
-    # volumes:
-    #   - ./scripts/non_live_seeding:/app
     depends_on:
       - localstack
       - local-config
