@@ -186,7 +186,7 @@ class ECSMonitor:
       # lifecycle for getting log streams
       # get logs while task is running
       # after task finishes, print remaining logs
-        self.logStreamName = 'seeding-app.online-lpa/app/{}'.format(
+        self.logStreamName = 'seeding.online-lpa/app/{}'.format(
             self.seeding_task.rsplit('/', 1)[-1])
         print("Streaming logs for logstream: ".format(self.logStreamName))
 
