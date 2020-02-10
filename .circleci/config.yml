@@ -19,6 +19,7 @@ workflows:
           name: pdf_docker_build
           ecr_repository_name_prefix: online-lpa/pdf
           service_path: service-pdf
+          build_web: false
 
       - infrastructure_and_deployment/lint_and_validate_terraform:
           name: lint_and_validate_terraform
@@ -175,6 +176,10 @@ orbs:
             description: The ecr repo name up to _app or _web. These will be assumed to be present and added by the job.
           service_path:
             type: string
+          build_web:
+            type: boolean
+            default: true
+            description: Some services do not require a web container, set to False to skip web container builds.
         steps:
           - checkout
           - install_aws_cli
@@ -184,7 +189,7 @@ orbs:
           - run:
               name: Build web container
               command: |
-                if [ << parameters.service_path >> != "service-pdf" ]; then
+                if [ << parameters.build_web >> ]; then
                   docker build -f << parameters.service_path >>/docker/web/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web .
                 fi
           - run:
@@ -202,7 +207,7 @@ orbs:
           - run:
               name: Push web container
               command: |
-                if [ << parameters.service_path >> != "service-pdf" ]; then
+                if [ << parameters.build_web >> ]; then
                   export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
                   docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:$CIRCLE_BRANCH-$SHORT_HASH
                   if [ "${CIRCLE_BRANCH}" == "master" ]; then
