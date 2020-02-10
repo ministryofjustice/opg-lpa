@@ -189,7 +189,7 @@ orbs:
           - run:
               name: Build web container
               command: |
-                if [ << parameters.build_web >> ]; then
+                if << parameters.build_web >> ; then
                   docker build -f << parameters.service_path >>/docker/web/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web .
                 fi
           - run:
@@ -207,7 +207,7 @@ orbs:
           - run:
               name: Push web container
               command: |
-                if [ << parameters.build_web >> ]; then
+                if << parameters.build_web >> ; then
                   export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
                   docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:$CIRCLE_BRANCH-$SHORT_HASH
                   if [ "${CIRCLE_BRANCH}" == "master" ]; then
