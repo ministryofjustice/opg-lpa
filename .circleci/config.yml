@@ -53,12 +53,6 @@ workflows:
           filters:
             branches:
               ignore: master
-      #      - infrastructure_and_deployment/run_healthcheck_test:
-      #          name: test_healthcheck
-      #          requires: [dev_environment_apply_terraform]
-      #          filters:
-      #            branches:
-      #              ignore: master
 
       - infrastructure_and_deployment/run_functional_test:
           name: run_functional_test
@@ -108,14 +102,6 @@ workflows:
           filters:
             branches:
               only: master
-
-      #      - infrastructure_and_deployment/run_healthcheck_test:
-      #          name: test_healthcheck_preprod
-      #          requires: [preprod_environment_apply_terraform]
-      #          workspace: preproduction
-      #          filters:
-      #            branches:
-      #              only: master
 
       - infrastructure_and_deployment/run_functional_test:
           name: test_functional_preprod
@@ -443,7 +429,7 @@ orbs:
               name: Wait for new tasks in services to be running
               command: |
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
-                echo $TF_WORKSPACE              
+                echo $TF_WORKSPACE
                 python ~/project/pipeline_scripts/ecs_monitor.py
           - run:
               name: Add CircleCI ingress to environment
