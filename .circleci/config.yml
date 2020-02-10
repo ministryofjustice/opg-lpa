@@ -84,7 +84,7 @@ workflows:
       - hold-for-destruction:
           name: hold_env_for_destruction
           type: approval
-          requires: [dev_environment_apply_terraform]
+          requires: [post_environment_domains]
           filters:
             branches:
               ignore: master
