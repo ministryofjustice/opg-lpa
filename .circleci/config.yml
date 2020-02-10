@@ -20,6 +20,11 @@ workflows:
           ecr_repository_name_prefix: online-lpa/pdf
           service_path: service-pdf
           build_web: false
+      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+          name: seeding_docker_build
+          ecr_repository_name_prefix: online-lpa/seeding
+          service_path: service-seeding
+          build_web: false
 
       - infrastructure_and_deployment/lint_and_validate_terraform:
           name: lint_and_validate_terraform
