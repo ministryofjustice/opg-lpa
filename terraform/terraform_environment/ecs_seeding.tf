@@ -77,11 +77,11 @@ locals {
     },
     "secrets": [
       { "name": "OPG_LPA_POSTGRES_USERNAME", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
-      { "name": "OPG_LPA_POSTGRES_PASSWORD", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" },
+      { "name": "OPG_LPA_POSTGRES_PASSWORD", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" }
     ],
     "environment": [
       { "name": "OPG_LPA_POSTGRES_HOSTNAME", "value": "${aws_db_instance.api.address}"},
-      { "name": "OPG_LPA_POSTGRES_PORT", "value": "${aws_db_instance.api.port}"},
+      { "name": "OPG_LPA_POSTGRES_PORT", "value": "${aws_db_instance.api.port}"}
       ]
     }
   EOF
