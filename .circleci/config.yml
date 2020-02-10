@@ -25,6 +25,7 @@ workflows:
           ecr_repository_name_prefix: online-lpa/seeding
           service_path: service-seeding
           build_web: false
+          unit_test: false
 
       - infrastructure_and_deployment/lint_and_validate_terraform:
           name: lint_and_validate_terraform
@@ -186,6 +187,10 @@ orbs:
             type: boolean
             default: true
             description: Some services do not require a web container, set to False to skip web container builds.
+          unit_test:
+            type: boolean
+            default: true
+            description: Execute unit tests during this build
         steps:
           - checkout
           - install_aws_cli
@@ -205,9 +210,11 @@ orbs:
           - run:
               name: Run unit tests
               command: |
-                docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
-                docker exec tests docker-php-ext-enable xdebug
-                docker exec tests /app/vendor/bin/phpunit
+                if << parameters.unit_test >> ; then
+                  docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
+                  docker exec tests docker-php-ext-enable xdebug
+                  docker exec tests /app/vendor/bin/phpunit
+                fi
 
           - ecr_login
           - run:
