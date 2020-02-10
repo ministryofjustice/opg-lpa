@@ -202,6 +202,8 @@ orbs:
               command: |
                 if << parameters.build_web >> ; then
                   docker build -f << parameters.service_path >>/docker/web/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web .
+                else
+                  echo "web container not required for this service"
                 fi
           - run:
               name: Build app container
@@ -214,6 +216,8 @@ orbs:
                   docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
                   docker exec tests docker-php-ext-enable xdebug
                   docker exec tests /app/vendor/bin/phpunit
+                else
+                  echo "phpunit tests not required for this service"
                 fi
 
           - ecr_login
