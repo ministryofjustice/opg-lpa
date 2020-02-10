@@ -62,6 +62,11 @@ workflows:
             branches:
               ignore: master
 
+      - infrastructure_and_deployment/seed_environment_databases:
+          name: dev_seed_environment_databases
+          requires: [dev_environment_apply_terraform]
+          filters: { branches: { ignore: [master] } }
+
       - infrastructure_and_deployment/run_functional_test:
           name: run_functional_test
           requires: [dev_environment_apply_terraform]
@@ -428,6 +433,36 @@ orbs:
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
                 fi
+      seed_environment_databases:
+        #
+        # Puts data into the database for testing and demo
+        #
+        executor: python
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        steps:
+          - checkout
+          - attach_workspace:
+              at: /tmp
+          - run:
+              name: Install python dependencies
+              command: |
+                pip install -r ~/project/pipeline_scripts/requirements.txt --user
+          - install_terraform
+          - run:
+              name: Wait for new tasks in services to be running
+              command: |
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE
+                python ~/project/pipeline_scripts/ecs_monitor.py
+          - run:
+              name: Run seeding ecs task
+              command: |
+                python ~/project/pipeline_scripts/ecs_start_seeding_task.py
+
       run_healthcheck_test:
         #
         # Checks the health check is returning 200
