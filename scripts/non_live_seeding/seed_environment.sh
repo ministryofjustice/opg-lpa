@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# The following variables aree set from docker-compose when run locally,
+# The following variables are set from docker-compose when run locally,
 # from ECS container definitions when run as a task in AWS,
 # or from scripts/non_live_seeding/.envrc when executed manually from a SSH terminal.
 # OPG_LPA_STACK_NAME

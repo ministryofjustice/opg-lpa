@@ -116,9 +116,15 @@ workflows:
             branches:
               only: master
 
-      - infrastructure_and_deployment/run_functional_test:
-          name: test_functional_preprod
+      - infrastructure_and_deployment/seed_environment_databases:
+          name: preprod_seed_environment_databases
+          workspace: preproduction
           requires: [preprod_environment_apply_terraform]
+          filters: { branches: { only: [master] } }
+
+      - infrastructure_and_deployment/run_functional_test:
+          name: preprod_test_functional
+          requires: [preprod_seed_environment_databases]
           workspace: preproduction
           filters:
             branches:
@@ -127,10 +133,11 @@ workflows:
       - infrastructure_and_deployment/apply_account_terraform:
           name: prod_account_apply_terraform
           workspace: production
-          requires: [test_functional_preprod]
+          requires: [preprod_test_functional]
           filters:
             branches:
               only: master
+
       - infrastructure_and_deployment/apply_environment_terraform:
           name: prod_environment_apply_terraform
           requires: [prod_account_apply_terraform]
