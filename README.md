@@ -3,7 +3,6 @@ The Office of the Public Guardian Lasting Power of Attorney online service: Mana
 
 
 ## Local Development Setup
-
 The first time you bring up the environment:
 
 ```
