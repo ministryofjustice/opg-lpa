@@ -228,7 +228,8 @@ class StatusController extends AbstractRestfulController
 
         // Get status update from Sirius
         if (!empty($idsToCheckInSirius )) {
-            $this->getLogger()->debug('Ids to check in Sirius :' . var_export($idsToCheckInSirius, true));
+            $this->getLogger()->debug('Ids to check in Sirius where status is not returned or does not have a returned date:' . var_export($idsToCheckInSirius, true));
+            $this->getLogger()->debug('Count of all application ids to check in Sirius where status is not returned or does not have a returned date:' . count($idsToCheckInSirius));
             $siriusResponseArray = $this->processingStatusService->getStatuses($idsToCheckInSirius);
 
             if (!empty($siriusResponseArray))
