@@ -182,8 +182,16 @@ class StatusController extends AbstractRestfulController
         $idsToCheckInSirius = [];
         $returnDate = "";
 
+        //LPA-3534
+        // Adding an array to check id's for which status requests would be sent without any condition set
+        $allIdsToCheckStatusInSirius = [];
+
         foreach ($exploded_ids as $id) {
             $currentProcessingStatus = $this->getCurrentProcessingStatus($id);
+
+            //LPA-3534: Add all id's to array to check status in SIRIUS for all applications created by the user
+            $allIdsToCheckStatusInSirius[] = $id;
+
             if ($currentProcessingStatus == Lpa::SIRIUS_PROCESSING_STATUS_RETURNED)
             {
                 $returnDate = $this->getApplicationReturnDate($id);
@@ -196,6 +204,7 @@ class StatusController extends AbstractRestfulController
 
             if ($currentProcessingStatus == null) {
                 $results[$id] = ['found' => false];
+
             } else {
                 $results[$id] = ['found' => true, 'status' => $currentProcessingStatus];
             }
@@ -210,6 +219,13 @@ class StatusController extends AbstractRestfulController
                 continue;
             }
         }
+
+        //LPA-3534 Log the request
+        if (!empty($allIdsToCheckStatusInSirius)) {
+            $this->getLogger()->debug('All application ids to check in Sirius :' . var_export($allIdsToCheckStatusInSirius, true));
+            $this->getLogger()->debug('Count of all application ids to check in Sirius :' .countOf($allIdsToCheckStatusInSirius));
+        }
+
         // Get status update from Sirius
         if (!empty($idsToCheckInSirius )) {
             $this->getLogger()->debug('Ids to check in Sirius :' . var_export($idsToCheckInSirius, true));
