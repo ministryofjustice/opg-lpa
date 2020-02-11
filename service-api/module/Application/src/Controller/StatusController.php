@@ -223,7 +223,7 @@ class StatusController extends AbstractRestfulController
         //LPA-3534 Log the request
         if (!empty($allIdsToCheckStatusInSirius)) {
             $this->getLogger()->debug('All application ids to check in Sirius :' . var_export($allIdsToCheckStatusInSirius, true));
-            $this->getLogger()->debug('Count of all application ids to check in Sirius :' .countOf($allIdsToCheckStatusInSirius));
+            $this->getLogger()->debug('Count of all application ids to check in Sirius :' . count($allIdsToCheckStatusInSirius));
         }
 
         // Get status update from Sirius
