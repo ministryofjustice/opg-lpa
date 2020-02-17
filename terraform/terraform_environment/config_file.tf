@@ -9,6 +9,7 @@ locals {
   environment_pipeline_tasks_config = {
     account_id   = local.account_id
     cluster_name = aws_ecs_cluster.online-lpa.name
+    environment  = local.environment
     front_fqdn   = local.front_fqdn
     admin_fqdn   = aws_route53_record.admin.fqdn
     tag          = var.container_version

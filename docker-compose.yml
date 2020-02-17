@@ -1,7 +1,6 @@
-version: "2.1"
+version: "3.7"
 
 services:
-
   # ---------------------------
   # Local Services
 
@@ -40,15 +39,15 @@ services:
       - postgres
       - localstack
     environment:
-      AWS_ACCESS_KEY_ID: '-'
-      AWS_SECRET_ACCESS_KEY: '-'
+      AWS_ACCESS_KEY_ID: "-"
+      AWS_SECRET_ACCESS_KEY: "-"
       AWS_ENDPOINT_DYNAMODB: dynamodb:8000
 
       OPG_LPA_COMMON_SQS_ENDPOINT: http://localstack:4576
       OPG_LPA_COMMON_PDF_QUEUE_NAME: pdf-queue.fifo
 
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4569
-      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: 'LpaCache'
+      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "LpaCache"
 
   # ---------------------------
   # Front
@@ -81,20 +80,20 @@ services:
       - localstack
       - local-config
     environment:
-      OPG_LPA_STACK_NAME: 'local'
-      OPG_LPA_STACK_ENVIRONMENT: 'dev'
+      OPG_LPA_STACK_NAME: "local"
+      OPG_LPA_STACK_ENVIRONMENT: "dev"
 
-      OPG_LPA_ENDPOINTS_API: 'http://api-web'
+      OPG_LPA_ENDPOINTS_API: "http://api-web"
 
-      OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE: 'Properties'
-      OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: 'Locks'
-      OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: 'Sessions'
+      OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE: "Properties"
+      OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
+      OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: "Sessions"
 
-      OPG_LPA_FRONT_CSRF_SALT: 'test'
+      OPG_LPA_FRONT_CSRF_SALT: "test"
 
       # Local only
-      AWS_ACCESS_KEY_ID: '-'
-      AWS_SECRET_ACCESS_KEY: '-'
+      AWS_ACCESS_KEY_ID: "-"
+      AWS_SECRET_ACCESS_KEY: "-"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
 
@@ -125,12 +124,11 @@ services:
     volumes:
       - ./local-ssl/certs:/etc/nginx/certs
     environment:
-      DOMAIN: 'localhost'
-      TARGET_HOST_HEADER: 'localhost:7002'
-      SSL_PORT: '443'
-      TARGET_HOST: 'front-web'
-      TARGET_PORT: '80'
-
+      DOMAIN: "localhost"
+      TARGET_HOST_HEADER: "localhost:7002"
+      SSL_PORT: "443"
+      TARGET_HOST: "front-web"
+      TARGET_PORT: "80"
 
   # ---------------------------
   # API
@@ -163,38 +161,38 @@ services:
       - localstack
       - local-config
     environment:
-      OPG_LPA_STACK_NAME: 'local'
-      OPG_LPA_STACK_ENVIRONMENT: 'dev'
+      OPG_LPA_STACK_NAME: "local"
+      OPG_LPA_STACK_ENVIRONMENT: "dev"
 
-      OPG_LPA_API_NOTIFY_API_KEY: 'xxx'
+      OPG_LPA_API_NOTIFY_API_KEY: "xxx"
 
-      OPG_LPA_POSTGRES_HOSTNAME: 'postgres'
-      OPG_LPA_POSTGRES_PORT: '5432'
-      OPG_LPA_POSTGRES_NAME: 'lpadb'
-      OPG_LPA_POSTGRES_USERNAME: 'lpauser'
-      OPG_LPA_POSTGRES_PASSWORD: 'lpapass'
+      OPG_LPA_POSTGRES_HOSTNAME: "postgres"
+      OPG_LPA_POSTGRES_PORT: "5432"
+      OPG_LPA_POSTGRES_NAME: "lpadb"
+      OPG_LPA_POSTGRES_USERNAME: "lpauser"
+      OPG_LPA_POSTGRES_PASSWORD: "lpapass"
 
       # Fake key; deliberately committed
-      OPG_LPA_API_PDF_ENCRYPTION_KEY_DOCUMENT: '0L5Mn687f312aj827NQq648U7899o91r'
+      OPG_LPA_API_PDF_ENCRYPTION_KEY_DOCUMENT: "0L5Mn687f312aj827NQq648U7899o91r"
 
-      OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE: 'Properties'
-      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: 'LpaCache'
-      OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: 'Locks'
+      OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE: "Properties"
+      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "LpaCache"
+      OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
 
-      OPG_LPA_PROCESSING_STATUS_ENDPOINT: 'http://gateway:5000/v1/lpa-online-tool/lpas/'
+      OPG_LPA_PROCESSING_STATUS_ENDPOINT: "http://gateway:5000/v1/lpa-online-tool/lpas/"
 
-      OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE: 'true'
+      OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE: "true"
 
       # Local only
-      AWS_ACCESS_KEY_ID: '-'
-      AWS_SECRET_ACCESS_KEY: '-'
+      AWS_ACCESS_KEY_ID: "-"
+      AWS_SECRET_ACCESS_KEY: "-"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4569
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4576/queue/pdf-queue.fifo
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
-      ENABLE_XDEBUG: 'true'
+      ENABLE_XDEBUG: "true"
       PHP_IDE_CONFIG: serverName=lpa-api-app
       XDEBUG_CONFIG: remote_host=host.docker.internal remote_enable=1
 
@@ -241,20 +239,20 @@ services:
       - localstack
       - local-config
     environment:
-      OPG_LPA_STACK_NAME: 'local'
-      OPG_LPA_STACK_ENVIRONMENT: 'dev'
+      OPG_LPA_STACK_NAME: "local"
+      OPG_LPA_STACK_ENVIRONMENT: "dev"
 
-      OPG_LPA_ENDPOINTS_API: 'http://api-web'
+      OPG_LPA_ENDPOINTS_API: "http://api-web"
 
-      OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE: 'Properties'
-      OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: 'Locks'
-      OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: 'Sessions'
+      OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE: "Properties"
+      OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
+      OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: "Sessions"
 
-      OPG_LPA_ADMIN_JWT_SECRET: 'test-secret'
+      OPG_LPA_ADMIN_JWT_SECRET: "test-secret"
 
       # Local only
-      AWS_ACCESS_KEY_ID: '-'
-      AWS_SECRET_ACCESS_KEY: '-'
+      AWS_ACCESS_KEY_ID: "-"
+      AWS_SECRET_ACCESS_KEY: "-"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
 
@@ -285,11 +283,11 @@ services:
     volumes:
       - ./local-ssl/certs:/etc/nginx/certs
     environment:
-      DOMAIN: 'localhost'
-      TARGET_HOST_HEADER: 'localhost:7003'
-      SSL_PORT: '443'
-      TARGET_HOST: 'admin-web'
-      TARGET_PORT: '80'
+      DOMAIN: "localhost"
+      TARGET_HOST_HEADER: "localhost:7003"
+      SSL_PORT: "443"
+      TARGET_HOST: "admin-web"
+      TARGET_PORT: "80"
 
   # ---------------------------
   # PDF
@@ -306,15 +304,14 @@ services:
       context: ./
       dockerfile: service-pdf/docker/app/Dockerfile
     environment:
-      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: 'LpaCache'
+      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "LpaCache"
 
       # Local only
-      AWS_ACCESS_KEY_ID: '-'
-      AWS_SECRET_ACCESS_KEY: '-'
+      AWS_ACCESS_KEY_ID: "-"
+      AWS_SECRET_ACCESS_KEY: "-"
 
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4569
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4576/queue/pdf-queue.fifo
-
 
   pdf-composer:
     image: composer
@@ -327,3 +324,25 @@ services:
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
+  # ---------------------------
+  # Seeding
+  seeding:
+    container_name: seeding
+    image: seeding
+    build:
+      context: ./
+      dockerfile: service-seeding/docker/app/Dockerfile
+    depends_on:
+      - localstack
+      - local-config
+      - api-app
+      - postgres
+      - api-composer
+    environment:
+      OPG_LPA_STACK_NAME: "local"
+      OPG_LPA_STACK_ENVIRONMENT: "dev"
+      OPG_LPA_POSTGRES_HOSTNAME: "postgres"
+      OPG_LPA_POSTGRES_PORT: "5432"
+      OPG_LPA_POSTGRES_NAME: "lpadb"
+      OPG_LPA_POSTGRES_USERNAME: "lpauser"
+      OPG_LPA_POSTGRES_PASSWORD: "lpapass"

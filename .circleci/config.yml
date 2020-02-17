@@ -19,6 +19,13 @@ workflows:
           name: pdf_docker_build
           ecr_repository_name_prefix: online-lpa/pdf
           service_path: service-pdf
+          build_web: false
+      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+          name: seeding_docker_build
+          ecr_repository_name_prefix: online-lpa/seeding
+          service_path: service-seeding
+          build_web: false
+          unit_test: false
 
       - infrastructure_and_deployment/lint_and_validate_terraform:
           name: lint_and_validate_terraform
@@ -49,20 +56,20 @@ workflows:
               admin_docker_build,
               api_docker_build,
               pdf_docker_build,
+              seeding_docker_build,
             ]
           filters:
             branches:
               ignore: master
-      #      - infrastructure_and_deployment/run_healthcheck_test:
-      #          name: test_healthcheck
-      #          requires: [dev_environment_apply_terraform]
-      #          filters:
-      #            branches:
-      #              ignore: master
+
+      - infrastructure_and_deployment/seed_environment_databases:
+          name: dev_seed_environment_databases
+          requires: [dev_environment_apply_terraform]
+          filters: { branches: { ignore: [master] } }
 
       - infrastructure_and_deployment/run_functional_test:
           name: run_functional_test
-          requires: [dev_environment_apply_terraform]
+          requires: [dev_seed_environment_databases]
           filters:
             branches:
               ignore: master
@@ -77,7 +84,7 @@ workflows:
       - hold-for-destruction:
           name: hold_env_for_destruction
           type: approval
-          requires: [dev_environment_apply_terraform]
+          requires: [post_environment_domains]
           filters:
             branches:
               ignore: master
@@ -109,17 +116,15 @@ workflows:
             branches:
               only: master
 
-      #      - infrastructure_and_deployment/run_healthcheck_test:
-      #          name: test_healthcheck_preprod
-      #          requires: [preprod_environment_apply_terraform]
-      #          workspace: preproduction
-      #          filters:
-      #            branches:
-      #              only: master
+      - infrastructure_and_deployment/seed_environment_databases:
+          name: preprod_seed_environment_databases
+          workspace: preproduction
+          requires: [preprod_environment_apply_terraform]
+          filters: { branches: { only: [master] } }
 
       - infrastructure_and_deployment/run_functional_test:
-          name: test_functional_preprod
-          requires: [preprod_environment_apply_terraform]
+          name: preprod_test_functional
+          requires: [preprod_seed_environment_databases]
           workspace: preproduction
           filters:
             branches:
@@ -128,10 +133,11 @@ workflows:
       - infrastructure_and_deployment/apply_account_terraform:
           name: prod_account_apply_terraform
           workspace: production
-          requires: [test_functional_preprod]
+          requires: [preprod_test_functional]
           filters:
             branches:
               only: master
+
       - infrastructure_and_deployment/apply_environment_terraform:
           name: prod_environment_apply_terraform
           requires: [prod_account_apply_terraform]
@@ -189,6 +195,14 @@ orbs:
             description: The ecr repo name up to _app or _web. These will be assumed to be present and added by the job.
           service_path:
             type: string
+          build_web:
+            type: boolean
+            default: true
+            description: Some services do not require a web container, set to False to skip web container builds.
+          unit_test:
+            type: boolean
+            default: true
+            description: Execute unit tests during this build
         steps:
           - checkout
           - install_aws_cli
@@ -198,8 +212,10 @@ orbs:
           - run:
               name: Build web container
               command: |
-                if [ << parameters.service_path >> != "service-pdf" ]; then
+                if << parameters.build_web >> ; then
                   docker build -f << parameters.service_path >>/docker/web/Dockerfile --progress=plain --no-cache -t << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web .
+                else
+                  echo "web container not required for this service"
                 fi
           - run:
               name: Build app container
@@ -208,15 +224,19 @@ orbs:
           - run:
               name: Run unit tests
               command: |
-                docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
-                docker exec tests docker-php-ext-enable xdebug
-                docker exec tests /app/vendor/bin/phpunit
+                if << parameters.unit_test >> ; then
+                  docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:latest
+                  docker exec tests docker-php-ext-enable xdebug
+                  docker exec tests /app/vendor/bin/phpunit
+                else
+                  echo "phpunit tests not required for this service"
+                fi
 
           - ecr_login
           - run:
               name: Push web container
               command: |
-                if [ << parameters.service_path >> != "service-pdf" ]; then
+                if << parameters.build_web >> ; then
                   export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
                   docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:$CIRCLE_BRANCH-$SHORT_HASH
                   if [ "${CIRCLE_BRANCH}" == "master" ]; then
@@ -420,6 +440,36 @@ orbs:
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
                 fi
+      seed_environment_databases:
+        #
+        # Puts data into the database for testing and demo
+        #
+        executor: python
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        steps:
+          - checkout
+          - attach_workspace:
+              at: /tmp
+          - run:
+              name: Install python dependencies
+              command: |
+                pip install -r ~/project/pipeline_scripts/requirements.txt --user
+          - install_terraform
+          - run:
+              name: Wait for new tasks in services to be running
+              command: |
+                export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
+                echo $TF_WORKSPACE
+                python ~/project/pipeline_scripts/ecs_monitor.py
+          - run:
+              name: Run seeding ecs task
+              command: |
+                python ~/project/pipeline_scripts/ecs_start_seeding_task.py
+
       run_healthcheck_test:
         #
         # Checks the health check is returning 200
@@ -443,7 +493,7 @@ orbs:
               name: Wait for new tasks in services to be running
               command: |
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
-                echo $TF_WORKSPACE              
+                echo $TF_WORKSPACE
                 python ~/project/pipeline_scripts/ecs_monitor.py
           - run:
               name: Add CircleCI ingress to environment
