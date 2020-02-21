@@ -1,7 +1,0 @@
-./workspace_destroyer/lambda_based/package_lambda.sh
-
-docker build -f workspace_destroyer/lambda_based/docker/Dockerfile . --tag lambda_packager:latest
-docker run -it -v ${PWD}/workspace_destroyer/lambda_based/lambda_function_destroyer:/app lambda_packager:latest /app/package.sh
-cp workspace_destroyer/lambda_based/lambda_function_destroyer/lambda_function_payload.zip /tmp
-
-avei python workspace_destroyer/pipeline/mark_workspace.py new_workspace_12
