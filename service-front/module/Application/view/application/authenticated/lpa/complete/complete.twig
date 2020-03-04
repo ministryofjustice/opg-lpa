@@ -38,7 +38,7 @@
 
     {% endif %}
 
-    <p>Your LPA reference number is <strong class="bold-small">{{ formatLpaId(lpa.id) }}</strong></p>
+    <p>Your online LPA ID is <strong class="bold-small">{{ formatLpaId(lpa.id) }}</strong></p>
 
     <p>You're now ready to print and sign the {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA for {{ lpa.document.donor.name }}, then post it to the Office of the Public Guardian.</p>
 
