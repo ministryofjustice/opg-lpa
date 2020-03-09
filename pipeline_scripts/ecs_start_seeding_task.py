@@ -47,10 +47,10 @@ class ECSMonitor:
         self.get_seeding_task_definition()
         self.get_subnet_id()
 
-        self.db_client_security_group = self.get_security_group_id('rds-client-{}'.format(
-            self.environment))
-        self.seeding_security_group = self.get_security_group_id('{}-seeding-ecs-service'.format(
-            self.environment))
+        # self.db_client_security_group = self.get_security_group_id('rds-client-{}'.format(
+        #     self.environment))
+        # self.seeding_security_group = self.get_security_group_id('{}-seeding-ecs-service'.format(
+        #     self.environment))
 
     def read_parameters_from_file(self, config_file):
         with open(config_file) as json_file:
@@ -58,6 +58,8 @@ class ECSMonitor:
             self.aws_account_id = parameters['account_id']
             self.aws_ecs_cluster = parameters['cluster_name']
             self.environment = parameters['environment']
+            self.db_client_security_group = parameters['db_client_security_group_id']
+            self.seeding_security_group = parameters['seeding_security_group_id']
 
     def get_seeding_task_definition(self):
       # get the latest task definition for seeding
