@@ -648,3 +648,17 @@ jobs:
           message: "By user: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
           footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
           webhook: ${PROD_RELEASE_SLACK_WEBHOOK}
+
+  ecr_scan_results:
+    docker:
+      - image: circleci/python
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: Check ECR Scan Results
+          command: |
+            sudo pip3 install -r pipeline_scripts/check_ecr_scan_results/requirements.txt
+            export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+            python pipeline_scripts/check_ecr_scan_results/aws_ecr_scan_results.py --tag $CIRCLE_BRANCH-$SHORT_HASH
