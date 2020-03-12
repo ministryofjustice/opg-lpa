@@ -62,6 +62,19 @@ workflows:
             branches:
               ignore: master
 
+      - ecr_scan_results:
+          name: ecr_scan_results_development
+          filters: { branches: { ignore: [master] } }
+          requires:
+            [
+              front_docker_build,
+              admin_docker_build,
+              api_docker_build,
+              pdf_docker_build,
+              seeding_docker_build,
+              dev_environment_apply_terraform,
+            ]
+
       - infrastructure_and_deployment/seed_environment_databases:
           name: dev_seed_environment_databases
           requires: [dev_environment_apply_terraform]
@@ -115,6 +128,18 @@ workflows:
           filters:
             branches:
               only: master
+
+      - ecr_scan_results:
+          name: ecr_scan_results_master
+          filters: { branches: { only: [master] } }
+          requires:
+            [
+              front_docker_build,
+              admin_docker_build,
+              api_docker_build,
+              pdf_docker_build,
+              preprod_environment_apply_terraform,
+            ]
 
       - infrastructure_and_deployment/seed_environment_databases:
           name: preprod_seed_environment_databases
