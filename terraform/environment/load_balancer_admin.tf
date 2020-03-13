@@ -13,7 +13,7 @@ resource "aws_lb_target_group" "admin" {
     unhealthy_threshold = 3
     matcher             = 200
   }
-  depends_on = ["aws_lb.admin"]
+  depends_on = [aws_lb.admin]
   tags       = local.default_tags
 }
 

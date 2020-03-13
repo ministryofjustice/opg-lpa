@@ -130,12 +130,12 @@ data "aws_iam_policy_document" "front_permissions_role" {
 }
 
 data "aws_ecr_repository" "lpa_front_web" {
-  provider = "aws.management"
+  provider = aws.management
   name     = "online-lpa/front_web"
 }
 
 data "aws_ecr_repository" "lpa_front_app" {
-  provider = "aws.management"
+  provider = aws.management
   name     = "online-lpa/front_app"
 }
 

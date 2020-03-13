@@ -13,7 +13,7 @@ resource "aws_lb_target_group" "front" {
     unhealthy_threshold = 3
     matcher             = 200
   }
-  depends_on = ["aws_lb.front"]
+  depends_on = [aws_lb.front]
   tags       = local.default_tags
 }
 
@@ -41,7 +41,6 @@ resource "aws_lb_listener" "front_loadbalancer" {
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
 
-  # certificate_arn   = "${aws_acm_certificate_validation.cert.certificate_arn}"
   certificate_arn = data.aws_acm_certificate.certificate_front.arn
 
   default_action {

@@ -118,12 +118,12 @@ data "aws_iam_policy_document" "admin_permissions_role" {
 }
 
 data "aws_ecr_repository" "lpa_admin_web" {
-  provider = "aws.management"
+  provider = aws.management
   name     = "online-lpa/admin_web"
 }
 
 data "aws_ecr_repository" "lpa_admin_app" {
-  provider = "aws.management"
+  provider = aws.management
   name     = "online-lpa/admin_app"
 }
 
