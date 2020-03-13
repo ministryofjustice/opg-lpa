@@ -488,11 +488,11 @@ orbs:
               command: |
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
-                python ~/project/pipeline_scripts/ecs_monitor.py
+                python ~/project/scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
               name: Run seeding ecs task
               command: |
-                python ~/project/pipeline_scripts/ecs_start_seeding_task.py
+                python ~/project/scripts/pipeline/start_seeding_task/ecs_start_seeding_task.py
 
       run_healthcheck_test:
         #
@@ -518,7 +518,7 @@ orbs:
               command: |
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
-                python ~/project/pipeline_scripts/ecs_monitor.py
+                python ~/project/scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
               name: Add CircleCI ingress to environment
               command: |
@@ -588,7 +588,7 @@ orbs:
               command: |
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
-                python ~/project/pipeline_scripts/ecs_monitor.py
+                python ~/project/scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
               name: Add CircleCI ingress to environment
               command: |
