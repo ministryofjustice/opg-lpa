@@ -136,9 +136,9 @@ resource "aws_lb_listener_rule" "www_redirect" {
       status_code = "HTTP_301"
     }
   }
-
   condition {
-    field  = "host-header"
-    values = ["lastingpowerofattorney.service.gov.uk"]
+    host_header {
+      values = ["lastingpowerofattorney.service.gov.uk"]
+    }
   }
 }
