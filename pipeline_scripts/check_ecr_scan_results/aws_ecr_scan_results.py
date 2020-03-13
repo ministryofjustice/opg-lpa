@@ -5,6 +5,9 @@ import os
 import sys
 import requests
 
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
+
 
 class ECRScanChecker:
     aws_account_id = ''
@@ -13,8 +16,10 @@ class ECRScanChecker:
     aws_ecr_repository_path = ''
     images_to_check = []
     report = ''
+    report_limit = ''
 
-    def __init__(self, config_file):
+    def __init__(self, config_file, report_limit):
+        self.report_limit = int(report_limit)
         self.images_to_check = [
             "front_web",
             "front_app",
@@ -87,21 +92,26 @@ class ECRScanChecker:
     def recursive_check_make_report(self, tag):
         print("Checking ECR scan results...")
         for image in self.images_to_check:
-            if self.get_ecr_scan_findings(image, tag)[
-                    "imageScanFindings"]["findings"] != []:
-                cve = self.get_ecr_scan_findings(image, tag)[
-                    "imageScanFindings"]["findings"][0]["name"]
-                description = self.get_ecr_scan_findings(image, tag)[
-                    "imageScanFindings"]["findings"][0]["description"]
-                severity = self.get_ecr_scan_findings(image, tag)[
-                    "imageScanFindings"]["findings"][0]["severity"]
-                link = self.get_ecr_scan_findings(image, tag)[
-                    "imageScanFindings"]["findings"][0]["uri"]
-                title = "\n\n:warning: *AWS ECR Scan found results for {}:* \n\n".format(
+            findings = self.get_ecr_scan_findings(image, tag)[
+                "imageScanFindings"]
+            if findings["findings"] != []:
+
+                counts = findings["findingSeverityCounts"]
+                title = "\n\n:warning: *AWS ECR Scan found results for {}:* \n".format(
                     self.aws_ecr_repository_path+image)
-                result = "*Image:* {0} \n*Severity:* {1} \n*CVE:* {2} \n*Description:* {3} \n*Link:* {4}\n\n".format(
-                    self.aws_ecr_repository_path+image, severity, cve, description, link)
-                self.report += title + result
+                severity_counts = "Severity finding counts:\n{}\nDisplaying the first {} in order of severity\n\n".format(
+                    counts, self.report_limit)
+                self.report = title + severity_counts
+
+                for finding in findings["findings"]:
+
+                    cve = finding["name"]
+                    description = finding["description"]
+                    severity = finding["severity"]
+                    link = finding["uri"]
+                    result = "*Image:* {0} \n*Severity:* {1} \n*CVE:* {2} \n*Description:* {3} \n*Link:* {4}\n\n".format(
+                        self.aws_ecr_repository_path+image, severity, cve, description, link)
+                    self.report += result
                 print(self.report)
 
     def get_ecr_scan_findings(self, image, tag):
@@ -111,7 +121,7 @@ class ECRScanChecker:
             imageId={
                 'imageTag': tag
             },
-            maxResults=1
+            maxResults=self.report_limit
         )
         return response
 
@@ -146,6 +156,9 @@ def main():
     parser.add_argument("--tag",
                         default="latest",
                         help="Image tag to check scan results for.")
+    parser.add_argument("--result_limit",
+                        default=5,
+                        help="How many results for each image to return. Defaults to 5")
     parser.add_argument("--slack_webhook",
                         default=os.getenv('SLACK_WEBHOOK'),
                         help="Webhook to use, determines what channel to post to")
@@ -154,7 +167,7 @@ def main():
                         help="Optionally turn off posting messages to slack")
 
     args = parser.parse_args()
-    work = ECRScanChecker(args.config_file_path)
+    work = ECRScanChecker(args.config_file_path, args.result_limit)
     work.recursive_wait(args.tag)
     work.recursive_check_make_report(args.tag)
     if args.slack_webhook is None:

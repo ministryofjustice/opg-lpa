@@ -8,6 +8,8 @@ The script takes arguments for image tag to return results for, the Slack webhoo
 
 If omitted, the image tag will default to `latest`, and the webhook will default to the system environment variable `$SLACK_WEBHOOK`.
 
+The script will return the first 5 results, in order of most severe first, for each image. More results can be returned using the result_limit argument when running the script.
+
 ## Install python dependencies with pip
 
 ``` bash
@@ -22,7 +24,7 @@ You can provide the script credentials using aws-vault
 
 ``` bash
 aws-vault exec identity -- python pipeline_scripts/check_ecr_scan_results/aws_ecr_scan_results.py \
-  --tag latest \
+  --tag latest
 ```
 
 to configure other options, use the additional arguments
@@ -32,5 +34,6 @@ aws-vault exec identity -- python pipeline_scripts/check_ecr_scan_results/aws_ec
   --config_file_path "\tmp\configfile.json" \
   --tag latest \
   --webhook "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX" \
-  --post_to_slack True
+  --post_to_slack True \
+  --result_limit 10
 ```
