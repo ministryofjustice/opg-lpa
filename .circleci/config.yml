@@ -482,7 +482,7 @@ orbs:
           - run:
               name: Install python dependencies
               command: |
-                pip install -r ~/project/pipeline_scripts/requirements.txt --user
+                pip install -r ~/project/scripts/pipeline/requirements.txt --user
           - run:
               name: Wait for new tasks in services to be running
               command: |
@@ -511,7 +511,7 @@ orbs:
           - run:
               name: Install python dependencies
               command: |
-                pip install -r ~/project/pipeline_scripts/requirements.txt --user
+                pip install -r ~/project/scripts/pipeline/requirements.txt --user
           - install_terraform
           - run:
               name: Wait for new tasks in services to be running
@@ -574,7 +574,7 @@ orbs:
           - run:
               name: Install python dependencies
               command: |
-                pip install -r ~/project/pipeline_scripts/requirements.txt --user
+                pip install -r ~/project/scripts/pipeline/requirements.txt --user
           - install_terraform
           - run:
               name: Get URLs
