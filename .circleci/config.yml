@@ -533,7 +533,7 @@ orbs:
           - run:
               name: Run test
               command: |
-                python ~/project/pipeline_scripts/healthcheck_test.py
+                python ~/project/scripts/pipeline/healthcheck_test/healthcheck_test.py
           - run:
               name: Remove CircleCI ingress to environment
               command: |
