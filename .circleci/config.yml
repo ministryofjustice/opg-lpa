@@ -482,17 +482,17 @@ orbs:
           - run:
               name: Install python dependencies
               command: |
-                pip install -r ~/project/scripts/pipeline/requirements.txt --user
+                pip install -r scripts/pipeline/requirements.txt --user
           - run:
               name: Wait for new tasks in services to be running
               command: |
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
-                python ~/project/scripts/pipeline/ecs_monitor/ecs_monitor.py
+                python scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
               name: Run seeding ecs task
               command: |
-                python ~/project/scripts/pipeline/start_seeding_task/ecs_start_seeding_task.py
+                python scripts/pipeline/start_seeding_task/ecs_start_seeding_task.py
 
       run_healthcheck_test:
         #
@@ -511,14 +511,14 @@ orbs:
           - run:
               name: Install python dependencies
               command: |
-                pip install -r ~/project/scripts/pipeline/requirements.txt --user
+                pip install -r scripts/pipeline/requirements.txt --user
           - install_terraform
           - run:
               name: Wait for new tasks in services to be running
               command: |
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
-                python ~/project/scripts/pipeline/ecs_monitor/ecs_monitor.py
+                python scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
               name: Add CircleCI ingress to environment
               command: |
@@ -533,7 +533,7 @@ orbs:
           - run:
               name: Run test
               command: |
-                python ~/project/scripts/pipeline/healthcheck_test/healthcheck_test.py
+                python scripts/pipeline/healthcheck_test/healthcheck_test.py
           - run:
               name: Remove CircleCI ingress to environment
               command: |
@@ -574,7 +574,7 @@ orbs:
           - run:
               name: Install python dependencies
               command: |
-                pip install -r ~/project/scripts/pipeline/requirements.txt --user
+                pip install -r scripts/pipeline/requirements.txt --user
           - install_terraform
           - run:
               name: Get URLs
@@ -588,7 +588,7 @@ orbs:
               command: |
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
-                python ~/project/scripts/pipeline/ecs_monitor/ecs_monitor.py
+                python scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
               name: Add CircleCI ingress to environment
               command: |
