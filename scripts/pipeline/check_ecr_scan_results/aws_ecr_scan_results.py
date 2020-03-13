@@ -18,7 +18,7 @@ class ECRScanChecker:
     report = ''
     report_limit = ''
 
-    def __init__(self, config_file, report_limit):
+    def __init__(self, report_limit):
         self.report_limit = int(report_limit)
         self.images_to_check = [
             "front_web",
@@ -30,8 +30,8 @@ class ECRScanChecker:
             "admin_app",
             "seeding_app"
         ]
+        self.aws_account_id = 311462405659
         self.aws_ecr_repository_path = 'online-lpa/'
-        self.read_parameters_from_file(config_file)
         self.set_iam_role_session()
         self.aws_ecr_client = boto3.client(
             'ecr',
@@ -39,11 +39,6 @@ class ECRScanChecker:
             aws_access_key_id=self.aws_iam_session['Credentials']['AccessKeyId'],
             aws_secret_access_key=self.aws_iam_session['Credentials']['SecretAccessKey'],
             aws_session_token=self.aws_iam_session['Credentials']['SessionToken'])
-
-    def read_parameters_from_file(self, config_file):
-        with open(config_file) as json_file:
-            parameters = json.load(json_file)
-            self.aws_account_id = 311462405659
 
     def set_iam_role_session(self):
         if os.getenv('CI'):
@@ -147,12 +142,6 @@ class ECRScanChecker:
 def main():
     parser = argparse.ArgumentParser(
         description="Check ECR Scan results for all service container images.")
-
-    parser.add_argument("--config_file_path",
-                        nargs='?',
-                        default="/tmp/environment_pipeline_tasks_config.json",
-                        type=str,
-                        help="Path to config file produced by terraform")
     parser.add_argument("--tag",
                         default="latest",
                         help="Image tag to check scan results for.")
@@ -167,7 +156,7 @@ def main():
                         help="Optionally turn off posting messages to slack")
 
     args = parser.parse_args()
-    work = ECRScanChecker(args.config_file_path, args.result_limit)
+    work = ECRScanChecker(args.result_limit)
     work.recursive_wait(args.tag)
     work.recursive_check_make_report(args.tag)
     if args.slack_webhook is None:
