@@ -64,7 +64,7 @@ resource "aws_nat_gateway" "nat" {
 }
 
 resource "aws_default_route_table" "default" {
-  default_route_table_id = "${aws_default_vpc.default.default_route_table_id}"
+  default_route_table_id = aws_default_vpc.default.default_route_table_id
 
   tags = merge(
     local.default_tags,

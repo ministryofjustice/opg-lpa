@@ -3,8 +3,8 @@
 
 resource "aws_security_group" "seeding_ecs_service" {
   name_prefix = "${terraform.workspace}-seeding-ecs-service"
-  vpc_id      = "${data.aws_vpc.default.id}"
-  tags        = "${local.default_tags}"
+  vpc_id      = data.aws_vpc.default.id
+  tags        = local.default_tags
 }
 
 //----------------------------------
@@ -15,7 +15,7 @@ resource "aws_security_group_rule" "seeding_ecs_service_egress" {
   to_port           = 0
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = "${aws_security_group.seeding_ecs_service.id}"
+  security_group_id = aws_security_group.seeding_ecs_service.id
 }
 
 //--------------------------------------
@@ -28,9 +28,9 @@ resource "aws_ecs_task_definition" "seeding" {
   cpu                      = 2048
   memory                   = 4096
   container_definitions    = "[${local.seeding_app}]"
-  task_role_arn            = "${aws_iam_role.seeding_task_role.arn}"
-  execution_role_arn       = "${aws_iam_role.execution_role.arn}"
-  tags                     = "${local.default_tags}"
+  task_role_arn            = aws_iam_role.seeding_task_role.arn
+  execution_role_arn       = aws_iam_role.execution_role.arn
+  tags                     = local.default_tags
 }
 
 
@@ -44,7 +44,7 @@ resource "aws_iam_role" "seeding_task_role" {
 }
 
 data "aws_ecr_repository" "lpa_seeding_app" {
-  provider = "aws.management"
+  provider = aws.management
   name     = "online-lpa/seeding_app"
 }
 

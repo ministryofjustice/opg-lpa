@@ -62,6 +62,19 @@ workflows:
             branches:
               ignore: master
 
+      - ecr_scan_results:
+          name: ecr_scan_results_development
+          filters: { branches: { ignore: [master] } }
+          requires:
+            [
+              front_docker_build,
+              admin_docker_build,
+              api_docker_build,
+              pdf_docker_build,
+              seeding_docker_build,
+              dev_environment_apply_terraform,
+            ]
+
       - infrastructure_and_deployment/seed_environment_databases:
           name: dev_seed_environment_databases
           requires: [dev_environment_apply_terraform]
@@ -115,6 +128,18 @@ workflows:
           filters:
             branches:
               only: master
+
+      - ecr_scan_results:
+          name: ecr_scan_results_master
+          filters: { branches: { only: [master] } }
+          requires:
+            [
+              front_docker_build,
+              admin_docker_build,
+              api_docker_build,
+              pdf_docker_build,
+              preprod_environment_apply_terraform,
+            ]
 
       - infrastructure_and_deployment/seed_environment_databases:
           name: preprod_seed_environment_databases
@@ -274,8 +299,8 @@ orbs:
           - run:
               name: Install Terraform
               command: |
-                export TERRAFORM_VERSION=0.12.8
-                export TERRAFORM_SHA256SUM=43806e68f7af396449dd4577c6e5cb63c6dc4a253ae233e1dddc46cf423d808b
+                export TERRAFORM_VERSION=0.12.23
+                export TERRAFORM_SHA256SUM=78fd53c0fffd657ee0ab5decac604b0dea2e6c0d4199a9f27db53f081d831a45
                 curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip
                 echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS
                 sha256sum -c --status terraform_${TERRAFORM_VERSION}_SHA256SUMS
@@ -289,7 +314,7 @@ orbs:
       python-browsers:
         docker: [image: circleci/python:3.6-stretch-browsers]
       terraform:
-        docker: [image: hashicorp/terraform:0.12.8]
+        docker: [image: hashicorp/terraform:0.12.23]
     jobs:
       #----------------------------------------------------
       # Lambda
@@ -333,7 +358,7 @@ orbs:
               command: |
                 export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
                 echo $SHORT_HASH
-                cd ~/project/terraform/terraform_environment
+                cd ~/project/terraform/environment
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
@@ -403,7 +428,7 @@ orbs:
                 ENV_NAME=<<parameters.workspace>>
                 export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
                 echo $SHORT_HASH
-                cd ~/project/terraform/terraform_environment
+                cd ~/project/terraform/environment
                 terraform init -lock-timeout=300s
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
@@ -434,7 +459,7 @@ orbs:
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
                 if [ "${CIRCLE_BRANCH}" != "master" ]; then
-                  cd ~/project/terraform/terraform_environment
+                  cd ~/project/terraform/environment
                   terraform init -lock-timeout=300s
                   export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                   echo $TF_WORKSPACE
@@ -457,18 +482,17 @@ orbs:
           - run:
               name: Install python dependencies
               command: |
-                pip install -r ~/project/pipeline_scripts/requirements.txt --user
-          - install_terraform
+                pip install -r scripts/pipeline/requirements.txt --user
           - run:
               name: Wait for new tasks in services to be running
               command: |
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
-                python ~/project/pipeline_scripts/ecs_monitor.py
+                python scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
               name: Run seeding ecs task
               command: |
-                python ~/project/pipeline_scripts/ecs_start_seeding_task.py
+                python scripts/pipeline/start_seeding_task/ecs_start_seeding_task.py
 
       run_healthcheck_test:
         #
@@ -487,14 +511,14 @@ orbs:
           - run:
               name: Install python dependencies
               command: |
-                pip install -r ~/project/pipeline_scripts/requirements.txt --user
+                pip install -r scripts/pipeline/requirements.txt --user
           - install_terraform
           - run:
               name: Wait for new tasks in services to be running
               command: |
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
-                python ~/project/pipeline_scripts/ecs_monitor.py
+                python scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
               name: Add CircleCI ingress to environment
               command: |
@@ -509,7 +533,7 @@ orbs:
           - run:
               name: Run test
               command: |
-                python ~/project/pipeline_scripts/healthcheck_test.py
+                python scripts/pipeline/healthcheck_test/healthcheck_test.py
           - run:
               name: Remove CircleCI ingress to environment
               command: |
@@ -550,7 +574,7 @@ orbs:
           - run:
               name: Install python dependencies
               command: |
-                pip install -r ~/project/pipeline_scripts/requirements.txt --user
+                pip install -r scripts/pipeline/requirements.txt --user
           - install_terraform
           - run:
               name: Get URLs
@@ -564,7 +588,7 @@ orbs:
               command: |
                 export TF_WORKSPACE=${ENV_NAME:0:13} >> $BASH_ENV
                 echo $TF_WORKSPACE
-                python ~/project/pipeline_scripts/ecs_monitor.py
+                python scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
               name: Add CircleCI ingress to environment
               command: |
@@ -648,3 +672,17 @@ jobs:
           message: "By user: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
           footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
           webhook: ${PROD_RELEASE_SLACK_WEBHOOK}
+
+  ecr_scan_results:
+    docker:
+      - image: circleci/python
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: Check ECR Scan Results
+          command: |
+            sudo pip3 install -r scripts/pipeline/requirements.txt
+            export SHORT_HASH=${CIRCLE_SHA1:0:7} >> $BASH_ENV
+            python scripts/pipeline/check_ecr_scan_results/aws_ecr_scan_results.py --search online-lpa --tag $CIRCLE_BRANCH-$SHORT_HASH
