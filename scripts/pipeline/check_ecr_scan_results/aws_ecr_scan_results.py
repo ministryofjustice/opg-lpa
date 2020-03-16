@@ -5,9 +5,6 @@ import os
 import sys
 import requests
 
-import pprint
-pp = pprint.PrettyPrinter(indent=4)
-
 
 class ECRScanChecker:
     aws_account_id = ''

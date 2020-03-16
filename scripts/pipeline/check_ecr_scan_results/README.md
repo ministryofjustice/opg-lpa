@@ -31,7 +31,7 @@ to configure other options, use the additional arguments
 
 ``` bash
 aws-vault exec identity -- python scripts/pipeline/check_ecr_scan_results/aws_ecr_scan_results.py \
-  --repository_root online-lpa \
+  --search online-lpa \
   --tag latest \
   --webhook "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX" \
   --post_to_slack True \
