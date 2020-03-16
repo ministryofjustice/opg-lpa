@@ -1,9 +1,7 @@
 import boto3
 import argparse
-import json
-import os
-import sys
 import requests
+import os
 
 
 class ECRScanChecker:
@@ -15,9 +13,9 @@ class ECRScanChecker:
     report = ''
     report_limit = ''
 
-    def __init__(self, report_limit, repository_root):
+    def __init__(self, report_limit, search_term):
         self.report_limit = int(report_limit)
-        self.aws_account_id = 311462405659
+        self.aws_account_id = 311462405659  # management account id
         self.set_iam_role_session()
         self.aws_ecr_client = boto3.client(
             'ecr',
@@ -25,7 +23,7 @@ class ECRScanChecker:
             aws_access_key_id=self.aws_iam_session['Credentials']['AccessKeyId'],
             aws_secret_access_key=self.aws_iam_session['Credentials']['SecretAccessKey'],
             aws_session_token=self.aws_iam_session['Credentials']['SessionToken'])
-        self.images_to_check = self.get_repositories(repository_root)
+        self.images_to_check = self.get_repositories(search_term)
 
     def set_iam_role_session(self):
         if os.getenv('CI'):
@@ -46,11 +44,11 @@ class ECRScanChecker:
         )
         self.aws_iam_session = session
 
-    def get_repositories(self, repository_root):
+    def get_repositories(self, search_term):
         images_to_check = []
         response = self.aws_ecr_client.describe_repositories()
         for repository in response["repositories"]:
-            if repository_root in repository["repositoryName"]:
+            if search_term in repository["repositoryName"]:
                 images_to_check.append(repository["repositoryName"])
         return images_to_check
 
@@ -68,14 +66,14 @@ class ECRScanChecker:
                 imageId={
                     'imageTag': tag
                 },
-                maxResults=1,
+                # maxResults=1,
                 WaiterConfig={
                     'Delay': 5,
                     'MaxAttempts': 60
                 }
             )
         except:
-            print("Unable to find ECR image scan results for image {0}, tag {1}".format(
+            print("No ECR image scan results for image {0}, tag {1}".format(
                 image, tag))
 
     def recursive_check_make_report(self, tag):
@@ -85,7 +83,6 @@ class ECRScanChecker:
                 findings = self.get_ecr_scan_findings(image, tag)[
                     "imageScanFindings"]
                 if findings["findings"] != []:
-
                     counts = findings["findingSeverityCounts"]
                     title = "\n\n:warning: *AWS ECR Scan found results for {}:* \n".format(
                         image)
@@ -94,7 +91,6 @@ class ECRScanChecker:
                     self.report = title + severity_counts
 
                     for finding in findings["findings"]:
-
                         cve = finding["name"]
                         description = finding["description"]
                         severity = finding["severity"]
@@ -108,7 +104,6 @@ class ECRScanChecker:
                     image, tag))
 
     def get_ecr_scan_findings(self, image, tag):
-
         response = self.aws_ecr_client.describe_image_scan_findings(
             repositoryName=image,
             imageId={
