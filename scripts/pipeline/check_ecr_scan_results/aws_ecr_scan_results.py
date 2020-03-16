@@ -143,9 +143,8 @@ class ECRScanChecker:
 def main():
     parser = argparse.ArgumentParser(
         description="Check ECR Scan results for all service container images.")
-    parser.add_argument("--repository_root",
-                        # default=os.path.join(
-                        #     os.path.dirname(__file__), 'images'),
+    parser.add_argument("--search",
+                        default="",
                         help="The root part oof the ECR repositry path, for example online-lpa")
     parser.add_argument("--tag",
                         default="latest",
@@ -161,7 +160,7 @@ def main():
                         help="Optionally turn off posting messages to slack")
 
     args = parser.parse_args()
-    work = ECRScanChecker(args.result_limit, args.repository_root)
+    work = ECRScanChecker(args.result_limit, args.search)
     work.recursive_wait(args.tag)
     work.recursive_check_make_report(args.tag)
     if args.slack_webhook is None:
