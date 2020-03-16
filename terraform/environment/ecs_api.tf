@@ -3,8 +3,8 @@
 
 resource "aws_ecs_service" "api" {
   name            = "api"
-  cluster         = "${aws_ecs_cluster.online-lpa.id}"
-  task_definition = "${aws_ecs_task_definition.api.arn}"
+  cluster         = aws_ecs_cluster.online-lpa.id
+  task_definition = aws_ecs_task_definition.api.arn
   desired_count   = local.ecs_minimum_task_count_api
   launch_type     = "FARGATE"
 
@@ -18,7 +18,7 @@ resource "aws_ecs_service" "api" {
   }
 
   service_registries {
-    registry_arn = "${aws_service_discovery_service.api.arn}"
+    registry_arn = aws_service_discovery_service.api.arn
   }
 }
 
@@ -29,7 +29,7 @@ resource "aws_service_discovery_service" "api" {
   name = "api"
 
   dns_config {
-    namespace_id = "${aws_service_discovery_private_dns_namespace.internal.id}"
+    namespace_id = aws_service_discovery_private_dns_namespace.internal.id
 
     dns_records {
       ttl  = 10
@@ -54,8 +54,8 @@ locals {
 
 resource "aws_security_group" "api_ecs_service" {
   name_prefix = "${terraform.workspace}-api-ecs-service"
-  vpc_id      = "${data.aws_vpc.default.id}"
-  tags        = "${local.default_tags}"
+  vpc_id      = data.aws_vpc.default.id
+  tags        = local.default_tags
 }
 
 //----------------------------------
@@ -66,8 +66,8 @@ resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
   from_port                = 80
   to_port                  = 80
   protocol                 = "tcp"
-  security_group_id        = "${aws_security_group.api_ecs_service.id}"
-  source_security_group_id = "${aws_security_group.front_ecs_service.id}"
+  security_group_id        = aws_security_group.api_ecs_service.id
+  source_security_group_id = aws_security_group.front_ecs_service.id
 }
 
 //----------------------------------
@@ -78,8 +78,8 @@ resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
   from_port                = 80
   to_port                  = 80
   protocol                 = "tcp"
-  security_group_id        = "${aws_security_group.api_ecs_service.id}"
-  source_security_group_id = "${aws_security_group.admin_ecs_service.id}"
+  security_group_id        = aws_security_group.api_ecs_service.id
+  source_security_group_id = aws_security_group.admin_ecs_service.id
 }
 
 //----------------------------------
@@ -90,7 +90,7 @@ resource "aws_security_group_rule" "api_ecs_service_egress" {
   to_port           = 0
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = "${aws_security_group.api_ecs_service.id}"
+  security_group_id = aws_security_group.api_ecs_service.id
 }
 
 //--------------------------------------
@@ -103,9 +103,9 @@ resource "aws_ecs_task_definition" "api" {
   cpu                      = 2048
   memory                   = 4096
   container_definitions    = "[${local.api_web}, ${local.api_app}]"
-  task_role_arn            = "${aws_iam_role.api_task_role.arn}"
-  execution_role_arn       = "${aws_iam_role.execution_role.arn}"
-  tags                     = "${local.default_tags}"
+  task_role_arn            = aws_iam_role.api_task_role.arn
+  execution_role_arn       = aws_iam_role.execution_role.arn
+  tags                     = local.default_tags
 }
 
 
@@ -208,12 +208,12 @@ data "aws_iam_policy_document" "api_permissions_role" {
 }
 
 data "aws_ecr_repository" "lpa_api_web" {
-  provider = "aws.management"
+  provider = aws.management
   name     = "online-lpa/api_web"
 }
 
 data "aws_ecr_repository" "lpa_api_app" {
-  provider = "aws.management"
+  provider = aws.management
   name     = "online-lpa/api_app"
 }
 

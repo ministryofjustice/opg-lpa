@@ -1,5 +1,5 @@
 data "aws_route53_zone" "opg_service_justice_gov_uk" {
-  provider = "aws.management"
+  provider = aws.management
   name     = "opg.service.justice.gov.uk"
 }
 
@@ -12,7 +12,7 @@ data "aws_route53_zone" "lastingpowerofattorney_service_gov_uk" {
 // Front Certificates
 
 resource "aws_route53_record" "certificate_validation_front" {
-  provider = "aws.management"
+  provider = aws.management
   name     = aws_acm_certificate.certificate_front.domain_validation_options.0.resource_record_name
   type     = aws_acm_certificate.certificate_front.domain_validation_options.0.resource_record_type
   zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
@@ -34,7 +34,7 @@ resource "aws_acm_certificate" "certificate_front" {
 // Admin Certificates
 
 resource "aws_route53_record" "certificate_validation_admin" {
-  provider = "aws.management"
+  provider = aws.management
   name     = aws_acm_certificate.certificate_admin.domain_validation_options.0.resource_record_name
   type     = aws_acm_certificate.certificate_admin.domain_validation_options.0.resource_record_type
   zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id

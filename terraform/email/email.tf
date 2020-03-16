@@ -1,5 +1,5 @@
 data "aws_route53_zone" "opg_service_justice_gov_uk" {
-  provider = "aws.management"
+  provider = aws.management
   name     = "opg.service.justice.gov.uk"
 }
 
@@ -15,7 +15,7 @@ resource "aws_route53_record" "casper_amazonses_verification_record" {
   type     = "TXT"
   ttl      = "600"
   records  = [aws_ses_domain_identity.casper.verification_token]
-  provider = "aws.management"
+  provider = aws.management
 }
 
 resource "aws_ses_domain_identity_verification" "casper_verification" {
@@ -29,7 +29,7 @@ resource "aws_route53_record" "casper_amazonses_mx" {
   type     = "MX"
   ttl      = "600"
   records  = ["10 inbound-smtp.eu-west-1.amazonaws.com"]
-  provider = "aws.management"
+  provider = aws.management
 }
 
 # Create S3 bucket for SES mail storage

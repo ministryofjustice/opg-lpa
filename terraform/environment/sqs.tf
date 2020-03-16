@@ -48,4 +48,3 @@ data "aws_iam_policy_document" "queue_policy_document" {
     ]
   }
 }
-

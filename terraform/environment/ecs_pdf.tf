@@ -34,7 +34,7 @@ resource "aws_security_group_rule" "pdf_ecs_service_egress" {
   to_port           = 0
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = "${aws_security_group.pdf_ecs_service.id}"
+  security_group_id = aws_security_group.pdf_ecs_service.id
 }
 
 //--------------------------------------
@@ -137,7 +137,7 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
 }
 
 data "aws_ecr_repository" "lpa_pdf_app" {
-  provider = "aws.management"
+  provider = aws.management
   name     = "online-lpa/pdf_app"
 }
 
