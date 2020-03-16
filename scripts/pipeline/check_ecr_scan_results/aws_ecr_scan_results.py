@@ -13,25 +13,14 @@ class ECRScanChecker:
     aws_account_id = ''
     aws_iam_session = ''
     aws_ecr_client = ''
-    aws_ecr_repository_path = ''
     images_to_check = []
+    tag = ''
     report = ''
     report_limit = ''
 
-    def __init__(self, report_limit):
+    def __init__(self, report_limit, repository_root):
         self.report_limit = int(report_limit)
-        self.images_to_check = [
-            "front_web",
-            "front_app",
-            "api_web",
-            "api_app",
-            "pdf_app",
-            "admin_web",
-            "admin_app",
-            "seeding_app"
-        ]
         self.aws_account_id = 311462405659
-        self.aws_ecr_repository_path = 'online-lpa/'
         self.set_iam_role_session()
         self.aws_ecr_client = boto3.client(
             'ecr',
@@ -39,6 +28,7 @@ class ECRScanChecker:
             aws_access_key_id=self.aws_iam_session['Credentials']['AccessKeyId'],
             aws_secret_access_key=self.aws_iam_session['Credentials']['SecretAccessKey'],
             aws_session_token=self.aws_iam_session['Credentials']['SessionToken'])
+        self.images_to_check = self.get_repositories(repository_root)
 
     def set_iam_role_session(self):
         if os.getenv('CI'):
@@ -59,6 +49,14 @@ class ECRScanChecker:
         )
         self.aws_iam_session = session
 
+    def get_repositories(self, repository_root):
+        images_to_check = []
+        response = self.aws_ecr_client.describe_repositories()
+        for repository in response["repositories"]:
+            if repository_root in repository["repositoryName"]:
+                images_to_check.append(repository["repositoryName"])
+        return images_to_check
+
     def recursive_wait(self, tag):
         print("Waiting for ECR scans to complete...")
         for image in self.images_to_check:
@@ -67,10 +65,9 @@ class ECRScanChecker:
 
     def wait_for_scan_completion(self, image, tag):
         try:
-            repository_name = self.aws_ecr_repository_path+image
             waiter = self.aws_ecr_client.get_waiter('image_scan_complete')
             waiter.wait(
-                repositoryName=repository_name,
+                repositoryName=image,
                 imageId={
                     'imageTag': tag
                 },
@@ -81,38 +78,42 @@ class ECRScanChecker:
                 }
             )
         except:
-            print("Unable to return ECR image scan results for", tag)
-            exit(1)
+            print("Unable to find ECR image scan results for image {0}, tag {1}".format(
+                image, tag))
 
     def recursive_check_make_report(self, tag):
         print("Checking ECR scan results...")
         for image in self.images_to_check:
-            findings = self.get_ecr_scan_findings(image, tag)[
-                "imageScanFindings"]
-            if findings["findings"] != []:
+            try:
+                findings = self.get_ecr_scan_findings(image, tag)[
+                    "imageScanFindings"]
+                if findings["findings"] != []:
 
-                counts = findings["findingSeverityCounts"]
-                title = "\n\n:warning: *AWS ECR Scan found results for {}:* \n".format(
-                    self.aws_ecr_repository_path+image)
-                severity_counts = "Severity finding counts:\n{}\nDisplaying the first {} in order of severity\n\n".format(
-                    counts, self.report_limit)
-                self.report = title + severity_counts
+                    counts = findings["findingSeverityCounts"]
+                    title = "\n\n:warning: *AWS ECR Scan found results for {}:* \n".format(
+                        image)
+                    severity_counts = "Severity finding counts:\n{}\nDisplaying the first {} in order of severity\n\n".format(
+                        counts, self.report_limit)
+                    self.report = title + severity_counts
 
-                for finding in findings["findings"]:
+                    for finding in findings["findings"]:
 
-                    cve = finding["name"]
-                    description = finding["description"]
-                    severity = finding["severity"]
-                    link = finding["uri"]
-                    result = "*Image:* {0} \n*Severity:* {1} \n*CVE:* {2} \n*Description:* {3} \n*Link:* {4}\n\n".format(
-                        self.aws_ecr_repository_path+image, severity, cve, description, link)
-                    self.report += result
-                print(self.report)
+                        cve = finding["name"]
+                        description = finding["description"]
+                        severity = finding["severity"]
+                        link = finding["uri"]
+                        result = "*Image:* {0} \n**Tag:* {1} \n*Severity:* {2} \n*CVE:* {3} \n*Description:* {4} \n*Link:* {5}\n\n".format(
+                            image, tag, severity, cve, description, link)
+                        self.report += result
+                    print(self.report)
+            except:
+                print("Unable to get ECR image scan results for image {0}, tag {1}".format(
+                    image, tag))
 
     def get_ecr_scan_findings(self, image, tag):
-        repository_name = self.aws_ecr_repository_path+image
+
         response = self.aws_ecr_client.describe_image_scan_findings(
-            repositoryName=repository_name,
+            repositoryName=image,
             imageId={
                 'imageTag': tag
             },
@@ -142,6 +143,10 @@ class ECRScanChecker:
 def main():
     parser = argparse.ArgumentParser(
         description="Check ECR Scan results for all service container images.")
+    parser.add_argument("--repository_root",
+                        # default=os.path.join(
+                        #     os.path.dirname(__file__), 'images'),
+                        help="The root part oof the ECR repositry path, for example online-lpa")
     parser.add_argument("--tag",
                         default="latest",
                         help="Image tag to check scan results for.")
@@ -156,7 +161,7 @@ def main():
                         help="Optionally turn off posting messages to slack")
 
     args = parser.parse_args()
-    work = ECRScanChecker(args.result_limit)
+    work = ECRScanChecker(args.result_limit, args.repository_root)
     work.recursive_wait(args.tag)
     work.recursive_check_make_report(args.tag)
     if args.slack_webhook is None:
