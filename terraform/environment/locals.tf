@@ -36,15 +36,13 @@ variable "container_version" {
 
 
 locals {
-  account_name = lookup(var.account_mapping, terraform.workspace, "development")
-  account      = var.accounts[local.account_name]
-  environment  = terraform.workspace
+  opg_project       = "lpa"
+  account_name      = lookup(var.account_mapping, terraform.workspace, "development")
+  account           = var.accounts[local.account_name]
+  environment       = terraform.workspace
+  dns_namespace_env = local.account_name != "development" ? "" : "${local.environment}."
+  track_from_date   = "2019-04-01"
 
-  dns_namespace_env  = local.account_name != "development" ? "" : "${local.environment}."
-  prevent_db_destroy = local.account.prevent_db_destroy
-  track_from_date    = "2019-04-01"
-
-  opg_project = "lpa"
   mandatory_moj_tags = {
     business-unit = "OPG"
     application   = "Online LPA Service"
