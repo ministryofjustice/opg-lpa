@@ -5,7 +5,7 @@ resource "aws_ecs_service" "api" {
   name            = "api"
   cluster         = aws_ecs_cluster.online-lpa.id
   task_definition = aws_ecs_task_definition.api.arn
-  desired_count   = local.ecs_minimum_task_count_api
+  desired_count   = local.account.api_autoscaling_minimum
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -165,7 +165,7 @@ data "aws_iam_policy_document" "api_permissions_role" {
     ]
 
     resources = [
-      local.sirius_api_gateway_arn,
+      local.account.sirius_api_gateway_arn,
     ]
   }
   statement {
@@ -288,7 +288,7 @@ locals {
       { "name": "OPG_LPA_POSTGRES_HOSTNAME", "value": "${aws_db_instance.api.address}"},
       { "name": "OPG_LPA_POSTGRES_PORT", "value": "${aws_db_instance.api.port}"},
       { "name": "OPG_LPA_POSTGRES_NAME", "value": "${aws_db_instance.api.name}"},
-      { "name": "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value": "${local.sirius_api_gateway_endpoint}"},
+      { "name": "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value": "${local.account.sirius_api_gateway_endpoint}"},
       { "name": "OPG_LPA_API_TRACK_FROM_DATE", "value": "${local.track_from_date}"},
       { "name": "OPG_LPA_SEED_DATA", "value": "true"},
       { "name": "OPG_LPA_STACK_NAME", "value": "${local.environment}"},
@@ -305,7 +305,7 @@ locals {
       { "name": "OPG_NGINX_SSL_FORCE_REDIRECT", "value": "TRUE"},
       { "name": "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value": "redisback"},
       { "name": "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value": "${data.aws_s3_bucket.lpa_pdf_cache.bucket}"},
-      { "name": "OPG_LPA_COMMON_PDF_QUEUE_URL", "value": "https://sqs.eu-west-1.amazonaws.com/${local.account_id}/lpa-pdf-queue-${local.environment}.fifo"}
+      { "name": "OPG_LPA_COMMON_PDF_QUEUE_URL", "value": "https://sqs.eu-west-1.amazonaws.com/${local.account.account_id}/lpa-pdf-queue-${local.environment}.fifo"}
       ]
     }
   EOF
