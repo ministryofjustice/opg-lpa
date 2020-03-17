@@ -26,7 +26,7 @@ resource "aws_acm_certificate_validation" "certificate_front" {
 }
 
 resource "aws_acm_certificate" "certificate_front" {
-  domain_name       = var.accounts[local.account_name].front_certificate_domain_name
+  domain_name       = local.account.front_certificate_domain_name
   validation_method = "DNS"
 }
 
@@ -48,7 +48,7 @@ resource "aws_acm_certificate_validation" "certificate_admin" {
 }
 
 resource "aws_acm_certificate" "certificate_admin" {
-  domain_name       = var.accounts[local.account_name].admin_certificate_domain_name
+  domain_name       = local.account.admin_certificate_domain_name
   validation_method = "DNS"
 }
 
