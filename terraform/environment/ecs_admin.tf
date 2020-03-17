@@ -60,7 +60,7 @@ resource "aws_ecs_task_definition" "admin" {
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 512
-  memory                   = 1024
+  memory                   = 512
   container_definitions    = "[${local.admin_web}, ${local.admin_app}]"
   task_role_arn            = aws_iam_role.admin_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
