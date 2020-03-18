@@ -170,7 +170,7 @@ locals {
         }
     },
     "secrets": [
-      { "name": "OPG_LPA_PDF_OWNER_PASSWORD", "valueFrom": "${data.aws_secretsmanager_secret.opg_lpa_pdf_owner_password.arn}" }
+      { "name": "OPG_LPA_PDF_OWNER_PASSWORD", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_pdf_owner_password.name}" }
     ],
     "environment": [
 

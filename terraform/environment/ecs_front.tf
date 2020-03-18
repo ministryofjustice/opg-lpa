@@ -200,13 +200,13 @@ locals {
         }
     },
     "secrets": [
-    { "name": "OPG_LPA_FRONT_CSRF_SALT", "valueFrom": "${data.aws_secretsmanager_secret.opg_lpa_front_csrf_salt.arn}" },
-    { "name": "OPG_LPA_FRONT_EMAIL_SENDGRID_WEBHOOK_TOKEN", "valueFrom": "${data.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_webhook_token.arn}" },
-    { "name": "OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY", "valueFrom": "${data.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_api_key.arn}" },
-    { "name": "OPG_LPA_FRONT_GOV_PAY_KEY", "valueFrom": "${data.aws_secretsmanager_secret.opg_lpa_front_gov_pay_key.arn}" },
-    { "name": "OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY", "valueFrom": "${data.aws_secretsmanager_secret.opg_lpa_front_ordnance_survey_license_key.arn}" },
-    { "name": "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom": "${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.arn}" },
-    { "name": "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom": "${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.arn}" }
+    { "name": "OPG_LPA_FRONT_CSRF_SALT", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_csrf_salt.name}" },
+    { "name": "OPG_LPA_FRONT_EMAIL_SENDGRID_WEBHOOK_TOKEN", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_webhook_token.name}" },
+    { "name": "OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_email_sendgrid_api_key.name}" },
+    { "name": "OPG_LPA_FRONT_GOV_PAY_KEY", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_gov_pay_key.name}" },
+    { "name": "OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_ordnance_survey_license_key.name}" },
+    { "name": "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
+    { "name": "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
   ],
     "environment": [
       {"name": "OPG_LPA_FRONT_NGINX_FRONTENDDOMAIN", "value": "${local.dns_namespace_env}${local.account.front_dns}"},
