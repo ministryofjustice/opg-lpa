@@ -635,11 +635,9 @@ jobs:
           name: Get URLs
           command: |
             ENV_NAME=<<parameters.workspace>>
-            echo 'export TF_WORKSPACE=${ENV_NAME:0:13}' >> $BASH_ENV
+            scripts/pipeline/set_environment_variables/set_terraform_workspace_name.sh >> $BASH_ENV
             echo $TF_WORKSPACE
-            echo 'export FRONT_DOMAIN="$(jq -r .front_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
-            echo 'export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
-            echo 'export COMMIT_MESSAGE="$(git log -1 --pretty=%B)"' >> $BASH_ENV
+            scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - slack/notify:
           title: "Online LPA Development Environment Ready"
           color: "#508c18"
@@ -663,9 +661,7 @@ jobs:
             ENV_NAME=<<parameters.workspace>>
             echo 'export TF_WORKSPACE=${ENV_NAME:0:13}' >> $BASH_ENV
             echo $TF_WORKSPACE
-            echo 'export FRONT_DOMAIN="$(jq -r .front_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
-            echo 'export ADMIN_DOMAIN="$(jq -r .admin_fqdn /tmp/environment_pipeline_tasks_config.json)"' >> $BASH_ENV
-            echo 'export COMMIT_MESSAGE="$(git log -1 --pretty=%B)"' >> $BASH_ENV
+            scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - slack/notify:
           title: "Online LPA Production Release Successful"
           color: "#508c18"
