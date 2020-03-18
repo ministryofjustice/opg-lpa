@@ -21,6 +21,7 @@ resource "aws_ecs_service" "front" {
   }
 
   depends_on = [aws_lb.front, aws_iam_role.front_task_role, aws_iam_role.execution_role]
+  tags       = local.default_tags
 }
 
 //----------------------------------

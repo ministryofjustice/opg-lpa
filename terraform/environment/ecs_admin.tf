@@ -21,6 +21,7 @@ resource "aws_ecs_service" "admin" {
   }
 
   depends_on = [aws_lb.admin, aws_iam_role.admin_task_role, aws_iam_role.execution_role]
+  tags       = local.default_tags
 }
 
 //----------------------------------
