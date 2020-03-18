@@ -6,7 +6,7 @@ resource "aws_db_instance" "api" {
   storage_encrypted          = true
   skip_final_snapshot        = true
   engine                     = "postgres"
-  engine_version             = "9.6.11"
+  engine_version             = "9.6.15"
   instance_class             = "db.m3.medium"
   port                       = "5432"
   username                   = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
