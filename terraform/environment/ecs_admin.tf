@@ -188,9 +188,9 @@ locals {
         }
     },
     "secrets": [
-      { "name": "OPG_LPA_ADMIN_JWT_SECRET", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_jwt_secret.name}" },
-      { "name": "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
-      { "name": "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
+      { "name": "OPG_LPA_ADMIN_JWT_SECRET", "valueFrom": "${data.aws_secretsmanager_secret.opg_lpa_admin_jwt_secret.arn}" },
+      { "name": "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom": "${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.arn}" },
+      { "name": "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom": "${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.arn}" }
     ],
     "environment": [
       {"name": "OPG_NGINX_SERVER_NAMES", "value": "${local.dns_namespace_env}${local.account.admin_dns} localhost 127.0.0.1"},
