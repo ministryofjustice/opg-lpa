@@ -53,7 +53,7 @@ class ApplicationController extends AbstractLpaController
      */
     public function getList()
     {
-        $this->checkAccess();
+       // $this->checkAccess();
 
         $query = $this->params()->fromQuery();
 
