@@ -151,20 +151,7 @@ class ApplicationControllerTest extends AbstractControllerTest
         $this->assertNotNull($response);
         $this->assertInstanceOf(NoContent::class, $response);
     }
-
-    /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
-     * @expectedExceptionMessage You do not have permission to access this service
-     */
-    public function testGetListUnauthorised()
-    {
-        $this->setAuthorised(false);
-
-        $controller = $this->getController();
-
-        $controller->getList();
-    }
-
+    
     public function testCreateSuccess()
     {
         $controller = $this->getController();
