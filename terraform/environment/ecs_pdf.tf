@@ -45,8 +45,8 @@ resource "aws_ecs_task_definition" "pdf" {
   family                   = "${local.environment}-pdf"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 1024
-  memory                   = 2048
+  cpu                      = 2048
+  memory                   = 4096
   container_definitions    = "[${local.pdf_app}]"
   task_role_arn            = aws_iam_role.pdf_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
