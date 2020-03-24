@@ -151,7 +151,7 @@ class ApplicationControllerTest extends AbstractControllerTest
         $this->assertNotNull($response);
         $this->assertInstanceOf(NoContent::class, $response);
     }
-    
+
     public function testCreateSuccess()
     {
         $controller = $this->getController();

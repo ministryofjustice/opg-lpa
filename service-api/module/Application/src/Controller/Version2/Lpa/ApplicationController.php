@@ -53,8 +53,6 @@ class ApplicationController extends AbstractLpaController
      */
     public function getList()
     {
-       // $this->checkAccess();
-
         $query = $this->params()->fromQuery();
 
         //  If appropriate numeric values have been provided then get the correct page
