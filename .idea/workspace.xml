@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e2c96d2a-ccf6-404b-9338-493ac7fbe9b3" name="Default Changelist" comment="" />
+    <list default="true" id="e2c96d2a-ccf6-404b-9338-493ac7fbe9b3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations/admin_app.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations/admin_app_test.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations/api_app.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations/api_app_test.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations/front_app.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations/front_app_test.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations/opg_lpa.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -47,6 +56,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="TF_FMT" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -59,51 +69,7 @@
     <property name="settings.editor.selected.configurable" value="settings.php.debug.servers" />
     <property name="settings.editor.splitter.proportion" value="0.4052953" />
   </component>
-  <component name="RunManager" selected="PHP Web Page.api-app">
-    <configuration name="admin-app-test" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
-      <CommandLine>
-        <PhpTestInterpreterSettings>
-          <option name="interpreterName" value="admin-app" />
-        </PhpTestInterpreterSettings>
-      </CommandLine>
-      <TestRunner configuration_file="$PROJECT_DIR$/service-admin/phpunit.xml.dist" scope="XML" use_alternative_configuration_file="true" />
-      <method v="2" />
-    </configuration>
-    <configuration name="api-app-test" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
-      <CommandLine>
-        <PhpTestInterpreterSettings>
-          <option name="interpreterName" value="api-app" />
-        </PhpTestInterpreterSettings>
-      </CommandLine>
-      <TestRunner configuration_file="$PROJECT_DIR$/service-api/phpunit.xml" scope="XML" use_alternative_configuration_file="true" />
-      <method v="2" />
-    </configuration>
-    <configuration name="front-app-test" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
-      <CommandLine>
-        <PhpTestInterpreterSettings>
-          <option name="interpreterName" value="front-app" />
-        </PhpTestInterpreterSettings>
-      </CommandLine>
-      <TestRunner configuration_file="$PROJECT_DIR$/service-front/phpunit.xml" scope="XML" use_alternative_configuration_file="true" />
-      <method v="2" />
-    </configuration>
-    <configuration name="admin-app" type="PhpWebAppRunConfigurationType" factoryName="PHP Web Application" server_name="lpa-admin-app">
-      <method v="2" />
-    </configuration>
-    <configuration name="api-app" type="PhpWebAppRunConfigurationType" factoryName="PHP Web Application" server_name="lpa-api-app">
-      <method v="2" />
-    </configuration>
-    <configuration name="front-app" type="PhpWebAppRunConfigurationType" factoryName="PHP Web Application" server_name="lpa-front-app">
-      <method v="2" />
-    </configuration>
-    <configuration name="opg-lpa" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="sourceFilePath" value="docker-compose.yml" />
-        </settings>
-      </deployment>
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="PHPUnit.front-app-test">
     <list>
       <item itemvalue="Docker.opg-lpa" />
       <item itemvalue="PHP Web Page.admin-app" />
@@ -152,6 +118,8 @@
       <workItem from="1585213706556" duration="1057000" />
       <workItem from="1585216217083" duration="1808000" />
       <workItem from="1585229569287" duration="24000" />
+      <workItem from="1585237566855" duration="306000" />
+      <workItem from="1585238300715" duration="128000" />
     </task>
     <task id="LOCAL-00001" summary="workspace.xml">
       <created>1585229589634</created>
@@ -222,8 +190,8 @@
     <state x="514" y="-967" key="#Test_Frameworks/0.0.1440.900/-194.-1080.1920.1080@-194.-1080.1920.1080" timestamp="1581612105470" />
     <state x="514" y="-946" key="#Test_Frameworks/0.23.1440.814/-194.-1057.1920.1057@-194.-1057.1920.1057" timestamp="1581604210514" />
     <state x="514" y="-946" key="#Test_Frameworks/0.23.1440.821/-194.-1057.1920.1057@-194.-1057.1920.1057" timestamp="1581612369418" />
-    <state x="2322" y="-756" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1585219555765">
-      <screen x="1700" y="-1057" width="1920" height="977" />
+    <state x="2322" y="-731" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1585238324385">
+      <screen x="1700" y="-1057" width="1920" height="1057" />
     </state>
     <state x="408" y="-821" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1440.900/-194.-1080.1920.1080@-194.-1080.1920.1080" timestamp="1581612114779" />
     <state x="646" y="-676" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1440.814/-194.-1057.1920.1057@-194.-1057.1920.1057" timestamp="1581604320197" />
@@ -232,6 +200,7 @@
     <state x="408" y="-824" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1440.877/-194.-1057.1920.977@-194.-1057.1920.977" timestamp="1582305721435" />
     <state x="408" y="-821" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1440.877/-194.-1057.1920.988@-194.-1057.1920.988" timestamp="1581683973010" />
     <state x="2322" y="-676" key="#com.intellij.execution.impl.EditConfigurationsDialog/1700.-1057.1920.1057/-220.-1057.1920.1057/0.23.1440.812@1700.-1057.1920.1057" timestamp="1585214915913" />
+    <state x="2322" y="-731" key="#com.intellij.execution.impl.EditConfigurationsDialog/1700.-1057.1920.1057/-220.-1057.1920.1057/0.23.1440.821@1700.-1057.1920.1057" timestamp="1585238324385" />
     <state x="2322" y="-756" key="#com.intellij.execution.impl.EditConfigurationsDialog/1700.-1057.1920.977/-220.-1057.1920.1057/0.23.1440.877@1700.-1057.1920.977" timestamp="1585219555765" />
     <state x="2540" y="-759" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1585068902365">
       <screen x="1700" y="-1057" width="1920" height="1057" />
