@@ -1,6 +1,6 @@
 # Seeding non-live environments with test data
 
-This document sets out how to dump and insert database records from an AWS environment for the purposes of seeding test data.
+This document sets out how to dump and insert database records from an AWS environment for seeding test data.
 
 In a future revision, these instructions will show how to do this with local environments and across AWS and local environments.
 
@@ -12,7 +12,7 @@ These will be the records we will dump from the database.
 
 ## Capturing data from an environment using pg_dump
 
-First, establish a connection to an AWS environment database using the instructions in docs/runbooks/terminal_access.md.
+First, establish a connection to an AWS environment database using the instructions in `docs/runbooks/terminal_access.md`.
 
 Connect to the database
 
@@ -58,4 +58,3 @@ You must be connected to the MoJ VPN before beginning these instructions.
 ## Seeding an environment using the pipeline
 
 The CircleCI pipeline will run a seeding task after the environment has been built using the scripts in scripts/non_live_seeding.
-
