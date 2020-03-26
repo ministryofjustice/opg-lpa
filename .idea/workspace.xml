@@ -47,6 +47,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="TF_FMT" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -150,7 +151,16 @@
       <workItem from="1585066517030" duration="2139000" />
       <workItem from="1585213706556" duration="1057000" />
       <workItem from="1585216217083" duration="1808000" />
+      <workItem from="1585229569287" duration="24000" />
     </task>
+    <task id="LOCAL-00001" summary="workspace.xml">
+      <created>1585229589634</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1585229589634</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -173,7 +183,8 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/opg-use-an-lpa" />
     </ignored-roots>
-    <option name="LAST_COMMIT_MESSAGE" value="" />
+    <MESSAGE value="workspace.xml" />
+    <option name="LAST_COMMIT_MESSAGE" value="workspace.xml" />
   </component>
   <component name="WindowStateProjectService">
     <state x="2133" y="-987" width="824" height="676" key="#CLI_Interpreters" timestamp="1585214812300">
@@ -226,6 +237,10 @@
       <screen x="1700" y="-1057" width="1920" height="1057" />
     </state>
     <state x="2540" y="-759" key="#com.intellij.fileTypes.FileTypeChooser/1700.-1057.1920.1057/-220.-1057.1920.1057/0.23.1440.821@1700.-1057.1920.1057" timestamp="1585068902365" />
+    <state x="2403" y="-964" key="CommitChangelistDialog2" timestamp="1585229589500">
+      <screen x="1700" y="-1057" width="1920" height="980" />
+    </state>
+    <state x="2403" y="-964" key="CommitChangelistDialog2/1700.-1057.1920.980/-220.-1057.1920.1057/0.23.1440.877@1700.-1057.1920.980" timestamp="1585229589500" />
     <state x="2198" y="-957" width="1422" height="777" key="DiffContextDialog" timestamp="1584628085341">
       <screen x="1700" y="-1057" width="1920" height="1057" />
     </state>
