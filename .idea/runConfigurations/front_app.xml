@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="front-app" type="PhpWebAppRunConfigurationType" factoryName="PHP Web Application" server_name="lpa-front-app">
+    <method v="2" />
+  </configuration>
+</component>
