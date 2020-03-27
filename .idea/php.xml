@@ -250,9 +250,21 @@
   </component>
   <component name="PhpProjectServersManager">
     <servers>
-      <server host="localhost" id="6c3fe96d-8746-449f-af46-617e587ffecf" name="lpa-admin-app" port="7003" />
-      <server host="localhost" id="3dde9080-b61d-42e7-b154-2e748bc5db88" name="lpa-api-app" port="7001" />
-      <server host="localhost" id="341d3d30-cf9b-4262-a157-8deee42f8047" name="lpa-front-app" port="7002" />
+      <server host="localhost" id="6c3fe96d-8746-449f-af46-617e587ffecf" name="lpa-admin-app" port="7003" use_path_mappings="true">
+        <path_mappings>
+          <mapping local-root="$PROJECT_DIR$/service-admin" remote-root="/app" />
+        </path_mappings>
+      </server>
+      <server host="localhost" id="3dde9080-b61d-42e7-b154-2e748bc5db88" name="lpa-api-app" port="7001" use_path_mappings="true">
+        <path_mappings>
+          <mapping local-root="$PROJECT_DIR$/service-api" remote-root="/app" />
+        </path_mappings>
+      </server>
+      <server host="localhost" id="341d3d30-cf9b-4262-a157-8deee42f8047" name="lpa-front-app" port="7002" use_path_mappings="true">
+        <path_mappings>
+          <mapping local-root="$PROJECT_DIR$/service-front" remote-root="/app" />
+        </path_mappings>
+      </server>
     </servers>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />
