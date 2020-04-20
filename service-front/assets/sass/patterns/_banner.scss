@@ -12,7 +12,7 @@
 
 
 .moj-banner__icon {
-  fill: currentColor;
+  fill: #1d70b8;
   float: left;
   margin-right: 10px;
 }
@@ -39,12 +39,12 @@
    ========================================================================== */
 
 .moj-banner--success {
-  border-color: govuk-colour("green");
-  color: govuk-colour("green");
+  border-color: #00823b;
+  color: #00823b;
 }
 
 
 .moj-banner--warning {
-  border-color: govuk-colour("red");
-  color: govuk-colour("red");
+  border-color: #b10e1e;
+  color: #b10e1e;
 }
