@@ -1,5 +1,7 @@
 # Signing the LPA
 
+###![](https://github.com/ministryofjustice/opg-lpa/blob/master/service-front/public/assets/v2/images/icons/icon-information-2x.png)[Read our guidance](https://www.gov.uk/guidance/making-and-registering-an-lpa-during-the-coronavirus-outbreak) on getting an LPA signed and witnessed during the corona virus outbreak
+
 ### Sign the LPA in the right order
 
 The different sections of the LPA must be signed in the right order. If they're not, we cannot register the LPA and the donor may have to pay the application fee again.

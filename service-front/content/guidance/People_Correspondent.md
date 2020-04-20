@@ -1,6 +1,6 @@
 # Correspondent
 
-[Read our guidance](https://www.gov.uk/guidance/making-and-registering-an-lpa-during-the-coronavirus-outbreak) on getting on being a correspondent during the corona virus outbreak 
+###![](https://github.com/ministryofjustice/opg-lpa/blob/master/service-front/public/assets/v2/images/icons/icon-information-2x.png)[Read our guidance](https://www.gov.uk/guidance/making-and-registering-an-lpa-during-the-coronavirus-outbreak) on getting on being a correspondent during the corona virus outbreak 
 
 The correspondent is the person we’ll send the LPA to once it is registered.
 

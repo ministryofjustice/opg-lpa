@@ -1,5 +1,7 @@
 # Certificate providers
 
+###![](https://github.com/ministryofjustice/opg-lpa/blob/master/service-front/public/assets/v2/images/icons/icon-information-2x.png)[Read our guidance](https://www.gov.uk/guidance/making-and-registering-an-lpa-during-the-coronavirus-outbreak) on being a certificate provider during the corona virus outbreak
+
 An LPA must have a certificate provider. They must sign the LPA.
 
 The certificate provider is an impartial person who helps protect the donor’s interests by checking that the donor understands the LPA and is making it of their own free will.
