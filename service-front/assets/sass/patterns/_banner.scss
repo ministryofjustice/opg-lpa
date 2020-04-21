@@ -22,11 +22,12 @@
   font-weight: 400;
   color: #0b0c0c;
   display: block;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .moj-banner__message h2 {
   margin-bottom: 10px;
+  margin-top: auto;
 }
 
 
