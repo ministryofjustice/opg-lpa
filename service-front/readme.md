@@ -19,6 +19,12 @@ npm install
 
 ```
 
+## To build grunt for development
+- Apply the scss change
+- Run below command
+
+    ```docker run -it --rm -v $(pwd)/service-front:/srv huli/grunt:alpine grunt build --force```
+
 ## Tests
 
 Some unit tests can be found in `opg-lpa-front/module/Application/tests/`
