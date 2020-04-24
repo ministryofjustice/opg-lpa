@@ -1,0 +1,51 @@
+/* ==========================================================================
+   #BANNER
+   ========================================================================== */
+
+.moj-banner {
+  border: 5px solid #1d70b8;
+  color: #1d70b8;
+  font-size: 0; // Removes white space when using inline-block on child element.
+  margin-bottom: 30px;
+  padding: 10px;
+}
+
+
+.moj-banner__icon {
+  fill: #1d70b8;
+  float: left;
+  margin-right: 10px;
+}
+
+.moj-banner__message {
+  font-family: "GDS Transport", Arial, sans-serif;
+  font-weight: 400;
+  color: #0b0c0c;
+  display: block;
+  overflow: visible;
+}
+
+.moj-banner__message h2 {
+  margin-bottom: 10px;
+  margin-top: auto;
+}
+
+
+.moj-banner__message h2:last-child,
+.moj-banner__message p:last-child {
+  margin-bottom: 0;
+}
+
+/* Style variants
+   ========================================================================== */
+
+.moj-banner--success {
+  border-color: #00823b;
+  color: #00823b;
+}
+
+
+.moj-banner--warning {
+  border-color: #b10e1e;
+  color: #b10e1e;
+}
