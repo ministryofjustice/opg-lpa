@@ -6,8 +6,8 @@ module "front_ecs_autoscaling" {
   ecs_autoscaling_service_role_arn       = data.aws_iam_role.ecs_autoscaling_service_role.arn
   ecs_task_autoscaling_minimum           = local.account.front_autoscaling_minimum
   ecs_task_autoscaling_maximum           = local.account.front_autoscaling_maximum
-  autoscaling_metric_track_cpu_target    = 80
-  autoscaling_metric_track_memory_target = 80
+  autoscaling_metric_track_cpu_target    = 5
+  autoscaling_metric_track_memory_target = 5
 }
 
 module "api_ecs_autoscaling" {
@@ -18,8 +18,8 @@ module "api_ecs_autoscaling" {
   ecs_autoscaling_service_role_arn       = data.aws_iam_role.ecs_autoscaling_service_role.arn
   ecs_task_autoscaling_minimum           = local.account.api_autoscaling_minimum
   ecs_task_autoscaling_maximum           = local.account.api_autoscaling_maximum
-  autoscaling_metric_track_cpu_target    = 80
-  autoscaling_metric_track_memory_target = 80
+  autoscaling_metric_track_cpu_target    = 5
+  autoscaling_metric_track_memory_target = 5
 }
 
 module "pdf_ecs_autoscaling" {
@@ -30,6 +30,6 @@ module "pdf_ecs_autoscaling" {
   ecs_autoscaling_service_role_arn       = data.aws_iam_role.ecs_autoscaling_service_role.arn
   ecs_task_autoscaling_minimum           = local.account.pdf_autoscaling_minimum
   ecs_task_autoscaling_maximum           = local.account.pdf_autoscaling_maximum
-  autoscaling_metric_track_cpu_target    = 80
-  autoscaling_metric_track_memory_target = 80
+  autoscaling_metric_track_cpu_target    = 5
+  autoscaling_metric_track_memory_target = 5
 }
