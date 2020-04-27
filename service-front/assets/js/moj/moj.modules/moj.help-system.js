@@ -1,7 +1,7 @@
 // Help System module for LPA
 // Dependencies: popup, moj, jQuery
 
-(function () {
+(function (global) {
   'use strict';
 
   // Define the class
@@ -57,7 +57,10 @@
         var href = $(this).attr('href'),
           topic = href.substring(href.lastIndexOf('#') + 1);
         // report the click to ga
-        ga('send', 'pageview', href);
+        if (typeof global.ga === 'function') {
+          global.ga('send', 'pageview', href);
+        }
+
         // set the current click as the source
         self.source = $(this);
         // select topic
@@ -198,4 +201,4 @@
 
   // Add module to MOJ namespace
   moj.Modules.HelpSystem = new HelpSystem();
-}());
+}(window));
