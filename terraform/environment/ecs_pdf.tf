@@ -5,7 +5,7 @@ resource "aws_ecs_service" "pdf" {
   name            = "pdf"
   cluster         = aws_ecs_cluster.online-lpa.id
   task_definition = aws_ecs_task_definition.pdf.arn
-  desired_count   = local.account.pdf_autoscaling_minimum
+  desired_count   = local.account.autoscaling.pdf.minimum
   launch_type     = "FARGATE"
 
   network_configuration {

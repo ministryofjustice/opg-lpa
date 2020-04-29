@@ -5,7 +5,7 @@ resource "aws_ecs_service" "api" {
   name            = "api"
   cluster         = aws_ecs_cluster.online-lpa.id
   task_definition = aws_ecs_task_definition.api.arn
-  desired_count   = local.account.api_autoscaling_minimum
+  desired_count   = local.account.autoscaling.api.minimum
   launch_type     = "FARGATE"
 
   network_configuration {
