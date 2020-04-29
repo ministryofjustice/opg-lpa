@@ -16,14 +16,24 @@ variable "accounts" {
       sirius_api_gateway_arn        = string
       prevent_db_destroy            = bool
       backup_retention_period       = number
-      front_autoscaling_minimum     = number
-      front_autoscaling_maximum     = number
-      api_autoscaling_minimum       = number
-      api_autoscaling_maximum       = number
-      pdf_autoscaling_minimum       = number
-      pdf_autoscaling_maximum       = number
-      admin_autoscaling_minimum     = number
-      admin_autoscaling_maximum     = number
+      autoscaling = object({
+        front = object({
+          minimum = number
+          maximum = number
+        })
+        api = object({
+          minimum = number
+          maximum = number
+        })
+        pdf = object({
+          minimum = number
+          maximum = number
+        })
+        admin = object({
+          minimum = number
+          maximum = number
+        })
+      })
     })
   )
 }
