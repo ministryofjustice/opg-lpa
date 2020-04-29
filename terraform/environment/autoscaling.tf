@@ -4,8 +4,8 @@ module "front_ecs_autoscaling" {
   aws_ecs_cluster_name             = aws_ecs_cluster.online-lpa.name
   aws_ecs_service_name             = aws_ecs_service.front.name
   ecs_autoscaling_service_role_arn = data.aws_iam_role.ecs_autoscaling_service_role.arn
-  ecs_task_autoscaling_minimum     = local.account.front_autoscaling_minimum
-  ecs_task_autoscaling_maximum     = local.account.front_autoscaling_maximum
+  ecs_task_autoscaling_minimum     = local.account.autoscaling.front.minimum
+  ecs_task_autoscaling_maximum     = local.account.autoscaling.front.maximum
 }
 
 module "api_ecs_autoscaling" {
@@ -14,8 +14,8 @@ module "api_ecs_autoscaling" {
   aws_ecs_cluster_name             = aws_ecs_cluster.online-lpa.name
   aws_ecs_service_name             = aws_ecs_service.api.name
   ecs_autoscaling_service_role_arn = data.aws_iam_role.ecs_autoscaling_service_role.arn
-  ecs_task_autoscaling_minimum     = local.account.api_autoscaling_minimum
-  ecs_task_autoscaling_maximum     = local.account.api_autoscaling_maximum
+  ecs_task_autoscaling_minimum     = local.account.autoscaling.api.minimum
+  ecs_task_autoscaling_maximum     = local.account.autoscaling.api.maximum
 }
 
 module "pdf_ecs_autoscaling" {
@@ -24,6 +24,6 @@ module "pdf_ecs_autoscaling" {
   aws_ecs_cluster_name             = aws_ecs_cluster.online-lpa.name
   aws_ecs_service_name             = aws_ecs_service.pdf.name
   ecs_autoscaling_service_role_arn = data.aws_iam_role.ecs_autoscaling_service_role.arn
-  ecs_task_autoscaling_minimum     = local.account.pdf_autoscaling_minimum
-  ecs_task_autoscaling_maximum     = local.account.pdf_autoscaling_maximum
+  ecs_task_autoscaling_minimum     = local.account.autoscaling.pdf.minimum
+  ecs_task_autoscaling_maximum     = local.account.autoscaling.pdf.maximum
 }
