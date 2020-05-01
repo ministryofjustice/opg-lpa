@@ -5,7 +5,7 @@ resource "aws_ecs_service" "pdf" {
   name            = "pdf"
   cluster         = aws_ecs_cluster.online-lpa.id
   task_definition = aws_ecs_task_definition.pdf.arn
-  desired_count   = local.ecs_minimum_task_count_pdf
+  desired_count   = local.account.autoscaling.pdf.minimum
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -15,6 +15,7 @@ resource "aws_ecs_service" "pdf" {
   }
 
   depends_on = [aws_iam_role.pdf_task_role, aws_iam_role.execution_role]
+  tags       = local.default_tags
 }
 
 //----------------------------------

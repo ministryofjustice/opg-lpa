@@ -7,7 +7,7 @@ locals {
   front_fqdn = local.account_name == "production" ? "www.lastingpowerofattorney.service.gov.uk" : aws_route53_record.front.fqdn
 
   environment_pipeline_tasks_config = {
-    account_id                  = local.account_id
+    account_id                  = local.account.account_id
     cluster_name                = aws_ecs_cluster.online-lpa.name
     environment                 = local.environment
     front_fqdn                  = local.front_fqdn

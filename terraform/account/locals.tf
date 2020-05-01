@@ -18,14 +18,15 @@ locals {
   opg_project = "lpa"
 
   account_name = lookup(var.account_mapping, terraform.workspace, "development")
+  account      = var.accounts[local.account_name]
 
-  account_id = var.accounts[local.account_name].account_id
+  account_id = local.account.account_id
 
   mandatory_moj_tags = {
     business-unit = "OPG"
     application   = "Online LPA Service"
     owner         = "Amy Wilson: amy.wilson@digital.justice.gov.uk"
-    is-production = var.accounts[local.account_name].is_production
+    is-production = local.account.is_production
   }
 
   optional_tags = {

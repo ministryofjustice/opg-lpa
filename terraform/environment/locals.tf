@@ -14,7 +14,26 @@ variable "accounts" {
       admin_certificate_domain_name = string
       sirius_api_gateway_endpoint   = string
       sirius_api_gateway_arn        = string
-      prevent_db_destroy            = string
+      prevent_db_destroy            = bool
+      backup_retention_period       = number
+      autoscaling = object({
+        front = object({
+          minimum = number
+          maximum = number
+        })
+        api = object({
+          minimum = number
+          maximum = number
+        })
+        pdf = object({
+          minimum = number
+          maximum = number
+        })
+        admin = object({
+          minimum = number
+          maximum = number
+        })
+      })
     })
   )
 }
@@ -27,36 +46,22 @@ variable "container_version" {
 
 
 locals {
-  account_name = lookup(var.account_mapping, terraform.workspace, "development")
-  account_id   = var.accounts[local.account_name].account_id
-
+  opg_project       = "lpa"
+  account_name      = lookup(var.account_mapping, terraform.workspace, "development")
+  account           = var.accounts[local.account_name]
   environment       = terraform.workspace
   dns_namespace_env = local.account_name != "development" ? "" : "${local.environment}."
+  track_from_date   = "2019-04-01"
 
-  backup_retention_period = local.account_name != "development" ? 14 : 0
-
-  sirius_api_gateway_endpoint = var.accounts[local.account_name].sirius_api_gateway_endpoint
-  sirius_api_gateway_arn      = var.accounts[local.account_name].sirius_api_gateway_arn
-  prevent_db_destroy          = var.accounts[local.account_name].prevent_db_destroy
-
-  // Set minimum count for each service.
-  ecs_minimum_task_count_front = local.account_name == "development" ? 1 : 3
-  ecs_minimum_task_count_api   = local.account_name == "development" ? 1 : 3
-  ecs_minimum_task_count_pdf   = local.account_name == "development" ? 1 : 2
-  ecs_minimum_task_count_admin = local.account_name == "development" ? 1 : 2
-
-  track_from_date = "2019-04-01"
-
-  opg_project = "lpa"
   mandatory_moj_tags = {
     business-unit = "OPG"
     application   = "Online LPA Service"
     owner         = "Amy Wilson: amy.wilson@digital.justice.gov.uk"
-    is-production = var.accounts[local.account_name].is_production
+    is-production = local.account.is_production
   }
 
   optional_tags = {
-    environment-name       = terraform.workspace
+    environment-name       = local.environment
     infrastructure-support = "OPG LPA Product Team: opgteam+online-lpa@digital.justice.gov.uk"
     runbook                = "https://github.com/ministryofjustice/opg-webops-runbooks/tree/master/LPA"
     source-code            = "https://github.com/ministryofjustice/opg-lpa"
