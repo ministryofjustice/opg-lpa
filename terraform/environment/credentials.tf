@@ -4,7 +4,7 @@ terraform {
     key            = "moj-lasting-power-of-attorney-environment/terraform.tfstate"
     encrypt        = true
     region         = "eu-west-1"
-    role_arn       = "arn:aws:iam::311462405659:role/state_write"
+    role_arn       = "arn:aws:iam::311462405659:role/opg-lpa-ci"
     dynamodb_table = "remote_lock"
   }
 }
@@ -29,11 +29,11 @@ provider "aws" {
 }
 
 variable "default_role" {
-  default = "ci"
+  default = "opg-lpa-ci"
 }
 
 variable "management_role" {
-  default = "ci"
+  default = "opg-lpa-ci"
 }
 
 provider "aws" {

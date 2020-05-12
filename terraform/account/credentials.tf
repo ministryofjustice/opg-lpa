@@ -10,11 +10,11 @@ terraform {
 }
 
 variable "default_role" {
-  default = "ci"
+  default = "opg-lpa-ci"
 }
 
 variable "legacy_account_role" {
-  default = "ci"
+  default = "opg-lpa-ci"
 }
 
 provider "aws" {
