@@ -69,7 +69,7 @@ class ECSMonitor:
 
     def set_iam_role_session(self):
         if os.getenv('CI'):
-            role_arn = 'arn:aws:iam::{}:role/ci'.format(
+            role_arn = 'arn:aws:iam::{}:role/opg-lpa-ci'.format(
                 self.aws_account_id)
         else:
             role_arn = 'arn:aws:iam::{}:role/operator'.format(
