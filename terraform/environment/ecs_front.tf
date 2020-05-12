@@ -164,7 +164,7 @@ locals {
         "options": {
             "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
             "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "front-web.online-lpa"
+            "awslogs-stream-prefix": "${local.environment}.front-web.online-lpa"
         }
     },
     "environment": [
@@ -196,7 +196,7 @@ locals {
         "options": {
             "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
             "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "front-app.online-lpa"
+            "awslogs-stream-prefix": "${local.environment}.front-app.online-lpa"
         }
     },
     "secrets": [
