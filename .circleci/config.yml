@@ -199,11 +199,11 @@ orbs:
           - run:
               name: Login to ECR
               command: |
-                temp_role=$(aws sts assume-role --role-arn arn:aws:iam::311462405659:role/ci --role-session-name ci)
+                temp_role=$(aws sts assume-role --role-arn arn:aws:iam::311462405659:role/opg-lpa-ci --role-session-name opg-lpa-ci)
                 export AWS_ACCESS_KEY_ID=$(echo $temp_role | jq .Credentials.AccessKeyId | xargs)
                 export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | jq .Credentials.SecretAccessKey | xargs)
                 export AWS_SESSION_TOKEN=$(echo $temp_role | jq .Credentials.SessionToken | xargs)
-                eval $(aws ecr get-login --no-include-email --region=eu-west-1)
+                aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com
     executors:
       python:
         docker:
@@ -299,8 +299,8 @@ orbs:
           - run:
               name: Install Terraform
               command: |
-                export TERRAFORM_VERSION=0.12.23
-                export TERRAFORM_SHA256SUM=78fd53c0fffd657ee0ab5decac604b0dea2e6c0d4199a9f27db53f081d831a45
+                export TERRAFORM_VERSION=0.12.24
+                export TERRAFORM_SHA256SUM=602d2529aafdaa0f605c06adb7c72cfb585d8aa19b3f4d8d189b42589e27bf11
                 curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip
                 echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS
                 sha256sum -c --status terraform_${TERRAFORM_VERSION}_SHA256SUMS
@@ -314,7 +314,7 @@ orbs:
       python-browsers:
         docker: [image: circleci/python:3.6-stretch-browsers]
       terraform:
-        docker: [image: hashicorp/terraform:0.12.23]
+        docker: [image: hashicorp/terraform:0.12.24]
     jobs:
       #----------------------------------------------------
       # Lambda

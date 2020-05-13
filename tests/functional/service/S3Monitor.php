@@ -37,7 +37,7 @@ try {
     ]);
 
     if (getenv('CI')) {
-        $roleToAssumeArn = 'arn:aws:iam::050256574573:role/ci';
+        $roleToAssumeArn = 'arn:aws:iam::050256574573:role/opg-lpa-ci';
     }
     else{
         $roleToAssumeArn = 'arn:aws:iam::050256574573:role/operator';
@@ -165,8 +165,3 @@ function getPlusPartFromEmailAddress($email)
 
     return $userId;
 }
-
-
-
-
-

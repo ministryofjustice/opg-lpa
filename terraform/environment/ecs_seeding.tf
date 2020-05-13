@@ -72,7 +72,7 @@ locals {
         "options": {
             "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
             "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "seeding.online-lpa"
+            "awslogs-stream-prefix": "${local.environment}.seeding.online-lpa"
         }
     },
     "secrets": [

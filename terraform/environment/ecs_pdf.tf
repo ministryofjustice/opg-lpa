@@ -166,7 +166,7 @@ locals {
         "options": {
             "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
             "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "pdf-app.online-lpa"
+            "awslogs-stream-prefix": "${local.environment}.pdf-app.online-lpa"
         }
     },
     "secrets": [

@@ -69,7 +69,7 @@ class ECSMonitor:
 
     def set_iam_role_session(self):
         if os.getenv('CI'):
-            role_arn = 'arn:aws:iam::{}:role/ci'.format(
+            role_arn = 'arn:aws:iam::{}:role/opg-lpa-ci'.format(
                 self.aws_account_id)
         else:
             role_arn = 'arn:aws:iam::{}:role/operator'.format(
@@ -169,8 +169,8 @@ class ECSMonitor:
       # lifecycle for getting log streams
       # get logs while task is running
       # after task finishes, print remaining logs
-        self.logStreamName = 'seeding.online-lpa/app/{}'.format(
-            self.seeding_task.rsplit('/', 1)[-1])
+        self.logStreamName = '{}.seeding.online-lpa/app/{}'.format(self.environment,
+                                                                   self.seeding_task.rsplit('/', 1)[-1])
         print("Streaming logs for logstream: ".format(self.logStreamName))
 
         self.nextForwardToken = 'f/0'
