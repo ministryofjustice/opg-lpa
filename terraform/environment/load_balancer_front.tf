@@ -74,16 +74,6 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
   security_group_id = aws_security_group.front_loadbalancer.id
 }
 
-resource "aws_security_group_rule" "front_loadbalancer_ingress_ithc" {
-  count             = local.environment == "preproduction" ? 1 : 0
-  type              = "ingress"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
-  cidr_blocks       = ["54.37.241.156/30"]
-  security_group_id = aws_security_group.front_loadbalancer.id
-}
-
 // Allow http traffic in to be redirected to https
 resource "aws_security_group_rule" "front_loadbalancer_ingress_http" {
   type              = "ingress"

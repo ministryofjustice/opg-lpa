@@ -10,6 +10,7 @@ variable "accounts" {
       is_production                 = string
       front_certificate_domain_name = string
       admin_certificate_domain_name = string
+      retention_in_days             = number
     })
   )
 }

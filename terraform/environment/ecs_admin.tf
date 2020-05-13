@@ -152,7 +152,7 @@ locals {
         "options": {
             "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
             "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "admin-web.online-lpa"
+            "awslogs-stream-prefix": "${local.environment}.admin-web.online-lpa"
         }
     },
     "environment": [
@@ -184,7 +184,7 @@ locals {
         "options": {
             "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
             "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "admin-app.online-lpa"
+            "awslogs-stream-prefix": "${local.environment}.admin-app.online-lpa"
         }
     },
     "secrets": [

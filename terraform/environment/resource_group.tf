@@ -1,5 +1,5 @@
 resource "aws_resourcegroups_group" "environment" {
-  name = "lpa-${local.environment}"
+  name = local.environment
 
   resource_query {
     query = local.environment_resource_group_query
@@ -13,8 +13,8 @@ locals {
     ],
     TagFilters = [
       {
-        Key    = "Name",
-        Values = ["${local.environment}-online-lpa-tool"]
+        Key    = "environment-name",
+        Values = ["${local.environment}"]
       }
     ]
   })

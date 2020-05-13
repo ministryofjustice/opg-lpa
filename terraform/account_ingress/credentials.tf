@@ -8,11 +8,11 @@ provider "aws" {
 }
 
 variable "default_role" {
-  default = "ci"
+  default = "opg-lpa-ci"
 }
 
 variable "management_role" {
-  default = "ci"
+  default = "opg-lpa-ci"
 }
 
 provider "aws" {
