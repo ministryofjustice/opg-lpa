@@ -261,7 +261,7 @@ orbs:
           - run:
               name: Push web container
               command: |
-                export IMAGE_TAG=$(bash ~/project/pipeline_scripts/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
                 echo $IMAGE_TAG
                 if << parameters.build_web >> ; then
                   docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_web:${IMAGE_TAG}
@@ -277,7 +277,7 @@ orbs:
           - run:
               name: Push app container
               command: |
-                export IMAGE_TAG=$(bash ~/project/pipeline_scripts/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
                 echo $IMAGE_TAG
                 docker tag << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app << parameters.ecr_url >>/<< parameters.ecr_repository_name_prefix >>_app:${IMAGE_TAG}
                 if [ "${CIRCLE_BRANCH}" == "master" ]; then
@@ -358,11 +358,11 @@ orbs:
           - run:
               name: Lint Environment Terraform
               command: |
-                export IMAGE_TAG=$(bash ~/project/pipeline_scripts/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
                 echo $IMAGE_TAG
                 cd ~/project/terraform/environment
                 terraform init -lock-timeout=300s
-                export TF_WORKSPACE=$(~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate -var container_version=${IMAGE_TAG}
 
@@ -384,7 +384,7 @@ orbs:
               command: |
                 cd ~/project/terraform/email
                 terraform init -lock-timeout=300s
-                export TF_WORKSPACE=$(~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
 
@@ -406,7 +406,7 @@ orbs:
               command: |
                 cd ~/project/terraform/account
                 terraform init -lock-timeout=300s
-                export TF_WORKSPACE=$(~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
 
@@ -427,11 +427,11 @@ orbs:
           - run:
               name: Apply Environment Terraform
               command: |
-                export IMAGE_TAG=$(bash ~/project/pipeline_scripts/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
                 echo $IMAGE_TAG
                 cd ~/project/terraform/environment
                 terraform init -lock-timeout=300s
-                export TF_WORKSPACE=$(~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s -auto-approve -parallelism=15 -var container_version=${IMAGE_TAG}
                 export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
@@ -456,12 +456,12 @@ orbs:
           - run:
               name: Destroy Development Environment
               command: |
-                export TF_WORKSPACE=$(~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 if [ "${CIRCLE_BRANCH}" != "master" ]; then
                   cd ~/project/terraform/environment
                   terraform init -lock-timeout=300s
-                  export TF_WORKSPACE=$(~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                  export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
                 fi
@@ -486,7 +486,7 @@ orbs:
           - run:
               name: Wait for new tasks in services to be running
               command: |
-                export TF_WORKSPACE=$(bash ~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 python scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
@@ -516,7 +516,7 @@ orbs:
           - run:
               name: Wait for new tasks in services to be running
               command: |
-                export TF_WORKSPACE=$(bash ~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 python scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
@@ -525,7 +525,7 @@ orbs:
                 if [ <<parameters.workspace>> != "production" ]; then
                   cd ~/project/terraform/account_ingress
                   terraform init -lock-timeout=300s
-                  export TF_WORKSPACE=$(bash ~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                  export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform apply -lock-timeout=300s -auto-approve
                 fi
@@ -539,7 +539,7 @@ orbs:
                 if [ <<parameters.workspace>> != "production" ]; then
                   cd ~/project/terraform/account_ingress
                   terraform init -lock-timeout=300s
-                  export TF_WORKSPACE=$(bash ~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                  export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
                 fi
@@ -577,13 +577,13 @@ orbs:
           - run:
               name: Get URLs
               command: |
-                export TF_WORKSPACE=$(bash ~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
           - run:
               name: Wait for new tasks in services to be running
               command: |
-                export TF_WORKSPACE=$(bash ~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 python scripts/pipeline/ecs_monitor/ecs_monitor.py
           - run:
@@ -592,7 +592,7 @@ orbs:
                 if [ <<parameters.workspace>> != "production" ]; then
                   cd ~/project/terraform/account_ingress
                   terraform init -lock-timeout=300s
-                  export TF_WORKSPACE=$(bash ~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                  export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform apply -lock-timeout=300s -auto-approve -var docker_remote_ip=$DOCKER_REMOTE_IP
                 fi
@@ -607,7 +607,7 @@ orbs:
                 if [ <<parameters.workspace>> != "production" ]; then
                   cd ~/project/terraform/account_ingress
                   terraform init -lock-timeout=300s
-                  export TF_WORKSPACE=$(bash ~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                  export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
                   terraform destroy -lock-timeout=300s -auto-approve
                 fi
@@ -629,7 +629,7 @@ jobs:
       - run:
           name: Get URLs
           command: |
-            export TF_WORKSPACE=$(bash ~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+            export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - slack/notify:
@@ -652,7 +652,7 @@ jobs:
       - run:
           name: Get URLs
           command: |
-            export TF_WORKSPACE=$(bash ~/project/pipeline_scripts/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+            export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
             echo $TF_WORKSPACE
             scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
       - slack/notify:
@@ -671,6 +671,6 @@ jobs:
           name: Check ECR Scan Results
           command: |
             sudo pip3 install -r scripts/pipeline/requirements.txt
-            export IMAGE_TAG=$(bash ~/project/pipeline_scripts/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+            export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
                 echo $IMAGE_TAG
             python scripts/pipeline/check_ecr_scan_results/aws_ecr_scan_results.py --search online-lpa --tag ${IMAGE_TAG}
