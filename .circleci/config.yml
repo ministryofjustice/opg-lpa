@@ -1,54 +1,60 @@
 version: 2.1
 
 workflows:
-  pr-build-and-test:
+  pr_build:
     jobs:
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
           name: front_docker_build
           ecr_repository_name_prefix: online-lpa/front
           service_path: service-front
+          filters: { branches: { ignore: [master] } }
+
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
           name: admin_docker_build
           ecr_repository_name_prefix: online-lpa/admin
           service_path: service-admin
+          filters: { branches: { ignore: [master] } }
+
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
           name: api_docker_build
           ecr_repository_name_prefix: online-lpa/api
           service_path: service-api
+          filters: { branches: { ignore: [master] } }
+
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
           name: pdf_docker_build
           ecr_repository_name_prefix: online-lpa/pdf
           service_path: service-pdf
           build_web: false
+          filters: { branches: { ignore: [master] } }
+
       - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
           name: seeding_docker_build
           ecr_repository_name_prefix: online-lpa/seeding
           service_path: service-seeding
           build_web: false
           unit_test: false
+          filters: { branches: { ignore: [master] } }
 
       - infrastructure_and_deployment/lint_and_validate_terraform:
           name: lint_and_validate_terraform
-          filters:
-            branches:
-              ignore: master
+          filters: { branches: { ignore: [master] } }
 
       - infrastructure_and_deployment/apply_account_terraform:
           name: dev_account_apply_terraform
           workspace: development
+          filters: { branches: { ignore: [master] } }
           requires: [lint_and_validate_terraform]
-          filters:
-            branches:
-              ignore: master
+
       - infrastructure_and_deployment/apply_email_terraform:
           name: email_apply_terraform
           workspace: development
+          filters: { branches: { ignore: [master] } }
           requires: [lint_and_validate_terraform]
-          filters:
-            branches:
-              ignore: master
+
       - infrastructure_and_deployment/apply_environment_terraform:
           name: dev_environment_apply_terraform
+          filters: { branches: { ignore: [master] } }
           requires:
             [
               dev_account_apply_terraform,
@@ -58,9 +64,6 @@ workflows:
               pdf_docker_build,
               seeding_docker_build,
             ]
-          filters:
-            branches:
-              ignore: master
 
       - ecr_scan_results:
           name: ecr_scan_results_development
@@ -77,45 +80,74 @@ workflows:
 
       - infrastructure_and_deployment/seed_environment_databases:
           name: dev_seed_environment_databases
-          requires: [dev_environment_apply_terraform]
           filters: { branches: { ignore: [master] } }
+          requires: [dev_environment_apply_terraform]
 
       - infrastructure_and_deployment/run_functional_test:
           name: run_functional_test
+          filters: { branches: { ignore: [master] } }
           requires: [dev_seed_environment_databases]
-          filters:
-            branches:
-              ignore: master
 
       - slack_notify_domain:
           name: post_environment_domains
+          filters: { branches: { ignore: [master] } }
           requires: [run_functional_test]
-          filters:
-            branches:
-              ignore: master
 
       - hold-for-destruction:
           name: hold_env_for_destruction
           type: approval
+          filters: { branches: { ignore: [master] } }
           requires: [post_environment_domains]
-          filters:
-            branches:
-              ignore: master
+
       - infrastructure_and_deployment/destroy_dev_environment:
           name: dev_destroy_environment
+          filters: { branches: { ignore: [master] } }
           requires: [hold_env_for_destruction]
-          filters:
-            branches:
-              ignore: master
+
+  path_to_live:
+    jobs:
+      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+          name: front_docker_build
+          ecr_repository_name_prefix: online-lpa/front
+          service_path: service-front
+          filters: { branches: { only: [master] } }
+
+      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+          name: admin_docker_build
+          ecr_repository_name_prefix: online-lpa/admin
+          service_path: service-admin
+          filters: { branches: { only: [master] } }
+
+      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+          name: api_docker_build
+          ecr_repository_name_prefix: online-lpa/api
+          service_path: service-api
+          filters: { branches: { only: [master] } }
+
+      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+          name: pdf_docker_build
+          ecr_repository_name_prefix: online-lpa/pdf
+          service_path: service-pdf
+          build_web: false
+          filters: { branches: { only: [master] } }
+
+      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+          name: seeding_docker_build
+          ecr_repository_name_prefix: online-lpa/seeding
+          service_path: service-seeding
+          build_web: false
+          unit_test: false
+          filters: { branches: { only: [master] } }
 
       - infrastructure_and_deployment/apply_account_terraform:
           name: preprod_account_apply_terraform
           workspace: preproduction
-          filters:
-            branches:
-              only: master
+          filters: { branches: { only: [master] } }
+
       - infrastructure_and_deployment/apply_environment_terraform:
           name: preprod_environment_apply_terraform
+          workspace: preproduction
+          filters: { branches: { only: [master] } }
           requires:
             [
               preprod_account_apply_terraform,
@@ -124,10 +156,6 @@ workflows:
               api_docker_build,
               pdf_docker_build,
             ]
-          workspace: preproduction
-          filters:
-            branches:
-              only: master
 
       - ecr_scan_results:
           name: ecr_scan_results_master
@@ -144,46 +172,37 @@ workflows:
       - infrastructure_and_deployment/seed_environment_databases:
           name: preprod_seed_environment_databases
           workspace: preproduction
-          requires: [preprod_environment_apply_terraform]
           filters: { branches: { only: [master] } }
+          requires: [preprod_environment_apply_terraform]
 
       - infrastructure_and_deployment/run_functional_test:
           name: preprod_test_functional
-          requires: [preprod_seed_environment_databases]
           workspace: preproduction
-          filters:
-            branches:
-              only: master
+          filters: { branches: { only: [master] } }
+          requires: [preprod_seed_environment_databases]
 
       - infrastructure_and_deployment/apply_account_terraform:
           name: prod_account_apply_terraform
           workspace: production
+          filters: { branches: { only: [master] } }
           requires: [preprod_test_functional]
-          filters:
-            branches:
-              only: master
 
       - infrastructure_and_deployment/apply_environment_terraform:
           name: prod_environment_apply_terraform
           requires: [prod_account_apply_terraform]
+          filters: { branches: { only: [master] } }
           workspace: production
-          filters:
-            branches:
-              only: master
 
       - infrastructure_and_deployment/run_healthcheck_test:
           name: test_healthcheck_prod
           requires: [prod_environment_apply_terraform]
+          filters: { branches: { only: [master] } }
           workspace: production
-          filters:
-            branches:
-              only: master
+
       - slack_notify_production_release:
           name: post_production_release_message
+          filters: { branches: { only: [master] } }
           requires: [test_healthcheck_prod]
-          filters:
-            branches:
-              only: master
 
 orbs:
   slack: circleci/slack@3.3.0
