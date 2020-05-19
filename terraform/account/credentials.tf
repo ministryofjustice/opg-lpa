@@ -51,7 +51,7 @@ provider "aws" {
   alias  = "opg-lpa-prod"
 
   assume_role {
-    role_arn     = "arn:aws:iam::550790013665:role/${var.legacy_account_role}"
+    role_arn     = "arn:aws:iam::550790013665:role/${var.default_role}"
     session_name = "terraform-session"
   }
 }
