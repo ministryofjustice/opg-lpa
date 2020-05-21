@@ -453,7 +453,6 @@ orbs:
                 export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s -auto-approve -parallelism=15 -var container_version=${IMAGE_TAG}
-                export ENV_DOMAINS="$(terraform output)" >> $BASH_ENV
           - persist_to_workspace:
               root: /tmp
               paths:
