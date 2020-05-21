@@ -8,8 +8,6 @@ variable "accounts" {
     object({
       account_id                    = string
       is_production                 = string
-      front_dns                     = string
-      admin_dns                     = string
       front_certificate_domain_name = string
       admin_certificate_domain_name = string
       sirius_api_gateway_endpoint   = string
@@ -52,6 +50,8 @@ locals {
   environment       = terraform.workspace
   dns_namespace_env = local.environment == "production" ? "" : "${local.environment}."
   track_from_date   = "2019-04-01"
+  front_dns         = "front.lpa"
+  admin_dns         = "admin.lpa"
 
   mandatory_moj_tags = {
     business-unit = "OPG"
