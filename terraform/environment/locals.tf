@@ -50,7 +50,7 @@ locals {
   account_name      = lookup(var.account_mapping, terraform.workspace, "development")
   account           = var.accounts[local.account_name]
   environment       = terraform.workspace
-  dns_namespace_env = local.account_name != "development" ? "" : "${local.environment}."
+  dns_namespace_env = local.environment == "production" ? "" : "${local.environment}."
   track_from_date   = "2019-04-01"
 
   mandatory_moj_tags = {
