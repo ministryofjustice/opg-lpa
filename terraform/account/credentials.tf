@@ -48,10 +48,10 @@ provider "aws" {
 
 provider "aws" {
   region = "eu-west-1"
-  alias  = "opg-lpa-prod"
+  alias  = "legacy-lpa"
 
   assume_role {
-    role_arn     = "arn:aws:iam::550790013665:role/${var.legacy_account_role}"
+    role_arn     = "arn:aws:iam::550790013665:role/${var.default_role}"
     session_name = "terraform-session"
   }
 }

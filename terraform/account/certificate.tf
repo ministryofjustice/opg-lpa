@@ -4,7 +4,7 @@ data "aws_route53_zone" "opg_service_justice_gov_uk" {
 }
 
 data "aws_route53_zone" "lastingpowerofattorney_service_gov_uk" {
-  provider = aws.opg-lpa-prod
+  provider = aws.legacy-lpa
   name     = "lastingpowerofattorney.service.gov.uk"
 }
 
@@ -57,7 +57,7 @@ resource "aws_acm_certificate" "certificate_admin" {
 
 resource "aws_route53_record" "certificate_validation_live_service" {
   count    = terraform.workspace == "production" ? 1 : 0
-  provider = aws.opg-lpa-prod
+  provider = aws.legacy-lpa
   name     = aws_acm_certificate.certificate_live_service[count.index].domain_validation_options.0.resource_record_name
   type     = aws_acm_certificate.certificate_live_service[count.index].domain_validation_options.0.resource_record_type
   zone_id  = data.aws_route53_zone.lastingpowerofattorney_service_gov_uk.id
