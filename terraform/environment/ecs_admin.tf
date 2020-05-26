@@ -193,7 +193,7 @@ locals {
       { "name": "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
     ],
     "environment": [
-      {"name": "OPG_NGINX_SERVER_NAMES", "value": "${local.dns_namespace_env}${local.account.admin_dns} localhost 127.0.0.1"},
+      {"name": "OPG_NGINX_SERVER_NAMES", "value": "${local.dns_namespace_env}${local.admin_dns} localhost 127.0.0.1"},
       {"name": "OPG_LPA_STACK_NAME", "value": "${local.environment}"},
       {"name": "OPG_DOCKER_TAG", "value": "${var.container_version}"},
       {"name": "OPG_LPA_STACK_ENVIRONMENT", "value": "${local.account_name}"},

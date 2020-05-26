@@ -209,8 +209,8 @@ locals {
     { "name": "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
   ],
     "environment": [
-      {"name": "OPG_LPA_FRONT_NGINX_FRONTENDDOMAIN", "value": "${local.dns_namespace_env}${local.account.front_dns}"},
-      {"name": "OPG_NGINX_SERVER_NAMES", "value": "${local.dns_namespace_env}${local.account.front_dns} localhost 127.0.0.1"},
+      {"name": "OPG_LPA_FRONT_NGINX_FRONTENDDOMAIN", "value": "${local.dns_namespace_env}${local.front_dns}"},
+      {"name": "OPG_NGINX_SERVER_NAMES", "value": "${local.dns_namespace_env}${local.front_dns} localhost 127.0.0.1"},
       {"name": "OPG_LPA_FRONT_TRACK_FROM_DATE", "value": "${local.track_from_date}"},
       {"name": "OPG_LPA_STACK_NAME", "value": "${local.environment}"},
       {"name": "OPG_DOCKER_TAG", "value": "${var.container_version}"},
