@@ -335,7 +335,7 @@ orbs:
       python-browsers:
         docker: [image: circleci/python:3.6-stretch-browsers]
       terraform:
-        docker: [image: hashicorp/terraform:0.12.25]
+        docker: [image: hashicorp/terraform:0.12.28]
     jobs:
       #----------------------------------------------------
       # Lambda
