@@ -4,7 +4,7 @@ resource "aws_db_instance" "api" {
   allocated_storage          = 10
   storage_type               = "gp2"
   storage_encrypted          = true
-  skip_final_snapshot        = true
+  skip_final_snapshot        = local.account.skip_final_snapshot
   engine                     = "postgres"
   engine_version             = "9.6.15"
   instance_class             = "db.m3.medium"
