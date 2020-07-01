@@ -320,8 +320,8 @@ orbs:
           - run:
               name: Install Terraform
               command: |
-                export TERRAFORM_VERSION=0.12.25
-                export TERRAFORM_SHA256SUM=e95daabd1985329f87e6d40ffe7b9b973ff0abc07a403f767e8658d64d733fb0
+                export TERRAFORM_VERSION=0.12.28
+                export TERRAFORM_SHA256SUM=be99da1439a60942b8d23f63eba1ea05ff42160744116e84f46fc24f1a8011b6
                 curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip
                 echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS
                 sha256sum -c --status terraform_${TERRAFORM_VERSION}_SHA256SUMS
@@ -335,7 +335,7 @@ orbs:
       python-browsers:
         docker: [image: circleci/python:3.6-stretch-browsers]
       terraform:
-        docker: [image: hashicorp/terraform:0.12.25]
+        docker: [image: hashicorp/terraform:0.12.28]
     jobs:
       #----------------------------------------------------
       # Lambda

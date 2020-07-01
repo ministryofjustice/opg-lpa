@@ -14,6 +14,7 @@ variable "accounts" {
       sirius_api_gateway_arn        = string
       prevent_db_destroy            = bool
       backup_retention_period       = number
+      skip_final_snapshot           = bool
       autoscaling = object({
         front = object({
           minimum = number
