@@ -186,7 +186,13 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                             $pdf->getPageHeight() - $targetStrikeThroughCoordinates['by'],
                             $targetStrikeThroughCoordinates['tx'],
                             $pdf->getPageHeight() - $targetStrikeThroughCoordinates['ty'],
-                            ['width' => 10, 'color' => [0, 0, 0]]);
+                            ['width' => 12, 'color' => [255, 255, 255]]);
+
+                        $pdf->Line($targetStrikeThroughCoordinates['bx'],
+                            $pdf->getPageHeight() - $targetStrikeThroughCoordinates['by'],
+                            $targetStrikeThroughCoordinates['tx'],
+                            $pdf->getPageHeight() - $targetStrikeThroughCoordinates['ty'],
+                            ['width' => 8, 'color' => [0, 0, 0]]);
 
                         $changesMade = true;
                     }
