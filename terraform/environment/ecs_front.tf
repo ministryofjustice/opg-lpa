@@ -5,7 +5,7 @@ resource "aws_ecs_service" "front" {
   name            = "front"
   cluster         = aws_ecs_cluster.online-lpa.id
   task_definition = aws_ecs_task_definition.front.arn
-  desired_count   = local.ecs_minimum_task_count_front
+  desired_count   = local.account.autoscaling.front.minimum
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -21,6 +21,7 @@ resource "aws_ecs_service" "front" {
   }
 
   depends_on = [aws_lb.front, aws_iam_role.front_task_role, aws_iam_role.execution_role]
+  tags       = local.default_tags
 }
 
 //----------------------------------
@@ -59,8 +60,8 @@ resource "aws_ecs_task_definition" "front" {
   family                   = "${local.environment}-front"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 2048
-  memory                   = 4096
+  cpu                      = 256
+  memory                   = 512
   container_definitions    = "[${local.front_web}, ${local.front_app}]"
   task_role_arn            = aws_iam_role.front_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
@@ -163,7 +164,7 @@ locals {
         "options": {
             "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
             "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "front-web.online-lpa"
+            "awslogs-stream-prefix": "${local.environment}.front-web.online-lpa"
         }
     },
     "environment": [
@@ -195,7 +196,7 @@ locals {
         "options": {
             "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
             "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "front-app.online-lpa"
+            "awslogs-stream-prefix": "${local.environment}.front-app.online-lpa"
         }
     },
     "secrets": [
@@ -208,8 +209,8 @@ locals {
     { "name": "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
   ],
     "environment": [
-      {"name": "OPG_LPA_FRONT_NGINX_FRONTENDDOMAIN", "value": "${local.dns_namespace_env}${var.accounts[local.account_name].front_dns}"},
-      {"name": "OPG_NGINX_SERVER_NAMES", "value": "${local.dns_namespace_env}${var.accounts[local.account_name].front_dns} localhost 127.0.0.1"},
+      {"name": "OPG_LPA_FRONT_NGINX_FRONTENDDOMAIN", "value": "${local.dns_namespace_env}${local.front_dns}"},
+      {"name": "OPG_NGINX_SERVER_NAMES", "value": "${local.dns_namespace_env}${local.front_dns} localhost 127.0.0.1"},
       {"name": "OPG_LPA_FRONT_TRACK_FROM_DATE", "value": "${local.track_from_date}"},
       {"name": "OPG_LPA_STACK_NAME", "value": "${local.environment}"},
       {"name": "OPG_DOCKER_TAG", "value": "${var.container_version}"},

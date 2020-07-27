@@ -35,14 +35,18 @@ data "aws_kms_key" "lpa_pdf_cache" {
 }
 
 data "aws_acm_certificate" "certificate_front" {
-  domain = var.accounts[local.account_name].front_certificate_domain_name
+  domain = local.account.front_certificate_domain_name
 }
 
 data "aws_acm_certificate" "certificate_admin" {
-  domain = var.accounts[local.account_name].admin_certificate_domain_name
+  domain = local.account.admin_certificate_domain_name
 }
 
 data "aws_acm_certificate" "certificate_live_service" {
   count  = terraform.workspace == "production" ? 1 : 0
   domain = "*.lastingpowerofattorney.service.gov.uk"
+}
+
+data "aws_iam_role" "ecs_autoscaling_service_role" {
+  name = "AWSServiceRoleForApplicationAutoScaling_ECSService"
 }

@@ -5,7 +5,7 @@ resource "aws_ecs_service" "admin" {
   name            = "admin"
   cluster         = aws_ecs_cluster.online-lpa.id
   task_definition = aws_ecs_task_definition.admin.arn
-  desired_count   = local.ecs_minimum_task_count_admin
+  desired_count   = local.account.autoscaling.admin.minimum
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -21,6 +21,7 @@ resource "aws_ecs_service" "admin" {
   }
 
   depends_on = [aws_lb.admin, aws_iam_role.admin_task_role, aws_iam_role.execution_role]
+  tags       = local.default_tags
 }
 
 //----------------------------------
@@ -151,7 +152,7 @@ locals {
         "options": {
             "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
             "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "admin-web.online-lpa"
+            "awslogs-stream-prefix": "${local.environment}.admin-web.online-lpa"
         }
     },
     "environment": [
@@ -183,7 +184,7 @@ locals {
         "options": {
             "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
             "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "admin-app.online-lpa"
+            "awslogs-stream-prefix": "${local.environment}.admin-app.online-lpa"
         }
     },
     "secrets": [
@@ -192,7 +193,7 @@ locals {
       { "name": "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
     ],
     "environment": [
-      {"name": "OPG_NGINX_SERVER_NAMES", "value": "${local.dns_namespace_env}${var.accounts[local.account_name].admin_dns} localhost 127.0.0.1"},
+      {"name": "OPG_NGINX_SERVER_NAMES", "value": "${local.dns_namespace_env}${local.admin_dns} localhost 127.0.0.1"},
       {"name": "OPG_LPA_STACK_NAME", "value": "${local.environment}"},
       {"name": "OPG_DOCKER_TAG", "value": "${var.container_version}"},
       {"name": "OPG_LPA_STACK_ENVIRONMENT", "value": "${local.account_name}"},

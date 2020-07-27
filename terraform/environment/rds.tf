@@ -1,14 +1,13 @@
 resource "aws_db_instance" "api" {
-  identifier          = lower("api-${local.environment}")
-  name                = "api2"
-  allocated_storage   = 10
-  storage_type        = "gp2"
-  storage_encrypted   = true
-  skip_final_snapshot = true
-  engine              = "postgres"
-  engine_version      = "9.6.11"
-  instance_class      = "db.m3.medium"
-  # iam_database_authentication_enabled = true
+  identifier                 = lower("api-${local.environment}")
+  name                       = "api2"
+  allocated_storage          = 10
+  storage_type               = "gp2"
+  storage_encrypted          = true
+  skip_final_snapshot        = local.account.skip_final_snapshot
+  engine                     = "postgres"
+  engine_version             = "9.6.15"
+  instance_class             = "db.m3.medium"
   port                       = "5432"
   username                   = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
   password                   = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
@@ -17,7 +16,8 @@ resource "aws_db_instance" "api" {
   auto_minor_version_upgrade = true
   maintenance_window         = "sun:01:00-sun:01:30"
   multi_az                   = true
-  backup_retention_period    = local.backup_retention_period
+  backup_retention_period    = local.account.backup_retention_period
+  deletion_protection        = local.account.prevent_db_destroy
   tags                       = local.default_tags
 }
 

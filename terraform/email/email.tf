@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "mailbox" {
       test     = "StringEquals"
       variable = "aws:Referer"
       values = [
-        local.account_id,
+        local.account.account_id,
       ]
     }
   }
