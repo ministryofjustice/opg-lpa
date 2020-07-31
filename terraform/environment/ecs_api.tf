@@ -7,7 +7,7 @@ resource "aws_ecs_service" "api" {
   task_definition  = aws_ecs_task_definition.api.arn
   desired_count    = local.account.autoscaling.api.minimum
   launch_type      = "FARGATE"
-  platform_version = "1.3.0"
+  platform_version = "1.4.0"
 
   network_configuration {
     security_groups = [
