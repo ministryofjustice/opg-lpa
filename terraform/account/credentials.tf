@@ -19,6 +19,7 @@ variable "legacy_account_role" {
 
 provider "aws" {
   region = "eu-west-1"
+  version = "2.70.0"
 
   assume_role {
     role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
@@ -29,6 +30,7 @@ provider "aws" {
 provider "aws" {
   alias  = "us_east_1"
   region = "us-east-1"
+  version = "2.70.0"
 
   assume_role {
     role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
@@ -39,6 +41,7 @@ provider "aws" {
 provider "aws" {
   region = "eu-west-1"
   alias  = "management"
+  version = "2.70.0"
 
   assume_role {
     role_arn     = "arn:aws:iam::311462405659:role/${var.default_role}"
@@ -49,6 +52,7 @@ provider "aws" {
 provider "aws" {
   region = "eu-west-1"
   alias  = "legacy-lpa"
+  version = "2.70.0"
 
   assume_role {
     role_arn     = "arn:aws:iam::550790013665:role/${var.default_role}"
