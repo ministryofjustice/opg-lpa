@@ -11,21 +11,21 @@ terraform {
 
 provider "aws" {
   region = "eu-west-1"
-
   assume_role {
     role_arn     = "arn:aws:iam::${local.account.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
   }
+  version = "2.70"
 }
 
 provider "aws" {
   alias  = "us_east_1"
   region = "us-east-1"
-
   assume_role {
     role_arn     = "arn:aws:iam::${local.account.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
   }
+  version = "2.70"
 }
 
 variable "default_role" {
@@ -39,9 +39,9 @@ variable "management_role" {
 provider "aws" {
   region = "eu-west-1"
   alias  = "management"
-
   assume_role {
     role_arn     = "arn:aws:iam::311462405659:role/${var.management_role}"
     session_name = "terraform-session"
   }
+  version = "2.70"
 }
