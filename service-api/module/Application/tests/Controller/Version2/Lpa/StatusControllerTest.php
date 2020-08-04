@@ -345,43 +345,101 @@ class StatusControllerTest extends AbstractControllerTest
     public function testGetNotFoundInDB()
     {
         $this->statusController->onDispatch($this->mvcEvent);
-        $this->service->shouldReceive('fetch')->withArgs(['98765', '12345'])
-            ->once()
+
+        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
+            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Checking']]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->service->shouldReceive('fetch')
+            ->withArgs(['98765', '12345'])
+            ->atMost()->times(3)
             ->andReturn(new ApiProblem(500, 'Test error'));
+
+        $this->processingStatusService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn([
+                '98765' => ['status' => 'Checking','registrationDate' => new DateTime('2019-02-11')]
+            ]);
+
+
         $result = $this->statusController->get('98765');
-        $this->assertEquals(new Json(['98765' => ['found' => false]]), $result);
+
+        $this->assertEquals(new Json(['98765' => ['found' => true, 'status' => 'Checking', 'receiptDate' => null,'registrationDate' => new DateTime('2019-02-11'), 'rejectedDate' => null ]]), $result);
     }
 
     public function testGetLpaAlreadyReturnedWithRegistrationDateSet()
     {
         $this->statusController->onDispatch($this->mvcEvent);
-        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
-            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Returned', Lpa::APPLICATION_REGISTRATION_DATE => new DateTime('2019-02-20')]]);
 
-        $dataModel = new DataModelEntity($lpa);
-
-        $this->service->shouldReceive('fetch')
-            ->twice()->andReturn($dataModel);
-
-        $result = $this->statusController->get('98765');
-
-        $this->assertEquals(new Json(['98765' => ['found'=>true, 'status'=>'Returned']]), $result);
-    }
-
-    public function testGetLpaAlreadyReturnedWithRejectedDateSet()
-    {
-        $this->statusController->onDispatch($this->mvcEvent);
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
             'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Returned', Lpa::APPLICATION_REJECTED_DATE => new DateTime('2019-02-10')]]);
 
         $dataModel = new DataModelEntity($lpa);
 
         $this->service->shouldReceive('fetch')
-            ->twice()->andReturn($dataModel);
+            ->withArgs(['98765', '12345'])
+            ->atMost()->times(3)
+            ->andReturn($dataModel);
+
+        $this->processingStatusService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn([
+                '98765' => ['status' => 'Checking','registrationDate' => new DateTime('2019-02-11')]
+            ]);
+
+        $this->service->shouldReceive('patch')
+            ->withArgs([
+                [
+                    'metadata' => [
+                        'sirius-processing-status' => 'Checking',
+                        'application-registration-date' => new DateTime('2019-02-11') ,
+                        'application-receipt-date' => null,
+                        'application-rejected-date' => null
+                    ]
+                ], '98765', '12345'
+            ])->once();
 
         $result = $this->statusController->get('98765');
 
-        $this->assertEquals(new Json(['98765' => ['found'=>true, 'status'=>'Returned']]), $result);
+        $this->assertEquals(new Json(['98765' => ['found' => true, 'status' => 'Checking', 'receiptDate' => null,'registrationDate' => new DateTime('2019-02-11'), 'rejectedDate' => null ]]), $result);
+    }
+
+    public function testGetLpaAlreadyReturnedWithRejectedDateSet()
+    {
+        $this->statusController->onDispatch($this->mvcEvent);
+
+        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
+            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Returned', Lpa::APPLICATION_REJECTED_DATE => new DateTime('2019-02-10')]]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->service->shouldReceive('fetch')
+            ->withArgs(['98765', '12345'])
+            ->atMost()->times(3)
+            ->andReturn($dataModel);
+
+        $this->processingStatusService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn([
+                '98765' => ['status' => 'Returned','rejectedDate' => new DateTime('2019-02-10')]
+            ]);
+
+        $this->service->shouldReceive('patch')
+            ->withArgs([
+                [
+                    'metadata' => [
+                        'sirius-processing-status' => 'Returned',
+                        'application-registration-date' => null,
+                        'application-receipt-date' => null,
+                        'application-rejected-date' => new DateTime('2019-02-10') ,
+                    ]
+                ], '98765', '12345'
+            ])->once();
+
+        $result = $this->statusController->get('98765');
+
+        $this->assertEquals(new Json(['98765' => ['found' => true, 'status' => 'Returned', 'receiptDate' => null,'registrationDate' => null, 'rejectedDate' => new DateTime('2019-02-10') ]]), $result);
     }
 
     /**
