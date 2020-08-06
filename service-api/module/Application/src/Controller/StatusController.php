@@ -220,15 +220,13 @@ class StatusController extends AbstractRestfulController
 
                         $currentResult = $results[$lpaId];
                         $currentProcessingStatus = $currentResult['found'] ? $currentResult['status'] : null;
-                       // var_dump($currentProcessingStatus);
-
 
                         $receiptDate = isset($lpaDetail['receiptDate']) ? $lpaDetail['receiptDate'] : null;
                         $registrationDate = isset($lpaDetail['registrationDate']) ? $lpaDetail['registrationDate'] : null;
                         $rejectDate = isset($lpaDetail['rejectedDate']) ? $lpaDetail['rejectedDate'] : null;
 
                         // If it doesn't match what we already have update the database
-                        if (!is_null($lpaDetail['status']) && $lpaDetail['status']){
+                        if (!is_null($lpaDetail['status']) && $lpaDetail['status'] && $lpaDetail['status'] != $currentProcessingStatus){
                             $this->updateMetadata($lpaId, $lpaDetail['status'],$receiptDate,$registrationDate,$rejectDate);
                             $results[$lpaId] = ['found' => true, 'status' => $lpaDetail['status'], 'receiptDate' => $receiptDate, 'registrationDate' => $registrationDate, 'rejectedDate' => $rejectDate];
                         }
