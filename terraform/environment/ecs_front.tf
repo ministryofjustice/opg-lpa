@@ -2,11 +2,12 @@
 // front ECS Service level config
 
 resource "aws_ecs_service" "front" {
-  name            = "front"
-  cluster         = aws_ecs_cluster.online-lpa.id
-  task_definition = aws_ecs_task_definition.front.arn
-  desired_count   = local.account.autoscaling.front.minimum
-  launch_type     = "FARGATE"
+  name             = "front"
+  cluster          = aws_ecs_cluster.online-lpa.id
+  task_definition  = aws_ecs_task_definition.front.arn
+  desired_count    = local.account.autoscaling.front.minimum
+  launch_type      = "FARGATE"
+  platform_version = "LATEST"
 
   network_configuration {
     security_groups  = [aws_security_group.front_ecs_service.id]
