@@ -70,7 +70,8 @@ function postgresql() {
   export AWS_DEFAULT_REGION=eu-west-1
   export PGHOST=$( jq -r .'DBInstances'[0].'Endpoint'.'Address' <<< "${db_instance}")
   export DB_INSTANCE=$( jq -r .'DBInstances'[0].'DBInstanceIdentifier' <<< "${db_instance}")
-  export DB_NAME=$( jq -r .'DBInstances'[0].'DBName' <<< "${db_instance}")  export PGUSER=$(aws secretsmanager get-secret-value --secret-id ${ACCOUNT}/api_rds_username | jq -r .'SecretString')
+  export DB_NAME=$( jq -r .'DBInstances'[0].'DBName' <<< "${db_instance}")
+  export PGUSER=$(aws secretsmanager get-secret-value --secret-id ${ACCOUNT}/api_rds_username | jq -r .'SecretString')
   export PGPASSWORD=$(aws secretsmanager get-secret-value --secret-id ${ACCOUNT}/api_rds_password | jq -r .'SecretString')
 }
 
