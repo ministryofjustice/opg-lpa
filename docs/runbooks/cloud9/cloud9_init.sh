@@ -65,16 +65,19 @@ function add_rds_sgs() {
 
 function postgresql() {
   local environment_name=$(echo ${1:?} | awk '{print tolower($0)}')
+  local db_instance=$(aws rds describe-db-instances --db-instance-identifier api-${environment_name})
+
   export AWS_DEFAULT_REGION=eu-west-1
-  export PGHOST=$(aws rds describe-db-instances --db-instance-identifier api-${environment_name} | jq -r .'DBInstances'[0].'Endpoint'.'Address')
-  export DB_INSTANCE=$(aws rds describe-db-instances --db-instance-identifier api-${environment_name} | jq -r .'DBInstances'[0].'DBInstanceIdentifier')
-  export DB_NAME=$(aws rds describe-db-instances --db-instance-identifier api-${environment_name} | jq -r .'DBInstances'[0].'DBName')
-  export PGUSER=$(aws secretsmanager get-secret-value --secret-id ${ACCOUNT}/api_rds_username | jq -r .'SecretString')
+  export PGHOST=$( jq -r .'DBInstances'[0].'Endpoint'.'Address' <<< "${db_instance}")
+  export DB_INSTANCE=$( jq -r .'DBInstances'[0].'DBInstanceIdentifier' <<< "${db_instance}")
+  export DB_NAME=$( jq -r .'DBInstances'[0].'DBName' <<< "${db_instance}")  export PGUSER=$(aws secretsmanager get-secret-value --secret-id ${ACCOUNT}/api_rds_username | jq -r .'SecretString')
   export PGPASSWORD=$(aws secretsmanager get-secret-value --secret-id ${ACCOUNT}/api_rds_password | jq -r .'SecretString')
 }
 
 function setup_info() {
   echo ""
+  echo "------------------------------------------------------------------------------------"
+  echo "Postgres host is $PGHOST"
   echo "------------------------------------------------------------------------------------"
   echo "api PostgreSQL Instance set to $DB_INSTANCE"
   echo "------------------------------------------------------------------------------------"
