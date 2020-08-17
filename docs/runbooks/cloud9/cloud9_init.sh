@@ -8,7 +8,8 @@ function main() {
 }
 
 function install_tools() {
-  sudo yum install postgresql jq -y
+  #update to 9.6 - to match rds version deployed
+  sudo yum install postgresql96 jq -y
 }
 
 function infer_account() {
@@ -64,8 +65,12 @@ function add_rds_sgs() {
 
 function postgresql() {
   local environment_name=$(echo ${1:?} | awk '{print tolower($0)}')
+  local db_instance=$(aws rds describe-db-instances --db-instance-identifier api-${environment_name})
+
   export AWS_DEFAULT_REGION=eu-west-1
-  export PGHOST=$(aws rds describe-db-instances --db-instance-identifier api-${environment_name} | jq -r .'DBInstances'[0].'Endpoint'.'Address')
+  export PGHOST=$( jq -r .'DBInstances'[0].'Endpoint'.'Address' <<< "${db_instance}")
+  export DB_INSTANCE=$( jq -r .'DBInstances'[0].'DBInstanceIdentifier' <<< "${db_instance}")
+  export DB_NAME=$( jq -r .'DBInstances'[0].'DBName' <<< "${db_instance}")
   export PGUSER=$(aws secretsmanager get-secret-value --secret-id ${ACCOUNT}/api_rds_username | jq -r .'SecretString')
   export PGPASSWORD=$(aws secretsmanager get-secret-value --secret-id ${ACCOUNT}/api_rds_password | jq -r .'SecretString')
 }
@@ -73,9 +78,11 @@ function postgresql() {
 function setup_info() {
   echo ""
   echo "------------------------------------------------------------------------------------"
-  echo "api PostgreSQL Instance set to $API_HOST"
+  echo "Postgres host is $PGHOST"
   echo "------------------------------------------------------------------------------------"
-  echo "type psql <database_name> to connect"
+  echo "api PostgreSQL Instance set to $DB_INSTANCE"
+  echo "------------------------------------------------------------------------------------"
+  echo "type psql $DB_NAME to connect"
   echo "------------------------------------------------------------------------------------"
   echo ""
 }
