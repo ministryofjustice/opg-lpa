@@ -224,13 +224,13 @@ class StatusController extends AbstractRestfulController
                         $receiptDate = isset($lpaDetail['receiptDate']) ? $lpaDetail['receiptDate'] : null;
                         $registrationDate = isset($lpaDetail['registrationDate']) ? $lpaDetail['registrationDate'] : null;
                         $rejectDate = isset($lpaDetail['rejectedDate']) ? $lpaDetail['rejectedDate'] : null;
-
+                        
                         // If it doesn't match what we already have update the database
-                        if (!is_null($lpaDetail['status']) && $lpaDetail['status'] && $lpaDetail['status'] != $currentProcessingStatus){
+                        if (isset($lpaDetail['status']) && $lpaDetail['status'] !== $currentProcessingStatus) {
                             $this->updateMetadata($lpaId, $lpaDetail['status'],$receiptDate,$registrationDate,$rejectDate);
                             $results[$lpaId] = ['found' => true, 'status' => $lpaDetail['status'], 'receiptDate' => $receiptDate, 'registrationDate' => $registrationDate, 'rejectedDate' => $rejectDate];
                         }
-                        else if (!is_null($lpaDetail['status']) && $lpaDetail['status'] == $currentProcessingStatus){
+                        else if (isset($lpaDetail['status']) && $lpaDetail['status'] == $currentProcessingStatus) {
                             $results[$lpaId] = ['found' => true, 'status' => $currentProcessingStatus,'receiptDate' => $receiptDate, 'registrationDate' => $registrationDate, 'rejectedDate' => $rejectDate];
                         }
                         else if(is_null($lpaDetail['status']) && !is_null($currentProcessingStatus) && is_null($rejectDate)){
@@ -241,6 +241,8 @@ class StatusController extends AbstractRestfulController
                         }
                     }
                 }
+                die;
+
             }
         }
         return new Json($results);

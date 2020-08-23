@@ -83,7 +83,11 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json(
             [
                 98765 => [
-                    'found' => true, 'status' => 'Returned','receiptDate' => null, 'registrationDate' => null, 'rejectedDate'  => new DateTime('2019-02-11')
+                    'found' => true,
+                    'status' => 'Returned',
+                    'receiptDate' => null,
+                    'registrationDate' => null,
+                    'rejectedDate'  => new DateTime('2019-02-11')
                 ]
             ]
         ), $result);
@@ -122,7 +126,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json(
             [
                 98765 => [
-                    'found' => true, 'status' => 'Checking', 'receiptDate' => new DateTime('2019-02-11'), 'registrationDate' => null,'rejectedDate'  => null
+                    'found' => true,
+                    'status' => 'Checking',
+                    'receiptDate' => new DateTime('2019-02-11'),
+                    'registrationDate' => null,'rejectedDate'  => null
                 ]
             ]
         ), $result);
@@ -153,7 +160,11 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json(
             [
                 98765 => [
-                    'found' => true, 'status' => 'Received', 'receiptDate'  => new DateTime('2019-02-11'), 'registrationDate' => null, 'rejectedDate' => null
+                    'found' => true,
+                    'status' => 'Received',
+                    'receiptDate'  => new DateTime('2019-02-11'),
+                    'registrationDate' => null,
+                    'rejectedDate' => null
                 ]
             ]
         ), $result);
@@ -196,7 +207,11 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json(
             [
                 98765 => [
-                    'found' => true, 'status' => 'Checking','receiptDate' => null,'registrationDate'  => new DateTime('2019-02-11'), 'rejectedDate' => null
+                    'found' => true,
+                    'status' => 'Checking',
+                    'receiptDate' => null,
+                    'registrationDate'  => new DateTime('2019-02-11'),
+                    'rejectedDate' => null
                 ]
             ]
         ), $result);
@@ -207,7 +222,11 @@ class StatusControllerTest extends AbstractControllerTest
         $this->statusController->onDispatch($this->mvcEvent);
 
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
-            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Waiting', Lpa::APPLICATION_REJECTED_DATE => null, Lpa::APPLICATION_REGISTRATION_DATE => null ]]);
+            'metadata' => [
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Waiting',
+                Lpa::APPLICATION_REJECTED_DATE => null,
+                Lpa::APPLICATION_REGISTRATION_DATE => null
+            ]]);
 
         $dataModel = new DataModelEntity($lpa);
 
@@ -239,7 +258,11 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json(
             [
                 98765 => [
-                    'found' => true, 'status' => 'Returned','receiptDate' => null, 'registrationDate' => null,  'rejectedDate'  => new DateTime('2019-02-11')
+                    'found' => true,
+                    'status' => 'Returned',
+                    'receiptDate' => null,
+                    'registrationDate' => null,
+                    'rejectedDate'  => new DateTime('2019-02-11')
                 ]
             ]
         ), $result);
@@ -250,7 +273,11 @@ class StatusControllerTest extends AbstractControllerTest
         $this->statusController->onDispatch($this->mvcEvent);
 
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
-            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Returned', Lpa::APPLICATION_REJECTED_DATE => null, Lpa::APPLICATION_REGISTRATION_DATE => null ]]);
+            'metadata' => [
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Returned',
+                Lpa::APPLICATION_REJECTED_DATE => null,
+                Lpa::APPLICATION_REGISTRATION_DATE => null
+            ]]);
 
         $dataModel = new DataModelEntity($lpa);
 
@@ -282,7 +309,11 @@ class StatusControllerTest extends AbstractControllerTest
         $this->assertEquals(new Json(
             [
                 98765 => [
-                    'found' => true, 'status' => 'Checking','receiptDate' => new DateTime('2019-02-11'), 'registrationDate' => null,  'rejectedDate'  => null
+                    'found' => true,
+                    'status' => 'Checking',
+                    'receiptDate' => new DateTime('2019-02-11'),
+                    'registrationDate' => null,
+                    'rejectedDate'  => null
                 ]
             ]
         ), $result);
@@ -309,7 +340,12 @@ class StatusControllerTest extends AbstractControllerTest
 
         $result = $this->statusController->get('98765');
 
-        $this->assertEquals(new Json(['98765' => ['found' => true, 'status' => 'Checking', 'rejectedDate'  => null ]]), $result);
+        $this->assertEquals(new Json([
+            '98765' => [
+            'found' => true,
+                'status' => 'Checking',
+                'rejectedDate'  => null
+            ]]), $result);
     }
 
     public function testGetWithNoUpdateOnValidCaseWithNoPreviousStatus()
@@ -359,7 +395,14 @@ class StatusControllerTest extends AbstractControllerTest
 
         $result = $this->statusController->get('98765');
 
-        $this->assertEquals(new Json(['98765' => ['found' => true, 'status' => 'Checking', 'receiptDate' => null,'registrationDate' => new DateTime('2019-02-11'), 'rejectedDate' => null ]]), $result);
+        $this->assertEquals(new Json([
+            '98765' => [
+                'found' => true,
+                'status' => 'Checking',
+                'receiptDate' => null,
+                'registrationDate' => new DateTime('2019-02-11'),
+                'rejectedDate' => null
+            ]]), $result);
     }
 
     public function testGetNotFoundInDB()
@@ -385,7 +428,14 @@ class StatusControllerTest extends AbstractControllerTest
 
         $result = $this->statusController->get('98765');
 
-        $this->assertEquals(new Json(['98765' => ['found' => true, 'status' => 'Checking', 'receiptDate' => null,'registrationDate' => new DateTime('2019-02-11'), 'rejectedDate' => null ]]), $result);
+        $this->assertEquals(new Json([
+            '98765' => [
+                'found' => true,
+                'status' => 'Checking',
+                'receiptDate' => null,
+                'registrationDate' => new DateTime('2019-02-11'),
+                'rejectedDate' => null
+            ]]), $result);
     }
 
     public function testGetLpaAlreadyReturnedWithRegistrationDateSet()
@@ -393,7 +443,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->statusController->onDispatch($this->mvcEvent);
 
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
-            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Returned', Lpa::APPLICATION_REJECTED_DATE => new DateTime('2019-02-10')]]);
+            'metadata' => [
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Returned',
+                Lpa::APPLICATION_REJECTED_DATE => new DateTime('2019-02-10')
+            ]]);
 
         $dataModel = new DataModelEntity($lpa);
 
@@ -422,7 +475,14 @@ class StatusControllerTest extends AbstractControllerTest
 
         $result = $this->statusController->get('98765');
 
-        $this->assertEquals(new Json(['98765' => ['found' => true, 'status' => 'Checking', 'receiptDate' => null,'registrationDate' => new DateTime('2019-02-11'), 'rejectedDate' => null ]]), $result);
+        $this->assertEquals(new Json([
+            '98765' => [
+                'found' => true,
+                'status' => 'Checking',
+                'receiptDate' => null,
+                'registrationDate' => new DateTime('2019-02-11'),
+                'rejectedDate' => null
+            ]]), $result);
     }
 
     public function testGetLpaAlreadyReturnedWithRejectedDateSet()
@@ -430,7 +490,10 @@ class StatusControllerTest extends AbstractControllerTest
         $this->statusController->onDispatch($this->mvcEvent);
 
         $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
-            'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Returned', Lpa::APPLICATION_REJECTED_DATE => new DateTime('2019-02-10')]]);
+            'metadata' => [
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Returned',
+                Lpa::APPLICATION_REJECTED_DATE => new DateTime('2019-02-10')
+            ]]);
 
         $dataModel = new DataModelEntity($lpa);
 
@@ -447,7 +510,14 @@ class StatusControllerTest extends AbstractControllerTest
 
         $result = $this->statusController->get('98765');
 
-        $this->assertEquals(new Json(['98765' => ['found' => true, 'status' => 'Returned', 'receiptDate' => null,'registrationDate' => null, 'rejectedDate' => new DateTime('2019-02-10') ]]), $result);
+        $this->assertEquals(new Json([
+            '98765' => [
+                'found' => true,
+                'status' => 'Returned',
+                'receiptDate' => null,
+                'registrationDate' => null,
+                'rejectedDate' => new DateTime('2019-02-10')
+            ]]), $result);
     }
 
     /**
@@ -510,8 +580,18 @@ class StatusControllerTest extends AbstractControllerTest
         $result = $this->statusController->get('98765,98766');
 
         $this->assertEquals(new Json([
-            98765 => ['found' => true, 'status' => 'Returned', 'receiptDate' => null, 'registrationDate' => null, 'rejectedDate' => new DateTime('2019-02-11')],
-            98766 => ['found' => true, 'status' => 'Received', 'receiptDate' => new DateTime('2019-02-11'), 'registrationDate' => null,'rejectedDate' => null]
+            98765 => [
+                'found' => true,
+                'status' => 'Returned',
+                'receiptDate' => null,
+                'registrationDate' => null,
+                'rejectedDate' => new DateTime('2019-02-11')],
+            98766 => [
+                'found' => true,
+                'status' => 'Received',
+                'receiptDate' => new DateTime('2019-02-11'),
+                'registrationDate' => null,
+                'rejectedDate' => null]
         ]), $result);
     }
 }
