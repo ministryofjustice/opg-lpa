@@ -206,7 +206,6 @@ class StatusController extends AbstractRestfulController
         if (!empty($allIdsToCheckStatusInSirius)) {
             $this->getLogger()->info('All application ids to check in Sirius :' .implode("','",$allIdsToCheckStatusInSirius)."'");
             $this->getLogger()->info('Count of all application ids to check in Sirius :' . count($allIdsToCheckStatusInSirius));
-            // }
 
             // Get status update from Sirius
             $siriusResponseArray = $this->processingStatusService->getStatuses($allIdsToCheckStatusInSirius);
@@ -241,8 +240,6 @@ class StatusController extends AbstractRestfulController
                         }
                     }
                 }
-                die;
-
             }
         }
         return new Json($results);
