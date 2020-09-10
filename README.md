@@ -37,7 +37,7 @@ However, sometimes e:g when working on Track My LPA, you'll also require the Sir
 git clone git@github.com:ministryofjustice/opg-sirius-api-gateway.git
 ```
 
-then return to the opg-lpa directory, and now instead of a simple docker-compose up , you'll need to also bring up with sirius api gateway, like this:
+Then return to the opg-lpa directory, and now instead of a simple docker-compose up , you'll need to bring the sirius api gateway too, like this:
 ```bash
 docker-compose -f docker-compose.yml \
 -f ../opg-sirius-api-gateway/docker-compose.yml \
