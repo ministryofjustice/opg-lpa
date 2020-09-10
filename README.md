@@ -26,10 +26,24 @@ The Admin service will be available via https://localhost:7003
 
 The API service will be available (direct) via http://localhost:7001
 
-After the first time, you bring up the environment with:
+After the first time, normally you bring up the environment with:
 ```
 docker-compose up
 ```
+
+However, sometimes e:g when working on Track My LPA, you'll also require the Sirius API Gateway running locally. To achieve this you should clone the repo, in the same directory as opg-lpa was cloned into, so that the 2 repos are sibling directories.
+
+```
+git clone git@github.com:ministryofjustice/opg-sirius-api-gateway.git
+```
+
+then return to the opg-lpa directory, and now instead of a simple docker-compose up , you'll need to also bring up with sirius api gateway, like this:
+```bash
+docker-compose -f docker-compose.yml \
+-f ../opg-sirius-api-gateway/docker-compose.yml \
+-f ../opg-sirius-api-gateway/docker-compose-integration.yml up
+```
+
 
 ### Tests
 
