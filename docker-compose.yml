@@ -20,7 +20,7 @@ services:
       - 8000:8000
 
   localstack:
-    image: localstack/localstack
+    image: localstack/localstack:0.9.1
     ports:
       - 4569:4569
       - 4576:4576
