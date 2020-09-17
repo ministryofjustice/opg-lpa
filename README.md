@@ -3,22 +3,30 @@ The Office of the Public Guardian Lasting Power of Attorney online service: Mana
 
 
 ## Local Development Setup
-The first time you bring up the environment:
+
+Intially, download the repo via:
 
 ```
 git clone git@github.com:ministryofjustice/opg-lpa.git
 cd opg-lpa
+```
 
+Within `opg-lpa` directory to *run* the project for the first time use the following:
+
+```
 make dc-run
 make
 ```
+
+The `Makefile` will fetch secrets using `aws secretsmanager` and `docker-compose` commands together to pass along environment variables removing the need for local configuration files.
+
 
 The LPA Tool service will be available via https://localhost:7002/home
 The Admin service will be available via https://localhost:7003
 
 The API service will be available (direct) via http://localhost:7001
 
-After the first time, you bring up the environment with:
+After the first time, you can *run* the project by:
 ```
 make
 ```
