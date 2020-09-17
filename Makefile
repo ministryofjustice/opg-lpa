@@ -43,8 +43,8 @@ build:
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 		docker-compose build
 
-.PHONY: tests
-tests:
+.PHONY: unit-tests
+unit-tests:
 	docker-compose run front-app /app/vendor/bin/phpunit
 	docker-compose run admin-app /app/vendor/bin/phpunit
 	docker-compose run api-app /app/vendor/bin/phpunit

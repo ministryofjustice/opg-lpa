@@ -27,7 +27,7 @@ make
 
 To run the unit tests
 ```bash
-make tests
+make unit-tests
 ```
 
 ### Updating composer dependencies
