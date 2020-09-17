@@ -1,7 +1,7 @@
 SHELL := '/bin/bash'
-SENDGRID := $(shell aws-vault exec lpa-dev-operator -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_email_sendgrid_api_key | jq -r .'SecretString')
-GOVPAY := $(shell aws-vault exec lpa-dev-operator -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_gov_pay_key | jq -r .'SecretString')
-ORDNANCESURVEY := $(shell aws-vault exec lpa-dev-operator -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_ordnance_survey_license_key | jq -r .'SecretString')
+SENDGRID := $(shell aws-vault exec lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_email_sendgrid_api_key | jq -r .'SecretString')
+GOVPAY := $(shell aws-vault exec lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_gov_pay_key | jq -r .'SecretString')
+ORDNANCESURVEY := $(shell aws-vault exec lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_ordnance_survey_license_key | jq -r .'SecretString')
 
 .PHONY: all
 all:
