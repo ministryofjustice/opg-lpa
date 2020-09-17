@@ -9,7 +9,7 @@ The first time you bring up the environment:
 git clone git@github.com:ministryofjustice/opg-lpa.git
 cd opg-lpa
 
-make run
+make dc-run
 make
 ```
 
@@ -27,7 +27,7 @@ make
 
 To run the unit tests
 ```bash
-make unit-tests
+make dc-unit-tests
 ```
 
 ### Updating composer dependencies

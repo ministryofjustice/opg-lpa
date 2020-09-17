@@ -5,10 +5,10 @@ ORDNANCESURVEY := $(shell aws-vault exec lpa-dev -- aws secretsmanager get-secre
 
 .PHONY: all
 all:
-	@${MAKE} up
+	@${MAKE} dc-up
 
-.PHONY: run
-run:
+.PHONY: dc-run
+dc-run:
 	export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
@@ -29,22 +29,22 @@ run:
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 		docker-compose run pdf-composer
 
-.PHONY: up
-up:
+.PHONY: dc-up
+dc-up:
 	export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 		docker-compose up
 
-.PHONY: build
-build:
+.PHONY: dc-build
+dc-build:
 	export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 		docker-compose build
 
-.PHONY: unit-tests
-unit-tests:
+.PHONY: dc-unit-tests
+dc-unit-tests:
 	docker-compose run front-app /app/vendor/bin/phpunit
 	docker-compose run admin-app /app/vendor/bin/phpunit
 	docker-compose run api-app /app/vendor/bin/phpunit
