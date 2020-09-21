@@ -41,6 +41,17 @@ return [
                 ],
             ], // terms
 
+            'accessibility' => [
+                'type' => 'Zend\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/accessibility',
+                    'defaults' => [
+                        'controller' => 'General\HomeController',
+                        'action'     => 'accessibility',
+                    ],
+                ],
+            ], // terms
+
             'privacy' => [
                 'type' => 'Zend\Router\Http\Literal',
                 'options' => [
