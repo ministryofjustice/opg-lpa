@@ -31,6 +31,10 @@ class HomeController extends AbstractBaseController
         return new ViewModel();
     }
 
+    public function accessibilityAction(){
+        return new ViewModel();
+    }
+
     public function privacyAction(){
         return new ViewModel();
     }

@@ -48,6 +48,18 @@ class HomeControllerTest extends AbstractControllerTest
         $this->assertEquals('', $result->getTemplate());
     }
 
+    public function testAccessibilityAction()
+    {
+        /** @var HomeController $controller */
+        $controller = $this->getController(HomeController::class);
+
+        /** @var ViewModel $result */
+        $result = $controller->accessibilityAction();
+
+        $this->assertInstanceOf(ViewModel::class, $result);
+        $this->assertEquals('', $result->getTemplate());
+    }
+
     public function testTermsAction()
     {
         /** @var HomeController $controller */
