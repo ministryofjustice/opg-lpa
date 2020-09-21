@@ -20,7 +20,7 @@ services:
       - 8000:8000
 
   localstack:
-    image: localstack/localstack
+    image: localstack/localstack:0.9.1
     ports:
       - 4569:4569
       - 4576:4576
@@ -101,6 +101,10 @@ services:
       #ENABLE_XDEBUG: 'true'
       PHP_IDE_CONFIG: serverName=lpa-front-app
       XDEBUG_CONFIG: remote_host=host.docker.internal remote_enable=1
+
+      OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY: "${OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY}"
+      OPG_LPA_FRONT_GOV_PAY_KEY: "${OPG_LPA_FRONT_GOV_PAY_KEY}"
+      OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY: "${OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY}"
 
   front-composer:
     image: composer
