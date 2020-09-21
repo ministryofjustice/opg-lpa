@@ -3,22 +3,22 @@ The Office of the Public Guardian Lasting Power of Attorney online service: Mana
 
 
 ## Local Development Setup
-The first time you bring up the environment:
+
+Intially, download the repo via:
 
 ```
 git clone git@github.com:ministryofjustice/opg-lpa.git
 cd opg-lpa
-
-docker-compose run front-composer
-docker-compose run admin-composer
-docker-compose run api-composer
-docker-compose run pdf-composer
-
-docker-compose up
 ```
 
-You will also need a copy of the local config file `service-front/config/autoload/local.php`. Any developer on the team
-should be able to provide you with this.
+Within `opg-lpa` directory to *run* the project for the first time use the following:
+
+```
+make dc-run
+make
+```
+
+The `Makefile` will fetch secrets using `aws secretsmanager` and `docker-compose` commands together to pass along environment variables removing the need for local configuration files.
 
 
 The LPA Tool service will be available via https://localhost:7002/home
@@ -26,33 +26,16 @@ The Admin service will be available via https://localhost:7003
 
 The API service will be available (direct) via http://localhost:7001
 
-After the first time, normally you bring up the environment with:
+After the first time, you can *run* the project by:
 ```
-docker-compose up
+make
 ```
-
-However, sometimes e:g when working on Track My LPA, you'll also require the Sirius API Gateway running locally. To achieve this you should clone the repo, in the same directory as opg-lpa was cloned into, so that the 2 repos are sibling directories.
-
-```
-git clone git@github.com:ministryofjustice/opg-sirius-api-gateway.git
-```
-
-Then return to the opg-lpa directory, and now instead of a simple docker-compose up , you'll need to bring the sirius api gateway too, like this:
-```bash
-docker-compose -f docker-compose.yml \
--f ../opg-sirius-api-gateway/docker-compose.yml \
--f ../opg-sirius-api-gateway/docker-compose-integration.yml up
-```
-
 
 ### Tests
 
 To run the unit tests
 ```bash
-docker-compose run front-app /app/vendor/bin/phpunit
-docker-compose run admin-app /app/vendor/bin/phpunit
-docker-compose run api-app /app/vendor/bin/phpunit
-docker-compose run pdf-app /app/vendor/bin/phpunit
+make dc-unit-tests
 ```
 
 ### Updating composer dependencies
