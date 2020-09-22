@@ -641,7 +641,10 @@ orbs:
                 fi
               when: always
 
-     run_pa11y_test:
+      run_pa11y_test:
+        #
+        # Runs pa11y tests
+        #
         executor: python
         steps:
           - checkout
@@ -649,7 +652,6 @@ orbs:
               name: Run Pa11y tests
               command: |
                 ls
-              when: always
 
 jobs:
   cancel_redundant_builds:
