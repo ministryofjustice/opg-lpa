@@ -642,14 +642,14 @@ orbs:
               when: always
 
      run_pa11y_test:
-       docker:
-         - image: circleci/node
-       steps:
-         - checkout
-         - run:
-             name: Run Pa11y tests
-             command: |
-               ls
+        executor: python
+        steps:
+          - checkout
+          - run:
+              name: Run Pa11y tests
+              command: |
+                ls
+              when: always
 
 jobs:
   cancel_redundant_builds:
