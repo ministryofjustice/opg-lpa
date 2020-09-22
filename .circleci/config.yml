@@ -645,7 +645,8 @@ orbs:
         #
         # Runs pa11y tests
         #
-        executor: python
+        docker:
+          - image: circleci/node
         steps:
           - checkout
           - run:
