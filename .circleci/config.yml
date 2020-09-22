@@ -640,15 +640,16 @@ orbs:
                   terraform destroy -lock-timeout=300s -auto-approve
                 fi
               when: always
-  run_pa11y_test:
-    docker:
-      - image: circleci/node
-    steps:
-      - checkout
-      - run:
-          name: Run Pa11y tests
-          command: |
-            ls
+
+     run_pa11y_test:
+       docker:
+         - image: circleci/node
+       steps:
+         - checkout
+         - run:
+             name: Run Pa11y tests
+             command: |
+               ls
 
 jobs:
   cancel_redundant_builds:
