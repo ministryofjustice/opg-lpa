@@ -93,6 +93,11 @@ workflows:
           filters: { branches: { ignore: [master] } }
           requires: [dev_seed_environment_databases]
 
+      - infrastructure_and_deployment/run_pa11y_test:
+          name: run_pa11y_test
+          filters: { branches: { ignore: [master] } }
+          requires: [dev_seed_environment_databases]
+
       - slack_notify_domain:
           name: post_environment_domains
           filters: { branches: { ignore: [master] } }
@@ -635,6 +640,15 @@ orbs:
                   terraform destroy -lock-timeout=300s -auto-approve
                 fi
               when: always
+  run_pa11y_test:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+          name: Run Pa11y tests
+          command: |
+            ls
 
 jobs:
   cancel_redundant_builds:
