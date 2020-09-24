@@ -22976,7 +22976,7 @@ var SessionTimeoutDialog = function (options) {
     if (typeof options.element === 'undefined') {
         throw 'Popup element not provided';
     }
-    
+
     if (typeof options.warningPeriodMs === 'undefined') {
         throw 'Timeout warning in Milliseconds not provided';
     }
@@ -25095,7 +25095,7 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
       });
     }
   };
-  
+
 })();
 ;
 // UI Behaviour module for LPA
@@ -25237,6 +25237,32 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
 
     var NATIVE_DETAILS = typeof document.createElement('details').open === 'boolean'
 
+    /**
+     * restore tab Functionality on a list of links.
+     * this is when the links appear to user. fixes accessibility issue.
+     * @param links
+     */
+    function restoreTabbing(links){
+        var i =0;
+        var n = links.length
+        for (i=0; i < n; i++) {
+            links[i].removeAttribute('tabindex');
+        }
+    }
+
+    /**
+     * remove tabbing on links passed in.
+     * this is when its parent content hides. fixes accessibility issue.
+     * @param links
+     */
+    function removeTabbing(links) {
+        var i =0;
+        var n = links.length
+        for ( i = 0; i < n; i++) {
+            links[i].setAttribute('tabindex', '-1');
+        }
+    }
+
     // Add event construct for modern browsers or IE
     // which fires the callback with a pre-converted target reference
     function addEvent (node, type, callback) {
@@ -25305,6 +25331,13 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
                 summary.__details.removeAttribute('open')
             }
         }
+        // this is the details current state. e.g. open now soon to be closed
+        if(summary.__details.open ||
+            summary.__details.getAttribute('open') !== null ){
+            removeTabbing(summary.__details.__links)
+        }else{
+            restoreTabbing(summary.__details.__links)
+        }
 
         if (summary.__twisty) {
             summary.__twisty.firstChild.nodeValue = (expanded ? '\u25ba' : '\u25bc')
@@ -25345,6 +25378,8 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
             // Save shortcuts to the inner summary and content elements
             details.__summary = details.getElementsByTagName('summary').item(0)
             details.__content = details.getElementsByTagName('div').item(0)
+            // shortcut to all links - for tabindex handling.
+            details.__links =  details.getElementsByTagName('a');
 
             // If the content doesn't have an ID, assign it one now
             // which we'll need for the summary's aria-controls assignment
@@ -25372,12 +25407,14 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
             if (openAttr === true) {
                 details.__summary.setAttribute('aria-expanded', 'true')
                 details.__content.setAttribute('aria-hidden', 'false')
+                restoreTabbing(details.__links)
             } else {
                 details.__summary.setAttribute('aria-expanded', 'false')
                 details.__content.setAttribute('aria-hidden', 'true')
                 if (!NATIVE_DETAILS) {
                     details.__content.style.display = 'none'
                 }
+                removeTabbing(details.__links)
             }
 
             // Create a circular reference from the summary back to its
@@ -25694,4 +25731,3 @@ $('body').removeClass('no-js');
 //   'use strict';
 
 // });
-
