@@ -14,29 +14,22 @@
     var NATIVE_DETAILS = typeof document.createElement('details').open === 'boolean'
 
     /**
-     * restore tabbing on a list of focusable elements.
-     * fixes accessibility issue.
-     * @param elements
-     */
-    function restoreTabbing(elements){
-        var i =0;
-        var n = elements.length
-        for (i=0; i < n; i++) {
-            elements[i].removeAttribute('tabindex');
-        }
-    }
-
-    /**
-     * remove tabbing on a list of focusable elements.
+     * add/remove tabbing on a list of focusable elements.
      * this is when its parent content hides.
      * fixes accessibility issue.
-     * @param elements
+     * @param elements,
+     * @param enableTabs
      */
-    function removeTabbing(elements) {
+    function toggleTabbing(elements, enableTabs) {
         var i =0;
         var n = elements.length
         for ( i = 0; i < n; i++) {
-            elements[i].setAttribute('tabindex', '-1');
+            if (enableTabs) {
+                elements[i].removeAttribute('tabindex')
+            } else {
+                elements[i].setAttribute('tabindex', '-1')
+            }
+
         }
     }
 
@@ -111,9 +104,9 @@
         // this is the details current state. e.g. open now soon to be closed
         if(summary.__details.open ||
             summary.__details.getAttribute('open') !== null ){
-            removeTabbing(summary.__details.__focusableElements)
+            toggleTabbing(summary.__details.__focusableElements,false)
         }else{
-            restoreTabbing(summary.__details.__focusableElements)
+            toggleTabbing(summary.__details.__focusableElements, true)
         }
 
         if (summary.__twisty) {
@@ -184,14 +177,14 @@
             if (openAttr === true) {
                 details.__summary.setAttribute('aria-expanded', 'true')
                 details.__content.setAttribute('aria-hidden', 'false')
-                restoreTabbing(details.__focusableElements)
+                toggleTabbing(details.__focusableElements,true)
             } else {
                 details.__summary.setAttribute('aria-expanded', 'false')
                 details.__content.setAttribute('aria-hidden', 'true')
                 if (!NATIVE_DETAILS) {
                     details.__content.style.display = 'none'
                 }
-                removeTabbing(details.__focusableElements)
+                toggleTabbing(details.__focusableElements,true)
             }
 
             // Create a circular reference from the summary back to its
@@ -220,7 +213,6 @@
     moj.Modules.DetailsPolyfill = {
 
         init: function () {
-            debugger;
             moj.Events.on('Polyfill.fill', this.fill);
             this.fill();
         },
