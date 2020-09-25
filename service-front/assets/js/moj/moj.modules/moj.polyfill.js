@@ -14,28 +14,29 @@
     var NATIVE_DETAILS = typeof document.createElement('details').open === 'boolean'
 
     /**
-     * restore tab Functionality on a list of links.
-     * this is when the links appear to user. fixes accessibility issue.
-     * @param links
+     * restore tabbing on a list of focusable elements.
+     * fixes accessibility issue.
+     * @param elements
      */
-    function restoreTabbing(links){
+    function restoreTabbing(elements){
         var i =0;
-        var n = links.length
+        var n = elements.length
         for (i=0; i < n; i++) {
-            links[i].removeAttribute('tabindex');
+            elements[i].removeAttribute('tabindex');
         }
     }
 
     /**
-     * remove tabbing on links passed in.
-     * this is when its parent content hides. fixes accessibility issue.
-     * @param links
+     * remove tabbing on a list of focusable elements.
+     * this is when its parent content hides.
+     * fixes accessibility issue.
+     * @param elements
      */
-    function removeTabbing(links) {
+    function removeTabbing(elements) {
         var i =0;
-        var n = links.length
+        var n = elements.length
         for ( i = 0; i < n; i++) {
-            links[i].setAttribute('tabindex', '-1');
+            elements[i].setAttribute('tabindex', '-1');
         }
     }
 
@@ -110,9 +111,9 @@
         // this is the details current state. e.g. open now soon to be closed
         if(summary.__details.open ||
             summary.__details.getAttribute('open') !== null ){
-            removeTabbing(summary.__details.__links)
+            removeTabbing(summary.__details.__focusableElements)
         }else{
-            restoreTabbing(summary.__details.__links)
+            restoreTabbing(summary.__details.__focusableElements)
         }
 
         if (summary.__twisty) {
@@ -154,8 +155,8 @@
             // Save shortcuts to the inner summary and content elements
             details.__summary = details.getElementsByTagName('summary').item(0)
             details.__content = details.getElementsByTagName('div').item(0)
-            // shortcut to all links - for tabindex handling.
-            details.__links =  details.getElementsByTagName('a');
+            // shortcut to all focusable elements - for tabindex handling.
+            details.__focusableElements =  $(details).find('a,:input');
 
             // If the content doesn't have an ID, assign it one now
             // which we'll need for the summary's aria-controls assignment
@@ -183,14 +184,14 @@
             if (openAttr === true) {
                 details.__summary.setAttribute('aria-expanded', 'true')
                 details.__content.setAttribute('aria-hidden', 'false')
-                restoreTabbing(details.__links)
+                restoreTabbing(details.__focusableElements)
             } else {
                 details.__summary.setAttribute('aria-expanded', 'false')
                 details.__content.setAttribute('aria-hidden', 'true')
                 if (!NATIVE_DETAILS) {
                     details.__content.style.display = 'none'
                 }
-                removeTabbing(details.__links)
+                removeTabbing(details.__focusableElements)
             }
 
             // Create a circular reference from the summary back to its
@@ -217,7 +218,9 @@
     }
 
     moj.Modules.DetailsPolyfill = {
+
         init: function () {
+            debugger;
             moj.Events.on('Polyfill.fill', this.fill);
             this.fill();
         },
