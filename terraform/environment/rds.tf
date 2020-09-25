@@ -13,7 +13,7 @@ resource "aws_db_instance" "api" {
   password                   = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
   parameter_group_name       = aws_db_parameter_group.postgres-db-params.name
   vpc_security_group_ids     = [aws_security_group.rds-api.id]
-  auto_minor_version_upgrade = true
+  auto_minor_version_upgrade = false
   maintenance_window         = "sun:01:00-sun:01:30"
   multi_az                   = true
   backup_retention_period    = local.account.backup_retention_period
