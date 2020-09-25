@@ -184,7 +184,7 @@
                 if (!NATIVE_DETAILS) {
                     details.__content.style.display = 'none'
                 }
-                toggleTabbing(details.__focusableElements,true)
+                toggleTabbing(details.__focusableElements,false)
             }
 
             // Create a circular reference from the summary back to its
@@ -213,6 +213,7 @@
     moj.Modules.DetailsPolyfill = {
 
         init: function () {
+            debugger;
             moj.Events.on('Polyfill.fill', this.fill);
             this.fill();
         },
