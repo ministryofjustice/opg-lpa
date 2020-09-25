@@ -15,6 +15,7 @@ variable "accounts" {
       prevent_db_destroy            = bool
       backup_retention_period       = number
       skip_final_snapshot           = bool
+      psql_engine_version           = string
       autoscaling = object({
         front = object({
           minimum = number
