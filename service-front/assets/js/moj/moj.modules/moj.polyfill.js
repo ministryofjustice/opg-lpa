@@ -213,7 +213,6 @@
     moj.Modules.DetailsPolyfill = {
 
         init: function () {
-            debugger;
             moj.Events.on('Polyfill.fill', this.fill);
             this.fill();
         },
