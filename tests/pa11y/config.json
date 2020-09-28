@@ -8,6 +8,6 @@
         "timeout": 60000
     },
     "urls": [
-        "http://google.com"
+        "https://localhost:7002/login"
     ]
 }

@@ -631,15 +631,15 @@ orbs:
                   terraform apply -lock-timeout=300s -auto-approve -var docker_remote_ip=$DOCKER_REMOTE_IP
                 fi
           - run:
+              name: Run pa11y test
+              command: |
+                docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name opgpa11y opgpa11y:latest
+                docker exec opgpa11y iecho $BASE_DOMAIN
+          - run:
               name: Run test
               command: |
                 docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name casperjs casperjs:latest
                 docker exec casperjs ./start.sh 'tests/'
-          - run:
-              name: Run pa11y test
-              command: |
-                docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name opgpa11y opgpa11y:latest
-                docker exec opgpa11y ls
           - run:
               name: Remove CircleCI ingress to environment
               command: |
