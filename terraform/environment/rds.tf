@@ -26,13 +26,13 @@ resource "aws_db_parameter_group" "postgres-db-params" {
   name        = lower("postgres-db-params-${local.environment}")
   description = "default postgres rds parameter group"
   family      = local.account.psql_parameter_group_family
-  # -1 is default which would not log anything
+
   parameter {
     name         = "log_min_duration_statement"
     value        = "500"
     apply_method = "immediate"
   }
-  # none is default
+
   parameter {
     name         = "log_statement"
     value        = "none"
