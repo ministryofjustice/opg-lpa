@@ -33,7 +33,7 @@ aws dynamodb create-table \
 --endpoint $DYNAMODN_ENDPOINT
 
 # ----------------------------------------------------------
-/usr/local/bin/waitforit -address=${OPG_LPA_COMMON_SQS_ENDPOINT} -timeout 60 -retry 6000 -debug
+/usr/local/bin/waitforit -address=tcp://${OPG_LPA_COMMON_SQS_ENDPOINT} -timeout 60 -retry 6000 -debug
 
 ATTR="MessageRetentionPeriod=3600,\
 FifoQueue=true,\
@@ -44,13 +44,13 @@ aws sqs create-queue \
 --queue-name=${OPG_LPA_COMMON_PDF_QUEUE_NAME} \
 --attributes="$ATTR" \
 --region=eu-west-1 \
---endpoint=${OPG_LPA_COMMON_SQS_ENDPOINT}
+--endpoint=http://${OPG_LPA_COMMON_SQS_ENDPOINT}
 
 
 # ----------------------------------------------------------
-/usr/local/bin/waitforit -address=${OPG_LPA_COMMON_S3_ENDPOINT} -timeout 60 -retry 6000 -debug
+/usr/local/bin/waitforit -address=tcp://${OPG_LPA_COMMON_S3_ENDPOINT} -timeout 60 -retry 6000 -debug
 
 aws s3api create-bucket \
---endpoint=${OPG_LPA_COMMON_S3_ENDPOINT} \
+--endpoint=http://${OPG_LPA_COMMON_S3_ENDPOINT} \
 --region=eu-west-1 \
 --bucket=${OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET}
