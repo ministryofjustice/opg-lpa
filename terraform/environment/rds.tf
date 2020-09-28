@@ -19,6 +19,7 @@ resource "aws_db_instance" "api" {
   backup_retention_period    = local.account.backup_retention_period
   deletion_protection        = local.account.prevent_db_destroy
   tags                       = local.default_tags
+  allow_major_version_upgrade= true
 }
 
 resource "aws_db_parameter_group" "postgres-db-params" {
