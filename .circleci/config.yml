@@ -93,11 +93,6 @@ workflows:
           filters: { branches: { ignore: [master] } }
           requires: [dev_seed_environment_databases]
 
-      - infrastructure_and_deployment/run_pa11y_test:
-          name: run_pa11y_test
-          filters: { branches: { ignore: [master] } }
-          requires: [dev_seed_environment_databases]
-
       - slack_notify_domain:
           name: post_environment_domains
           filters: { branches: { ignore: [master] } }
@@ -634,7 +629,7 @@ orbs:
               name: Run pa11y test
               command: |
                 docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name opgpa11y opgpa11y:latest
-                docker exec opgpa11y echo $BASE_DOMAIN
+                docker exec opgpa11y env
           - run:
               name: Run test
               command: |
@@ -651,19 +646,6 @@ orbs:
                   terraform destroy -lock-timeout=300s -auto-approve
                 fi
               when: always
-
-      run_pa11y_test:
-        #
-        # Runs pa11y tests
-        #
-        docker:
-          - image: circleci/python
-        steps:
-          - checkout
-          - run:
-              name: Run Pa11y tests
-              command: |
-                ls
 
 jobs:
   cancel_redundant_builds:
