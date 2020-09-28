@@ -1,35 +1,17 @@
-# A minimal Docker image with Node and Puppeteer
+FROM node:11
 
-FROM node:lts-alpine
+RUN apt-get update && apt-get install -y curl wget apt-transport-https \
+	&& wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst ttf-freefont \
+      --no-install-recommends \
+	&& apt-get install -y wget unzip fontconfig locales gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget \
+	&& npm install -g pa11y-ci@2.3.0 depcheck --unsafe-perm \
+    && npm install -g pa11y --unsafe-perm \
+    && npm install -g axe \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get purge --auto-remove -y \
+    && rm -rf /src/*.deb
 
-RUN apk add --no-cache \
-      chromium \
-      nss \
-      freetype \
-      freetype-dev \
-      harfbuzz \
-      ca-certificates \
-      ttf-freefont \
-      nodejs \
-      yarn
-
-# Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
-#ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true 
-# Tell puppeteer where to look for chromium and install here.
-#ENV CHROMIUM_PATH /usr/bin/chromium-browser
-
-USER node
-WORKDIR /home/node
-#COPY package.json yarn.lock ./
-RUN yarn install --silent --production --non-interactive && \
-    yarn cache clean --force
-# Puppeteer v1.19.0 works with Chromium 77.
-RUN yarn add puppeteer@1.19.0
-
-WORKDIR /src/app
-USER root
-RUN npm install
-RUN npm install -g pa11y --unsafe-perm=true
-RUN which pa11y
-
-#CMD [ "node", "-r", "esm", "src/server.js"]
+WORKDIR /workspace

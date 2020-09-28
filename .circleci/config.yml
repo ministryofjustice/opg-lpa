@@ -596,7 +596,12 @@ orbs:
                 docker build -f ~/project/tests/Dockerfile  -t casperjs:latest .
                 echo 'export DOCKER_REMOTE_IP="$(docker run casperjs:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
                 echo $DOCKER_REMOTE_IP
-
+          - run:
+              name: Build pa11y container
+              command: |
+                docker build -f ~/project/tests/pa11y/Dockerfile -v ~/project/tests/pa11y/config.json:/tmp/config.json -t opgpa11y:latest .
+                echo 'export DOCKER_PA11Y_REMOTE_IP="$(docker run opgpa11y:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
+                echo $DOCKER_PA11Y_REMOTE_IP
           - run:
               name: Install python dependencies
               command: |
@@ -630,6 +635,11 @@ orbs:
                 docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name casperjs casperjs:latest
                 docker exec casperjs ./start.sh 'tests/'
           - run:
+              name: Run pa11y test
+              command: |
+                docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name opgpa11y opgpa11y:latest
+                docker exec opgpa11y pwd
+          - run:
               name: Remove CircleCI ingress to environment
               command: |
                 if [ <<parameters.workspace>> != "production" ]; then
@@ -646,7 +656,7 @@ orbs:
         # Runs pa11y tests
         #
         docker:
-          - image: circleci/node
+          - image: circleci/python
         steps:
           - checkout
           - run:

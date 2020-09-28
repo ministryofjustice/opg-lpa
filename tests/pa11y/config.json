@@ -1,0 +1,13 @@
+{
+    "defaults": {
+      "chromeLaunchConfig": {
+         "args": ["--no-sandbox"],
+         "ignoreHTTPSErrors": true
+       },
+        "standard": "WCAG2AA",
+        "timeout": 60000
+    },
+    "urls": [
+        "http://google.com"
+    ]
+}
