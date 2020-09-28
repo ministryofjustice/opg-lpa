@@ -630,6 +630,8 @@ orbs:
               command: |
                 docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name opgpa11y opgpa11y:latest
                 docker exec opgpa11y env
+                docker exec opgpa11y sed -i "s/localhost:7002/$BASE_DOMAIN/" config.json
+                docker exex opgpa11y cat config.json
           - run:
               name: Run test
               command: |
