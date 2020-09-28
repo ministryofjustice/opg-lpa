@@ -599,7 +599,7 @@ orbs:
           - run:
               name: Build pa11y container
               command: |
-                docker build -f ~/project/tests/pa11y/Dockerfile -v ~/project/tests/pa11y/config.json:/tmp/config.json -t opgpa11y:latest .
+                docker build -f ~/project/tests/pa11y/Dockerfile -t opgpa11y:latest .
                 echo 'export DOCKER_PA11Y_REMOTE_IP="$(docker run opgpa11y:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
                 echo $DOCKER_PA11Y_REMOTE_IP
           - run:
@@ -638,7 +638,7 @@ orbs:
               name: Run pa11y test
               command: |
                 docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name opgpa11y opgpa11y:latest
-                docker exec opgpa11y pwd
+                docker exec opgpa11y ls
           - run:
               name: Remove CircleCI ingress to environment
               command: |
