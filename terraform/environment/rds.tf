@@ -24,7 +24,7 @@ resource "aws_db_instance" "api" {
 resource "aws_db_parameter_group" "postgres-db-params" {
   name        = lower("postgres-db-params-${local.environment}")
   description = "default postgres rds parameter group"
-  family      = "postgres${local.account.psql_engine_version}"
+  family      = "postgres${local.account.psql_parameter_group_family}"
 
   parameter {
     name         = "log_min_duration_statement"
