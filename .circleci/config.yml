@@ -322,6 +322,7 @@ orbs:
               name: install Workspace Manager
               command: |
                 pwd
+                apk add libc6-compat
                 wget https://github.com/TomTucka/terraform-workspace-manager/releases/download/v0.3.1/terraform-workspace-manager_Linux_x86_64.tar.gz
                 tar -xzf terraform-workspace-manager_Linux_x86_64.tar.gz
                 chmod +x terraform-workspace-manager
