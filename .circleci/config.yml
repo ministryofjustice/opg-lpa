@@ -219,6 +219,15 @@ orbs:
           - run:
               name: Install AWS CLI
               command: sudo pip3 install awscli --upgrade
+      install_workspace_manager:
+        steps:
+          - run:
+              name: install workspace manager
+              command: |
+                pwd
+                wget https://github.com/TomTucka/terraform-workspace-manager/releases/download/v0.3.1/terraform-workspace-manager_Linux_arm64.tar.gz
+                sudo tar -xzf terraform-workspace-manager_Linux_arm64.tar.gz
+                sudo chmod +x terraform-workspace-manager
       ecr_login:
         steps:
           - run:
@@ -449,21 +458,27 @@ orbs:
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
         steps:
           - checkout
+
           - run:
               name: Apply Environment Terraform
               command: |
                 cd ~/project/terraform/environment
                 terraform init -lock-timeout=300s
-                export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                export IMAGE_TAG=$(~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                echo $IMAGE_TAG
+                terraform apply -lock-timeout=300s -auto-approve -parallelism=15 -var container_version=${IMAGE_TAG}
+          - install_workspace_manager
+          - run:
+              name: register workspace
+              command: |
+               pwd
+               export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
-                ~/project/scripts/pipeline/workspace_cleanup/terraform-workspace-manager_Linux_amd64/terraform-workspace-manager \
+                ~/project/terraform-workspace-manager \
                 -register-workspace=${TF_WORKSPACE} \
                 -time-to-protect=24 \
                 -aws-account-id=050256574573 \
                 -aws-iam-role=opg-lpa-ci
-                export IMAGE_TAG=$(~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
-                echo $IMAGE_TAG
-                terraform apply -lock-timeout=300s -auto-approve -parallelism=15 -var container_version=${IMAGE_TAG}
           - persist_to_workspace:
               root: /tmp
               paths:
@@ -724,12 +739,13 @@ jobs:
       - image: hashicorp/terraform
     steps:
       - checkout
+      - install_workspace_manager
       - run:
           name: Cleanup Workspaces
           command: |
             cd terraform/environment
             terraform init -lock-timeout=300s
-            export TF_PROTECTED_WORKSPACES=$(~/project/scripts/pipeline/workspace_cleanup/terraform-workspace-manager_Linux_amd64/terraform-workspace-manager \
+            export TF_PROTECTED_WORKSPACES=$(~/project/terraform-workspace-manager \
              -protected-workspaces=true \
              -aws-account-id=050256574573 \
              -aws-iam-role=opg-lpa-ci) >> $BASH_ENV
