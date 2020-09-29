@@ -212,18 +212,6 @@ workflows:
 
 orbs:
   slack: circleci/slack@3.3.0
-  terraform_workspace_manager:
-    commands:
-      install_workspace_manager:
-        steps:
-          - run:
-              name: install workspace manager
-              command: |
-                pwd
-                wget https://github.com/TomTucka/terraform-workspace-manager/releases/download/v0.3.1/terraform-workspace-manager_Linux_arm64.tar.gz
-                sudo tar -xzf terraform-workspace-manager_Linux_arm64.tar.gz
-                sudo chmod +x terraform-workspace-manager
-
   build_containers_and_push_to_ecr:
     commands:
       install_aws_cli:
@@ -328,6 +316,15 @@ orbs:
 
   infrastructure_and_deployment:
     commands:
+      install_workspace_manager:
+        steps:
+          - run:
+              name: install Workspace Manager
+              command: |
+                pwd
+                wget https://github.com/TomTucka/terraform-workspace-manager/releases/download/v0.3.1/terraform-workspace-manager_Linux_arm64.tar.gz
+                sudo tar -xzf terraform-workspace-manager_Linux_arm64.tar.gz
+                sudo chmod +x terraform-workspace-manager
       install_aws_cli:
         steps:
           - run:
@@ -742,7 +739,7 @@ jobs:
       - image: hashicorp/terraform
     steps:
       - checkout
-      - install_workspace_manager
+      - infrastructure_and_deployment/install_workspace_manager
       - run:
           name: Cleanup Workspaces
           command: |
