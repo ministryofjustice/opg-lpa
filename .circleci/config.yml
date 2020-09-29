@@ -212,13 +212,8 @@ workflows:
 
 orbs:
   slack: circleci/slack@3.3.0
-  build_containers_and_push_to_ecr:
+  terraform_workspace_manager:
     commands:
-      install_aws_cli:
-        steps:
-          - run:
-              name: Install AWS CLI
-              command: sudo pip3 install awscli --upgrade
       install_workspace_manager:
         steps:
           - run:
@@ -228,6 +223,14 @@ orbs:
                 wget https://github.com/TomTucka/terraform-workspace-manager/releases/download/v0.3.1/terraform-workspace-manager_Linux_arm64.tar.gz
                 sudo tar -xzf terraform-workspace-manager_Linux_arm64.tar.gz
                 sudo chmod +x terraform-workspace-manager
+
+  build_containers_and_push_to_ecr:
+    commands:
+      install_aws_cli:
+        steps:
+          - run:
+              name: Install AWS CLI
+              command: sudo pip3 install awscli --upgrade
       ecr_login:
         steps:
           - run:
