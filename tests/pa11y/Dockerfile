@@ -17,4 +17,3 @@ RUN apt-get update && apt-get install -y curl wget apt-transport-https \
 
 WORKDIR /workspace
 COPY config.json .
-COPY *.js .
