@@ -11,7 +11,7 @@ resource "aws_db_instance" "api" {
   port                        = "5432"
   username                    = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
   password                    = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
-  parameter_group_name        = terraform.workspace == "preproduction" ? "default.${local.account.psql_parameter_group_family}" : aws_db_parameter_group.postgres-db-params[0].name
+  parameter_group_name        = aws_db_parameter_group.postgres-db-params.name
   vpc_security_group_ids      = [aws_security_group.rds-api.id]
   auto_minor_version_upgrade  = false
   maintenance_window          = "sun:01:00-sun:01:30"
@@ -26,7 +26,6 @@ resource "aws_db_parameter_group" "postgres-db-params" {
   name        = lower("postgres-db-params-${local.environment}")
   description = "default postgres rds parameter group"
   family      = local.account.psql_parameter_group_family
-  count       = terraform.workspace == "preproduction" ? 0 : 1
   parameter {
     name         = "log_min_duration_statement"
     value        = "500"
