@@ -5,7 +5,7 @@ services:
   # Local Services
 
   postgres:
-    image: postgres:9.6
+    image: postgres:10.13
     ports:
       - 5432:5432
     environment:
