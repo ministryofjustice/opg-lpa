@@ -1,17 +1,17 @@
 version: 2.1
 
 workflows:
-  # workspace_cleanup:
-  #   triggers:
-  #     - schedule:
-  #         cron: "0 6,18 * * 0-6" # 6am and 6pm
-  #         filters:
-  #           branches:
-  #             only:
-  #               - master
-  #   jobs:
-  #     - workspace_cleanup:
-  #         name: workspace_cleanup
+  workspace_cleanup:
+     triggers:
+       - schedule:
+           cron: "0 6,18 * * 0-6" # 6am and 6pm
+           filters:
+             branches:
+               only:
+                 - master
+     jobs:
+       - workspace_cleanup:
+           name: workspace_cleanup
 
   pr_build:
     jobs:
@@ -473,7 +473,6 @@ orbs:
           - run:
               name: register workspace
               command: |
-                pwd
                 export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 ~/project/terraform-workspace-manager \
