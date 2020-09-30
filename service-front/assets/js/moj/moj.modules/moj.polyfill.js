@@ -13,6 +13,26 @@
 
     var NATIVE_DETAILS = typeof document.createElement('details').open === 'boolean'
 
+    /**
+     * add/remove tabbing on a list of focusable elements.
+     * this is when its parent content hides.
+     * fixes accessibility issue.
+     * @param elements,
+     * @param enableTabs
+     */
+    function toggleTabbing(elements, enableTabs) {
+        var i =0;
+        var n = elements.length
+        for ( i = 0; i < n; i++) {
+            if (enableTabs) {
+                elements[i].removeAttribute('tabindex')
+            } else {
+                elements[i].setAttribute('tabindex', '-1')
+            }
+
+        }
+    }
+
     // Add event construct for modern browsers or IE
     // which fires the callback with a pre-converted target reference
     function addEvent (node, type, callback) {
@@ -81,6 +101,13 @@
                 summary.__details.removeAttribute('open')
             }
         }
+        // this is the details current state. e.g. open now soon to be closed
+        if(summary.__details.open ||
+            summary.__details.getAttribute('open') !== null ){
+            toggleTabbing(summary.__details.__focusableElements,false)
+        }else{
+            toggleTabbing(summary.__details.__focusableElements, true)
+        }
 
         if (summary.__twisty) {
             summary.__twisty.firstChild.nodeValue = (expanded ? '\u25ba' : '\u25bc')
@@ -121,6 +148,8 @@
             // Save shortcuts to the inner summary and content elements
             details.__summary = details.getElementsByTagName('summary').item(0)
             details.__content = details.getElementsByTagName('div').item(0)
+            // shortcut to all focusable elements - for tabindex handling.
+            details.__focusableElements =  $(details).find('a,:input');
 
             // If the content doesn't have an ID, assign it one now
             // which we'll need for the summary's aria-controls assignment
@@ -148,12 +177,14 @@
             if (openAttr === true) {
                 details.__summary.setAttribute('aria-expanded', 'true')
                 details.__content.setAttribute('aria-hidden', 'false')
+                toggleTabbing(details.__focusableElements,true)
             } else {
                 details.__summary.setAttribute('aria-expanded', 'false')
                 details.__content.setAttribute('aria-hidden', 'true')
                 if (!NATIVE_DETAILS) {
                     details.__content.style.display = 'none'
                 }
+                toggleTabbing(details.__focusableElements,false)
             }
 
             // Create a circular reference from the summary back to its
@@ -180,6 +211,7 @@
     }
 
     moj.Modules.DetailsPolyfill = {
+
         init: function () {
             moj.Events.on('Polyfill.fill', this.fill);
             this.fill();
