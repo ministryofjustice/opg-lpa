@@ -1,6 +1,18 @@
 version: 2.1
 
 workflows:
+  workspace_cleanup:
+     triggers:
+       - schedule:
+           cron: "0 6,18 * * 0-6" # 6am and 6pm
+           filters:
+             branches:
+               only:
+                 - master
+     jobs:
+       - workspace_cleanup:
+           name: workspace_cleanup
+
   pr_build:
     jobs:
       - cancel_redundant_builds:
@@ -80,7 +92,7 @@ workflows:
               api_docker_build,
               pdf_docker_build,
               seeding_docker_build,
-              dev_environment_apply_terraform,
+              #dev_environment_apply_terraform,
             ]
 
       - infrastructure_and_deployment/seed_environment_databases:
@@ -97,17 +109,6 @@ workflows:
           name: post_environment_domains
           filters: { branches: { ignore: [master] } }
           requires: [run_functional_test]
-
-      - hold-for-destruction:
-          name: hold_env_for_destruction
-          type: approval
-          filters: { branches: { ignore: [master] } }
-          requires: [post_environment_domains]
-
-      - infrastructure_and_deployment/destroy_dev_environment:
-          name: dev_destroy_environment
-          filters: { branches: { ignore: [master] } }
-          requires: [hold_env_for_destruction]
 
   path_to_live:
     jobs:
@@ -315,6 +316,17 @@ orbs:
 
   infrastructure_and_deployment:
     commands:
+      install_workspace_manager:
+        steps:
+          - run:
+              name: install Workspace Manager
+              command: |
+                pwd
+                apk add libc6-compat
+                wget https://github.com/TomTucka/terraform-workspace-manager/releases/download/v0.3.1/terraform-workspace-manager_Linux_x86_64.tar.gz
+                tar -xzf terraform-workspace-manager_Linux_x86_64.tar.gz
+                chmod +x terraform-workspace-manager
+
       install_aws_cli:
         steps:
           - run:
@@ -448,6 +460,7 @@ orbs:
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
         steps:
           - checkout
+          - install_workspace_manager
           - run:
               name: Apply Environment Terraform
               command: |
@@ -458,6 +471,16 @@ orbs:
                 export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s -auto-approve -parallelism=15 -var container_version=${IMAGE_TAG}
+          - run:
+              name: register workspace
+              command: |
+                export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                echo $TF_WORKSPACE
+                ~/project/terraform-workspace-manager \
+                -register-workspace=${TF_WORKSPACE} \
+                -time-to-protect=24 \
+                -aws-account-id=050256574573 \
+                -aws-iam-role=opg-lpa-ci
           - persist_to_workspace:
               root: /tmp
               paths:
@@ -724,3 +747,21 @@ jobs:
             export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
                 echo $IMAGE_TAG
             python scripts/pipeline/check_ecr_scan_results/aws_ecr_scan_results.py --search online-lpa --tag ${IMAGE_TAG}
+
+  workspace_cleanup:
+    docker:
+      - image: hashicorp/terraform
+    steps:
+      - checkout
+      - infrastructure_and_deployment/install_workspace_manager
+      - run:
+          name: Cleanup Workspaces
+          command: |
+            cd terraform/environment
+            terraform init -lock-timeout=300s
+            export TF_PROTECTED_WORKSPACES=$(~/project/terraform-workspace-manager \
+             -protected-workspaces=true \
+             -aws-account-id=050256574573 \
+             -aws-iam-role=opg-lpa-ci) >> $BASH_ENV
+             echo $TF_PROTECTED_WORKSPACES
+             ~/project/scripts/pipeline/workspace_cleanup/workspace_cleanup.sh ${TF_PROTECTED_WORKSPACES}
