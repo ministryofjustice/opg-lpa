@@ -591,7 +591,13 @@ orbs:
                 docker build -f ~/project/tests/Dockerfile  -t casperjs:latest .
                 echo 'export DOCKER_REMOTE_IP="$(docker run casperjs:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
                 echo $DOCKER_REMOTE_IP
-
+          - run:
+              name: Build pa11y container
+              command: |
+                cd ~/project/tests/pa11y
+                docker build -t opgpa11y:latest .
+                echo 'export DOCKER_PA11Y_REMOTE_IP="$(docker run opgpa11y:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
+                echo $DOCKER_PA11Y_REMOTE_IP
           - run:
               name: Install python dependencies
               command: |
@@ -619,6 +625,12 @@ orbs:
                   echo $TF_WORKSPACE
                   terraform apply -lock-timeout=300s -auto-approve -var docker_remote_ip=$DOCKER_REMOTE_IP
                 fi
+          - run:
+              name: Run pa11y test
+              command: |
+                docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name opgpa11y opgpa11y:latest
+                docker exec opgpa11y sed -i "s/localhost:7002/$FRONT_DOMAIN/" config.json
+                docker exec opgpa11y pa11y-ci -c config.json || true # true prevents this being a failure if pa11y has errors. one day we will want to remove true
           - run:
               name: Run test
               command: |
