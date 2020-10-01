@@ -256,7 +256,7 @@ orbs:
           - checkout
           - install_aws_cli
           - setup_remote_docker:
-              version: 18.06.0-ce
+              version: 19.03.12
               docker_layer_caching: false
           - run:
               name: Build web container
@@ -581,7 +581,7 @@ orbs:
         steps:
           - checkout
           - setup_remote_docker:
-              version: 18.06.0-ce
+              version: 19.03.12
               docker_layer_caching: false
           - attach_workspace:
               at: /tmp
