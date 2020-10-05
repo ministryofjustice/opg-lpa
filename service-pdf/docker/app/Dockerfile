@@ -4,7 +4,7 @@ COPY service-pdf /app
 
 RUN composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
 
-FROM php:7.4-cli
+FROM php:cli-buster
 
 # mkdir below fixes a known issue with openjdk https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
 RUN apt-get -y update \
