@@ -9,6 +9,7 @@ function main() {
 
 function install_tools() {
   #update to 9.6 - to match rds version deployed
+  #this may need further adjusting as the environments maybe a newer one e.g. 10.3
   sudo yum install postgresql96 jq -y
 }
 
