@@ -1,5 +1,8 @@
 # Using cloud9
 
+Generally, if you want to access an RDS instance, om AWS you will need to spin up a Cloud9 instance.
+The instructions below help you to do that, so you can query data and perform database operations.
+
 ## Setup
 
 ### Starting a Cloud 9 Instance
