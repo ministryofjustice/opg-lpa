@@ -58,3 +58,14 @@ You must be connected to the MoJ VPN before beginning these instructions.
 ## Seeding an environment using the pipeline
 
 The CircleCI pipeline will run a seeding task after the environment has been built using the scripts in scripts/non_live_seeding.
+
+## Seeded user details
+
+The following user will be seeded into all non live environments.
+
+``` code
+username: seeded_test_user@digital.justice.gov.uk
+password: Pass1234
+```
+
+attached to this user are a number of example LPA's for testing and debug purposes.
