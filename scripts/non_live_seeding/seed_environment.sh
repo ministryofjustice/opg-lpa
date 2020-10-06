@@ -22,16 +22,6 @@ else
 fi
 }
 
-#check_users_table_exists()
-#{
-#if [ "$( PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} lpadb -tAc "SELECT 1 FROM pg_database WHERE datname='${OPG_LPA_POSTGRES_NAME}'" )" = '1' ]
-#then
-    #echo "Users table exists. Can continue"
-#else
-    #echo "Users table does not exist. Seeding will fail"
-#fi
-#}
-
 if [ "$OPG_LPA_STACK_NAME" == "production" ]; then
   echo "These scripts must not be run on production."
   exit 0
