@@ -1,7 +1,7 @@
 ## Purpose
 _Briefly describe the purpose of the change, and/or link to the JIRA ticket for context_
 
-Fixes LPA-####
+Fixes LPAL-####
 
 ## Approach
 
@@ -9,7 +9,7 @@ _Explain how your code addresses the purpose of the change_
 
 ## Learning
 
-_Any tips and tricks, blog posts or tools which helped you. Plus anything notable you've discovered about the Refunds service_
+_Any tips and tricks, blog posts or tools which helped you. Plus anything notable you've discovered about the LPA service_
 
 ## Checklist
 
