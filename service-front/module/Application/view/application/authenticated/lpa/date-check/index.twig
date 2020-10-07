@@ -66,54 +66,79 @@
     {# Set form fields variables #}
     {% set donorElement = form.get('sign-date-donor') %}
     {% set donorElementDay = donorElement.get('day') %}
+    {% set donorElementDayId = donorElementDay.getAttribute('name') %}
+
     {% set donorElementMonth = donorElement.get('month') %}
+    {% set donorElementMonthId = donorElementMonth.getAttribute('name') %}
+
     {% set donorElementYear = donorElement.get('year') %}
+    {% set donorElementYearId = donorElementYear.getAttribute('name') %}
 
     {# form fields config #}
     {{ donorElementDay.setAttributes({
-        class: 'form-control'
+        class: 'form-control',
+        id: donorElementDayId
     }) ? '' }}
     {{ donorElementMonth.setAttributes({
-        class: 'form-control'
+        class: 'form-control',
+        id: donorElementMonthId
     }) ? '' }}
     {{ donorElementYear.setAttributes({
-        class: 'form-control'
+        class: 'form-control',
+        id: donorElementYearId
     }) ? '' }}
 
     {% set certificateProviderElement = form.get('sign-date-certificate-provider') %}
     {% set certificateProviderElementDay = certificateProviderElement.get('day') %}
+    {% set certificateProviderElementDayId = certificateProviderElementDay.getAttribute('name') %}
+
     {% set certificateProviderElementMonth = certificateProviderElement.get('month') %}
+    {% set certificateProviderElementMonthId = certificateProviderElementMonth.getAttribute('name') %}
+
     {% set certificateProviderElementYear = certificateProviderElement.get('year') %}
+    {% set certificateProviderElementYearId = certificateProviderElementYear.getAttribute('name') %}
 
     {{ certificateProviderElementDay.setAttributes({
-        class: 'form-control'
+        class: 'form-control',
+        id: certificateProviderElementDayId
     }) ? '' }}
 
     {{ certificateProviderElementMonth.setAttributes({
-        class: 'form-control'
+        class: 'form-control',
+        id: certificateProviderElementMonthId
     }) ? '' }}
 
     {{ certificateProviderElementYear.setAttributes({
-        class: 'form-control'
+        class: 'form-control',
+        id: certificateProviderElementYearId
     }) ? '' }}
 
     {% if form.has('sign-date-donor-life-sustaining') %}
 
         {% set donorLifeSustainingElement = form.get('sign-date-donor-life-sustaining') %}
+
         {% set donorLifeSustainingElementDay = donorLifeSustainingElement.get('day') %}
+        {% set donorLifeSustainingElementDayId = donorLifeSustainingElementDay.getAttribute('name') %}
+
         {% set donorLifeSustainingElementMonth = donorLifeSustainingElement.get('month') %}
+        {% set donorLifeSustainingElementMonthId = donorLifeSustainingElementMonth.getAttribute('name') %}
+
         {% set donorLifeSustainingElementYear = donorLifeSustainingElement.get('year') %}
+        {% set donorLifeSustainingElementYearId = donorLifeSustainingElementYear.getAttribute('name') %}
 
         {{ donorLifeSustainingElementDay.setAttributes({
-            class: 'form-control'
+            class: 'form-control',
+            id: donorLifeSustainingElementDayId
         }) ? '' }}
 
         {{ donorLifeSustainingElementMonth.setAttributes({
-            class: 'form-control'
+            class: 'form-control',
+            id: donorLifeSustainingElementMonthId
         }) ? '' }}
 
         {{ donorLifeSustainingElementYear.setAttributes({
-            class: 'form-control'
+            class: 'form-control',
+            id: donorLifeSustainingElementYearId
         }) ? '' }}
 
     {% endif %}
@@ -172,17 +197,17 @@
                     <fieldset id="{{ donorLifeSustainingElement.getAttribute('id') }}" class="date-check-dates">
                         <legend class="visually-hidden">Check signature dates for donor</legend>
                         <div class="form-group form-group-day {{ donorLifeSustainingElement.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ donorLifeSustainingElementDay.getAttribute('id') }}">Day</label>
+                            <label class="form-label" for="{{ donorLifeSustainingElementDayId }}">Day</label>
                             {{ formElement(donorLifeSustainingElementDay) }}
                         </div>
 
                         <div class="form-group form-group-month {{ donorLifeSustainingElement.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ donorLifeSustainingElementMonth.getAttribute('id') }}">Month</label>
+                            <label class="form-label" for="{{ donorLifeSustainingElementMonthId }}">Month</label>
                             {{ formElement(donorLifeSustainingElementMonth) }}
                         </div>
 
                         <div class="form-group form-group-year {{ donorLifeSustainingElement.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ donorLifeSustainingElementYear.getAttribute('id') }}">Year</label>
+                            <label class="form-label" for="{{ donorLifeSustainingElementYearId }}">Year</label>
                             {{ formElement(donorLifeSustainingElementYear) }}
                         </div>
                     </fieldset>
@@ -204,17 +229,17 @@
                 <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates">
                     <legend class="visually-hidden">Check signature dates for donor</legend>
                     <div class="form-group form-group-day {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
-                        <label class="form-label" for="{{ donorElementDay.getAttribute('id') }}">Day</label>
+                        <label class="form-label" for="{{ donorElementDayId }}">Day</label>
                         {{ formElement(donorElementDay) }}
                     </div>
 
                     <div class="form-group form-group-month {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
-                        <label class="form-label" for="{{ donorElementMonth.getAttribute('id') }}">Month</label>
+                        <label class="form-label" for="{{ donorElementMonthId }}">Month</label>
                         {{ formElement(donorElementMonth) }}
                     </div>
 
                     <div class="form-group form-group-year {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
-                        <label class="form-label" for="{{ donorElementYear.getAttribute('id') }}">Year</label>
+                        <label class="form-label" for="{{ donorElementYearId }}">Year</label>
                         {{ formElement(donorElementYear) }}
                     </div>
                 </fieldset>
@@ -242,17 +267,17 @@
                 <fieldset id="{{ certificateProviderElement.getAttribute('id') }}" class="date-check-dates">
                     <legend class="visually-hidden">Check signature dates for certificate provider</legend>
                     <div class="form-group form-group-day {{ certificateProviderElement.getMessages|length >0 ? 'error'}}">
-                        <label class="form-label" for="{{ certificateProviderElementDay.getAttribute('id') }}">Day</label>
+                        <label class="form-label" for="{{ certificateProviderElementDayId }}">Day</label>
                         {{ formElement(certificateProviderElementDay) }}
                     </div>
 
                     <div class="form-group form-group-month {{ certificateProviderElement.getMessages|length >0 ? 'form-group-error'}}">
-                        <label class="form-label" for="{{ certificateProviderElementMonth.getAttribute('id') }}">Month</label>
+                        <label class="form-label" for="{{ certificateProviderElementMonthId }}">Month</label>
                         {{ formElement(certificateProviderElementMonth) }}
                     </div>
 
                     <div class="form-group form-group-year {{ certificateProviderElement.getMessages|length >0 ? 'form-group-error'}}">
-                        <label class="form-label" for="{{ certificateProviderElementYear.getAttribute('id') }}">Year</label>
+                        <label class="form-label" for="{{ certificateProviderElementYearId }}">Year</label>
                         {{ formElement(certificateProviderElementYear) }}
                     </div>
                 </fieldset>
@@ -264,17 +289,25 @@
 
         {% set element = form.get('sign-date-attorney-' ~ idx) %}
         {% set elementDay = element.get('day') %}
+        {% set elementDayId = elementDay.getAttribute('name') %}
+
         {% set elementMonth = element.get('month') %}
+        {% set elementMonthId = elementMonth.getAttribute('name') %}
+
         {% set elementYear = element.get('year') %}
+        {% set elementYearId = elementYear.getAttribute('name') %}
 
         {{ elementDay.setAttributes({
-            class: 'form-control'
+            class: 'form-control',
+            id: elementDayId
         }) ? '' }}
         {{ elementMonth.setAttributes({
-            class: 'form-control'
+            class: 'form-control',
+            id: elementMonthId
         }) ? '' }}
         {{ elementYear.setAttributes({
-            class: 'form-control'
+            class: 'form-control',
+            id: elementYearId
         }) ? '' }}
 
         <div class="date-check-person person person--full">
@@ -297,17 +330,17 @@
                     <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates">
                         <legend class="visually-hidden">Check signature dates for primary attorney</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementDay.getAttribute('id') }}">Day</label>
+                            <label class="form-label" for="{{ elementDayId }}">Day</label>
                             {{ formElement(elementDay) }}
                         </div>
 
                         <div class="form-group form-group-month {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementMonth.getAttribute('id') }}">Month</label>
+                            <label class="form-label" for="{{ elementMonthId }}">Month</label>
                             {{ formElement(elementMonth) }}
                         </div>
 
                         <div class="form-group form-group-year {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementYear.getAttribute('id') }}">Year</label>
+                            <label class="form-label" for="{{ elementYearId }}">Year</label>
                             {{ formElement(elementYear) }}
                         </div>
                     </fieldset>
@@ -321,17 +354,25 @@
 
         {% set element = form.get('sign-date-replacement-attorney-' ~ idx) %}
         {% set elementDay = element.get('day') %}
+        {% set elementDayId = elementDay.getAttribute('name') %}
+
         {% set elementMonth = element.get('month') %}
+        {% set elementMonthId = elementMonth.getAttribute('name') %}
+
         {% set elementYear = element.get('year') %}
+        {% set elementYearId = elementYear.getAttribute('name') %}
 
         {{ elementDay.setAttributes({
-            class: 'form-control'
+            class: 'form-control',
+            id: elementDayId
         }) ? '' }}
         {{ elementMonth.setAttributes({
-            class: 'form-control'
+            class: 'form-control',
+            id: elementMonthId
         }) ? '' }}
         {{ elementYear.setAttributes({
-            class: 'form-control'
+            class: 'form-control',
+            id: elementYearId
         }) ? '' }}
 
         <div class="date-check-person person person--full">
@@ -354,17 +395,17 @@
                     <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates">
                         <legend class="visually-hidden">Check signature dates for replacement attorney</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementDay.getAttribute('name') }}">Day</label>
+                            <label class="form-label" for="{{ elementDayId }}">Day</label>
                             {{ formElement(elementDay) }}
                         </div>
 
                         <div class="form-group form-group-month {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementMonth.getAttribute('name') }}">Month</label>
+                            <label class="form-label" for="{{ elementMonthId }}">Month</label>
                             {{ formElement(elementMonth) }}
                         </div>
 
                         <div class="form-group form-group-year {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementYear.getAttribute('name') }}">Year</label>
+                            <label class="form-label" for="{{ elementYearId }}">Year</label>
                             {{ formElement(elementYear) }}
                         </div>
                     </fieldset>
@@ -378,17 +419,25 @@
 
         {% set element = form.get('sign-date-applicant-' ~ idx) %}
         {% set elementDay = element.get('day') %}
+        {% set elementDayId = elementDay.getAttribute('name') %}
+
         {% set elementMonth = element.get('month') %}
+        {% set elementMonthId = elementMonth.getAttribute('name') %}
+
         {% set elementYear = element.get('year') %}
+        {% set elementYearId = elementYear.getAttribute('name') %}
 
         {{ elementDay.setAttributes({
-            class: 'form-control'
+            class: 'form-control',
+            id: elementDayId
         }) ? '' }}
         {{ elementMonth.setAttributes({
-            class: 'form-control'
+            class: 'form-control',
+            id: elementMonthId
         }) ? '' }}
         {{ elementYear.setAttributes({
-            class: 'form-control'
+            class: 'form-control',
+            id: elementYearId
         }) ? '' }}
 
         <div class="date-check-person person person--full">
@@ -411,17 +460,17 @@
                     <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates">
                         <legend class="visually-hidden">Check signature dates for applicant</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementDay.getAttribute('name') }}">Day</label>
+                            <label class="form-label" for="{{ elementDayId }}">Day</label>
                             {{ formElement(elementDay) }}
                         </div>
 
                         <div class="form-group form-group-month {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementMonth.getAttribute('name') }}">Month</label>
+                            <label class="form-label" for="{{ elementMonthId }}">Month</label>
                             {{ formElement(elementMonth) }}
                         </div>
 
                         <div class="form-group form-group-year {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementYear.getAttribute('name') }}">Year</label>
+                            <label class="form-label" for="{{ elementYearId }}">Year</label>
                             {{ formElement(elementYear) }}
                         </div>
                     </fieldset>
