@@ -354,17 +354,17 @@
                     <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates">
                         <legend class="visually-hidden">Check signature dates for replacement attorney</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementDay.getAttribute('id') }}">Day</label>
+                            <label class="form-label" for="{{ elementDay.getAttribute('name') }}">Day</label>
                             {{ formElement(elementDay) }}
                         </div>
 
                         <div class="form-group form-group-month {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementMonth.getAttribute('id') }}">Month</label>
+                            <label class="form-label" for="{{ elementMonth.getAttribute('name') }}">Month</label>
                             {{ formElement(elementMonth) }}
                         </div>
 
                         <div class="form-group form-group-year {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementYear.getAttribute('id') }}">Year</label>
+                            <label class="form-label" for="{{ elementYear.getAttribute('name') }}">Year</label>
                             {{ formElement(elementYear) }}
                         </div>
                     </fieldset>
@@ -411,17 +411,17 @@
                     <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates">
                         <legend class="visually-hidden">Check signature dates for applicant</legend>
                         <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementDay.getAttribute('id') }}">Day</label>
+                            <label class="form-label" for="{{ elementDay.getAttribute('name') }}">Day</label>
                             {{ formElement(elementDay) }}
                         </div>
 
                         <div class="form-group form-group-month {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementMonth.getAttribute('id') }}">Month</label>
+                            <label class="form-label" for="{{ elementMonth.getAttribute('name') }}">Month</label>
                             {{ formElement(elementMonth) }}
                         </div>
 
                         <div class="form-group form-group-year {{ element.getMessages|length >0 ? 'form-group-error'}}">
-                            <label class="form-label" for="{{ elementYear.getAttribute('id') }}">Year</label>
+                            <label class="form-label" for="{{ elementYear.getAttribute('name') }}">Year</label>
                             {{ formElement(elementYear) }}
                         </div>
                     </fieldset>
