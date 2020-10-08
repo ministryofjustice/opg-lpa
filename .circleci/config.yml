@@ -92,7 +92,6 @@ workflows:
               api_docker_build,
               pdf_docker_build,
               seeding_docker_build,
-              #dev_environment_apply_terraform,
             ]
 
       - infrastructure_and_deployment/seed_environment_databases:
@@ -172,7 +171,6 @@ workflows:
               admin_docker_build,
               api_docker_build,
               pdf_docker_build,
-              preprod_environment_apply_terraform,
             ]
 
       - infrastructure_and_deployment/seed_environment_databases:
@@ -212,11 +210,19 @@ workflows:
 
 orbs:
   slack: circleci/slack@3.3.0
+  docker_common:
+    commands:
+      dockerhub_login:
+        steps:
+        - run:
+            name: Login to Docker hub
+            command: echo "$DOCKER_ACCESS_TOKEN" | docker login --username $DOCKER_USER --password-stdin
+
   build_containers_and_push_to_ecr:
     commands:
       install_aws_cli:
         steps:
-          - run:
+         - run:
               name: Install AWS CLI
               command: sudo pip3 install awscli --upgrade
       ecr_login:
@@ -233,6 +239,9 @@ orbs:
       python:
         docker:
           - image: circleci/python
+            auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
     jobs:
       checkout_docker_build_push_web-app:
         executor: python
@@ -259,6 +268,7 @@ orbs:
           - setup_remote_docker:
               version: 19.03.12
               docker_layer_caching: false
+          - docker_common/dockerhub_login
           - run:
               name: Build web container
               command: |
@@ -319,7 +329,7 @@ orbs:
       install_workspace_manager:
         steps:
           - run:
-              name: install Workspace Manager
+              name: Install Terraform Workspace Manager
               command: |
                 pwd
                 apk add libc6-compat
@@ -346,13 +356,30 @@ orbs:
                 rm -f terraform_${TERRAFORM_VERSION}_linux_amd64.zip
     executors:
       python:
-        docker: [image: circleci/python]
+        docker:
+         - image: circleci/python
+           auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
       python-build:
-        docker: [image: python:alpine]
+        docker:
+          - image: python:alpine
+            auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
       python-browsers:
-        docker: [image: circleci/python:3.6-stretch-browsers]
+        docker:
+          - image: circleci/python:3.6-stretch-browsers
+            auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
+
       terraform:
-        docker: [image: hashicorp/terraform:0.12.28]
+        docker:
+        - image: hashicorp/terraform:0.12.28
+          auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
     jobs:
       #----------------------------------------------------
       # Lambda
@@ -608,6 +635,7 @@ orbs:
               docker_layer_caching: false
           - attach_workspace:
               at: /tmp
+          - docker_common/dockerhub_login
           - run:
               name: Build casper JS container
               command: |
@@ -675,6 +703,9 @@ jobs:
   cancel_redundant_builds:
     docker:
       - image: circleci/python
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_ACCESS_TOKEN
     resource_class: small
     steps:
       - checkout
@@ -690,6 +721,9 @@ jobs:
   slack_notify_domain:
     docker:
       - image: circleci/python
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_ACCESS_TOKEN
     parameters:
       workspace:
         description: Terraform workspace name
@@ -713,6 +747,9 @@ jobs:
   slack_notify_production_release:
     docker:
       - image: circleci/python
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_ACCESS_TOKEN
     parameters:
       workspace:
         description: Terraform workspace name
@@ -738,6 +775,9 @@ jobs:
   ecr_scan_results:
     docker:
       - image: circleci/python
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_ACCESS_TOKEN
     steps:
       - checkout
       - run:
@@ -751,6 +791,9 @@ jobs:
   workspace_cleanup:
     docker:
       - image: hashicorp/terraform
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_ACCESS_TOKEN
     steps:
       - checkout
       - infrastructure_and_deployment/install_workspace_manager
