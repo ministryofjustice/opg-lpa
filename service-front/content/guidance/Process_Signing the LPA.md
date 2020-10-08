@@ -4,7 +4,7 @@
     <p class="bold-small"><a href="https://www.gov.uk/guidance/making-and-registering-an-lpa-during-the-coronavirus-outbreak#signing-and-witnessing-the-lpa">Read our guidance</a>  on getting an LPA signed and witnessed during the coronavirus outbreak</p>
 </div>
 
-### Sign the LPA in the right order
+## Sign the LPA in the right order
 
 The different sections of the LPA must be signed in the right order. If they're not, we cannot register the LPA and the donor may have to pay the application fee again.
 
@@ -28,7 +28,7 @@ Everyone can sign the LPA on the same day or different days, as long as people s
     <p>All the information on this page is also included in the LPA document that you will print and download once you’ve finished making the LPA.</p>
 </div>
 
-### Who can be a witness?
+## Who can be a witness?
 
 Witnesses are impartial people who watch the donor, attorneys and any replacement attorneys sign the LPA. The witnesses must also sign the LPA to say they've seen the donor and attorneys sign.
 
@@ -41,13 +41,13 @@ Attorneys or replacement attorneys can witness each other’s signature but not 
 
 Witnesses must give their full name and address wherever they sign the form.
 
-### If the donor cannot sign or make a mark
+## If the donor cannot sign or make a mark
 
 If someone is signing a property and financial affairs LPA on the donor’s behalf, they must sign continuation sheet 3 before the certificate provider signs section 10.
 
 If someone is signing a health and welfare LPA on the donor’s behalf, they must sign continuation sheet 3 and section 5 on the same day. This must be done before the certificate provider signs section 10.
 
-### Check your signing dates
+## Check your signing dates
 
 Once you’ve completed your LPA, you'll see a link to the ‘check signing dates’ service on the [your LPAs](/user/dashboard) page.
 
