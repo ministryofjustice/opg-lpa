@@ -210,8 +210,6 @@ workflows:
 
 orbs:
   slack: circleci/slack@3.3.0
-
-
   build_containers_and_push_to_ecr:
     orbs:
       docker: circleci/docker@1.4.0
