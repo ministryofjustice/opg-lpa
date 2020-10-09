@@ -210,6 +210,7 @@ workflows:
 
 orbs:
   slack: circleci/slack@3.3.0
+
   docker_common:
     commands:
       dockerhub_login:
