@@ -211,7 +211,7 @@ workflows:
 orbs:
   slack: circleci/slack@3.3.0
 
-  docker_common:
+  build_containers_and_push_to_ecr:
     commands:
       dockerhub_login:
         steps:
@@ -219,8 +219,6 @@ orbs:
             name: Login to Docker hub
             command: echo "$DOCKER_ACCESS_TOKEN" | docker login --username $DOCKER_USER --password-stdin
 
-  build_containers_and_push_to_ecr:
-    commands:
       install_aws_cli:
         steps:
          - run:
@@ -269,7 +267,7 @@ orbs:
           - setup_remote_docker:
               version: 19.03.12
               docker_layer_caching: false
-          - docker_common/dockerhub_login
+          - dockerhub_login
           - run:
               name: Build web container
               command: |
@@ -327,6 +325,12 @@ orbs:
 
   infrastructure_and_deployment:
     commands:
+      dockerhub_login:
+        steps:
+        - run:
+            name: Login to Docker hub
+            command: echo "$DOCKER_ACCESS_TOKEN" | docker login --username $DOCKER_USER --password-stdin
+
       install_workspace_manager:
         steps:
           - run:
@@ -636,7 +640,7 @@ orbs:
               docker_layer_caching: false
           - attach_workspace:
               at: /tmp
-          - docker_common/dockerhub_login
+          - dockerhub_login
           - run:
               name: Build casper JS container
               command: |
