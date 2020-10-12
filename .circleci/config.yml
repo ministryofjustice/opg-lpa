@@ -216,6 +216,7 @@ orbs:
     commands:
       dockerhub_login:
         steps:
+          - docker/install-docker-credential-helper
           - docker/check:
               docker-password: DOCKER_ACCESS_TOKEN
               docker-username: DOCKER_USER
@@ -241,6 +242,7 @@ orbs:
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
     jobs:
       checkout_docker_build_push_web-app:
         executor: python
@@ -329,6 +331,7 @@ orbs:
     commands:
       dockerhub_login:
         steps:
+          - docker/install-docker-credential-helper
           - docker/check:
               docker-password: DOCKER_ACCESS_TOKEN
               docker-username: DOCKER_USER
@@ -367,18 +370,21 @@ orbs:
            auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
       python-build:
         docker:
           - image: python:alpine
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
       python-browsers:
         docker:
           - image: circleci/python:3.6-stretch-browsers
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
 
       terraform:
         docker:
@@ -386,6 +392,7 @@ orbs:
           auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
     jobs:
       #----------------------------------------------------
       # Lambda
@@ -730,6 +737,7 @@ jobs:
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
+    resource_class: small
     parameters:
       workspace:
         description: Terraform workspace name
@@ -756,6 +764,7 @@ jobs:
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
+    resource_class: small
     parameters:
       workspace:
         description: Terraform workspace name
@@ -784,6 +793,7 @@ jobs:
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
+    resource_class: small
     steps:
       - checkout
       - run:
@@ -800,6 +810,7 @@ jobs:
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
+    resource_class: small
     steps:
       - checkout
       - infrastructure_and_deployment/install_workspace_manager
