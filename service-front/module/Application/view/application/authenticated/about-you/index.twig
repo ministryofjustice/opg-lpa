@@ -65,7 +65,8 @@
     maxlength: '2',
     min: '0',
     max: '31',
-    pattern: '[0-9]*'
+    pattern: '[0-9]*',
+    inputmode: 'numeric'
 }) ? ''}}
 
 {{ monthOfBirth.setAttributes({
@@ -75,7 +76,8 @@
     maxlength: '2',
     min: '0',
     max: '12',
-    pattern: '[0-9]*'
+    pattern: '[0-9]*',
+    inputmode: 'numeric'
  }) ? ''}}
 
 {{ yearOfBirth.setAttributes({
@@ -83,7 +85,8 @@
     type: 'tel',
     class: 'form-control',
     maxlength: '4',
-    pattern: '[0-9]*'
+    pattern: '[0-9]*',
+    inputmode: 'numeric'
 })  ? ''}}
 
 {{ address1.setAttributes({
