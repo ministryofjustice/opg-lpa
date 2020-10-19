@@ -196,7 +196,6 @@ path_to_live: &path_to_live
         requires: [test_healthcheck_prod]
 
 workflows:
-  version: 2
   workspace_cleanup:
      triggers:
        - schedule:
