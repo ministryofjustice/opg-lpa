@@ -1,5 +1,200 @@
 version: 2.1
 
+pr_build:  &pr_build
+  jobs:
+    - cancel_redundant_builds:
+        name: cancel_previous_jobs
+        filters: { branches: { ignore: [master] } }
+
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: front_docker_build
+        ecr_repository_name_prefix: online-lpa/front
+        service_path: service-front
+        filters: { branches: { ignore: [master] } }
+
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: admin_docker_build
+        ecr_repository_name_prefix: online-lpa/admin
+        service_path: service-admin
+        filters: { branches: { ignore: [master] } }
+
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: api_docker_build
+        ecr_repository_name_prefix: online-lpa/api
+        service_path: service-api
+        filters: { branches: { ignore: [master] } }
+
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: pdf_docker_build
+        ecr_repository_name_prefix: online-lpa/pdf
+        service_path: service-pdf
+        build_web: false
+        filters: { branches: { ignore: [master] } }
+
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: seeding_docker_build
+        ecr_repository_name_prefix: online-lpa/seeding
+        service_path: service-seeding
+        build_web: false
+        unit_test: false
+        filters: { branches: { ignore: [master] } }
+
+    - infrastructure_and_deployment/lint_and_validate_terraform:
+        name: lint_and_validate_terraform
+        filters: { branches: { ignore: [master] } }
+
+    - infrastructure_and_deployment/apply_account_terraform:
+        name: dev_account_apply_terraform
+        workspace: development
+        filters: { branches: { ignore: [master] } }
+        requires: [cancel_previous_jobs, lint_and_validate_terraform]
+
+    - infrastructure_and_deployment/apply_email_terraform:
+        name: email_apply_terraform
+        workspace: development
+        filters: { branches: { ignore: [master] } }
+        requires: [cancel_previous_jobs, lint_and_validate_terraform]
+
+    - infrastructure_and_deployment/apply_environment_terraform:
+        name: dev_environment_apply_terraform
+        filters: { branches: { ignore: [master] } }
+        requires:
+          [
+            cancel_previous_jobs,
+            dev_account_apply_terraform,
+            front_docker_build,
+            admin_docker_build,
+            api_docker_build,
+            pdf_docker_build,
+            seeding_docker_build,
+          ]
+
+    - ecr_scan_results:
+        name: ecr_scan_results_development
+        filters: { branches: { ignore: [master] } }
+        requires:
+          [
+            front_docker_build,
+            admin_docker_build,
+            api_docker_build,
+            pdf_docker_build,
+            seeding_docker_build,
+          ]
+
+    - infrastructure_and_deployment/seed_environment_databases:
+        name: dev_seed_environment_databases
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_environment_apply_terraform]
+
+    - infrastructure_and_deployment/run_functional_test:
+        name: run_functional_test
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_seed_environment_databases]
+
+    - slack_notify_domain:
+        name: post_environment_domains
+        filters: { branches: { ignore: [master] } }
+        requires: [run_functional_test]
+
+path_to_live: &path_to_live
+  jobs:
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: front_docker_build
+        ecr_repository_name_prefix: online-lpa/front
+        service_path: service-front
+        filters: { branches: { only: [master] } }
+
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: admin_docker_build
+        ecr_repository_name_prefix: online-lpa/admin
+        service_path: service-admin
+        filters: { branches: { only: [master] } }
+
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: api_docker_build
+        ecr_repository_name_prefix: online-lpa/api
+        service_path: service-api
+        filters: { branches: { only: [master] } }
+
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: pdf_docker_build
+        ecr_repository_name_prefix: online-lpa/pdf
+        service_path: service-pdf
+        build_web: false
+        filters: { branches: { only: [master] } }
+
+    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+        name: seeding_docker_build
+        ecr_repository_name_prefix: online-lpa/seeding
+        service_path: service-seeding
+        build_web: false
+        unit_test: false
+        filters: { branches: { only: [master] } }
+
+    - infrastructure_and_deployment/apply_account_terraform:
+        name: preprod_account_apply_terraform
+        workspace: preproduction
+        filters: { branches: { only: [master] } }
+
+    - infrastructure_and_deployment/apply_environment_terraform:
+        name: preprod_environment_apply_terraform
+        workspace: preproduction
+        filters: { branches: { only: [master] } }
+        requires:
+          [
+            preprod_account_apply_terraform,
+            front_docker_build,
+            admin_docker_build,
+            api_docker_build,
+            pdf_docker_build,
+          ]
+
+    - ecr_scan_results:
+        name: ecr_scan_results_master
+        filters: { branches: { only: [master] } }
+        requires:
+          [
+            front_docker_build,
+            admin_docker_build,
+            api_docker_build,
+            pdf_docker_build,
+          ]
+
+    - infrastructure_and_deployment/seed_environment_databases:
+        name: preprod_seed_environment_databases
+        workspace: preproduction
+        filters: { branches: { only: [master] } }
+        requires: [preprod_environment_apply_terraform]
+
+    - infrastructure_and_deployment/run_functional_test:
+        name: preprod_test_functional
+        workspace: preproduction
+        filters: { branches: { only: [master] } }
+        requires: [preprod_seed_environment_databases]
+
+    - infrastructure_and_deployment/apply_account_terraform:
+        name: prod_account_apply_terraform
+        workspace: production
+        filters: { branches: { only: [master] } }
+        requires: [preprod_test_functional]
+
+    - infrastructure_and_deployment/apply_environment_terraform:
+        name: prod_environment_apply_terraform
+        requires: [prod_account_apply_terraform]
+        filters: { branches: { only: [master] } }
+        workspace: production
+
+    - infrastructure_and_deployment/run_healthcheck_test:
+        name: test_healthcheck_prod
+        requires: [prod_environment_apply_terraform]
+        filters: { branches: { only: [master] } }
+        workspace: production
+
+    - slack_notify_production_release:
+        name: post_production_release_message
+        filters: { branches: { only: [master] } }
+        requires: [test_healthcheck_prod]
+
 workflows:
   workspace_cleanup:
      triggers:
@@ -14,209 +209,37 @@ workflows:
            name: workspace_cleanup
 
   pr_build:
-    jobs:
-      - cancel_redundant_builds:
-          name: cancel_previous_jobs
-          filters: { branches: { ignore: [master] } }
-
-      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: front_docker_build
-          ecr_repository_name_prefix: online-lpa/front
-          service_path: service-front
-          filters: { branches: { ignore: [master] } }
-
-      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: admin_docker_build
-          ecr_repository_name_prefix: online-lpa/admin
-          service_path: service-admin
-          filters: { branches: { ignore: [master] } }
-
-      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: api_docker_build
-          ecr_repository_name_prefix: online-lpa/api
-          service_path: service-api
-          filters: { branches: { ignore: [master] } }
-
-      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: pdf_docker_build
-          ecr_repository_name_prefix: online-lpa/pdf
-          service_path: service-pdf
-          build_web: false
-          filters: { branches: { ignore: [master] } }
-
-      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: seeding_docker_build
-          ecr_repository_name_prefix: online-lpa/seeding
-          service_path: service-seeding
-          build_web: false
-          unit_test: false
-          filters: { branches: { ignore: [master] } }
-
-      - infrastructure_and_deployment/lint_and_validate_terraform:
-          name: lint_and_validate_terraform
-          filters: { branches: { ignore: [master] } }
-
-      - infrastructure_and_deployment/apply_account_terraform:
-          name: dev_account_apply_terraform
-          workspace: development
-          filters: { branches: { ignore: [master] } }
-          requires: [cancel_previous_jobs, lint_and_validate_terraform]
-
-      - infrastructure_and_deployment/apply_email_terraform:
-          name: email_apply_terraform
-          workspace: development
-          filters: { branches: { ignore: [master] } }
-          requires: [cancel_previous_jobs, lint_and_validate_terraform]
-
-      - infrastructure_and_deployment/apply_environment_terraform:
-          name: dev_environment_apply_terraform
-          filters: { branches: { ignore: [master] } }
-          requires:
-            [
-              cancel_previous_jobs,
-              dev_account_apply_terraform,
-              front_docker_build,
-              admin_docker_build,
-              api_docker_build,
-              pdf_docker_build,
-              seeding_docker_build,
-            ]
-
-      - ecr_scan_results:
-          name: ecr_scan_results_development
-          filters: { branches: { ignore: [master] } }
-          requires:
-            [
-              front_docker_build,
-              admin_docker_build,
-              api_docker_build,
-              pdf_docker_build,
-              seeding_docker_build,
-              #dev_environment_apply_terraform,
-            ]
-
-      - infrastructure_and_deployment/seed_environment_databases:
-          name: dev_seed_environment_databases
-          filters: { branches: { ignore: [master] } }
-          requires: [dev_environment_apply_terraform]
-
-      - infrastructure_and_deployment/run_functional_test:
-          name: run_functional_test
-          filters: { branches: { ignore: [master] } }
-          requires: [dev_seed_environment_databases]
-
-      - slack_notify_domain:
-          name: post_environment_domains
-          filters: { branches: { ignore: [master] } }
-          requires: [run_functional_test]
+    <<: *pr_build
 
   path_to_live:
-    jobs:
-      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: front_docker_build
-          ecr_repository_name_prefix: online-lpa/front
-          service_path: service-front
-          filters: { branches: { only: [master] } }
+    <<: *path_to_live
 
-      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: admin_docker_build
-          ecr_repository_name_prefix: online-lpa/admin
-          service_path: service-admin
-          filters: { branches: { only: [master] } }
+  weekly_refresh:
+    triggers:
+      - schedule:
+           cron: "0 3 * * 3" # 3 am (UTC) on wednesday
+           filters:
+             branches:
+               only:
+                 - master
+    <<: *path_to_live
 
-      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: api_docker_build
-          ecr_repository_name_prefix: online-lpa/api
-          service_path: service-api
-          filters: { branches: { only: [master] } }
-
-      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: pdf_docker_build
-          ecr_repository_name_prefix: online-lpa/pdf
-          service_path: service-pdf
-          build_web: false
-          filters: { branches: { only: [master] } }
-
-      - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-          name: seeding_docker_build
-          ecr_repository_name_prefix: online-lpa/seeding
-          service_path: service-seeding
-          build_web: false
-          unit_test: false
-          filters: { branches: { only: [master] } }
-
-      - infrastructure_and_deployment/apply_account_terraform:
-          name: preprod_account_apply_terraform
-          workspace: preproduction
-          filters: { branches: { only: [master] } }
-
-      - infrastructure_and_deployment/apply_environment_terraform:
-          name: preprod_environment_apply_terraform
-          workspace: preproduction
-          filters: { branches: { only: [master] } }
-          requires:
-            [
-              preprod_account_apply_terraform,
-              front_docker_build,
-              admin_docker_build,
-              api_docker_build,
-              pdf_docker_build,
-            ]
-
-      - ecr_scan_results:
-          name: ecr_scan_results_master
-          filters: { branches: { only: [master] } }
-          requires:
-            [
-              front_docker_build,
-              admin_docker_build,
-              api_docker_build,
-              pdf_docker_build,
-              preprod_environment_apply_terraform,
-            ]
-
-      - infrastructure_and_deployment/seed_environment_databases:
-          name: preprod_seed_environment_databases
-          workspace: preproduction
-          filters: { branches: { only: [master] } }
-          requires: [preprod_environment_apply_terraform]
-
-      - infrastructure_and_deployment/run_functional_test:
-          name: preprod_test_functional
-          workspace: preproduction
-          filters: { branches: { only: [master] } }
-          requires: [preprod_seed_environment_databases]
-
-      - infrastructure_and_deployment/apply_account_terraform:
-          name: prod_account_apply_terraform
-          workspace: production
-          filters: { branches: { only: [master] } }
-          requires: [preprod_test_functional]
-
-      - infrastructure_and_deployment/apply_environment_terraform:
-          name: prod_environment_apply_terraform
-          requires: [prod_account_apply_terraform]
-          filters: { branches: { only: [master] } }
-          workspace: production
-
-      - infrastructure_and_deployment/run_healthcheck_test:
-          name: test_healthcheck_prod
-          requires: [prod_environment_apply_terraform]
-          filters: { branches: { only: [master] } }
-          workspace: production
-
-      - slack_notify_production_release:
-          name: post_production_release_message
-          filters: { branches: { only: [master] } }
-          requires: [test_healthcheck_prod]
 
 orbs:
   slack: circleci/slack@3.3.0
   build_containers_and_push_to_ecr:
+    orbs:
+      docker: circleci/docker@1.4.0
     commands:
+      dockerhub_login:
+        steps:
+          - docker/install-docker-credential-helper
+          - docker/check:
+              docker-password: DOCKER_ACCESS_TOKEN
+              docker-username: DOCKER_USER
       install_aws_cli:
         steps:
-          - run:
+         - run:
               name: Install AWS CLI
               command: sudo pip3 install awscli --upgrade
       ecr_login:
@@ -233,6 +256,10 @@ orbs:
       python:
         docker:
           - image: circleci/python
+            auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
     jobs:
       checkout_docker_build_push_web-app:
         executor: python
@@ -259,6 +286,7 @@ orbs:
           - setup_remote_docker:
               version: 19.03.12
               docker_layer_caching: false
+          - dockerhub_login
           - run:
               name: Build web container
               command: |
@@ -315,11 +343,19 @@ orbs:
                 fi
 
   infrastructure_and_deployment:
+    orbs:
+      docker: circleci/docker@1.4.0
     commands:
+      dockerhub_login:
+        steps:
+          - docker/install-docker-credential-helper
+          - docker/check:
+              docker-password: DOCKER_ACCESS_TOKEN
+              docker-username: DOCKER_USER
       install_workspace_manager:
         steps:
           - run:
-              name: install Workspace Manager
+              name: Install Terraform Workspace Manager
               command: |
                 pwd
                 apk add libc6-compat
@@ -346,13 +382,34 @@ orbs:
                 rm -f terraform_${TERRAFORM_VERSION}_linux_amd64.zip
     executors:
       python:
-        docker: [image: circleci/python]
+        docker:
+         - image: circleci/python
+           auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
       python-build:
-        docker: [image: python:alpine]
+        docker:
+          - image: python:alpine
+            auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
       python-browsers:
-        docker: [image: circleci/python:3.6-stretch-browsers]
+        docker:
+          - image: circleci/python:3.6-stretch-browsers
+            auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
+
       terraform:
-        docker: [image: hashicorp/terraform:0.12.28]
+        docker:
+        - image: hashicorp/terraform:0.12.28
+          auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
     jobs:
       #----------------------------------------------------
       # Lambda
@@ -608,6 +665,7 @@ orbs:
               docker_layer_caching: false
           - attach_workspace:
               at: /tmp
+          - dockerhub_login
           - run:
               name: Build casper JS container
               command: |
@@ -675,6 +733,9 @@ jobs:
   cancel_redundant_builds:
     docker:
       - image: circleci/python
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_ACCESS_TOKEN
     resource_class: small
     steps:
       - checkout
@@ -687,9 +748,14 @@ jobs:
             --circle_branch ${CIRCLE_BRANCH} \
             --circle_builds_token ${CIRCLECI_API_KEY} \
             --terms_to_waitfor "dev_account_apply_terraform,dev_environment_apply_terraform,apply_email_terraform"
+
   slack_notify_domain:
     docker:
       - image: circleci/python
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_ACCESS_TOKEN
+    resource_class: small
     parameters:
       workspace:
         description: Terraform workspace name
@@ -710,9 +776,14 @@ jobs:
           color: "#508c18"
           message: "User: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
           footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
+
   slack_notify_production_release:
     docker:
       - image: circleci/python
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_ACCESS_TOKEN
+    resource_class: small
     parameters:
       workspace:
         description: Terraform workspace name
@@ -738,6 +809,10 @@ jobs:
   ecr_scan_results:
     docker:
       - image: circleci/python
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_ACCESS_TOKEN
+    resource_class: small
     steps:
       - checkout
       - run:
@@ -751,6 +826,10 @@ jobs:
   workspace_cleanup:
     docker:
       - image: hashicorp/terraform
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_ACCESS_TOKEN
+    resource_class: small
     steps:
       - checkout
       - infrastructure_and_deployment/install_workspace_manager

@@ -5,6 +5,8 @@ from requests_aws4auth import AWS4Auth
 import requests
 import os
 
+PROD_ACCOUNT = '980242665824'
+DEV_ACCOUNT = '050256574573'
 
 class APIGatewayCaller:
     aws_account_id = ''
@@ -13,10 +15,9 @@ class APIGatewayCaller:
     aws_iam_session = ''
     aws_auth = ''
 
-    def __init__(self):
-        self.aws_account_id = os.getenv('AWS_ACCOUNT_ID')
-        self.api_gateway_url = os.getenv('API_GATEWAY_URL')
-        self.aws_iam_role = os.getenv('AWS_IAM_ROLE')
+    def __init__(self, target_production):
+        self.choose_target_gateway(target_production)
+        self.aws_iam_role = os.getenv('AWS_IAM_ROLE') or 'operator'
         self.set_iam_role_session()
         self.aws_auth = AWS4Auth(
             self.aws_iam_session['Credentials']['AccessKeyId'],
@@ -25,11 +26,14 @@ class APIGatewayCaller:
             'execute-api',
             session_token=self.aws_iam_session['Credentials']['SessionToken'])
 
-    def iterate_over_files(self):
-        with open("uid_list") as file:
-            for line in file:
-                uid = line.rstrip()
-                self.call_api_gateway(uid)
+    def choose_target_gateway(self, target_production):
+        if target_production:
+            self.aws_account_id =  PROD_ACCOUNT
+            self.api_gateway_url = 'https://api.sirius.opg.digital/v1/lpa-online-tool/lpas/'
+        else:
+            self.aws_account_id =  DEV_ACCOUNT
+            self.api_gateway_url = 'https://api.dev.sirius.opg.digital/v1/lpa-online-tool/lpas/'
+
 
     def set_iam_role_session(self):
         if os.getenv('CI'):
@@ -66,10 +70,12 @@ def main():
 
     parser.add_argument("lpa_id", type=str,
                         help="LPA ID to look up in API Gateway")
+    parser.add_argument('--production', dest='target_production', action='store_const',
+                        const=True, default=False,
+                        help='target the production sirius api gateway')
 
     args = parser.parse_args()
-    work = APIGatewayCaller()
-    # work.iterate_over_files()
+    work = APIGatewayCaller(args.target_production)
     work.call_api_gateway(args.lpa_id)
 
 
