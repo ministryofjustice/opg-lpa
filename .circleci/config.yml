@@ -1,41 +1,6 @@
 version: 2.1
 
-workflows:
-  workspace_cleanup:
-     triggers:
-       - schedule:
-           cron: "0 6,18 * * 0-6" # 6am and 6pm
-           filters:
-             branches:
-               only:
-                 - master
-     jobs:
-       - workspace_cleanup:
-           name: workspace_cleanup
-
-  pr_build_workflow:
-    jobs:
-      - pr_build:
-          name: pr_build
-
-  path_to_live_workflow:
-    jobs:
-      - path_to_live:
-          name: path_to_live
-
-  weekly_refresh_build:
-    triggers:
-      - schedule:
-           cron: "30 10 * * 1" # 2 am on wednesday (proposed)
-           filters:
-             branches:
-               only:
-                 - LPAL-18-run-scheduled-refresh
-    jobs:
-    - pr_build:
-          name: weekly_refresh
-
-pr_build:
+pr_build:  &pr_build
   jobs:
     - cancel_redundant_builds:
         name: cancel_previous_jobs
@@ -131,7 +96,7 @@ pr_build:
         filters: { branches: { ignore: [master] } }
         requires: [run_functional_test]
 
-path_to_live:
+path_to_live: &path_to_live
   jobs:
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
         name: front_docker_build
@@ -229,6 +194,36 @@ path_to_live:
         name: post_production_release_message
         filters: { branches: { only: [master] } }
         requires: [test_healthcheck_prod]
+
+workflows:
+  workspace_cleanup:
+     triggers:
+       - schedule:
+           cron: "0 6,18 * * 0-6" # 6am and 6pm
+           filters:
+             branches:
+               only:
+                 - master
+     jobs:
+       - workspace_cleanup:
+           name: workspace_cleanup
+
+  pr_build_workflow:
+    <<: *pr_build
+
+  path_to_live_workflow:
+    <<: *path_to_live
+
+  weekly_refresh_build:
+    triggers:
+      - schedule:
+           cron: "38 10 * * 1" # 2 am on wednesday (CHANGEME!)
+           filters:
+             branches:
+               only:
+                 - LPAL-18-run-scheduled-refresh
+    <<: *pr_build
+
 
 orbs:
   slack: circleci/slack@3.3.0
