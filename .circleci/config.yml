@@ -196,6 +196,7 @@ path_to_live: &path_to_live
         requires: [test_healthcheck_prod]
 
 workflows:
+  version: 2
   workspace_cleanup:
      triggers:
        - schedule:
@@ -208,13 +209,13 @@ workflows:
        - workspace_cleanup:
            name: workspace_cleanup
 
-  pr_build_workflow:
+  pr_build:
     <<: *pr_build
 
-  path_to_live_workflow:
+  path_to_live:
     <<: *path_to_live
 
-  weekly_refresh_build:
+  weekly_refresh:
     triggers:
       - schedule:
            cron: "0 3 * * 3" # 3 am (UTC) on wednesday
