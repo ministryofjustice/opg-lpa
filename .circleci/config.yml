@@ -217,7 +217,7 @@ workflows:
   weekly_refresh_build:
     triggers:
       - schedule:
-           cron: "38 10 * * 1" # 2 am on wednesday (CHANGEME!)
+           cron: "50 9 * * 1" # 2 am on wednesday (CHANGEME!)
            filters:
              branches:
                only:
