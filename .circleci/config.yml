@@ -217,12 +217,12 @@ workflows:
   weekly_refresh_build:
     triggers:
       - schedule:
-           cron: "50 9 * * 1" # 2 am on wednesday (CHANGEME!)
+           cron: "0 3 * * 3" # 3 am (UTC) on wednesday
            filters:
              branches:
                only:
-                 - LPAL-18-run-scheduled-refresh
-    <<: *pr_build
+                 - master
+    <<: *path_to_live
 
 
 orbs:
