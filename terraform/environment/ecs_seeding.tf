@@ -2,14 +2,13 @@
 // The Api service's Security Groups
 
 resource "aws_security_group" "seeding_ecs_service" {
-  count       = local.environment == "production" ? 0 : 1
   name_prefix = "${terraform.workspace}-seeding-ecs-service"
   vpc_id      = data.aws_vpc.default.id
   tags        = local.default_tags
 }
 
 //----------------------------------
-// Anything out
+// Anything out except production
 resource "aws_security_group_rule" "seeding_ecs_service_egress" {
   count             = local.environment == "production" ? 0 : 1
   type              = "egress"
@@ -31,7 +30,7 @@ resource "aws_ecs_task_definition" "seeding" {
   cpu                      = 2048
   memory                   = 4096
   container_definitions    = "[${local.seeding_app}]"
-  task_role_arn            = aws_iam_role.seeding_task_role.arn
+  task_role_arn            = aws_iam_role.seeding_task_role[count.index].arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.default_tags
 }
@@ -87,7 +86,7 @@ locals {
       { "name": "OPG_LPA_POSTGRES_NAME", "value": "${aws_db_instance.api.name}"},
       { "name": "OPG_LPA_POSTGRES_HOSTNAME", "value": "${aws_db_instance.api.address}"},
       { "name": "OPG_LPA_POSTGRES_PORT", "value": "${aws_db_instance.api.port}"},
-      { "name": "OPG_LPA_STACK_ENVIRONMENT", "value" : "${local.environment}"}
+      { "name": "OPG_LPA_STACK_ENVIRONMENT", "value" : "${local.account_name}"}
       ]
     }
   EOF
