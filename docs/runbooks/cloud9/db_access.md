@@ -1,4 +1,4 @@
-# Using cloud9
+# Using cloud9 to access RDS instance
 
 Generally, if you want to access an RDS instance, om AWS you will need to spin up a Cloud9 instance.
 The instructions below help you to do that, so you can query data and perform database operations.
@@ -19,9 +19,8 @@ The instructions below help you to do that, so you can query data and perform da
 7. Adjust the **Cost-saving setting** to suit your needs, basing this on how long you will need the instance.
 8 under the **Network settings (advanced)** drop tab:
     1. Leave the **Network (VPC)** dropdown as is.
-    2. select a public facing **Subnet** from the dropdown.
-    3. failure to do this will mean your instance cannot be accessed and will fail to deploy
-
+    2. select a public facing **Subnet** from the dropdown. **Note** these are usually the shorter named groups.
+    3. Failure to do this will mean your instance cannot be accessed and will fail to deploy
 
 ### Once Connected
 
@@ -32,13 +31,13 @@ Give the script execution permissions with
 chmod +x cloud9_init.sh
 ```
 
-Execute the script, passing it the name of the environment you want to connect to, (matches the terraform workspace name for the environment)
+Execute the script, passing it the name of the environment you want to connect to. This matches the terraform workspace name for the environment, e.g. the prefix for the url, and is mentioned CircleCI Build. **Note** the **`.`** in the command below.
 
 ``` bash
-. cloud9_init.sh 114-postmigra
+ . cloud9_init.sh 114-postmigra
 ```
 
-You should see tools being installed and an RDS & Elasticsearch connection string output
+You should see tools being installed and RDS details being output, to show how to connect.
 
 ## Using the environment
 
@@ -47,9 +46,9 @@ You should see tools being installed and an RDS & Elasticsearch connection strin
 If you have run the setup script correctly then you can use psql to connect to the databases for that environment.
 
 ``` bash
-psql postgres
+psql api2
 ```
 
 ### Cleanup
 
-Once you've finished with your environment go to the Cloud 9 Dashboard and delete your environment.
+Once you've finished with your environment go to the Cloud 9 Dashboard and delete it.
