@@ -49,7 +49,7 @@
         {% set navigationReference = sectionHeading %}
     {% endif %}
 
-    {{ macros.outputSectionHeading(sectionHeading, headerType) }}
+    {{ macros.outputSectionHeadingSpecifyingHeaderType(sectionHeading, headerType) }}
 
     {# Add the edit link into the name #}
     {% if data.name is defined and data.name is not empty %}
@@ -160,11 +160,16 @@
 
 {% endmacro %}
 
-
-{% macro outputSectionHeading(sectionHeading, headerType) %}
+{% macro outputSectionHeading(sectionHeading) %}
 
     {% import _self as macros %}
     {{ macros.outputSection('<h3 class="heading-small">' ~ sectionHeading ~ '</h3>') }}
-{#    {{ macros.outputSection('<' ~ headerType ~ ' class="heading-small">' ~ sectionHeading ~ '</' ~ headerType ~ '>') }}    #}
+
+{% endmacro %}
+
+{% macro outputSectionHeadingSpecifyingHeaderType(sectionHeading, headerType) %}
+
+    {% import _self as macros %}
+    {{ macros.outputSection('<' ~ headerType ~ ' class="heading-small">' ~ sectionHeading ~ '</' ~ headerType ~ '>') }}
 
 {% endmacro %}
