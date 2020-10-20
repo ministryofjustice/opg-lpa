@@ -6,6 +6,7 @@ variable "account_mapping" {
 variable "accounts" {
   type = map(
     object({
+      pagerduty_service_name        = string
       account_id                    = string
       is_production                 = string
       front_certificate_domain_name = string
