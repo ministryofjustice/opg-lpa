@@ -8,8 +8,9 @@ resource "aws_security_group" "seeding_ecs_service" {
 }
 
 //----------------------------------
-// Anything out
+// Anything out except production
 resource "aws_security_group_rule" "seeding_ecs_service_egress" {
+  count             = local.environment == "production" ? 0 : 1
   type              = "egress"
   from_port         = 0
   to_port           = 0
@@ -22,13 +23,14 @@ resource "aws_security_group_rule" "seeding_ecs_service_egress" {
 // seeding ECS Service Task level config
 
 resource "aws_ecs_task_definition" "seeding" {
+  count                    = local.environment == "production" ? 0 : 1
   family                   = "${terraform.workspace}-seeding"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 2048
   memory                   = 4096
   container_definitions    = "[${local.seeding_app}]"
-  task_role_arn            = aws_iam_role.seeding_task_role.arn
+  task_role_arn            = aws_iam_role.seeding_task_role[count.index].arn
   execution_role_arn       = aws_iam_role.execution_role.arn
   tags                     = local.default_tags
 }
@@ -38,6 +40,7 @@ resource "aws_ecs_task_definition" "seeding" {
 // Permissions
 
 resource "aws_iam_role" "seeding_task_role" {
+  count              = local.environment == "production" ? 0 : 1
   name               = "${local.environment}-seeding-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
   tags               = local.default_tags
@@ -82,7 +85,8 @@ locals {
     "environment": [
       { "name": "OPG_LPA_POSTGRES_NAME", "value": "${aws_db_instance.api.name}"},
       { "name": "OPG_LPA_POSTGRES_HOSTNAME", "value": "${aws_db_instance.api.address}"},
-      { "name": "OPG_LPA_POSTGRES_PORT", "value": "${aws_db_instance.api.port}"}
+      { "name": "OPG_LPA_POSTGRES_PORT", "value": "${aws_db_instance.api.port}"},
+      { "name": "OPG_LPA_STACK_ENVIRONMENT", "value" : "${local.account_name}"}
       ]
     }
   EOF
