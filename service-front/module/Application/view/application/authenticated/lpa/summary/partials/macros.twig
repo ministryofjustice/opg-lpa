@@ -163,6 +163,7 @@
 {% macro outputSectionHeading(sectionHeading) %}
 
     {% import _self as macros %}
+
     {{ macros.outputSection('<h3 class="heading-small">' ~ sectionHeading ~ '</h3>') }}
 
 {% endmacro %}
@@ -170,6 +171,7 @@
 {% macro outputSectionHeadingSpecifyingHeaderType(sectionHeading, headerType) %}
 
     {% import _self as macros %}
+
     {{ macros.outputSection('<' ~ headerType ~ ' class="heading-small">' ~ sectionHeading ~ '</' ~ headerType ~ '>') }}
 
 {% endmacro %}
