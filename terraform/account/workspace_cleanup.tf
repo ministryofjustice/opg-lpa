@@ -15,9 +15,10 @@ resource "aws_dynamodb_table" "workspace_cleanup_table" {
     enabled        = true
 
   }
+
   tags = local.default_tags
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 }
