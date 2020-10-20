@@ -91,3 +91,8 @@ dc-unit-tests:
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker-compose run pdf-app /app/vendor/bin/phpunit
+
+.PHONY: functional-local
+functional-local:
+	docker build -f ./tests/Dockerfile  -t casperjs:latest .; \
+	docker run --rm -it --network="host" -e "BASE_DOMAIN=localhost:7002" --name casperjs casperjs:latest ./start.sh 'tests/'
