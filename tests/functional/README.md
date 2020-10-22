@@ -31,7 +31,7 @@ docker run -d -e "CASPER_EMAIL_USER=CASPER_EMAIL_USER" -e "CASPER_EMAIL_PASSWORD
 docker exec casperjs ./start.sh 'tests/'
 ```
 
-that old way, some tests will fail though, because S3Monitor only works via aws-vault, because needs to talk to real S3 
+That old way, some tests will fail though, because S3Monitor only works via aws-vault, because S3Monitor needs to talk to real S3 
 
 ## Advanced information
 
