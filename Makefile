@@ -91,3 +91,8 @@ dc-unit-tests:
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker-compose run pdf-app /app/vendor/bin/phpunit
+
+.PHONY: functional-local
+functional-local:
+	docker build -f ./tests/Dockerfile  -t casperjs:latest .; \
+	aws-vault exec identity -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhost:7002" --network="host" --rm casperjs:latest ./start.sh 'tests/'
