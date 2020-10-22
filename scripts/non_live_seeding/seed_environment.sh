@@ -22,7 +22,7 @@ else
 fi
 }
 
-if [ "$OPG_LPA_STACK_NAME" == "production" ]; then
+if [ "$OPG_LPA_STACK_ENVIRONMENT" == "production" ]; then
   echo "These scripts must not be run on production."
   exit 0
 fi
@@ -34,11 +34,12 @@ API_OPTS="--host=${OPG_LPA_POSTGRES_HOSTNAME} --username=${OPG_LPA_POSTGRES_USER
 echo "Waiting for database to be created"
 check_db_exists
 
-# PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
-#   ${OPG_LPA_POSTGRES_NAME} \
-#   -f clear_tables.sql
 
 sleep 20
+
+ PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
+   ${OPG_LPA_POSTGRES_NAME} \
+   -f clear_tables.sql
 
 PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
   ${OPG_LPA_POSTGRES_NAME} \
