@@ -95,4 +95,4 @@ dc-unit-tests:
 .PHONY: functional-local
 functional-local:
 	docker build -f ./tests/Dockerfile  -t casperjs:latest .; \
-	docker run --rm -it --network="host" -e "BASE_DOMAIN=localhost:7002" --name casperjs casperjs:latest ./start.sh 'tests/'
+	aws-vault exec identity -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhost:7002" --network="host" --rm casperjs:latest ./start.sh 'tests/'
