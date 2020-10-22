@@ -8,8 +8,9 @@ Run the following command in CI to run all the tests
 aws-vault exec identity -- docker run -it -v ${PWD}/tests:/mnt/test -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=<PUBLIC_FRONT_URL>" --net=host --rm casperjs:latest ./start.sh 'tests/'
 ```
 
-Running the tests with start.sh automatically runs S3Monitor. If for some reason you need to individually run the S3Monitor on terminal you can do :
 By specifying the volume with -v,  we can change edit tests on the host machine and not constantly have to rebuild the docker container
+
+Running the tests with start.sh automatically runs S3Monitor. If for some reason you need to individually run the S3Monitor on terminal you can do :
 
 ```bash
 aws-vault exec identity -- php S3Monitor.php
