@@ -38,6 +38,8 @@ To run the unit tests
 make dc-unit-tests
 ```
 
+For how to run the functional tests, please see seperate README in tests/functional directory
+
 ### Updating composer dependencies
 
 Composer install is run when the app containers are built, and on a standard `docker-compose up`.
