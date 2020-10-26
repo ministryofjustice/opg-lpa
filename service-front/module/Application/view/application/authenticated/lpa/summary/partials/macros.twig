@@ -34,7 +34,7 @@
         {% set navigationReference = sectionHeading %}
     {% endif %}
 
-    {{ macros.outputSectionHeading(sectionHeading) }}
+    {{ macros.outputSectionHeadingSpecifyingHeaderType(sectionHeading, 'h3') }}
 
     {# Add the edit link into the name #}
     {% if data.name is defined and data.name is not empty %}
