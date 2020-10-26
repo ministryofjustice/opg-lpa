@@ -6,10 +6,10 @@ use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\User\User;
-use Zend\Router\RouteMatch;
-use Zend\Session\Container;
-use Zend\View\Helper\AbstractHelper;
-use Zend\View\Model\ViewModel;
+use Laminas\Router\RouteMatch;
+use Laminas\Session\Container;
+use Laminas\View\Helper\AbstractHelper;
+use Laminas\View\Model\ViewModel;
 use Twig_Environment;
 
 class AccountInfo extends AbstractHelper

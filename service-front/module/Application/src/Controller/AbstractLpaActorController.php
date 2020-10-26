@@ -15,16 +15,16 @@ use Opg\Lpa\DataModel\Lpa\Document\CertificateProvider;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
-use Zend\Session\Container;
-use Zend\Router;
-use Zend\View\Model\ViewModel;
+use Laminas\Session\Container;
+use Laminas\Router;
+use Laminas\View\Model\ViewModel;
 
 abstract class AbstractLpaActorController extends AbstractLpaController
 {
     /**
      * Function to check if the reuse details options are available and if it is appropriate to redirect to them
      *
-     * @return \Zend\Http\Response
+     * @return \Laminas\Http\Response
      */
     protected function checkReuseDetailsOptions(ViewModel $viewModel)
     {

@@ -7,7 +7,7 @@ use Application\Model\Service\Lock\Service;
 use Application\Library\Http\Response\Json;
 use Mockery;
 use Mockery\MockInterface;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class LockControllerTest extends AbstractControllerTest
 {

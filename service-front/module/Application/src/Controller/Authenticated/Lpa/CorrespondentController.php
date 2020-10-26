@@ -8,8 +8,8 @@ use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Common\PhoneNumber;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 class CorrespondentController extends AbstractLpaActorController
 {
@@ -266,7 +266,7 @@ class CorrespondentController extends AbstractLpaActorController
      * Process the correspondent data and return an appropriate model
      *
      * @param   array   $correspondentData
-     * @return  \Zend\Http\Response|JsonModel
+     * @return  \Laminas\Http\Response|JsonModel
      * @throws  \RuntimeException
      */
     private function processCorrespondentData(array $correspondentData)

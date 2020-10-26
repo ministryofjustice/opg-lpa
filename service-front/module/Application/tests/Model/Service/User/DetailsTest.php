@@ -13,7 +13,7 @@ use Mockery\MockInterface;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
-use Zend\Session\Container;
+use Laminas\Session\Container;
 
 class DetailsTest extends AbstractEmailServiceTest
 {

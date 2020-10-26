@@ -3,7 +3,7 @@
 namespace Application\Controller\General;
 
 use Application\Model\Service\Guidance\Guidance;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
 
 class GuidanceController extends AbstractBaseController

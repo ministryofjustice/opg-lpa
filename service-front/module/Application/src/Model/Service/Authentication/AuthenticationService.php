@@ -3,9 +3,9 @@
 namespace Application\Model\Service\Authentication;
 
 use Application\Model\Service\Authentication\Adapter\AdapterInterface as LpaAdapterInterface;
-use Zend\Authentication\Adapter\AdapterInterface;
-use Zend\Authentication\AuthenticationService as ZFAuthenticationService;
-use Zend\Authentication\Storage\StorageInterface;
+use Laminas\Authentication\Adapter\AdapterInterface;
+use Laminas\Authentication\AuthenticationService as ZFAuthenticationService;
+use Laminas\Authentication\Storage\StorageInterface;
 use RuntimeException;
 
 /**

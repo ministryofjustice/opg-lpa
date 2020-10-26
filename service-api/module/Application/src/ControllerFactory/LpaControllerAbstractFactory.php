@@ -5,8 +5,8 @@ namespace Application\ControllerFactory;
 use Application\Controller\Version2\Lpa as LpaControllers;
 use Application\Model\Service;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\AbstractFactoryInterface;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
 class LpaControllerAbstractFactory implements AbstractFactoryInterface
 {

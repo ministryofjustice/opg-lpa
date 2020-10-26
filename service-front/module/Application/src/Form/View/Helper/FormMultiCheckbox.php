@@ -2,9 +2,9 @@
 
 namespace Application\Form\View\Helper;
 
-use Zend\Form\Element\MultiCheckbox;
-use Zend\Form\LabelAwareInterface;
-use Zend\Form\View\Helper\FormMultiCheckbox as ZFFormMultiCheckbox;
+use Laminas\Form\Element\MultiCheckbox;
+use Laminas\Form\LabelAwareInterface;
+use Laminas\Form\View\Helper\FormMultiCheckbox as ZFFormMultiCheckbox;
 
 class FormMultiCheckbox extends ZFFormMultiCheckbox
 {

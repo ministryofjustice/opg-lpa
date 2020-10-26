@@ -14,8 +14,8 @@ use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
 use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
-use Zend\Crypt\BlockCipher;
-use Zend\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
+use Laminas\Crypt\BlockCipher;
+use Laminas\Crypt\Symmetric\Exception\InvalidArgumentException as CryptInvalidArgumentException;
 
 class ServiceTest extends AbstractServiceTest
 {

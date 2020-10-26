@@ -8,7 +8,7 @@ use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Users\Service;
 use Mockery;
 use Mockery\MockInterface;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class UserControllerTest extends AbstractControllerTest
 {

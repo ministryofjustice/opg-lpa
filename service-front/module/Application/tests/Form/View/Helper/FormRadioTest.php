@@ -4,7 +4,7 @@ namespace ApplicationTest\Form\View\Helper;
 
 use Application\Form\View\Helper\FormRadio;
 use PHPUnit\Framework\TestCase;
-use Zend\Form\Element\Radio;
+use Laminas\Form\Element\Radio;
 
 class FormRadioTest extends TestCase
 {

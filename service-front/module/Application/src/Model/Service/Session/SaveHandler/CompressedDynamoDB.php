@@ -1,8 +1,8 @@
 <?php
 namespace Application\Model\Service\Session\SaveHandler;
 
-use Zend\Filter\Compress;
-use Zend\Filter\Decompress;
+use Laminas\Filter\Compress;
+use Laminas\Filter\Decompress;
 
 /**
  * Our DynamoDB SaveHandler, with compression.

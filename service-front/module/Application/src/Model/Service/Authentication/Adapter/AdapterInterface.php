@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\Authentication\Adapter;
 
-use Zend\Authentication\Adapter\AdapterInterface as ZFAdapterInterface;
+use Laminas\Authentication\Adapter\AdapterInterface as ZFAdapterInterface;
 
 interface AdapterInterface extends ZFAdapterInterface
 {

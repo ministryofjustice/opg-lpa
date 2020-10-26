@@ -5,7 +5,7 @@ namespace Application\Controller\Version2\Lpa;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Model\Service\AttorneyDecisionsReplacement\Service;
 use Application\Model\Service\EntityInterface;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class ReplacementAttorneyDecisionsController extends AbstractLpaController
 {

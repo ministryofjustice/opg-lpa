@@ -7,11 +7,11 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery;
 use Mockery\MockInterface;
 use Application\Model\Service\Feedback\Service as FeedbackService;
-use Zend\Mvc\Controller\PluginManager;
+use Laminas\Mvc\Controller\PluginManager;
 use ZfcRbac\Service\AuthorizationService;
-use Zend\Mvc\Controller\Plugin\Params;
+use Laminas\Mvc\Controller\Plugin\Params;
 use Application\Library\Http\Response\Json;
-use ZF\ApiProblem\ApiProblemResponse;
+use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 use Application\Library\Http\Response\NoContent;
 
 class FeedbackControllerTest extends MockeryTestCase

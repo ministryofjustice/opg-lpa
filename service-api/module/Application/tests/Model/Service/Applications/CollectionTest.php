@@ -5,7 +5,7 @@ namespace ApplicationTest\Model\Service\Applications;
 use Application\Model\Service\Applications\Collection;
 use OpgTest\Lpa\DataModel\FixturesData;
 use PHPUnit\Framework\TestCase;
-use Zend\Paginator\Adapter\ArrayAdapter;
+use Laminas\Paginator\Adapter\ArrayAdapter;
 
 class CollectionTest extends TestCase
 {

@@ -5,8 +5,8 @@ namespace Application\Controller\Authenticated;
 use Application\Controller\AbstractAuthenticatedController;
 use DateTime;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 class DashboardController extends AbstractAuthenticatedController
 {
@@ -215,7 +215,7 @@ class DashboardController extends AbstractAuthenticatedController
     /**
      * This is overridden to prevent people being (accidently?) directed to this controller post-auth.
      *
-     * @return bool|\Zend\Http\Response
+     * @return bool|\Laminas\Http\Response
      */
     protected function checkAuthenticated($allowRedirect = true)
     {

@@ -8,7 +8,7 @@ use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Mockery;
 use Mockery\MockInterface;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class NotifiedPeopleControllerTest extends AbstractControllerTest
 {

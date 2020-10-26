@@ -5,12 +5,12 @@ use DateTime;
 use PDOException;
 use Traversable;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\Db\Sql\Sql;
-use Zend\Db\Sql\Predicate\Operator;
-use Zend\Db\Sql\Predicate\Expression;
-use Zend\Db\Sql\Predicate\IsNull;
-use Zend\Db\Sql\Predicate\IsNotNull;
-use Zend\Db\Metadata\Source\Factory as DbMetadataFactory;
+use Laminas\Db\Sql\Sql;
+use Laminas\Db\Sql\Predicate\Operator;
+use Laminas\Db\Sql\Predicate\Expression;
+use Laminas\Db\Sql\Predicate\IsNull;
+use Laminas\Db\Sql\Predicate\IsNotNull;
+use Laminas\Db\Metadata\Source\Factory as DbMetadataFactory;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Library\DateTime as MillisecondDateTime;
@@ -193,7 +193,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
             $statement->execute();
 
-        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e){
+        } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
 
             // If it's a key clash, re-try with new values.
             if ($e->getPrevious() instanceof PDOException) {

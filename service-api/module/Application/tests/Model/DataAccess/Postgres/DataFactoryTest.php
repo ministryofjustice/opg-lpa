@@ -6,7 +6,7 @@ use Mockery\MockInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Interop\Container\ContainerInterface;
 
-use Zend\Db\Adapter\Adapter as ZendDbAdapter;
+use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 
 use Application\Model\DataAccess\Postgres\DataFactory;
 use Application\Model\DataAccess\Postgres\UserData;

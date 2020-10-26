@@ -12,9 +12,9 @@ use Mockery;
 use Mockery\MockInterface;
 use SendGrid;
 use SendGrid\Client;
-use Zend\Mail\Message;
-use Zend\Mime\Mime;
-use Zend\Mime\Part;
+use Laminas\Mail\Message;
+use Laminas\Mime\Mime;
+use Laminas\Mime\Part;
 
 class MailTransportTest extends AbstractEmailServiceTest
 {
@@ -97,7 +97,7 @@ class MailTransportTest extends AbstractEmailServiceTest
         $textHtml = new Part('<HTML><body>Test html</body></HTML>');
         $textHtml->setType(Mime::TYPE_HTML);
 
-        $content = new \Zend\Mime\Message();
+        $content = new \Laminas\Mime\Message();
         $content->setParts([$textContent, $textHtml]);
 
         $message = new Message();

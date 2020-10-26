@@ -2,7 +2,7 @@
 
 namespace App\Handler\Initializers;
 
-use Zend\Expressive\Helper\UrlHelper;
+use Mezzio\Helper\UrlHelper;
 use UnexpectedValueException;
 
 /**

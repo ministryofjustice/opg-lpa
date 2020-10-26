@@ -1,9 +1,9 @@
 <?php
 namespace Application\View\Helper;
 
-use Zend\View\Helper\AbstractHelper;
-use Zend\Form\ElementInterface;
-use Zend\Form\Form;
+use Laminas\View\Helper\AbstractHelper;
+use Laminas\Form\ElementInterface;
+use Laminas\Form\Form;
 
 class FormLinkedErrorList extends AbstractHelper
 {

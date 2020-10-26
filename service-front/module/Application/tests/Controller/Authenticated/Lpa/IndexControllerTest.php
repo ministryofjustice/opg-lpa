@@ -5,7 +5,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 use Application\Controller\Authenticated\Lpa\IndexController;
 use ApplicationTest\Controller\AbstractControllerTest;
 use OpgTest\Lpa\DataModel\FixturesData;
-use Zend\Http\Response;
+use Laminas\Http\Response;
 
 class IndexControllerTest extends AbstractControllerTest
 {

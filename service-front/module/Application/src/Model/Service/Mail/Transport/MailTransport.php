@@ -7,13 +7,13 @@ use Html2Text\Html2Text;
 use Opg\Lpa\Logger\LoggerTrait;
 use SendGrid;
 use Twig_Environment;
-use Zend\Mime;
-use Zend\Mail\Exception\InvalidArgumentException;
-use Zend\Mail\Header\GenericHeader;
-use Zend\Mail\Message as ZFMessage;
-use Zend\Mail\Transport\Exception\InvalidArgumentException as TransportInvalidArgumentException;
-use Zend\Mail\Transport\TransportInterface;
-use Zend\Mime\Message as MimeMessage;
+use Laminas\Mime;
+use Laminas\Mail\Exception\InvalidArgumentException;
+use Laminas\Mail\Header\GenericHeader;
+use Laminas\Mail\Message as ZFMessage;
+use Laminas\Mail\Transport\Exception\InvalidArgumentException as TransportInvalidArgumentException;
+use Laminas\Mail\Transport\TransportInterface;
+use Laminas\Mime\Message as MimeMessage;
 use DateTime;
 use Exception;
 
@@ -417,7 +417,7 @@ class MailTransport implements TransportInterface
      * Get the from address object from the message
      *
      * @param  ZFMessage $message
-     * @return mixed|\Zend\Mail\Address
+     * @return mixed|\Laminas\Mail\Address
      * @throws InvalidArgumentException
      */
     private function getFrom(ZFMessage $message)
