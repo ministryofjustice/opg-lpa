@@ -9,7 +9,7 @@ use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use ZfcRbac\Service\AuthorizationService;
 
 class LpaControllerAbstractFactoryTest extends MockeryTestCase

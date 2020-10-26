@@ -3,10 +3,10 @@ namespace Application\Model\Service\Session;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Session\Exception\RuntimeException;
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Session\Exception\RuntimeException;
 use Aws\DynamoDb\DynamoDbClient;
 
 /**
@@ -54,7 +54,7 @@ class SessionFactory implements FactoryInterface {
         // Set the cookie domain
 
         // Only if it's not a Console request.
-        if( !( $container->get('Request') instanceof \Zend\Console\Request ) ){
+        if( !( $container->get('Request') instanceof \Laminas\Console\Request ) ){
 
             // This is requirement of the GDS service checker
 

@@ -3,7 +3,7 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
-use Zend\Form\FormInterface;
+use Laminas\Form\FormInterface;
 
 class CorrespondentForm extends AbstractActorForm
 {

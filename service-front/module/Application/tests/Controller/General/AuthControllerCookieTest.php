@@ -6,9 +6,9 @@ use Application\Controller\General\AuthController;
 use Application\Form\User\Login;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
-use Zend\Http\Header\Cookie;
-use Zend\Http\Response;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Header\Cookie;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 
 class AuthControllerCookieTest extends AbstractControllerTest
 {

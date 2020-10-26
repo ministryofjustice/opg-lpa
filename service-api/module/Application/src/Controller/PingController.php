@@ -8,10 +8,10 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Http\Client\HttpClient;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\View\Model\JsonModel;
+use Laminas\Mvc\Controller\AbstractRestfulController;
+use Laminas\View\Model\JsonModel;
 use Exception;
-use Zend\Db\Adapter\Adapter as ZendDbAdapter;
+use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Aws\Sqs\SqsClient;
 
 /**
@@ -74,7 +74,7 @@ class PingController extends AbstractRestfulController
      * Endpoint for the AWS ELB.
      * All we're checking is that PHP can be called and a 200 returned.
      *
-     * @return \Zend\Stdlib\ResponseInterface
+     * @return \Laminas\Stdlib\ResponseInterface
      */
     public function elbAction()
     {

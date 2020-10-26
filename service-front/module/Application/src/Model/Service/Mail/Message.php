@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\Mail;
 
-use Zend\Mail\Message as ZFMessage;
+use Laminas\Mail\Message as ZFMessage;
 
 /**
  * Represents an email message to be sent.

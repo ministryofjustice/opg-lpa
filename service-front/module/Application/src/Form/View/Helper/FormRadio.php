@@ -2,10 +2,10 @@
 
 namespace Application\Form\View\Helper;
 
-use Zend\Form\Element\MultiCheckbox;
-use Zend\Form\Element\Radio;
-use Zend\Form\LabelAwareInterface;
-use Zend\Form\View\Helper\FormRadio as ZFFormRadioHelper;
+use Laminas\Form\Element\MultiCheckbox;
+use Laminas\Form\Element\Radio;
+use Laminas\Form\LabelAwareInterface;
+use Laminas\Form\View\Helper\FormRadio as ZFFormRadioHelper;
 
 class FormRadio extends ZFFormRadioHelper
 {

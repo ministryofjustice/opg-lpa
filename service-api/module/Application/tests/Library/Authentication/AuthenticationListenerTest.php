@@ -8,13 +8,13 @@ use Application\Model\Service\Authentication\Service;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Zend\Authentication\Result;
-use Zend\Authentication\Storage\StorageInterface;
-use Zend\Http\Request;
-use Zend\Mvc\ApplicationInterface;
-use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use ZF\ApiProblem\ApiProblemResponse;
+use Laminas\Authentication\Result;
+use Laminas\Authentication\Storage\StorageInterface;
+use Laminas\Http\Request;
+use Laminas\Mvc\ApplicationInterface;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
 class AuthenticationListenerTest extends MockeryTestCase
 {
@@ -29,7 +29,7 @@ class AuthenticationListenerTest extends MockeryTestCase
     private $serviceManager;
 
     /**
-     * @var Zend\Authentication\AuthenticationService|MockInterface
+     * @var Laminas\Authentication\AuthenticationService|MockInterface
      */
     private $authService;
 
@@ -45,10 +45,10 @@ class AuthenticationListenerTest extends MockeryTestCase
 
     public function setUp(): void
     {
-        $this->authService = Mockery::mock(Zend\Authentication\AuthenticationService::class);
+        $this->authService = Mockery::mock(Laminas\Authentication\AuthenticationService::class);
 
         $this->serviceManager = Mockery::mock(ServiceLocatorInterface::class);
-        $this->serviceManager->shouldReceive('get')->with('Zend\Authentication\AuthenticationService')
+        $this->serviceManager->shouldReceive('get')->with('Laminas\Authentication\AuthenticationService')
             ->andReturn($this->authService)->once();
 
         $this->application = Mockery::mock(ApplicationInterface::class);

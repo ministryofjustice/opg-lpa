@@ -3,9 +3,9 @@
 namespace Application\Form\User;
 
 use Application\Model\Service\Authentication\AuthenticationService;
-use Zend\Authentication\Exception\InvalidArgumentException;
-use Zend\Validator\Callback;
-use Zend\Validator\NotEmpty;
+use Laminas\Authentication\Exception\InvalidArgumentException;
+use Laminas\Validator\Callback;
+use Laminas\Validator\NotEmpty;
 
 class ChangePassword extends SetPassword
 {

@@ -3,7 +3,7 @@
 namespace Application\Model\Service\Applications;
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\Paginator\Paginator;
+use Laminas\Paginator\Paginator;
 
 class Collection extends Paginator
 {

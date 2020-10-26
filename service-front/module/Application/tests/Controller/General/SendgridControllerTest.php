@@ -8,8 +8,8 @@ use ApplicationTest\Controller\AbstractControllerTest;
 use Exception;
 use Mockery;
 use Mockery\MockInterface;
-use Zend\Http\Response;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 
 class SendgridControllerTest extends AbstractControllerTest
 {

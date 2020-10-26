@@ -2,15 +2,15 @@
 return array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
-        'Zend\Mvc\Console',
-        'Zend\Mvc\I18n',
-        'Zend\I18n',
-        'Zend\Cache',
-        'Zend\Filter',
-        'Zend\Paginator',
-        'Zend\Router',
-        'Zend\Validator',
-        'ZF\ApiProblem',
+        'Laminas\Mvc\Console',
+        'Laminas\Mvc\I18n',
+        'Laminas\I18n',
+        'Laminas\Cache',
+        'Laminas\Filter',
+        'Laminas\Paginator',
+        'Laminas\Router',
+        'Laminas\Validator',
+        'Laminas\ApiTools\ApiProblem',
         'ZfcRbac',
         'Application',
     ),
@@ -69,6 +69,6 @@ return array(
     // )
 
    // Initial configuration with which to seed the ServiceManager.
-   // Should be compatible with Zend\ServiceManager\Config.
+   // Should be compatible with Laminas\ServiceManager\Config.
    // 'service_manager' => array(),
 );

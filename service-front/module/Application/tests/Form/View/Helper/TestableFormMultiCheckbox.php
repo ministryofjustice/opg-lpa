@@ -3,7 +3,7 @@
 namespace ApplicationTest\Form\View\Helper;
 
 use Application\Form\View\Helper\FormMultiCheckbox;
-use Zend\Form\Element\MultiCheckbox;
+use Laminas\Form\Element\MultiCheckbox;
 
 class TestableFormMultiCheckbox extends FormMultiCheckbox
 {

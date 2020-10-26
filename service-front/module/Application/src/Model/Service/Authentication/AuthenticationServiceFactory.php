@@ -5,10 +5,10 @@ namespace Application\Model\Service\Authentication;
 use Application\Model\Service\Authentication\Adapter\AdapterInterface;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Authentication\Storage\Session as SessionStorage;
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Authentication\Storage\Session as SessionStorage;
 
 class AuthenticationServiceFactory implements FactoryInterface
 {

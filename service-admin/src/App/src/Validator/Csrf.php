@@ -2,7 +2,7 @@
 
 namespace App\Validator;
 
-use Zend\Validator\Csrf as ZendCsrf;
+use Laminas\Validator\Csrf as ZendCsrf;
 use InvalidArgumentException;
 use UnexpectedValueException;
 

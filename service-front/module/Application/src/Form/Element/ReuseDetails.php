@@ -2,7 +2,7 @@
 
 namespace Application\Form\Element;
 
-use Zend\Form\Element\Radio as ZFRadio;
+use Laminas\Form\Element\Radio as ZFRadio;
 
 class ReuseDetails extends ZFRadio
 {

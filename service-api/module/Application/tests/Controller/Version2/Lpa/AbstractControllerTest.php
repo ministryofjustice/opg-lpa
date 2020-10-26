@@ -7,12 +7,12 @@ use Application\Model\Service\EntityInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Zend\EventManager\EventManager;
-use Zend\Http\Request;
-use Zend\Http\Response;
-use Zend\Mvc\MvcEvent;
-use Zend\Router\Http\RouteMatch;
-use Zend\Stdlib\ParametersInterface;
+use Laminas\EventManager\EventManager;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Router\Http\RouteMatch;
+use Laminas\Stdlib\ParametersInterface;
 use ZfcRbac\Service\AuthorizationService;
 
 abstract class AbstractControllerTest extends MockeryTestCase

@@ -2,9 +2,9 @@
 
 namespace Application\Form\Validator;
 
-use Zend\Math\Rand;
-use Zend\Session\Container;
-use Zend\Validator\Csrf as ZFCsrfValidator;
+use Laminas\Math\Rand;
+use Laminas\Session\Container;
+use Laminas\Validator\Csrf as ZFCsrfValidator;
 use RuntimeException;
 
 /**

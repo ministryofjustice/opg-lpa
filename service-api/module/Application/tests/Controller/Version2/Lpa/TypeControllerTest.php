@@ -7,7 +7,7 @@ use Application\Library\Http\Response\Json;
 use Application\Model\Service\Type\Service;
 use Mockery;
 use Mockery\MockInterface;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class TypeControllerTest extends AbstractControllerTest
 {

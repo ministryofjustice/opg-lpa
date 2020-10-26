@@ -17,10 +17,10 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Twig_Environment;
 use Twig_Template;
-use Zend\Mvc\Console\View\Renderer;
-use Zend\Router\RouteMatch;
-use Zend\Session\Container;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Console\View\Renderer;
+use Laminas\Router\RouteMatch;
+use Laminas\Session\Container;
+use Laminas\View\Model\ViewModel;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 
 class AccountInfoTest extends MockeryTestCase

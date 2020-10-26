@@ -1,8 +1,8 @@
 <?php
 namespace Application\Model\Service\Session;
 
-use Zend\Session\Container;
-use Zend\Session\SessionManager as ZFSessionManager;
+use Laminas\Session\Container;
+use Laminas\Session\SessionManager as ZFSessionManager;
 
 class SessionManager extends ZFSessionManager {
 

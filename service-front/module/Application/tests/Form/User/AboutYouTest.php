@@ -30,14 +30,14 @@ class AboutYouTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('name-title'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('name-first'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('name-last'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('name-title'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('name-first'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('name-last'));
         $this->assertInstanceOf('Application\Form\Fieldset\Dob', $this->form->get('dob-date'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-address1'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-address2'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-address3'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-postcode'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('address-address1'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('address-address2'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('address-address3'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('address-postcode'));
     }
 
     public function testValidateByModelOK()

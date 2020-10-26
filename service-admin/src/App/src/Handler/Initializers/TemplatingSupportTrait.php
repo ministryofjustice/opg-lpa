@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler\Initializers;
 
-use Zend\Expressive\Template\TemplateRendererInterface;
+use Mezzio\Template\TemplateRendererInterface;
 use UnexpectedValueException;
 
 /**

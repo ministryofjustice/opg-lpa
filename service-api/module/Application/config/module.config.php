@@ -42,7 +42,7 @@ return [
     'router' => [
         'routes' => [
             'home' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
@@ -53,7 +53,7 @@ return [
             ],
 
             'ping' => [
-                'type' => 'Zend\Router\Http\Segment',
+                'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route' => '/ping[/:action]',
                     'defaults' => [
@@ -479,7 +479,7 @@ return [
     'service_manager' => [
         'abstract_factories' => [
             'Application\Model\Service\ServiceAbstractFactory',
-            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
+            'Laminas\Cache\Service\StorageCacheAbstractServiceFactory',
         ],
         'aliases' => [
             'translator' => 'MvcTranslator',

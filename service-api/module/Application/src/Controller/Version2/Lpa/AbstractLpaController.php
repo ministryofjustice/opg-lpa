@@ -6,12 +6,12 @@ use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\Service\AbstractService;
 use Application\Model\DataAccess\Repository\Application\LockedException;
-use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\Controller\AbstractRestfulController;
+use Laminas\Mvc\MvcEvent;
 use ZfcRbac\Exception\UnauthorizedException as ZFCUnauthorizedException;
 use ZfcRbac\Service\AuthorizationService;
-use ZF\ApiProblem\ApiProblem;
-use ZF\ApiProblem\ApiProblemResponse;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
 abstract class AbstractLpaController extends AbstractRestfulController
 {

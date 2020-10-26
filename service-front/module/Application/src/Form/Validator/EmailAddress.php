@@ -2,7 +2,7 @@
 
 namespace Application\Form\Validator;
 
-use Zend\Validator\EmailAddress as ZfEmailAddressValidator;
+use Laminas\Validator\EmailAddress as ZfEmailAddressValidator;
 
 class EmailAddress extends ZfEmailAddressValidator
 {

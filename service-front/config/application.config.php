@@ -2,19 +2,19 @@
 return array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
-        'Zend\Mvc\Console',
-        'Zend\Mail',
-        'Zend\Mvc\I18n',
-        'Zend\I18n',
-        'Zend\Mvc\Plugin\FlashMessenger',
-        'Zend\Form',
-        'Zend\InputFilter',
-        'Zend\Filter',
-        'Zend\Hydrator',
-        'Zend\Cache',
-        'Zend\Session',
-        'Zend\Router',
-        'Zend\Validator',
+        'Laminas\Mvc\Console',
+        'Laminas\Mail',
+        'Laminas\Mvc\I18n',
+        'Laminas\I18n',
+        'Laminas\Mvc\Plugin\FlashMessenger',
+        'Laminas\Form',
+        'Laminas\InputFilter',
+        'Laminas\Filter',
+        'Laminas\Hydrator',
+        'Laminas\Cache',
+        'Laminas\Session',
+        'Laminas\Router',
+        'Laminas\Validator',
         'Application',
         //ZfcTwig MUST be the last module!
         'ZfcTwig'
@@ -65,6 +65,6 @@ return array(
     // )
 
    // Initial configuration with which to seed the ServiceManager.
-   // Should be compatible with Zend\ServiceManager\Config.
+   // Should be compatible with Laminas\ServiceManager\Config.
    // 'service_manager' => array(),
 );

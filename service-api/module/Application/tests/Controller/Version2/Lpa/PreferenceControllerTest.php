@@ -7,7 +7,7 @@ use Application\Library\Http\Response\Json;
 use Application\Model\Service\Preference\Service;
 use Mockery;
 use Mockery\MockInterface;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class PreferenceControllerTest extends AbstractControllerTest
 {

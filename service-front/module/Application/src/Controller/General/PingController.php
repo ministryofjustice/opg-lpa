@@ -3,8 +3,8 @@
 namespace Application\Controller\General;
 
 use Application\Model\Service\System\Status;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 use Application\Controller\AbstractBaseController;
 
 class PingController extends AbstractBaseController
@@ -70,7 +70,7 @@ class PingController extends AbstractBaseController
 
         $start = round(microtime(true) * 1000);
 
-        $response = new \Zend\Http\Response();
+        $response = new \Laminas\Http\Response();
         $response->getHeaders()->addHeaderLine('Content-Type', 'text/xml; charset=utf-8');
 
         $xml = simplexml_load_string("<?xml version='1.0' ?><pingdom_http_custom_check><status></status><response_time></response_time></pingdom_http_custom_check>");

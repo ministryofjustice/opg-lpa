@@ -10,10 +10,10 @@ use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use RuntimeException;
-use Zend\Form\ElementInterface;
-use Zend\Http\Response;
-use Zend\Stdlib\ArrayObject;
-use Zend\View\Model\ViewModel;
+use Laminas\Form\ElementInterface;
+use Laminas\Http\Response;
+use Laminas\Stdlib\ArrayObject;
+use Laminas\View\Model\ViewModel;
 use Alphagov\Pay\Client as GovPayClient;
 use Alphagov\Pay\Response\Payment as GovPayPayment;
 

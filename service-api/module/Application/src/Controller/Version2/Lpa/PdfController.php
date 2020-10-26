@@ -6,7 +6,7 @@ use Application\Library\Http\Response\File as FileResponse;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\Pdfs\Service;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class PdfController extends AbstractLpaController
 {

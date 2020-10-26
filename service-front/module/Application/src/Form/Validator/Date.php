@@ -2,7 +2,7 @@
 
 namespace Application\Form\Validator;
 
-use Zend\Validator\Date as DateValidator;
+use Laminas\Validator\Date as DateValidator;
 use DateTime;
 use Exception;
 

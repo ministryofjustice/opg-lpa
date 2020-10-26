@@ -5,8 +5,8 @@ namespace Application\Controller;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\SessionManager;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\ServiceManager\AbstractPluginManager;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\ServiceManager\AbstractPluginManager;
 
 abstract class AbstractBaseController extends AbstractActionController
 {
@@ -66,7 +66,7 @@ abstract class AbstractBaseController extends AbstractActionController
      * Thus is the session cookies doesn't exist AND cookie=1, we can assume the client is not sending cookies.
      *
      * @param $routeName string The route name for the current page for if a redirect is needed.
-     * @return bool|\Zend\Http\Response Iff bool true is returned, all is good. Otherwise the calling controller should return the response.
+     * @return bool|\Laminas\Http\Response Iff bool true is returned, all is good. Otherwise the calling controller should return the response.
      */
     protected function checkCookie($routeName)
     {
@@ -118,7 +118,7 @@ abstract class AbstractBaseController extends AbstractActionController
      *
      * e.g. login, register, etc.
      *
-     * @return bool|\Zend\Http\Response
+     * @return bool|\Laminas\Http\Response
      */
     protected function preventAuthenticatedUser()
     {

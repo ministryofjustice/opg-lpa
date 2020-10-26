@@ -10,12 +10,12 @@ use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\User\Details as UserService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\Mvc\MvcEvent;
-use Zend\Router\Http\RouteMatch;
-use Zend\ServiceManager\AbstractPluginManager;
-use Zend\Session\Container;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Router\Http\RouteMatch;
+use Laminas\ServiceManager\AbstractPluginManager;
+use Laminas\Session\Container;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 use RuntimeException;
 
 abstract class AbstractLpaController extends AbstractAuthenticatedController
@@ -143,7 +143,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     /**
      * Return an appropriate view model to move to the next route from the current route
      *
-     * @return ViewModel|\Zend\Http\Response
+     * @return ViewModel|\Laminas\Http\Response
      */
     protected function moveToNextRoute()
     {
@@ -155,7 +155,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         $routeMatch = $this->getEvent()->getRouteMatch();
 
         if (!$routeMatch instanceof RouteMatch) {
-            throw new RuntimeException('RouteMatch must be an instance of Zend\Router\Http\RouteMatch when using the moveToNextRoute function');
+            throw new RuntimeException('RouteMatch must be an instance of Laminas\Router\Http\RouteMatch when using the moveToNextRoute function');
         }
 
         //  Get the current route and the LPA ID to move to the next route
