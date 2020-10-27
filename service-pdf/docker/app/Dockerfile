@@ -1,4 +1,4 @@
-FROM composer AS composer
+FROM composer:1.10.16 AS composer
 
 COPY service-pdf /app
 
@@ -11,7 +11,7 @@ RUN apt-get -y update \
     && mkdir -p /usr/share/man/man1 \
     && apt-get -y install pdftk \
     && apt-get -y clean \
-    && pecl install xdebug \ 
+    && pecl install xdebug \
     && pecl clear-cache
 
 COPY service-pdf /app
