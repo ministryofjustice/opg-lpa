@@ -1,4 +1,4 @@
-FROM composer AS composer
+FROM composer:1.10.16 AS composer
 
 COPY service-admin /app
 
@@ -23,4 +23,3 @@ WORKDIR /app
 
 CMD ([[ -z "${ENABLE_XDEBUG}" ]] || docker-php-ext-enable xdebug) \
     && php-fpm
-
