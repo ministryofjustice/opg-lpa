@@ -1,4 +1,4 @@
-FROM composer AS composer
+FROM composer:1.10.16 AS composer
 
 COPY tests /app
 
@@ -45,5 +45,3 @@ COPY --from=composer /app/vendor /mnt/test/vendor
 
 WORKDIR /mnt/test/functional/
 CMD php
-
-
