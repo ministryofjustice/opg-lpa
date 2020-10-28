@@ -107,7 +107,7 @@ services:
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
 
   front-composer:
-    image: composer
+    image: composer:1.10.16
     volumes:
       - ./service-front:/app
     command:
@@ -202,7 +202,7 @@ services:
       XDEBUG_CONFIG: remote_host=host.docker.internal remote_enable=1
 
   api-composer:
-    image: composer
+    image: composer:1.10.16
     volumes:
       - ./service-api:/app
     command:
@@ -268,7 +268,7 @@ services:
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
 
   admin-composer:
-    image: composer
+    image: composer:1.10.16
     volumes:
       - ./service-admin:/app
     command:
@@ -320,7 +320,7 @@ services:
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo
 
   pdf-composer:
-    image: composer
+    image: composer:1.10.16
     volumes:
       - ./service-pdf:/app
     command:
