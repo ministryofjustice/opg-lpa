@@ -14,7 +14,7 @@
 
     {# DONOR #}
     {% if lpa.document.donor is defined %}
-        {{ macros.outputActor(
+        {{ macros.outputActorH2(
             'Donor',
             lpa.document.donor,
             url('lpa/donor', {'lpa-id': lpa.id})
