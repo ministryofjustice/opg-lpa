@@ -7,6 +7,11 @@ ADMIN_USERS := $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secr
 all:
 	@${MAKE} dc-up
 
+.PHONY: reset
+reset:
+	@${MAKE} dc-build-clean
+	@${MAKE} dc-run
+
 .PHONY: dc-run
 dc-run:
 	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
@@ -31,7 +36,7 @@ dc-run:
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-docker-compose run pdf-composer
+    docker-compose run pdf-composer
 
 .PHONY: dc-up
 dc-up:
@@ -50,12 +55,34 @@ dc-build:
 	docker-compose build
 
 
+# remove docker containers, volumes, images left by existing system, remove vendor folders, rebuild everything
+# with no-cache
+# this leaves things in a state where make dc-run is needed again before starting back up
 .PHONY: dc-build-clean
 dc-build-clean:
+	@${MAKE} dc-down
 	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
+	docker-compose down --remove-orphans; \
+	docker system prune -f --volumes; \
+	docker rmi lpa-pdf-app; \
+	docker rmi lpa-admin-web; \
+	docker rmi lpa-admin-app; \
+	docker rmi lpa-api-web; \
+	docker rmi lpa-api-app; \
+	docker rmi lpa-front-web; \
+	docker rmi lpa-front-app; \
+	docker rmi seeding; \
+	docker rmi opg-lpa_local-config; \
+	rm -fr ./service-admin/vendor; \
+    rm -fr ./service-api/vendor; \
+    rm -fr ./service-front/node_modules/parse-json/vendor; \
+    rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
+    rm -fr ./service-front/public/assets/v2/js/vendor; \
+    rm -fr ./service-front/vendor; \
+    rm -fr ./service-pdf/vendor; \
 	docker-compose build --no-cache
 
 .PHONY: dc-down
@@ -64,7 +91,7 @@ dc-down:
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose down
+	docker-compose down --remove-orphans
 
 .PHONY: dc-unit-tests
 dc-unit-tests:
