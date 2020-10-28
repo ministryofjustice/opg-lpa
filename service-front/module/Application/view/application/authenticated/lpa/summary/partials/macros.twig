@@ -25,8 +25,23 @@
 
 {% endmacro %}
 
+{% macro outputActorH2(sectionHeading, data, changeUrl, navigationReference, ariaLabelOverride) %}
+
+    {% import _self as macros %}
+
+    {{ macros.outputActorSpecifyingHeaderType(sectionHeading, data, changeUrl, navigationReference, ariaLabelOverride, 'h2') }}
+
+{% endmacro %}
 
 {% macro outputActor(sectionHeading, data, changeUrl, navigationReference, ariaLabelOverride) %}
+
+    {% import _self as macros %}
+
+    {{ macros.outputActorSpecifyingHeaderType(sectionHeading, data, changeUrl, navigationReference, ariaLabelOverride, 'h3') }}
+
+{% endmacro %}
+
+{% macro outputActorSpecifyingHeaderType(sectionHeading, data, changeUrl, navigationReference, ariaLabelOverride, headerType) %}
 
     {% import _self as macros %}
 
@@ -34,7 +49,7 @@
         {% set navigationReference = sectionHeading %}
     {% endif %}
 
-    {{ macros.outputSectionHeading(sectionHeading) }}
+    {{ macros.outputSectionHeadingSpecifyingHeaderType(sectionHeading, headerType) }}
 
     {# Add the edit link into the name #}
     {% if data.name is defined and data.name is not empty %}
@@ -145,11 +160,18 @@
 
 {% endmacro %}
 
-
 {% macro outputSectionHeading(sectionHeading) %}
 
     {% import _self as macros %}
 
     {{ macros.outputSection('<h3 class="heading-small">' ~ sectionHeading ~ '</h3>') }}
+
+{% endmacro %}
+
+{% macro outputSectionHeadingSpecifyingHeaderType(sectionHeading, headerType) %}
+
+    {% import _self as macros %}
+
+    {{ macros.outputSection('<' ~ headerType ~ ' class="heading-small">' ~ sectionHeading ~ '</' ~ headerType ~ '>') }}
 
 {% endmacro %}
