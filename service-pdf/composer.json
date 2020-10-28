@@ -19,7 +19,7 @@
         "php": "^7.1",
         "aws/aws-sdk-php": "^3.0",
         "mikehaertl/php-pdftk": "0.2.1",
-        "nmiles/laminaspdf" : "3.0.0",
+        "nmiles/laminas-pdf" : "3.0.0",
         "laminas/laminas-crypt": "^3.3",
         "laminas/laminas-filter": "^2.5",
         "ministryofjustice/opg-lpa-datamodels": "^13.2",
