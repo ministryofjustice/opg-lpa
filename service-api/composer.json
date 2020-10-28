@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": "^7.1",
+        "php": "^7.4",
         "aws/aws-sdk-php": "^3.0",
         "ministryofjustice/opg-lpa-datamodels": "^13.6",
         "ministryofjustice/opg-lpa-logger": "^5.0",
