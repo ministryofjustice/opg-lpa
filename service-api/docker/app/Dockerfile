@@ -1,4 +1,4 @@
-FROM composer:1.10.16 AS composer
+FROM composer:1.10.15 AS composer
 
 COPY service-api/composer.json /app/composer.json
 
