@@ -5,7 +5,7 @@ COPY service-api/composer.json /app/composer.json
 RUN composer global require hirak/prestissimo --no-plugins --no-scripts \
         && composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
 
-FROM php:7.3-fpm-alpine3.10
+FROM php:7.3-fpm-alpine
 
 # Postgres lib needs to remain in the container
 RUN apk add --update --no-cache postgresql-libs
