@@ -255,7 +255,7 @@ orbs:
     executors:
       python:
         docker:
-          - image: circleci/python
+          - image: circleci/python:3.8
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -383,7 +383,7 @@ orbs:
     executors:
       python:
         docker:
-         - image: circleci/python
+         - image: circleci/python:3.8
            auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
