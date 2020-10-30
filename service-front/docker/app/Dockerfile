@@ -2,7 +2,8 @@ FROM composer:1.10.16 AS composer
 
 COPY service-front /app
 
-RUN composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
+RUN composer global require hirak/prestissimo --no-plugins --no-scripts
+        && composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
 
 FROM php:7-fpm-alpine
 
