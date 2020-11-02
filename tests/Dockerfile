@@ -1,8 +1,10 @@
 FROM composer:1.10.16 AS composer
 
-COPY tests /app
+COPY tests/composer.json /app/composer.json
+COPY tests/composer.lock /app/composer.lock
 
-RUN composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
+RUN composer global require hirak/prestissimo --no-plugins --no-scripts \
+    && composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
 
 FROM php:7.3-cli
 
