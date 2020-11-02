@@ -117,6 +117,7 @@ services:
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
+      - --ignore-platform-reqs
 
   front-ssl:
     container_name: lpa-front-ssl
@@ -212,6 +213,7 @@ services:
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
+      - --ignore-platform-reqs
 
   # ---------------------------
   # Admin
@@ -278,6 +280,7 @@ services:
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
+      - --ignore-platform-reqs
 
   admin-ssl:
     container_name: lpa-admin-ssl
@@ -330,6 +333,7 @@ services:
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
+      - --ignore-platform-reqs
   # ---------------------------
   # Seeding
   seeding:
