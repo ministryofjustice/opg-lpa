@@ -2,9 +2,9 @@ FROM composer:1.10.16 AS composer
 
 COPY service-admin /app
 
-RUN composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
+RUN composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader  --ignore-platform-reqs
 
-FROM php:7-fpm-alpine
+FROM php:7.3-fpm-alpine
 
 RUN apk add --update --no-cache icu
 
