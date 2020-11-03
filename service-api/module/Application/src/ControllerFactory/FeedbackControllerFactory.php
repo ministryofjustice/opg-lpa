@@ -4,7 +4,7 @@ namespace Application\ControllerFactory;
 use Application\Controller\FeedbackController;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 use Application\Model\Service\Feedback\Service as FeedbackService;
 
 class FeedbackControllerFactory implements FactoryInterface

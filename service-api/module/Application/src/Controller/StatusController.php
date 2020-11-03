@@ -15,7 +15,7 @@ use Opg\Lpa\Logger\LoggerTrait;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class StatusController extends AbstractRestfulController
 {

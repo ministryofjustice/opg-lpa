@@ -14,7 +14,7 @@ class JsonTest extends TestCase
 
         $headers = $result->getHeaders();
 
-        $this->assertEqualsIgnoringCase(['content-type' => 'application/json'], $headers->toArray());
+        $this->assertEquals(['Content-Type' => 'application/json'], $headers->toArray());
     }
 
     public function testGetContent()

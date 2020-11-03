@@ -433,7 +433,7 @@ return [
             'isAuthorizedToManageUser' => 'Application\Library\Authorization\Assertions\IsAuthorizedToManageUser',
         ],
         'role_provider' => [
-            'ZfcRbac\Role\InMemoryRoleProvider' => [
+            'LmcRbacMvc\Role\InMemoryRoleProvider' => [
                 'admin' => [
                     // An authenticated request with admin rights.
                     'children' => ['user'],
