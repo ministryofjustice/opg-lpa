@@ -13,7 +13,7 @@ use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\Http\RouteMatch;
 use Laminas\Stdlib\ParametersInterface;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 abstract class AbstractControllerTest extends MockeryTestCase
 {

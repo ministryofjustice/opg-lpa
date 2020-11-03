@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aa7e0a8d9645d704730d9b21926dfdd5",
+    "content-hash": "342d21f952b48e2675250ea56fc2cde6",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -64,16 +64,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.158.18",
+            "version": "3.158.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "75aebc2f5dfd23ad7272ff1d59c521bc2a8e2802"
+                "reference": "b1c3c763e227e518768f0416cbd2b29c11f79561"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/75aebc2f5dfd23ad7272ff1d59c521bc2a8e2802",
-                "reference": "75aebc2f5dfd23ad7272ff1d59c521bc2a8e2802",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b1c3c763e227e518768f0416cbd2b29c11f79561",
+                "reference": "b1c3c763e227e518768f0416cbd2b29c11f79561",
                 "shasum": ""
             },
             "require": {
@@ -145,7 +145,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-10-30T18:12:38+00:00"
+            "time": "2020-11-02T19:49:21+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -1524,26 +1524,25 @@
         },
         {
             "name": "laminas/laminas-dependency-plugin",
-            "version": "2.0.0",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-dependency-plugin.git",
-                "reference": "7738ded196287dd88dec24d1a3cb58f5d4453e69"
+                "reference": "1cedcd1590225fcaa3d4d580ab3adf318779ac28"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-dependency-plugin/zipball/7738ded196287dd88dec24d1a3cb58f5d4453e69",
-                "reference": "7738ded196287dd88dec24d1a3cb58f5d4453e69",
+                "url": "https://api.github.com/repos/laminas/laminas-dependency-plugin/zipball/1cedcd1590225fcaa3d4d580ab3adf318779ac28",
+                "reference": "1cedcd1590225fcaa3d4d580ab3adf318779ac28",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.1 || ^2.0",
-                "php": "^5.6 || ^7.0"
+                "php": "^7.3 || ~8.0.0"
             },
             "require-dev": {
                 "composer/composer": "^1.9 || ^2.0",
                 "mikey179/vfsstream": "^1.6",
-                "phpcompatibility/php-compatibility": "^9.3",
                 "roave/security-advisories": "dev-master"
             },
             "type": "composer-plugin",
@@ -1566,7 +1565,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2020-10-30T14:51:02+00:00"
+            "time": "2020-11-02T18:16:57+00:00"
         },
         {
             "name": "laminas/laminas-escaper",
@@ -6636,7 +6635,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.4"
+        "php": "^7.3"
     },
     "platform-dev": [],
     "plugin-api-version": "1.1.0"
