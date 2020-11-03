@@ -32,6 +32,7 @@
         "laminas/laminas-mvc-i18n": "^1.0",
         "laminas/laminas-paginator": "^2.8",
         "laminas/laminas-zendframework-bridge": "^1.1.1",
+        "laminas/laminas-log": "^2.12",
         "lm-commons/lmc-rbac-mvc":"^3.0",
         "laminas-api-tools/api-tools-api-problem": "^1.2",
         "php-http/guzzle6-adapter": "^1.1",

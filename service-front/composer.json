@@ -49,6 +49,7 @@
         "laminas/laminas-mvc-console": "^1.2",
         "theiconic/php-ga-measurement-protocol": "^2.9",
         "laminas/laminas-zendframework-bridge": "^1.1.1",
+        "laminas/laminas-log": "^2.12",
         "guzzlehttp/psr7": "^1.4"
     },
     "require-dev": {
