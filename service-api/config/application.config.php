@@ -11,7 +11,7 @@ return array(
         'Laminas\Router',
         'Laminas\Validator',
         'Laminas\ApiTools\ApiProblem',
-        'ZfcRbac',
+        'LmcRbacMvc',
         'Application',
     ),
 

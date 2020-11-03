@@ -92,7 +92,7 @@ class UserControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
+     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
      * @expectedExceptionMessage You do not have permission to access this service
      */
     public function testGetUnauthorised()
@@ -158,7 +158,7 @@ class UserControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
+     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
      * @expectedExceptionMessage You do not have permission to access this service
      */
     public function testUpdateUnauthorised()
@@ -223,7 +223,7 @@ class UserControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
+     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
      * @expectedExceptionMessage You do not have permission to access this service
      */
     public function testDeleteUnauthorised()

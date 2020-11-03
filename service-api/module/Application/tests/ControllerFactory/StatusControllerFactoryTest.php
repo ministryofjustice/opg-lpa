@@ -11,7 +11,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use RuntimeException;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class StatusControllerFactoryTest extends MockeryTestCase
 {

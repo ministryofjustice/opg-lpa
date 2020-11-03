@@ -9,7 +9,7 @@ use Application\Model\Service\Feedback\Service as FeedbackService;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 use Laminas\Mvc\Controller\PluginManager;
 
 class FeedbackController extends AbstractRestfulController

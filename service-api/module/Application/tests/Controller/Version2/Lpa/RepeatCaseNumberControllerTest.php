@@ -82,7 +82,7 @@ class RepeatCaseNumberControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
+     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
      * @expectedExceptionMessage You do not have permission to access this service
      */
     public function testUpdateUnauthorised()
@@ -147,7 +147,7 @@ class RepeatCaseNumberControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
+     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
      * @expectedExceptionMessage You do not have permission to access this service
      */
     public function testDeleteUnauthorised()

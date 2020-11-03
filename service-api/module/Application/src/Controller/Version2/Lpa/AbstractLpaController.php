@@ -8,8 +8,8 @@ use Application\Model\Service\AbstractService;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
-use ZfcRbac\Exception\UnauthorizedException as ZFCUnauthorizedException;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Exception\UnauthorizedException as ZFCUnauthorizedException;
+use LmcRbacMvc\Service\AuthorizationService;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
