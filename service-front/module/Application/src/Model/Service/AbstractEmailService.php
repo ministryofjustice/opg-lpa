@@ -4,12 +4,12 @@ namespace Application\Model\Service;
 
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Mail\Transport\MailTransport;
-use Twig_Environment;
+use Twig\Environment;
 
 abstract class AbstractEmailService extends AbstractService
 {
     /**
-     * @var Twig_Environment
+     * @var Environment
      */
     private $twigEmailRenderer;
 
@@ -22,13 +22,13 @@ abstract class AbstractEmailService extends AbstractService
      * AbstractEmailService constructor.
      * @param AuthenticationService $authenticationService
      * @param array $config
-     * @param Twig_Environment $twigEmailRenderer
+     * @param Environment $twigEmailRenderer
      * @param MailTransport $mailTransport
      */
     public function __construct(
         AuthenticationService $authenticationService,
         array $config,
-        Twig_Environment $twigEmailRenderer,
+        Environment $twigEmailRenderer,
         MailTransport $mailTransport
     ) {
         parent::__construct($authenticationService, $config);
@@ -37,9 +37,9 @@ abstract class AbstractEmailService extends AbstractService
     }
 
     /**
-     * @return Twig_Environment
+     * @return Environment
      */
-    public function getTwigEmailRenderer(): Twig_Environment
+    public function getTwigEmailRenderer(): Environment
     {
         return $this->twigEmailRenderer;
     }

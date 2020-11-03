@@ -12,7 +12,7 @@ use Laminas\Router\RouteMatch;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
-use Twig_Environment;
+use Twig\Environment;
 
 class AccountInfoFactory implements FactoryInterface
 {
@@ -34,7 +34,7 @@ class AccountInfoFactory implements FactoryInterface
         $application = $container->get('Application');
         /** @var LpaApplicationService $lpaApplicationService */
         $lpaApplicationService = $container->get('LpaApplicationService');
-        /** @var Twig_Environment $viewRenderer */
+        /** @var Environment $viewRenderer */
         $viewRenderer = $container->get('TwigViewRenderer');
 
         /** @var ViewModel $viewModel */
