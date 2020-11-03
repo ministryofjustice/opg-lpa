@@ -8,7 +8,7 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use SendGrid as SendGridClient;
-use Twig_Environment;
+use Twig\Environment;
 use RuntimeException;
 
 class MailTransportFactory implements FactoryInterface
@@ -36,7 +36,7 @@ class MailTransportFactory implements FactoryInterface
 
         $client = new SendGridClient($sendGridConfig['key']);
 
-        /** @var Twig_Environment $emailRenderer */
+        /** @var Environment $emailRenderer */
         $emailRenderer = $container->get('TwigEmailRenderer');
 
         return new MailTransport($client->client, $emailRenderer, $emailConfig);

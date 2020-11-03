@@ -20,6 +20,9 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
+use Twig\Loader\FilesystemLoader;
+use Twig\Environment;
+use Twig\TwigFunction;
 
 class Module implements FormElementProviderInterface
 {
@@ -205,9 +208,9 @@ class Module implements FormElementProviderInterface
                 },
 
                 'TwigEmailRenderer' => function (ServiceLocatorInterface $sm) {
-                    $loader = new \Twig_Loader_Filesystem('module/Application/view/email');
+                    $loader = new FilesystemLoader('module/Application/view/email');
 
-                    $env = new \Twig_Environment($loader);
+                    $env = new Environment($loader);
 
                     $viewHelperManager = $sm->get('ViewHelperManager');
                     $renderer = new \Laminas\View\Renderer\PhpRenderer();
@@ -220,16 +223,16 @@ class Module implements FormElementProviderInterface
 
                         $callable = [$renderer->plugin($name), '__invoke'];
                         $options  = ['is_safe' => ['html']];
-                        return new \Twig_SimpleFunction('email', $callable, $options);
+                        return new TwigFunction('email', $callable, $options);
                     });
 
                     return $env;
                 },
 
                 'TwigViewRenderer' => function (ServiceLocatorInterface $sm) {
-                    $loader = new \Twig_Loader_Filesystem('module/Application/view/application');
+                    $loader = new FilesystemLoader('module/Application/view/application');
 
-                    return new \Twig_Environment($loader);
+                    return new Environment($loader);
                 }
             ], // factories
         ];
