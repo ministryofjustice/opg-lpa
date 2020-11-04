@@ -51,4 +51,4 @@ psql api2
 
 ### Cleanup
 
-Once you've finished with your environment go to the Cloud 9 Dashboard and delete it.
+Once you've finished with your environment go to the Cloud 9 Dashboard in AWS Console and delete it.
