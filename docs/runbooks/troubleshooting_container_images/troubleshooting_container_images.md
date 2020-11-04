@@ -35,7 +35,7 @@ you will need:
 - Docker Desktop for Mac
 - PHPStorm
 
-please see [Setting up aws Credentials](setting-up-aws-credentials/setting-up-credentials.md) for details of how to set up aws cli and aws-vault on your local machine.
+please see [Setting up AWS Credentials](../setting-up-aws-credentials/setting-up-credentials.md) for details of how to set up aws cli and aws-vault on your local machine.
 
 ## Scenarios
 

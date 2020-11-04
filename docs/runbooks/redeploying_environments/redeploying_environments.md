@@ -4,7 +4,7 @@ This document sets out how to perform a forced redeployment of ECS services usin
 
 ## Prerequisites
 
-please see [Setting up AWS Credentials](setting-up-aws-credentials/setting-up-credentials.md) for details of how to set up aws cli and aws-vault on your local machine.
+please see [Setting up AWS Credentials](../setting-up-aws-credentials/setting-up-credentials.md) for details of how to set up aws cli and aws-vault on your local machine.
 
 ## Issuing a force redeploy command for a service
 
