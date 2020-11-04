@@ -6,12 +6,12 @@ use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Mail\Transport\MailTransport;
 use Mockery;
 use Mockery\MockInterface;
-use Twig\Environment;
+use Twig\Environment as TwigEnvironment;
 
 class AbstractEmailServiceTest extends AbstractServiceTest
 {
     /**
-     * @var $twigEmailRenderer Environment|MockInterface
+     * @var $twigEmailRenderer TwigEnvironment|MockInterface
      */
     protected $twigEmailRenderer;
 
@@ -24,7 +24,7 @@ class AbstractEmailServiceTest extends AbstractServiceTest
     {
         parent::setUp();
 
-        $this->twigEmailRenderer = Mockery::mock(Environment::class);
+        $this->twigEmailRenderer = Mockery::mock(TwigEnvironment::class);
 
         $this->mailTransport = Mockery::mock(MailTransport::class);
     }
