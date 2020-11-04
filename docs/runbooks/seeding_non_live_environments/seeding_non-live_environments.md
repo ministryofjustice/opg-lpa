@@ -12,7 +12,7 @@ These will be the records we will dump from the database.
 
 ## Capturing data from an environment using pg_dump
 
-First, establish a connection to an AWS environment database using the instructions in `docs/runbooks/terminal_access.md`.
+First, establish a connection to an AWS environment database using the instructions in [Using cloud9 to access RDS instance](../cloud9/db_access.md)
 
 Connect to the database
 
