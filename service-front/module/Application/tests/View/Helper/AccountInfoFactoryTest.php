@@ -13,7 +13,7 @@ use Laminas\Mvc\View\Http\ViewManager;
 use Laminas\Router\RouteMatch;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
-use Twig\Environment;
+use Twig\Environment as TwigEnvironment;
 
 class AccountInfoFactoryTest extends MockeryTestCase
 {
@@ -33,7 +33,7 @@ class AccountInfoFactoryTest extends MockeryTestCase
 
         $authenticationService = Mockery::mock(AuthenticationService::class);
         $userDetailsSession = Mockery::mock(Container::class);
-        $twigViewRender = Mockery::mock(Environment::class);
+        $twigViewRender = Mockery::mock(TwigEnvironment::class);
 
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('get')->withArgs(['TwigViewRenderer'])->once()->andReturn($twigViewRender);

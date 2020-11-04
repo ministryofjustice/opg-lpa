@@ -6,7 +6,6 @@ use Application\Model\Service\Mail\Message;
 use Html2Text\Html2Text;
 use Opg\Lpa\Logger\LoggerTrait;
 use SendGrid;
-use Twig\Environment;
 use Laminas\Mime;
 use Laminas\Mail\Exception\InvalidArgumentException;
 use Laminas\Mail\Header\GenericHeader;
@@ -16,6 +15,7 @@ use Laminas\Mail\Transport\TransportInterface;
 use Laminas\Mime\Message as MimeMessage;
 use DateTime;
 use Exception;
+use Twig\Environment as TwigEnvironment;
 
 /**
  * Sends an email out via SendGrid's HTTP interface.
@@ -37,7 +37,7 @@ class MailTransport implements TransportInterface
     /**
      * Email renderer for sending template content
      *
-     * @var Environment
+     * @var TwigEnvironment
      */
     private $emailRenderer;
 
@@ -160,10 +160,10 @@ class MailTransport implements TransportInterface
      * MailTransport constructor
      *
      * @param SendGrid\Client $client
-     * @param Environment $emailRenderer
+     * @param TwigEnvironment $emailRenderer
      * @param array $emailConfig
      */
-    public function __construct(SendGrid\Client $client, Environment $emailRenderer, array $emailConfig)
+    public function __construct(SendGrid\Client $client, TwigEnvironment $emailRenderer, array $emailConfig)
     {
         $this->client = $client;
         $this->emailRenderer = $emailRenderer;

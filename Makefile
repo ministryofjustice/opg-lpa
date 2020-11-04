@@ -65,16 +65,15 @@ dc-build-clean:
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose down --remove-orphans; \
 	docker system prune -f --volumes; \
-	docker rmi lpa-pdf-app; \
-	docker rmi lpa-admin-web; \
-	docker rmi lpa-admin-app; \
-	docker rmi lpa-api-web; \
-	docker rmi lpa-api-app; \
-	docker rmi lpa-front-web; \
-	docker rmi lpa-front-app; \
-	docker rmi seeding; \
+	docker rmi lpa-pdf-app || true; \
+	docker rmi lpa-admin-web || true; \
+	docker rmi lpa-admin-app || true; \
+	docker rmi lpa-api-web || true; \
+	docker rmi lpa-api-app || true; \
+	docker rmi lpa-front-web || true; \
+	docker rmi lpa-front-app || true; \
+	docker rmi seeding || true; \
 	docker rmi opg-lpa_local-config; \
 	rm -fr ./service-admin/vendor; \
 	rm -fr ./service-api/vendor; \
@@ -85,6 +84,25 @@ dc-build-clean:
 	rm -fr ./service-pdf/vendor; \
 	docker-compose build --no-cache
 
+# only reset the front container - uesful for quick reset when only been working on front component
+.PHONY: reset-front
+reset-front:
+	@${MAKE} dc-down
+	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
+	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
+	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
+	docker system prune -f --volumes; \
+	docker rmi lpa-front-web || true; \
+	docker rmi lpa-front-app || true; \
+	rm -fr ./service-front/node_modules/parse-json/vendor; \
+	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
+	rm -fr ./service-front/public/assets/v2/js/vendor; \
+	rm -fr ./service-front/vendor; \
+	docker-compose build --no-cache front-web 
+	docker-compose build --no-cache front-app
+	docker-compose run front-composer
+
 .PHONY: dc-down
 dc-down:
 	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
@@ -93,13 +111,17 @@ dc-down:
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker-compose down --remove-orphans
 
-.PHONY: dc-unit-tests
-dc-unit-tests:
+.PHONY: dc-front-unit-tests
+dc-front-unit-tests:
 	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	docker-compose run front-app /app/vendor/bin/phpunit
+
+.PHONY: dc-unit-tests
+dc-unit-tests:
+	@${MAKE} dc-front-unit-tests
 
 	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \

@@ -10,7 +10,7 @@ use Laminas\Router\RouteMatch;
 use Laminas\Session\Container;
 use Laminas\View\Helper\AbstractHelper;
 use Laminas\View\Model\ViewModel;
-use Twig\Environment;
+use Twig\Environment as TwigEnvironment;
 
 class AccountInfo extends AbstractHelper
 {
@@ -40,7 +40,7 @@ class AccountInfo extends AbstractHelper
     private $lpaApplicationService;
 
     /**
-     * @var Environment
+     * @var TwigEnvironment
      */
     private $viewRenderer;
 
@@ -50,9 +50,9 @@ class AccountInfo extends AbstractHelper
      * @param ViewModel $viewModel
      * @param RouteMatch $routeMatch
      * @param LpaApplicationService $lpaApplicationService
-     * @param Environment $viewRenderer
+     * @param TwigEnvironment $viewRenderer
      */
-    public function __construct(AuthenticationService $authenticationService, Container $userDetailsSession, ViewModel $viewModel, ?RouteMatch $routeMatch, LpaApplicationService $lpaApplicationService, Environment $viewRenderer)
+    public function __construct(AuthenticationService $authenticationService, Container $userDetailsSession, ViewModel $viewModel, ?RouteMatch $routeMatch, LpaApplicationService $lpaApplicationService, TwigEnvironment $viewRenderer)
     {
         $this->authenticationService = $authenticationService;
         $this->userDetailsSession = $userDetailsSession;

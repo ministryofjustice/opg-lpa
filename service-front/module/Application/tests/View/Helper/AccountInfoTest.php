@@ -15,7 +15,7 @@ use Application\View\Helper\AccountInfo;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Twig\Environment;
+use Twig\Environment as TwigEnvironment;
 use Twig_Template;
 use Laminas\Mvc\Console\View\Renderer;
 use Laminas\Router\RouteMatch;
@@ -51,12 +51,12 @@ class AccountInfoTest extends MockeryTestCase
     private $lpaApplicationService;
 
     /**
-     * @var Environment|MockInterface
+     * @var TwigEnvironment|MockInterface
      */
     private $viewRenderer;
 
     /**
-     * @var Environment|MockInterface
+     * @var TwigEnvironment|MockInterface
      */
     private $twigTemplate;
 
@@ -74,7 +74,7 @@ class AccountInfoTest extends MockeryTestCase
         $this->routeMatch = Mockery::mock(RouteMatch::class);
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
-        $this->viewRenderer = Mockery::mock(Environment::class);
+        $this->viewRenderer = Mockery::mock(TwigEnvironment::class);
         $this->twigTemplate = Mockery::mock(Twig_Template::class);
     }
 
