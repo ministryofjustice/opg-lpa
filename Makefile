@@ -52,7 +52,7 @@ dc-build:
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose build
+	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
 
 
 # remove docker containers, volumes, images left by existing system, remove vendor folders, rebuild everything
@@ -83,7 +83,7 @@ dc-build-clean:
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
 	rm -fr ./service-front/vendor; \
 	rm -fr ./service-pdf/vendor; \
-	docker-compose build --no-cache
+	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build --no-cache
 
 .PHONY: dc-down
 dc-down:
