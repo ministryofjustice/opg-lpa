@@ -428,7 +428,7 @@ return [
         ],
     ],
 
-    'zfc_rbac' => [
+    'lmc_rbac' => [
         'assertion_map' => [
             'isAuthorizedToManageUser' => 'Application\Library\Authorization\Assertions\IsAuthorizedToManageUser',
         ],
