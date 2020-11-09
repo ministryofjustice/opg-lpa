@@ -1,3 +1,4 @@
+
 resource "aws_db_instance" "api" {
   identifier                  = lower("api-${local.environment}")
   name                        = "api2"
