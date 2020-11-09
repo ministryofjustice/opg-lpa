@@ -66,11 +66,6 @@ class AccountInfoTest extends MockeryTestCase
      */
     private $identity;
 
-    /**
-     * @var RendererInterface|MockInterface
-     */
-    private $localViewRenderer;
-
     public function setUp()
     {
         parent::setUp();
@@ -105,8 +100,7 @@ class AccountInfoTest extends MockeryTestCase
             $this->viewModel,
             null,
             $this->lpaApplicationService,
-            $this->viewRenderer,
-            $this->localViewRenderer
+            $this->viewRenderer
         );
 
         $accountInfo->setView($view);
@@ -124,8 +118,7 @@ class AccountInfoTest extends MockeryTestCase
             $this->viewModel,
             null,
             $this->lpaApplicationService,
-            $this->viewRenderer,
-            $this->localViewRenderer
+            $this->viewRenderer
         );
 
         $accountInfo();
@@ -151,8 +144,7 @@ class AccountInfoTest extends MockeryTestCase
             $this->viewModel,
             null,
             $this->lpaApplicationService,
-            $this->viewRenderer,
-            $this->localViewRenderer
+            $this->viewRenderer
         );
 
         $this->expectOutputString("test content");
@@ -182,8 +174,7 @@ class AccountInfoTest extends MockeryTestCase
             $this->viewModel,
             null,
             $this->lpaApplicationService,
-            $this->viewRenderer,
-            $this->localViewRenderer
+            $this->viewRenderer
         );
 
         $this->expectOutputString("test content");
@@ -212,8 +203,7 @@ class AccountInfoTest extends MockeryTestCase
             $this->viewModel,
             $this->routeMatch,
             $this->lpaApplicationService,
-            $this->viewRenderer,
-            $this->localViewRenderer
+            $this->viewRenderer
         );
 
         $this->expectOutputString("test content");
@@ -240,8 +230,7 @@ class AccountInfoTest extends MockeryTestCase
             $this->viewModel,
             null,
             $this->lpaApplicationService,
-            $this->viewRenderer,
-            $this->localViewRenderer
+            $this->viewRenderer
         );
 
         $this->expectOutputString("test content");
