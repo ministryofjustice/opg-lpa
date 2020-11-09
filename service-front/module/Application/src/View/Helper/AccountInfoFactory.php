@@ -42,6 +42,6 @@ class AccountInfoFactory implements FactoryInterface
         /** @var RouteMatch $routeMatch */
         $routeMatch = $application->getMvcEvent()->getRouteMatch();
 
-        return new AccountInfo($authenticationService, $userDetailsSession, $viewModel, $routeMatch, $lpaApplicationService, $viewRenderer);
+        return new AccountInfo($authenticationService, $userDetailsSession, $viewModel, $routeMatch, $lpaApplicationService, new LocalViewRenderer($viewRenderer));
     }
 }

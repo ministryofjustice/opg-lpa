@@ -1,5 +1,5 @@
 <?php
-/**
+/** 
  * Created by PhpStorm.
  * User: seemamenon
  * Date: 17/02/2019
@@ -22,6 +22,7 @@ use Laminas\Router\RouteMatch;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\View\Helper\RendererInterface as RendererInterface;
 
 class AccountInfoTest extends MockeryTestCase
 {
@@ -56,7 +57,7 @@ class AccountInfoTest extends MockeryTestCase
     private $viewRenderer;
 
     /**
-     * @var TwigEnvironment|MockInterface
+     * @var Twig_Template|MockInterface
      */
     private $twigTemplate;
 
@@ -64,6 +65,11 @@ class AccountInfoTest extends MockeryTestCase
      * @var AuthenticationService|MockInterface
      */
     private $identity;
+
+    /**
+     * @var RendererInterface|MockInterface
+     */
+    private $localViewRenderer;
 
     public function setUp()
     {
@@ -74,7 +80,7 @@ class AccountInfoTest extends MockeryTestCase
         $this->routeMatch = Mockery::mock(RouteMatch::class);
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
-        $this->viewRenderer = Mockery::mock(TwigEnvironment::class);
+        $this->viewRenderer = Mockery::mock(RendererInterface::class);
         $this->twigTemplate = Mockery::mock(Twig_Template::class);
     }
 
@@ -99,7 +105,8 @@ class AccountInfoTest extends MockeryTestCase
             $this->viewModel,
             null,
             $this->lpaApplicationService,
-            $this->viewRenderer
+            $this->viewRenderer,
+            $this->localViewRenderer
         );
 
         $accountInfo->setView($view);
@@ -117,7 +124,8 @@ class AccountInfoTest extends MockeryTestCase
             $this->viewModel,
             null,
             $this->lpaApplicationService,
-            $this->viewRenderer
+            $this->viewRenderer,
+            $this->localViewRenderer
         );
 
         $accountInfo();
@@ -143,7 +151,8 @@ class AccountInfoTest extends MockeryTestCase
             $this->viewModel,
             null,
             $this->lpaApplicationService,
-            $this->viewRenderer
+            $this->viewRenderer,
+            $this->localViewRenderer
         );
 
         $this->expectOutputString("test content");
@@ -173,7 +182,8 @@ class AccountInfoTest extends MockeryTestCase
             $this->viewModel,
             null,
             $this->lpaApplicationService,
-            $this->viewRenderer
+            $this->viewRenderer,
+            $this->localViewRenderer
         );
 
         $this->expectOutputString("test content");
@@ -202,7 +212,8 @@ class AccountInfoTest extends MockeryTestCase
             $this->viewModel,
             $this->routeMatch,
             $this->lpaApplicationService,
-            $this->viewRenderer
+            $this->viewRenderer,
+            $this->localViewRenderer
         );
 
         $this->expectOutputString("test content");
@@ -229,7 +240,8 @@ class AccountInfoTest extends MockeryTestCase
             $this->viewModel,
             null,
             $this->lpaApplicationService,
-            $this->viewRenderer
+            $this->viewRenderer,
+            $this->localViewRenderer
         );
 
         $this->expectOutputString("test content");

@@ -10,7 +10,6 @@ use Laminas\Router\RouteMatch;
 use Laminas\Session\Container;
 use Laminas\View\Helper\AbstractHelper;
 use Laminas\View\Model\ViewModel;
-use Twig\Environment as TwigEnvironment;
 
 class AccountInfo extends AbstractHelper
 {
@@ -24,7 +23,7 @@ class AccountInfo extends AbstractHelper
      */
     private $userDetailsSession;
 
-    /**
+    /** 
      * @var ViewModel
      */
     private $viewModel;
@@ -33,16 +32,16 @@ class AccountInfo extends AbstractHelper
      * @var RouteMatch
      */
     private $routeMatch;
-
+ 
     /**
      * @var LpaApplicationService
      */
     private $lpaApplicationService;
 
     /**
-     * @var TwigEnvironment
+     * @var RendererInterface
      */
-    private $viewRenderer;
+    private $localViewRenderer;
 
     /**
      * @param AuthenticationService $authenticationService
@@ -50,16 +49,15 @@ class AccountInfo extends AbstractHelper
      * @param ViewModel $viewModel
      * @param RouteMatch $routeMatch
      * @param LpaApplicationService $lpaApplicationService
-     * @param TwigEnvironment $viewRenderer
      */
-    public function __construct(AuthenticationService $authenticationService, Container $userDetailsSession, ViewModel $viewModel, ?RouteMatch $routeMatch, LpaApplicationService $lpaApplicationService, TwigEnvironment $viewRenderer)
+    public function __construct(AuthenticationService $authenticationService, Container $userDetailsSession, ViewModel $viewModel, ?RouteMatch $routeMatch, LpaApplicationService $lpaApplicationService, RendererInterface $localViewRenderer)
     {
         $this->authenticationService = $authenticationService;
         $this->userDetailsSession = $userDetailsSession;
         $this->viewModel = $viewModel;
         $this->routeMatch = $routeMatch;
         $this->lpaApplicationService = $lpaApplicationService;
-        $this->viewRenderer = $viewRenderer;
+        $this->localViewRenderer = $localViewRenderer;
     }
 
     public function __invoke()
@@ -107,7 +105,7 @@ class AccountInfo extends AbstractHelper
 
         $params['hasOneOrMoreLPAs'] = $this->userDetailsSession->hasOneOrMoreLPAs;
 
-        $template = $this->viewRenderer->loadTemplate('account-info/account-info.twig');
+        $template = $this->localViewRenderer->loadTemplate('account-info/account-info.twig');
 
         echo $template->render($params);
     }
