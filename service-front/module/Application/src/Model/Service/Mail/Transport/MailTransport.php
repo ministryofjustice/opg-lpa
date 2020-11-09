@@ -15,7 +15,7 @@ use Laminas\Mail\Transport\TransportInterface;
 use Laminas\Mime\Message as MimeMessage;
 use DateTime;
 use Exception;
-use Twig\Environment as TwigEnvironment;
+use Application\View\Helper\RendererInterface as RendererInterface;
 
 /**
  * Sends an email out via SendGrid's HTTP interface.
@@ -37,7 +37,7 @@ class MailTransport implements TransportInterface
     /**
      * Email renderer for sending template content
      *
-     * @var TwigEnvironment
+     * @var RendererInterface
      */
     private $emailRenderer;
 
@@ -160,13 +160,12 @@ class MailTransport implements TransportInterface
      * MailTransport constructor
      *
      * @param SendGrid\Client $client
-     * @param TwigEnvironment $emailRenderer
      * @param array $emailConfig
      */
-    public function __construct(SendGrid\Client $client, TwigEnvironment $emailRenderer, array $emailConfig)
+    public function __construct(SendGrid\Client $client, RendererInterface $localEmailRenderer, array $emailConfig)
     {
         $this->client = $client;
-        $this->emailRenderer = $emailRenderer;
+        $this->localEmailRenderer = $localEmailRenderer;
         $this->emailConfig = $emailConfig;
     }
 
@@ -344,7 +343,7 @@ class MailTransport implements TransportInterface
             }
 
             //  Get the HTML content from the template and the data
-            $template = $this->emailRenderer->loadTemplate($this->emailTemplatesConfig[$emailRef]['template']);
+            $template = $this->localEmailRenderer->loadTemplate($this->emailTemplatesConfig[$emailRef]['template']);
             $emailHtml = $template->render($data);
 
 
