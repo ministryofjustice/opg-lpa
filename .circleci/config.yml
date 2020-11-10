@@ -39,21 +39,25 @@ pr_build:  &pr_build
         unit_test: false
         filters: { branches: { ignore: [master] } }
 
-    - infrastructure_and_deployment/lint_and_validate_terraform:
-        name: lint_and_validate_terraform
+    - infrastructure_and_deployment/lint_account_terraform:
+        name: lint_account_terraform_pr_build
+        filters: { branches: { ignore: [master] } }
+
+    - infrastructure_and_deployment/lint_environment_terraform:
+        name: lint_environment_terraform_pr_build
         filters: { branches: { ignore: [master] } }
 
     - infrastructure_and_deployment/apply_account_terraform:
         name: dev_account_apply_terraform
         workspace: development
         filters: { branches: { ignore: [master] } }
-        requires: [cancel_previous_jobs, lint_and_validate_terraform]
+        requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
 
     - infrastructure_and_deployment/apply_email_terraform:
         name: email_apply_terraform
         workspace: development
         filters: { branches: { ignore: [master] } }
-        requires: [cancel_previous_jobs, lint_and_validate_terraform]
+        requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
 
     - infrastructure_and_deployment/apply_environment_terraform:
         name: dev_environment_apply_terraform
@@ -61,6 +65,7 @@ pr_build:  &pr_build
         requires:
           [
             cancel_previous_jobs,
+            lint_environment_terraform_pr_build,
             dev_account_apply_terraform,
             front_docker_build,
             admin_docker_build,
@@ -223,7 +228,6 @@ workflows:
                only:
                  - master
     <<: *path_to_live
-
 
 orbs:
   slack: circleci/slack@3.3.0
@@ -402,10 +406,16 @@ orbs:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
-
-      terraform:
+      terraform12:
         docker:
         - image: hashicorp/terraform:0.12.28
+          auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
+        resource_class: small
+      terraform13:
+        docker:
+        - image: hashicorp/terraform:0.13.5
           auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
@@ -427,13 +437,13 @@ orbs:
                 - lambda_function_payload.zip
       #----------------------------------------------------
       # Terraform
-      lint_and_validate_terraform:
+      lint_account_terraform:
         parameters:
           workspace:
             description: Terraform workspace name
             type: string
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
-        executor: terraform
+        executor: terraform12
         steps:
           - checkout
           - run:
@@ -448,6 +458,14 @@ orbs:
                 export TF_WORKSPACE=development >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform validate
+      lint_environment_terraform:
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        executor: terraform13
+        steps:
           - run:
               name: Lint Environment Terraform
               command: |
@@ -464,7 +482,7 @@ orbs:
         # Apply the email terraform configuration. This:
         #   - Creates a mailbox used for functional testing;
         #
-        executor: terraform
+        executor: terraform12
         parameters:
           workspace:
             description: Terraform workspace name
@@ -486,7 +504,7 @@ orbs:
         # Apply the shared terraform configuration. This:
         #   - Updates the account infrastructure;
         #
-        executor: terraform
+        executor: terraform12
         parameters:
           workspace:
             description: Terraform workspace name
@@ -509,7 +527,7 @@ orbs:
         #   - Updates per environment infrastructure; and
         #   - Triggers a deploy of the updated container (if changed)
         #
-        executor: terraform
+        executor: terraform13
         parameters:
           workspace:
             description: Terraform workspace name
@@ -548,7 +566,7 @@ orbs:
         # Destroys a development environment after testing and approval
         # Cannot be run on master branch
         #
-        executor: terraform
+        executor: terraform13
         parameters:
           workspace:
             description: Terraform workspace name
