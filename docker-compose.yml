@@ -111,6 +111,10 @@ services:
     volumes:
       - ./service-front:/app
     command:
+      - global require hirak/prestissimo 
+      - --no-plugins
+      - --no-scripts 
+    command:
       - install
       - --prefer-dist
       - --no-suggest
@@ -207,6 +211,10 @@ services:
     volumes:
       - ./service-api:/app
     command:
+      - global require hirak/prestissimo 
+      - --no-plugins
+      - --no-scripts 
+    command:
       - install
       - --prefer-dist
       - --no-suggest
@@ -274,6 +282,10 @@ services:
     volumes:
       - ./service-admin:/app
     command:
+      - global require hirak/prestissimo 
+      - --no-plugins
+      - --no-scripts 
+    command:
       - install
       - --prefer-dist
       - --no-suggest
@@ -326,6 +338,10 @@ services:
     image: composer:1.10.16
     volumes:
       - ./service-pdf:/app
+    command:
+      - global require hirak/prestissimo 
+      - --no-plugins
+      - --no-scripts 
     command:
       - install
       - --prefer-dist
