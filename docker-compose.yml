@@ -97,7 +97,7 @@ services:
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
-      #ENABLE_XDEBUG: 'true'
+      ENABLE_XDEBUG: 'true'
       PHP_IDE_CONFIG: serverName=lpa-front-app
       XDEBUG_CONFIG: remote_host=host.docker.internal remote_enable=1
 
@@ -111,12 +111,17 @@ services:
     volumes:
       - ./service-front:/app
     command:
+      - global require hirak/prestissimo 
+      - --no-plugins
+      - --no-scripts 
+    command:
       - install
       - --prefer-dist
       - --no-suggest
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
+      - --ignore-platform-reqs
 
   front-ssl:
     container_name: lpa-front-ssl
@@ -206,12 +211,17 @@ services:
     volumes:
       - ./service-api:/app
     command:
+      - global require hirak/prestissimo 
+      - --no-plugins
+      - --no-scripts 
+    command:
       - install
       - --prefer-dist
       - --no-suggest
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
+      - --ignore-platform-reqs
 
   # ---------------------------
   # Admin
@@ -272,12 +282,17 @@ services:
     volumes:
       - ./service-admin:/app
     command:
+      - global require hirak/prestissimo 
+      - --no-plugins
+      - --no-scripts 
+    command:
       - install
       - --prefer-dist
       - --no-suggest
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
+      - --ignore-platform-reqs
 
   admin-ssl:
     container_name: lpa-admin-ssl
@@ -324,12 +339,17 @@ services:
     volumes:
       - ./service-pdf:/app
     command:
+      - global require hirak/prestissimo 
+      - --no-plugins
+      - --no-scripts 
+    command:
       - install
       - --prefer-dist
       - --no-suggest
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
+      - --ignore-platform-reqs
   # ---------------------------
   # Seeding
   seeding:
