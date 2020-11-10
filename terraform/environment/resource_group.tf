@@ -14,7 +14,7 @@ locals {
     TagFilters = [
       {
         Key    = "environment-name",
-        Values = ["${local.environment}"]
+        Values = [local.environment]
       }
     ]
   })
