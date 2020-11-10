@@ -466,6 +466,7 @@ orbs:
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
         executor: terraform12
         steps:
+          - checkout
           - run:
               name: Lint Environment Terraform
               command: |
