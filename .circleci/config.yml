@@ -464,7 +464,7 @@ orbs:
             description: Terraform workspace name
             type: string
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
-        executor: terraform13
+        executor: terraform12
         steps:
           - run:
               name: Lint Environment Terraform
@@ -527,7 +527,7 @@ orbs:
         #   - Updates per environment infrastructure; and
         #   - Triggers a deploy of the updated container (if changed)
         #
-        executor: terraform13
+        executor: terraform12
         parameters:
           workspace:
             description: Terraform workspace name
@@ -566,7 +566,7 @@ orbs:
         # Destroys a development environment after testing and approval
         # Cannot be run on master branch
         #
-        executor: terraform13
+        executor: terraform12
         parameters:
           workspace:
             description: Terraform workspace name
