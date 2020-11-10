@@ -443,7 +443,7 @@ orbs:
             description: Terraform workspace name
             type: string
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
-        executor: terraform12
+        executor: terraform13
         steps:
           - checkout
           - run:
@@ -505,7 +505,7 @@ orbs:
         # Apply the shared terraform configuration. This:
         #   - Updates the account infrastructure;
         #
-        executor: terraform12
+        executor: terraform13
         parameters:
           workspace:
             description: Terraform workspace name
