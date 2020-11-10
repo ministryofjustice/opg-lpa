@@ -18,25 +18,25 @@ dc-run:
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose run front-composer
+	docker-compose run front-composer | xargs -L1 echo front-composer: &
 
 	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose run admin-composer
+	sleep 20; docker-compose run admin-composer | xargs -L1 echo admin-composer: &
 
 	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	docker-compose run api-composer
+	sleep 20; docker-compose run api-composer | xargs -L1 echo api-composer: &
 
 	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-    docker-compose run pdf-composer
+	sleep 20; docker-compose run pdf-composer | xargs -L1 echo pdf-composer: 
 
 .PHONY: dc-up
 dc-up:
