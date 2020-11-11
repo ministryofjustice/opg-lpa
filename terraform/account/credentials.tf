@@ -23,7 +23,6 @@ provider "aws" {
     role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
   }
-  version = "2.70.0"
 }
 
 provider "aws" {
@@ -33,7 +32,6 @@ provider "aws" {
     role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
   }
-  version = "2.70.0"
 }
 
 provider "aws" {
@@ -43,7 +41,6 @@ provider "aws" {
     role_arn     = "arn:aws:iam::311462405659:role/${var.default_role}"
     session_name = "terraform-session"
   }
-  version = "2.70.0"
 }
 
 provider "aws" {
@@ -53,5 +50,4 @@ provider "aws" {
     role_arn     = "arn:aws:iam::550790013665:role/${var.default_role}"
     session_name = "terraform-session"
   }
-  version = "2.70.0"
 }
