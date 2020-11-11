@@ -1,10 +1,9 @@
-FROM composer:1.10.16 AS composer
+FROM composer:latest AS composer
 
 COPY service-pdf/composer.json /app/composer.json
 COPY service-pdf/composer.lock /app/composer.lock
 
-RUN composer global require hirak/prestissimo --no-plugins --no-scripts \
-    && composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
+RUN composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
 FROM php:7-cli
 
