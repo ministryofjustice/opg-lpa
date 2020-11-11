@@ -45,3 +45,7 @@ provider "aws" {
   }
   version = "2.70"
 }
+
+provider "pagerduty" {
+  token = var.pagerduty_token
+}

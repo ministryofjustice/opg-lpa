@@ -7,7 +7,7 @@ data "aws_iam_policy_document" "loadbalancer_logging" {
     sid = "accessLogBucketAccess"
 
     resources = [
-      "${aws_s3_bucket.access_log.arn}",
+      aws_s3_bucket.access_log.arn,
       "${aws_s3_bucket.access_log.arn}/*",
     ]
 

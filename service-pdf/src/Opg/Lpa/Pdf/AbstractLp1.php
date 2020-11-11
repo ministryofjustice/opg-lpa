@@ -545,6 +545,10 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             }
         }
 
+        if (!is_null($this->formattedLpaRef) && $this->lpaIsComplete) {
+            $this->setData('lpa-a-reference-number', $this->formattedLpaRef);
+        }
+
         //  Set repeat application details
         if (!is_null($repeatCaseNumber)) {
             $this->setCheckBox('is-repeat-application')

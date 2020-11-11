@@ -97,7 +97,7 @@ services:
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
-      #ENABLE_XDEBUG: 'true'
+      ENABLE_XDEBUG: 'true'
       PHP_IDE_CONFIG: serverName=lpa-front-app
       XDEBUG_CONFIG: remote_host=host.docker.internal remote_enable=1
 
@@ -107,9 +107,13 @@ services:
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
 
   front-composer:
-    image: composer
+    image: composer:1.10.16
     volumes:
       - ./service-front:/app
+    command:
+      - global require hirak/prestissimo 
+      - --no-plugins
+      - --no-scripts 
     command:
       - install
       - --prefer-dist
@@ -117,6 +121,7 @@ services:
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
+      - --ignore-platform-reqs
 
   front-ssl:
     container_name: lpa-front-ssl
@@ -202,9 +207,13 @@ services:
       XDEBUG_CONFIG: remote_host=host.docker.internal remote_enable=1
 
   api-composer:
-    image: composer
+    image: composer:1.10.16
     volumes:
       - ./service-api:/app
+    command:
+      - global require hirak/prestissimo 
+      - --no-plugins
+      - --no-scripts 
     command:
       - install
       - --prefer-dist
@@ -212,6 +221,7 @@ services:
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
+      - --ignore-platform-reqs
 
   # ---------------------------
   # Admin
@@ -268,9 +278,13 @@ services:
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
 
   admin-composer:
-    image: composer
+    image: composer:1.10.16
     volumes:
       - ./service-admin:/app
+    command:
+      - global require hirak/prestissimo 
+      - --no-plugins
+      - --no-scripts 
     command:
       - install
       - --prefer-dist
@@ -278,6 +292,7 @@ services:
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
+      - --ignore-platform-reqs
 
   admin-ssl:
     container_name: lpa-admin-ssl
@@ -320,9 +335,13 @@ services:
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo
 
   pdf-composer:
-    image: composer
+    image: composer:1.10.16
     volumes:
       - ./service-pdf:/app
+    command:
+      - global require hirak/prestissimo 
+      - --no-plugins
+      - --no-scripts 
     command:
       - install
       - --prefer-dist
@@ -330,6 +349,7 @@ services:
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
+      - --ignore-platform-reqs
   # ---------------------------
   # Seeding
   seeding:
