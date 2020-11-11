@@ -377,8 +377,8 @@ orbs:
           - run:
               name: Install Terraform
               command: |
-                export TERRAFORM_VERSION=0.12.28
-                export TERRAFORM_SHA256SUM=be99da1439a60942b8d23f63eba1ea05ff42160744116e84f46fc24f1a8011b6
+                export TERRAFORM_VERSION=0.13.5
+                export TERRAFORM_SHA256SUM=f7b7a7b1bfbf5d78151cfe3d1d463140b5fd6a354e71a7de2b5644e652ca5147
                 curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip
                 echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS
                 sha256sum -c --status terraform_${TERRAFORM_VERSION}_SHA256SUMS
@@ -403,13 +403,6 @@ orbs:
         docker:
           - image: circleci/python:3.6-stretch-browsers
             auth:
-              username: $DOCKER_USER
-              password: $DOCKER_ACCESS_TOKEN
-        resource_class: small
-      terraform12:
-        docker:
-        - image: hashicorp/terraform:0.12.28
-          auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
@@ -483,7 +476,7 @@ orbs:
         # Apply the email terraform configuration. This:
         #   - Creates a mailbox used for functional testing;
         #
-        executor: terraform12
+        executor: terraform13
         parameters:
           workspace:
             description: Terraform workspace name
@@ -844,7 +837,7 @@ jobs:
 
   workspace_cleanup:
     docker:
-      - image: hashicorp/terraform:0.12.28
+      - image: hashicorp/terraform
         auth:
           username: $DOCKER_USER
           password: $DOCKER_ACCESS_TOKEN
