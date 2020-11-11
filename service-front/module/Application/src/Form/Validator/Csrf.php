@@ -4,7 +4,7 @@ namespace Application\Form\Validator;
 
 use Laminas\Math\Rand;
 use Laminas\Session\Container;
-use Laminas\Validator\Csrf as ZFCsrfValidator;
+use Laminas\Validator\Csrf as LaminasCsrfValidator;
 use RuntimeException;
 
 /**
@@ -21,7 +21,7 @@ use RuntimeException;
  * Class Csrf
  * @package Application\Form\Validator
  */
-class Csrf extends ZFCsrfValidator
+class Csrf extends LaminasCsrfValidator
 {
     /**
      * Error messages

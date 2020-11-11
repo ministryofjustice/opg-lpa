@@ -9,7 +9,7 @@ use SendGrid;
 use Laminas\Mime;
 use Laminas\Mail\Exception\InvalidArgumentException;
 use Laminas\Mail\Header\GenericHeader;
-use Laminas\Mail\Message as ZFMessage;
+use Laminas\Mail\Message as LaminasMessage;
 use Laminas\Mail\Transport\Exception\InvalidArgumentException as TransportInvalidArgumentException;
 use Laminas\Mail\Transport\TransportInterface;
 use Laminas\Mime\Message as MimeMessage;
@@ -172,11 +172,11 @@ class MailTransport implements TransportInterface
     /**
      * Send a mail message
      *
-     * @param  ZFMessage $message
+     * @param  LaminasMessage $message
      * @throws InvalidArgumentException
      * @throws TransportInvalidArgumentException
      */
-    public function send(ZFMessage $message)
+    public function send(LaminasMessage $message)
     {
         //  Determine the categories being used in the message
         $categories = ($message instanceof Message ? $message->getCategories() : []);
@@ -415,11 +415,11 @@ class MailTransport implements TransportInterface
     /**
      * Get the from address object from the message
      *
-     * @param  ZFMessage $message
+     * @param  LaminasMessage $message
      * @return mixed|\Laminas\Mail\Address
      * @throws InvalidArgumentException
      */
-    private function getFrom(ZFMessage $message)
+    private function getFrom(LaminasMessage $message)
     {
         $from = $message->getFrom();
 

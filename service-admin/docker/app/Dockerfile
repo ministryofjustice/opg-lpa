@@ -6,7 +6,7 @@ COPY service-admin/composer.lock /app/composer.lock
 RUN composer global require hirak/prestissimo --no-plugins --no-scripts \
         && composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-FROM php:7.3-fpm-alpine
+FROM php:7.4-fpm-alpine
 
 RUN apk add --update --no-cache icu
 
