@@ -4,9 +4,9 @@ namespace Application\Form\View\Helper;
 
 use Laminas\Form\Element\MultiCheckbox;
 use Laminas\Form\LabelAwareInterface;
-use Laminas\Form\View\Helper\FormMultiCheckbox as ZFFormMultiCheckbox;
+use Laminas\Form\View\Helper\FormMultiCheckbox as LaminasFormMultiCheckbox;
 
-class FormMultiCheckbox extends ZFFormMultiCheckbox
+class FormMultiCheckbox extends LaminasFormMultiCheckbox
 {
     /**
      * Render options
