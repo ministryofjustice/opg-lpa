@@ -1,8 +1,10 @@
-FROM composer AS composer
+FROM composer:1.10.16 AS composer
 
-COPY service-pdf /app
+COPY service-pdf/composer.json /app/composer.json
+COPY service-pdf/composer.lock /app/composer.lock
 
-RUN composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
+RUN composer global require hirak/prestissimo --no-plugins --no-scripts \
+    && composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
 
 FROM php:7-cli
 
@@ -11,7 +13,7 @@ RUN apt-get -y update \
     && mkdir -p /usr/share/man/man1 \
     && apt-get -y install pdftk \
     && apt-get -y clean \
-    && pecl install xdebug \ 
+    && pecl install xdebug \
     && pecl clear-cache
 
 COPY service-pdf /app

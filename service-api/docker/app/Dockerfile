@@ -1,8 +1,10 @@
-FROM composer AS composer
+FROM composer:1.10.16 AS composer
 
-COPY service-api /app
+COPY service-api/composer.json /app/composer.json
+COPY service-api/composer.lock /app/composer.lock
 
-RUN composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
+RUN composer global require hirak/prestissimo --no-plugins --no-scripts \
+        && composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
 
 FROM php:7.3-fpm-alpine
 
