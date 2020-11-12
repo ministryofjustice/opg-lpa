@@ -14,7 +14,7 @@ data "aws_lb" "new_lpa_production_front" {
 }
 
 resource "aws_route53_record" "lastingpowerofattorney_service_gov_uk" {
-  zone_id = "${data.aws_route53_zone.lastingpowerofattorney_service_gov_uk.zone_id}"
+  zone_id = data.aws_route53_zone.lastingpowerofattorney_service_gov_uk.zone_id
   name    = "lastingpowerofattorney.service.gov.uk"
   type    = "A"
 
