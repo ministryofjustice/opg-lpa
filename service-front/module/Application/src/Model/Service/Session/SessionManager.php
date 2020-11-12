@@ -2,9 +2,9 @@
 namespace Application\Model\Service\Session;
 
 use Laminas\Session\Container;
-use Laminas\Session\SessionManager as ZFSessionManager;
+use Laminas\Session\SessionManager as LaminasSessionManager;
 
-class SessionManager extends ZFSessionManager {
+class SessionManager extends LaminasSessionManager {
 
     /**
      * Tracks whether we've seen this session before and does a regenerateId() if not.

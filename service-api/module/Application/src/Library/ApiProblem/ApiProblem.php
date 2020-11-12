@@ -1,9 +1,9 @@
 <?php
 namespace Application\Library\ApiProblem;
 
-use Laminas\ApiTools\ApiProblem\ApiProblem as ZFApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem as LaminasApiProblem;
 
-class ApiProblem extends ZFApiProblem
+class ApiProblem extends LaminasApiProblem
 {
     /**
      * @return string

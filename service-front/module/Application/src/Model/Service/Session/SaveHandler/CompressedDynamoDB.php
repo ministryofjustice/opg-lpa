@@ -13,7 +13,7 @@ use Laminas\Filter\Decompress;
 class CompressedDynamoDB extends DynamoDB {
 
     /**
-     * The compression adapter to use (with ZF2 Filters)
+     * The compression adapter to use (with Laminas Filters)
      */
     const COMPRESSION_ADAPTER = 'Gz';
 

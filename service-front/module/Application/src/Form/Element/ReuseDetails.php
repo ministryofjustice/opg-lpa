@@ -2,9 +2,9 @@
 
 namespace Application\Form\Element;
 
-use Laminas\Form\Element\Radio as ZFRadio;
+use Laminas\Form\Element\Radio as LaminasRadio;
 
-class ReuseDetails extends ZFRadio
+class ReuseDetails extends LaminasRadio
 {
     /**
      * @param  array $options

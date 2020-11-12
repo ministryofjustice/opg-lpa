@@ -8,7 +8,7 @@ use Application\Model\Service\AbstractService;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
-use LmcRbacMvc\Exception\UnauthorizedException as ZFCUnauthorizedException;
+use LmcRbacMvc\Exception\UnauthorizedException as LaminasUnauthorizedException;
 use LmcRbacMvc\Service\AuthorizationService;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
@@ -102,11 +102,11 @@ abstract class AbstractLpaController extends AbstractRestfulController
     protected function checkAccess()
     {
         if (!$this->authorizationService->isGranted('authenticated')) {
-            throw new ZFCUnauthorizedException('You need to be authenticated to access this service');
+            throw new LaminasUnauthorizedException('You need to be authenticated to access this service');
         }
 
         if (!$this->authorizationService->isGranted('isAuthorizedToManageUser', $this->routeUserId) && !$this->authorizationService->isGranted('admin')) {
-            throw new ZFCUnauthorizedException('You do not have permission to access this service');
+            throw new LaminasUnauthorizedException('You do not have permission to access this service');
         }
     }
 }

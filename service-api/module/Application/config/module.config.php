@@ -455,7 +455,7 @@ return [
                 ],
             ],
         ],
-    ], // zfc_rbac
+    ], 
 
     'controllers' => [
         'invokables' => [
