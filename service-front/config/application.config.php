@@ -17,6 +17,7 @@ return array(
         'Laminas\Validator',
         'Application',
         //ZfcTwig MUST be the last module!
+        //note that at this time that ZfcTwig has not been given a new Laminas namespace 
         'ZfcTwig'
     ),
     // These are various options for the listeners attached to the ModuleManager

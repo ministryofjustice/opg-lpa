@@ -4,7 +4,7 @@ namespace Application\Model\Service\Authentication;
 
 use Application\Model\Service\Authentication\Adapter\AdapterInterface as LpaAdapterInterface;
 use Laminas\Authentication\Adapter\AdapterInterface;
-use Laminas\Authentication\AuthenticationService as ZFAuthenticationService;
+use Laminas\Authentication\AuthenticationService as LaminasAuthenticationService;
 use Laminas\Authentication\Storage\StorageInterface;
 use RuntimeException;
 
@@ -14,7 +14,7 @@ use RuntimeException;
  * Class AuthenticationService
  * @package Application\Model\Service\Authentication
  */
-class AuthenticationService extends ZFAuthenticationService
+class AuthenticationService extends LaminasAuthenticationService
 {
     /**
      * AuthenticationService constructor
