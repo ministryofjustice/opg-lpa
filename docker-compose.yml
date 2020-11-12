@@ -113,7 +113,6 @@ services:
     command:
       - install
       - --prefer-dist
-      - --no-suggest
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
@@ -209,7 +208,6 @@ services:
     command:
       - install
       - --prefer-dist
-      - --no-suggest
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
@@ -276,7 +274,6 @@ services:
     command:
       - install
       - --prefer-dist
-      - --no-suggest
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
@@ -329,7 +326,6 @@ services:
     command:
       - install
       - --prefer-dist
-      - --no-suggest
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
