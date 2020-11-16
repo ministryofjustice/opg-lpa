@@ -4,7 +4,6 @@ provider "aws" {
     role_arn     = "arn:aws:iam::${local.account.account_id}:role/${var.default_role}"
     session_name = "terraform-session"
   }
-  version = "2.70.0"
 }
 
 variable "default_role" {
@@ -22,5 +21,4 @@ provider "aws" {
     role_arn     = "arn:aws:iam::311462405659:role/${var.management_role}"
     session_name = "terraform-session"
   }
-  version = "2.70.0"
 }
