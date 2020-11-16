@@ -89,9 +89,7 @@ resource "aws_kms_alias" "lpa_pdf_cache" {
 resource "aws_s3_bucket" "static_email_assets" {
   count  = terraform.workspace == "production" ? 1 : 0
   bucket = "opg-lpa-email-assets"
-
   tags   = local.default_tags
-  region = "eu-west-1"
 }
 
 resource "aws_s3_bucket_object" "govuk_logo" {
