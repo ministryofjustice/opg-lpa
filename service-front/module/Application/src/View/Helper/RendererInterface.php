@@ -8,5 +8,10 @@ namespace Application\View\Helper;
 
 interface RendererInterface
 {
+/**
+ * Load the twig template
+ *
+ * @param string $templateName
+ */
     public function LoadTemplate(string $templateName);
 }
