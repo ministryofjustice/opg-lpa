@@ -13,16 +13,24 @@ data "aws_route53_zone" "lastingpowerofattorney_service_gov_uk" {
 
 resource "aws_route53_record" "certificate_validation_front" {
   provider = aws.management
-  name     = aws_acm_certificate.certificate_front.domain_validation_options.0.resource_record_name
-  type     = aws_acm_certificate.certificate_front.domain_validation_options.0.resource_record_type
-  zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
-  records  = [aws_acm_certificate.certificate_front.domain_validation_options.0.resource_record_value]
-  ttl      = 60
+  for_each = {
+    for dvo in aws_acm_certificate.certificate_front.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
 }
 
 resource "aws_acm_certificate_validation" "certificate_front" {
   certificate_arn         = aws_acm_certificate.certificate_front.arn
-  validation_record_fqdns = [aws_route53_record.certificate_validation_front.fqdn]
+  validation_record_fqdns = [for record in aws_route53_record.certificate_validation_front : record.fqdn]
 }
 
 resource "aws_acm_certificate" "certificate_front" {
@@ -35,16 +43,26 @@ resource "aws_acm_certificate" "certificate_front" {
 
 resource "aws_route53_record" "certificate_validation_admin" {
   provider = aws.management
-  name     = aws_acm_certificate.certificate_admin.domain_validation_options.0.resource_record_name
-  type     = aws_acm_certificate.certificate_admin.domain_validation_options.0.resource_record_type
-  zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
-  records  = [aws_acm_certificate.certificate_admin.domain_validation_options.0.resource_record_value]
-  ttl      = 60
+
+  for_each = {
+    for dvo in aws_acm_certificate.certificate_admin.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
 }
 
 resource "aws_acm_certificate_validation" "certificate_admin" {
   certificate_arn         = aws_acm_certificate.certificate_admin.arn
-  validation_record_fqdns = [aws_route53_record.certificate_validation_admin.fqdn]
+  validation_record_fqdns = [for record in aws_route53_record.certificate_validation_admin : record.fqdn]
 }
 
 resource "aws_acm_certificate" "certificate_admin" {
@@ -56,21 +74,27 @@ resource "aws_acm_certificate" "certificate_admin" {
 // Live Service Certificate
 
 resource "aws_route53_record" "certificate_validation_live_service" {
-  count    = terraform.workspace == "production" ? 1 : 0
   provider = aws.legacy-lpa
-  name     = aws_acm_certificate.certificate_live_service[count.index].domain_validation_options.0.resource_record_name
-  type     = aws_acm_certificate.certificate_live_service[count.index].domain_validation_options.0.resource_record_type
-  zone_id  = data.aws_route53_zone.lastingpowerofattorney_service_gov_uk.id
-  records  = [aws_acm_certificate.certificate_live_service[count.index].domain_validation_options.0.resource_record_value]
-  ttl      = 60
+  for_each = terraform.workspace == "production" ? {
+    for dvo in aws_acm_certificate.certificate_live_service[0].domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  } : {}
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = data.aws_route53_zone.lastingpowerofattorney_service_gov_uk.id
 }
 
 resource "aws_acm_certificate_validation" "certificate_live_service" {
-  count           = terraform.workspace == "production" ? 1 : 0
-  certificate_arn = aws_acm_certificate.certificate_live_service[count.index].arn
-  validation_record_fqdns = [
-    aws_route53_record.certificate_validation_live_service[count.index].fqdn,
-  ]
+  count                   = terraform.workspace == "production" ? 1 : 0
+  certificate_arn         = aws_acm_certificate.certificate_live_service[0].arn
+  validation_record_fqdns = [for record in aws_route53_record.certificate_validation_live_service : record.fqdn]
 }
 
 resource "aws_acm_certificate" "certificate_live_service" {
