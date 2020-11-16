@@ -1,6 +1,7 @@
 <?php
-// @inheritdoc
-//
+/**
+ * @inheritDoc
+ */
 
 namespace Application\View\Helper;
 
@@ -23,9 +24,4 @@ class LocalViewRenderer implements RendererInterface
     {
          return $this->viewRenderer->load($templateName)->unwrap();
     }
-}
-
-interface RendererInterface
-{
-    public function LoadTemplate(string $templateName);
 }
