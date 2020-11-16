@@ -309,7 +309,6 @@ orbs:
                 else
                   echo "phpunit tests not required for this service"
                 fi
-
           - ecr_login
           - run:
               name: Push web container
