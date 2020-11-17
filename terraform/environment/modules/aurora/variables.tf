@@ -7,6 +7,7 @@ variable "backup_retention_period" { default = 14 }
 variable "cluster_identifier" {}
 variable "deletion_protection" {}
 variable "database_name" {}
+variable "db_subnet_group_name" {}
 variable "engine" { default = "aurora-postgresql" }
 variable "engine_version" { default = "10.11" }
 variable "environment" {}
