@@ -36,7 +36,7 @@ module "api_aurora" {
   account_id                    = data.aws_caller_identity.current.account_id
   apply_immediately             = ! local.account.deletion_protection
   cluster_identifier            = "api2"
-  db_subnet_group_name          = "data-persistence-${local.account.vpc_name}"
+  db_subnet_group_name          = "data-persistence-subnet-${local.account.vpc_name}"
   deletion_protection           = local.account.deletion_protection
   database_name                 = "api2"
   engine_version                = local.account.psql_engine_version
