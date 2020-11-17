@@ -97,7 +97,7 @@ resource "aws_route" "private" {
 
 
 resource "aws_db_subnet_group" "data_persistence" {
-  name       = "data-persistence-subnet-${local.account.stack_name}"
+  name       = "data-persistence-subnet-default"
   subnet_ids = data.aws_subnet_ids.data_persistence.ids # todo: create new subnet for data layer.
 }
 

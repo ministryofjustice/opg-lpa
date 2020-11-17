@@ -1,6 +1,14 @@
 
 
 locals {
+
+  db = {
+    endpoint = local.account.aurora_enabled ? module.api_aurora[0].endpoint : aws_db_instance.api[0].address
+    port     = local.account.aurora_enabled ? module.api_aurora[0].port : aws_db_instance.api[0].port
+    name     = local.account.aurora_enabled ? module.api_aurora[0].name : aws_db_instance.api[0].name
+    username = local.account.aurora_enabled ? module.api_aurora[0].master_username : aws_db_instance.api[0].username
+  }
+
   opg_project       = "lpa"
   account_name      = lookup(var.account_mapping, terraform.workspace, "development")
   account           = var.accounts[local.account_name]

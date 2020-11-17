@@ -31,12 +31,12 @@ resource "aws_db_instance" "api" {
 
 module "api_aurora" {
   source                        = "./modules/aurora"
-  count                         = local.account_name == "development" ? 1 : 0
+  count                         = local.account.aurora_enabled ? 1 : 0
   aurora_serverless             = local.account.aurora_serverless
   account_id                    = data.aws_caller_identity.current.account_id
   apply_immediately             = ! local.account.deletion_protection
   cluster_identifier            = "api2"
-  db_subnet_group_name          = "data-persistence-subnet-${local.account.vpc_name}"
+  db_subnet_group_name          = "data-persistence-subnet-default"
   deletion_protection           = local.account.deletion_protection
   database_name                 = "api2"
   engine_version                = local.account.psql_engine_version
@@ -104,13 +104,5 @@ resource "aws_security_group_rule" "rds-api" {
   security_group_id        = aws_security_group.rds-api.id
 }
 
-locals {
-  db = {
-    endpoint = local.account.aurora_enabled ? module.api_aurora[0].endpoint : aws_db_instance.api[0].address
-    port     = local.account.aurora_enabled ? module.api_aurora[0].port : aws_db_instance.api[0].port
-    name     = local.account.aurora_enabled ? module.api_aurora[0].name : aws_db_instance.api[0].name
-    username = local.account.aurora_enabled ? module.api_aurora[0].master_username : aws_db_instance.api[0].username
-  }
-}
 
 data "aws_caller_identity" "current" {}
