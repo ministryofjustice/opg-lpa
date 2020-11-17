@@ -1,8 +1,5 @@
-
-
 locals {
-
-  db = {
+  db = { #will be removed once we use aurora in pre and production.
     endpoint = local.account.aurora_enabled ? module.api_aurora[0].endpoint : aws_db_instance.api[0].address
     port     = local.account.aurora_enabled ? module.api_aurora[0].port : aws_db_instance.api[0].port
     name     = local.account.aurora_enabled ? module.api_aurora[0].name : aws_db_instance.api[0].name
