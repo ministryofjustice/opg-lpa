@@ -6,7 +6,6 @@ variable "availability_zones" { default = ["eu-west-1a", "eu-west-1b", "eu-west-
 variable "backup_retention_period" { default = 14 }
 variable "cluster_identifier" {}
 variable "deletion_protection" {}
-variable "db_subnet_group_name" {}
 variable "database_name" {}
 variable "engine" { default = "aurora-postgresql" }
 variable "engine_version" { default = "10.11" }
