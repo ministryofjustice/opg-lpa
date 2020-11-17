@@ -94,3 +94,18 @@ resource "aws_route" "private" {
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = element(aws_nat_gateway.nat.*.id, count.index)
 }
+
+
+resource "aws_db_subnet_group" "data_persistence" {
+  name       = "data-persistence-subnet-${local.account.stack_name}"
+  subnet_ids = data.aws_subnet_ids.data_persistence.ids # todo: create new subnet for data layer.
+}
+
+data "aws_subnet_ids" "data_persistence" {
+  vpc_id = aws_default_vpc.default.id # todo: create new subnet for data layer.
+
+  filter {
+    name   = "tag:Name"
+    values = ["private"]
+  }
+}

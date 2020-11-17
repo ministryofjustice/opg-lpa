@@ -26,7 +26,7 @@ variable "accounts" {
       aurora_instance_count         = number
       deletion_protection           = bool
       always_on                     = bool
-      db_subnet_group               = string
+      vpc_name                      = string
       autoscaling = object({
         front = object({
           minimum = number
