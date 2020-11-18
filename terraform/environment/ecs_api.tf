@@ -287,9 +287,9 @@ locals {
     ],
     "environment": [
       { "name": "OPG_NGINX_SERVER_NAMES", "value": "api api-${local.environment}.${local.account_name} localhost 127.0.0.1"},
-      { "name": "OPG_LPA_POSTGRES_HOSTNAME", "value": "${aws_db_instance.api.address}"},
-      { "name": "OPG_LPA_POSTGRES_PORT", "value": "${aws_db_instance.api.port}"},
-      { "name": "OPG_LPA_POSTGRES_NAME", "value": "${aws_db_instance.api.name}"},
+      { "name": "OPG_LPA_POSTGRES_HOSTNAME", "value": "${local.db.endpoint}"},
+      { "name": "OPG_LPA_POSTGRES_PORT", "value": "${local.db.port}"},
+      { "name": "OPG_LPA_POSTGRES_NAME", "value": "${local.db.name}"},
       { "name": "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value": "${local.account.sirius_api_gateway_endpoint}"},
       { "name": "OPG_LPA_API_TRACK_FROM_DATE", "value": "${local.track_from_date}"},
       { "name": "OPG_LPA_SEED_DATA", "value": "true"},
