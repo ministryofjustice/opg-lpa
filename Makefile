@@ -149,4 +149,4 @@ functional-local:
 .PHONY: cypress-local
 cypress-local:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	docker run -it --network="host" --rm cypress:latest cypress run --spec cypress/integration/basic_login.js
+	docker run -it -e "CYPRESS_baseUrl=https://localhost:7002" --network="host" --rm cypress:latest cypress run --spec cypress/integration/basic_login.js
