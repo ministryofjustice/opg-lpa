@@ -733,7 +733,7 @@ orbs:
           - run:
               name: Run cypress tests
               command: |
-	            docker run -dt -e "CYPRESS_baseUrl=$FRONT_DOMAIN" --name cypress cypress:latest 
+                docker run -dt -e "CYPRESS_baseUrl=$FRONT_DOMAIN" --name cypress cypress:latest 
                 docker exec cypress cypress run --spec cypress/integration/basic_login.js
           - run:
               name: Run caspar tests
