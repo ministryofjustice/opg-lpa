@@ -145,3 +145,8 @@ dc-unit-tests:
 functional-local:
 	docker build -f ./tests/Dockerfile  -t casperjs:latest .; \
 	aws-vault exec identity -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhost:7002" --network="host" --rm casperjs:latest ./start.sh 'tests/'
+
+.PHONY: cypress-local
+cypress-local:
+	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
+	docker run -it --network="host" --rm cypress:latest cypress run --spec cypress/integration/basic_login.js
