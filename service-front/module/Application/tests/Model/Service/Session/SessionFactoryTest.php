@@ -8,7 +8,7 @@ use Interop\Container\Exception\ContainerException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Zend\Session\Exception\RuntimeException;
+use Laminas\Session\Exception\RuntimeException;
 
 class SessionFactoryTest extends MockeryTestCase
 {

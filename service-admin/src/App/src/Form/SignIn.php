@@ -4,11 +4,11 @@ namespace App\Form;
 
 use App\Validator;
 use App\Filter\StandardInput as StandardInputFilter;
-use Zend\Filter;
-use Zend\Form\Element\Text;
-use Zend\Form\Element\Password;
-use Zend\InputFilter\Input;
-use Zend\InputFilter\InputFilter;
+use Laminas\Filter;
+use Laminas\Form\Element\Text;
+use Laminas\Form\Element\Password;
+use Laminas\InputFilter\Input;
+use Laminas\InputFilter\InputFilter;
 
 /**
  * Class SignIn

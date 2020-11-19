@@ -3,7 +3,7 @@ namespace Application\Model\Service\Session\SaveHandler;
 
 use Aws\DynamoDb\SessionHandler as DynamoDbSessionHandler;
 
-use Zend\Session\SaveHandler\SaveHandlerInterface;
+use Laminas\Session\SaveHandler\SaveHandlerInterface;
 
 /**
  * Extends Amazon's DynamoDb Session Handler so we can apply Zend's Save Handler Interface.

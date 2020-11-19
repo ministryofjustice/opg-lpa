@@ -2,7 +2,7 @@
 namespace Opg\Lpa\Pdf\Worker;
 
 use Opg\Lpa\Pdf\Config\Config;
-use Zend\Filter\Decompress;
+use Laminas\Filter\Decompress;
 use Aws\Sqs\SqsClient;
 
 class SqsWorker extends AbstractWorker

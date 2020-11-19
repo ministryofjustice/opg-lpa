@@ -3,10 +3,10 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
-use Zend\Form\Element\Radio;
-use Zend\Http\Header\SetCookie;
-use Zend\Stdlib\RequestInterface;
-use Zend\View\Model\ViewModel;
+use Laminas\Form\Element\Radio;
+use Laminas\Http\Header\SetCookie;
+use Laminas\Stdlib\RequestInterface;
+use Laminas\View\Model\ViewModel;
 
 class CookiesController extends AbstractBaseController
 {

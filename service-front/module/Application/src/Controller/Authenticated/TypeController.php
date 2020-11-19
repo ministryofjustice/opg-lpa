@@ -5,7 +5,7 @@ namespace Application\Controller\Authenticated;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Model\FormFlowChecker;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 use RuntimeException;
 
 class TypeController extends AbstractAuthenticatedController

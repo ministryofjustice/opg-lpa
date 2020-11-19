@@ -7,10 +7,10 @@ use Application\Form\User\Login as LoginForm;
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\Http\Response;
-use Zend\Session\Container;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\Session\Container;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 class AuthController extends AbstractBaseController
 {
@@ -20,7 +20,7 @@ class AuthController extends AbstractBaseController
     private $lpaApplicationService;
 
     /**
-     * @return bool|\Zend\Http\Response|ViewModel
+     * @return bool|\Laminas\Http\Response|ViewModel
      */
     public function indexAction()
     {
@@ -179,7 +179,7 @@ class AuthController extends AbstractBaseController
     /**
      * Logs the user out by clearing the identity from the session.
      *
-     * @return \Zend\Http\Response
+     * @return \Laminas\Http\Response
      */
     public function logoutAction()
     {

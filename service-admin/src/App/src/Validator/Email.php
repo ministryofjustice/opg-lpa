@@ -2,7 +2,7 @@
 
 namespace App\Validator;
 
-use Zend\Validator\EmailAddress;
+use Laminas\Validator\EmailAddress;
 
 /**
  * Class Email

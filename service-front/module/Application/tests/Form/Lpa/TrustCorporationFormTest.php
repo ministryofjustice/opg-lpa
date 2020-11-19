@@ -30,14 +30,14 @@ class TrustCorporationFormTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('name'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('number'));
-        $this->assertInstanceOf('Zend\Form\Element\Email', $this->form->get('email-address'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-address1'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-address2'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-address3'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('address-postcode'));
-        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('submit'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('name'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('number'));
+        $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email-address'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('address-address1'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('address-address2'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('address-address3'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('address-postcode'));
+        $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('submit'));
     }
 
     public function testValidateByModelOK()
@@ -67,10 +67,12 @@ class TrustCorporationFormTest extends MockeryTestCase
 
         $this->assertEquals([
             'name' => [
-                0 => 'cannot-be-blank'
+                0 => 'cannot-be-blank',
+                1 => 'must-be-greater-than-or-equal:1'
             ],
             'number' => [
-                0 => 'cannot-be-blank'
+                0 => 'cannot-be-blank',
+                1 => 'must-be-greater-than-or-equal:1'
             ],
             'email-address' => [
                 0 => 'invalid-email-address'

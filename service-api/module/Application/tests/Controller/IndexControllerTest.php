@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller;
 
 use Application\Controller\IndexController;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class IndexControllerTest extends MockeryTestCase
 {

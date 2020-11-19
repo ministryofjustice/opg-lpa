@@ -5,12 +5,12 @@ namespace ApplicationTest\Controller;
 use DateTime;
 use Mockery;
 use Opg\Lpa\DataModel\User\User;
-use Zend\Http\Response;
-use Zend\Mvc\MvcEvent;
-use Zend\Router\RouteMatch;
-use Zend\Session\Container;
-use Zend\Stdlib\ArrayObject;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Router\RouteMatch;
+use Laminas\Session\Container;
+use Laminas\Stdlib\ArrayObject;
+use Laminas\View\Model\ViewModel;
 
 class AbstractAuthenticatedControllerTest extends AbstractControllerTest
 {

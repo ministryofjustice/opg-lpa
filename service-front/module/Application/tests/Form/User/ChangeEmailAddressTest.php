@@ -39,9 +39,9 @@ class ChangeEmailAddressTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Zend\Form\Element\Password', $this->form->get('password_current'));
-        $this->assertInstanceOf('Zend\Form\Element\Email', $this->form->get('email'));
-        $this->assertInstanceOf('Zend\Form\Element\Email', $this->form->get('email_confirm'));
+        $this->assertInstanceOf('Laminas\Form\Element\Password', $this->form->get('password_current'));
+        $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email'));
+        $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email_confirm'));
     }
 
     public function testValidateByModelOK()

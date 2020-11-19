@@ -30,9 +30,9 @@ class WhenReplacementAttorneyStepInFormTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Zend\Form\Element\Radio', $this->form->get('when'));
-        $this->assertInstanceOf('Zend\Form\Element\Textarea', $this->form->get('whenDetails'));
-        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('save'));
+        $this->assertInstanceOf('Laminas\Form\Element\Radio', $this->form->get('when'));
+        $this->assertInstanceOf('Laminas\Form\Element\Textarea', $this->form->get('whenDetails'));
+        $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('save'));
     }
 
     public function testValidateByModelOK()

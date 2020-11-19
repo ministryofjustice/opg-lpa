@@ -7,7 +7,7 @@ use Application\Library\Http\Response\Json;
 use Application\Model\Service\Payment\Service;
 use Mockery;
 use Mockery\MockInterface;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class PaymentControllerTest extends AbstractControllerTest
 {
@@ -81,7 +81,7 @@ class PaymentControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
+     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
      * @expectedExceptionMessage You do not have permission to access this service
      */
     public function testUpdateUnauthorised()

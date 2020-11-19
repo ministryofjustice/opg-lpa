@@ -4,8 +4,8 @@ namespace Opg\Lpa\Pdf\Worker\Response;
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
-use Zend\Crypt\BlockCipher;
-use Zend\Crypt\Symmetric\Exception\InvalidArgumentException;
+use Laminas\Crypt\BlockCipher;
+use Laminas\Crypt\Symmetric\Exception\InvalidArgumentException;
 use SplFileInfo;
 
 /**

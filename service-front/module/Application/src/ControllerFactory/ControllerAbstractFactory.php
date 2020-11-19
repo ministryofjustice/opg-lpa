@@ -22,10 +22,10 @@ use Application\Controller\General\SendgridController;
 use Application\Controller\General\StatsController;
 use Application\Controller\General\VerifyEmailAddressController;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Factory\AbstractFactoryInterface;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\Stdlib\DispatchableInterface as Dispatchable;
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
+use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\Stdlib\DispatchableInterface as Dispatchable;
 use Exception;
 use RuntimeException;
 

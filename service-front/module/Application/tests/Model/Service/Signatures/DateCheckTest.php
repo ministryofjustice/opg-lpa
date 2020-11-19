@@ -5,7 +5,7 @@ use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Date\IDateService;
 use Mockery;
 use Mockery\MockInterface;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Model\Service\Signatures\DateCheck;
 use DateTime;
 

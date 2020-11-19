@@ -3,8 +3,8 @@
 namespace Application\Controller\Version2\Auth;
 
 use Application\Model\Service\Password\Service;
-use ZF\ApiProblem\ApiProblem;
-use Zend\View\Model\JsonModel;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Laminas\View\Model\JsonModel;
 use DateTime;
 
 class PasswordController extends AbstractAuthController

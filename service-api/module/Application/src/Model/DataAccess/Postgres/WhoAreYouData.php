@@ -2,9 +2,9 @@
 namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
-use Zend\Db\Sql\Sql;
-use Zend\Db\Sql\Predicate\Operator;
-use Zend\Db\Sql\Predicate\Expression;
+use Laminas\Db\Sql\Sql;
+use Laminas\Db\Sql\Predicate\Operator;
+use Laminas\Db\Sql\Predicate\Expression;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryInterface;
 

@@ -8,7 +8,7 @@ use Application\Model\Service\Authentication\Service;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Zend\Authentication\Result;
+use Laminas\Authentication\Result;
 
 class LpaAuthTest extends MockeryTestCase
 {

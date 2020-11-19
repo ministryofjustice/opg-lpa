@@ -6,7 +6,7 @@ use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Exception;
-use Zend\Session\Container;
+use Laminas\Session\Container;
 
 /**
  * A model service class for sending emails on LPA creation and completion.
