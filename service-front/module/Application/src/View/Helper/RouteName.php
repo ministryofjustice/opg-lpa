@@ -2,8 +2,8 @@
 
 namespace Application\View\Helper;
 
-use Zend\Router\RouteMatch;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\Router\RouteMatch;
+use Laminas\View\Helper\AbstractHelper;
 
 class RouteName extends AbstractHelper
 {

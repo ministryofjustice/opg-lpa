@@ -6,13 +6,13 @@ use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Interop\Container\ContainerInterface;
 use Opg\Lpa\DataModel\User\User;
-use Zend\Mvc\Application;
-use Zend\Mvc\View\Http\ViewManager;
-use Zend\Router\RouteMatch;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Session\Container;
-use Zend\View\Model\ViewModel;
-use Twig_Environment;
+use Laminas\Mvc\Application;
+use Laminas\Mvc\View\Http\ViewManager;
+use Laminas\Router\RouteMatch;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Session\Container;
+use Laminas\View\Model\ViewModel;
+use Twig\Environment;
 
 class AccountInfoFactory implements FactoryInterface
 {
@@ -34,7 +34,7 @@ class AccountInfoFactory implements FactoryInterface
         $application = $container->get('Application');
         /** @var LpaApplicationService $lpaApplicationService */
         $lpaApplicationService = $container->get('LpaApplicationService');
-        /** @var Twig_Environment $viewRenderer */
+        /** @var Environment $viewRenderer */
         $viewRenderer = $container->get('TwigViewRenderer');
 
         /** @var ViewModel $viewModel */
@@ -42,6 +42,6 @@ class AccountInfoFactory implements FactoryInterface
         /** @var RouteMatch $routeMatch */
         $routeMatch = $application->getMvcEvent()->getRouteMatch();
 
-        return new AccountInfo($authenticationService, $userDetailsSession, $viewModel, $routeMatch, $lpaApplicationService, $viewRenderer);
+        return new AccountInfo($authenticationService, $userDetailsSession, $viewModel, $routeMatch, $lpaApplicationService, new LocalViewRenderer($viewRenderer));
     }
 }

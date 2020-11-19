@@ -8,7 +8,7 @@ use Application\View\Helper\AccordionFactory;
 use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Zend\Router\RouteMatch;
+use Laminas\Router\RouteMatch;
 
 class AccordionFactoryTest extends MockeryTestCase
 {

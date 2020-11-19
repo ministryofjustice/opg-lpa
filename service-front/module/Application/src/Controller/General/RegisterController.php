@@ -4,8 +4,8 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\User\Details as UserService;
-use Zend\Http\Response as HttpResponse;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response as HttpResponse;
+use Laminas\View\Model\ViewModel;
 
 class RegisterController extends AbstractBaseController
 {
@@ -18,7 +18,7 @@ class RegisterController extends AbstractBaseController
     /**
      * Register a new account.
      *
-     * @return ViewModel|\Zend\Http\Response
+     * @return ViewModel|\Laminas\Http\Response
      */
     public function indexAction()
     {

@@ -9,12 +9,12 @@ use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\Authentication\Result;
-use Zend\Http\Response;
-use Zend\Session\Container;
-use Zend\Stdlib\ArrayObject;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Authentication\Result;
+use Laminas\Http\Response;
+use Laminas\Session\Container;
+use Laminas\Stdlib\ArrayObject;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 use DateTime;
 
 class AuthControllerTest extends AbstractControllerTest

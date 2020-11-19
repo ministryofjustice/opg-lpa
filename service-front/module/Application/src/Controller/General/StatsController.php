@@ -4,7 +4,7 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\Stats\Stats as StatsService;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class StatsController extends AbstractBaseController
 {

@@ -6,7 +6,7 @@ use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\EntityInterface;
 use Application\Model\Service\NotifiedPeople\Service;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class NotifiedPeopleController extends AbstractLpaController
 {

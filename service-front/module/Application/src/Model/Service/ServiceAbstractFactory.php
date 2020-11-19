@@ -13,9 +13,9 @@ use Application\Model\Service\System\Status;
 use Application\Model\Service\User\Details;
 use Exception;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Factory\AbstractFactoryInterface;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
+use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
 class ServiceAbstractFactory implements AbstractFactoryInterface
 {

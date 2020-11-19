@@ -4,7 +4,7 @@ namespace Application\View\Helper;
 
 use Application\Model\FormFlowChecker;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\View\Helper\AbstractHelper;
 
 class FinalCheckAccessible extends AbstractHelper
 {

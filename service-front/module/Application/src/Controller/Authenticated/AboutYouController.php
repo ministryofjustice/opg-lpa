@@ -3,8 +3,8 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
-use Zend\Session\Container;
-use Zend\View\Model\ViewModel;
+use Laminas\Session\Container;
+use Laminas\View\Model\ViewModel;
 
 class AboutYouController extends AbstractAuthenticatedController
 {
@@ -21,7 +21,7 @@ class AboutYouController extends AbstractAuthenticatedController
     protected $requireCompleteUserDetails = false;
 
     /**
-     * @return \Zend\Http\Response|ViewModel
+     * @return \Laminas\Http\Response|ViewModel
      */
     public function indexAction()
     {

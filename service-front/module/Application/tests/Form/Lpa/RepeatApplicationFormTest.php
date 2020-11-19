@@ -30,9 +30,9 @@ class RepeatApplicationFormTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Zend\Form\Element\Radio', $this->form->get('isRepeatApplication'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('repeatCaseNumber'));
-        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('save'));
+        $this->assertInstanceOf('Laminas\Form\Element\Radio', $this->form->get('isRepeatApplication'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('repeatCaseNumber'));
+        $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('save'));
     }
 
     public function testValidateByModelOK()

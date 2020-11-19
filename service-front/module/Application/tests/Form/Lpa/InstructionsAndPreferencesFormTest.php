@@ -30,9 +30,9 @@ class InstructionsAndPreferencesFormTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Zend\Form\Element\Textarea', $this->form->get('instruction'));
-        $this->assertInstanceOf('Zend\Form\Element\Textarea', $this->form->get('preference'));
-        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('save'));
+        $this->assertInstanceOf('Laminas\Form\Element\Textarea', $this->form->get('instruction'));
+        $this->assertInstanceOf('Laminas\Form\Element\Textarea', $this->form->get('preference'));
+        $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('save'));
     }
 
     public function testValidateByModelOK()

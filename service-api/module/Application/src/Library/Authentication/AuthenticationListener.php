@@ -4,10 +4,10 @@ namespace Application\Library\Authentication;
 
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Authentication\Result as AuthenticationResult;
-use Zend\Mvc\MvcEvent;
-use ZF\ApiProblem\ApiProblem;
-use ZF\ApiProblem\ApiProblemResponse;
+use Laminas\Authentication\Result as AuthenticationResult;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
 /**
  * Authenticate the user from a header token.
@@ -25,7 +25,7 @@ class AuthenticationListener
     {
         $serviceManager = $e->getApplication()->getServiceManager();
 
-        $authService = $serviceManager->get('Zend\Authentication\AuthenticationService');
+        $authService = $serviceManager->get('Laminas\Authentication\AuthenticationService');
 
         /*
          * Do some authentication. Initially this will just be via the token passed from front-2.

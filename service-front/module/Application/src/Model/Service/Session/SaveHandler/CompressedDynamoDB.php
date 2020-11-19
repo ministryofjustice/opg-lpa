@@ -1,8 +1,8 @@
 <?php
 namespace Application\Model\Service\Session\SaveHandler;
 
-use Zend\Filter\Compress;
-use Zend\Filter\Decompress;
+use Laminas\Filter\Compress;
+use Laminas\Filter\Decompress;
 
 /**
  * Our DynamoDB SaveHandler, with compression.
@@ -13,7 +13,7 @@ use Zend\Filter\Decompress;
 class CompressedDynamoDB extends DynamoDB {
 
     /**
-     * The compression adapter to use (with ZF2 Filters)
+     * The compression adapter to use (with Laminas Filters)
      */
     const COMPRESSION_ADAPTER = 'Gz';
 

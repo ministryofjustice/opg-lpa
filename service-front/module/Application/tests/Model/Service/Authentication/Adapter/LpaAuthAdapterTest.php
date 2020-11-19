@@ -12,7 +12,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use RuntimeException;
-use Zend\Authentication\Result;
+use Laminas\Authentication\Result;
 
 class LpaAuthAdapterTest extends MockeryTestCase
 {

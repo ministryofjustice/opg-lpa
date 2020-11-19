@@ -29,13 +29,13 @@ class RegistrationTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Zend\Form\Element\Email', $this->form->get('email'));
-        $this->assertInstanceOf('Zend\Form\Element\Email', $this->form->get('email_confirm'));
-        $this->assertInstanceOf('Zend\Form\Element\Checkbox', $this->form->get('terms'));
+        $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email'));
+        $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email_confirm'));
+        $this->assertInstanceOf('Laminas\Form\Element\Checkbox', $this->form->get('terms'));
         //  From SetPassword
-        $this->assertInstanceOf('Zend\Form\Element\Password', $this->form->get('password'));
-        $this->assertInstanceOf('Zend\Form\Element\Password', $this->form->get('password_confirm'));
-        $this->assertInstanceOf('Zend\Form\Element\Hidden', $this->form->get('skip_confirm_password'));
+        $this->assertInstanceOf('Laminas\Form\Element\Password', $this->form->get('password'));
+        $this->assertInstanceOf('Laminas\Form\Element\Password', $this->form->get('password_confirm'));
+        $this->assertInstanceOf('Laminas\Form\Element\Hidden', $this->form->get('skip_confirm_password'));
     }
 
     public function testValidateByModelOK()

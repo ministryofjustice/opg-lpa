@@ -5,7 +5,7 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaActorController;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class PeopleToNotifyController extends AbstractLpaActorController
 {

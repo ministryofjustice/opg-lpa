@@ -6,7 +6,7 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\DataAccess\Repository\User\TokenInterface as Token;
 use Application\Model\DataAccess\Repository\User\UserInterface as User;
 use Application\Model\Service\AbstractService;
-use Zend\Math\BigInteger\BigInteger;
+use Laminas\Math\BigInteger\BigInteger;
 use DateTime;
 
 class Service extends AbstractService

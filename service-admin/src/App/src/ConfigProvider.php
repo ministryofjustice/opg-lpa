@@ -6,7 +6,7 @@ namespace App;
 
 use App\Logging\LoggingErrorListenerDelegatorFactory;
 use Tuupola\Middleware\JwtAuthentication;
-use Zend\Stratigility\Middleware\ErrorHandler;
+use Laminas\Stratigility\Middleware\ErrorHandler;
 
 /**
  * The configuration provider for the App module

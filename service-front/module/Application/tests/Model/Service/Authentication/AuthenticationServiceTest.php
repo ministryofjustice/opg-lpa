@@ -8,9 +8,9 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use RuntimeException;
-use Zend\Authentication\Adapter\AdapterInterface;
-use Zend\Authentication\Result;
-use Zend\Authentication\Storage\StorageInterface;
+use Laminas\Authentication\Adapter\AdapterInterface;
+use Laminas\Authentication\Result;
+use Laminas\Authentication\Storage\StorageInterface;
 
 class AuthenticationServiceTest extends MockeryTestCase
 {

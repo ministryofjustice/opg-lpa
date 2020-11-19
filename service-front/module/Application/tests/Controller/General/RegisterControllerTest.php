@@ -10,11 +10,11 @@ use Application\Model\Service\User\Register;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Zend\Http\Header\Referer;
-use Zend\Http\Response;
-use Zend\Mvc\MvcEvent;
-use Zend\Router\RouteMatch;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Header\Referer;
+use Laminas\Http\Response;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Router\RouteMatch;
+use Laminas\View\Model\ViewModel;
 
 class RegisterControllerTest extends AbstractControllerTest
 {

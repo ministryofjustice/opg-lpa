@@ -2,8 +2,8 @@
 
 namespace Application\Form\User;
 
-use Zend\Validator\Identical;
-use Zend\Validator\NotEmpty;
+use Laminas\Validator\Identical;
+use Laminas\Validator\NotEmpty;
 
 class Registration extends SetPassword
 {

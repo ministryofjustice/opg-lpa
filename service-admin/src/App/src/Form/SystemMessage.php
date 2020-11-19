@@ -2,10 +2,10 @@
 
 namespace App\Form;
 
-use Zend\Form\Element\Textarea;
-use Zend\InputFilter\Input;
-use Zend\InputFilter\InputFilter;
-use Zend\Validator\StringLength;
+use Laminas\Form\Element\Textarea;
+use Laminas\InputFilter\Input;
+use Laminas\InputFilter\InputFilter;
+use Laminas\Validator\StringLength;
 
 /**
  * Class SystemMessage

@@ -45,7 +45,7 @@ class DateCheckFormTest extends MockeryTestCase
         $this->assertInstanceOf('Application\Form\Fieldset\Dob', $this->form->get('sign-date-donor-life-sustaining'));
         $this->assertInstanceOf('Application\Form\Fieldset\Dob', $this->form->get('sign-date-donor'));
         $this->assertInstanceOf('Application\Form\Fieldset\Dob', $this->form->get('sign-date-certificate-provider'));
-        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('submit'));
+        $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('submit'));
     }
 
     public function testValidateByModelOK()
