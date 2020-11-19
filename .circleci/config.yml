@@ -690,13 +690,13 @@ orbs:
                 docker build -f ~/project/tests/Dockerfile  -t casperjs:latest .
                 echo 'export DOCKER_REMOTE_IP="$(docker run casperjs:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
                 echo $DOCKER_REMOTE_IP
-          - run:
-              name: Build pa11y container
-              command: |
-                cd ~/project/tests/pa11y
-                docker build -t opgpa11y:latest .
-                echo 'export DOCKER_PA11Y_REMOTE_IP="$(docker run opgpa11y:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
-                echo $DOCKER_PA11Y_REMOTE_IP
+                #- run:
+            #name: Build pa11y container
+            #  command: |
+            #    cd ~/project/tests/pa11y
+            #    docker build -t opgpa11y:latest .
+            #    echo 'export DOCKER_PA11Y_REMOTE_IP="$(docker run opgpa11y:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
+            #    echo $DOCKER_PA11Y_REMOTE_IP
           - run:
               name: Install python dependencies
               command: |
@@ -729,12 +729,12 @@ orbs:
               command: |
                 docker run -dt -e "CYPRESS_baseUrl=$FRONT_DOMAIN" --name opgcypress cypress:latest 
                 docker exec opgcypress cypress run --spec cypress/integration/basic_login.js
-          - run:
-              name: Run pa11y tests
-              command: |
-                docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name opgpa11y opgpa11y:latest
-                docker exec opgpa11y sed -i "s/localhost:7002/$FRONT_DOMAIN/" config.json
-                docker exec opgpa11y pa11y-ci -c config.json || true # true prevents this being a failure if pa11y has errors. one day we will want to remove true
+                #- run:
+                #              name: Run pa11y tests
+                #              command: |
+                #docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name opgpa11y opgpa11y:latest
+                #docker exec opgpa11y sed -i "s/localhost:7002/$FRONT_DOMAIN/" config.json
+                #docker exec opgpa11y pa11y-ci -c config.json || true # true prevents this being a failure if pa11y has errors. one day we will want to remove true
           - run:
               name: Run caspar tests
               command: |
