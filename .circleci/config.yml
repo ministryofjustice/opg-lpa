@@ -728,7 +728,7 @@ orbs:
           - run:
               name: Run cypress tests
               command: |
-                docker run -e "CYPRESS_baseUrl=$FRONT_DOMAIN" cypress:latest cypress run --spec ~/project/cypress/integration/basic_login.js
+                docker run -it -e "CYPRESS_baseUrl=$FRONT_DOMAIN" cypress:latest cypress run --spec ~/project/cypress/integration/basic_login.js
                 #- run:
                 #              name: Run pa11y tests
                 #              command: |
