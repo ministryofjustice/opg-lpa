@@ -9,7 +9,7 @@ use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Zend\Session\Container;
+use Laminas\Session\Container;
 
 class CommunicationTest extends AbstractEmailServiceTest
 {

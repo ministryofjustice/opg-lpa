@@ -3,8 +3,8 @@
 namespace App\Handler\Initializers;
 
 use Interop\Container\ContainerInterface;
-use Zend\Expressive\Template\TemplateRendererInterface;
-use Zend\ServiceManager\Initializer\InitializerInterface;
+use Mezzio\Template\TemplateRendererInterface;
+use Laminas\ServiceManager\Initializer\InitializerInterface;
 
 /**
  * Initialize handler middleware with support for rendering.

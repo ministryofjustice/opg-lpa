@@ -3,10 +3,10 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Zend\Form\Element;
+use Laminas\Form\Element;
 
 class FeeReductionController extends AbstractLpaController
 {

@@ -40,11 +40,11 @@ class ChangePasswordTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Zend\Form\Element\Password', $this->form->get('password_current'));
+        $this->assertInstanceOf('Laminas\Form\Element\Password', $this->form->get('password_current'));
         //  From SetPassword
-        $this->assertInstanceOf('Zend\Form\Element\Password', $this->form->get('password'));
-        $this->assertInstanceOf('Zend\Form\Element\Password', $this->form->get('password_confirm'));
-        $this->assertInstanceOf('Zend\Form\Element\Hidden', $this->form->get('skip_confirm_password'));
+        $this->assertInstanceOf('Laminas\Form\Element\Password', $this->form->get('password'));
+        $this->assertInstanceOf('Laminas\Form\Element\Password', $this->form->get('password_confirm'));
+        $this->assertInstanceOf('Laminas\Form\Element\Hidden', $this->form->get('skip_confirm_password'));
     }
 
     public function testValidateByModelOK()

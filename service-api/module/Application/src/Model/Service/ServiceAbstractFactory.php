@@ -13,7 +13,7 @@ use Application\Model\Service\Users\Service as UsersService;
 use GuzzleHttp\Client;
 use Http\Client\HttpClient;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\AbstractFactoryInterface;
+use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Exception;
 
 /**

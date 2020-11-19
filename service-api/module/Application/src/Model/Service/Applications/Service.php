@@ -10,8 +10,8 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
 use Opg\Lpa\DataModel\Lpa\Document;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\Paginator\Adapter\Callback as PaginatorCallback;
-use Zend\Paginator\Adapter\NullFill as PaginatorNull;
+use Laminas\Paginator\Adapter\Callback as PaginatorCallback;
+use Laminas\Paginator\Adapter\NullFill as PaginatorNull;
 use RuntimeException;
 
 class Service extends AbstractService

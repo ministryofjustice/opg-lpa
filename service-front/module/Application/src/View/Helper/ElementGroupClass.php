@@ -1,8 +1,8 @@
 <?php
 namespace Application\View\Helper;
 
-use Zend\View\Helper\AbstractHelper;
-use Zend\Form\ElementInterface;
+use Laminas\View\Helper\AbstractHelper;
+use Laminas\Form\ElementInterface;
 
 class ElementGroupClass extends AbstractHelper
 {

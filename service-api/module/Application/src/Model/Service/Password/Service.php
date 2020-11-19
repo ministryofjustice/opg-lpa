@@ -7,7 +7,7 @@ use Application\Model\DataAccess\Repository\User\UserInterface as User;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\PasswordValidatorTrait;
-use Zend\Math\BigInteger\BigInteger;
+use Laminas\Math\BigInteger\BigInteger;
 use DateTime;
 
 class Service extends AbstractService

@@ -27,8 +27,8 @@ class LoginTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Zend\Form\Element\Email', $this->form->get('email'));
-        $this->assertInstanceOf('Zend\Form\Element\Password', $this->form->get('password'));
+        $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email'));
+        $this->assertInstanceOf('Laminas\Form\Element\Password', $this->form->get('password'));
     }
 
     public function testValidateByModelOK()

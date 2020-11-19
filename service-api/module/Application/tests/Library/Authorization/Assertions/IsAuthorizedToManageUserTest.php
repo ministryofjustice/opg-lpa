@@ -7,7 +7,7 @@ use Application\Library\Authorization\Assertions\IsAuthorizedToManageUser;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class IsAuthorizedToManageUserTest extends MockeryTestCase
 {

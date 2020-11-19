@@ -12,18 +12,18 @@ class CorrespondenceFieldsetTest extends MockeryTestCase
         $fieldSet = new CorrespondenceFieldset();
 
         $this->assertInstanceOf('Application\Form\Lpa\CorrespondenceFieldset', $fieldSet);
-        $this->assertInstanceOf('Zend\Form\Fieldset', $fieldSet);
+        $this->assertInstanceOf('Laminas\Form\Fieldset', $fieldSet);
     }
 
     public function testElements()
     {
         $fieldSet = new CorrespondenceFieldset();
 
-        $this->assertInstanceOf('Zend\Form\Element\Checkbox', $fieldSet->get('contactByEmail'));
-        $this->assertInstanceOf('Zend\Form\Element\Checkbox', $fieldSet->get('contactByPhone'));
-        $this->assertInstanceOf('Zend\Form\Element\Checkbox', $fieldSet->get('contactByPost'));
-        $this->assertInstanceOf('Zend\Form\Element\Email', $fieldSet->get('email-address'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $fieldSet->get('phone-number'));
+        $this->assertInstanceOf('Laminas\Form\Element\Checkbox', $fieldSet->get('contactByEmail'));
+        $this->assertInstanceOf('Laminas\Form\Element\Checkbox', $fieldSet->get('contactByPhone'));
+        $this->assertInstanceOf('Laminas\Form\Element\Checkbox', $fieldSet->get('contactByPost'));
+        $this->assertInstanceOf('Laminas\Form\Element\Email', $fieldSet->get('email-address'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $fieldSet->get('phone-number'));
     }
 
     public function testSetAndGetMessages()

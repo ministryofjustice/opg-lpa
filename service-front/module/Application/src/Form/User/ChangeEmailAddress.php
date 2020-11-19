@@ -4,10 +4,10 @@ namespace Application\Form\User;
 
 use Application\Form\AbstractCsrfForm;
 use Application\Model\Service\Authentication\AuthenticationService;
-use Zend\Authentication\Exception\InvalidArgumentException;
-use Zend\Validator\Callback;
-use Zend\Validator\Identical;
-use Zend\Validator\NotEmpty;
+use Laminas\Authentication\Exception\InvalidArgumentException;
+use Laminas\Validator\Callback;
+use Laminas\Validator\Identical;
+use Laminas\Validator\NotEmpty;
 
 class ChangeEmailAddress extends AbstractCsrfForm
 {

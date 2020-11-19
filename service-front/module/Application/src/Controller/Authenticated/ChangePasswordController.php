@@ -3,7 +3,7 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class ChangePasswordController extends AbstractAuthenticatedController
 {

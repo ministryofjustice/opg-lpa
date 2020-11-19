@@ -6,7 +6,7 @@ use Application\View\Helper\Accordion;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Mockery;
-use Zend\Router\RouteMatch;
+use Laminas\Router\RouteMatch;
 
 /**
  * AccordionTest

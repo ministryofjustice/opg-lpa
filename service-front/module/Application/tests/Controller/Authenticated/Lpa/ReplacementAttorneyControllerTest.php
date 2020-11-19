@@ -15,10 +15,10 @@ use Opg\Lpa\DataModel\Common\Name;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
-use Zend\Http\Response;
-use Zend\Mvc\MvcEvent;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\Mvc\MvcEvent;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 class ReplacementAttorneyControllerTest extends AbstractControllerTest
 {

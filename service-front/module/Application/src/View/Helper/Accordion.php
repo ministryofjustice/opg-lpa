@@ -4,8 +4,8 @@ namespace Application\View\Helper;
 
 use Application\Model\FormFlowChecker;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\Router\RouteMatch;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\Router\RouteMatch;
+use Laminas\View\Helper\AbstractHelper;
 
 class Accordion extends AbstractHelper
 {

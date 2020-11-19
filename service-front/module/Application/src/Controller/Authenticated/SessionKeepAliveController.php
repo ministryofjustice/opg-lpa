@@ -3,7 +3,7 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
-use Zend\View\Model\JsonModel;
+use Laminas\View\Model\JsonModel;
 
 class SessionKeepAliveController extends AbstractAuthenticatedController
 {

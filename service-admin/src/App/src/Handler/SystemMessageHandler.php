@@ -8,8 +8,8 @@ use App\Form\SystemMessage;
 use App\Handler\Traits\JwtTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Cache\Storage\StorageInterface;
-use Zend\Diactoros\Response\HtmlResponse;
+use Laminas\Cache\Storage\StorageInterface;
+use Laminas\Diactoros\Response\HtmlResponse;
 
 class SystemMessageHandler extends AbstractHandler
 {

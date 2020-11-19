@@ -12,10 +12,10 @@ use Exception;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\Mvc\MvcEvent;
-use ZF\ApiProblem\ApiProblemResponse;
-use ZfcRbac\Service\AuthorizationService;
+use Laminas\Mvc\Controller\AbstractRestfulController;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class StatusController extends AbstractRestfulController
 {

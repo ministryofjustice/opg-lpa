@@ -2,7 +2,7 @@
 
 namespace App\Service\Authentication;
 
-use Zend\Authentication\Result as ZendResult;
+use Laminas\Authentication\Result as ZendResult;
 
 /**
  * Class Result

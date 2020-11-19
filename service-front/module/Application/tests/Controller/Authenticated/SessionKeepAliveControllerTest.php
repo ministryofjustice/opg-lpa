@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\SessionKeepAliveController;
 use ApplicationTest\Controller\AbstractControllerTest;
-use Zend\View\Model\JsonModel;
+use Laminas\View\Model\JsonModel;
 
 class SessionKeepAliveControllerTest extends AbstractControllerTest
 {

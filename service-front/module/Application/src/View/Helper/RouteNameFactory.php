@@ -3,9 +3,9 @@
 namespace Application\View\Helper;
 
 use Interop\Container\ContainerInterface;
-use Zend\Mvc\Application;
-use Zend\Router\RouteMatch;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\Mvc\Application;
+use Laminas\Router\RouteMatch;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class RouteNameFactory implements FactoryInterface
 {
