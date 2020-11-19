@@ -683,8 +683,8 @@ orbs:
               name: Build cypress container
               command: |
                 docker build -f ./cypress/Dockerfile  -t cypress:latest .
-                echo 'export DOCKER_CYPRESS_REMOTE_IP="$(docker run cypress:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
-                echo $DOCKER_CYPRESS_REMOTE_IP
+                echo 'export DOCKER_REMOTE_IP="$(docker run cypress:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
+                echo $DOCKER_REMOTE_IP
                 #- run:
                 #name: Build casper JS container
                 #command: |
