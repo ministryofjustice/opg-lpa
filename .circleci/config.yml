@@ -683,15 +683,14 @@ orbs:
               name: Build cypress container
               command: |
                 docker build -f ./cypress/Dockerfile  -t cypress:latest .
-                docker run cypress:latest 
-                echo 'export DOCKER_REMOTE_IP="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' `docker ps | grep cypress | awk '{print $1}'`)"' >> $BASH_ENV
+          - run:
+              name: Build casper JS container
+              command: |
+                docker build -f ~/project/tests/Dockerfile  -t casperjs:latest .
+                echo 'export DOCKER_REMOTE_IP="$(docker run casperjs:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
                 echo $DOCKER_REMOTE_IP
-                #- run:
-                #name: Build casper JS container
-                #command: |
-                #docker build -f ~/project/tests/Dockerfile  -t casperjs:latest .
-                #echo 'export DOCKER_REMOTE_IP="$(docker run casperjs:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
-                #echo $DOCKER_REMOTE_IP
+                echo 'export DOCKER_HOST_IP="$(curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
+                echo $DOCKER_HOST_IP
                 #- run:
             #name: Build pa11y container
             #  command: |
@@ -729,8 +728,7 @@ orbs:
           - run:
               name: Run cypress tests
               command: |
-                docker run -dt -e "CYPRESS_baseUrl=$FRONT_DOMAIN" --ipc=host --shm-size=1024M --name opgcypress cypress:latest 
-                docker exec opgcypress cypress run --spec cypress/integration/basic_login.js
+                docker run -dt -e "CYPRESS_baseUrl=$FRONT_DOMAIN" --ipc=host --shm-size=1024M cypress:latest cypress run --spec cypress/integration/basic_login.js
                 #- run:
                 #              name: Run pa11y tests
                 #              command: |
