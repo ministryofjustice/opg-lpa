@@ -1,7 +1,7 @@
 <?php
 namespace ApplicationTest\Model\Service\Payment\Helper;
 
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Model\Service\Payment\Helper\LpaIdHelper;
 
 /**

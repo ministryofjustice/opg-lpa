@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service\Mail;
 
-use Zend\Mail\Message as ZFMessage;
+use Laminas\Mail\Message as LaminasMessage;
 
 /**
  * Represents an email message to be sent.
@@ -10,7 +10,7 @@ use Zend\Mail\Message as ZFMessage;
  * Class Message
  * @package Application\Model\Service\Mail
  */
-class Message extends ZFMessage
+class Message extends LaminasMessage
 {
     private $categories = [];
 

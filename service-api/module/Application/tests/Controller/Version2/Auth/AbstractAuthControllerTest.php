@@ -9,14 +9,14 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Opg\Lpa\Logger\Logger;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\ResponseCollection;
-use Zend\Http\Header\ContentType;
-use Zend\Http\Header\HeaderInterface;
-use Zend\Http\Headers;
-use Zend\Http\Request;
-use Zend\Mvc\Controller\Plugin\Params;
-use Zend\Mvc\Controller\PluginManager;
+use Laminas\EventManager\EventManager;
+use Laminas\EventManager\ResponseCollection;
+use Laminas\Http\Header\ContentType;
+use Laminas\Http\Header\HeaderInterface;
+use Laminas\Http\Headers;
+use Laminas\Http\Request;
+use Laminas\Mvc\Controller\Plugin\Params;
+use Laminas\Mvc\Controller\PluginManager;
 
 abstract class AbstractAuthControllerTest extends MockeryTestCase
 {

@@ -5,9 +5,9 @@ namespace Application\Form\Lpa;
 use Application\Form\AbstractCsrfForm;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Validator\ValidatorResponse;
-use Zend\Form\Element\Checkbox;
-use Zend\Form\Element\Radio;
-use Zend\Form\FormInterface;
+use Laminas\Form\Element\Checkbox;
+use Laminas\Form\Element\Radio;
+use Laminas\Form\FormInterface;
 
 abstract class AbstractLpaForm extends AbstractCsrfForm
 {
@@ -67,7 +67,7 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
     /**
      * Validate form elements through model validation.
      *
-     * @see \Zend\Form\Form::isValid()
+     * @see \Laminas\Form\Form::isValid()
      */
     public function isValid()
     {

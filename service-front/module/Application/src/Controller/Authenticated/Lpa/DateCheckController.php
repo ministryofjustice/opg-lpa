@@ -4,7 +4,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Application\Model\Service\Signatures\DateCheck;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class DateCheckController extends AbstractLpaController
 {

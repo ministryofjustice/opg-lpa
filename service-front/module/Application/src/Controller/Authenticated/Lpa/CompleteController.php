@@ -6,7 +6,7 @@ use Application\Controller\AbstractLpaController;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Lpa\Formatter as LpaFormatter;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class CompleteController extends AbstractLpaController
 {

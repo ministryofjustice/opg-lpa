@@ -1,7 +1,7 @@
 <?php
 namespace Application\Model\DataAccess\Postgres;
 
-use Zend\Db\Adapter\Adapter as ZendDbAdapter;
+use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 
 class AbstractBase {
 

@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\HomeController;
 use ApplicationTest\Controller\AbstractControllerTest;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class HomeControllerTest extends AbstractControllerTest
 {

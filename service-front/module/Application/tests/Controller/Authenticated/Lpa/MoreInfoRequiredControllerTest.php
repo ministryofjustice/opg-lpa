@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\MoreInfoRequiredController;
 use ApplicationTest\Controller\AbstractControllerTest;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class MoreInfoRequiredControllerTest extends AbstractControllerTest
 {

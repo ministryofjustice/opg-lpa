@@ -4,8 +4,8 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
-use Zend\Form\Element;
-use Zend\View\Model\ViewModel;
+use Laminas\Form\Element;
+use Laminas\View\Model\ViewModel;
 
 class WhoAreYouController extends AbstractLpaController
 {

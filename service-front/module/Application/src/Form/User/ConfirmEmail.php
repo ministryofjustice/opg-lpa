@@ -3,8 +3,8 @@
 namespace Application\Form\User;
 
 use Application\Form\AbstractCsrfForm;
-use Zend\Validator\Identical;
-use Zend\Validator\NotEmpty;
+use Laminas\Validator\Identical;
+use Laminas\Validator\NotEmpty;
 
 /**
  * Form to accept and validate email addresses

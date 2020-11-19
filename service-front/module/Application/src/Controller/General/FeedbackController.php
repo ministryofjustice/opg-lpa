@@ -4,8 +4,8 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\Feedback\Feedback;
-use Zend\Session\Container;
-use Zend\View\Model\ViewModel;
+use Laminas\Session\Container;
+use Laminas\View\Model\ViewModel;
 
 class FeedbackController extends AbstractBaseController
 {
@@ -15,7 +15,7 @@ class FeedbackController extends AbstractBaseController
     private $feedbackService;
 
     /**
-     * @return \Zend\Http\Response|ViewModel
+     * @return \Laminas\Http\Response|ViewModel
      * @throws \Exception
      */
     public function indexAction()

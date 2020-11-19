@@ -5,9 +5,9 @@ namespace App\Middleware\Authorization;
 use App\Service\Authentication\AuthenticationService;
 use App\Service\User\UserService;
 use Interop\Container\ContainerInterface;
-use Zend\Expressive\Handler\NotFoundHandler;
-use Zend\Expressive\Helper\UrlHelper;
-use Zend\Permissions\Rbac\Rbac;
+use Mezzio\Handler\NotFoundHandler;
+use Mezzio\Helper\UrlHelper;
+use Laminas\Permissions\Rbac\Rbac;
 use Exception;
 
 /**

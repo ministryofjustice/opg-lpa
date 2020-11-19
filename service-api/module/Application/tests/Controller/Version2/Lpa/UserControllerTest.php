@@ -8,7 +8,7 @@ use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Users\Service;
 use Mockery;
 use Mockery\MockInterface;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class UserControllerTest extends AbstractControllerTest
 {
@@ -92,7 +92,7 @@ class UserControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
+     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
      * @expectedExceptionMessage You do not have permission to access this service
      */
     public function testGetUnauthorised()
@@ -158,7 +158,7 @@ class UserControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
+     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
      * @expectedExceptionMessage You do not have permission to access this service
      */
     public function testUpdateUnauthorised()
@@ -223,7 +223,7 @@ class UserControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
+     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
      * @expectedExceptionMessage You do not have permission to access this service
      */
     public function testDeleteUnauthorised()

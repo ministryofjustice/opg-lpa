@@ -10,7 +10,7 @@ use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class PrimaryAttorneyController extends AbstractLpaActorController
 {

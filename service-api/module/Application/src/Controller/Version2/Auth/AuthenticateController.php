@@ -2,8 +2,8 @@
 
 namespace Application\Controller\Version2\Auth;
 
-use Zend\View\Model\JsonModel;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\View\Model\JsonModel;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class AuthenticateController extends AbstractAuthController
 {

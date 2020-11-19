@@ -2,7 +2,7 @@
 
 namespace Application\Controller\Authenticated;
 
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 use Application\Controller\AbstractAuthenticatedController;
 
 /**
@@ -34,7 +34,7 @@ class DeleteController extends AbstractAuthenticatedController
     /**
      * This is overridden to prevent people being (accidently?) directed to this controller post-auth.
      *
-     * @return bool|\Zend\Http\Response
+     * @return bool|\Laminas\Http\Response
      */
     protected function checkAuthenticated($allowRedirect = true)
     {

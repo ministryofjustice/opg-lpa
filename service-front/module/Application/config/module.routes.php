@@ -9,7 +9,7 @@ return [
             // ========================== General ==========================
 
             'index-redirect' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
@@ -20,7 +20,7 @@ return [
             ], // index-redirect
 
             'home' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/home',
                     'defaults' => [
@@ -31,7 +31,7 @@ return [
             ], // home
 
             'terms' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/terms',
                     'defaults' => [
@@ -42,7 +42,7 @@ return [
             ], // terms
 
             'accessibility' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/accessibility',
                     'defaults' => [
@@ -53,7 +53,7 @@ return [
             ], // terms
 
             'privacy' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/privacy-notice',
                     'defaults' => [
@@ -64,7 +64,7 @@ return [
             ], // privacy
 
             'contact' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/contact',
                     'defaults' => [
@@ -75,7 +75,7 @@ return [
             ], // contact
 
             'cookies' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/cookies',
                     'defaults' => [
@@ -112,7 +112,7 @@ return [
             ], // forgot-password
 
             'send-feedback' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/send-feedback',
                     'defaults' => [
@@ -123,7 +123,7 @@ return [
             ], // send-feedback
 
             'feedback-thanks' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/feedback-thanks',
                     'defaults' => [
@@ -134,7 +134,7 @@ return [
             ], // feedback-thanks
 
             'sendgrid-bounce' => [
-                'type' => 'Zend\Router\Http\Segment',
+                'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/email/bounce/:token',
                     'constraints' => [
@@ -148,7 +148,7 @@ return [
             ], // sendgrid-bounce
 
             'guidance' => [
-                'type' => 'Zend\Router\Http\Segment',
+                'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/guide[/:section]',
                     'defaults' => [
@@ -160,7 +160,7 @@ return [
             ], // guidance
 
             'enable-cookie' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/enable-cookie',
                     'defaults' => [
@@ -171,7 +171,7 @@ return [
             ], // enable-cookie
 
             'login' => [
-                'type' => 'Zend\Router\Http\Segment',
+                'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/login[/:state]',
                     'defaults' => [
@@ -270,7 +270,7 @@ return [
             ], // register
 
             'stats' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/stats',
                     'defaults' => [
@@ -281,7 +281,7 @@ return [
             ], // stats
 
             'ping' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/ping',
                     'defaults' => [
@@ -325,7 +325,7 @@ return [
             // Signed in User routes
 
             'postcode' => [
-                'type'    => 'Zend\Router\Http\Literal',
+                'type'    => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/address-lookup',
                     'defaults' => [
@@ -336,7 +336,7 @@ return [
             ],
 
             'user' => [
-                'type' => 'Zend\Router\Http\Literal',
+                'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
                     'route'    => '/user',
                     'defaults' => [
@@ -494,7 +494,7 @@ return [
             // Untyped LPA Route (Type form, no LPA ID)
 
             'lpa-type-no-id' => [
-                'type' => 'Zend\Router\Http\Segment',
+                'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/lpa/type',
                     'defaults' => [
@@ -508,7 +508,7 @@ return [
             // LPA Routes
 
             'lpa' => [
-                'type' => 'Zend\Router\Http\Segment',
+                'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
                     'route'    => '/lpa/:lpa-id',
                     'constraints' => [

@@ -27,10 +27,10 @@ class FeedbackFormTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Zend\Form\Element\Radio', $this->form->get('rating'));
-        $this->assertInstanceOf('Zend\Form\Element\Textarea', $this->form->get('details'));
-        $this->assertInstanceOf('Zend\Form\Element\Email', $this->form->get('email'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $this->form->get('phone'));
+        $this->assertInstanceOf('Laminas\Form\Element\Radio', $this->form->get('rating'));
+        $this->assertInstanceOf('Laminas\Form\Element\Textarea', $this->form->get('details'));
+        $this->assertInstanceOf('Laminas\Form\Element\Email', $this->form->get('email'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $this->form->get('phone'));
     }
 
     public function testValidateByModelOK()

@@ -7,7 +7,7 @@ use Application\Form\User\ChangeEmailAddress;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class ChangeEmailAddressControllerTest extends AbstractControllerTest
 {

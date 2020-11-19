@@ -6,8 +6,8 @@ use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\ApiClient\Response\AuthResponse;
 use Application\Model\Service\Authentication\Identity\User;
-use Zend\Authentication\Adapter\Exception\RuntimeException;
-use Zend\Authentication\Result;
+use Laminas\Authentication\Adapter\Exception\RuntimeException;
+use Laminas\Authentication\Result;
 use DateTime;
 
 /**

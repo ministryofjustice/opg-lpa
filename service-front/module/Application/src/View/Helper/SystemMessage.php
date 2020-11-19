@@ -3,7 +3,7 @@
 namespace Application\View\Helper;
 
 use Application\Adapter\DynamoDbKeyValueStore;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\View\Helper\AbstractHelper;
 
 class SystemMessage extends AbstractHelper
 {

@@ -3,7 +3,7 @@
 namespace Application\Controller\Console;
 
 use Application\Model\Service\AccountCleanup\Service as AccountCleanupService;
-use Zend\Mvc\Console\Controller\AbstractConsoleController;
+use Laminas\Mvc\Console\Controller\AbstractConsoleController;
 
 class AccountCleanupController extends AbstractConsoleController
 {

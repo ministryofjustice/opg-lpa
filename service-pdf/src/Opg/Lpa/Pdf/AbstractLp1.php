@@ -20,7 +20,7 @@ use Opg\Lpa\Pdf\Aggregator\ContinuationSheet2 as ContinuationSheet2Aggregator;
 use Opg\Lpa\Pdf\Traits\LongContentTrait;
 use Exception;
 use mikehaertl\pdftk\Pdf as Pdftk;
-use Zend\Barcode\Barcode;
+use Laminas\Barcode\Barcode;
 
 /**
  * Class AbstractLp1

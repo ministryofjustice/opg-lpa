@@ -3,7 +3,7 @@
 namespace App\Middleware\ViewData;
 
 use Interop\Container\ContainerInterface;
-use Zend\Expressive\Template\TemplateRendererInterface;
+use Mezzio\Template\TemplateRendererInterface;
 
 /**
  * Class ViewDataMiddlewareFactory
