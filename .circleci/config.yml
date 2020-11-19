@@ -665,7 +665,6 @@ orbs:
         # Runs user journey tests using casper JS
         #
         executor: python
-        resource_class: large
         parameters:
           workspace:
             description: Terraform workspace name
@@ -683,6 +682,8 @@ orbs:
               name: Build cypress container
               command: |
                 docker build -f ./cypress/Dockerfile  -t cypress:latest .
+                echo 'export DOCKER_CYPRESS_REMOTE_IP="$(docker run -it --entrypoint curl cypress:latest --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
+                echo $DOCKER_CYPRESS_REMOTE_IP
           - run:
               name: Build casper JS container
               command: |
@@ -726,7 +727,7 @@ orbs:
           - run:
               name: Run cypress tests
               command: |
-                docker run -it -e "CYPRESS_baseUrl=https://$FRONT_DOMAIN" cypress:latest cypress run --spec ~/project/cypress/integration/basic_login.js
+                docker run -it -e "CYPRESS_baseUrl=https://$FRONT_DOMAIN" cypress:latest # cypress run --spec ~/project/cypress/integration/basic_login.js
                 #- run:
                 #              name: Run pa11y tests
                 #              command: |
