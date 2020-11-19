@@ -689,8 +689,6 @@ orbs:
                 docker build -f ~/project/tests/Dockerfile  -t casperjs:latest .
                 echo 'export DOCKER_REMOTE_IP="$(docker run casperjs:latest curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
                 echo $DOCKER_REMOTE_IP
-                echo 'export DOCKER_HOST_IP="$(curl --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
-                echo $DOCKER_HOST_IP
                 #- run:
             #name: Build pa11y container
             #  command: |
@@ -728,7 +726,7 @@ orbs:
           - run:
               name: Run cypress tests
               command: |
-                docker run -it -e "CYPRESS_baseUrl=$FRONT_DOMAIN" cypress:latest cypress run --spec ~/project/cypress/integration/basic_login.js
+                docker run -it -e "CYPRESS_baseUrl=https://$FRONT_DOMAIN" cypress:latest cypress run --spec ~/project/cypress/integration/basic_login.js
                 #- run:
                 #              name: Run pa11y tests
                 #              command: |
