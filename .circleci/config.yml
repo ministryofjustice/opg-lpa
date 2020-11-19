@@ -665,6 +665,7 @@ orbs:
         # Runs user journey tests using casper JS
         #
         executor: python
+        resource_class: medium+
         parameters:
           workspace:
             description: Terraform workspace name
