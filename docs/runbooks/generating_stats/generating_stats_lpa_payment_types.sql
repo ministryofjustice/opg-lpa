@@ -1,4 +1,8 @@
 -- Query for LPA payment types
+-- edit this date range as needed
+\set datefrom '2019-11-23 00:00:00'
+\set dateto '2020-11-22 23:59:59'
+
 SELECT
     COALESCE(applications."payment"->>'method', 'No-payment') AS "Method",
 	TO_CHAR(applications."completedAt", 'MM') AS "Mon",
@@ -6,7 +10,7 @@ SELECT
     COUNT(1)
 FROM applications
 WHERE
-	applications."completedAt" BETWEEN '2019-01-01 00:00:00' AND '2020-03-31 23:59:59'
+	applications."completedAt" BETWEEN :'datefrom' AND :'dateto'
 GROUP BY
 	1,
 	3,
