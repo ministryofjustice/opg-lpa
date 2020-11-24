@@ -788,6 +788,7 @@ orbs:
                   terraform init -lock-timeout=300s
                   export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                   echo $TF_WORKSPACE
+                  echo $DOCKER_CYPRESS_REMOTE_IP
                   terraform apply -lock-timeout=300s -auto-approve -var docker_remote_ip=$DOCKER_CYPRESS_REMOTE_IP
                 fi
           - run:
