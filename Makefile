@@ -156,4 +156,4 @@ cypress-local:
 .PHONY: cypress-gui-local
 cypress-gui-local:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	docker run -it -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002" --volume=${PWD}:/opg-lpa --entrypoint cypress --network="host" --rm cypress:latest open
+	docker run -it -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  --entrypoint cypress --network="host" --rm cypress:latest open --project /app

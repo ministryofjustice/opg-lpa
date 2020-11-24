@@ -1,6 +1,6 @@
 FROM cypress/included:5.2.0
 
-WORKDIR /root
+WORKDIR /app
 
 RUN npm install --save-dev cypress-axe axe-core
 
