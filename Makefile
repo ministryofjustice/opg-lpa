@@ -3,6 +3,7 @@ SENDGRID := $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-
 GOVPAY := $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_gov_pay_key | jq -r .'SecretString')
 ORDNANCESURVEY := $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_ordnance_survey_license_key | jq -r .'SecretString')
 ADMIN_USERS := $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_common_admin_accounts | jq -r .'SecretString')
+MYIP := $(shell ipconfig getifaddr en0)
 .PHONY: all
 all:
 	@${MAKE} dc-up
@@ -151,3 +152,8 @@ cypress-local:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
 	docker run -it -e "CYPRESS_baseUrl=https://localhost:7002" --network="host" --rm cypress:latest cypress run --spec cypress/integration/home.spec.js
 	docker run -it -e "CYPRESS_baseUrl=https://localhost:7002" --network="host" --rm cypress:latest cypress run --spec cypress/integration/basic_login.js
+
+.PHONY: cypress-gui-local
+cypress-gui-local:
+	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
+	docker run -it -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002" --volume=${PWD}:/opg-lpa --entrypoint cypress --network="host" --rm cypress:latest open
