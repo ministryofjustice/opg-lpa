@@ -761,7 +761,7 @@ orbs:
               name: Build cypress container
               command: |
                 docker build -f ./cypress/Dockerfile  -t cypress:latest .
-                echo 'export DOCKER_CYPRESS_REMOTE_IP="$(docker run -it --entrypoint curl cypress:latest --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
+                echo 'export DOCKER_CYPRESS_REMOTE_IP="$(docker run -it --entrypoint curl cypress:latest --silent https://checkip.amazonaws.com/ | tr -d '^@')"' >> $BASH_ENV
                 echo $DOCKER_CYPRESS_REMOTE_IP
           - run:
               name: Install python dependencies
