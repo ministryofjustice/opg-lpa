@@ -91,6 +91,11 @@ pr_build:  &pr_build
         filters: { branches: { ignore: [master] } }
         requires: [dev_environment_apply_terraform]
 
+    - infrastructure_and_deployment/run_cypress_test:
+        name: run_cypress_test
+        filters: { branches: { ignore: [master] } }
+        requires: [dev_seed_environment_databases]
+
     - infrastructure_and_deployment/run_functional_test:
         name: run_functional_test
         filters: { branches: { ignore: [master] } }
@@ -99,7 +104,7 @@ pr_build:  &pr_build
     - slack_notify_domain:
         name: post_environment_domains
         filters: { branches: { ignore: [master] } }
-        requires: [run_functional_test]
+        requires: [run_functional_test, run_cypress_test]
 
 path_to_live: &path_to_live
   jobs:
@@ -171,6 +176,12 @@ path_to_live: &path_to_live
         filters: { branches: { only: [master] } }
         requires: [preprod_environment_apply_terraform]
 
+    - infrastructure_and_deployment/run_cypress_test:
+        name: preprod_test_cypress
+        workspace: preproduction
+        filters: { branches: { only: [master] } }
+        requires: [preprod_seed_environment_databases]
+
     - infrastructure_and_deployment/run_functional_test:
         name: preprod_test_functional
         workspace: preproduction
@@ -181,7 +192,7 @@ path_to_live: &path_to_live
         name: prod_account_apply_terraform
         workspace: production
         filters: { branches: { only: [master] } }
-        requires: [preprod_test_functional]
+        requires: [preprod_test_functional, preprod_test_cypress]
 
     - infrastructure_and_deployment/apply_environment_terraform:
         name: prod_environment_apply_terraform
@@ -679,12 +690,6 @@ orbs:
               at: /tmp
           - dockerhub_login
           - run:
-              name: Build cypress container
-              command: |
-                docker build -f ./cypress/Dockerfile  -t cypress:latest .
-                echo 'export DOCKER_CYPRESS_REMOTE_IP="$(docker run -it --entrypoint curl cypress:latest --silent https://checkip.amazonaws.com/)"' >> $BASH_ENV
-                echo $DOCKER_CYPRESS_REMOTE_IP
-          - run:
               name: Build casper JS container
               command: |
                 docker build -f ~/project/tests/Dockerfile  -t casperjs:latest .
@@ -718,14 +723,78 @@ orbs:
                   terraform apply -lock-timeout=300s -auto-approve -var docker_remote_ip=$DOCKER_REMOTE_IP
                 fi
           - run:
-              name: Run cypress tests
-              command: |
-                docker run -it -e "CYPRESS_baseUrl=https://$FRONT_DOMAIN" cypress:latest || true 
-          - run:
               name: Run casper tests
               command: |
                 docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name casperjs casperjs:latest
                 docker exec casperjs ./start.sh 'tests/'
+          - run:
+              name: Remove CircleCI ingress to environment
+              command: |
+                if [ <<parameters.workspace>> != "production" ]; then
+                  cd ~/project/terraform/account_ingress
+                  terraform init -lock-timeout=300s
+                  export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                  echo $TF_WORKSPACE
+                  terraform destroy -lock-timeout=300s -auto-approve
+                fi
+              when: always
+
+      run_cypress_test:
+        #
+        # Runs cypress testing
+        #
+        executor: python
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+        steps:
+          - checkout
+          - setup_remote_docker:
+              version: 19.03.12
+              docker_layer_caching: false
+          - attach_workspace:
+              at: /tmp
+          - dockerhub_login
+          - run:
+              name: Build cypress container
+              command: |
+                docker build -f ./cypress/Dockerfile  -t cypress:latest .
+                echo 'export DOCKER_CYPRESS_REMOTE_IP="$(docker run -it --entrypoint curl cypress:latest --silent https://checkip.amazonaws.com/ | tr -d '^@')"' >> $BASH_ENV
+                echo $DOCKER_CYPRESS_REMOTE_IP
+          - run:
+              name: Install python dependencies
+              command: |
+                pip install -r scripts/pipeline/requirements.txt --user
+          - install_terraform
+          - run:
+              name: Get URLs
+              command: |
+                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                echo $TF_WORKSPACE
+                scripts/pipeline/set_environment_variables/set_slack_env_vars.sh >> $BASH_ENV
+          - run:
+              name: Wait for new tasks in services to be running
+              command: |
+                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                echo $TF_WORKSPACE
+                python scripts/pipeline/ecs_monitor/ecs_monitor.py
+          - run:
+              name: Add CircleCI ingress to environment
+              command: |
+                if [ <<parameters.workspace>> != "production" ]; then
+                  cd ~/project/terraform/account_ingress
+                  terraform init -lock-timeout=300s
+                  export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                  echo $TF_WORKSPACE
+                  echo $DOCKER_CYPRESS_REMOTE_IP
+                  terraform apply -lock-timeout=300s -auto-approve -var docker_remote_ip=$DOCKER_CYPRESS_REMOTE_IP
+                fi
+          - run:
+              name: Run cypress tests
+              command: |
+                docker run -it -e "CYPRESS_baseUrl=https://$FRONT_DOMAIN" cypress:latest || true
           - run:
               name: Remove CircleCI ingress to environment
               command: |
