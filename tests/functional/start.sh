@@ -1,6 +1,7 @@
 #!/bin/bash
 
-xunitfile=/mnt/test/casperesults.xml
+xunitfile=/mnt/test/functional/casperesults.xml
+touch $xunitfile
 
 echo The base domain is $BASE_DOMAIN
 
