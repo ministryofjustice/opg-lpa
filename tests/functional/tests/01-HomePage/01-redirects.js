@@ -35,18 +35,24 @@ casper.test.begin('Checking http -> https redirect', {
 
         var insecureUrl = 'http://' + baseDomain + paths.home;
 
-        test.info('Accessing: ' + insecureUrl );
+        // early return if we're testing against localhost
+        if (baseDomain.match(/localhost|127.0.0.1/) !== null) {
+            test.skip(1, 'Skipping http -> https redirect test (always fails locally)');
+        }
+        else {
+            test.info('Accessing: ' + insecureUrl );
 
-        casper.start( insecureUrl ).then(function () {
-            // We should be redirected to HTTPS.
-            test.info('Current URL: ' + this.getCurrentUrl());
-            // The URL should now to be the proper homepage (with https).
-            if ( baseDomain.search('lastingpowerofattorney.service.gov.uk') == -1 ) {
-                test.assertUrlMatch(new RegExp('^' + basePath + paths.home + '$'), 'Page is on the expected URL.');
-            } else {
-                test.assertUrlMatch(new RegExp('^' + basePath + '$'), 'Page is on the expected URL.');
-            }
-        });
+            casper.start( insecureUrl ).then(function () {
+                // We should be redirected to HTTPS.
+                test.info('Current URL: ' + this.getCurrentUrl());
+                // The URL should now to be the proper homepage (with https).
+                if ( baseDomain.search('lastingpowerofattorney.service.gov.uk') == -1 ) {
+                    test.assertUrlMatch(new RegExp('^' + basePath + paths.home + '$'), 'Page is on the expected URL.');
+                } else {
+                    test.assertUrlMatch(new RegExp('^' + basePath + '$'), 'Page is on the expected URL.');
+                }
+            });
+        }
         casper.run(function () { test.done(); });
     } // test
 });
