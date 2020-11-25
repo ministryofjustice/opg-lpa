@@ -84,6 +84,11 @@
             <div>
                 <p class="lede">We've sent the LPA to {{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }}.</p>
                 <p>For security reasons, we can only tell you we’ve returned the LPA. We cannot tell you on this service if the LPA is registered or not.</p>
+                <p>If you’re the donor or an attorney, you’ll receive a letter that tells you the LPA is:</p>
+                <ul class="list list-bullet">
+                    <li>registered</li>
+                    <li>unregistered - we’ll also say why we could not register it and what to do next</li>
+                </ul>
 
                 {% if returnDate != null  %}
                     <p>We sent the LPA and letters by second class post on  {{ returnDate|date("d F Y")  }}. </p>
