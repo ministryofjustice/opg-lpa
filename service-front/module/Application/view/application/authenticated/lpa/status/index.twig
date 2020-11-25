@@ -79,19 +79,20 @@
         {% elseif status == 'returned' %}
 
             <div>
-                <h2 class="heading-xlarge">The LPA has been returned</h2>
+                <h2 class="heading-xlarge">We’ve returned the LPA</h2>
             </div>
             <div>
-                <p class="lede">We've written to the donor and the attorneys to let them know whether we were able to register the LPA.</p>
-                <p>We have returned the LPA to {{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }}. This will be either the registered LPA or the unregistered LPA along with a letter explaining why we could not register it.</p>
+                <p class="lede">We've sent the LPA to {{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }}.</p>
+                <p>For security reasons, we can only tell you we’ve returned the LPA. We cannot tell you on this service if the LPA is registered or not.</p>
 
                 {% if returnDate != null  %}
-                    <p>The letters were sent by second class post on  {{ returnDate|date("d F Y")  }}.</p>
+                    <p>We sent the LPA and letters by second class post on  {{ returnDate|date("d F Y")  }}. </p>
                 {% else %}
-                    <p>The letters were sent by second class post.
+                    <p>We sent the LPA and letters by second class post. </p>
                 {% endif %}
 
                 <p>If they have not arrived after 10 working days, please call 0300 456 0300.</p>
+
                 <p>Opening times: Monday, Tuesday, Thursday, Friday 9.30am to 5pm. Wednesday 10am to 5pm.</p>
 
             </div>
