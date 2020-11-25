@@ -44,7 +44,7 @@ casper.test.begin('Checking http -> https redirect', {
             if ( baseDomain.search('lastingpowerofattorney.service.gov.uk') == -1 ) {
                 test.assertUrlMatch(new RegExp('^' + basePath + paths.home + '$'), 'Page is on the expected URL.');
             } else {
-                test.assertUrlMatch(new RegExp('^' + baseProdPath + '$'), 'Page is on the expected URL.');
+                test.assertUrlMatch(new RegExp('^' + basePath + '$'), 'Page is on the expected URL.');
             }
         });
         casper.run(function () { test.done(); });
