@@ -274,7 +274,7 @@ orbs:
             auth:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
-        resource_class: medium
+        resource_class: small
     jobs:
       checkout_docker_build_push_web-app:
         executor: python
