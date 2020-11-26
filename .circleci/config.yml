@@ -1,5 +1,4 @@
 version: 2.1
-
 pr_build:  &pr_build
   jobs:
     - cancel_redundant_builds:
