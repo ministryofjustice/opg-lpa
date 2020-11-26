@@ -9,6 +9,7 @@ pr_build:  &pr_build
         name: front_docker_build
         ecr_repository_name_prefix: online-lpa/front
         service_path: service-front
+        unit_test: false
         filters: { branches: { ignore: [master] } }
 
     - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
