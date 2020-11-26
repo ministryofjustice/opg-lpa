@@ -126,12 +126,12 @@ casper.checkPdfDownload = function(test, path, iterationCount){
         } else {
 
             if( fs.size( 'download.pdf' ) < 90000 ){
-                if (iterationCount >= 10) {
+                if (iterationCount >= 100) {
                     test.info('PDF file size is '+fs.size('download.pdf'));
                     test.fail( 'PDF generation failed' );
                 } else {
                     // It's hopefully still generating and we should try again.
-                    test.info('PDF is still generating... ('+(iterationCount + 1)+'/10)');
+                    test.info('PDF is still generating... ('+(iterationCount + 1)+'/100)');
                     casper.checkPdfDownload(test, path, iterationCount + 1);
                 }
             } else {
