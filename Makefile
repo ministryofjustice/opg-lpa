@@ -149,11 +149,12 @@ functional-local:
 
 .PHONY: cypress-local
 cypress-local:
-	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	docker run -it -e "CYPRESS_baseUrl=https://localhost:7002" --network="host" --rm cypress:latest cypress run --spec cypress/integration/basic_login.spec.js
+	docker build --no-cache -f ./cypress/Dockerfile  -t cypress:latest .; \
 	docker run -it -e "CYPRESS_baseUrl=https://localhost:7002" --network="host" --rm cypress:latest cypress run --spec cypress/integration/home.spec.js
+	docker run -it -e "CYPRESS_baseUrl=https://localhost:7002" --network="host" --rm cypress:latest cypress run --spec cypress/integration/basic_login.spec.js
+	docker run -it -e "CYPRESS_baseUrl=https://localhost:7002" --network="host" --rm cypress:latest cypress run --spec cypress/integration/BasicLogin.feature
 
 .PHONY: cypress-gui-local
 cypress-gui-local:
-	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	docker run -it -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  --entrypoint cypress --network="host" --rm cypress:latest open --project /app
+	docker build --no-cache -f ./cypress/Dockerfile  -t cypress:latest .; \
+		docker run -it -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  -v ${PWD}/cypress:/app/cypress --entrypoint cypress --network="host" --rm cypress:latest open --project /app
