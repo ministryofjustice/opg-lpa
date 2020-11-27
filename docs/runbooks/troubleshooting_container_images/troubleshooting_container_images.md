@@ -47,12 +47,14 @@ Here's a number of things that will help when debugging a container issue:
 - To run the container in PHP Storm: [Set up individual docker run configuration for PHPStorm](#set-up-individual-docker-run-configuration-for-phpstorm)
 - To deep debug the tests on container: [Setting up debugging of PHPUnit tests in PHPStorm](#setting-up-debugging-of-phpunit-tests-in-phpstorm)
 
+Examples below cover api container, but equally apply for front, admin and pdf containers too.
+
 ## Build dockerfile locally
 
-Build the dockerfile for container image you wish to debug - it's best to keep names as per how the circleci produces, if you want to mirror the CI process.
+Build the dockerfile for container image you wish to debug - it's best to keep names as per how the circleci produces, if you want to mirror the CI process. e.g 
 
  ``` bash
- docker build -f service-front/docker/app/Dockerfile --progress=plain --no-cache -t 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app
+ docker build -f service-api/docker/app/Dockerfile --progress=plain --no-cache -t 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app
  ```
 
 ## Pull an existing ECR image
@@ -70,8 +72,8 @@ run the image up, enable xdebug on the container and run the tests, using the fo
 
 ``` bash
 docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name api-tests 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app:latest
-docker exec tests docker-php-ext-enable xdebug
-docker exec tests /app/vendor/bin/phpunit
+docker exec api-tests docker-php-ext-enable xdebug
+docker exec api-tests /app/vendor/bin/phpunit
 
 ```
 
@@ -120,8 +122,8 @@ This consists of 3 main steps:
 7. connect to a running instance of the image above to work this out.
 
     ``` bash
-    docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name tests2 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app:latest
-    docker exec -it tests2 sh
+    docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name api-tests 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app:latest
+    docker exec -it api-tests sh
     ```
 
 8. at the `/app #` prompt enter `cd /usr/local/lib/php/extensions/` then enter `ls`.
