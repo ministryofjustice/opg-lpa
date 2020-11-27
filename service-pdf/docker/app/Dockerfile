@@ -20,6 +20,7 @@ WORKDIR /usr/local/bin/
 RUN wget https://gitlab.com/pdftk-java/pdftk/-/jobs/812582458/artifacts/raw/build/libs/pdftk-all.jar
 
 COPY service-pdf/bin/pdftk pdftk
+RUN chmod +x pdftk
 
 COPY service-pdf /app
 COPY --from=composer /app/vendor /app/vendor
