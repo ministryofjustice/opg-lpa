@@ -3,7 +3,6 @@ SENDGRID := $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-
 GOVPAY := $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_gov_pay_key | jq -r .'SecretString')
 ORDNANCESURVEY := $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_ordnance_survey_license_key | jq -r .'SecretString')
 ADMIN_USERS := $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_common_admin_accounts | jq -r .'SecretString')
-MYIP := $(shell ipconfig getifaddr en0)
 .PHONY: all
 all:
 	@${MAKE} dc-up
@@ -145,7 +144,7 @@ dc-unit-tests:
 .PHONY: functional-local
 functional-local:
 	docker build -f ./tests/Dockerfile  -t casperjs:latest .; \
-	aws-vault exec identity -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhost:7002" --network="host" --rm casperjs:latest ./start.sh 'tests/'
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhost:7002" --network="host" --rm casperjs:latest ./start.sh 'tests/'
 
 .PHONY: cypress-local
 cypress-local:
@@ -154,6 +153,17 @@ cypress-local:
 	docker run -it -e "CYPRESS_baseUrl=https://localhost:7002" --network="host" --rm cypress:latest cypress run --spec cypress/integration/home.spec.js
 
 .PHONY: cypress-gui-local
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Darwin)
+MYIP := $(shell ipconfig getifaddr en0)
 cypress-gui-local:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
 	docker run -it -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  --entrypoint cypress --network="host" --rm cypress:latest open --project /app
+endif
+
+ifeq ($(UNAME_S),Linux)
+cypress-gui-local:
+	xhost + 127.0.0.1
+	docker run -it -v ~/.Xauthority:/root/.Xauthority:ro -e DISPLAY -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  --entrypoint cypress --network="host" --rm cypress:latest open --project /app
+endif
