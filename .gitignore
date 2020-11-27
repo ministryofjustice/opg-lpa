@@ -8,6 +8,7 @@ geckodriver.log
 node_modules/
 **functional/casperesults.xml
 *.iml
+/.idea
 **notes.md
 **queue_config.json
 async_destroy_lambda/lambdas/vendor
