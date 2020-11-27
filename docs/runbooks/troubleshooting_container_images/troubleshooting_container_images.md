@@ -73,7 +73,7 @@ run the image up, enable xdebug on the container and run the tests, using the fo
 ``` bash
 docker run -d --env AWS_ACCESS_KEY_ID='-' --env AWS_SECRET_ACCESS_KEY='-' --name api-tests 311462405659.dkr.ecr.eu-west-1.amazonaws.com/online-lpa/api_app:latest
 docker exec api-tests docker-php-ext-enable xdebug
-docker exec api-tests /app/vendor/bin/phpunit
+docker exec api-tests /app/vendor/bin/phpunit -d memory_limit=256M
 
 ```
 
