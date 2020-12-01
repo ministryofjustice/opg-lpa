@@ -106,7 +106,7 @@ class ECRScanChecker:
                 print("Unable to get ECR image scan results for image {0}, tag {1}".format(
                     image, tag))
         if not self.report :
-           self.report = "AWS ECR Scan found no issues."
+           self.report = "AWS ECR Scan found no issues.\n"
            print(self.report)
 
     def get_ecr_scan_findings(self, image, tag):
