@@ -144,4 +144,25 @@ dc-unit-tests:
 .PHONY: functional-local
 functional-local:
 	docker build -f ./tests/Dockerfile  -t casperjs:latest .; \
-	aws-vault exec identity -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhost:7002" --network="host" --rm casperjs:latest ./start.sh 'tests/'
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhost:7002" --network="host" --rm casperjs:latest ./start.sh 'tests/'
+
+.PHONY: cypress-local
+cypress-local:
+	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
+	docker run -it -e "CYPRESS_baseUrl=https://localhost:7002" --network="host" --rm cypress:latest cypress run --spec cypress/integration/BasicLogin.feature
+
+.PHONY: cypress-gui-local
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Darwin)
+MYIP := $(shell ipconfig getifaddr en0)
+cypress-gui-local:
+	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
+	docker run -it -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  -v ${PWD}/cypress:/app/cypress --entrypoint cypress --network="host" --rm cypress:latest open --project /app
+endif
+
+ifeq ($(UNAME_S),Linux)
+cypress-gui-local:
+	xhost + 127.0.0.1
+	docker run -it -v ~/.Xauthority:/root/.Xauthority:ro -e DISPLAY -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  --entrypoint cypress --network="host" --rm cypress:latest open --project /app
+endif
