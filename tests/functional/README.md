@@ -31,7 +31,35 @@ docker run -d -e "CASPER_EMAIL_USER=CASPER_EMAIL_USER" -e "CASPER_EMAIL_PASSWORD
 docker exec casperjs ./start.sh 'tests/'
 ```
 
-That old way, some tests will fail though, because S3Monitor only works via aws-vault, because S3Monitor needs to talk to real S3 
+That old way, some tests will fail though, because S3Monitor only works via aws-vault, because S3Monitor needs to talk to real S3
+
+## Running a subset of the tests
+
+It is possible to run a subset of the tests by manually doing what the Makefile does.
+
+From the root directory of the project, build the casperjs docker container:
+
+```
+docker build -f ./tests/Dockerfile  -t casperjs:latest .
+```
+
+Then specify the test suites you want to run on the command line:
+
+```
+aws-vault exec moj-lpa-dev -- time docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhost:7002" --network="host" casperjs:latest ./start.sh tests/02-Signup/02-signup.js tests/02-Signup/03-activate.js tests/03-Authentication/ tests/05-CreatePfLpa/
+```
+
+You can specify individual files and/or directories. The tests run in the order specified. If you specify a directory, the tests will be run from that directory in name order before moving onto the next test file/directory.
+
+As shown in the command above, you will typically need the following test suites to run first for the other test suites to subsequently work correctly:
+
+```
+tests/02-Signup/02-signup.js
+tests/02-Signup/03-activate.js
+tests/03-Authentication/
+```
+
+This is because the 04+ test suites assume that a valid login token is available on the test client and the above tests perform a sign up and login.
 
 ## Advanced information
 
