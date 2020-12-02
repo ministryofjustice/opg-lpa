@@ -6,15 +6,16 @@
 # OPG_LPA_STACK_ENVIRONMENT
 # OPG_LPA_POSTGRES_HOSTNAME
 # OPG_LPA_POSTGRES_PORT
-# OPG_LPA_POSTGRES_NAME
+# OPG_LPA_POSTGRES_NAME - database name
 # OPG_LPA_POSTGRES_USERNAME
 # OPG_LPA_POSTGRES_PASSWORD
 
 AWS_DEFAULT_REGION=eu-west-1
+API_OPTS="--host=${OPG_LPA_POSTGRES_HOSTNAME} --username=${OPG_LPA_POSTGRES_USERNAME}"
 
 check_db_exists()
 {
-if [ "$( PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} lpadb -tAc "SELECT 1 FROM pg_database WHERE datname='${OPG_LPA_POSTGRES_NAME}'" )" = '1' ]
+if [ "$( PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} ${OPG_LPA_POSTGRES_NAME} -tAc "SELECT 1 FROM pg_database WHERE datname='${OPG_LPA_POSTGRES_NAME}'" )" = '1' ]
 then
     echo "LPA Database exists. Can continue"
 else
@@ -38,9 +39,15 @@ check_tables_exist()
     while [[ "$count_tables" -ne "2" ]] ; do
          tries=$(($tries+1))
 
-         count_tables=$(PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} lpadb -tAc "$sql")
+         count_tables=$(PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} ${OPG_LPA_POSTGRES_NAME} -tAc "$sql")
 
-         if [ $tries -gt 20 ] ; then
+         # error codes mean there are no tables
+         if [ "$?" -ne "0" ] ; then
+             count_tables=0
+         fi
+
+         # one minute
+         if [ $tries -gt 12 ] ; then
             break
          fi
 
@@ -62,8 +69,6 @@ fi
 
 echo "Waiting for postgres to be ready"
 timeout 90s sh -c 'pgready=1; until [ ${pgready} -eq 0 ]; do pg_isready -h ${OPG_LPA_POSTGRES_HOSTNAME} -d ${OPG_LPA_POSTGRES_NAME}; pgready=$? ; sleep 5 ; done'
-
-API_OPTS="--host=${OPG_LPA_POSTGRES_HOSTNAME} --username=${OPG_LPA_POSTGRES_USERNAME}"
 
 echo "Checking database exists"
 check_db_exists
