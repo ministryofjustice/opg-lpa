@@ -8,8 +8,3 @@ Feature: Basic Login
     Then I see "Sign in" in the title
     When I log in 
     Then I see "Your LPAs" in the title
-  
-  @focus
-  Scenario: Visit homepage
-    Given I visit "/"
-    Then I see "Make a lasting power of attorney" in the title
