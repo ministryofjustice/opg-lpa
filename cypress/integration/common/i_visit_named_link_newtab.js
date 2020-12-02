@@ -1,0 +1,11 @@
+import { Given } from "cypress-cucumber-preprocessor/steps";
+ 
+Then(`I visit in new tab link named {string}`, (linkName) => {
+    // Test whether we can visit this link in a new tab. First we ensure there
+    // is indeed a target _blank, thats enough to say this would open in a new tab
+    // then remove that before clicking it. Since Cypress doesn't support
+    // multiple tabs, we then visit this link in the parent window
+    //  clearly, this is not 100% the same as the user journey, extra testing
+    //  may need doing by hand on some pages that open in tabs
+    cy.get(linkName).should('have.attr', 'target', '_blank').invoke('removeAttr', 'target').click()
+})
