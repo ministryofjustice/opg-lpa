@@ -6,16 +6,16 @@ Feature: Homepage Links
   Scenario: Visit guidance
     Given I visit "/home"
     Then I see "Make a lasting power of attorney" in the title
-    And I can visit link containing "login"
+    And I visit link containing "login"
     And I am taken to "/login"
     When I click back
-    Then I can visit link containing "terms"
-    Then I can visit link containing "privacy"
-    #Then I can visit link containing "cookies"
-    #And I can visit link named "a.js-guidance"
+    Then I visit link in new tab containing "terms"
+    Then I visit link in new tab containing "privacy"
+    #Then I visit link containing "cookies"
+    #And I visit link named "a.js-guidance"
 
   @focus
   Scenario: Visit feedback
     Given I visit "/home"
     Then I see "Make a lasting power of attorney" in the title
-    And I can visit link containing "feedback"
+    And I visit link containing "feedback"
