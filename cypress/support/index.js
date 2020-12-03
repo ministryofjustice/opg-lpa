@@ -26,5 +26,8 @@ var random = Math.floor(Math.random() * 999999999);
 
 var date = new Date();
 var userNumber = date.getTime() + "" + random;
-Cypress.env("email","caspertests+" + userNumber + "@lpa.opg.service.justice.gov.uk")
-Cypress.env("password", "Casper" + userNumber)
+Cypress.env("userNumber", userNumber)
+Cypress.env("email","cypresstests+" + userNumber + "@lpa.opg.service.justice.gov.uk")
+Cypress.env("password", "Cypress" + userNumber)
+Cypress.env("seeded_email","seeded_test_user@digital.justice.gov.uk");
+Cypress.env("seeded_password","Pass1234");

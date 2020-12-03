@@ -7,5 +7,5 @@ Then(`I visit in new tab link named {string}`, (linkName) => {
     // multiple tabs, we then visit this link in the parent window
     //  clearly, this is not 100% the same as the user journey, extra testing
     //  may need doing by hand on some pages that open in tabs
-    cy.get(linkName).should('have.attr', 'target', '_blank').invoke('removeAttr', 'target').click()
+    cy.get(linkName).should('have.attr', 'target', '_blank').invoke('removeAttr', 'target').click();
 })
