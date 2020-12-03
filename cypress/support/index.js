@@ -21,3 +21,10 @@ import './commands'
 
 // pull in cypress-axe
 import 'cypress-axe'
+
+var random = Math.floor(Math.random() * 999999999);
+
+var date = new Date();
+var userNumber = date.getTime() + "" + random;
+Cypress.env("email","caspertests+" + userNumber + "@lpa.opg.service.justice.gov.uk")
+Cypress.env("password", "Casper" + userNumber)

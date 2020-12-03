@@ -6,4 +6,5 @@ Feature: Signup
   Scenario: Visit guidance
     Given I visit "/signup"
     Then I see "Create an account" in the title
-    And I type "cypress_blah_test_user@digital.justice.gov.uk" into "input#email.form-control"
+    And I sign up standard test user
+    #And I type "cypress_blah_test_user@digital.justice.gov.uk" into "input#email.form-control"
