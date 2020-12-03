@@ -91,4 +91,18 @@ class UsersController extends AbstractAuthController
 
         return new JsonModel($user);
     }
+
+    /**
+     * Match action for user details (wildcard/case-insensitive search)
+     *
+     * @return JsonModel
+     */
+    public function matchAction()
+    {
+        $query = $this->params()->fromQuery()['query'];
+
+        $users = $this->getService()->matchUsers($query);
+
+        return new JsonModel($users);
+    }
 }
