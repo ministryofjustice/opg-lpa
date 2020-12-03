@@ -13,6 +13,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\User\User;
 use OpgTest\Lpa\DataModel\FixturesData;
+use ArrayObject;
 use DateTime;
 
 class ServiceTest extends AbstractServiceTest
@@ -247,6 +248,35 @@ class ServiceTest extends AbstractServiceTest
         $result = $service->delete($user->getId());
 
         $this->assertTrue($result);
+
+        $serviceBuilder->verify();
+    }
+
+    public function testMatchUsers()
+    {
+        $query = 'smith';
+
+        $email = FixturesData::getUser()->getEmail()->getAddress();
+        $collectionUser1 = new CollectionUser(['identity' => $email]);
+        $collectionUser2 = new CollectionUser(['identity' => $email]);
+        $users = (new ArrayObject([$collectionUser1, $collectionUser2]))->getIterator();
+
+        $this->authUserRepository
+            ->shouldReceive('matchUsers')
+            ->with($query)
+            ->andReturn($users)
+            ->once();
+
+        $serviceBuilder = new ServiceBuilder();
+        $service = $serviceBuilder
+            ->withApplicationsService($this->applicationsService)
+            ->withAuthLogRepository($this->authLogRepository)
+            ->withAuthUserRepository($this->authUserRepository)
+            ->build();
+
+        $results = $service->matchUsers($query);
+
+        $this->assertEquals(count($results), 2);
 
         $serviceBuilder->verify();
     }

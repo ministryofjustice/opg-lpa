@@ -247,6 +247,15 @@ class Service extends AbstractService
     }
 
     /**
+     * @param string $query to match against username
+     * @return array of UserModel objects
+     */
+    public function matchUsers(string $query)
+    {
+        return iterator_to_array($this->getUserRepository()->matchUsers($query));
+    }
+
+    /**
      * @param ApplicationService $applicationsService
      */
     public function setApplicationsService(ApplicationService $applicationsService)
