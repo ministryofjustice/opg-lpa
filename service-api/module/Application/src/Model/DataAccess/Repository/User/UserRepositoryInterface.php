@@ -16,6 +16,15 @@ interface UserRepositoryInterface
     public function getByUsername(string $username) : ?UserInterface;
 
     /**
+     * Returns zero or more users whose username (email address) approximately
+     * matches the query (case insensitive, using LIKE).
+     *
+     * @param $query - string to match users against
+     * @return iterable
+     */
+    public function matchUsers(string $query) : iterable;
+
+    /**
      * @param $id
      * @return UserInterface|null
      */

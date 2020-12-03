@@ -8,6 +8,8 @@ use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\IsNotNull;
+use Laminas\Db\Sql\Predicate\Like;
+use Laminas\Db\Sql\Predicate\PredicateSet;
 use Opg\Lpa\DataModel\User\User as ProfileUserModel;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 
@@ -56,6 +58,8 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
         $select->where($where);
 
+        print($select->getSqlString());
+
         $result = $sql->prepareStatementForSqlObject($select)->execute();
 
         if (!$result->isQueryResult() || $result->count() != 1) {
@@ -103,6 +107,33 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         }
 
         return new UserModel($user);
+    }
+
+    /**
+     * Returns zero or more users by case-insensitive and partial
+     * matching
+     *
+     * @param $query
+     * @return iterable
+     */
+    public function matchUsers(string $query) : iterable
+    {
+        $sql = new Sql($this->getZendDb());
+        $select = $sql->select(self::USERS_TABLE);
+
+        $like_string = sprintf('%%%s%%', $query);
+
+        $where = new PredicateSet();
+        $where->orPredicate(new Like('identity', $like_string));
+        $where->orPredicate(new Like('identity', strtolower($like_string)));
+
+        $select->where($where);
+
+        $users = $sql->prepareStatementForSqlObject($select)->execute();
+
+        foreach ($users as $user) {
+            yield new UserModel($user);
+        }
     }
 
     /**
