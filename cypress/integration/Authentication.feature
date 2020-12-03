@@ -6,5 +6,5 @@ Feature: Basic Login
   Scenario: Logging into Make an LPA
     Given I visit "/login"
     Then I see "Sign in" in the title
-    When I log in 
+    When I log in as seeded user
     Then I see "Your LPAs" in the title

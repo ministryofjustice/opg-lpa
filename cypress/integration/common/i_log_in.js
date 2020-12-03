@@ -1,7 +1,7 @@
 import { When } from "cypress-cucumber-preprocessor/steps";
 
-When(`I log in`, () => {
-    cy.get("input#email.form-control").clear().type("seeded_test_user@digital.justice.gov.uk");
-    cy.get("input#password.form-control").clear().type("Pass1234");
+Then(`I log in with user {string} password {string}`, (user, password) => {
+    cy.get("input#email.form-control").clear().type(user);
+    cy.get("input#password.form-control").clear().type(password);
     cy.get('input#signin-form-submit.button').click()
 })
