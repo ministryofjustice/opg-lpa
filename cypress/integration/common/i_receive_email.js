@@ -26,15 +26,15 @@ function getActivationLink(){
 
     var filename = '/mnt/test/functional/activation_emails/' + Cypress.env("userNumber") + '.activation';
     
-    if( fs.isReadable( filename ) ){
+    if( cy.readFile(filename, { timeout: 200000 }) ){
 
         cy.log('Activation email has arrived!');
 
-        var content = fs.read( filename );
-        link = content.substring(content.indexOf(",")+1);
+        //var content = fs.read( filename );
+        //link = content.substring(content.indexOf(",")+1);
 
-        cy.log('Content: ' + content);
-        cy.log('Link: ' + link);
+        //cy.log('Content: ' + content);
+        //cy.log('Link: ' + link);
 
     } else {
 

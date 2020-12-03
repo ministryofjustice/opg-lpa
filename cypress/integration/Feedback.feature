@@ -8,3 +8,4 @@ Feature: Feedback
     And I visit link containing "feedback"
     Then I am taken to "/send-feedback"
     And I see "Send us feedback" in the title
+    And I can find feedback buttons
