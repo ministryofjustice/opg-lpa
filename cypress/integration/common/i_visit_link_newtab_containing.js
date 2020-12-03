@@ -7,5 +7,5 @@ Then(`I visit link in new tab containing {string}`, (linkText) => {
     // multiple tabs, we then visit this link in the parent window
     //  clearly, this is not 100% the same as the user journey, extra testing
     //  may need doing by hand on some pages that open in tabs
-    cy.contains(linkText).should('have.attr', 'target', '_blank').invoke('removeAttr', 'target').click()
+    cy.contains(linkText).should('have.attr', 'target', '_blank').invoke('removeAttr', 'target').click();
 })
