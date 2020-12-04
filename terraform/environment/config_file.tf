@@ -9,7 +9,7 @@ locals {
     account_id                  = local.account.account_id
     cluster_name                = aws_ecs_cluster.online-lpa.name
     environment                 = local.environment
-    front_fqdn                  = aws_route53_record.front_fqdn
+    front_fqdn                  = aws_route53_record.front.fqdn
     admin_fqdn                  = aws_route53_record.admin.fqdn
     public_facing_fqdn          = aws_route53_record.public_facing_lastingpowerofattorney.fqdn
     tag                         = var.container_version
