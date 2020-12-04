@@ -25666,6 +25666,12 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
                 window.GOVUK.cookie('cookie_policy') || window.GOVUK.setDefaultConsentCookie()
             }
 
+            if (this.isInCookiesPage() && !this.isInIframe() && 'true' === window.GOVUK.cookie('submitted_cookie_page')) {
+            	window.setTimeout(function () {
+					window.close();
+				}, 500);
+			}
+
             this.enableAllCookies = this.enableAllCookies.bind(this);
             var acceptButton = document.querySelector('.global-cookie-message__button_accept');
             acceptButton.addEventListener('click', this.enableAllCookies);
