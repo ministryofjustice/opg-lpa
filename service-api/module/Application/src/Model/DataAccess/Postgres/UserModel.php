@@ -16,6 +16,10 @@ class UserModel implements UserRepository\UserInterface
 
     public function __construct(array $data)
     {
+        if (!isset($data['numberOfLpas'])) {
+            $data['numberOfLpas'] = -1;
+        }
+
         $this->data = $data;
     }
 
@@ -59,6 +63,7 @@ class UserModel implements UserRepository\UserInterface
             'activatedAt' => $this->activatedAt(),
             'lastFailedLoginAttemptAt' => $this->lastFailedLoginAttemptAt(),
             'failedLoginAttempts' => $this->failedLoginAttempts(),
+            'numberOfLpas' => $this->numberOfLpas(),
         ];
     }
 
@@ -224,4 +229,14 @@ class UserModel implements UserRepository\UserInterface
         $this->data['failed_login_attempts'] = 0;
     }
 
+    /**
+     * Number of LPA applications made by the user.
+     * If not set, returns -1.
+     *
+     * @return int
+     */
+    public function numberOfLpas() : int
+    {
+        return $this->data['numberOfLpas'];
+    }
 }
