@@ -94,9 +94,8 @@ resource "aws_security_group_rule" "front_loadbalancer_egress" {
 }
 
 resource "aws_lb_listener_certificate" "front_loadbalancer_live_service_certificate" {
-  count           = terraform.workspace == "production" ? 1 : 0
   listener_arn    = aws_lb_listener.front_loadbalancer.arn
-  certificate_arn = data.aws_acm_certificate.certificate_live_service[count.index].arn
+  certificate_arn = data.aws_acm_certificate.public_facing_certificate.arn
 }
 
 
@@ -130,7 +129,7 @@ resource "aws_lb_listener_rule" "www_redirect" {
     type = "redirect"
 
     redirect {
-      host        = "www.lastingpowerofattorney.service.gov.uk"
+      host        = "www.${local.dns_namespace_env}lastingpowerofattorney.service.gov.uk"
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_301"
@@ -138,7 +137,7 @@ resource "aws_lb_listener_rule" "www_redirect" {
   }
   condition {
     host_header {
-      values = ["lastingpowerofattorney.service.gov.uk"]
+      values = ["${local.dns_namespace_env}lastingpowerofattorney.service.gov.uk"]
     }
   }
 }

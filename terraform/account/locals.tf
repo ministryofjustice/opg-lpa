@@ -23,6 +23,9 @@ locals {
 
   account_id = local.account.account_id
 
+  dns_namespace_acc = local.environment == "production" ? "" : "${local.account_name}."
+  dev_wildcard      = local.account_name == "production" ? "" : "*."
+
   mandatory_moj_tags = {
     business-unit = "OPG"
     application   = "Online LPA Service"
