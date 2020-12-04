@@ -11,6 +11,7 @@ locals {
   account           = var.accounts[local.account_name]
   environment       = terraform.workspace
   dns_namespace_env = local.environment == "production" ? "" : "${local.environment}."
+  dev_wildcard      = local.account_name == "production" ? "" : "*."
   track_from_date   = "2019-04-01"
   front_dns         = "front.lpa"
   admin_dns         = "admin.lpa"
