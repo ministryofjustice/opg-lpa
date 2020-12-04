@@ -3,6 +3,7 @@ namespace Application\Model\DataAccess\Postgres;
 
 use PDOException;
 use DateTime;
+use Laminas\Db\Sql\Expression as SqlExpression;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
@@ -12,6 +13,7 @@ use Laminas\Db\Sql\Predicate\Like;
 use Laminas\Db\Sql\Predicate\PredicateSet;
 use Opg\Lpa\DataModel\User\User as ProfileUserModel;
 use Application\Model\DataAccess\Repository\User as UserRepository;
+use Application\Model\DataAccess\Postgres\ApplicationData as ApplicationData;
 
 class UserData extends AbstractBase implements UserRepository\UserRepositoryInterface {
 
@@ -119,15 +121,22 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     public function matchUsers(string $query) : iterable
     {
         $sql = new Sql($this->getZendDb());
-        $select = $sql->select(self::USERS_TABLE);
 
+        // count applications by user
+        $subselect = $sql->select(['a' => ApplicationData::APPLICATIONS_TABLE])
+                         ->columns(['user', 'numberOfLpas' => new SqlExpression('COUNT(*)')])
+                         ->group(['user']);
+
+        // LIKE statements for WHERE clause
+        $likes = new PredicateSet();
         $like_string = sprintf('%%%s%%', $query);
+        $likes->orPredicate(new Like('u.identity', $like_string));
+        $likes->orPredicate(new Like('u.identity', strtolower($like_string)));
 
-        $where = new PredicateSet();
-        $where->orPredicate(new Like('identity', $like_string));
-        $where->orPredicate(new Like('identity', strtolower($like_string)));
-
-        $select->where($where);
+        // main query
+        $select = $sql->select(['u' => self::USERS_TABLE])
+                      ->join(['a' => $subselect], 'u.id = a.user', ['numberOfLpas'])
+                      ->where($likes);
 
         $users = $sql->prepareStatementForSqlObject($select)->execute();
 
