@@ -22,8 +22,8 @@ resource "aws_route53_record" "public_facing_lastingpowerofattorney" {
 
   alias {
     evaluate_target_health = false
-    name                   = aws_lb.viewer.dns_name
-    zone_id                = aws_lb.viewer.zone_id
+    name                   = aws_lb.front.dns_name
+    zone_id                = aws_lb.front.zone_id
   }
 
   lifecycle {
