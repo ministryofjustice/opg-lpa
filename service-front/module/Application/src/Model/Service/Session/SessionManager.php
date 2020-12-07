@@ -7,9 +7,9 @@ use Laminas\Session\SessionManager as LaminasSessionManager;
 class SessionManager extends LaminasSessionManager {
 
     /**
-     * @var string $lastMatchedRoute
+     * @var string $lastMatchedRouteName
      */
-    private $lastMatchedRoute;
+    private $lastMatchedRouteName;
 
     /**
      * Tracks whether we've seen this session before and does a regenerateId() if not.
@@ -29,19 +29,18 @@ class SessionManager extends LaminasSessionManager {
     /**
      * @return string
      */
-    public function getLastMatchedRoute(): string
+    public function getLastMatchedRouteName(): string
     {
-        return $this->lastMatchedRoute;
+        return $this->lastMatchedRouteName;
     }
 
     /**
-     * @param string $matchedRoute
+     * @param string $matchedRouteName
      */
-    public function setLastMatchedRoute(string $matchedRoute): void
+    public function setLastMatchedRouteName(string $matchedRouteName): void
     {
-        if (!isset($this->lastMatchedRoute) || $this->lastMatchedRoute !== $matchedRoute) {
-            $this->lastMatchedRoute = $matchedRoute;
+        if (!isset($this->lastMatchedRouteName) || $this->lastMatchedRouteName !== $matchedRouteName) {
+            $this->lastMatchedRouteName = $matchedRouteName;
         }
     }
-
 } // class

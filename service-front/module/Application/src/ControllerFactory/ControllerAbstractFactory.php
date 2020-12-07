@@ -138,7 +138,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         $config = $container->get('Config');
 
         $currentRoute = $container->get('Application')->getMvcEvent()->getRouteMatch();
-        $sessionManager->setLastMatchedRoute($currentRoute->getMatchedRouteName());
+        $sessionManager->setLastMatchedRouteName($currentRoute->getMatchedRouteName());
 
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
             $userDetailsSession = $container->get('UserDetailsSession');

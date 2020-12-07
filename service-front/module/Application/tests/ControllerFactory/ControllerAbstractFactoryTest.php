@@ -49,7 +49,7 @@ class ControllerAbstractFactoryTest extends MockeryTestCase
     public function testCreateServiceWithName()
     {
         $routeMatch = Mockery::mock(RouteMatch::class);
-        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('');
+        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/applicant');
 
         $mvcEvent = Mockery::mock(RouteMatch::class);
         $mvcEvent->shouldReceive('getRouteMatch')->withArgs([])
@@ -62,7 +62,7 @@ class ControllerAbstractFactoryTest extends MockeryTestCase
             ->andReturn($application)->once();
 
         $session = Mockery::mock(SessionManager::class);
-        $session->shouldReceive('setLastMatchedRoute');
+        $session->shouldReceive('setLastMatchedRouteName');
         $this->container->shouldReceive('get')->withArgs(['SessionManager'])
             ->andReturn($session)->once();
 
