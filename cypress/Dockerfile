@@ -21,6 +21,7 @@ COPY tests /mnt/test
 RUN npm install --save-dev cypress-axe@0.9.1 axe-core cypress-cucumber-preprocessor cosmiconfig
 
 ENV CYPRESS_VIDEO=false
+ENV CYPRESS_RUN_A11Y_TESTS=true
 
 COPY cypress.json .
 COPY package.json .
