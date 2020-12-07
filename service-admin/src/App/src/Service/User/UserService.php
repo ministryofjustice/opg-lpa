@@ -89,4 +89,13 @@ class UserService
 
         return false;
     }
+
+    /**
+     * @param array $params
+     * @return array|bool
+     */
+    public function match(array $params)
+    {
+        return $this->client->httpGet('/v2/users/match', $params);
+    }
 }

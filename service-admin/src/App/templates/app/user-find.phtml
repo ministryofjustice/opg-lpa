@@ -1,0 +1,74 @@
+<?php $this->layout('layout::default', ['title' => 'Find Users']); ?>
+
+<div class="grid-row">
+    <div class="column-full">
+
+        <form method="get" class="form" action="<?= $this->url('user.find') ?>">
+
+            <fieldset>
+
+                <legend>
+                    <h1 class="heading-xlarge">Find Users</h1>
+                </legend>
+
+                <div class="text">
+                    <p>
+                        Find users by full or partial email address. If found, a summary of the user with a link to their full details will be shown.
+                    </p>
+
+                    <p>!!!!FORM ELEMENTS HERE!!!!</p>
+                </div>
+
+            </fieldset>
+
+            <div class="form-group">
+                <input class="button" type="submit" value="Find">
+            </div>
+
+        </form>
+
+        <h2 class="heading-medium">Matching users</h2>
+
+        <p>!!!!NO USERS FOUND MESSAGE HERE!!!!</p>
+
+            <?php foreach ($users as $user) { ?>
+                <ul>
+                    <li>
+                        <strong class="bold-small">Name: </strong>
+                        <a href="<?= $this->url('user.search', [], ['email' => $user['username']]) ?>"><?= $user['username'] ?></a>
+                    </li>
+                    <li>
+                        <strong class="bold-small">Account status: </strong>
+
+                        <?php if (array_key_exists('isActive', $user)) { ?>
+                            <span><?= ($user['isActive'] ? 'Activated' : 'Not activated'); ?></span>
+                        <?php } elseif (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
+                            <span>Deleted</span>
+                        <?php } ?>
+                    </li>
+
+                    <?php if (array_key_exists('lastLoginAt', $user)) { ?>
+                        <li>
+                            <strong class="bold-small">Last login time: </strong>
+                            <span><?= ($user['lastLoginAt'] instanceof DateTime ? ($user['lastLoginAt'])->format('jS M Y \\a\\t g:i:s a') : 'Never logged in'); ?></span>
+                        </li>
+                    <?php } ?>
+
+                    <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
+                        <li>
+                            <strong class="bold-small">Number of failed login attempts: </strong>
+                            <span><?= $user['failedLoginAttempts']; ?></span>
+                        </li>
+                    <?php } ?>
+
+                    <?php if (array_key_exists('numberOfLpas', $user)) { ?>
+                        <li>
+                            <strong class="bold-small">Number of LPAs: </strong>
+                            <span><?= $user['numberOfLpas']; ?></span>
+                        </li>
+                    <?php } ?>
+                </ul>
+            <? } ?>
+
+    </div>
+</div>

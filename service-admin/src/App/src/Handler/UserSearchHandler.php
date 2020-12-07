@@ -21,6 +21,17 @@ class UserSearchHandler extends AbstractHandler
     private $userService;
 
     /**
+     * Factory method
+     * @param ContainerInterface $container
+     * @return RequestHandlerInterface
+     */
+    public static function create(ContainerInterface $container) : RequestHandlerInterface
+    {
+        $userSearchService = $container->get(UserService::class);
+        return new UserSearchHandler($userSearchService);
+    }
+
+    /**
      * UserSearchHandler constructor.
      * @param UserService $userService
      */
@@ -40,29 +51,38 @@ class UserSearchHandler extends AbstractHandler
         ]);
 
         $user = null;
+        $email = null;
 
         if ($request->getMethod() == 'POST') {
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                //  Get the data from the form
-
                 $email = $form->getInputFilter()->get('email')->getValue();
+            }
+        }
+        else if ($request->getMethod() == 'GET') {
+            $params = $request->getQueryParams();
 
-                $result = $this->userService->search($email);
+            if (isset($params['email'])) {
+                $email = $params['email'];
+                $form->setData(['email' => $email]);
+            }
+        }
 
-                if ($result === false) {
-                    // Set error message
-                    $messages = array_merge($form->getMessages(), [
-                        'email' => [
-                            'No user found for email address'
-                        ]
-                    ]);
+        if (!is_null($email)) {
+            $result = $this->userService->search($email);
 
-                    $form->setMessages($messages);
-                } else {
-                    $user = $result;
-                }
+            if ($result === false) {
+                // Set error message
+                $messages = array_merge($form->getMessages(), [
+                    'email' => [
+                        'No user found for email address'
+                    ]
+                ]);
+
+                $form->setMessages($messages);
+            } else {
+                $user = $result;
             }
         }
 
