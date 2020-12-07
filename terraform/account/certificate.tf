@@ -108,7 +108,7 @@ resource "aws_acm_certificate" "certificate_public_facing" {
 }
 
 //------------------------
-// Live Service Certificate
+// LEGACY Live Service Certificate
 
 resource "aws_route53_record" "certificate_validation_live_service" {
   provider = aws.legacy-lpa
