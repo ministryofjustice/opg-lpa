@@ -99,9 +99,15 @@ class UsersController extends AbstractAuthController
      */
     public function matchAction()
     {
-        $query = $this->params()->fromQuery()['query'];
+        $params = $this->params();
+        $query = $params->fromQuery('query');
 
-        $users = $this->getService()->matchUsers($query);
+        $options = [
+            'offset' => $params->fromQuery('offset', 0),
+            'limit' => $params->fromQuery('limit', 10)
+        ];
+
+        $users = $this->service->matchUsers($query, $options);
 
         return new JsonModel($users);
     }

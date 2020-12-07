@@ -50,10 +50,10 @@ $ curl -X POST -H "Accept: application/json" -H "Content-Type: application/json"
 
 The `token` returned here can be sent with subsequent requests to other parts of the API:
 
-```/v2/users/search
+```
 $ curl -H "Accept: application/json" -H "User-Agent: LPA-ADMIN" \
   -H "Token: yIU0G8NiTesl4hev0wXIQHpeipcdiAIiMvRpT0hZ2rl" \
-  "http://localhost:7001/v2/users/search?email=seeded_test_user@digital.justice.gov.uk"
+  "http://localhost:7001/v2/users/match?query=seeded_test_user"
 
 {"userId":"082347fe0f7da026fa6187fc00b05c55","username":"seeded_test_user@digital.justice.gov.uk","isActive":true,
 "lastLoginAt":{"date":"2020-12-03 11:01:34.000000","timezone_type":1,"timezone":"+00:00"},

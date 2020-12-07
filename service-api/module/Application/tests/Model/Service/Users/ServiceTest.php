@@ -263,7 +263,7 @@ class ServiceTest extends AbstractServiceTest
 
         $this->authUserRepository
             ->shouldReceive('matchUsers')
-            ->with($query)
+            ->with($query, [])
             ->andReturn($users)
             ->once();
 

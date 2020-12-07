@@ -207,9 +207,18 @@ class UsersControllerTest extends AbstractAuthControllerTest
 
         // Set up the data in the params plugin
         $this->params->shouldReceive('fromQuery')
-            ->andReturn([
-                'query' => $query,
-            ])
+            ->with('query')
+            ->andReturn($query)
+            ->once();
+
+        $this->params->shouldReceive('fromQuery')
+            ->with('limit', 10)
+            ->andReturn(10)
+            ->once();
+
+        $this->params->shouldReceive('fromQuery')
+            ->with('offset', 0)
+            ->andReturn(0)
             ->once();
 
         $userMatchReturnData = [
@@ -224,7 +233,7 @@ class UsersControllerTest extends AbstractAuthControllerTest
         ];
 
         $this->service->shouldReceive('matchUsers')
-            ->with($query)
+            ->with($query, ['offset' => 0, 'limit' => 10])
             ->andReturn($userMatchReturnData)
             ->once();
 
@@ -243,18 +252,34 @@ class UsersControllerTest extends AbstractAuthControllerTest
     public function testMatchActionEmptyResultset()
     {
         $query = 'phoebe';
+        $offset = 10;
+        $limit = 5;
 
         // Set up the data in the params plugin
         $this->params->shouldReceive('fromQuery')
-            ->andReturn([
-                'query' => $query,
-            ])
-            ->once();
+             ->with('query')
+             ->andReturn($query)
+             ->once();
+
+        $this->params->shouldReceive('fromQuery')
+             ->with('limit', 10)
+             ->andReturn($limit)
+             ->once();
+
+        $this->params->shouldReceive('fromQuery')
+             ->with('offset', 0)
+             ->andReturn($offset)
+             ->once();
 
         $userMatchReturnData = [];
 
+        $expectedOptions = [
+            'offset' => $offset,
+            'limit' => $limit
+        ];
+
         $this->service->shouldReceive('matchUsers')
-            ->with($query)
+            ->with($query, $expectedOptions)
             ->andReturn($userMatchReturnData)
             ->once();
 
