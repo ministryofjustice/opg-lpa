@@ -2,6 +2,7 @@
 
 namespace Application\View\Helper;
 
+use Application\Model\Service\Session\SessionManager;
 use Interop\Container\ContainerInterface;
 use Laminas\Mvc\Application;
 use Laminas\Router\RouteMatch;
@@ -20,9 +21,12 @@ class RouteNameFactory implements FactoryInterface
         /** @var Application $application */
         $application = $container->get('Application');
 
+        /** @var SessionManager $session */
+        $session = $container->get('SessionManager');
+
         /** @var RouteMatch $routeMatch */
         $routeMatch = $application->getMvcEvent()->getRouteMatch();
 
-        return new RouteName($routeMatch);
+        return new RouteName($session, $routeMatch);
     }
 }
