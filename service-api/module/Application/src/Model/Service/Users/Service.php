@@ -250,13 +250,16 @@ class Service extends AbstractService
 
     /**
      * @param string $query to match against username
-     * @return array of UserModel objects
+     * @param array $options - see UserData.php / matchUsers
+     * @return array of arrays (each subarray derived from a UserModel instance)
      */
-    public function matchUsers(string $query)
+    public function matchUsers(string $query, array $options = [])
     {
         $users = new ArrayObject();
 
-        foreach ($this->getUserRepository()->matchUsers($query) as $user) {
+        $results = $this->getUserRepository()->matchUsers($query, $options);
+
+        foreach ($results as $user) {
             $users->append($user->toArray());
         }
 

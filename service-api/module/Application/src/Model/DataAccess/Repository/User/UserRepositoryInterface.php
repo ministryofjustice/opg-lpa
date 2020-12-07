@@ -20,9 +20,10 @@ interface UserRepositoryInterface
      * matches the query (case insensitive, using LIKE).
      *
      * @param $query - string to match users against
+     * @param $options - optional query criteria
      * @return iterable
      */
-    public function matchUsers(string $query) : iterable;
+    public function matchUsers(string $query, array $options) : iterable;
 
     /**
      * @param $id

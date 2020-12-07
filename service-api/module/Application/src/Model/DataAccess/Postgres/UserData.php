@@ -116,10 +116,23 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * matching
      *
      * @param $query
+     * @param $options - array of optional parameters, including
+     * 'offset' (int, default 0) and 'limit' (int, default 10)
      * @return iterable
      */
-    public function matchUsers(string $query) : iterable
+    public function matchUsers(string $query, array $options = []) : iterable
     {
+        $offset = 0;
+        $limit = 10;
+
+        if (isset($options['offset'])) {
+            $offset = int($options['offset']);
+        }
+
+        if (isset($options['limit'])) {
+            $limit = int($options['limit']);
+        }
+
         $sql = new Sql($this->getZendDb());
 
         // count applications by user
@@ -136,7 +149,9 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         // main query
         $select = $sql->select(['u' => self::USERS_TABLE])
                       ->join(['a' => $subselect], 'u.id = a.user', ['numberOfLpas'])
-                      ->where($likes);
+                      ->where($likes)
+                      ->offset($offset)
+                      ->limit($limit);
 
         $users = $sql->prepareStatementForSqlObject($select)->execute();
 
