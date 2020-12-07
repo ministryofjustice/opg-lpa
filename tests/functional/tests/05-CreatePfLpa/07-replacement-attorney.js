@@ -142,7 +142,7 @@ casper.test.begin("Checking user can add replacement attorney", {
             test.assertTextExists( "Change address line 1 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 1");
             test.assertTextExists( "Change address line 2 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 2");
             test.assertTextExists( "Change address line 3 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 3");
-            
+
         }).then(function() {
 
             // populate the attorney form
@@ -163,7 +163,7 @@ casper.test.begin("Checking user can add replacement attorney", {
 
             test.info("Clicked [Save details] button to submit first replacement attorney Ms Isobel Ward's details");
 
-        }).wait(1500).waitForSelector('div.person', function then () {
+        }).waitForSelector('a[href="'+replacementAttorneyPath+'/confirm-delete/0"]', function then () {
 
             // check the attorney is displayed on the landing page
             test.assertSelectorHasText('div.person h3', 'Ms Isobel Ward', "Replacement attorney's name Isobel Ward is displayed on the replacement attorney landing page as expected");
@@ -223,7 +223,8 @@ casper.test.begin("Checking user can add replacement attorney", {
                 'address-postcode':'ST14 8NX'
             }, false);
 
-        }).wait(1500).then(function() {
+        })
+        .waitForSelector('.js-duplication-alert', function then() {
 
             // check error handling and response
             test.assertVisible('.js-duplication-alert', "Name duplication warning shown");
@@ -248,7 +249,7 @@ casper.test.begin("Checking user can add replacement attorney", {
 
             test.info("Clicked [Save details] button to submit second replacement attorney Ewan Adams's details");
 
-        }).wait(1500).waitFor(function check() {
+        }).waitForSelector('div[class="person"]', function then() {
 
             // waiting for second attorney showing on primary attorney page
             return this.evaluate(function() {
@@ -259,14 +260,20 @@ casper.test.begin("Checking user can add replacement attorney", {
 
             test.assertSelectorHasText('div.person h3', 'Mr Ewan Adams', "Second replacement attorney's name is displayed on replacement attorney page as expected");
 
+        }).waitForSelector('a[href="'+replacementAttorneyPath+'/edit/1"]', function then() {
+
             test.assertExists('a[href="'+replacementAttorneyPath+'/edit/1"]', 'Found the link for editing attorney Ewan Adams as expected');
+
+        }).waitForSelector('a[href="'+replacementAttorneyPath+'/confirm-delete/1"]', function then() {
+
             test.assertExists('a[href="'+replacementAttorneyPath+'/confirm-delete/1"]', 'Found the link for deleting attorney Ewan Adams as expected');
 
-        }).thenClick('a[href="'+replacementAttorneyPath+'/confirm-delete/1"]', function() {
+        })
+        .thenClick('a[href="'+replacementAttorneyPath+'/confirm-delete/1"]', function() {
 
             test.info('Test deleting replacement attorney');
 
-        }).wait(1500).waitFor(function check() {
+        }).waitFor(function check() {
 
             // waiting for the confirm delete popup
             return this.exists('a[href="'+replacementAttorneyPath+'/delete/1"]');
@@ -275,7 +282,7 @@ casper.test.begin("Checking user can add replacement attorney", {
 
             test.info('Test confirm deleting replacement attorney');
 
-        }).wait(1500).waitFor(function check() {
+        }).waitFor(function check() {
 
             // waiting for second attorney showing on primary attorney page
             return this.evaluate(function() {
@@ -324,7 +331,7 @@ casper.test.begin("Checking user can add replacement attorney", {
 
             test.info("Clicked [Save details] button to submit the second attorney Ewan Adams's details");
 
-        }).wait(1500).waitFor(function check() {
+        }).waitFor(function check() {
 
             // waiting for second attorney showing on primary attorney page
             return this.evaluate(function() {
@@ -371,7 +378,9 @@ casper.test.begin("Checking user can add replacement attorney", {
 
             test.info('Clicked [Cancel] button');
 
-        }).wait(1500).thenClick('input[type="submit"][name="save"]', function() {
+        }).waitFor(function check() {
+            return this.exists('input[type="submit"][name="save"]');
+        }).thenClick('input[type="submit"][name="save"]', function() {
 
             test.info("Clicked 'Save and continue button' on replacement attorney page");
 
