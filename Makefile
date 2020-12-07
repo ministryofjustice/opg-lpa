@@ -159,6 +159,7 @@ MYIP := $(shell ipconfig getifaddr en0)
 cypress-gui-local:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
 	docker run -it -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  -v ${PWD}/cypress:/app/cypress --entrypoint cypress --network="host" --rm cypress:latest open --project /app
+	#docker run -it -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  -v ${PWD}/cypress:/app/cypress --entrypoint bash --network="host" --rm cypress:latest 
 endif
 
 ifeq ($(UNAME_S),Linux)
