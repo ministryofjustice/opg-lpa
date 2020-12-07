@@ -32,9 +32,9 @@ class RouteName extends AbstractHelper
     {
         $routeName = [];
 
-        if ($this->routeMatch) {
-            $routeName[] = ['current' => $this->routeMatch->getMatchedRouteName()];
-        }
+        $routeName[] = ($this->routeMatch) ?
+            ['current' => $this->routeMatch->getMatchedRouteName()] :
+            ['current' => ''];
 
         $routeName[] = ['last' => $this->session->getLastMatchedRoute()];
 
