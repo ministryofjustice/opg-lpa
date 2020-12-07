@@ -126,11 +126,11 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         $limit = 10;
 
         if (isset($options['offset'])) {
-            $offset = int($options['offset']);
+            $offset = intval($options['offset']);
         }
 
         if (isset($options['limit'])) {
-            $limit = int($options['limit']);
+            $limit = intval($options['limit']);
         }
 
         $sql = new Sql($this->getZendDb());
@@ -144,12 +144,22 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         $likes = new PredicateSet();
         $like_string = sprintf('%%%s%%', $query);
         $likes->orPredicate(new Like('u.identity', $like_string));
-        $likes->orPredicate(new Like('u.identity', strtolower($like_string)));
+
+        $lcase_like_string = strtolower($like_string);
+        if ($lcase_like_string !== $likes) {
+            $likes->orPredicate(new Like('u.identity', $lcase_like_string));
+        }
 
         // main query
+        // WARNING join type is "FULL" here as using Select::JOIN_OUTER produces
+        // invalid SQL; but this potentially locks the code to Postgres
         $select = $sql->select(['u' => self::USERS_TABLE])
-                      ->join(['a' => $subselect], 'u.id = a.user', ['numberOfLpas'])
+                      ->join(['a' => $subselect],
+                              'u.id = a.user',
+                              ['numberOfLpas'],
+                              'FULL')
                       ->where($likes)
+                      ->order('identity')
                       ->offset($offset)
                       ->limit($limit);
 
