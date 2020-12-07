@@ -27,6 +27,6 @@ class RouteNameFactory implements FactoryInterface
         /** @var RouteMatch $routeMatch */
         $routeMatch = $application->getMvcEvent()->getRouteMatch();
 
-        return new RouteName($session, $routeMatch);
+        return new RouteName($routeMatch, $session);
     }
 }
