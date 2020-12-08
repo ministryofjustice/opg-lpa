@@ -19,10 +19,10 @@ class RouteName extends AbstractHelper
     private $session;
 
     /**
-     * @param RouteMatch|null $routeMatch
      * @param SessionManager $session
+     * @param RouteMatch|null $routeMatch
      */
-    public function __construct(?RouteMatch $routeMatch, SessionManager $session)
+    public function __construct(SessionManager $session, ?RouteMatch $routeMatch)
     {
         $this->session = $session;
         $this->routeMatch = $routeMatch;
@@ -31,12 +31,11 @@ class RouteName extends AbstractHelper
     public function __invoke()
     {
         $routeName = [];
+        $routeName['current'] = ($this->routeMatch) ?
+            $this->routeMatch->getMatchedRouteName() :
+            '';
 
-        $routeName[] = ($this->routeMatch) ?
-            ['current' => $this->routeMatch->getMatchedRouteName()] :
-            ['current' => ''];
-
-        $routeName[] = ['last' => $this->session->getLastMatchedRouteName()];
+        $routeName['previous'] = $this->session->getLastMatchedRouteName();
 
         return $routeName;
     }
