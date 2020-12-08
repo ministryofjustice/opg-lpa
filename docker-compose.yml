@@ -164,6 +164,7 @@ services:
       - dynamodb
       - localstack
       - local-config
+      - postgres
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
