@@ -35,7 +35,7 @@ casper.test.begin("Check feedback page accessible", {
 
         	test.assertExists('input[type="email"][name="email"][id="email"]', 'Found email address input box on page');
 
-        	test.assertExists('input[type="submit"][name="send"][class="button"]', 'Found submit button on page');
+        	test.assertExists('input[type="submit"][name="send"][class="data-cy-feedback-submit-button button"]', 'Found submit button on page');
 
         }).thenClick('input[type=submit]', function() {
 
