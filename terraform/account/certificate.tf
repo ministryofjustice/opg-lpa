@@ -76,17 +76,18 @@ resource "aws_acm_certificate" "certificate_admin" {
 }
 
 //---------------
-// new public facing certs on management
+// new public facing certs on management. keep existing in place so we need to ensure this doesn't go to production.
+// as a belt and braces, i've turned this off for production so we can add after.
 //
 resource "aws_route53_record" "certificate_validation_public_facing" {
   provider = aws.management
-  for_each = {
-    for dvo in aws_acm_certificate.certificate_public_facing.domain_validation_options : dvo.domain_name => {
+  for_each = terraform.workspace != "production" ? {
+    for dvo in aws_acm_certificate.certificate_public_facing[0].domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
     }
-  }
+  } : {}
 
   allow_overwrite = true
   name            = each.value.name
@@ -97,11 +98,13 @@ resource "aws_route53_record" "certificate_validation_public_facing" {
 }
 
 resource "aws_acm_certificate_validation" "certificate_public_facing" {
-  certificate_arn         = aws_acm_certificate.certificate_public_facing.arn
+  count                   = terraform.workspace == "production" ? 0 : 1
+  certificate_arn         = aws_acm_certificate.certificate_public_facing[0].arn
   validation_record_fqdns = [for record in aws_route53_record.certificate_validation_public_facing : record.fqdn]
 }
 
 resource "aws_acm_certificate" "certificate_public_facing" {
+  count                     = terraform.workspace == "production" ? 0 : 1
   domain_name               = "${local.dev_wildcard}${data.aws_route53_zone.live_lastingpowerofattorney_gov_uk.name}"
   validation_method         = "DNS"
   subject_alternative_names = ["www.${local.dev_wildcard}${data.aws_route53_zone.live_lastingpowerofattorney_gov_uk.name}"]
