@@ -29,22 +29,27 @@ class FeedbackForm extends AbstractCsrfForm
                     'very-satisfied' => [
                         'label' => 'Very satisfied',
                         'value' => 'very-satisfied',
+                        'attributes' => ['class' => 'data-cy-very-satisfied'],
                     ],
                     'satisfied' => [
                         'label' => 'Satisfied',
                         'value' => 'satisfied',
+                        'attributes' => ['class' => 'data-cy-satisfied'],
                     ],
                     'neither-satisfied-or-dissatisfied' => [
                         'label' => 'Neither satisfied nor dissatisfied',
                         'value' => 'neither-satisfied-or-dissatisfied',
+                        'attributes' => ['class' => 'data-cy-neither-satisfied-or-dissatisfied'],
                     ],
                     'dissatisfied' => [
                         'label' => 'Dissatisfied',
                         'value' => 'dissatisfied',
+                        'attributes' => ['class' => 'data-cy-dissatisfied'],
                     ],
                     'very-dissatisfied' => [
                         'label' => 'Very dissatisfied',
                         'value' => 'very-dissatisfied',
+                        'attributes' => ['class' => 'data-cy-very-dissatisfied'],
                     ],
                 ],
                 'disable_inarray_validator' => true,
