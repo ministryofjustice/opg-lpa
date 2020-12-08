@@ -96,6 +96,7 @@ class UserService
      */
     public function match(array $params)
     {
+        error_log($params['query']);
         return $this->client->httpGet('/v2/users/match', $params);
     }
 }
