@@ -32,7 +32,7 @@ casper.test.begin("Checking user can add primary attorney", {
 
             test.info("Clicked [Add an attorney] button to add the first primary attorney");
 
-        }).wait(1500).waitFor(function check() {
+        }).waitFor(function check() {
 
             // waiting for lightbox loading
             return this.exists('div#popup');
@@ -129,7 +129,7 @@ casper.test.begin("Checking user can add primary attorney", {
             test.assertTextExists( "Change address line 1 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 1");
             test.assertTextExists( "Change address line 2 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 2");
             test.assertTextExists( "Change address line 3 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 3");
-            
+
         }).then(function() {
 
             // populate the attorney form
@@ -151,7 +151,7 @@ casper.test.begin("Checking user can add primary attorney", {
 
             test.info("Clicked [Save details] button to submit attorney Amy Wheeler's details");
 
-        }).wait(1500).waitForSelector('div.person', function then () {
+        }).waitForSelector('div.person', function then () {
 
             // check the attorney is displayed on the landing page
             test.assertSelectorHasText('div.person h3', 'Mrs Amy Wheeler', "Attorney's name Amy Wheeler is displayed on the attorney landing page as expected");
@@ -212,7 +212,7 @@ casper.test.begin("Checking user can add primary attorney", {
                 'address-postcode':'ST14 8NX'
             }, false);
 
-        }).wait(1500).then(function() {
+        }).waitForSelector('.js-duplication-alert', function then() {
 
             // check error handling and response
             test.assertVisible('.js-duplication-alert', "Name duplication warning shown");
@@ -238,7 +238,7 @@ casper.test.begin("Checking user can add primary attorney", {
 
             test.info("Clicked [Save details] button to submit the second attorney David Wheeler's details");
 
-        }).wait(1500).waitFor(function check() {
+        }).waitFor(function check() {
 
             // waiting for second attorney showing on primary attorney page
             return this.evaluate(function() {
@@ -258,7 +258,7 @@ casper.test.begin("Checking user can add primary attorney", {
 
             test.info('Test deleting attorney');
 
-        }).wait(1500).waitFor(function check() {
+        }).waitFor(function check() {
 
             // waiting for the confirm delete popup
             return this.exists('a[href="'+primaryAttorneyPath+'/delete/1"]');
@@ -267,7 +267,7 @@ casper.test.begin("Checking user can add primary attorney", {
 
             test.info('Test confirm deleting attorney');
 
-        }).wait(1500).waitFor(function check() {
+        }).waitFor(function check() {
 
             // waiting for second attorney showing on primary attorney page
             return this.evaluate(function() {
@@ -298,12 +298,12 @@ casper.test.begin("Checking user can add primary attorney", {
 
             test.info('Clicked << Use a trust corporation >> link');
 
-        }).wait(5000).then(function() {
+        }).waitForSelector('.use-details-link-panel a[href="'+primaryAttorneyPath+'/add"]', function then() {
 
             // checking form fields existance.
 
             // checking 'use my details' link
-            test.assertExists('.use-details-link-panel  a[href="'+primaryAttorneyPath+'/add"]', 'Found << Use individual >> link in the lightbox as expected');
+            test.assertExists('.use-details-link-panel a[href="'+primaryAttorneyPath+'/add"]', 'Found << Use individual >> link in the lightbox as expected');
 
             // checking first names text input box
             test.assertExists('form#form-trust-corporation input[type="text"][name="name"]', 'Found first names text input box in the lightbox as expected');
@@ -364,7 +364,7 @@ casper.test.begin("Checking user can add primary attorney", {
             test.assertTextExists( "Change address line 1 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 1");
             test.assertTextExists( "Change address line 2 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 2");
             test.assertTextExists( "Change address line 3 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 3");
-            
+
         }).then(function() {
 
             test.info('Populate trust corporation details');
@@ -384,7 +384,7 @@ casper.test.begin("Checking user can add primary attorney", {
 
             test.info("Clicked [Save details] button to submit the trust corporation's details");
 
-        }).wait(1500).waitFor(function check() {
+        }).waitFor(function check() {
 
             // waiting for second attorney showing on primary attorney page
             return this.evaluate(function() {
@@ -434,7 +434,11 @@ casper.test.begin("Checking user can add primary attorney", {
 
             test.info('Clicked [Cancel] button');
 
-        }).wait(1500).thenClick('a[href="'+primaryAttorneysDecisionPath+'"]', function() {
+        }).waitForSelector('a[href="'+primaryAttorneysDecisionPath+'"]', function() {
+
+            test.info('Found link to primary attorney decisions page');
+
+        }).thenClick('a[href="'+primaryAttorneysDecisionPath+'"]', function() {
 
             test.info("Clicked [Save and continue] button to go to primary attorney decisions page");
 
