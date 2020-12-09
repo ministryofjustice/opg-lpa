@@ -8,18 +8,14 @@ RUN apt-get update && \
 
 RUN pip3 install boto3
 
-#RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
-#  docker-php-ext-install -j$(nproc) imap
-
 RUN mkdir -p /mnt/test
 
 COPY tests /mnt/test
 
-#RUN php /mnt/test/functional/service/S3Monitor.php &
+RUN npm install --save-dev cypress-axe@0.9.1 axe-core cypress-cucumber-preprocessor cosmiconfig 
 
-
-RUN npm install --save-dev cypress-axe@0.9.1 axe-core cypress-cucumber-preprocessor cosmiconfig
-
+# unset CI which gets set in Cypress's dockerfile
+ENV CI=
 ENV CYPRESS_VIDEO=false
 ENV CYPRESS_RUN_A11Y_TESTS=true
 
