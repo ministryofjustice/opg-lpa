@@ -28,7 +28,7 @@
     cols: 67,
     maxlength: 2000,
     class: 'form-control',
-    class: 'data-cy-feedback-textarea'
+    'data-cy': 'feedback-textarea'
 }) ? ''}}
 
 {{ email.setAttributes({
@@ -36,7 +36,7 @@
     type: 'email',
     maxlength: 100,
     class: 'form-control',
-    class: 'data-cy-feedback-email'
+    'data-cy': 'feedback-email'
 }) ? ''}}
 
 {{ phone.setAttributes({
@@ -44,7 +44,7 @@
     type: 'phone',
     maxlength: 15,
     class: 'form-control',
-    class: 'data-cy-feedback-phone'
+    'data-cy': 'feedback-phone'
 }) ? ''}}
 
 {% set allOptions = type.getOptions() %}
@@ -113,7 +113,7 @@
         </div>
     </fieldset>
 
-    <input type="submit" name="send" id="send" class="data-cy-feedback-submit-button button" value="Send feedback">
+    <input type="submit" name="send" id="send" data-cy="feedback-submit-button" value="Send feedback">
 
 {{ form().closeTag|raw }}
 
