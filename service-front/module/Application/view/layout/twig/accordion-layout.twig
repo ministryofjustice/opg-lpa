@@ -18,8 +18,8 @@
 
         {% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionTop, 'lpa':lpa } %}
 
-        {% if route['previous'] != 'dashboard' or route['previous'] != 'login' or (accordionTop|last).routeName != 'review-link' %}
-            <li aria-hidden="true"><a id="current" class="accordion-current"></a></li>
+        {% if route['previous'] != 'dashboard' and (accordionTop|last).routeName != 'review-link' %}
+            <li aria-hidden="true"><a id="current" class="accordion-current">{{ route['previous'] }}</a></li>
         {% endif %}
 
 {% endblock %}
