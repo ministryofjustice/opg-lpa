@@ -14,8 +14,8 @@ When(`I log in as standard test user`, () => {
 
 function logIn(user, password){
     cy.visit("/login").title().should('include','Sign in');
-    cy.get("input#email.form-control").clear().type(user);
-    cy.get("input#password.form-control").clear().type(password);
-    cy.get("input#signin-form-submit.button").click();
+    cy.get('[data-cy=login-email]').clear().type(user);
+    cy.get('[data-cy=login-password]').clear().type(password);
+    cy.get('[data-cy=login-submit-button]').click();
     cy.log("Successfully logged in as " + user);
 }
