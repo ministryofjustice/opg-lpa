@@ -35,7 +35,7 @@ variable "management_role" {
 }
 
 variable "ci_legacy_role" {
-  default = "ci"
+  default = "account-write"
 }
 
 provider "aws" {
