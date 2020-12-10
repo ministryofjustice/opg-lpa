@@ -129,7 +129,7 @@ resource "aws_lb_listener_rule" "www_redirect" {
     type = "redirect"
 
     redirect {
-      host        = "www.${local.dns_namespace_env}lastingpowerofattorney.service.gov.uk"
+      host        = "www.lastingpowerofattorney.service.gov.uk"
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_301"
@@ -137,7 +137,7 @@ resource "aws_lb_listener_rule" "www_redirect" {
   }
   condition {
     host_header {
-      values = ["${local.dns_namespace_env}lastingpowerofattorney.service.gov.uk"]
+      values = ["$lastingpowerofattorney.service.gov.uk"]
     }
   }
 }
