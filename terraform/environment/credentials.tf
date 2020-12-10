@@ -34,8 +34,8 @@ variable "management_role" {
   default = "opg-lpa-ci"
 }
 
-variable "breakglass_legacy_role" {
-  default = "breakglass"
+variable "ci_legacy_role" {
+  default = "ci"
 }
 
 provider "aws" {
@@ -51,7 +51,7 @@ provider "aws" {
   region = "eu-west-1"
   alias  = "legacy-lpa"
   assume_role {
-    role_arn     = "arn:aws:iam::550790013665:role/${var.breakglass_legacy_role}"
+    role_arn     = "arn:aws:iam::550790013665:role/${var.ci_legacy_role}"
     session_name = "terraform-session"
   }
 }
