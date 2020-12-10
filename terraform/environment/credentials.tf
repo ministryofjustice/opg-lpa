@@ -34,10 +34,6 @@ variable "management_role" {
   default = "opg-lpa-ci"
 }
 
-variable "ci_legacy_role" {
-  default = "account-write"
-}
-
 provider "aws" {
   region = "eu-west-1"
   alias  = "management"
@@ -51,7 +47,7 @@ provider "aws" {
   region = "eu-west-1"
   alias  = "legacy-lpa"
   assume_role {
-    role_arn     = "arn:aws:iam::550790013665:role/${var.ci_legacy_role}"
+    role_arn     = "arn:aws:iam::550790013665:role/${var.default_role}"
     session_name = "terraform-session"
   }
 }
