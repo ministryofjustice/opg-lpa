@@ -100,7 +100,7 @@ resource "aws_lb_listener_certificate" "front_loadbalancer_live_service_certific
 
 
 //------------------------------------------------
-// HTTP Redirect
+// HTTP Redirect to HTTPS
 
 resource "aws_lb_listener" "front_loadbalancer_http_redirect" {
   load_balancer_arn = aws_lb.front.arn
