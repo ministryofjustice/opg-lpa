@@ -12,8 +12,6 @@ class S3Monitor:
             region_name='eu-west-1',
         )
 
-        print("CI is")
-        print(os.getenv('CI'))
         if os.getenv('CI'):
             role_arn = 'arn:aws:iam::050256574573:role/opg-lpa-ci'
         else:
@@ -27,20 +25,44 @@ class S3Monitor:
 
         self.s3Client = boto3.client('s3')
 
+    # Extract the plus part from emails of the form:
+    # basename+pluspart@example.com
+    def getPlusPartFromEmailAddress(self,email):
+        plusPos = email.find('+')
+        atPos = email.find('@')
+        userIdLength = atPos - plusPos - 1
+        userId = email[plusPos + 1:atPos]
+        return userId
+
     def parseBody(self, bodyContent, subject, thetype, linkRegex):
-        #print(bodyContent)
-        #regex = '|(https:\/\/\S+' + linkRegex + '\/[a-zA-Z0-9]+)|sim'
-        #regex = '(https:\/\/\S+' + linkRegex + '\/[a-zA-Z0-9]+)|sim'
+        regex = 'https:\/\/\S+' + linkRegex + '\/[a-zA-Z0-9]+'
 
-        #regexstr = '|(https:\/\/\S+' + linkRegex + '\/[a-zA-Z0-9]+)|sim'
-        #regex = re.compile(regexstr)
+        match = re.search(regex, bodyContent)
 
+        if match is not None: 
+            s = match.start()
+            e = match.end()
+            activationLink = bodyContent[s:e]
+            print(f'Activation link { activationLink }')
 
-        regex = '|(https:\/\/\S+\/[a-zA-Z0-9]+)|sim'
-        result = re.match(regex, bodyContent )
-        print(result.group(0))
-        #if re.match(regex, bodyContent, matches) > 0) {
-        #    activationLink = matches[1];
+            emailRegex = 'To: (.+)'
+
+            emailMatch = re.search(emailRegex, bodyContent)
+            if emailMatch is not None:
+                s = emailMatch.start()
+                e = emailMatch.end()
+                toEmail = bodyContent[s:e]
+                print(f'To email {toEmail}')
+
+                userId = self.getPlusPartFromEmailAddress(toEmail)
+                print(f'userId {userId}')
+                contents = toEmail + ',' + activationLink;
+                #file_put_contents('/mnt/test/functional/activation_emails/' . $userId . '.' . $type, $contents);
+        else:
+            print(f'Message: {subject} does not match regex {regex}') 
+            print('----------------------------------------------------------------------------------')
+            #print(bodyContent)
+            print('----------------------------------------------------------------------------------')
 
     def monitor_bucket(self):
         seenkeys = []
@@ -50,14 +72,12 @@ class S3Monitor:
                 s3Key = s3obj['Key']
                 if not s3Key in seenkeys:
                     result = self.s3Client.get_object(Bucket='opg-lpa-casper-mailbox',Key=s3Key)
-                    #bodyContent = quopri.decodestring(result["Body"].read())
                     bodyContent = quopri.decodestring(result["Body"].read()).decode('latin-1')
-                    #print(bodyContent)
                     self.parseBody(bodyContent, 'Activate your lasting power of attorney account', 'activation', 'signup\/confirm')
                     self.parseBody(bodyContent, 'Password reset request', 'passwordreset', 'forgot-password\/reset')
                     seenkeys.append(s3Key)
                 else:
-                    print("already seen " + s3Key)
+                    print(f'Already seen {s3Key}')
             time.sleep(5)
 
 
