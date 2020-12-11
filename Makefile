@@ -146,10 +146,10 @@ functional-local:
 	docker build -f ./tests/Dockerfile  -t casperjs:latest .; \
 	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhos:7002" --network="host" --rm casperjs:latest ./start.sh 'tests/'
 
-.PHONY: functional-api-local
-functional-api-local:
-	docker build -f ./service-api/docker/app/Dockerfile -t api-func-tests .;\
-	docker run -it --network="host" --rm api-func-tests sh -c "cd /app/tests/functional && php ../../vendor/bin/phpunit -v"
+.PHONY: integration-api-local
+integration-api-local:
+	docker build -f ./service-api/docker/app/Dockerfile -t integration-api-tests .;\
+	docker run -it --network="host" --rm integration-api-tests  sh -c "cd /app/tests/integration && php ../../vendor/bin/phpunit -v"
 
 .PHONY: cypress-local
 cypress-local:
