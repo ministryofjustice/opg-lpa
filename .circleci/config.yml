@@ -852,7 +852,7 @@ jobs:
       - slack/notify:
           title: "Online LPA Development Environment Ready"
           color: "#508c18"
-          message: "User: $CIRCLE_USERNAME\npublic facing url: https://$PUBLIC_FACING_DOMAIN\nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
+          message: "User: $CIRCLE_USERNAME\npublic facing url: https://$PUBLIC_FACING_DOMAIN/home \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
           footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
 
   slack_notify_production_release:
