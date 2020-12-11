@@ -21,17 +21,6 @@ class UserSearchHandler extends AbstractHandler
     private $userService;
 
     /**
-     * Factory method
-     * @param ContainerInterface $container
-     * @return RequestHandlerInterface
-     */
-    public static function create(ContainerInterface $container) : RequestHandlerInterface
-    {
-        $userSearchService = $container->get(UserService::class);
-        return new UserSearchHandler($userSearchService);
-    }
-
-    /**
      * UserSearchHandler constructor.
      * @param UserService $userService
      */
