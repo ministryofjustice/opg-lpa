@@ -13,7 +13,7 @@ use Laminas\Diactoros\Response\HtmlResponse;
 
 class UserFindHandler extends AbstractHandler
 {
-    public static $LIMIT = 20;
+    public static $LIMIT = 10;
 
     use JwtTrait;
 
