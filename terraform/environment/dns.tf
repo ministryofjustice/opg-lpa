@@ -55,7 +55,7 @@ resource "aws_route53_record" "public_facing_lastingpowerofattorney_LEGACY" {
   }
 }
 
-output "public_facing_domain" {
+output "public-facing-domain" {
   value = "https://${aws_route53_record.public_facing_lastingpowerofattorney.fqdn}"
 }
 
