@@ -2,6 +2,10 @@
 # users with slightly different email addresses and login tokens. The output is
 # SQL which can be appended to the seed_test_users.sql file when required.
 #
+# An optional <last name> argument can be supplied to set the last name for all
+# generated users. This can be useful to mark the purpose of users in the seed
+# data.
+#
 # password for all users is set to Pass1234
 
 import json
@@ -12,19 +16,28 @@ from datetime import datetime
 
 
 if len(sys.argv) < 2:
-    sys.stderr.write(f'Usage: {sys.argv[0]} <number of seed users to create SQL for>\n')
+    sys.stderr.write(f'Usage: {sys.argv[0]} <number of seed users to create SQL for> <last name (optional)>\n')
     sys.exit(1)
 
+# parse command line
+start = 10
+end = start + int(sys.argv[1])
+
+lastname = 'Benbow'
+if len(sys.argv) == 3:
+    # script was supplied with a last name for the generated users
+    lastname = sys.argv[2]
+
+# the unique part of each record is based on current timestamp
 now = f'{datetime.now().timestamp()}'
 unique = b64encode(now.encode('utf8')).decode('ascii')[-10:-1].replace('=', '0')
 
-start = 10
-end = start + int(sys.argv[1])
+# create users SQL
 for num in range(start, end):
     id = f'{unique}{num}a026fa6187fc00b05c'
     token = f'{unique}{num}yYJ7NhXL8IaDC2lLqdDnLtUuteS1T66'
-    firstname = f'Test{unique}{num}'
-    email = f'foobar{unique}{num}@uat.justice.gov.uk'
+    firstname = f'{unique}{num}'
+    email = f'{lastname}{unique}{num}@uat.justice.gov.uk'
 
     # set even users to active, odd users to inactive
     active = 'false'
@@ -45,7 +58,7 @@ for num in range(start, end):
             "date": "1982-11-28T00:00:00.000000+0000"
         },
         "name": {
-            "last": "Benbow",
+            "last": lastname,
             "first": firstname,
             "title": "Mx"
         },
