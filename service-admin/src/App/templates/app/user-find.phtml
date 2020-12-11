@@ -12,8 +12,6 @@
 
                 <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
 
-                <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
-
                 <div class="text">
                     <p>
                         Find users by full or partial email address. If found, a summary of the user with a link to their full details will be shown.
@@ -91,8 +89,7 @@
             <?php
             $options = [
                 'offset' => $previousOffset,
-                'query' => $query,
-                'secret' => $form->get('secret')->getValue()
+                'query' => $query
             ];
             $previousHref = $this->url('user.find', [], $options);
             ?>
@@ -106,8 +103,7 @@
             <?php
             $options = [
                 'offset' => $nextOffset,
-                'query' => $query,
-                'secret' => $form->get('secret')->getValue()
+                'query' => $query
             ];
             $nextHref = $this->url('user.find', [], $options);
             ?>

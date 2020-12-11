@@ -37,9 +37,7 @@ class UserFindHandler extends AbstractHandler
      */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
-        $form = new UserFind([
-            'csrf' => $this->getTokenData('csrf'),
-        ]);
+        $form = new UserFind();
 
         $limit = (get_class($this))::$LIMIT;
 
@@ -70,8 +68,11 @@ class UserFindHandler extends AbstractHandler
                 }
             }
             else {
+                // reset this to empty string for display as form element value
                 $params['query'] = '';
+
                 $params['offset'] = $defaultOffset;
+
                 $form->setData($params);
             }
         }

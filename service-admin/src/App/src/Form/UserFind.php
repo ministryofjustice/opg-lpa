@@ -53,8 +53,5 @@ class UserFind extends AbstractForm
 
         $this->add($offset);
         $inputFilter->add($offsetInput);
-
-        //  Csrf field
-        $this->addCsrfElement($inputFilter);
     }
 }
