@@ -60,8 +60,6 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
         $select->where($where);
 
-        print($select->getSqlString());
-
         $result = $sql->prepareStatementForSqlObject($select)->execute();
 
         if (!$result->isQueryResult() || $result->count() != 1) {
