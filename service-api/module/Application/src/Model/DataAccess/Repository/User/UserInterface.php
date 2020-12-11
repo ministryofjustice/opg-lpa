@@ -120,10 +120,10 @@ interface UserInterface
     public function resetFailedLoginAttempts();
 
     /**
-     * Number of LPA applications associated with this user. Returns -1 if
+     * Number of LPA applications associated with this user. Returns null if
      * not set.
      *
-     * @return int
+     * @return int|null
      */
-    public function numberOfLpas() : int;
+    public function numberOfLpas();
 }

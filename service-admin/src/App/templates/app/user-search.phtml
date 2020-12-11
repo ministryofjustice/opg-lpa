@@ -93,7 +93,7 @@ $this->addErrorMap([
                     </li>
                 <?php } ?>
 
-                <?php if (array_key_exists('numberOfLpas', $user) && $user['numberOfLpas'] > -1) { ?>
+                <?php if (array_key_exists('numberOfLpas', $user) && !is_null($user['numberOfLpas'])) { ?>
                     <li>
                         <strong class="bold-small">Number of LPAs: </strong>
                         <span><?= $user['numberOfLpas']; ?></span>

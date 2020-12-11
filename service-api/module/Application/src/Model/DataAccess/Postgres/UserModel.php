@@ -16,10 +16,10 @@ class UserModel implements UserRepository\UserInterface
 
     public function __construct(array $data)
     {
-        // if the numberOfLpas key hasn't been set, set it to -1
+        // if the numberOfLpas key hasn't been set, set it to null
         // to mark that the value hasn't been derived
         if (!array_key_exists('numberOfLpas', $data)) {
-            $data['numberOfLpas'] = -1;
+            $data['numberOfLpas'] = null;
         }
 
         $this->data = $data;
@@ -233,12 +233,18 @@ class UserModel implements UserRepository\UserInterface
 
     /**
      * Number of LPA applications made by the user.
-     * If not set, returns -1.
+     * If not set, returns null.
      *
-     * @return int
+     * @return int|null
      */
-    public function numberOfLpas() : int
+    public function numberOfLpas()
     {
-        return intval($this->data['numberOfLpas']);
+        $value = $this->data['numberOfLpas'];
+
+        if (is_null($value)) {
+            return $value;
+        }
+
+        return intval($value);
     }
 }
