@@ -17,7 +17,7 @@ $this->addErrorMap([
 <div class="grid-row">
     <div class="column-full">
 
-        <form method="post" class="form" action="<?= $this->url('user.search') ?>">
+        <form method="get" class="form" action="<?= $this->url('user.search') ?>">
 
             <fieldset>
 
@@ -26,8 +26,6 @@ $this->addErrorMap([
                 </legend>
 
                 <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
-
-                <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
 
                 <div class="text">
                     <p>Search for a user by email address. If found, the user's account status and other details will be displayed.</p>
