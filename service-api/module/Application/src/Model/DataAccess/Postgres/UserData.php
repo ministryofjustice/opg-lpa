@@ -140,12 +140,12 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
         // LIKE statements for WHERE clause
         $likes = new PredicateSet();
-        $like_string = sprintf('%%%s%%', $query);
-        $likes->orPredicate(new Like('u.identity', $like_string));
+        $likeString = sprintf('%%%s%%', $query);
+        $likes->orPredicate(new Like('u.identity', $likeString));
 
-        $lcase_like_string = strtolower($like_string);
-        if ($lcase_like_string !== $likes) {
-            $likes->orPredicate(new Like('u.identity', $lcase_like_string));
+        $lcaseLikeString = strtolower($likeString);
+        if ($lcaseLikeString !== $likesString) {
+            $likes->orPredicate(new Like('u.identity', $lcaseLikeString));
         }
 
         // main query
