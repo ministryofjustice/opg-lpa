@@ -43,6 +43,7 @@ resource "aws_route53_record" "public_facing_lastingpowerofattorney_LEGACY" {
   zone_id  = data.aws_route53_zone.legacy_live_service_lasting_power_of_attorney.zone_id
   name     = "${local.dns_namespace_env}${data.aws_route53_zone.live_service_lasting_power_of_attorney.name}"
   type     = "A"
+
   alias {
     evaluate_target_health = false
     name                   = aws_lb.front.dns_name
