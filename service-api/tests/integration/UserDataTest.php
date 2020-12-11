@@ -1,6 +1,8 @@
 <?php
 /**
- * Script for poking the database.
+ * Integration tests for UserData.
+ * This touch the Postgres database and are dependent on seeding being
+ * run first.
  */
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
