@@ -725,7 +725,7 @@ orbs:
           - run:
               name: Run casper tests
               command: |
-                docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$FRONT_DOMAIN" --name casperjs casperjs:latest
+                docker run -dt -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CI -e "BASE_DOMAIN=$PUBLIC_FACING_DOMAIN" --name casperjs casperjs:latest
                 docker exec casperjs ./start.sh 'tests/'
           - run:
               name: Remove CircleCI ingress to environment
@@ -794,7 +794,7 @@ orbs:
           - run:
               name: Run cypress tests
               command: |
-                docker run -it -e "CYPRESS_baseUrl=https://$FRONT_DOMAIN" cypress:latest || true
+                docker run -it -e "CYPRESS_baseUrl=https://$PUBLIC_FACING_DOMAIN" cypress:latest || true
           - run:
               name: Remove CircleCI ingress to environment
               command: |
@@ -852,7 +852,7 @@ jobs:
       - slack/notify:
           title: "Online LPA Development Environment Ready"
           color: "#508c18"
-          message: "User: $CIRCLE_USERNAME \nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN \npublic facing url: https://$PUBLIC_FACING_DOMAIN"
+          message: "User: $CIRCLE_USERNAME\npublic facing url: https://$PUBLIC_FACING_DOMAIN\nfront url: https://$FRONT_DOMAIN/home \nadmin url: https://$ADMIN_DOMAIN"
           footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
 
   slack_notify_production_release:
