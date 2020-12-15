@@ -24,7 +24,6 @@ def set_iam_role_session():
         RoleArn=role_arn,
         RoleSessionName='session1',
     )
-    #print(result)
 
 # Extract the plus part from emails of the form:
 # basename+pluspart@example.com
@@ -63,8 +62,6 @@ def parseBody(bodyContent, subject, thetype, linkRegex):
             emailFile.close()
     else:
         print(f'Message: {subject} does not match regex {regex}') 
-        print('----------------------------------------------------------------------------------')
-        #print(bodyContent)
         print('----------------------------------------------------------------------------------')
 
 def parse_email(bodyContent, s3Key):
