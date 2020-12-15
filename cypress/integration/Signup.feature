@@ -10,4 +10,4 @@ Feature: Signup
     And I receive email
     And I see "Account activated" in the title
     Then I log in as standard test user
-    And I see "Your Details" in the title
+    And I see "Your details" in the title
