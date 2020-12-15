@@ -8,3 +8,4 @@ Feature: Signup
     Then I see "Please check your email" in the title
     And I see standard test user in the page text
     And I receive email
+    And I see "Account activated" in the title
