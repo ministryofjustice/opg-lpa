@@ -1,16 +1,14 @@
 # variables for terraform.tfvars.json
 variable "account_mapping" {
-  type = map
+  type = map(any)
 }
 
 variable "accounts" {
   type = map(
     object({
-      account_id                    = string
-      is_production                 = string
-      front_certificate_domain_name = string
-      admin_certificate_domain_name = string
-      retention_in_days             = number
+      account_id        = string
+      is_production     = string
+      retention_in_days = number
     })
   )
 }
@@ -21,7 +19,8 @@ locals {
   account_name = lookup(var.account_mapping, terraform.workspace, "development")
   account      = var.accounts[local.account_name]
 
-  account_id = local.account.account_id
+  account_id   = local.account.account_id
+  dev_wildcard = local.account_name == "production" ? "" : "*."
 
   mandatory_moj_tags = {
     business-unit = "OPG"
