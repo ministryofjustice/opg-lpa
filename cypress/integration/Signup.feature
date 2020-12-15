@@ -9,3 +9,5 @@ Feature: Signup
     And I see standard test user in the page text
     And I receive email
     And I see "Account activated" in the title
+    Then I log in as standard test user
+    And I see "Your Details" in the title
