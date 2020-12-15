@@ -26,22 +26,21 @@ function getActivationLink(){
 
     var filename = '/mnt/test/functional/activation_emails/' + Cypress.env("userNumber") + '.activation';
     
-    if( cy.readFile(filename, { timeout: 200000 }) ){
+    var content = cy.readFile(filename, { timeout: 200000 });
+    if( content != null ){
+        var contentStr = String(content);
 
         cy.log('Activation email has arrived!');
 
-        //var content = fs.read( filename );
-        //link = content.substring(content.indexOf(",")+1);
-
-        //cy.log('Content: ' + content);
-        //cy.log('Link: ' + link);
+        cy.log('Content: ' + contentStr);
+        link = contentStr.substring(contentStr.indexOf(",")+1);
+        cy.log('Link: ' + link);
 
     } else {
 
         if( checkCount <= 40 ){
 
             cy.log('Activation email has not arrived yet. Waiting...');
-            //this.wait(waitTime, getActivationLink);
             getActivationLink();
 
             checkCount++;

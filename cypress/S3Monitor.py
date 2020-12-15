@@ -49,15 +49,18 @@ class S3Monitor:
 
             emailMatch = re.search(emailRegex, bodyContent)
             if emailMatch is not None:
-                s = emailMatch.start()
-                e = emailMatch.end()
-                toEmail = bodyContent[s:e]
-                print(f'To email {toEmail}')
+                es = emailMatch.start()
+                ee = emailMatch.end()
+                toEmail = bodyContent[es:ee]
 
                 userId = self.getPlusPartFromEmailAddress(toEmail)
                 print(f'userId {userId}')
-                contents = toEmail + ',' + activationLink;
-                #file_put_contents('/mnt/test/functional/activation_emails/' . $userId . '.' . $type, $contents);
+                contents = f'{toEmail[:-1]},{activationLink}'
+                filePath = f'/mnt/test/activation_emails/{userId}.{thetype}'
+                print(f'writing {contents} here')
+                emailFile = open(filePath,'w')
+                emailFile.write(contents)
+                emailFile.close()
         else:
             print(f'Message: {subject} does not match regex {regex}') 
             print('----------------------------------------------------------------------------------')
@@ -68,16 +71,19 @@ class S3Monitor:
         seenkeys = []
 
         while True:
-            for s3obj in self.s3Client.list_objects(Bucket='opg-lpa-casper-mailbox')['Contents']:
-                s3Key = s3obj['Key']
-                if not s3Key in seenkeys:
-                    result = self.s3Client.get_object(Bucket='opg-lpa-casper-mailbox',Key=s3Key)
-                    bodyContent = quopri.decodestring(result["Body"].read()).decode('latin-1')
-                    self.parseBody(bodyContent, 'Activate your lasting power of attorney account', 'activation', 'signup\/confirm')
-                    self.parseBody(bodyContent, 'Password reset request', 'passwordreset', 'forgot-password\/reset')
-                    seenkeys.append(s3Key)
-                else:
-                    print(f'Already seen {s3Key}')
+            print('Checking S3')
+            bucketContents = self.s3Client.list_objects(Bucket='opg-lpa-casper-mailbox')
+            if 'Contents' in bucketContents:  # handle bucket being empty
+                for s3obj in self.s3Client.list_objects(Bucket='opg-lpa-casper-mailbox')['Contents']:
+                    s3Key = s3obj['Key']
+                    if not s3Key in seenkeys:
+                        result = self.s3Client.get_object(Bucket='opg-lpa-casper-mailbox',Key=s3Key)
+                        bodyContent = quopri.decodestring(result["Body"].read()).decode('latin-1')
+                        self.parseBody(bodyContent, 'Activate your lasting power of attorney account', 'activation', 'signup\/confirm')
+                        self.parseBody(bodyContent, 'Password reset request', 'passwordreset', 'forgot-password\/reset')
+                        seenkeys.append(s3Key)
+                    #else:
+                    #    print(f'Already seen {s3Key}')
             time.sleep(5)
 
 
