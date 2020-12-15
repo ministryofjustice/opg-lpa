@@ -417,7 +417,7 @@ orbs:
               username: $DOCKER_USER
               password: $DOCKER_ACCESS_TOKEN
         resource_class: small
-      terraform13:
+      terraform14:
         docker:
         - image: hashicorp/terraform
           auth:
@@ -447,7 +447,7 @@ orbs:
             description: Terraform workspace name
             type: string
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
-        executor: terraform13
+        executor: terraform14
         steps:
           - checkout
           - run:
@@ -468,7 +468,7 @@ orbs:
             description: Terraform workspace name
             type: string
             default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
-        executor: terraform13
+        executor: terraform14
         steps:
           - checkout
           - run:
@@ -487,7 +487,7 @@ orbs:
         # Apply the email terraform configuration. This:
         #   - Creates a mailbox used for functional testing;
         #
-        executor: terraform13
+        executor: terraform14
         parameters:
           workspace:
             description: Terraform workspace name
@@ -509,7 +509,7 @@ orbs:
         # Apply the shared terraform configuration. This:
         #   - Updates the account infrastructure;
         #
-        executor: terraform13
+        executor: terraform14
         parameters:
           workspace:
             description: Terraform workspace name
@@ -532,7 +532,7 @@ orbs:
         #   - Updates per environment infrastructure; and
         #   - Triggers a deploy of the updated container (if changed)
         #
-        executor: terraform13
+        executor: terraform14
         parameters:
           workspace:
             description: Terraform workspace name
@@ -571,7 +571,7 @@ orbs:
         # Destroys a development environment after testing and approval
         # Cannot be run on master branch
         #
-        executor: terraform13
+        executor: terraform14
         parameters:
           workspace:
             description: Terraform workspace name
