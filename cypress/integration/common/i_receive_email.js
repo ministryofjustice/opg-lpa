@@ -4,49 +4,26 @@ var fs = require('fs');
 var link = null;
 var waitTime = 5000;
 var checkCount = 0;
+var activation_email_path = 'cypress/activation_emails/';
 
 Then(`I receive email`, () => {
-    getActivationLink();
-   // this.wait(waitTime, getActivationLink);
-    // Wait for the email to arrive...
-
-    if( link == null ){
-        //test.fail('Failed to receive Activation Link.');
-        cy.log('Failed to receive Activation Link.');
-    }
-
-    cy.log('Opening activation link: ' + link);
-    
-    //this.open(link, {
-    //    method: 'get'
-    //});
-})
-
-function getActivationLink(){
-
-    var filename = '/mnt/test/functional/activation_emails/' + Cypress.env("userNumber") + '.activation';
-    
-    var content = cy.readFile(filename, { timeout: 200000 });
-    if( content != null ){
-        var contentStr = String(content);
+    var filename = activation_email_path + Cypress.env("userNumber") + '.activation';
+    cy.log('Trying to open: ' + filename);
+   
+    cy.readFile(filename, { timeout: 20000 }).then(text => {
+        var content = text;
+        cy.log(text); 
+        cy.log('Orig Content: ' + content);
+        var contentStr = content;
 
         cy.log('Activation email has arrived!');
 
         cy.log('Content: ' + contentStr);
+        console.log('Content: ');
+        console.log(contentStr);
         link = contentStr.substring(contentStr.indexOf(",")+1);
-        cy.log('Link: ' + link);
+        cy.log('Opening activation link: ' + link);
+        cy.visit(link);
+    })
+})
 
-    } else {
-
-        if( checkCount <= 40 ){
-
-            cy.log('Activation email has not arrived yet. Waiting...');
-            getActivationLink();
-
-            checkCount++;
-
-        }
-
-    } // if
-
-}; // function
