@@ -7,7 +7,7 @@ use Application\Model\Service\Instruction\Service;
 use Application\Library\Http\Response\Json;
 use Mockery;
 use Mockery\MockInterface;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class InstructionControllerTests extends AbstractControllerTest
 {
@@ -83,7 +83,7 @@ class InstructionControllerTests extends AbstractControllerTest
     }
 
     /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
+     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
      * @expectedExceptionMessage You do not have permission to access this service
      */
     public function testUpdateUnauthorised()

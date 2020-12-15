@@ -19,7 +19,7 @@ class StatusControllerFactory
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $authorizationService = $container->get('ZfcRbac\Service\AuthorizationService');
+        $authorizationService = $container->get('LmcRbacMvc\Service\AuthorizationService');
         $applicationsService = $container->get(ApplicationService::class);
         $processingStatusService = $container->get(ProcessingStatusService::class);
 

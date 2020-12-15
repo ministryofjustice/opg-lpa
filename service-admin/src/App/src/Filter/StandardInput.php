@@ -2,7 +2,7 @@
 
 namespace App\Filter;
 
-use Zend\Filter;
+use Laminas\Filter;
 
 /**
  * Class StandardInput

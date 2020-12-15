@@ -1,7 +1,7 @@
 <?php
 namespace Application\Model\DataAccess\Postgres;
 
-use Zend\Db\Sql\Sql;
+use Laminas\Db\Sql\Sql;
 use Application\Model\DataAccess\Repository\Stats as StatsRepository;
 
 class StatsData extends AbstractBase implements StatsRepository\StatsRepositoryInterface

@@ -3,9 +3,9 @@
 namespace Application\Form\User;
 
 use Application\Form\AbstractCsrfForm;
-use Zend\Validator\Identical;
-use Zend\Validator\NotEmpty;
-use Zend\Validator\StringLength;
+use Laminas\Validator\Identical;
+use Laminas\Validator\NotEmpty;
+use Laminas\Validator\StringLength;
 
 /**
  * For to request a password reset email be sent out.

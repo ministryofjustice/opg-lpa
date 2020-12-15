@@ -2,18 +2,18 @@
 namespace Application\Library\Authorization;
 
 use Exception;
-use ZfcRbac\Exception\UnauthorizedException as ZfcRbacUnauthorizedException;
+use LmcRbacMvc\Exception\UnauthorizedException as LmcRbacUnauthorizedException;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 
 /**
- * An extension of the ZfcRbac exception that:
+ * An extension of the LmcRbac exception that:
  *  - Sets the correct default code
  *  - Implements ApiProblemExceptionInterface so it can be caught and output as a ApiProblem.
  *
  * Class UnauthorizedException
  * @package Application\Library\Authorization
  */
-class UnauthorizedException extends ZfcRbacUnauthorizedException implements ApiProblemExceptionInterface {
+class UnauthorizedException extends LmcRbacUnauthorizedException implements ApiProblemExceptionInterface {
 
     public function __construct($message = "", $code = 401, Exception $previous = null) {
 

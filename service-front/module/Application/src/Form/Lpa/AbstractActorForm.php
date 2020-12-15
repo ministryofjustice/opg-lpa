@@ -3,7 +3,7 @@
 namespace Application\Form\Lpa;
 
 use Opg\Lpa\DataModel\AbstractData;
-use Zend\Form\FormInterface;
+use Laminas\Form\FormInterface;
 
 abstract class AbstractActorForm extends AbstractLpaForm
 {

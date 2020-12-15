@@ -4,8 +4,8 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\VerifyEmailAddressController;
 use ApplicationTest\Controller\AbstractControllerTest;
-use Zend\Http\Response;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 
 class VerifyEmailAddressControllerTest extends AbstractControllerTest
 {

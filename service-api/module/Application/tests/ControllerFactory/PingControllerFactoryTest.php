@@ -8,7 +8,7 @@ use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Zend\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\Adapter;
 use Aws\Sqs\SqsClient;
 use Http\Client\HttpClient;
 

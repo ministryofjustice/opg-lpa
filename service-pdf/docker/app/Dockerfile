@@ -1,20 +1,26 @@
-FROM composer:1.10.16 AS composer
+FROM composer:latest AS composer
 
 COPY service-pdf/composer.json /app/composer.json
 COPY service-pdf/composer.lock /app/composer.lock
 
-RUN composer global require hirak/prestissimo --no-plugins --no-scripts \
-    && composer install --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader
+RUN composer install --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-FROM php:7-cli
+FROM php:7-cli-alpine
 
-# mkdir below fixes a known issue with openjdk https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
-RUN apt-get -y update \
-    && mkdir -p /usr/share/man/man1 \
-    && apt-get -y install pdftk \
-    && apt-get -y clean \
+RUN apk update \
+    && apk add --no-cache openjdk8-jre gcc make musl-dev pkgconfig bash\
+    && apk add --no-cache --update --virtual buildDeps autoconf \
     && pecl install xdebug \
-    && pecl clear-cache
+    && pecl clear-cache \
+    && apk del buildDeps
+WORKDIR /usr/local/bin/
+# This is version 3.2.1 of this tool, we will need to check this regularly.
+# PDFTK does have a community based docker container, but the version is not up to date.
+
+RUN wget https://gitlab.com/pdftk-java/pdftk/-/jobs/812582458/artifacts/raw/build/libs/pdftk-all.jar
+
+COPY service-pdf/bin/pdftk pdftk
+RUN chmod +x pdftk
 
 COPY service-pdf /app
 COPY --from=composer /app/vendor /app/vendor

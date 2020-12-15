@@ -5,9 +5,9 @@ namespace ApplicationTest\Controller\Version2\Auth;
 use Application\Controller\Version2\Auth\AuthenticateController;
 use DateTime;
 use Mockery;
-use Zend\Http\Header\HeaderInterface;
-use Zend\View\Model\JsonModel;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\Http\Header\HeaderInterface;
+use Laminas\View\Model\JsonModel;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class AuthenticateControllerTest extends AbstractAuthControllerTest
 {

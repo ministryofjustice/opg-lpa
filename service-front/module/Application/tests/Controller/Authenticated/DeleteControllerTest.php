@@ -4,10 +4,10 @@ namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\DeleteController;
 use ApplicationTest\Controller\AbstractControllerTest;
-use Zend\Http\Response;
-use Zend\Session\Container;
-use Zend\Stdlib\ArrayObject;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\Session\Container;
+use Laminas\Stdlib\ArrayObject;
+use Laminas\View\Model\ViewModel;
 
 class DeleteControllerTest extends AbstractControllerTest
 {

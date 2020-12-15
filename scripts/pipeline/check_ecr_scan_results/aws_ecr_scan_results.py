@@ -102,10 +102,12 @@ class ECRScanChecker:
                         result = "*Image:* {0} \n**Tag:* {1} \n*Severity:* {2} \n*CVE:* {3} \n*Description:* {4} \n*Link:* {5}\n\n".format(
                             image, tag, severity, cve, description, link)
                         self.report += result
-                    print(self.report)
             except:
                 print("Unable to get ECR image scan results for image {0}, tag {1}".format(
                     image, tag))
+        if not self.report :
+           self.report = "AWS ECR Scan found no issues.\n"
+           print(self.report)
 
     def get_ecr_scan_findings(self, image, tag):
         response = self.aws_ecr_client.describe_image_scan_findings(
@@ -119,6 +121,7 @@ class ECRScanChecker:
 
     def post_to_slack(self, slack_webhook):
         if os.getenv('CI'):
+
             ci_footer = "*Github Branch:* {0}\n\n*CircleCI Job Link:* {1}\n\n".format(
                 os.getenv('CIRCLE_BRANCH'),
                 os.getenv('CIRCLE_BUILD_URL'))

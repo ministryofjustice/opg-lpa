@@ -2,8 +2,8 @@
 
 namespace Application\Library\Authorization\Assertions;
 
-use ZfcRbac\Assertion\AssertionInterface;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Assertion\AssertionInterface;
+use LmcRbacMvc\Service\AuthorizationService;
 
 /**
  * The authorized user or another service can manage the user data and LPAs

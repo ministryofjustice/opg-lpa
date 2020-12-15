@@ -5,7 +5,7 @@ namespace Application\Controller\Console;
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Aws\Sdk;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Mvc\Console\Controller\AbstractConsoleController;
+use Laminas\Mvc\Console\Controller\AbstractConsoleController;
 
 class DynamoDbController extends AbstractConsoleController
 {

@@ -2,9 +2,9 @@
 
 namespace Application\Model\Service\Authentication\Adapter;
 
-use Zend\Authentication\Adapter\AdapterInterface as ZFAdapterInterface;
+use Laminas\Authentication\Adapter\AdapterInterface as LaminasAdapterInterface;
 
-interface AdapterInterface extends ZFAdapterInterface
+interface AdapterInterface extends LaminasAdapterInterface
 {
     /**
      * Set the email address credential to attempt authentication with.

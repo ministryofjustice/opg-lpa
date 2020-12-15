@@ -8,11 +8,11 @@ use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManager;
 use Application\Model\Service\User\Details as UserService;
 use Opg\Lpa\DataModel\User\User;
-use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\AbstractPluginManager;
-use Zend\Session\Container;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ServiceManager\AbstractPluginManager;
+use Laminas\Session\Container;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 use DateTime;
 
 abstract class AbstractAuthenticatedController extends AbstractBaseController
@@ -94,7 +94,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
      * Do some pre-dispatch checks...
      *
      * @param MvcEvent $e
-     * @return bool|mixed|\Zend\Http\Response
+     * @return bool|mixed|\Laminas\Http\Response
      * @throws \Exception
      */
     public function onDispatch(MvcEvent $e)
@@ -193,7 +193,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     /**
      * Check there is a user authenticated.
      *
-     * @return bool|\Zend\Http\Response
+     * @return bool|\Laminas\Http\Response
      */
     protected function checkAuthenticated($allowRedirect = true)
     {

@@ -6,16 +6,16 @@ use Application\Model\Service\Mail\Message;
 use Html2Text\Html2Text;
 use Opg\Lpa\Logger\LoggerTrait;
 use SendGrid;
-use Twig_Environment;
-use Zend\Mime;
-use Zend\Mail\Exception\InvalidArgumentException;
-use Zend\Mail\Header\GenericHeader;
-use Zend\Mail\Message as ZFMessage;
-use Zend\Mail\Transport\Exception\InvalidArgumentException as TransportInvalidArgumentException;
-use Zend\Mail\Transport\TransportInterface;
-use Zend\Mime\Message as MimeMessage;
+use Laminas\Mime;
+use Laminas\Mail\Exception\InvalidArgumentException;
+use Laminas\Mail\Header\GenericHeader;
+use Laminas\Mail\Message as LaminasMessage;
+use Laminas\Mail\Transport\Exception\InvalidArgumentException as TransportInvalidArgumentException;
+use Laminas\Mail\Transport\TransportInterface;
+use Laminas\Mime\Message as MimeMessage;
 use DateTime;
 use Exception;
+use Application\View\Helper\RendererInterface as RendererInterface;
 
 /**
  * Sends an email out via SendGrid's HTTP interface.
@@ -37,7 +37,7 @@ class MailTransport implements TransportInterface
     /**
      * Email renderer for sending template content
      *
-     * @var Twig_Environment
+     * @var RendererInterface
      */
     private $emailRenderer;
 
@@ -160,24 +160,23 @@ class MailTransport implements TransportInterface
      * MailTransport constructor
      *
      * @param SendGrid\Client $client
-     * @param Twig_Environment $emailRenderer
      * @param array $emailConfig
      */
-    public function __construct(SendGrid\Client $client, Twig_Environment $emailRenderer, array $emailConfig)
+    public function __construct(SendGrid\Client $client, RendererInterface $localEmailRenderer, array $emailConfig)
     {
         $this->client = $client;
-        $this->emailRenderer = $emailRenderer;
+        $this->localEmailRenderer = $localEmailRenderer;
         $this->emailConfig = $emailConfig;
     }
 
     /**
      * Send a mail message
      *
-     * @param  ZFMessage $message
+     * @param  LaminasMessage $message
      * @throws InvalidArgumentException
      * @throws TransportInvalidArgumentException
      */
-    public function send(ZFMessage $message)
+    public function send(LaminasMessage $message)
     {
         //  Determine the categories being used in the message
         $categories = ($message instanceof Message ? $message->getCategories() : []);
@@ -344,7 +343,7 @@ class MailTransport implements TransportInterface
             }
 
             //  Get the HTML content from the template and the data
-            $template = $this->emailRenderer->loadTemplate($this->emailTemplatesConfig[$emailRef]['template']);
+            $template = $this->localEmailRenderer->loadTemplate($this->emailTemplatesConfig[$emailRef]['template']);
             $emailHtml = $template->render($data);
 
 
@@ -416,11 +415,11 @@ class MailTransport implements TransportInterface
     /**
      * Get the from address object from the message
      *
-     * @param  ZFMessage $message
-     * @return mixed|\Zend\Mail\Address
+     * @param  LaminasMessage $message
+     * @return mixed|\Laminas\Mail\Address
      * @throws InvalidArgumentException
      */
-    private function getFrom(ZFMessage $message)
+    private function getFrom(LaminasMessage $message)
     {
         $from = $message->getFrom();
 

@@ -6,7 +6,7 @@ use Application\Controller\AbstractLpaController;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class RepeatApplicationController extends AbstractLpaController
 {

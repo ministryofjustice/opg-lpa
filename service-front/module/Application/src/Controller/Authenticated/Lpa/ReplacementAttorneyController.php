@@ -6,7 +6,7 @@ use Application\Controller\AbstractLpaActorController;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\Human;
 use Opg\Lpa\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class ReplacementAttorneyController extends AbstractLpaActorController
 {

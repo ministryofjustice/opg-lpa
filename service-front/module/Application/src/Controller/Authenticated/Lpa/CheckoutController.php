@@ -10,8 +10,8 @@ use Opg\Lpa\DataModel\Lpa\Lpa;
 use Opg\Lpa\DataModel\Common\EmailAddress;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Zend\View\Helper\ServerUrl;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Helper\ServerUrl;
+use Laminas\View\Model\ViewModel;
 use RuntimeException;
 
 class CheckoutController extends AbstractLpaController

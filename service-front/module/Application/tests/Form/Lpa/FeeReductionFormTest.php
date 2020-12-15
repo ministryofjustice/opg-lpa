@@ -30,8 +30,8 @@ class FeeReductionFormTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Zend\Form\Element\Radio', $this->form->get('reductionOptions'));
-        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('save'));
+        $this->assertInstanceOf('Laminas\Form\Element\Radio', $this->form->get('reductionOptions'));
+        $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('save'));
     }
 
     public function testValidateByModelOK()

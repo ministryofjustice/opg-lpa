@@ -4,8 +4,8 @@ namespace Application\Library\Authentication\Adapter;
 
 use Application\Library\Authentication\Identity;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
-use Zend\Authentication\Result;
-use Zend\Authentication\Adapter\AdapterInterface;
+use Laminas\Authentication\Result;
+use Laminas\Authentication\Adapter\AdapterInterface;
 
 /**
  * Class LpaAuth

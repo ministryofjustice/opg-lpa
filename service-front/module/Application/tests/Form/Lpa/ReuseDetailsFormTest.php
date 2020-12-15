@@ -30,7 +30,7 @@ class ReuseDetailsFormTest extends MockeryTestCase
     public function testElements()
     {
         $this->assertInstanceOf('Application\Form\Element\ReuseDetails', $this->form->get('reuse-details'));
-        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('submit'));
+        $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('submit'));
     }
 
     public function testValidateByModelOK()

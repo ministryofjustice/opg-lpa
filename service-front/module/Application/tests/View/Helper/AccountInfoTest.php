@@ -1,5 +1,5 @@
 <?php
-/**
+/** 
  * Created by PhpStorm.
  * User: seemamenon
  * Date: 17/02/2019
@@ -15,13 +15,14 @@ use Application\View\Helper\AccountInfo;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Twig_Environment;
+use Twig\Environment as TwigEnvironment;
 use Twig_Template;
-use Zend\Mvc\Console\View\Renderer;
-use Zend\Router\RouteMatch;
-use Zend\Session\Container;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Console\View\Renderer;
+use Laminas\Router\RouteMatch;
+use Laminas\Session\Container;
+use Laminas\View\Model\ViewModel;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\View\Helper\RendererInterface as RendererInterface;
 
 class AccountInfoTest extends MockeryTestCase
 {
@@ -51,12 +52,12 @@ class AccountInfoTest extends MockeryTestCase
     private $lpaApplicationService;
 
     /**
-     * @var Twig_Environment|MockInterface
+     * @var TwigEnvironment|MockInterface
      */
     private $viewRenderer;
 
     /**
-     * @var Twig_Environment|MockInterface
+     * @var Twig_Template|MockInterface
      */
     private $twigTemplate;
 
@@ -74,7 +75,7 @@ class AccountInfoTest extends MockeryTestCase
         $this->routeMatch = Mockery::mock(RouteMatch::class);
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
-        $this->viewRenderer = Mockery::mock(Twig_Environment::class);
+        $this->viewRenderer = Mockery::mock(RendererInterface::class);
         $this->twigTemplate = Mockery::mock(Twig_Template::class);
     }
 
