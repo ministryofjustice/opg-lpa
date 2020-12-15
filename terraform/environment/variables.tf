@@ -3,7 +3,7 @@ variable "pagerduty_token" {
 }
 
 variable "account_mapping" {
-  type = map
+  type = map(any)
 }
 
 variable "accounts" {
