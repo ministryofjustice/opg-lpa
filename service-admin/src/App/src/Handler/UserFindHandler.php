@@ -39,7 +39,7 @@ class UserFindHandler extends AbstractHandler
     {
         $form = new UserFind();
 
-        $limit = (get_class($this))::$LIMIT;
+        $limit = self::$LIMIT;
 
         // to be set from GET
         $query = null;
