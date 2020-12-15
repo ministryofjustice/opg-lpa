@@ -57,6 +57,7 @@ class ConfigProvider
                 Handler\SignInHandler::class        => Handler\SignInHandlerFactory::class,
                 Handler\SystemMessageHandler::class => Handler\SystemMessageHandlerFactory::class,
                 Handler\UserSearchHandler::class    => Handler\UserSearchHandlerFactory::class,
+                Handler\UserFindHandler::class      => Handler\UserFindHandlerFactory::class,
 
                 //  Middleware
                 JwtAuthentication::class                                => Middleware\Session\JwtAuthenticationFactory::class,

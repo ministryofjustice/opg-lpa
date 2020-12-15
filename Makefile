@@ -36,7 +36,7 @@ dc-run:
 	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY=${ORDNANCESURVEY}; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
-	sleep 20; docker-compose run pdf-composer | xargs -L1 echo pdf-composer: 
+	sleep 20; docker-compose run pdf-composer | xargs -L1 echo pdf-composer:
 
 .PHONY: dc-up
 dc-up:
@@ -99,7 +99,7 @@ reset-front:
 	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
 	rm -fr ./service-front/vendor; \
-	docker-compose build --no-cache front-web 
+	docker-compose build --no-cache front-web
 	docker-compose build --no-cache front-app
 	docker-compose run front-composer
 
@@ -144,7 +144,12 @@ dc-unit-tests:
 .PHONY: functional-local
 functional-local:
 	docker build -f ./tests/Dockerfile  -t casperjs:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhost:7002" --network="host" --rm casperjs:latest ./start.sh 'tests/'
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhos:7002" --network="host" --rm casperjs:latest ./start.sh 'tests/'
+
+.PHONY: integration-api-local
+integration-api-local:
+	docker build -f ./service-api/docker/app/Dockerfile -t integration-api-tests .;\
+	docker run -it --network="host" --rm integration-api-tests  sh -c "cd /app/tests/integration && php ../../vendor/bin/phpunit -v"
 
 .PHONY: cypress-local
 cypress-local:
