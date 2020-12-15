@@ -1,7 +1,7 @@
 <?php
 namespace Application\Library\Http\Response;
 
-use Zend\Http\Response;
+use Laminas\Http\Response;
 
 /**
  * Returns an Empty (204) response. Used for a response after a DELETE.
@@ -26,7 +26,7 @@ class File extends Response {
      * Proxies to parent class, but then checks if we have an content-type
      * header; if not, sets it, with the correct value.
      *
-     * @return \Zend\Http\Headers
+     * @return \Laminas\Http\Headers
      */
     public function getHeaders()
     {

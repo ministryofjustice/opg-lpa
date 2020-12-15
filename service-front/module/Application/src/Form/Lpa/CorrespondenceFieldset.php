@@ -2,8 +2,8 @@
 
 namespace Application\Form\Lpa;
 
-use Zend\Form\Fieldset;
-use Zend\Hydrator\ClassMethodsHydrator as ClassMethodsHydrator;
+use Laminas\Form\Fieldset;
+use Laminas\Hydrator\ClassMethodsHydrator as ClassMethodsHydrator;
 use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
 
 class CorrespondenceFieldset extends Fieldset

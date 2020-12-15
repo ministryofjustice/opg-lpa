@@ -10,7 +10,7 @@ use Application\Model\Service\AbstractService;
 use Aws\S3\S3Client;
 use Aws\Sqs\SqsClient;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Zend\Filter\Compress;
+use Laminas\Filter\Compress;
 
 class Service extends AbstractService
 {

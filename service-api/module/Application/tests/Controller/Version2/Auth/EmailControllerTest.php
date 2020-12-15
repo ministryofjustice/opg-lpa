@@ -6,8 +6,8 @@ use Application\Controller\Version2\Auth\EmailController;
 use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\Service\Email\Service;
-use Zend\View\Model\JsonModel;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\View\Model\JsonModel;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Mockery;
 
 class EmailControllerTest extends AbstractAuthControllerTest

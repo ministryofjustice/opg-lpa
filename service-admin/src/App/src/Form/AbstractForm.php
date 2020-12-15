@@ -3,17 +3,17 @@
 namespace App\Form;
 
 use App\Validator;
-use Zend\Form\Element\Csrf;
-use Zend\Form\Form as ZendForm;
-use Zend\Form\FormInterface;
-use Zend\InputFilter\Input;
-use Zend\InputFilter\InputFilter;
+use Laminas\Form\Element\Csrf;
+use Laminas\Form\Form as LaminasForm;
+use Laminas\Form\FormInterface;
+use Laminas\InputFilter\Input;
+use Laminas\InputFilter\InputFilter;
 
 /**
  * Class AbstractForm
  * @package App\Form
  */
-abstract class AbstractForm extends ZendForm
+abstract class AbstractForm extends LaminasForm
 {
     /**
      * @param InputFilter $inputFilter

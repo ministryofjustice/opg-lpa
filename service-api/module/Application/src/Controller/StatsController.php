@@ -5,8 +5,8 @@ namespace Application\Controller;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\Stats\Service;
-use Zend\Mvc\Controller\AbstractRestfulController;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\Mvc\Controller\AbstractRestfulController;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class StatsController extends AbstractRestfulController
 {

@@ -40,7 +40,7 @@ class FormTest extends MockeryTestCase
                     }
                 }
 
-                $this->assertInstanceOf('Zend\Form\Element\Csrf', $secretKeys);
+                $this->assertInstanceOf('Laminas\Form\Element\Csrf', $secretKeys);
             }
         }
     }

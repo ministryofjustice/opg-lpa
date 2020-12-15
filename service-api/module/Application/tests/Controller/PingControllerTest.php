@@ -8,8 +8,8 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Aws\Sqs\SqsClient;
 use Opg\Lpa\Logger\Logger;
-use Zend\Db\Adapter\Adapter as ZendDbAdapter;
-use Zend\View\Model\JsonModel;
+use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
+use Laminas\View\Model\JsonModel;
 use Http\Client\HttpClient;
 
 class PingControllerTest extends MockeryTestCase

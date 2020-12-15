@@ -4,11 +4,12 @@ namespace Application\Model\Service\Mail\Transport;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use SendGrid as SendGridClient;
-use Twig_Environment;
+use Twig\Environment as TwigEnvironment;
+use Application\View\Helper\LocalViewRenderer as LocalViewRenderer;
 use RuntimeException;
 
 class MailTransportFactory implements FactoryInterface
@@ -36,9 +37,9 @@ class MailTransportFactory implements FactoryInterface
 
         $client = new SendGridClient($sendGridConfig['key']);
 
-        /** @var Twig_Environment $emailRenderer */
+        /** @var TwigEnvironment $emailRenderer */
         $emailRenderer = $container->get('TwigEmailRenderer');
 
-        return new MailTransport($client->client, $emailRenderer, $emailConfig);
+        return new MailTransport($client->client, new LocalViewRenderer($emailRenderer), $emailConfig);
     }
 }

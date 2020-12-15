@@ -4,7 +4,7 @@ namespace ApplicationTest\Form\Lpa;
 
 use Application\Form\Validator\Csrf;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Zend\Session\Container;
+use Laminas\Session\Container;
 
 class CsrfTest extends MockeryTestCase
 {

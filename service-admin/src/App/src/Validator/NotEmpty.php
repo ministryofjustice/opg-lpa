@@ -2,7 +2,7 @@
 
 namespace App\Validator;
 
-use Zend\Validator\NotEmpty as ZendNotEmpty;
+use Laminas\Validator\NotEmpty as ZendNotEmpty;
 
 /**
  * Class NotEmpty

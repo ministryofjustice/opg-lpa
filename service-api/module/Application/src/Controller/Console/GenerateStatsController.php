@@ -3,7 +3,7 @@
 namespace Application\Controller\Console;
 
 use Application\Model\Service\System\Stats as StatsService;
-use Zend\Mvc\Console\Controller\AbstractConsoleController;
+use Laminas\Mvc\Console\Controller\AbstractConsoleController;
 
 class GenerateStatsController extends AbstractConsoleController
 {

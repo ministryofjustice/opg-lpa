@@ -5,7 +5,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 use Application\Controller\Authenticated\Lpa\CompleteController;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class CompleteControllerTest extends AbstractControllerTest
 {

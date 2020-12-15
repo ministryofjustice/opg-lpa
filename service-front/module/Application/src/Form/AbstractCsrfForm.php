@@ -3,7 +3,7 @@
 namespace Application\Form;
 
 use Application\Form\Validator\Csrf as CsrfValidator;
-use Zend\Form\Element\Csrf;
+use Laminas\Form\Element\Csrf;
 
 abstract class AbstractCsrfForm extends AbstractForm
 {

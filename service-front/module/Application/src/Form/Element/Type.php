@@ -2,7 +2,7 @@
 
 namespace Application\Form\Element;
 
-use Zend\Form\Element\Radio;
+use Laminas\Form\Element\Radio;
 
 class Type extends Radio
 {

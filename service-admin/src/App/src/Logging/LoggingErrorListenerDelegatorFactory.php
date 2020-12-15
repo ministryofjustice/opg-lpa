@@ -3,7 +3,7 @@
 namespace App\Logging;
 
 use Psr\Container\ContainerInterface;
-use Zend\Stratigility\Middleware\ErrorHandler;
+use Laminas\Stratigility\Middleware\ErrorHandler;
 
 /**
  * Class LoggingErrorListenerDelegatorFactory

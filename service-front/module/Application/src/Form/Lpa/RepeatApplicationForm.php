@@ -27,7 +27,7 @@ class RepeatApplicationForm extends AbstractMainFlowForm
             'required'  => true,
             'filters'  => [
                 [
-                    'name' => 'Zend\Filter\Word\DashToSeparator',
+                    'name' => 'Laminas\Filter\Word\DashToSeparator',
                     'options' => [
                         'separator' => '',
                     ]

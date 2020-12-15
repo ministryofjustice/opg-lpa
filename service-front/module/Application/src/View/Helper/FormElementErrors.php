@@ -1,9 +1,9 @@
 <?php
 namespace Application\View\Helper;
 
-use Zend\Form\ElementInterface;
+use Laminas\Form\ElementInterface;
 
-class FormElementErrors extends \Zend\Form\View\Helper\FormElementErrors
+class FormElementErrors extends \Laminas\Form\View\Helper\FormElementErrors
 {
     public function __invoke(ElementInterface $element = null, array $attributes = array(), array $messageOverrideMap = [])
     {

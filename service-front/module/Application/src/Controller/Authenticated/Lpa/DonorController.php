@@ -4,7 +4,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class DonorController extends AbstractLpaActorController
 {

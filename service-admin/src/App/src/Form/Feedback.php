@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use Zend\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilter;
 use DateTime;
 use Exception;
 

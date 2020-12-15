@@ -24,14 +24,19 @@ The instructions below help you to do that, so you can query data and perform da
 
 ### Once Connected
 
-In the terminal session create a script called cloud9_init.sh and paste in the contents of cloud9_init.sh
-Give the script execution permissions with
+it is recommended that you clone the repo into the Cloud9 instance:
 
 ``` bash
-chmod +x cloud9_init.sh
+git clone https://github.com/ministryofjustice/opg-lpa.git
 ```
 
-Execute the script, passing it the name of the environment you want to connect to. This matches the terraform workspace name for the environment, e.g. the prefix for the url, and is mentioned CircleCI Build. **Note** the **`.`** in the command below.
+go to the folder where the cloud9 script is now sitting:
+
+``` bash
+cd ~/environment/opg-lpa/docs/runbooks/cloud9
+```
+
+Execute the script below, passing it the name of the environment you want to connect to. This matches the terraform workspace name for the environment, e.g. the prefix for the url, and is mentioned CircleCI Build. **Note** the **`.`** in the command below.
 
 ``` bash
  . cloud9_init.sh 114-postmigra

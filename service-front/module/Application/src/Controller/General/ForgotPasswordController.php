@@ -4,7 +4,7 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\User\Details as UserService;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class ForgotPasswordController extends AbstractBaseController
 {

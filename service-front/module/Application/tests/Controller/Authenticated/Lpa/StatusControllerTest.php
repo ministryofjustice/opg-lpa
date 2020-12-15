@@ -6,8 +6,8 @@ use Application\Controller\Authenticated\Lpa\StatusController;
 use ApplicationTest\Controller\AbstractControllerTest;
 use ApplicationTest\Controller\Authenticated\TestableDashboardController;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
-use Zend\View\Model\ViewModel;
-use Zend\Http\Response;
+use Laminas\View\Model\ViewModel;
+use Laminas\Http\Response;
 
 class StatusControllerTest extends AbstractControllerTest
 {

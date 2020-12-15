@@ -1,10 +1,10 @@
 <?php
 namespace Application\Model\Service\Session;
 
-use Zend\Session\Container;
-use Zend\Session\SessionManager as ZFSessionManager;
+use Laminas\Session\Container;
+use Laminas\Session\SessionManager as LaminasSessionManager;
 
-class SessionManager extends ZFSessionManager {
+class SessionManager extends LaminasSessionManager {
 
     /**
      * Tracks whether we've seen this session before and does a regenerateId() if not.

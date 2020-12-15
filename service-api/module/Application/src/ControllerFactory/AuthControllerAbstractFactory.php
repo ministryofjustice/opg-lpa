@@ -6,8 +6,8 @@ use Application\Controller\Version2\Auth as AuthControllers;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\Factory\AbstractFactoryInterface;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 
 class AuthControllerAbstractFactory implements AbstractFactoryInterface
 {

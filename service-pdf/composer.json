@@ -16,17 +16,19 @@
         }
     ],
     "require": {
-        "php": "^7.1",
-        "aws/aws-sdk-php": "^3.0",
+        "php": "^7.4",
+        "aws/aws-sdk-php": "^3.91",
         "mikehaertl/php-pdftk": "0.2.1",
         "zendframework/zendpdf": "^2.0.2",
-        "zendframework/zend-crypt": "^3.3",
-        "zendframework/zend-filter": "^2.5",
+        "laminas/laminas-crypt": "^3.3.1",
+        "laminas/laminas-filter": "^2.9.4",
         "ministryofjustice/opg-lpa-datamodels": "^13.2",
         "ministryofjustice/opg-lpa-logger": "^5.0",
-        "zendframework/zend-barcode": "^2.5",
+        "laminas/laminas-barcode": "^2.5",
         "tecnickcom/tcpdf": "6.2.25",
-        "setasign/fpdi-tcpdf": "^2.0"
+        "setasign/fpdi-tcpdf": "^2.0",
+        "laminas/laminas-zendframework-bridge": "^1.1.1",
+        "laminas/laminas-log": "^2.12"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.0",

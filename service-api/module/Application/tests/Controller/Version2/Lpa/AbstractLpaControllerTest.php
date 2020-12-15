@@ -7,10 +7,10 @@ use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\Service\AbstractService;
 use Mockery;
 use Mockery\MockInterface;
-use Zend\Http\Response;
-use Zend\Mvc\MvcEvent;
-use Zend\Router\RouteMatch;
-use ZF\ApiProblem\ApiProblemResponse;
+use Laminas\Http\Response;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Router\RouteMatch;
+use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
 class AbstractLpaControllerTest extends AbstractControllerTest
 {

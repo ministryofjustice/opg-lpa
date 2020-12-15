@@ -7,9 +7,9 @@ use Application\Model\Service\System\Status;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use Mockery\MockInterface;
-use Zend\Http\Response;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 class PingControllerTest extends AbstractControllerTest
 {
