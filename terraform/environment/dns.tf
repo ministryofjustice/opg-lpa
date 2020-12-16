@@ -3,10 +3,35 @@ data "aws_route53_zone" "opg_service_justice_gov_uk" {
   name     = "opg.service.justice.gov.uk"
 }
 
+data "aws_route53_zone" "live_service_lasting_power_of_attorney" {
+  provider = aws.management
+  name     = "lastingpowerofattorney.service.gov.uk"
+}
+
+
+
 resource "aws_service_discovery_private_dns_namespace" "internal" {
   name = "${local.environment}-internal"
   vpc  = data.aws_vpc.default.id
 }
+
+resource "aws_route53_record" "public_facing_lastingpowerofattorney" {
+  provider = aws.management
+  zone_id  = data.aws_route53_zone.live_service_lasting_power_of_attorney.zone_id
+  name     = "${local.dns_namespace_env}${data.aws_route53_zone.live_service_lasting_power_of_attorney.name}"
+  type     = "A"
+
+  alias {
+    evaluate_target_health = false
+    name                   = aws_lb.front.dns_name
+    zone_id                = aws_lb.front.zone_id
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 
 //-------------------------------------------------------------
 // front
