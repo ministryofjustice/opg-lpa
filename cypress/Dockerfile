@@ -8,10 +8,6 @@ RUN apt-get update && \
 
 RUN pip3 install boto3
 
-RUN mkdir -p /mnt/test
-
-COPY cypress/activation_emails /mnt/test/activation_emails
-
 RUN npm install --save-dev cypress-axe@0.9.1 axe-core cypress-cucumber-preprocessor cosmiconfig 
 
 # unset CI which gets set in Cypress's dockerfile
