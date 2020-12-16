@@ -10,7 +10,7 @@ Then(`I receive email`, () => {
     var filename = activation_email_path + Cypress.env("userNumber") + '.activation';
     cy.log('Trying to open: ' + filename);
    
-    cy.readFile(filename, { timeout: 20000 }).then(text => {
+    cy.readFile(filename, { timeout: 100000 }).then(text => {
         var content = text;
         cy.log(text); 
         cy.log('Orig Content: ' + content);
