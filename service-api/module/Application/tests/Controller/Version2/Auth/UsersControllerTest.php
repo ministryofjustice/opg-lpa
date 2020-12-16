@@ -200,4 +200,98 @@ class UsersControllerTest extends AbstractAuthControllerTest
         $this->assertEquals(404, $data['status']);
         $this->assertEquals('No user found with supplied email address', $data['detail']);
     }
+
+    public function testMatchAction()
+    {
+        $query = 'horace';
+
+        // Set up the data in the params plugin
+        $this->params->shouldReceive('fromQuery')
+            ->with('query')
+            ->andReturn($query)
+            ->once();
+
+        $this->params->shouldReceive('fromQuery')
+            ->with('limit', 10)
+            ->andReturn(10)
+            ->once();
+
+        $this->params->shouldReceive('fromQuery')
+            ->with('offset', 0)
+            ->andReturn(0)
+            ->once();
+
+        $userMatchReturnData = [
+            [
+                'email' => 'horace@foo.com',
+                'user'  => 'ertyu34565456ytyg',
+            ],
+            [
+                'email' => 'foo@horace.com',
+                'user' => 'ddasdwrq2524525',
+            ]
+        ];
+
+        $this->service->shouldReceive('matchUsers')
+            ->with($query, ['offset' => 0, 'limit' => 10])
+            ->andReturn($userMatchReturnData)
+            ->once();
+
+        /** @var UsersController $controller */
+        $controller = $this->getController(UsersController::class);
+
+        /** @var JsonModel $result */
+        // NB query parameter comes from query string via the params plugin
+        // (see top of test function)
+        $result = $controller->matchAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals($userMatchReturnData, $result->getVariables());
+    }
+
+    public function testMatchActionEmptyResultset()
+    {
+        $query = 'phoebe';
+        $offset = 10;
+        $limit = 5;
+
+        // Set up the data in the params plugin
+        $this->params->shouldReceive('fromQuery')
+             ->with('query')
+             ->andReturn($query)
+             ->once();
+
+        $this->params->shouldReceive('fromQuery')
+             ->with('limit', 10)
+             ->andReturn($limit)
+             ->once();
+
+        $this->params->shouldReceive('fromQuery')
+             ->with('offset', 0)
+             ->andReturn($offset)
+             ->once();
+
+        $userMatchReturnData = [];
+
+        $expectedOptions = [
+            'offset' => $offset,
+            'limit' => $limit
+        ];
+
+        $this->service->shouldReceive('matchUsers')
+            ->with($query, $expectedOptions)
+            ->andReturn($userMatchReturnData)
+            ->once();
+
+        /** @var UsersController $controller */
+        $controller = $this->getController(UsersController::class);
+
+        /** @var JsonModel $result */
+        // NB query parameter comes from query string via the params plugin
+        // (see top of test function)
+        $result = $controller->matchAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals($userMatchReturnData, $result->getVariables());
+    }
 }

@@ -1,6 +1,6 @@
 # variables for terraform.tfvars.json
 variable "account_mapping" {
-  type = map
+  type = map(any)
 }
 
 variable "accounts" {
