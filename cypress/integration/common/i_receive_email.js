@@ -1,9 +1,6 @@
 import { When } from "cypress-cucumber-preprocessor/steps";
 
-var fs = require('fs');
 var link = null;
-var waitTime = 5000;
-var checkCount = 0;
 var activation_email_path = 'cypress/activation_emails/';
 
 Then(`I receive email`, () => {
