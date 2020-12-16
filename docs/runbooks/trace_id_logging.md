@@ -6,6 +6,8 @@ We use the incoming `X-Amzn-Trace-Id` header as the key which ties together log 
 
 Using the value of this header as a key enables us to trace requests from the load balancers all the way through to back-end services and out again.
 
+For an overview of how data moves through the stack, see [data flows](./data_flows.md).
+
 ## front-ssl/admin-ssl
 
 These containers only exist in dev. They mock the load balancers which pass traffic on to the front-web/admin-web components in live.
