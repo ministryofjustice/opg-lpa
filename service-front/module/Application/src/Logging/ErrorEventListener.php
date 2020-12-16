@@ -1,14 +1,16 @@
 <?php
-
 namespace Application\Logging;
 
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\AbstractListenerAggregate;
 use Laminas\EventManager\Event;
 use Laminas\Mvc\MvcEvent;
-use Opg\Lpa\Logger\LoggerTrait;
+use Application\Logging\LoggerTrait;
 
-class EventLogger extends AbstractListenerAggregate
+/**
+ * Listener for error events arising from controllers.
+ */
+class ErrorEventListener extends AbstractListenerAggregate
 {
     use LoggerTrait;
 
@@ -45,11 +47,10 @@ class EventLogger extends AbstractListenerAggregate
      */
     private function onError(string $errorType, Event $event): void
     {
-        $error = [
-            'type' => $errorType,
+        $extra = [
             'event' => $event,
         ];
 
-        $this->getLogger()->err($error);
+        $this->getLogger()->err($errorType, $extra);
     }
 }
