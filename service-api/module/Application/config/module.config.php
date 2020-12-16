@@ -139,6 +139,15 @@ return [
                                     ],
                                 ],
                             ],
+                            'match-users' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/match',
+                                    'defaults' => [
+                                        'action' => 'match',
+                                    ],
+                                ],
+                            ],
                             'email-change' => [
                                 'type'    => 'Segment',
                                 'options' => [
@@ -455,7 +464,7 @@ return [
                 ],
             ],
         ],
-    ], 
+    ],
 
     'controllers' => [
         'invokables' => [

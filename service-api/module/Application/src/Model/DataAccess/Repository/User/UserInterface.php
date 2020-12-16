@@ -118,4 +118,12 @@ interface UserInterface
      * NOTE - this does not change the value in the database!
      */
     public function resetFailedLoginAttempts();
+
+    /**
+     * Number of LPA applications associated with this user. Returns null if
+     * not set.
+     *
+     * @return int|null
+     */
+    public function numberOfLpas();
 }

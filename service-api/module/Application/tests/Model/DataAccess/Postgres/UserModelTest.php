@@ -67,6 +67,7 @@ class UserModelTest extends MockeryTestCase
         $this->assertEquals(2, $user->failedLoginAttempts());
         $this->assertEquals('activation-token', $user->activationToken());
         $this->assertEquals('auth-token', $user->authToken()->id());
+        $this->assertEquals(null, $user->numberOfLpas());
     }
 
 }
