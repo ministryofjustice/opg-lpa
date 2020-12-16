@@ -16,8 +16,10 @@ def set_iam_role_session():
     )
 
     if os.getenv('CI'):
+        print("Assuming CI role")
         role_arn = 'arn:aws:iam::050256574573:role/opg-lpa-ci'
     else:
+        print("Assuming operator role")
         role_arn = 'arn:aws:iam::050256574573:role/operator'
 
     result = sts.assume_role(
