@@ -8,7 +8,8 @@ python3 cypress/S3Monitor.py &
 
 echo Starting Cypress Tests
 
-CYPRESS_CMD="cypress open --project /app"
+# pass supplied args to cypress, this would be open or run followed by the likes of --project /app
+CYPRESS_CMD="cypress $@"
 
 echo "Running cypress command line:"
 echo $CYPRESS_CMD
