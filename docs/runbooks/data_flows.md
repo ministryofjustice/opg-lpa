@@ -2,7 +2,7 @@
 
 Preliminary efforts to document how data moves through the MaLPA stack. Please comment on/correct as you see fit.
 
-[!../images/malpa_dataflow.png]
+![../images/malpa_dataflow.png]
 
 The labels on the boxes in the diagram (roughly) correspond with the names of the containers in the `docker-compose.yml` config used to run the stack.
 
