@@ -1,6 +1,6 @@
 import { Given } from "cypress-cucumber-preprocessor/steps";
  
-Then(`I sign up standard test user`, () => {
+Given(`I sign up standard test user`, () => {
     signUp(Cypress.env("email"),Cypress.env("password"));
 })
 
