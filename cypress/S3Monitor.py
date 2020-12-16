@@ -7,9 +7,8 @@ import re
 
 mailbox_bucket = 'opg-lpa-casper-mailbox' # this might get renamed once casper tests are turned off
 activation_emails_path = 'cypress/activation_emails'
-s3Client = boto3.client('s3')
 
-def set_iam_role_session():
+def assume_role_and_get_client():
     sts = boto3.client(
         'sts',
         region_name='eu-west-1',
@@ -26,6 +25,15 @@ def set_iam_role_session():
         RoleArn=role_arn,
         RoleSessionName='session1',
     )
+
+    s3Client = boto3.client(
+        's3',
+        aws_access_key_id=result['Credentials']['AccessKeyId'],
+        aws_secret_access_key=result['Credentials']['SecretAccessKey'],
+        aws_session_token=result['Credentials']['SessionToken']
+    )
+
+    return s3Client
 
 # Extract the plus part from emails of the form:
 # basename+pluspart@example.com
@@ -82,13 +90,13 @@ def parse_email(bodyContent, s3Key):
             emailFile.write(bodyContent)
             emailFile.close()
 
-def process_bucket_object(s3Key):
+def process_bucket_object(s3Client,s3Key):
         result = s3Client.get_object(Bucket=mailbox_bucket,Key=s3Key)
         bodyContent = quopri.decodestring(result["Body"].read()).decode('latin-1')
         #print(f'Parsing {s3Key}')
         parse_email(bodyContent, s3Key)
 
-def monitor_bucket():
+def monitor_bucket(s3Client):
     seenkeys = []
 
     while True:
@@ -98,7 +106,7 @@ def monitor_bucket():
             for s3obj in s3Client.list_objects(Bucket=mailbox_bucket)['Contents']:
                 s3Key = s3obj['Key']
                 if not s3Key in seenkeys:
-                    process_bucket_object(s3Key)
+                    process_bucket_object(s3Client,s3Key)
                     seenkeys.append(s3Key)
                 #else:
                 #    print(f'Already seen {s3Key}')
@@ -106,8 +114,8 @@ def monitor_bucket():
 
 
 def main():
-    set_iam_role_session()
-    monitor_bucket()
+    s3Client = assume_role_and_get_client()
+    monitor_bucket(s3Client)
 
 if __name__ == "__main__":
     main()
