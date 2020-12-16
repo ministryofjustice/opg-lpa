@@ -8,7 +8,7 @@ python3 cypress/S3Monitor.py &
 
 echo Starting Cypress Tests
 
-# pass supplied args to cypress, this would be open or run followed by the likes of --project /app
+# pass supplied args to cypress, this would be open (gui) or run (headless) then optionally --project /app
 CYPRESS_CMD="cypress $@"
 
 echo "Running cypress command line:"
@@ -23,8 +23,5 @@ if [ $RETVAL -eq 0 ]; then
 else
     echo FAIL
 fi
-
-echo Killing S3 Monitor
-#kill $(ps aux | grep '[p]hp' | awk '{print $2}')
 
 exit $RETVAL

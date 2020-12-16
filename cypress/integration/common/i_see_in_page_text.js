@@ -1,4 +1,4 @@
-import { Given } from "cypress-cucumber-preprocessor/steps";
+import { Then } from "cypress-cucumber-preprocessor/steps";
 
 Then(`I see {string} in the page text`, (text) => {
   cy.contains(text);
