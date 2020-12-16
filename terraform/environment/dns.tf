@@ -8,11 +8,6 @@ data "aws_route53_zone" "live_service_lasting_power_of_attorney" {
   name     = "lastingpowerofattorney.service.gov.uk"
 }
 
-//TO BE REMOVED WHEN NAME SERVERS MOVE in our DNS entries.
-data "aws_route53_zone" "legacy_live_service_lasting_power_of_attorney" {
-  provider = aws.legacy-lpa
-  name     = "lastingpowerofattorney.service.gov.uk"
-}
 
 
 resource "aws_service_discovery_private_dns_namespace" "internal" {
@@ -37,27 +32,6 @@ resource "aws_route53_record" "public_facing_lastingpowerofattorney" {
   }
 }
 
-//TO BE REMOVED WHEN NAME SERVERS MOVE in our DNS entries.
-resource "aws_route53_record" "public_facing_lastingpowerofattorney_LEGACY" {
-  provider = aws.legacy-lpa
-  zone_id  = data.aws_route53_zone.legacy_live_service_lasting_power_of_attorney.zone_id
-  name     = "${local.dns_namespace_env}${data.aws_route53_zone.live_service_lasting_power_of_attorney.name}"
-  type     = "A"
-
-  alias {
-    evaluate_target_health = false
-    name                   = aws_lb.front.dns_name
-    zone_id                = aws_lb.front.zone_id
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-output "public-facing-domain" {
-  value = "https://${aws_route53_record.public_facing_lastingpowerofattorney.fqdn}"
-}
 
 //-------------------------------------------------------------
 // front
