@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\ApiClient;
 
+use Application\Logging\Logger;
 use Application\Model\Service\ApiClient\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
@@ -10,7 +11,6 @@ use Http\Client\HttpClient;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Opg\Lpa\Logger\Logger;
 use Psr\Http\Message\ResponseInterface;
 
 class ClientTest extends MockeryTestCase

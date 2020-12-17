@@ -3,7 +3,7 @@
 namespace Application\Model\Service;
 
 use Application\Model\Service\Authentication\AuthenticationService;
-use Opg\Lpa\Logger\LoggerTrait;
+use Application\Logging\LoggerTrait;
 
 abstract class AbstractService
 {
