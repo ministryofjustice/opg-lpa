@@ -8,13 +8,33 @@ data "aws_route53_zone" "live_service_lasting_power_of_attorney" {
   name     = "lastingpowerofattorney.service.gov.uk"
 }
 
-
-
 resource "aws_service_discovery_private_dns_namespace" "internal" {
   name = "${local.environment}-internal"
   vpc  = data.aws_vpc.default.id
 }
 
+
+//---------------------------------------------------------------
+// maintenance DNS record
+resource "aws_route53_record" "maintenance_lastingpowerofattorney" {
+  count           = local.environment == "production" ? 1 : 0
+  provider        = aws.management
+  zone_id         = data.aws_route53_zone.live_service_lasting_power_of_attorney.zone_id
+  name            = "maintenance.lastingpowerofattorney.service.gov.uk"
+  type            = "A"
+  allow_overwrite = true
+  alias {
+    evaluate_target_health = false
+    name                   = "doh1aoak1ioex.cloudfront.net."
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+//---------------------------------------------------------------
+// public facing
 resource "aws_route53_record" "public_facing_lastingpowerofattorney" {
   provider        = aws.management
   zone_id         = data.aws_route53_zone.live_service_lasting_power_of_attorney.zone_id
