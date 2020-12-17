@@ -3,8 +3,7 @@ FROM cypress/included:5.2.0
 WORKDIR /app
 
 RUN apt-get update && \
-  apt-get install -y php \
-      python3-pip 
+  apt-get install -y python3-pip 
 
 RUN pip3 install boto3
 
