@@ -5,7 +5,9 @@ use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\AbstractListenerAggregate;
 use Laminas\EventManager\Event;
 use Laminas\Mvc\MvcEvent;
+
 use Application\Logging\LoggerTrait;
+use Application\Logging\MvcEventProcessor;
 
 /**
  * Listener for error events arising from controllers.
@@ -48,7 +50,7 @@ class ErrorEventListener extends AbstractListenerAggregate
     private function onError(string $errorType, Event $event): void
     {
         $extra = [
-            'event' => $event,
+            MvcEventProcessor::EVENT_FIELD_NAME => $event,
         ];
 
         $this->getLogger()->err($errorType, $extra);

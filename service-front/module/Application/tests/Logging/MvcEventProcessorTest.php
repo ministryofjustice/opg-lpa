@@ -7,9 +7,9 @@ use Laminas\Stdlib\RequestInterface as Request;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-use Application\Logging\EventProcessor;
+use Application\Logging\MvcEventProcessor;
 
-class EventProcessorTest extends MockeryTestCase
+class MvcEventProcessorTest extends MockeryTestCase
 {
     public function testEventToArray()
     {
@@ -45,11 +45,11 @@ class EventProcessorTest extends MockeryTestCase
 
         $logEvent = [
             'extra' => [
-                'event' => $fakeEvent
+                MvcEventProcessor::EVENT_FIELD_NAME => $fakeEvent
             ]
         ];
 
-        $processor = new EventProcessor();
+        $processor = new MvcEventProcessor();
         $actual = $processor->process($logEvent);
 
         $this->assertEquals($fakeHeadersArray['X-Trace-Id'], $actual['trace_id'],
