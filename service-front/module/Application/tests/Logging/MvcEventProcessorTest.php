@@ -52,20 +52,23 @@ class MvcEventProcessorTest extends MockeryTestCase
         $processor = new MvcEventProcessor();
         $actual = $processor->process($logEvent);
 
-        $this->assertEquals($fakeHeadersArray['X-Trace-Id'], $actual['trace_id'],
-            'X-Trace-Id header should be used to set trace_id value on log event');
-
         $expectedLoggedHeaders = [
             'X-Trace-Id' => $fakeHeadersArray['X-Trace-Id'],
             'Sec-Fetch-Dest' => $fakeHeadersArray['Sec-Fetch-Dest'],
             'Accept' => $fakeHeadersArray['Accept'],
             'User-Agent' => $fakeHeadersArray['User-Agent'],
             'Upgrade-Insecure-Requests' => $fakeHeadersArray['Upgrade-Insecure-Requests'],
+            '_ga' => 'GoogleAnalyticsValue',
+            '_gid' => 'GoogleAnalyticsId',
+            'Authorization' => 'Basic authstring',
+            'Cookie' => 'foo',
         ];
 
-        $this->assertEquals('MyController', $actual['controller']);
-        $this->assertEquals('http://uri', $actual['request']['uri']);
-        $this->assertEquals('generic error', $actual['errorMessage']);
-        $this->assertEquals($expectedLoggedHeaders, $actual['request']['headers']);
+        $this->assertEquals($expectedLoggedHeaders, $actual['extra']['headers']);
+
+        $this->assertEquals('MyController', $actual['extra']['controller']);
+        $this->assertEquals('http://uri', $actual['extra']['request_uri']);
+        $this->assertEquals('GET', $actual['extra']['request_method']);
+        $this->assertEquals('generic error', $actual['extra']['errorMessage']);
     }
 }
