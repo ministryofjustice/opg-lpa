@@ -2,16 +2,12 @@ worker_processes 1;
 pid /run/nginx.pid;
 daemon off;
 
-error_log stderr info;
+error_log stderr;
 
 events { worker_connections 1024; }
 
 http {
     sendfile on;
-
-    log_format tracing '$trace_id - [$time_local] "$request" '
-                       '$status $body_bytes_sent "$http_referer" '
-                       '"$http_user_agent" "$http_x_forwarded_for"';
 
     # set a dummy X-Amzn-Trace-Id header on requests forwarded to the *-web
     # containers in dev
