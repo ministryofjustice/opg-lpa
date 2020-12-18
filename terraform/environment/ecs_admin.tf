@@ -133,37 +133,37 @@ data "aws_ecr_repository" "lpa_admin_app" {
 // admin ECS Service Task Container level config
 
 locals {
-  admin_web = <<EOF
-  {
-    "cpu": 1,
-    "essential": true,
-    "image": "${data.aws_ecr_repository.lpa_admin_web.repository_url}:${var.container_version}",
-    "mountPoints": [],
-    "name": "web",
-    "portMappings": [
+  admin_web = jsonencode(
+    {
+      "cpu" : 1,
+      "essential" : true,
+      "image" : "${data.aws_ecr_repository.lpa_admin_web.repository_url}:${var.container_version}",
+      "mountPoints" : [],
+      "name" : "web",
+      "portMappings" : [
         {
-            "containerPort": 80,
-            "hostPort": 80,
-            "protocol": "tcp"
+          "containerPort" : 80,
+          "hostPort" : 80,
+          "protocol" : "tcp"
         }
-    ],
-    "volumesFrom": [],
-    "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-            "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
-            "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "${local.environment}.admin-web.online-lpa"
+      ],
+      "volumesFrom" : [],
+      "logConfiguration" : {
+        "logDriver" : "awslogs",
+        "options" : {
+          "awslogs-group" : data.aws_cloudwatch_log_group.online-lpa.name,
+          "awslogs-region" : "eu-west-1",
+          "awslogs-stream-prefix" : "${local.environment}.admin-web.online-lpa"
         }
-    },
-    "environment": [
-    {"name": "APP_HOST", "value": "127.0.0.1"},
-    {"name": "APP_PORT", "value": "9000"},
-    {"name": "TIMEOUT", "value": "60"},
-    {"name": "CONTAINER_VERSION", "value": "${var.container_version}"}
-    ]
-  }
-  EOF
+      },
+      "environment" : [
+        { "name" : "APP_HOST", "value" : "127.0.0.1" },
+        { "name" : "APP_PORT", "value" : "9000" },
+        { "name" : "TIMEOUT", "value" : "60" },
+        { "name" : "CONTAINER_VERSION", "value" : var.container_version }
+      ]
+    }
+  )
 
   admin_app = <<EOF
   {
