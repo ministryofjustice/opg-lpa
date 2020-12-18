@@ -5,14 +5,14 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\Log\Processor\ProcessorInterface;
 
 /**
- * Recognise events sent to the logger and convert them to arrays.
+ * Recognise MVC events sent to the logger and convert them to arrays.
  * This is to enable events to be serialised correctly to JSON:
  * without this processor, they contain circular references which make the
  * JsonFormatter choke.
  *
  * For this to work, the $extra array passed to the log() method must contain
- * an "event" key. The value for this key is converted into an array, removing
- * any circular references.
+ * an "event" key which points to an MvcEvent instance. The value for this
+ * key is converted into an array, removing any circular references.
  */
 class MvcEventProcessor implements ProcessorInterface
 {
@@ -23,56 +23,32 @@ class MvcEventProcessor implements ProcessorInterface
      */
     public const EVENT_FIELD_NAME = 'event';
 
-    public const HEADERS_TO_STRIP = ['cookie', 'authorization', '_ga', '_gid'];
-
     public function process(array $logEvent): array
     {
-        // early return if there's no "event" in extra
+        // early return if there's no "event" in $extra
         if (!isset($logEvent['extra'][self::EVENT_FIELD_NAME]) ||
         !($logEvent['extra'][self::EVENT_FIELD_NAME] instanceof MvcEvent)) {
             return $logEvent;
         }
 
         // pick apart the log event
-        $traceId = NULL;
         $laminasEvent = $logEvent['extra'][self::EVENT_FIELD_NAME];
         $req = $laminasEvent->getRequest();
 
-        // request headers; filter out any which potentially contain private data
-        $reqHeadersArray = [];
-        $reqHeaders = $req->getHeaders()->toArray();
+        // raw headers
+        $logEvent['extra']['headers'] = $req->getHeaders()->toArray();
 
-        foreach ($reqHeaders as $name => $value) {
-            $lcaseName = strtolower($name);
-
-            if ($lcaseName === 'x-trace-id') {
-                $traceId = $value;
-            }
-
-            if (!(in_array($lcaseName, self::HEADERS_TO_STRIP))) {
-                $reqHeadersArray[$name] = $value;
-            }
-        }
-
-        // X-Amzn-Trace-Id, forwarded to the app as X-Trace-Id
-        if ($traceId !== NULL) {
-            $logEvent['trace_id'] = $traceId;
-        }
-
-        // headers and other request data
-        $logEvent['request'] = [
-            'uri' => $req->getUriString(),
-            'method' => $req->getMethod(),
-            'headers' => $reqHeadersArray,
-        ];
+        // other request data
+        $logEvent['extra']['request_uri'] = $req->getUriString();
+        $logEvent['extra']['request_method'] = $req->getMethod();
 
         // event source controller
-        $logEvent['controller'] = $laminasEvent->getController();
+        $logEvent['extra']['controller'] = $laminasEvent->getController();
 
         // exception (if present)
         $exception = $laminasEvent->getParam('exception');
         if ($exception != NULL) {
-            $logEvent['exception'] = [
+            $logEvent['extra']['exception'] = [
                 'message' => $exception->getMessage(),
                 'file' => $exception->getFile(),
                 'line' => $exception->getLine(),
@@ -82,10 +58,11 @@ class MvcEventProcessor implements ProcessorInterface
 
         // error (if present)
         if ($laminasEvent->isError()) {
-            $logEvent['errorMessage'] = $laminasEvent->getError();
+            $logEvent['extra']['errorMessage'] = $laminasEvent->getError();
         }
 
-        unset($logEvent['extra']);
+        // remove the event we've now decomposed
+        unset($logEvent['extra'][self::EVENT_FIELD_NAME]);
 
         return $logEvent;
     }
