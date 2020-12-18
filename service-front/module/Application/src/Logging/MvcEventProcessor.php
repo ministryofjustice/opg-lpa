@@ -14,24 +14,31 @@ use Laminas\Log\Processor\ProcessorInterface;
  * an "event" key. The value for this key is converted into an array, removing
  * any circular references.
  */
-class EventProcessor implements ProcessorInterface
+class MvcEventProcessor implements ProcessorInterface
 {
+    /**
+     * Name of the field in the $extra array passed to the logger.
+     * If the $extra array contains this key, the value for the key is
+     * retrieved and (if an MvcEvent) processed into a JSON-serialisable array.
+     */
+    public const EVENT_FIELD_NAME = 'event';
+
     public const HEADERS_TO_STRIP = ['cookie', 'authorization', '_ga', '_gid'];
 
     public function process(array $logEvent): array
     {
-        // early return if there's no log event in extra
-        if (!isset($logEvent['extra']['event']) ||
-        !($logEvent['extra']['event'] instanceof MvcEvent)) {
+        // early return if there's no "event" in extra
+        if (!isset($logEvent['extra'][self::EVENT_FIELD_NAME]) ||
+        !($logEvent['extra'][self::EVENT_FIELD_NAME] instanceof MvcEvent)) {
             return $logEvent;
         }
 
         // pick apart the log event
         $traceId = NULL;
-        $laminasEvent = $logEvent['extra']['event'];
+        $laminasEvent = $logEvent['extra'][self::EVENT_FIELD_NAME];
         $req = $laminasEvent->getRequest();
 
-        // request headers
+        // request headers; filter out any which potentially contain private data
         $reqHeadersArray = [];
         $reqHeaders = $req->getHeaders()->toArray();
 
@@ -59,10 +66,10 @@ class EventProcessor implements ProcessorInterface
             'headers' => $reqHeadersArray,
         ];
 
-        // event source
+        // event source controller
         $logEvent['controller'] = $laminasEvent->getController();
 
-        // exception
+        // exception (if present)
         $exception = $laminasEvent->getParam('exception');
         if ($exception != NULL) {
             $logEvent['exception'] = [

@@ -6,7 +6,7 @@ use Laminas\Log\Logger as LaminasLogger;
 use Laminas\Log\Writer\Stream as StreamWriter;
 use Laminas\Log\Formatter\Json as JsonFormatter;
 
-use Application\Logging\EventProcessor;
+use Application\Logging\MvcEventProcessor;
 
 /**
  * class Logger
@@ -27,7 +27,7 @@ class Logger extends LaminasLogger
     {
         parent::__construct();
 
-        $this->addProcessor(new EventProcessor());
+        $this->addProcessor(new MvcEventProcessor());
 
         $writer = new StreamWriter('php://stderr');
         $writer->setFormatter(new JsonFormatter());
