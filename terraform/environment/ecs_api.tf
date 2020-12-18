@@ -255,60 +255,60 @@ locals {
     }
   )
 
-  api_app = <<EOF
-  {
-    "cpu": 1,
-    "essential": true,
-    "image": "${data.aws_ecr_repository.lpa_api_app.repository_url}:${var.container_version}",
-    "mountPoints": [],
-    "name": "app",
-    "portMappings": [
+  api_app = jsonencode(
+    {
+      "cpu" : 1,
+      "essential" : true,
+      "image" : "${data.aws_ecr_repository.lpa_api_app.repository_url}:${var.container_version}",
+      "mountPoints" : [],
+      "name" : "app",
+      "portMappings" : [
         {
-            "containerPort": 9000,
-            "hostPort": 9000,
-            "protocol": "tcp"
+          "containerPort" : 9000,
+          "hostPort" : 9000,
+          "protocol" : "tcp"
         }
-    ],
-    "volumesFrom": [],
-    "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-            "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
-            "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "${local.environment}.api-app.online-lpa"
+      ],
+      "volumesFrom" : [],
+      "logConfiguration" : {
+        "logDriver" : "awslogs",
+        "options" : {
+          "awslogs-group" : data.aws_cloudwatch_log_group.online-lpa.name,
+          "awslogs-region" : "eu-west-1",
+          "awslogs-stream-prefix" : "${local.environment}.api-app.online-lpa"
         }
-    },
-    "secrets": [
-      { "name": "OPG_LPA_API_NOTIFY_API_KEY", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
-      { "name": "OPG_LPA_POSTGRES_USERNAME", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
-      { "name": "OPG_LPA_POSTGRES_PASSWORD", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" },
-      { "name": "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
-      { "name": "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
-    ],
-    "environment": [
-      { "name": "OPG_NGINX_SERVER_NAMES", "value": "api api-${local.environment}.${local.account_name} localhost 127.0.0.1"},
-      { "name": "OPG_LPA_POSTGRES_HOSTNAME", "value": "${local.db.endpoint}"},
-      { "name": "OPG_LPA_POSTGRES_PORT", "value": "${local.db.port}"},
-      { "name": "OPG_LPA_POSTGRES_NAME", "value": "${local.db.name}"},
-      { "name": "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value": "${local.account.sirius_api_gateway_endpoint}"},
-      { "name": "OPG_LPA_API_TRACK_FROM_DATE", "value": "${local.track_from_date}"},
-      { "name": "OPG_LPA_SEED_DATA", "value": "true"},
-      { "name": "OPG_LPA_STACK_NAME", "value": "${local.environment}"},
-      { "name": "OPG_DOCKER_TAG", "value": "${var.container_version}"},
-      { "name": "OPG_LPA_STACK_ENVIRONMENT", "value": "${local.account_name}"},
-      { "name": "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value": "/var/log/app/application.log"},
-      { "name": "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value": ""},
-      { "name": "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value": "${aws_dynamodb_table.lpa-locks.name}"},
-      { "name": "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", "value": "${aws_dynamodb_table.lpa-sessions.name}"},
-      { "name": "OPG_LPA_COMMON_API_DYNAMODB_TABLE", "value": "${aws_dynamodb_table.lpa-properties.name}"},
-      { "name": "OPG_PHP_POOL_CHILDREN_MAX", "value": "20"},
-      { "name": "OPG_PHP_POOL_REQUESTS_MAX", "value": "500"},
-      { "name": "OPG_NGINX_SSL_HSTS_AGE", "value": "31536000"},
-      { "name": "OPG_NGINX_SSL_FORCE_REDIRECT", "value": "TRUE"},
-      { "name": "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value": "redisback"},
-      { "name": "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value": "${data.aws_s3_bucket.lpa_pdf_cache.bucket}"},
-      { "name": "OPG_LPA_COMMON_PDF_QUEUE_URL", "value": "https://sqs.eu-west-1.amazonaws.com/${local.account.account_id}/lpa-pdf-queue-${local.environment}.fifo"}
+      },
+      "secrets" : [
+        { "name" : "OPG_LPA_API_NOTIFY_API_KEY", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
+        { "name" : "OPG_LPA_POSTGRES_USERNAME", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
+        { "name" : "OPG_LPA_POSTGRES_PASSWORD", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" },
+        { "name" : "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
+        { "name" : "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
+      ],
+      "environment" : [
+        { "name" : "OPG_NGINX_SERVER_NAMES", "value" : "api api-${local.environment}.${local.account_name} localhost 127.0.0.1" },
+        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : local.db.endpoint },
+        { "name" : "OPG_LPA_POSTGRES_PORT", "value" : tostring(local.db.port) },
+        { "name" : "OPG_LPA_POSTGRES_NAME", "value" : local.db.name },
+        { "name" : "OPG_LPA_PROCESSING_STATUS_ENDPOINT", "value" : local.account.sirius_api_gateway_endpoint },
+        { "name" : "OPG_LPA_API_TRACK_FROM_DATE", "value" : local.track_from_date },
+        { "name" : "OPG_LPA_SEED_DATA", "value" : "true" },
+        { "name" : "OPG_LPA_STACK_NAME", "value" : local.environment },
+        { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
+        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : local.account_name },
+        { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
+        { "name" : "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value" : "" },
+        { "name" : "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-locks.name },
+        { "name" : "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-sessions.name },
+        { "name" : "OPG_LPA_COMMON_API_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-properties.name },
+        { "name" : "OPG_PHP_POOL_CHILDREN_MAX", "value" : "20" },
+        { "name" : "OPG_PHP_POOL_REQUESTS_MAX", "value" : "500" },
+        { "name" : "OPG_NGINX_SSL_HSTS_AGE", "value" : "31536000" },
+        { "name" : "OPG_NGINX_SSL_FORCE_REDIRECT", "value" : "TRUE" },
+        { "name" : "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value" : "redisback" },
+        { "name" : "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", "value" : data.aws_s3_bucket.lpa_pdf_cache.bucket },
+        { "name" : "OPG_LPA_COMMON_PDF_QUEUE_URL", "value" : "https://sqs.eu-west-1.amazonaws.com/${local.account.account_id}/lpa-pdf-queue-${local.environment}.fifo" }
       ]
     }
-  EOF
+  )
 }
