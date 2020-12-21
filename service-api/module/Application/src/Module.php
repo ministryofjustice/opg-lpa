@@ -17,7 +17,7 @@ use Aws\Sqs\SqsClient;
 use Aws\Signature\SignatureV4;
 use Http\Adapter\Guzzle6\Client as Guzzle6Client;
 use Http\Client\HttpClient;
-use Opg\Lpa\Logger\Logger;
+use Application\Logging\Logger;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Storage\NonPersistent;
 use Laminas\Console\Request as ConsoleRequest;
