@@ -22,7 +22,9 @@ abstract class AbstractActorForm extends AbstractLpaForm
         //  If the form has a title field then add the select attributes to be used in a dropdown menu
         if (isset($this->formElements['name-title'])) {
             $this->formElements['name-title']['attributes'] = [
-                'data-select-options' => json_encode([
+                // added data-cy tags, but for some reason only 1 of data-cy or data-select-options actually takes. needs fixing somehow
+                  'data-cy' => 'name-title',
+                  'data-select-options' => json_encode([
                     '',
                     'Mr',
                     'Mrs',
@@ -33,7 +35,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
                     'Other',
                 ]),
             ];
-        }
+    }
 
         parent::init();
     }
