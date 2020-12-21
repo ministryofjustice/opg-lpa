@@ -14,5 +14,20 @@ Feature: Signup
         And I see "Account activated" in the title
         Then I log in as standard test user
         And I see "Your details" in the title
-        Then I submit About Me details
-        Then I see "There was a problem" in the page text
+        #When I submit About Me details with Blank title, month and wrong postcode in address + long names
+        #Then I see "There was a problem" in the page text
+        #When I submit About Me details with DOB in the future
+        # todo - the system response to this is not sufficiently informative
+        #Then I see "There was a problem" in the page text 
+        When I submit valid About Me details
+        Given I force fill out 
+          |  "name-title"| Mr|
+          |  "name-first"| Chris|
+          |  "name-last"| Smith|
+          |  "dob-date-day"| 1|
+          |  "dob-date-month"| 12 |
+          |  "dob-date-year"| 1982 |
+          |  "address-address1"| 12 Highway Close |
+          |  "address-postcode"| PL45 9JA |
+        Then I click "save"
+        Then I see "What type of LPA do you want to make?" in the page text
