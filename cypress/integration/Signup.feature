@@ -22,12 +22,12 @@ Feature: Signup
         When I submit valid About Me details
         Given I force fill out 
           |  #name-title| Mr|
-          |  "name-first"| Chris|
-          |  "name-last"| Smith|
-          |  "dob-date-day"| 1|
-          |  "dob-date-month"| 12 |
-          |  "dob-date-year"| 1982 |
-          |  "address-address1"| 12 Highway Close |
-          |  "address-postcode"| PL45 9JA |
+          |  name-first| Chris|
+          |  name-last| Smith|
+          |  dob-date-day| 1|
+          |  dob-date-month| 12 |
+          |  dob-date-year| 1982 |
+          |  address-address1| 12 Highway Close |
+          |  address-postcode| PL45 9JA |
         Then I click "save"
         Then I see "What type of LPA do you want to make?" in the page text
