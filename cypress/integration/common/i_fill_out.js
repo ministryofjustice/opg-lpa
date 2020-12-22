@@ -6,7 +6,7 @@ When("I fill out", (dataTable) => {
     rawTable.forEach(row => { 
                 cy.log("field is " + row[0])
                 if (row[0].valueOf() === new String("#name-title").valueOf()) { // we cannot currently label name-title with a data-cy tag
-                    cy.get(row[0]).type(row[1]);
+                    cy.get(row[0]).select(row[1]);
                 }
                 else {
                     cy.get("[data-cy=" + row[0] + "]").type(row[1]);
@@ -21,7 +21,7 @@ When("I force fill out", (dataTable) => {
     rawTable.forEach(row => { 
                 cy.log("field is " + row[0])
                 if (row[0].valueOf() === new String("#name-title").valueOf()) { // we cannot currently label name-title with a data-cy tag
-                    cy.get(row[0]).type(row[1], { force: true });
+                    cy.get(row[0]).select(row[1], { force: true });
                 }
                 else {
                     cy.get("[data-cy=" + row[0] + "]").type(row[1], { force: true });
