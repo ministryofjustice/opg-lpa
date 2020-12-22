@@ -5,6 +5,7 @@ When(`I type {string} into {string}`, (value, id) => {
 })
 
 When(`I type {string} into old style id {string}`, (value, id) => {
+    // this is for elements that we have been unable to tag with data-cy=
         cy.get(id).type(value);
 })
 
@@ -13,6 +14,7 @@ When(`I select {string} on {string}`, (value, id) => {
 })
 
 When(`I select {string} on old style id {string}`, (value, id) => {
+    // this is for elements that we have been unable to tag with data-cy=
         cy.get(id).select(value);
 })
 
