@@ -21,7 +21,7 @@ Feature: Signup
         #Then I see "There was a problem" in the page text 
         When I submit valid About Me details
         Given I force fill out 
-          |  "name-title"| Mr|
+          |  #name-title| Mr|
           |  "name-first"| Chris|
           |  "name-last"| Smith|
           |  "dob-date-day"| 1|
