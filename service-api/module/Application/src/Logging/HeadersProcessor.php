@@ -5,8 +5,7 @@ use Laminas\Log\Processor\ProcessorInterface;
 
 /**
  * Process any headers array in the $extra field, stripping sensitive
- * fields and moving any X-Trace-Id field up to the top-level of the logged
- * event as a trace_id property.
+ * fields.
  *
  * For example, if we make a call like:
  *
@@ -26,9 +25,9 @@ use Laminas\Log\Processor\ProcessorInterface;
  * Given that structure, this processor will output a log event like this:
  *
  *    [
- *        'trace_id' => 'foo',
  *        'extra' => [
  *            'headers' => [
+ *                'X-Trace-Id' => 'foo',
  *                'Content-Type' => 'application/json'
  *            ]
  *        ]
@@ -36,8 +35,7 @@ use Laminas\Log\Processor\ProcessorInterface;
  *
  * i.e.
  * - strip out 'cookie' header
- * - promote X-Trace-Id to the top level of the log event and change key to trace_id
- * - retain other headers as-is on the event
+ * - retain other headers as-is in $extra
  */
 class HeadersProcessor implements ProcessorInterface
 {
@@ -65,10 +63,6 @@ class HeadersProcessor implements ProcessorInterface
 
         foreach ($headers as $name => $value) {
             $lcaseName = strtolower($name);
-
-            if ($lcaseName === 'x-trace-id' && !is_null($value)) {
-                $logEvent['trace_id'] = $value;
-            }
 
             if (!(in_array($lcaseName, self::HEADERS_TO_STRIP))) {
                 $headersArray[$name] = $value;

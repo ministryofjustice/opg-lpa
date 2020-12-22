@@ -20,7 +20,6 @@ trait LoggerTrait
     public function setLogger(Logger $logger)
     {
         $this->logger = $logger;
-
         return $this;
     }
 

@@ -41,7 +41,6 @@ class HeadersProcessorTest extends MockeryTestCase
             'Upgrade-Insecure-Requests' => 1,
         ];
 
-        $this->assertEquals($fakeHeadersArray['X-Trace-Id'], $actual['trace_id']);
         $this->assertEquals($expectedHeaders, $actual['extra']['headers']);
     }
 }
