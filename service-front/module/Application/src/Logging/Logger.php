@@ -8,6 +8,7 @@ use Laminas\Log\Formatter\Json as JsonFormatter;
 
 use Application\Logging\MvcEventProcessor;
 use Application\Logging\HeadersProcessor;
+use Application\Logging\TraceIdProcessor;
 
 /**
  * class Logger
@@ -21,15 +22,13 @@ class Logger extends LaminasLogger
      */
     private static $instance = null;
 
-    /**
-     * Logger constructor
-     */
     public function __construct()
     {
         parent::__construct();
 
         $this->addProcessor(new MvcEventProcessor());
         $this->addProcessor(new HeadersProcessor());
+        $this->addProcessor(new TraceIdProcessor());
 
         $writer = new StreamWriter('php://stderr');
         $writer->setFormatter(new JsonFormatter());
@@ -38,25 +37,27 @@ class Logger extends LaminasLogger
     }
 
     /**
-     * Singleton provider for logger
-     * Required so logger can be loaded in all services including none
-     *
-     * @return self
+     * Override the log() method to allow us to append a trace_id field into
+     * the $extra argument.
      */
+    public function log($priority, $msg, $extra = [])
+    {
+        // HACK - get the X-Trace-Id direct from the $_SERVER global
+        // if it is set
+        if (isset($_SERVER[TraceIdProcessor::X_TRACE_ID_HEADER_NAME])) {
+            $extra[TraceIdProcessor::TRACE_ID_FIELD_NAME] =
+                $_SERVER[TraceIdProcessor::X_TRACE_ID_HEADER_NAME];
+        }
+
+        parent::log($priority, $msg, $extra);
+    }
+
     public static function getInstance()
     {
-        if (self::$instance === null) {
-            self::$instance = new self();
+        if (!self::$instance instanceof Logger) {
+            self::$instance = new Logger();
         }
 
         return self::$instance;
-    }
-
-    /**
-     * Destroy the logger
-     */
-    public static function destroy()
-    {
-        self::$instance = null;
     }
 }
