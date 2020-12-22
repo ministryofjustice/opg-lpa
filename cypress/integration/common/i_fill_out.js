@@ -1,16 +1,26 @@
-import { Then } from "cypress-cucumber-preprocessor/steps";
+import { When } from "cypress-cucumber-preprocessor/steps";
+
+When(`I type {string} into {string}`, (value, id) => {
+        cy.get("[data-cy=" + id + "]").type(value);
+})
+
+When(`I type {string} into old style id {string}`, (value, id) => {
+        cy.get(id).type(value);
+})
+
+When(`I select {string} on {string}`, (value, id) => {
+        cy.get("[data-cy=" + id + "]").select(value);
+})
+
+When(`I select {string} on old style id {string}`, (value, id) => {
+        cy.get(id).select(value);
+})
 
 When("I fill out", (dataTable) => {
     var rawTable = dataTable.rawTable;
 
     rawTable.forEach(row => { 
-                cy.log("field is " + row[0])
-                if (row[0].valueOf() === new String("#name-title").valueOf()) { // we cannot currently label name-title with a data-cy tag
-                    cy.get(row[0]).select(row[1]);
-                }
-                else {
-                    cy.get("[data-cy=" + row[0] + "]").type(row[1]);
-                }
+                    cy.get("[data-cy=" + row[0] + "]").clear().type(row[1]);
             });
 });
 
@@ -19,12 +29,6 @@ When("I force fill out", (dataTable) => {
     var rawTable = dataTable.rawTable;
 
     rawTable.forEach(row => { 
-                cy.log("field is " + row[0])
-                if (row[0].valueOf() === new String("#name-title").valueOf()) { // we cannot currently label name-title with a data-cy tag
-                    cy.get(row[0]).select(row[1], { force: true });
-                }
-                else {
-                    cy.get("[data-cy=" + row[0] + "]").type(row[1], { force: true });
-                }
+                    cy.get("[data-cy=" + row[0] + "]").clear({ force: true }).type(row[1], { force: true });
             });
 });
