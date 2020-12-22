@@ -3,7 +3,7 @@ import { When } from "cypress-cucumber-preprocessor/steps";
 var link = null;
 var activation_email_path = 'cypress/activation_emails/';
 
-Then(`I receive email`, () => {
+Then(`I receive email and can visit the link`, () => {
     var filename = activation_email_path + Cypress.env("userNumber") + '.activation';
     cy.log('Trying to open: ' + filename);
    
