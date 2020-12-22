@@ -14,20 +14,38 @@ Feature: Signup
         And I see "Account activated" in the title
         Then I log in as standard test user
         And I see "Your details" in the title
-        #When I submit About Me details with Blank title, month and wrong postcode in address + long names
-        #Then I see "There was a problem" in the page text
-        #When I submit About Me details with DOB in the future
+        When I force fill out  
+        # Blank title, month and wrong postcode in address + long names
+          | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+          | name-last  | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+          | dob-date-day | 1 |
+          | dob-date-year | 1982 |
+          | address-address1| 12 Highway Close |
+          | address-postcode| wrongpostcode |
+        And I click "save"
+        Then I see "There was a problem" in the page text
+        When I type "Mr" into old style id "#name-title" 
+        And I force fill out  
+          | name-first| Chris|
+          | name-last| Smith|
+        # DOB in the future
+          | dob-date-day| 1|
+          | dob-date-month| 1 |
+          | dob-date-year| 5500 |
+          | address-address1| 12 Highway Close |
+          | address-postcode| PL45 9JA |
+        And I click "save"
         # todo - the system response to this is not sufficiently informative
-        #Then I see "There was a problem" in the page text 
-        When I submit valid About Me details
-        Given I force fill out 
-          |  #name-title| Mr|
-          |  name-first| Chris|
-          |  name-last| Smith|
-          |  dob-date-day| 1|
-          |  dob-date-month| 12 |
-          |  dob-date-year| 1982 |
-          |  address-address1| 12 Highway Close |
-          |  address-postcode| PL45 9JA |
-        Then I click "save"
+        Then I see "There was a problem" in the page text 
+        # Valid About Me details
+        When I type "Mr" into old style id "#name-title" 
+        And I force fill out 
+          | name-first| Chris|
+          | name-last| Smith|
+          | dob-date-day| 1|
+          | dob-date-month| 12 |
+          | dob-date-year| 1982 |
+          | address-address1| 12 Highway Close |
+          | address-postcode| PL45 9JA |
+        And I click "save"
         Then I see "What type of LPA do you want to make?" in the page text

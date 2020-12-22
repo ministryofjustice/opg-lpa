@@ -23,7 +23,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
         if (isset($this->formElements['name-title'])) {
             $this->formElements['name-title']['attributes'] = [
                 // added data-cy tags, but for some reason only 1 of data-cy or data-select-options actually takes. needs fixing somehow
-                  'data-cy' => 'name-title',
+                //  'data-cy' => 'name-title',
                   'data-select-options' => json_encode([
                     '',
                     'Mr',
