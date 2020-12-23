@@ -21,7 +21,7 @@ function openEmailAndVisitLink(type){
         cy.log('Orig Content: ' + content);
         var contentStr = content;
 
-        cy.log('Activation email has arrived!');
+        cy.log(type + ' email has arrived!');
 
         cy.log('Content: ' + contentStr);
         console.log('Content: ');

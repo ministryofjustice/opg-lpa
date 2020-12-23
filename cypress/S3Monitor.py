@@ -77,12 +77,14 @@ def parseBody(bodyContent, subject, thetype, linkRegex):
 def parse_email(bodyContent, s3Key):
     activate_subject = 'Activate your lasting power of attorney account'
     reset_password_subject = 'Password reset request'
+    #reset_password_subject = 'Request to reset password'  # this is the title for password resets where the account doesn't exist yet. We may need to test this too ultimately
     if re.search(activate_subject, bodyContent) is not None:
         parseBody(bodyContent, activate_subject, 'activation', 'signup\/confirm')
     else:
         if re.search(reset_password_subject, bodyContent) is not None:
             parseBody(bodyContent, reset_password_subject, 'passwordreset', 'forgot-password\/reset')
         else:
+            # handle other emails. Ultimately, we should be testing these other emails as well
             print("Found an email that is not an Activate or Password reset. Don't know what to do with it")
             fileSuffix = s3Key[s3Key.rfind('/')+1:]
             filePath = f'{activation_emails_path}/unrecognized.{fileSuffix}'

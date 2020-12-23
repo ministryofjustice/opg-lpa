@@ -22,11 +22,8 @@ import './commands'
 // pull in cypress-axe
 import 'cypress-axe'
 
-var random = Math.floor(Math.random() * 999999999);
-
-var date = new Date();
-var userNumber = date.getTime() + "" + random;
-Cypress.env("userNumber", userNumber)
+// note that userNumber is set in start.sh, to ensure that it applies to all feature files run during this session of Cypress
+var userNumber = Cypress.env('userNumber')
 // line below, email currently needs to start with caspertests, to get written to the S3 bucket. That is configured in email.tf, and could be changed once casper tests are switched off
 Cypress.env("email","caspertests+" + userNumber + "@lpa.opg.service.justice.gov.uk") 
 Cypress.env("password", "Cypress" + userNumber)

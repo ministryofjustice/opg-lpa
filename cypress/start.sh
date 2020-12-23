@@ -5,6 +5,9 @@ echo The base domain is $BASE_DOMAIN
 echo Starting S3 Monitor
 python3 cypress/S3Monitor.py &
 
+# set userNumber env var here at the very start to ensure it applies to all feature files run by Cypress
+export CYPRESS_userNumber=`node cypress/userNumber.js`
+echo Cypress user number is $CYPRESS_userNumber
 
 echo Starting Cypress Tests
 
