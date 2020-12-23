@@ -45,7 +45,7 @@ trait ApplicationRepositoryTrait {
 
     protected function updateLpa(Lpa $lpa) : bool
     {
-        $logger = Logger::getInstance();
+        $logger = new Logger();
 
         $logger->info('Updating LPA', [
             'lpaid' => $lpa->id
