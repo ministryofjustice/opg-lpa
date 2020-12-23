@@ -16,3 +16,7 @@ Feature: Homepage
         Then I see "We've emailed a link" in the page text
         And I see standard test user in the page text
         And I receive password reset email and can visit the link
+        When I choose a new password
+        Then I am taken to the login page
+        And I see "Password successfully reset" in the page text
+        When I log in with new password
