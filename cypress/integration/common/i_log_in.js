@@ -17,5 +17,4 @@ function logIn(user, password){
     cy.get('[data-cy=login-email]').clear().type(user);
     cy.get('[data-cy=login-password]').clear().type(password);
     cy.get('[data-cy=login-submit-button]').click();
-    cy.log("Successfully logged in as " + user);
 }
