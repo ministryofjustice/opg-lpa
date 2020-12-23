@@ -10,7 +10,7 @@ Feature: Signup
         Given I sign up standard test user
         Then I see "Please check your email" in the title
         And I see standard test user in the page text
-        And I receive activation email and can visit the link
+        And I use activation email to visit the link
         And I see "Account activated" in the title
         And I visit link containing "sign in"
         Then I am taken to the login page
