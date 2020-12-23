@@ -13,9 +13,9 @@ Feature: Signup
         And I receive activation email and can visit the link
         And I see "Account activated" in the title
         And I visit link containing "sign in"
-        Then I am taken to "/login"
+        Then I am taken to the login page
 
-    @focus
+    #    @focus
     Scenario: About Me Details have Blank title, month and wrong postcode in address + long names, followed by DOB in future
         Given I log in as standard test user
         Then I see "Make a lasting power of attorney" in the page text
@@ -59,7 +59,7 @@ Feature: Signup
           | address-address1| 12 Highway Close |
           | address-postcode| PL45 9JA |
         And I click "save"
-        Then I am taken to "/lpa/type"
+        Then I am taken to the lpa type page
         And I see "What type of LPA do you want to make?" in the page text
         # logout test done here for consistency with original Casper tests
         # cypress seems t choke on being redirected off our site though
