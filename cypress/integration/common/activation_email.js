@@ -3,11 +3,11 @@ import { When } from "cypress-cucumber-preprocessor/steps";
 var link = null;
 var activation_email_path = 'cypress/activation_emails/';
 
-Then(`I receive activation email and can visit the link`, () => {
+Then(`I use activation email to visit the link`, () => {
     openEmailAndVisitLink('activation');
 })
 
-Then(`I receive password reset email and can visit the link`, () => {
+Then(`I use password reset email to visit the link`, () => {
     openEmailAndVisitLink('passwordreset');
 })
 
