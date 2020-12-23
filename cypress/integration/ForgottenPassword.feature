@@ -8,7 +8,7 @@ Feature: Homepage
   
     @focus
     Scenario: Visit home page links
-        Given I visit "/login"
+        Given I visit the login page
         When I visit link containing "Forgotten your password?"
         Then I am taken to "/forgot-password"
         And I see "Reset your password" in the title
@@ -20,3 +20,5 @@ Feature: Homepage
         Then I am taken to the login page
         And I see "Password successfully reset" in the page text
         When I log in with new password
+        # accept either type or dashboard page , so we're agnostic as to what has previously happened to this user
+        Then I am taken to the type or dashboard page

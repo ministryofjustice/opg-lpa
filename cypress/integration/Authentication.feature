@@ -4,5 +4,6 @@ Feature: Authentication
   
   @focus
   Scenario: Logging into Make an LPA with existing seeded user that has some LPAs
-    When I log in as seeded user
-    Then I see "Your LPAs" in the title
+        When I log in as seeded user
+        Then I am taken to the dashboard page
+        Then I see "Your LPAs" in the title
