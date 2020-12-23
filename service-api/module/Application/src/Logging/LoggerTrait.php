@@ -29,7 +29,7 @@ trait LoggerTrait
     protected function getLogger()
     {
         if (!$this->logger instanceof Logger) {
-            $this->logger = Logger::getInstance();
+            $this->logger = new Logger();
         }
 
         return $this->logger;

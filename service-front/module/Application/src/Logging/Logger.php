@@ -20,9 +20,7 @@ class Logger extends LaminasLogger
     /**
      * @var Logger
      */
-    private static $instance = null;
-
-    public function __construct()
+    public function __construct(StreamWriter $writer = null)
     {
         parent::__construct();
 
@@ -30,8 +28,10 @@ class Logger extends LaminasLogger
         $this->addProcessor(new HeadersProcessor());
         $this->addProcessor(new TraceIdProcessor());
 
-        $writer = new StreamWriter('php://stderr');
-        $writer->setFormatter(new JsonFormatter());
+        if (is_null($writer)) {
+            $writer = new StreamWriter('php://stderr');
+            $writer->setFormatter(new JsonFormatter());
+        }
 
         $this->addWriter($writer);
     }
@@ -50,14 +50,5 @@ class Logger extends LaminasLogger
         }
 
         parent::log($priority, $msg, $extra);
-    }
-
-    public static function getInstance()
-    {
-        if (!self::$instance instanceof Logger) {
-            self::$instance = new Logger();
-        }
-
-        return self::$instance;
     }
 }

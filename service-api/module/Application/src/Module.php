@@ -10,6 +10,7 @@ use Application\Model\DataAccess\Postgres;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
+use Application\Logging\LoggerTrait;
 use Alphagov\Notifications\Client as NotifyClient;
 use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
@@ -17,7 +18,6 @@ use Aws\Sqs\SqsClient;
 use Aws\Signature\SignatureV4;
 use Http\Adapter\Guzzle6\Client as Guzzle6Client;
 use Http\Client\HttpClient;
-use Application\Logging\Logger;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Storage\NonPersistent;
 use Laminas\Console\Request as ConsoleRequest;
@@ -28,6 +28,8 @@ use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
 class Module
 {
+    use LoggerTrait;
+
     const VERSION = '3.0.3-dev';
 
     public function onBootstrap(MvcEvent $e)
@@ -165,8 +167,7 @@ class Module
             $response = new ApiProblemResponse($problem);
             $e->setResponse($response);
 
-            $logger = Logger::getInstance();
-            $logger->err($exception->getMessage());
+            $this->getLogger()->err($exception->getMessage());
 
             return $response;
         }
