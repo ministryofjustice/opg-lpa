@@ -86,11 +86,14 @@ def parse_email(bodyContent, s3Key):
         else:
             # handle other emails. Ultimately, we should be testing these other emails as well
             print("Found an email that is not an Activate or Password reset. Don't know what to do with it")
-            fileSuffix = s3Key[s3Key.rfind('/')+1:]
-            filePath = f'{activation_emails_path}/unrecognized.{fileSuffix}'
-            emailFile = open(filePath,'w')
-            emailFile.write(bodyContent)
-            emailFile.close()
+            write_unrecognized_file(s3Key,bodyContent,'unrecognized')
+
+def write_unrecognized_file(s3Key,bodyContent, filePrefix):
+        fileSuffix = s3Key[s3Key.rfind('/')+1:]
+        filePath = f'{activation_emails_path}/{filePrefix}.{fileSuffix}'
+        emailFile = open(filePath,'w')
+        emailFile.write(bodyContent)
+        emailFile.close()
 
 def process_bucket_object(s3Client,s3Key):
         result = s3Client.get_object(Bucket=mailbox_bucket,Key=s3Key)
