@@ -26,7 +26,10 @@ When("I fill out", (dataTable) => {
             });
 });
 
-// this uses force, to forcibly fill out elements even if they're meant to be hidden
+// todo : this uses force, to forcibly fill out elements even if they're meant to be hidden
+// the casper tests just bludgeoned their way through not checking whether things were hidden
+// cypress is more careful. We should ultimately revisit this and ensure we aren't hiding 
+// things we shouldn't
 When("I force fill out", (dataTable) => {
     var rawTable = dataTable.rawTable;
 
