@@ -43,6 +43,16 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  region = "eu-west-1"
+  alias  = "legacy-lpa"
+  assume_role {
+    role_arn     = "arn:aws:iam::550790013665:role/${var.default_role}"
+    session_name = "terraform-session"
+  }
+}
+
+
 provider "pagerduty" {
   token = var.pagerduty_token
 }
