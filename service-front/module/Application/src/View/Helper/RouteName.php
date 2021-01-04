@@ -2,41 +2,29 @@
 
 namespace Application\View\Helper;
 
-use Application\Model\Service\Session\SessionManager;
-use Laminas\Router\RouteMatch;
 use Laminas\View\Helper\AbstractHelper;
 
 class RouteName extends AbstractHelper
 {
     /**
-     * @var RouteMatch
+     * @var array
      */
-    private $routeMatch;
+    private $routes;
 
     /**
-     * @var SessionManager
+     * @param string|null $currentRoute
+     * @param string|null $previousRoute
      */
-    private $session;
-
-    /**
-     * @param SessionManager $session
-     * @param RouteMatch|null $routeMatch
-     */
-    public function __construct(SessionManager $session, ?RouteMatch $routeMatch)
+    public function __construct(?string $currentRoute, ?string $previousRoute)
     {
-        $this->session = $session;
-        $this->routeMatch = $routeMatch;
+        $this->routes = [
+            'current'   => $currentRoute,
+            'previous'  => $previousRoute
+        ];
     }
 
     public function __invoke()
     {
-        $routeName = [];
-        $routeName['current'] = ($this->routeMatch) ?
-            $this->routeMatch->getMatchedRouteName() :
-            '';
-
-        $routeName['previous'] = $this->session->getLastMatchedRouteName();
-
-        return $routeName;
+        return $this->routes;
     }
 }

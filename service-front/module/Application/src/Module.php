@@ -10,8 +10,6 @@ use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
 use Aws\DynamoDb\DynamoDbClient;
-use Opg\Lpa\Logger\LoggerTrait;
-use TheIconic\Tracking\GoogleAnalytics\Analytics;
 use Laminas\ModuleManager\Feature\FormElementProviderInterface;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
@@ -20,6 +18,7 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
+use Opg\Lpa\Logger\LoggerTrait;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
 use Twig\TwigFunction;
@@ -154,6 +153,26 @@ class Module implements FormElementProviderInterface
                 // Generate the session container for a user's personal details
                 'UserDetailsSession' => function () {
                     return new Container('UserDetails');
+                },
+
+                // Creates new container to store additional session information
+                'PersistentSessionDetails' => function (ServiceLocatorInterface $sm) {
+                    $sessionDetails = new Container('SessionDetails');
+
+                    // breadcrumb so we can determine user's last visited route.
+                    $sessionDetails->currentRoute = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getMatchedRouteName();
+
+                    if (!isset($this->sessionDetails->previousRoute)) {
+                        $sessionDetails->previousRoute = $sessionDetails->currentRoute;
+                    }
+
+                    if ($sessionDetails->routeStore !== $sessionDetails->previousRoute) {
+                        $sessionDetails->previousRoute = $sessionDetails->routeStore;
+                    }
+
+                    $sessionDetails->routeStore = $sessionDetails->currentRoute;
+
+                    return $sessionDetails;
                 },
 
                 // PSR-7 HTTP Client
