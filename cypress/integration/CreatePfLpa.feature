@@ -4,9 +4,7 @@ Feature: Create an LPA
   
   @focus
     Scenario: Create LPA
-        # TODO the following will change to logging in with signed up standard user
+        # TODO the following may change to logging in with signed up standard user
     Given I log in as seeded user
-    And I am taken to "/user/dashboard"
-    And I can find "Start now"
-    #When I click button marked "Start now"
-    #Then I am taken to "/lpa/type"
+    Then I am taken to the type or dashboard page
+    When I click button marked "Start now"

@@ -29,6 +29,8 @@ Then(`I am taken to the type or dashboard page`, () => {
     // it specifies the 2 acceptable results of logging in
     // we use this where a user may or may not be newly signed up and 
     // for this particular test we don't mind which
+    //
+    cy.get("[data-cy=accordion]");  // ensure accordion is on this page
 
     cy.url().then(urlStr => {expect(urlStr).to.be.oneOf([dashboard, lpaType])});
 })
