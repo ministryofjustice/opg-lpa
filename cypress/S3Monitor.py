@@ -38,11 +38,10 @@ def assume_role_and_get_client():
 # Extract the plus part from emails of the form:
 # basename+pluspart@example.com
 def getPlusPartFromEmailAddress(email):
-    plusPos = email.find('+')
-    atPos = email.find('@')
-    userIdLength = atPos - plusPos - 1
-    userId = email[plusPos + 1:atPos]
-    return userId
+    match = re.search("[^\+]\+(.+)@", email)
+    if match is None:
+        return ""
+    return match.group(1)
 
 def parseBody(bodyContent, subject, thetype, linkRegex):
     regex = 'https:\/\/\S+' + linkRegex + '\/[a-zA-Z0-9]+'
