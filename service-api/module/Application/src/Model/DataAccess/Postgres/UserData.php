@@ -3,13 +3,17 @@ namespace Application\Model\DataAccess\Postgres;
 
 use PDOException;
 use DateTime;
+use Laminas\Db\Sql\Expression as SqlExpression;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\IsNotNull;
+use Laminas\Db\Sql\Predicate\Like;
+use Laminas\Db\Sql\Predicate\PredicateSet;
 use Opg\Lpa\DataModel\User\User as ProfileUserModel;
 use Application\Model\DataAccess\Repository\User as UserRepository;
+use Application\Model\DataAccess\Postgres\ApplicationData as ApplicationData;
 
 class UserData extends AbstractBase implements UserRepository\UserRepositoryInterface {
 
@@ -103,6 +107,65 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         }
 
         return new UserModel($user);
+    }
+
+    /**
+     * Returns zero or more users by case-insensitive and partial
+     * matching
+     *
+     * @param $query
+     * @param $options - array of optional parameters, including
+     * 'offset' (int, default 0) and 'limit' (int, default 10)
+     * @return iterable
+     */
+    public function matchUsers(string $query, array $options = []) : iterable
+    {
+        $offset = 0;
+        $limit = 10;
+
+        if (isset($options['offset'])) {
+            $offset = intval($options['offset']);
+        }
+
+        if (isset($options['limit'])) {
+            $limit = intval($options['limit']);
+        }
+
+        $sql = new Sql($this->getZendDb());
+
+        // count applications by user
+        $subselect = $sql->select(['a' => ApplicationData::APPLICATIONS_TABLE])
+                         ->columns(['user', 'numberOfLpas' => new SqlExpression('COUNT(*)')])
+                         ->group(['user']);
+
+        // LIKE statements for WHERE clause
+        $likes = new PredicateSet();
+        $likeString = sprintf('%%%s%%', $query);
+        $likes->orPredicate(new Like('u.identity', $likeString));
+
+        $lcaseLikeString = strtolower($likeString);
+        if ($lcaseLikeString !== $likesString) {
+            $likes->orPredicate(new Like('u.identity', $lcaseLikeString));
+        }
+
+        // main query
+        // WARNING join type is "FULL" here as using Select::JOIN_OUTER produces
+        // invalid SQL; but this potentially locks the code to Postgres
+        $select = $sql->select(['u' => self::USERS_TABLE])
+                      ->join(['a' => $subselect],
+                              'u.id = a.user',
+                              ['numberOfLpas'],
+                              'FULL')
+                      ->where($likes)
+                      ->order('identity')
+                      ->offset($offset)
+                      ->limit($limit);
+
+        $users = $sql->prepareStatementForSqlObject($select)->execute();
+
+        foreach ($users as $user) {
+            yield new UserModel($user);
+        }
     }
 
     /**
