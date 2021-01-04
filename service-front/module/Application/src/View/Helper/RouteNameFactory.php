@@ -2,10 +2,7 @@
 
 namespace Application\View\Helper;
 
-use Application\Model\Service\Session\SessionManager;
 use Interop\Container\ContainerInterface;
-use Laminas\Mvc\Application;
-use Laminas\Router\RouteMatch;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class RouteNameFactory implements FactoryInterface
@@ -18,15 +15,10 @@ class RouteNameFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var Application $application */
-        $application = $container->get('Application');
 
-        /** @var SessionManager $session */
-        $session = $container->get('SessionManager');
+        /** @var ContainerInterface $sessionDetails */
+        $sessionDetails = $container->get('PersistentSessionDetails');
 
-        /** @var RouteMatch $routeMatch */
-        $routeMatch = $application->getMvcEvent()->getRouteMatch();
-
-        return new RouteName($session, $routeMatch);
+        return new RouteName($sessionDetails->currentRoute, $sessionDetails->previousRoute);
     }
 }

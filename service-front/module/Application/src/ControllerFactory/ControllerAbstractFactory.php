@@ -133,12 +133,12 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         $controllerName = $this->getControllerName($requestedName);
 
         $formElementManager = $container->get('FormElementManager');
+        $sessionDetails = $container->get('PersistentSessionDetails');
         $sessionManager = $container->get('SessionManager');
         $authenticationService = $container->get('AuthenticationService');
         $config = $container->get('Config');
 
-        $currentRoute = $container->get('Application')->getMvcEvent()->getRouteMatch();
-        $sessionManager->setLastMatchedRouteName($currentRoute->getMatchedRouteName());
+        $route = $container->get('Application')->getMvcEvent()->getRouteMatch();
 
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
             $userDetailsSession = $container->get('UserDetailsSession');
@@ -147,7 +147,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
 
             if (is_subclass_of($controllerName, AbstractLpaController::class)) {
                 //  Get the LPA ID from the route params
-                $lpaId = $currentRoute->getParam('lpa-id');
+                $lpaId = $route->getParam('lpa-id');
 
                 if (!is_numeric($lpaId)) {
                     throw new RuntimeException('Invalid LPA ID passed');
