@@ -144,7 +144,7 @@ dc-unit-tests:
 .PHONY: functional-local
 functional-local:
 	docker build -f ./tests/Dockerfile  -t casperjs:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhos:7002" --network="host" --rm casperjs:latest ./start.sh 'tests/'
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "BASE_DOMAIN=localhost:7002" --network="host" --rm casperjs:latest ./start.sh 'tests/'
 
 .PHONY: integration-api-local
 integration-api-local:
@@ -154,7 +154,7 @@ integration-api-local:
 .PHONY: cypress-local
 cypress-local:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint ./cypress/start.sh --network="host" --rm cypress:latest run --spec cypress/integration/Signup.feature
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_TAGS=@runAfterSignup" -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint ./cypress/start.sh --network="host" --rm cypress:latest run #-e TAGS 'not @runAfterSignup' --spec cypress/integration/Signup.feature
 
 .PHONY: cypress-gui-local
 UNAME_S := $(shell uname -s)
