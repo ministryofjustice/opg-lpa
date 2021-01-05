@@ -19,6 +19,7 @@ use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
 use Opg\Lpa\Logger\LoggerTrait;
+use TheIconic\Tracking\GoogleAnalytics\Analytics;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
 use Twig\TwigFunction;
