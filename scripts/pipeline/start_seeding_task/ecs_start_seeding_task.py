@@ -3,6 +3,7 @@ import boto3
 import argparse
 import json
 import os
+import sys
 
 
 class ECSMonitor:
@@ -57,8 +58,8 @@ class ECSMonitor:
             self.seeding_security_group = parameters['seeding_security_group_id']
 
     def get_seeding_task_definition(self):
-      # get the latest task definition for seeding
-      # returns task defintion arn
+        # get the latest task definition for seeding
+        # returns task defintion arn
         self.seeding_task_definition = self.aws_ecs_client.list_task_definitions(
             familyPrefix='{}-seeding'.format(self.environment),
             status='ACTIVE',
@@ -87,8 +88,8 @@ class ECSMonitor:
         self.aws_iam_session = session
 
     def get_subnet_id(self):
-      # get ids for private subnets
-      # returns a list of private subnet ids
+        # get ids for private subnets
+        # returns a list of private subnet ids
         subnets = self.aws_ec2_client.describe_subnets(
             Filters=[
                 {
@@ -104,8 +105,8 @@ class ECSMonitor:
             self.aws_private_subnets.append(subnet['SubnetId'])
 
     def run_seeding_task(self):
-      # run a seeding task in ecs with a network configuration
-      # sets a task arn for the seeding task started
+        # run a seeding task in ecs with a network configuration
+        # sets a task arn for the seeding task started
         print("starting seeding task...")
         running_tasks = self.aws_ecs_client.run_task(
             cluster=self.aws_ecs_cluster,
@@ -127,17 +128,24 @@ class ECSMonitor:
         print(self.seeding_task)
 
     def check_task_status(self):
-      # returns the status of the seeding task
-        tasks = self.aws_ecs_client.describe_tasks(
+        # returns the status of the seeding task
+        return self._get_task()['lastStatus']
+
+    def get_task_exit_code(self):
+        # returns the exit code of the task
+        return self._get_task()['containers'][0]['exitCode']
+
+    def _get_task(self):
+        # returns the status of the seeding task
+        return self.aws_ecs_client.describe_tasks(
             cluster=self.aws_ecs_cluster,
             tasks=[
                 self.seeding_task,
             ]
-        )
-        return tasks['tasks'][0]['lastStatus']
+        )['tasks'][0]
 
     def wait_for_task_to_start(self):
-      # wait for the seeding task to start
+        # wait for the seeding task to start
         print("waiting for seeding task to start...")
         waiter = self.aws_ecs_client.get_waiter('tasks_running')
         waiter.wait(
@@ -152,8 +160,8 @@ class ECSMonitor:
         )
 
     def get_logs(self):
-      # retrieve logstreeam for the seeding task started
-      # formats and prints simple log output
+        # retrieve logstreeam for the seeding task started
+        # formats and prints simple log output
         log_events = self.aws_logs_client.get_log_events(
             logGroupName='online-lpa',
             logStreamName=self.logStreamName,
@@ -166,9 +174,9 @@ class ECSMonitor:
         self.nextForwardToken = log_events['nextForwardToken']
 
     def print_task_logs(self):
-      # lifecycle for getting log streams
-      # get logs while task is running
-      # after task finishes, print remaining logs
+        # lifecycle for getting log streams
+        # get logs while task is running
+        # after task finishes, print remaining logs
         self.logStreamName = '{}.seeding.online-lpa/app/{}'.format(self.environment,
                                                                    self.seeding_task.rsplit('/', 1)[-1])
         print("Streaming logs for logstream: ".format(self.logStreamName))
@@ -184,7 +192,7 @@ class ECSMonitor:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Start the seeding task for the lpa refunds caseworker database")
+        description="Start the seeding task for the Make an LPA database")
 
     parser.add_argument("config_file_path", nargs='?', default="/tmp/environment_pipeline_tasks_config.json", type=str,
                         help="Path to config file produced by terraform")
@@ -196,6 +204,11 @@ def main():
     work.wait_for_task_to_start()
     work.print_task_logs()
 
+    # at this point, the task has finished: see print_task_logs() where
+    # we check for this
+
+    # get the task exit code and use this as the exit code for this script
+    return work.get_task_exit_code()
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
