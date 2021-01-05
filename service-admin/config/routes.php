@@ -39,4 +39,5 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->route('/system-message', App\Handler\SystemMessageHandler::class, ['GET', 'POST'], 'system.message');
     $app->route('/feedback', App\Handler\FeedbackHandler::class, ['GET', 'POST'], 'feedback');
     $app->route('/user-search', App\Handler\UserSearchHandler::class, ['GET', 'POST'], 'user.search');
+    $app->route('/user-find', App\Handler\UserFindHandler::class, ['GET', 'POST'], 'user.find');
 };
