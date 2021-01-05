@@ -15,12 +15,17 @@ API_OPTS="--host=${OPG_LPA_POSTGRES_HOSTNAME} --username=${OPG_LPA_POSTGRES_USER
 
 check_db_exists()
 {
-if [ "$( PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} ${OPG_LPA_POSTGRES_NAME} -tAc "SELECT 1 FROM pg_database WHERE datname='${OPG_LPA_POSTGRES_NAME}'" )" = '1' ]
-then
-    echo "LPA Database exists. Can continue"
-else
-    echo "LPA Database does not exist. Seeding will fail"
-fi
+    ret_val=0
+
+    if [ "$( PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} ${OPG_LPA_POSTGRES_NAME} -tAc "SELECT 1 FROM pg_database WHERE datname='${OPG_LPA_POSTGRES_NAME}'" )" = '1' ]
+    then
+        echo "LPA Database exists. Can continue"
+    else
+        echo "LPA Database does not exist. Seeding will fail"
+        ret_val=1
+    fi
+
+    return $ret_val
 }
 
 # returns 0 if tables are ready, 1 otherwise
@@ -63,8 +68,8 @@ check_tables_exist()
 }
 
 if [ "$OPG_LPA_STACK_ENVIRONMENT" == "production" ]; then
-  echo "These scripts must not be run on production."
-  exit 0
+    echo "These scripts must not be run on production."
+    exit 1
 fi
 
 echo "Waiting for postgres to be ready"
@@ -72,6 +77,10 @@ timeout 90s sh -c 'pgready=1; until [ ${pgready} -eq 0 ]; do pg_isready -h ${OPG
 
 echo "Checking database exists"
 check_db_exists
+if [ "$?" -ne "0" ] ; then
+    echo "ERROR: database does not exist"
+    exit 1
+fi
 
 echo "Waiting for tables to be ready"
 check_tables_exist
@@ -81,9 +90,9 @@ if [ "$?" -ne "0" ] ; then
 fi
 
 echo "Seeding data"
- PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
-   ${OPG_LPA_POSTGRES_NAME} \
-   -f clear_tables.sql
+PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
+  ${OPG_LPA_POSTGRES_NAME} \
+  -f clear_tables.sql
 
 PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
   ${OPG_LPA_POSTGRES_NAME} \
