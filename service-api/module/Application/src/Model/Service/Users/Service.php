@@ -2,6 +2,8 @@
 
 namespace Application\Model\Service\Users;
 
+use ArrayObject;
+
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\DateTime;
 use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
@@ -244,6 +246,24 @@ class Service extends AbstractService
         }
 
         return $user->toArray();
+    }
+
+    /**
+     * @param string $query to match against username
+     * @param array $options See UserData.matchUsers()
+     * @return array of arrays (each subarray derived from a UserModel instance)
+     */
+    public function matchUsers(string $query, array $options = [])
+    {
+        $users = new ArrayObject();
+
+        $results = $this->getUserRepository()->matchUsers($query, $options);
+
+        foreach ($results as $user) {
+            $users->append($user->toArray());
+        }
+
+        return $users;
     }
 
     /**

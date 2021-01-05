@@ -35,34 +35,34 @@ class UserSearchHandler extends AbstractHandler
      */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
-        $form = new UserSearch([
-            'csrf' => $this->getTokenData('csrf'),
-        ]);
+        $form = new UserSearch();
 
         $user = null;
+        $email = null;
 
-        if ($request->getMethod() == 'POST') {
-            $form->setData($request->getParsedBody());
+        if ($request->getMethod() == 'GET') {
+            $params = $request->getQueryParams();
 
-            if ($form->isValid()) {
-                //  Get the data from the form
+            if (isset($params['email'])) {
+                $email = $params['email'];
+                $form->setData(['email' => $email]);
+            }
+        }
 
-                $email = $form->getInputFilter()->get('email')->getValue();
+        if (!is_null($email)) {
+            $result = $this->userService->search($email);
 
-                $result = $this->userService->search($email);
+            if ($result === false) {
+                // Set error message
+                $messages = array_merge($form->getMessages(), [
+                    'email' => [
+                        'No user found for email address'
+                    ]
+                ]);
 
-                if ($result === false) {
-                    // Set error message
-                    $messages = array_merge($form->getMessages(), [
-                        'email' => [
-                            'No user found for email address'
-                        ]
-                    ]);
-
-                    $form->setMessages($messages);
-                } else {
-                    $user = $result;
-                }
+                $form->setMessages($messages);
+            } else {
+                $user = $result;
             }
         }
 

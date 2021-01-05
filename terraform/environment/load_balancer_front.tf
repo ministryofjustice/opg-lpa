@@ -94,14 +94,13 @@ resource "aws_security_group_rule" "front_loadbalancer_egress" {
 }
 
 resource "aws_lb_listener_certificate" "front_loadbalancer_live_service_certificate" {
-  count           = terraform.workspace == "production" ? 1 : 0
   listener_arn    = aws_lb_listener.front_loadbalancer.arn
-  certificate_arn = data.aws_acm_certificate.certificate_live_service[count.index].arn
+  certificate_arn = data.aws_acm_certificate.public_facing_certificate.arn
 }
 
 
 //------------------------------------------------
-// HTTP Redirect
+// HTTP Redirect to HTTPS
 
 resource "aws_lb_listener" "front_loadbalancer_http_redirect" {
   load_balancer_arn = aws_lb.front.arn
