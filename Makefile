@@ -155,9 +155,6 @@ integration-api-local:
 cypress-local:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
 	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint ./cypress/start.sh --network="host" --rm cypress:latest run
-# attempt to use cypress-tags under development. does not currently work , uncomment to make work
-#	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint ./node_modules/.bin/cypress-tags --network="host" --rm cypress:latest run -e TAGS='@runaftersignup' #'not @runAfterSignup' 
-#	uncomment below to bring up a bash on docker container
 #	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint bash --network="host" --rm cypress:latest 
 
 .PHONY: cypress-gui-local
