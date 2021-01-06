@@ -93,16 +93,16 @@ def parse_email(bodyContent, s3Key):
     write_unrecognized_file(s3Key, bodyContent, 'unrecognized')
 
 def write_unrecognized_file(s3Key, bodyContent, filePrefix):
-        fileSuffix = s3Key[s3Key.rfind('/')+1:]
-        filePath = f'{activation_emails_path}/{filePrefix}.{fileSuffix}'
-        emailFile = open(filePath,'w')
-        emailFile.write(bodyContent)
-        emailFile.close()
+    fileSuffix = s3Key[s3Key.rfind('/')+1:]
+    filePath = f'{activation_emails_path}/{filePrefix}.{fileSuffix}'
+    emailFile = open(filePath,'w')
+    emailFile.write(bodyContent)
+    emailFile.close()
 
 def process_bucket_object(s3Client, s3Key):
-        result = s3Client.get_object(Bucket=mailbox_bucket, Key=s3Key)
-        bodyContent = quopri.decodestring(result["Body"].read()).decode('latin-1')
-        parse_email(bodyContent, s3Key)
+    result = s3Client.get_object(Bucket=mailbox_bucket, Key=s3Key)
+    bodyContent = quopri.decodestring(result["Body"].read()).decode('latin-1')
+    parse_email(bodyContent, s3Key)
 
 def monitor_bucket(s3Client):
     seenkeys = []
