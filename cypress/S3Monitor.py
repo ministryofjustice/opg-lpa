@@ -102,14 +102,12 @@ def write_unrecognized_file(s3Key, bodyContent, filePrefix):
 def process_bucket_object(s3Client, s3Key):
         result = s3Client.get_object(Bucket=mailbox_bucket, Key=s3Key)
         bodyContent = quopri.decodestring(result["Body"].read()).decode('latin-1')
-        #print(f'Parsing {s3Key}')
         parse_email(bodyContent, s3Key)
 
 def monitor_bucket(s3Client):
     seenkeys = []
 
     while True:
-        #print('Checking S3')
         bucketContents = s3Client.list_objects(Bucket=mailbox_bucket)
         if 'Contents' in bucketContents:  # handle bucket being empty
             for s3obj in s3Client.list_objects(Bucket=mailbox_bucket)['Contents']:
@@ -117,8 +115,6 @@ def monitor_bucket(s3Client):
                 if not s3Key in seenkeys:
                     process_bucket_object(s3Client, s3Key)
                     seenkeys.append(s3Key)
-                #else:
-                #    print(f'Already seen {s3Key}')
         time.sleep(5)
 
 
