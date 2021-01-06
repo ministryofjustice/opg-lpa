@@ -64,10 +64,8 @@ class ControllerAbstractFactoryTest extends MockeryTestCase
         $this->container->shouldReceive('get')->withArgs(['PersistentSessionDetails'])
             ->andReturn(Mockery::mock(ContainerInterface::class))->once();
 
-        $session = Mockery::mock(SessionManager::class);
-        $session->shouldReceive('setLastMatchedRouteName');
         $this->container->shouldReceive('get')->withArgs(['SessionManager'])
-            ->andReturn($session)->once();
+            ->andReturn(Mockery::mock(SessionManager::class))->once();
 
         $this->container->shouldReceive('get')->withArgs(['FormElementManager'])
             ->andReturn(Mockery::mock(AbstractPluginManager::class))->once();
