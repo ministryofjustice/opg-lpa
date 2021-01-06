@@ -19,6 +19,7 @@ RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-d
 COPY service-admin /app
 COPY --from=composer /app/vendor /app/vendor
 COPY service-admin/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY service-admin/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 
 WORKDIR /app
 
