@@ -133,83 +133,83 @@ data "aws_ecr_repository" "lpa_admin_app" {
 // admin ECS Service Task Container level config
 
 locals {
-  admin_web = <<EOF
-  {
-    "cpu": 1,
-    "essential": true,
-    "image": "${data.aws_ecr_repository.lpa_admin_web.repository_url}:${var.container_version}",
-    "mountPoints": [],
-    "name": "web",
-    "portMappings": [
+  admin_web = jsonencode(
+    {
+      "cpu" : 1,
+      "essential" : true,
+      "image" : "${data.aws_ecr_repository.lpa_admin_web.repository_url}:${var.container_version}",
+      "mountPoints" : [],
+      "name" : "web",
+      "portMappings" : [
         {
-            "containerPort": 80,
-            "hostPort": 80,
-            "protocol": "tcp"
+          "containerPort" : 80,
+          "hostPort" : 80,
+          "protocol" : "tcp"
         }
-    ],
-    "volumesFrom": [],
-    "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-            "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
-            "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "${local.environment}.admin-web.online-lpa"
+      ],
+      "volumesFrom" : [],
+      "logConfiguration" : {
+        "logDriver" : "awslogs",
+        "options" : {
+          "awslogs-group" : data.aws_cloudwatch_log_group.online-lpa.name,
+          "awslogs-region" : "eu-west-1",
+          "awslogs-stream-prefix" : "${local.environment}.admin-web.online-lpa"
         }
-    },
-    "environment": [
-    {"name": "APP_HOST", "value": "127.0.0.1"},
-    {"name": "APP_PORT", "value": "9000"},
-    {"name": "TIMEOUT", "value": "60"},
-    {"name": "CONTAINER_VERSION", "value": "${var.container_version}"}
-    ]
-  }
-  EOF
-
-  admin_app = <<EOF
-  {
-    "cpu": 1,
-    "essential": true,
-    "image": "${data.aws_ecr_repository.lpa_admin_app.repository_url}:${var.container_version}",
-    "mountPoints": [],
-    "name": "app",
-    "portMappings": [
-        {
-            "containerPort": 9000,
-            "hostPort": 9000,
-            "protocol": "tcp"
-        }
-    ],
-    "volumesFrom": [],
-    "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-            "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
-            "awslogs-region": "eu-west-1",
-            "awslogs-stream-prefix": "${local.environment}.admin-app.online-lpa"
-        }
-    },
-    "secrets": [
-      { "name": "OPG_LPA_ADMIN_JWT_SECRET", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_jwt_secret.name}" },
-      { "name": "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
-      { "name": "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom": "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
-    ],
-    "environment": [
-      {"name": "OPG_NGINX_SERVER_NAMES", "value": "${local.dns_namespace_env}${local.admin_dns} localhost 127.0.0.1"},
-      {"name": "OPG_LPA_STACK_NAME", "value": "${local.environment}"},
-      {"name": "OPG_DOCKER_TAG", "value": "${var.container_version}"},
-      {"name": "OPG_LPA_STACK_ENVIRONMENT", "value": "${local.account_name}"},
-      {"name": "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value": "/var/log/app/application.log"},
-      {"name": "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value": ""},
-      {"name": "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value": "${aws_dynamodb_table.lpa-locks.name}"},
-      {"name": "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", "value": "${aws_dynamodb_table.lpa-sessions.name}"},
-      {"name": "OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE", "value": "${aws_dynamodb_table.lpa-properties.name}"},
-      {"name": "OPG_PHP_POOL_CHILDREN_MAX", "value": "20"},
-      {"name": "OPG_PHP_POOL_REQUESTS_MAX", "value": "500"},
-      {"name": "OPG_NGINX_SSL_HSTS_AGE", "value": "31536000"},
-      {"name": "OPG_NGINX_SSL_FORCE_REDIRECT", "value": "TRUE"},
-      {"name": "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value": "redisback"},
-      {"name": "OPG_LPA_ENDPOINTS_API", "value": "http://${local.api_service_fqdn}"}
+      },
+      "environment" : [
+        { "name" : "APP_HOST", "value" : "127.0.0.1" },
+        { "name" : "APP_PORT", "value" : "9000" },
+        { "name" : "TIMEOUT", "value" : "60" },
+        { "name" : "CONTAINER_VERSION", "value" : var.container_version }
       ]
     }
-  EOF
+  )
+
+  admin_app = jsonencode(
+    {
+      "cpu" : 1,
+      "essential" : true,
+      "image" : "${data.aws_ecr_repository.lpa_admin_app.repository_url}:${var.container_version}",
+      "mountPoints" : [],
+      "name" : "app",
+      "portMappings" : [
+        {
+          "containerPort" : 9000,
+          "hostPort" : 9000,
+          "protocol" : "tcp"
+        }
+      ],
+      "volumesFrom" : [],
+      "logConfiguration" : {
+        "logDriver" : "awslogs",
+        "options" : {
+          "awslogs-group" : data.aws_cloudwatch_log_group.online-lpa.name,
+          "awslogs-region" : "eu-west-1",
+          "awslogs-stream-prefix" : "${local.environment}.admin-app.online-lpa"
+        }
+      },
+      "secrets" : [
+        { "name" : "OPG_LPA_ADMIN_JWT_SECRET", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_jwt_secret.name}" },
+        { "name" : "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
+        { "name" : "OPG_LPA_COMMON_ADMIN_ACCOUNTS", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
+      ],
+      "environment" : [
+        { "name" : "OPG_NGINX_SERVER_NAMES", "value" : "${local.dns_namespace_env}${local.admin_dns} localhost 127.0.0.1" },
+        { "name" : "OPG_LPA_STACK_NAME", "value" : local.environment },
+        { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
+        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : local.account_name },
+        { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
+        { "name" : "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value" : "" },
+        { "name" : "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-locks.name },
+        { "name" : "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-sessions.name },
+        { "name" : "OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-properties.name },
+        { "name" : "OPG_PHP_POOL_CHILDREN_MAX", "value" : "20" },
+        { "name" : "OPG_PHP_POOL_REQUESTS_MAX", "value" : "500" },
+        { "name" : "OPG_NGINX_SSL_HSTS_AGE", "value" : "31536000" },
+        { "name" : "OPG_NGINX_SSL_FORCE_REDIRECT", "value" : "TRUE" },
+        { "name" : "OPG_LPA_COMMON_RESQUE_REDIS_HOST", "value" : "redisback" },
+        { "name" : "OPG_LPA_ENDPOINTS_API", "value" : "http://${local.api_service_fqdn}" }
+      ]
+    }
+  )
 }
