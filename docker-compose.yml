@@ -120,9 +120,11 @@ services:
 
   front-ssl:
     container_name: lpa-front-ssl
-    image: fsouza/docker-ssl-proxy
     depends_on:
       - front-web
+    build:
+      context: ./
+      dockerfile: local-ssl/docker/Dockerfile
     ports:
       - 7002:443
     volumes:
@@ -282,9 +284,11 @@ services:
 
   admin-ssl:
     container_name: lpa-admin-ssl
-    image: fsouza/docker-ssl-proxy
     depends_on:
       - admin-web
+    build:
+      context: ./
+      dockerfile: local-ssl/docker/Dockerfile
     ports:
       - 7003:443
     volumes:
