@@ -15,7 +15,7 @@ Feature: Signup
         And I visit link containing "sign in"
         Then I am taken to the login page
 
-    #    @focus
+    @focus
     Scenario: About Me Details have Blank title, month and wrong postcode in address + long names, followed by DOB in future
         Given I log in as standard test user
         Then I see "Make a lasting power of attorney" in the page text
