@@ -193,16 +193,17 @@ While it would be nice to inject the logger into classes via Laminas' dependency
 
 Several key parts of the code use our custom `LoggerTrait`:
 
-* service-front
+* front-app
   * Most controllers via `AbstractBaseController`
   * Other controllers which don't inherit from `AbstractBaseController`
   * Most services via `AbstractService`
   * Other services, such as the `APIClient`, where they don't inherit from `AbstractService`
   * An [MVC event listener](https://docs.laminas.dev/laminas-mvc/mvc-event/) which captures and logs application-level errors. The listener was originally baked into the bootstrap function for the app, but was moved into a cleaner, separate class to make it simpler to test.
-* service-api
+* api-app
   * Most controllers via `AbstractAuthController`
   * Other controllers, such as the `PingController`, which don't inherit from `AbstractAuthController`
   * All services via `AbstractService`
+  * An MVC event listener, as per service-front
 
 (You can figure out where the logger is injected by looking for a `use LoggerTrait;` statement in a class.)
 
