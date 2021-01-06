@@ -14,9 +14,28 @@ echo Starting Cypress Tests
 # pass supplied args to cypress, this would be open (gui) or run (headless) then optionally --project /app
 CYPRESS_CMD="cypress $@"
 
-echo "Running cypress command line:"
-echo $CYPRESS_CMD
-$CYPRESS_CMD
+# see if we asked for a GUI by specifying "open"  . 
+for i in "$@" ; do
+    if [[ $i == "open" ]] ; then
+        GUI=true
+        break
+    fi
+done
+
+if [[ $GUI == "true" ]] ; then
+    # Its a GUI, so simply open up 
+    echo "Running Cypress GUI"
+    echo $CYPRESS_CMD
+    $CYPRESS_CMD
+else
+    # Its headless so run the signup test first followed by all others
+    echo "Running Cypress headless"
+    echo $CYPRESS_CMD
+    $CYPRESS_CMD --spec cypress/integration/Signup.feature
+    # todo: this is not a beautiful way to do this, better would be to use cypress-tags combined with tags in feature files, but that does not seem to work
+    $CYPRESS_CMD --spec `ls cypress/integration/*.feature | grep -v Signup | tr '\n' , | rev | cut -c 2- | rev`
+fi
+
 
 RETVAL=$?
 echo printing $RETVAL

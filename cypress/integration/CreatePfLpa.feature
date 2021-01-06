@@ -2,7 +2,7 @@ Feature: Create an LPA
  
   I want to create an LPA
   
-  @focus
+    @focus
     Scenario: Create LPA
         # todo: during development, using seeded user saves time, but
         # to avoid tests having external dependency on seeded user,
