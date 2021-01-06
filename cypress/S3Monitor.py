@@ -76,30 +76,31 @@ def parseBody(bodyContent, subject, thetype, linkRegex):
 def parse_email(bodyContent, s3Key):
     activate_subject = 'Activate your lasting power of attorney account'
     reset_password_subject = 'Password reset request'
-    reset_password_no_account_subject = 'Request to reset password'  # this is the title for password resets where the account doesn't exist yet. We may need to test this too ultimately
+    reset_password_no_account_subject = 'Request to reset password' 
     if re.search(activate_subject, bodyContent) is not None:
         return parseBody(bodyContent, activate_subject, 'activation', 'signup\/confirm')
 
     if re.search(reset_password_subject, bodyContent) is not None:
         return parseBody(bodyContent, reset_password_subject, 'passwordreset', 'forgot-password\/reset')
 
+    # handle password resets where the account doesn't exist yet. We may need to test this too ultimately
     if re.search(reset_password_no_account_subject, bodyContent) is not None:
         print("Found Password reset for a non-existent account. This shouldn't happen during tests, one explanation can be running password reset test before test that signs user up")
-        return write_unrecognized_file(s3Key,bodyContent,'noaccountpasswordreset')
+        return write_unrecognized_file(s3Key, bodyContent, 'noaccountpasswordreset')
 
     # handle other emails. Ultimately, we should be testing these other emails as well
     print("Found an email that is not an Activate or Password reset. Don't know what to do with it")
-    write_unrecognized_file(s3Key,bodyContent,'unrecognized')
+    write_unrecognized_file(s3Key, bodyContent, 'unrecognized')
 
-def write_unrecognized_file(s3Key,bodyContent, filePrefix):
+def write_unrecognized_file(s3Key, bodyContent, filePrefix):
         fileSuffix = s3Key[s3Key.rfind('/')+1:]
         filePath = f'{activation_emails_path}/{filePrefix}.{fileSuffix}'
         emailFile = open(filePath,'w')
         emailFile.write(bodyContent)
         emailFile.close()
 
-def process_bucket_object(s3Client,s3Key):
-        result = s3Client.get_object(Bucket=mailbox_bucket,Key=s3Key)
+def process_bucket_object(s3Client, s3Key):
+        result = s3Client.get_object(Bucket=mailbox_bucket, Key=s3Key)
         bodyContent = quopri.decodestring(result["Body"].read()).decode('latin-1')
         #print(f'Parsing {s3Key}')
         parse_email(bodyContent, s3Key)
@@ -114,7 +115,7 @@ def monitor_bucket(s3Client):
             for s3obj in s3Client.list_objects(Bucket=mailbox_bucket)['Contents']:
                 s3Key = s3obj['Key']
                 if not s3Key in seenkeys:
-                    process_bucket_object(s3Client,s3Key)
+                    process_bucket_object(s3Client, s3Key)
                     seenkeys.append(s3Key)
                 #else:
                 #    print(f'Already seen {s3Key}')
