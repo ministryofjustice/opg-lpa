@@ -10,7 +10,6 @@ use Application\Model\DataAccess\Postgres;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
-use Application\Logging\LoggerTrait;
 use Alphagov\Notifications\Client as NotifyClient;
 use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
@@ -28,8 +27,6 @@ use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
 class Module
 {
-    use LoggerTrait;
-
     const VERSION = '3.0.3-dev';
 
     public function onBootstrap(MvcEvent $e)
@@ -44,9 +41,11 @@ class Module
             // Setup authentication listener...
             $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener, 'authenticate'], 500);
 
-            // Register error handler for dispatch and render errors
-            $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
-            $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
+            // Register error handler for dispatch and render errors;
+            // priority is set to 100 here so that the global MvcEventListener
+            // has a chance to log it before it's converted into an API exception
+            $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'), 100);
+            $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'), 100);
         }
     }
 
@@ -149,7 +148,6 @@ class Module
     }
 
     /**
-     * Use our logger to send this exception to its various destinations
      * Listen for and catch ApiProblemExceptions. Convert them to a standard ApiProblemResponse.
      *
      * @param MvcEvent $e
@@ -162,12 +160,11 @@ class Module
 
         if ($exception instanceof ApiProblemExceptionInterface) {
             $problem = new ApiProblem($exception->getCode(), $exception->getMessage());
+            $response = new ApiProblemResponse($problem);
 
             $e->stopPropagation();
             $response = new ApiProblemResponse($problem);
             $e->setResponse($response);
-
-            $this->getLogger()->err($exception->getMessage());
 
             return $response;
         }
