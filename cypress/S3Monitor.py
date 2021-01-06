@@ -108,7 +108,7 @@ def monitor_bucket(s3Client):
     seenkeys = []
 
     while True:
-        print('Checking S3')
+        #print('Checking S3')
         bucketContents = s3Client.list_objects(Bucket=mailbox_bucket)
         if 'Contents' in bucketContents:  # handle bucket being empty
             for s3obj in s3Client.list_objects(Bucket=mailbox_bucket)['Contents']:
