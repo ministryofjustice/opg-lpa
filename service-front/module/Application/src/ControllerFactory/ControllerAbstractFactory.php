@@ -133,6 +133,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         $controllerName = $this->getControllerName($requestedName);
 
         $formElementManager = $container->get('FormElementManager');
+        // Var not used within class, but required to populate twig helper function within templates.
         $sessionDetails = $container->get('PersistentSessionDetails');
         $sessionManager = $container->get('SessionManager');
         $authenticationService = $container->get('AuthenticationService');

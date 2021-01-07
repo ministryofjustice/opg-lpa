@@ -158,12 +158,13 @@ class Module implements FormElementProviderInterface
 
                 // Creates new container to store additional session information
                 'PersistentSessionDetails' => function (ServiceLocatorInterface $sm) {
+                    // Ideally this should all be be contained within a helper class to manage the var's on the container for more type safety
                     $sessionDetails = new Container('SessionDetails');
 
                     // breadcrumb so we can determine user's last visited route.
                     $sessionDetails->currentRoute = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getMatchedRouteName();
 
-                    if (!isset($this->sessionDetails->previousRoute)) {
+                    if (!isset($sessionDetails->previousRoute)) {
                         $sessionDetails->previousRoute = $sessionDetails->currentRoute;
                     }
 
