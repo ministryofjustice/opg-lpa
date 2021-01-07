@@ -16,9 +16,17 @@ When("I choose a new password", () => {
 
 When("I change password back to my old one", () => {
     // change from new password back to original cypress password
-        cy.get("[data-cy=password_current]").type(newPassword);
-        cy.get("[data-cy=password]").type(Cypress.env('password'));
-        cy.get("[data-cy=password_confirm]").type(Cypress.env('password'));
+        cy.get("[data-cy=password_current]").clear().type(newPassword);
+        cy.get("[data-cy=password]").clear().type(Cypress.env('password'));
+        cy.get("[data-cy=password_confirm]").clear().type(Cypress.env('password'));
+        cy.get('[data-cy=save-new-password]').click();
+});
+
+When("I try to change password to an invalid one", () => {
+    // same as in 35-ChangePassword Casper test
+        cy.get("[data-cy=password_current]").clear().type(newPassword);
+        cy.get("[data-cy=password]").clear().type("-");
+        cy.get("[data-cy=password_confirm]").clear().type("*");
         cy.get('[data-cy=save-new-password]').click();
 });
 
