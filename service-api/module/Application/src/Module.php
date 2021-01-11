@@ -17,7 +17,6 @@ use Aws\Sqs\SqsClient;
 use Aws\Signature\SignatureV4;
 use Http\Adapter\Guzzle6\Client as Guzzle6Client;
 use Http\Client\HttpClient;
-use Opg\Lpa\Logger\Logger;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Storage\NonPersistent;
 use Laminas\Console\Request as ConsoleRequest;
@@ -42,9 +41,11 @@ class Module
             // Setup authentication listener...
             $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener, 'authenticate'], 500);
 
-            // Register error handler for dispatch and render errors
-            $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
-            $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
+            // Register error handler for dispatch and render errors;
+            // priority is set to 100 here so that the global MvcEventListener
+            // has a chance to log it before it's converted into an API exception
+            $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'), 100);
+            $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'), 100);
         }
     }
 
@@ -147,7 +148,6 @@ class Module
     }
 
     /**
-     * Use our logger to send this exception to its various destinations
      * Listen for and catch ApiProblemExceptions. Convert them to a standard ApiProblemResponse.
      *
      * @param MvcEvent $e
@@ -160,13 +160,11 @@ class Module
 
         if ($exception instanceof ApiProblemExceptionInterface) {
             $problem = new ApiProblem($exception->getCode(), $exception->getMessage());
+            $response = new ApiProblemResponse($problem);
 
             $e->stopPropagation();
             $response = new ApiProblemResponse($problem);
             $e->setResponse($response);
-
-            $logger = Logger::getInstance();
-            $logger->err($exception->getMessage());
 
             return $response;
         }

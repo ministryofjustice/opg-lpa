@@ -2,7 +2,7 @@
 
 namespace Application\Model\Service;
 
-use Opg\Lpa\Logger\LoggerTrait;
+use Application\Logging\LoggerTrait;
 
 abstract class AbstractService
 {

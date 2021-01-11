@@ -33,6 +33,26 @@ All other tests are located with the `lpa-deploy` repository.
 
 With special thanks to [BrowserStack](https://www.browserstack.com) for providing cross browser testing.
 
+### Test coverage
+
+To run the unit tests locally with test coverage, install the necessary dependencies:
+
+1. Ensure you local PHP has pecl (available as part of a [PEAR installation](https://pear.php.net/)).
+1. [Install XDebug](https://xdebug.org/docs/install) for your local PHP.
+2. Ensure your php.ini file has the following setting in it: `xdebug.mode = coverage`
+3. You may need to increase the default PHP `memory_limit` in php.ini, e.g. to `1024M`.
+4. Run the docker-compose stack, which installs the composer dependencies for the app.
+
+With the above in place, you can run the unit tests with coverage reporting:
+
+```
+cd service-front
+mkdir -p build/coverage
+php vendor/bin/phpunit --coverage-html=build/coverage/
+```
+
+The coverage reports are available in *build/coverage/index.html*.
+
 ## Development
 
 ### Updating composer libraries
