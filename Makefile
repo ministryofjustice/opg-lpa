@@ -168,7 +168,6 @@ MYIP := $(shell ipconfig getifaddr en0)
 cypress-gui-local:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
 	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_RUN_A11Y_TESTS=false" -e "CYPRESS_baseUrl=https://localhost:7002"  -v ${PWD}/cypress:/app/cypress --entrypoint "./cypress/start.sh" --network="host" --rm cypress:latest open --project /app
-	#aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_RUN_A11Y_TESTS=false" -e "CYPRESS_baseUrl=https://localhost:7002"  -v ${PWD}/cypress:/app/cypress --entrypoint bash --network="host" --rm cypress:latest 
 endif
 
 ifeq ($(UNAME_S),Linux)
