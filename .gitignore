@@ -24,3 +24,4 @@ cypress/activation_emails/*.activation
 cypress/activation_emails/*.passwordreset
 cypress/activation_emails/noaccountpasswordreset.*
 cypress/activation_emails/unrecognized.*
+**/build

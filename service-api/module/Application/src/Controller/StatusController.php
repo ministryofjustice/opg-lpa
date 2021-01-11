@@ -11,7 +11,7 @@ use Application\Model\Service\Applications\Service;
 use Exception;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
-use Opg\Lpa\Logger\LoggerTrait;
+use Application\Logging\LoggerTrait;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
@@ -223,7 +223,7 @@ class StatusController extends AbstractRestfulController
                         $receiptDate = isset($lpaDetail['receiptDate']) ? $lpaDetail['receiptDate'] : null;
                         $registrationDate = isset($lpaDetail['registrationDate']) ? $lpaDetail['registrationDate'] : null;
                         $rejectDate = isset($lpaDetail['rejectedDate']) ? $lpaDetail['rejectedDate'] : null;
-                        
+
                         // If it doesn't match what we already have update the database
                         if (isset($lpaDetail['status']) && $lpaDetail['status'] !== $currentProcessingStatus) {
                             $this->updateMetadata($lpaId, $lpaDetail['status'],$receiptDate,$registrationDate,$rejectDate);
