@@ -7,7 +7,7 @@ RUN apt-get update && \
 
 RUN pip3 install boto3
 
-RUN npm install --save-dev cypress-axe@0.9.1 axe-core cypress-cucumber-preprocessor cosmiconfig cypress-tags
+RUN npm install --save-dev cypress-axe@0.9.1 axe-core cypress-cucumber-preprocessor cypress-tags
 
 # unset CI which gets set in Cypress's dockerfile
 ENV CI=
