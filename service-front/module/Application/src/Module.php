@@ -10,7 +10,6 @@ use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
 use Aws\DynamoDb\DynamoDbClient;
-use Opg\Lpa\Logger\LoggerTrait;
 use TheIconic\Tracking\GoogleAnalytics\Analytics;
 use Laminas\ModuleManager\Feature\FormElementProviderInterface;
 use Laminas\Mvc\ModuleRouteListener;
@@ -26,8 +25,6 @@ use Twig\TwigFunction;
 
 class Module implements FormElementProviderInterface
 {
-    use LoggerTrait;
-
     public function onBootstrap(MvcEvent $e)
     {
         $eventManager        = $e->getApplication()->getEventManager();
@@ -305,7 +302,9 @@ class Module implements FormElementProviderInterface
     }
 
     /**
-     * Use our logger to send this exception to its various destinations
+     * Show 500 page on MVC exceptions.
+     * NB logging of errors is handled by Application\Logging\ErrorEventListener,
+     * which is attached to these events in config.
      *
      * @param MvcEvent $e
      * @return ViewModel
@@ -315,8 +314,6 @@ class Module implements FormElementProviderInterface
         $exception = $e->getResult()->exception;
 
         if ($exception) {
-            $this->getLogger()->err($exception->getMessage().' in '.$exception->getFile().' on line '.$exception->getLine().' - '.$exception->getTraceAsString());
-
             $viewModel = new ViewModel();
             $viewModel->setTemplate('error/500');
 

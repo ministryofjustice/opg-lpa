@@ -3,7 +3,7 @@
 namespace Application\Library\Authentication;
 
 use Application\Model\Service\Authentication\Service as AuthenticationService;
-use Opg\Lpa\Logger\LoggerTrait;
+use Application\Logging\LoggerTrait;
 use Laminas\Authentication\Result as AuthenticationResult;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ApiTools\ApiProblem\ApiProblem;

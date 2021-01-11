@@ -3,9 +3,12 @@
 namespace Application\Model\Service;
 
 use Application\Model\Service\Authentication\AuthenticationService;
+use Application\Logging\LoggerTrait;
 
 abstract class AbstractService
 {
+    use LoggerTrait;
+
     /**
      * @var AuthenticationService
      */
