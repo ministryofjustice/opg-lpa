@@ -10,4 +10,3 @@ Feature: Create an LPA
         # "seeded-by-code" newly signed up standard user
     Given I log in as seeded user
     Then I am taken to the type or dashboard page
-    When I click button marked "Start now"
