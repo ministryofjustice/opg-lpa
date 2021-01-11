@@ -22,13 +22,11 @@ use DateTime;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Opg\Lpa\DataModel\WhoAreYou\WhoAreYou;
 use ArrayObject;
-use Opg\Lpa\Logger\LoggerTrait;
 use RuntimeException;
 
 class Application extends AbstractService implements ApiClientAwareInterface
 {
     use ApiClientTrait;
-    use LoggerTrait;
 
     /**
      * Get an application by lpaId
