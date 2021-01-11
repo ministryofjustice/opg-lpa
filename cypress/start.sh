@@ -11,9 +11,6 @@ echo Cypress user number is $CYPRESS_userNumber
 
 echo Starting Cypress Tests
 
-# pass supplied args to cypress, this would be open (gui) or run (headless) then optionally --project /app
-CYPRESS_CMD="cypress $@"
-
 # see if we asked for a GUI by specifying "open"  . 
 for i in "$@" ; do
     if [[ $i == "open" ]] ; then
@@ -25,15 +22,15 @@ done
 if [[ $GUI == "true" ]] ; then
     # Its a GUI, so simply open up 
     echo "Running Cypress GUI"
+# pass supplied args to cypress
+    CYPRESS_CMD="cypress $@"
     echo $CYPRESS_CMD
     $CYPRESS_CMD
 else
-    # Its headless so run the signup test first followed by all others
+    # Its headless (used in CircleCI) so run the signup test first followed by all others
     echo "Running Cypress headless"
-    echo $CYPRESS_CMD
-    $CYPRESS_CMD --spec cypress/integration/Signup.feature
-    # todo: this is not a beautiful way to do this, better would be to use cypress-tags combined with tags in feature files, but that does not seem to work
-    $CYPRESS_CMD --spec `ls cypress/integration/*.feature | grep -v Signup | tr '\n' , | rev | cut -c 2- | rev`
+    ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp' 
+	./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp' 
 fi
 
 
