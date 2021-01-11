@@ -58,9 +58,7 @@ def parseBody(bodyContent, subject, thetype, linkRegex):
 
         emailMatch = re.search(emailRegex, bodyContent)
         if emailMatch is not None:
-            es = emailMatch.start()
-            ee = emailMatch.end()
-            toEmail = bodyContent[es:ee]
+            toEmail = emailMatch.group(1)
 
             userId = getPlusPartFromEmailAddress(toEmail)
             print(f'userId {userId}')
