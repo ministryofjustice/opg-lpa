@@ -14,11 +14,12 @@
     <ul class="accordion" data-cy="accordion">
 
         {% set accordionTop = accordion( lpa ).top() %}
+        {% set route = routeName() %}
 
         {% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionTop, 'lpa':lpa } %}
 
-        {% if (accordionTop|last).routeName != 'review-link' %}
-            <li aria-hidden="true"><a id="current" class="accordion-current"></a></li>
+        {% if route['previous'] != 'user/about-you' and route['previous'] != 'user/dashboard' and (accordionTop|last).routeName != 'review-link' %}
+            <li aria-hidden="true"><a id="current" class="accordion-current">{{ route['previous'] }}</a></li>
         {% endif %}
 
 {% endblock %}
