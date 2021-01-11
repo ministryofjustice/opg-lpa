@@ -111,21 +111,10 @@ resource "aws_ssm_parameter" "maintenance_switch" {
 }
 
 # maintenance site switching
-locals {
-  path_pattern = {
-    field  = "path-pattern"
-    values = ["/maintenance"]
-  }
-  host_pattern = {
-    field  = "host-header"
-    values = [aws_route53_record.public_facing_lastingpowerofattorney.fqdn]
-  }
-  rule_condition = aws_ssm_parameter.maintenance_switch.value ? local.host_pattern : local.path_pattern
-}
 
 resource "aws_lb_listener_rule" "front_maintenance" {
   listener_arn = aws_lb_listener.front_loadbalancer.arn
-
+  priority     = 101 # Specifically set so that maintenance mode scripts can locate the correct rule to modify
   action {
     type = "fixed-response"
 
@@ -137,8 +126,16 @@ resource "aws_lb_listener_rule" "front_maintenance" {
   }
 
   condition {
-    field  = local.rule_condition.field
-    values = local.rule_condition.values
+    path_pattern {
+      values = ["/maintenance"]
+    }
+  }
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to the condition as this is modified by a script
+      # when putting the service into maintenance mode.
+      condition,
+    ]
   }
 }
 
