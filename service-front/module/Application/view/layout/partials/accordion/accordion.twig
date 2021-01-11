@@ -158,9 +158,10 @@
         }}
     {% endif %}
 
+
     {% if (item.routeName == 'review-link') %}
         {{ macros.accordionBar({
-                'text' : 'You can edit the LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}) ~ '?return-route=' ~ routeName() ~ '" data-journey-click="accordion:link.preview:Links to lpa/summary">preview the LPA</a>',
+                'text' : 'You can edit the LPA above or <a href="' ~ url("lpa/summary", {"lpa-id": lpa.id}) ~ '?return-route=' ~ routeName()['current'] ~ '" data-journey-click="accordion:link.preview:Links to lpa/summary">preview the LPA</a>',
                 'titleBoxCssClass': 'title-box--full',
                 'current': true
             })
