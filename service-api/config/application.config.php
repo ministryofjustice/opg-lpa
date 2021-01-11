@@ -58,17 +58,14 @@ return array(
         // 'check_dependencies' => true,
     ),
 
-    // Used to create an own service manager. May contain one or more child arrays.
-    //'service_listener_options' => array(
-    //     array(
-    //         'service_manager' => $stringServiceManagerName,
-    //         'config_key'      => $stringConfigKey,
-    //         'interface'       => $stringOptionalInterface,
-    //         'method'          => $stringRequiredMethodName,
-    //     ),
-    // )
+    'listeners' => [
+        'Application\Logging\ErrorEventListener',
+    ],
 
-   // Initial configuration with which to seed the ServiceManager.
-   // Should be compatible with Laminas\ServiceManager\Config.
-   // 'service_manager' => array(),
+    // Should be compatible with Laminas\ServiceManager\Config.
+    'service_manager' => [
+        'factories' => [
+            'Application\Logging\ErrorEventListener'  => 'Application\Logging\ErrorEventListener',
+        ],
+    ],
 );

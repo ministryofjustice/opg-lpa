@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\ApiClient;
 
+use Application\Logging\Logger;
 use Application\Model\Service\ApiClient\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
@@ -10,7 +11,6 @@ use Http\Client\HttpClient;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Opg\Lpa\Logger\Logger;
 use Psr\Http\Message\ResponseInterface;
 
 class ClientTest extends MockeryTestCase
@@ -40,7 +40,7 @@ class ClientTest extends MockeryTestCase
         $this->httpClient = Mockery::mock(HttpClient::class);
         $this->logger = Mockery::mock(Logger::class);
 
-        $this->client = new Client($this->httpClient, 'base_url/', 'test token');
+        $this->client = new Client($this->httpClient, 'base_url/', ['Token' => 'test token']);
         $this->client->setLogger($this->logger);
     }
 
@@ -163,7 +163,14 @@ class ClientTest extends MockeryTestCase
         $this->response->shouldReceive('getStatusCode')->twice()->andReturn(404);
         $this->response->shouldReceive('getBody')->once()->andReturn(null);
 
-        $this->logger->shouldReceive('info')->withArgs(['HTTP:404 - Unexpected API response'])->once();
+        $expectedLoggerArgs = [
+            'HTTP:404 - Unexpected API response',
+            ['headers' => ['Token' => 'test token']]
+        ];
+
+        $this->logger->shouldReceive('err')
+                     ->withArgs($expectedLoggerArgs)
+                     ->once();
 
         $this->client->httpGet('path');
     }
@@ -178,7 +185,14 @@ class ClientTest extends MockeryTestCase
         $this->setUpRequest(500, 'An error');
         $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
 
-        $this->logger->shouldReceive('info')->withArgs(['HTTP:500 - Unexpected API response'])->once();
+        $expectedLoggerArgs = [
+            'HTTP:500 - Unexpected API response',
+            ['headers' => ['Token' => 'test token']]
+        ];
+
+        $this->logger->shouldReceive('err')
+                     ->withArgs($expectedLoggerArgs)
+                     ->once();
 
         $this->client->httpGet('path');
     }
@@ -201,7 +215,14 @@ class ClientTest extends MockeryTestCase
         $this->setUpRequest(500, 'An error', 'DELETE');
         $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
 
-        $this->logger->shouldReceive('info')->withArgs(['HTTP:500 - Unexpected API response'])->once();
+        $expectedLoggerArgs = [
+            'HTTP:500 - Unexpected API response',
+            ['headers' => ['Token' => 'test token']]
+        ];
+
+        $this->logger->shouldReceive('err')
+                     ->withArgs($expectedLoggerArgs)
+                     ->once();
 
         $this->client->httpDelete('path');
     }
@@ -245,7 +266,14 @@ class ClientTest extends MockeryTestCase
         $this->setUpRequest(500, 'An error', 'PATCH', 'base_url/path', '{"a":1}');
         $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
 
-        $this->logger->shouldReceive('info')->withArgs(['HTTP:500 - Unexpected API response'])->once();
+        $expectedLoggerArgs = [
+            'HTTP:500 - Unexpected API response',
+            ['headers' => ['Token' => 'test token']]
+        ];
+
+        $this->logger->shouldReceive('err')
+                     ->withArgs($expectedLoggerArgs)
+                     ->once();
 
         $this->client->httpPatch('path');
     }
@@ -277,7 +305,14 @@ class ClientTest extends MockeryTestCase
         $this->setUpRequest(500, 'An error', 'POST', 'base_url/path', '{"a":1}');
         $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
 
-        $this->logger->shouldReceive('info')->withArgs(['HTTP:500 - Unexpected API response'])->once();
+        $expectedLoggerArgs = [
+            'HTTP:500 - Unexpected API response',
+            ['headers' => ['Token' => 'test token']]
+        ];
+
+        $this->logger->shouldReceive('err')
+                     ->withArgs($expectedLoggerArgs)
+                     ->once();
 
         $this->client->httpPost('path');
     }
@@ -309,7 +344,9 @@ class ClientTest extends MockeryTestCase
         $this->setUpRequest(500, 'An error', 'PUT', 'base_url/path', '{"a":1}');
         $this->response->shouldReceive('getStatusCode')->times(2)->andReturn(500);
 
-        $this->logger->shouldReceive('info')->withArgs(['HTTP:500 - Unexpected API response'])->once();
+        $this->logger->shouldReceive('err')
+                     ->withArgs(['HTTP:500 - Unexpected API response', ['headers' => ['Token' => 'test token']]])
+                     ->once();
 
         $this->client->httpPut('path');
     }

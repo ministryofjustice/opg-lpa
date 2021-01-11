@@ -3,7 +3,7 @@ namespace Application\Model\DataAccess\Repository\Application;
 
 use RuntimeException;
 use Opg\Lpa\DataModel\Lpa\Lpa;
-use Opg\Lpa\Logger\Logger;
+use Application\Logging\Logger;
 
 trait ApplicationRepositoryTrait {
 
@@ -45,7 +45,7 @@ trait ApplicationRepositoryTrait {
 
     protected function updateLpa(Lpa $lpa) : bool
     {
-        $logger = Logger::getInstance();
+        $logger = new Logger();
 
         $logger->info('Updating LPA', [
             'lpaid' => $lpa->id
