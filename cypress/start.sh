@@ -30,7 +30,7 @@ else
     # Its headless (used in CircleCI) so run the signup test first followed by all others
     echo "Running Cypress headless"
     ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp' 
-	./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp' 
+    ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp' 
 fi
 
 
