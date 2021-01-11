@@ -154,7 +154,7 @@ integration-api-local:
 .PHONY: cypress-local
 cypress-local:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint ./node_modules/.bin/cypress-tags --network="host" --rm cypress:latest run -e TAGS='not @SignUp' 
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint ./cypress/start.sh --network="host" --rm cypress:latest run 
 
 .PHONY: cypress-bash
 cypress-bash:
