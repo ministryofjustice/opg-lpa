@@ -22,7 +22,6 @@ class PersistentSessionDetails {
     public function __construct(?RouteMatch $route) {
         $this->route = $route;
         $this->sessionDetails = new Container('SessionDetails');
-
         $this->setRouteDetails();
     }
     
@@ -30,7 +29,7 @@ class PersistentSessionDetails {
         // breadcrumb so we can determine user's last visited route.
         // Also account for any null values, eg activation links or status checks.
         // Unable to assign to RouteInterface, as RouteMatch does not implement RouteInterface
-        $this->sessionDetails->currentRoute = ($this->route instanceof RouteMatch) ?
+        $this->sessionDetails->currentRoute = (!is_null($this->route)) ?
             $this->route->getMatchedRouteName() :
             '';
 
@@ -42,10 +41,11 @@ class PersistentSessionDetails {
     }
 
     public function getCurrentRoute(): string {
-        return $this->sessionDetails->currentRoute;
+        return $this->sessionDetails->currentRoute ?? '';
     }
 
-    public function getPreviousRoute(): string {
+    public function getPreviousRoute(): string
+    {
         return $this->sessionDetails->previousRoute ?? 'home';
     }
 }
