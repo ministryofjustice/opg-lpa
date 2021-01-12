@@ -14,11 +14,6 @@
             "type": "vcs",
             "url": "https://github.com/ministryofjustice/opg-lpa-datamodels",
             "no-api": true
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/ministryofjustice/opg-lpa-logger",
-            "no-api": true
         }
     ],
     "require": {
@@ -26,7 +21,6 @@
         "guzzlehttp/guzzle": "^6.3",
         "aws/aws-sdk-php": "^3.91",
         "ministryofjustice/opg-lpa-datamodels": "^13.5",
-        "ministryofjustice/opg-lpa-logger": "^5.0",
         "michelf/php-markdown": "^1.8",
         "alphagov/pay-integration-php": "^1.0",
         "php-http/guzzle6-adapter": "^1.1",
