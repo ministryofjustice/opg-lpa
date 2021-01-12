@@ -98,17 +98,6 @@ resource "aws_lb_listener_certificate" "front_loadbalancer_live_service_certific
   certificate_arn = data.aws_acm_certificate.public_facing_certificate.arn
 }
 
-resource "aws_ssm_parameter" "maintenance_switch" {
-  name            = "${local.environment}_enable_maintenance"
-  type            = "String"
-  value           = "false"
-  description     = "values of either 'true' or 'false' only"
-  allowed_pattern = "^(true|false)"
-  overwrite       = true
-  lifecycle {
-    ignore_changes = [value]
-  }
-}
 
 # maintenance site switching
 
