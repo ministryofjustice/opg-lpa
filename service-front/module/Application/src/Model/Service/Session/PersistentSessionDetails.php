@@ -33,10 +33,6 @@ class PersistentSessionDetails {
         $this->sessionDetails->currentRoute = ($this->route instanceof RouteMatch) ?
             $this->route->getMatchedRouteName() :
             '';
-        
-        if (!isset($this->sessionDetails->previousRoute)) {
-            $this->sessionDetails->previousRoute = $this->sessionDetails->currentRoute;
-        }
 
         if ($this->sessionDetails->routeStore !== $this->sessionDetails->previousRoute) {
             $this->sessionDetails->previousRoute = $this->sessionDetails->routeStore;
@@ -50,6 +46,6 @@ class PersistentSessionDetails {
     }
 
     public function getPreviousRoute(): string {
-        return $this->sessionDetails->previousRoute;
+        return $this->sessionDetails->previousRoute ?? 'home';
     }
 }
