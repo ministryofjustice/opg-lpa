@@ -5,7 +5,7 @@ namespace Application\Model\Service\ApiClient;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\HttpClient as HttpClientInterface;
-use Opg\Lpa\Logger\LoggerTrait;
+use Application\Logging\LoggerTrait;
 use Psr\Http\Message\ResponseInterface;
 
 class Client
@@ -24,22 +24,25 @@ class Client
     private $apiBaseUri;
 
     /**
-     * @var string
+     * @var array
      */
-    private $token;
+    private $defaultHeaders;
 
     /**
      * Client constructor
      *
      * @param HttpClientInterface $httpClient
      * @param $apiBaseUri
-     * @param $token
+     * @param $defaultHeaders Array of name => value pairs; headers which are
+     *     set on every request; usually this will consist of
+     *     'X-Trace-Id'Token => <trace ID> as a minimum; for authenticated
+     *     requests, will also contain 'Token' => <token>
      */
-    public function __construct(HttpClientInterface $httpClient, $apiBaseUri, $token)
+    public function __construct(HttpClientInterface $httpClient, $apiBaseUri, $defaultHeaders = [])
     {
         $this->httpClient = $httpClient;
         $this->apiBaseUri = $apiBaseUri;
-        $this->token = $token;
+        $this->defaultHeaders = $defaultHeaders;
     }
 
     /**
@@ -51,7 +54,7 @@ class Client
      */
     public function updateToken($token)
     {
-        $this->token = $token;
+        $this->defaultHeaders['Token'] = $token;
     }
 
     /**
@@ -78,13 +81,9 @@ class Client
             $url = Uri::withQueryValue($url, $name, $value);
         }
 
-        $headers = $this->buildHeaders();
+        $headers = $this->buildHeaders($anonymous);
 
-        if ($anonymous) {
-            unset($headers['Token']);
-        }
-
-        if ($additionalHeaders) {
+        if (is_array($additionalHeaders)) {
             $headers += $additionalHeaders;
         }
 
@@ -213,9 +212,10 @@ class Client
     /**
      * Generates the standard set of HTTP headers expected by the API.
      *
+     * @param bool $anonymous If true, don't include a "Token" header
      * @return array
      */
-    private function buildHeaders()
+    private function buildHeaders($anonymous = FALSE)
     {
         $headers = [
             'Accept'        => 'application/json',
@@ -223,8 +223,14 @@ class Client
             'User-agent'    => 'LPA-FRONT'
         ];
 
-        if (!is_null($this->token)) {
-            $headers['Token'] = $this->token;
+        foreach ($this->defaultHeaders as $name => $value) {
+            if ($anonymous && $name == 'Token') {
+                continue;
+            }
+
+            if (!is_null($value)) {
+                $headers[$name] = $value;
+            }
         }
 
         return $headers;
@@ -264,7 +270,7 @@ class Client
     private function handleErrorResponse(ResponseInterface $response)
     {
         $exception = new Exception\ApiException($response);
-        $this->getLogger()->info($exception->getMessage());
+        $this->getLogger()->err($exception->getMessage(), ['headers' => $this->defaultHeaders]);
         throw $exception;
     }
 }

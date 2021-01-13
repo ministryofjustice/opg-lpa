@@ -20,5 +20,4 @@ class SessionManager extends LaminasSessionManager {
         }
 
     }
-
 } // class

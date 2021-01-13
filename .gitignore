@@ -20,3 +20,4 @@ tests/functional/complete.png
 tests/functional/download.pdf
 tests/functional/out.png
 tests/functional/summary.png
+**/build

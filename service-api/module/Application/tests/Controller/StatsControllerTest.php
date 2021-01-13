@@ -9,7 +9,7 @@ use Application\Model\Service\Stats\Service as StatsService;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Opg\Lpa\Logger\Logger;
+use Application\Logging\Logger;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class StatsControllerTest extends MockeryTestCase
