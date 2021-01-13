@@ -3148,40 +3148,6 @@
             "time": "2019-08-14T15:23:54+00:00"
         },
         {
-            "name": "ministryofjustice/opg-lpa-logger",
-            "version": "5.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ministryofjustice/opg-lpa-logger",
-                "reference": "81ee782e11382b0e6901f87199bdde0b28bb4ba4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-lpa-logger/zipball/81ee782e11382b0e6901f87199bdde0b28bb4ba4",
-                "reference": "81ee782e11382b0e6901f87199bdde0b28bb4ba4",
-                "shasum": ""
-            },
-            "require": {
-                "mockery/mockery": "^1.1",
-                "php": "^7.1",
-                "zendframework/zend-log": "^2.5"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Opg\\Lpa\\Logger\\": "src/Opg/Lpa/Logger/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "Common logger component for OPG LPA modules",
-            "time": "2019-07-10T08:43:03+00:00"
-        },
-        {
             "name": "mockery/mockery",
             "version": "1.3.3",
             "source": {
