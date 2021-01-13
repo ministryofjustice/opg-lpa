@@ -18,8 +18,8 @@ class RouteName extends AbstractHelper
     public function __construct(?string $currentRoute, ?string $previousRoute)
     {
         $this->routes = [
-            'current'   => $currentRoute,
-            'previous'  => $previousRoute
+            'current'   => $currentRoute ?? '',
+            'previous'  => $previousRoute ?? ''
         ];
     }
 
