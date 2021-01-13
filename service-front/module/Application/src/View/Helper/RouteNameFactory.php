@@ -19,6 +19,9 @@ class RouteNameFactory implements FactoryInterface
         /** @var ContainerInterface $sessionDetails */
         $sessionDetails = $container->get('PersistentSessionDetails');
 
-        return new RouteName($sessionDetails->currentRoute, $sessionDetails->previousRoute);
+        $currentRoute = $sessionDetails->getCurrentRoute();
+        $previousRoute = $sessionDetails->getPreviousRoute();
+
+        return new RouteName($currentRoute, $previousRoute);
     }
 }
