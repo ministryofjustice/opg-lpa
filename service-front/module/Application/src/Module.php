@@ -7,12 +7,14 @@ use Application\Form\AbstractCsrfForm;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
+use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
 use Aws\DynamoDb\DynamoDbClient;
 use Laminas\ModuleManager\Feature\FormElementProviderInterface;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
+use Laminas\Router\RouteMatch;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
@@ -156,23 +158,9 @@ class Module implements FormElementProviderInterface
 
                 // Creates new container to store additional session information
                 'PersistentSessionDetails' => function (ServiceLocatorInterface $sm) {
-                    // Ideally this should all be be contained within a helper class to manage the var's on the container for more type safety
-                    $sessionDetails = new Container('SessionDetails');
+                    $route = $sm->get('Application')->getMvcEvent()->getRouteMatch();
 
-                    // breadcrumb so we can determine user's last visited route.
-                    $sessionDetails->currentRoute = $sm->get('Application')->getMvcEvent()->getRouteMatch()->getMatchedRouteName();
-
-                    if (!isset($sessionDetails->previousRoute)) {
-                        $sessionDetails->previousRoute = $sessionDetails->currentRoute;
-                    }
-
-                    if ($sessionDetails->routeStore !== $sessionDetails->previousRoute) {
-                        $sessionDetails->previousRoute = $sessionDetails->routeStore;
-                    }
-
-                    $sessionDetails->routeStore = $sessionDetails->currentRoute;
-
-                    return $sessionDetails;
+                    return new PersistentSessionDetails($route);
                 },
 
                 // PSR-7 HTTP Client
