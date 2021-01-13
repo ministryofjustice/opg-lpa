@@ -1,6 +1,9 @@
 <?php
 
 namespace Application\Controller\General;
+// Work around due to issues with code base, unless in place this displays warnings when endpoint it accessed
+// Ticket has been created in the backlog to address this LPAL-267
+error_reporting(E_ERROR);
 
 use Application\Model\Service\System\Status;
 use Laminas\View\Model\JsonModel;
