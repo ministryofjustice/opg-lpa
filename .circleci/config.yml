@@ -188,28 +188,28 @@ path_to_live: &path_to_live
         filters: { branches: { only: [master] } }
         requires: [preprod_seed_environment_databases]
 
-    # - infrastructure_and_deployment/apply_account_terraform:
-    #     name: prod_account_apply_terraform
-    #     workspace: production
-    #     filters: { branches: { only: [master] } }
-    #     requires: [preprod_test_functional, preprod_test_cypress]
+    - infrastructure_and_deployment/apply_account_terraform:
+        name: prod_account_apply_terraform
+        workspace: production
+        filters: { branches: { only: [master] } }
+        requires: [preprod_test_functional, preprod_test_cypress]
 
-    # - infrastructure_and_deployment/apply_environment_terraform:
-    #     name: prod_environment_apply_terraform
-    #     requires: [prod_account_apply_terraform]
-    #     filters: { branches: { only: [master] } }
-    #     workspace: production
+    - infrastructure_and_deployment/apply_environment_terraform:
+        name: prod_environment_apply_terraform
+        requires: [prod_account_apply_terraform]
+        filters: { branches: { only: [master] } }
+        workspace: production
 
-    # - infrastructure_and_deployment/run_healthcheck_test:
-    #     name: test_healthcheck_prod
-    #     requires: [prod_environment_apply_terraform]
-    #     filters: { branches: { only: [master] } }
-    #     workspace: production
+    - infrastructure_and_deployment/run_healthcheck_test:
+        name: test_healthcheck_prod
+        requires: [prod_environment_apply_terraform]
+        filters: { branches: { only: [master] } }
+        workspace: production
 
-    # - slack_notify_production_release:
-    #     name: post_production_release_message
-    #     filters: { branches: { only: [master] } }
-    #     requires: [test_healthcheck_prod]
+    - slack_notify_production_release:
+        name: post_production_release_message
+        filters: { branches: { only: [master] } }
+        requires: [test_healthcheck_prod]
 
 workflows:
   workspace_cleanup:
@@ -230,15 +230,15 @@ workflows:
   path_to_live:
     <<: *path_to_live
 
-  #weekly_refresh:
-  #  triggers:
-  #    - schedule:
-  #         cron: "0 3 * * 3" # 3 am (UTC) on wednesday
-  #         filters:
-  #          branches:
-  #             only:
-  #               - master
-  #  <<: *path_to_live
+  weekly_refresh:
+    triggers:
+      - schedule:
+           cron: "0 3 * * 3" # 3 am (UTC) on wednesday
+           filters:
+             branches:
+               only:
+                 - master
+    <<: *path_to_live
 
 orbs:
   slack: circleci/slack@3.3.0
