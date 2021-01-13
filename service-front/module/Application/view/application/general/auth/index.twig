@@ -18,12 +18,14 @@
 {# form fields config #}
 {{ email.setAttributes({
     id: 'email',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'login-email'
 }) ? ''}}
 
 {{ password.setAttributes({
     id: 'password',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'login-password'
 }) ? '' }}
 
 {# form fields labels #}
@@ -66,7 +68,7 @@
         </div>
 
         <div class="form-group">
-            <input type="submit" name="submit" id="signin-form-submit" value="Sign in" class="button">
+            <input type="submit" name="submit" id="signin-form-submit" data-cy="login-submit-button" value="Sign in" class="button">
         </div>
 
     </fieldset>
