@@ -3,6 +3,13 @@ import { Then } from "cypress-cucumber-preprocessor/steps";
 Then(`I see {string} in the page text`, (text) => {
   cy.contains(text);
 })
+
+When("I see in the page text", (dataTable) => {
+    var rawTable = dataTable.rawTable;
+    rawTable.forEach(row => { 
+        cy.contains(row[0]);
+    });
+});
  
 Then(`I see standard test user in the page text`, () => {
   cy.contains(Cypress.env("email"));
