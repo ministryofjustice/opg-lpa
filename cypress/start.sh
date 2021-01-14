@@ -2,8 +2,8 @@
 
 echo The base domain is $CYPRESS_baseUrl
 
-echo Starting S3 Monitor
-python3 cypress/S3Monitor.py &
+#echo Starting S3 Monitor
+#python3 cypress/S3Monitor.py &
 
 # set userNumber env var here at the very start to ensure it applies to all feature files run by Cypress
 export CYPRESS_userNumber=`node cypress/userNumber.js`
@@ -29,8 +29,9 @@ if [[ $GUI == "true" ]] ; then
 else
     # Its headless (used in CircleCI) so run the signup test first followed by all others
     echo "Running Cypress headless"
-    ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp'
-    ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp'
+    ./node_modules/.bin/cypress-tags run -e TAGS='@Ping'
+    #./node_modules/.bin/cypress-tags run -e TAGS='@SignUp'
+    #./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp'
 fi
 
 
