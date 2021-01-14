@@ -156,6 +156,10 @@ cypress-local:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
 	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint ./cypress/start.sh --network="host" --rm cypress:latest run 
 
+.PHONY: cypress-local-shell
+cypress-local-shell:
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint bash --network="host" -v `pwd`/cypress:/app/cypress cypress:latest
+
 .PHONY: cypress-bash
 cypress-bash:
 	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint bash --network="host" --rm cypress:latest 
