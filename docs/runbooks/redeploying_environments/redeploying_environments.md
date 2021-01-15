@@ -118,4 +118,20 @@ aws-vault exec moj-lpa-dev -- \
 terraform apply -var container_version=76-LPA3435Bug-cde321ba
 ```
 
-Monitor in AWS account for ecs switch over.
+This switch over might take a few minutes after the apply to drain the old ECS container version and replace.
+
+You can  navigate to the ping/json endpoint on the service to see what container version is there to confirm.
+You can navigate using a browser, or use `curl`
+So, for the above example:
+
+``` bash
+curl https//76-LPA3435Bug.lastingpowerofattorney.gov.uk/ping/json
+```
+
+ will return something like this:
+
+```json
+{"dynamo":{"ok":true,"details":{"sessions":true,"locks":true}},"api":{"ok":true,"details":{"200":true,"database":{"ok":true},"gateway":{"ok":true},"ok":true,"queue":{"details":{"available":true,"length":0,"lengthAcceptable":true},"ok":true}}},"ok":true,"iterations":6,"tag":"76-LPA3435Bug-cde321ba"}
+```
+
+note the `tag` value should be the same as the requested container version in the plan and apply step.
