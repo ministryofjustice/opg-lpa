@@ -23,28 +23,33 @@
 {{ email.setAttributes({
     id: 'email',
     type: 'email',
-    class: 'form-control'
+    class: 'form-control',
+    "data-cy": 'signup-email'
 }) ? ''}}
 
 {{ email_confirm.setAttributes({
     id: 'email_confirm',
     type: 'email',
     autocomplete: 'off',
-    class: 'form-control'
+    class: 'form-control',
+    "data-cy": 'signup-email-confirm'
 }) ? ''}}
 
 {{ password.setAttributes({
     id: 'password',
-    class: 'form-control'
+    class: 'form-control',
+    "data-cy": 'signup-password'
 }) ? ''}}
 
 {{ password_confirm.setAttributes({
     id: 'password_confirm',
-    class: 'form-control'
+    class: 'form-control',
+    "data-cy": 'signup-password-confirm'
 }) ? ''}}
 
 {{ terms.setAttributes({
-    id: 'terms'
+    id: 'terms',
+    "data-cy": 'signup-terms'
 }) ? ''}}
 
 {{ skip_confirm_password.setAttributes({
@@ -120,7 +125,7 @@
     </div>
     
     <div class="form-group">
-        <input type="submit" name="submit" id="signin-form-submit" value="Create account" class="button">
+        <input type="submit" name="submit" id="signin-form-submit" data-cy="signup-submit-button" value="Create account" class="button">
     </div>    
 
 {{ form().closeTag|raw }}

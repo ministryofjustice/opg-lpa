@@ -154,7 +154,15 @@ integration-api-local:
 .PHONY: cypress-local
 cypress-local:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	docker run -it -e "CYPRESS_baseUrl=https://localhost:7002" --network="host" --rm cypress:latest cypress run --spec cypress/integration/BasicLogin.feature
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint ./cypress/start.sh --network="host" --rm cypress:latest run 
+
+.PHONY: cypress-local-shell
+cypress-local-shell:
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint bash --network="host" -v `pwd`/cypress:/app/cypress cypress:latest
+
+.PHONY: cypress-bash
+cypress-bash:
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "CYPRESS_baseUrl=https://localhost:7002" --entrypoint bash --network="host" --rm cypress:latest 
 
 .PHONY: cypress-gui-local
 UNAME_S := $(shell uname -s)
@@ -163,11 +171,11 @@ ifeq ($(UNAME_S),Darwin)
 MYIP := $(shell ipconfig getifaddr en0)
 cypress-gui-local:
 	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	docker run -it -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  -v ${PWD}/cypress:/app/cypress --entrypoint cypress --network="host" --rm cypress:latest open --project /app
+	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_RUN_A11Y_TESTS=false" -e "CYPRESS_baseUrl=https://localhost:7002"  -v ${PWD}/cypress:/app/cypress --entrypoint "./cypress/start.sh" --network="host" --rm cypress:latest open --project /app
 endif
 
 ifeq ($(UNAME_S),Linux)
 cypress-gui-local:
 	xhost + 127.0.0.1
-	docker run -it -v ~/.Xauthority:/root/.Xauthority:ro -e DISPLAY -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  --entrypoint cypress --network="host" --rm cypress:latest open --project /app
+	aws-vault exec moj-lpa-dev -- docker run -it -v ~/.Xauthority:/root/.Xauthority:ro -e DISPLAY -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  --entrypoint cypress --network="host" --rm cypress:latest open --project /app
 endif
