@@ -25,8 +25,8 @@ casper.test.begin("Checking user can access repeat application page", {
     		test.assertExists('form[name="form-repeat-application"]', 'Found form-repeat-application');
     		test.assertExists('input[type="radio"][name="isRepeatApplication"][value="is-repeat"]', 'Found is-repeat option');
     		test.assertExists('input[type="radio"][name="isRepeatApplication"][value="is-new"]', 'Found is-new option');
-    		test.assertExists('input[type="tel"][name="repeatCaseNumber"]', 'Found repeat case number text input');
-    		test.assertNotVisible('input[type="tel"][name="repeatCaseNumber"]', 'Found repeat case number text input is hidden');
+    		test.assertExists('input[type="text"][name="repeatCaseNumber"]', 'Found repeat case number text input');
+    		test.assertNotVisible('input[type="text"][name="repeatCaseNumber"]', 'Found repeat case number text input is hidden');
     		
     		test.assertExists('input[type="submit"][name="save"]', 'Found "Save and continue" button');
         	
@@ -40,7 +40,7 @@ casper.test.begin("Checking user can access repeat application page", {
         }).thenClick('input[type="radio"][name="isRepeatApplication"][value="is-repeat"]', function() {
         	
         	test.info('Clicked { Yes }');
-        	test.assertVisible('input[type="tel"][name="repeatCaseNumber"]', 'Found repeat case number text input is displayed');
+        	test.assertVisible('input[type="text"][name="repeatCaseNumber"]', 'Found repeat case number text input is displayed');
         	
         }).thenClick('input[type="submit"][name="save"]', function() {
 
