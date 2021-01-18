@@ -103,6 +103,7 @@ return [
             'formRadio'             => 'Application\Form\View\Helper\FormRadio',
             'formCheckbox'          => 'Application\Form\View\Helper\FormMultiCheckbox',
             'finalCheckAccessible'  => 'Application\View\Helper\FinalCheckAccessible',
+            'formtext'              => 'Application\Form\View\Helper\FormText',
         ],
         'factories' => [
             'accordion'     => 'Application\View\Helper\AccordionFactory',

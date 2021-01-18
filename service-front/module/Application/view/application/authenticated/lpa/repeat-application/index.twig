@@ -50,8 +50,10 @@
 
 {{ repeatCaseNumber.setAttributes({
     id: 'repeatCaseNumber',
-    type: 'tel',
-    class: 'form-control'
+    type: 'text',
+    class: 'form-control',
+    inputmode: 'numeric',
+    pattern: '[0-9]*',
 }) ? '' }}
 
 {# form fields labels #}
