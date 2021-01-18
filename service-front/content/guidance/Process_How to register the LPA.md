@@ -28,7 +28,7 @@ Once you’ve made the LPA, the online service will take you through the steps t
 
 OPG’s address is on the information sheets downloaded with your LPA.
 
-You need a PDF reader like Adobe Reader (<a href="http://www.adobe.com/uk/products/reader.html" rel="external" target="_blank">www.adobe.com/uk/products/reader.html</a>) to view and print the LPA form.
+You need a PDF reader like Adobe Reader to view and print the LPA form. You can <a href="http://www.adobe.com/uk/products/reader.html" rel="external" target="_blank" rel="noopener noreferrer">download Adobe Reader from the Adobe website (opens in a new tab)</a>.
 
 ### Track the progress of the LPA after you've posted it
 
