@@ -11,14 +11,15 @@
         <p>If this is the first time you’re making an LPA, you may want to look at our <a href="/guide#topic-before-you-begin" class="js-guidance" data-journey-click="page:link:help: find out more about how to prepare">Before you begin</a> help page. It explains the decisions the <a href="/guide#topic-donor" class="js-guidance" data-journey-click="page:link:help: donor">donor</a> has to make about their LPA and the information you’ll need to make an LPA.</p>
     </div>
 
-    <ul class="accordion">
+    <ul class="accordion" data-cy="accordion">
 
         {% set accordionTop = accordion( lpa ).top() %}
+        {% set route = routeName() %}
 
         {% include 'layout/partials/accordion/accordion.twig' with { 'items' : accordionTop, 'lpa':lpa } %}
 
-        {% if (accordionTop|last).routeName != 'review-link' %}
-            <li aria-hidden="true"><a id="current" class="accordion-current"></a></li>
+        {% if route['previous'] != 'user/about-you' and route['previous'] != 'user/dashboard' and (accordionTop|last).routeName != 'review-link' %}
+            <li aria-hidden="true"><a id="current" class="accordion-current">{{ route['previous'] }}</a></li>
         {% endif %}
 
 {% endblock %}

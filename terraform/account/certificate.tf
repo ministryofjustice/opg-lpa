@@ -39,7 +39,7 @@ resource "aws_acm_certificate_validation" "certificate_front" {
 }
 
 resource "aws_acm_certificate" "certificate_front" {
-  domain_name       = "${local.dev_wildcard}front.lpa.opg.service.justice.gov.uk"
+  domain_name       = "${local.cert_prefix_internal}front.lpa.opg.service.justice.gov.uk"
   validation_method = "DNS"
 }
 
@@ -71,7 +71,7 @@ resource "aws_acm_certificate_validation" "certificate_admin" {
 }
 
 resource "aws_acm_certificate" "certificate_admin" {
-  domain_name       = "${local.dev_wildcard}admin.lpa.opg.service.justice.gov.uk"
+  domain_name       = "${local.cert_prefix_internal}admin.lpa.opg.service.justice.gov.uk"
   validation_method = "DNS"
 }
 
@@ -96,24 +96,6 @@ resource "aws_route53_record" "certificate_validation_public_facing" {
   zone_id         = data.aws_route53_zone.live_lastingpowerofattorney_gov_uk.zone_id
 }
 
-//needed for the legacy account to validate the new cert. to be removed when legacy no longer needed.
-resource "aws_route53_record" "certificate_validation_public_facing_LEGACY" {
-  provider = aws.legacy-lpa
-  for_each = {
-    for dvo in aws_acm_certificate.certificate_public_facing.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
-  ttl             = 60
-  type            = each.value.type
-  zone_id         = data.aws_route53_zone.lastingpowerofattorney_service_gov_uk.zone_id
-}
 
 resource "aws_acm_certificate_validation" "certificate_public_facing" {
   certificate_arn         = aws_acm_certificate.certificate_public_facing.arn
@@ -121,41 +103,11 @@ resource "aws_acm_certificate_validation" "certificate_public_facing" {
 }
 
 resource "aws_acm_certificate" "certificate_public_facing" {
-  domain_name               = "${local.dev_wildcard}${data.aws_route53_zone.live_lastingpowerofattorney_gov_uk.name}"
+  domain_name               = "${local.cert_prefix_public_facing}${data.aws_route53_zone.live_lastingpowerofattorney_gov_uk.name}"
   validation_method         = "DNS"
-  subject_alternative_names = terraform.workspace == "production" ? ["www.lastingpowerofattorney.service.gov.uk", "maintenance.lastingpowerofattorney.service.gov.uk"] : []
-}
+  subject_alternative_names = terraform.workspace == "production" ? ["lastingpowerofattorney.service.gov.uk", "maintenance.lastingpowerofattorney.service.gov.uk"] : []
 
-//------------------------
-// LEGACY Live Service Certificate
-
-resource "aws_route53_record" "certificate_validation_live_service" {
-  provider = aws.legacy-lpa
-  for_each = terraform.workspace == "production" ? {
-    for dvo in aws_acm_certificate.certificate_live_service[0].domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  } : {}
-
-  allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
-  ttl             = 60
-  type            = each.value.type
-  zone_id         = data.aws_route53_zone.lastingpowerofattorney_service_gov_uk.id
-}
-
-resource "aws_acm_certificate_validation" "certificate_live_service" {
-  count                   = terraform.workspace == "production" ? 1 : 0
-  certificate_arn         = aws_acm_certificate.certificate_live_service[0].arn
-  validation_record_fqdns = [for record in aws_route53_record.certificate_validation_live_service : record.fqdn]
-}
-
-resource "aws_acm_certificate" "certificate_live_service" {
-  count                     = terraform.workspace == "production" ? 1 : 0
-  domain_name               = "*.lastingpowerofattorney.service.gov.uk"
-  validation_method         = "DNS"
-  subject_alternative_names = ["lastingpowerofattorney.service.gov.uk"]
+  lifecycle {
+    create_before_destroy = true
+  }
 }

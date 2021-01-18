@@ -41,21 +41,33 @@
 {% set address2 = form.get('address-address2') %}
 {% set address3 = form.get('address-address3') %}
 {% set postcode = form.get('address-postcode') %}
+{% set titleOptions = [
+      '',
+      'Mr',
+      'Mrs',
+      'Miss',
+      'Ms',
+      'Dr',
+      'Prefer not to say',
+] | json_encode() %}
 
 {# form fields config #}
 {{ title.setAttributes({
     id: 'name-title',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'name-title',
 }) ? ''}}
 
 {{ firstName.setAttributes({
     id: 'name-first',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'name-first',
 }) ? '' }}
 
 {{ lastName.setAttributes({
     id: 'name-last',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'name-last',
 }) ? '' }}
 
 {{ dayOfBirth.setAttributes({
@@ -90,22 +102,26 @@
 
 {{ address1.setAttributes({
     id: 'address-address1',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'address-address1',
 }) ? ''}}
 
 {{ address2.setAttributes({
     id: 'address-address2',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'address-address2',
 }) ? ''}}
 
 {{ address3.setAttributes({
     id: 'address-address3',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'address-address3',
 }) ? ''}}
 
 {{ postcode.setAttributes({
     id: 'address-postcode',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'address-postcode',
 }) ? ''}}
 
 {# form fields labels #}
@@ -184,7 +200,7 @@
 
     </fieldset>
 
-    <input type="submit" name="save" id="save" class="button" value="Save and continue">
+    <input type="submit" name="save" id="save" data-cy="save" class="button" value="Save and continue">
 
 {{ form().closeTag|raw }}
 

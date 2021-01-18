@@ -19,14 +19,16 @@
 {{ email.setAttributes({
     id: 'email',
     type: 'email',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'email'
 }) ? ''}}
 
 {{ email_confirm.setAttributes({
     id: 'email_confirm',
     type: 'email',
     autocomplete: 'off',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'email_confirm'
 }) ? ''}}
 
 {# form fields labels #}
@@ -49,7 +51,7 @@
         {{ macros.formGroup(email_confirm) }}
 
         <div class="form-group">
-            <input type="submit" name="submit" id="form-submit" class="button" value="Email me the link">
+            <input type="submit" name="submit" id="form-submit" class="button" data-cy="email-me-the-link" value="Email me the link">
         </div>
 
     </fieldset>

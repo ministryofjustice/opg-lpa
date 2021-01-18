@@ -2,32 +2,29 @@
 
 namespace Application\View\Helper;
 
-use Laminas\Router\RouteMatch;
 use Laminas\View\Helper\AbstractHelper;
 
 class RouteName extends AbstractHelper
 {
     /**
-     * @var RouteMatch
+     * @var array
      */
-    private $routeMatch;
+    private $routes;
 
     /**
-     * @param RouteMatch $routeMatch
+     * @param string|null $currentRoute
+     * @param string|null $previousRoute
      */
-    public function __construct(?RouteMatch $routeMatch)
+    public function __construct(?string $currentRoute, ?string $previousRoute)
     {
-        $this->routeMatch = $routeMatch;
+        $this->routes = [
+            'current'   => $currentRoute ?? '',
+            'previous'  => $previousRoute ?? ''
+        ];
     }
 
     public function __invoke()
     {
-        $routeName = '';
-
-        if ($this->routeMatch) {
-            $routeName = $this->routeMatch->getMatchedRouteName();
-        }
-
-        return $routeName;
+        return $this->routes;
     }
 }

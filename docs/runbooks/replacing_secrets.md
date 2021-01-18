@@ -14,7 +14,7 @@ please see [Setting up AWS Credentials](setting-up-aws-credentials/setting-up-cr
 
 ## Replace a secret in AWS Secrets Manager
 
-```
+```bash
 aws-vault exec <PROFILE_NAME> -- aws secretsmanager put-secret-value --secret-id path_to/secret --secret-string 'value'
 ```
 

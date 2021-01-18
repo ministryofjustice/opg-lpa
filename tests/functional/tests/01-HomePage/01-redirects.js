@@ -46,11 +46,8 @@ casper.test.begin('Checking http -> https redirect', {
                 // We should be redirected to HTTPS.
                 test.info('Current URL: ' + this.getCurrentUrl());
                 // The URL should now to be the proper homepage (with https).
-                if ( baseDomain.search('lastingpowerofattorney.service.gov.uk') == -1 ) {
-                    test.assertUrlMatch(new RegExp('^' + basePath + paths.home + '$'), 'Page is on the expected URL.');
-                } else {
-                    test.assertUrlMatch(new RegExp('^' + basePath + '$'), 'Page is on the expected URL.');
-                }
+                test.assertUrlMatch(new RegExp('^' + basePath +  paths. home + '$'), 'Page is on the expected URL.');
+
             });
         }
         casper.run(function () { test.done(); });

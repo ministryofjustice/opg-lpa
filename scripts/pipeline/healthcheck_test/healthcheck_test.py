@@ -18,7 +18,7 @@ class HealthcheckTester:
         with open(config_file) as json_file:
             parameters = json.load(json_file)
             self.front_url = "https://{}/ping/json".format(
-                parameters['front_fqdn'])
+                parameters['public_facing_fqdn'])
             self.expected_tag = parameters['tag']
 
     def read_healthcheck(self):

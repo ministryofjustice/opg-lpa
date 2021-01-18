@@ -4,13 +4,10 @@ namespace Application\Model\Service\Analytics;
 
 use Application\Model\Service\AbstractService;
 use Exception;
-use Opg\Lpa\Logger\LoggerTrait;
 use TheIconic\Tracking\GoogleAnalytics\Analytics;
 
 class GoogleAnalyticsService extends AbstractService
 {
-    use LoggerTrait;
-
     /**
      * @var Analytics
      */

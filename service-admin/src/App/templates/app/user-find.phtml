@@ -1,0 +1,113 @@
+<?php $this->layout('layout::default', ['title' => 'Find Users']); ?>
+<div class="grid-row">
+    <div class="column-full">
+
+        <form method="get" class="form" action="<?= $this->url('user.find') ?>">
+
+            <fieldset>
+
+                <legend>
+                    <h1 class="heading-xlarge">Find Users</h1>
+                </legend>
+
+                <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
+
+                <div class="text">
+                    <p>
+                        Find users by full or partial email address. If found, a summary of the user with a link to their full details will be shown.
+                    </p>
+
+                    <?php $this->insert('snippet::input-text', [
+                        'formLabel'     => 'Query',
+                        'formElement'   => $form->get('query'),
+                        'formType'      => 'text',
+                        'formLabelBold' => false
+                    ]) ?>
+
+                    <?php $this->insert('snippet::input-hidden', [
+                        'formElement' => $form->get('offset')
+                    ]) ?>
+                </div>
+
+            </fieldset>
+
+            <div class="form-group">
+                <input class="button" type="submit" value="Find">
+            </div>
+
+        </form>
+
+        <?php if ($query !== '') { ?>
+            <h2 class="heading-medium">Matching users</h2>
+            <?php if (count($users) === 0) { ?>
+                <p>No users found</p>
+            <?php } else { ?>
+                <?php foreach ($users as $user) { ?>
+                    <div class="user-find-result">
+                        <ul>
+                            <li>
+                                <strong class="bold-small">Name: </strong>
+                                <a href="<?= $this->url('user.search', [], ['email' => $user['username']]) ?>"><?= $user['username'] ?></a>
+                            </li>
+                            <li>
+                                <strong class="bold-small">Account status: </strong>
+
+                                <?php if (array_key_exists('isActive', $user)) { ?>
+                                    <span><?= ($user['isActive'] ? 'Activated' : 'Not activated'); ?></span>
+                                <?php } elseif (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
+                                    <span>Deleted</span>
+                                <?php } ?>
+                            </li>
+
+                            <?php if (array_key_exists('lastLoginAt', $user)) { ?>
+                                <li>
+                                    <strong class="bold-small">Last login time: </strong>
+                                    <span><?= ($user['lastLoginAt'] instanceof DateTime ? ($user['lastLoginAt'])->format('jS M Y \\a\\t g:i:s a') : 'Never logged in'); ?></span>
+                                </li>
+                            <?php } ?>
+
+                            <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
+                                <li>
+                                    <strong class="bold-small">Number of failed login attempts: </strong>
+                                    <span><?= $user['failedLoginAttempts']; ?></span>
+                                </li>
+                            <?php } ?>
+
+                            <?php if (array_key_exists('numberOfLpas', $user)) { ?>
+                                <li>
+                                    <strong class="bold-small">Number of LPAs: </strong>
+                                    <span><?= $user['numberOfLpas']; ?></span>
+                                </li>
+                            <?php } ?>
+                        </ul>
+                    </div>
+                <? } ?>
+            <?php } ?>
+        <?php } ?>
+
+        <?php if (!is_null($previousOffset)) { ?>
+            <?php
+            $options = [
+                'offset' => $previousOffset,
+                'query' => $query
+            ];
+            $previousHref = $this->url('user.find', [], $options);
+            ?>
+            <a href="<?= $previousHref ?>">Previous</a>
+        <?php } ?>
+
+        <?php if (!is_null($nextOffset)) { ?>
+            <?php if (!is_null($previousOffset)) { # previous link present ?>
+            &nbsp;|&nbsp;
+            <?php } ?>
+            <?php
+            $options = [
+                'offset' => $nextOffset,
+                'query' => $query
+            ];
+            $nextHref = $this->url('user.find', [], $options);
+            ?>
+            <a href="<?= $nextHref ?>">Next</a>
+        <?php } ?>
+    </div>
+</div>
