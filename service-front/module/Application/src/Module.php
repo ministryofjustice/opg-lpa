@@ -7,27 +7,27 @@ use Application\Form\AbstractCsrfForm;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
+use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\System\DynamoCronLock;
 use Alphagov\Pay\Client as GovPayClient;
 use Aws\DynamoDb\DynamoDbClient;
-use Opg\Lpa\Logger\LoggerTrait;
-use TheIconic\Tracking\GoogleAnalytics\Analytics;
 use Laminas\ModuleManager\Feature\FormElementProviderInterface;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
+use Laminas\Router\RouteMatch;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
+use Opg\Lpa\Logger\LoggerTrait;
+use TheIconic\Tracking\GoogleAnalytics\Analytics;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
 use Twig\TwigFunction;
 
 class Module implements FormElementProviderInterface
 {
-    use LoggerTrait;
-
     public function onBootstrap(MvcEvent $e)
     {
         $eventManager        = $e->getApplication()->getEventManager();
@@ -154,6 +154,13 @@ class Module implements FormElementProviderInterface
                 // Generate the session container for a user's personal details
                 'UserDetailsSession' => function () {
                     return new Container('UserDetails');
+                },
+
+                // Creates new container to store additional session information
+                'PersistentSessionDetails' => function (ServiceLocatorInterface $sm) {
+                    $route = $sm->get('Application')->getMvcEvent()->getRouteMatch();
+
+                    return new PersistentSessionDetails($route);
                 },
 
                 // PSR-7 HTTP Client
@@ -305,7 +312,9 @@ class Module implements FormElementProviderInterface
     }
 
     /**
-     * Use our logger to send this exception to its various destinations
+     * Show 500 page on MVC exceptions.
+     * NB logging of errors is handled by Application\Logging\ErrorEventListener,
+     * which is attached to these events in config.
      *
      * @param MvcEvent $e
      * @return ViewModel
@@ -315,8 +324,6 @@ class Module implements FormElementProviderInterface
         $exception = $e->getResult()->exception;
 
         if ($exception) {
-            $this->getLogger()->err($exception->getMessage().' in '.$exception->getFile().' on line '.$exception->getLine().' - '.$exception->getTraceAsString());
-
             $viewModel = new ViewModel();
             $viewModel->setTemplate('error/500');
 

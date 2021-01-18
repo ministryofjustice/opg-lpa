@@ -16,6 +16,12 @@ class UserModel implements UserRepository\UserInterface
 
     public function __construct(array $data)
     {
+        // if the numberOfLpas key hasn't been set, set it to null
+        // to mark that the value hasn't been derived
+        if (!array_key_exists('numberOfLpas', $data)) {
+            $data['numberOfLpas'] = null;
+        }
+
         $this->data = $data;
     }
 
@@ -59,6 +65,7 @@ class UserModel implements UserRepository\UserInterface
             'activatedAt' => $this->activatedAt(),
             'lastFailedLoginAttemptAt' => $this->lastFailedLoginAttemptAt(),
             'failedLoginAttempts' => $this->failedLoginAttempts(),
+            'numberOfLpas' => $this->numberOfLpas(),
         ];
     }
 
@@ -224,4 +231,20 @@ class UserModel implements UserRepository\UserInterface
         $this->data['failed_login_attempts'] = 0;
     }
 
+    /**
+     * Number of LPA applications made by the user.
+     * If not set, returns null.
+     *
+     * @return int|null
+     */
+    public function numberOfLpas()
+    {
+        $value = $this->data['numberOfLpas'];
+
+        if (is_null($value)) {
+            return $value;
+        }
+
+        return intval($value);
+    }
 }

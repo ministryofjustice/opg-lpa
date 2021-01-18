@@ -4,7 +4,7 @@ namespace Application\Model\Service\Mail\Transport;
 
 use Application\Model\Service\Mail\Message;
 use Html2Text\Html2Text;
-use Opg\Lpa\Logger\LoggerTrait;
+use Application\Logging\LoggerTrait;
 use SendGrid;
 use Laminas\Mime;
 use Laminas\Mail\Exception\InvalidArgumentException;

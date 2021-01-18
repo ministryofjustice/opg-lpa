@@ -15,7 +15,7 @@ use DateTime;
 use Exception;
 use Mockery;
 use Mockery\MockInterface;
-use Opg\Lpa\Logger\Logger;
+use Application\Logging\Logger;
 
 class ServiceTest extends AbstractServiceTest
 {

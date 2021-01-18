@@ -20,17 +20,20 @@
 {# form fields config #}
 {{ password.setAttributes({
     id: 'password_current',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'password_current'
 }) ? ''}}
 
 {{ new_password.setAttributes({
     id: 'password',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'password'
 }) ? ''}}
 
 {{ new_password_confirm.setAttributes({
     id: 'password_confirm',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'password_confirm'
 }) ? ''}}
 
 {{ skip_confirm_password.setAttributes({
@@ -76,7 +79,7 @@
         {{ macros.formGroup(new_password_confirm) }}
 
         <div class="form-group">
-            <input type="submit" name="submit" id="signin-form-submit" class="button" value="Save new password">
+            <input type="submit" name="submit" id="signin-form-submit" class="button" data-cy='save-new-password' value="Save new password">
         </div>
 
     </fieldset>

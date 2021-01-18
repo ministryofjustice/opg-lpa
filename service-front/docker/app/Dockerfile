@@ -20,6 +20,7 @@ RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-d
 COPY service-front /app
 COPY --from=composer /app/vendor /app/vendor
 COPY service-front/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY service-front/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
