@@ -93,6 +93,34 @@ make dc-unit-tests
 
 For how to run the functional tests, please see seperate README in tests/functional directory
 
+### Cypress functional tests
+
+The cypress functional tests can be run with:
+
+```bash
+make cypress-local
+```
+
+Once you've run this command, it can be useful to start the cypress
+container and run the tests from a shell inside it. That way, you don't need
+to re-build the whole container for each test run. You can also mount your
+local test directory as a volume in the container so that you can quickly
+modify and re-run tests. To get a command-line in the cypress container, do:
+
+```bash
+make cypress-local-shell
+```
+
+This will give you a command prompt inside the container, from where you can
+run the tests:
+
+```bash
+./cypress/start.sh
+```
+
+You can then modify the tests in your usual editor and re-run the modified tests
+with the same command without having to rebuild/restart the container.
+
 ### Updating composer dependencies
 
 Composer install is run when the app containers are built, and on a standard `docker-compose up`.
