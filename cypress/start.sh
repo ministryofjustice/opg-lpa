@@ -19,9 +19,8 @@ for i in "$@" ; do
     fi
 done
 
-if [[ $GUI == "true" ]] ; then
-    # Its a GUI, so simply open up
-    echo "Running Cypress GUI"
+if [[ $GUI == "true" ]] || [[ $CI != "true" ]] ; then
+    echo "Running Cypress"
 # pass supplied args to cypress
     CYPRESS_CMD="cypress $@"
     echo $CYPRESS_CMD
