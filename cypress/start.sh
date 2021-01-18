@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo The base domain is $BASE_DOMAIN
+echo The base domain is $CYPRESS_baseUrl
 
 echo Starting S3 Monitor
 python3 cypress/S3Monitor.py &
@@ -11,7 +11,7 @@ echo Cypress user number is $CYPRESS_userNumber
 
 echo Starting Cypress Tests
 
-# see if we asked for a GUI by specifying "open"  . 
+# see if we asked for a GUI by specifying "open"  .
 for i in "$@" ; do
     if [[ $i == "open" ]] ; then
         GUI=true
@@ -20,7 +20,7 @@ for i in "$@" ; do
 done
 
 if [[ $GUI == "true" ]] ; then
-    # Its a GUI, so simply open up 
+    # Its a GUI, so simply open up
     echo "Running Cypress GUI"
 # pass supplied args to cypress
     CYPRESS_CMD="cypress $@"
@@ -29,8 +29,8 @@ if [[ $GUI == "true" ]] ; then
 else
     # Its headless (used in CircleCI) so run the signup test first followed by all others
     echo "Running Cypress headless"
-    ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp' 
-    ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp' 
+    ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp'
+    ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp'
 fi
 
 
