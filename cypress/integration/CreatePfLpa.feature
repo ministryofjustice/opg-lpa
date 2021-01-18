@@ -1,12 +1,16 @@
 Feature: Create an LPA
+
+    I want to create an LPA
+
+    Background:
+        Given I ignore application exceptions
  
-  I want to create an LPA
     @focus
     Scenario: Dashboard has Link to Type page
         # we use seeded user here because a newly signed-up user would not yet have a dashboard page
         Given I log in as seeded user
         When I click "createnewlpa"
-        Then I am taken to the type page
+        Then I am taken to the lpa type page
   
     @focus
     Scenario: Create LPA
@@ -15,4 +19,9 @@ Feature: Create an LPA
         # "seeded-by-code" newly signed up standard user
         Given I log in as appropriate test user
         Then I visit the type page
-        When I click submit
+        When I click "save"
+        And I see in the page text
+            | There was a problem submitting the form |
+            | You need to do the following: |
+            | Choose a type of LPA |
+            | Please try again |
