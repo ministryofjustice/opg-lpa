@@ -2930,7 +2930,7 @@ input[type=number] {
         float: left; } }
   .accordion .accordion-summary .link-edit {
     display: block;
-    padding: 15px 30px;
+    padding: 15px 15px;
     float: right; }
     @media (max-width: 640px) {
       .accordion .accordion-summary .link-edit {

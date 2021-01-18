@@ -9,7 +9,7 @@
     <div class="{{ (rowStyle ? rowStyle : '' ) }}">
         <dt class="cya-question">{{ sectionTitle|raw }}</dt>
         <dd class="cya-answer">{{ value|raw }}</dd>
-        {{ macros.outputChangeLink(changeUrl, navigationReference, ariaLabelOverride ? ariaLabelOverride : 'Edit ' ~ sectionTitle) }}
+        {{ macros.outputChangeLink(changeUrl, navigationReference, ariaLabelOverride ? ariaLabelOverride : sectionTitle) }}
     </div>
 
 {% endmacro %}
@@ -19,7 +19,7 @@
 
     <dd class="cya-change">
         {% if changeUrl is not null %}
-            <a href="{{ changeUrl|raw }}" data-journey-click="check your answers:link:navigation: {{ navigationReference }}"{% if ariaLabel %} aria-label="{{ ariaLabel }}"{% endif %}>Edit</a>
+            <a href="{{ changeUrl|raw }}" data-journey-click="check your answers:link:navigation: {{ navigationReference }}"{% if ariaLabel %} aria-label="Change {{ ariaLabel }}"{% endif %}>Change<span class="visually-hidden"> {{ ariaLabel }}</span></a>
         {% endif %}
     </dd>
 
@@ -59,7 +59,7 @@
             changeUrl,
             navigationReference,
             'actor-term',
-            ariaLabelOverride ? ariaLabelOverride : 'Edit ' ~ sectionHeading
+            ariaLabelOverride ? ariaLabelOverride : sectionHeading
         ) }}
     {% endif %}
 
