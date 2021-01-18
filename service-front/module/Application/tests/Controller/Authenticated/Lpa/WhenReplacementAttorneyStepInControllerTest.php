@@ -9,8 +9,8 @@ use Mockery;
 use Mockery\MockInterface;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use RuntimeException;
-use Zend\Http\Response;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 
 class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
 {

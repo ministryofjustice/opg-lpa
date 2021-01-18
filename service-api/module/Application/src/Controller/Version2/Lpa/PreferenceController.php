@@ -5,7 +5,7 @@ namespace Application\Controller\Version2\Lpa;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Model\Service\EntityInterface;
 use Application\Model\Service\Preference\Service;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class PreferenceController extends AbstractLpaController
 {

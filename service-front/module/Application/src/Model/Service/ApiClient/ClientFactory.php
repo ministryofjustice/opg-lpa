@@ -5,8 +5,8 @@ namespace Application\Model\Service\ApiClient;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Http\Client\HttpClient as HttpClientInterface;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Session\Container;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Session\Container;
 
 class ClientFactory implements FactoryInterface
 {

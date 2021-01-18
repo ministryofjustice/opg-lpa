@@ -5,7 +5,7 @@ namespace ApplicationTest\View\Helper;
 use Application\View\Helper\ElementGroupClass;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Zend\Form\ElementInterface;
+use Laminas\Form\ElementInterface;
 
 class ElementGroupClassTest extends MockeryTestCase
 {

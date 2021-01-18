@@ -12,16 +12,16 @@ class DobFieldsetTest extends MockeryTestCase
         $fieldSet = new DobFieldset();
 
         $this->assertInstanceOf('Application\Form\Fieldset\Dob', $fieldSet);
-        $this->assertInstanceOf('Zend\Form\Fieldset', $fieldSet);
+        $this->assertInstanceOf('Laminas\Form\Fieldset', $fieldSet);
     }
 
     public function testElements()
     {
         $fieldSet = new DobFieldset();
 
-        $this->assertInstanceOf('Zend\Form\Element\Text', $fieldSet->get('day'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $fieldSet->get('month'));
-        $this->assertInstanceOf('Zend\Form\Element\Text', $fieldSet->get('year'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $fieldSet->get('day'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $fieldSet->get('month'));
+        $this->assertInstanceOf('Laminas\Form\Element\Text', $fieldSet->get('year'));
     }
 
     public function testSetAndGetMessages()

@@ -2,8 +2,8 @@
 
 namespace Application\Library\Http\Response;
 
-use Zend\Http\Headers;
-use Zend\Http\Response;
+use Laminas\Http\Headers;
+use Laminas\Http\Response;
 
 /**
  * Class Json

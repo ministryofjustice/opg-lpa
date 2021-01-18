@@ -2,7 +2,7 @@
 
 namespace Application\Form;
 
-use Zend\Form\Form;
+use Laminas\Form\Form;
 
 abstract class AbstractForm extends Form
 {

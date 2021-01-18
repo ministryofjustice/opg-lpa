@@ -4,8 +4,8 @@ namespace ApplicationTest\Controller\Version2\Auth;
 
 use Application\Controller\Version2\Auth\PasswordController;
 use Application\Model\Service\Password\Service;
-use Zend\View\Model\JsonModel;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\View\Model\JsonModel;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Mockery;
 
 class PasswordControllerTest extends AbstractAuthControllerTest

@@ -3,8 +3,8 @@
 namespace Application\Form\General;
 
 use Application\Form\AbstractCsrfForm;
-use Zend\Validator\NotEmpty;
-use Zend\Validator\StringLength;
+use Laminas\Validator\NotEmpty;
+use Laminas\Validator\StringLength;
 
 /**
  * To send feedback to the OPG

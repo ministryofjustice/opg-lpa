@@ -2,7 +2,7 @@
 
 namespace App\Validator;
 
-use Zend\Validator\Regex as ZendRegex;
+use Laminas\Validator\Regex as ZendRegex;
 
 /**
  * Class Regex

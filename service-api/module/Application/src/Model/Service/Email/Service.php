@@ -5,7 +5,7 @@ namespace Application\Model\Service\Email;
 use Application\Model\DataAccess\Repository\User\UserInterface as User;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\Service\AbstractService;
-use Zend\Math\BigInteger\BigInteger;
+use Laminas\Math\BigInteger\BigInteger;
 use DateTime;
 
 class Service extends AbstractService
@@ -19,7 +19,7 @@ class Service extends AbstractService
     public function generateToken($userId, $newEmail)
     {
 
-        $validator = new \Zend\Validator\EmailAddress();
+        $validator = new \Laminas\Validator\EmailAddress();
 
         if (!$validator->isValid($newEmail)) {
             return 'invalid-email';

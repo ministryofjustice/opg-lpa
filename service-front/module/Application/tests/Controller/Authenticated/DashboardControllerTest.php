@@ -7,13 +7,13 @@ use ApplicationTest\Controller\AbstractControllerTest;
 use Mockery;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
-use Zend\Http\Response;
-use Zend\Mvc\MvcEvent;
-use Zend\Router\RouteMatch;
-use Zend\Session\Container;
-use Zend\Stdlib\ArrayObject;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Router\RouteMatch;
+use Laminas\Session\Container;
+use Laminas\Stdlib\ArrayObject;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 class DashboardControllerTest extends AbstractControllerTest
 {

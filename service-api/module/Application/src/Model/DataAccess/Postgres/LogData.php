@@ -2,7 +2,7 @@
 namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
-use Zend\Db\Sql\Sql;
+use Laminas\Db\Sql\Sql;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 
 class LogData extends AbstractBase implements UserRepository\LogRepositoryInterface
@@ -37,7 +37,7 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
         try {
             $statement->execute();
 
-        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e){
+        } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
             return false;
 
         }

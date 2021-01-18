@@ -9,10 +9,10 @@ use DateTime;
 use Exception;
 use Mockery;
 use Opg\Lpa\DataModel\Lpa\Document\NotifiedPerson;
-use Zend\Http\Header\HeaderInterface;
-use Zend\Http\Headers;
-use Zend\Http\Response;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Header\HeaderInterface;
+use Laminas\Http\Headers;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 
 class DownloadControllerTest extends AbstractControllerTest
 {

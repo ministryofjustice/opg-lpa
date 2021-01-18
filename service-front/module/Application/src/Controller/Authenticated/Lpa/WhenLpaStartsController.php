@@ -4,7 +4,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
 use Opg\Lpa\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 use RuntimeException;
 
 class WhenLpaStartsController extends AbstractLpaController

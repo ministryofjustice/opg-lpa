@@ -11,8 +11,8 @@ use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\PasswordValidatorTrait;
 use Opg\Lpa\DataModel\User\User;
-use Zend\Validator\EmailAddress as EmailAddressValidator;
-use Zend\Math\BigInteger\BigInteger;
+use Laminas\Validator\EmailAddress as EmailAddressValidator;
+use Laminas\Math\BigInteger\BigInteger;
 
 class Service extends AbstractService
 {

@@ -25,8 +25,8 @@ return [
     'service_manager' => [
         'abstract_factories' => [
             'Application\Model\Service\ServiceAbstractFactory',
-            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-            'Zend\Log\LoggerAbstractServiceFactory',
+            'Laminas\Cache\Service\StorageCacheAbstractServiceFactory',
+            'Laminas\Log\LoggerAbstractServiceFactory',
         ],
         'aliases' => [
             'AdminService'                  => 'Application\Model\Service\Admin\Admin',

@@ -4,7 +4,7 @@ namespace Application\Controller\Authenticated;
 
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Controller\AbstractAuthenticatedController;
-use Zend\View\Model\JsonModel;
+use Laminas\View\Model\JsonModel;
 
 class PostcodeController extends AbstractAuthenticatedController
 {

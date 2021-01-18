@@ -5,7 +5,7 @@ namespace Application\ControllerFactory;
 use Application\Controller\Console\GenerateStatsController;
 use Application\Model\Service\System\Stats as StatsService;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class GenerateStatsControllerFactory implements FactoryInterface
 {

@@ -2,10 +2,10 @@
 
 namespace Application\ControllerFactory;
 
-use Zend\Db\Adapter\Adapter as ZendDbAdapter;
+use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Application\Controller\PingController;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Aws\Sqs\SqsClient;
 use Http\Client\HttpClient;
 

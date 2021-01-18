@@ -12,9 +12,10 @@ use Mockery;
 use Mockery\MockInterface;
 use SendGrid;
 use SendGrid\Client;
-use Zend\Mail\Message;
-use Zend\Mime\Mime;
-use Zend\Mime\Part;
+use Laminas\Mail\Message;
+use Laminas\Mime\Mime;
+use Laminas\Mime\Part;
+use Application\View\Helper\RendererInterface as RendererInterface;
 
 class MailTransportTest extends AbstractEmailServiceTest
 {
@@ -28,15 +29,21 @@ class MailTransportTest extends AbstractEmailServiceTest
      */
     private $service;
 
+    /**
+     * @var RendererInterface|MockInterface
+     */
+    private $localEmailRenderer;
+
     public function setUp() : void
     {
         parent::setUp();
 
         $this->sendgridClient = Mockery::mock(Client::class);
+        $this->localEmailRenderer = Mockery::mock(RendererInterface::class);
 
         $this->service = new MailTransport(
             $this->sendgridClient,
-            $this->twigEmailRenderer,
+            $this->localEmailRenderer,
             [
                 'sender' => [
                     'default' => [
@@ -97,7 +104,7 @@ class MailTransportTest extends AbstractEmailServiceTest
         $textHtml = new Part('<HTML><body>Test html</body></HTML>');
         $textHtml->setType(Mime::TYPE_HTML);
 
-        $content = new \Zend\Mime\Message();
+        $content = new \Laminas\Mime\Message();
         $content->setParts([$textContent, $textHtml]);
 
         $message = new Message();
@@ -189,7 +196,7 @@ class MailTransportTest extends AbstractEmailServiceTest
         $template = Mockery::mock();
         $template->shouldReceive('render')->once()->andReturn('<html><!-- SUBJECT: TEST SUBJECT --><h1>An email</h1></html>');
 
-        $this->twigEmailRenderer->shouldReceive('loadTemplate')
+        $this->localEmailRenderer->shouldReceive('loadTemplate')
             ->withArgs(['registration.twig'])
             ->once()
             ->andReturn($template);
@@ -231,7 +238,7 @@ class MailTransportTest extends AbstractEmailServiceTest
         $template = Mockery::mock();
         $template->shouldReceive('render')->once();
 
-        $this->twigEmailRenderer->shouldReceive('loadTemplate')
+        $this->localEmailRenderer->shouldReceive('loadTemplate')
             ->withArgs(['registration.twig'])
             ->once()
             ->andReturn($template);

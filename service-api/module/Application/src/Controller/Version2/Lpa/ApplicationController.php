@@ -7,8 +7,8 @@ use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\Applications\Collection;
 use Application\Model\Service\Applications\Service;
 use Application\Model\Service\EntityInterface;
-use Zend\Paginator\Paginator;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\Paginator\Paginator;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class ApplicationController extends AbstractLpaController
 {

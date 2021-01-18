@@ -4,7 +4,7 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class HomeController extends AbstractBaseController
 {

@@ -4,7 +4,7 @@ namespace App\View\ErrorMapper;
 
 use League\Plates\Engine;
 use League\Plates\Extension\ExtensionInterface;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Stdlib\ArrayUtils;
 
 /**
  * Plates Extension providing a View Helper for the ErrorMapper service.

@@ -2,8 +2,8 @@
 
 namespace App\Service\Cache;
 
-use Zend\Cache\Exception\UnsupportedMethodCallException;
-use Zend\Cache\Storage\StorageInterface;
+use Laminas\Cache\Exception\UnsupportedMethodCallException;
+use Laminas\Cache\Storage\StorageInterface;
 use Aws\DynamoDb\DynamoDbClient;
 use Exception;
 
@@ -60,7 +60,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-     * @see \Zend\Cache\Storage\StorageInterface::setItem()
+     * @see \Laminas\Cache\Storage\StorageInterface::setItem()
      */
     public function setItem($key, $value)
     {
@@ -88,7 +88,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-     * @see \Zend\Cache\Storage\StorageInterface::removeItem()
+     * @see \Laminas\Cache\Storage\StorageInterface::removeItem()
      */
     public function removeItem($key)
     {
@@ -105,7 +105,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-     * @see \Zend\Cache\Storage\StorageInterface::getItem()
+     * @see \Laminas\Cache\Storage\StorageInterface::getItem()
      */
     public function getItem($key, & $success = null, & $casToken = null)
     {
@@ -130,7 +130,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::addItem()
+    * @see \Laminas\Cache\Storage\StorageInterface::addItem()
     */
     public function addItem($key, $value)
     {
@@ -138,7 +138,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::addItems()
+    * @see \Laminas\Cache\Storage\StorageInterface::addItems()
     */
     public function addItems(array $keyValuePairs)
     {
@@ -146,7 +146,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::checkAndSetItem()
+    * @see \Laminas\Cache\Storage\StorageInterface::checkAndSetItem()
     */
     public function checkAndSetItem($token, $key, $value)
     {
@@ -154,7 +154,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::decrementItem()
+    * @see \Laminas\Cache\Storage\StorageInterface::decrementItem()
     */
     public function decrementItem($key, $value)
     {
@@ -162,7 +162,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::decrementItems()
+    * @see \Laminas\Cache\Storage\StorageInterface::decrementItems()
     */
     public function decrementItems(array $keyValuePairs)
     {
@@ -170,7 +170,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::getCapabilities()
+    * @see \Laminas\Cache\Storage\StorageInterface::getCapabilities()
     */
     public function getCapabilities()
     {
@@ -178,7 +178,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::getItems()
+    * @see \Laminas\Cache\Storage\StorageInterface::getItems()
     */
     public function getItems(array $keys)
     {
@@ -186,7 +186,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::getMetadata()
+    * @see \Laminas\Cache\Storage\StorageInterface::getMetadata()
     */
     public function getMetadata($key)
     {
@@ -194,7 +194,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::getMetadatas()
+    * @see \Laminas\Cache\Storage\StorageInterface::getMetadatas()
     */
     public function getMetadatas(array $keys)
     {
@@ -202,7 +202,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::getOptions()
+    * @see \Laminas\Cache\Storage\StorageInterface::getOptions()
     */
     public function getOptions()
     {
@@ -210,7 +210,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::hasItem()
+    * @see \Laminas\Cache\Storage\StorageInterface::hasItem()
     */
     public function hasItem($key)
     {
@@ -218,7 +218,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::hasItems()
+    * @see \Laminas\Cache\Storage\StorageInterface::hasItems()
     */
     public function hasItems(array $keys)
     {
@@ -226,7 +226,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::incrementItem()
+    * @see \Laminas\Cache\Storage\StorageInterface::incrementItem()
     */
     public function incrementItem($key, $value)
     {
@@ -234,7 +234,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::incrementItems()
+    * @see \Laminas\Cache\Storage\StorageInterface::incrementItems()
     */
     public function incrementItems(array $keyValuePairs)
     {
@@ -242,7 +242,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::removeItems()
+    * @see \Laminas\Cache\Storage\StorageInterface::removeItems()
     */
     public function removeItems(array $keys)
     {
@@ -250,7 +250,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::replaceItem()
+    * @see \Laminas\Cache\Storage\StorageInterface::replaceItem()
     */
     public function replaceItem($key, $value)
     {
@@ -258,7 +258,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::replaceItems()
+    * @see \Laminas\Cache\Storage\StorageInterface::replaceItems()
     */
     public function replaceItems(array $keyValuePairs)
     {
@@ -266,7 +266,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::setItems()
+    * @see \Laminas\Cache\Storage\StorageInterface::setItems()
     */
     public function setItems(array $keyValuePairs)
     {
@@ -274,7 +274,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::setOptions()
+    * @see \Laminas\Cache\Storage\StorageInterface::setOptions()
     */
     public function setOptions($options)
     {
@@ -282,7 +282,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::touchItem()
+    * @see \Laminas\Cache\Storage\StorageInterface::touchItem()
     */
     public function touchItem($key)
     {
@@ -290,7 +290,7 @@ class Cache implements StorageInterface
     }
 
     /* (non-PHPdoc)
-    * @see \Zend\Cache\Storage\StorageInterface::touchItems()
+    * @see \Laminas\Cache\Storage\StorageInterface::touchItems()
     */
     public function touchItems(array $keys)
     {
