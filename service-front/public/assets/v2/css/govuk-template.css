@@ -89,16 +89,16 @@ fieldset {
   padding: 0; }
 
 a:link {
-  color: #1d70b8; }
+  color: #005ea5; }
 
 a:visited {
   color: #4c2c92; }
 
 a:hover {
-  color: #003078; }
+  color: #2b8cc4; }
 
 a:active {
-  color: #0b0c0c; }
+  color: #2b8cc4; }
 
 /*
  * 1. Corrects text resizing oddly in IE6/7 when body font-size is set using em units
