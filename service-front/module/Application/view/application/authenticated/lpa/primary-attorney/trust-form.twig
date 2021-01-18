@@ -57,6 +57,8 @@
 
 {{ registrationNumber.setAttributes({
     id: 'number',
+    inputmode: 'numeric',
+    pattern: '[0-9]*',
     type: 'tel',
     class: 'form-control'
 }) ? '' }}
