@@ -52,7 +52,7 @@ Each is an nginx proxy (based on docker-ssl-proxy) modified to proxy requests wi
 
 nginx proxies which receive traffic from front-ssl/admin-ssl respectively and forward it to the front-end application (front-app/admin-app). Incoming requests are logged in an access log.
 
-For non-static resources (i.e. requests which are proxied through to the *-app PHP apps), log entries look like this:
+Log entries look like this:
 
 ```
 {
@@ -85,15 +85,7 @@ For non-static resources (i.e. requests which are proxied through to the *-app P
 }
 ```
 
-This format is modelled after the JSON nginx log format used by Sirius.
-
-For static resources, access logging uses combined log format with the addition of the Amazon trace ID at the start of the line:
-
-```
-Root=1-1608303221.943-153-fromssl - 192.168.80.9 - - [18/Dec/2020:14:53:41 +0000] "GET /assets/1608303221/v2/css/govuk-template.min.css HTTP/1.0" 200 13995 "https://localhost:7002/home" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
-```
-
-As requests for static assets are separate from the original request for the page, they will carry different trace IDs.
+This format is modelled after the JSON nginx log format used by Sirius. Both static assets and PHP resources are logged using the same format. However, as requests for static assets are separate from the original request for the page, they will carry different trace IDs.
 
 The `X-Amzn-Trace-Id` header is forwarded with requests proxied to front-app/admin-app but renamed as `X-Trace-Id`.
 
