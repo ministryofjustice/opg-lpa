@@ -8,7 +8,7 @@ use Application\View\Helper\RouteNameFactory;
 use Interop\Container\ContainerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Zend\Router\RouteMatch;
+use Laminas\Router\RouteMatch;
 
 class RouteNameFactoryTest extends MockeryTestCase
 {

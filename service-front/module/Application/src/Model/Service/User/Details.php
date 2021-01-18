@@ -9,7 +9,7 @@ use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\DataModel\User\User;
 use Opg\Lpa\Logger\LoggerTrait;
-use Zend\Session\Container;
+use Laminas\Session\Container;
 use Exception;
 use RuntimeException;
 

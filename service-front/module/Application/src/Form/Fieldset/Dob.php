@@ -2,7 +2,7 @@
 
 namespace Application\Form\Fieldset;
 
-use Zend\Form\Fieldset;
+use Laminas\Form\Fieldset;
 
 class Dob extends Fieldset
 {

@@ -9,10 +9,11 @@ use Application\View\Helper\AccountInfo;
 use Application\View\Helper\AccountInfoFactory;
 use Interop\Container\ContainerInterface;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Zend\Mvc\View\Http\ViewManager;
-use Zend\Router\RouteMatch;
-use Zend\Session\Container;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\View\Http\ViewManager;
+use Laminas\Router\RouteMatch;
+use Laminas\Session\Container;
+use Laminas\View\Model\ViewModel;
+use Twig\Environment as TwigEnvironment;
 
 class AccountInfoFactoryTest extends MockeryTestCase
 {
@@ -32,7 +33,7 @@ class AccountInfoFactoryTest extends MockeryTestCase
 
         $authenticationService = Mockery::mock(AuthenticationService::class);
         $userDetailsSession = Mockery::mock(Container::class);
-        $twigViewRender = Mockery::mock(\Twig_Environment::class);
+        $twigViewRender = Mockery::mock(TwigEnvironment::class);
 
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('get')->withArgs(['TwigViewRenderer'])->once()->andReturn($twigViewRender);

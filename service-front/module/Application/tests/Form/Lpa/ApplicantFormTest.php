@@ -42,7 +42,7 @@ class ApplicantFormTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Zend\Form\Element\Radio', $this->form->get('whoIsRegistering'));
+        $this->assertInstanceOf('Laminas\Form\Element\Radio', $this->form->get('whoIsRegistering'));
     }
 
     public function testValidateByModelOK()

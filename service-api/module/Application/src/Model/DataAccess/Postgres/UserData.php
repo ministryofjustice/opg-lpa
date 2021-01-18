@@ -3,11 +3,11 @@ namespace Application\Model\DataAccess\Postgres;
 
 use PDOException;
 use DateTime;
-use Zend\Db\Sql\Sql;
-use Zend\Db\Sql\Predicate\Operator;
-use Zend\Db\Sql\Predicate\Expression;
-use Zend\Db\Sql\Predicate\IsNull;
-use Zend\Db\Sql\Predicate\IsNotNull;
+use Laminas\Db\Sql\Sql;
+use Laminas\Db\Sql\Predicate\Operator;
+use Laminas\Db\Sql\Predicate\Expression;
+use Laminas\Db\Sql\Predicate\IsNull;
+use Laminas\Db\Sql\Predicate\IsNotNull;
 use Opg\Lpa\DataModel\User\User as ProfileUserModel;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 
@@ -233,7 +233,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         try {
             $statement->execute();
 
-        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e){
+        } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
 
             // If it's a key clash, and not on the identity, re-try with new values.
             if ($e->getPrevious() instanceof PDOException) {

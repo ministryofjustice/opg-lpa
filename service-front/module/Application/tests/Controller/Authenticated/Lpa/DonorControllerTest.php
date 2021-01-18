@@ -13,9 +13,9 @@ use Opg\Lpa\DataModel\Common\LongName;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
 use OpgTest\Lpa\DataModel\FixturesData;
 use RuntimeException;
-use Zend\Http\Response;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 class DonorControllerTest extends AbstractControllerTest
 {

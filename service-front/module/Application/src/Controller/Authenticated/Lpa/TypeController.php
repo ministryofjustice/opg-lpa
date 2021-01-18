@@ -5,7 +5,7 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Opg\Lpa\DataModel\Lpa\Document\Document;
 use Opg\Lpa\DataModel\Lpa\Document\Donor;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 use RuntimeException;
 
 class TypeController extends AbstractLpaController

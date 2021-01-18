@@ -2,7 +2,7 @@
 namespace Application\Model\Service\AddressLookup;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class OrdnanceSurveyFactory implements FactoryInterface
 {

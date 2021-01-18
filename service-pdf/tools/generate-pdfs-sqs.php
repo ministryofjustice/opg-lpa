@@ -6,7 +6,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Aws\Sqs\SqsClient;
-use Zend\Filter\Compress;
+use Laminas\Filter\Compress;
 
 $client = new SqsClient([
     'region' => 'eu-west-1',

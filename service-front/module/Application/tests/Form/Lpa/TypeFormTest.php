@@ -32,7 +32,7 @@ class TypeFormTest extends MockeryTestCase
     public function testElements()
     {
         $this->assertInstanceOf('Application\Form\Element\Type', $this->form->get('type'));
-        $this->assertInstanceOf('Zend\Form\Element\Submit', $this->form->get('save'));
+        $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('save'));
     }
 
     public function testValidateByModelOK()

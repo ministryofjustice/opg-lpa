@@ -107,17 +107,12 @@ services:
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
 
   front-composer:
-    image: composer:1.10.16
+    image: composer:latest
     volumes:
       - ./service-front:/app
     command:
-      - global require hirak/prestissimo 
-      - --no-plugins
-      - --no-scripts 
-    command:
       - install
       - --prefer-dist
-      - --no-suggest
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
@@ -169,6 +164,7 @@ services:
       - dynamodb
       - localstack
       - local-config
+      - postgres
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -207,17 +203,12 @@ services:
       XDEBUG_CONFIG: remote_host=host.docker.internal remote_enable=1
 
   api-composer:
-    image: composer:1.10.16
+    image: composer:latest
     volumes:
       - ./service-api:/app
     command:
-      - global require hirak/prestissimo 
-      - --no-plugins
-      - --no-scripts 
-    command:
       - install
       - --prefer-dist
-      - --no-suggest
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
@@ -278,17 +269,12 @@ services:
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
 
   admin-composer:
-    image: composer:1.10.16
+    image: composer:latest
     volumes:
       - ./service-admin:/app
     command:
-      - global require hirak/prestissimo 
-      - --no-plugins
-      - --no-scripts 
-    command:
       - install
       - --prefer-dist
-      - --no-suggest
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader
@@ -335,17 +321,12 @@ services:
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo
 
   pdf-composer:
-    image: composer:1.10.16
+    image: composer:latest
     volumes:
       - ./service-pdf:/app
     command:
-      - global require hirak/prestissimo 
-      - --no-plugins
-      - --no-scripts 
-    command:
       - install
       - --prefer-dist
-      - --no-suggest
       - --no-interaction
       - --no-scripts
       - --optimize-autoloader

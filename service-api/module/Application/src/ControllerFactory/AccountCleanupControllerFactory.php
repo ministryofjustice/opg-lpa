@@ -5,7 +5,7 @@ namespace Application\ControllerFactory;
 use Application\Controller\Console\AccountCleanupController;
 use Application\Model\Service\AccountCleanup\Service as AccountCleanupService;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class AccountCleanupControllerFactory implements FactoryInterface
 {

@@ -3,9 +3,9 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
-use Zend\Http\Request;
-use Zend\Router\RouteStackInterface;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\Router\RouteStackInterface;
+use Laminas\View\Model\ViewModel;
 
 class ReuseDetailsController extends AbstractLpaActorController
 {

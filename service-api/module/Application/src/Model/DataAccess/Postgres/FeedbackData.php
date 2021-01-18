@@ -3,8 +3,8 @@ namespace Application\Model\DataAccess\Postgres;
 
 use DateTime;
 use Traversable;
-use Zend\Db\Sql\Sql;
-use Zend\Db\Sql\Predicate\Operator;
+use Laminas\Db\Sql\Sql;
+use Laminas\Db\Sql\Predicate\Operator;
 use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 
 class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRepositoryInterface
@@ -35,7 +35,7 @@ class FeedbackData extends AbstractBase implements FeedbackRepository\FeedbackRe
 
         try {
             $statement->execute();
-        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e){
+        } catch (\Laminas\Db\Adapter\Exception\InvalidQueryException $e){
             return false;
 
         }

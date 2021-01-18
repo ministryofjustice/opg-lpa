@@ -4,7 +4,7 @@ namespace Application;
 
 use GuzzleHttp\Client;
 use PDO;
-use Zend\Db\Adapter\Adapter as ZendDbAdapter;
+use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Application\Model\DataAccess\Repository;
 use Application\Model\DataAccess\Postgres;
 use Application\Library\ApiProblem\ApiProblem;
@@ -18,13 +18,13 @@ use Aws\Signature\SignatureV4;
 use Http\Adapter\Guzzle6\Client as Guzzle6Client;
 use Http\Client\HttpClient;
 use Opg\Lpa\Logger\Logger;
-use Zend\Authentication\AuthenticationService;
-use Zend\Authentication\Storage\NonPersistent;
-use Zend\Console\Request as ConsoleRequest;
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use ZF\ApiProblem\ApiProblemResponse;
+use Laminas\Authentication\AuthenticationService;
+use Laminas\Authentication\Storage\NonPersistent;
+use Laminas\Console\Request as ConsoleRequest;
+use Laminas\Mvc\ModuleRouteListener;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ApiTools\ApiProblem\ApiProblemResponse;
 
 class Module
 {
@@ -43,8 +43,8 @@ class Module
             $eventManager->attach(MvcEvent::EVENT_ROUTE, [new AuthenticationListener, 'authenticate'], 500);
 
             // Register error handler for dispatch and render errors
-            $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
-            $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
+            $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
+            $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
         }
     }
 
@@ -102,7 +102,7 @@ class Module
                     ]);
                 },
 
-                'Zend\Authentication\AuthenticationService' => function ($sm) {
+                'Laminas\Authentication\AuthenticationService' => function ($sm) {
                     // NonPersistent persists only for the life of the request...
                     return new AuthenticationService(new NonPersistent());
                 },

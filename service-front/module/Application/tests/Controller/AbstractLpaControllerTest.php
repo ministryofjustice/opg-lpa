@@ -5,10 +5,10 @@ namespace ApplicationTest\Controller;
 use Application\Model\FormFlowChecker;
 use Mockery;
 use RuntimeException;
-use Zend\Http\Response;
-use Zend\Mvc\MvcEvent;
-use Zend\Router\RouteMatch;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Router\RouteMatch;
+use Laminas\View\Model\ViewModel;
 
 class AbstractLpaControllerTest extends AbstractControllerTest
 {
@@ -134,7 +134,7 @@ class AbstractLpaControllerTest extends AbstractControllerTest
 
     /**
      * @expectedException        RuntimeException
-     * @expectedExceptionMessage RouteMatch must be an instance of Zend\Router\Http\RouteMatch when using the moveToNextRoute function
+     * @expectedExceptionMessage RouteMatch must be an instance of Laminas\Router\Http\RouteMatch when using the moveToNextRoute function
      */
     public function testMoveToNextRouteNotRouteMatch()
     {

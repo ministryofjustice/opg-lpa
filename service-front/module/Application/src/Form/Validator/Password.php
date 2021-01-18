@@ -2,8 +2,8 @@
 
 namespace Application\Form\Validator;
 
-use Zend\Validator\AbstractValidator;
-use Zend\Validator\Regex;
+use Laminas\Validator\AbstractValidator;
+use Laminas\Validator\Regex;
 
 class Password extends AbstractValidator
 {

@@ -12,14 +12,17 @@ use Alphagov\Pay\Client as GovPayClient;
 use Aws\DynamoDb\DynamoDbClient;
 use Opg\Lpa\Logger\LoggerTrait;
 use TheIconic\Tracking\GoogleAnalytics\Analytics;
-use Zend\ModuleManager\Feature\FormElementProviderInterface;
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\ServiceManager\ServiceManager;
-use Zend\Session\Container;
-use Zend\Stdlib\ArrayUtils;
-use Zend\View\Model\ViewModel;
+use Laminas\ModuleManager\Feature\FormElementProviderInterface;
+use Laminas\Mvc\ModuleRouteListener;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\ServiceManager;
+use Laminas\Session\Container;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\View\Model\ViewModel;
+use Twig\Loader\FilesystemLoader;
+use Twig\Environment;
+use Twig\TwigFunction;
 
 class Module implements FormElementProviderInterface
 {
@@ -32,9 +35,9 @@ class Module implements FormElementProviderInterface
         $moduleRouteListener->attach($eventManager);
 
         // Register error handler for dispatch and render errors
-        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
-        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
-        $eventManager->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER, array($this, 'preRender'));
+        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleError'));
+        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, array($this, 'handleError'));
+        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER, array($this, 'preRender'));
 
         register_shutdown_function(function () {
             $error = error_get_last();
@@ -50,7 +53,7 @@ class Module implements FormElementProviderInterface
 
         $request = $e->getApplication()->getServiceManager()->get('Request');
 
-        if (!$request instanceof \Zend\Console\Request) {
+        if (!$request instanceof \Laminas\Console\Request) {
             $path = $request->getUri()->getPath();
 
             // Only bootstrap the session if it's *not* PHPUnit AND is not an excluded url.
@@ -129,7 +132,7 @@ class Module implements FormElementProviderInterface
             ],
             'aliases' => [
                 'AddressLookup' => 'OrdnanceSurvey',
-                'Zend\Authentication\AuthenticationService' => 'AuthenticationService',
+                'Laminas\Authentication\AuthenticationService' => 'AuthenticationService',
             ],
             'factories' => [
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
@@ -205,12 +208,12 @@ class Module implements FormElementProviderInterface
                 },
 
                 'TwigEmailRenderer' => function (ServiceLocatorInterface $sm) {
-                    $loader = new \Twig_Loader_Filesystem('module/Application/view/email');
+                    $loader = new FilesystemLoader('module/Application/view/email');
 
-                    $env = new \Twig_Environment($loader);
+                    $env = new Environment($loader);
 
                     $viewHelperManager = $sm->get('ViewHelperManager');
-                    $renderer = new \Zend\View\Renderer\PhpRenderer();
+                    $renderer = new \Laminas\View\Renderer\PhpRenderer();
                     $renderer->setHelperPluginManager($viewHelperManager);
 
                     $env->registerUndefinedFunctionCallback(function ($name) use ($viewHelperManager, $renderer) {
@@ -220,16 +223,16 @@ class Module implements FormElementProviderInterface
 
                         $callable = [$renderer->plugin($name), '__invoke'];
                         $options  = ['is_safe' => ['html']];
-                        return new \Twig_SimpleFunction('email', $callable, $options);
+                        return new TwigFunction('email', $callable, $options);
                     });
 
                     return $env;
                 },
 
                 'TwigViewRenderer' => function (ServiceLocatorInterface $sm) {
-                    $loader = new \Twig_Loader_Filesystem('module/Application/view/application');
+                    $loader = new FilesystemLoader('module/Application/view/application');
 
-                    return new \Twig_Environment($loader);
+                    return new Environment($loader);
                 }
             ], // factories
         ];
@@ -327,10 +330,10 @@ class Module implements FormElementProviderInterface
     }
 
     /**
-     * Expected to return \Zend\ServiceManager\Config object or array to
+     * Expected to return \Laminas\ServiceManager\Config object or array to
      * seed such an object.
      *
-     * @return array|\Zend\ServiceManager\Config
+     * @return array|\Laminas\ServiceManager\Config
      */
     public function getFormElementConfig()
     {

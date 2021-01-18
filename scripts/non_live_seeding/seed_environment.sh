@@ -6,20 +6,60 @@
 # OPG_LPA_STACK_ENVIRONMENT
 # OPG_LPA_POSTGRES_HOSTNAME
 # OPG_LPA_POSTGRES_PORT
-# OPG_LPA_POSTGRES_NAME
+# OPG_LPA_POSTGRES_NAME - database name
 # OPG_LPA_POSTGRES_USERNAME
 # OPG_LPA_POSTGRES_PASSWORD
 
 AWS_DEFAULT_REGION=eu-west-1
+API_OPTS="--host=${OPG_LPA_POSTGRES_HOSTNAME} --username=${OPG_LPA_POSTGRES_USERNAME}"
 
 check_db_exists()
 {
-if [ "$( PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} lpadb -tAc "SELECT 1 FROM pg_database WHERE datname='${OPG_LPA_POSTGRES_NAME}'" )" = '1' ]
+if [ "$( PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} ${OPG_LPA_POSTGRES_NAME} -tAc "SELECT 1 FROM pg_database WHERE datname='${OPG_LPA_POSTGRES_NAME}'" )" = '1' ]
 then
     echo "LPA Database exists. Can continue"
 else
     echo "LPA Database does not exist. Seeding will fail"
 fi
+}
+
+# returns 0 if tables are ready, 1 otherwise
+check_tables_exist()
+{
+    count_tables=0
+    tries=0
+
+    sql="SELECT COUNT(*) FROM (
+          SELECT FROM pg_tables
+          WHERE  schemaname = 'public'
+          AND    tablename  = 'users' OR tablename = 'applications'
+    ) AS tables;"
+
+    # expect two tables
+    while [[ "$count_tables" -ne "2" ]] ; do
+         tries=$(($tries+1))
+
+         count_tables=$(PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} ${OPG_LPA_POSTGRES_NAME} -tAc "$sql")
+
+         # error codes mean there are no tables
+         if [ "$?" -ne "0" ] ; then
+             count_tables=0
+         fi
+
+         # one minute
+         if [ $tries -gt 12 ] ; then
+            break
+         fi
+
+         sleep 5
+    done
+
+    ret_val=1
+    if [ "$count_tables" -eq "2" ] ; then
+        ret_val=0
+    fi
+
+    return $ret_val
 }
 
 if [ "$OPG_LPA_STACK_ENVIRONMENT" == "production" ]; then
@@ -30,13 +70,17 @@ fi
 echo "Waiting for postgres to be ready"
 timeout 90s sh -c 'pgready=1; until [ ${pgready} -eq 0 ]; do pg_isready -h ${OPG_LPA_POSTGRES_HOSTNAME} -d ${OPG_LPA_POSTGRES_NAME}; pgready=$? ; sleep 5 ; done'
 
-API_OPTS="--host=${OPG_LPA_POSTGRES_HOSTNAME} --username=${OPG_LPA_POSTGRES_USERNAME}"
-echo "Waiting for database to be created"
+echo "Checking database exists"
 check_db_exists
 
+echo "Waiting for tables to be ready"
+check_tables_exist
+if [ "$?" -ne "0" ] ; then
+    echo "ERROR: Seeding aborted; database tables not ready in a timely fashion"
+    exit 1
+fi
 
-sleep 20
-
+echo "Seeding data"
  PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
    ${OPG_LPA_POSTGRES_NAME} \
    -f clear_tables.sql

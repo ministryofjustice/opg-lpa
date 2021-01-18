@@ -10,7 +10,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use RuntimeException;
-use Twig_Environment;
+use Twig\Environment;
 
 class MailTransportFactoryTest extends MockeryTestCase
 {
@@ -28,7 +28,7 @@ class MailTransportFactoryTest extends MockeryTestCase
         $container->shouldReceive('get')
             ->withArgs(['TwigEmailRenderer'])
             ->once()
-            ->andReturn(Mockery::mock(Twig_Environment::class));
+            ->andReturn(Mockery::mock(Environment::class));
 
         $factory = new MailTransportFactory();
         $result = $factory($container, null, null);

@@ -3,15 +3,16 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
-use Zend\Form\Element\Radio;
-use Zend\Http\Header\SetCookie;
-use Zend\Stdlib\RequestInterface;
-use Zend\View\Model\ViewModel;
+use Laminas\Form\Element\Radio;
+use Laminas\Http\Header\SetCookie;
+use Laminas\Stdlib\RequestInterface;
+use Laminas\View\Model\ViewModel;
 
 class CookiesController extends AbstractBaseController
 {
     const COOKIE_POLICY_NAME = 'cookie_policy';
     const SEEN_COOKIE_NAME   = 'seen_cookie_message';
+    const SUBMITTED_COOKIE_PAGE   = 'submitted_cookie_page';
 
     public function indexAction()
     {
@@ -24,6 +25,13 @@ class CookiesController extends AbstractBaseController
         if ($request->isPost()) {
             $form->setData($request->getPost());
 
+            $cookiePolicyViewed = new SetCookie(self::SUBMITTED_COOKIE_PAGE);
+            $cookiePolicyViewed->setValue('true')
+                ->setHttponly(false)
+                ->setSecure(true)
+                ->setExpires(new \DateTime('+60 seconds'));
+            $this->getResponse()->getHeaders()->addHeaderLine($cookiePolicyViewed->getFieldName(), $cookiePolicyViewed->getFieldValue());
+
             $cookiePolicy['usage'] = $form->get('usageCookies')->getValue() === 'yes' ? true : false;
 
             $newCookiePolicy = new SetCookie(self::COOKIE_POLICY_NAME);
@@ -35,14 +43,14 @@ class CookiesController extends AbstractBaseController
             $this->getResponse()->getHeaders()->addHeaderLine($newCookiePolicy->getFieldName(), $newCookiePolicy->getFieldValue());
 
             $seenCookie = new SetCookie(self::SEEN_COOKIE_NAME);
-            $seenCookie->setValue("true")
+            $seenCookie->setValue('true')
                 ->setHttponly(false)
                 ->setSecure(true)
                 ->setPath('/')
                 ->setExpires(new \DateTime('+30 days'));
             $this->getResponse()->getHeaders()->addHeaderLine($seenCookie->getFieldName(), $seenCookie->getFieldValue());
 
-            return $this->redirect()->toRoute('home');
+            return $this->redirect()->toRoute('cookies');
         }
 
         if (!is_null($cookiePolicy)) {
@@ -51,7 +59,7 @@ class CookiesController extends AbstractBaseController
             $ucElement->setValue($cookiePolicy['usage'] ? "yes" : "no");
         }
 
-        return new ViewModel(compact('form'));
+        return new ViewModel(['form' => $form]);
     }
 
     private function fetchPolicyCookie(RequestInterface $request) : ?array

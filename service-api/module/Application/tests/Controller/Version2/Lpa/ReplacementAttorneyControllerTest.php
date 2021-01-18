@@ -8,7 +8,7 @@ use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\AttorneysReplacement\Service;
 use Mockery;
 use Mockery\MockInterface;
-use ZF\ApiProblem\ApiProblem;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
 
 class ReplacementAttorneyControllerTest extends AbstractControllerTest
 {
@@ -85,7 +85,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
+     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
      * @expectedExceptionMessage You do not have permission to access this service
      */
     public function testCreateUnauthorised()
@@ -151,7 +151,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
+     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
      * @expectedExceptionMessage You do not have permission to access this service
      */
     public function testUpdateUnauthorised()
@@ -216,7 +216,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @expectedException ZfcRbac\Exception\UnauthorizedException
+     * @expectedException LmcRbacMvc\Exception\UnauthorizedException
      * @expectedExceptionMessage You do not have permission to access this service
      */
     public function testDeleteUnauthorised()
