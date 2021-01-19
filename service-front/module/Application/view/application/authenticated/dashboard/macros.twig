@@ -15,13 +15,13 @@
             <li class="list-item list-item--v3 status-container--{{ status }}" {% if lpa.refreshId %}data-refresh-id="{{ lpa.refreshId }}"{% endif %}>
                 <div class="info">
                     <div class="main-info">
-                        <h1 class="list-item_title">
+                        <h3 class="list-item_title">
                             {%- if lpa.donor|length > 0 -%}
                                 {{ lpa.donor }}
                             {%- else -%}
                                 No donor added
                             {%- endif -%}
-                        </h1>
+                        </h3>
                         <span class="lpa-number">{{ formatLpaId(lpa.id) }}</span>
                     </div>
 
