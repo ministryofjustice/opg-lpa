@@ -24,4 +24,3 @@ Feature: Create an LPA
             | There was a problem submitting the form |
             | You need to do the following: |
             | Choose a type of LPA |
-            | Please try again |
