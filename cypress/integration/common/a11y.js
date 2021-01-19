@@ -11,19 +11,19 @@ After(() => {
     }
 });
 
-// Check links on the page which are inside the main content area and
-// which will open a new tab.
+// Check links on the page which will open a new tab.
 // On pages where we have many links which open in new tabs, and where we
 // provide a visually-hidden notice which explains this, we use a hidden span
 // in the link text instead of always showing the "opens in new tab" text.
-// This test therefore checks for both.
+// This test therefore checks for both a "bare" link containing the expected
+// text, or a link whose text contains a <span> with the expected text.
 Then('I should not find links in the page which open in new tabs without notifying me', () => {
     cy.get('a[target="_blank"]').each(($el, index, $list) => {
         let $visuallyHiddenSpan = $el.find('span[class="visually-hidden"]');
         if ($visuallyHiddenSpan.length > 0) {
             $el = $visuallyHiddenSpan;
         }
-        expect($el.text()).to.contain("opens in new tab");
+        expect($el.text()).to.contain(" (opens in new tab)");
     });
 });
 
@@ -35,8 +35,6 @@ Then('I should not find links in the page which open in new tabs without notifyi
 // See guidance at https://design-system.service.gov.uk/styles/typography/#links
 // under "If you’re displaying lots of links together".
 Then('I should encounter a visually-hidden statement about links on the page opening in new tabs', () => {
-    // if there is a link-accessibility-statement element on the page,
-    // we assume that any target="_blank" links on the page are covered by it
     let $accessibilityStatement =
         cy.get("*[data-role='link-accessibility-statement']").first();
 
