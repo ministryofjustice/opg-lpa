@@ -19,6 +19,6 @@ This link takes you to a page where you can review and edit the LPA and download
 
 ## Preview from the ‘Final check’ page
 
-If you're on the 'Final check' page, click the ‘edit’ link next to any of the questions. This will take you back to the 'Make a lasting power of attorney' page, where you’ll see a ‘preview the LPA’ link just above each question.
+If you're on the 'Final check' page, click the ‘Change’ link next to any of the questions. This will take you back to the 'Make a lasting power of attorney' page, where you’ll see a ‘preview the LPA’ link just above each question.
 
 This link takes you to a page where you can review and edit the LPA and download a preview.
