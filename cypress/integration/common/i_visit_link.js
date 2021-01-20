@@ -1,11 +1,13 @@
 import { Then } from "cypress-cucumber-preprocessor/steps";
  
 Then(`I visit link named {string}`, (linkName) => {
-  cy.get(linkName).click();
+    cy.get(linkName).click();
+    cy.OPGCheckA11y();
 })
 
 Then(`I visit link containing {string}`, (linkText) => {
-  cy.contains(linkText).click();
+    cy.contains(linkText).click();
+    cy.OPGCheckA11y();
 })
 
 // Test whether we can visit this link in a new tab. First we ensure there
@@ -17,8 +19,10 @@ Then(`I visit link containing {string}`, (linkText) => {
 
 Then(`I visit link in new tab containing {string}`, (linkText) => {
     cy.contains(linkText).should('have.attr', 'target', '_blank').invoke('removeAttr', 'target').click();
+    cy.OPGCheckA11y();
 })
 
 Then(`I visit in new tab link named {string}`, (linkName) => {
     cy.get(linkName).should('have.attr', 'target', '_blank').invoke('removeAttr', 'target').click();
+    cy.OPGCheckA11y();
 })
