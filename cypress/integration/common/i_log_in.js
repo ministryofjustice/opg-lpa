@@ -14,12 +14,10 @@ When(`I log in as standard test user`, () => {
 
 When(`I log in as appropriate test user`, () => {
     // if we're running under CI , use the newly signed up user, otherwise, use the seeded user
-    if (Cypress.env('CI'))
-    {
+    if (Cypress.env('CI')) {
         logInAsStandardUser();
     }
-    else
-    { 
+    else { 
         logInAsSeededUser();
     }
 })
