@@ -38,9 +38,9 @@
 <body class="no-js">
     <script>document.body.className = document.body.className + ' js-enabled';</script>
     <div id="skiplink-container">
-        <div><a href="#main-content" class="skiplink">Skip to main content</a></div>
+        <div><a href="#main-content" class="skiplink" data-cy="skip-link">Skip to main content</a></div>
     </div>
-    <div id="global-cookie-message" role="region" aria-label="cookie banner">
+    <div id="global-cookie-message" role="region" aria-label="cookie banner" data-cy="cookie-message">
         <p class="global-cookie-message__text">
             GOV.UK uses cookies which are essential for the site to work. We also use non-essential cookies to help us
             improve government digital services. Any data collected is anonymised.
@@ -52,7 +52,7 @@
             </div>
         </div>
     </div>
-    <header role="banner" id="global-header" class="with-proposition">
+    <header role="banner" id="global-header" class="with-proposition" data-cy="banner">
         <div class="header-wrapper">
             <div class="header-global">
                 <div class="header-logo">
@@ -83,7 +83,7 @@
         {{ accountInfo() }}
         <a name="main-content"></a>
         {% block errorSummary %}{% endblock %}
-        <h1 class="heading-xlarge">
+        <h1 class="heading-xlarge" data-cy="main-title">
             {% block supportTitleTop %}{% endblock %}
             {% block pageTitle %} Make a lasting power of attorney {% endblock %}
             {% block supportTitleBottom %}{% endblock %}
