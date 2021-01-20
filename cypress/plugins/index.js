@@ -36,15 +36,28 @@ module.exports = (on, config) => {
         throw new Error(name + ' is already set in the test store');
       }
 
-      testStore[name] = value
-      return true
+      testStore[name] = value;
+      return true;
     }
   });
 
   on('task', {
     getValue(name) {
-      return testStore[name]
+      return testStore[name];
     }
+  });
+
+    // the following on('task') 10 lines are required for cypress.axe to use custom function to write to the log
+    // and could be removed if we remove dependency on cypress-axe in future
+  on('task', {
+    log(message) {
+      console.log(message);
+      return null;
+    },
+    table(message) {
+      console.table(message);
+      return null;
+    },
   });
 
   return config;

@@ -23,3 +23,20 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+//
+Cypress.Commands.add("OPGCheckA11y", (skipFailures) => { cy.injectAxe(); 
+    cy.checkA11y(null, null, printAccessibilityViolations, true);
+  })
+
+// Print cypress-axe violations to the terminal
+function printAccessibilityViolations(violations) {
+  cy.task(
+    'table',
+    violations.map(({ id, impact, description, nodes }) => ({
+      impact,
+      description: `${description} (${id})`,
+      nodes: nodes.length,
+    })),
+  );
+}
+

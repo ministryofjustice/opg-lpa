@@ -19,6 +19,10 @@ Then(`I am taken to the lpa type page`, () => {
   cy.url().should('eq',lpaType);
 })
  
+Then(`I am taken to the donor page`, () => {
+  cy.url().should('contain','donor');
+})
+ 
 Then(`I am taken to the post logout url`, () => {
   cy.log("I should be on " + Cypress.config().postLogoutUrl );
   cy.url().should('eq',Cypress.config().postLogoutUrl );
