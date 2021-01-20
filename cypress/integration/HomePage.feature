@@ -1,7 +1,7 @@
-Feature: Homepage 
- 
+Feature: Homepage
+
   I want to be able to visit the homepage and follow the links
-  
+
   @focus
   Scenario: Visit home page links
     Given I visit "/home"
@@ -19,3 +19,12 @@ Feature: Homepage
     And I see "Cookies" in the title
     #When I click back
     #And I visit link named "a.js-guidance"
+
+  @focus
+  Scenario: Use skip link on home page
+    Given I visit "/home"
+    When I disable stylesheets
+    And I click "skip-link"
+    Then I have "main-title" in the viewport
+    And I do not have "banner" in the viewport
+    And I do not have "cookie-message" in the viewport
