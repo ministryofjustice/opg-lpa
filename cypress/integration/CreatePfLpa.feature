@@ -1,11 +1,11 @@
-Feature: Create an LPA
+Feature: Create a Property and Finance LPA
 
-    I want to create an LPA
+    I want to create a Property and Finance LPA
 
     Background:
         Given I ignore application exceptions
  
-    @focus
+    #    @focus
     Scenario: Dashboard has Link to Type page
         # we use seeded user here because a newly signed-up user would not yet have a dashboard page
         Given I log in as seeded user
@@ -14,13 +14,12 @@ Feature: Create an LPA
   
     @focus
     Scenario: Create LPA
-        # todo: to avoid tests having external dependency on seeded user,
-        # the following may ultimately change to logging in with a
-        # "seeded-by-code" newly signed up standard user
         Given I log in as appropriate test user
         Then I visit the type page
         When I click "save"
-        And I see in the page text
+        Then I see in the page text
             | There was a problem submitting the form |
             | You need to do the following: |
             | Choose a type of LPA |
+        Then I choose Property and Finance
+        And I click "save"
