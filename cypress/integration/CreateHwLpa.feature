@@ -16,6 +16,7 @@ Feature: Create a Health and Welfare LPA
             | Choose a type of LPA |
         Then I choose Health and Welfare
         When I click "save"
+        Then I am taken to the donor page
 
     @focus
     Scenario: Create LPA normal path
@@ -23,3 +24,4 @@ Feature: Create a Health and Welfare LPA
         Then I visit the type page
         Then I choose Health and Welfare
         When I click "save"
+        Then I am taken to the donor page
