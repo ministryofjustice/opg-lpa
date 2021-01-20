@@ -38,7 +38,7 @@
 <body class="no-js">
     <script>document.body.className = document.body.className + ' js-enabled';</script>
     <div id="skiplink-container">
-        <div><a href="#content" class="skiplink">Skip to main content</a></div>
+        <div><a href="#main-content" class="skiplink">Skip to main content</a></div>
     </div>
     <div id="global-cookie-message" role="region" aria-label="cookie banner">
         <p class="global-cookie-message__text">
@@ -81,7 +81,7 @@
 
     <main id="content" role="main">
         {{ accountInfo() }}
-
+        <a name="main-content"></a>
         {% block errorSummary %}{% endblock %}
         <h1 class="heading-xlarge">
             {% block supportTitleTop %}{% endblock %}
