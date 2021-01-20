@@ -36,29 +36,27 @@ module.exports = (on, config) => {
         throw new Error(name + ' is already set in the test store');
       }
 
-      testStore[name] = value
-      return true
+      testStore[name] = value;
+      return true;
     }
   });
 
   on('task', {
     getValue(name) {
-      return testStore[name]
+      return testStore[name];
     }
   });
 
   on('task', {
     log(message) {
-      console.log(message)
-
-      return null
+      console.log(message);
+      return null;
     },
     table(message) {
       console.table(message);
       return null;
     },
   });
-  //});
 
   return config;
 }
