@@ -4,5 +4,5 @@ Feature: Admin
   
   @focus
   Scenario: Visit admin page 
-    Given I visit the admin page
-    Then I see "Make a lasting power of attorney" in the title
+    Given I visit the admin sign-in page
+    Then I see "Sign In" in the title
