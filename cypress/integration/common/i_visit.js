@@ -15,3 +15,9 @@ Then(`I visit the type page`, () => {
     cy.visit('/lpa/type');
     cy.OPGCheckA11y();
 })
+
+
+Then(`I visit the admin page`, () => {
+    cy.visit(adminUrl + '/sign-in');
+    //cy.OPGCheckA11y();
+})
