@@ -82,8 +82,9 @@
 
 {{ dobDay.setAttributes({
     id: 'dob-date-day',
-    type: 'tel',
+    type: 'text',
     class: 'form-control',
+    inputmode: 'numeric',
     maxlength: '2',
     min: '1',
     max: '31',
@@ -92,8 +93,9 @@
 
 {{ dobMonth.setAttributes({
     id: 'dob-date-month',
-    type: 'tel',
+    type: 'text',
     class: 'form-control',
+    inputmode: 'numeric',
     maxlength: '2',
     min: '1',
     max: '12',
@@ -102,8 +104,9 @@
 
 {{ dobYear.setAttributes({
     id: 'dob-date-year',
-    type: 'tel',
+    type: 'text',
     class: 'form-control',
+    inputmode: 'numeric',
     maxlength: '4',
     pattern: '[0-9]*'
 })  ? ''}}
