@@ -19,7 +19,7 @@ for i in "$@" ; do
     fi
 done
 
-if [[ $GUI == "true" ]] || [[ $CI != "true" ]] ; then
+if [[ $GUI == "true" ]] ; then
     echo "Running Cypress"
 # pass supplied args to cypress
     CYPRESS_CMD="cypress $@"
