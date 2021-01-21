@@ -1,14 +1,9 @@
 {# Form Validation - Error Summary #}
-{% macro formErrorSummary(error, form, message) %}
+{% macro formErrorSummary(error, form, message = "There is a problem") %}
 
     {% if (error is not empty or form.getMessages|length > 0) %}
     <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
         <h1 class="heading-medium error-summary-heading" id="error-heading">{{ message }}</h1>
-
-        {# Show this only if it's a form error #}
-        {% if form.getMessages|length > 0 %}
-            <p>You need to do the following:</p>
-        {% endif %}
 
         {% if error is not empty %}
             {# API errors #}
@@ -134,7 +129,7 @@
                     An LPA form only has a small amount of space for the donor's preferences and instructions. Preferences and instructions that would not fit on the form are included at the end of the LPA on 'continuation sheet 2'.
                 {% endif %}
             </p>
-        {% endfor %}    
+        {% endfor %}
     {% endif %}
 
 {% endmacro %}

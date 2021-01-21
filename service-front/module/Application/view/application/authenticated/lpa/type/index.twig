@@ -48,7 +48,7 @@
         {{ formElement(form.getCsrf) }}
 
         {# Error summary #}
-        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+        {{ macros.formErrorSummary(error,form) }}
 
         <div class="form-group {{ type.getMessages|length > 0 ? 'form-group-error'}}">
             <fieldset id="type">

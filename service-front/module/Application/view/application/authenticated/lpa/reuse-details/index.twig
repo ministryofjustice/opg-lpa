@@ -34,7 +34,7 @@
 {{ form.prepare() ? '' }}
 
 {#Error summary#}
-{{ macros.formErrorSummary(error, form, 'There was a problem submitting the form') }}
+{{ macros.formErrorSummary(error, form) }}
 
     {{ form().openTag(form)|raw }}
         {{ formElement(form.getCsrf) }}

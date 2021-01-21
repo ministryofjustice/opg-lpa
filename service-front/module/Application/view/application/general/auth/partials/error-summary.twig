@@ -20,7 +20,7 @@
 
 {% if authError %}
     <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
-      <h1 class="heading-medium error-summary-heading" id="error-heading">There was a problem signing you in</h1>
+      <h1 class="heading-medium error-summary-heading" id="error-heading">There is a problem</h1>
       <div class="error-summary-text" data-tracking-context="Signing in">
             {% if authError == 'not-activated' %}
                 <p data-tracking-summary="Account not activated">Your account has not been activated. Click on the link in the email sent to you when you created the account.
@@ -34,4 +34,4 @@
     </div>
 {% endif %}
 
-{{ macros.formErrorSummary(error,form,'There was a problem signing you in') }}
+{{ macros.formErrorSummary(error,form) }}
