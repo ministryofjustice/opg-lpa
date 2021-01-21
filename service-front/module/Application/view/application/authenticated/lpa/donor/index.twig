@@ -36,7 +36,7 @@
             <p class="person-address flush--ends">{{ lpa.document.donor.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
-                    <a href="{{ editUrl }}" role="button" class="action-edit js-form-popup" aria-label="View/Edit Donor Details">View/edit details</a>
+                    <a href="{{ editUrl }}" role="button" class="action-edit js-form-popup" aria-label="View/Change Donor">View/Change<span class="visually-hidden"> Donor</span></a>
                 </li>
             </ul>
         </div>
@@ -48,7 +48,7 @@
     {% else %}
 
         <div class="form-group">
-            <a href="{{ addUrl }}" role="button" class="button js-form-popup">Add donor details</a>
+            <a href="{{ addUrl }}" role="button" class="button js-form-popup" aria-label="Add Donor">Add donor</a>
         </div>
 
     {% endif %}

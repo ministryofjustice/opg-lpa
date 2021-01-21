@@ -77,10 +77,10 @@
             <p class="person-address flush--ends">{{ lpa.document.certificateProvider.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
-                    <a href="{{ url('lpa/certificate-provider/edit', {'lpa-id': lpa.id}) }}" data-form="certificateprovider1" role="button" class="action-edit js-form-popup" aria-label="View/edit Certificate Provider details">View/edit details</a>
+                    <a href="{{ url('lpa/certificate-provider/edit', {'lpa-id': lpa.id}) }}" data-form="certificateprovider1" role="button" class="action-edit js-form-popup" aria-label="View/Change Certificate Provider">View/Change<span class="visually-hidden"> Certificate Provider</span></a>
                 </li>
                 <li class="action-item">
-                    <a href="{{ url('lpa/certificate-provider/confirm-delete', {'lpa-id': lpa.id}) }}" class="action-delete js-form-popup">Delete</a>
+                    <a href="{{ url('lpa/certificate-provider/confirm-delete', {'lpa-id': lpa.id}) }}" class="action-delete js-form-popup" aria-label="Delete Certificate Provider">Delete<span class="visually-hidden"> Certificate Provider</span></a>
                 </li>
             </ul>
         </div>
