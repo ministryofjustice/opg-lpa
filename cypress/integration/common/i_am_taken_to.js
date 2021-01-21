@@ -2,6 +2,7 @@ import { Then } from "cypress-cucumber-preprocessor/steps";
 
 var dashboard = Cypress.config().baseUrl + '/user/dashboard';
 var lpaType = Cypress.config().baseUrl + '/lpa/type';
+var lpaid;
  
 Then(`I am taken to {string}`, (url) => {
   cy.url().should('eq',Cypress.config().baseUrl + url);
@@ -20,7 +21,11 @@ Then(`I am taken to the lpa type page`, () => {
 })
  
 Then(`I am taken to the donor page`, () => {
-  cy.url().should('contain','donor');
+  cy.url().should('contain','donor').as('myurl');
+})
+
+Then(`I get lpaid`, () => {
+    cy.get('@myurl').then(($url) => {cy.log("url is " + $url + " yeah")});
 })
  
 Then(`I am taken to the post logout url`, () => {
