@@ -16,7 +16,6 @@ Then(`I visit the type page`, () => {
     cy.OPGCheckA11y();
 })
 
-
 Then(`I visit the admin sign-in page`, () => {
     cy.visit(Cypress.config().adminUrl + 'sign-in');
     cy.OPGCheckA11y();
