@@ -72,33 +72,32 @@
 
 {{ dayOfBirth.setAttributes({
     id: 'dob-date-day',
-    type: 'tel',
+    type: 'text',
     class: 'form-control',
     maxlength: '2',
-    min: '0',
-    max: '31',
     pattern: '[0-9]*',
     'data-cy': 'dob-date-day',
+    inputmode: 'numeric'
 }) ? ''}}
 
 {{ monthOfBirth.setAttributes({
     id: 'dob-date-month',
-    type: 'tel',
+    type: 'text',
     class: 'form-control',
     maxlength: '2',
-    min: '0',
-    max: '12',
     pattern: '[0-9]*',
     'data-cy': 'dob-date-month',
+    inputmode: 'numeric'
  }) ? ''}}
 
 {{ yearOfBirth.setAttributes({
     id: 'dob-date-year',
-    type: 'tel',
+    type: 'text',
     class: 'form-control',
     maxlength: '4',
     pattern: '[0-9]*',
     'data-cy': 'dob-date-year',
+    inputmode: 'numeric'
 })  ? ''}}
 
 {{ address1.setAttributes({
