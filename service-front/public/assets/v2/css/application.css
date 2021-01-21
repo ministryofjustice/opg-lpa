@@ -3016,7 +3016,8 @@ input[type=number] {
     text-decoration: none;
     -webkit-font-smoothing: antialiased;
     cursor: pointer;
-    color: #0b0c0c; }
+    color: #0b0c0c;
+    margin-right: 3px; }
     .person-actions .action-edit:visited {
       background-color: #dee0e2; }
     .person-actions .action-edit:hover, .person-actions .action-edit:focus {
