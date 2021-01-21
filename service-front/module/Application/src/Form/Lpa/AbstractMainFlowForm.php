@@ -22,6 +22,7 @@ abstract class AbstractMainFlowForm extends AbstractLpaForm
             'attributes' => [
                 'value' => ($finalCheckAccessible ? 'Save and return to final check' : 'Save and continue'),
                 'class' => 'button',
+                'data-cy' => 'save',
             ],
         ];
 
