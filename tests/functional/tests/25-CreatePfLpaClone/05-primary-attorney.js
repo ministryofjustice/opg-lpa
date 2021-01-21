@@ -75,7 +75,7 @@ casper.test.begin("Checking user can add primary attorney", {
             test.assertExists('form#form-trust-corporation input[type="text"][name="name"]', 'Found first names text input box in the lightbox as expected');
 
             // checking last name text input box
-            test.assertExists('form#form-trust-corporation input[type="text"][name="number"]', 'Found last name text input box in the lightbox as expected');
+            test.assertExists('form#form-trust-corporation input[type="tel"][name="number"]', 'Found last name text input box in the lightbox as expected');
 
             // checking email address text input box
             test.assertExists('form#form-trust-corporation input[name="email-address"]', 'Found email address input box in the lightbox as expected');
