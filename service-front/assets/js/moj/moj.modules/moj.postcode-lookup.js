@@ -142,7 +142,7 @@
     },
 
     postcodeError: function (jqXHR, textStatus, errorThrown) {
-      var errorText = 'There was a problem: ';
+      var errorText = 'There is a problem: ';
 
       this.$wrap.find('.js-PostcodeLookup__search-btn').spinner('off');
 

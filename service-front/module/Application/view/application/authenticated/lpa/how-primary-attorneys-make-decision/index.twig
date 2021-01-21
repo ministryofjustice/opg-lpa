@@ -91,14 +91,14 @@
     {{ form().openTag( form )|raw }}
         {{ formElement(form.getCsrf) }}
 
-		{{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+		{{ macros.formErrorSummary(error,form) }}
 
 		<div class="form-group {{ how.getMessages|length > 0 ? 'form-group-error'}}">
 			<fieldset id="how">
 	            <legend class="visually-hidden">How should the attorneys make decisions?</legend>
 
 	            <h2 class="heading-medium flush--top">How should the attorneys make decisions?</h2>
-	            
+
                 {{ formElementErrorsV2(how) }}
                 {{ formRadio(how) }}
                 <div id="decisions-details" class="panel panel-border-narrow js-hidden">

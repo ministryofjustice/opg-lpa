@@ -39,16 +39,16 @@
         {{ formElement(form.getCsrf) }}
 
         {# Error summary #}
-        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+        {{ macros.formErrorSummary(error,form) }}
 
         <div class="form-group text {{ reductionOptionsElement.getMessages|length >0 ? 'form-group-error'}}">
             <fieldset id="reductionOptions">
                 <legend class="visually-hidden">Reduced fee options</legend>
 
                 <h2 class="heading-medium flush--top">Reduced fee options</h2>
-            
+
                 {{ formElementErrorsV2(reductionOptionsElement) }}
-                
+
                 <div class="multiple-choice" data-target="receives-benefits">
                     {{ formInput(reductionOptions['reducedFeeReceivesBenefits']) }}
                     <label class="block-label" for="{{ reductionOptions['reducedFeeReceivesBenefits'].getAttribute('id') }}">

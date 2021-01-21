@@ -58,7 +58,7 @@
 
 {% block errorSummary %}
     {# Error summary #}
-    {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+    {{ macros.formErrorSummary(error,form) }}
 {% endblock %}
 
 {% block content %}
@@ -184,7 +184,7 @@
         <div class="alert panel" role="alert">
             <i class="icon icon-cross" role="presentation"></i>
             <div class="alert-message">
-                <p>There was a problem with the order in which the LPA was signed</p>
+                <p>There is a problem</p>
             </div>
         </div>
 
