@@ -25,3 +25,6 @@ cypress/activation_emails/*.passwordreset
 cypress/activation_emails/noaccountpasswordreset.*
 cypress/activation_emails/unrecognized.*
 **/build
+service-front/public/assets/js/lpa/lpa.templates.js
+service-front/public/assets/v2/js/application.js.map
+service-front/public/assets/v2/js/application.min.js.map
