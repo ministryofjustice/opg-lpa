@@ -9,12 +9,14 @@ const {
 // This test therefore checks for both a "bare" link containing the expected
 // text, or a link whose text contains a <span> with the expected text.
 Then('I should not find links in the page which open in new tabs without notifying me', () => {
-    cy.get('a[target="_blank"]').each(($el, index, $list) => {
-        let $visuallyHiddenSpan = $el.find('span[class="visually-hidden"]');
-        if ($visuallyHiddenSpan.length > 0) {
-            $el = $visuallyHiddenSpan;
-        }
-        expect($el.text()).to.contain(" (opens in new tab)");
+    cy.document().then((doc) => {
+        doc.querySelectorAll('a[target="_blank"]').forEach((el) => {
+            let visuallyHiddenSpan = el.querySelector('span[class="visually-hidden"]');
+            if (visuallyHiddenSpan !== null) {
+                el = visuallyHiddenSpan;
+            }
+            expect(el.innerText).to.contain("opens in new tab");
+        });
     });
 });
 

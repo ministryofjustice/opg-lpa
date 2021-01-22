@@ -7,10 +7,12 @@ const {
 // is recommended by the GOV.UK design system guidelines
 // https://design-system.service.gov.uk/styles/typography/#links
 After(() => {
-    cy.get('a[target="_blank"]').each(($el, index, $list) => {
-        let rel = $el.attr("rel");
-        expect(rel).not.to.be.undefined;
-        expect(rel).to.contain("noreferrer");
-        expect(rel).to.contain("noopener");
+    cy.document().then((doc) => {
+        doc.querySelectorAll('a[target="_blank"]').forEach((el) => {
+            let rel = el.getAttribute("rel");
+            expect(rel).not.to.be.undefined;
+            expect(rel).to.contain("noreferrer");
+            expect(rel).to.contain("noopener");
+        });
     });
 });
