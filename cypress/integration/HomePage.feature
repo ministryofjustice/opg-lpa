@@ -24,3 +24,12 @@ Feature: Homepage
     And I should not find links in the page which open in new tabs without notifying me
     #When I click back
     #And I visit link named "a.js-guidance"
+
+  @focus
+  Scenario: Use skip link on home page
+    Given I visit "/home"
+    When I disable stylesheets
+    And I click "skip-link"
+    Then I have "main-title" in the viewport
+    And I do not have "banner" in the viewport
+    And I do not have "cookie-message" in the viewport
