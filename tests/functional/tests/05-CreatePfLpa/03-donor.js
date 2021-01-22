@@ -65,13 +65,13 @@ casper.test.begin("Checking user can add donor", {
             test.assertExists('form#form-donor input[type="text"][name="otherNames"]', 'Found other names text input box in the lightbox as expected');
 
             // checking dob day text input box
-            test.assertExists('form#form-donor input[type="tel"][name="dob-date[day]"]', 'Found DOB day text input box in the lightbox as expected');
+            test.assertExists('form#form-donor input[type="text"][name="dob-date[day]"]', 'Found DOB day text input box in the lightbox as expected');
 
             // checking dob month text input box
-            test.assertExists('form#form-donor input[type="tel"][name="dob-date[month]"]', 'Found DOB month text input box in the lightbox as expected');
+            test.assertExists('form#form-donor input[type="text"][name="dob-date[month]"]', 'Found DOB month text input box in the lightbox as expected');
 
             // checking dob year text input box
-            test.assertExists('form#form-donor input[type="tel"][name="dob-date[year]"]', 'Found DOB year text input box in the lightbox as expected');
+            test.assertExists('form#form-donor input[type="text"][name="dob-date[year]"]', 'Found DOB year text input box in the lightbox as expected');
 
             // checking email address text input box
             test.assertExists('form#form-donor input[name="email-address"]', 'Found email address input box in the lightbox as expected');

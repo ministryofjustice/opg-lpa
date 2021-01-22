@@ -111,7 +111,10 @@
 
 {{ phone.setAttributes({
     id: 'phone-number',
-    class: 'form-control'
+    class: 'form-control',
+    type: 'tel',
+    pattern: '[0-9]*',
+    inputmode: 'numeric'
 }) ? ''}}
 
 {# form fields labels #}

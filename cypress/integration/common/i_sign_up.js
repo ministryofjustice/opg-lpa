@@ -6,6 +6,7 @@ Given(`I sign up standard test user`, () => {
 
 function signUp(user, password){
     cy.visit("/signup").title().should('include','Create an account');
+    cy.OPGCheckA11y();
     cy.get('[data-cy=signup-email]').clear().type(user);
     cy.get('[data-cy=signup-email-confirm]').clear().type(user);
     cy.get('[data-cy=signup-password]').clear().type(password);
