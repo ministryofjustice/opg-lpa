@@ -49,7 +49,7 @@
     .action-item {
         @include media(tablet) {
             margin-left: 8px;
-            float: right;
+            float: left;
         }
     }
 

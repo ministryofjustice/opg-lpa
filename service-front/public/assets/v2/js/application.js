@@ -1,9 +1,9 @@
 /**!
 
  @license
- handlebars v4.5.3
+ handlebars v4.7.6
 
-Copyright (C) 2011-2017 by Yehuda Katz
+Copyright (C) 2011-2019 by Yehuda Katz
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -92,23 +92,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	// Compiler imports
 
-	var _handlebarsCompilerAst = __webpack_require__(40);
+	var _handlebarsCompilerAst = __webpack_require__(45);
 
 	var _handlebarsCompilerAst2 = _interopRequireDefault(_handlebarsCompilerAst);
 
-	var _handlebarsCompilerBase = __webpack_require__(41);
+	var _handlebarsCompilerBase = __webpack_require__(46);
 
-	var _handlebarsCompilerCompiler = __webpack_require__(46);
+	var _handlebarsCompilerCompiler = __webpack_require__(51);
 
-	var _handlebarsCompilerJavascriptCompiler = __webpack_require__(49);
+	var _handlebarsCompilerJavascriptCompiler = __webpack_require__(52);
 
 	var _handlebarsCompilerJavascriptCompiler2 = _interopRequireDefault(_handlebarsCompilerJavascriptCompiler);
 
-	var _handlebarsCompilerVisitor = __webpack_require__(44);
+	var _handlebarsCompilerVisitor = __webpack_require__(49);
 
 	var _handlebarsCompilerVisitor2 = _interopRequireDefault(_handlebarsCompilerVisitor);
 
-	var _handlebarsNoConflict = __webpack_require__(39);
+	var _handlebarsNoConflict = __webpack_require__(44);
 
 	var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 
@@ -178,7 +178,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
 
-	var _handlebarsSafeString = __webpack_require__(33);
+	var _handlebarsSafeString = __webpack_require__(37);
 
 	var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
@@ -190,11 +190,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Utils = _interopRequireWildcard(_handlebarsUtils);
 
-	var _handlebarsRuntime = __webpack_require__(34);
+	var _handlebarsRuntime = __webpack_require__(38);
 
 	var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
-	var _handlebarsNoConflict = __webpack_require__(39);
+	var _handlebarsNoConflict = __webpack_require__(44);
 
 	var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 
@@ -276,7 +276,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _logger2 = _interopRequireDefault(_logger);
 
-	var VERSION = '4.5.3';
+	var _internalProtoAccess = __webpack_require__(33);
+
+	var VERSION = '4.7.6';
 	exports.VERSION = VERSION;
 	var COMPILER_REVISION = 8;
 	exports.COMPILER_REVISION = COMPILER_REVISION;
@@ -352,6 +354,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	  unregisterDecorator: function unregisterDecorator(name) {
 	    delete this.decorators[name];
+	  },
+	  /**
+	   * Reset the memory of illegal property accesses that have already been logged.
+	   * @deprecated should only be used in handlebars test-cases
+	   */
+	  resetLoggedPropertyAccesses: function resetLoggedPropertyAccesses() {
+	    _internalProtoAccess.resetLoggedProperties();
 	  }
 	};
 
@@ -375,7 +384,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.createFrame = createFrame;
 	exports.blockParams = blockParams;
 	exports.appendContextPath = appendContextPath;
-
 	var escape = {
 	  '&': '&amp;',
 	  '<': '&lt;',
@@ -499,7 +507,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _Object$defineProperty = __webpack_require__(7)['default'];
 
 	exports.__esModule = true;
-
 	var errorProps = ['description', 'fileName', 'lineNumber', 'endLineNumber', 'message', 'name', 'number', 'stack'];
 
 	function Exception(message, node) {
@@ -1047,7 +1054,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (arguments.length != 2) {
 	      throw new _exception2['default']('#unless requires exactly one argument');
 	    }
-	    return instance.helpers['if'].call(this, conditional, { fn: options.inverse, inverse: options.fn, hash: options.hash });
+	    return instance.helpers['if'].call(this, conditional, {
+	      fn: options.inverse,
+	      inverse: options.fn,
+	      hash: options.hash
+	    });
 	  });
 	};
 
@@ -1090,21 +1101,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	exports.__esModule = true;
-	var dangerousPropertyRegex = /^(constructor|__defineGetter__|__defineSetter__|__lookupGetter__|__proto__)$/;
-
-	exports.dangerousPropertyRegex = dangerousPropertyRegex;
 
 	exports['default'] = function (instance) {
-	  instance.registerHelper('lookup', function (obj, field) {
+	  instance.registerHelper('lookup', function (obj, field, options) {
 	    if (!obj) {
+	      // Note for 5.0: Change to "obj == null" in 5.0
 	      return obj;
 	    }
-	    if (dangerousPropertyRegex.test(String(field)) && !Object.prototype.propertyIsEnumerable.call(obj, field)) {
-	      return undefined;
-	    }
-	    return obj[field];
+	    return options.lookupProperty(obj, field);
 	  });
 	};
+
+	module.exports = exports['default'];
 
 /***/ }),
 /* 29 */
@@ -1238,8 +1246,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    if (typeof console !== 'undefined' && logger.lookupLevel(logger.level) <= level) {
 	      var method = logger.methodMap[level];
+	      // eslint-disable-next-line no-console
 	      if (!console[method]) {
-	        // eslint-disable-line no-console
 	        method = 'log';
 	      }
 
@@ -1257,6 +1265,129 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _Object$create = __webpack_require__(34)['default'];
+
+	var _Object$keys = __webpack_require__(13)['default'];
+
+	var _interopRequireWildcard = __webpack_require__(3)['default'];
+
+	exports.__esModule = true;
+	exports.createProtoAccessControl = createProtoAccessControl;
+	exports.resultIsAllowed = resultIsAllowed;
+	exports.resetLoggedProperties = resetLoggedProperties;
+
+	var _createNewLookupObject = __webpack_require__(36);
+
+	var _logger = __webpack_require__(32);
+
+	var logger = _interopRequireWildcard(_logger);
+
+	var loggedProperties = _Object$create(null);
+
+	function createProtoAccessControl(runtimeOptions) {
+	  var defaultMethodWhiteList = _Object$create(null);
+	  defaultMethodWhiteList['constructor'] = false;
+	  defaultMethodWhiteList['__defineGetter__'] = false;
+	  defaultMethodWhiteList['__defineSetter__'] = false;
+	  defaultMethodWhiteList['__lookupGetter__'] = false;
+
+	  var defaultPropertyWhiteList = _Object$create(null);
+	  // eslint-disable-next-line no-proto
+	  defaultPropertyWhiteList['__proto__'] = false;
+
+	  return {
+	    properties: {
+	      whitelist: _createNewLookupObject.createNewLookupObject(defaultPropertyWhiteList, runtimeOptions.allowedProtoProperties),
+	      defaultValue: runtimeOptions.allowProtoPropertiesByDefault
+	    },
+	    methods: {
+	      whitelist: _createNewLookupObject.createNewLookupObject(defaultMethodWhiteList, runtimeOptions.allowedProtoMethods),
+	      defaultValue: runtimeOptions.allowProtoMethodsByDefault
+	    }
+	  };
+	}
+
+	function resultIsAllowed(result, protoAccessControl, propertyName) {
+	  if (typeof result === 'function') {
+	    return checkWhiteList(protoAccessControl.methods, propertyName);
+	  } else {
+	    return checkWhiteList(protoAccessControl.properties, propertyName);
+	  }
+	}
+
+	function checkWhiteList(protoAccessControlForType, propertyName) {
+	  if (protoAccessControlForType.whitelist[propertyName] !== undefined) {
+	    return protoAccessControlForType.whitelist[propertyName] === true;
+	  }
+	  if (protoAccessControlForType.defaultValue !== undefined) {
+	    return protoAccessControlForType.defaultValue;
+	  }
+	  logUnexpecedPropertyAccessOnce(propertyName);
+	  return false;
+	}
+
+	function logUnexpecedPropertyAccessOnce(propertyName) {
+	  if (loggedProperties[propertyName] !== true) {
+	    loggedProperties[propertyName] = true;
+	    logger.log('error', 'Handlebars: Access has been denied to resolve the property "' + propertyName + '" because it is not an "own property" of its parent.\n' + 'You can add a runtime option to disable the check or this warning:\n' + 'See https://handlebarsjs.com/api-reference/runtime-options.html#options-to-control-prototype-access for details');
+	  }
+	}
+
+	function resetLoggedProperties() {
+	  _Object$keys(loggedProperties).forEach(function (propertyName) {
+	    delete loggedProperties[propertyName];
+	  });
+	}
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(35), __esModule: true };
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var $ = __webpack_require__(9);
+	module.exports = function create(P, D){
+	  return $.create(P, D);
+	};
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _Object$create = __webpack_require__(34)['default'];
+
+	exports.__esModule = true;
+	exports.createNewLookupObject = createNewLookupObject;
+
+	var _utils = __webpack_require__(5);
+
+	/**
+	 * Create a new object with "null"-prototype to avoid truthy results on prototype properties.
+	 * The resulting object can be used with "object[property]" to check if a property exists
+	 * @param {...object} sources a varargs parameter of source objects that will be merged
+	 * @returns {object}
+	 */
+
+	function createNewLookupObject() {
+	  for (var _len = arguments.length, sources = Array(_len), _key = 0; _key < _len; _key++) {
+	    sources[_key] = arguments[_key];
+	  }
+
+	  return _utils.extend.apply(undefined, [_Object$create(null)].concat(sources));
+	}
+
+/***/ }),
+/* 37 */
 /***/ (function(module, exports) {
 
 	// Build out our basic SafeString type
@@ -1275,12 +1406,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ }),
-/* 34 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _Object$seal = __webpack_require__(35)['default'];
+	var _Object$seal = __webpack_require__(39)['default'];
+
+	var _Object$keys = __webpack_require__(13)['default'];
 
 	var _interopRequireWildcard = __webpack_require__(3)['default'];
 
@@ -1306,6 +1439,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _helpers = __webpack_require__(10);
 
+	var _internalWrapHelper = __webpack_require__(43);
+
+	var _internalProtoAccess = __webpack_require__(33);
+
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,
 	      currentRevision = _base.COMPILER_REVISION;
@@ -1325,7 +1462,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	function template(templateSpec, env) {
-
 	  /* istanbul ignore next */
 	  if (!env) {
 	    throw new _exception2['default']('No environment passed to template');
@@ -1352,13 +1488,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    partial = env.VM.resolvePartial.call(this, partial, context, options);
 
-	    var optionsWithHooks = Utils.extend({}, options, { hooks: this.hooks });
+	    var extendedOptions = Utils.extend({}, options, {
+	      hooks: this.hooks,
+	      protoAccessControl: this.protoAccessControl
+	    });
 
-	    var result = env.VM.invokePartial.call(this, partial, context, optionsWithHooks);
+	    var result = env.VM.invokePartial.call(this, partial, context, extendedOptions);
 
 	    if (result == null && env.compile) {
 	      options.partials[options.name] = env.compile(partial, templateSpec.compilerOptions, env);
-	      result = options.partials[options.name](context, optionsWithHooks);
+	      result = options.partials[options.name](context, extendedOptions);
 	    }
 	    if (result != null) {
 	      if (options.indent) {
@@ -1382,14 +1521,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var container = {
 	    strict: function strict(obj, name, loc) {
 	      if (!obj || !(name in obj)) {
-	        throw new _exception2['default']('"' + name + '" not defined in ' + obj, { loc: loc });
+	        throw new _exception2['default']('"' + name + '" not defined in ' + obj, {
+	          loc: loc
+	        });
 	      }
 	      return obj[name];
+	    },
+	    lookupProperty: function lookupProperty(parent, propertyName) {
+	      var result = parent[propertyName];
+	      if (result == null) {
+	        return result;
+	      }
+	      if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+	        return result;
+	      }
+
+	      if (_internalProtoAccess.resultIsAllowed(result, container.protoAccessControl, propertyName)) {
+	        return result;
+	      }
+	      return undefined;
 	    },
 	    lookup: function lookup(depths, name) {
 	      var len = depths.length;
 	      for (var i = 0; i < len; i++) {
-	        if (depths[i] && depths[i][name] != null) {
+	        var result = depths[i] && container.lookupProperty(depths[i], name);
+	        if (result != null) {
 	          return depths[i][name];
 	        }
 	      }
@@ -1425,6 +1581,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	      return value;
 	    },
+	    mergeIfNeeded: function mergeIfNeeded(param, common) {
+	      var obj = param || common;
+
+	      if (param && common && param !== common) {
+	        obj = Utils.extend({}, common, param);
+	      }
+
+	      return obj;
+	    },
 	    // An empty object to use as replacement for null-contexts
 	    nullContext: _Object$seal({}),
 
@@ -1454,28 +1619,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function main(context /*, options*/) {
 	      return '' + templateSpec.main(container, context, container.helpers, container.partials, data, blockParams, depths);
 	    }
+
 	    main = executeDecorators(templateSpec.main, main, container, options.depths || [], data, blockParams);
 	    return main(context, options);
 	  }
+
 	  ret.isTop = true;
 
 	  ret._setup = function (options) {
 	    if (!options.partial) {
-	      container.helpers = Utils.extend({}, env.helpers, options.helpers);
+	      var mergedHelpers = Utils.extend({}, env.helpers, options.helpers);
+	      wrapHelpersToPassLookupProperty(mergedHelpers, container);
+	      container.helpers = mergedHelpers;
 
 	      if (templateSpec.usePartial) {
-	        container.partials = Utils.extend({}, env.partials, options.partials);
+	        // Use mergeIfNeeded here to prevent compiling global partials multiple times
+	        container.partials = container.mergeIfNeeded(options.partials, env.partials);
 	      }
 	      if (templateSpec.usePartial || templateSpec.useDecorators) {
 	        container.decorators = Utils.extend({}, env.decorators, options.decorators);
 	      }
 
 	      container.hooks = {};
+	      container.protoAccessControl = _internalProtoAccess.createProtoAccessControl(options);
 
 	      var keepHelperInHelpers = options.allowCallsToHelperMissing || templateWasPrecompiledWithCompilerV7;
 	      _helpers.moveHelperToHooks(container, 'helperMissing', keepHelperInHelpers);
 	      _helpers.moveHelperToHooks(container, 'blockHelperMissing', keepHelperInHelpers);
 	    } else {
+	      container.protoAccessControl = options.protoAccessControl; // internal option
 	      container.helpers = options.helpers;
 	      container.partials = options.partials;
 	      container.decorators = options.decorators;
@@ -1596,25 +1768,39 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return prog;
 	}
 
+	function wrapHelpersToPassLookupProperty(mergedHelpers, container) {
+	  _Object$keys(mergedHelpers).forEach(function (helperName) {
+	    var helper = mergedHelpers[helperName];
+	    mergedHelpers[helperName] = passLookupPropertyOption(helper, container);
+	  });
+	}
+
+	function passLookupPropertyOption(helper, container) {
+	  var lookupProperty = container.lookupProperty;
+	  return _internalWrapHelper.wrapHelper(helper, function (options) {
+	    return Utils.extend({ lookupProperty: lookupProperty }, options);
+	  });
+	}
+
 /***/ }),
-/* 35 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(36), __esModule: true };
+	module.exports = { "default": __webpack_require__(40), __esModule: true };
 
 /***/ }),
-/* 36 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(37);
+	__webpack_require__(41);
 	module.exports = __webpack_require__(21).Object.seal;
 
 /***/ }),
-/* 37 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// 19.1.2.17 Object.seal(O)
-	var isObject = __webpack_require__(38);
+	var isObject = __webpack_require__(42);
 
 	__webpack_require__(18)('seal', function($seal){
 	  return function seal(it){
@@ -1623,7 +1809,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 
 /***/ }),
-/* 38 */
+/* 42 */
 /***/ (function(module, exports) {
 
 	module.exports = function(it){
@@ -1631,11 +1817,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 39 */
+/* 43 */
 /***/ (function(module, exports) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {/* global window */
 	'use strict';
+
+	exports.__esModule = true;
+	exports.wrapHelper = wrapHelper;
+
+	function wrapHelper(helper, transformOptionsFn) {
+	  if (typeof helper !== 'function') {
+	    // This should not happen, but apparently it does in https://github.com/wycats/handlebars.js/issues/1639
+	    // We try to make the wrapper least-invasive by not wrapping it, if the helper is not a function.
+	    return helper;
+	  }
+	  var wrapper = function wrapper() /* dynamic arguments */{
+	    var options = arguments[arguments.length - 1];
+	    arguments[arguments.length - 1] = transformOptionsFn(options);
+	    return helper.apply(this, arguments);
+	  };
+	  return wrapper;
+	}
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
 	exports.__esModule = true;
 
@@ -1656,7 +1864,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ }),
-/* 40 */
+/* 45 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1691,7 +1899,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ }),
-/* 41 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1704,15 +1912,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.parseWithoutProcessing = parseWithoutProcessing;
 	exports.parse = parse;
 
-	var _parser = __webpack_require__(42);
+	var _parser = __webpack_require__(47);
 
 	var _parser2 = _interopRequireDefault(_parser);
 
-	var _whitespaceControl = __webpack_require__(43);
+	var _whitespaceControl = __webpack_require__(48);
 
 	var _whitespaceControl2 = _interopRequireDefault(_whitespaceControl);
 
-	var _helpers = __webpack_require__(45);
+	var _helpers = __webpack_require__(50);
 
 	var Helpers = _interopRequireWildcard(_helpers);
 
@@ -1749,7 +1957,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ }),
-/* 42 */
+/* 47 */
 /***/ (function(module, exports) {
 
 	// File ignored in coverage tests via setting in .istanbul.yml
@@ -2490,7 +2698,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ }),
-/* 43 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2499,7 +2707,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.__esModule = true;
 
-	var _visitor = __webpack_require__(44);
+	var _visitor = __webpack_require__(49);
 
 	var _visitor2 = _interopRequireDefault(_visitor);
 
@@ -2714,7 +2922,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ }),
-/* 44 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2857,7 +3065,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ }),
-/* 45 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3088,14 +3296,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ }),
-/* 46 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* eslint-disable new-cap */
 
 	'use strict';
 
-	var _Object$create = __webpack_require__(47)['default'];
+	var _Object$create = __webpack_require__(34)['default'];
 
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 
@@ -3110,7 +3318,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _utils = __webpack_require__(5);
 
-	var _ast = __webpack_require__(40);
+	var _ast = __webpack_require__(45);
 
 	var _ast2 = _interopRequireDefault(_ast);
 
@@ -3165,14 +3373,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    options.blockParams = options.blockParams || [];
 
 	    options.knownHelpers = _utils.extend(_Object$create(null), {
-	      'helperMissing': true,
-	      'blockHelperMissing': true,
-	      'each': true,
+	      helperMissing: true,
+	      blockHelperMissing: true,
+	      each: true,
 	      'if': true,
-	      'unless': true,
+	      unless: true,
 	      'with': true,
-	      'log': true,
-	      'lookup': true
+	      log: true,
+	      lookup: true
 	    }, options.knownHelpers);
 
 	    return this.accept(program);
@@ -3439,7 +3647,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  // HELPERS
 	  opcode: function opcode(name) {
-	    this.opcodes.push({ opcode: name, args: slice.call(arguments, 1), loc: this.sourceNode[0].loc });
+	    this.opcodes.push({
+	      opcode: name,
+	      args: slice.call(arguments, 1),
+	      loc: this.sourceNode[0].loc
+	    });
 	  },
 
 	  addDepth: function addDepth(depth) {
@@ -3655,22 +3867,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ }),
-/* 47 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	module.exports = { "default": __webpack_require__(48), __esModule: true };
-
-/***/ }),
-/* 48 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	var $ = __webpack_require__(9);
-	module.exports = function create(P, D){
-	  return $.create(P, D);
-	};
-
-/***/ }),
-/* 49 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3689,11 +3886,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _utils = __webpack_require__(5);
 
-	var _codeGen = __webpack_require__(50);
+	var _codeGen = __webpack_require__(53);
 
 	var _codeGen2 = _interopRequireDefault(_codeGen);
-
-	var _helpersLookup = __webpack_require__(28);
 
 	function Literal(value) {
 	  this.value = value;
@@ -3704,20 +3899,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	JavaScriptCompiler.prototype = {
 	  // PUBLIC API: You can override these methods in a subclass to provide
 	  // alternative compiled forms for name lookup and buffering semantics
-	  nameLookup: function nameLookup(parent, name /* , type*/) {
-	    if (_helpersLookup.dangerousPropertyRegex.test(name)) {
-	      var isEnumerable = [this.aliasable('container.propertyIsEnumerable'), '.call(', parent, ',', JSON.stringify(name), ')'];
-	      return ['(', isEnumerable, '?', _actualLookup(), ' : undefined)'];
-	    }
-	    return _actualLookup();
-
-	    function _actualLookup() {
-	      if (JavaScriptCompiler.isValidJavaScriptVariableName(name)) {
-	        return [parent, '.', name];
-	      } else {
-	        return [parent, '[', JSON.stringify(name), ']'];
-	      }
-	    }
+	  nameLookup: function nameLookup(parent, name /*,  type */) {
+	    return this.internalNameLookup(parent, name);
 	  },
 	  depthedLookup: function depthedLookup(name) {
 	    return [this.aliasable('container.lookup'), '(depths, "', name, '")'];
@@ -3753,6 +3936,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.quotedString('');
 	  },
 	  // END PUBLIC API
+	  internalNameLookup: function internalNameLookup(parent, name) {
+	    this.lookupPropertyFunctionIsUsed = true;
+	    return ['lookupProperty(', parent, ',', JSON.stringify(name), ')'];
+	  },
+
+	  lookupPropertyFunctionIsUsed: false,
 
 	  compile: function compile(environment, options, context, asObject) {
 	    this.environment = environment;
@@ -3811,7 +4000,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!this.decorators.isEmpty()) {
 	      this.useDecorators = true;
 
-	      this.decorators.prepend('var decorators = container.decorators;\n');
+	      this.decorators.prepend(['var decorators = container.decorators, ', this.lookupPropertyFunctionVarDeclaration(), ';\n']);
 	      this.decorators.push('return fn;');
 
 	      if (asObject) {
@@ -3924,6 +4113,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    });
 
+	    if (this.lookupPropertyFunctionIsUsed) {
+	      varDeclarations += ', ' + this.lookupPropertyFunctionVarDeclaration();
+	    }
+
 	    var params = ['container', 'depth0', 'helpers', 'partials', 'data'];
 
 	    if (this.useBlockParams || this.useDepths) {
@@ -4000,6 +4193,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    return this.source.merge();
+	  },
+
+	  lookupPropertyFunctionVarDeclaration: function lookupPropertyFunctionVarDeclaration() {
+	    return '\n      lookupProperty = container.lookupProperty || function(parent, propertyName) {\n        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {\n          return parent[propertyName];\n        }\n        return undefined\n    }\n    '.trim();
 	  },
 
 	  // [blockValue]
@@ -4804,6 +5001,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	})();
 
+	/**
+	 * @deprecated May be removed in the next major version
+	 */
 	JavaScriptCompiler.isValidJavaScriptVariableName = function (name) {
 	  return !JavaScriptCompiler.RESERVED_WORDS[name] && /^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(name);
 	};
@@ -4831,7 +5031,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ }),
-/* 50 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* global define */
@@ -5022,7 +5222,7 @@ return /******/ (function(modules) { // webpackBootstrap
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.15';
+  var VERSION = '4.17.20';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -8729,8 +8929,21 @@ return /******/ (function(modules) { // webpackBootstrap
      * @returns {Array} Returns the new sorted array.
      */
     function baseOrderBy(collection, iteratees, orders) {
+      if (iteratees.length) {
+        iteratees = arrayMap(iteratees, function(iteratee) {
+          if (isArray(iteratee)) {
+            return function(value) {
+              return baseGet(value, iteratee.length === 1 ? iteratee[0] : iteratee);
+            }
+          }
+          return iteratee;
+        });
+      } else {
+        iteratees = [identity];
+      }
+
       var index = -1;
-      iteratees = arrayMap(iteratees.length ? iteratees : [identity], baseUnary(getIteratee()));
+      iteratees = arrayMap(iteratees, baseUnary(getIteratee()));
 
       var result = baseMap(collection, function(value, key, collection) {
         var criteria = arrayMap(iteratees, function(iteratee) {
@@ -8987,6 +9200,10 @@ return /******/ (function(modules) { // webpackBootstrap
         var key = toKey(path[index]),
             newValue = value;
 
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+          return object;
+        }
+
         if (index != lastIndex) {
           var objValue = nested[key];
           newValue = customizer ? customizer(objValue, key, nested) : undefined;
@@ -9139,11 +9356,14 @@ return /******/ (function(modules) { // webpackBootstrap
      *  into `array`.
      */
     function baseSortedIndexBy(array, value, iteratee, retHighest) {
-      value = iteratee(value);
-
       var low = 0,
-          high = array == null ? 0 : array.length,
-          valIsNaN = value !== value,
+          high = array == null ? 0 : array.length;
+      if (high === 0) {
+        return 0;
+      }
+
+      value = iteratee(value);
+      var valIsNaN = value !== value,
           valIsNull = value === null,
           valIsSymbol = isSymbol(value),
           valIsUndefined = value === undefined;
@@ -10628,10 +10848,11 @@ return /******/ (function(modules) { // webpackBootstrap
       if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
         return false;
       }
-      // Assume cyclic values are equal.
-      var stacked = stack.get(array);
-      if (stacked && stack.get(other)) {
-        return stacked == other;
+      // Check that cyclic values are equal.
+      var arrStacked = stack.get(array);
+      var othStacked = stack.get(other);
+      if (arrStacked && othStacked) {
+        return arrStacked == other && othStacked == array;
       }
       var index = -1,
           result = true,
@@ -10793,10 +11014,11 @@ return /******/ (function(modules) { // webpackBootstrap
           return false;
         }
       }
-      // Assume cyclic values are equal.
-      var stacked = stack.get(object);
-      if (stacked && stack.get(other)) {
-        return stacked == other;
+      // Check that cyclic values are equal.
+      var objStacked = stack.get(object);
+      var othStacked = stack.get(other);
+      if (objStacked && othStacked) {
+        return objStacked == other && othStacked == object;
       }
       var result = true;
       stack.set(object, other);
@@ -14177,6 +14399,10 @@ return /******/ (function(modules) { // webpackBootstrap
      * // The `_.property` iteratee shorthand.
      * _.filter(users, 'active');
      * // => objects for ['barney']
+     *
+     * // Combining several predicates using `_.overEvery` or `_.overSome`.
+     * _.filter(users, _.overSome([{ 'age': 36 }, ['age', 40]]));
+     * // => objects for ['fred', 'barney']
      */
     function filter(collection, predicate) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
@@ -14926,15 +15152,15 @@ return /******/ (function(modules) { // webpackBootstrap
      * var users = [
      *   { 'user': 'fred',   'age': 48 },
      *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 },
+     *   { 'user': 'fred',   'age': 30 },
      *   { 'user': 'barney', 'age': 34 }
      * ];
      *
      * _.sortBy(users, [function(o) { return o.user; }]);
-     * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 40]]
+     * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 30]]
      *
      * _.sortBy(users, ['user', 'age']);
-     * // => objects for [['barney', 34], ['barney', 36], ['fred', 40], ['fred', 48]]
+     * // => objects for [['barney', 34], ['barney', 36], ['fred', 30], ['fred', 48]]
      */
     var sortBy = baseRest(function(collection, iteratees) {
       if (collection == null) {
@@ -19809,11 +20035,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
       // Use a sourceURL for easier debugging.
       // The sourceURL gets injected into the source that's eval-ed, so be careful
-      // with lookup (in case of e.g. prototype pollution), and strip newlines if any.
-      // A newline wouldn't be a valid sourceURL anyway, and it'd enable code injection.
+      // to normalize all kinds of whitespace, so e.g. newlines (and unicode versions of it) can't sneak in
+      // and escape the comment, thus injecting code that gets evaled.
       var sourceURL = '//# sourceURL=' +
         (hasOwnProperty.call(options, 'sourceURL')
-          ? (options.sourceURL + '').replace(/[\r\n]/g, ' ')
+          ? (options.sourceURL + '').replace(/\s/g, ' ')
           : ('lodash.templateSources[' + (++templateCounter) + ']')
         ) + '\n';
 
@@ -19846,8 +20072,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
       // If `variable` is not specified wrap a with-statement around the generated
       // code to add the data object to the top of the scope chain.
-      // Like with sourceURL, we take care to not check the option's prototype,
-      // as this configuration is a code injection vector.
       var variable = hasOwnProperty.call(options, 'variable') && options.variable;
       if (!variable) {
         source = 'with (obj) {\n' + source + '\n}\n';
@@ -20554,6 +20778,9 @@ return /******/ (function(modules) { // webpackBootstrap
      * values against any array or object value, respectively. See `_.isEqual`
      * for a list of supported value comparisons.
      *
+     * **Note:** Multiple values can be checked by combining several matchers
+     * using `_.overSome`
+     *
      * @static
      * @memberOf _
      * @since 3.0.0
@@ -20569,6 +20796,10 @@ return /******/ (function(modules) { // webpackBootstrap
      *
      * _.filter(objects, _.matches({ 'a': 4, 'c': 6 }));
      * // => [{ 'a': 4, 'b': 5, 'c': 6 }]
+     *
+     * // Checking for several possible values
+     * _.filter(objects, _.overSome([_.matches({ 'a': 1 }), _.matches({ 'a': 4 })]));
+     * // => [{ 'a': 1, 'b': 2, 'c': 3 }, { 'a': 4, 'b': 5, 'c': 6 }]
      */
     function matches(source) {
       return baseMatches(baseClone(source, CLONE_DEEP_FLAG));
@@ -20582,6 +20813,9 @@ return /******/ (function(modules) { // webpackBootstrap
      * **Note:** Partial comparisons will match empty array and empty object
      * `srcValue` values against any array or object value, respectively. See
      * `_.isEqual` for a list of supported value comparisons.
+     *
+     * **Note:** Multiple values can be checked by combining several matchers
+     * using `_.overSome`
      *
      * @static
      * @memberOf _
@@ -20599,6 +20833,10 @@ return /******/ (function(modules) { // webpackBootstrap
      *
      * _.find(objects, _.matchesProperty('a', 4));
      * // => { 'a': 4, 'b': 5, 'c': 6 }
+     *
+     * // Checking for several possible values
+     * _.filter(objects, _.overSome([_.matchesProperty('a', 1), _.matchesProperty('a', 4)]));
+     * // => [{ 'a': 1, 'b': 2, 'c': 3 }, { 'a': 4, 'b': 5, 'c': 6 }]
      */
     function matchesProperty(path, srcValue) {
       return baseMatchesProperty(path, baseClone(srcValue, CLONE_DEEP_FLAG));
@@ -20822,6 +21060,10 @@ return /******/ (function(modules) { // webpackBootstrap
      * Creates a function that checks if **all** of the `predicates` return
      * truthy when invoked with the arguments it receives.
      *
+     * Following shorthands are possible for providing predicates.
+     * Pass an `Object` and it will be used as an parameter for `_.matches` to create the predicate.
+     * Pass an `Array` of parameters for `_.matchesProperty` and the predicate will be created using them.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
@@ -20848,6 +21090,10 @@ return /******/ (function(modules) { // webpackBootstrap
      * Creates a function that checks if **any** of the `predicates` return
      * truthy when invoked with the arguments it receives.
      *
+     * Following shorthands are possible for providing predicates.
+     * Pass an `Object` and it will be used as an parameter for `_.matches` to create the predicate.
+     * Pass an `Array` of parameters for `_.matchesProperty` and the predicate will be created using them.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
@@ -20867,6 +21113,9 @@ return /******/ (function(modules) { // webpackBootstrap
      *
      * func(NaN);
      * // => false
+     *
+     * var matchesFunc = _.overSome([{ 'a': 1 }, { 'a': 2 }])
+     * var matchesPropertyFunc = _.overSome([['a', 1], ['a', 2]])
      */
     var overSome = createOver(arraySome);
 
@@ -22976,7 +23225,7 @@ var SessionTimeoutDialog = function (options) {
     if (typeof options.element === 'undefined') {
         throw 'Popup element not provided';
     }
-
+    
     if (typeof options.warningPeriodMs === 'undefined') {
         throw 'Timeout warning in Milliseconds not provided';
     }
@@ -23405,48 +23654,68 @@ this["lpa"] = this["lpa"] || {};
 this["lpa"]["templates"] = this["lpa"]["templates"] || {};
 
 this["lpa"]["templates"]["alert.withinForm"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", alias4=container.escapeExpression;
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", alias4=container.escapeExpression, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
 
   return "<div class=\"form-group "
-    + alias4(((helper = (helper = helpers.elementJSref || (depth0 != null ? depth0.elementJSref : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementJSref","hash":{},"data":data,"loc":{"start":{"line":1,"column":23},"end":{"line":1,"column":39}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"elementJSref") || (depth0 != null ? lookupProperty(depth0,"elementJSref") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementJSref","hash":{},"data":data,"loc":{"start":{"line":1,"column":23},"end":{"line":1,"column":39}}}) : helper)))
     + "\">\n	<div class=\"alert panel text\" role=\"alert\" tabindex=\"-1\">\n		<i class=\"icon icon-"
-    + alias4(((helper = (helper = helpers.alertType || (depth0 != null ? depth0.alertType : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"alertType","hash":{},"data":data,"loc":{"start":{"line":3,"column":22},"end":{"line":3,"column":35}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"alertType") || (depth0 != null ? lookupProperty(depth0,"alertType") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"alertType","hash":{},"data":data,"loc":{"start":{"line":3,"column":22},"end":{"line":3,"column":35}}}) : helper)))
     + "\" role=\"presentation\"></i>\n		<div class=\"alert-message\">\n			"
-    + ((stack1 = ((helper = (helper = helpers.alertMessage || (depth0 != null ? depth0.alertMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"alertMessage","hash":{},"data":data,"loc":{"start":{"line":5,"column":3},"end":{"line":5,"column":21}}}) : helper))) != null ? stack1 : "")
+    + ((stack1 = ((helper = (helper = lookupProperty(helpers,"alertMessage") || (depth0 != null ? lookupProperty(depth0,"alertMessage") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"alertMessage","hash":{},"data":data,"loc":{"start":{"line":5,"column":3},"end":{"line":5,"column":21}}}) : helper))) != null ? stack1 : "")
     + "\n		</div>\n	</div>\n</div>";
 },"useData":true});
 
 this["lpa"]["templates"]["dialog.confirmRepeatApplication"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", alias4=container.escapeExpression;
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", alias4=container.escapeExpression, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
 
   return "<div class=\"dialog-container\" role=\"dialog\" aria-labelledby=\"dialog-title\" aria-describedby=\"dialog-message\">\n\n    <h2 id=\"dialog-title\" class=\"dialog-title-block\">"
-    + alias4(((helper = (helper = helpers.dialogTitle || (depth0 != null ? depth0.dialogTitle : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"dialogTitle","hash":{},"data":data,"loc":{"start":{"line":3,"column":53},"end":{"line":3,"column":68}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"dialogTitle") || (depth0 != null ? lookupProperty(depth0,"dialogTitle") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"dialogTitle","hash":{},"data":data,"loc":{"start":{"line":3,"column":53},"end":{"line":3,"column":68}}}) : helper)))
     + "</h2>\n\n    <div id=\"dialog-message\" class=\"dialog-message-block\"><p>"
-    + alias4(((helper = (helper = helpers.dialogMessage || (depth0 != null ? depth0.dialogMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"dialogMessage","hash":{},"data":data,"loc":{"start":{"line":5,"column":61},"end":{"line":5,"column":78}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"dialogMessage") || (depth0 != null ? lookupProperty(depth0,"dialogMessage") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"dialogMessage","hash":{},"data":data,"loc":{"start":{"line":5,"column":61},"end":{"line":5,"column":78}}}) : helper)))
     + "</p></div>\n\n    <div class=\"dialog__button-bar\">\n        <a href=\"#\" class=\"button dialog__button--accept "
-    + alias4(((helper = (helper = helpers.acceptClass || (depth0 != null ? depth0.acceptClass : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"acceptClass","hash":{},"data":data,"loc":{"start":{"line":8,"column":57},"end":{"line":8,"column":72}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"acceptClass") || (depth0 != null ? lookupProperty(depth0,"acceptClass") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"acceptClass","hash":{},"data":data,"loc":{"start":{"line":8,"column":57},"end":{"line":8,"column":72}}}) : helper)))
     + "\">"
-    + alias4(((helper = (helper = helpers.acceptButtonText || (depth0 != null ? depth0.acceptButtonText : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"acceptButtonText","hash":{},"data":data,"loc":{"start":{"line":8,"column":74},"end":{"line":8,"column":94}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"acceptButtonText") || (depth0 != null ? lookupProperty(depth0,"acceptButtonText") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"acceptButtonText","hash":{},"data":data,"loc":{"start":{"line":8,"column":74},"end":{"line":8,"column":94}}}) : helper)))
     + "</a>\n        <a href=\"#\" class=\"button-secondary dialog__button--cancel  "
-    + alias4(((helper = (helper = helpers.cancelClass || (depth0 != null ? depth0.cancelClass : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cancelClass","hash":{},"data":data,"loc":{"start":{"line":9,"column":68},"end":{"line":9,"column":83}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"cancelClass") || (depth0 != null ? lookupProperty(depth0,"cancelClass") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cancelClass","hash":{},"data":data,"loc":{"start":{"line":9,"column":68},"end":{"line":9,"column":83}}}) : helper)))
     + "\">"
-    + alias4(((helper = (helper = helpers.cancelButtonText || (depth0 != null ? depth0.cancelButtonText : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cancelButtonText","hash":{},"data":data,"loc":{"start":{"line":9,"column":85},"end":{"line":9,"column":105}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"cancelButtonText") || (depth0 != null ? lookupProperty(depth0,"cancelButtonText") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cancelButtonText","hash":{},"data":data,"loc":{"start":{"line":9,"column":85},"end":{"line":9,"column":105}}}) : helper)))
     + "</a>\n    </div>\n\n</div>\n";
 },"useData":true});
 
 this["lpa"]["templates"]["errors.formElement"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    var helper;
+    var helper, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
 
   return "<div class=\"form-element-errors\">\n    <div class=\"group validation\">\n        <span class=\"validation-message\">"
-    + container.escapeExpression(((helper = (helper = helpers.validationMessage || (depth0 != null ? depth0.validationMessage : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"validationMessage","hash":{},"data":data,"loc":{"start":{"line":3,"column":41},"end":{"line":3,"column":62}}}) : helper)))
+    + container.escapeExpression(((helper = (helper = lookupProperty(helpers,"validationMessage") || (depth0 != null ? lookupProperty(depth0,"validationMessage") : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"validationMessage","hash":{},"data":data,"loc":{"start":{"line":3,"column":41},"end":{"line":3,"column":62}}}) : helper)))
     + "</span>\n    </div>\n</div>";
 },"useData":true});
 
 this["lpa"]["templates"]["errors.formMessage"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    var helper;
+    var helper, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
 
   return "<span class=\"error-message text\">"
-    + container.escapeExpression(((helper = (helper = helpers.errorMessage || (depth0 != null ? depth0.errorMessage : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"errorMessage","hash":{},"data":data,"loc":{"start":{"line":1,"column":33},"end":{"line":1,"column":49}}}) : helper)))
+    + container.escapeExpression(((helper = (helper = lookupProperty(helpers,"errorMessage") || (depth0 != null ? lookupProperty(depth0,"errorMessage") : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"errorMessage","hash":{},"data":data,"loc":{"start":{"line":1,"column":33},"end":{"line":1,"column":49}}}) : helper)))
     + "</span>";
 },"useData":true});
 
@@ -23455,18 +23724,23 @@ this["lpa"]["templates"]["errors.formSummary"] = Handlebars.template({"compiler"
 },"useData":true});
 
 this["lpa"]["templates"]["input.checkbox"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", alias4=container.escapeExpression;
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", alias4=container.escapeExpression, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
 
   return "<fieldset class=\""
-    + alias4(((helper = (helper = helpers.elementJSref || (depth0 != null ? depth0.elementJSref : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementJSref","hash":{},"data":data,"loc":{"start":{"line":1,"column":17},"end":{"line":1,"column":33}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"elementJSref") || (depth0 != null ? lookupProperty(depth0,"elementJSref") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementJSref","hash":{},"data":data,"loc":{"start":{"line":1,"column":17},"end":{"line":1,"column":33}}}) : helper)))
     + "\">\n    <div class=\"input-checkbox group\">\n        <label for=\""
-    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data,"loc":{"start":{"line":3,"column":20},"end":{"line":3,"column":35}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"elementName") || (depth0 != null ? lookupProperty(depth0,"elementName") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data,"loc":{"start":{"line":3,"column":20},"end":{"line":3,"column":35}}}) : helper)))
     + "\">\n            <input type=\"checkbox\" name=\""
-    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data,"loc":{"start":{"line":4,"column":41},"end":{"line":4,"column":56}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"elementName") || (depth0 != null ? lookupProperty(depth0,"elementName") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data,"loc":{"start":{"line":4,"column":41},"end":{"line":4,"column":56}}}) : helper)))
     + "\" id=\""
-    + alias4(((helper = (helper = helpers.elementName || (depth0 != null ? depth0.elementName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data,"loc":{"start":{"line":4,"column":62},"end":{"line":4,"column":77}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"elementName") || (depth0 != null ? lookupProperty(depth0,"elementName") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data,"loc":{"start":{"line":4,"column":62},"end":{"line":4,"column":77}}}) : helper)))
     + "\" class=\"confirmation-validation\" value=\"1\"\n                   required=\"required\">\n            "
-    + ((stack1 = ((helper = (helper = helpers.elementLabel || (depth0 != null ? depth0.elementLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementLabel","hash":{},"data":data,"loc":{"start":{"line":6,"column":12},"end":{"line":6,"column":30}}}) : helper))) != null ? stack1 : "")
+    + ((stack1 = ((helper = (helper = lookupProperty(helpers,"elementLabel") || (depth0 != null ? lookupProperty(depth0,"elementLabel") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementLabel","hash":{},"data":data,"loc":{"start":{"line":6,"column":12},"end":{"line":6,"column":30}}}) : helper))) != null ? stack1 : "")
     + "\n        </label>\n    </div>\n</fieldset>\n";
 },"useData":true});
 
@@ -23499,26 +23773,36 @@ this["lpa"]["templates"]["postcodeLookup.search-field"] = Handlebars.template({"
 },"useData":true});
 
 this["lpa"]["templates"]["postcodeLookup.search-result"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
-    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", alias4=container.escapeExpression;
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", alias4=container.escapeExpression, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
 
   return "      <option value=\""
-    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data,"loc":{"start":{"line":6,"column":21},"end":{"line":6,"column":27}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"id") || (depth0 != null ? lookupProperty(depth0,"id") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data,"loc":{"start":{"line":6,"column":21},"end":{"line":6,"column":27}}}) : helper)))
     + "\" data-line1=\""
-    + alias4(((helper = (helper = helpers.line1 || (depth0 != null ? depth0.line1 : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"line1","hash":{},"data":data,"loc":{"start":{"line":6,"column":41},"end":{"line":6,"column":50}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"line1") || (depth0 != null ? lookupProperty(depth0,"line1") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"line1","hash":{},"data":data,"loc":{"start":{"line":6,"column":41},"end":{"line":6,"column":50}}}) : helper)))
     + "\" data-line2=\""
-    + alias4(((helper = (helper = helpers.line2 || (depth0 != null ? depth0.line2 : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"line2","hash":{},"data":data,"loc":{"start":{"line":6,"column":64},"end":{"line":6,"column":73}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"line2") || (depth0 != null ? lookupProperty(depth0,"line2") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"line2","hash":{},"data":data,"loc":{"start":{"line":6,"column":64},"end":{"line":6,"column":73}}}) : helper)))
     + "\" data-line3=\""
-    + alias4(((helper = (helper = helpers.line3 || (depth0 != null ? depth0.line3 : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"line3","hash":{},"data":data,"loc":{"start":{"line":6,"column":87},"end":{"line":6,"column":96}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"line3") || (depth0 != null ? lookupProperty(depth0,"line3") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"line3","hash":{},"data":data,"loc":{"start":{"line":6,"column":87},"end":{"line":6,"column":96}}}) : helper)))
     + "\" data-postcode=\""
-    + alias4(((helper = (helper = helpers.postcode || (depth0 != null ? depth0.postcode : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"postcode","hash":{},"data":data,"loc":{"start":{"line":6,"column":113},"end":{"line":6,"column":125}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"postcode") || (depth0 != null ? lookupProperty(depth0,"postcode") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"postcode","hash":{},"data":data,"loc":{"start":{"line":6,"column":113},"end":{"line":6,"column":125}}}) : helper)))
     + "\">"
-    + alias4(((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data,"loc":{"start":{"line":6,"column":127},"end":{"line":6,"column":142}}}) : helper)))
+    + alias4(((helper = (helper = lookupProperty(helpers,"description") || (depth0 != null ? lookupProperty(depth0,"description") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data,"loc":{"start":{"line":6,"column":127},"end":{"line":6,"column":142}}}) : helper)))
     + "</option>\n";
 },"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1;
+    var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
 
   return "<div class=\"form-group\">\n  <label class=\"form-label\" for=\"address-search-result\">Address</label>\n  <select class=\"form-control js-PostcodeLookup__search-results\" id=\"address-search-result\">\n    <option value=\"\">Please select an address...</option>\n"
-    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.results : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":5,"column":4},"end":{"line":7,"column":13}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? lookupProperty(depth0,"results") : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":5,"column":4},"end":{"line":7,"column":13}}})) != null ? stack1 : "")
     + "  </select>\n</div>\n";
 },"useData":true});
 
@@ -25095,7 +25379,7 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
       });
     }
   };
-
+  
 })();
 ;
 // UI Behaviour module for LPA
@@ -25666,12 +25950,6 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
                 window.GOVUK.cookie('cookie_policy') || window.GOVUK.setDefaultConsentCookie()
             }
 
-            if (this.isInCookiesPage() && !this.isInIframe() && 'true' === window.GOVUK.cookie('submitted_cookie_page')) {
-            	window.setTimeout(function () {
-					window.close();
-				}, 500);
-			}
-
             this.enableAllCookies = this.enableAllCookies.bind(this);
             var acceptButton = document.querySelector('.global-cookie-message__button_accept');
             acceptButton.addEventListener('click', this.enableAllCookies);
@@ -25732,3 +26010,4 @@ $('body').removeClass('no-js');
 //   'use strict';
 
 // });
+
