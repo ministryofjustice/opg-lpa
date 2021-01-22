@@ -63,13 +63,13 @@ casper.test.begin("Checking user can add primary attorney", {
             test.assertExists('form#form-attorney input[type="text"][name="name-last"]', 'Found last name text input box in the lightbox as expected');
 
             // checking dob day text input box
-            test.assertExists('form#form-attorney input[type="tel"][name="dob-date[day]"]', 'Found DOB day text input box in the lightbox as expected');
+            test.assertExists('form#form-attorney input[type="text"][name="dob-date[day]"]', 'Found DOB day text input box in the lightbox as expected');
 
             // checking dob month text input box
-            test.assertExists('form#form-attorney input[type="tel"][name="dob-date[month]"]', 'Found DOB month text input box in the lightbox as expected');
+            test.assertExists('form#form-attorney input[type="text"][name="dob-date[month]"]', 'Found DOB month text input box in the lightbox as expected');
 
             // checking dob year text input box
-            test.assertExists('form#form-attorney input[type="tel"][name="dob-date[year]"]', 'Found DOB year text input box in the lightbox as expected');
+            test.assertExists('form#form-attorney input[type="text"][name="dob-date[year]"]', 'Found DOB year text input box in the lightbox as expected');
 
             // checking email address text input box
             test.assertExists('form#form-attorney input[name="email-address"]', 'Found email address input box in the lightbox as expected');
