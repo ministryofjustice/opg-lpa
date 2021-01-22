@@ -2,15 +2,6 @@ const {
   Then, After,
 } = require("cypress-cucumber-preprocessor/steps");
 
-// this will get called after each scenario if flag is set
-After(() => {
-    if (Cypress.env('RUN_A11Y_TESTS'))
-    {
-        cy.injectAxe();
-        cy.checkA11y();
-    }
-});
-
 // Check links on the page which will open a new tab.
 // On pages where we have many links which open in new tabs, and where we
 // provide a visually-hidden notice which explains this, we use a hidden span

@@ -61,7 +61,10 @@
 
 {{ phone.setAttributes({
     id: 'phone-number',
-    class: 'form-control'
+    class: 'form-control',
+    type: 'tel',
+    inputmode: 'numeric',
+    pattern: '[0-9]*'
 }) ? '' }}
 
 {{ email.setAttributes({

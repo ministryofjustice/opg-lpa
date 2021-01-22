@@ -29,3 +29,8 @@ Cypress.env("email","caspertests+" + userNumber + "@lpa.opg.service.justice.gov.
 Cypress.env("password", "Cypress" + userNumber)
 Cypress.env("seeded_email","seeded_test_user@digital.justice.gov.uk");
 Cypress.env("seeded_password","Pass1234");
+// see if we've inherited an adminUrl, if not default to localhost
+var adminUrl = Cypress.env("adminUrl");
+if (adminUrl === undefined) {
+    Cypress.env("adminUrl","https://localhost:7003");
+}
