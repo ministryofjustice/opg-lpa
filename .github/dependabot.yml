@@ -1,0 +1,57 @@
+version: 2
+updates:
+  # Enable version updates for service-front npm
+  - package-ecosystem: "npm"
+    directory: "/service-front/package.json"
+    schedule:
+      interval: "daily"
+    versioning-strategy: lockfile-only
+    open-pull-requests-limit: 1
+
+  # Enable version updates for service-front composer
+  - package-ecosystem: "composer"
+    directory: "/service-front/composer.json"
+    schedule:
+      interval: "daily"
+    versioning-strategy: lockfile-only
+    open-pull-requests-limit: 1
+
+  # Enable version updates for service-admin composer
+  - package-ecosystem: "composer"
+    directory: "/service-admin/composer.json"
+    schedule:
+      interval: "daily"
+    versioning-strategy: lockfile-only
+    open-pull-requests-limit: 1
+
+# Enable version updates for service-pdf composer
+  - package-ecosystem: "composer"
+    directory: "/service-pdf/composer.json"
+    schedule:
+      interval: "daily"
+    versioning-strategy: lockfile-only
+    open-pull-requests-limit: 1
+
+    # Enable version updates for service-api composer
+  - package-ecosystem: "composer"
+    directory: "/service-api/composer.json"
+    schedule:
+      interval: "daily"
+    versioning-strategy: lockfile-only
+    open-pull-requests-limit: 1
+
+    # Enable version updates for tests composer
+  - package-ecosystem: "composer"
+    directory: "/tests/composer.json"
+    schedule:
+      interval: "daily"
+    versioning-strategy: lockfile-only
+    open-pull-requests-limit: 1
+
+  # Enable version updates for root composer
+  - package-ecosystem: "composer"
+    directory: "/composer.json"
+    schedule:
+      interval: "daily"
+    versioning-strategy: lockfile-only
+    open-pull-requests-limit: 1
