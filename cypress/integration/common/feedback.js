@@ -31,4 +31,5 @@ Then(`I set feedback email as {string}`, (email) => {
  
 Then(`I submit the feedback`, () => {
     cy.get('[data-cy=feedback-submit-button]').click();
+    cy.OPGCheckA11y();
 })

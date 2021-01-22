@@ -18,11 +18,12 @@ Feature: Password
         Then I am taken to "/user/change-password"
         When I try to change password to an invalid one
         Then I am taken to "/user/change-password"
-        And I see "There was a problem changing your password" in the page text
-        And I see "Choose a new password that includes at least one digit (0-9)" in the page text
-        And I see "Choose a new password that includes at least one lower case letter (a-z)" in the page text
-        And I see "Choose a new password that includes at least one capital letter (A-Z)" in the page text
-        And I see "Enter matching passwords" in the page text
+        And I see in the page text
+            | There was a problem changing your password |
+            | Choose a new password that includes at least one digit (0-9) |
+            | Choose a new password that includes at least one lower case letter (a-z) |
+            | Choose a new password that includes at least one capital letter (A-Z) |
+            | Enter matching passwords |
   
     @focus
     Scenario: Reset Password using email link
