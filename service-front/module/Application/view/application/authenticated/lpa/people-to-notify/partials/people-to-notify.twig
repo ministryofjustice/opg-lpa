@@ -4,10 +4,10 @@
         <p class="person-address flush--ends">{{ notifiedPerson.address }}</p>
         <ul class="person-actions">
             <li class="action-item">
-                <a href="{{ editRoute }}" role="button" class="action-edit js-form-popup" aria-label="View/edit person to notify, {{ notifiedPerson.name }}">View/edit details</a>
+                <a href="{{ confirmDeleteRoute }}" class="action-delete js-form-popup">Delete</a>
             </li>
             <li class="action-item">
-                <a href="{{ confirmDeleteRoute }}" class="action-delete js-form-popup">Delete</a>
+                <a href="{{ editRoute }}" role="button" class="action-edit js-form-popup" aria-label="View/edit person to notify, {{ notifiedPerson.name }}">View/edit details</a>
             </li>
         </ul>
     </div>
