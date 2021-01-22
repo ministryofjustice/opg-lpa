@@ -39,7 +39,7 @@ casper.test.begin("Check password reset process", {
 
     	}).waitForSelector('.error-summary', function() {
 
-		    test.assertTextExists('There was a problem submitting your email details');
+		    test.assertTextExists('There is a problem');
 
     	}).waitForSelector('input[type="submit"]',  function () {
 
