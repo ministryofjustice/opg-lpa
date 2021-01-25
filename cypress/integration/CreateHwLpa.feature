@@ -5,7 +5,7 @@ Feature: Create a Health and Welfare LPA
     Background:
         Given I ignore application exceptions
  
-    @focus
+    #@focus
     Scenario: Create LPA with error first
         Given I log in as appropriate test user
         Then I visit the type page
@@ -35,3 +35,4 @@ Feature: Create a Health and Welfare LPA
         # save button should be missing initially
         And I cannot find "save-and-continue"
         And I click "add-donor-details"
+        And I can see popup
