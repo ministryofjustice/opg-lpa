@@ -62,3 +62,17 @@ Feature: Create a Property and Finance LPA
             | Change address line 1 so that it has fewer than 51 characters |
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
+        When I select "Mrs" on old style id "#name-title"
+        And I force fill out  
+                | name-first | Nancy |
+                | name-last | Garrison |
+                | dob-date-day| 22 |
+                | dob-date-month| 10 |
+                | dob-date-year| 1988 |
+                | email-address| opglpademo+NancyGarrison@gmail.com |
+                | address-address1| Bank End Farm House |
+                | address-address2| Undercliff Drive |
+                | address-address3| Ventnor, Isle of Wight |
+                | address-postcode| PO38 1UL |
+        And I check "can-sign"
+        And I click "form-save"
