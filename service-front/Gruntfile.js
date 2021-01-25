@@ -237,9 +237,9 @@ module.exports = function (grunt) {
 
   // define tasks
   grunt.registerTask('default', ['watch']);
-  grunt.registerTask('compile', ['sass', 'replace:image_url', 'copy', 'handlebars', 'concat']);
   grunt.registerTask('test', ['scsslint', 'jshint']);
-  grunt.registerTask('compress', ['cssmin', 'uglify']);
   grunt.registerTask('refresh', ['browserSync', 'watch']);
-  grunt.registerTask('build', ['compile', 'compress']);
+  grunt.registerTask('build_js', ['handlebars', 'concat', 'uglify']);
+  grunt.registerTask('build_css', ['sass', 'replace:image_url', 'copy', 'cssmin']);
+  grunt.registerTask('build', ['build_js', 'build_css']);
 };
