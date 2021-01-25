@@ -37,3 +37,11 @@ When("I force fill out", (dataTable) => {
                     cy.get("[data-cy=" + row[0] + "]").clear({ force: true }).type(row[1], { force: true });
             });
 });
+
+Then("I see form prefilled out with", (dataTable) => {
+    var rawTable = dataTable.rawTable;
+
+    rawTable.forEach(row => { 
+                    cy.get("[data-cy=" + row[0] + "]").should("have.value",row[1]);
+            });
+});
