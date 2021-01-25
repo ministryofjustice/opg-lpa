@@ -19,6 +19,15 @@ Then(`I am taken to the dashboard page`, () => {
 Then(`I am taken to the lpa type page`, () => {
   cy.url().should('eq',lpaType);
 })
+
+Then(`I am taken to the when lpa starts page`, () => {
+    var when_lpa_starts = '/lpa/\\d+/when-lpa-starts';
+    cy.get('@donorPageUrl').then(($url) => {
+        var lpaId = $url.match(/\/(\d+)\//)[1];
+        var whenLpaStartsPath = when_lpa_starts.replace('\\d+', lpaId);
+        cy.url().should('eq',Cypress.config().baseUrl + whenLpaStartsPath);
+    });
+})
  
 Then(`I am taken to the donor page for health and welfare`, () => {
   cy.url().should('contain','donor').as('donorPageUrl');
