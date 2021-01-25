@@ -22,11 +22,13 @@ Then(`I am taken to the lpa type page`, () => {
  
 Then(`I am taken to the donor page for health and welfare`, () => {
   cy.url().should('contain','donor').as('donorPageUrl');
+    // in theory, the line below should use a data-cy tag to get this element, in practice, putting the tag in the right place to be searched for, is not straightforward
   cy.get('.accordion li.complete').should('contain','This LPA covers health and welfare');
 })
 
-Then(`I am taken to the donor page for finance and property`, () => {
+Then(`I am taken to the donor page for property and finance`, () => {
   cy.url().should('contain','donor').as('donorPageUrl');
+    // in theory, the line below should use a data-cy tag to get this element, in practice, putting the tag in the right place to be searched for, is not straightforward
   cy.get('.accordion li.complete').should('contain','This LPA covers property and financial affairs');
 })
 

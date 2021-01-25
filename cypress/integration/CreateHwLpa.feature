@@ -17,6 +17,7 @@ Feature: Create a Health and Welfare LPA
         Then I choose Health and Welfare
         When I click "save"
         Then I am taken to the donor page for health and welfare
+        And I see "Who is the donor for this LPA?" in the page text
         And I get lpaid
 
     @focus
@@ -26,4 +27,5 @@ Feature: Create a Health and Welfare LPA
         Then I choose Health and Welfare
         When I click "save"
         Then I am taken to the donor page for health and welfare
+        And I see "Who is the donor for this LPA?" in the page text
         And I get lpaid
