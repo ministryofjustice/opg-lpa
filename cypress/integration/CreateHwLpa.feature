@@ -19,6 +19,9 @@ Feature: Create a Health and Welfare LPA
         Then I am taken to the donor page for health and welfare
         And I see "Who is the donor for this LPA?" in the page text
         And I get lpaid
+        # save button should be missing initially
+        And I cannot find "save-and-continue"
+        And I click "add-donor-details"
 
     @focus
     Scenario: Create LPA normal path
@@ -29,3 +32,6 @@ Feature: Create a Health and Welfare LPA
         Then I am taken to the donor page for health and welfare
         And I see "Who is the donor for this LPA?" in the page text
         And I get lpaid
+        # save button should be missing initially
+        And I cannot find "save-and-continue"
+        And I click "add-donor-details"
