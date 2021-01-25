@@ -11,7 +11,7 @@
 
 {% if isTimeout %}
     <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
-      <h1 class="heading-medium error-summary-heading" id="error-heading">Session timed out</h1>
+      <h2 class="heading-medium error-summary-heading" id="error-heading">Session timed out</h2>
       <div class="error-summary-text" data-tracking-context="Session">
           <p data-tracking-summary="Session timed out">Sorry, your session has timed out due to inactivity or because you have signed in on another browser. Please sign in again.</p>
       </div>
@@ -20,7 +20,7 @@
 
 {% if authError %}
     <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
-      <h1 class="heading-medium error-summary-heading" id="error-heading">There is a problem</h1>
+      <h2 class="heading-medium error-summary-heading" id="error-heading">There is a problem</h2>
       <div class="error-summary-text" data-tracking-context="Signing in">
             {% if authError == 'not-activated' %}
                 <p data-tracking-summary="Account not activated">Your account has not been activated. Click on the link in the email sent to you when you created the account.
