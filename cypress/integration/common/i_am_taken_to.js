@@ -20,9 +20,16 @@ Then(`I am taken to the lpa type page`, () => {
   cy.url().should('eq',lpaType);
 })
  
-Then(`I am taken to the donor page`, () => {
+Then(`I am taken to the donor page for health and welfare`, () => {
   cy.url().should('contain','donor').as('donorPageUrl');
+  cy.get('.accordion li.complete').should('contain','This LPA covers health and welfare');
 })
+
+Then(`I am taken to the donor page for finance and property`, () => {
+  cy.url().should('contain','donor').as('donorPageUrl');
+  cy.get('.accordion li.complete').should('contain','This LPA covers property and financial affairs');
+})
+
 
 Then(`I get lpaid`, () => {
     cy.OPGGetLpaId();

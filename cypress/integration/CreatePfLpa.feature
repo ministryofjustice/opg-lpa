@@ -23,7 +23,7 @@ Feature: Create a Property and Finance LPA
             | Choose a type of LPA |
         Then I choose Property and Finance
         When I click "save"
-        Then I am taken to the donor page
+        Then I am taken to the donor page for property and finance
 
     @focus
     Scenario: Create LPA normal path
@@ -31,4 +31,4 @@ Feature: Create a Property and Finance LPA
         Then I visit the type page
         Then I choose Property and Finance
         When I click "save"
-        Then I am taken to the donor page
+        Then I am taken to the donor page for property and finance
