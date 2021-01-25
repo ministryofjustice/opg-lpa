@@ -21,11 +21,11 @@ Then(`I am taken to the lpa type page`, () => {
 })
  
 Then(`I am taken to the donor page`, () => {
-  cy.url().should('contain','donor').as('myurl');
+  cy.url().should('contain','donor').as('donorPageUrl');
 })
 
 Then(`I get lpaid`, () => {
-    cy.get('@myurl').then(($url) => {cy.log("url is " + $url + " yeah")});
+    cy.OPGGetLpaId();
 })
  
 Then(`I am taken to the post logout url`, () => {
