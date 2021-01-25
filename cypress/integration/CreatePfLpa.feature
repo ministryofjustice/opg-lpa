@@ -92,3 +92,6 @@ Feature: Create a Property and Finance LPA
             | address-address3| Ventnor, Isle of Wight |
             | address-postcode| PO38 1UL |
         Then I click "form-cancel"
+        Then I click "save-and-continue"
+        And I am taken to the when lpa starts page
+        And I see "When can the LPA be used?" in the page text
