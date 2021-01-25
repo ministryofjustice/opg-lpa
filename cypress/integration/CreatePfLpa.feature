@@ -12,7 +12,7 @@ Feature: Create a Property and Finance LPA
         When I click "createnewlpa"
         Then I am taken to the lpa type page
   
-    @focus
+    #@focus
     Scenario: Create LPA with error first
         Given I log in as appropriate test user
         Then I visit the type page
@@ -27,7 +27,8 @@ Feature: Create a Property and Finance LPA
         And I see "Who is the donor for this LPA?" in the page text
         # save button should be missing initially
         And I cannot find "save-and-continue"
-        And I click "add-donor-details"
+        When I click "add-donor-details"
+        Then I can see popup
 
     @focus
     Scenario: Create LPA normal path
@@ -39,4 +40,25 @@ Feature: Create a Property and Finance LPA
         And I see "Who is the donor for this LPA?" in the page text
         # save button should be missing initially
         And I cannot find "save-and-continue"
-        And I click "add-donor-details"
+        When I click "add-donor-details"
+        Then I can see popup
+        When I force fill out  
+            | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | dob-date-day | 22 |
+            | dob-date-month | 10 |
+            | dob-date-year | 1988 |
+            | email-address | opglpademo+NancyGarrison@gmail.com |
+            | address-address1 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | address-address2 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | address-address3 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | address-postcode | PO38 1UL |
+        And I click "form-save"
+        Then I see in the page text
+            | There was a problem submitting the form |
+            | Enter the donor's title |
+            | Enter a first name that's less than 54 characters long |
+            | Enter a last name that's less than 62 characters long |
+            | Change address line 1 so that it has fewer than 51 characters |
+            | Change address line 2 so that it has fewer than 51 characters |
+            | Change address line 3 so that it has fewer than 51 characters |

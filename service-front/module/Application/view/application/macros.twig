@@ -92,7 +92,7 @@
 
 {% macro renderFormButtons(cancelUrl, backButtonUrl) %}
     {# Submit button #}
-    <input type="submit" name="submit" id="form-save" value="Save details" class="button">
+    <input type="submit" name="submit" id="form-save" value="Save details" class="button" data-cy="form-save">
 
     {# Back button - if necessary #}
     {% if (backButtonUrl) %}

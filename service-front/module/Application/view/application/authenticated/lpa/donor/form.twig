@@ -69,22 +69,26 @@
 
 {{ title.setAttributes({
     id: 'name-title',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'name-title'
 }) ? '' }}
 
 {{ firstname.setAttributes({
     id: 'name-first',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'name-first'
 }) ? '' }}
 
 {{ lastname.setAttributes({
     id: 'name-last',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'name-last'
 }) ? '' }}
 
 {{ otherNames.setAttributes({
     id: 'otherNames',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'otherNames'
 }) ? '' }}
 
 {{ dobDay.setAttributes({
@@ -93,7 +97,8 @@
     class: 'form-control',
     inputmode: 'numeric',
     maxlength: '2',
-    pattern: '[0-9]*'
+    pattern: '[0-9]*',
+    'data-cy': 'dob-date-day'
 }) ? ''}}
 
 {{ dobMonth.setAttributes({
@@ -102,7 +107,8 @@
     class: 'form-control',
     inputmode: 'numeric',
     maxlength: '2',
-    pattern: '[0-9]*'
+    pattern: '[0-9]*',
+    'data-cy': 'dob-date-month'
  }) ? ''}}
 
 {{ dobYear.setAttributes({
@@ -111,36 +117,43 @@
     class: 'form-control',
     inputmode: 'numeric',
     maxlength: '4',
-    pattern: '[0-9]*'
+    pattern: '[0-9]*',
+    'data-cy': 'dob-date-year'
 })  ? ''}}
 
 {{ email.setAttributes({
     id: 'email-address',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'email-address'
 }) ? '' }}
 
 {{ address1.setAttributes({
     id: 'address-address1',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'address-address1'
 }) ? ''}}
 
 {{ address2.setAttributes({
     id: 'address-address2',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'address-address2'
 }) ? ''}}
 
 {{ address3.setAttributes({
     id: 'address-address3',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'address-address3'
 }) ? ''}}
 
 {{ postcode.setAttributes({
     id: 'address-postcode',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'address-postcode'
 }) ? ''}}
 
 {{ canSign.setAttributes({
-    id: 'can-sign'
+    id: 'can-sign',
+    'data-cy': 'can-sign'
 }) ? '' }}
 
 {# form fields labels #}

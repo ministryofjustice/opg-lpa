@@ -21,7 +21,8 @@ Feature: Create a Health and Welfare LPA
         And I get lpaid
         # save button should be missing initially
         And I cannot find "save-and-continue"
-        And I click "add-donor-details"
+        When I click "add-donor-details"
+        Then I can see popup
 
     @focus
     Scenario: Create LPA normal path
@@ -34,5 +35,5 @@ Feature: Create a Health and Welfare LPA
         And I get lpaid
         # save button should be missing initially
         And I cannot find "save-and-continue"
-        And I click "add-donor-details"
-        And I can see popup
+        When I click "add-donor-details"
+        Then I can see popup
