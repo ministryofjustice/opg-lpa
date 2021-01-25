@@ -64,15 +64,31 @@ Feature: Create a Property and Finance LPA
             | Change address line 3 so that it has fewer than 51 characters |
         When I select "Mrs" on old style id "#name-title"
         And I force fill out  
-                | name-first | Nancy |
-                | name-last | Garrison |
-                | dob-date-day| 22 |
-                | dob-date-month| 10 |
-                | dob-date-year| 1988 |
-                | email-address| opglpademo+NancyGarrison@gmail.com |
-                | address-address1| Bank End Farm House |
-                | address-address2| Undercliff Drive |
-                | address-address3| Ventnor, Isle of Wight |
-                | address-postcode| PO38 1UL |
+            | name-first | Nancy |
+            | name-last | Garrison |
+            | dob-date-day| 22 |
+            | dob-date-month| 10 |
+            | dob-date-year| 1988 |
+            | email-address| opglpademo+NancyGarrison@gmail.com |
+            | address-address1| Bank End Farm House |
+            | address-address2| Undercliff Drive |
+            | address-address3| Ventnor, Isle of Wight |
+            | address-postcode| PO38 1UL |
         And I check "can-sign"
         And I click "form-save"
+        Then I can find "save-and-continue"
+        When I click "view-edit-details"
+        Then I can see popup
+        # TODO need to check title set to Mrs
+        And I see form prefilled out with
+            | name-first | Nancy |
+            | name-last | Garrison |
+            | dob-date-day| 22 |
+            | dob-date-month| 10 |
+            | dob-date-year| 1988 |
+            | email-address| opglpademo+NancyGarrison@gmail.com |
+            | address-address1| Bank End Farm House |
+            | address-address2| Undercliff Drive |
+            | address-address3| Ventnor, Isle of Wight |
+            | address-postcode| PO38 1UL |
+        Then I click "form-cancel"

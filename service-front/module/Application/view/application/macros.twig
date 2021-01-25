@@ -96,12 +96,12 @@
 
     {# Back button - if necessary #}
     {% if (backButtonUrl) %}
-        <a href="{{ backButtonUrl }}" class="button button-secondary js-form-popup">Back</a>
+        <a href="{{ backButtonUrl }}" class="button button-secondary js-form-popup" data-cy="form-back" >Back</a>
     {% endif %}
 
     {# Cancel button #}
     {% if cancelUrl %}
-        <a href="{{ cancelUrl }}" class="button button-secondary js-cancel">Cancel</a>
+        <a href="{{ cancelUrl }}" class="button button-secondary js-cancel" data-cy="form-cancel">Cancel</a>
     {% endif %}
 {% endmacro %}
 
