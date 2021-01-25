@@ -25,6 +25,9 @@ Feature: Create a Property and Finance LPA
         When I click "save"
         Then I am taken to the donor page for property and finance
         And I see "Who is the donor for this LPA?" in the page text
+        # save button should be missing initially
+        And I cannot find "save-and-continue"
+        And I click "add-donor-details"
 
     @focus
     Scenario: Create LPA normal path
@@ -34,3 +37,6 @@ Feature: Create a Property and Finance LPA
         When I click "save"
         Then I am taken to the donor page for property and finance
         And I see "Who is the donor for this LPA?" in the page text
+        # save button should be missing initially
+        And I cannot find "save-and-continue"
+        And I click "add-donor-details"
