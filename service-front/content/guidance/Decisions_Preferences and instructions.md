@@ -1,4 +1,4 @@
-# Preferences and instructions
+## Preferences and instructions
 
 The donor can give preferences and instructions to guide and direct the way their attorneys make decisions.
 
@@ -6,7 +6,7 @@ Adding preferences and instructions is optional, and most donors do not add any.
 
 When attorneys want to make a decision on the donor’s behalf, they will need to show the registered LPA to organisations, such as banks or care homes. These organisations will check the LPA to see if the donor made any relevant preferences or instructions.
 
-## When instructions must be added
+### When instructions must be added
 
 The donor must add instructions if:
 
@@ -16,7 +16,7 @@ The donor must add instructions if:
 
 You can find more information about these instructions below.
 
-## The difference between preferences and instructions
+### The difference between preferences and instructions
 
 Instructions are things the donor says their attorneys must or must not do when making decisions on their behalf.
 
@@ -24,7 +24,7 @@ Preferences are things the donor would like their attorneys to think about when 
 
 The attorneys do not have to follow the donor’s preferences, but they should keep them in mind when making decisions. If the donor definitely wants their attorneys to do something, include it in the instructions.
 
-## Write preferences and instructions carefully
+### Write preferences and instructions carefully
 
 Complicated or badly written preferences and instructions can make an LPA unworkable. If this happens, the Office of the Public Guardian (OPG) may not register the LPA or the Court of Protection may need to remove a preference or instruction from the LPA. This can take a long time.
 
@@ -34,19 +34,19 @@ If the donor’s not sure what they can put in their preferences and instruction
 
 We’ve included some guidance at bottom of this page to help you avoid some common mistakes.
 
-## Change when and how replacement attorneys step in
+### Change when and how replacement attorneys step in
 
 If the original attorneys are appointed jointly and severally, the donor can add instructions to state the order in which replacement attorneys should step in.
 
 Find out more and see example instructions on the [replacement attorneys](/help/#topic-replacement-attorneys) help page.
 
-## Change what happens when an attorneys dies or is unable to act
+### Change what happens when an attorneys dies or is unable to act
 
 If the original attorneys are appointed jointly or jointly for some decisions, the donor can add instructions to change what happens to their LPA when an original attorney dies or is unable or unwilling to act.
 
 Find out more and see example instructions on the [how multiple attorneys make decisions](/help/#topic-how-multiple-attorneys-make-decisions) help page.
 
-## Preferences on property and financial affairs LPAs
+### Preferences on property and financial affairs LPAs
 
 The donor can add preferences about how they’d like their money and property to be managed.
 
@@ -59,7 +59,7 @@ Examples:
 * I would like my attorneys to consult my doctor if they believe I may not have mental capacity to make decisions about my house.
 * I would like to donate £50 each year to Age UK.
 
-## Preferences on health and welfare LPAs
+### Preferences on health and welfare LPAs
 
 The donor can add preferences about their health, care and welfare. These could include the donor’s preferences on where they’d like to live and who they’d prefer to look after them.
 
@@ -71,7 +71,7 @@ Examples:
 * I prefer to be prescribed generic medicine whenever possible.
 * I would like to take exercise at least 3 times a week whenever I am physically able to do so.
 
-### Life-sustaining treatment preferences
+#### Life-sustaining treatment preferences
 
 If the donor chooses to give their attorneys the power to make decisions about [life-sustaining treatment](/help/#topic-life-sustaining-treatment), they can add preferences about this. This can help attorneys make decisions that are as close as possible to the decisions the donor would have made.
 
@@ -84,7 +84,7 @@ Attorneys should pay attention to the donor’s preferences, though they do not 
 
 The donor does not have to give any preferences for life-sustaining treatment – their attorneys can act without them.
 
-## Instructions on property and financial affairs LPAs
+### Instructions on property and financial affairs LPAs
 
 The donor can add instructions about how they’d like their money and property to be managed.
 
@@ -97,7 +97,7 @@ Examples:
 * My attorneys must not sell my home unless, in my doctor's opinion, I can no longer live independently.
 * My attorneys must send annual accounts to my brother and sister.
 
-### Discretionary management schemes
+#### Discretionary management schemes
 
 A discretionary management scheme (DMS) is a type of investment where investment decisions are taken by the scheme manager, such as a bank.
 
@@ -114,7 +114,7 @@ OPG cannot guarantee that DMSs will accept this wording. The donor may also want
 
 If the LPA does not include appropriate instructions about DMSs and the donor has lost capacity, their attorneys will have to apply to the Court of Protection to allow them to use a DMS.
 
-## Instructions on health and welfare LPAs
+### Instructions on health and welfare LPAs
 
 The donor can add instructions about their health, care and welfare. These could include instructions about where the donor lives and medical treatment that fits with their beliefs.
 
@@ -127,7 +127,7 @@ Examples:
 * My attorneys must refer to my advance decision to refuse treatment involving blood products, which is against my religion.
 * My attorneys must not decide that I am to move into residential care unless my doctor says that I can no longer live independently.
 
-### Life-sustaining treatment instructions
+#### Life-sustaining treatment instructions
 
 If the donor chooses to give their attorneys the power to make decisions about [life-sustaining treatment](/help/#topic-life-sustaining-treatment), they can add instructions to specify medical conditions where their attorneys must or must not consent to life-sustaining treatment on the donor behalf.
 
@@ -139,13 +139,13 @@ The donor cannot write instructions that would require their attorneys to break 
 
 The donor does not have to give any instructions for life-sustaining treatment – their attorneys can act without them.
 
-## Avoiding problems with instructions
+### Avoiding problems with instructions
 
 Instructions and preferences can create problems. It’s easy to ask for something that the law will not allow.
 
 If the donor would like to add instructions and preferences, here are some common mistakes to avoid.
 
-### Do not add instructions that try to change the way attorneys are appointed to act
+#### Do not add instructions that try to change the way attorneys are appointed to act
 
 The donor must not appoint attorneys to make decisions in one way, then include an instruction that requires the attorneys to make decisions in a different way.
 
@@ -158,11 +158,11 @@ If the donor has chosen to appoint their attorneys to act jointly and severally 
 
 We cannot register the LPA if it includes instructions like these.
 
-### Make sure preferences or instructions are for all attorneys
+#### Make sure preferences or instructions are for all attorneys
 
 Any preferences or instructions must apply to all the attorneys. The donor must not say, for example, that only their daughter is allowed to sell their house, or that one attorney cannot make decisions about giving gifts.
 
-### Be careful with gifts
+#### Be careful with gifts
 
 Instructions about gifts often cause problems on property and financial affairs LPAs. This is because there are strict limits on the size and kind of gifts attorneys can give on the donor’s behalf. Attorneys can only:
 
@@ -182,7 +182,7 @@ The donor also cannot instruct their attorneys to do things such as:
 
 The attorneys must apply to the Court of Protection if they want to make gifts like this on the donor’s behalf.
 
-### Other common mistakes to avoid
+#### Other common mistakes to avoid
 
 In their instructions, the donor:
 
