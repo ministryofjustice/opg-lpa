@@ -2,7 +2,7 @@ version: 2
 updates:
   # Enable version updates for service-front npm
   - package-ecosystem: "npm"
-    directory: "/service-front/package.json"
+    directory: "/service-front"
     schedule:
       interval: "daily"
     versioning-strategy: lockfile-only
@@ -10,7 +10,7 @@ updates:
 
   # Enable version updates for service-front composer
   - package-ecosystem: "composer"
-    directory: "/service-front/composer.json"
+    directory: "/service-front"
     schedule:
       interval: "daily"
     versioning-strategy: lockfile-only
@@ -18,7 +18,7 @@ updates:
 
   # Enable version updates for service-admin composer
   - package-ecosystem: "composer"
-    directory: "/service-admin/composer.json"
+    directory: "/service-admin"
     schedule:
       interval: "daily"
     versioning-strategy: lockfile-only
@@ -26,7 +26,7 @@ updates:
 
 # Enable version updates for service-pdf composer
   - package-ecosystem: "composer"
-    directory: "/service-pdf/composer.json"
+    directory: "/service-pdf"
     schedule:
       interval: "daily"
     versioning-strategy: lockfile-only
@@ -34,7 +34,7 @@ updates:
 
     # Enable version updates for service-api composer
   - package-ecosystem: "composer"
-    directory: "/service-api/composer.json"
+    directory: "/service-api"
     schedule:
       interval: "daily"
     versioning-strategy: lockfile-only
@@ -42,7 +42,7 @@ updates:
 
     # Enable version updates for tests composer
   - package-ecosystem: "composer"
-    directory: "/tests/composer.json"
+    directory: "/tests"
     schedule:
       interval: "daily"
     versioning-strategy: lockfile-only
@@ -50,7 +50,7 @@ updates:
 
   # Enable version updates for root composer
   - package-ecosystem: "composer"
-    directory: "/composer.json"
+    directory: "/"
     schedule:
       interval: "daily"
     versioning-strategy: lockfile-only
