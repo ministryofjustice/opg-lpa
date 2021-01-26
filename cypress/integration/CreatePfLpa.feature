@@ -37,6 +37,8 @@ Feature: Create a Property and Finance LPA
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
+        # todo - casper just looked for use-my-details. We need ultimately to actually test this
+        And I can find "use-my-details"
         When I type "B1 1TF" into old style id "input#postcode-lookup"
         And I click element marked "Find UK address"
         Then I can find old style id "#address-search-result" with 6 options

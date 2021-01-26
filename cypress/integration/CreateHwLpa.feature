@@ -35,6 +35,8 @@ Feature: Create a Health and Welfare LPA
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
+        # todo - casper just looked for use-my-details. We need ultimately to actually test this
+        And I can find "use-my-details"
         # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
         And I can find old style id "#name-title" with 8 options
         When I type "B1 1TF" into old style id "input#postcode-lookup"
