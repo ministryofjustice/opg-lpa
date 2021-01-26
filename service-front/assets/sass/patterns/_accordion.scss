@@ -108,7 +108,7 @@
 
         .link-edit {
             display: block;
-            padding: $gutter-half $gutter;
+            padding: $gutter-half $gutter-half;
             float: right;
 
             @include media(mobile) {
