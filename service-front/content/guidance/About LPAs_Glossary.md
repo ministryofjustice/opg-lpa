@@ -1,4 +1,4 @@
-## Glossary {.heading-large}
+## Glossary
 
 Here are some words you'll see when you're making your lasting power of attorney (LPA). The help topics explain many of them in more detail.
 
