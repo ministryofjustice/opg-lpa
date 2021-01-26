@@ -8,6 +8,8 @@ Feature: Create a Health and Welfare LPA
     #@focus
     Scenario: Create LPA with error first
         Given I log in as appropriate test user
+        # we go direct to type page here because we're agnostic to whether it is seeded or newly signed-up user
+        # and newly signed-up user won't have a dashboard.
         Then I visit the type page
         When I click "save"
         Then I see in the page text
@@ -27,6 +29,8 @@ Feature: Create a Health and Welfare LPA
     @focus
     Scenario: Create LPA normal path
         Given I log in as appropriate test user
+        # we go direct to type page here because we're agnostic to whether it is seeded or newly signed-up user
+        # and newly signed-up user won't have a dashboard.
         Then I visit the type page
         Then I choose Health and Welfare
         When I click "save"
@@ -37,3 +41,24 @@ Feature: Create a Health and Welfare LPA
         And I cannot find "save-and-continue"
         When I click "add-donor-details"
         Then I can see popup
+        # TODO need to test postcode lookup here
+        And I can find old style id "#name-title" with 8 options
+        And I can find old style id "#name-title" with options
+            | Mr |
+            | Mrs |
+        When I select "Mrs" on old style id "#name-title"
+        And I force fill out  
+            | name-first | Nancy |
+            | name-last | Garrison |
+            | dob-date-day| 22 |
+            | dob-date-month| 10 |
+            | dob-date-year| 1988 |
+            | email-address| opglpademo+NancyGarrison@gmail.com |
+            | address-address1| Bank End Farm House |
+            | address-address2| Undercliff Drive |
+            | address-address3| Ventnor, Isle of Wight |
+            | address-postcode| PO38 1UL |
+        And I check "can-sign"
+        And I click "form-save"
+        Then I can find "save-and-continue"
+        And I see "Mrs Nancy Garrison" in the page text

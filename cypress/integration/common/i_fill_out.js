@@ -20,7 +20,6 @@ When(`I select {string} on old style id {string}`, (value, id) => {
 
 When("I fill out", (dataTable) => {
     var rawTable = dataTable.rawTable;
-
     rawTable.forEach(row => { 
                     cy.get("[data-cy=" + row[0] + "]").clear().type(row[1]);
             });
@@ -40,7 +39,6 @@ When("I force fill out", (dataTable) => {
 
 Then("I see form prefilled out with", (dataTable) => {
     var rawTable = dataTable.rawTable;
-
     rawTable.forEach(row => { 
                     cy.get("[data-cy=" + row[0] + "]").should("have.value",row[1]);
             });

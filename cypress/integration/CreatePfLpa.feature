@@ -15,6 +15,8 @@ Feature: Create a Property and Finance LPA
     #@focus
     Scenario: Create LPA with error first
         Given I log in as appropriate test user
+        # we go direct to type page here because we're agnostic to whether it is seeded or newly signed-up user
+        # and newly signed-up user won't have a dashboard.
         Then I visit the type page
         When I click "save"
         Then I see in the page text
@@ -77,6 +79,7 @@ Feature: Create a Property and Finance LPA
         And I check "can-sign"
         And I click "form-save"
         Then I can find "save-and-continue"
+        And I see "Mrs Nancy Garrison" in the page text
         When I click "view-edit-details"
         Then I can see popup
         # TODO need to check title set to Mrs
