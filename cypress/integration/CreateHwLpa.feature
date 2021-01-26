@@ -8,9 +8,8 @@ Feature: Create a Health and Welfare LPA
     #@focus
     Scenario: Create LPA with error first
         Given I log in as appropriate test user
-        # we go direct to type page here because we're agnostic to whether it is seeded or newly signed-up user
-        # and newly signed-up user won't have a dashboard.
-        Then I visit the type page
+        Then If I am on dashboard I click to create lpa
+        And I am taken to the lpa type page
         When I click "save"
         Then I see in the page text
             | There was a problem submitting the form |
@@ -29,9 +28,8 @@ Feature: Create a Health and Welfare LPA
     @focus
     Scenario: Create LPA normal path
         Given I log in as appropriate test user
-        # we go direct to type page here because we're agnostic to whether it is seeded or newly signed-up user
-        # and newly signed-up user won't have a dashboard.
-        Then I visit the type page
+        Then If I am on dashboard I click to create lpa
+        And I am taken to the lpa type page
         Then I choose Health and Welfare
         When I click "save"
         Then I am taken to the donor page for health and welfare
