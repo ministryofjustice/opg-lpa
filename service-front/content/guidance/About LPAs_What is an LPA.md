@@ -1,4 +1,4 @@
-# What is an LPA?
+## What is an LPA?
 
 A lasting power of attorney (LPA) is a legal document that lets someone (the '[donor](/help/#topic-donor)') choose one or more trusted people ('[attorneys](/help/#topic-attorneys)') to make decisions on their behalf.
 
@@ -12,13 +12,13 @@ The attorneys must always:
 
 The donor can make their LPA themselves or ask someone to help them make it.
 
-## The 2 types of LPA
+### The 2 types of LPA
 
 There are [2 types of LPA](/help/#topic-the-2-types-of-lpa). An LPA can be made to cover the donor’s property and financial affairs or their health and welfare.
 
 The donor can make one or both of the LPAs. The LPAs do not have to be made at the same time.
 
-## Registering an LPA
+### Registering an LPA
 
 All LPAs must be [registered](/help/#topic-how-to-register-the-lpa) by the Office of the Public Guardian (OPG).
 Before registering an LPA, OPG:
@@ -29,7 +29,7 @@ Before registering an LPA, OPG:
 
 It takes between 8 and 10 weeks to register an LPA if there are no mistakes in the application and no objections.
 
-## When an LPA can be used
+### When an LPA can be used
 
 After it’s been registered, a health and welfare LPA can only be used once the donor has lost mental capacity.
 
@@ -40,7 +40,7 @@ When the donor makes a property and financial affairs LPA, they can decide wheth
 
 Find out more about [when an LPA can be used](/help/#topic-when-an-lpa-can-be-used).
 
-## A registered LPA can be ended
+### A registered LPA can be ended
 
 As long as the donor still has mental capacity, they can contact OPG and ask for their LPA to be ended or for a particular attorney to be removed.
 

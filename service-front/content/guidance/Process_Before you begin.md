@@ -1,4 +1,4 @@
-# Before you begin
+## Before you begin
 
 Before you start making the LPA, it’s important that the [donor](/help/#topic-donor) knows how they want it to work and talks to the people they want to be involved.
 
@@ -13,7 +13,7 @@ The donor should decide:
 
 Remember that you will need to print the LPA and that everyone named in the LPA, apart from the people to notify, will need to [sign the LPA in the right order](/help/#topic-signing-the-lpa).
 
-## Information you’ll need to make an LPA
+### Information you’ll need to make an LPA
 
 We’ll save the LPA as you progress so you do not need to complete it in one go. You can sign out at any time and come back later.
 
