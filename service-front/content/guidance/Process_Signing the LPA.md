@@ -1,7 +1,7 @@
 # Signing the LPA
 
 <div class="moj-banner moj-banner__message">
-    <p class="bold-small"><a href="https://www.gov.uk/guidance/making-and-registering-an-lpa-during-the-coronavirus-outbreak#signing-and-witnessing-the-lpa">Read our guidance</a>  on getting an LPA signed and witnessed during the coronavirus outbreak</p>
+    <p class="bold-small">Read our guidance on <a href="https://www.gov.uk/guidance/making-and-registering-an-lpa-during-the-coronavirus-outbreak#signing-and-witnessing-the-lpa">getting an LPA signed and witnessed during the coronavirus outbreak</a></p>
 </div>
 
 ## Sign the LPA in the right order

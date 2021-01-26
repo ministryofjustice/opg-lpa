@@ -1,7 +1,8 @@
 {
-    "baseUrl": "https://localhost:7002/",
+    "baseUrl": "https://localhost:7002",
     "testFiles": "**/*.feature",
     "postLogoutUrl": "https://www.gov.uk/done/lasting-power-of-attorney",
     "rootRedirectUrl": "https://www.gov.uk/power-of-attorney/make-lasting-power",
-    "numberOfGuidanceHelpTopics": 22
+    "numberOfGuidanceHelpTopics": 22,
+    "defaultCommandTimeout": 20000
 }
