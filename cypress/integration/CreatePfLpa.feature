@@ -5,19 +5,11 @@ Feature: Create a Property and Finance LPA
     Background:
         Given I ignore application exceptions
  
-    #    @focus
-    Scenario: Dashboard has Link to Type page
-        # we use seeded user here because a newly signed-up user would not yet have a dashboard page
-        Given I log in as seeded user
-        When I click "createnewlpa"
-        Then I am taken to the lpa type page
-  
     #@focus
     Scenario: Create LPA with error first
         Given I log in as appropriate test user
-        # we go direct to type page here because we're agnostic to whether it is seeded or newly signed-up user
-        # and newly signed-up user won't have a dashboard.
-        Then I visit the type page
+        Then If I am on dashboard I click to create lpa
+        And I am taken to the lpa type page
         When I click "save"
         Then I see in the page text
             | There was a problem submitting the form |
@@ -31,11 +23,14 @@ Feature: Create a Property and Finance LPA
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
+        When I type "B1 1TF" into old style id "input#postcode-lookup"
+        When I click element marked "Find UK address"
 
     @focus
     Scenario: Create LPA normal path
         Given I log in as appropriate test user
-        Then I visit the type page
+        Then If I am on dashboard I click to create lpa
+        And I am taken to the lpa type page
         Then I choose Property and Finance
         When I click "save"
         Then I am taken to the donor page for property and finance
