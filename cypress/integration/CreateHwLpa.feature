@@ -61,4 +61,5 @@ Feature: Create a Health and Welfare LPA
         And I check "can-sign"
         And I click "form-save"
         Then I can find "save-and-continue"
+        And I cannot find "add-donor"
         And I see "Mrs Nancy Garrison" in the page text
