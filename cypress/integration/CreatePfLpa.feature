@@ -82,7 +82,8 @@ Feature: Create a Property and Finance LPA
         Then I can find "save-and-continue"
         And I cannot find "add-donor"
         And I see "Mrs Nancy Garrison" in the page text
-        When I click "view-change-donor"
+        # following line uses force click because view-change-donor button is partly obscured
+        When I force click "view-change-donor"
         Then I can see popup
         # TODO need to check title set to Mrs
         And I see form prefilled out with
