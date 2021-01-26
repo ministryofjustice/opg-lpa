@@ -19,8 +19,6 @@ Feature: Create a Health and Welfare LPA
         When I click "save"
         Then I am taken to the donor page for health and welfare
         And I see "Who is the donor for this LPA?" in the page text
-        And I get lpaid
-        # save button should be missing initially
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
@@ -34,16 +32,15 @@ Feature: Create a Health and Welfare LPA
         When I click "save"
         Then I am taken to the donor page for health and welfare
         And I see "Who is the donor for this LPA?" in the page text
-        And I get lpaid
-        # save button should be missing initially
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
-        # TODO need to test postcode lookup here
+        # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
         And I can find old style id "#name-title" with 8 options
-        And I can find old style id "#name-title" with options
-            | Mr |
-            | Mrs |
+        When I type "B1 1TF" into old style id "input#postcode-lookup"
+        And I click element marked "Find UK address"
+        # casper simply checked for 6 options so we do too, but we may ultimately wish to check the values
+        Then I can find old style id "#address-search-result" with 6 options
         When I select "Mrs" on old style id "#name-title"
         And I force fill out  
             | name-first | Nancy |

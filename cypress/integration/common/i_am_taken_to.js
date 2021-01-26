@@ -22,9 +22,8 @@ Then(`I am taken to the lpa type page`, () => {
 
 Then(`I am taken to the when lpa starts page`, () => {
     var when_lpa_starts = '/lpa/\\d+/when-lpa-starts';
-    cy.get('@donorPageUrl').then(($url) => {
-        var lpaId = $url.match(/\/(\d+)\//)[1];
-        var whenLpaStartsPath = when_lpa_starts.replace('\\d+', lpaId);
+    cy.OPGGetLpaId().then(($lpaId) => {
+        var whenLpaStartsPath = when_lpa_starts.replace('\\d+', $lpaId);
         cy.url().should('eq',Cypress.config().baseUrl + whenLpaStartsPath);
     });
 })
@@ -41,11 +40,6 @@ Then(`I am taken to the donor page for property and finance`, () => {
   cy.get('.accordion li.complete').should('contain','This LPA covers property and financial affairs');
 })
 
-
-Then(`I get lpaid`, () => {
-    cy.OPGGetLpaId();
-})
- 
 Then(`I am taken to the post logout url`, () => {
   cy.log("I should be on " + Cypress.config().postLogoutUrl );
   cy.url().should('eq',Cypress.config().postLogoutUrl );
