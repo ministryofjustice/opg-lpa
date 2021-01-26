@@ -23,7 +23,7 @@ Feature: Create a Health and Welfare LPA
         And I get lpaid
         # save button should be missing initially
         And I cannot find "save-and-continue"
-        When I click "add-donor-details"
+        When I click "add-donor"
         Then I can see popup
 
     @focus
@@ -39,7 +39,7 @@ Feature: Create a Health and Welfare LPA
         And I get lpaid
         # save button should be missing initially
         And I cannot find "save-and-continue"
-        When I click "add-donor-details"
+        When I click "add-donor"
         Then I can see popup
         # TODO need to test postcode lookup here
         And I can find old style id "#name-title" with 8 options

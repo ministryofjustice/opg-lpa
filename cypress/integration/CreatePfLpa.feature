@@ -29,7 +29,7 @@ Feature: Create a Property and Finance LPA
         And I see "Who is the donor for this LPA?" in the page text
         # save button should be missing initially
         And I cannot find "save-and-continue"
-        When I click "add-donor-details"
+        When I click "add-donor"
         Then I can see popup
 
     @focus
@@ -42,8 +42,9 @@ Feature: Create a Property and Finance LPA
         And I see "Who is the donor for this LPA?" in the page text
         # save button should be missing initially
         And I cannot find "save-and-continue"
-        When I click "add-donor-details"
+        When I click "add-donor"
         Then I can see popup
+        And I can find old style id "#name-title" with 8 options
         When I force fill out  
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
@@ -80,7 +81,7 @@ Feature: Create a Property and Finance LPA
         And I click "form-save"
         Then I can find "save-and-continue"
         And I see "Mrs Nancy Garrison" in the page text
-        When I click "view-edit-details"
+        When I click "view-change-donor"
         Then I can see popup
         # TODO need to check title set to Mrs
         And I see form prefilled out with
