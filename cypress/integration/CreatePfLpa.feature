@@ -23,8 +23,6 @@ Feature: Create a Property and Finance LPA
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
-        When I type "B1 1TF" into old style id "input#postcode-lookup"
-        When I click element marked "Find UK address"
 
     @focus
     Scenario: Create LPA normal path
@@ -39,6 +37,9 @@ Feature: Create a Property and Finance LPA
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
+        When I type "B1 1TF" into old style id "input#postcode-lookup"
+        And I click element marked "Find UK address"
+        Then I can find old style id "#address-search-result" with 6 options
         And I can find old style id "#name-title" with 8 options
         When I force fill out  
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
