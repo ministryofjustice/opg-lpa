@@ -1,7 +1,7 @@
 ## Certificate providers
 
 <div class="moj-banner moj-banner__message">
-    <p class="bold-small"><a href="https://www.gov.uk/guidance/making-and-registering-an-lpa-during-the-coronavirus-outbreak#the-certificate-provider-and-donor-conversation">Read our guidance</a>  on being a certificate provider during the coronavirus outbreak</p>
+    <p class="bold-small">Read our guidance on <a href="https://www.gov.uk/guidance/making-and-registering-an-lpa-during-the-coronavirus-outbreak#the-certificate-provider-and-donor-conversation">being a certificate provider during the coronavirus outbreak</a></p>
 </div>
 
 
