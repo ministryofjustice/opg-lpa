@@ -2,6 +2,18 @@ const {
   Then, After,
 } = require("cypress-cucumber-preprocessor/steps");
 
+/*
+ * Find all elements which are error summary headings.
+ * For each, ensure that it is an h2.
+ */
+After(() => {
+    cy.document().then((doc) => {
+        doc.querySelectorAll('.error-summary-heading').forEach((node) => {
+            assert(node.tagName == 'H2');
+        });
+    });
+});
+
 // Check links on the page which will open a new tab.
 // On pages where we have many links which open in new tabs, and where we
 // provide a visually-hidden notice which explains this, we use a hidden span
@@ -35,5 +47,4 @@ Then('I should encounter a visually-hidden statement about links on the page ope
         expect($el).to.have.class("visually-hidden");
         expect($el.text()).to.contain("open in new tabs");
     });
-
 });
