@@ -60,3 +60,22 @@ Feature: Create a Health and Welfare LPA
         Then I can find "save-and-continue"
         And I cannot find "add-donor"
         And I see "Mrs Nancy Garrison" in the page text
+        # following line uses force click because view-change-donor button is partly obscured
+        When I force click "view-change-donor"
+        Then I can see popup
+        # TODO need to check title set to Mrs
+        And I see form prefilled out with
+            | name-first | Nancy |
+            | name-last | Garrison |
+            | dob-date-day| 22 |
+            | dob-date-month| 10 |
+            | dob-date-year| 1988 |
+            | email-address| opglpademo+NancyGarrison@gmail.com |
+            | address-address1| Bank End Farm House |
+            | address-address2| Undercliff Drive |
+            | address-address3| Ventnor, Isle of Wight |
+            | address-postcode| PO38 1UL |
+        Then I click "form-cancel"
+        Then I click "save-and-continue"
+        And I am taken to the when lpa starts page
+        And I see "When can the LPA be used?" in the page text
