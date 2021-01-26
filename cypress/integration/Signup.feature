@@ -1,11 +1,16 @@
 @SignUp
 Feature: Signup
- 
+
     I want to be able to sign up
 
     Background:
         Given I ignore application exceptions
-  
+
+    @focus
+    Scenario: Go to the create account page
+        Given I visit "/signup"
+        Then I should not find links in the page which open in new tabs without notifying me
+
     @focus
     Scenario: Sign up with automatically generated test username and password
         Given I sign up standard test user
@@ -21,7 +26,7 @@ Feature: Signup
         Given I log in as standard test user
         Then I see "Make a lasting power of attorney" in the page text
         And I see "Your details" in the title
-        When I force fill out  
+        When I force fill out
           | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
           | name-last  | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
           | dob-date-day | 1 |
@@ -33,8 +38,8 @@ Feature: Signup
 
         # todo - note we should be selecting Mr like we do in the Valid scenario, not typing it in here, but due to system bug, after a previous error we get a text box
         # instead of a dropdown. The line below will therefore need to change to When I select Mr on old style id, once that bug is fixed
-        When I type "Mr" into old style id "#name-title" 
-        And I force fill out  
+        When I type "Mr" into old style id "#name-title"
+        And I force fill out
           | name-first| Chris |
           | name-last| Smith |
           | dob-date-day| 1 |
@@ -43,7 +48,7 @@ Feature: Signup
           | address-address1| 12 Highway Close |
           | address-postcode| PL45 9JA |
         And I click "save"
-        Then I see "There was a problem" in the page text 
+        Then I see "There was a problem" in the page text
 
     @focus
     Scenario: Valid About Me details
@@ -51,7 +56,7 @@ Feature: Signup
         Then I see "Make a lasting power of attorney" in the page text
         And I see "Your details" in the title
         When I select "Mr" on old style id "#name-title"
-        And I force fill out 
+        And I force fill out
           | name-first| Chris |
           | name-last| Smith |
           | dob-date-day| 1 |
