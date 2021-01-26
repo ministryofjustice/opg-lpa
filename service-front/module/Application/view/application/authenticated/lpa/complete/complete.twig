@@ -103,26 +103,26 @@
         <div class="panel-body">
             <ul class="list iconlinks flush hard text-left">
                 <li class="iconlinks-item">
-                    <a class="iconlinks-link" href="{{ lp1Url }}" target="_blank" data-journey-click="page:link:download: Download your print-ready LPA form">
+                    <a class="iconlinks-link" href="{{ lp1Url }}" rel="noreferrer noopener" target="_blank" data-journey-click="page:link:download: Download your print-ready LPA form">
                         <i class="icon icon-file-download"></i>
-                        <span class="iconlinks-text">Download your print-ready LPA form</span>
+                        <span class="iconlinks-text">Download your print-ready LPA form (PDF, opens in new tab)</span>
                     </a>
                 </li>
 
                 {% if lpa120Url %}
                     {% if feeBenefits %}
                         <li class="iconlinks-item">
-                            <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank" data-journey-click="page:link:download: Download your fee exemption form">
+                            <a class="iconlinks-link" href="{{ lpa120Url }}" rel="noreferrer noopener" target="_blank" data-journey-click="page:link:download: Download your fee exemption form">
                                 <i class="icon icon-file-download"></i>
-                                <span class="iconlinks-text">Download your fee exemption form</span>
+                                <span class="iconlinks-text">Download your fee exemption form (PDF, opens in new tab)</span>
                             </a>
                         </li>
                     {% endif %}
                     {% if feeUC or feeLowIncome %}
                         <li class="iconlinks-item">
-                            <a class="iconlinks-link" href="{{ lpa120Url }}" target="_blank" data-journey-click="page:link:download: Download your fee remission form">
+                            <a class="iconlinks-link" href="{{ lpa120Url }}" rel="noreferrer noopener" target="_blank" data-journey-click="page:link:download: Download your fee remission form">
                                 <i class="icon icon-file-download"></i>
-                                <span class="iconlinks-text">Download your fee remission form</span>
+                                <span class="iconlinks-text">Download your fee remission form (PDF, opens in new tab)</span>
                             </a>
                         </li>
                     {% endif %}
@@ -130,9 +130,9 @@
 
                 {% if lp3Url %}
                     <li class="iconlinks-item">
-                        <a class="iconlinks-link" href="{{ lp3Url }}" target="_blank" data-journey-click="page:link:download: Download the letter to send to your 'people to notify'">
+                        <a class="iconlinks-link" href="{{ lp3Url }}" rel="noreferrer noopener" target="_blank" data-journey-click="page:link:download: Download the letter to send to your 'people to notify'">
                             <i class="icon icon-file-download"></i>
-                            <span class="iconlinks-text">Download the letter to send to your 'people to notify'</span>
+                            <span class="iconlinks-text">Download the letter to send to your 'people to notify' (PDF, opens in new tab)</span>
                         </a>
                     </li>
                 {% endif %}
@@ -142,7 +142,7 @@
 
     <p>These documents are PDF files and each should be no larger than 4MB.</p>
 
-    <p>If you cannot view the documents, you'll need to <a target="_blank" href="https://get.adobe.com/uk/reader/" data-journey-click="page:link:external: Acrobat Reader">download Acrobat Reader</a>.</p>
+    <p>If you cannot view the documents, you'll need to <a rel="noreferrer noopener" target="_blank" href="https://get.adobe.com/uk/reader/" data-journey-click="page:link:external: Acrobat Reader">download Acrobat Reader from the Adobe website (opens in new tab)</a>.</p>
 
     {{ macros.continuationNotes(continuationNoteKeys) }}
 
@@ -152,7 +152,7 @@
 
     <p><a class="js-guidance" href="/guide#topic-signing-the-lpa" data-journey-click="page:link:help: -This guide- shows you how to sign">This guide</a> shows you how to sign in the right order.</p>
 
-    <p>Once the LPA has been signed, you can use <a href="{{ dateCheckUrl }}" data-journey-click="page:link:navigation: -this tool- to check">this tool</a> to check you’ve got it right before you send the LPA to us. If you find the LPA has been signed in the wrong order, you'll need to print the relevant sections of the LPA and get them signed again.</p>
+    <p>Once the LPA has been signed, you can <a href="{{ dateCheckUrl }}" data-journey-click="page:link:navigation: -this tool- to check">use this tool to check your LPA is correct before sending it to us</a>. If you find the LPA has been signed in the wrong order, you'll need to print the relevant sections of the LPA and get them signed again.</p>
 
 
     <h2 class="heading-large">Found a mistake in the LPA?</h2>
