@@ -38,6 +38,7 @@ class Guidance extends AbstractService
                     'html' => $this->processSection($sectionFilename, $sectionId),
                     'url' => '/' . self::GUIDANCE_ROUTE . '#topic-' . $sectionId,
                     'dataJourney' => 'guidance:link:navigation: ' . $sectionTitle,
+                    'dataCy' => $sectionId . '-nav-link',
                 ];
             }
         }
