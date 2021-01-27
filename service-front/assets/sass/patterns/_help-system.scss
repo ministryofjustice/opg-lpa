@@ -140,14 +140,14 @@
     }
 
     article:first-child {
-        h1 {
+        h2 {
             @include media($min-width: 640px) {
                 margin-top: 0;
             }
         }
     }
 
-    h1 {
+    h2 {
         @extend %heading-large;
 
         .popup & {
@@ -156,11 +156,11 @@
         }
     }
 
-    h2 {
+    h3 {
         @extend %heading-medium;
     }
 
-    h3 {
+    h4 {
         @extend %heading-small;
     }
 
