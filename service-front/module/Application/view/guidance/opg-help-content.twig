@@ -6,7 +6,7 @@
 
     <div class="grid-row help-body">
         <div class="column-left">
-            <div class="help-sections">
+            <div class="help-sections" id="help-sections" tabindex="-1">
                 {% for key,value in sections %}
                     {{ value['html']|raw }}
                 {% endfor %}

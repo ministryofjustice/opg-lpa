@@ -24194,6 +24194,9 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
 
       // Scroll back to top of help
       $('#mask').scrollTop(0);
+
+      // shift focus to the help content
+      $('#help-sections').focus();
     },
 
     _hasCachedContent: function () {
@@ -24257,7 +24260,8 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
 
   // Add module to MOJ namespace
   moj.Modules.HelpSystem = new HelpSystem();
-}(window));;
+}(window));
+;
 // Form Popup module for LPA
 // Dependencies: moj, jQuery
 
