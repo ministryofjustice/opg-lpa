@@ -1,42 +1,33 @@
 <div id="help-system" class="help-system">
+    <header class="help-header">
+        <i class="icon icon-information"></i>
+        <p class="help-header-title flush--bottom">A guide to making your lasting power of attorney (LPA)</p>
+    </header>
 
-	<header class="help-header">
-		<i class="icon icon-information"></i>
-		<p class="help-header-title flush--bottom">A guide to making your lasting power of attorney (LPA)</p>
-	</header>
+    <div class="grid-row help-body">
+        <div class="column-left">
+            <div class="help-sections">
+                {% for key,value in sections %}
+                    {{ value['html']|raw }}
+                {% endfor %}
+                <a href="#help-navigation" class="link-back">Back to topics</a>
+            </div>
+        </div>
+        <div class="column-right">
+            <nav class="help-navigation" id="help-navigation">
+                <h2 class="help-navigation-title">Help topics</h2>
+                <ul class="help-topics">
+                {% for key,value in sections %}
+                    <li><a class="js-guidance" href="{{ value['url'] }}" data-journey-click="{{ value['dataJourney'] }}">{{ value['title'] }}</a></li>
+                {% endfor %}
+                </ul>
+            </nav>
+        </div>
+    </div>
 
-	<div class="grid-row help-body">
-
-		<div class="column-right">
-			<nav class="help-navigation" id="help-navigation">
-				<h2 class="help-navigation-title">Help topics</h2>
-				<ul class="help-topics">
-
-				{% for key,value in sections %}
-					<li><a class="js-guidance" href="{{ value['url'] }}" data-journey-click="{{ value['dataJourney'] }}">{{ value['title'] }}</a></li>
-				{% endfor %}
-
-				</ul>
-			</nav>
-		</div>
-
-		<div class="column-left">
-			<div class="help-sections">
-				{% for key,value in sections %}
-                    			{{ value['html']|raw }}
-                		{% endfor %}
-				<a href="#help-navigation" class="link-back">Back to topics</a>
-			</div>
-		</div>
-
-	</div>
-
-	<div class="help-footer">
-
-		<p class="flush--bottom">Need help? Ring us on <strong>0300 456 0300</strong>. Alternatively, email us at <strong><a href="mailto:customerservices@publicguardian.gov.uk?subject=Digital%20LPA%20Enquiry">customerservices@publicguardian.gov.uk</a></strong></p>
-		<hr>
-		<a href="#" class="js-popup-close button-secondary">Close help</a>
-
-	</div>
-
+    <div class="help-footer">
+        <p class="flush--bottom">Need help? Ring us on <strong>0300 456 0300</strong>. Alternatively, email us at <strong><a href="mailto:customerservices@publicguardian.gov.uk?subject=Digital%20LPA%20Enquiry">customerservices@publicguardian.gov.uk</a></strong></p>
+        <hr>
+        <a href="#" class="js-popup-close button-secondary">Close help</a>
+    </div>
 </div>
