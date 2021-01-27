@@ -1,8 +1,8 @@
-# How to register the LPA
+## How to register the LPA
 
 Once you’ve made the LPA, you need to send it to the Office of the Public Guardian (OPG) to be registered. An LPA can only be used after it’s been registered.
 
-## Why you should register the LPA as soon as you can
+### Why you should register the LPA as soon as you can
 
 It’s a good idea to register the LPA as soon as you can. Most people send the LPA to OPG within 2 months of making it.
 
@@ -10,7 +10,7 @@ If you send the LPA to us as soon as it is signed, we can spot mistakes while th
 
 If the donor no longer has mental capacity, their attorneys can apply to register the LPA, however it will not be possible to correct any errors. If there are mistakes, we cannot register the LPA and it cannot be used. The attorneys – or someone else – will have to apply to the Court of Protection to get the power to make decisions on the donor’s behalf. This can be a long process and can cost a lot more than an LPA.
 
-## How to register the LPA
+### How to register the LPA
 
 Once you’ve made the LPA, the online service will take you through the steps to send in the LPA for registration.
 
@@ -30,14 +30,14 @@ OPG’s address is on the information sheets downloaded with your LPA.
 
 You need a PDF reader like Adobe Reader to view and print the LPA form. You can <a href="http://www.adobe.com/uk/products/reader.html" target="_blank" rel="external noopener noreferrer">download Adobe Reader from the Adobe website (opens in new tab)</a>.
 
-### Track the progress of the LPA after you've posted it
+#### Track the progress of the LPA after you've posted it
 
 Once you've posted the LPA to us, you can track its progress from the [Your LPAs](/user/dashboard) page. This will let you know when we've received the LPA, when we're checking it, and when we've returned it.
 
 It’s not possible to track the progress of LPAs made before 1 April 2019.
 
 
-### What happens when OPG gets your LPA
+#### What happens when OPG gets your LPA
 
 If the donor is applying to register the LPA, we write to the attorneys to let them know about the application. If an attorney is applying, we write to the donor and any other attorneys.
 

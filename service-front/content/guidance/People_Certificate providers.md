@@ -1,4 +1,4 @@
-# Certificate providers
+## Certificate providers
 
 <div class="moj-banner moj-banner__message">
     <p class="bold-small">Read our guidance on <a href="https://www.gov.uk/guidance/making-and-registering-an-lpa-during-the-coronavirus-outbreak#the-certificate-provider-and-donor-conversation">being a certificate provider during the coronavirus outbreak</a></p>
@@ -9,7 +9,7 @@ An LPA must have a certificate provider. They must sign the LPA.
 
 The certificate provider is an impartial person who helps protect the donor’s interests by checking that the donor understands the LPA and is making it of their own free will.
 
-## The certificate provider's role
+### The certificate provider's role
 
 The certificate provider must discuss the LPA with the donor. It’s a good idea for this discussion to happen in private, without the attorneys or any one else present.
 
@@ -22,7 +22,7 @@ The certificate provider signs the LPA to certify that they have discussed the L
 
 The donor must sign the LPA before the certificate provider. The certificate provider can witness the donor’s signature.
 
-## Who can be a certificate provider
+### Who can be a certificate provider
 
 The certificate provider must be 18 years old or over and have [mental capacity](/help/#topic-mental-capacity).
 
@@ -31,7 +31,7 @@ They can be either:
 * someone who has known the donor personally for at least 2 years, such as a friend or neighbour (but not a relative)
 * someone with relevant professional skills, such as the donor’s GP or solicitor
 
-### Someone who has known the donor well for at least 2 years
+#### Someone who has known the donor well for at least 2 years
 
 This could be one of the donor’s friends or neighbours, someone they know at a social or sports club, a work colleague, or similar.
 
@@ -39,7 +39,7 @@ The certificate provider must be more than an acquaintance. They have to know th
 
 '[People to notify](/help/#topic-people-to-notify)' can be certificate providers.
 
-### Someone with relevant professional skills
+#### Someone with relevant professional skills
 
 This must be one of the following:
 
@@ -52,7 +52,7 @@ Other professionals may have skills that allow them to judge whether the donor c
 
 If you choose a professional, they may charge you a fee.
 
-## Who cannot be the certificate provider?
+### Who cannot be the certificate provider?
 
 The certificate provider cannot be:
 

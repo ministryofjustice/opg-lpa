@@ -1,16 +1,16 @@
-# The 2 types of LPA
+## The 2 types of LPA
 
 There are 2 types of LPA: property and financial affairs, and health and welfare.
 
 The [donor](/help/#topic-donor) can have one or both. The LPAs do not have to be made at the same time and the donor can choose different [attorneys](/help/#topic-attorneys) for each LPA.
 
-## Property and financial affairs
+### Property and financial affairs
 
 This LPA covers the donor’s money and property.
 
 The donor does not have to own their own home or have a lot of money to make this type of LPA.
 
-### Decisions the attorneys can make
+#### Decisions the attorneys can make
 
 The donor chooses people they trust (attorneys) to make decisions on their behalf about money and financial matters, such as:
 
@@ -22,7 +22,7 @@ The donor chooses people they trust (attorneys) to make decisions on their behal
 
 The donor can also make a separate LPA for their business affairs if they want different people to make those decisions.
 
-### When a property and financial affairs LPA can be used
+#### When a property and financial affairs LPA can be used
 
 When they make their LPA, the donor can decide whether it can be used:
 
@@ -31,11 +31,11 @@ When they make their LPA, the donor can decide whether it can be used:
 
 Find out more about deciding [when an LPA can be used](/help/#topic-when-an-lpa-can-be-used).
 
-## Health and welfare
+### Health and welfare
 
 This LPA covers the donor’s health care and personal welfare.
 
-### Decisions the attorneys can make
+#### Decisions the attorneys can make
 
 The donor chooses people they trust (attorneys) to make decisions about things such as:
 
@@ -53,13 +53,13 @@ A health and welfare attorney might need to spend the donor’s money on things 
 
 The attorney must ask for money from the person in charge of the donor’s funds. In some cases, the same person may be an attorney on both the donor’s financial and property affairs LPA and health and welfare LPA.
 
-### When a health and welfare LPA can be used
+#### When a health and welfare LPA can be used
 
 This type of LPA can only be used after it’s been registered and if the donor does not have the [mental capacity](/help/#topic-mental-capacity) to make decisions.
 
 Find out more about [when an LPA can be used](/help/#topic-when-an-lpa-can-be-used).
 
-### Life-sustaining treatment
+#### Life-sustaining treatment
 
 'Life-sustaining treatment' is medical treatment needed to keep someone alive.
 
@@ -67,7 +67,7 @@ In their LPA, the donor must choose whether their attorneys can give or refuse c
 
 There’s more information about this on the [life-sustaining treatment](/help/#topic-life-sustaining-treatment) help page.
 
-### Advance decision to refuse treatment
+#### Advance decision to refuse treatment
 
 An advance decision is a legally binding written statement. It lets someone say what medical treatment they do not want to have in certain situations. It’s sometimes called a ‘living will’.
 
