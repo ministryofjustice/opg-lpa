@@ -20,7 +20,6 @@ When(`I select {string} on old style id {string}`, (value, id) => {
 
 When("I fill out", (dataTable) => {
     var rawTable = dataTable.rawTable;
-
     rawTable.forEach(row => { 
                     cy.get("[data-cy=" + row[0] + "]").clear().type(row[1]);
             });
@@ -36,4 +35,19 @@ When("I force fill out", (dataTable) => {
     rawTable.forEach(row => { 
                     cy.get("[data-cy=" + row[0] + "]").clear({ force: true }).type(row[1], { force: true });
             });
+});
+
+Then("I see form prepopulated with", (dataTable) => {
+    var rawTable = dataTable.rawTable;
+    rawTable.forEach(row => { 
+                    cy.get("[data-cy=" + row[0] + "]").should("have.value",row[1]);
+            });
+});
+
+Then("I see {string} prepopulated with {string}", (object, value) => {
+        cy.get("[data-cy=" + object + "]").should("have.value",value);
+});
+
+Then("I see old style id {string} prepopulated with {string}", (object, value) => {
+        cy.get(object).should("have.value",value);
 });
