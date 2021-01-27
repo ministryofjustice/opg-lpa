@@ -31,3 +31,7 @@ Then('I do not have {string} in the viewport', (dataCyReference) => {
     });
 })
 
+Then('I am using a viewport greater than {int} pixels wide', (viewportWidth) => {
+    cy.viewport(viewportWidth + 1, Cypress.config('viewportHeight'));
+})
+

@@ -3,11 +3,12 @@ FROM cypress/included:6.2.0
 WORKDIR /app
 
 RUN apt-get update && \
-  apt-get install -y python3-pip 
+  apt-get install -y python3-pip
 
 RUN pip3 install boto3
 
-RUN npm install --save-dev cypress-axe@0.9.1 axe-core cypress-cucumber-preprocessor 
+RUN npm install --save-dev cypress-axe@0.9.1 axe-core \
+    cypress-cucumber-preprocessor cypress-plugin-tab
 
 # unset CI which gets set in Cypress's dockerfile
 ENV CI=
