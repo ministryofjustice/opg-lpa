@@ -83,8 +83,8 @@ Feature: Create a Property and Finance LPA
         # following line uses force click because view-change-donor button is partly obscured
         When I force click "view-change-donor"
         Then I can see popup
-        # TODO need to check title set to Mrs
-        And I see form prefilled out with
+        And I see old style id "#name-title" prepopulated with "Mrs"
+        And I see form prepopulated with
             | name-first | Nancy |
             | name-last | Garrison |
             | dob-date-day| 22 |
