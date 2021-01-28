@@ -99,8 +99,14 @@ Feature: Create a Property and Finance LPA
         Then I click "save-and-continue"
         And I am taken to the when lpa starts page
         And I see "When can the LPA be used?" in the page text
+        # in this test we check the when-no-capacity exists, then a few lines down we actually click when-now
+        And I can find old style id "#when-no-capacity"
         When I click "save"
         Then I see in the page text
             | There was a problem submitting the form |
             | You need to do the following: |
             | Choose when your LPA can be used |
+        When I check old style id "#when-now"
+        And I click "save"
+        Then I am taken to the primary attorney page
+

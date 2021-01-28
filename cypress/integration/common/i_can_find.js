@@ -4,6 +4,10 @@ Then(`I can find {string}`, (object) => {
   cy.get("[data-cy=" + object + "]");
 })
 
+Then(`I can find old style id {string}`, (object) => {
+  cy.get(object);
+})
+
 Then(`I cannot find {string}`, (object) => {
   cy.get("[data-cy=" + object + "]").should('not.exist');
 })
