@@ -4,9 +4,13 @@ import os
 import quopri
 import time
 import re
+import argparse
 
 mailbox_bucket = 'opg-lpa-casper-mailbox' # this might get renamed once casper tests are turned off
 activation_emails_path = 'cypress/activation_emails'
+parser = argparse.ArgumentParser(description='Monitor S3 bucket for emails sent during tests of Make an LPA.')
+parser.add_argument('-v', action="store_true", help='verbose', default=False)
+args = parser.parse_args()
 
 def assume_role_and_get_client():
     sts = boto3.client(
@@ -15,10 +19,10 @@ def assume_role_and_get_client():
     )
 
     if os.getenv('CI'):
-        print("Assuming CI role")
+        print("S3Monitor starting, Assuming CI role")
         role_arn = 'arn:aws:iam::050256574573:role/opg-lpa-ci'
     else:
-        print("Assuming operator role")
+        print("S3Monitor starting, Assuming operator role")
         role_arn = 'arn:aws:iam::050256574573:role/operator'
 
     result = sts.assume_role(
@@ -52,7 +56,7 @@ def parseBody(bodyContent, subject, thetype, linkRegex):
         s = match.start()
         e = match.end()
         activationLink = bodyContent[s:e]
-        print(f'{ thetype } link { activationLink }')
+        printIfVerbose(f'{ thetype } link { activationLink }')
 
         emailRegex = 'To: (.+)'
 
@@ -61,15 +65,15 @@ def parseBody(bodyContent, subject, thetype, linkRegex):
             toEmail = emailMatch.group(1)
 
             userId = getPlusPartFromEmailAddress(toEmail)
-            print(f'userId {userId}')
+            printIfVerbose(f'userId {userId}')
             contents = f'{toEmail[:-1]},{activationLink}'
             filePath = f'{activation_emails_path}/{userId}.{thetype}'
             emailFile = open(filePath,'w')
             emailFile.write(contents)
             emailFile.close()
     else:
-        print(f'Message: {subject} does not match regex {regex}') 
-        print('----------------------------------------------------------------------------------')
+        printIfVerbose(f'Message: {subject} does not match regex {regex}') 
+        printIfVerbose('----------------------------------------------------------------------------------')
 
 def parse_email(bodyContent, s3Key):
     activate_subject = 'Activate your lasting power of attorney account'
@@ -83,11 +87,11 @@ def parse_email(bodyContent, s3Key):
 
     # handle password resets where the account doesn't exist yet. We may need to test this too ultimately
     if re.search(reset_password_no_account_subject, bodyContent) is not None:
-        print("Found Password reset for a non-existent account. This shouldn't happen during tests, one explanation can be running password reset test before test that signs user up")
+        printIfVerbose("Found Password reset for a non-existent account. This shouldn't happen during tests, one explanation can be running password reset test before test that signs user up")
         return write_unrecognized_file(s3Key, bodyContent, 'noaccountpasswordreset')
 
     # handle other emails. Ultimately, we should be testing these other emails as well
-    print("Found an email that is not an Activate or Password reset. Don't know what to do with it")
+    printIfVerbose("Found an email that is not an Activate or Password reset. Don't know what to do with it")
     write_unrecognized_file(s3Key, bodyContent, 'unrecognized')
 
 def write_unrecognized_file(s3Key, bodyContent, filePrefix):
@@ -114,6 +118,10 @@ def monitor_bucket(s3Client):
                     process_bucket_object(s3Client, s3Key)
                     seenkeys.append(s3Key)
         time.sleep(5)
+
+def printIfVerbose(logOutput):
+    if args.v :  # if we specified verbose with -v option
+        print(logOutput)
 
 
 def main():
