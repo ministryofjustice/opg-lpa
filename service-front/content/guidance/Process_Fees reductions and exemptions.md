@@ -1,10 +1,10 @@
-# Fees, reductions and exemptions
+## Fees, reductions and exemptions
 
 It costs £82 to apply to register an LPA. This can be paid by cheque or online by card.
 
 This fee covers the cost of processing your application, not just registering the LPA.
 
-## Reductions and exemptions
+### Reductions and exemptions
 
 If the donor has a low income or gets certain means-tested benefits, you can apply for them to pay a lower fee or no fee.
 
@@ -14,7 +14,7 @@ If the donor has a low income or gets certain means-tested benefits, you can app
 
 It’s only the donor’s benefits and income that are considered. If an attorney is applying to register the LPA, their benefits and income are not taken into account. The attorney can pay the fee and reclaim it from the donor.
 
-### How to apply for a reduction
+#### How to apply for a reduction
 
 When you’re making the LPA, you’ll be asked if the donor wants to apply to pay a reduced or no fee. If you answer yes, once you’ve finished making the LPA, you’ll be able to download a ‘fee remissions and exemption form’ (LPA120). You must sign and date the form.
 
@@ -25,7 +25,7 @@ When you post the LPA to OPG for registration, include:
 
 Everything should be sent together in the same envelope.
 
-## Means-tested benefits: no fee
+### Means-tested benefits: no fee
 
 If the donor gets any of these means-tested benefits, they do not have to pay a fee :
 
@@ -45,7 +45,7 @@ If the donor has been awarded personal injury damages of more than £16,000, the
 
 Disability Living Allowance, Invalidity Benefit and Personal Independence Payment do not allow the donor to get an exemption from paying the fee.
 
-### Proof of benefits
+#### Proof of benefits
 
 You have to prove that the donor gets one of the relevant benefits. Your proof should be a recent letter from either:
 
@@ -57,7 +57,7 @@ The letter must:
 * confirm that the donor is getting the benefit at the time the LPA is sent to OPG for registration
 * include the donor’s title, full name and address including postcode
 
-## Low income: reduced fee
+### Low income: reduced fee
 
 If the donor has a gross annual income of less than £12,000, they are eligible to pay only half the fee.
 
@@ -68,7 +68,7 @@ Gross annual income is income before tax. It's not just salary or wages – inco
 * interest from investments
 * rental income from property
 
-### Proof of low income
+#### Proof of low income
 
 You have to send OPG documents that prove the donor has a low income.
 
@@ -89,7 +89,7 @@ The documents you send must:
 
 If the donor does not have any income, you have to send OPG a signed statement from the donor explaining how the donor supports themselves.
 
-## Universal Credit: reduced fee
+### Universal Credit: reduced fee
 
 If the donor receives Universal Credit, they may be able to pay a reduced fee.
 
@@ -97,6 +97,6 @@ Because Universal Credit is in its trial phase and replaces several existing ben
 
 If you state that the donor gets Universal Credit, we will not ask you to pay until we’ve received the LPA and the proof of Universal Credit. We’ll then contact you to let you know how much the donor has to pay and to arrange payment. We aim to do this within 7 working days of getting your application.
 
-### Proof of Universal Credit
+#### Proof of Universal Credit
 
 You have to send OPG a copy of the donor’s most recent benefit award letter, to prove they are receiving Universal Credit.
