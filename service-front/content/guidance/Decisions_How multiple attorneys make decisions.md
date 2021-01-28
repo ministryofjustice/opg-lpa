@@ -1,4 +1,4 @@
-# How multiple attorneys make decisions
+## How multiple attorneys make decisions
 
 If the donor has more than one attorney or replacement attorney, they must decide how they want their attorneys to make decisions.
 
@@ -10,7 +10,7 @@ The options are:
 
 Each choice is explained below. If the donor’s not sure which is best for their circumstances, they may want to get legal advice.
 
-## Jointly and severally (attorneys act together or individually)
+### Jointly and severally (attorneys act together or individually)
 
 The attorneys can make decisions on their own or together.
 
@@ -28,7 +28,7 @@ For example, the donor could say that they would prefer a particular attorney to
 
 See the [preferences and instructions](/help/#topic-preferences-and-instructions) page for more information.
 
-## Jointly (attorneys must all agree on every decision)
+### Jointly (attorneys must all agree on every decision)
 
 The attorneys must make all decisions together, however big or small. The attorneys must all agree on every decision.
 
@@ -43,7 +43,7 @@ If the attorneys live far apart, they may find acting jointly difficult – for 
 
 The donor should also consider whether anything could stop the attorneys working together in the future. For example, what would happen if the attorneys fell out or if one moved abroad?
 
-### If one of the attorneys dies or is unable to act
+#### If one of the attorneys dies or is unable to act
 
 The law treats attorneys who act jointly as a single unit. This means that if an attorney dies or is unable or unwilling to act, the LPA will stop working. However, the donor can add [instructions](/help/#topic-preferences-and-instructions) to change this.
 
@@ -55,7 +55,7 @@ If the donor has also appointed [replacement attorneys](/help/#topic-replacement
 
 "If neither of my original attorneys is able or willing to act, I appoint my replacement attorneys to act."
 
-## Jointly for some decisions, and jointly and severally for other decisions
+### Jointly for some decisions, and jointly and severally for other decisions
 
 The donor specifies certain decisions that the attorneys must all make together and agree on. Any other decisions can be made individually.
 
@@ -65,7 +65,7 @@ With this option, if the attorneys cannot all agree on a joint decision, it cann
 
 The donor should consider whether anything could stop the attorneys working together to make joint decisions. For example, what would happen if the attorneys fell out or if one moved abroad?
 
-### If one of the attorneys dies or is unable to act
+#### If one of the attorneys dies or is unable to act
 
 If an attorney dies or is unable or unwilling to act, the remaining attorneys will not be able to make any of the joint decisions, unless the donor either said otherwise in their [instructions](/help/#topic-preferences-and-instructions).
 
@@ -77,7 +77,7 @@ If the donor has also appointed [replacement attorneys](/help/#topic-replacement
 
 "If neither of my original attorneys is able or willing to act, I appoint my replacement attorneys to act."
 
-### Examples of instructions for attorneys appointed jointly for some decisions and severally for others
+#### Examples of instructions for attorneys appointed jointly for some decisions and severally for others
 
 Do not use these examples unless they’re exactly what the donor wants – they need to state what’s right for them.
 

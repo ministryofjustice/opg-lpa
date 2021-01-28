@@ -1,6 +1,6 @@
-# Mental capacity
+## Mental capacity
 
-## What is mental capacity?
+### What is mental capacity?
 
 A person with mental capacity is able to make a specific decision at the time it needs to be made. They will have at least some understanding of:
 
@@ -13,7 +13,7 @@ They should be able to communicate their decision through speech, signs or in ot
 
 Whether or not the donor has mental capacity can affect whether an LPA can be made and [when it can be used](/help/#topic-when-an-lpa-can-be-used).
 
-## Mental capacity is not always fixed
+### Mental capacity is not always fixed
 
 A person may have the mental capacity to make some decisions but not others. For example, they may be able to decide what to buy for dinner but be unable to understand and arrange their home insurance.
 
@@ -21,7 +21,7 @@ If someone’s condition changes day-to-day, there may be times when they have m
 
 A person can also temporarily lack mental capacity, for example if they are unconscious.
 
-## Assessing mental capacity
+### Assessing mental capacity
 
 A health and welfare LPA can only be used after it’s been registered and if the donor does not have mental capacity.
 

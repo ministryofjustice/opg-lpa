@@ -1,4 +1,4 @@
-# If you find a mistake
+## If you find a mistake
 
 When you’ve finished creating the LPA online, we'll ask you to confirm all the information you've entered is correct. Once you’ve confirmed this, you cannot make any more changes to that LPA.
 

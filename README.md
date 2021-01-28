@@ -121,6 +121,26 @@ run the tests:
 You can then modify the tests in your usual editor and re-run the modified tests
 with the same command without having to rebuild/restart the container.
 
+To run the cypress tests in a GUI on Mac, you need to install and start xquartz and socat :
+```bash
+brew install xquartz socat
+socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\"
+open -a Xquartz
+```
+
+If all is working, you will see XQuartz (X Window manager) running, and be able to start up a terminal.
+
+Then run cypress :
+
+```bash
+make cypress-gui-local
+```
+
+You will see the Cypress GUI, which starts a browser (Chrome and Firefox are supported) to run tests.
+You can edit tests and Cypress will (usually, although its not 100% perfect at spotting updates) re-run the
+tests automatically as result.
+
+
 ### Updating composer dependencies
 
 Composer install is run when the app containers are built, and on a standard `docker-compose up`.

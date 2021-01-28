@@ -1,14 +1,14 @@
-# Applicant
+## Applicant
 
 The applicant is the person who applies to register the LPA. The applicant signs the LPA.
 
-## Who can apply to register an LPA
+### Who can apply to register an LPA
 
 Either the donor or one or more of their attorneys, can apply to register the LPA. A donor and attorney cannot apply to register the LPA together.
 
 Although someone else, such as a solicitor, might have helped to make the LPA, they cannot be the applicant unless they’re also an attorney on the LPA.
 
-### If there’s more than one attorney
+#### If there’s more than one attorney
 
 If the attorneys want to register the LPA, the rules about who can be an applicant depend on how the donor appointed their attorneys to make decisions.
 
