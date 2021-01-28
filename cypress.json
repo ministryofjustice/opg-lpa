@@ -4,5 +4,5 @@
     "postLogoutUrl": "https://www.gov.uk/done/lasting-power-of-attorney",
     "rootRedirectUrl": "https://www.gov.uk/power-of-attorney/make-lasting-power",
     "numberOfGuidanceHelpTopics": 22,
-    "defaultCommandTimeout": 60000
+    "defaultCommandTimeout": 20000
 }
