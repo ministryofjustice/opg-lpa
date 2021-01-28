@@ -8,15 +8,15 @@ Feature: Create a Property and Finance LPA
     #@focus
     Scenario: Create LPA with error first
         Given I log in as appropriate test user
-        Then If I am on dashboard I click to create lpa
-        And I am taken to the lpa type page
+        When If I am on dashboard I click to create lpa
+        Then I am taken to the lpa type page
         When I click "save"
         Then I see in the page text
             | There was a problem submitting the form |
             | You need to do the following: |
             | Choose a type of LPA |
-        Then I choose Property and Finance
-        When I click "save"
+        When I choose Property and Finance
+        And I click "save"
         Then I am taken to the donor page for property and finance
         And I see "Who is the donor for this LPA?" in the page text
         # save button should be missing initially
@@ -27,10 +27,10 @@ Feature: Create a Property and Finance LPA
     @focus
     Scenario: Create LPA normal path
         Given I log in as appropriate test user
-        Then If I am on dashboard I click to create lpa
-        And I am taken to the lpa type page
-        Then I choose Property and Finance
-        When I click "save"
+        When If I am on dashboard I click to create lpa
+        Then I am taken to the lpa type page
+        When I choose Property and Finance
+        And I click "save"
         Then I am taken to the donor page for property and finance
         And I see "Who is the donor for this LPA?" in the page text
         # save button should be missing initially
@@ -95,9 +95,9 @@ Feature: Create a Property and Finance LPA
             | address-address2| Undercliff Drive |
             | address-address3| Ventnor, Isle of Wight |
             | address-postcode| PO38 1UL |
-        Then I click "form-cancel"
-        Then I click "save-and-continue"
-        And I am taken to the when lpa starts page
+        When I click "form-cancel"
+        And I click "save-and-continue"
+        Then I am taken to the when lpa starts page
         And I see "When can the LPA be used?" in the page text
         # in this test we check the when-no-capacity exists, then a few lines down we actually click when-now
         And I can find old style id "#when-no-capacity"
