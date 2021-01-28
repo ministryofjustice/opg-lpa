@@ -39,9 +39,9 @@ Feature: Create a Property and Finance LPA
         Then I can see popup
         # todo - casper just looked for use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
-        When I type "B1 1TF" into old style id "input#postcode-lookup"
-        And I click element marked "Find UK address"
-        Then I can find old style id "#address-search-result" with 6 options
+        #When I type "B1 1TF" into old style id "input#postcode-lookup"
+        #And I click element marked "Find UK address"
+        #Then I can find old style id "#address-search-result" with 6 options
         And I can find old style id "#name-title" with 8 options
         When I force fill out  
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
@@ -99,3 +99,8 @@ Feature: Create a Property and Finance LPA
         Then I click "save-and-continue"
         And I am taken to the when lpa starts page
         And I see "When can the LPA be used?" in the page text
+        When I click "save"
+        Then I see in the page text
+            | There was a problem submitting the form |
+            | You need to do the following: |
+            | Choose when your LPA can be used |
