@@ -1,4 +1,4 @@
-FROM node:11
+FROM node:15
 
 RUN apt-get update && apt-get install -y curl wget apt-transport-https \
 	&& wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
