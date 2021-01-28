@@ -22,18 +22,21 @@ Then(`I am taken to the lpa type page`, () => {
 
 Then(`I am taken to the when lpa starts page`, () => {
     var when_lpa_starts = '/lpa/\\d+/when-lpa-starts';
-    cy.get('@donorPageUrl').then(($url) => {
-            checkPath(when_lpa_starts,$url);
-    });
+    cy.get('@donorPageUrl').then(($url) => { checkPath(when_lpa_starts,$url); });
   //cy.get('.accordion li.donor-section').should('contain','This LPA covers health and welfare');
 });
 
 Then(`I am taken to the primary attorney page`, () => {
     var primary_attorney = '/lpa/\\d+/primary-attorney';
-    cy.get('@donorPageUrl').then(($url) => {
-            checkPath(primary_attorney,$url);
-    });
-  //cy.get('.accordion li.donor-section').should('contain','This LPA covers health and welfare');
+    cy.get('@donorPageUrl').then(($url) => { checkPath(primary_attorney,$url); });
+  //cy.get('.accordion li.donor-section').should('contain','blah');
+});
+ 
+Then(`I am taken to the life sustaining page`, () => {
+    checkAmOnPageWithPath('/lpa/\\d+/life-sustaining');
+    /*var life_sustaining = '/lpa/\\d+/life-sustaining';
+    cy.get('@donorPageUrl').then(($url) => { checkPath(life_sustaining,$url); });*/
+  //cy.get('.accordion li.donor-section').should('contain','blah');
 });
  
 Then(`I am taken to the donor page for health and welfare`, () => {
@@ -52,6 +55,10 @@ Then(`I am taken to the post logout url`, () => {
   cy.log("I should be on " + Cypress.config().postLogoutUrl );
   cy.url().should('eq',Cypress.config().postLogoutUrl );
 })
+
+function checkAmOnPageWithPath(pathRegex) {
+    cy.get('@donorPageUrl').then(($url) => { checkPath(pathRegex, $url); });
+}
 
 function checkPath(path, donorPageUrl){
     // Given a path, insert the lpaId by extracting that from donorPageUrl, then check we're on the resulting url

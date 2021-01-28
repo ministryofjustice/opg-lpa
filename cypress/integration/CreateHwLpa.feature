@@ -15,8 +15,8 @@ Feature: Create a Health and Welfare LPA
             | There was a problem submitting the form |
             | You need to do the following: |
             | Choose a type of LPA |
-        Then I choose Health and Welfare
-        When I click "save"
+        When I choose Health and Welfare
+        And I click "save"
         Then I am taken to the donor page for health and welfare
         And I see "Who is the donor for this LPA?" in the page text
         And I cannot find "save-and-continue"
@@ -28,8 +28,8 @@ Feature: Create a Health and Welfare LPA
         Given I log in as appropriate test user
         Then If I am on dashboard I click to create lpa
         And I am taken to the lpa type page
-        Then I choose Health and Welfare
-        When I click "save"
+        When I choose Health and Welfare
+        And I click "save"
         Then I am taken to the donor page for health and welfare
         And I see "Who is the donor for this LPA?" in the page text
         And I cannot find "save-and-continue"
@@ -39,10 +39,10 @@ Feature: Create a Health and Welfare LPA
         And I can find "use-my-details"
         # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
         And I can find old style id "#name-title" with 8 options
-        When I type "B1 1TF" into old style id "input#postcode-lookup"
-        And I click element marked "Find UK address"
+        #When I type "B1 1TF" into old style id "input#postcode-lookup"
+        #And I click element marked "Find UK address"
         # casper simply checked for 6 options so we do too, but we may ultimately wish to check the values
-        Then I can find old style id "#address-search-result" with 6 options
+        #Then I can find old style id "#address-search-result" with 6 options
         When I select "Mrs" on old style id "#name-title"
         And I force fill out  
             | name-first | Nancy |
@@ -75,7 +75,17 @@ Feature: Create a Health and Welfare LPA
             | address-address2| Undercliff Drive |
             | address-address3| Ventnor, Isle of Wight |
             | address-postcode| PO38 1UL |
-        Then I click "form-cancel"
-        Then I click "save-and-continue"
-        And I am taken to the when lpa starts page
-        And I see "When can the LPA be used?" in the page text
+        When I click "form-cancel"
+        And I click "save-and-continue"
+        Then I am taken to the life sustaining page
+        And I see "Who does the donor want to make decisions about life-sustaining treatment?" in the page text
+        # in this test we check CanSustainLife-0 (no option) exists, then a few lines down we actually click canSustainLife-1 (yes)
+        And I can find old style id "#canSustainLife-0"
+        When I click "save"
+        Then I see in the page text
+            | There was a problem submitting the form |
+            | You need to do the following: |
+            | Choose an option |
+        When I check old style id "#canSustainLife-1"
+        And I click "save"
+        Then I am taken to the primary attorney page
