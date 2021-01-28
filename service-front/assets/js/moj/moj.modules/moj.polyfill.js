@@ -25,7 +25,7 @@
         var n = elements.length
         for ( i = 0; i < n; i++) {
             if (enableTabs) {
-                elements[i].removeAttribute('tabindex')
+                elements[i].setAttribute('tabindex', '0')
             } else {
                 elements[i].setAttribute('tabindex', '-1')
             }
@@ -85,6 +85,7 @@
     // Define a statechange function that updates aria-expanded and style.display
     // Also update the arrow position
     function statechange (summary) {
+        // toggle aria-attributes
         var expanded = summary.__details.__summary.getAttribute('aria-expanded') === 'true'
         var hidden = summary.__details.__content.getAttribute('aria-hidden') === 'true'
 
@@ -168,9 +169,7 @@
 
             // Set tabIndex so the summary is keyboard accessible for non-native elements
             // http://www.saliences.com/browserBugs/tabIndex.html
-            if (!NATIVE_DETAILS) {
-                details.__summary.tabIndex = 0
-            }
+            details.__summary.tabIndex = 0
 
             // Detect initial open state
             var openAttr = details.getAttribute('open') !== null
