@@ -1,4 +1,4 @@
-# Life-sustaining treatment
+## Life-sustaining treatment
 
 Life-sustaining treatment is care, surgery, medicine or other help from doctors that's needed to keep someone alive. For example:
 
@@ -10,7 +10,7 @@ Whether some treatments are life-sustaining depends on the situation. For exampl
 
 Decisions about life-sustaining treatment can be needed in unexpected circumstances. For example, if a routine operation does not go as planned and a decision needs to be made about life-sustaining treatment while the donor is under general anesthetic.
 
-## Decisions about life-sustaining treatment
+### Decisions about life-sustaining treatment
 
 When making a health and welfare LPA, the donor must choose who they want to make decisions about life-sustaining treatment if they do not have the mental capacity to decide themselves.
 
@@ -27,7 +27,7 @@ The donor has 2 options.
 
 After you print out the LPA document, the donor has to sign and date the option they've chosen. This must be witnessed.
 
-## Taking the donor’s wishes into account
+### Taking the donor’s wishes into account
 
 If the donor chooses to give their attorneys the power to make decisions about life-sustaining treatment, they can add preferences and instructions about treatment. For example, the donor can express preferences about treatment or give instructions about when their attorneys must or must not consent to life-sustaining treatment.
 
@@ -35,13 +35,13 @@ This can help the attorneys make decisions that are as close as possible to thos
 
 See the [preferences and instructions](/help/#topic-preferences-and-instructions) help page for more guidance.
 
-## If the donor has an ‘advance decision’
+### If the donor has an ‘advance decision’
 
 An advance decision to refuse treatment is a legally binding written statement. It lets someone say what medical treatment they do not want to have in certain situations in the future. It’s sometimes called a ‘living will’.
 
 The donor can have an advance decision and an LPA.
 
-### If the donor makes an LPA after making an advance decision
+#### If the donor makes an LPA after making an advance decision
 
 Whoever the donor has chosen to make decisions about life-sustaining treatment (either their attorneys or doctors), might override what is written in the advance decision.
 

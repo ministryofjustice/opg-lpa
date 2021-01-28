@@ -36,19 +36,19 @@
             <p class="person-address flush--ends">{{ lpa.document.donor.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
-                    <a href="{{ editUrl }}" role="button" class="action-edit js-form-popup" aria-label="View/Change Donor">View/Change<span class="visually-hidden"> Donor</span></a>
+                    <a href="{{ editUrl }}" role="button" class="action-edit js-form-popup" aria-label="View/Change Donor">View/Change<span class="visually-hidden" data-cy="view-change-donor"> Donor</span></a>
                 </li>
             </ul>
         </div>
 
         <div class="form-group">
-            <a href="{{ nextUrl }}" role="button" class="button">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
+            <a href="{{ nextUrl }}" role="button" class="button" data-cy="save-and-continue">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
 
     {% else %}
 
         <div class="form-group">
-            <a href="{{ addUrl }}" role="button" class="button js-form-popup" aria-label="Add Donor">Add donor</a>
+            <a href="{{ addUrl }}" role="button" class="button js-form-popup" aria-label="Add Donor" data-cy="add-donor">Add donor</a>
         </div>
 
     {% endif %}

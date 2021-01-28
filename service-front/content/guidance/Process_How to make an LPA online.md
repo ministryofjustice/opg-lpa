@@ -1,4 +1,4 @@
-# How to make an LPA online
+## How to make an LPA online
 
 This online service helps you make a lasting power of attorney (LPA) that you can post to Office of the Public Guardian (OPG) for registration. An LPA can only be used once OPG have registered it.
 
@@ -12,7 +12,7 @@ We'll save the LPA as you progress so you do not need to make it in one go. You 
 
 You can only make an LPA for England and Wales – your LPA may not be recognised in other countries. There’s a different process in [Scotland](http://www.publicguardian-scotland.gov.uk/power-of-attorney) and [Northern Ireland](http://www.nidirect.gov.uk/managing-your-affairs-and-enduring-power-of-attorney). People involved in the LPA do not need to be British citizens or live in the UK.
 
-## The 3 steps to a registered LPA
+### The 3 steps to a registered LPA
 
 1. Make the LPA online and pay the [application fee](/help/#topic-fees-reductions-and-exemptions)
 2. Print the LPA and get all the required people to sign it in the right order
@@ -20,7 +20,7 @@ You can only make an LPA for England and Wales – your LPA may not be recognise
 
 You do not have to register the LPA as soon as you create it, but it's a good idea to. This gives you time to sort out any problems, so the LPA will be ready to use as soon as the donor needs it.
 
-## Track the progress of the LPA after you've posted it
+### Track the progress of the LPA after you've posted it
 
 Once you've posted the LPA to us, you can track its progress from the [Your LPAs](/user/dashboard) page. This will let you know when we've received the LPA, when we're checking it, and when we've returned it.
 
