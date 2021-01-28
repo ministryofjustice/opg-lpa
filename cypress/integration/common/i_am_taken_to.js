@@ -23,10 +23,17 @@ Then(`I am taken to the lpa type page`, () => {
 Then(`I am taken to the when lpa starts page`, () => {
     var when_lpa_starts = '/lpa/\\d+/when-lpa-starts';
     cy.get('@donorPageUrl').then(($url) => {
-        var lpaId = $url.match(/\/(\d+)\//)[1];
-        var whenLpaStartsPath = when_lpa_starts.replace('\\d+', lpaId);
-        cy.url().should('eq',Cypress.config().baseUrl + whenLpaStartsPath);
+            checkPath(when_lpa_starts,$url);
     });
+  //cy.get('.accordion li.donor-section').should('contain','This LPA covers health and welfare');
+});
+
+Then(`I am taken to the primary attorney page`, () => {
+    var primary_attorney = '/lpa/\\d+/primary-attorney';
+    cy.get('@donorPageUrl').then(($url) => {
+            checkPath(primary_attorney,$url);
+    });
+  //cy.get('.accordion li.donor-section').should('contain','This LPA covers health and welfare');
 });
  
 Then(`I am taken to the donor page for health and welfare`, () => {
@@ -45,3 +52,11 @@ Then(`I am taken to the post logout url`, () => {
   cy.log("I should be on " + Cypress.config().postLogoutUrl );
   cy.url().should('eq',Cypress.config().postLogoutUrl );
 })
+
+function checkPath(path, donorPageUrl){
+    // Given a path, insert the lpaId by extracting that from donorPageUrl, then check we're on the resulting url
+    var lpaId = donorPageUrl.match(/\/(\d+)\//)[1];
+    var pathWithLpaId = path.replace('\\d+', lpaId);
+    cy.url().should('eq',Cypress.config().baseUrl + pathWithLpaId);
+}
+ 
