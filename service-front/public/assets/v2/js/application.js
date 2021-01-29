@@ -23707,7 +23707,7 @@ this["lpa"]["templates"]["errors.formMessage"] = Handlebars.template({"compiler"
 },"useData":true});
 
 this["lpa"]["templates"]["popup.close"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<p class=\"close\">\n  <a href=\"#\" class=\"js-popup-close button-close\" title=\"Click or press escape to close this window\">Close layer</a>\n</p>";
+    return "<p class=\"close\">\n  <a href=\"#\" class=\"js-popup-close button-close\" title=\"Click or press escape to close this window\" data-cy=\"popup-close\">Close layer</a>\n</p>\n";
 },"useData":true});
 
 this["lpa"]["templates"]["popup.container"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -24156,6 +24156,9 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
 
       // Scroll back to top of help
       $('#mask').scrollTop(0);
+
+      // shift focus to the help content
+      $('#help-sections').focus();
     },
 
     _hasCachedContent: function () {
@@ -24219,7 +24222,8 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
 
   // Add module to MOJ namespace
   moj.Modules.HelpSystem = new HelpSystem();
-}(window));;
+}(window));
+;
 // Form Popup module for LPA
 // Dependencies: moj, jQuery
 

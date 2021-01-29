@@ -55,7 +55,7 @@ this["lpa"]["templates"]["errors.formMessage"] = Handlebars.template({"compiler"
 },"useData":true});
 
 this["lpa"]["templates"]["popup.close"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<p class=\"close\">\n  <a href=\"#\" class=\"js-popup-close button-close\" title=\"Click or press escape to close this window\">Close layer</a>\n</p>";
+    return "<p class=\"close\">\n  <a href=\"#\" class=\"js-popup-close button-close\" title=\"Click or press escape to close this window\" data-cy=\"popup-close\">Close layer</a>\n</p>\n";
 },"useData":true});
 
 this["lpa"]["templates"]["popup.container"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
