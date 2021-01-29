@@ -38,6 +38,7 @@ class Guidance extends AbstractService
                     'html' => $this->processSection($sectionFilename, $sectionId),
                     'url' => '/' . self::GUIDANCE_ROUTE . '#topic-' . $sectionId,
                     'dataJourney' => 'guidance:link:navigation: ' . $sectionTitle,
+                    'dataCy' => $sectionId . '-nav-link',
                 ];
             }
         }
@@ -63,7 +64,7 @@ class Guidance extends AbstractService
 
         $html .= preg_replace(
                     '/<a href="\/help\/#topic-([^"]*)">([^"]*)<\/a>/',
-                    '<a href="/' . self::GUIDANCE_ROUTE . '#topic-${1}" class="js-guidance" data-journey-click="guidance:link:help: ${1}">${2}</a>',
+                    '<a href="/' . self::GUIDANCE_ROUTE . '#topic-${1}" class="js-guidance" data-cy="${1}-link" data-journey-click="guidance:link:help: ${1}">${2}</a>',
                     $md
                  );
 

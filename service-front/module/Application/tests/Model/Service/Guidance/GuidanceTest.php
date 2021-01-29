@@ -53,13 +53,15 @@ class GuidanceTest extends AbstractServiceTest
                     "</article>",
                 'url' => '/guide#topic-topic-1',
                 'dataJourney' => 'guidance:link:navigation: Topic 1',
+                'dataCy' => 'topic-1-nav-link',
             ],
             [
                 'id' => 'topic-2',
                 'title' => 'Topic 2',
                 'html' => "<article id=\"topic-topic-2\">\n</article>",
                 'url' => '/guide#topic-topic-2',
-                'dataJourney' => 'guidance:link:navigation: Topic 2'
+                'dataJourney' => 'guidance:link:navigation: Topic 2',
+                'dataCy' => 'topic-2-nav-link',
             ]]], $result);
     }
 
