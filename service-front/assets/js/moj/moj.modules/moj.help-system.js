@@ -138,6 +138,9 @@
 
       // Scroll back to top of help
       $('#mask').scrollTop(0);
+
+      // shift focus to the help content
+      $('#help-sections').focus();
     },
 
     _hasCachedContent: function () {
