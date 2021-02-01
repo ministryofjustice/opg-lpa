@@ -109,7 +109,7 @@ Feature: Create a Property and Finance LPA
         When I check old style id "#when-now"
         And I click "save"
         Then I am taken to the primary attorney page
-        And I cannot find "save-and-continue"
+        And I cannot find "save"
         When I click "add-attorney"
         Then I can see popup
         And I can find old style id "#name-title" with 8 options
@@ -133,4 +133,19 @@ Feature: Create a Property and Finance LPA
             | Change address line 1 so that it has fewer than 51 characters |
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
+        When I select "Mrs" on old style id "#name-title"
+        And I force fill out  
+            | name-first | Amy |
+            | name-last | Wheeler |
+            | dob-date-day| 22 |
+            | dob-date-month| 10 |
+            | dob-date-year| 1988 |
+            | email-address| opglpademo+AmyWheeler@gmail.com |
+            | address-address1| Brickhill Cottage |
+            | address-address2| Birch Cross |
+            | address-address3| Marchington, Uttoxeter, Staffordshire |
+            | address-postcode| ST14 8NX |
+        And I click "form-save"
+        Then I can find "save"
+        And I see "Mrs Amy Wheeler" in the page text
 

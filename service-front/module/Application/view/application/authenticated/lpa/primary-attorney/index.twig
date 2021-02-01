@@ -56,7 +56,7 @@
     {% if (attorneys) %}
 
         <div class="form-group">
-            <a href="{{ nextUrl }}" role="button" class="button">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
+            <a href="{{ nextUrl }}" role="button" data-cy="save" class="button">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
 
     {% endif %}
