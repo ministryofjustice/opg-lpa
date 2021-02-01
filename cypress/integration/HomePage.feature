@@ -5,7 +5,8 @@ Feature: Homepage
   @focus
   Scenario: Visit home page links
     Given I visit "/home"
-    Then I see "Make a lasting power of attorney" in the title
+    Then I see that included assets such as js and css are ok
+    And I see "Make a lasting power of attorney" in the title
     When I visit link in new tab containing "Terms of use"
     Then I am taken to "/terms"
     And I see "Terms of use" in the title
