@@ -30,3 +30,6 @@ cypress/activation_emails/unrecognized.*
 /cypress/fixtures/
 service-front/public/assets/v2/css/application.css.map
 service-front/public/assets/v2/css/print.css.map
+service-front/public/assets/v2/css/application.css
+service-front/public/assets/v2/css/print.css
+service-front/assets/js/lpa/lpa.templates.js
