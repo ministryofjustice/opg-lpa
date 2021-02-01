@@ -50,9 +50,11 @@ Then('I should encounter a visually-hidden statement about links on the page ope
 });
 
 // Check that focusing on and opening a <details> element on a page
-// makes the interior content of the element accessible via tab key navigation
-Then('I can navigate through expandable elements using the tab key', () => {
-    cy.get('details').each((details) => {
+// makes the interior content of the element accessible via tab key navigation;
+// note that "tag" is a parameter to enable us to check elements which have
+// been polyfilled to emulate a details element; see Polyfills.feature
+Then('I can navigate through {string} elements using the tab key', (tag) => {
+    cy.get(tag).each((details) => {
         // simulate pressing return on the <summary> element; note that,
         // because the browser prevents synthesis of key presses on elements
         // which aren't inputs, we perform a focus() (to prove the summary
@@ -84,6 +86,26 @@ Then('I can navigate through expandable elements using the tab key', () => {
                     focusableEls.splice(focusableEls.indexOf(els[0]), 1);
                 });
             }
+        });
+    });
+});
+
+// replace <details> elements on the page with <polyfilleddetails> elements,
+// and polyfill them; the purpose of this is to enable testing the polyfill
+// on a browser which *does* support the <details> element
+Then('my browser doesn\'t support details elements', () => {
+    cy.window().then((window) => {
+        cy.get('details').each((details) => {
+            // replace with a new <polyfilleddetails> element with the same
+            // internal content
+            let newElement = Cypress.$('<polyfilleddetails>' +
+                                       details[0].innerHTML +
+                                       '</polyfilleddetails>');
+
+            // wrap the new element manually
+            window.moj.Modules.DetailsPolyfill.wrap(newElement);
+
+            details.replaceWith(newElement);
         });
     });
 });

@@ -14,6 +14,12 @@
     // Wrap a single jQuery element with the necessary event handlers
     // and add required aria attributes; usually, this will be a <details>
     // element, but other custom elements can be used (e.g. for testing)
+    //
+    // details: jQuery element to polyfill
+    // identifier: unique number for creation of ID on the wrapped element
+    //     (used for ARIA controls)
+    // hasNativeImplementation: set to true if the element has native
+    //     details support (i.e. a boolean open attribute)
     function wrapDetails(details, identifier, hasNativeImplementation) {
         var noop = function () {};
 
@@ -221,6 +227,8 @@
 
         fill: function () {
             addDetailsPolyfill('details');
-        }
+        },
+
+        wrap: wrapDetails,
     };
 })()
