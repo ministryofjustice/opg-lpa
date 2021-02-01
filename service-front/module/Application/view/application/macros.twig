@@ -85,7 +85,7 @@
 {% macro addSwitchAttorneyTypeLink(switchAttorneyTypeRoute, lpa, trustLink) %}
     {% if (switchAttorneyTypeRoute) %}
         <div class="action-item use-details-link-panel hard--bottom">
-            <a class="js-form-popup" href="{{ url(switchAttorneyTypeRoute, {'lpa-id': lpa.id}) }}">Using {{ trustLink ? 'a trust corporation' : 'an individual' }}?</a>
+            <a class="js-form-popup" data-cy="use-trust-coporation" href="{{ url(switchAttorneyTypeRoute, {'lpa-id': lpa.id}) }}">Using {{ trustLink ? 'a trust corporation' : 'an individual' }}?</a>
         </div>
     {% endif %}
 {% endmacro %}
