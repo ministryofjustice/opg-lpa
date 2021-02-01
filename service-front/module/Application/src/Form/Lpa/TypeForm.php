@@ -8,10 +8,19 @@ class TypeForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'type' => [
-            'type'          => 'Application\Form\Element\Type',
+            'type'          => 'Laminas\Form\Element\Radio',
             'required'      => true,
             'error_message' => 'cannot-be-empty',
-            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
+            'attributes'    => [
+                'id' => 'type',
+                'div-attributes' => ['class' => 'multiple-choice'],
+            ],
+            'options'       => [
+                'value_options' => [
+                    'property-and-financial' => 'Property and financial',
+                    'health-and-welfare' => 'Health and welfare',
+                ],
+            ],
         ],
     ];
 
