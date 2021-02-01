@@ -49,7 +49,7 @@ Feature: Create a Property and Finance LPA
         And I click element marked "Find UK address"
         Then I can find old style id "#address-search-result" with 6 options
         And I can find old style id "#name-title" with 8 options
-        When I force fill out  
+        When I force fill out
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | dob-date-day | 22 |
@@ -62,7 +62,7 @@ Feature: Create a Property and Finance LPA
             | address-postcode | PO38 1UL |
         And I click "form-save"
         Then I see in the page text
-            | There was a problem submitting the form |
+            | There is a problem |
             | Enter the donor's title |
             | Enter a first name that's less than 54 characters long |
             | Enter a last name that's less than 62 characters long |
@@ -70,7 +70,7 @@ Feature: Create a Property and Finance LPA
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
         When I select "Mrs" on old style id "#name-title"
-        And I force fill out  
+        And I force fill out
             | name-first | Nancy |
             | name-last | Garrison |
             | dob-date-day| 22 |
