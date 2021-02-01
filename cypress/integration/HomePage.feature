@@ -39,6 +39,6 @@ Feature: Homepage
     And I do not have "cookie-message" in the viewport
 
   @focus
-  Scenario: Navigate expandable elements on home page using keyboard (LPAL-253)
+  Scenario: Navigate details elements on home page using keyboard (LPAL-253)
     Given I visit "/home"
-    Then I can navigate through expandable elements using the tab key
+    Then I can navigate through "details" elements using the tab key
