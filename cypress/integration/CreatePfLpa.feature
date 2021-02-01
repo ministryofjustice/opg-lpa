@@ -148,4 +148,7 @@ Feature: Create a Property and Finance LPA
         And I click "form-save"
         Then I can find "save"
         And I see "Mrs Amy Wheeler" in the page text
+        # casper checked for existince of delete link, here we click it then cancel, which is more thorough
+        When I visit link containing "Delete"
+        And I click "cancel"
 
