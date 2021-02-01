@@ -39,10 +39,10 @@ Feature: Create a Health and Welfare LPA
         And I can find "use-my-details"
         # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
         And I can find old style id "#name-title" with 8 options
-        #When I type "B1 1TF" into old style id "input#postcode-lookup"
-        #And I click element marked "Find UK address"
+        When I type "B1 1TF" into "postcode-lookup"
+        And I click element marked "Find UK address"
         # casper simply checked for 6 options so we do too, but we may ultimately wish to check the values
-        #Then I can find old style id "#address-search-result" with 6 options
+        Then I can find old style id "#address-search-result" with 6 options
         When I select "Mrs" on old style id "#name-title"
         And I force fill out  
             | name-first | Nancy |
