@@ -8,6 +8,7 @@ geckodriver.log
 node_modules/
 **functional/casperesults.xml
 *.iml
+*.swp
 /.idea
 **notes.md
 **queue_config.json
@@ -27,6 +28,5 @@ cypress/activation_emails/unrecognized.*
 **/build
 /cypress/screenshots/
 /cypress/fixtures/
-service-front/public/assets/js/lpa/lpa.templates.js
-service-front/public/assets/v2/js/application.js.map
-service-front/public/assets/v2/js/application.min.js.map
+service-front/public/assets/v2/css/application.css.map
+service-front/public/assets/v2/css/print.css.map
