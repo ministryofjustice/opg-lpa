@@ -200,3 +200,15 @@ Feature: Create a Property and Finance LPA
         # check we can see the 2 attorneys listed
         And I see "Mrs Amy Wheeler" in the page text
         And I see "Mr David Wheeler" in the page text
+
+    @focus
+    Scenario: Fail to select type of LPA to create, error links to first radio (LPAL-248)
+        Given I log in as appropriate test user
+        Then If I am on dashboard I click to create lpa
+        And I am taken to the lpa type page
+        When I click "save"
+        Then I see in the page text
+            | There was a problem submitting the form |
+            | Choose a type of LPA |
+        And I visit link containing "Choose a type of LPA"
+        Then I am focused on ""
