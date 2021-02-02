@@ -21,6 +21,10 @@ Then(`I can find old style id {string} with {int} options`, (object, count) => {
   cy.get(object).children().should("have.length", count);
 })
 
+Then(`I can find {string} with {int} options`, (object, count) => {
+  cy.get("[data-cy=" + object + "]").children().should("have.length", count);
+})
+
 // used for dropdown list for example
 Then(`I can find old style id {string} with options`, (object, dataTable) => {
   cy.get(object).children().should($foundObject => {

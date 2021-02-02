@@ -39,10 +39,10 @@ Feature: Create a Property and Finance LPA
         Then I can see popup
         # todo - casper just looked for use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
-        When I type "B1 1TF" into "postcode-lookup"
-        And I click element marked "Find UK address"
-        Then I can find old style id "#address-search-result" with 6 options
-        And I can find old style id "#name-title" with 8 options
+        #When I type "B1 1TF" into "postcode-lookup"
+        #And I click element marked "Find UK address"
+        #Then I can find old style id "#address-search-result" with 6 options
+        And I can find "name-title" with 8 options
         When I force fill out  
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
@@ -63,7 +63,7 @@ Feature: Create a Property and Finance LPA
             | Change address line 1 so that it has fewer than 51 characters |
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
-        When I select "Mrs" on old style id "#name-title"
+        When I select "Mrs" on "name-title"
         And I force fill out  
             | name-first | Nancy |
             | name-last | Garrison |
@@ -83,7 +83,7 @@ Feature: Create a Property and Finance LPA
         # following line uses force click because view-change-donor button is partly obscured
         When I force click "view-change-donor"
         Then I can see popup
-        And I see old style id "#name-title" prepopulated with "Mrs"
+        And I see "name-title" prepopulated with "Mrs"
         And I see form prepopulated with
             | name-first | Nancy |
             | name-last | Garrison |
@@ -112,7 +112,7 @@ Feature: Create a Property and Finance LPA
         And I cannot find "save"
         When I click "add-attorney"
         Then I can see popup
-        And I can find old style id "#name-title" with 8 options
+        And I can find "name-title" with 8 options
         And I force fill out  
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
@@ -133,7 +133,7 @@ Feature: Create a Property and Finance LPA
             | Change address line 1 so that it has fewer than 51 characters |
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
-        When I select "Mrs" on old style id "#name-title"
+        When I select "Mrs" on "name-title"
         And I force fill out  
             | name-first | Amy |
             | name-last | Wheeler |
