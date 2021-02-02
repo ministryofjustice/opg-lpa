@@ -7,7 +7,10 @@ class ReuseDetailsForm extends AbstractLpaForm
     protected $formElements = [
         'reuse-details' => [
             'type'          => 'Application\Form\Element\ReuseDetails',
-            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
+            'attributes' => [
+                'id' => 'reuse-details',
+                'div-attributes' => ['class' => 'multiple-choice'],
+            ],
             'required'      => true,
             'error_message' => 'cannot-be-empty',
             'options'       => [
