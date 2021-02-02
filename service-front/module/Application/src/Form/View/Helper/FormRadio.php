@@ -149,6 +149,7 @@ class FormRadio extends LaminasFormRadioHelper
             }
 
             $inputAttributes['value']    = $value;
+            $inputAttributes['data-cy']  = $value;
             $inputAttributes['checked']  = $selected;
             $inputAttributes['disabled'] = $disabled;
             $inputAttributes['id'] = isset($attributes['id']) ?
