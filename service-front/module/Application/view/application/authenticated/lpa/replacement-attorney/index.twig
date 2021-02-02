@@ -75,7 +75,7 @@
     {% endif %}
 
     <div class="{% if (attorneys) %}action-item{% endif %} form-group">
-        <a href="{{ addRoute }}" role="{% if not (attorneys)  %}button{% endif %}" class="{% if not (attorneys) %}button{% endif %} js-form-popup" >
+        <a href="{{ addRoute }}" role="{% if not (attorneys)  %}button{% endif %}" class="{% if not (attorneys) %}button{% endif %} js-form-popup" data-cy="add-replacement-attorney">
             {% if (attorneys) %}
                 Add another replacement attorney?
             {% else %}
