@@ -37,8 +37,8 @@ Feature: Signup
         Then I see "There was a problem" in the page text
 
         # todo - note we should be selecting Mr like we do in the Valid scenario, not typing it in here, but due to system bug, after a previous error we get a text box
-        # instead of a dropdown. The line below will therefore need to change to When I select Mr on old style id, once that bug is fixed
-        When I type "Mr" into old style id "#name-title"
+        # instead of a dropdown. The line below will therefore need to change to When I select Mr on name-title, once this bug is fixed
+        When I type "Mr" into "name-title"
         And I force fill out
           | name-first| Chris |
           | name-last| Smith |
@@ -55,7 +55,7 @@ Feature: Signup
         Given I log in as standard test user
         Then I see "Make a lasting power of attorney" in the page text
         And I see "Your details" in the title
-        When I select "Mr" on old style id "#name-title"
+        When I select "Mr" on "name-title"
         And I force fill out
           | name-first| Chris |
           | name-last| Smith |
