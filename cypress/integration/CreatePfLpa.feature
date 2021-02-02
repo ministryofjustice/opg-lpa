@@ -18,7 +18,7 @@ Feature: Create a Property and Finance LPA
         When I choose Property and Finance
         And I click "save"
         Then I am taken to the donor page for property and finance
-        And I see "Who is the donor for this LPA?" in the page text
+        And I see "This LPA covers property and financial affairs" in the page text
         # save button should be missing initially
         And I cannot find "save-and-continue"
         When I click "add-donor"
@@ -32,7 +32,7 @@ Feature: Create a Property and Finance LPA
         When I choose Property and Finance
         And I click "save"
         Then I am taken to the donor page for property and finance
-        And I see "Who is the donor for this LPA?" in the page text
+        And I see "This LPA covers property and financial affairs" in the page text
         # save button should be missing initially
         And I cannot find "save-and-continue"
         When I click "add-donor"

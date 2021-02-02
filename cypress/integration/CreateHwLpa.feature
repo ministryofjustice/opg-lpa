@@ -18,7 +18,7 @@ Feature: Create a Health and Welfare LPA
         When I choose Health and Welfare
         And I click "save"
         Then I am taken to the donor page for health and welfare
-        And I see "Who is the donor for this LPA?" in the page text
+        And I see "This LPA covers health and welfare" in the page text
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
@@ -31,7 +31,7 @@ Feature: Create a Health and Welfare LPA
         When I choose Health and Welfare
         And I click "save"
         Then I am taken to the donor page for health and welfare
-        And I see "Who is the donor for this LPA?" in the page text
+        And I see "This LPA covers health and welfare" in the page text
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
