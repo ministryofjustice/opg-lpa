@@ -8,12 +8,13 @@ class WhenLpaStartsForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'when' => [
-            'type'      => 'Radio',
+            'type'      => 'Laminas\Form\Element\Radio',
             'required'  => true,
             'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
             'options'   => [
                 'value_options' => [
                     'now' => [
+                        'id' => 'when',
                         'value' => 'now',
                         'label' => 'as soon as it\'s registered (with the donor\'s consent)',
                         'label_attributes' => [
