@@ -17,7 +17,7 @@ Feature: Create a Property and Finance LPA
             | Choose a type of LPA |
         When I choose Property and Finance
         And I click "save"
-        Then I am taken to the donor page for property and finance
+        Then I am taken to the donor page
         And I see "This LPA covers property and financial affairs" in the page text
         # save button should be missing initially
         And I cannot find "save-and-continue"
@@ -31,7 +31,7 @@ Feature: Create a Property and Finance LPA
         Then I am taken to the lpa type page
         When I choose Property and Finance
         And I click "save"
-        Then I am taken to the donor page for property and finance
+        Then I am taken to the donor page
         And I see "This LPA covers property and financial affairs" in the page text
         # save button should be missing initially
         And I cannot find "save-and-continue"
@@ -112,6 +112,7 @@ Feature: Create a Property and Finance LPA
         And I cannot find "save"
         When I click "add-attorney"
         Then I can see popup
+        And I can find "form-cancel"
         And I can find "name-title" with 8 options
         And I force fill out  
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
@@ -151,4 +152,37 @@ Feature: Create a Property and Finance LPA
         # casper checked for existince of delete link, here we click it then cancel, which is more thorough
         When I visit link containing "Delete"
         And I click "cancel"
-
+        #When I click "save"
+        #Then I am taken to the replacement attorney page
+        #When I click
+        #Then I am taken to the primary attorney page
+        #Test of adding same attorney twice
+        When I click "add-attorney"
+        When I select "Mrs" on "name-title"
+        And I force fill out  
+            | name-first | Amy |
+            | name-last | Wheeler |
+            | dob-date-day| 22 |
+            | dob-date-month| 10 |
+            | dob-date-year| 1988 |
+            | email-address| opglpademo+AmyWheeler@gmail.com |
+            | address-address1| Brickhill Cottage |
+            | address-address2| Birch Cross |
+            | address-address3| Marchington, Uttoxeter, Staffordshire |
+            | address-postcode| ST14 8NX |
+            #Then I see duplication warning
+        When I select "Mr" on "name-title"
+        And I force fill out  
+            | name-first | David |
+            | name-last | Wheeler |
+            | dob-date-day| 12 |
+            | dob-date-month| 03 |
+            | dob-date-year| 1972 |
+            | email-address| opglpademo+DavidWheeler@gmail.com |
+            | address-address1| Brickhill Cottage |
+            | address-address2| Birch Cross |
+            | address-address3| Marchington, Uttoxeter, Staffordshire |
+            | address-postcode| ST14 8NX |
+        And I click "form-save"
+        Then I can find "save"
+        And I see "Mr David Wheeler" in the page text

@@ -26,6 +26,11 @@ Then(`I am taken to the when lpa starts page`, () => {
     checkAccordionHeaderContains("When can the LPA be used?") 
 });
 
+Then(`I am taken to the replacement attorney page`, () => {
+    checkOnPageWithPath('/lpa/\\d+/replacement-attorney');
+    checkAccordionHeaderContains("Does the donor want any replacement attorneys?");
+});
+
 Then(`I am taken to the primary attorney page`, () => {
     checkOnPageWithPath('/lpa/\\d+/primary-attorney');
     checkAccordionHeaderContains("Who are the attorneys?") 
@@ -36,12 +41,7 @@ Then(`I am taken to the life sustaining page`, () => {
     checkAccordionHeaderContains('Who does the donor want to make decisions about life-sustaining treatment?');
 });
  
-Then(`I am taken to the donor page for health and welfare`, () => {
-    cy.url().should('contain','donor').as('donorPageUrl');
-    checkAccordionHeaderContains('Who is the donor for this LPA?');
-})
-
-Then(`I am taken to the donor page for property and finance`, () => {
+Then(`I am taken to the donor page`, () => {
     cy.url().should('contain','donor').as('donorPageUrl');
     checkAccordionHeaderContains('Who is the donor for this LPA?');
 })

@@ -17,7 +17,7 @@ Feature: Create a Health and Welfare LPA
             | Choose a type of LPA |
         When I choose Health and Welfare
         And I click "save"
-        Then I am taken to the donor page for health and welfare
+        Then I am taken to the donor page 
         And I see "This LPA covers health and welfare" in the page text
         And I cannot find "save-and-continue"
         When I click "add-donor"
@@ -30,7 +30,7 @@ Feature: Create a Health and Welfare LPA
         And I am taken to the lpa type page
         When I choose Health and Welfare
         And I click "save"
-        Then I am taken to the donor page for health and welfare
+        Then I am taken to the donor page
         And I see "This LPA covers health and welfare" in the page text
         And I cannot find "save-and-continue"
         When I click "add-donor"
