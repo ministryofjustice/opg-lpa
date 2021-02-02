@@ -211,4 +211,4 @@ Feature: Create a Property and Finance LPA
             | There was a problem submitting the form |
             | Choose a type of LPA |
         And I visit link containing "Choose a type of LPA"
-        Then I am focused on ""
+        Then I am focused on "property-and-financial"
