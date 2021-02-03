@@ -1,5 +1,5 @@
 const {
-  Then
+  Then, After,
 } = require("cypress-cucumber-preprocessor/steps");
 
 /*
