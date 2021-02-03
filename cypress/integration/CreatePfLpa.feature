@@ -4,16 +4,22 @@ Feature: Create a Property and Finance LPA
 
     Background:
         Given I ignore application exceptions
- 
-    #@focus
+
+    @focus
+    Scenario: Dashboard has Link to Type page
+        # we use seeded user here because a newly signed-up user would not yet have a dashboard page
+        Given I log in as seeded user
+        When I click "createnewlpa"
+        Then I am taken to the lpa type page
+
+    @focus
     Scenario: Create LPA with error first
         Given I log in as appropriate test user
         When If I am on dashboard I click to create lpa
         Then I am taken to the lpa type page
         When I click "save"
         Then I see in the page text
-            | There was a problem |
-            | You need to do the following: |
+            | There is a problem |
             | Choose a type of LPA |
         When I choose Property and Finance
         And I click "save"
@@ -58,7 +64,7 @@ Feature: Create a Property and Finance LPA
             | address-postcode | PO38 1UL |
         And I click "form-save"
         Then I see in the page text
-            | There was a problem |
+            | There is a problem |
             | Enter the donor's title |
             | Enter a first name that's less than 54 characters long |
             | Enter a last name that's less than 62 characters long |

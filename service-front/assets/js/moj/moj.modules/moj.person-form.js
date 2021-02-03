@@ -85,10 +85,7 @@
           return returnDate;
 
         },
-        tplFormElementErrors = lpa.templates['errors.formElement'],
-        tplErrorsFormSummary = lpa.templates['errors.formSummary'],
-        tplAlert = lpa.templates['alert.withinForm'],
-        tplInputCheckbox = lpa.templates['input.checkbox'];
+        tplAlert = lpa.templates['alert.withinForm'];
 
       // Listen for changes to form
       $form

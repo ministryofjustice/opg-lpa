@@ -34,7 +34,7 @@ Feature: Signup
           | address-address1| 12 Highway Close |
           | address-postcode| wrongpostcode |
         And I click "save"
-        Then I see "There was a problem" in the page text
+        Then I see "There is a problem" in the page text
 
         # todo - note we should be selecting Mr like we do in the Valid scenario, not typing it in here, but due to system bug, after a previous error we get a text box
         # instead of a dropdown. The line below will therefore need to change to When I select Mr on name-title, once this bug is fixed
@@ -48,7 +48,7 @@ Feature: Signup
           | address-address1| 12 Highway Close |
           | address-postcode| PL45 9JA |
         And I click "save"
-        Then I see "There was a problem" in the page text
+        Then I see "There is a problem" in the page text
 
     @focus
     Scenario: Valid About Me details

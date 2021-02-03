@@ -17,7 +17,7 @@ casper.test.begin('Change password', {
 
         }).then(function() { // Change password validation test
 
-            var formVars = { 
+            var formVars = {
                 "password_current": password,
                 "password": "-",
                 "password_confirm": "*"
@@ -25,10 +25,10 @@ casper.test.begin('Change password', {
 
             casper.fill('#change-password', formVars, true);
 
-        }).waitForText('There was a problem changing your password', function(){
+        }).waitForText('There is a problem', function(){
 
             test.assertUrlMatch(new RegExp('^' + basePath + paths.passwordChange + '$'), "Back to Change Password page as expected due to failed validation");
-            
+
             test.assertTextExists( "Choose a new password that includes at least one digit (0-9)" , "Correct validation message shown for no digits");
             test.assertTextExists( "Choose a new password that includes at least one lower case letter (a-z)", "Correct validation message shown for no lowercase letters");
             test.assertTextExists( "Choose a new password that includes at least one capital letter (A-Z)" , "Correct validation message shown for no uppercase letters");

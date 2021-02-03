@@ -4,16 +4,15 @@ Feature: Create a Health and Welfare LPA
 
     Background:
         Given I ignore application exceptions
- 
-    #@focus
+
+    @focus
     Scenario: Create LPA with error first
         Given I log in as appropriate test user
         Then If I am on dashboard I click to create lpa
         And I am taken to the lpa type page
         When I click "save"
         Then I see in the page text
-            | There was a problem submitting the form |
-            | You need to do the following: |
+            | There is a problem |
             | Choose a type of LPA |
         When I choose Health and Welfare
         And I click "save"

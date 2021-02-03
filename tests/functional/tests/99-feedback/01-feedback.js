@@ -39,7 +39,7 @@ casper.test.begin("Check feedback page accessible", {
 
         }).thenClick('input[type=submit]', function() {
 
-        	test.assertTextExists('There was a problem submitting your feedback');
+        	test.assertTextExists('There is a problem');
 
         }).then(function() {
 
@@ -49,7 +49,7 @@ casper.test.begin("Check feedback page accessible", {
 
         }).thenClick('input[type=submit]', function() {
 
-        	test.assertTextExists('There was a problem submitting your feedback');
+        	test.assertTextExists('There is a problem');
 
         }).then(function() {
         	// click a radio button
