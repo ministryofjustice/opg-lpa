@@ -85,7 +85,6 @@ Feature: Create a Health and Welfare LPA
         When I click "save"
         Then I see in the page text
             | There is a problem |
-            | You need to do the following: |
             | Choose an option |
         When I check old style id "#canSustainLife-1"
         And I click "save"
