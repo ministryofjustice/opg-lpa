@@ -84,7 +84,7 @@ Feature: Create a Health and Welfare LPA
         And I can find old style id "#canSustainLife-0"
         When I click "save"
         Then I see in the page text
-            | There was a problem submitting the form |
+            | There is a problem |
             | You need to do the following: |
             | Choose an option |
         When I check old style id "#canSustainLife-1"
