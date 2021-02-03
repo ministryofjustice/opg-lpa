@@ -24,7 +24,7 @@ if [[ "$CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
     # so run the signup test first followed by all others
     echo "Running Cypress headless"
     ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp'
-    ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp'
+    ./node_modules/.bin/cypress-tags run --parallel -e TAGS='not @SignUp'
 else
     echo "Running Cypress"
     # pass supplied args to cypress
