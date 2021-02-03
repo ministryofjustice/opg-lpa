@@ -45,9 +45,11 @@ Then("I see form prepopulated with", (dataTable) => {
 });
 
 Then("I see {string} prepopulated with {string}", (object, value) => {
-        cy.get("[data-cy=" + object + "]").should("have.value",value);
+    // set higher timeout because sometimes cypress takes more than the default 4 secs to fill in an element
+        cy.get("[data-cy=" + object + "]", { timeout: 10000 }).should("have.value",value);
 });
 
 Then("I see old style id {string} prepopulated with {string}", (object, value) => {
-        cy.get(object).should("have.value",value);
+    // set higher timeout because sometimes cypress takes more than the default 4 secs to fill in an element
+        cy.get(object, { timeout: 10000 }).should("have.value",value);
 });
