@@ -39,8 +39,6 @@ Feature: Password
         Then I am taken to the login page
         And I see "Password successfully reset" in the page text
         When I log in with new password
-        # accept either type or dashboard page , so we're agnostic as to what has previously happened to this user
-        Then I am taken to the type or dashboard page
         # change password back to old one. This wasn't in the original casper tests, but ensures this feature doesn't have any side effects
         When I visit link containing "Your details"
         Then I am taken to "/user/about-you"
