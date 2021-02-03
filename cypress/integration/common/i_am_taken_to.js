@@ -52,12 +52,11 @@ Then(`I am taken to the post logout url`, () => {
 })
 
 function checkOnPageWithPath(pathRegex) {
-    cy.getLpaId().then((lpaId) => { checkPath(pathRegex, lpaId); });
-}
-
-function checkPath(path, lpaId) {
-    var pathWithLpaId = path.replace('\\d+', lpaId);
-    cy.url().should('eq',Cypress.config().baseUrl + pathWithLpaId);
+    // get the current lpaId, put this in the path regex, make sure that's the url we're now on
+    cy.getLpaId().then((lpaId) => { 
+        var pathWithLpaId = pathRegex.replace('\\d+', lpaId);
+        cy.url().should('eq',Cypress.config().baseUrl + pathWithLpaId);
+    });
 }
 
 function checkAccordionHeaderContains(text) {
