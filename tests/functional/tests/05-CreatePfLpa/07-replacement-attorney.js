@@ -134,7 +134,7 @@ casper.test.begin("Checking user can add replacement attorney", {
 
             test.info("Clicked [Save details] button to submit invalid attorney details");
 
-        }).waitForText('There was a problem submitting the form', function(){
+        }).waitForText('There is a problem', function(){
 
             test.assertTextExists( "Enter the replacement attorney's title" , "Correct validation message shown for blank title");
             test.assertTextExists( "Enter a first name that's less than 51 characters long", "Correct validation message shown for too long first name");

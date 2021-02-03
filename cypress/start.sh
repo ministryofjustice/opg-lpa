@@ -19,17 +19,18 @@ for i in "$@" ; do
     fi
 done
 
-if [[ $GUI == "true" ]] || [[ $CI != "true" ]] ; then
-    echo "Running Cypress"
-# pass supplied args to cypress
-    CYPRESS_CMD="cypress $@"
-    echo $CYPRESS_CMD
-    $CYPRESS_CMD
-else
-    # Its headless (used in CircleCI) so run the signup test first followed by all others
+if [[ "$CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
+    # It's CI (used in CircleCI) or headless (local CLI runs)
+    # so run the signup test first followed by all others
     echo "Running Cypress headless"
     ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp'
     ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp'
+else
+    echo "Running Cypress"
+    # pass supplied args to cypress
+    CYPRESS_CMD="cypress $@"
+    echo $CYPRESS_CMD
+    $CYPRESS_CMD
 fi
 
 
