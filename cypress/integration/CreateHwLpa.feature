@@ -16,7 +16,7 @@ Feature: Create a Health and Welfare LPA
             | Choose a type of LPA |
         When I choose Health and Welfare
         And I click "save"
-        Then I am taken to the donor page 
+        Then I am taken to the donor page
         And I see "This LPA covers health and welfare" in the page text
         And I cannot find "save-and-continue"
         When I click "add-donor"
@@ -45,7 +45,7 @@ Feature: Create a Health and Welfare LPA
         # casper simply checked for 6 options so we do too, but we may ultimately wish to check the values
         Then I can find old style id "#address-search-result" with 6 options
         When I select "Mrs" on "name-title"
-        And I force fill out  
+        And I force fill out
             | name-first | Nancy |
             | name-last | Garrison |
             | dob-date-day| 22 |
@@ -81,11 +81,11 @@ Feature: Create a Health and Welfare LPA
         Then I am taken to the life sustaining page
         And I see "Who does the donor want to make decisions about life-sustaining treatment?" in the page text
         # in this test we check CanSustainLife-0 (no option) exists, then a few lines down we actually click canSustainLife-1 (yes)
-        And I can find old style id "#canSustainLife-0"
+        And I can find "canSustainLife-0"
         When I click "save"
         Then I see in the page text
             | There is a problem |
             | Choose an option |
-        When I check old style id "#canSustainLife-1"
+        When I check "canSustainLife-1"
         And I click "save"
         Then I am taken to the primary attorney page

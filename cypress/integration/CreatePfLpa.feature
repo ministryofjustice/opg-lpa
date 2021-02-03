@@ -51,7 +51,7 @@ Feature: Create a Property and Finance LPA
         And I click element marked "Find UK address"
         Then I can find old style id "#address-search-result" with 6 options
         And I can find "name-title" with 8 options
-        When I force fill out  
+        When I force fill out
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | dob-date-day | 22 |
@@ -72,7 +72,7 @@ Feature: Create a Property and Finance LPA
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
         When I select "Mrs" on "name-title"
-        And I force fill out  
+        And I force fill out
             | name-first | Nancy |
             | name-last | Garrison |
             | dob-date-day| 22 |
@@ -113,7 +113,7 @@ Feature: Create a Property and Finance LPA
         Then I see in the page text
             | There is a problem |
             | Choose when your LPA can be used |
-        When I check old style id "#when-now"
+        When I check "when-now"
         And I click "save"
         Then I am taken to the primary attorney page
         And I cannot find "save"
@@ -123,7 +123,7 @@ Feature: Create a Property and Finance LPA
         And I can find "name-title" with 8 options
         And I can find "use-my-details"
         And I can find "use-trust-corporation"
-        And I force fill out  
+        And I force fill out
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | dob-date-day| 22 |
@@ -144,7 +144,7 @@ Feature: Create a Property and Finance LPA
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
         When I select "Mrs" on "name-title"
-        And I force fill out  
+        And I force fill out
             | name-first | Amy |
             | name-last | Wheeler |
             | dob-date-day| 22 |
@@ -170,7 +170,7 @@ Feature: Create a Property and Finance LPA
         #Test adding same attorney twice
         When I click "add-attorney"
         When I select "Mrs" on "name-title"
-        And I force fill out  
+        And I force fill out
             | name-first | Amy |
             | name-last | Wheeler |
             | dob-date-day| 22 |
@@ -184,7 +184,7 @@ Feature: Create a Property and Finance LPA
         Then I see "There is also an attorney called Amy Wheeler. A person cannot be named as an attorney twice on the same LPA." in the page text
         # Add 2cnd primary attorney
         When I select "Mr" on "name-title"
-        And I force fill out  
+        And I force fill out
             | name-first | David |
             | name-last | Wheeler |
             | dob-date-day| 12 |
@@ -208,7 +208,7 @@ Feature: Create a Property and Finance LPA
         And I am taken to the lpa type page
         When I click "save"
         Then I see in the page text
-            | There was a problem submitting the form |
+            | There is a problem |
             | Choose a type of LPA |
         And I visit link containing "Choose a type of LPA"
-        Then I am focused on "property-and-financial"
+        Then I am focused on "type-property-and-financial"

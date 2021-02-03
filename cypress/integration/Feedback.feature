@@ -32,4 +32,4 @@ Feature: Feedback
         And I see "Select a rating for this service" in the page text
         # this is the link in the error summary
         When I visit link containing "Select a rating for this service"
-        Then I am focused on "very-satisfied"
+        Then I am focused on "rating-very-satisfied"
