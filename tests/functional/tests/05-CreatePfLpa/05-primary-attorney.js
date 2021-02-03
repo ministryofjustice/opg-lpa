@@ -121,7 +121,7 @@ casper.test.begin("Checking user can add primary attorney", {
 
             test.info("Clicked [Save details] button to submit invalid attorney details");
 
-        }).waitForText('There was a problem submitting the form', function(){
+        }).waitForText('There is a problem', function(){
 
             test.assertTextExists( "Enter the attorney's title" , "Correct validation message shown for blank title");
             test.assertTextExists( "Enter a first name that's less than 51 characters long", "Correct validation message shown for too long first name");
@@ -357,7 +357,7 @@ casper.test.begin("Checking user can add primary attorney", {
 
             test.info("Clicked [Save details] button to submit invalid trust corporation's details");
 
-        }).waitForText('There was a problem submitting the form', function(){
+        }).waitForText('There is a problem', function(){
 
             test.assertTextExists( "Enter a company name that's less than 76 characters long", "Correct validation message shown for too long company name");
             test.assertTextExists( "Enter a registration number that's less than 76 characters long", "Correct validation message shown for too long reg number");

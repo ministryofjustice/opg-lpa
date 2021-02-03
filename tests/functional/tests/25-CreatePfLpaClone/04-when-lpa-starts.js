@@ -32,7 +32,7 @@ casper.test.begin("Checking user can set when lpa starts", {
             test.info('Clicked [Save and continue] button to submit the form without user input values');
 
             // check error handling and response
-            test.assertExists('div.error-summary h1#error-heading', 'Error messages are displayed as expected');
+            test.assertExists('div.error-summary h2#error-heading', 'Error messages are displayed as expected');
             test.assertExists('div.error-summary ul.error-summary-list li', 'There is at least one error displayed.');
 
         }).thenClick('input[type="radio"][name="when"][value="no-capacity"]', function() {

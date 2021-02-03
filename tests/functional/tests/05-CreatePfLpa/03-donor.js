@@ -146,7 +146,7 @@ casper.test.begin("Checking user can add donor", {
 
             test.info("Clicked [Save details] button to submit invalid donor's details");
 
-        }).waitForText('There was a problem submitting the form', function(){
+        }).waitForText('There is a problem', function(){
 
             test.assertTextExists( "Enter the donor's title" , "Correct validation message shown for blank title");
             test.assertTextExists( "Enter a first name that's less than 54 characters long", "Correct validation message shown for too long first name");
@@ -154,7 +154,7 @@ casper.test.begin("Checking user can add donor", {
             test.assertTextExists( "Change address line 1 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 1");
             test.assertTextExists( "Change address line 2 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 2");
             test.assertTextExists( "Change address line 3 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 3");
-            
+
         }).then(function() {
 
             // populate the donor form

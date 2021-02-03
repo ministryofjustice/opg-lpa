@@ -27,7 +27,7 @@
         value: isRepeatApplicationValueOptions['is-repeat'].value,
         'div-attributes': {
             'data-target': 'repeat-application-details'
-        }        
+        }
     },
     'is-new': {
         label: "No",
@@ -82,12 +82,12 @@
         {{ formElement(form.getCsrf) }}
 
         {# Error summary #}
-        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+        {{ macros.formErrorSummary(error,form) }}
 
         <div class="form-group {{ isRepeatApplication.getMessages|length > 0 ? 'form-group-error'}}">
             <fieldset id="isRepeatApplication" class="inline">
                 <legend class="visually-hidden">Is this a repeat application?</legend>
-                
+
                     {{ formElementErrorsV2(isRepeatApplication) }}
                     {{ formRadio(isRepeatApplication) }}
 

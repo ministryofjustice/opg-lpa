@@ -50,7 +50,7 @@
     {{ form().openTag( form )|raw }}
         {{ formElement(form.getCsrf) }}
 
-        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+        {{ macros.formErrorSummary(error,form) }}
 
         <fieldset id="canSustainLife">
             <legend class="visually-hidden">Life-sustaining treatment decision</legend>
