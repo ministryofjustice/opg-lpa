@@ -29,6 +29,12 @@ Cypress.Commands.add("OPGCheckA11y", (skipFailures) => {
     cy.checkA11y(null, null, printAccessibilityViolations, true);
 });
 
+Cypress.Commands.add("getLpaId", () => {
+    cy.get('@donorPageUrl').then((donorPageUrl) => { 
+        return donorPageUrl.match(/\/(\d+)\//)[1];
+    });
+});
+
 // Print cypress-axe violations to the terminal
 function printAccessibilityViolations(violations) {
   cy.task(
