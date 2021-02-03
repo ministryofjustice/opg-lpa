@@ -111,7 +111,7 @@ Feature: Create a Property and Finance LPA
         And I can find old style id "#when-no-capacity"
         When I click "save"
         Then I see in the page text
-            | There was a problem |
+            | There is a problem |
             | You need to do the following: |
             | Choose when your LPA can be used |
         When I check old style id "#when-now"
@@ -137,7 +137,7 @@ Feature: Create a Property and Finance LPA
             | address-postcode| ST14 8NX |
         When I click "form-save"
         Then I see in the page text
-            | There was a problem |
+            | There is a problem |
             | Enter the attorney's title |
             | Enter a first name that's less than 51 characters long |
             | Enter a last name that's less than 51 characters long |
