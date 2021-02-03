@@ -192,4 +192,6 @@ Feature: Create a Property and Finance LPA
             | address-postcode| ST14 8NX |
         And I click "form-save"
         Then I can find "save"
+        # check we can see the 2 attorneys listed
+        And I see "Mrs Amy Wheeler" in the page text
         And I see "Mr David Wheeler" in the page text
