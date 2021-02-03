@@ -47,7 +47,7 @@ Feature: Create a Property and Finance LPA
         And I can find "use-my-details"
         When I type "B1 1TF" into "postcode-lookup"
         # cypress is not reliable at filling in postcode fully before hitting next button, so, ensure it is now filled in
-        And I see "postcode-lookup" prepopulated with "B1 1TF"
+        And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
         And I click element marked "Find UK address"
         Then I can find old style id "#address-search-result" with 6 options
         And I can find "name-title" with 8 options
