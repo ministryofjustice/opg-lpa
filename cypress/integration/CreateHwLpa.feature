@@ -89,3 +89,66 @@ Feature: Create a Health and Welfare LPA
         When I check old style id "#canSustainLife-1"
         And I click "save"
         Then I am taken to the primary attorney page
+        And I cannot find "save"
+        When I click "add-attorney"
+        Then I can see popup
+        And I can find "form-cancel"
+        And I can find "name-title" with 8 options
+        And I can find "use-my-details"
+        When I select "Mrs" on "name-title"
+        And I force fill out  
+            | name-first | Amy |
+            | name-last | Wheeler |
+            | dob-date-day| 22 |
+            | dob-date-month| 10 |
+            | dob-date-year| 1988 |
+            | email-address| opglpademo+AmyWheeler@gmail.com |
+            | address-address1| Brickhill Cottage |
+            | address-address2| Birch Cross |
+            | address-address3| Marchington, Uttoxeter, Staffordshire |
+            | address-postcode| ST14 8NX |
+        And I click "form-save"
+        Then I can find "save"
+        And I see "Mrs Amy Wheeler" in the page text
+        # Casper checked for existence of delete link, here we click it then cancel, which is more thorough
+        When I visit link containing "Delete"
+        And I click "cancel"
+        # TODO replacement attorney commented out becos cypress currently refuses to click the link properly
+        #When I click "save"
+        #Then I am taken to the replacement attorney page
+        # next line is force visit because cypress seems to think link is hidden even it clearly isn't
+        #When I visit link containing "primary"
+        #Then I am taken to the primary attorney page
+        #Test adding same attorney twice
+        When I click "add-attorney"
+        When I select "Mrs" on "name-title"
+        And I force fill out  
+            | name-first | Amy |
+            | name-last | Wheeler |
+            | dob-date-day| 22 |
+            | dob-date-month| 10 |
+            | dob-date-year| 1988 |
+            | email-address| opglpademo+AmyWheeler@gmail.com |
+            | address-address1| Brickhill Cottage |
+            | address-address2| Birch Cross |
+            | address-address3| Marchington, Uttoxeter, Staffordshire |
+            | address-postcode| ST14 8NX |
+        Then I see "There is also an attorney called Amy Wheeler. A person cannot be named as an attorney twice on the same LPA." in the page text
+        # Add 2cnd primary attorney
+        When I select "Mr" on "name-title"
+        And I force fill out  
+            | name-first | David |
+            | name-last | Wheeler |
+            | dob-date-day| 12 |
+            | dob-date-month| 03 |
+            | dob-date-year| 1972 |
+            | email-address| opglpademo+DavidWheeler@gmail.com |
+            | address-address1| Brickhill Cottage |
+            | address-address2| Birch Cross |
+            | address-address3| Marchington, Uttoxeter, Staffordshire |
+            | address-postcode| ST14 8NX |
+        And I click "form-save"
+        Then I can find "save"
+        # check we can see the 2 attorneys listed
+        And I see "Mrs Amy Wheeler" in the page text
+        And I see "Mr David Wheeler" in the page text
