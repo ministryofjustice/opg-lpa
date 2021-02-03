@@ -4,16 +4,22 @@ Feature: Create a Property and Finance LPA
 
     Background:
         Given I ignore application exceptions
- 
-    #@focus
+
+    @focus
+    Scenario: Dashboard has Link to Type page
+        # we use seeded user here because a newly signed-up user would not yet have a dashboard page
+        Given I log in as seeded user
+        When I click "createnewlpa"
+        Then I am taken to the lpa type page
+
+    @focus
     Scenario: Create LPA with error first
         Given I log in as appropriate test user
         Then If I am on dashboard I click to create lpa
         And I am taken to the lpa type page
         When I click "save"
         Then I see in the page text
-            | There was a problem submitting the form |
-            | You need to do the following: |
+            | There is a problem |
             | Choose a type of LPA |
         Then I choose Property and Finance
         When I click "save"
@@ -43,7 +49,7 @@ Feature: Create a Property and Finance LPA
         And I click element marked "Find UK address"
         Then I can find old style id "#address-search-result" with 6 options
         And I can find old style id "#name-title" with 8 options
-        When I force fill out  
+        When I force fill out
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | dob-date-day | 22 |
@@ -56,7 +62,7 @@ Feature: Create a Property and Finance LPA
             | address-postcode | PO38 1UL |
         And I click "form-save"
         Then I see in the page text
-            | There was a problem submitting the form |
+            | There is a problem |
             | Enter the donor's title |
             | Enter a first name that's less than 54 characters long |
             | Enter a last name that's less than 62 characters long |
@@ -64,7 +70,7 @@ Feature: Create a Property and Finance LPA
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
         When I select "Mrs" on old style id "#name-title"
-        And I force fill out  
+        And I force fill out
             | name-first | Nancy |
             | name-last | Garrison |
             | dob-date-day| 22 |

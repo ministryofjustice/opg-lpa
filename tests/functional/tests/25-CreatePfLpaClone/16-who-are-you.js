@@ -11,9 +11,9 @@ casper.test.begin("Checking user can access who are you page", {
     },
 
     test: function(test) {
-    	
+
         casper.start(basePath + whoAreYourPath).then(function () {
-        	
+
             test.info('Current URL: ' + this.getCurrentUrl());
 
             test.assertUrlMatch(new RegExp('^' + basePath + whoAreYourPath + '$'), 'Page is on the expected URL.');
@@ -37,25 +37,25 @@ casper.test.begin("Checking user can access who are you page", {
             test.assertExists('input[type="text"][name="other"]', 'Found other text input element');
 
             test.assertExists('input[type="submit"][name="save"]', 'Found "Save and continue" button');
-        	
+
         }).thenClick('input[type="submit"][name="save"]', function() {
 
 			// check error handling and response
-			test.assertExists('div.error-summary h1#error-heading', 'Error messages are displayed as expected');
+			test.assertExists('div.error-summary h2#error-heading', 'Error messages are displayed as expected');
 			test.assertExists('div.error-summary ul.error-summary-list li', 'There is at least one error displayed.');
-        	
+
         }).thenClick('input[type="radio"][name="who"][value="donor"]', function() {
-        	
+
         	test.info('Selected the donor');
-        	
+
         }).thenClick('input[type="submit"][name="save"]', function() {
-        	
+
         	test.info('Clicked [Save and continue] button');
-        	
+
         	test.assertHttpStatus(200, 'Page returns a 200 when the "who-are-you" form is submitted');
-        	
+
         	test.info('Current URL: ' + this.getCurrentUrl());
-        	
+
         	// check after form submission, page is expected landing on correspondent page.
         	test.assertUrlMatch(new RegExp('^' + basePath + repeatApplicationPath + '$'), 'Page is on the expected URL.');
 
@@ -63,17 +63,17 @@ casper.test.begin("Checking user can access who are you page", {
 			test.assertExists('.accordion li.complete a[href="'+whoAreYouPath+'"]', 'Found an accordion bar link as expected');
 
 		}).thenClick('.accordion li.complete a[href="'+whoAreYouPath+'"]', function() {
-        	
+
         	test.info('Clicked the accordion bar for going to who are you page');
-        	
+
         	test.assertUrlMatch(new RegExp('^' + basePath + whoAreYourPath + '$'), 'Page is on the who are you page.');
-        	
+
         	test.assertNotExists('form[name="form-who-are-you"]', 'Page does not have form-who-are-you as expected');
-        	
+
         	test.assertSelectorHasText('a[href="'+repeatApplicationPath+'"]', 'Continue', 'Found the continue button as expected');
-        	
+
         });
-        
+
         casper.run(function () { test.done(); });
 
     } // test

@@ -136,7 +136,7 @@ casper.test.begin("Checking user can access correspondent page", {
 
             test.info("Clicked [Save details] button to submit invalid correspondent details");
 
-        }).waitForText('There was a problem submitting the form', function(){
+        }).waitForText('There is a problem', function(){
 
             test.assertTextExists( "Enter the correspondent's title" , "Correct validation message shown for blank title");
             test.assertTextExists( "Enter a first name that's less than 54 characters long", "Correct validation message shown for too long first name");
@@ -144,7 +144,7 @@ casper.test.begin("Checking user can access correspondent page", {
             test.assertTextExists( "Change address line 1 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 1");
             test.assertTextExists( "Change address line 2 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 2");
             test.assertTextExists( "Change address line 3 so that it has fewer than 51 characters", "Correct validation message shown for too long address line 3");
-            
+
         }).thenClick('form#form-correspondent a.js-form-popup[href="'+correspondentPath+'/edit"]', function() {
 
             test.info("Clicked [Back] button to go back to the radio button options");
@@ -210,10 +210,10 @@ casper.test.begin("Checking user can access correspondent page", {
 
             test.info('Clicked [Save and continue] button with no contact option selected');
 
-        }).waitForText('There was a problem submitting the form', function(){
+        }).waitForText('There is a problem', function(){
 
             test.assertTextExists( "Select at least one option" , "Correct validation message shown when no contact option chosen");
-            
+
         }).thenClick('input[type="checkbox"][name="correspondence[contactByEmail]"]', function() {
 
             test.info("Reselected Email to pass validation");

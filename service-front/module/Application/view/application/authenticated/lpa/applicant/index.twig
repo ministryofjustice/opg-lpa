@@ -110,7 +110,7 @@
     {{ form().openTag( form )|raw }}
         {{ formElement(form.getCsrf) }}
 
-        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+        {{ macros.formErrorSummary(error,form) }}
 
         <div class="form-group {{ whoIsRegistering.getMessages|length > 0 ? 'form-group-error'}}">
 
@@ -127,7 +127,7 @@
                         {{ formCheckbox(attorneyList) }}
                     </div>
                 </fieldset>
-            {% endif %}            
+            {% endif %}
         </div>
 
         <div class="form-group">

@@ -132,7 +132,7 @@
     {{ form().openTag( form )|raw }}
         {{ formElement(form.getCsrf) }}
 
-        {{ macros.formErrorSummary(error,form,'There was a problem submitting the form') }}
+        {{ macros.formErrorSummary(error,form) }}
 
         <div class="form-group {{ topLevelError ? 'form-group-error'}}">
 
@@ -140,7 +140,7 @@
 
                 <legend class="visually-hidden">Contact options</legend>
                 <h3 class="heading-medium flush--top">How would the person above prefer to be contacted?</h3>
-                
+
                 <p>Select how the correspondent would like to be contacted. You can choose more than one option.</p>
 
                 <div class="multiple-choice">
@@ -194,7 +194,7 @@
             <fieldset class="inline">
                 <legend class="visually-hidden">Language options</legend>
 
-            
+
                 {{ formRadio().outputOption(contactInWelsh, 'english')|raw }}
                 {{ formRadio().outputOption(contactInWelsh, 'welsh')|raw }}
             </fieldset>

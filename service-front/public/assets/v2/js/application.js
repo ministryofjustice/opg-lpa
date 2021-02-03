@@ -23693,19 +23693,6 @@ this["lpa"]["templates"]["dialog.confirmRepeatApplication"] = Handlebars.templat
     + "</a>\n    </div>\n\n</div>\n";
 },"useData":true});
 
-this["lpa"]["templates"]["errors.formElement"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    var helper, lookupProperty = container.lookupProperty || function(parent, propertyName) {
-        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
-          return parent[propertyName];
-        }
-        return undefined
-    };
-
-  return "<div class=\"form-element-errors\">\n    <div class=\"group validation\">\n        <span class=\"validation-message\">"
-    + container.escapeExpression(((helper = (helper = lookupProperty(helpers,"validationMessage") || (depth0 != null ? lookupProperty(depth0,"validationMessage") : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"validationMessage","hash":{},"data":data,"loc":{"start":{"line":3,"column":41},"end":{"line":3,"column":62}}}) : helper)))
-    + "</span>\n    </div>\n</div>";
-},"useData":true});
-
 this["lpa"]["templates"]["errors.formMessage"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -23717,31 +23704,6 @@ this["lpa"]["templates"]["errors.formMessage"] = Handlebars.template({"compiler"
   return "<span class=\"error-message text\">"
     + container.escapeExpression(((helper = (helper = lookupProperty(helpers,"errorMessage") || (depth0 != null ? lookupProperty(depth0,"errorMessage") : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"errorMessage","hash":{},"data":data,"loc":{"start":{"line":1,"column":33},"end":{"line":1,"column":49}}}) : helper)))
     + "</span>";
-},"useData":true});
-
-this["lpa"]["templates"]["errors.formSummary"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"validation-summary group\" role=\"alert\" aria-labelledby=\"error-heading\" tabindex=\"-1\">\n    <h1 id=\"error-heading\">There was a problem submitting the form</h1>\n\n    <p>Because of the following problems:</p>\n    <ol>\n    </ol>\n</div>\n";
-},"useData":true});
-
-this["lpa"]["templates"]["input.checkbox"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", alias4=container.escapeExpression, lookupProperty = container.lookupProperty || function(parent, propertyName) {
-        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
-          return parent[propertyName];
-        }
-        return undefined
-    };
-
-  return "<fieldset class=\""
-    + alias4(((helper = (helper = lookupProperty(helpers,"elementJSref") || (depth0 != null ? lookupProperty(depth0,"elementJSref") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementJSref","hash":{},"data":data,"loc":{"start":{"line":1,"column":17},"end":{"line":1,"column":33}}}) : helper)))
-    + "\">\n    <div class=\"input-checkbox group\">\n        <label for=\""
-    + alias4(((helper = (helper = lookupProperty(helpers,"elementName") || (depth0 != null ? lookupProperty(depth0,"elementName") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data,"loc":{"start":{"line":3,"column":20},"end":{"line":3,"column":35}}}) : helper)))
-    + "\">\n            <input type=\"checkbox\" name=\""
-    + alias4(((helper = (helper = lookupProperty(helpers,"elementName") || (depth0 != null ? lookupProperty(depth0,"elementName") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data,"loc":{"start":{"line":4,"column":41},"end":{"line":4,"column":56}}}) : helper)))
-    + "\" id=\""
-    + alias4(((helper = (helper = lookupProperty(helpers,"elementName") || (depth0 != null ? lookupProperty(depth0,"elementName") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementName","hash":{},"data":data,"loc":{"start":{"line":4,"column":62},"end":{"line":4,"column":77}}}) : helper)))
-    + "\" class=\"confirmation-validation\" value=\"1\"\n                   required=\"required\">\n            "
-    + ((stack1 = ((helper = (helper = lookupProperty(helpers,"elementLabel") || (depth0 != null ? lookupProperty(depth0,"elementLabel") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"elementLabel","hash":{},"data":data,"loc":{"start":{"line":6,"column":12},"end":{"line":6,"column":30}}}) : helper))) != null ? stack1 : "")
-    + "\n        </label>\n    </div>\n</fieldset>\n";
 },"useData":true});
 
 this["lpa"]["templates"]["popup.close"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -24690,7 +24652,7 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
     },
 
     postcodeError: function (jqXHR, textStatus, errorThrown) {
-      var errorText = 'There was a problem: ';
+      var errorText = 'There is a problem: ';
 
       this.$wrap.find('.js-PostcodeLookup__search-btn').spinner('off');
 
@@ -24880,10 +24842,7 @@ this["lpa"]["templates"]["shared.loading-popup"] = Handlebars.template({"compile
           return returnDate;
 
         },
-        tplFormElementErrors = lpa.templates['errors.formElement'],
-        tplErrorsFormSummary = lpa.templates['errors.formSummary'],
-        tplAlert = lpa.templates['alert.withinForm'],
-        tplInputCheckbox = lpa.templates['input.checkbox'];
+        tplAlert = lpa.templates['alert.withinForm'];
 
       // Listen for changes to form
       $form
