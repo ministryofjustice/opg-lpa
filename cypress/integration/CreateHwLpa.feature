@@ -39,8 +39,8 @@ Feature: Create a Health and Welfare LPA
         # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
         And I can find "name-title" with 8 options
         When I type "B1 1TF" into "postcode-lookup"
-        # pause here because the next click in practice sometimes happens before cypress has fully filled in the postcode
-        And I pause
+        # cypress is not reliable at filling in postcode fully before hitting next button, so, ensure it is now filled in
+        And I see "postcode-lookup" prepopulated with "B1 1TF"
         And I click element marked "Find UK address"
         # casper simply checked for 6 options so we do too, but we may ultimately wish to check the values
         Then I can find old style id "#address-search-result" with 6 options
