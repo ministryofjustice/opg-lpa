@@ -112,7 +112,6 @@ Feature: Create a Property and Finance LPA
         When I click "save"
         Then I see in the page text
             | There is a problem |
-            | You need to do the following: |
             | Choose when your LPA can be used |
         When I check old style id "#when-now"
         And I click "save"
