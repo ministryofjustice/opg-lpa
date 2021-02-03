@@ -4,6 +4,10 @@ Then(`I can find {string}`, (object) => {
   cy.get("[data-cy=" + object + "]");
 })
 
+Then(`I can find old style id {string}`, (object) => {
+  cy.get(object);
+})
+
 Then(`I cannot find {string}`, (object) => {
   cy.get("[data-cy=" + object + "]").should('not.exist');
 })
@@ -15,6 +19,10 @@ Then(`I can find link pointing to {string}`, (linkAddr) => {
 
 Then(`I can find old style id {string} with {int} options`, (object, count) => {
   cy.get(object).children().should("have.length", count);
+})
+
+Then(`I can find {string} with {int} options`, (object, count) => {
+  cy.get("[data-cy=" + object + "]").children().should("have.length", count);
 })
 
 // used for dropdown list for example

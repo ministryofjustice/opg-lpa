@@ -14,8 +14,8 @@
 <div class="form">
     <h2 class="heading-medium">{{ certificateProviderName }}</h2>
     <p>{{ certificateProviderAddress }}</p>
-    <a href="{{ deleteRoute }}" class="button button-warning flush--left">Delete</a>
-    <a href="{{ cancelUrl }}" class="button button-secondary js-cancel">Cancel</a>
+    <a href="{{ deleteRoute }}" data-cy="delete" class="button button-warning flush--left">Delete</a>
+    <a href="{{ cancelUrl }}" data-cy="cancel" class="button button-secondary js-cancel">Cancel</a>
 </div>
 
 {% endblock %}

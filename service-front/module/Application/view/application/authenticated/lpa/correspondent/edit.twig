@@ -66,47 +66,56 @@
 
 {{ title.setAttributes({
     id:'name-title',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'name-title'
 }) ? '' }}
 
 {{ firstname.setAttributes({
     id: 'name-first',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'name-first'
 }) ? '' }}
 
 {{ lastname.setAttributes({
     id: 'name-last',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'name-last'
 }) ? '' }}
 
 {{ company.setAttributes({
     id:'company-name',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'company-name'
 }) ? '' }}
 
 {{ address1.setAttributes({
     id:'address-address1',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'address-address1'
 }) ? '' }}
 
 {{ address2.setAttributes({
     id:'address-address2',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'address-address2'
 }) ? '' }}
 
 {{ address3.setAttributes({
     id:'address-address3',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'address-address3'
 }) ? '' }}
 
 {{ postcode.setAttributes({
     id: 'address-postcode',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'address-postcode'
 }) ? ''}}
 
 {{ email.setAttributes({
     id: 'email-address',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'email-address'
 }) ? ''}}
 
 {{ phone.setAttributes({
@@ -114,7 +123,8 @@
     class: 'form-control',
     type: 'tel',
     pattern: '[0-9]*',
-    inputmode: 'numeric'
+    inputmode: 'numeric',
+    'data-cy': 'phone-number'
 }) ? ''}}
 
 {# form fields labels #}

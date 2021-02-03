@@ -43,7 +43,8 @@
       $select = $('<select>', {
         'id': $titleInput.attr('id'),
         'name': $titleInput.attr('name'),
-        'class': 'js-TitleSwitch-select form-control'
+        'class': 'js-TitleSwitch-select form-control',
+        'data-cy' : $titleInput.attr('id')
       });
 
       // add options and select an existing value if possible
@@ -70,7 +71,8 @@
           'name': $titleInput.attr('name'),
           'class': 'form-control',
           'type':'text',
-          'placeholder': 'Please specify'
+          'placeholder': 'Please specify',
+          'data-cy' : $titleInput.attr('id')
         });
 
         //  Replace the select input with the new text input
