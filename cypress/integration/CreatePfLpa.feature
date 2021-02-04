@@ -161,12 +161,10 @@ Feature: Create a Property and Finance LPA
         # Casper checked for existence of delete link, here we click it then cancel, which is more thorough
         When I visit link containing "Delete"
         And I click "cancel"
-        # TODO replacement attorney commented out becos cypress currently refuses to click the link properly
-        #When I click "save"
-        #Then I am taken to the replacement attorney page
-        # next line is force visit because cypress seems to think link is hidden even it clearly isn't
-        #When I visit link containing "primary"
-        #Then I am taken to the primary attorney page
+        When I click "save"
+        Then I am taken to the replacement attorney page
+        When I click third occurrence of "accordion-view-change"
+        Then I am taken to the primary attorney page
         #Test adding same attorney twice
         When I click "add-attorney"
         When I select "Mrs" on "name-title"

@@ -113,12 +113,10 @@ Feature: Create a Health and Welfare LPA
         # Casper checked for existence of delete link, here we click it then cancel, which is more thorough
         When I visit link containing "Delete"
         And I click "cancel"
-        # TODO replacement attorney commented out becos cypress currently refuses to click the link properly
-        #When I click "save"
-        #Then I am taken to the replacement attorney page
-        # next line is force visit because cypress seems to think link is hidden even it clearly isn't
-        #When I visit link containing "primary"
-        #Then I am taken to the primary attorney page
+        When I click "save"
+        Then I am taken to the replacement attorney page
+        When I click third occurrence of "accordion-view-change"
+        Then I am taken to the primary attorney page
         #Test adding same attorney twice
         When I click "add-attorney"
         When I select "Mrs" on "name-title"
@@ -152,3 +150,18 @@ Feature: Create a Health and Welfare LPA
         # check we can see the 2 attorneys listed
         And I see "Mrs Amy Wheeler" in the page text
         And I see "Mr David Wheeler" in the page text
+        When I click second occurrence of "Edit"
+        Then I can see popup
+        And I see "name-title" prepopulated with "Mr"
+        And I see form prepopulated with
+            | name-first | David |
+            | name-last | Wheeler |
+            | dob-date-day| 12 |
+            | dob-date-month| 03 |
+            | dob-date-year| 1972 |
+            | email-address| opglpademo+DavidWheeler@gmail.com |
+            | address-address1| Brickhill Cottage |
+            | address-address2| Birch Cross |
+            | address-address3| Marchington, Uttoxeter, Staffordshire |
+            | address-postcode| ST14 8NX |
+        When I click "form-cancel"
