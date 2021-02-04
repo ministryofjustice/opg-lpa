@@ -33,7 +33,7 @@ casper.test.begin("Checking user can access fee reduction page", {
 
     		test.assertExists('input[type="submit"][name="save"]', 'Found "Save and continue" button');
 
-        	test.info('Click submit button without selecting a raido option');
+        	test.info('Click submit button without selecting a radio option');
 
         }).thenClick('input[type="submit"][name="save"]', function() {
 
@@ -46,28 +46,28 @@ casper.test.begin("Checking user can access fee reduction page", {
 			test.assertNotVisible('#receives-benefits', 'Description about fee exemption is hidden as expected');
 			test.assertNotVisible('#universal-credit', 'Description about universal credit is hidden as expected');
 
-        }).thenClick('input[type="radio"][id="notApply"]', function() {
+        }).thenClick('input[type="radio"][value="notApply"]', function() {
 
         	test.info('Click on not applying reduced fee radio option');
 
 			test.assertNotVisible('#receives-benefits', 'Description about fee exemption is hidden as expected');
 			test.assertNotVisible('#universal-credit', 'Description about universal credit is hidden as expected');
 
-        }).thenClick('input[type="radio"][id="reducedFeeLowIncome"]', function() {
+        }).thenClick('input[type="radio"][value="reducedFeeLowIncome"]', function() {
 
         	test.info('Click on low income radio option');
 
 			test.assertNotVisible('#receives-benefits', 'Description about fee exemption is hidden as expected');
 			test.assertNotVisible('#universal-credit', 'Description about universal credit is hidden as expected');
 
-        }).thenClick('input[type="radio"][id="reducedFeeUniversalCredit"]', function() {
+        }).thenClick('input[type="radio"][value="reducedFeeUniversalCredit"]', function() {
 
         	test.info('Click on universal credit radio option');
 
 			test.assertVisible('#universal-credit', 'Description about universal credit is displayed as expected');
 			test.assertNotVisible('#receives-benefits', 'Description about fee exemption is hidden as expected');
 
-        }).thenClick('input[type="radio"][id="reducedFeeReceivesBenefits"]', function() {
+        }).thenClick('input[type="radio"][value="reducedFeeReceivesBenefits"]', function() {
 
         	test.info('Click on exemption radio option');
 

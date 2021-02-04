@@ -56,14 +56,14 @@ casper.test.begin("Checking user can access fee reduction page", {
             test.assertVisible('#universal-credit', 'Description about universal credit is displayed as expected');
             test.assertNotVisible('#receives-benefits', 'Description about fee exemption is hidden as expected');
 
-        }).thenClick('input[type="radio"][id="reducedFeeLowIncome"]', function() {
+        }).thenClick('input[type="radio"][value="reducedFeeLowIncome"]', function() {
 
             test.info('Click on low income radio option');
 
             test.assertNotVisible('#revised-fee-uc', 'Description about universal credit is hidden as expected');
             test.assertNotVisible('#revised-fee-0', 'Description about fee exemption is hidden as expected');
 
-        }).thenClick('input[type="radio"][id="notApply"]', function() {
+        }).thenClick('input[type="radio"][value="notApply"]', function() {
 
             test.info('Click on not applying reduced fee radio option');
 
