@@ -4,6 +4,10 @@ When(`I type {string} into {string}`, (value, id) => {
         cy.get("[data-cy=" + id + "]").type(value);
 })
 
+When(`I type {string} into {string} working around cypress bug`, (value, id) => {
+        cy.get("[data-cy=" + id + "]").invoke('val', value)
+})
+
 When(`I type {string} into old style id {string}`, (value, id) => {
     // this is for elements that we have been unable to tag with data-cy=
         cy.get(id).type(value);
@@ -46,7 +50,7 @@ Then("I see form prepopulated with", (dataTable) => {
 
 Then("I see {string} prepopulated within timeout with {string}", (object, value) => {
     // set higher timeout because sometimes cypress takes more than the default 4 secs to fill in an element
-        cy.get("[data-cy=" + object + "]", { timeout: 60000 }).should("have.value",value);
+        cy.get("[data-cy=" + object + "]", { timeout: 10000 }).should("have.value",value);
 });
 
 Then("I see {string} prepopulated with {string}", (object, value) => {

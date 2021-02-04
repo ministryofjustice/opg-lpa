@@ -45,7 +45,7 @@ Feature: Create a Property and Finance LPA
         Then I can see popup
         # todo - casper just looked for use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
-        When I type "B1 1TF" into "postcode-lookup"
+        When I type "B1 1TF" into "postcode-lookup" working around cypress bug
         # cypress is not reliable at filling in postcode fully before hitting next button, so, ensure it is now filled in
         And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
         And I click element marked "Find UK address"
