@@ -4,105 +4,119 @@ updates:
   - package-ecosystem: "npm"
     directory: "/service-front"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "thursday"
     versioning-strategy: lockfile-only
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 2
 
   # Enable version updates for service-front composer
   - package-ecosystem: "composer"
     directory: "/service-front"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "sunday"
     versioning-strategy: lockfile-only
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 2
 
   # Enable version updates for service-admin composer
   - package-ecosystem: "composer"
     directory: "/service-admin"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "sunday"
     versioning-strategy: lockfile-only
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 2
 
 # Enable version updates for service-pdf composer
   - package-ecosystem: "composer"
     directory: "/service-pdf"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "sunday"
     versioning-strategy: lockfile-only
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 2
 
     # Enable version updates for service-api composer
   - package-ecosystem: "composer"
     directory: "/service-api"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "sunday"
     versioning-strategy: lockfile-only
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 2
 
     # Enable version updates for tests composer
   - package-ecosystem: "composer"
     directory: "/tests"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "sunday"
     versioning-strategy: lockfile-only
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 2
 
   # Enable version updates for root composer
   - package-ecosystem: "composer"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "sunday"
     versioning-strategy: lockfile-only
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 2
 
  # Enable version updates for docker on service-front web
   - package-ecosystem: "docker"
     directory: "/service-front/docker/web"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
     open-pull-requests-limit: 1
 
  # Enable version updates for docker on service-front app
   - package-ecosystem: "docker"
     directory: "/service-front/docker/app"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
     open-pull-requests-limit: 1
 
   # Enable version updates for docker on service-api web
   - package-ecosystem: "docker"
     directory: "/service-api/docker/web"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
     open-pull-requests-limit: 1
 
  # Enable version updates for docker on service-api app
   - package-ecosystem: "docker"
     directory: "/service-api/docker/app"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
     open-pull-requests-limit: 1
 
   # Enable version updates for docker on service-admin web
   - package-ecosystem: "docker"
     directory: "/service-admin/docker/web"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
     open-pull-requests-limit: 1
 
  # Enable version updates for docker on service-admin app
   - package-ecosystem: "docker"
     directory: "/service-admin/docker/app"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
     open-pull-requests-limit: 1
 
   # Enable version updates for docker on cypress
   - package-ecosystem: "docker"
     directory: "/cypress"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
     open-pull-requests-limit: 1
 
 
@@ -110,12 +124,14 @@ updates:
   - package-ecosystem: "docker"
     directory: "/tests"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
     open-pull-requests-limit: 1
 
   # Enable version updates for docker on tests/pa11y
   - package-ecosystem: "docker"
     directory: "/tests/pa11y"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
     open-pull-requests-limit: 1
