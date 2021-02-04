@@ -15,10 +15,16 @@ var SessionTimeoutDialog = function (options) {
 
     var that = this;
 
+    var debugTimerMs = 0;
+    var debug = /debug.dialog.sessionMs=([0-9]+)/.exec(window.location.href);
+    if (debug) {
+        debugTimerMs = parseInt(debug[1]);
+    }
+
     if (typeof options.element === 'undefined') {
         throw 'Popup element not provided';
     }
-    
+
     if (typeof options.warningPeriodMs === 'undefined') {
         throw 'Timeout warning in Milliseconds not provided';
     }
@@ -49,7 +55,7 @@ var SessionTimeoutDialog = function (options) {
             'height': $(document).height() + 'px'
         });
         underlay.show();
-        that.trapNavigation();
+        that.trapNavigation([continueButton[0], logoutButton[0]]);
         continueButton.focus();
 
         GOVUK.performance.sendGoogleAnalyticsEvent('timeout warning', 'warning popup');
@@ -73,6 +79,9 @@ var SessionTimeoutDialog = function (options) {
                 } else if (data.status === 200) {
                     // Check how much time left
                     var remainingMs = data.responseJSON.remainingSeconds * 1000;
+                    if (debug) {
+                        remainingMs = that.warningPeriodMs - 1000;
+                    }
 
                     if (remainingMs <= that.warningPeriodMs) {
                         // If less time remaining than the warning period then show the warning and check again just
@@ -116,26 +125,47 @@ var SessionTimeoutDialog = function (options) {
         this.releaseNavigation();
     };
 
-    this.trapNavigation = function () {
-        continueButton.keydown(function (e) {
-            if (e.key === 'Tab' && e.shiftKey) {
-                e.preventDefault();
-                logoutButton.focus();
+    this.trapNavigation = function (focusables) {
+        var currentElementIndex = 0;
+        focusables[currentElementIndex].focus();
+
+        var lastFocusableIndex = focusables.length - 1;
+
+        this.element.keydown(function (e) {
+            // capture only tab events on this dialog
+            if (e.key !== 'Tab') {
+                return true;
             }
-        });
-        logoutButton.keydown(function (e) {
-            if (e.key === 'Tab' && !e.shiftKey) {
-                e.preventDefault();
-                continueButton.focus();
+            e.preventDefault();
+
+            var direction = 1;
+            if (e.shiftKey) {
+                direction = -1;
             }
+
+            currentElementIndex = currentElementIndex + direction;
+
+            // cycle to start/end of list if out of bounds
+            if (currentElementIndex > lastFocusableIndex) {
+                currentElementIndex = 0;
+            }
+            else if (currentElementIndex < 0) {
+                currentElementIndex = lastFocusableIndex;
+            }
+
+            focusables[currentElementIndex].focus();
         });
     };
 
     this.releaseNavigation = function () {
-        continueButton.off('keydown');
-        logoutButton.off('keydown');
+        this.element.off('keydown');
     };
 
     // Start countdown
-    this.startExpiryCheckCountdown(initialSessionTimeoutMs - this.warningPeriodMs);
+    var countdownTimerMs = initialSessionTimeoutMs - this.warningPeriodMs;
+    if (debugTimerMs > 0) {
+        countdownTimerMs = debugTimerMs;
+    }
+
+    this.startExpiryCheckCountdown(countdownTimerMs);
 };
