@@ -5,6 +5,8 @@ When(`I type {string} into {string}`, (value, id) => {
 })
 
 When(`I type {string} into {string} working around cypress bug`, (value, id) => {
+    // it seems that sometimes Cypress doesn't fill out text properly, for example in postcode lookup. This step
+    // fills it in a different way in an attempt to workaround this bug
         cy.get("[data-cy=" + id + "]").invoke('val', value)
 })
 

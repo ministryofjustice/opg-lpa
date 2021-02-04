@@ -18,6 +18,7 @@ Feature: Create a Health and Welfare LPA
         And I click "save"
         Then I am taken to the donor page 
         And I see "This LPA covers health and welfare" in the page text
+        # save button should be missing initially
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
@@ -31,10 +32,11 @@ Feature: Create a Health and Welfare LPA
         And I click "save"
         Then I am taken to the donor page
         And I see "This LPA covers health and welfare" in the page text
+        # save button should be missing initially
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
-        # todo - casper just looked for use-my-details. We need ultimately to actually test this
+        # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
         # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
         And I can find "name-title" with 8 options
@@ -94,6 +96,7 @@ Feature: Create a Health and Welfare LPA
         Then I can see popup
         And I can find "form-cancel"
         And I can find "name-title" with 8 options
+        # todo - casper just looked for use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
         When I select "Mrs" on "name-title"
         And I force fill out  
@@ -118,7 +121,7 @@ Feature: Create a Health and Welfare LPA
         Then I am taken to the replacement attorney page
         When I click third occurrence of "accordion-view-change"
         Then I am taken to the primary attorney page
-        #Test adding same attorney twice
+        # Test adding same attorney twice
         When I click "add-attorney"
         When I select "Mrs" on "name-title"
         And I force fill out  
@@ -133,7 +136,7 @@ Feature: Create a Health and Welfare LPA
             | address-address3| Marchington, Uttoxeter, Staffordshire |
             | address-postcode| ST14 8NX |
         Then I see "There is also an attorney called Amy Wheeler. A person cannot be named as an attorney twice on the same LPA." in the page text
-        # add 2cnd attorney
+        # Add 2cnd attorney
         When I select "Mr" on "name-title"
         And I force fill out  
             | name-first | David |
@@ -147,19 +150,19 @@ Feature: Create a Health and Welfare LPA
             | address-address3| Marchington, Uttoxeter, Staffordshire |
             | address-postcode| ST14 8NX |
         And I click "form-save"
-        # check we can see the 2 attorneys listed and save now points to primary attorney decisions page
+        # Check we can see the 2 attorneys listed and save now points to primary attorney decisions page
         Then I see "Mrs Amy Wheeler" in the page text
         And I see "Mr David Wheeler" in the page text
         And I can find save pointing to primary attorney decisions page
-        # delete 2cnd attorney
+        # Delete 2cnd attorney
         When I click second occurrence of "delete-attorney"
         And I click "delete"
-        # check we are back to 1 attorney listed and save points back to replacement attorney page
+        # Check we are back to 1 attorney listed and save points back to replacement attorney page
         Then I am taken to the primary attorney page
         And I see "Mrs Amy Wheeler" in the page text
         And I do not see "Mr David Wheeler" in the page text
         And I can find save pointing to replacement attorney page
-        # re-add 2cnd attorney
+        # Re-add 2cnd attorney
         When I click "add-attorney"
         When I select "Mr" on "name-title"
         And I force fill out  
@@ -175,7 +178,7 @@ Feature: Create a Health and Welfare LPA
             | address-postcode| ST14 8NX |
         And I click "form-save"
         Then I can find save pointing to primary attorney decisions page
-        # check we can see the 2 attorneys listed
+        # Check we can see the 2 attorneys listed
         And I see "Mrs Amy Wheeler" in the page text
         And I see "Mr David Wheeler" in the page text
         # re-view 2cnd attorney
