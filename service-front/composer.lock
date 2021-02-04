@@ -63,16 +63,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.172.3",
+            "version": "3.173.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "14fd73f12fc70d5f48e034f5dfc33136136adb61"
+                "reference": "1ab4f565744aea8e9560ee8aaffb19b87238c7d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/14fd73f12fc70d5f48e034f5dfc33136136adb61",
-                "reference": "14fd73f12fc70d5f48e034f5dfc33136136adb61",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1ab4f565744aea8e9560ee8aaffb19b87238c7d5",
+                "reference": "1ab4f565744aea8e9560ee8aaffb19b87238c7d5",
                 "shasum": ""
             },
             "require": {
@@ -147,9 +147,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.172.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.173.2"
             },
-            "time": "2021-01-28T19:14:55+00:00"
+            "time": "2021-02-03T21:12:51+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -2698,16 +2698,16 @@
         },
         {
             "name": "laminas/laminas-servicemanager",
-            "version": "3.6.3",
+            "version": "3.6.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-servicemanager.git",
-                "reference": "04a0118731d9f3ee865c7ceb5342551491adebc1"
+                "reference": "b1445e1a7077c21b0fad0974a1b7a11b9dbe0828"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-servicemanager/zipball/04a0118731d9f3ee865c7ceb5342551491adebc1",
-                "reference": "04a0118731d9f3ee865c7ceb5342551491adebc1",
+                "url": "https://api.github.com/repos/laminas/laminas-servicemanager/zipball/b1445e1a7077c21b0fad0974a1b7a11b9dbe0828",
+                "reference": "b1445e1a7077c21b0fad0974a1b7a11b9dbe0828",
                 "shasum": ""
             },
             "require": {
@@ -2781,7 +2781,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-01-25T00:14:52+00:00"
+            "time": "2021-02-03T08:44:41+00:00"
         },
         {
             "name": "laminas/laminas-session",
