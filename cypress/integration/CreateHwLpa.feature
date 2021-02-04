@@ -111,7 +111,8 @@ Feature: Create a Health and Welfare LPA
         Then I can find "save"
         And I see "Mrs Amy Wheeler" in the page text
         # Casper checked for existence of delete link, here we click it then cancel, which is more thorough
-        When I visit link containing "Delete"
+        #When I visit link containing "Delete"
+        When I click "delete-attorney"
         And I click "cancel"
         When I click "save"
         Then I am taken to the replacement attorney page
@@ -132,7 +133,7 @@ Feature: Create a Health and Welfare LPA
             | address-address3| Marchington, Uttoxeter, Staffordshire |
             | address-postcode| ST14 8NX |
         Then I see "There is also an attorney called Amy Wheeler. A person cannot be named as an attorney twice on the same LPA." in the page text
-        # Add 2cnd primary attorney
+        # add 2cnd attorney
         When I select "Mr" on "name-title"
         And I force fill out  
             | name-first | David |
@@ -150,7 +151,33 @@ Feature: Create a Health and Welfare LPA
         # check we can see the 2 attorneys listed
         And I see "Mrs Amy Wheeler" in the page text
         And I see "Mr David Wheeler" in the page text
-        When I click second occurrence of "view-change-donor"
+        # delete 2cnd attorney
+        When I click second occurrence of "delete-attorney"
+        And I click "delete"
+        Then I am taken to the primary attorney page
+        And I see "Mrs Amy Wheeler" in the page text
+        And I do not see "Mr David Wheeler" in the page text
+        # re-add 2cnd attorney
+        When I click "add-attorney"
+        When I select "Mr" on "name-title"
+        And I force fill out  
+            | name-first | David |
+            | name-last | Wheeler |
+            | dob-date-day| 12 |
+            | dob-date-month| 03 |
+            | dob-date-year| 1972 |
+            | email-address| opglpademo+DavidWheeler@gmail.com |
+            | address-address1| Brickhill Cottage |
+            | address-address2| Birch Cross |
+            | address-address3| Marchington, Uttoxeter, Staffordshire |
+            | address-postcode| ST14 8NX |
+        And I click "form-save"
+        Then I can find "save"
+        # check we can see the 2 attorneys listed
+        And I see "Mrs Amy Wheeler" in the page text
+        And I see "Mr David Wheeler" in the page text
+        # re-view 2cnd attorney
+        When I click second occurrence of "view-change-attorney"
         Then I can see popup
         And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
@@ -164,4 +191,4 @@ Feature: Create a Health and Welfare LPA
             | address-address2| Birch Cross |
             | address-address3| Marchington, Uttoxeter, Staffordshire |
             | address-postcode| ST14 8NX |
-        When I click "form-cancel"
+            #When I click "form-cancel"
