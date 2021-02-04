@@ -2,6 +2,9 @@ Feature: Homepage
 
   I want to be able to visit the homepage and follow the links
 
+  Background:
+    Given I ignore application exceptions
+
   @focus
   Scenario: Visit home page links
     Given I visit "/home"
@@ -34,3 +37,8 @@ Feature: Homepage
     Then I have "main-title" in the viewport
     And I do not have "banner" in the viewport
     And I do not have "cookie-message" in the viewport
+
+  @focus
+  Scenario: Navigate details elements on home page using keyboard (LPAL-253)
+    Given I visit "/home"
+    Then I can navigate through "details" elements using the tab key
