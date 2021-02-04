@@ -108,10 +108,10 @@ Feature: Create a Health and Welfare LPA
             | address-address3| Marchington, Uttoxeter, Staffordshire |
             | address-postcode| ST14 8NX |
         And I click "form-save"
-        Then I can find "save"
-        And I see "Mrs Amy Wheeler" in the page text
+        # check attorney is listed and save points to replacement attorney page
+        Then I see "Mrs Amy Wheeler" in the page text
+        And I can find save pointing to replacement attorney page
         # Casper checked for existence of delete link, here we click it then cancel, which is more thorough
-        #When I visit link containing "Delete"
         When I click "delete-attorney"
         And I click "cancel"
         When I click "save"
@@ -147,16 +147,18 @@ Feature: Create a Health and Welfare LPA
             | address-address3| Marchington, Uttoxeter, Staffordshire |
             | address-postcode| ST14 8NX |
         And I click "form-save"
-        Then I can find "save"
-        # check we can see the 2 attorneys listed
-        And I see "Mrs Amy Wheeler" in the page text
+        # check we can see the 2 attorneys listed and save now points to primary attorney decisions page
+        Then I see "Mrs Amy Wheeler" in the page text
         And I see "Mr David Wheeler" in the page text
+        And I can find save pointing to primary attorney decisions page
         # delete 2cnd attorney
         When I click second occurrence of "delete-attorney"
         And I click "delete"
+        # check we are back to 1 attorney listed and save points back to replacement attorney page
         Then I am taken to the primary attorney page
         And I see "Mrs Amy Wheeler" in the page text
         And I do not see "Mr David Wheeler" in the page text
+        And I can find save pointing to replacement attorney page
         # re-add 2cnd attorney
         When I click "add-attorney"
         When I select "Mr" on "name-title"
@@ -172,7 +174,7 @@ Feature: Create a Health and Welfare LPA
             | address-address3| Marchington, Uttoxeter, Staffordshire |
             | address-postcode| ST14 8NX |
         And I click "form-save"
-        Then I can find "save"
+        Then I can find save pointing to primary attorney decisions page
         # check we can see the 2 attorneys listed
         And I see "Mrs Amy Wheeler" in the page text
         And I see "Mr David Wheeler" in the page text
@@ -191,4 +193,5 @@ Feature: Create a Health and Welfare LPA
             | address-address2| Birch Cross |
             | address-address3| Marchington, Uttoxeter, Staffordshire |
             | address-postcode| ST14 8NX |
-            #When I click "form-cancel"
+        When I click "form-cancel"
+        Then I am taken to the primary attorney page
