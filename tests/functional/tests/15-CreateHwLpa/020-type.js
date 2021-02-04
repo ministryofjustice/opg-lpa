@@ -17,7 +17,7 @@ casper.test.begin("Checking user can select an LPA type and create an LPA of the
 			test.assertExists('.accordion li#lpa-type-section', 'Accordion header is found on the page');
 
     		// check form has correct elements
-        	test.assertExists('input[type="radio"][name="type"][id="type-property-and-financial"][value="property-and-financial"]', 'Found radio option "Property and financial affairs"');
+        	test.assertExists('input[type="radio"][name="type"][id="type"][value="property-and-financial"]', 'Found radio option "Property and financial affairs"');
         	test.assertExists('input[type="radio"][name="type"][id="type-health-and-welfare"][value="health-and-welfare"]', 'Found radio option "Health and welfare"');
         	test.assertExists('input[type="submit"][name="save"][value="Save and continue"]', 'Found submit button on page');
 
