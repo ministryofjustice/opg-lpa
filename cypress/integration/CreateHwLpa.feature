@@ -38,7 +38,7 @@ Feature: Create a Health and Welfare LPA
         And I can find "use-my-details"
         # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
         And I can find "name-title" with 8 options
-        When I type "B1 1TF" into "postcode-lookup"
+        When I type "B1 1TF" into "postcode-lookup" working around cypress bug
         # cypress is not reliable at filling in postcode fully before hitting next button, so, ensure it is now filled in
         And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
         And I click element marked "Find UK address"
@@ -150,7 +150,7 @@ Feature: Create a Health and Welfare LPA
         # check we can see the 2 attorneys listed
         And I see "Mrs Amy Wheeler" in the page text
         And I see "Mr David Wheeler" in the page text
-        When I click second occurrence of "Edit"
+        When I click second occurrence of "view-change-donor"
         Then I can see popup
         And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
