@@ -48,3 +48,64 @@ Then('I should encounter a visually-hidden statement about links on the page ope
         expect($el.text()).to.contain("open in new tabs");
     });
 });
+
+// Check that focusing on and opening a <details> element on a page
+// makes the interior content of the element accessible via tab key navigation;
+// note that "tag" is a parameter to enable us to check elements which have
+// been polyfilled to emulate a details element; see Polyfills.feature
+Then('I can navigate through {string} elements using the tab key', (tag) => {
+    cy.get(tag).each((details) => {
+        // simulate pressing return on the <summary> element; note that,
+        // because the browser prevents synthesis of key presses on elements
+        // which aren't inputs, we perform a focus() (to prove the summary
+        // can be focused) followed by a click() to open the <details>
+        // element instead
+        cy.wrap(details)
+        .find('summary')
+        .focus()
+        .click()
+        .then(() => {
+            // get child focusable elements of the detail element
+            let focusableEls = details.find('a,:input').toArray();
+            let numFocusableEls = focusableEls.length;
+
+            // press tab once for each focusable element and check that focus
+            // touches each element; NB we don't attempt to figure out the tab
+            // order, we just want to ensure that each element reached by
+            // tabbing is one of the elements inside the <details> and is
+            // reached once
+            for (let i = 0; i < numFocusableEls; i++) {
+                cy.tab().focused().then((els) => {
+                    // check that the focused element is in the list of
+                    // focusable elements; if not, we are outside the <details>
+                    // element
+                    expect(els[0]).to.be.oneOf(focusableEls);
+
+                    // remove the element; this is to ensure that we
+                    // only visit each focusable once
+                    focusableEls.splice(focusableEls.indexOf(els[0]), 1);
+                });
+            }
+        });
+    });
+});
+
+// replace <details> elements on the page with <polyfilleddetails> elements,
+// and polyfill them; the purpose of this is to enable testing the polyfill
+// on a browser which *does* support the <details> element
+Then('my browser doesn\'t support details elements', () => {
+    cy.window().then((window) => {
+        cy.get('details').each((details) => {
+            // replace with a new <polyfilleddetails> element with the same
+            // internal content
+            let newElement = Cypress.$('<polyfilleddetails>' +
+                                       details[0].innerHTML +
+                                       '</polyfilleddetails>');
+
+            // wrap the new element manually
+            window.moj.Modules.DetailsPolyfill.wrap(newElement);
+
+            details.replaceWith(newElement);
+        });
+    });
+});
