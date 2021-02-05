@@ -19,14 +19,24 @@ class Service extends AbstractService
     const MAX_ALLOWED_LOGIN_ATTEMPTS = 5;
 
     /**
-     * The number of seconds before an auth token expires.
+     * Default number of seconds before an auth token expires.
      */
     const TOKEN_TTL = 4500; // 75 minutes
+
+    /**
+     * The actual number of seconds before an auth token expires.
+     */
+    private $token_ttl;
 
     /**
      * The number of minutes to lock an account for after x failed login consecutive attempts.
      */
     const ACCOUNT_LOCK_TIME = 900; // 15 minutes
+
+    public function __construct($token_ttl = self::TOKEN_TTL)
+    {
+        $this->token_ttl = $token_ttl;
+    }
 
     public function withPassword($username, $password, $createToken)
     {
@@ -85,7 +95,7 @@ class Service extends AbstractService
         $tokenDetails = array();
 
         if ($createToken) {
-            $expires = new DateTime("+" . self::TOKEN_TTL . " seconds");
+            $expires = new DateTime("+" . $this->token_ttl . " seconds");
 
             do {
                 $authToken = bin2hex(random_bytes(32));
@@ -102,7 +112,7 @@ class Service extends AbstractService
 
             $tokenDetails = [
                 'token' => $authToken,
-                'expiresIn' => self::TOKEN_TTL,
+                'expiresIn' => $this->token_ttl,
                 'expiresAt' => $expires
             ];
         }
@@ -140,12 +150,12 @@ class Service extends AbstractService
         $secondsSinceLastUpdate = time() - $token->updatedAt()->getTimestamp();
 
         if ($extendToken && $secondsSinceLastUpdate > 5) {
-            $expires = new DateTime("+" . self::TOKEN_TTL . " seconds");
+            $expires = new DateTime("+" . $this->token_ttl . " seconds");
 
             $this->getUserRepository()->extendAuthToken($user->id(), $expires);
 
             $expiresAt = [
-                'expiresIn' => self::TOKEN_TTL,
+                'expiresIn' => $this->token_ttl,
                 'expiresAt' => $expires
             ];
         } else {
