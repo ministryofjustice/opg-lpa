@@ -102,6 +102,9 @@ return [
 
 
     'session' => [
+        // lifetime of authentication tokens, in seconds
+        'token_ttl' => getenv('OPG_LPA_AUTH_TOKEN_TTL') ?: 4500,
+
         'dynamodb' => [
             'client' => [
                 'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
