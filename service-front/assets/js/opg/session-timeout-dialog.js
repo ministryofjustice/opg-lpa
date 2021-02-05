@@ -15,12 +15,6 @@ var SessionTimeoutDialog = function (options) {
 
     var that = this;
 
-    var debugTimerMs = 0;
-    var debug = /debug.dialog.sessionMs=([0-9]+)/.exec(window.location.href);
-    if (debug) {
-        debugTimerMs = parseInt(debug[1]);
-    }
-
     if (typeof options.element === 'undefined') {
         throw 'Popup element not provided';
     }
@@ -55,8 +49,8 @@ var SessionTimeoutDialog = function (options) {
             'height': $(document).height() + 'px'
         });
         underlay.show();
+
         that.trapNavigation([continueButton[0], logoutButton[0]]);
-        continueButton.focus();
 
         GOVUK.performance.sendGoogleAnalyticsEvent('timeout warning', 'warning popup');
     };
@@ -79,9 +73,6 @@ var SessionTimeoutDialog = function (options) {
                 } else if (data.status === 200) {
                     // Check how much time left
                     var remainingMs = data.responseJSON.remainingSeconds * 1000;
-                    if (debug) {
-                        remainingMs = that.warningPeriodMs - 1000;
-                    }
 
                     if (remainingMs <= that.warningPeriodMs) {
                         // If less time remaining than the warning period then show the warning and check again just
@@ -162,10 +153,5 @@ var SessionTimeoutDialog = function (options) {
     };
 
     // Start countdown
-    var countdownTimerMs = initialSessionTimeoutMs - this.warningPeriodMs;
-    if (debugTimerMs > 0) {
-        countdownTimerMs = debugTimerMs;
-    }
-
-    this.startExpiryCheckCountdown(countdownTimerMs);
+    this.startExpiryCheckCountdown(initialSessionTimeoutMs - this.warningPeriodMs);
 };
