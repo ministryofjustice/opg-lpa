@@ -45,6 +45,11 @@ Then(`I am taken to the certificate provider page`, () => {
     checkOnPageWithPath('/lpa/\\d+/certificate-provider');
     checkAccordionHeaderContains("Who is the certificate provider?") 
 });
+
+Then(`I am taken to the when replacement attorneys step in page`, () => {
+    checkOnPageWithPath('/lpa/\\d+/when-replacement-attorney-step-in');
+    checkAccordionHeaderContains("How should the replacement attorneys step in?") 
+});
  
 Then(`I am taken to the life sustaining page`, () => {
     checkOnPageWithPath('/lpa/\\d+/life-sustaining');
