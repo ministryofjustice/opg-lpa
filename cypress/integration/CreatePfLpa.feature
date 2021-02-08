@@ -202,7 +202,7 @@ Feature: Create a Property and Finance LPA
         And I see "Mrs Amy Wheeler" in the page text
         And I do not see "Mr David Wheeler" in the page text
         And I can find save pointing to replacement attorney page
-        # Re-add 2cnd attorney
+        # Re-add 2cnd attorney, first with errors
         When I click "add-attorney"
         And I click "use-trust-corporation"
         And I force fill out
@@ -213,7 +213,7 @@ Feature: Create a Property and Finance LPA
             | address-address2 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | address-address3 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | address-postcode | SA2 8HT |
-        When I click "form-save"
+        And I click "form-save"
         Then I see in the page text
             | There is a problem |
             | Enter a company name that's less than 76 characters long |
@@ -221,7 +221,8 @@ Feature: Create a Property and Finance LPA
             | Change address line 1 so that it has fewer than 51 characters |
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
-        And I force fill out
+        # Re-add 2cnd attorney, correctly this time
+        When I force fill out
             | name | Standard Trust |
             | number | 678437685 |
             | email-address| opglpademo+trustcorp@gmail.com |
