@@ -6,13 +6,6 @@ Feature: Create a Property and Finance LPA
         Given I ignore application exceptions
 
     @focus
-    Scenario: Dashboard has Link to Type page
-        # we use seeded user here because a newly signed-up user would not yet have a dashboard page
-        Given I log in as seeded user
-        When I click "createnewlpa"
-        Then I am taken to the lpa type page
-
-    @focus
     Scenario: Create LPA with error first
         Given I log in as appropriate test user
         When If I am on dashboard I click to create lpa
