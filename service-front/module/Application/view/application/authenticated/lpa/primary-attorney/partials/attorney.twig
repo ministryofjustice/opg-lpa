@@ -4,10 +4,10 @@
         <p class="person-address flush--ends">{{ attorney['address'] }}</p>
         <ul class="person-actions">
             <li class="action-item">
-                <a href="{{ confirmDeleteUrl }}" class="action-delete js-form-popup" aria-label="Delete Attorney {{ attorney['name'] }}">Delete<span class="visually-hidden"> Attorney {{ attorney['name'] }}</span></a>
+                <a href="{{ confirmDeleteUrl }}" class="action-delete js-form-popup" data-cy="delete-attorney" aria-label="Delete Attorney {{ attorney['name'] }}">Delete<span class="visually-hidden"> Attorney {{ attorney['name'] }}</span></a>
             </li>
             <li class="action-item">
-                <a href="{{ editUrl }}" role="button" class="action-edit js-form-popup" aria-label="View/Change Attorney {{ attorney['name'] }}">View/Change<span class="visually-hidden"> Attorney {{ attorney['name'] }}</span></a>
+                <a href="{{ editUrl }}" role="button" class="action-edit js-form-popup" data-cy="view-change-attorney" aria-label="View/Change Attorney {{ attorney['name'] }}">View/Change<span class="visually-hidden"> Attorney {{ attorney['name'] }}</span></a>
             </li>
         </ul>
     </div>

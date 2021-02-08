@@ -52,7 +52,8 @@
 
 {{ companyName.setAttributes({
     id: 'name',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy' : 'name'
 }) ? '' }}
 
 {{ registrationNumber.setAttributes({
@@ -60,32 +61,38 @@
     inputmode: 'numeric',
     pattern: '[0-9]*',
     type: 'tel',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy' : 'number'
 }) ? '' }}
 
 {{ email.setAttributes({
     id: 'email-address',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy' : 'email-address'
 }) ? '' }}
 
 {{ address1.setAttributes({
     id: 'address-address1',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy' : 'address-address1'
 }) ? ''}}
 
 {{ address2.setAttributes({
     id: 'address-address2',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy' : 'address-address2'
 }) ? ''}}
 
 {{ address3.setAttributes({
     id: 'address-address3',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy' : 'address-address3'
 }) ? ''}}
 
 {{ postcode.setAttributes({
     id: 'address-postcode',
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy' : 'address-postcode'
 }) ? ''}}
 
 {# form fields labels #}
