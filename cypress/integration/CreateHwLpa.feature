@@ -90,6 +90,9 @@ Feature: Create a Health and Welfare LPA
         And I click "save"
         Then I am taken to the primary attorney page
         And I cannot find "save"
+
+        # Donor page tests end here and Primary Attorney page tests start. Ultimately a good place to start a new Scenario
+        
         When I click "add-attorney"
         Then I can see popup
         And I can find "form-cancel"
@@ -212,3 +215,6 @@ Feature: Create a Health and Welfare LPA
         When I click "how-jointly-and-severally"
         When I click "save"
         Then I am taken to the replacement attorney page
+
+        # Primary Attorney page tests end here and Replacement Attorney tests start. Ultimately a good place to start a new Scenario
+        
