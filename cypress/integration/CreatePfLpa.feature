@@ -110,6 +110,9 @@ Feature: Create a Property and Finance LPA
         And I click "save"
         Then I am taken to the primary attorney page
         And I cannot find "save"
+
+        # Donor page tests end here and Primary Attorney page tests start. Ultimately a good place to start a new Scenario
+        
         When I click "add-attorney"
         Then I can see popup
         And I can find "form-cancel"
@@ -163,7 +166,7 @@ Feature: Create a Property and Finance LPA
         Then I am taken to the primary attorney page
         # Test adding same attorney twice
         When I click "add-attorney"
-        # lie below is deliberately Mr rather than Mrs, as was done in Casper tests
+        # line below is deliberately Mr rather than Mrs, as was done in Casper tests
         When I select "Mr" on "name-title"
         And I force fill out  
             | name-first | Amy |
@@ -273,6 +276,9 @@ Feature: Create a Property and Finance LPA
         Then I am taken to the certificate provider page
         When I click fifth occurrence of "accordion-view-change"
         Then I am taken to the replacement attorney page
+
+        # Primary Attorney page tests end here and Replacement Attorney tests start. Ultimately a good place to start a new Scenario
+        
         When I click "add-replacement-attorney"
         Then I can see popup
         And I can find "use-my-details"
@@ -306,3 +312,70 @@ Feature: Create a Property and Finance LPA
             | address-address3 | Trull, Taunton, Somerset |
         And I click "form-save"
         Then I see "Ms Isobel Ward" in the page text
+        # Test adding same attorney twice
+        When I click "add-replacement-attorney"
+        # deliberately Mrs instead of Ms this time
+        When I select "Mrs" on "name-title"
+        And I force fill out  
+            | name-first | Isobel |
+            | name-last | Ward |
+            | dob-date-day | 22 |
+            | dob-date-month | 10 |
+            | dob-date-year | 1988 |
+            | address-address1| Brickhill Cottage |
+            | address-address2| Birch Cross |
+            | address-address3| Marchington, Uttoxeter, Staffordshire |
+            | address-postcode| ST14 8NX |
+        Then I see "There is also a replacement attorney called Isobel Ward. A person cannot be named as a replacement attorney twice on the same LPA." in the page text
+        When I select "Mr" on "name-title"
+        And I force fill out  
+            | name-first | Ewan |
+            | name-last | Adams |
+            | dob-date-day | 12 |
+            | dob-date-month | 03 |
+            | dob-date-year | 1972 |
+            | address-address1 | 2 Westview |
+            | address-address2 | Staplehay |
+            | address-address3 | Trull, Taunton, Somerset |
+            | address-postcode | TA3 7HF |
+        When I click "form-save"
+        Then I see "Ms Isobel Ward" in the page text
+        And I see "Mr Ewan Adams" in the page text
+        When I click second occurrence of "delete-attorney"
+        And I click "delete"
+        # Check we are back to 1 attorney listed 
+        Then I am taken to the replacement attorney page
+        Then I do not see "Mr Ewan Adams" in the page text
+        # re-add 2cnd replacement attorney
+        When I click "add-replacement-attorney"
+        And I select "Mr" on "name-title"
+        And I force fill out  
+            | name-first | Ewan |
+            | name-last | Adams |
+            | dob-date-day | 12 |
+            | dob-date-month | 03 |
+            | dob-date-year | 1972 |
+            | address-address1 | 2 Westview |
+            | address-address2 | Staplehay |
+            | address-address3 | Trull, Taunton, Somerset |
+            | address-postcode | TA3 7HF |
+        When I click "form-save"
+        # both replacement attorneys can be seen again
+        Then I see "Ms Isobel Ward" in the page text
+        And I see "Mr Ewan Adams" in the page text
+        # re-view 2cnd replacement attorney
+        When I click second occurrence of "view-change-attorney"
+        Then I can see popup
+        And I see "name-title" prepopulated with "Mr"
+        And I see form prepopulated with
+            | name-first | Ewan |
+            | name-last | Adams |
+            | dob-date-day | 12 |
+            | dob-date-month | 03 |
+            | dob-date-year | 1972 |
+            | address-address1 | 2 Westview |
+            | address-address2 | Staplehay |
+            | address-address3 | Trull, Taunton, Somerset |
+            | address-postcode | TA3 7HF |
+        When I click "form-cancel"
+        Then I am taken to the replacement attorney page
