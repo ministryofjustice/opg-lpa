@@ -162,7 +162,8 @@ Feature: Create a Property and Finance LPA
         Then I am taken to the primary attorney page
         # Test adding same attorney twice
         When I click "add-attorney"
-        When I select "Mrs" on "name-title"
+        # lie below is deliberately Mr rather than Mrs, as was done in Casper tests
+        When I select "Mr" on "name-title"
         And I force fill out  
             | name-first | Amy |
             | name-last | Wheeler |
