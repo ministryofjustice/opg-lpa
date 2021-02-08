@@ -2,14 +2,15 @@ Feature: Create a Property and Finance LPA
 
     I want to create a Property and Finance LPA
 
+    # background steps logs us in and takes us to the type page
     Background:
         Given I ignore application exceptions
+        When I log in as appropriate test user
+        And If I am on dashboard I click to create lpa
+        Then I am taken to the lpa type page
 
     @focus
     Scenario: Create LPA with error first
-        Given I log in as appropriate test user
-        When If I am on dashboard I click to create lpa
-        Then I am taken to the lpa type page
         When I click "save"
         Then I see in the page text
             | There is a problem |
@@ -25,9 +26,6 @@ Feature: Create a Property and Finance LPA
 
     @focus
     Scenario: Create LPA normal path
-        Given I log in as appropriate test user
-        When If I am on dashboard I click to create lpa
-        Then I am taken to the lpa type page
         When I choose Property and Finance
         And I click "save"
         Then I am taken to the donor page
