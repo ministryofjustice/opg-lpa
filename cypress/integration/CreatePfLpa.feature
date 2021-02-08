@@ -204,34 +204,47 @@ Feature: Create a Property and Finance LPA
         And I can find save pointing to replacement attorney page
         # Re-add 2cnd attorney
         When I click "add-attorney"
-        When I select "Mr" on "name-title"
-              And I force fill out
-            | name-first | David |
-            | name-last | Wheeler |
-            | dob-date-day| 12 |
-            | dob-date-month| 03 |
-            | dob-date-year| 1972 |
-            | email-address| opglpademo+DavidWheeler@gmail.com |
-            | address-address1| Brickhill Cottage |
-            | address-address2| Birch Cross |
-            | address-address3| Marchington, Uttoxeter, Staffordshire |
-            | address-postcode| ST14 8NX |
+        And I click "use-trust-corporation"
+        And I force fill out
+            | name | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kBPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | number | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kBPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | email-address| opglpademo+trustcorp@gmail.com |
+            | address-address1 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | address-address2 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | address-address3 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | address-postcode | SA2 8HT |
+        When I click "form-save"
+        Then I see in the page text
+            | There is a problem |
+            | Enter a company name that's less than 76 characters long |
+            | Enter a registration number that's less than 76 characters long |
+            | Change address line 1 so that it has fewer than 51 characters |
+            | Change address line 2 so that it has fewer than 51 characters |
+            | Change address line 3 so that it has fewer than 51 characters |
+        And I force fill out
+            | name | Standard Trust |
+            | number | 678437685 |
+            | email-address| opglpademo+trustcorp@gmail.com |
+            | address-address1 | 1 Laburnum Place |
+            | address-address2 | Sketty |
+            | address-address3 | Swansea, Abertawe |
+            | address-postcode | SA2 8HT |
         And I click "form-save"
         Then I can find save pointing to primary attorney decisions page
         # check we can see the 2 attorneys listed
         And I see "Mrs Amy Wheeler" in the page text
-        And I see "Mr David Wheeler" in the page text
-        # re-view 2cnd attorney
-        When I click second occurrence of "view-change-attorney"
+        And I see "Standard Trust" in the page text
+        # re-view 1st attorney
+        When I click first occurrence of "view-change-attorney"
         Then I can see popup
-        And I see "name-title" prepopulated with "Mr"
+        And I see "name-title" prepopulated with "Mrs"
         And I see form prepopulated with
-            | name-first | David |
+            | name-first | Amy |
             | name-last | Wheeler |
-            | dob-date-day| 12 |
-            | dob-date-month| 03 |
-            | dob-date-year| 1972 |
-            | email-address| opglpademo+DavidWheeler@gmail.com |
+            | dob-date-day| 22 |
+            | dob-date-month| 10 |
+            | dob-date-year| 1988 |
+            | email-address| opglpademo+AmyWheeler@gmail.com |
             | address-address1| Brickhill Cottage |
             | address-address2| Birch Cross |
             | address-address3| Marchington, Uttoxeter, Staffordshire |
