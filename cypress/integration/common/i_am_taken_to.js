@@ -41,6 +41,11 @@ Then(`I am taken to the primary attorney decisions page`, () => {
     checkAccordionHeaderContains("How should the attorneys make decisions?") 
 });
  
+Then(`I am taken to the certificate provider page`, () => {
+    checkOnPageWithPath('/lpa/\\d+/certificate-provider');
+    checkAccordionHeaderContains("Who is the certificate provider?") 
+});
+ 
 Then(`I am taken to the life sustaining page`, () => {
     checkOnPageWithPath('/lpa/\\d+/life-sustaining');
     checkAccordionHeaderContains('Who does the donor want to make decisions about life-sustaining treatment?');
