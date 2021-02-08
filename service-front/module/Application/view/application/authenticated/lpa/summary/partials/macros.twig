@@ -19,7 +19,7 @@
 
     <dd class="cya-change">
         {% if changeUrl is not null %}
-            <a href="{{ changeUrl|raw }}" data-journey-click="check your answers:link:navigation: {{ navigationReference }}"{% if ariaLabel %} aria-label="Change {{ ariaLabel }}"{% endif %}>Change<span class="visually-hidden"> {{ ariaLabel }}</span></a>
+            <a href="{{ changeUrl|raw }}" data-cy="change" data-journey-click="check your answers:link:navigation: {{ navigationReference }}"{% if ariaLabel %} aria-label="Change {{ ariaLabel }}"{% endif %}>Change<span class="visually-hidden"> {{ ariaLabel }}</span></a>
         {% endif %}
     </dd>
 
