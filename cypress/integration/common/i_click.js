@@ -20,6 +20,16 @@ Then(`I click third occurrence of {string}`, (clickable) => {
     cy.OPGCheckA11y();
 })
 
+Then(`I click fourth occurrence of {string}`, (clickable) => {
+    cy.get("[data-cy=" + clickable + "]").eq(3).click();
+    cy.OPGCheckA11y();
+})
+
+Then(`I click fifth occurrence of {string}`, (clickable) => {
+    cy.get("[data-cy=" + clickable + "]").eq(4).click();
+    cy.OPGCheckA11y();
+})
+
 Then(`I force click {string}`, (clickable) => {
     cy.get("[data-cy=" + clickable + "]").click({ force: true });
     cy.OPGCheckA11y();

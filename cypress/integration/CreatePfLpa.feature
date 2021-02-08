@@ -113,6 +113,7 @@ Feature: Create a Property and Finance LPA
         When I click "add-attorney"
         Then I can see popup
         And I can find "form-cancel"
+        And I can find "postcode-lookup"
         And I can find "name-title" with 8 options
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
@@ -268,3 +269,40 @@ Feature: Create a Property and Finance LPA
         When I click "how-jointly-and-severally"
         When I click "save"
         Then I am taken to the replacement attorney page
+        When I click "save"
+        Then I am taken to the certificate provider page
+        When I click fifth occurrence of "accordion-view-change"
+        Then I am taken to the replacement attorney page
+        When I click "add-replacement-attorney"
+        Then I can see popup
+        And I can find "use-my-details"
+        And I can find "postcode-lookup"
+        And I can find "name-title" with 8 options
+        When I force fill out  
+            | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | dob-date-day | 01 |
+            | dob-date-month | 02 |
+            | dob-date-year | 1937 |
+            | address-address1 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | address-address2 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | address-address3 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | address-postcode | TA3 7HF |
+        And I click "form-save"
+        Then I see in the page text
+            | There is a problem |
+            | Enter the replacement attorney's title |
+            | Enter a first name that's less than 51 characters long |
+            | Enter a last name that's less than 51 characters long |
+            | Change address line 1 so that it has fewer than 51 characters |
+            | Change address line 2 so that it has fewer than 51 characters |
+            | Change address line 3 so that it has fewer than 51 characters |
+        When I select "Ms" on "name-title"
+        And I force fill out  
+            | name-first | Isobel |
+            | name-last | Ward |
+            | address-address1 | 2 Westview |
+            | address-address2 | Staplehay |
+            | address-address3 | Trull, Taunton, Somerset |
+        And I click "form-save"
+        Then I see "Ms Isobel Ward" in the page text
