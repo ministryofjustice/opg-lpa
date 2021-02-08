@@ -164,7 +164,7 @@ Feature: Create a Property and Finance LPA
         When I click "add-attorney"
         # lie below is deliberately Mr rather than Mrs, as was done in Casper tests
         When I select "Mr" on "name-title"
-        And I force fill out  
+        And I force fill out
             | name-first | Amy |
             | name-last | Wheeler |
             | dob-date-day| 22 |
@@ -256,11 +256,8 @@ Feature: Create a Property and Finance LPA
 
     @focus
     Scenario: Fail to select type of LPA to create, error links to first radio (LPAL-248)
-        Given I log in as appropriate test user
-        Then If I am on dashboard I click to create lpa
-        And I am taken to the lpa type page
-        When I click "save"
-        Then I see in the page text
+        Given I click "save"
+        When I see in the page text
             | There is a problem |
             | Choose a type of LPA |
         And I visit link containing "Choose a type of LPA"
