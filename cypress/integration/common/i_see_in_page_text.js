@@ -4,6 +4,10 @@ Then(`I see {string} in the page text`, (text) => {
   cy.contains(text);
 })
 
+Then(`I do not see {string} in the page text`, (text) => {
+  cy.contains(text).should('not.exist');
+})
+
 When("I see in the page text", (dataTable) => {
     var rawTable = dataTable.rawTable;
     rawTable.forEach(row => { 
