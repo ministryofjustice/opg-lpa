@@ -272,13 +272,13 @@ Feature: Create a Property and Finance LPA
         When I click "how-jointly-and-severally"
         When I click "save"
         Then I am taken to the replacement attorney page
+
+        # Primary Attorney page tests end here and Replacement Attorney tests start. Ultimately a good place to start a new Scenario
+        
         When I click "save"
         Then I am taken to the certificate provider page
         When I click fifth occurrence of "accordion-view-change"
         Then I am taken to the replacement attorney page
-
-        # Primary Attorney page tests end here and Replacement Attorney tests start. Ultimately a good place to start a new Scenario
-        
         When I click "add-replacement-attorney"
         Then I can see popup
         And I can find "use-my-details"
@@ -379,3 +379,5 @@ Feature: Create a Property and Finance LPA
             | address-postcode | TA3 7HF |
         When I click "form-cancel"
         Then I am taken to the replacement attorney page
+        When I click "save"
+        Then I am taken to the when replacement attorneys step in page
