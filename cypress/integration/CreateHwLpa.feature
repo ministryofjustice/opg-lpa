@@ -196,3 +196,19 @@ Feature: Create a Health and Welfare LPA
             | address-postcode| ST14 8NX |
         When I click "form-cancel"
         Then I am taken to the primary attorney page
+        When I click "save"
+        Then I am taken to the primary attorney decisions page
+        # test save without selecting anything
+        When I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | How should the attorneys make decisions |
+        When I click "how-depends"
+        # test save without typing anything in how-details
+        When I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | Tell us which decisions have to be made jointly, and which can be made jointly and severally |
+        When I click "how-jointly-and-severally"
+        When I click "save"
+        Then I am taken to the replacement attorney page
