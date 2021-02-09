@@ -22,7 +22,7 @@ const MapElementSpecifierToTag = {
  * elementSpecifier: specifier for the element to match; can either be
  *     a key in MapElementSpecifierToTag or a selector
  * contextSelector: selector for the element within which to search for the
- *     expected elements
+ *     expected elements; 'document' makes the document the context
  */
 const checkNumberOfElements = (numberText, elementSpecifier, contextSelector) => {
     let tag = MapElementSpecifierToTag[elementSpecifier];
@@ -36,8 +36,15 @@ const checkNumberOfElements = (numberText, elementSpecifier, contextSelector) =>
     }
 
     // select elements matching the specifier and count them
-    let ctx = Cypress.$(contextSelector);
-    expect(ctx[0].querySelectorAll(tag).length).to.equal(numberExpected);
+    if (contextSelector === 'document') {
+        cy.document().then((doc) => {
+            expect(doc.querySelectorAll(tag).length).to.equal(numberExpected);
+        });
+    }
+    else {
+        let ctx = Cypress.$(contextSelector);
+        expect(ctx[0].querySelectorAll(tag).length).to.equal(numberExpected);
+    }
 };
 
 /**
