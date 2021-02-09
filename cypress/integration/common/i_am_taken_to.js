@@ -22,42 +22,47 @@ Then(`I am taken to the lpa type page`, () => {
 })
 
 Then(`I am taken to the when lpa starts page`, () => {
-    checkOnPageWithPath('/lpa/\\d+/when-lpa-starts');
+    checkOnPageWithPath('when-lpa-starts');
     checkAccordionHeaderContains("When can the LPA be used?") 
 });
 
 Then(`I am taken to the replacement attorney page`, () => {
-    checkOnPageWithPath('/lpa/\\d+/replacement-attorney');
+    checkOnPageWithPath('replacement-attorney');
     checkAccordionHeaderContains("Does the donor want any replacement attorneys?");
 });
 
 Then(`I am taken to the primary attorney page`, () => {
-    checkOnPageWithPath('/lpa/\\d+/primary-attorney');
+    checkOnPageWithPath('primary-attorney');
     checkAccordionHeaderContains("Who are the attorneys?") 
 });
  
 Then(`I am taken to the primary attorney decisions page`, () => {
-    checkOnPageWithPath('/lpa/\\d+/how-primary-attorneys-make-decision');
+    checkOnPageWithPath('how-primary-attorneys-make-decision');
     checkAccordionHeaderContains("How should the attorneys make decisions?") 
 });
  
 Then(`I am taken to the certificate provider page`, () => {
-    checkOnPageWithPath('/lpa/\\d+/certificate-provider');
+    checkOnPageWithPath('certificate-provider');
     checkAccordionHeaderContains("Who is the certificate provider?") 
 });
 
+Then(`I am taken to the people to notify page`, () => {
+    checkOnPageWithPath('people-to-notify');
+    checkAccordionHeaderContains("Who should be notified about the LPA?") 
+});
+
 Then(`I am taken to the when replacement attorneys step in page`, () => {
-    checkOnPageWithPath('/lpa/\\d+/when-replacement-attorney-step-in');
+    checkOnPageWithPath('when-replacement-attorney-step-in');
     checkAccordionHeaderContains("How should the replacement attorneys step in?") 
 });
  
 Then(`I am taken to the how replacement attorneys make decision page`, () => {
-    checkOnPageWithPath('/lpa/\\d+/how-replacement-attorneys-make-decision');
+    checkOnPageWithPath('how-replacement-attorneys-make-decision');
     checkAccordionHeaderContains("How should the replacement attorneys make decisions?") 
 });
  
 Then(`I am taken to the life sustaining page`, () => {
-    checkOnPageWithPath('/lpa/\\d+/life-sustaining');
+    checkOnPageWithPath('life-sustaining');
     checkAccordionHeaderContains('Who does the donor want to make decisions about life-sustaining treatment?');
 });
  
@@ -71,8 +76,9 @@ Then(`I am taken to the post logout url`, () => {
     cy.url().should('eq',Cypress.config().postLogoutUrl );
 })
 
-function checkOnPageWithPath(pathRegex) {
+function checkOnPageWithPath(urlPart) {
     // get the current lpaId, put this in the path regex, make sure that's the url we're now on
+    var pathRegex = '/lpa/\\d+/' + urlPart;
     cy.getLpaId().then((lpaId) => { 
         var pathWithLpaId = pathRegex.replace('\\d+', lpaId);
         cy.url().should('eq',Cypress.config().baseUrl + pathWithLpaId);
