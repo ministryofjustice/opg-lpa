@@ -381,3 +381,16 @@ Feature: Create a Property and Finance LPA
         Then I am taken to the replacement attorney page
         When I click "save"
         Then I am taken to the when replacement attorneys step in page
+
+        # Replacement Attorney details tests end and when Replacement Attorney should Act tests start. Ultimately a good place to start a new Scenario
+        
+        When I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | Choose how the replacement attorneys should step in |
+        When I click "when-depends"
+        And I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | Tell us how you'd like the replacement attorneys to step in |
+        And I can find "when-details" wrapped with error highlighting
