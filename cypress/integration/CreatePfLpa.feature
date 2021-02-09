@@ -394,3 +394,11 @@ Feature: Create a Property and Finance LPA
             | There is a problem |
             | Tell us how you'd like the replacement attorneys to step in |
         And I can find "when-details" wrapped with error highlighting
+        When I click "when-first"
+        And I click "save"
+        Then I am taken to the certificate provider page
+        When I click sixth occurrence of "accordion-view-change"
+        Then I am taken to the when replacement attorneys step in page
+        When I click "when-last"
+        And I click "save"
+        Then I am taken to the how replacement attorneys make decision page
