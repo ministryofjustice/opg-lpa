@@ -314,7 +314,7 @@ Feature: Create a Health and Welfare LPA
         When I click "save"
         Then I am taken to the when replacement attorneys step in page
 
-        # Replacement Attorney details tests end and when Replacement Attorney should Act tests start. Ultimately a good place to start a new Scenario
+        # Replacement Attorney details tests end and When Replacement Attorney should Act tests start. Ultimately a good place to start a new Scenario
         
         When I click "save"
         Then I see in the page text
@@ -334,3 +334,20 @@ Feature: Create a Health and Welfare LPA
         When I click "when-last"
         And I click "save"
         Then I am taken to the how replacement attorneys make decision page
+
+        # When Replacement Attorney should Act tests end and how Replacement Attorney make decisions start. Ultimately a good place to start a new Scenario
+        
+        # test save without selecting anything
+        When I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | How should the replacement attorneys make decisions |
+        When I click "how-depends"
+        # test save without typing anything in how-details
+        When I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | Tell us which decisions have to be made jointly, and which can be made jointly and severally |
+        When I click "how-jointly-and-severally"
+        When I click "save"
+        Then I am taken to the certificate provider page
