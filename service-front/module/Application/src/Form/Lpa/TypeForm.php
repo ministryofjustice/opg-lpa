@@ -17,7 +17,7 @@ class TypeForm extends AbstractMainFlowForm
             ],
             'options'       => [
                 'value_options' => [
-                    'property-and-financial' => 'Property and financial',
+                    'property-and-financial' => 'Property and financial affairs',
                     'health-and-welfare' => 'Health and welfare',
                 ],
             ],
