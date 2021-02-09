@@ -388,3 +388,36 @@ Feature: Create a Health and Welfare LPA
         And I click "form-cancel"
         When I click "save"
         Then I am taken to the people to notify page
+
+        # Certificate Provider tests end and Person to Notify Tests start. Ultimately a good place to start a new Scenario
+        
+        When I click "add"
+        Then I can see popup
+        And I can find "form-cancel"
+        And I can find "name-title" with 8 options
+        # todo - casper just looked for use-my-details. We need ultimately to actually test this
+        And I can find "use-my-details"
+        When I select "Other" on "name-title"
+        And I force fill out  
+            | name-title | Sir |
+            | name-first | Anthony |
+            | name-last | Webb |
+            | address-address1 | Brickhill Cottage |
+            | address-address2 | Birch Cross |
+            | address-address3 | Marchington, Uttoxeter, Staffordshire |
+            | address-postcode | BS18 6PL |
+        And I click "form-save"
+        Then I see "Sir Anthony Webb" in the page text
+        When I click "view-change"
+        Then I can see popup
+        And I see form prepopulated with
+            | name-title | Sir |
+            | name-first | Anthony |
+            | name-last | Webb |
+            | address-address1 | Brickhill Cottage |
+            | address-address2 | Birch Cross |
+            | address-address3 | Marchington, Uttoxeter, Staffordshire |
+            | address-postcode | BS18 6PL |
+        And I click "form-cancel"
+        When I click "save"
+        Then I am taken to the instructions page

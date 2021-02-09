@@ -471,3 +471,51 @@ Feature: Create a Property and Finance LPA
         And I click "form-cancel"
         When I click "save"
         Then I am taken to the people to notify page
+
+        # Certificate Provider tests end and Person to Notify Tests start. Ultimately a good place to start a new Scenario
+        
+        When I click "add"
+        Then I can see popup
+        And I can find "form-cancel"
+        And I can find "name-title" with 8 options
+        # todo - casper just looked for use-my-details. We need ultimately to actually test this
+        And I can find "use-my-details"
+        When I force fill out  
+            | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | address-address1 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | address-address2 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | address-address3 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
+            | address-postcode | BS18 6PL |
+        And I click "form-save"
+        Then I see in the page text
+            | There is a problem |
+            | Enter the title of the person to notify |
+            | Enter a first name that's less than 51 characters long |
+            | Enter a last name that's less than 51 characters long |
+            | Change address line 1 so that it has fewer than 51 characters |
+            | Change address line 2 so that it has fewer than 51 characters |
+            | Change address line 3 so that it has fewer than 51 characters |
+        When I select "Other" on "name-title"
+        And I force fill out  
+            | name-title | Sir |
+            | name-first | Anthony |
+            | name-last | Webb |
+            | address-address1 | Brickhill Cottage |
+            | address-address2 | Birch Cross |
+            | address-address3 | Marchington, Uttoxeter, Staffordshire |
+        And I click "form-save"
+        Then I see "Sir Anthony Webb" in the page text
+        When I click "view-change"
+        Then I can see popup
+        And I see form prepopulated with
+            | name-title | Sir |
+            | name-first | Anthony |
+            | name-last | Webb |
+            | address-address1 | Brickhill Cottage |
+            | address-address2 | Birch Cross |
+            | address-address3 | Marchington, Uttoxeter, Staffordshire |
+            | address-postcode | BS18 6PL |
+        And I click "form-cancel"
+        When I click "save"
+        Then I am taken to the instructions page
