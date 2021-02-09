@@ -51,6 +51,11 @@ Then(`I am taken to the when replacement attorneys step in page`, () => {
     checkAccordionHeaderContains("How should the replacement attorneys step in?") 
 });
  
+/*Then(`I am taken to the how replacement attorneys make decision page`, () => {
+    checkOnPageWithPath('/lpa/\\d+/how-replacement-attorneys-make-decision');
+    checkAccordionHeaderContains("How should the replacement attorneys step in?") 
+});*/
+ 
 Then(`I am taken to the life sustaining page`, () => {
     checkOnPageWithPath('/lpa/\\d+/life-sustaining');
     checkAccordionHeaderContains('Who does the donor want to make decisions about life-sustaining treatment?');
