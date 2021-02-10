@@ -185,6 +185,12 @@
 .help-footer {
     padding: $gutter 0 0;
 
+    p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        overflow-wrap: break-word;
+    }
+
     hr {
         display: none;
     }
