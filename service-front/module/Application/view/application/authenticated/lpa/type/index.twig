@@ -51,14 +51,14 @@
         {{ macros.formErrorSummary(error,form) }}
 
         <div class="form-group {{ type.getMessages|length > 0 ? 'form-group-error'}}">
-            <fieldset id="type">
-                    <legend class="visually-hidden">Choose type of LPA</legend>
+            <fieldset>
+                <legend class="visually-hidden">Choose type of LPA</legend>
 
-                    <h2 class="heading-medium flush--top">What type of LPA do you want to make?</h2>
+                <h2 class="heading-medium flush--top">Which type of LPA do you want to make?</h2>
 
-                    {{ formElementErrorsV2(type) }}
-                    {{ formRadio(type) }}
-               </fieldset>
+                {{ formElementErrorsV2(type) }}
+                {{ formRadio(type) }}
+            </fieldset>
         </div>
 
         {% if not (isChangeAllowed) %}

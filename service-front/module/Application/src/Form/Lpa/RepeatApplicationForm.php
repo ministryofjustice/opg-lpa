@@ -8,8 +8,11 @@ class RepeatApplicationForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'isRepeatApplication' => [
-            'type'      => 'Radio',
-            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
+            'type'      => 'Laminas\Form\Element\Radio',
+            'attributes' => [
+                'id' => 'isRepeatApplication',
+                'div-attributes' => ['class' => 'multiple-choice']
+            ],
             'required'  => true,
             'options'   => [
                 'value_options' => [

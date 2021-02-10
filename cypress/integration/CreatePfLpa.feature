@@ -44,7 +44,7 @@ Feature: Create a Property and Finance LPA
         Then I can find old style id "#address-search-result" with 6 options
         # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
         And I can find "name-title" with 8 options
-        When I force fill out  
+        When I force fill out
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | dob-date-day | 22 |
@@ -65,7 +65,7 @@ Feature: Create a Property and Finance LPA
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
         When I select "Mrs" on "name-title"
-        And I force fill out  
+        And I force fill out
             | name-first | Nancy |
             | name-last | Garrison |
             | dob-date-day| 22 |
@@ -106,7 +106,7 @@ Feature: Create a Property and Finance LPA
         Then I see in the page text
             | There is a problem |
             | Choose when your LPA can be used |
-        When I check old style id "#when-now"
+        When I check "when-now"
         And I click "save"
         Then I am taken to the primary attorney page
         And I cannot find "save"
@@ -121,7 +121,7 @@ Feature: Create a Property and Finance LPA
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
         And I can find "use-trust-corporation"
-        And I force fill out  
+        And I force fill out
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | dob-date-day| 22 |
@@ -142,7 +142,7 @@ Feature: Create a Property and Finance LPA
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
         When I select "Mrs" on "name-title"
-        And I force fill out  
+        And I force fill out
             | name-first | Amy |
             | name-last | Wheeler |
             | dob-date-day| 22 |
@@ -168,7 +168,7 @@ Feature: Create a Property and Finance LPA
         When I click "add-attorney"
         # line below is deliberately Mr rather than Mrs, as was done in Casper tests
         When I select "Mr" on "name-title"
-        And I force fill out  
+        And I force fill out
             | name-first | Amy |
             | name-last | Wheeler |
             | dob-date-day| 22 |
@@ -182,7 +182,7 @@ Feature: Create a Property and Finance LPA
         Then I see "There is also an attorney called Amy Wheeler. A person cannot be named as an attorney twice on the same LPA." in the page text
         # Add 2cnd attorney
         When I select "Mr" on "name-title"
-        And I force fill out  
+        And I force fill out
             | name-first | David |
             | name-last | Wheeler |
             | dob-date-day| 12 |
@@ -238,6 +238,7 @@ Feature: Create a Property and Finance LPA
         Then I can find save pointing to primary attorney decisions page
         # check we can see the 2 attorneys listed
         And I see "Mrs Amy Wheeler" in the page text
+        And I see "Mr David Wheeler" in the page text
         And I see "Standard Trust" in the page text
         # re-view 1st attorney
         When I click first occurrence of "view-change-attorney"
@@ -519,3 +520,12 @@ Feature: Create a Property and Finance LPA
         And I click "form-cancel"
         When I click "save"
         Then I am taken to the instructions page
+
+    @focus
+    Scenario: Fail to select type of LPA to create, error links to first radio (LPAL-248)
+        Given I click "save"
+        When I see in the page text
+            | There is a problem |
+            | Choose a type of LPA |
+        And I visit link containing "Choose a type of LPA"
+        Then I am focused on "type-property-and-financial"
