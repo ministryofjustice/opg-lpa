@@ -66,6 +66,16 @@ Then(`I am taken to the instructions page`, () => {
     checkAccordionHeaderContains("Preferences and instructions") 
 });
  
+Then(`I am taken to the applicant page`, () => {
+    checkOnPageWithPath('applicant');
+    checkAccordionHeaderContains("Who’s applying to register the LPA?") 
+});
+ 
+Then(`I am taken to the correspondent page`, () => {
+    checkOnPageWithPath('correspondent');
+    checkAccordionHeaderContains("Where should we send the registered LPA and any correspondence?") 
+});
+ 
 Then(`I am taken to the life sustaining page`, () => {
     checkOnPageWithPath('life-sustaining');
     checkAccordionHeaderContains('Who does the donor want to make decisions about life-sustaining treatment?');
