@@ -9,8 +9,11 @@ class ApplicantForm extends AbstractMainFlowForm
 {
     protected $formElements = [
         'whoIsRegistering' => [
-            'type' => 'Radio',
-            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
+            'type' => 'Laminas\Form\Element\Radio',
+            'attributes' => [
+                'id' => 'whoIsRegistering',
+                'div-attributes' => ['class' => 'multiple-choice']
+            ],
             'options' => [
                 'value_options' => [
                     'donor' => [

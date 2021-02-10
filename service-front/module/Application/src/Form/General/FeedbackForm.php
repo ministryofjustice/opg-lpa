@@ -22,8 +22,11 @@ class FeedbackForm extends AbstractCsrfForm
 
         $this->add([
             'name'    => 'rating',
-            'type'    => 'Radio',
-            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
+            'type'    => 'Laminas\Form\Element\Radio',
+            'attributes' => [
+                'id' => 'rating',
+                'div-attributes' => ['class' => 'multiple-choice']
+            ],
             'options' => [
                 'value_options' => [
                     'very-satisfied' => [
