@@ -519,20 +519,22 @@ Feature: Create a Property and Finance LPA
         And I click "form-cancel"
         When I click "save"
         Then I am taken to the instructions page
+
+        # Person to Notify Tests end and Instructions tests start. Ultimately a good place to start a new Scenario
+        
         When I click "add-extra-preferences"
         And I force fill out  
             | instruction | Lorem Ipsum |
-            | preference | Neque porro quisquam |
-        #When I click "save"
-        #Then I am taken to the applicant page
+            | preferences | Neque porro quisquam |
+        When I click "save"
+        Then I am taken to the applicant page
+        When I click occurrence 9 of "accordion-view-change"
+        Then I see in the page text
+            | Lorem Ipsum |
+            | Neque porro quisquam |
+        When I click "save"
+        Then I am taken to the applicant page
+        When I click "preview-lpa"
+        Then I am taken to the summary page
         #When I click "save"
         #Then I am taken to the correspondent page
-
-    @focus
-    Scenario: Fail to select type of LPA to create, error links to first radio (LPAL-248)
-        Given I click "save"
-        When I see in the page text
-            | There is a problem |
-            | Choose a type of LPA |
-        And I visit link containing "Choose a type of LPA"
-        Then I am focused on "type-property-and-financial"
