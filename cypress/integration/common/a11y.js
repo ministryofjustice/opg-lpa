@@ -106,3 +106,9 @@ Then('my browser doesn\'t support details elements', () => {
         });
     });
 });
+
+Then('elements on the page should have sufficient contrast', () => {
+    cy.injectAxe();
+
+    cy.checkA11y(null);
+});
