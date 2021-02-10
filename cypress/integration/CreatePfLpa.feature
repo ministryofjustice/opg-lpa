@@ -519,3 +519,12 @@ Feature: Create a Property and Finance LPA
         And I click "form-cancel"
         When I click "save"
         Then I am taken to the instructions page
+
+    @focus
+    Scenario: Fail to select type of LPA to create, error links to first radio (LPAL-248)
+        Given I click "save"
+        When I see in the page text
+            | There is a problem |
+            | Choose a type of LPA |
+        And I visit link containing "Choose a type of LPA"
+        Then I am focused on "type-property-and-financial"
