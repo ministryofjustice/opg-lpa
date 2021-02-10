@@ -107,8 +107,23 @@ Then('my browser doesn\'t support details elements', () => {
     });
 });
 
+/**
+ * The configuration shown runs only axe rules tagged with "cat.color",
+ * which includes the contrast checks.
+ *
+ * Typically you would visit a page, focus on an element which is visually
+ * highlighted (e.g. button, link), then check contrast across the whole page.
+ *
+ * This will fail the test if the contrast is insufficient, possibly not
+ * just on the highlighted element but on any element which requires contrast
+ * (e.g. text with a background colour).
+ */
 Then('elements on the page should have sufficient contrast', () => {
     cy.injectAxe();
-
-    cy.checkA11y(null);
+    cy.checkA11y(null, {
+        runOnly: {
+            type: 'tag',
+            values: ['cat.color']
+        }
+    });
 });
