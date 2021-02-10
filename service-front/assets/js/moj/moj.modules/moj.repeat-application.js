@@ -31,7 +31,7 @@
         formToSubmit,
         formSubmitted = false;
 
-      if ($('#isRepeatApplication-is-repeat:checked').length) {
+      if ($('[name="isRepeatApplication"][value="is-repeat"]:checked').length) {
 
         formToSubmit = evt.target.form;
         evt.preventDefault();

@@ -31,3 +31,12 @@ Feature: Feedback
         And I submit the feedback
         Then I see "Thank you" in the title
         And I can find link pointing to "/home"
+
+    @focus
+    Scenario: Fail to select a rating for feedback, error links to first radio (LPAL-248)
+        Given I visit "/send-feedback"
+        And I submit the feedback
+        And I see "Select a rating for this service" in the page text
+        # this is the link in the error summary
+        When I visit link containing "Select a rating for this service"
+        Then I am focused on "rating-very-satisfied"
