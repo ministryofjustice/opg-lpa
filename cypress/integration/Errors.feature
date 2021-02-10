@@ -24,3 +24,12 @@ Feature: Errors
         Then I see "There is a problem" in the page text
         And "error-heading" is a "level 2 heading" element
         And there is "one" "level 1 heading" element on the page
+
+    @focus
+    Scenario: Fail to select type of LPA to create, error links to first radio (LPAL-248)
+        Given I click "save"
+        When I see in the page text
+            | There is a problem |
+            | Choose a type of LPA |
+        And I visit link containing "Choose a type of LPA"
+        Then I am focused on "type-property-and-financial"
