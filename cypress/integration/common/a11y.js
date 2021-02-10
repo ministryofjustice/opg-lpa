@@ -40,12 +40,9 @@ Then('I should not find links in the page which open in new tabs without notifyi
 // See guidance at https://design-system.service.gov.uk/styles/typography/#links
 // under "If you’re displaying lots of links together".
 Then('I should encounter a visually-hidden statement about links on the page opening in new tabs', () => {
-    let $accessibilityStatement =
-        cy.get("*[data-role='link-accessibility-statement']").first();
-
-    $accessibilityStatement.each(($el, index, $list) => {
-        expect($el).to.have.class("visually-hidden");
-        expect($el.text()).to.contain("open in new tabs");
+    cy.get("*[data-role='link-accessibility-statement']").each((accessibilityStatement) => {
+        expect(accessibilityStatement).to.have.class("visually-hidden");
+        expect(accessibilityStatement.text()).to.contain("open in new tabs");
     });
 });
 
