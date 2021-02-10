@@ -120,7 +120,7 @@ Feature: Create a Health and Welfare LPA
         And I click "cancel"
         When I click "save"
         Then I am taken to the replacement attorney page
-        When I click third occurrence of "accordion-view-change"
+        When I click occurrence 2 of "accordion-view-change"
         Then I am taken to the primary attorney page
         # Test adding same attorney twice
         When I click "add-attorney"
@@ -156,7 +156,7 @@ Feature: Create a Health and Welfare LPA
         And I see "Mr David Wheeler" in the page text
         And I can find save pointing to primary attorney decisions page
         # Delete 2cnd attorney
-        When I click second occurrence of "delete-attorney"
+        When I click occurrence 1 of "delete-attorney"
         And I click "delete"
         # Check we are back to 1 attorney listed and save points back to replacement attorney page
         Then I am taken to the primary attorney page
@@ -183,7 +183,7 @@ Feature: Create a Health and Welfare LPA
         And I see "Mrs Amy Wheeler" in the page text
         And I see "Mr David Wheeler" in the page text
         # re-view 2cnd attorney
-        When I click second occurrence of "view-change-attorney"
+        When I click occurrence 1 of "view-change-attorney"
         Then I can see popup
         And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
@@ -220,7 +220,7 @@ Feature: Create a Health and Welfare LPA
         
         When I click "save"
         Then I am taken to the certificate provider page
-        When I click fifth occurrence of "accordion-view-change"
+        When I click occurrence 4 of "accordion-view-change"
         Then I am taken to the replacement attorney page
         When I click "add-replacement-attorney"
         Then I can see popup
@@ -242,7 +242,7 @@ Feature: Create a Health and Welfare LPA
         Then I see "Ms Isobel Ward" in the page text
         When I click "save"
         Then I am taken to the when replacement attorneys step in page
-        When I click fifth occurrence of "accordion-view-change"
+        When I click occurrence 4 of "accordion-view-change"
         Then I am taken to the replacement attorney page
         # Test adding same attorney twice
         When I click "add-replacement-attorney"
@@ -273,7 +273,7 @@ Feature: Create a Health and Welfare LPA
         When I click "form-save"
         Then I see "Ms Isobel Ward" in the page text
         And I see "Mr Ewan Adams" in the page text
-        When I click second occurrence of "delete-attorney"
+        When I click occurrence 1 of "delete-attorney"
         And I click "delete"
         # Check we are back to 1 attorney listed 
         Then I am taken to the replacement attorney page
@@ -296,7 +296,7 @@ Feature: Create a Health and Welfare LPA
         Then I see "Ms Isobel Ward" in the page text
         And I see "Mr Ewan Adams" in the page text
         # re-view 2cnd replacement attorney
-        When I click second occurrence of "view-change-attorney"
+        When I click occurrence 1 of "view-change-attorney"
         Then I can see popup
         And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
@@ -329,7 +329,7 @@ Feature: Create a Health and Welfare LPA
         When I click "when-first"
         And I click "save"
         Then I am taken to the certificate provider page
-        When I click sixth occurrence of "accordion-view-change"
+        When I click occurrence 5 of "accordion-view-change"
         Then I am taken to the when replacement attorneys step in page
         When I click "when-last"
         And I click "save"
