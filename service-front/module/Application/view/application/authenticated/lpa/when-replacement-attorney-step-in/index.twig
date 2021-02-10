@@ -27,23 +27,33 @@
     rows: 10,
     cols: 67,
     maxlength: 2000,
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'when-details'
 }) ? ''}}
 
 {% set whenOptions = {
 	'first' : {
 		label: 'As soon as <strong class="bold-small">one</strong> of the original attorneys can no longer act, all the replacement attorneys should step in together',
-		value: currentWhenOptions['first'].value
+		value: currentWhenOptions['first'].value,
+		attributes: {
+			'data-cy': 'when-first'
+		}
 	},
 	'last' : {
 		label: 'When <strong class="bold-small">none</strong> of the original attorneys can act, all the replacement attorneys should step in together',
-		value: currentWhenOptions['last'].value
+		value: currentWhenOptions['last'].value,
+		attributes: {
+			'data-cy': 'when-last'
+		}
 	},
 	'depends' : {
 		label: 'In some other way...',
 		value: currentWhenOptions['depends'].value,
 		'div-attributes': {
 			'data-target': 'step-in-details'
+		},
+		attributes: {
+			'data-cy': 'when-depends'
 		}
 	}
 }

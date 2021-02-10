@@ -12,6 +12,12 @@ Then(`I cannot find {string}`, (object) => {
   cy.get("[data-cy=" + object + "]").should('not.exist');
 })
 
+Then(`I can find {string} wrapped with error highlighting`, (object) => {
+    cy.get("div.form-group-error").within((el) => {
+      cy.get("[data-cy=" + object + "]");
+    })
+})
+
 Then(`I can find link pointing to {string}`, (linkAddr) => {
     let searchStr = 'a[href*="' + linkAddr + '"]'
     cy.get(searchStr)

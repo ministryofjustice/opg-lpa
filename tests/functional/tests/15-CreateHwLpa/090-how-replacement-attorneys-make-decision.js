@@ -1,5 +1,5 @@
 
-casper.test.begin("Checking user can access how primary attorney make decision page", {
+casper.test.begin("Checking user can access how replacement attorney make decision page", {
 
     setUp: function(test) {
     	howReplacementAttorneysMakeDecisionPath = paths.how_replacement_attorneys_make_decision.replace('\\d+', lpaId);
