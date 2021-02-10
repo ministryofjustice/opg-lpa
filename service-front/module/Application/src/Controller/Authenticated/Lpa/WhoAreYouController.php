@@ -52,7 +52,7 @@ class WhoAreYouController extends AbstractLpaController
         ]);
         $whoOptions['donor']->setAttributes([
                 'type' => 'radio',
-                'id' => 'who-donor',
+                'id' => 'who',
                 'value' => $who->getOptions()['value_options']['donor']['value'],
                 'checked' => (($who->getValue() == 'donor')? 'checked':null),
         ]);
