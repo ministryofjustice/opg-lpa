@@ -5,18 +5,8 @@ Then(`I click {string}`, (clickable) => {
     cy.OPGCheckA11y();
 })
 
-Then(`I click first occurrence of {string}`, (clickable) => {
-    cy.get("[data-cy=" + clickable + "]").eq(0).click();
-    cy.OPGCheckA11y();
-})
-
-Then(`I click second occurrence of {string}`, (clickable) => {
-    cy.get("[data-cy=" + clickable + "]").eq(1).click();
-    cy.OPGCheckA11y();
-})
-
-Then(`I click third occurrence of {string}`, (clickable) => {
-    cy.get("[data-cy=" + clickable + "]").eq(2).click();
+Then(`I click occurrence {int} of {string}`, (number, clickable) => {
+    cy.get("[data-cy=" + clickable + "]").eq(number).click();
     cy.OPGCheckA11y();
 })
 
