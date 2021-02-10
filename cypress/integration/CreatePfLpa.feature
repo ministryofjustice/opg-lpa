@@ -238,7 +238,6 @@ Feature: Create a Property and Finance LPA
         Then I can find save pointing to primary attorney decisions page
         # check we can see the 2 attorneys listed
         And I see "Mrs Amy Wheeler" in the page text
-        And I see "Mr David Wheeler" in the page text
         And I see "Standard Trust" in the page text
         # re-view 1st attorney
         When I click occurrence 0 of "view-change-attorney"
