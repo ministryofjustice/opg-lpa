@@ -60,15 +60,18 @@ module.exports = function (grunt) {
       }
     },
 
-    // govuk template css copied into public/assets
+    // govuk template css - copy our fork of the template to public dir, as we
+    // are applying some later govuk template styles on top of an out-of-date
+    // set of older govuk CSS files; if we copy from node_modules we may
+    // overwrite our custom changes...
     copy: {
       main: {
         files: [{
           expand: true,
           src: [
-            'node_modules/govuk_template_mustache/assets/stylesheets/fonts.css',
-            'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css',
-            'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css'
+            'assets/stylesheets/fonts.css',
+            'assets/stylesheets/govuk-template-print.css',
+            'assets/stylesheets/govuk-template.css'
           ],
           dest: 'public/assets/v2/css/',
           flatten: true
