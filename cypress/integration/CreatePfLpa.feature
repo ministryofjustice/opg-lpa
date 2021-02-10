@@ -269,7 +269,7 @@ Feature: Create a Property and Finance LPA
         Then I see in the page text
             | There is a problem |
             | Tell us which decisions have to be made jointly, and which can be made jointly and severally |
-        When I click "how-jointly-and-severally"
+        When I click "how-jointly-attorney-severally"
         When I click "save"
         Then I am taken to the replacement attorney page
 
@@ -416,7 +416,7 @@ Feature: Create a Property and Finance LPA
         Then I see in the page text
             | There is a problem |
             | Tell us which decisions have to be made jointly, and which can be made jointly and severally |
-        When I click "how-jointly-and-severally"
+        When I click "how-jointly-attorney-severally"
         When I click "save"
         Then I am taken to the certificate provider page
 
