@@ -31,7 +31,6 @@ class TypeFormTest extends MockeryTestCase
 
     public function testElements()
     {
-        $this->assertInstanceOf('Application\Form\Element\Type', $this->form->get('type'));
         $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('save'));
     }
 

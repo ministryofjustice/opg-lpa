@@ -27,23 +27,28 @@ class FormRadioTest extends TestCase
         $html = $helper($radio);
 
         $expected = '<div>' .
-            '<input type="radio" name="test-name" value="1" id="test-name-1">' .
+            '<input type="radio" name="test-name" value="1" ' .
+            'data-cy="test-name-1" id="test-name-1">' .
             '<label for="test-name-1">Option value 1</label>' .
             '</div>' .
             '<div>' .
-            '<input type="radio" name="test-name" value="2" id="test-name-2">' .
+            '<input type="radio" name="test-name" value="2" ' .
+            'data-cy="test-name-2" id="test-name-2">' .
             '<label for="test-name-2">Option value 2</label>' .
             '</div>' .
             '<div>' .
-            '<input type="radio" name="test-name" value="3" id="test-name-3">' .
+            '<input type="radio" name="test-name" value="3" ' .
+            'data-cy="test-name-3" id="test-name-3">' .
             '<label for="test-name-3">Option value 3</label>' .
             '</div>' .
             '<div>' .
-            '<input type="radio" name="test-name" value="4" id="test-name-4">' .
+            '<input type="radio" name="test-name" value="4" ' .
+            'data-cy="test-name-4" id="test-name-4">' .
             '<label for="test-name-4">Option value 4</label>' .
             '</div>' .
             '<div>' .
-            '<input type="radio" name="test-name" value="5" id="test-name-5">' .
+            '<input type="radio" name="test-name" value="5" ' .
+            'data-cy="test-name-5" id="test-name-5">' .
             '<label for="test-name-5">Option value 5</label>' .
             '</div>';
 
@@ -70,23 +75,28 @@ class FormRadioTest extends TestCase
         $html = $helper($radio);
 
         $expected = '<div class="test_class">' .
-            '<input type="radio" name="test-name" value="1" id="test-name-1">' .
+            '<input type="radio" name="test-name" value="1" ' .
+            'data-cy="test-name-1" id="test-name-1">' .
             '<label for="test-name-1">Option value 1</label>' .
             '</div>' .
             '<div class="test_class">' .
-            '<input type="radio" name="test-name" value="2" id="test-name-2">' .
+            '<input type="radio" name="test-name" value="2" ' .
+            'data-cy="test-name-2" id="test-name-2">' .
             '<label for="test-name-2">Option value 2</label>' .
             '</div>' .
             '<div class="test_class">' .
-            '<input type="radio" name="test-name" value="3" id="test-name-3">' .
+            '<input type="radio" name="test-name" value="3" ' .
+            'data-cy="test-name-3" id="test-name-3">' .
             '<label for="test-name-3">Option value 3</label>' .
             '</div>' .
             '<div class="test_class">' .
-            '<input type="radio" name="test-name" value="4" id="test-name-4">' .
+            '<input type="radio" name="test-name" value="4" ' .
+            'data-cy="test-name-4" id="test-name-4">' .
             '<label for="test-name-4">Option value 4</label>' .
             '</div>' .
             '<div class="test_class">' .
-            '<input type="radio" name="test-name" value="5" id="test-name-5">' .
+            '<input type="radio" name="test-name" value="5" ' .
+            'data-cy="test-name-5" id="test-name-5">' .
             '<label for="test-name-5">Option value 5</label>' .
             '</div>';
 
@@ -127,15 +137,18 @@ class FormRadioTest extends TestCase
         $html = $helper($radio);
 
         $expected = '<div class="another-class" data-target="target-one">' .
-            '<input type="radio" name="test-name" value="one" id="test-name-one">' .
+            '<input type="radio" name="test-name" value="one" ' .
+            'data-cy="test-name-one" id="test-name-one">' .
             '<label for="test-name-one">One</label>' .
             '</div>' .
             '<div class="all-class">' .
-            '<input type="radio" name="test-name" value="two" id="test-name-two">' .
+            '<input type="radio" name="test-name" value="two" ' .
+            'data-cy="test-name-two" id="test-name-two">' .
             '<label for="test-name-two">Two</label>' .
             '</div>' .
             '<div class="all-class" data-target="target-three">' .
-            '<input type="radio" name="test-name" value="three" id="test-name-three">' .
+            '<input type="radio" name="test-name" value="three" ' .
+            'data-cy="test-name-three" id="test-name-three">' .
             '<label for="test-name-three">Three</label>' .
             '</div>';
 
@@ -161,7 +174,8 @@ class FormRadioTest extends TestCase
         $html = $helper->outputOption($radio, 1);
 
         $expected = '<div>' .
-            '<input type="radio" name="test-radio" id="test-radio-1" value="1">' .
+            '<input type="radio" name="test-radio" id="test-radio-1" value="1" ' .
+            'data-cy="test-radio-1">' .
             '<label for="test-radio-1">Option value 1</label>' .
             '</div>';
 

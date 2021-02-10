@@ -61,7 +61,7 @@ class FeeReductionController extends AbstractLpaController
         ]);
         $reductionOptions['reducedFeeReceivesBenefits']->setAttributes([
             'type' => 'radio',
-            'id' => 'reducedFeeReceivesBenefits',
+            'id' => 'reductionOptions',
             'value' => $reduction->getOptions()['value_options']['reducedFeeReceivesBenefits']['value'],
             'checked' => (($reduction->getValue() == 'reducedFeeReceivesBenefits')? 'checked':null),
         ]);
