@@ -9,7 +9,7 @@ Feature: Create a Health and Welfare LPA
         And If I am on dashboard I click to create lpa
         Then I am taken to the lpa type page
 
-    #@focus
+    @focus
     Scenario: Create LPA with error first
         When I click "save"
         Then I see in the page text
