@@ -30,20 +30,23 @@ Cypress.Commands.add("OPGCheckA11y", (skipFailures) => {
 });
 
 Cypress.Commands.add("getLpaId", () => {
-    cy.get('@donorPageUrl').then((donorPageUrl) => { 
+    cy.get('@donorPageUrl').then((donorPageUrl) => {
         return donorPageUrl.match(/\/(\d+)\//)[1];
     });
 });
 
 // Print cypress-axe violations to the terminal
 function printAccessibilityViolations(violations) {
-  cy.task(
-    'table',
-    violations.map(({ id, impact, description, nodes }) => ({
-      impact,
-      description: `${description} (${id})`,
-      nodes: nodes.length,
-    })),
-  );
+    cy.location().then((location) => {
+        cy.task(
+            'table',
+            violations.map(({ id, impact, description, nodes }) => ({
+                impact,
+                location: `${location}`.replace(Cypress.config('baseUrl'), ''),
+                description: `${description} (${id})`,
+                nodes: nodes.length,
+            })),
+        );
+    });
 }
 
