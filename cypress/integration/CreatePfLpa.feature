@@ -9,7 +9,7 @@ Feature: Create a Property and Finance LPA
         And If I am on dashboard I click to create lpa
         Then I am taken to the lpa type page
 
-    @focus
+    #@focus
     Scenario: Create LPA with error first
         When I click "save"
         Then I see in the page text
@@ -519,3 +519,11 @@ Feature: Create a Property and Finance LPA
         And I click "form-cancel"
         When I click "save"
         Then I am taken to the instructions page
+        When I click "add-extra-preferences"
+        And I force fill out  
+            | instruction | Lorem Ipsum |
+            | preference | Neque porro quisquam |
+        #When I click "save"
+        #Then I am taken to the applicant page
+        #When I click "save"
+        #Then I am taken to the correspondent page
