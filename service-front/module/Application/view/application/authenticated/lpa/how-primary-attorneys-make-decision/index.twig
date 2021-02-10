@@ -27,13 +27,15 @@
     rows: 10,
     cols: 67,
     maxlength: 2000,
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'how-details'
 }) ? ''}}
 
 {% set howValueOptions = {
 	'jointly-attorney-severally' :{
 		attributes: {
-			id: 'how-jointly-attorney-severally'
+			id: 'how-jointly-attorney-severally',
+			'data-cy': 'how-jointly-and-severally'
 		},
 		label: '<strong class="bold-small">Jointly and severally</strong>
 			<span class="text form-hint form-hint--strong">
@@ -45,6 +47,9 @@
 		value: currentHowValueOptions['jointly-attorney-severally'].value
 	},
 	'jointly' : {
+		attributes: {
+			'data-cy': 'how-jointly'
+		},
 		label: '<strong class="bold-small">Jointly</strong>
 			<span class="text form-hint form-hint--strong">
 			Attorneys must agree unanimously on every decision, however big or small. Be careful - if one of the attorneys can no longer act, none of the other attorneys will be able to act either, unless the donor states otherwise in their instructions.
@@ -52,6 +57,9 @@
 		value: currentHowValueOptions['jointly'].value
 	},
 	'depends' : {
+		attributes: {
+			'data-cy': 'how-depends'
+		},
 		label: '<strong class="text bold-small">Jointly for some decisions, and jointly and severally for other decisions</strong>
 			<span class="text form-hint form-hint--strong">
 			Attorneys must agree unanimously on some decisions, but can make others on their own. The donor must state which decisions need to be agreed unanimously.
