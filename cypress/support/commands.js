@@ -40,12 +40,19 @@ function printAccessibilityViolations(violations) {
     cy.location().then((location) => {
         cy.task(
             'table',
-            violations.map(({ id, impact, description, nodes }) => ({
-                impact,
-                location: `${location}`.replace(Cypress.config('baseUrl'), ''),
-                description: `${description} (${id})`,
-                nodes: nodes.length,
-            })),
+            violations.map(({ id, impact, description, nodes }) => {
+                let snippets = [];
+                for (let i = 0; i < nodes.length; i++) {
+                    snippets.push(nodes[i].html);
+                }
+
+                return {
+                    impact,
+                    location: `${location}`.replace(Cypress.config('baseUrl'), ''),
+                    description: `${description} (${id})`,
+                    nodes: snippets.join('; '),
+                };
+            }),
         );
     });
 }
