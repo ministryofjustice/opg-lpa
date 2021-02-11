@@ -50,22 +50,32 @@ Cypress.Commands.add("getLpaId", () => {
 // Print cypress-axe violations to the terminal
 function printAccessibilityViolations(violations) {
     cy.location().then((location) => {
-        cy.task(
-            'table',
-            violations.map(({ id, impact, description, nodes }) => {
-                let snippets = [];
-                for (let i = 0; i < nodes.length; i++) {
-                    snippets.push(nodes[i].html);
-                }
+        // make a set of unique violations; yes, I could have been clever
+        // and done it in one line, but the previous code confused me and
+        // I think this makes it clearer that we're populating a set
+        let reports = new Set();
 
-                return {
-                    impact,
-                    location: `${location}`.replace(Cypress.config('baseUrl'), ''),
-                    description: `${description} (${id})`,
-                    nodes: snippets.join('; '),
-                };
-            }),
-        );
+        violations.forEach((violation) => {
+            reports.add({
+                id: violation.id,
+                impact: violation.impact,
+                description: violation.description,
+                snippets: violation.nodes.map((node) => node.html),
+            });
+        });
+
+        location = `${location}`.replace(Cypress.config('baseUrl'), '');
+        cy.task('log', `\n************** ACCESSIBILITY VIOLATIONS ON ${location}`);
+
+        reports.forEach((report) => {
+            cy.task('log', `-------------- ID: ${report.id}`);
+            cy.task('log', `Impact: ${report.impact}`);
+            cy.task('log', `Description: ${report.description}`);
+            cy.task('log', 'HTML elements causing violation:')
+            cy.task('log', '* ' + report.snippets.join('\n*  '));
+        });
+
+        return new Cypress.Promise((resolve, reject) => { return resolve(true); });
     });
 }
 
