@@ -119,7 +119,7 @@ Then('my browser doesn\'t support details elements', () => {
  * (e.g. text with a background colour).
  */
 Then('elements on the page should have sufficient contrast', () => {
-    cy.injectAxe();
+    cy.injectAxe2();
     cy.checkA11y(null, {
         runOnly: {
             type: 'tag',
