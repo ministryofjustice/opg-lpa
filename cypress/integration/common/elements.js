@@ -54,3 +54,28 @@ Then('there is {string} {string} element on the page', (numberText, elementSpeci
 Then('there are {string} {string} elements on the page', (numberText, elementSpecifier) => {
     checkNumberOfElements(numberText, elementSpecifier);
 });
+
+/**
+ * Check whether text in an element is overflowing. There is an overflow
+ * when the scrollWidth of an element is greater than its clientWidth.
+ */
+Then('the text in {string} does not overflow', (dataCyReference) => {
+    cy.get("[data-cy=" + dataCyReference + "]").then((els) => {
+        let el = els[0];
+        let clientWidth = el.clientWidth;
+        let scrollWidth = el.scrollWidth;
+        let overflowHidden = (Cypress.$(el).css('overflow') === 'hidden');
+
+        let msg = "element [data-cy=\"" + dataCyReference +
+            "\"]'s clientWidth [" + clientWidth + "] is less than " +
+            "its scrollWidth [" + scrollWidth + "], and overflow:hidden is " +
+            "not set on it - text may overflow";
+
+        if (scrollWidth > clientWidth) {
+            expect(overflowHidden).to.eql(true, msg);
+        }
+        else {
+            expect(clientWidth).to.be.at.least(scrollWidth, msg);
+        }
+    });
+});
