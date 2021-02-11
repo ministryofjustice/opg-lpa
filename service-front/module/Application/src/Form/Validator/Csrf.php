@@ -2,6 +2,7 @@
 
 namespace Application\Form\Validator;
 
+use Application\Logging\LoggerTrait;
 use Laminas\Math\Rand;
 use Laminas\Session\Container;
 use Laminas\Validator\Csrf as LaminasCsrfValidator;
@@ -23,6 +24,8 @@ use RuntimeException;
  */
 class Csrf extends LaminasCsrfValidator
 {
+    use LoggerTrait;
+
     /**
      * Error messages
      * @var array
@@ -40,7 +43,12 @@ class Csrf extends LaminasCsrfValidator
      */
     public function isValid($value, $context = null)
     {
-        if ($value !== $this->getHash(true)) {
+        if ($value !== $this->getHash()) {
+            $this->logger->err(sprintf(
+                $value,
+                $this->getHash(),
+                'Mismatched CSRF provided; expected %s received %s'
+            ));
             $this->error(self::NOT_SAME);
             return false;
         }
