@@ -24,8 +24,20 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 //
+
+// work-around for "require.resolve is not a function" error
+// as per https://github.com/component-driven/cypress-axe/issues/73#issuecomment-734909801
+Cypress.Commands.add("injectAxe2", () => {
+  cy.window({ log: false }).then(window => {
+      const axe = require('axe-core/axe.js');
+      const script = window.document.createElement('script');
+      script.innerHTML = axe.source;
+      window.document.body.appendChild(script);
+  })
+});
+
 Cypress.Commands.add("OPGCheckA11y", (skipFailures) => {
-    cy.injectAxe();
+    cy.injectAxe2();
     cy.checkA11y(null, null, printAccessibilityViolations, true);
 });
 
