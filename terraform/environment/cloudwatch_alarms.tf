@@ -46,7 +46,7 @@ resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
 
 resource "aws_cloudwatch_log_metric_filter" "csrf_mistmatch_filter" {
   name           = "CSRFValuesMismatch"
-  pattern        = "{($.priorityName = \"ERROR\") && ($.message = \"Mismatched CSRF provided\")}"
+  pattern        = "{($.priorityName = \"ERR\") && ($.message = \"Mismatched CSRF provided\")}"
   log_group_name = data.aws_cloudwatch_log_group.online-lpa.name
 
   metric_transformation {
