@@ -17,9 +17,9 @@
 {% set canSustainLife = form.get('canSustainLife') %}
 
 {{ canSustainLife.setValueOptions(
-    {"1": "Option A – <strong class='bold-small'>The donor gives their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf.",
-        "0": "Option B – <strong class='bold-small'>The donor does not give their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf."}
-) ? ''}}
+    {"1": {"id": "canSustainLife", "value": "1", "label": "Option A – <strong class='bold-small'>The donor gives their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf."},
+        "0": {"value": "0", "label": "Option B – <strong class='bold-small'>The donor does not give their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf."}
+}) ? ''}}
 
 {# form fields config #}
 
@@ -52,7 +52,7 @@
 
         {{ macros.formErrorSummary(error,form) }}
 
-        <fieldset id="canSustainLife">
+        <fieldset>
             <legend class="visually-hidden">Life-sustaining treatment decision</legend>
 
             <h2 class="heading-medium flush--top text">Who does the donor want to make decisions about life-sustaining treatment?</h2>

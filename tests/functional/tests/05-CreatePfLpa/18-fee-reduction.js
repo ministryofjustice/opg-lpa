@@ -84,7 +84,7 @@ casper.test.begin("Checking user can access fee reduction page", {
 
             test.info('Click on accordion bar to go back to fee reduction page');
 
-        }).thenClick('input[type="radio"][id="reducedFeeLowIncome"]', function() {
+        }).thenClick('input[type="radio"][name="reductionOptions"][value="reducedFeeLowIncome"]', function() {
 
             test.info('Click on low income radio option');
 

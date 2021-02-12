@@ -35,7 +35,7 @@ casper.test.begin("Checking user can select an applicant", {
 			test.assertExists('div.error-summary h2#error-heading', 'Error messages are displayed as expected');
 			test.assertExists('div.error-summary ul.error-summary-list li', 'There is at least one error displayed.');
 
-        }).thenClick('input[type="radio"][id="whoIsRegistering-1"]', function() {
+        }).thenClick('input[type="radio"][name="whoIsRegistering"][value="1"]', function() {
 
         	test.info('Selected the attorney as the applicant');
 

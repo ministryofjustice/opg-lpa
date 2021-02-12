@@ -21,7 +21,7 @@ Then('I have {string} in the viewport', (dataCyReference) => {
             expect(isInViewport(window, el)).to.be.true;
         });
     });
-})
+});
 
 Then('I do not have {string} in the viewport', (dataCyReference) => {
     cy.window().then((window) => {
@@ -29,9 +29,19 @@ Then('I do not have {string} in the viewport', (dataCyReference) => {
             expect(isInViewport(window, el)).not.to.be.true;
         });
     });
-})
+});
 
 Then('I am using a viewport greater than {int} pixels wide', (viewportWidth) => {
     cy.viewport(viewportWidth + 1, Cypress.config('viewportHeight'));
-})
+});
 
+Then('I am using a viewport which is {int} pixels wide', (viewportWidth) => {
+    cy.viewport(viewportWidth, Cypress.config('viewportHeight'));
+});
+
+/**
+ * Scroll a selected data-cy element into view.
+ */
+Then('I scroll to {string}', (dataCyReference) => {
+    cy.get('[data-cy="' + dataCyReference + '"]').scrollIntoView();
+});

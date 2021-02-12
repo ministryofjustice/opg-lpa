@@ -34,7 +34,10 @@ class FormRadio extends LaminasFormRadioHelper
         $attributes['type'] = $this->getInputType();
         $selectedOptions    = (array) $element->getValue();
 
-        if (isset($options[$option]['value'])) {
+        if (isset($options[$option]['id'])) {
+            $attributes['id'] = $options[$option]['id'];
+        }
+        else if (isset($options[$option]['value'])) {
             $attributes['id'] = $name . '-' . $options[$option]['value'];
         } else {
             $attributes['id'] = $name . '-' . $option;
@@ -92,12 +95,15 @@ class FormRadio extends LaminasFormRadioHelper
         $combinedMarkup = [];
         $count          = 0;
 
-        // If multiple options are being rendered unset the id as it can't be the same for all of them
-        if (count($options) > 1 && array_key_exists('id', $attributes)) {
-            unset($attributes['id']);
-        }
-
         foreach ($options as $key => $optionSpec) {
+            // If multiple options are being rendered, unset the id after the
+            // first option; if the ID is given we want that ID on the first
+            // radio button (option) so that error messages shown in the error
+            // summary are linked to that button
+            if ($count > 0 && array_key_exists('id', $attributes)) {
+                unset($attributes['id']);
+            }
+
             $count++;
 
             $value           = '';
@@ -143,6 +149,7 @@ class FormRadio extends LaminasFormRadioHelper
             }
 
             $inputAttributes['value']    = $value;
+            $inputAttributes['data-cy']  = $element->getName() . '-' . $value;
             $inputAttributes['checked']  = $selected;
             $inputAttributes['disabled'] = $disabled;
             $inputAttributes['id'] = isset($attributes['id']) ?

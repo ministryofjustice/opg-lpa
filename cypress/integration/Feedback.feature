@@ -15,12 +15,28 @@ Feature: Feedback
         And I can find feedback buttons
         When I submit the feedback
         Then I see "There is a problem" in the page text
+        Then I see in the page text
+            | There is a problem |
+            | Select a rating for this service |
+            | Do not forget to leave your feedback in the box | 
         When I select satisfied
         And I submit the feedback
-        Then I see "There is a problem" in the page text
+        Then I see in the page text
+            | There is a problem |
+            | Do not forget to leave your feedback in the box | 
+        And I can find "feedback-textarea" wrapped with error highlighting
         When I select neither satisfied or dissatisfied
         And I set feedback email as "cypress@opg-lpa-test.net"
         And I set feedback content as "Cypress feedback form test"
         And I submit the feedback
         Then I see "Thank you" in the title
         And I can find link pointing to "/home"
+
+    @focus
+    Scenario: Fail to select a rating for feedback, error links to first radio (LPAL-248)
+        Given I visit "/send-feedback"
+        And I submit the feedback
+        And I see "Select a rating for this service" in the page text
+        # this is the link in the error summary
+        When I visit link containing "Select a rating for this service"
+        Then I am focused on "rating-very-satisfied"
