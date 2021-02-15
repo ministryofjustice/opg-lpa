@@ -9,7 +9,7 @@ Feature: Create a Property and Finance LPA
         And If I am on dashboard I click to create lpa
         Then I am taken to the lpa type page
 
-    #@focus
+    @focus
     Scenario: Create LPA with error first
         When I click "save"
         Then I see in the page text
@@ -534,7 +534,13 @@ Feature: Create a Property and Finance LPA
             | Neque porro quisquam |
         When I click "save"
         Then I am taken to the applicant page
-        When I click "preview-lpa"
+        When I visit link containing "preview the LPA"
         Then I am taken to the summary page
+        And I see the following summary information
+            | Type | Property and finance | |
+            | Donor | | |
+            | Name | Mrs Nancy Garrison | donor |
+            | Date of birth | 22 October 1988 | |
+            | Email address | opglpademo+NancyGarrison@gmail.com | |
         #When I click "save"
         #Then I am taken to the correspondent page

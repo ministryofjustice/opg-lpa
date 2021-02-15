@@ -77,8 +77,8 @@ Then(`I am taken to the correspondent page`, () => {
 });
  
 Then(`I am taken to the summary page`, () => {
-    checkOnPageWithPath('summary');
-    checkAccordionHeaderContains("Review your details") 
+    checkOnPageContainingPath('summary');
+    cy.contains("Review your details");
 });
  
 Then(`I am taken to the life sustaining page`, () => {
@@ -97,11 +97,21 @@ Then(`I am taken to the post logout url`, () => {
 })
 
 function checkOnPageWithPath(urlPart) {
+    comparePageToPath(urlPart,'eq');
+}
+
+// this second function is almost the same as checkOnPageWithPath, but handles non-exact matches
+// e:g where there's a query string
+function checkOnPageContainingPath(urlPart) {
+    comparePageToPath(urlPart,'contains');
+}
+
+function comparePageToPath(urlPart, comparator) {
     // get the current lpaId, put this in the path regex, make sure that's the url we're now on
     var pathRegex = '/lpa/\\d+/' + urlPart;
     cy.getLpaId().then((lpaId) => { 
         var pathWithLpaId = pathRegex.replace('\\d+', lpaId);
-        cy.url().should('eq',Cypress.config().baseUrl + pathWithLpaId);
+        cy.url().should(comparator, Cypress.config().baseUrl + pathWithLpaId);
     });
 }
 
