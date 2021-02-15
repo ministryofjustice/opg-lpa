@@ -1,11 +1,30 @@
-// for global replace of incorrect highlight colour (from obsolete
-// govuk design system) with correct highlight colour (from latest
-// design system); this is the focus colour on links and buttons;
-// this will not be required when we upgrade to the latest
+// for global replace of incorrect colours (from obsolete
+// govuk design system) with correct colours (from latest
+// design system); this will not be required when we upgrade to the latest
 // design system as we will just use the colours as they are
 // without any patching
-const oldFocusColour = 'ffbf47';
-const newFocusColour = 'ffdd00';
+const colourPatching = [
+  // focus-colour
+  {
+    'from': /ffbf47/g,
+    'to': 'ffdd00'
+  },
+  // button-colour
+  {
+    'from': /00823b/g,
+    'to': '00703c'
+  }
+];
+
+let colourPatch = function (content) {
+    for (let patch in colourPatching) {
+        let oldColour = patch.from;
+        let newColour = patch.to;
+        content = content.replace(oldColour, newColour);
+    }
+
+    return content;
+};
 
 module.exports = function (grunt) {
   'use strict';
@@ -67,14 +86,12 @@ module.exports = function (grunt) {
           to: 'url'
         }]
       },
-      // replace the focus-colour variable value
-      focus_colour: {
+
+      // replace deprecated colours in CSS files
+      colours: {
         src: ['public/assets/v2/css/*.css'],
         dest: 'public/assets/v2/css/',
-        replacements: [{
-          from: oldFocusColour,
-          to: newFocusColour
-        }]
+        replacements: colourPatching,
       },
     },
 
@@ -87,9 +104,7 @@ module.exports = function (grunt) {
         ],
         dest: 'public/assets/v2/css/',
         options: {
-          process: function (content, srcpath) {
-            return content.replace(new RegExp(oldFocusColour, 'g'), newFocusColour);
-          }
+          process: colourPatch
         },
         flatten: true,
       }
@@ -259,6 +274,6 @@ module.exports = function (grunt) {
   grunt.registerTask('test', ['scsslint', 'jshint']);
   grunt.registerTask('refresh', ['browserSync', 'watch']);
   grunt.registerTask('build_js', ['handlebars', 'concat', 'uglify']);
-  grunt.registerTask('build_css', ['sass', 'replace:image_url', 'copy', 'cssmin']);
+  grunt.registerTask('build_css', ['sass', 'replace', 'copy', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);
 };
