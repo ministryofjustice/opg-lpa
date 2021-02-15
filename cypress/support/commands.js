@@ -72,7 +72,7 @@ function printAccessibilityViolations(violations) {
             cy.task('log', `Impact: ${report.impact}`);
             cy.task('log', `Description: ${report.description}`);
             cy.task('log', 'HTML elements causing violation:')
-            cy.task('log', '* ' + report.snippets.join('\n*  '));
+            cy.task('log', '* ' + report.snippets.join('\n* '));
         });
 
         return new Cypress.Promise((resolve, reject) => { return resolve(true); });
