@@ -1,3 +1,12 @@
+// for global replace of incorrect highlight colour (from obsolete
+// govuk design system) with correct highlight colour (from latest
+// design system); this is the focus colour on links and buttons;
+// this will not be required when we upgrade to the latest
+// design system as we will just use the colours as they are
+// without any patching
+const oldFocusColour = 'ffbf47';
+const newFocusColour = 'ffdd00';
+
 module.exports = function (grunt) {
   'use strict';
 
@@ -48,8 +57,8 @@ module.exports = function (grunt) {
       }
     },
 
-    // replacing a compass depended helper within govuk template css
     replace: {
+      // replacing a compass depended helper within govuk template css
       image_url: {
         src: ['public/assets/v2/css/*.css'],
         dest: 'public/assets/v2/css/',
@@ -57,7 +66,16 @@ module.exports = function (grunt) {
           from: 'image-url',
           to: 'url'
         }]
-      }
+      },
+      // replace the focus-colour variable value
+      focus_colour: {
+        src: ['public/assets/v2/css/*.css'],
+        dest: 'public/assets/v2/css/',
+        replacements: [{
+          from: oldFocusColour,
+          to: newFocusColour
+        }]
+      },
     },
 
     copy: {
@@ -70,13 +88,7 @@ module.exports = function (grunt) {
         dest: 'public/assets/v2/css/',
         options: {
           process: function (content, srcpath) {
-            // global replace of incorrect highlight colour (from obsolete
-            // govuk design system) with correct highlight colour (from latest
-            // design system); this is the focus colour on links and buttons;
-            // this will not be required when we upgrade to the latest
-            // design system as we will just use the colours as they are
-            // without any patching
-            return content.replace(/ffbf47/g, 'ffdd00');
+            return content.replace(new RegExp(oldFocusColour, 'g'), newFocusColour);
           }
         },
         flatten: true,
