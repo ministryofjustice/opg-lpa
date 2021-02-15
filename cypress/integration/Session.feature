@@ -8,17 +8,21 @@ Feature: Session
 
     @focus
     Scenario: Session timeout pop-up displays after inactivity and keeps focus (LPAL-245)
-        # Session lifetime is set in the test env in docker-compose.yml
-        # via the OPG_LPA_AUTH_TOKEN_TTL env var
         Given I log in as appropriate test user
         Then I see "Make a lasting power of attorney" in the page text
-        # The wait here should be equal to
-        # OPG_LPA_AUTH_TOKEN_TTL - 300 (5 minutes);
-        # this ensures we are on the page for enough time to reach
-        # < 5 minutes remaining in our session, which is what prompts the
-        # session timeout to show
         Then I should not see "Session timeout" in the page text
-        When I wait for 35 seconds
+
+        # The remaining session seconds here should be equal to
+        # 300 + a few seconds; this ensures we are on the page for enough time
+        # to reach < 5 minutes remaining in our session, which is what prompts the
+        # session timeout to show
+        When I manually set the session remaining seconds to 302
+
+        # This should be the same as the session remaining seconds - 299;
+        # if we wait this long, we enter into the window of time where the
+        # impending session timeout dialog appears
+        And I wait for 3 seconds
+
         Then I see "Session timeout" in the page text
         And there are "two" "button" elements inside "session-timeout-form"
         # Pressing tab twice will take the user outside the timeout pop-up
