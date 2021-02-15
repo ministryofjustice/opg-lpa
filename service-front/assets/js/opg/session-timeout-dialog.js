@@ -172,7 +172,7 @@ var SessionTimeoutDialog = function (options) {
 
         this.element.keydown(function (e) {
             // capture only tab events on this dialog
-            if (e.key !== 'Tab') {
+            if (e.key !== 'Tab' && e.keyCode !== 9) {
                 return true;
             }
             e.preventDefault();
