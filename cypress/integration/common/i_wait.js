@@ -6,12 +6,13 @@ Then('I wait for {int} seconds', (seconds) => {
 });
 
 // Load the current page, but manually set the seconds remaining in
-// the user's session; couple with "I wait for ... seconds", this enables
+// the user's session; coupled with "I wait for ... seconds", this enables
 // testing the session timeout without having to reduce the whole stack timeout.
 Then('I manually set the session remaining seconds to {int}', (seconds) => {
     // Set the number of seconds by appending
     // SessionTimeoutDialog.remainingSeconds=<seconds> to the current URL
-    // and reloading the page
+    // and reloading the page; see session-timeout-dialog.js for the code
+    // which understands this query string variable
     let qstring = 'SessionTimeoutDialog.remainingSeconds=' + seconds;
 
     cy.location().then((loc) => {
