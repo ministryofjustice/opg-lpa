@@ -36,12 +36,7 @@
     }
 }
 
-.button:focus {
-    outline-color: $focus-colour-override !important;
-}
-
 .button {
-    background-color: $button-color-override !important;
     -webkit-box-shadow: 0 2px 0 #002d18 !important;
     -moz-box-shadow: 0 2px 0 #002d18 !important;
     box-shadow: 0 2px 0 #002d18 !important;
