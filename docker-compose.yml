@@ -189,9 +189,8 @@ services:
 
       OPG_LPA_PROCESSING_STATUS_ENDPOINT: "http://gateway:5000/v1/lpa-online-tool/lpas/"
 
-      # lifetime (in seconds) of authentication tokens; in prod this defaults
-      # to 4500, but we set it to 5.5 minutes here so we can test session timeouts
-      OPG_LPA_AUTH_TOKEN_TTL: 330
+      # lifetime (in seconds) of authentication tokens
+      OPG_LPA_AUTH_TOKEN_TTL: 4500
       OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE: "true"
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
 
