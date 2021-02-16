@@ -51,7 +51,7 @@ resource "aws_cloudwatch_log_metric_filter" "csrf_mistmatch_filter" {
 
   metric_transformation {
     name      = "EventCount"
-    namespace = "AWS/ApplicationELB"
+    namespace = "online-lpa/Cloudwatch"
     value     = "1"
   }
 }
