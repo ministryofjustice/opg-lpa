@@ -43,11 +43,11 @@ class Csrf extends LaminasCsrfValidator
      */
     public function isValid($value, $context = null)
     {
-        if ($value !== $this->getHash()) {
-            $this->logger->err(sprintf(
+        if ($value !== $this->getHash(true)) {
+            $this->getLogger()->err(sprintf(
+                "Mismatched CSRF provided; expected %s received %s",
                 $value,
                 $this->getHash(),
-                'Mismatched CSRF provided; expected %s received %s'
             ));
             $this->error(self::NOT_SAME);
             return false;
