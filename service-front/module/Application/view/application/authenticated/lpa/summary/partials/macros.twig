@@ -127,16 +127,16 @@
         {% set addressString = '' %}
 
         {% if data.address.address1 is defined %}
-            {% set addressString = addressString ~ '<div itemprop="streetAddress">' ~ data.address.address1 ~ '</div>' %}
+            {% set addressString = addressString ~ '<div data-cy="streetAddress" itemprop="streetAddress">' ~ data.address.address1 ~ '</div>' %}
         {% endif %}
         {% if data.address.address2 is defined %}
-            {% set addressString = addressString ~ '<div itemprop="addressLocality">' ~ data.address.address2 ~ '</div>' %}
+            {% set addressString = addressString ~ '<div data-cy="addressLocality" itemprop="addressLocality">' ~ data.address.address2 ~ '</div>' %}
         {% endif %}
         {% if data.address.address3 is defined %}
-            {% set addressString = addressString ~ '<div itemprop="addressRegion">' ~ data.address.address3 ~ '</div>' %}
+            {% set addressString = addressString ~ '<div data-cy="addressRegion" itemprop="addressRegion">' ~ data.address.address3 ~ '</div>' %}
         {% endif %}
         {% if data.address.postcode is defined %}
-            {% set addressString = addressString ~ '<div itemprop="postalCode">' ~ data.address.postcode ~ '</div>' %}
+            {% set addressString = addressString ~ '<div data-cy="postalCode" itemprop="postalCode">' ~ data.address.postcode ~ '</div>' %}
         {% endif %}
 
         {{ macros.outputSection(
