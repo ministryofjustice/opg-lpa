@@ -63,12 +63,9 @@ resource "aws_cloudwatch_metric_alarm" "front_csrf_mismatch_errors" {
   alarm_name          = "${local.environment} public front CSRF errors"
   comparison_operator = "GreaterThanThreshold"
   datapoints_to_alarm = 2
-  dimensions = {
-    "LoadBalancer" = trimprefix(split(":", aws_lb.front.arn)[5], "loadbalancer/")
-  }
   evaluation_periods        = 2
   insufficient_data_actions = []
-  metric_name               = "${data.aws_cloudwatch_log_group.online-lpa}:csrf_mistmatch_filter"
+  metric_name               = "${data.aws_cloudwatch_log_group.online-lpa.name}:csrf_mistmatch_filter"
   namespace                 = "AWS/ApplicationELB"
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   period                    = 60
