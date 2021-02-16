@@ -57,12 +57,12 @@ resource "aws_cloudwatch_log_metric_filter" "csrf_mistmatch_filter" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "front_csrf_mismatch_errors" {
-  actions_enabled     = true
-  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  alarm_description   = "CSRF Errors returned to front users for ${local.environment}"
-  alarm_name          = "${local.environment} public front CSRF errors"
-  comparison_operator = "GreaterThanThreshold"
-  datapoints_to_alarm = 2
+  actions_enabled           = true
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_description         = "CSRF Errors returned to front users for ${local.environment}"
+  alarm_name                = "${local.environment} public front CSRF errors"
+  comparison_operator       = "GreaterThanThreshold"
+  datapoints_to_alarm       = 2
   evaluation_periods        = 2
   insufficient_data_actions = []
   metric_name               = "${data.aws_cloudwatch_log_group.online-lpa.name}:csrf_mistmatch_filter"
