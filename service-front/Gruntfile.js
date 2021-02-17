@@ -1,3 +1,31 @@
+// for global replace of incorrect colours (from obsolete
+// govuk design system) with correct colours (from latest
+// design system); this will not be required when we upgrade to the latest
+// design system as we will just use the colours as they are
+// without any patching
+const colourPatching = [
+  // focus-colour
+  {
+    'from': /ffbf47/g,
+    'to': 'ffdd00'
+  },
+  // button-colour
+  {
+    'from': /00823b/g,
+    'to': '00703c'
+  }
+];
+
+let colourPatch = function (content) {
+    for (let patch in colourPatching) {
+        let oldColour = patch.from;
+        let newColour = patch.to;
+        content = content.replace(oldColour, newColour);
+    }
+
+    return content;
+};
+
 module.exports = function (grunt) {
   'use strict';
 
@@ -48,8 +76,8 @@ module.exports = function (grunt) {
       }
     },
 
-    // replacing a compass depended helper within govuk template css
     replace: {
+      // replacing a compass depended helper within govuk template css
       image_url: {
         src: ['public/assets/v2/css/*.css'],
         dest: 'public/assets/v2/css/',
@@ -57,22 +85,28 @@ module.exports = function (grunt) {
           from: 'image-url',
           to: 'url'
         }]
-      }
+      },
+
+      // replace deprecated colours in CSS files
+      colours: {
+        src: ['public/assets/v2/css/*.css'],
+        dest: 'public/assets/v2/css/',
+        replacements: colourPatching,
+      },
     },
 
-    // govuk template css copied into public/assets
     copy: {
       main: {
-        files: [{
-          expand: true,
-          src: [
-            'node_modules/govuk_template_mustache/assets/stylesheets/fonts.css',
-            'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css',
-            'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css'
-          ],
-          dest: 'public/assets/v2/css/',
-          flatten: true
-        }]
+        src: [
+          'node_modules/govuk_template_mustache/assets/stylesheets/fonts.css',
+          'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css',
+          'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css'
+        ],
+        dest: 'public/assets/v2/css/',
+        options: {
+          process: colourPatch
+        },
+        flatten: true,
       }
     },
 
@@ -240,6 +274,6 @@ module.exports = function (grunt) {
   grunt.registerTask('test', ['scsslint', 'jshint']);
   grunt.registerTask('refresh', ['browserSync', 'watch']);
   grunt.registerTask('build_js', ['handlebars', 'concat', 'uglify']);
-  grunt.registerTask('build_css', ['sass', 'replace:image_url', 'copy', 'cssmin']);
+  grunt.registerTask('build_css', ['sass', 'replace', 'copy', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);
 };
