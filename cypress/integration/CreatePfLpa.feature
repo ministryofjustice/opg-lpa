@@ -542,7 +542,7 @@ Feature: Create a Property and Finance LPA
             | Name | Mrs Nancy Garrison | donor |
             | Date of birth | 22 October 1988 | |
             | Email address | opglpademo+NancyGarrison@gmail.com | |
-            | Address | Bank End Farm House$Undercliff Drive$ Ventnor, Isle of Wight $ PO38 1UL | |
+            | Address | Bank End Farm House $ Undercliff Drive$ Ventnor, Isle of Wight $ PO38 1UL | |
             | The donor can physically sign or make a mark on the LPA | No | |
             | When LPA starts |  As soon as it's registered (and with the donor's consent) | when-lpa-starts |
             | 1st attorney | | |
