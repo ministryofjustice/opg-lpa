@@ -10,7 +10,6 @@
   }
 
   .global-cookie-message__button {
-    @include button($button-colour);
     margin-right: 15px;
   }
 }
