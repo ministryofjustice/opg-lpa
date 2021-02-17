@@ -441,6 +441,7 @@ Feature: Create a Health and Welfare LPA
         Then I am taken to the applicant page
         When I visit link containing "preview the LPA"
         Then I am taken to the summary page
+        And I can find draft download link
         And I see the following summary information
             | Type | Health and welfare | |
             | Donor | | |
@@ -456,10 +457,10 @@ Feature: Create a Health and Welfare LPA
             | Email address | opglpademo+AmyWheeler@gmail.com | |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ ST14 8NX | |
             | 2nd attorney | | |
-            | Name | Standard Trust | primary-attorney |
-            | Company number | 678437685 | |
-            | Email address | opglpademo+trustcorp@gmail.com | |
-            | Address | 1 Laburnum Place $ Sketty $ Swansea, Abertawe $ SA2 8HT | |
+            | Name | Mr David Wheeler | primary-attorney |
+            | Date of birth | 12 March 1972 | |
+            | Email address | opglpademo+DavidWheeler@gmail.com | |
+            | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ ST14 8NX | |
             | Attorney decisions | | |
             | How decisions are made | The attorneys will act jointly and severally | how-primary-attorneys-make-decision |
             | 1st replacement attorney | | |
@@ -479,5 +480,7 @@ Feature: Create a Health and Welfare LPA
             | Person to notify | | |
             | Name | Sir Anthony Webb | people-to-notify |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ BS18 6PL | |
+        When I click "continue"
+        Then I am taken to the applicant page
         #When I click "save"
         #Then I am taken to the correspondent page
