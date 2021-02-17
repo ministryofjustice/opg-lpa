@@ -2,11 +2,6 @@
 // BUTTONS
 
 
-.button-secondary {
-    @extend %button-extended;
-    @include button($panel-colour);
-}
-
 .button-warning {
     @extend %button-extended;
     @include button($error-colour);
@@ -33,6 +28,37 @@
         @include media(mobile) {
             margin-top: 15px;
         }
+    }
+}
+
+.button {
+    // replacement for:
+    // # govuk_frontend_toolkit/**/_buttons.scss
+    // @include box-shadow(0 2px 0 darken($colour, 15%));
+    // @include ie-lte(8) {
+    //   border-bottom: 2px solid darken($colour, 15%);
+    // }
+    @include box-shadow(0 2px 0 #002d18);
+    @include ie-lte(8) {
+      border-bottom: 2px solid #002d18;
+    }
+
+    // replacement for:
+    // # govuk_frontend_toolkit/**/_buttons.scss
+    // darken($button-color, 5%)
+    &:hover, &:focus {
+        background-color: #005a30 !important;
+    }
+}
+
+.button-secondary {
+    @extend %button-extended;
+    @include button($panel-colour);
+
+    // override button colour settings from govuk stylesheets
+    background-color: #f3f2f1 !important;
+    &:hover, &:focus {
+        background-color: #d0d3d6 !important;
     }
 }
 
