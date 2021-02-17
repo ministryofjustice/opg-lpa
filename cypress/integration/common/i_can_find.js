@@ -23,6 +23,13 @@ Then(`I can find link pointing to {string}`, (linkAddr) => {
     cy.get(searchStr)
 })
 
+Then(`I can find draft download link`, () => {
+    cy.getLpaId().then((lpaId) => { 
+        let searchStr = 'a[href*="/lpa/' + lpaId + '/download/lp1/draft' + '"]'
+        cy.get(searchStr)
+    });
+})
+
 Then(`I can find old style id {string} with {int} options`, (object, count) => {
   cy.get(object).children().should("have.length", count);
 })

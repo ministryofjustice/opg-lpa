@@ -536,6 +536,7 @@ Feature: Create a Property and Finance LPA
         Then I am taken to the applicant page
         When I visit link containing "preview the LPA"
         Then I am taken to the summary page
+        And I can find draft download link
         And I see the following summary information
             | Type | Property and finance | |
             | Donor | | |
@@ -574,5 +575,7 @@ Feature: Create a Property and Finance LPA
             | Person to notify | | |
             | Name | Sir Anthony Webb | people-to-notify |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ BS18 6PL | |
+        When I click "continue"
+        Then I am taken to the applicant page
         #When I click "save"
         #Then I am taken to the correspondent page
