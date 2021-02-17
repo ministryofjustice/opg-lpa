@@ -9,7 +9,7 @@
     <p class="lede">This online service will help you to create a lasting power of attorney
         (LPA) for England and Wales.</p>
 
-    <p>It has step-by-step <a class="js-guidance" href="/guide#topic-what-is-an-lpa" data-journey-click="page:link:help: lasting power of attorney">guidance to making an LPA</a>, which will help you answer each question as you go through the service. We’ll use your answers to create an LPA that you can save and print, sign and send to the Office of the Public Guardian for registration.</p>
+    <p>It has step-by-step <a class="js-guidance" href="/guide#topic-what-is-an-lpa" data-journey-click="page:link:help: lasting power of attorney" data-cy="guidance-to-making-an-lpa-link">guidance to making an LPA</a>, which will help you answer each question as you go through the service. We’ll use your answers to create an LPA that you can save and print, sign and send to the Office of the Public Guardian for registration.</p>
 
     <p>We’ll save your LPA as you progress so you do not need to complete it in one go.</p>
     {{ systemMessage() }}
@@ -33,7 +33,7 @@
                 <p>
                     Continue making your LPA online by signing into your existing account.
                 </p>
-                <a class="button button-start" href="{{ url('login') }}" role="button">Sign in</a>
+                <a class="button button-start" href="{{ url('login') }}" role="button" data-cy="sign-in-button">Sign in</a>
             </div>
             </div>
     {% else %}
