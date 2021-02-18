@@ -152,7 +152,7 @@ class Service extends AbstractService
         if ($extendToken && $secondsSinceLastUpdate > 5) {
             $expires = new DateTime("+" . $this->token_ttl . " seconds");
 
-            $this->getUserRepository()->extendAuthToken($user->id(), $expires);
+            $this->getUserRepository()->updateAuthTokenExpiry($user->id(), $expires);
 
             $expiresAt = [
                 'expiresIn' => $this->token_ttl,

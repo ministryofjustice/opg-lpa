@@ -346,7 +346,7 @@ class ServiceTest extends AbstractServiceTest
             ])
         ]));
 
-        $this->authUserRepository->shouldReceive('extendAuthToken')
+        $this->authUserRepository->shouldReceive('updateAuthTokenExpiry')
             ->withArgs(function ($userId, $expires) {
                 //Store generated token details for later validation
                 $this->tokenDetails = [
