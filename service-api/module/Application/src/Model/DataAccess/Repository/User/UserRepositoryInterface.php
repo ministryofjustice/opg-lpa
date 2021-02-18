@@ -112,13 +112,13 @@ interface UserRepositoryInterface
     public function setAuthToken(string $userId, DateTime $expires, string $token) : bool;
 
     /**
-     * Extends the authentication token.
+     * Updates the authentication token expiry datetime.
      *
      * @param $userId
      * @param DateTime $expires
      * @return bool
      */
-    public function extendAuthToken(string $userId, DateTime $expires) : bool;
+    public function updateAuthTokenExpiry(string $userId, DateTime $expires) : bool;
 
     /**
      * @param $id
