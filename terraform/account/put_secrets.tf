@@ -47,6 +47,11 @@ resource "aws_secretsmanager_secret" "opg_lpa_front_ordnance_survey_license_key"
   tags = local.default_tags
 }
 
+resource "aws_secretsmanager_secret" "opg_lpa_front_os_places_hub_license_key" {
+  name = "${local.account_name}/opg_lpa_front_os_places_hub_license_key"
+  tags = local.default_tags
+}
+
 # pdf secrets
 resource "aws_secretsmanager_secret" "opg_lpa_pdf_owner_password" {
   name = "${local.account_name}/opg_lpa_pdf_owner_password"
