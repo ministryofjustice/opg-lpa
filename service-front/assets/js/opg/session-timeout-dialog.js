@@ -15,12 +15,6 @@ var SessionTimeoutDialog = function (options) {
 
     var that = this;
 
-    var remainingSeconds = /SessionTimeoutDialog.remainingSeconds=([0-9]+)/.exec(window.location.href);
-    if (remainingSeconds) {
-        // Limit maximum session length to 75 minutes
-        remainingSeconds = Math.min(parseInt(remainingSeconds[1]), 75*60*60);
-    }
-
     if (typeof options.element === 'undefined') {
         throw 'Popup element not provided';
     }
@@ -107,40 +101,22 @@ var SessionTimeoutDialog = function (options) {
     // Checks how much time is remaining on the session and show/hides the warning as appropriate as well as scheduling
     // another check, refreshes page on timeout
     this.checkSessionState = function () {
-        if (remainingSeconds === null) {
-            // Fetch the session data from the API
-            $.ajax({
-                url: that.remainingTimeUrl,
-                data: {},
-                complete: function (data) {
-                    var remainingSeconds = 0;
-                    if (data.status === 200) {
-                        remainingSeconds = data.responseJSON.remainingSeconds;
-                    }
-                    that.setDialogState(data.status, remainingSeconds);
-                },
-                error: function () {
-                    // Assume it was a temporary error and check again in 1 minute
-                    that.startExpiryCheckCountdown(60000);
+        // Fetch the session data from the API
+        $.ajax({
+            url: that.remainingTimeUrl,
+            data: {},
+            complete: function (data) {
+                var remainingSeconds = 0;
+                if (data.status === 200) {
+                    remainingSeconds = data.responseJSON.remainingSeconds;
                 }
-            });
-        }
-        else {
-            // Use our manually set remaining seconds rather than fetching the
-            // data from the API
-            if (remainingSeconds < 0) {
-                // User's session has timed out
-                that.setDialogState(204, 0);
+                that.setDialogState(data.status, remainingSeconds);
+            },
+            error: function () {
+                // Assume it was a temporary error and check again in 1 minute
+                that.startExpiryCheckCountdown(60000);
             }
-            else {
-                // User is possibly within the warning window, show/hide popup
-                var nextCheckMs = that.setDialogState(200, remainingSeconds);
-
-                // Calculate when the next check will happen and reduce
-                // the manually-set remainingSeconds by this amount
-                remainingSeconds -= parseInt(nextCheckMs / 1000);
-            }
-        }
+        });
     };
 
     this.startExpiryCheckCountdown = function (ms) {
