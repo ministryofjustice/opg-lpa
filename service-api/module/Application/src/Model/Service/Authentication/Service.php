@@ -131,6 +131,7 @@ class Service extends AbstractService
         $throttle = true;
 
         // will be derived from the tokenTtl if we decide to update
+        // (i.e. not ignored because of throttling)
         $expiresAt = null;
 
         return $this->updateToken($tokenStr, $extendToken, $throttle, $expiresAt);
@@ -168,6 +169,9 @@ class Service extends AbstractService
 
         $currentTimestamp = $currentDatetime->getTimestamp();
 
+        // the maximum expiry datetime is set via the TTL on this service
+        $maxExpiresAt = $currentDatetime->modify("+" . $this->tokenTtl . " seconds");
+
         /**
          * If $throttle, only need to update if not updated in last 5 seconds.
          * This withToken() method is called many times per end-user request.
@@ -183,14 +187,18 @@ class Service extends AbstractService
 
         // ensure expiresAt is set to some value
         if ($expiresAt === null) {
-            // if we need to update, derive the new expiresAt
+            // if we need to update, use the default expiry
             if ($needsUpdate) {
-                $expiresAt = $currentDatetime->modify("+" . $this->tokenTtl . " seconds");
+                $expiresAt = $maxExpiresAt;
             }
             // not updating, just get the token's current expiresAt
             else {
                 $expiresAt = $token->expiresAt();
             }
+        }
+        else {
+            // limit how far ahead expiry is set to <= the TTL for this service
+            $expiresAt = min($maxExpiresAt, $expiresAt);
         }
 
         // derive expiresIn
@@ -198,7 +206,11 @@ class Service extends AbstractService
 
         // apply the update if required
         if ($needsUpdate) {
-            $this->getUserRepository()->updateAuthTokenExpiry($user->id(), $expiresAt);
+            $result = $this->getUserRepository()->updateAuthTokenExpiry($user->id(), $expiresAt);
+
+            if (!$result) {
+                return 'token-update-not-applied';
+            }
         }
 
         return [

@@ -101,12 +101,12 @@ class Service extends AbstractService
             ],
             'fulfilled' => function ($response, $id) use (&$results) {
                 // Each successful response
-                $this->getLogger()->debug('We have a result for:' . $id);
+                //$this->getLogger()->debug('We have a result for:' . $id);
 
                 $results[$id] = $response;
                 },
             'rejected' => function ($reason, $id){
-                $this->getLogger()->debug('Failed to get result for :' . $id .$reason);
+                //$this->getLogger()->debug('Failed to get result for :' . $id .$reason);
             },
         ]);
 

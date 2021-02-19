@@ -16,7 +16,9 @@ Feature: Session
         # 300 + a few seconds; this ensures we are on the page for enough time
         # to reach < 5 minutes remaining in our session, which is what prompts the
         # session timeout to show
-        When I manually set the session remaining seconds to 302
+        When I hack the session to have 302 seconds remaining
+        And I verify that the session has at most 302 seconds remaining
+        And I visit "/user/about-you"
 
         # This should be the same as the session remaining seconds - 299;
         # if we wait this long, we enter into the window of time where the

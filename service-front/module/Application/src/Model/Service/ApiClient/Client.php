@@ -108,15 +108,18 @@ class Client
      *
      * @param string $path
      * @param array $payload
+     * @param array $headers
      * @return array|null
      * @throws Exception\ApiException
      * @throws \Http\Client\Exception
      */
-    public function httpPost($path, array $payload = [])
+    public function httpPost($path, array $payload = [], array $headers = [])
     {
         $url = new Uri($this->apiBaseUri . $path);
 
-        $request = new Request('POST', $url, $this->buildHeaders(), json_encode($payload));
+        $headers = $this->buildHeaders() + $headers;
+
+        $request = new Request('POST', $url, $headers, json_encode($payload));
 
         $response = $this->httpClient->sendRequest($request);
 
