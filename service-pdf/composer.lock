@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.173.4",
+            "version": "3.173.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "1400b2d08ded25bd9c6876edb0490b8cb9aeaa60"
+                "reference": "539d5235443368a34e98b8f0f434f2146a8ddb32"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1400b2d08ded25bd9c6876edb0490b8cb9aeaa60",
-                "reference": "1400b2d08ded25bd9c6876edb0490b8cb9aeaa60",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/539d5235443368a34e98b8f0f434f2146a8ddb32",
+                "reference": "539d5235443368a34e98b8f0f434f2146a8ddb32",
                 "shasum": ""
             },
             "require": {
@@ -92,9 +92,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.173.4"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.173.11"
             },
-            "time": "2021-02-05T19:19:35+00:00"
+            "time": "2021-02-17T19:12:46+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -549,24 +549,24 @@
         },
         {
             "name": "laminas/laminas-barcode",
-            "version": "2.8.2",
+            "version": "2.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-barcode.git",
-                "reference": "7806b774328a32b1f121f2972c72a0ded85939e1"
+                "reference": "74034895076d2305ce6716f93dd8d821f3c1e4fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-barcode/zipball/7806b774328a32b1f121f2972c72a0ded85939e1",
-                "reference": "7806b774328a32b1f121f2972c72a0ded85939e1",
+                "url": "https://api.github.com/repos/laminas/laminas-barcode/zipball/74034895076d2305ce6716f93dd8d821f3c1e4fc",
+                "reference": "74034895076d2305ce6716f93dd8d821f3c1e4fc",
                 "shasum": ""
             },
             "require": {
-                "laminas/laminas-servicemanager": "^2.7.8 || ^3.3",
+                "laminas/laminas-servicemanager": "^3.6.0",
                 "laminas/laminas-stdlib": "^2.7.7 || ^3.1",
                 "laminas/laminas-validator": "^2.10.1",
                 "laminas/laminas-zendframework-bridge": "^1.0",
-                "php": "^5.6 || ^7.0"
+                "php": "^7.3 || ~8.0.0"
             },
             "replace": {
                 "zendframework/zend-barcode": "^2.8.0"
@@ -574,19 +574,13 @@
             "require-dev": {
                 "laminas/laminas-coding-standard": "~1.0.0",
                 "laminas/laminas-config": "^2.6 || ^3.1",
-                "phpunit/phpunit": "^5.7.23 || ^6.4.3 || ^7.5.20",
+                "phpunit/phpunit": "^9.5.2",
                 "zendframework/zendpdf": "^2.0.2"
             },
             "suggest": {
                 "zendframework/zendpdf": "ZendPdf component"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.8.x-dev",
-                    "dev-develop": "2.9.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Laminas\\Barcode\\": "src/"
@@ -610,20 +604,26 @@
                 "rss": "https://github.com/laminas/laminas-barcode/releases.atom",
                 "source": "https://github.com/laminas/laminas-barcode"
             },
-            "time": "2020-03-29T11:59:03+00:00"
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
+            "time": "2021-02-10T21:50:12+00:00"
         },
         {
             "name": "laminas/laminas-crypt",
-            "version": "3.3.1",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-crypt.git",
-                "reference": "5f5dfe3ca08c965cc1f44f95831a83a81a93bf78"
+                "reference": "a058eeb2fe57824b958ac56753faff790a649e18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-crypt/zipball/5f5dfe3ca08c965cc1f44f95831a83a81a93bf78",
-                "reference": "5f5dfe3ca08c965cc1f44f95831a83a81a93bf78",
+                "url": "https://api.github.com/repos/laminas/laminas-crypt/zipball/a058eeb2fe57824b958ac56753faff790a649e18",
+                "reference": "a058eeb2fe57824b958ac56753faff790a649e18",
                 "shasum": ""
             },
             "require": {
@@ -632,25 +632,19 @@
                 "laminas/laminas-math": "^3.0",
                 "laminas/laminas-stdlib": "^2.7.7 || ^3.1",
                 "laminas/laminas-zendframework-bridge": "^1.0",
-                "php": "^5.6 || ^7.0"
+                "php": "^7.3 || ~8.0.0"
             },
             "replace": {
-                "zendframework/zend-crypt": "self.version"
+                "zendframework/zend-crypt": "^3.3.1"
             },
             "require-dev": {
                 "laminas/laminas-coding-standard": "~1.0.0",
-                "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.2"
+                "phpunit/phpunit": "^9.3"
             },
             "suggest": {
                 "ext-openssl": "Required for most features of Laminas\\Crypt"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.3.x-dev",
-                    "dev-develop": "3.4.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Laminas\\Crypt\\": "src/"
@@ -674,7 +668,13 @@
                 "rss": "https://github.com/laminas/laminas-crypt/releases.atom",
                 "source": "https://github.com/laminas/laminas-crypt"
             },
-            "time": "2019-12-31T16:33:24+00:00"
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
+            "time": "2021-02-11T19:40:03+00:00"
         },
         {
             "name": "laminas/laminas-filter",
@@ -758,16 +758,16 @@
         },
         {
             "name": "laminas/laminas-log",
-            "version": "2.13.0",
+            "version": "2.13.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-log.git",
-                "reference": "71bb2c98e0286c447488e71290ecf0beb44e6ca5"
+                "reference": "6ac20830d4f324b4662fc454fcc1954436bfced3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-log/zipball/71bb2c98e0286c447488e71290ecf0beb44e6ca5",
-                "reference": "71bb2c98e0286c447488e71290ecf0beb44e6ca5",
+                "url": "https://api.github.com/repos/laminas/laminas-log/zipball/6ac20830d4f324b4662fc454fcc1954436bfced3",
+                "reference": "6ac20830d4f324b4662fc454fcc1954436bfced3",
                 "shasum": ""
             },
             "require": {
@@ -839,20 +839,20 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2020-11-19T17:09:53+00:00"
+            "time": "2021-02-12T16:46:26+00:00"
         },
         {
             "name": "laminas/laminas-math",
-            "version": "3.3.1",
+            "version": "3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-math.git",
-                "reference": "0921d16529e00b37927ba96129e49567d8bfaf31"
+                "reference": "188456530923a449470963837c25560f1fdd8a60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-math/zipball/0921d16529e00b37927ba96129e49567d8bfaf31",
-                "reference": "0921d16529e00b37927ba96129e49567d8bfaf31",
+                "url": "https://api.github.com/repos/laminas/laminas-math/zipball/188456530923a449470963837c25560f1fdd8a60",
+                "reference": "188456530923a449470963837c25560f1fdd8a60",
                 "shasum": ""
             },
             "require": {
@@ -907,7 +907,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-01-22T09:29:45+00:00"
+            "time": "2021-02-16T15:46:01+00:00"
         },
         {
             "name": "laminas/laminas-servicemanager",
@@ -1787,16 +1787,16 @@
         },
         {
             "name": "setasign/fpdi",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Setasign/FPDI.git",
-                "reference": "f2246c8669bd25834f5c264425eb0e250d7a9312"
+                "reference": "6231e315f73e4f62d72b73f3d6d78ff0eed93c31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Setasign/FPDI/zipball/f2246c8669bd25834f5c264425eb0e250d7a9312",
-                "reference": "f2246c8669bd25834f5c264425eb0e250d7a9312",
+                "url": "https://api.github.com/repos/Setasign/FPDI/zipball/6231e315f73e4f62d72b73f3d6d78ff0eed93c31",
+                "reference": "6231e315f73e4f62d72b73f3d6d78ff0eed93c31",
                 "shasum": ""
             },
             "require": {
@@ -1847,7 +1847,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Setasign/FPDI/issues",
-                "source": "https://github.com/Setasign/FPDI/tree/v2.3.5"
+                "source": "https://github.com/Setasign/FPDI/tree/v2.3.6"
             },
             "funding": [
                 {
@@ -1855,7 +1855,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-12-03T13:40:03+00:00"
+            "time": "2021-02-11T11:37:01+00:00"
         },
         {
             "name": "setasign/fpdi-tcpdf",
@@ -1903,7 +1903,7 @@
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.22.0",
+            "version": "v1.22.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
@@ -1962,7 +1962,7 @@
                 "portable"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.22.0"
+                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.22.1"
             },
             "funding": [
                 {
@@ -1982,16 +1982,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.22.0",
+            "version": "v1.22.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "f377a3dd1fde44d37b9831d68dc8dea3ffd28e13"
+                "reference": "5232de97ee3b75b0360528dae24e73db49566ab1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/f377a3dd1fde44d37b9831d68dc8dea3ffd28e13",
-                "reference": "f377a3dd1fde44d37b9831d68dc8dea3ffd28e13",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/5232de97ee3b75b0360528dae24e73db49566ab1",
+                "reference": "5232de97ee3b75b0360528dae24e73db49566ab1",
                 "shasum": ""
             },
             "require": {
@@ -2042,7 +2042,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.22.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.22.1"
             },
             "funding": [
                 {
@@ -2058,7 +2058,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-07T16:49:33+00:00"
+            "time": "2021-01-22T09:19:47+00:00"
         },
         {
             "name": "symfony/translation-contracts",
