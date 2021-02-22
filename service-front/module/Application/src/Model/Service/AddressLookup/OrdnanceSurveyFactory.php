@@ -15,9 +15,14 @@ class OrdnanceSurveyFactory implements FactoryInterface
             throw new \UnexpectedValueException('Ordnance Survey API key not configured');
         }
 
+        if (!isset($config['address']['ordnancesurvey']['endpoint'])) {
+            throw new \UnexpectedValueException('Ordnance Survey API endpoint not configured');
+        }
+
         return new OrdnanceSurvey(
             $container->get('HttpClient'),
-            $config['address']['ordnancesurvey']['key']
+            $config['address']['ordnancesurvey']['key'],
+            $config['address']['ordnancesurvey']['endpoint']
         );
     }
 
