@@ -136,7 +136,8 @@ return [
     'address' => [
 
         'ordnancesurvey' => [
-            'key' => getenv('OPG_LPA_FRONT_ORDNANCE_SURVEY_LICENSE_KEY') ?: null,
+            'key' => getenv('OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY') ?: null,
+            'endpoint' => getenv('OPG_LPA_OS_PLACES_HUB_ENDPOINT') ?: null,
         ],
 
     ], // address

@@ -19,6 +19,11 @@ class OrdnanceSurveyTest extends MockeryTestCase
     private $apiKey;
 
     /**
+     * @var string
+     */
+    private $endpoint;
+
+    /**
      * @var MockInterface|HttpClientInterface
      */
     private $httpClient;
@@ -31,6 +36,9 @@ class OrdnanceSurveyTest extends MockeryTestCase
     protected function setUp()
     {
         $this->apiKey = 'test-key';
+
+        $this->endpoint = "http://localhost";
+
         $this->httpClient = Mockery::mock(HttpClientInterface::class);
 
         $this->response = Mockery::mock(ResponseInterface::class);
@@ -72,7 +80,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
             ->once()
             ->andReturn($this->response);
 
-        $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey);
+        $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey, $this->endpoint);
 
         $lookup->lookupPostcode($postcode);
     }
@@ -86,7 +94,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
             ->once()
             ->andReturn($this->response);
 
-        $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey);
+        $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey, $this->endpoint);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessageRegExp('/bad status code/');
@@ -103,7 +111,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
             ->once()
             ->andReturn($this->response);
 
-        $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey);
+        $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey, $this->endpoint);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessageRegExp('/invalid JSON/');
@@ -122,7 +130,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
             ->once()
             ->andReturn($this->response);
 
-        $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey);
+        $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey, $this->endpoint);
 
         $result = $lookup->lookupPostcode('SW1A 2AA');
 
@@ -174,7 +182,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
         $this->setupResponse();
         $this->httpClient->shouldReceive('sendRequest')->once()->andReturn($this->response);
 
-        $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey);
+        $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey, $this->endpoint);
         $results = $lookup->lookupPostcode('X1 3XX');
 
         $this->assertInternalType('array', $results);
