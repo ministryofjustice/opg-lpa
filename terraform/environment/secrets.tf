@@ -38,6 +38,10 @@ data "aws_secretsmanager_secret" "opg_lpa_front_ordnance_survey_license_key" {
   name = "${local.account_name}/opg_lpa_front_ordnance_survey_license_key"
 }
 
+data "aws_secretsmanager_secret" "opg_lpa_front_os_places_hub_license_key" {
+  name = "${local.account_name}/opg_lpa_front_os_places_hub_license_key"
+}
+
 # pdf secrets
 data "aws_secretsmanager_secret" "opg_lpa_pdf_owner_password" {
   name = "${local.account_name}/opg_lpa_pdf_owner_password"
