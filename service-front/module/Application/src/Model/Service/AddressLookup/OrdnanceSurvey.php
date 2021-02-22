@@ -26,14 +26,20 @@ class OrdnanceSurvey {
     private $apiKey;
 
     /**
+     * @var string
+     */
+    private $endpoint;
+
+    /**
      * OrdnanceSurvey constructor.
      * @param HttpClientInterface $client
      * @param string $apiKey
      */
-    public function __construct(HttpClientInterface $client, string $apiKey)
+    public function __construct(HttpClientInterface $client, string $apiKey, string $endpoint)
     {
         $this->httpClient = $client;
         $this->apiKey = $apiKey;
+        $this->endpoint = $endpoint;
     }
 
     /**
@@ -66,7 +72,7 @@ class OrdnanceSurvey {
      */
     private function getData($postcode)
     {
-        $url = new Uri("https://api.ordnancesurvey.co.uk/places/v1/addresses/postcode");
+        $url = new Uri($this->endpoint);
         $url = URI::withQueryValue($url, 'key', $this->apiKey );
         $url = URI::withQueryValue($url, 'postcode', $postcode );
         $url = URI::withQueryValue($url, 'lr', 'EN' );
