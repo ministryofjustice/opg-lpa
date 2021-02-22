@@ -28,12 +28,12 @@ class OrdnanceSurveyFactoryTest extends MockeryTestCase
         $this->assertInstanceOf(OrdnanceSurveyFactory::class, $factory);
     }
 
-    public function testInvalidClass()
+    public function testInvalidApiKeyConfiguration()
     {
         $this->container->shouldReceive('get')
             ->withArgs(['config'])
             ->once()
-            ->andReturn([]);
+            ->andReturn(['address'=>['ordnancesurvey'=>['endpoint'=>'xxx']]]);
 
         $factory = new OrdnanceSurveyFactory();
         $this->expectException(\UnexpectedValueException::class);
@@ -42,12 +42,27 @@ class OrdnanceSurveyFactoryTest extends MockeryTestCase
         $factory($this->container, null);
     }
 
-    public function testWithValidConfiguration()
+    public function testInvalidEndpointConfiguration()
     {
         $this->container->shouldReceive('get')
             ->withArgs(['config'])
             ->once()
             ->andReturn(['address'=>['ordnancesurvey'=>['key'=>'xxx']]]);
+
+        $factory = new OrdnanceSurveyFactory();
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessageRegExp('/Ordnance Survey API endpoint not configured/');
+
+        $factory($this->container, null);
+    }
+
+
+    public function testWithValidConfiguration()
+    {
+        $this->container->shouldReceive('get')
+            ->withArgs(['config'])
+            ->once()
+            ->andReturn(['address'=>['ordnancesurvey'=>['key'=>'xxx', 'endpoint'=> 'http://yyyy.example.com']]]);
 
         $this->container->shouldReceive('get')
             ->withArgs(['HttpClient'])

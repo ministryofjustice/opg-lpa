@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.173.11",
+            "version": "3.173.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "539d5235443368a34e98b8f0f434f2146a8ddb32"
+                "reference": "b8ef72b8b335a1bb004505784f1a03ff5b37928f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/539d5235443368a34e98b8f0f434f2146a8ddb32",
-                "reference": "539d5235443368a34e98b8f0f434f2146a8ddb32",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b8ef72b8b335a1bb004505784f1a03ff5b37928f",
+                "reference": "b8ef72b8b335a1bb004505784f1a03ff5b37928f",
                 "shasum": ""
             },
             "require": {
@@ -92,9 +92,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.173.11"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.173.13"
             },
-            "time": "2021-02-17T19:12:46+00:00"
+            "time": "2021-02-19T19:14:50+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -6814,12 +6814,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "1e48e1beacb6122df93aa61a6cc291254984be2a"
+                "reference": "640ff0b5dcacc0958534c8c0255b90697f3eb2a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/1e48e1beacb6122df93aa61a6cc291254984be2a",
-                "reference": "1e48e1beacb6122df93aa61a6cc291254984be2a",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/640ff0b5dcacc0958534c8c0255b90697f3eb2a8",
+                "reference": "640ff0b5dcacc0958534c8c0255b90697f3eb2a8",
                 "shasum": ""
             },
             "conflict": {
@@ -6837,6 +6837,7 @@
                 "barrelstrength/sprout-forms": "<3.9",
                 "baserproject/basercms": ">=4,<=4.3.6|>=4.4,<4.4.1",
                 "bolt/bolt": "<3.7.1",
+                "bolt/core": "<4.1.13",
                 "brightlocal/phpwhois": "<=4.2.5",
                 "buddypress/buddypress": "<5.1.2",
                 "bugsnag/bugsnag-laravel": ">=2,<2.0.2",
@@ -7132,7 +7133,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-02-16T17:17:25+00:00"
+            "time": "2021-02-18T21:02:27+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
