@@ -15,8 +15,16 @@ class SessionKeepAliveController extends AbstractAuthenticatedController
     public function setExpiryAction()
     {
         if ($this->request->isPost()) {
-            // Derive expireInSeconds from request POST
-            $expireInSeconds = $this->request->getPost('expireInSeconds');
+            // Derive expireInSeconds from request body
+            $expireInSeconds = null;
+
+            $content = $this->request->getContent();
+            if ($content !== '') {
+                $decodedContent = json_decode($content, true);
+                if (array_key_exists('expireInSeconds', $decodedContent)) {
+                    $expireInSeconds = $decodedContent['expireInSeconds'];
+                }
+            }
 
             if ($expireInSeconds === null) {
                 $response = $this->getResponse();

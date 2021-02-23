@@ -45,9 +45,8 @@ class SessionKeepAliveControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
 
         $this->request
-             ->shouldReceive('getPost')
-             ->withArgs(['expireInSeconds'])
-             ->andReturn($expireInSeconds)
+             ->shouldReceive('getContent')
+             ->andReturn("{\"expireInSeconds\": $expireInSeconds}")
              ->once();
 
         /** @var SessionKeepAliveController $controller */
@@ -64,14 +63,31 @@ class SessionKeepAliveControllerTest extends AbstractControllerTest
         $this->assertEquals(['remainingSeconds' => $expireInSeconds], $result->getVariables());
     }
 
+    public function testSetExpiryActionMissingPOSTVariable() : void
+    {
+        $this->request->shouldReceive('isPost')->andReturn(true)->once();
+
+        $this->request
+             ->shouldReceive('getContent')
+             ->andReturn("{}")
+             ->once();
+
+        /** @var SessionKeepAliveController $controller */
+        $controller = $this->getController(SessionKeepAliveController::class);
+
+        $result = $controller->setExpiryAction();
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals($result->getStatusCode(), 400);
+    }
+
     public function testSetExpiryActionWithInvalidPostReceives400() : void
     {
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
 
         $this->request
-             ->shouldReceive('getPost')
-             ->withArgs(['expireInSeconds'])
-             ->andReturn(null)
+             ->shouldReceive('getContent')
+             ->andReturn('')
              ->once();
 
         /** @var SessionKeepAliveController $controller */
