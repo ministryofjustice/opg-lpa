@@ -5,6 +5,7 @@ namespace ApplicationTest\Controller\Authenticated;
 use Application\Controller\Authenticated\SessionKeepAliveController;
 use ApplicationTest\Controller\AbstractControllerTest;
 use Laminas\View\Model\JsonModel;
+use Laminas\Http\Response;
 
 class SessionKeepAliveControllerTest extends AbstractControllerTest
 {
@@ -35,5 +36,61 @@ class SessionKeepAliveControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(JsonModel::class, $result);
         $this->assertEquals(['refreshed' => false], $result->getVariables());
+    }
+
+    public function testSetExpiryAction() : void
+    {
+        $expireInSeconds = 500;
+
+        $this->request->shouldReceive('isPost')->andReturn(true)->once();
+
+        $this->request
+             ->shouldReceive('getPost')
+             ->withArgs(['expireInSeconds'])
+             ->andReturn($expireInSeconds)
+             ->once();
+
+        /** @var SessionKeepAliveController $controller */
+        $controller = $this->getController(SessionKeepAliveController::class);
+        $this->authenticationService
+             ->shouldReceive('setSessionExpiry')
+             ->withArgs([$expireInSeconds])
+             ->andReturn($expireInSeconds)
+             ->once();
+
+        $result = $controller->setExpiryAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals(['remainingSeconds' => $expireInSeconds], $result->getVariables());
+    }
+
+    public function testSetExpiryActionWithInvalidPostReceives400() : void
+    {
+        $this->request->shouldReceive('isPost')->andReturn(true)->once();
+
+        $this->request
+             ->shouldReceive('getPost')
+             ->withArgs(['expireInSeconds'])
+             ->andReturn(null)
+             ->once();
+
+        /** @var SessionKeepAliveController $controller */
+        $controller = $this->getController(SessionKeepAliveController::class);
+        $result = $controller->setExpiryAction();
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals($result->getStatusCode(), 400);
+    }
+
+    public function testSetExpiryActionWithGETReceives405() : void
+    {
+        $this->request->shouldReceive('isPost')->andReturn(false)->once();
+
+        /** @var SessionKeepAliveController $controller */
+        $controller = $this->getController(SessionKeepAliveController::class);
+        $result = $controller->setExpiryAction();
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals($result->getStatusCode(), 405);
     }
 }
