@@ -441,7 +441,6 @@ Feature: Create a Health and Welfare LPA
         Then I am taken to the applicant page
         When I visit link containing "preview the LPA"
         Then I am taken to the summary page
-        And I can find draft download link
         And I see the following summary information
             | Type | Health and welfare | |
             | Donor | | |
@@ -480,7 +479,18 @@ Feature: Create a Health and Welfare LPA
             | Person to notify | | |
             | Name | Sir Anthony Webb | people-to-notify |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ BS18 6PL | |
-        When I click "continue"
+        And I can find draft download link
+        When I visit link in new tab containing "download a preview"
+        #Then I can download "Draft-Lasting-Power-of-Attorney-LP1H.pdf"
+        When I click back
+        And I click "continue"
         Then I am taken to the applicant page
-        #When I click "save"
-        #Then I am taken to the correspondent page
+        When I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | Select the person who is applying to register the LPA |
+        # select the attorney
+        When I check occurrence 1 of checkbox
+        When I check occurrence 0 of radio button
+        And I click "save"
+        Then I am taken to the correspondent page
