@@ -153,10 +153,7 @@ var SessionTimeoutDialog = function (options) {
             }
             e.preventDefault();
 
-            var direction = 1;
-            if (e.shiftKey) {
-                direction = -1;
-            }
+            var direction = (e.shiftKey ? -1 : 1);
 
             currentElementIndex = currentElementIndex + direction;
 
