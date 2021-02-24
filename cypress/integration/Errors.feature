@@ -11,6 +11,7 @@ Feature: Errors
         Given I visit "/send-feedback"
         When I submit the feedback
         Then I see "There is a problem" in the page text
+        And I see "Error" in the title
         And "error-heading" is a "level 2 heading" element
         And there is "one" "level 1 heading" element on the page
 
@@ -22,6 +23,7 @@ Feature: Errors
         And I type "aaa" into "login-password"
         And I click "login-submit-button"
         Then I see "There is a problem" in the page text
+        And I see "Error" in the title
         And "error-heading" is a "level 2 heading" element
         And there is "one" "level 1 heading" element on the page
 
