@@ -1,11 +1,11 @@
 <?php
 
-namespace ApplicationTest\Form\Lpa;
+namespace ApplicationTest\Form\FieldSet;
 
 use Application\Form\Fieldset\Correspondence;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class CorrespondenceFieldsetTest extends MockeryTestCase
+class CorrespondenceTest extends MockeryTestCase
 {
     public function testNameAndInstance()
     {
