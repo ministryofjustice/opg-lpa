@@ -31,7 +31,7 @@ class CorrespondenceFormTest extends MockeryTestCase
     public function testElements()
     {
         $this->assertInstanceOf('Laminas\Form\Element\Radio', $this->form->get('contactInWelsh'));
-        $this->assertInstanceOf('Application\Form\Lpa\CorrespondenceFieldset', $this->form->get('correspondence'));
+        $this->assertInstanceOf('Application\Form\Fieldset\Correspondence', $this->form->get('correspondence'));
         $this->assertInstanceOf('Laminas\Form\Element\Submit', $this->form->get('save'));
     }
 

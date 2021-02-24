@@ -12,28 +12,20 @@ class FormLinkedErrorListV2 extends AbstractHelper
      *
      * @param ElementInterface
      */
-    public function __invoke(Form $form)
-    {
+    public function __invoke(Form $form) {
+        foreach ($form->getMessages() as $field => $errors) {
 
-        foreach( $form->getMessages() as $field=>$errors ){
-
-            foreach( $errors as $error ){
-
-                if( is_array( $error ) ){
-
-                    foreach( $error as $subError ){
-                        $this->outputError( $field, $subError );
+            foreach ($errors as $error) {
+                if (is_array($error)) {
+                    foreach($error as $subError) {
+                        $this->outputError($field, $subError);
                     }
-
                 } else {
-                    $this->outputError( $field, $error );
+                    $this->outputError($field, $error);
                 }
-
-            } // foreach
-
-        } // foreach
-
-    } // function
+            }
+        }
+    }
 
     /**
      * Output one error message
@@ -41,12 +33,12 @@ class FormLinkedErrorListV2 extends AbstractHelper
      * @param $field
      * @param $error
      */
-    private function outputError( $field, $error ){
+    private function outputError ($field, $error)
+    {
 
         echo '<li><a href="#' . $field . '">';
         echo $error;
         echo '</a></li>';
 
     }
-    
 }
