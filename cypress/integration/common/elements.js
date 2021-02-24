@@ -12,7 +12,7 @@ const MapNumberTextToNumber = {
 // map from natural language text to HTML tag name
 const MapElementSpecifierToTag = {
     'level 1 heading': 'H1',
-    'level 2 heading': 'H2',
+    'level 2 heading': 'H2'
 };
 
 /**

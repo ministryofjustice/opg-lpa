@@ -39,7 +39,7 @@ class SessionKeepAliveController extends AbstractAuthenticatedController
 
         $response = $this->getResponse();
         $response->setStatusCode(405);
-        $response->setContent('Bad request method');
+        $response->setContent('Method not allowed');
         return $response;
     }
 }
