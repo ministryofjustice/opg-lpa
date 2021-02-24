@@ -15,7 +15,8 @@ class CsrfTest extends MockeryTestCase
     {
         $validator = new Csrf();
 
-        //  Set the session seed to skip the randomisation step
+        //  Set the session seed to skip the randomisation step, required to normalise the session
+        // container specified due to how session info is managed
         $session = new Container('CsrfValidator');
         $session->token = 12345;
 
