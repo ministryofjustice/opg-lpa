@@ -1,7 +1,7 @@
 @Errors
 Feature: Errors
 
-    I want to be see useful and relevant error messages
+    I want to see useful and relevant error messages
 
     Background:
         Given I ignore application exceptions
@@ -16,8 +16,12 @@ Feature: Errors
         And there is "one" "level 1 heading" element on the page
 
     @focus
-    # requires additional scenario as login page doesn't use the error macro
-    Scenario: Error message heading level and text / server-rendered auth (LPAL-247)
+    # requires additional scenarios as login page doesn't use the error macro;
+    # this path attempts to log the user in and fails, but doesn't use
+    # the same path through the code as invalid form fields (see below);
+    # a failed login (but valid email input) produces a different type of error
+    # from invalid form fields
+    Scenario: Error message heading level and text / server-rendered auth - valid email (LPAL-247)
         Given I visit "/login"
         And I type "foo@example.com" into "login-email"
         And I type "aaa" into "login-password"
@@ -35,5 +39,19 @@ Feature: Errors
         Then I see in the page text
             | There is a problem |
             | Choose a type of LPA |
+        And I see "Error" in the title
         When I visit link containing "Choose a type of LPA"
         Then I am focused on "type-property-and-financial"
+
+    # requires additional scenarios as login page doesn't use the error macro;
+    # this scenario covers invalid email entered, which uses a different branch
+    # of the code from a failed user login
+    Scenario: Error message heading level and text / server-rendered auth - invalid email (LPAL-247)
+        Given I visit "/login"
+        And I type "foo" into "login-email"
+        And I type "aaa" into "login-password"
+        And I click "login-submit-button"
+        Then I see "There is a problem" in the page text
+        And I see "Error" in the title
+        And "error-heading" is a "level 2 heading" element
+        And there is "one" "level 1 heading" element on the page
