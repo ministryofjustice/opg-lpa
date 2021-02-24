@@ -1,12 +1,12 @@
 <?php
 
-namespace Application\Form\Lpa;
+namespace Application\Form\Fieldset;
 
 use Laminas\Form\Fieldset;
 use Laminas\Hydrator\ClassMethodsHydrator as ClassMethodsHydrator;
-use Opg\Lpa\DataModel\Lpa\Document\Correspondence;
+use Opg\Lpa\DataModel\Lpa\Document\Correspondence AS CorrespondenceModel;
 
-class CorrespondenceFieldset extends Fieldset
+class Correspondence extends Fieldset
 {
     /**
      * @param  null|int|string  $name    Optional name for the element
@@ -14,10 +14,10 @@ class CorrespondenceFieldset extends Fieldset
      */
     public function __construct($name = null, $options = [])
     {
-        parent::__construct('fieldset-correspondence', $options);
+        parent::__construct($name, $options);
 
         $this->setHydrator(new ClassMethodsHydrator(false))
-             ->setObject(new Correspondence());
+             ->setObject(new CorrespondenceModel());
 
         $this->add([
             'name' => 'contactByEmail',
