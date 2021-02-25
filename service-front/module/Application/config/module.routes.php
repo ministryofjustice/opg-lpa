@@ -214,6 +214,18 @@ return [
                 ]
             ],
 
+            'session-set-expiry' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route'    => '/session-set-expiry',
+                    'defaults' => [
+                        'controller' => 'Authenticated\SessionKeepAliveController',
+                        'action'     => 'setExpiry',
+                    ],
+                ]
+            ],
+
+
             'deleted' => [
                 'type'    => 'Literal',
                 'options' => [

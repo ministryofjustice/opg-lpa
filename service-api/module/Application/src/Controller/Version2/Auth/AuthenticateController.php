@@ -2,6 +2,7 @@
 
 namespace Application\Controller\Version2\Auth;
 
+use \DateTime;
 use Laminas\View\Model\JsonModel;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 
@@ -122,6 +123,40 @@ class AuthenticateController extends AbstractAuthController
         if ($result instanceof ApiProblem) {
             return $result;
         }
+
+        if (is_string($result)) {
+            return new JsonModel(['valid' => false, 'problem' => $result]);
+        }
+
+        return new JsonModel(['valid' => true, 'remainingSeconds' => $result['expiresIn']]);
+    }
+
+    /**
+     * expects a JSON POST with the following properties:
+     * - CheckedToken header, containing the user's auth token
+     * - JSON body with these properties:
+     *   - "expiresInSeconds": <int>
+     */
+    public function setSessionExpiryAction()
+    {
+        $token = $this->getRequest()->getHeader('CheckedToken');
+
+        if ($token == null) {
+            return new ApiProblem(400, 'No CheckedToken was specified in the header');
+        }
+
+        // create datetime by getting the expiry time in seconds from the POST
+        $expireInSeconds = $this->getBodyContent('expireInSeconds');
+        if ($expireInSeconds === null) {
+            return new ApiProblem(400, 'No expireInSeconds property in JSON request body');
+        }
+
+        $tokenStr = trim($token->getFieldValue());
+        $needsUpdate = true;
+        $throttle = false;
+        $expiresAt = (new DateTime())->modify('+' . $expireInSeconds . ' seconds');
+
+        $result = $this->authenticationService->updateToken($tokenStr, $needsUpdate, $throttle, $expiresAt);
 
         if (is_string($result)) {
             return new JsonModel(['valid' => false, 'problem' => $result]);
