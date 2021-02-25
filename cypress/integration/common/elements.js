@@ -15,14 +15,36 @@ const MapElementSpecifierToTag = {
     'level 2 heading': 'H2'
 };
 
-const checkNumberOfElements = (numberText, elementSpecifier) => {
+/**
+ * Count the number of elements with a specific tag.
+ *
+ * numberText: e.g. "one", "two"; alternatively, a number like "10"
+ * elementSpecifier: specifier for the element to match; can either be
+ *     a key in MapElementSpecifierToTag or a selector
+ * contextSelector: selector for the element within which to search for the
+ *     expected elements; 'document' makes the document the context
+ */
+const checkNumberOfElements = (numberText, elementSpecifier, contextSelector) => {
     let tag = MapElementSpecifierToTag[elementSpecifier];
-    let numberExpected = MapNumberTextToNumber[numberText];
+    if (tag === undefined) {
+        tag = elementSpecifier;
+    }
 
-    cy.document().then((doc) => {
-        // select elements matching the specifier and count them
-        expect(doc.querySelectorAll(tag).length).to.equal(numberExpected);
-    });
+    let numberExpected = MapNumberTextToNumber[numberText];
+    if (numberExpected === undefined) {
+        numberExpected = parseInt(numberExpected);
+    }
+
+    // select elements matching the specifier and count them
+    if (contextSelector === 'document') {
+        cy.document().then((doc) => {
+            expect(doc.querySelectorAll(tag).length).to.equal(numberExpected);
+        });
+    }
+    else {
+        let ctx = Cypress.$(contextSelector);
+        expect(ctx[0].querySelectorAll(tag).length).to.equal(numberExpected);
+    }
 };
 
 /**
@@ -40,19 +62,33 @@ Then('{string} is a {string} element', (dataCyReference, elementSpecifier) => {
 });
 
 /**
- * Check that there is/are a specific number of elements of a particular tag
- * in the document
+ * Check that there is/are a specific number of elements of a particular
+ * tag in the document
  *
  * numberText: key from MapNumberTextToNumber, e.g. "is a single", "are two"
  * elementSpecifier: type of element dataCyReference is expected to be,
  *     expressed as a key from the MapElementSpecifierToTag array
  */
 Then('there is {string} {string} element on the page', (numberText, elementSpecifier) => {
-    checkNumberOfElements(numberText, elementSpecifier);
+    checkNumberOfElements(numberText, elementSpecifier, 'document');
 });
 
 Then('there are {string} {string} elements on the page', (numberText, elementSpecifier) => {
-    checkNumberOfElements(numberText, elementSpecifier);
+    checkNumberOfElements(numberText, elementSpecifier, 'document');
+});
+
+// dataCyReference specifies a data-cy value for the context within which
+// the elements should occur
+Then('there is {string} {string} element inside {string}', (numberText, elementSpecifier, dataCyReference) => {
+    cy.get("[data-cy=" + dataCyReference + "]").then((els) => {
+        checkNumberOfElements(numberText, elementSpecifier, els[0]);
+    });
+});
+
+Then('there are {string} {string} elements inside {string}', (numberText, elementSpecifier, dataCyReference) => {
+    cy.get("[data-cy=" + dataCyReference + "]").then((els) => {
+        checkNumberOfElements(numberText, elementSpecifier, els[0]);
+    });
 });
 
 /**

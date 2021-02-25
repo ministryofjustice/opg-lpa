@@ -85,7 +85,15 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             throw new Exception(sprintf('Abstract factory %s can not create the requested service %s', get_class($this), $requestedName));
         }
 
-        $service = new $requestedName();
+        // Use custom factory method for AuthenticationService;
+        // the AppAuthenticationService factory method is defined in
+        // service-api/module/Application/src/Module.php
+        if ($requestedName === 'Application\Model\Service\Authentication\Service') {
+            $service = $container->get('AppAuthenticationService');
+        }
+        else {
+            $service = new $requestedName();
+        }
 
         $traitsUsed = class_uses($service);
 

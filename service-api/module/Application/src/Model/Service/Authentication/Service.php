@@ -19,14 +19,24 @@ class Service extends AbstractService
     const MAX_ALLOWED_LOGIN_ATTEMPTS = 5;
 
     /**
-     * The number of seconds before an auth token expires.
+     * Default number of seconds before an auth token expires.
      */
     const TOKEN_TTL = 4500; // 75 minutes
+
+    /**
+     * The actual number of seconds before an auth token expires.
+     */
+    private $tokenTtl;
 
     /**
      * The number of minutes to lock an account for after x failed login consecutive attempts.
      */
     const ACCOUNT_LOCK_TIME = 900; // 15 minutes
+
+    public function __construct($tokenTtl = self::TOKEN_TTL)
+    {
+        $this->tokenTtl = $tokenTtl;
+    }
 
     public function withPassword($username, $password, $createToken)
     {
@@ -85,7 +95,7 @@ class Service extends AbstractService
         $tokenDetails = array();
 
         if ($createToken) {
-            $expires = new DateTime("+" . self::TOKEN_TTL . " seconds");
+            $expires = new DateTime("+" . $this->tokenTtl . " seconds");
 
             do {
                 $authToken = bin2hex(random_bytes(32));
@@ -102,7 +112,7 @@ class Service extends AbstractService
 
             $tokenDetails = [
                 'token' => $authToken,
-                'expiresIn' => self::TOKEN_TTL,
+                'expiresIn' => $this->tokenTtl,
                 'expiresAt' => $expires
             ];
         }
@@ -115,11 +125,33 @@ class Service extends AbstractService
             ] + $tokenDetails;
     }
 
-    public function withToken($token, $extendToken)
+    public function withToken($tokenStr, $extendToken)
     {
-        $user = $this->getUserRepository()->getByAuthToken($token);
+        // limit token updates to once every 5 seconds
+        $throttle = true;
 
-        if (!$user instanceof User) {
+        // will be derived from the tokenTtl if we decide to update
+        // (i.e. not ignored because of throttling)
+        $expiresAt = null;
+
+        return $this->updateToken($tokenStr, $extendToken, $throttle, $expiresAt);
+    }
+
+    /**
+     * $tokenStr: string; representation of token, derived from request
+     * $needsUpdate: bool; set to true to decide whether to try to update the
+     *     token expiry; if false, no update is attempted
+     * $throttle: bool; if $needsUpdate is true and $throttle is true,
+     *     the update will still only be applied if the last update time for the
+     *     token is more than 5 seconds ago
+     * $expiresAt: DateTime|null; if null, defaults to the current time +
+     *     the tokenTtl on this service
+     */
+    public function updateToken($tokenStr, $needsUpdate = true, $throttle = true, $expiresAt = null)
+    {
+        $user = $this->getUserRepository()->getByAuthToken($tokenStr);
+
+        if (!($user instanceof User)) {
             return 'invalid-token';
         }
 
@@ -129,38 +161,65 @@ class Service extends AbstractService
             return 'invalid-token';
         }
 
-        if ($token->expiresAt() < (new DateTime())) {
+        $currentDatetime = new DateTime();
+
+        if ($token->expiresAt() < $currentDatetime) {
             return 'token-has-expired';
         }
 
+        $currentTimestamp = $currentDatetime->getTimestamp();
+
+        // the maximum expiry datetime is set via the TTL on this service
+        $maxExpiresAt = $currentDatetime->modify("+" . $this->tokenTtl . " seconds");
+
         /**
+         * If $throttle, only need to update if not updated in last 5 seconds.
          * This withToken() method is called many times per end-user request.
-         * To reduce write load on the database we leave a few seconds grace period before re-extending the token.
+         * To reduce write load on the database we leave a few seconds grace
+         * period before re-extending the token.
          */
-        $secondsSinceLastUpdate = time() - $token->updatedAt()->getTimestamp();
+        if ($throttle) {
+            $secondsSinceLastUpdate = $currentTimestamp - $token->updatedAt()->getTimestamp();
+            if ($secondsSinceLastUpdate < 5) {
+                $needsUpdate = false;
+            }
+        }
 
-        if ($extendToken && $secondsSinceLastUpdate > 5) {
-            $expires = new DateTime("+" . self::TOKEN_TTL . " seconds");
+        // ensure expiresAt is set to some value
+        if ($expiresAt === null) {
+            // if we need to update, use the default expiry
+            if ($needsUpdate) {
+                $expiresAt = $maxExpiresAt;
+            }
+            // not updating, just get the token's current expiresAt
+            else {
+                $expiresAt = $token->expiresAt();
+            }
+        }
+        else {
+            // limit how far ahead expiry is set to <= the TTL for this service
+            $expiresAt = min($maxExpiresAt, $expiresAt);
+        }
 
-            $this->getUserRepository()->extendAuthToken($user->id(), $expires);
+        // derive expiresIn
+        $expiresIn = (int)abs($currentTimestamp - $expiresAt->getTimestamp());
 
-            $expiresAt = [
-                'expiresIn' => self::TOKEN_TTL,
-                'expiresAt' => $expires
-            ];
-        } else {
-            // Otherwise return the existing details.
-            $expiresAt = [
-                'expiresIn' => (int)abs(time() - $token->expiresAt()->getTimestamp()),
-                'expiresAt' => $token->expiresAt()
-            ];
+        // apply the update if required
+        if ($needsUpdate) {
+            $result = $this->getUserRepository()->updateAuthTokenExpiry($user->id(), $expiresAt);
+
+            if (!$result) {
+                return 'token-update-not-applied';
+            }
         }
 
         return [
-                'token' => $token->id(),
-                'userId' => $user->id(),
-                'username' => $user->username(),
-                'last_login' => $user->lastLoginAt(),
-            ] + $expiresAt;
+            'token' => $token->id(),
+            'userId' => $user->id(),
+            'username' => $user->username(),
+            'last_login' => $user->lastLoginAt(),
+            'expiresIn' => $expiresIn,
+            'expiresAt' => $expiresAt,
+        ];
     }
 }
