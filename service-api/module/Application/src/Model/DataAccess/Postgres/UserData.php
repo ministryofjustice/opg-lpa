@@ -410,13 +410,13 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     }
 
     /**
-     * Extends the authentication token.
+     * Sets the expiry datetime of the authentication token.
      *
      * @param $userId
      * @param DateTime $expires
      * @return bool
      */
-    public function extendAuthToken(string $userId, DateTime $expires) : bool
+    public function updateAuthTokenExpiry(string $userId, DateTime $expires) : bool
     {
         return  $this->updateRow(
             ['id' => $userId],
