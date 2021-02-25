@@ -25,57 +25,61 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 //
 
-// work-around for "require.resolve is not a function" error
-// as per https://github.com/component-driven/cypress-axe/issues/73#issuecomment-734909801
-Cypress.Commands.add("injectAxe2", () => {
-  cy.window({ log: false }).then(window => {
-      const axe = require('axe-core/axe.js');
-      const script = window.document.createElement('script');
-      script.innerHTML = axe.source;
-      window.document.body.appendChild(script);
-  })
-});
-
-Cypress.Commands.add("OPGCheckA11y", (skipFailures) => {
-    cy.injectAxe2();
-    cy.checkA11y(null, null, printAccessibilityViolations, true);
-});
-
 Cypress.Commands.add("getLpaId", () => {
     cy.get('@donorPageUrl').then((donorPageUrl) => {
         return donorPageUrl.match(/\/(\d+)\//)[1];
     });
 });
 
-// Print cypress-axe violations to the terminal
-function printAccessibilityViolations(violations) {
-    cy.location().then((location) => {
-        // make a set of unique violations; yes, I could have been clever
-        // and done it in one line, but the previous code confused me and
-        // I think this makes it clearer that we're populating a set
-        let reports = new Set();
+Cypress.Commands.add("OPGCheckA11y", () => {
+    cy.window({ log: false }).then((window) => {
+        if (Cypress.$('#axe').length < 1) {
+            const script = window.document.createElement('script');
+            script.id = 'axe';
+            script.async = false;
+            script.innerHTML = require('axe-core/axe.js').source;
+            window.document.body.appendChild(script);
+        }
 
-        violations.forEach((violation) => {
-            reports.add({
-                id: violation.id,
-                impact: violation.impact,
-                description: violation.description,
-                snippets: violation.nodes.map((node) => node.html),
-            });
+        let logFn = (msg) => {
+            Cypress.log({name: 'axe', message: msg});
+        };
+
+        window.axe.run().then((results) => {
+            let violations = results.violations;
+
+            if (violations.length > 0) {
+                showAccessibilityViolations(violations, logFn);
+            }
         });
+    });
+});
 
-        location = `${location}`.replace(Cypress.config('baseUrl'), '');
-        cy.task('log', `\n************** ACCESSIBILITY VIOLATIONS ON ${location}`);
+// Show axe accessibility violations on the terminal
+function showAccessibilityViolations(violations, logFn) {
+    let location = window.location.href;
 
-        reports.forEach((report) => {
-            cy.task('log', `-------------- ID: ${report.id}`);
-            cy.task('log', `Impact: ${report.impact}`);
-            cy.task('log', `Description: ${report.description}`);
-            cy.task('log', 'HTML elements causing violation:')
-            cy.task('log', '* ' + report.snippets.join('\n* '));
+    // make a set of unique violations; yes, I could have been clever
+    // and done it in one line, but the previous code confused me and
+    // I think this makes it clearer that we're populating a set
+    let reports = new Set();
+
+    violations.forEach((violation) => {
+        reports.add({
+            id: violation.id,
+            impact: violation.impact,
+            description: violation.description,
+            snippets: violation.nodes.map((node) => node.html),
         });
+    });
 
-        return new Cypress.Promise((resolve, reject) => { return resolve(true); });
+    logFn(`\n************** ACCESSIBILITY VIOLATIONS ON ${location}`);
+
+    reports.forEach((report) => {
+        logFn(`-------------- ID: ${report.id}`);
+        logFn(`Impact: ${report.impact}`);
+        logFn(`Description: ${report.description}`);
+        logFn('HTML elements causing violation:');
+        logFn('* ' + report.snippets.join('\n* '));
     });
 }
-
