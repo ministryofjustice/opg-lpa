@@ -12,7 +12,8 @@ class FormLinkedErrorListV2 extends AbstractHelper
      *
      * @param ElementInterface
      */
-    public function __invoke(Form $form) {
+    public function __invoke(Form $form)
+    {
         foreach ($form->getMessages() as $field => $errors) {
 
             foreach ($errors as $error) {
