@@ -297,6 +297,7 @@ locals {
         { "name" : "OPG_DOCKER_TAG", "value" : var.container_version },
         { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : local.account_name },
         { "name" : "OPG_LPA_COMMON_APPLICATION_LOG_PATH", "value" : "/var/log/app/application.log" },
+        { "name" : "OPG_LPA_AUTH_TOKEN_TTL", "value" : tostring(local.account.auth_token_ttl_secs) },
         { "name" : "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", "value" : "" },
         { "name" : "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-locks.name },
         { "name" : "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", "value" : aws_dynamodb_table.lpa-sessions.name },

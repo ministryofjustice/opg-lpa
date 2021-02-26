@@ -196,4 +196,16 @@ class LpaAuthAdapterTest extends MockeryTestCase
 
         $this->assertEquals(['test' => 'response'], $result);
     }
+
+    public function testSetSessionExpiry() : void
+    {
+        $this->client->shouldReceive('httpPost')
+            ->withArgs(['/v2/session-set-expiry', ['expireInSeconds' => 20], ['CheckedToken' => 'test token']])
+            ->once()
+            ->andReturn(['test' => 'response']);
+
+        $result = $this->adapter->setSessionExpiry('test token', 20);
+
+        $this->assertEquals(['test' => 'response'], $result);
+    }
 }

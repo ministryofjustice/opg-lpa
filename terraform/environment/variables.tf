@@ -16,6 +16,7 @@ variable "accounts" {
       sirius_api_gateway_arn      = string
       deletion_protection         = bool
       backup_retention_period     = number
+      auth_token_ttl_secs         = number
       skip_final_snapshot         = bool
       psql_engine_version         = string
       psql_parameter_group_family = string
