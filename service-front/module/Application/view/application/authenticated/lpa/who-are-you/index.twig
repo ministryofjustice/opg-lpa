@@ -145,10 +145,10 @@
                 </div>
 
                 <div class="panel panel-border-narrow js-hidden" id="other-input">
-                    {{ formElementErrorsV2(other) }}
                     <label class="form-label" for="{{ other.getAttribute('id') }}">
                         {{ other.getOption('label') }}
                     </label>
+                    {{ formElementErrorsV2(other) }}
                     {{ formText(other) }}
                 </div>
 
