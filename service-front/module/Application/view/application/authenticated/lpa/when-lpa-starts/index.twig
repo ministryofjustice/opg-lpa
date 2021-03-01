@@ -38,10 +38,9 @@
             <fieldset>
                 <legend class="visually-hidden">When can the LPA be used?</legend>
 
-                {{ formElementErrorsV2(when) }}
-
                 <h2 class="heading-medium flush--top">The LPA can be used</h2>
 
+                {{ formElementErrorsV2(when) }}
                 {{ formRadio().outputOption(when, 'now')|raw }}
 
                 <div class="panel panel-border-narrow">
