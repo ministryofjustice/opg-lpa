@@ -295,4 +295,77 @@ class AuthenticateControllerTest extends AbstractAuthControllerTest
         $this->assertInstanceOf(ApiProblem::class, $result);
         $this->assertEquals((new ApiProblem(500, 'Test problem'))->toArray(), $result->toArray());
     }
+
+    public function testSetSessionExpiryActionNoCheckedTokenReceives400()
+    {
+        $this->request->shouldReceive('getHeader')->withArgs(['CheckedToken'])->once()->andReturn(null);
+
+        $result = $this->getController(AuthenticateController::class)->setSessionExpiryAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+
+        $resultArray = $result->toArray();
+        $this->assertEquals(400, $resultArray['status']);
+        $this->assertStringContainsString('CheckedToken', $resultArray['detail']);
+    }
+
+    public function testSetSessionExpiryActionBadPOSTReceives400()
+    {
+        $header = Mockery::mock(HeaderInterface::class);
+        $this->request->shouldReceive('getHeader')->withArgs(['CheckedToken'])->once()->andReturn($header);
+
+        $result = $this->getController(AuthenticateController::class)->setSessionExpiryAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+
+        $resultArray = $result->toArray();
+        $this->assertEquals(400, $resultArray['status']);
+        $this->assertStringContainsString('expireInSeconds', $resultArray['detail']);
+    }
+
+    public function testSetSessionExpiryAuthServiceFail()
+    {
+        $header = Mockery::mock(HeaderInterface::class);
+        $this->request->shouldReceive('getHeader')->withArgs(['CheckedToken'])->once()->andReturn($header);
+        $header->shouldReceive('getFieldValue')->once()->andReturn('asdfgh123456');
+
+        // mock out request body with valid expireInSeconds property
+        $this->request->shouldReceive('getContent')->andReturn('{"expireInSeconds": 20}');
+
+        $this->authenticationService->shouldReceive('updateToken')
+             ->once()
+             ->withArgs(['asdfgh123456', true, false, Mockery::type('DateTime')])
+             ->andReturn('token-has-expired');
+
+        $result = $this->getController(AuthenticateController::class)->setSessionExpiryAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+
+        $resultArray = $result->getVariables();
+        $this->assertEquals(false, $resultArray['valid']);
+        $this->assertEquals('token-has-expired', $resultArray['problem']);
+    }
+
+    public function testSetSessionExpiryOK()
+    {
+        $header = Mockery::mock(HeaderInterface::class);
+        $this->request->shouldReceive('getHeader')->withArgs(['CheckedToken'])->once()->andReturn($header);
+        $header->shouldReceive('getFieldValue')->once()->andReturn('asdfgh123456');
+
+        // mock out request body with valid expireInSeconds property
+        $this->request->shouldReceive('getContent')->andReturn('{"expireInSeconds": 20}');
+
+        $this->authenticationService->shouldReceive('updateToken')
+             ->once()
+             ->withArgs(['asdfgh123456', true, false, Mockery::type('DateTime')])
+             ->andReturn(['expiresIn' => 20]);
+
+        $result = $this->getController(AuthenticateController::class)->setSessionExpiryAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+
+        $resultArray = $result->getVariables();
+        $this->assertEquals(true, $resultArray['valid']);
+        $this->assertEquals(20, $resultArray['remainingSeconds']);
+    }
 }

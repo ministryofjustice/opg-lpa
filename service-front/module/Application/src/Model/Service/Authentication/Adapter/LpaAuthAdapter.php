@@ -136,4 +136,26 @@ class LpaAuthAdapter implements AdapterInterface
             return null;
         }
     }
+
+    /**
+     * @param $token string
+     * @param $expirySeconds int - set expiry this many seconds from now
+     * @return array|null
+     * @throws \Http\Client\Exception
+     */
+    public function setSessionExpiry(string $token, int $expireInSeconds)
+    {
+
+        try {
+            $result = $this->client->httpPost(
+                '/v2/session-set-expiry',
+                ['expireInSeconds' => $expireInSeconds],
+                ['CheckedToken' => $token]
+            );
+
+            return $result;
+        } catch (ApiException $ex) {
+            return $ex->getMessage();
+        }
+    }
 }

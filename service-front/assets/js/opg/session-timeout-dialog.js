@@ -18,7 +18,7 @@ var SessionTimeoutDialog = function (options) {
     if (typeof options.element === 'undefined') {
         throw 'Popup element not provided';
     }
-    
+
     if (typeof options.warningPeriodMs === 'undefined') {
         throw 'Timeout warning in Milliseconds not provided';
     }
@@ -28,6 +28,9 @@ var SessionTimeoutDialog = function (options) {
     this.remainingTimeUrl = options.remainingTimeUrl ? options.remainingTimeUrl : '/session-state';
     this.keepSessionAliveUrl = options.keepSessionAliveUrl ? options.keepSessionAliveUrl : '/session-keep-alive';
     var initialSessionTimeoutMs = options.initialSessionTimeoutMs ? options.initialSessionTimeoutMs : 0;
+
+    var countdown = null;
+    var counter = 0;
 
     var continueButton = $('#session-timeout-continue'),
         logoutButton = $('#session-timeout-logout'),
@@ -49,8 +52,8 @@ var SessionTimeoutDialog = function (options) {
             'height': $(document).height() + 'px'
         });
         underlay.show();
-        that.trapNavigation();
-        continueButton.focus();
+
+        that.trapNavigation([continueButton[0], logoutButton[0]]);
 
         GOVUK.performance.sendGoogleAnalyticsEvent('timeout warning', 'warning popup');
     };
@@ -60,33 +63,54 @@ var SessionTimeoutDialog = function (options) {
         underlay.hide();
     };
 
+    // status: 200 means user is still logged in; 204 means they have timed out
+    // remainingSeconds: number of seconds remaining in user's session
+    this.setDialogState = function (status, remainingSeconds) {
+        // How long to wait before checking for session timeout
+        var nextCheckMs = 0;
+
+        if (status === 204) {
+            // If timed out, refresh page and let the server do the redirect
+            // to the timeout page
+            window.location.reload();
+        }
+        else if (status === 200) {
+            // Check how much time left
+            var remainingMs = remainingSeconds * 1000;
+
+            if (remainingMs <= that.warningPeriodMs) {
+                // If less time remaining than the warning period then show the
+                // warning and check again just after the session should have expired
+                that.showWarning();
+                nextCheckMs = remainingMs + 1000;
+            }
+            else {
+                // If more time than the warning period then check again when
+                // we're back in the warning window
+                that.hideWarning();
+                nextCheckMs = remainingMs - that.warningPeriodMs;
+            }
+
+            // Queue up the next check of whether session is about to expire
+            that.startExpiryCheckCountdown(nextCheckMs);
+        }
+
+        return nextCheckMs;
+    };
+
     // Checks how much time is remaining on the session and show/hides the warning as appropriate as well as scheduling
     // another check, refreshes page on timeout
     this.checkSessionState = function () {
+        // Fetch the session data from the API
         $.ajax({
             url: that.remainingTimeUrl,
             data: {},
             complete: function (data) {
-                if (data.status === 204) {
-                    // If timed out, refresh page and let the server do the redirect to the timeout page
-                    window.location.reload();
-                } else if (data.status === 200) {
-                    // Check how much time left
-                    var remainingMs = data.responseJSON.remainingSeconds * 1000;
-
-                    if (remainingMs <= that.warningPeriodMs) {
-                        // If less time remaining than the warning period then show the warning and check again just
-                        // after the session should have expired
-                        that.showWarning();
-                        that.startExpiryCheckCountdown(remainingMs + 1000);
-                    } else {
-                        // If more time than the warning period then check again when it we're back in the warning
-                        // period
-                        that.hideWarning();
-                        that.startExpiryCheckCountdown(remainingMs - that.warningPeriodMs);
-                    }
-
+                var remainingSeconds = 0;
+                if (data.status === 200) {
+                    remainingSeconds = data.responseJSON.remainingSeconds;
                 }
+                that.setDialogState(data.status, remainingSeconds);
             },
             error: function () {
                 // Assume it was a temporary error and check again in 1 minute
@@ -108,32 +132,45 @@ var SessionTimeoutDialog = function (options) {
 
         // Keep the session alive
         $.get(this.keepSessionAliveUrl)
-            .complete(function () {
-                // restart countdown to get new session expiry in one minute
-                that.checkSessionState();
-            });
+         .complete(function () {
+             // restart countdown
+             that.checkSessionState();
+         });
 
         this.releaseNavigation();
     };
 
-    this.trapNavigation = function () {
-        continueButton.keydown(function (e) {
-            if (e.key === 'Tab' && e.shiftKey) {
-                e.preventDefault();
-                logoutButton.focus();
+    this.trapNavigation = function (focusables) {
+        var currentElementIndex = 0;
+        focusables[currentElementIndex].focus();
+
+        var lastFocusableIndex = focusables.length - 1;
+
+        this.element.keydown(function (e) {
+            // capture only tab events on this dialog
+            if (e.key !== 'Tab' && e.keyCode !== 9) {
+                return true;
             }
-        });
-        logoutButton.keydown(function (e) {
-            if (e.key === 'Tab' && !e.shiftKey) {
-                e.preventDefault();
-                continueButton.focus();
+            e.preventDefault();
+
+            var direction = (e.shiftKey ? -1 : 1);
+
+            currentElementIndex = currentElementIndex + direction;
+
+            // cycle to start/end of list if out of bounds
+            if (currentElementIndex > lastFocusableIndex) {
+                currentElementIndex = 0;
             }
+            else if (currentElementIndex < 0) {
+                currentElementIndex = lastFocusableIndex;
+            }
+
+            focusables[currentElementIndex].focus();
         });
     };
 
     this.releaseNavigation = function () {
-        continueButton.off('keydown');
-        logoutButton.off('keydown');
+        this.element.off('keydown');
     };
 
     // Start countdown
