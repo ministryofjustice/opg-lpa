@@ -74,3 +74,24 @@ resource "aws_cloudwatch_metric_alarm" "front_csrf_mismatch_errors" {
   threshold                 = 2
   treat_missing_data        = "notBreaching"
 }
+
+resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
+  actions_enabled     = true
+  alarm_name          = "${local.environment} pdf messages awaiting processing"
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_description   = "number of pdf requests in queue"
+  namespace           = "AWS/SQS"
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  comparison_operator = "GreaterThanThreshold"
+  dimensions = {
+    QueueName = aws_sqs_queue.pdf_fifo_queue.name
+  }
+  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  period              = 60
+  evaluation_periods  = 2
+  datapoints_to_alarm = 2
+  statistic           = "Sum"
+  tags                = {}
+  threshold           = 10
+  treat_missing_data  = "notBreaching"
+}
