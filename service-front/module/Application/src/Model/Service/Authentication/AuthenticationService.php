@@ -87,12 +87,7 @@ class AuthenticationService extends LaminasAuthenticationService
         return $this;
     }
 
-    /**
-     * Get the seconds until the session expires
-     *
-     * @return int|null null if the session is not active/timed out, otherwise returns the remaining seconds until expiry
-     */
-    public function getSessionExpiry() : ?int
+    private function getToken()
     {
         $this->getStorage();
 
@@ -106,11 +101,48 @@ class AuthenticationService extends LaminasAuthenticationService
             return null;
         }
 
-        $adapter = $this->adapter;
+        return $token;
+    }
+
+    /**
+     * Get the seconds until the session expires
+     *
+     * @return int|null null if the session is not active/timed out, otherwise returns the remaining seconds until expiry
+     */
+    public function getSessionExpiry() : ?int
+    {
+        $token = $this->getToken();
+        if ($token === null) {
+            return null;
+        }
 
         /** @noinspection PhpUndefinedMethodInspection */
         // the constructor makes sure we're using the LPA Authentication/AdapterInterface
-        $result = $adapter->getSessionExpiry($token);
+        $result = $this->adapter->getSessionExpiry($token);
+
+        if ($result == null || !isset($result['valid']) || !$result['valid']) {
+            return null;
+        }
+
+        return $result['remainingSeconds'];
+    }
+
+    /**
+     * Set the seconds until the session expires
+     *
+     * @param $expiresInSeconds int - number of seconds from now to set expiry at
+     * @return int|null null if the session is not active/timed out, otherwise returns the remaining seconds until expiry
+     */
+    public function setSessionExpiry(int $expiresInSeconds) : ?int
+    {
+        $token = $this->getToken();
+        if ($token === null) {
+            return null;
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        // the constructor makes sure we're using the LPA Authentication/AdapterInterface
+        $result = $this->adapter->setSessionExpiry($token, $expiresInSeconds);
 
         if ($result == null || !isset($result['valid']) || !$result['valid']) {
             return null;

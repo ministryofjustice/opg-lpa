@@ -182,4 +182,53 @@ class AuthenticationServiceTest extends MockeryTestCase
 
         $this->assertEquals(null, $result);
     }
+
+    public function testSetSessionExpiry() : void
+    {
+        $identity = Mockery::mock();
+        $identity->shouldReceive('token')->andReturn('4321');
+
+        $this->storageInterface->shouldReceive('isEmpty')->once()->andReturn(false);
+        $this->storageInterface->shouldReceive('read')->once()->andReturn($identity);
+
+        $this->adapterInterface->shouldReceive('setSessionExpiry')
+            ->withArgs(['4321', 20])
+            ->once()
+            ->andReturn(['valid' => true, 'remainingSeconds' => 20]);
+
+        $result = $this->service->setSessionExpiry(20);
+
+        $this->assertEquals(20, $result);
+    }
+
+    public function testSetSessionExpiryNoToken() : void
+    {
+        $identity = Mockery::mock();
+        $identity->shouldReceive('token')->andReturn(null);
+
+        $this->storageInterface->shouldReceive('isEmpty')->once()->andReturn(false);
+        $this->storageInterface->shouldReceive('read')->once()->andReturn($identity);
+
+        $result = $this->service->setSessionExpiry(20);
+
+        $this->assertEquals(null, $result);
+    }
+
+    public function testSetSessionExpiryAdapterFail() : void
+    {
+        $identity = Mockery::mock();
+        $identity->shouldReceive('token')->andReturn('4321');
+
+        $this->storageInterface->shouldReceive('isEmpty')->once()->andReturn(false);
+        $this->storageInterface->shouldReceive('read')->once()->andReturn($identity);
+
+        $this->adapterInterface->shouldReceive('setSessionExpiry')
+            ->withArgs(['4321', 20])
+            ->once()
+            ->andReturn(null);
+
+        $result = $this->service->setSessionExpiry(20);
+
+        $this->assertEquals(null, $result);
+    }
 }

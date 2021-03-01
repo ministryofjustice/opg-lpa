@@ -10,6 +10,7 @@ use Application\Model\DataAccess\Postgres;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\Authentication\AuthenticationListener;
+use Application\Model\Service\Authentication\Service as AppAuthenticationService;
 use Alphagov\Notifications\Client as NotifyClient;
 use Aws\Sns\SnsClient;
 use Aws\S3\S3Client;
@@ -51,6 +52,8 @@ class Module
 
     public function getServiceConfig()
     {
+        // calls to $sm->get('config') return the array in
+        // service-api/config/autoload/global.php
         return [
             'aliases' => [
                 // Map the Repository Interfaces to concrete implementations.
@@ -138,7 +141,12 @@ class Module
                     return new SignatureV4('execute-api', 'eu-west-1');
                 },
 
+                'AppAuthenticationService' => function ($sm) {
+                    return new AppAuthenticationService($sm->get('config')['session']['token_ttl']);
+                },
+
             ], // factories
+
         ];
     } // function
 
