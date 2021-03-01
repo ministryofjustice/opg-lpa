@@ -88,10 +88,10 @@ resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   }
   ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   period              = 60
-  evaluation_periods  = 2
-  datapoints_to_alarm = 2
+  evaluation_periods  = 1
+  datapoints_to_alarm = 1
   statistic           = "Sum"
   tags                = {}
-  threshold           = 10
+  threshold           = 6
   treat_missing_data  = "notBreaching"
 }
