@@ -61,17 +61,14 @@
     </div>
 
     {% if (attorneys) %}
-
         <h3 class="heading-medium flush--top">
             The replacement attorney{% if attorneys|length > 1 %}s{% endif %}
         </h3>
-
         <ul>
             {% for attorney in attorneys %}
                 {% include 'application/authenticated/lpa/replacement-attorney/partials/attorney.twig' with attorney %}
             {% endfor %}
         </ul>
-
     {% endif %}
 
     <div class="{% if (attorneys) %}action-item{% endif %} form-group">
