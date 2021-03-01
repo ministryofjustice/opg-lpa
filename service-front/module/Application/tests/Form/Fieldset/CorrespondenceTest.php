@@ -1,23 +1,23 @@
 <?php
 
-namespace ApplicationTest\Form\Lpa;
+namespace ApplicationTest\Form\FieldSet;
 
-use Application\Form\Lpa\CorrespondenceFieldset;
+use Application\Form\Fieldset\Correspondence;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class CorrespondenceFieldsetTest extends MockeryTestCase
+class CorrespondenceTest extends MockeryTestCase
 {
     public function testNameAndInstance()
     {
-        $fieldSet = new CorrespondenceFieldset();
+        $fieldSet = new Correspondence();
 
-        $this->assertInstanceOf('Application\Form\Lpa\CorrespondenceFieldset', $fieldSet);
+        $this->assertInstanceOf('Application\Form\Fieldset\Correspondence', $fieldSet);
         $this->assertInstanceOf('Laminas\Form\Fieldset', $fieldSet);
     }
 
     public function testElements()
     {
-        $fieldSet = new CorrespondenceFieldset();
+        $fieldSet = new Correspondence();
 
         $this->assertInstanceOf('Laminas\Form\Element\Checkbox', $fieldSet->get('contactByEmail'));
         $this->assertInstanceOf('Laminas\Form\Element\Checkbox', $fieldSet->get('contactByPhone'));
@@ -32,7 +32,7 @@ class CorrespondenceFieldsetTest extends MockeryTestCase
             'some-field' => 'A big error message',
         ];
 
-        $fieldSet = new CorrespondenceFieldset();
+        $fieldSet = new Correspondence();
 
         $fieldSet->setMessages($testMessages);
 
