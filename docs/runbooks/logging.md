@@ -232,5 +232,5 @@ docker logs -ft lpa-api-web | tee apiweblog
 Then extract from this - ignore authenticate or session-expiry calls which happen a lot,  cut the timestamp off the front, leaving json which we can jq to get the request and the body file name, then use xargs to try to get the file content from the container , where this text relates to an existing file 
 
 ```
- cat apiweblog | grep -v "authenticate" | grep -v "session-expiry" | cut -c 32- | jq .request,.request_body_file | xargs -I % sh -c 'echo % ; docker exec lpa-api-web cat % ; printf "\n" ' 2>/dev/null
+ cat apiweblog | grep -v "authenticate\|session-expiry" | cut -c 32- | jq .request,.request_body_file | xargs -I % sh -c 'printf "\n%" ; docker exec lpa-api-web cat % ' 2>/dev/null
 ```
