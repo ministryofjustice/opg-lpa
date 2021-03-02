@@ -16,21 +16,17 @@ class FormElementErrorsV2 extends \Laminas\Form\View\Helper\FormElementErrors
         $this->setMessageSeparatorString('<br>');
 
         if (count($element->getMessages()) > 0) {
-            
+
             $messages = $element->getMessages();
-            
+
             foreach ($messages as $key => &$message) {
                 if (array_key_exists($key, $messageOverrideMap)) {
                     $message = $messageOverrideMap[$key];
                 }
             }
-            
             $element->setMessages($messages);
             
             echo $this->render($element, $attributes);
-            
         }
-
     }
-
 }

@@ -31,7 +31,7 @@ class CorrespondenceForm extends AbstractMainFlowForm
             ],
         ],
         'correspondence' => [
-            'type' => 'Application\Form\Lpa\CorrespondenceFieldset',
+            'type' => 'Application\Form\Fieldset\Correspondence',
             'options' => [
                 'checked_value' => true,
                 'unchecked_value' => false,
