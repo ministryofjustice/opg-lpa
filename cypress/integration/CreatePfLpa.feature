@@ -535,6 +535,9 @@ Feature: Create a Property and Finance LPA
         When I click "save"
         Then I am taken to the applicant page
         When I visit link containing "preview the LPA"
+
+        # Instructions tests end here and Summary tests start. Ultimately a good place to start a new Scenario
+        
         Then I am taken to the summary page
         And I see the following summary information
             | Type | Property and finance | |
@@ -579,12 +582,22 @@ Feature: Create a Property and Finance LPA
         #Then I can download "Draft-Lasting-Power-of-Attorney-LP1H.pdf"
         When I click back
         And I click "continue"
+
+        # Summary tests end here and Applicant tests start. Ultimately a good place to start a new Scenario
+        
         Then I am taken to the applicant page
         When I click "save"
         Then I see in the page text
             | There is a problem |
             | Select the person who is applying to register the LPA |
-        # select the donor
+        # select the donor as applicant
         When I check occurrence 0 of checkbox
         And I click "save"
+
+        # Applicant tests end here and Correspondent tests start. Ultimately a good place to start a new Scenario
+        
         Then I am taken to the correspondent page
+        And I can find "contactInWelsh-0"
+        And I can find "contactInWelsh-1"
+        When I click "change-correspondent"
+        Then I can see popup
