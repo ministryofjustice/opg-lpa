@@ -204,3 +204,33 @@ Our logger also has attached processors which modify the log output in a couple 
 * `TraceIdProcessor`: looks for a trace ID header on the incoming request and adds it to the log output
 * `HeadersProcessor`: strips any sensitive headers out of the request before it is logged
 * `MvcEventProcessor`: this is tailored to recognise and reformat MVC events into an easier-to-read format before they are written to the log
+
+## Increasing api logging
+Sometimes there is a need to examine what the front end has sent to the back-end api. 
+To achieve this, modify nginx.conf to add (in the server directive)
+
+```
+client_body_in_file_only on
+```
+
+Then in the log_format section, add 
+
+```
+'"request_body_file": "$request_body_file"'  
+```
+
+not forgetting to append a comma on the previous line.
+
+Rebuild the lpa-api-web container
+
+Then while running, e:g during a cypress scenario, write logs to a file:
+
+```
+docker logs -ft lpa-api-web | tee apiweblog
+```
+
+Then extract from this - ignore authenticate or session-expiry calls which happen a lot,  cut the timestamp off the front, leaving json which we can jq to get the request and the body file name, then use xargs to try to get the file content from the container , where this text relates to an existing file 
+
+```
+ cat apiweblog | grep -v "authenticate" | grep -v "session-expiry" | cut -c 32- | jq .request,.request_body_file | xargs -I % sh -c 'echo % ; docker exec lpa-api-web cat % ; printf "\n" ' 2>/dev/null
+```
