@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% import "application/macros.twig" as macros %}
+{% import 'application/macros.twig' as macros %}
 
 {# Error messages #}
 
@@ -13,7 +13,7 @@
         'Value is required and can\'t be empty': 'A language must be selected'
     },
     'correspondence' : {
-        "at-least-one-option-needs-to-be-selected" : "Select at least one option"
+        'at-least-one-option-needs-to-be-selected' : 'Select at least one option'
     }
 }) %}
 
@@ -136,12 +136,15 @@
 
         <div class="form-group {{ topLevelError ? 'form-group-error'}}">
 
-            <fieldset id="correspondence">
-
+            <fieldset id="{{ correspondence.getAttribute('name') }}">
                 <legend class="visually-hidden">Contact options</legend>
                 <h3 class="heading-medium flush--top">How would the person above prefer to be contacted?</h3>
 
                 <p>Select how the correspondent would like to be contacted. You can choose more than one option.</p>
+
+                {% if topLevelError %}
+                    {{ formElementErrorsV2(correspondence) }}
+                {% endif %}
 
                 <div class="multiple-choice">
                     {{ formElement(contactByPost) }}
@@ -161,7 +164,6 @@
                     <div class="form-group {{ phone.getMessages|length >0 or contactByPhone.getMessages|length >0 ? 'form-group-error'}}">
                         <label class="form-label" for="{{ phone.getAttribute('id') }}">
                             {{ phone.getOption('label') }}
-                            {{ formElementErrorsV2(contactByPhone) }}
                             {{ formElementErrorsV2(phone) }}
                         </label>
                         {{ formText(phone) }}
@@ -178,7 +180,6 @@
                     <div class="form-group {{ email.getMessages|length >0 or contactByEmail.getMessages|length >0 ? 'form-group-error'}}">
                         <label class="form-label" for="{{ email.getAttribute('id') }}">
                             {{ email.getOption('label') }}
-                            {{ formElementErrorsV2(contactByEmail) }}
                             {{ formElementErrorsV2(email) }}
                         </label>
                         {{ formText(email) }}
