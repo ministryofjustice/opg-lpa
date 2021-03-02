@@ -420,6 +420,9 @@ Feature: Create a Health and Welfare LPA
             | address-postcode | BS18 6PL |
         And I click "form-cancel"
         When I click "save"
+
+        # Person to notify tests end here and Instructions tests start. Ultimately a good place to start a new Scenario
+        
         Then I am taken to the instructions page
         When I click "add-extra-preferences"
         And I force fill out  
@@ -440,6 +443,9 @@ Feature: Create a Health and Welfare LPA
         When I click "save"
         Then I am taken to the applicant page
         When I visit link containing "preview the LPA"
+
+        # Instructions tests end here and Summary tests start. Ultimately a good place to start a new Scenario
+        
         Then I am taken to the summary page
         And I see the following summary information
             | Type | Health and welfare | |
@@ -484,13 +490,24 @@ Feature: Create a Health and Welfare LPA
         #Then I can download "Draft-Lasting-Power-of-Attorney-LP1H.pdf"
         When I click back
         And I click "continue"
+
+        # Summary tests end here and Applicant tests start. Ultimately a good place to start a new Scenario
+        
         Then I am taken to the applicant page
         When I click "save"
         Then I see in the page text
             | There is a problem |
             | Select the person who is applying to register the LPA |
-        # select the attorney
+        # select the attorney as applicant
         When I check occurrence 1 of checkbox
         When I check occurrence 0 of radio button
         And I click "save"
+
+        # Applicant tests end here and Correspondent tests start. Ultimately a good place to start a new Scenario
+        
         Then I am taken to the correspondent page
+        And I can find "contactInWelsh-0"
+        And I can find "contactInWelsh-1"
+        When I click "change-correspondent"
+        Then I can see popup
+        And I can see "Which details would you like to reuse?" in the page text
