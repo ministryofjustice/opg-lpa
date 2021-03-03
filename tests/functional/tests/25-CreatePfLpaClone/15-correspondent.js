@@ -31,8 +31,8 @@ casper.test.begin("Checking user can access correspondent page", {
             test.assertExists('input[type="checkbox"][name="correspondence[contactByEmail]"][checked="checked"]', "Found 'Email' checkbox and is checked");
             test.assertSelectorHasText('label[for="contactByEmail"]', 'Email (opglpademo+trustcorp@gmail.com)', "Found donor's email address as expected");
 
-            test.assertExists('input[type="text"][name="correspondence[phone-number]"]', "Found Phone Number field");
-            test.assertNotVisible('input[type="text"][name="correspondence[phone-number]"]', "Found Phone Number is not visible");
+            test.assertExists('input[type="tel"][name="correspondence[phone-number]"]', "Found Phone Number field");
+            test.assertNotVisible('input[type="tel"][name="correspondence[phone-number]"]', "Found Phone Number is not visible");
 
             test.assertExists('input[type="submit"][name="save"]', 'Found "Save and continue" button');
 
