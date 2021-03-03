@@ -309,7 +309,7 @@ class ServiceTest extends AbstractServiceTest
             'auth_token' => json_encode([
                 'token' => 'valid',
                 'expiresAt' => $expiresAt->format(self::TIME_FORMAT),
-                'updatedAt' => (new DateTime('-5 seconds'))->format(self::TIME_FORMAT)
+                'updatedAt' => (new DateTime('-2 seconds'))->format(self::TIME_FORMAT)
             ])
         ]));
 
@@ -346,7 +346,7 @@ class ServiceTest extends AbstractServiceTest
             ])
         ]));
 
-        $this->authUserRepository->shouldReceive('extendAuthToken')
+        $this->authUserRepository->shouldReceive('updateAuthTokenExpiry')
             ->withArgs(function ($userId, $expires) {
                 //Store generated token details for later validation
                 $this->tokenDetails = [

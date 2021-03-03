@@ -118,6 +118,16 @@ return [
                             ],
                         ],
                     ],
+                    'session-set-expiry' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/session-set-expiry',
+                            'defaults' => [
+                                'controller' => 'AuthenticateController',
+                                'action'     => 'setSessionExpiry',
+                            ],
+                        ],
+                    ],
 
                     'users' => [
                         'type'    => 'Segment',
