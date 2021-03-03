@@ -62,3 +62,8 @@ resource "aws_secretsmanager_secret" "api_rds_password" {
   name = "${local.account_name}/api_rds_password"
   tags = local.default_tags
 }
+
+resource "aws_secretsmanager_secret" "slack_incoming_webhook" {
+  name = "${local.account_name}/slack_incoming_webhook"
+  tags = local.default_tags
+}
