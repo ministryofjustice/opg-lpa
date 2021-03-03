@@ -29,7 +29,7 @@ resource "aws_cloudwatch_log_metric_filter" "breakglass_metric" {
 
 resource "aws_cloudwatch_metric_alarm" "account_breakglass_login_alarm" {
   actions_enabled     = true
-  alarm_name          = "${local.environment} breakglass console login check"
+  alarm_name          = "${local.account_name} breakglass console login check"
   alarm_actions       = [aws_sns_topic.cloudwatch_to_slack_breakglass_alerts.arn]
   alarm_description   = "number of breakglass attempts"
   namespace           = "online-lpa/Cloudtrail"
