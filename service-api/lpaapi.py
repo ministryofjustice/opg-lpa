@@ -16,51 +16,60 @@ def getTokenByAuthenticating(username = "seeded_test_user@digital.justice.gov.uk
 
 def getIdOfAuthenticatedUser(token):
     # given a token, get the ID of the related user
-    tokenhdr = {"authToken": token}
-    print(tokenhdr)
+    tokenData = {"authToken": token}
     # note we have to call the authenticate endpoint a second time, with the token, to get the userId, which is a little odd
     authPath = f'{apiRoot}/v2/authenticate'
-    r = s.get(authPath, data=tokenhdr)
+    r = s.get(authPath, data=tokenData)
     print(r.json())
     userId = r.json()['userId']
     print(f'userId : {userId}')
     return userId
 
 def getUserDetails():
-    token = getTokenByAuthenticating()
+    token = getTokenJsonByAuthenticating()
+    tokenHdr = {"Token": token}
     userId = getIdOfAuthenticatedUser(token)
     userPath = f'{apiRoot}/v2/user/{userId}'
-    tokenhdr = {"Token": token}
-    r = s.get(userPath, headers=tokenhdr)
+    r = s.get(userPath, headers=tokenHdr)
     print(r.json())
 
 def getApplications():
     token = getTokenByAuthenticating()
+    tokenHdr = {"Token": token}
     userId = getIdOfAuthenticatedUser(token)
     applicationPath = f'{apiRoot}/v2/user/{userId}/applications'
-    tokenhdr = {"Token": token}
-    r = s.get(applicationPath, headers=tokenhdr)
+    r = s.get(applicationPath, headers=tokenHdr)
     print(r.json())
     return r.json()
 
 def makeNewLpa():
     token = getTokenByAuthenticating()
+    tokenHdr = {"Token": token}
     userId = getIdOfAuthenticatedUser(token)
     applicationPath = f'{apiRoot}/v2/user/{userId}/applications'
-    tokenhdr = {"Token": token}
     emptyData = []
-    r = s.post(applicationPath, headers=tokenhdr, data=emptyData)
+    r = s.post(applicationPath, headers=tokenHdr, data=emptyData)
     print(r.json())
     id = r.json()['id']
     print(f'lpa Id : {id}')
     return id
 
 def setLpaType(lpaId, lpaType = 'health-and-welfare'):
-    #r = s.put(applicationPath, headers=tokenhdr)
     token = getTokenByAuthenticating()
+    tokenHdr = {"Token": token}
     userId = getIdOfAuthenticatedUser(token)
     lpatype = {"type":"health-and-welfare"}
     typePath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/type'
-    tokenhdr = {"Token": token}
-    r = s.put(typePath, headers=tokenhdr, data=lpatype)
+    r = s.put(typePath, headers=tokenHdr, data=lpatype)
     print(r.json())
+
+def setDonor(lpaId):
+    token = getTokenByAuthenticating()
+    tokenHdr = {"Token": token}
+    userId = getIdOfAuthenticatedUser(token)
+    donorDetails = '{"name":{"title":"Mrs","first":"Nancy","last":"Garrison"},"otherNames":"","address":{"address1":"Bank End Farm House","address2":"Undercliff Drive","address3":"Ventnor, Isle of Wight","postcode":"PO38 1UL"},"dob":{"date":"1988-10-22T00:00:00.000000+0000"},"email":{"address":"opglpademo+NancyGarrison@gmail.com"},"canSign":false}'
+    donorPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/donor'
+    r = s.put(donorPath, headers=tokenHdr, data=donorDetails)
+    print(r)
+    print(r.content)
+    #print(r.json())
