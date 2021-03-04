@@ -601,3 +601,4 @@ Feature: Create a Property and Finance LPA
         And I can find "contactInWelsh-1"
         When I click "change-correspondent"
         Then I can see popup
+        And I see "Which details would you like to reuse?" in the page text
