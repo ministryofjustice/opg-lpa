@@ -19,6 +19,14 @@ When(`I select {string} on {string}`, (value, id) => {
         cy.get("[data-cy=" + id + "]").select(value);
 })
 
+Then(`I select element containing {string}`, (linkText) => {
+    cy.contains(linkText).select();
+})
+
+Then(`I check element containing {string}`, (linkText) => {
+    cy.contains(linkText).check();
+})
+
 When(`I select {string} on old style id {string}`, (value, id) => {
     // this is for elements that we have been unable to tag with data-cy=
         cy.get(id).select(value);

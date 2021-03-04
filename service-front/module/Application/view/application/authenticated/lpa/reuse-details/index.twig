@@ -24,6 +24,7 @@
 {{ submit.setAttributes({
     value: 'Continue',
     class: 'button flush--left reuse-details-button',
+    'data-cy': 'continue',
 }) ? '' }}
 
 <header class="popup-header">
@@ -50,7 +51,7 @@
 
         {{ formElement(submit) }}
 
-        <a href="{{ cancelUrl }}" class="button button-secondary js-cancel">Cancel</a>
+        <a data-cy="cancel" href="{{ cancelUrl }}" class="button button-secondary js-cancel">Cancel</a>
 
     {{ form().closeTag|raw }}
 
