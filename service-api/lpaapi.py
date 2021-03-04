@@ -11,7 +11,7 @@ def getTokenByAuthenticating(username = "seeded_test_user@digital.justice.gov.uk
 
     print(r.json())
     token = r.json()['token']
-    print("token :")
+    print(f'token : {token}')
     return token
 
 def getIdOfAuthenticatedUser(token):
@@ -23,7 +23,7 @@ def getIdOfAuthenticatedUser(token):
     r = s.get(authPath, data=tokenhdr)
     print(r.json())
     userId = r.json()['userId']
-    print("userId :")
+    print(f'userId : {userId}')
     return userId
 
 def getUserDetails():
@@ -34,3 +34,36 @@ def getUserDetails():
     r = s.get(userPath, headers=tokenhdr)
     print(r.json())
     #import pdb; pdb.set_trace()
+
+def getApplications():
+    token = getTokenByAuthenticating()
+    userId = getIdOfAuthenticatedUser(token)
+    applicationPath = f'{apiRoot}/v2/user/{userId}/applications'
+    tokenhdr = {"Token": token}
+    r = s.get(applicationPath, headers=tokenhdr)
+    print(r.json())
+    return r.json()
+
+def makeNewLpa():
+    token = getTokenByAuthenticating()
+    userId = getIdOfAuthenticatedUser(token)
+    applicationPath = f'{apiRoot}/v2/user/{userId}/applications'
+    tokenhdr = {"Token": token}
+    emptyData = []
+    r = s.post(applicationPath, headers=tokenhdr, data=emptyData)
+    print(r.json())
+    id = r.json()['id']
+    print(f'lpa Id : {id}')
+    return id
+
+def makeNewLpa2(lpaType = 'health-and-welfare'):
+    #r = s.put(applicationPath, headers=tokenhdr)
+    token = getTokenByAuthenticating()
+    userId = getIdOfAuthenticatedUser(token)
+    lpaid = 12345678901
+    lpatype = {"type":"health-and-welfare"}
+    typePath = f'{apiRoot}/v2/user/{userId}/applications/{lpaid}/type'
+    tokenhdr = {"Token": token}
+    r = s.put(typePath, headers=tokenhdr, data=lpatype)
+    print(r.content)
+    #print(r.json())
