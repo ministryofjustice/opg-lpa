@@ -1,4 +1,5 @@
 from lpaapi import *
 
-getUserDetails()
+#getUserDetails()
+makeNewLpa()
 
