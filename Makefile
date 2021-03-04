@@ -103,6 +103,22 @@ reset-front:
 	docker-compose build --no-cache front-app
 	docker-compose run front-composer
 
+# only reset the api container
+.PHONY: reset-api
+reset-api:
+	@${MAKE} dc-down
+	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
+	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY}; \
+	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
+	docker system prune -f --volumes; \
+	docker rmi lpa-api-web || true; \
+	docker rmi lpa-api-app || true; \
+	rm -fr ./service-api/vendor; \
+	docker-compose build --no-cache api-web
+	docker-compose build --no-cache api-app
+	docker-compose run api-composer
+
 .PHONY: dc-down
 dc-down:
 	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
