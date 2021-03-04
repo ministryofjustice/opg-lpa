@@ -7,8 +7,8 @@
     {% endif %}
 
     <div class="{{ (rowStyle ? rowStyle : '' ) }}">
-        <dt class="cya-question">{{ sectionTitle|raw }}</dt>
-        <dd class="cya-answer">{{ value|raw }}</dd>
+        <dt data-cy="cya-question" class="cya-question">{{ sectionTitle|raw }}</dt>
+        <dd data-cy="cya-answer" class="cya-answer">{{ value|raw }}</dd>
         {{ macros.outputChangeLink(changeUrl, navigationReference, ariaLabelOverride ? ariaLabelOverride : sectionTitle) }}
     </div>
 
@@ -19,7 +19,7 @@
 
     <dd class="cya-change">
         {% if changeUrl is not null %}
-            <a href="{{ changeUrl|raw }}" data-cy="change" data-journey-click="check your answers:link:navigation: {{ navigationReference }}"{% if ariaLabel %} aria-label="Change {{ ariaLabel }}"{% endif %}>Change<span class="visually-hidden"> {{ ariaLabel }}</span></a>
+            <a data-cy="cya-change" href="{{ changeUrl|raw }}" data-journey-click="check your answers:link:navigation: {{ navigationReference }}"{% if ariaLabel %} aria-label="Change {{ ariaLabel }}"{% endif %}>Change<span class="visually-hidden"> {{ ariaLabel }}</span></a>
         {% endif %}
     </dd>
 
@@ -127,16 +127,16 @@
         {% set addressString = '' %}
 
         {% if data.address.address1 is defined %}
-            {% set addressString = addressString ~ '<div itemprop="streetAddress">' ~ data.address.address1 ~ '</div>' %}
+            {% set addressString = addressString ~ '<div data-cy="streetAddress" itemprop="streetAddress">' ~ data.address.address1 ~ '</div>' %}
         {% endif %}
         {% if data.address.address2 is defined %}
-            {% set addressString = addressString ~ '<div itemprop="addressLocality">' ~ data.address.address2 ~ '</div>' %}
+            {% set addressString = addressString ~ '<div data-cy="addressLocality" itemprop="addressLocality">' ~ data.address.address2 ~ '</div>' %}
         {% endif %}
         {% if data.address.address3 is defined %}
-            {% set addressString = addressString ~ '<div itemprop="addressRegion">' ~ data.address.address3 ~ '</div>' %}
+            {% set addressString = addressString ~ '<div data-cy="addressRegion" itemprop="addressRegion">' ~ data.address.address3 ~ '</div>' %}
         {% endif %}
         {% if data.address.postcode is defined %}
-            {% set addressString = addressString ~ '<div itemprop="postalCode">' ~ data.address.postcode ~ '</div>' %}
+            {% set addressString = addressString ~ '<div data-cy="postalCode" itemprop="postalCode">' ~ data.address.postcode ~ '</div>' %}
         {% endif %}
 
         {{ macros.outputSection(
