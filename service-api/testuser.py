@@ -1,0 +1,4 @@
+from lpaapi import *
+
+getUserDetails()
+
