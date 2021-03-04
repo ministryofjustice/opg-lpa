@@ -2,5 +2,7 @@ from lpaapi import *
 
 #getUserDetails()
 lpaId = makeNewLpa()
-setLpaType(lpaId)
+setLpaType(lpaId, 'property-and-financial')
 setDonor(lpaId)
+setPrimaryAttorneyDecisions(lpaId)
+setPrimaryAttorney(lpaId)
