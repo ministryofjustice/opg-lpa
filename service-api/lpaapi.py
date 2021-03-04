@@ -33,7 +33,6 @@ def getUserDetails():
     tokenhdr = {"Token": token}
     r = s.get(userPath, headers=tokenhdr)
     print(r.json())
-    #import pdb; pdb.set_trace()
 
 def getApplications():
     token = getTokenByAuthenticating()
@@ -56,14 +55,12 @@ def makeNewLpa():
     print(f'lpa Id : {id}')
     return id
 
-def makeNewLpa2(lpaType = 'health-and-welfare'):
+def setLpaType(lpaId, lpaType = 'health-and-welfare'):
     #r = s.put(applicationPath, headers=tokenhdr)
     token = getTokenByAuthenticating()
     userId = getIdOfAuthenticatedUser(token)
-    lpaid = 12345678901
     lpatype = {"type":"health-and-welfare"}
-    typePath = f'{apiRoot}/v2/user/{userId}/applications/{lpaid}/type'
+    typePath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/type'
     tokenhdr = {"Token": token}
     r = s.put(typePath, headers=tokenhdr, data=lpatype)
-    print(r.content)
-    #print(r.json())
+    print(r.json())

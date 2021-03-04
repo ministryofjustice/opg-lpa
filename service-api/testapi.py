@@ -1,5 +1,6 @@
 from lpaapi import *
 
 #getUserDetails()
-makeNewLpa()
+lpaId = makeNewLpa()
+setLpaType(lpaId)
 
