@@ -14,7 +14,11 @@ resource "aws_lb_target_group" "admin" {
     matcher             = 200
   }
   depends_on = [aws_lb.admin]
-  tags       = local.default_tags
+  tags = merge(
+    local.default_tags, {
+      component = "admin"
+    }
+  )
 }
 
 resource "aws_lb" "admin" {
@@ -22,7 +26,11 @@ resource "aws_lb" "admin" {
   internal           = false
   load_balancer_type = "application"
   subnets            = data.aws_subnet_ids.public.ids
-  tags               = local.default_tags
+  tags = merge(
+    local.default_tags, {
+      component = "admin"
+    }
+  )
 
   security_groups = [
     aws_security_group.admin_loadbalancer.id,
@@ -53,7 +61,11 @@ resource "aws_security_group" "admin_loadbalancer" {
   name        = "${local.environment}-admin-loadbalancer"
   description = "Allow inbound traffic"
   vpc_id      = data.aws_vpc.default.id
-  tags        = local.default_tags
+  tags = merge(
+    local.default_tags, {
+      component = "admin"
+    }
+  )
 }
 
 resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
