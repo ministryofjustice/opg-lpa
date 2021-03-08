@@ -89,7 +89,7 @@ resource "aws_kms_alias" "lpa_pdf_cache" {
 resource "aws_s3_bucket" "static_email_assets" {
   count  = terraform.workspace == "production" ? 1 : 0
   bucket = "opg-lpa-email-assets"
-  tags   = local.default_tags
+  tags   = merge(local.default_tags, local.shared_component_tag)
 }
 
 resource "aws_s3_bucket_object" "govuk_logo" {
@@ -99,7 +99,7 @@ resource "aws_s3_bucket_object" "govuk_logo" {
   source       = "../../email-assets/govuk-logo-v1.png"
   etag         = filemd5("../../email-assets/govuk-logo-v1.png")
   content_type = "image/png"
-  tags         = local.default_tags
+  tags         = merge(local.default_tags, local.shared_component_tag)
 }
 
 resource "aws_s3_bucket_object" "opg_logo" {
@@ -109,7 +109,7 @@ resource "aws_s3_bucket_object" "opg_logo" {
   source       = "../../email-assets/opg-logo-v1.png"
   etag         = filemd5("../../email-assets/opg-logo-v1.png")
   content_type = "image/png"
-  tags         = local.default_tags
+  tags         = merge(local.default_tags, local.shared_component_tag)
 }
 
 data "aws_iam_policy_document" "static_email_assets_policy" {
