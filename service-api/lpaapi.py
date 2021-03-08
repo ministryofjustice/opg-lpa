@@ -21,6 +21,13 @@ def makeNewLpa():
     #print(f'lpa Id : {id}')
     return id
 
+def deleteLpa(lpaId):
+    token, userId = authenticate()
+    lpaPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}'
+    emptyData = []
+    r = s.delete(lpaPath, headers=token)
+    print(r)
+
 def setLpaType(lpaId, lpaType = 'health-and-welfare'):
     token, userId = authenticate()
     lpatype = {"type": lpaType}

@@ -24,7 +24,8 @@ if [[ "$CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
     # so run the signup test first followed by all others
     echo "Running Cypress headless"
     ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp'
-    ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp and not @OrderMattersInCI'
+    # TODO - need to run through the create lpa features explicitly in order here
+    ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp and not @CreateLpa'
 else
     echo "Running Cypress"
     # pass supplied args to cypress
