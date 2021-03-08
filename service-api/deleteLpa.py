@@ -6,3 +6,5 @@ args = parser.parse_args()
 
 if args.i :
     deleteLpa(args.i)
+else:
+    print("usage: deleteLpa -i 39561005664")
