@@ -22,7 +22,11 @@ resource "aws_ecs_service" "admin" {
   }
 
   depends_on = [aws_lb.admin, aws_iam_role.admin_task_role, aws_iam_role.execution_role]
-  tags       = local.default_tags
+  tags = merge(
+    local.default_tags, {
+      component = "admin"
+    }
+  )
 }
 
 //----------------------------------
@@ -31,7 +35,11 @@ resource "aws_ecs_service" "admin" {
 resource "aws_security_group" "admin_ecs_service" {
   name_prefix = "${local.environment}-admin-ecs-service"
   vpc_id      = data.aws_vpc.default.id
-  tags        = local.default_tags
+  tags = merge(
+    local.default_tags, {
+      component = "admin"
+    }
+  )
 }
 
 // 80 in from the ELB
@@ -66,7 +74,11 @@ resource "aws_ecs_task_definition" "admin" {
   container_definitions    = "[${local.admin_web}, ${local.admin_app}]"
   task_role_arn            = aws_iam_role.admin_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = local.default_tags
+  tags = merge(
+    local.default_tags, {
+      component = "admin"
+    }
+  )
 }
 
 //----------------
@@ -75,7 +87,11 @@ resource "aws_ecs_task_definition" "admin" {
 resource "aws_iam_role" "admin_task_role" {
   name               = "${local.environment}-admin-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.default_tags
+  tags = merge(
+    local.default_tags, {
+      component = "admin"
+    }
+  )
 }
 
 resource "aws_iam_role_policy" "admin_permissions_role" {

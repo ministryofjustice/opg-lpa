@@ -1,6 +1,6 @@
 resource "aws_resourcegroups_group" "environment" {
   name = local.environment
-
+  tags = local.default_tags
   resource_query {
     query = local.environment_resource_group_query
   }

@@ -5,6 +5,7 @@ resource "aws_ecs_cluster" "online-lpa" {
 
 data "aws_cloudwatch_log_group" "online-lpa" {
   name = "online-lpa"
+  tags = local.default_tags
 }
 
 resource "aws_iam_role" "execution_role" {
