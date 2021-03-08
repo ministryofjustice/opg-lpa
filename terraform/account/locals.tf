@@ -55,11 +55,11 @@ locals {
     component = "api"
   }
 
-  db_component_tag = {
-    component = "db"
-  }
-
   pdf_component_tag = {
     component = "pdf"
+  }
+
+  db_component_tag = {
+    component = "db"
   }
 }

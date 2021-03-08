@@ -78,7 +78,7 @@ resource "aws_s3_bucket_public_access_block" "lpa_pdf_cache" {
 resource "aws_kms_key" "lpa_pdf_cache" {
   description             = "S3 bucket encryption key for lpa_pdf_cache"
   deletion_window_in_days = 7
-  tags                    = local.default_tags
+  tags                    = merge(local.default_tags, local.pdf_component_tag)
 }
 
 resource "aws_kms_alias" "lpa_pdf_cache" {
