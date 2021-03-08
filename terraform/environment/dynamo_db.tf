@@ -8,7 +8,11 @@ resource "aws_dynamodb_table" "lpa-locks" {
     type = "S"
   }
 
-  tags = local.default_tags
+  tags = merge(
+    local.default_tags, {
+      component = "dynamodb"
+    }
+  )
 }
 
 resource "aws_dynamodb_table" "lpa-properties" {
@@ -21,7 +25,11 @@ resource "aws_dynamodb_table" "lpa-properties" {
     type = "S"
   }
 
-  tags = local.default_tags
+  tags = merge(
+    local.default_tags, {
+      component = "dynamodb"
+    }
+  )
 }
 
 resource "aws_dynamodb_table" "lpa-sessions" {
@@ -39,5 +47,9 @@ resource "aws_dynamodb_table" "lpa-sessions" {
     enabled        = true
   }
 
-  tags = local.default_tags
+  tags = merge(
+    local.default_tags, {
+      component = "dynamodb"
+    }
+  )
 }
