@@ -25,7 +25,7 @@ resource "aws_db_instance" "api" {
   multi_az                    = true
   backup_retention_period     = local.account.backup_retention_period
   deletion_protection         = local.account.deletion_protection
-  tags                        = merge(local.default_tags, db_component_tag)
+  tags                        = merge(local.default_tags, local.db_component_tag)
   allow_major_version_upgrade = true
 }
 
@@ -49,7 +49,7 @@ module "api_aurora" {
   replication_source_identifier = local.account.always_on ? aws_db_instance.api[0].arn : ""
   skip_final_snapshot           = !local.account.deletion_protection
   vpc_security_group_ids        = [aws_security_group.rds-api.id]
-  tags                          = merge(local.default_tags, db_component_tag)
+  tags                          = merge(local.default_tags, local.db_component_tag)
 }
 
 resource "aws_db_parameter_group" "postgres-db-params" {
@@ -80,7 +80,7 @@ resource "aws_security_group" "rds-client" {
   description            = "rds access for ${local.environment}"
   vpc_id                 = data.aws_vpc.default.id
   revoke_rules_on_delete = true
-  tags                   = merge(local.default_tags, db_component_tag)
+  tags                   = merge(local.default_tags, local.db_component_tag)
 }
 
 resource "aws_security_group" "rds-api" {
@@ -88,7 +88,7 @@ resource "aws_security_group" "rds-api" {
   description            = "api rds access"
   vpc_id                 = data.aws_vpc.default.id
   revoke_rules_on_delete = true
-  tags                   = merge(local.default_tags, db_component_tag)
+  tags                   = merge(local.default_tags, local.db_component_tag)
 
   lifecycle {
     create_before_destroy = true

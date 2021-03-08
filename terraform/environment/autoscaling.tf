@@ -28,5 +28,5 @@ module "pdf_ecs_autoscaling" {
   ecs_autoscaling_service_role_arn = data.aws_iam_role.ecs_autoscaling_service_role.arn
   ecs_task_autoscaling_minimum     = local.account.autoscaling.pdf.minimum
   ecs_task_autoscaling_maximum     = local.account.autoscaling.pdf.maximum
-  tags                             = merge(local.default_tags, pdf_component_tag)
+  tags                             = merge(local.default_tags, local.pdf_component_tag)
 }
