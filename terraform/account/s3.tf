@@ -99,6 +99,7 @@ resource "aws_s3_bucket_object" "govuk_logo" {
   source       = "../../email-assets/govuk-logo-v1.png"
   etag         = filemd5("../../email-assets/govuk-logo-v1.png")
   content_type = "image/png"
+  tags         = local.default_tags
 }
 
 resource "aws_s3_bucket_object" "opg_logo" {
@@ -108,6 +109,7 @@ resource "aws_s3_bucket_object" "opg_logo" {
   source       = "../../email-assets/opg-logo-v1.png"
   etag         = filemd5("../../email-assets/opg-logo-v1.png")
   content_type = "image/png"
+  tags         = local.default_tags
 }
 
 data "aws_iam_policy_document" "static_email_assets_policy" {
