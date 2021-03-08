@@ -25,21 +25,7 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 //
 
-// work-around for "require.resolve is not a function" error
-// as per https://github.com/component-driven/cypress-axe/issues/73#issuecomment-734909801
-Cypress.Commands.add("injectAxe2", () => {
-  cy.window({ log: false }).then(window => {
-      const axe = require('axe-core/axe.js');
-      const script = window.document.createElement('script');
-      script.innerHTML = axe.source;
-      window.document.body.appendChild(script);
-  })
-});
-
-Cypress.Commands.add("OPGCheckA11y", (skipFailures) => {
-    cy.injectAxe2();
-    cy.checkA11y(null, null, printAccessibilityViolations, true);
-});
+const axeWrapper = require('./axe_wrapper');
 
 Cypress.Commands.add("getLpaId", () => {
     cy.get('@donorPageUrl').then((donorPageUrl) => {
@@ -47,35 +33,35 @@ Cypress.Commands.add("getLpaId", () => {
     });
 });
 
-// Print cypress-axe violations to the terminal
-function printAccessibilityViolations(violations) {
-    cy.location().then((location) => {
-        // make a set of unique violations; yes, I could have been clever
-        // and done it in one line, but the previous code confused me and
-        // I think this makes it clearer that we're populating a set
-        let reports = new Set();
+// window: DOM window instance
+// options: passed directly to axe
+// stopOnError: boolean, default=false; if true, if any violations are
+//     found, an exception is thrown, stopping the test
+Cypress.Commands.add("runAxe", (window, options, stopOnError) => {
+    stopOnError = !!stopOnError;
 
-        violations.forEach((violation) => {
-            reports.add({
-                id: violation.id,
-                impact: violation.impact,
-                description: violation.description,
-                snippets: violation.nodes.map((node) => node.html),
+    // wrap runAxe so that cypress understands the promise it returns
+    cy.wrap(axeWrapper.runAxe(window, options)).then((violations) => {
+        if (violations != null) {
+            // wrap this so that all the cy.task('log', ...) calls complete before
+            // throwing the error; without this, the error is thrown before
+            // the logging is completed
+            cy.wrap(axeWrapper.logViolations(violations, (msg) => {
+                cy.task('log', msg);
+            }))
+            .then(() => {
+                // throw an error to stop the test if configured to;
+                // otherwise we just see log messages and the test continues
+                if (stopOnError) {
+                    throw new Error('accessibility violations caused test to fail');
+                }
             });
-        });
-
-        location = `${location}`.replace(Cypress.config('baseUrl'), '');
-        cy.task('log', `\n************** ACCESSIBILITY VIOLATIONS ON ${location}`);
-
-        reports.forEach((report) => {
-            cy.task('log', `-------------- ID: ${report.id}`);
-            cy.task('log', `Impact: ${report.impact}`);
-            cy.task('log', `Description: ${report.description}`);
-            cy.task('log', 'HTML elements causing violation:')
-            cy.task('log', '* ' + report.snippets.join('\n* '));
-        });
-
-        return new Cypress.Promise((resolve, reject) => { return resolve(true); });
+        }
     });
-}
+});
 
+Cypress.Commands.add("OPGCheckA11y", () => {
+    cy.window({ log: false }).then((window) => {
+        cy.runAxe(window);
+    });
+});
