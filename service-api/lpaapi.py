@@ -9,9 +9,7 @@ def authenticate(username = "seeded_test_user@digital.justice.gov.uk", password 
     authPath = f'{apiRoot}/v2/authenticate'
     r = requests.get(authPath, data=credentials)
     token = r.json()['token']
-    print(f'token : {token}')
     userId = r.json()['userId']
-    print(f'userId : {userId}')
     return {"Token": token}, userId
 
 def makeNewLpa():
@@ -19,9 +17,8 @@ def makeNewLpa():
     applicationPath = f'{apiRoot}/v2/user/{userId}/applications'
     emptyData = []
     r = s.post(applicationPath, headers=token, data=emptyData)
-    print(r.json())
     id = r.json()['id']
-    print(f'lpa Id : {id}')
+    #print(f'lpa Id : {id}')
     return id
 
 def setLpaType(lpaId, lpaType = 'health-and-welfare'):
@@ -29,7 +26,6 @@ def setLpaType(lpaId, lpaType = 'health-and-welfare'):
     lpatype = {"type": lpaType}
     typePath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/type'
     r = s.put(typePath, headers=token, data=lpatype)
-    print(r.json())
 
 def setDonor(lpaId):
     token, userId = authenticate()
