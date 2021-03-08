@@ -55,10 +55,10 @@
         <legend class="visually-hidden">Change password</legend>
 
         <div class="form-group {{ password.getMessages|length >0 ? 'form-group-error'}}">
+            {{ formElementErrorsV2(password) }}
             <label class="form-label" for="{{ password.getAttribute('id') }}">
                 {{ password.getOption('label') }}
             </label>
-            {{ formElementErrorsV2(password) }}
             {{ formElement(password) }}
             <div>
                 <a href="#" class="hidden js-showHidePassword" data-for="password_current">Show password</a>
@@ -66,10 +66,10 @@
         </div>
 
         <div class="form-group {{ new_password.getMessages|length >0 ? 'form-group-error'}}">
+            {{ formElementErrorsV2(new_password) }}
             <label class="form-label" for="{{ new_password.getAttribute('id') }}">
                 {{ new_password.getOption('label') }}
             </label>
-            {{ formElementErrorsV2(new_password) }}
             {{ formElement(new_password) }}
             <div>
                 <a href="#" class="hidden js-showHidePassword" data-for="password" data-alsoHideConfirm="true">Show password</a>
