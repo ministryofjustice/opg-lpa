@@ -14,19 +14,6 @@ def authenticate(username = "seeded_test_user@digital.justice.gov.uk", password 
     print(f'userId : {userId}')
     return {"Token": token}, userId
 
-def getUserDetails():
-    token, userId = getTokenJsonByAuthenticating()
-    userPath = f'{apiRoot}/v2/user/{userId}'
-    r = s.get(userPath, headers=token)
-    print(r.json())
-
-def getApplications():
-    token, userId = authenticate()
-    applicationPath = f'{apiRoot}/v2/user/{userId}/applications'
-    r = s.get(applicationPath, headers=token)
-    print(r.json())
-    return r.json()
-
 def makeNewLpa():
     token, userId = authenticate()
     applicationPath = f'{apiRoot}/v2/user/{userId}/applications'

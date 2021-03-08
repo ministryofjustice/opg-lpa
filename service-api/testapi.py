@@ -1,6 +1,5 @@
 from lpaapi import *
 
-#getUserDetails()
 lpaId = makeNewLpa()
 setLpaType(lpaId, 'property-and-financial')
 setDonor(lpaId)
