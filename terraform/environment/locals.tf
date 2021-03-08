@@ -52,7 +52,7 @@ locals {
     component = "api"
   }
 
-  dynamodb_component_tag {
+  dynamodb_component_tag = {
     component = "dynamodb"
   }
 
