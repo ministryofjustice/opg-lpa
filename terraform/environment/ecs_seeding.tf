@@ -4,7 +4,11 @@
 resource "aws_security_group" "seeding_ecs_service" {
   name_prefix = "${terraform.workspace}-seeding-ecs-service"
   vpc_id      = data.aws_vpc.default.id
-  tags        = local.default_tags
+  tags = merge(
+    local.default_tags, {
+      component = "seeding"
+    }
+  )
 }
 
 //----------------------------------
@@ -32,7 +36,11 @@ resource "aws_ecs_task_definition" "seeding" {
   container_definitions    = "[${local.seeding_app}]"
   task_role_arn            = aws_iam_role.seeding_task_role[count.index].arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = local.default_tags
+  tags = merge(
+    local.default_tags, {
+      component = "seeding"
+    }
+  )
 }
 
 
@@ -43,7 +51,11 @@ resource "aws_iam_role" "seeding_task_role" {
   count              = local.environment == "production" ? 0 : 1
   name               = "${local.environment}-seeding-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.default_tags
+  tags = merge(
+    local.default_tags, {
+      component = "seeding"
+    }
+  )
 }
 
 data "aws_ecr_repository" "lpa_seeding_app" {

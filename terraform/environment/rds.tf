@@ -4,28 +4,33 @@ data "aws_kms_key" "rds" {
 }
 
 resource "aws_db_instance" "api" {
-  count                       = local.account.always_on ? 1 : 0
-  identifier                  = lower("api-${local.environment}")
-  name                        = "api2"
-  allocated_storage           = 10
-  storage_type                = "gp2"
-  storage_encrypted           = true
-  skip_final_snapshot         = local.account.skip_final_snapshot
-  engine                      = "postgres"
-  engine_version              = local.account.psql_engine_version
-  instance_class              = "db.m3.medium"
-  port                        = "5432"
-  kms_key_id                  = data.aws_kms_key.rds.arn
-  username                    = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
-  password                    = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
-  parameter_group_name        = aws_db_parameter_group.postgres-db-params.name
-  vpc_security_group_ids      = [aws_security_group.rds-api.id]
-  auto_minor_version_upgrade  = false
-  maintenance_window          = "sun:01:00-sun:01:30"
-  multi_az                    = true
-  backup_retention_period     = local.account.backup_retention_period
-  deletion_protection         = local.account.deletion_protection
-  tags                        = local.default_tags
+  count                      = local.account.always_on ? 1 : 0
+  identifier                 = lower("api-${local.environment}")
+  name                       = "api2"
+  allocated_storage          = 10
+  storage_type               = "gp2"
+  storage_encrypted          = true
+  skip_final_snapshot        = local.account.skip_final_snapshot
+  engine                     = "postgres"
+  engine_version             = local.account.psql_engine_version
+  instance_class             = "db.m3.medium"
+  port                       = "5432"
+  kms_key_id                 = data.aws_kms_key.rds.arn
+  username                   = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
+  password                   = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
+  parameter_group_name       = aws_db_parameter_group.postgres-db-params.name
+  vpc_security_group_ids     = [aws_security_group.rds-api.id]
+  auto_minor_version_upgrade = false
+  maintenance_window         = "sun:01:00-sun:01:30"
+  multi_az                   = true
+  backup_retention_period    = local.account.backup_retention_period
+  deletion_protection        = local.account.deletion_protection
+  tags = merge(
+    local.default_tags,
+    {
+      component = "db"
+    }
+  )
   allow_major_version_upgrade = true
 }
 
@@ -49,7 +54,12 @@ module "api_aurora" {
   replication_source_identifier = local.account.always_on ? aws_db_instance.api[0].arn : ""
   skip_final_snapshot           = !local.account.deletion_protection
   vpc_security_group_ids        = [aws_security_group.rds-api.id]
-  tags                          = local.default_tags
+  tags = merge(
+    local.default_tags,
+    {
+      component = "db"
+    }
+  )
 }
 
 resource "aws_db_parameter_group" "postgres-db-params" {
@@ -80,7 +90,12 @@ resource "aws_security_group" "rds-client" {
   description            = "rds access for ${local.environment}"
   vpc_id                 = data.aws_vpc.default.id
   revoke_rules_on_delete = true
-  tags                   = local.default_tags
+  tags = merge(
+    local.default_tags,
+    {
+      component = "db"
+    }
+  )
 }
 
 resource "aws_security_group" "rds-api" {
@@ -88,8 +103,12 @@ resource "aws_security_group" "rds-api" {
   description            = "api rds access"
   vpc_id                 = data.aws_vpc.default.id
   revoke_rules_on_delete = true
-  tags                   = local.default_tags
-
+  tags = merge(
+    local.default_tags,
+    {
+      component = "db"
+    }
+  )
   lifecycle {
     create_before_destroy = true
   }

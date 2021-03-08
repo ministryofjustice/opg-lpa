@@ -1,4 +1,5 @@
 ## Purpose
+
 _Briefly describe the purpose of the change, and/or link to the JIRA ticket for context_
 
 Fixes LPAL-####
@@ -16,4 +17,5 @@ _Any tips and tricks, blog posts or tools which helped you. Plus anything notabl
 * [ ] I have performed a self-review of my own code
 * [ ] I have updated documentation (Confluence/GitHub wiki/tech debt doc) where relevant
 * [ ] I have added tests to prove my work
+* [ ] I have added mandatory tags to terraformed resources, where possible
 * [ ] The product team have tested these changes
