@@ -14,17 +14,18 @@ Feature: Feedback
         And I see "Send us feedback" in the title
         And I can find feedback buttons
         When I submit the feedback
-        Then I see "There is a problem" in the page text
         Then I see in the page text
             | There is a problem |
             | Select a rating for this service |
-            | Do not forget to leave your feedback in the box | 
+            | Do not forget to leave your feedback in the box |
+        And I see "Error" in the title
         When I select satisfied
         And I submit the feedback
         Then I see in the page text
             | There is a problem |
-            | Do not forget to leave your feedback in the box | 
+            | Do not forget to leave your feedback in the box |
         And I can find "feedback-textarea" wrapped with error highlighting
+        And I see "Error" in the title
         When I select neither satisfied or dissatisfied
         And I set feedback email as "cypress@opg-lpa-test.net"
         And I set feedback content as "Cypress feedback form test"

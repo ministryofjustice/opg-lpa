@@ -189,5 +189,5 @@ endif
 ifeq ($(UNAME_S),Linux)
 cypress-gui-local:
 	xhost + 127.0.0.1
-	aws-vault exec moj-lpa-dev -- docker run -it -v ~/.Xauthority:/root/.Xauthority:ro -e DISPLAY -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  --entrypoint "./cypress/start.sh" --network="host" --rm cypress:latest open --project /app
+	aws-vault exec moj-lpa-dev -- docker run -it -v ~/.Xauthority:/root/.Xauthority:ro -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e DISPLAY -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  --entrypoint "./cypress/start.sh" --network="host" --rm cypress:latest open --project /app
 endif
