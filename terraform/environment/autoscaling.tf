@@ -6,6 +6,10 @@ module "front_ecs_autoscaling" {
   ecs_autoscaling_service_role_arn = data.aws_iam_role.ecs_autoscaling_service_role.arn
   ecs_task_autoscaling_minimum     = local.account.autoscaling.front.minimum
   ecs_task_autoscaling_maximum     = local.account.autoscaling.front.maximum
+  tags = merge(
+    local.default_tags,
+    { component = "front" }
+  )
 }
 
 module "api_ecs_autoscaling" {
@@ -16,6 +20,10 @@ module "api_ecs_autoscaling" {
   ecs_autoscaling_service_role_arn = data.aws_iam_role.ecs_autoscaling_service_role.arn
   ecs_task_autoscaling_minimum     = local.account.autoscaling.api.minimum
   ecs_task_autoscaling_maximum     = local.account.autoscaling.api.maximum
+  tags = merge(
+    local.default_tags,
+    { component = "api" }
+  )
 }
 
 module "pdf_ecs_autoscaling" {
@@ -26,4 +34,8 @@ module "pdf_ecs_autoscaling" {
   ecs_autoscaling_service_role_arn = data.aws_iam_role.ecs_autoscaling_service_role.arn
   ecs_task_autoscaling_minimum     = local.account.autoscaling.pdf.minimum
   ecs_task_autoscaling_maximum     = local.account.autoscaling.pdf.maximum
+  tags = merge(
+    local.default_tags,
+    { component = "pdf" }
+  )
 }
