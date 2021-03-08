@@ -5,7 +5,7 @@
   'use strict';
 
   moj.Modules.Validation = {
-    selector: '.error-summary[role=group]',
+    selector: '.error-summary[role=alert]',
 
     init: function () {
       _.bindAll(this, 'render');

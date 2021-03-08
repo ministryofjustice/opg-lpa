@@ -2,7 +2,7 @@
 {% macro formErrorSummary(error, form, message = "There is a problem") %}
 
     {% if (error is not empty or form.getMessages|length > 0) %}
-    <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
+    <div class="error-summary text" role="alert" aria-labelledby="error-heading" tabindex="-1">
         <h2 class="heading-medium error-summary-heading" id="error-heading" data-cy="error-heading">{{ message }}</h2>
 
         {% if error is not empty %}
