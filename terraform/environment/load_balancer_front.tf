@@ -14,11 +14,7 @@ resource "aws_lb_target_group" "front" {
     matcher             = 200
   }
   depends_on = [aws_lb.front]
-  tags = merge(
-    local.default_tags, {
-      component = "front"
-    }
-  )
+  tags       = merge(local.default_tags, local.front_component_tag)
 }
 
 resource "aws_lb" "front" {
@@ -26,11 +22,8 @@ resource "aws_lb" "front" {
   internal           = false
   load_balancer_type = "application"
   subnets            = data.aws_subnet_ids.public.ids
-  tags = merge(
-    local.default_tags, {
-      component = "front"
-    }
-  )
+  tags               = merge(local.default_tags, local.front_component_tag)
+
 
   security_groups = [
     aws_security_group.front_loadbalancer.id,
@@ -61,11 +54,8 @@ resource "aws_security_group" "front_loadbalancer" {
   name        = "${local.environment}-front-loadbalancer"
   description = "Allow inbound traffic"
   vpc_id      = data.aws_vpc.default.id
-  tags = merge(
-    local.default_tags, {
-      component = "front"
-    }
-  )
+  tags        = merge(local.default_tags, local.front_component_tag)
+
 }
 
 resource "aws_security_group_rule" "front_loadbalancer_ingress" {
