@@ -1,7 +1,10 @@
 @CreateLpa
-Feature: Type page Property and Finance LPA
+Feature: Property and Finance LPA starting from the Type page
 
     I want to go to the type page and create a Property and Finance LPA
+
+    Background:
+        Given I ignore application exceptions
 
     @focus, @CleanupFixtures
     Scenario: Choose Property and Finance as Lpa Type

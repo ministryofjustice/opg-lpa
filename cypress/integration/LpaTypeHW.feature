@@ -1,7 +1,10 @@
 @CreateLpa
-Feature: Type page Health and Welfare LPA
+Feature: Health and Welfare LPA starting from the Type page
 
     I want to go to the type page and create a Health and Welfare LPA
+
+    Background:
+        Given I ignore application exceptions
 
     @focus, @CleanupFixtures
     Scenario: Choose Health and Welfare as Lpa Type

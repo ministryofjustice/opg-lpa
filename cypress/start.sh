@@ -11,14 +11,6 @@ echo Cypress user number is $CYPRESS_userNumber
 
 echo Starting Cypress Tests
 
-# see if we asked for a GUI by specifying "open"  .
-for i in "$@" ; do
-    if [[ $i == "open" ]] ; then
-        GUI=true
-        break
-    fi
-done
-
 if [[ "$CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
     # It's CI (used in CircleCI) or headless (local CLI runs)
     # so run the signup test first followed by all others
