@@ -10,13 +10,11 @@ resource "aws_dynamodb_table" "workspace_cleanup_table" {
   }
 
   ttl {
-
     attribute_name = "ExpiresTTL"
     enabled        = true
-
   }
 
-  tags = local.default_tags
+  tags = merge(local.default_tags, local.shared_component_tag)
 
   lifecycle {
     prevent_destroy = true

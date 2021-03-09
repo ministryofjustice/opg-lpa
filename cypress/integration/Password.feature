@@ -24,6 +24,7 @@ Feature: Password
             | Choose a new password that includes at least one lower case letter (a-z) |
             | Choose a new password that includes at least one capital letter (A-Z) |
             | Enter matching passwords |
+        And I see "Error" in the title
 
     @focus
     Scenario: Reset Password using email link
