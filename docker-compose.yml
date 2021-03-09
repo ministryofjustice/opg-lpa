@@ -169,6 +169,7 @@ services:
       - localstack
       - local-config
       - postgres
+      - gateway
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -188,7 +189,7 @@ services:
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "LpaCache"
       OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
 
-      OPG_LPA_PROCESSING_STATUS_ENDPOINT: "http://gateway:5000/v1/lpa-online-tool/lpas/"
+      OPG_LPA_PROCESSING_STATUS_ENDPOINT: "http://gateway:5000/lpa-online-tool/lpas/"
 
       # lifetime (in seconds) of authentication tokens
       OPG_LPA_AUTH_TOKEN_TTL: 4500
@@ -363,3 +364,14 @@ services:
       OPG_LPA_POSTGRES_NAME: "lpadb"
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
+
+  # ---------------------------
+  # Sirius gateway mock
+  gateway:
+    container_name: gateway
+    image: gateway
+    build:
+      context: ./service-gateway-mock
+      dockerfile: ./Dockerfile
+    ports:
+      - 7010:5000
