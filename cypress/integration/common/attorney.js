@@ -13,7 +13,7 @@ Then(`I can find save pointing to people to notify page`, (linkAddr) => {
 })
 
 function canFindButtonLinkedTo(urlPart) {
-    cy.getLpaId().then((lpaId) => {
+    cy.get('@lpaId').then((lpaId) => {
         let expectedHref = '/lpa/' + lpaId + '/' + urlPart;
         cy.get('[data-cy=save][href="' + expectedHref + '"]');
     });

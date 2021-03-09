@@ -27,12 +27,6 @@
 
 const axeWrapper = require('./axe_wrapper');
 
-Cypress.Commands.add("getLpaId", () => {
-    cy.get('@donorPageUrl').then((donorPageUrl) => {
-        return donorPageUrl.match(/\/(\d+)\//)[1];
-    });
-});
-
 Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
     cy.exec('python3 service-api/' + pythonCommand)
 });
