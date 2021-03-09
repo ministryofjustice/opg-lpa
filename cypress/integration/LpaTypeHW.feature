@@ -3,7 +3,7 @@ Feature: Type page Health and Welfare LPA
 
     I want to go to the type page and create a Health and Welfare LPA
 
-    @focus
+    @focus, @CleanupFixtures
     Scenario: Choose Health and Welfare as Lpa Type
         Given I log in as appropriate test user
         And If I am on dashboard I visit the type page
