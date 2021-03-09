@@ -4,7 +4,7 @@ namespace Application\Model\Service\ProcessingStatus;
 
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Service\AbstractService;
-use Aws\Credentials\CredentialProvider;
+use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
@@ -35,6 +35,11 @@ class Service extends AbstractService
     private $httpClient;
 
     /**
+     * @var $credentials CredentialsInterface
+     */
+    private $credentials;
+
+    /**
      * @var $processingStatusServiceUri string
      */
     private $processingStatusServiceUri;
@@ -47,6 +52,11 @@ class Service extends AbstractService
     public function setClient(HttpClient $httpClient)
     {
         $this->httpClient = $httpClient;
+    }
+
+    public function setCredentials(CredentialsInterface $credentials)
+    {
+        $this->credentials = $credentials;
     }
 
     public function setConfig(array $config)
@@ -75,9 +85,6 @@ class Service extends AbstractService
         $requests = [];
         $siriusResponseArray = [];
 
-        $provider = CredentialProvider::defaultProvider();
-        $credentials = $provider()->wait();
-
         foreach ($ids as $id) {
 
             $prefixedId = $id;
@@ -88,7 +95,7 @@ class Service extends AbstractService
 
             $url = new Uri($this->processingStatusServiceUri . $prefixedId);
             $requests[$id] = new Request('GET', $url, $this->buildHeaders());
-            $requests[$id] = $this->awsSignature->signRequest($requests[$id], $credentials);
+            $requests[$id] = $this->awsSignature->signRequest($requests[$id], $this->credentials);
         } //end of request loop
 
         // build pool
@@ -177,6 +184,12 @@ class Service extends AbstractService
         }
         if (isset($responseBody['rejectedDate'])){
             $return['rejectedDate'] = $responseBody['rejectedDate'];
+        }
+        if (isset($responseBody['invalidDate'])){
+            $return['invalidDate'] = $responseBody['invalidDate'];
+        }
+        if (isset($responseBody['withdrawnDate'])){
+            $return['withdrawnDate'] = $responseBody['withdrawnDate'];
         }
         if (isset($responseBody['status'])) {
             $return['status'] = self::SIRIUS_STATUS_TO_LPA[$responseBody['status']];
