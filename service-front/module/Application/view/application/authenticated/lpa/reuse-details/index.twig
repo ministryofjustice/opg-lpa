@@ -40,10 +40,10 @@
     {{ form().openTag(form)|raw }}
         {{ formElement(form.getCsrf) }}
 
-        <div class="form-group">
+        <div class="form-group {{ reuseDetails.getMessages|length > 0 ? 'form-group-error'}}">
             <fieldset class="reuse-details-container">
                 <legend class="heading-medium">Which details would you like to reuse?</legend>
-                {{ formElementErrorsV2(reuseDetails) }}
+                <div class="form-reuse-details">{{ formElementErrorsV2(reuseDetails) }}</div>
                 {{ formRadio(reuseDetails) }}
 
             </fieldset>
