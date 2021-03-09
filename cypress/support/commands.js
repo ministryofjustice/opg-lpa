@@ -33,6 +33,10 @@ Cypress.Commands.add("getLpaId", () => {
     });
 });
 
+Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
+    cy.exec('python3 service-api/' + pythonCommand)
+});
+
 // window: DOM window instance
 // options: passed directly to axe
 // stopOnError: boolean, default=false; if true, if any violations are
