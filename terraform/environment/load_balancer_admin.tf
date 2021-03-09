@@ -14,7 +14,7 @@ resource "aws_lb_target_group" "admin" {
     matcher             = 200
   }
   depends_on = [aws_lb.admin]
-  tags       = local.default_tags
+  tags       = merge(local.default_tags, local.admin_component_tag)
 }
 
 resource "aws_lb" "admin" {
@@ -22,7 +22,7 @@ resource "aws_lb" "admin" {
   internal           = false
   load_balancer_type = "application"
   subnets            = data.aws_subnet_ids.public.ids
-  tags               = local.default_tags
+  tags               = merge(local.default_tags, local.admin_component_tag)
 
   security_groups = [
     aws_security_group.admin_loadbalancer.id,
@@ -53,7 +53,7 @@ resource "aws_security_group" "admin_loadbalancer" {
   name        = "${local.environment}-admin-loadbalancer"
   description = "Allow inbound traffic"
   vpc_id      = data.aws_vpc.default.id
-  tags        = local.default_tags
+  tags        = merge(local.default_tags, local.admin_component_tag)
 }
 
 resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
@@ -61,7 +61,7 @@ resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
-  cidr_blocks       = module.whitelist.moj_sites
+  cidr_blocks       = module.allowed_ip_list.moj_sites
   security_group_id = aws_security_group.admin_loadbalancer.id
 }
 resource "aws_security_group_rule" "admin_loadbalancer_ingress_production" {

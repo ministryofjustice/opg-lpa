@@ -54,6 +54,7 @@ resource "aws_cloudwatch_metric_alarm" "max_scaling_reached" {
   threshold                 = var.ecs_task_autoscaling_maximum
   alarm_description         = "This metric monitors ecs running task count for the ${var.environment} ${var.aws_ecs_service_name} service"
   insufficient_data_actions = []
+  tags                      = var.tags
   dimensions = {
     ServiceName = var.aws_ecs_service_name
     ClusterName = "${var.environment}-online-lpa"
