@@ -28,7 +28,7 @@
 const axeWrapper = require('./axe_wrapper');
 
 Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
-    cy.exec('python3 service-api/' + pythonCommand)
+    cy.exec('python3 service-api/tests/python/' + pythonCommand)
 });
 
 // window: DOM window instance
