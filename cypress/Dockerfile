@@ -5,7 +5,7 @@ WORKDIR /app
 RUN apt-get update && \
   apt-get install -y python3-pip
 
-RUN pip3 install boto3
+RUN pip3 install boto3 requests
 
 RUN npm install --save-dev axe-core \
     cypress-cucumber-preprocessor cypress-plugin-tab
