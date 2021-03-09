@@ -64,3 +64,8 @@ variable "cpu_track_metric_scale_out_cooldown" {
   type        = number
   default     = 60
 }
+
+variable "tags" {
+  description = "the AWS tags to apply to the resources in ths module."
+  type        = map(any)
+}

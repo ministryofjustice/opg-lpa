@@ -7,7 +7,7 @@ RUN apt-get update && \
 
 RUN pip3 install boto3
 
-RUN npm install --save-dev cypress-axe@0.12.1 axe-core \
+RUN npm install --save-dev axe-core \
     cypress-cucumber-preprocessor cypress-plugin-tab
 
 # unset CI which gets set in Cypress's dockerfile

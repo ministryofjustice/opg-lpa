@@ -17,6 +17,7 @@ data "aws_iam_policy_document" "cloudwatch_events_assume_policy" {
 resource "aws_iam_role" "cloudwatch_events_ecs_role" {
   name               = "${local.environment}-cloudwatch_events_ecs_cron"
   assume_role_policy = data.aws_iam_policy_document.cloudwatch_events_assume_policy.json
+  tags               = merge(local.default_tags, local.api_component_tag)
 }
 
 //---
@@ -58,11 +59,13 @@ resource "aws_iam_role_policy" "ecs_events_run_task_with_any_role" {
 resource "aws_cloudwatch_event_rule" "middle_of_the_night" {
   name                = "${local.environment}-middle-of-the-night-cron"
   schedule_expression = "cron(0 3 * * ? *)" // 3am UTC, every day.
+  tags                = merge(local.default_tags, local.api_component_tag)
 }
 
 resource "aws_cloudwatch_event_rule" "mid_morning" {
   name                = "${local.environment}-mid-morning-cron"
   schedule_expression = "cron(0 10 * * ? *)" // 10am UTC, every day.
+  tags                = merge(local.default_tags, local.api_component_tag)
 }
 
 //------------------------------------------------
@@ -77,9 +80,8 @@ resource "aws_ecs_task_definition" "api_crons" {
   container_definitions    = "[${local.api_app}]"
   task_role_arn            = aws_iam_role.api_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = local.default_tags
+  tags                     = merge(local.default_tags, local.api_component_tag)
 }
-
 
 //------------------------------------------------
 // Account Cleanup Task
@@ -97,7 +99,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
     task_count          = 1
     task_definition_arn = aws_ecs_task_definition.api.arn
     launch_type         = "FARGATE"
-    platform_version    = "LATEST"
+    platform_version    = "1.3.0"
 
     network_configuration {
       security_groups = [
@@ -134,7 +136,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
     task_count          = 1
     task_definition_arn = aws_ecs_task_definition.api.arn
     launch_type         = "FARGATE"
-    platform_version    = "LATEST"
+    platform_version    = "1.3.0"
 
     network_configuration {
       security_groups = [

@@ -4,6 +4,7 @@ resource "aws_cloudwatch_log_group" "online-lpa" {
 
   tags = merge(
     local.default_tags,
+    local.shared_component_tag,
     {
       "Name" = "online-lpa"
     },

@@ -16,7 +16,7 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   period                    = 60
   statistic                 = "Sum"
-  tags                      = {}
+  tags                      = merge(local.default_tags, local.front_component_tag)
   threshold                 = 2
   treat_missing_data        = "notBreaching"
 }
@@ -39,7 +39,7 @@ resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   period                    = 60
   statistic                 = "Sum"
-  tags                      = {}
+  tags                      = merge(local.default_tags, local.admin_component_tag)
   threshold                 = 2
   treat_missing_data        = "notBreaching"
 }
@@ -70,7 +70,7 @@ resource "aws_cloudwatch_metric_alarm" "front_csrf_mismatch_errors" {
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   period                    = 60
   statistic                 = "Sum"
-  tags                      = {}
+  tags                      = merge(local.default_tags, local.front_component_tag)
   threshold                 = 2
   treat_missing_data        = "notBreaching"
 }
@@ -91,7 +91,7 @@ resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   evaluation_periods  = 1
   datapoints_to_alarm = 1
   statistic           = "Sum"
-  tags                = {}
+  tags                = merge(local.default_tags, local.pdf_component_tag)
   threshold           = 6
   treat_missing_data  = "notBreaching"
 }

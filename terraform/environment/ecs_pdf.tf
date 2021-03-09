@@ -7,7 +7,7 @@ resource "aws_ecs_service" "pdf" {
   task_definition  = aws_ecs_task_definition.pdf.arn
   desired_count    = local.account.autoscaling.pdf.minimum
   launch_type      = "FARGATE"
-  platform_version = "LATEST"
+  platform_version = "1.3.0"
 
   network_configuration {
     security_groups  = [aws_security_group.pdf_ecs_service.id]
@@ -16,7 +16,8 @@ resource "aws_ecs_service" "pdf" {
   }
 
   depends_on = [aws_iam_role.pdf_task_role, aws_iam_role.execution_role]
-  tags       = local.default_tags
+  tags       = merge(local.default_tags, local.pdf_component_tag)
+
 }
 
 //----------------------------------
@@ -25,7 +26,7 @@ resource "aws_ecs_service" "pdf" {
 resource "aws_security_group" "pdf_ecs_service" {
   name_prefix = "${local.environment}-pdf-ecs-service"
   vpc_id      = data.aws_vpc.default.id
-  tags        = local.default_tags
+  tags        = merge(local.default_tags, local.pdf_component_tag)
 }
 
 //----------------------------------
@@ -51,7 +52,7 @@ resource "aws_ecs_task_definition" "pdf" {
   container_definitions    = "[${local.pdf_app}]"
   task_role_arn            = aws_iam_role.pdf_task_role.arn
   execution_role_arn       = aws_iam_role.execution_role.arn
-  tags                     = local.default_tags
+  tags                     = merge(local.default_tags, local.pdf_component_tag)
 }
 
 //----------------
@@ -60,7 +61,7 @@ resource "aws_ecs_task_definition" "pdf" {
 resource "aws_iam_role" "pdf_task_role" {
   name               = "${local.environment}-pdf-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.default_tags
+  tags               = merge(local.default_tags, local.pdf_component_tag)
 }
 
 resource "aws_iam_role_policy" "pdf_permissions_role" {

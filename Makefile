@@ -103,6 +103,22 @@ reset-front:
 	docker-compose build --no-cache front-app
 	docker-compose run front-composer
 
+# only reset the api container
+.PHONY: reset-api
+reset-api:
+	@${MAKE} dc-down
+	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
+	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY}; \
+	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
+	docker system prune -f --volumes; \
+	docker rmi lpa-api-web || true; \
+	docker rmi lpa-api-app || true; \
+	rm -fr ./service-api/vendor; \
+	docker-compose build --no-cache api-web
+	docker-compose build --no-cache api-app
+	docker-compose run api-composer
+
 .PHONY: dc-down
 dc-down:
 	@export OPG_LPA_FRONT_EMAIL_SENDGRID_API_KEY=${SENDGRID}; \
@@ -173,5 +189,5 @@ endif
 ifeq ($(UNAME_S),Linux)
 cypress-gui-local:
 	xhost + 127.0.0.1
-	aws-vault exec moj-lpa-dev -- docker run -it -v ~/.Xauthority:/root/.Xauthority:ro -e DISPLAY -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  --entrypoint "./cypress/start.sh" --network="host" --rm cypress:latest open --project /app
+	aws-vault exec moj-lpa-dev -- docker run -it -v ~/.Xauthority:/root/.Xauthority:ro -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e DISPLAY -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  --entrypoint "./cypress/start.sh" --network="host" --rm cypress:latest open --project /app
 endif

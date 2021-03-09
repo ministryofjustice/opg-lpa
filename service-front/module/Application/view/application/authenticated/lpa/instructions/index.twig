@@ -28,7 +28,8 @@
     rows: 10,
     cols: 67,
     maxlength: 10000,
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'instruction'
 }) ? ''}}
 
 {{ preferences.setAttributes({
@@ -36,7 +37,8 @@
     rows: 10,
     cols: 67,
     maxlength: 10000,
-    class: 'form-control'
+    class: 'form-control',
+    'data-cy': 'preferences'
 }) ? ''}}
 
 {# form fields labels #}
@@ -72,7 +74,7 @@
 
         <details{{ instructions.getValue() or preferences.getValue() ? ' open' : '' }} class="form-group">
 
-            <summary data-journey-click="page:link.reveal:Add extra preferences or instructions for the attorneys? (optional)" role="button" aria-expanded="false">Add extra preferences or instructions for the attorneys? (optional)</summary>
+            <summary data-journey-click="page:link.reveal:Add extra preferences or instructions for the attorneys? (optional)" role="button" data-cy="add-extra-preferences" aria-expanded="false">Add extra preferences or instructions for the attorneys? (optional)</summary>
 
             <div>
 
