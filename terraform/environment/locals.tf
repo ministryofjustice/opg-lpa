@@ -34,6 +34,37 @@ locals {
 
   default_tags = merge(local.mandatory_moj_tags, local.optional_tags, {
     "Name" = "${local.environment}-online-lpa-tool"
-  }, )
+  })
 
+  shared_component_tag = {
+    component = "shared"
+  }
+
+  admin_component_tag = {
+    component = "admin"
+  }
+
+  front_component_tag = {
+    component = "front"
+  }
+
+  api_component_tag = {
+    component = "api"
+  }
+
+  dynamodb_component_tag = {
+    component = "dynamodb"
+  }
+
+  db_component_tag = {
+    component = "db"
+  }
+
+  pdf_component_tag = {
+    component = "pdf"
+  }
+
+  seeding_component_tag = {
+    component = "seeding"
+  }
 }
