@@ -38,4 +38,28 @@ locals {
   }
 
   default_tags = merge(local.mandatory_moj_tags, local.optional_tags)
+
+  shared_component_tag = {
+    component = "shared"
+  }
+
+  admin_component_tag = {
+    component = "admin"
+  }
+
+  front_component_tag = {
+    component = "front"
+  }
+
+  api_component_tag = {
+    component = "api"
+  }
+
+  pdf_component_tag = {
+    component = "pdf"
+  }
+
+  db_component_tag = {
+    component = "db"
+  }
 }
