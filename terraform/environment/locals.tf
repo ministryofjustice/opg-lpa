@@ -28,12 +28,43 @@ locals {
   optional_tags = {
     environment-name       = local.environment
     infrastructure-support = "OPG LPA Product Team: opgteam+online-lpa@digital.justice.gov.uk"
-    runbook                = "https://github.com/ministryofjustice/opg-webops-runbooks/tree/master/LPA"
+    runbook                = "https://github.com/ministryofjustice/opg-lpa/tree/master/docs/runbooks"
     source-code            = "https://github.com/ministryofjustice/opg-lpa"
   }
 
   default_tags = merge(local.mandatory_moj_tags, local.optional_tags, {
     "Name" = "${local.environment}-online-lpa-tool"
-  }, )
+  })
 
+  shared_component_tag = {
+    component = "shared"
+  }
+
+  admin_component_tag = {
+    component = "admin"
+  }
+
+  front_component_tag = {
+    component = "front"
+  }
+
+  api_component_tag = {
+    component = "api"
+  }
+
+  dynamodb_component_tag = {
+    component = "dynamodb"
+  }
+
+  db_component_tag = {
+    component = "db"
+  }
+
+  pdf_component_tag = {
+    component = "pdf"
+  }
+
+  seeding_component_tag = {
+    component = "seeding"
+  }
 }
