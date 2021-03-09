@@ -31,3 +31,11 @@ Then(`I visit the admin sign-in page`, () => {
     cy.visit(Cypress.env('adminUrl') + '/sign-in');
     cy.OPGCheckA11y();
 })
+
+
+Then(`I visit the donor page for the in-progress lpa`, () => {
+        cy.get('@lpaId').then((lpaId) => {
+            cy.visit('/lpa/' + lpaId + '/donor');
+            cy.OPGCheckA11y();
+        });
+})

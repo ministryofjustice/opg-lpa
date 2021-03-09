@@ -21,7 +21,7 @@ Then("I see the following summary information", (dataTable) => {
         }
         // row[2] is optional change link, if specified , we ensure it exists and href points to right place
         if (row[2] != "") {
-            cy.getLpaId().then((lpaId) => { 
+            cy.get('@lpaId').then((lpaId) => { 
                 cy.get("[data-cy=cya-change]").eq(changeCounter).invoke('attr', 'href').should('contain','/lpa/' + lpaId + '/' + row[2]);
                 changeCounter++
             });

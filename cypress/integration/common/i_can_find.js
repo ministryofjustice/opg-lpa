@@ -24,7 +24,7 @@ Then(`I can find link pointing to {string}`, (linkAddr) => {
 })
 
 Then(`I can find draft download link`, () => {
-    cy.getLpaId().then((lpaId) => { 
+    cy.get('@lpaId').then((lpaId) => { 
         let searchStr = 'a[href*="/lpa/' + lpaId + '/download/lp1/draft' + '"]'
         cy.get(searchStr)
     });
