@@ -1,6 +1,7 @@
 resource "aws_default_vpc" "default" {
   tags = merge(
     local.default_tags,
+    local.shared_component_tag,
     map("Name", "default")
   )
 }
@@ -13,6 +14,7 @@ resource "aws_default_subnet" "public" {
 
   tags = merge(
     local.default_tags,
+    local.shared_component_tag,
     map("Name", "public")
   )
 }
@@ -26,6 +28,7 @@ resource "aws_subnet" "private" {
 
   tags = merge(
     local.default_tags,
+    local.shared_component_tag,
     map("Name", "private")
   )
 }
@@ -35,6 +38,7 @@ resource "aws_eip" "nat" {
 
   tags = merge(
     local.default_tags,
+    local.shared_component_tag,
     map("Name", "nat")
   )
 }
@@ -59,6 +63,7 @@ resource "aws_nat_gateway" "nat" {
 
   tags = merge(
     local.default_tags,
+    local.shared_component_tag,
     map("Name", "nat")
   )
 }
@@ -68,6 +73,7 @@ resource "aws_default_route_table" "default" {
 
   tags = merge(
     local.default_tags,
+    local.shared_component_tag,
     map("Name", "default")
   )
 }
@@ -78,6 +84,7 @@ resource "aws_route_table" "private" {
 
   tags = merge(
     local.default_tags,
+    local.shared_component_tag,
     map("Name", "private")
   )
 }

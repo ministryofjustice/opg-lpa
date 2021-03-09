@@ -8,13 +8,13 @@ resource "aws_flow_log" "vpc_flow_logs" {
 
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name = "vpc_flow_logs"
-  tags = local.default_tags
+  tags = merge(local.default_tags, local.shared_component_tag)
 }
 
 resource "aws_iam_role" "vpc_flow_logs" {
   name               = "vpc_flow_logs"
   assume_role_policy = data.aws_iam_policy_document.vpc_flow_logs_role_assume_role_policy.json
-  tags               = local.default_tags
+  tags               = merge(local.default_tags, local.shared_component_tag)
 }
 
 data "aws_iam_policy_document" "vpc_flow_logs_role_assume_role_policy" {
