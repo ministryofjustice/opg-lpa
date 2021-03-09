@@ -16,7 +16,6 @@ After({ tags: "@CleanupFixtures" }, () => {
 });
 
 Then(`I create PF LPA test fixture`, () => {
-    // TODO check whether lpaId is set, indicating that test fixture already exists. if not, create the fixture
     cy.runPythonApiCommand("createPFLpa.py").its('stdout').as('lpaId').then(lpaId => {
         cy.log("Created PF LPA test fixture through the API with id " + lpaId);
     });
