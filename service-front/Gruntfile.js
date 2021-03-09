@@ -182,9 +182,6 @@ module.exports = function (grunt) {
 
           // Init Script
           'assets/js/main.js',
-
-          // SHAME.JS -- NOT FOR PRODUCTION
-          'assets/js/shame.js'
         ],
         dest: 'public/assets/v2/js/application.js',
         nonull: true
