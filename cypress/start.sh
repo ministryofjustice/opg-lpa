@@ -22,7 +22,7 @@ if [[ "$CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
 	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CreatePFLpa.feature >> cypress/integration/StitchedCreatePFLpa.feature 
     cypress run --spec cypress/integration/StitchedCreatePFLpa.feature
     # Stitch together HW feature files and run
-	cp cypress/integration/LpaTypePF.feature cypress/integration/StitchedCreatePFLpa.feature 
+	cp cypress/integration/LpaTypeHW.feature cypress/integration/StitchedCreateHWLpa.feature 
 	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/DonorHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
 	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CreateHWLpa.feature >> cypress/integration/StitchedCreateHWLpa.feature 
     cypress run --spec cypress/integration/StitchedCreateHWLpa.feature
