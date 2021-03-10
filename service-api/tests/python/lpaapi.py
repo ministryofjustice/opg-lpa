@@ -42,11 +42,22 @@ def setDonor(lpaId):
     print(r.json())
 
 def setPrimaryAttorneyDecisions(lpaId):
+    # canSustainLife is for life-sustaining treatment (HW only) 
+    # "how" , is how attorneys makes decisions, can be set to jointly-attorney-severally if there is more than 1 attorney
+    # "when"  is when attorneys step in
     token, userId = authenticate()
     primaryAttorneyDecisionPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/primary-attorney-decisions'
-    # "how" , can also be set to jointly-attorney-severally if there is more than 1 attorney
     primaryAttorneyDecisionDetails = '{"canSustainLife":true,"how":null,"when":null,"howDetails":null}'
     r = s.put(primaryAttorneyDecisionPath, headers=token, data=primaryAttorneyDecisionDetails)
+    print(r.json())
+
+def setReplacementAttorneyDecisions(lpaId):
+    # "how" , is how replacement attorneys makes decisions, can be set to jointly-attorney-severally if there is more than 1 replacement attorney
+    # "when"  is when replacement attorneys step in, can be first or last
+    token, userId = authenticate()
+    replacementAttorneyDecisionPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/replacement-attorney-decisions'
+    replacementAttorneyDecisionDetails = '{"whenDetails":null,"how":null,"when":"first","howDetails":null}'
+    r = s.put(replacementAttorneyDecisionPath, headers=token, data=replacementAttorneyDecisionDetails)
     print(r.json())
 
 def addPrimaryAttorney(lpaId):

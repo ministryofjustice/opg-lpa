@@ -16,10 +16,16 @@ if [[ "$CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
     # so run the signup test first followed by all others
     echo "Running Cypress headless"
     ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp'
-    # Stich together PF feature files and run
+    # Stitch together PF feature files and run
 	cp cypress/integration/LpaTypePF.feature cypress/integration/StitchedCreatePFLpa.feature 
-	awk '/in-progress/,0{if (!/in-progress/)print}' < cypress/integration/DonorPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
+	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/DonorPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
+	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CreatePFLpa.feature >> cypress/integration/StitchedCreatePFLpa.feature 
     cypress run --spec cypress/integration/StitchedCreatePFLpa.feature
+    # Stitch together HW feature files and run
+	cp cypress/integration/LpaTypePF.feature cypress/integration/StitchedCreatePFLpa.feature 
+	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/DonorHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
+	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CreateHWLpa.feature >> cypress/integration/StitchedCreateHWLpa.feature 
+    cypress run --spec cypress/integration/StitchedCreateHWLpa.feature
     # run remaining tests that haven't already been run
     ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp and not @CreateLpa'
 else
