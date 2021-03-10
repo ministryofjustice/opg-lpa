@@ -1,52 +1,31 @@
 @CreateLpa
-Feature: Add donor to Property and Finance LPA
+Feature: Add donor to Health and Welfare LPA
 
-    I want to add a donor to a Property and Finance LPA
+    I want to add a donor to a Health and Welfare LPA
 
     Background:
         Given I ignore application exceptions
-        And I create PF LPA test fixture
+        And I create HW LPA test fixture
 
     @focus, @CleanupFixtures
     Scenario: Add Donor to LPA
         When I log in as appropriate test user
         And I visit the donor page for the in-progress lpa
-        Then I see "This LPA covers property and financial affairs" in the page text
-        # This comment line needed for stitching feature files. Please do not remove
+        Then I see "This LPA covers health and welfare" in the page text
         # save button should be missing initially
         And I cannot find "save-and-continue"
         When I click "add-donor"
         Then I can see popup
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
+        # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
+        And I can find "name-title" with 8 options
         When I type "B1 1TF" into "postcode-lookup" working around cypress bug
         # cypress is not reliable at filling in postcode fully before hitting next button, so, ensure it is now filled in
         And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
         And I click element marked "Find UK address"
         # casper simply checked for 6 options so we do too, but we may ultimately wish to check the values
         Then I can find old style id "#address-search-result" with 6 options
-        # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
-        And I can find "name-title" with 8 options
-        When I force fill out
-            | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
-            | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
-            | dob-date-day | 22 |
-            | dob-date-month | 10 |
-            | dob-date-year | 1988 |
-            | email-address | opglpademo+NancyGarrison@gmail.com |
-            | address-address1 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
-            | address-address2 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
-            | address-address3 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
-            | address-postcode | PO38 1UL |
-        And I click "form-save"
-        Then I see in the page text
-            | There is a problem |
-            | Enter the donor's title |
-            | Enter a first name that's less than 54 characters long |
-            | Enter a last name that's less than 62 characters long |
-            | Change address line 1 so that it has fewer than 51 characters |
-            | Change address line 2 so that it has fewer than 51 characters |
-            | Change address line 3 so that it has fewer than 51 characters |
         When I select "Mrs" on "name-title"
         And I force fill out
             | name-first | Nancy |
@@ -81,15 +60,16 @@ Feature: Add donor to Property and Finance LPA
             | address-postcode| PO38 1UL |
         When I click "form-cancel"
         And I click "save-and-continue"
-        Then I am taken to the when lpa starts page
-        And I see "When can the LPA be used?" in the page text
-        # in this test we check the when-no-capacity exists, then a few lines down we actually click when-now
-        And I can find old style id "#when-no-capacity"
+        Then I am taken to the life sustaining page
+        And I see "Who does the donor want to make decisions about life-sustaining treatment?" in the page text
+        # in this test we check CanSustainLife-0 (no option) exists, then a few lines down we actually click canSustainLife-1 (yes)
+        And I can find "canSustainLife-0"
         When I click "save"
         Then I see in the page text
             | There is a problem |
-            | Choose when your LPA can be used |
-        When I check "when-now"
+            | Choose an option |
+        And I see "Error" in the title
+        When I check "canSustainLife-1"
         And I click "save"
         Then I am taken to the primary attorney page
         And I cannot find "save"
