@@ -1,4 +1,4 @@
-@CreateLpa
+#@CreateLpa
 Feature: Add donor to Health and Welfare LPA
 
     I want to add a donor to a Health and Welfare LPA

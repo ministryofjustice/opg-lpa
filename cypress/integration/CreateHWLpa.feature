@@ -3,35 +3,15 @@ Feature: Create a Health and Welfare LPA
 
     I want to create a Health and Welfare LPA
 
-    # background steps logs us in and takes us to the type page
     Background:
         Given I ignore application exceptions
-        When I log in as appropriate test user
-        And If I am on dashboard I click to create lpa
-        Then I am taken to the lpa type page
+        And I create HW LPA test fixture
 
-    @focus
-    Scenario: Create LPA with error first
-        When I click "save"
-        Then I see in the page text
-            | There is a problem |
-            | Choose a type of LPA |
-        And I see "Error" in the title
-        When I choose Health and Welfare
-        And I click "save"
-        Then I am taken to the donor page
-        And I see "This LPA covers health and welfare" in the page text
-        # save button should be missing initially
-        And I cannot find "save-and-continue"
-        When I click "add-donor"
-        Then I can see popup
-
-    @focus
+    @focus, @CleanupFixtures
     Scenario: Create LPA normal path
-        When I choose Health and Welfare
-        And I click "save"
-        Then I am taken to the donor page
-        And I see "This LPA covers health and welfare" in the page text
+        When I log in as appropriate test user
+        And I visit the donor page for the in-progress lpa
+        Then I see "This LPA covers health and welfare" in the page text
         # save button should be missing initially
         And I cannot find "save-and-continue"
         When I click "add-donor"
