@@ -12,6 +12,7 @@ Feature: Add donor to Health and Welfare LPA
         When I log in as appropriate test user
         And I visit the donor page for the in-progress lpa
         Then I see "This LPA covers health and welfare" in the page text
+        # This comment line needed for stitching feature files. Please do not remove
         # save button should be missing initially
         And I cannot find "save-and-continue"
         When I click "add-donor"
