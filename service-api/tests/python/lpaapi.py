@@ -44,6 +44,7 @@ def setDonor(lpaId):
 def setPrimaryAttorneyDecisions(lpaId):
     token, userId = authenticate()
     primaryAttorneyDecisionPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/primary-attorney-decisions'
+    # "how" , can also be set to jointly-attorney-severally if there is more than 1 attorney
     primaryAttorneyDecisionDetails = '{"canSustainLife":true,"how":null,"when":null,"howDetails":null}'
     r = s.put(primaryAttorneyDecisionPath, headers=token, data=primaryAttorneyDecisionDetails)
     print(r.json())
@@ -81,7 +82,44 @@ def setCertificateProvider(lpaId):
     certProviderPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/certificate-provider'
     certProvider = {"name":{"title":"Mr","first":"Reece","last":"Richards"},"address":{"address1":"11 Brookside","address2":"Cholsey","address3":"Wallingford, Oxfordshire","postcode":"OX10 9NN"}}
     r = s.put(certProviderPath, headers=token, json=certProvider)
-    #import pdb; pdb.set_trace()
     print(r)
     print(r.content)
 
+def addPersonToNotify(lpaId):
+    token, userId = authenticate()
+    notifiedPeoplePath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/notified-people'
+    personToNotify = {"id":None,"name":{"title":"Sir","first":"Anthony","last":"Webb"},"address":{"address1":"Brickhill Cottage","address2":"Birch Cross","address3":"Marchington, Uttoxeter, Staffordshire","postcode":"BS18 6PL"}}
+    r = s.post(notifiedPeoplePath, headers=token, json=personToNotify)
+    print(r)
+    print(r.content)
+
+def setInstruction(lpaId, instruction = "Lorem Ipsum"):
+    token, userId = authenticate()
+    instructionPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/instruction'
+    instructionJson = {"instruction":instruction}
+    r = s.put(instructionPath, headers=token, json=instructionJson)
+    print(r)
+    print(r.content)
+
+def setPreference(lpaId, preference = "Neque porro quisquam"):
+    token, userId = authenticate()
+    preferencePath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/preference'
+    preferenceJson = {"preference":preference}
+    r = s.put(preferencePath, headers=token, json=preferenceJson)
+    print(r)
+    print(r.content)
+
+def setWhoIsRegistering(lpaId, who = "donor"):
+    token, userId = authenticate()
+    whoIsRegisteringPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/who-is-registering'
+    whoIsRegisteringJson = {"whoIsRegistering":who}
+    r = s.put(whoIsRegisteringPath, headers=token, json=whoIsRegisteringJson)
+    print(r)
+    print(r.content)
+
+def getPdf1(lpaId):
+    token, userId = authenticate()
+    pdf1Path = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/pdfs/lp1'
+    r = s.get(pdf1Path, headers=token )
+    print(r)
+    print(r.content)
