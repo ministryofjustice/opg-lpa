@@ -191,14 +191,3 @@ cypress-gui-local:
 	xhost + 127.0.0.1
 	aws-vault exec moj-lpa-dev -- docker run -it -v ~/.Xauthority:/root/.Xauthority:ro -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e DISPLAY -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  --entrypoint "./cypress/start.sh" --network="host" --rm cypress:latest open --project /app
 endif
-
-ifeq ($(UNAME_S),Darwin)
-MYIP := $(shell ipconfig getifaddr en0)
-cypress-stitched-gui-local:
-	# stitch feature files to make a full user journey without individual logons or test fixture creations
-	cp cypress/integration/LpaTypePF.feature cypress/integration/StitchedPF.feature ; \
-	awk '/in-progress/,0{if (!/in-progress/)print}' < cypress/integration/DonorPF.feature >> cypress/integration/StitchedPF.feature ; \
-	docker build -f ./cypress/Dockerfile  -t cypress:latest .; \
-	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e "DISPLAY=${MYIP}:0" -e "CYPRESS_VIDEO=true" -e "CYPRESS_baseUrl=https://localhost:7002"  -v ${PWD}/cypress:/app/cypress --entrypoint "./cypress/start_stitched.sh" --network="host" --rm cypress:latest open --project /app
-endif
-

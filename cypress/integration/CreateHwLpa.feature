@@ -1,3 +1,4 @@
+@CreateLpa
 Feature: Create a Health and Welfare LPA
 
     I want to create a Health and Welfare LPA

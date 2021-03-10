@@ -16,7 +16,11 @@ if [[ "$CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
     # so run the signup test first followed by all others
     echo "Running Cypress headless"
     ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp'
-    # TODO - need to run through the create lpa features explicitly in order here
+    # Stich together PF feature files and run
+	cp cypress/integration/LpaTypePF.feature cypress/integration/StitchedCreatePFLpa.feature 
+	awk '/in-progress/,0{if (!/in-progress/)print}' < cypress/integration/DonorPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
+    cypress run --spec cypress/integration/StitchedCreatePFLpa.feature
+    # run remaining tests that haven't already been run
     ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp and not @CreateLpa'
 else
     echo "Running Cypress"
