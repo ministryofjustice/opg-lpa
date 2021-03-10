@@ -1,3 +1,4 @@
+@CreateLpa
 Feature: Create a Property and Finance LPA
 
     I want to create a Property and Finance LPA
