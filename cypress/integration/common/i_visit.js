@@ -16,8 +16,9 @@ Then(`I visit the type page`, () => {
     cy.OPGCheckA11y();
 })
 
-// this is used to explicitly visit the type page but only when we landed
-// on the dashboard straight after logging in with an existing user
+// The reason the step below exists is that a newly Signed-up user gets taken 
+// automatically to type page on first logon, but existing test users get taken
+// to dashboard, and we wish to cater for both
 Then(`If I am on dashboard I visit the type page`, () => {
     cy.url().then(urlStr => {
         if (urlStr.includes('dashboard')) {
