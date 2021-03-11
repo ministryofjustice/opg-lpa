@@ -1,0 +1,58 @@
+paths:
+  /lpa-online-tool/lpas/{lpa_online_tool_id}:
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                received:
+                  value:
+                    onlineLpaId: A47629358836
+                    receiptDate: '2021-02-28'
+                    rejectedDate: null
+                    registrationDate: null
+                    cancellationDate: null
+                    invalidDate: null
+                    withdrawnDate: null
+                    status: Pending
+                rejected:
+                  value:
+                    onlineLpaId: A88668805824
+                    receiptDate: '2021-02-11'
+                    rejectedDate: '2021-02-14'
+                    registrationDate: null
+                    cancellationDate: null
+                    invalidDate: null
+                    withdrawnDate: null
+                    status: Rejected
+                registered:
+                  value:
+                    onlineLpaId: A68582508781
+                    receiptDate: '2021-03-01'
+                    rejectedDate: null
+                    registrationDate: '2021-03-04'
+                    cancellationDate: null
+                    invalidDate: null
+                    withdrawnDate: null
+                    status: Registered
+                invalid:
+                  value:
+                    onlineLpaId: A93348314693
+                    receiptDate: '2021-01-02'
+                    rejectedDate: null
+                    registrationDate: null
+                    cancellationDate: null
+                    invalidDate: '2021-01-05'
+                    withdrawnDate: null
+                    status: Invalid
+                withdrawn:
+                  value:
+                    onlineLpaId: A43476377885
+                    receiptDate: '2020-05-01'
+                    rejectedDate: null
+                    registrationDate: null
+                    cancellationDate: null
+                    invalidDate: null
+                    withdrawnDate: '2020-05-06'
+                    status: Withdrawn
