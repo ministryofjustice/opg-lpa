@@ -14,8 +14,9 @@ resource "pagerduty_service_integration" "cloudwatch_integration" {
 }
 
 resource "aws_sns_topic_subscription" "cloudwatch_breakglass_alerts_sns_subscription" {
+  count                  = local.account_name == "development" ? 1 : 0
   topic_arn              = aws_sns_topic.cloudwatch_to_slack_breakglass_alerts.arn
   protocol               = "https"
   endpoint_auto_confirms = true
-  endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.cloudwatch_integration.integration_key}/enqueue"
+  endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.cloudwatch_integration[0].integration_key}/enqueue"
 }
