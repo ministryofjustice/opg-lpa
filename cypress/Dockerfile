@@ -18,4 +18,4 @@ ENV CYPRESS_RUN_A11Y_TESTS=true
 COPY cypress.json .
 COPY package.json .
 COPY cypress cypress
-COPY service-api/tests/python service-api/tests/python
+COPY tests/python-api-client tests/python-api-client

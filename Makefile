@@ -194,9 +194,4 @@ endif
 
 .PHONY: restitch
 restitch:
-	cp cypress/integration/LpaTypePF.feature cypress/integration/StitchedCreatePFLpa.feature 
-	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/DonorPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
-	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CreatePFLpa.feature >> cypress/integration/StitchedCreatePFLpa.feature 
-	cp cypress/integration/LpaTypeHW.feature cypress/integration/StitchedCreateHWLpa.feature 
-	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/DonorHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
-	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CreateHWLpa.feature >> cypress/integration/StitchedCreateHWLpa.feature 
+	cypress/stitch.sh

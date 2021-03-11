@@ -34,9 +34,16 @@ Then(`I visit the admin sign-in page`, () => {
 })
 
 
-Then(`I visit the donor page for the in-progress lpa`, () => {
+Then(`I visit the donor page for the test fixture lpa`, () => {
         cy.get('@lpaId').then((lpaId) => {
             cy.visit('/lpa/' + lpaId + '/donor');
+            cy.OPGCheckA11y();
+        });
+})
+
+Then(`I visit the primary attorney page for the test fixture lpa`, () => {
+        cy.get('@lpaId').then((lpaId) => {
+            cy.visit('/lpa/' + lpaId + '/primary-attorney');
             cy.OPGCheckA11y();
         });
 })
