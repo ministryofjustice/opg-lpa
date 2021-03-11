@@ -214,9 +214,16 @@ class StatusController extends AbstractRestfulController
                 // updates the results for the status received back from Sirius
                 foreach ($siriusResponseArray as $lpaId => $lpaDetail)
                 {
-                    // If there was a status returned
-                    if (count($lpaDetail) > 0 ) {
-
+                    // If the processStatusService didn't get a response for
+                    // this LPA (it hasn't been received yet), the detail is null
+                    // and the LPA will display as "Waiting"
+                    if (is_null($lpaDetail))
+                    {
+                        $results[$lpaId] = ['found' => false];
+                    }
+                    // If there was a status returned by processStatusService
+                    else
+                    {
                         $currentResult = $results[$lpaId];
                         $currentProcessingStatus = $currentResult['found'] ? $currentResult['status'] : null;
 
@@ -234,9 +241,6 @@ class StatusController extends AbstractRestfulController
                         }
                         else if(is_null($lpaDetail['status']) && !is_null($currentProcessingStatus) && is_null($rejectDate)){
                             $results[$lpaId] = ['found' => true, 'status' => $currentProcessingStatus, 'rejectedDate' => null];
-                        }
-                        else {
-                            $results[$lpaId] = ['found' => false];
                         }
                     }
                 }
