@@ -19,3 +19,10 @@ Then('my focus is within {string}', (dataCyReference) => {
         });
     });
 })
+
+Then('{string} is the active element', (dataCyReference) => {
+    cy.document().then((doc) => {
+        const activeDataCy = Cypress.$(doc.activeElement).attr('data-cy');
+        expect(dataCyReference).to.equal(activeDataCy);
+    });
+})
