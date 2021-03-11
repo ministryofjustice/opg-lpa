@@ -1,0 +1,16 @@
+FROM stoplight/prism:4
+
+RUN apk add python3 py3-pip
+
+COPY scripts swagger-examples.yaml run.sh /app/
+
+# get the Sirius API gateway swagger file, add examples, make run script executable
+RUN cd /app/ && \
+    wget https://raw.githubusercontent.com/ministryofjustice/opg-sirius-api-gateway/master/docs/swagger.v1.yaml && \
+    pip3 install --upgrade pip && \
+    pip3 install -r requirements.txt && \
+    python3 merge_yaml.py swagger.v1.yaml swagger-examples.yaml > swagger.yaml && \
+    chmod +x run.sh
+
+# starts the mock server on port 5000
+ENTRYPOINT ["/app/run.sh"]

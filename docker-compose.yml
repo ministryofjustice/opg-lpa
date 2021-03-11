@@ -372,6 +372,17 @@ services:
     image: gateway
     build:
       context: ./service-gateway-mock
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile-gateway
+    depends_on:
+      - mocksirius
     ports:
       - 7010:5000
+
+  mocksirius:
+    container_name: mocksirius
+    image: mocksirius
+    build:
+      context: ./service-gateway-mock
+      dockerfile: ./Dockerfile-mocksirius
+    ports:
+      - 7011:5000
