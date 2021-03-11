@@ -1,4 +1,4 @@
-#@CreateLpa
+@CreateLpa
 Feature: Add donor to Health and Welfare LPA
 
     I want to add a donor to a Health and Welfare LPA
@@ -10,7 +10,7 @@ Feature: Add donor to Health and Welfare LPA
     @focus, @CleanupFixtures
     Scenario: Add Donor to LPA
         When I log in as appropriate test user
-        And I visit the donor page for the in-progress lpa
+        And I visit the donor page for the test fixture lpa
         Then I see "This LPA covers health and welfare" in the page text
         # This comment line needed for stitching feature files. Please do not remove
         # save button should be missing initially

@@ -1,4 +1,4 @@
-#@CreateLpa
+@CreateLpa
 Feature: Add donor to Property and Finance LPA
 
     I want to add a donor to a Property and Finance LPA
@@ -10,7 +10,7 @@ Feature: Add donor to Property and Finance LPA
     @focus, @CleanupFixtures
     Scenario: Add Donor to LPA
         When I log in as appropriate test user
-        And I visit the donor page for the in-progress lpa
+        And I visit the donor page for the test fixture lpa
         Then I see "This LPA covers property and financial affairs" in the page text
         # This comment line needed for stitching feature files. Please do not remove
         # save button should be missing initially

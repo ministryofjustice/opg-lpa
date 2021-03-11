@@ -16,25 +16,25 @@ After({ tags: "@CleanupFixtures" }, () => {
 });
 
 Then(`I create PF LPA test fixture`, () => {
-    cy.runPythonApiCommand("createPFLpa.py").its('stdout').as('lpaId').then(lpaId => {
+    cy.runPythonApiCommand("createLpa.py").its('stdout').as('lpaId').then(lpaId => {
         cy.log("Created PF LPA test fixture through the API with id " + lpaId);
     });
 })
  
 Then(`I create HW LPA test fixture`, () => {
-    cy.runPythonApiCommand("createHWLpa.py").its('stdout').as('lpaId').then(lpaId => {
+    cy.runPythonApiCommand("createLpa.py -hw").its('stdout').as('lpaId').then(lpaId => {
         cy.log("Created HW LPA test fixture through the API with id " + lpaId);
     });
 })
 
 Then(`I create PF LPA test fixture with a donor`, () => {
-    cy.runPythonApiCommand("createPFLpaWithDonor.py").its('stdout').as('lpaId').then(lpaId => {
+    cy.runPythonApiCommand("createLpa.py -d").its('stdout').as('lpaId').then(lpaId => {
         cy.log("Created PF LPA test fixture with donor through the API with id " + lpaId);
     });
 })
  
 Then(`I create HW LPA test fixture with a donor`, () => {
-    cy.runPythonApiCommand("createHWLpaWithDonor.py").its('stdout').as('lpaId').then(lpaId => {
+    cy.runPythonApiCommand("createLpa.py -hw -d").its('stdout').as('lpaId').then(lpaId => {
         cy.log("Created HW LPA test fixture with donor through the API with id " + lpaId);
     });
 })

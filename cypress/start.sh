@@ -12,21 +12,16 @@ echo Cypress user number is $CYPRESS_userNumber
 echo Starting Cypress Tests
 
 if [[ "$CI" == "true" ]] || [[ "$CYPRESS_headless" == "true" ]] ; then
-    # It's CI (used in CircleCI) or headless (local CLI runs)
-    # so run the signup test first followed by all others
     echo "Running Cypress headless"
+    # It's CI (used in CircleCI) or headless local CLI runs
+    # so run the signup test first, then stitched, followed by all others
     ./node_modules/.bin/cypress-tags run -e TAGS='@SignUp'
-    # Stitch together PF feature files and run
-	cp cypress/integration/LpaTypePF.feature cypress/integration/StitchedCreatePFLpa.feature 
-	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/DonorPF.feature >> cypress/integration/StitchedCreatePFLpa.feature 
-	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CreatePFLpa.feature >> cypress/integration/StitchedCreatePFLpa.feature 
+    # stitch feature files and run, to simulate newly signed-up user doing all actions from start to finish
+    cypress/stitch.sh 
     cypress run --spec cypress/integration/StitchedCreatePFLpa.feature
-    # Stitch together HW feature files and run
-	cp cypress/integration/LpaTypeHW.feature cypress/integration/StitchedCreateHWLpa.feature 
-	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/DonorHW.feature >> cypress/integration/StitchedCreateHWLpa.feature 
-	awk '/needed for stitching/,0{if (!/needed for stitching/)print}' < cypress/integration/CreateHWLpa.feature >> cypress/integration/StitchedCreateHWLpa.feature 
     cypress run --spec cypress/integration/StitchedCreateHWLpa.feature
-    # run remaining tests that haven't already been run
+    # run remaining feature files that haven't already been run 
+    # @CreateLpa is all the files that have been stitched, and @SignUp is the SignUp feature
     ./node_modules/.bin/cypress-tags run -e TAGS='not @SignUp and not @CreateLpa'
 else
     echo "Running Cypress"
