@@ -276,6 +276,10 @@ abstract class AbstractControllerTest extends MockeryTestCase
         $this->apiClient = Mockery::mock(Client::class);
 
         $this->router = Mockery::mock(RouteStackInterface::class);
+
+        $this->replacementAttorneyCleanup = Mockery::mock(ReplacementAttorneyCleanup::class);
+
+        $this->metadata = Mockery::mock(Metadata::class);
     }
 
     /**
@@ -316,9 +320,6 @@ abstract class AbstractControllerTest extends MockeryTestCase
                         $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpaId])->andReturn(false)->once();
                     }
                 }
-
-                $this->replacementAttorneyCleanup = Mockery::mock(ReplacementAttorneyCleanup::class);
-                $this->metadata = Mockery::mock(Metadata::class);
 
                 $controller = new $controllerName(
                     $lpaId,
