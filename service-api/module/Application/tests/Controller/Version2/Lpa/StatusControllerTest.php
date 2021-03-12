@@ -88,11 +88,6 @@ class StatusControllerTest extends AbstractControllerTest
                 98765 => [
                     'found' => true,
                     'status' => 'Returned',
-                    'receiptDate' => null,
-                    'registrationDate' => null,
-                    'rejectedDate'  => new DateTime('2019-02-11'),
-                    'invalidDate' => null,
-                    'withdrawnDate' => null,
                 ]
             ]
         ), $result);
@@ -135,11 +130,6 @@ class StatusControllerTest extends AbstractControllerTest
                 98765 => [
                     'found' => true,
                     'status' => 'Checking',
-                    'receiptDate' => new DateTime('2019-02-11'),
-                    'registrationDate' => null,
-                    'rejectedDate'  => null,
-                    'invalidDate' => null,
-                    'withdrawnDate' => null,
                 ]
             ]
         ), $result);
@@ -172,11 +162,6 @@ class StatusControllerTest extends AbstractControllerTest
                 98765 => [
                     'found' => true,
                     'status' => 'Received',
-                    'receiptDate'  => new DateTime('2019-02-11'),
-                    'registrationDate' => null,
-                    'rejectedDate' => null,
-                    'invalidDate' => null,
-                    'withdrawnDate' => null,
                 ]
             ]
         ), $result);
@@ -223,11 +208,6 @@ class StatusControllerTest extends AbstractControllerTest
                 98765 => [
                     'found' => true,
                     'status' => 'Checking',
-                    'receiptDate' => null,
-                    'registrationDate'  => new DateTime('2019-02-11'),
-                    'rejectedDate' => null,
-                    'invalidDate' => null,
-                    'withdrawnDate' => null,
                 ]
             ]
         ), $result);
@@ -278,11 +258,6 @@ class StatusControllerTest extends AbstractControllerTest
                 98765 => [
                     'found' => true,
                     'status' => 'Returned',
-                    'receiptDate' => null,
-                    'registrationDate' => null,
-                    'rejectedDate'  => new DateTime('2019-02-11'),
-                    'invalidDate' => null,
-                    'withdrawnDate' => null,
                 ]
             ]
         ), $result);
@@ -333,11 +308,6 @@ class StatusControllerTest extends AbstractControllerTest
                 98765 => [
                     'found' => true,
                     'status' => 'Checking',
-                    'receiptDate' => new DateTime('2019-02-11'),
-                    'registrationDate' => null,
-                    'rejectedDate'  => null,
-                    'invalidDate' => null,
-                    'withdrawnDate' => null,
                 ]
             ]
         ), $result);
@@ -366,9 +336,8 @@ class StatusControllerTest extends AbstractControllerTest
 
         $this->assertEquals(new Json([
             '98765' => [
-            'found' => true,
+                'found' => true,
                 'status' => 'Checking',
-                'rejectedDate'  => null
             ]]), $result);
     }
 
@@ -423,11 +392,6 @@ class StatusControllerTest extends AbstractControllerTest
             '98765' => [
                 'found' => true,
                 'status' => 'Checking',
-                'receiptDate' => null,
-                'registrationDate' => new DateTime('2019-02-11'),
-                'rejectedDate' => null,
-                'invalidDate' => null,
-                'withdrawnDate' => null,
             ]]), $result);
     }
 
@@ -458,11 +422,6 @@ class StatusControllerTest extends AbstractControllerTest
             '98765' => [
                 'found' => true,
                 'status' => 'Checking',
-                'receiptDate' => null,
-                'registrationDate' => new DateTime('2019-02-11'),
-                'rejectedDate' => null,
-                'invalidDate' => null,
-                'withdrawnDate' => null,
             ]]), $result);
     }
 
@@ -509,11 +468,6 @@ class StatusControllerTest extends AbstractControllerTest
             '98765' => [
                 'found' => true,
                 'status' => 'Checking',
-                'receiptDate' => null,
-                'registrationDate' => new DateTime('2019-02-11'),
-                'rejectedDate' => null,
-                'invalidDate' => null,
-                'withdrawnDate' => null,
             ]]), $result);
     }
 
@@ -546,11 +500,6 @@ class StatusControllerTest extends AbstractControllerTest
             '98765' => [
                 'found' => true,
                 'status' => 'Returned',
-                'receiptDate' => null,
-                'registrationDate' => null,
-                'rejectedDate' => new DateTime('2019-02-10'),
-                'invalidDate' => null,
-                'withdrawnDate' => null,
             ]]), $result);
     }
 
@@ -620,21 +569,75 @@ class StatusControllerTest extends AbstractControllerTest
             98765 => [
                 'found' => true,
                 'status' => 'Returned',
-                'receiptDate' => null,
-                'registrationDate' => null,
-                'rejectedDate' => new DateTime('2019-02-11'),
-                'invalidDate' => null,
-                'withdrawnDate' => null,
             ],
             98766 => [
                 'found' => true,
                 'status' => 'Received',
-                'receiptDate' => new DateTime('2019-02-11'),
-                'registrationDate' => null,
-                'rejectedDate' => null,
-                'invalidDate' => null,
-                'withdrawnDate' => null,
             ]
         ]), $result);
+    }
+
+    public function testGetLpaWithInvalidDate()
+    {
+        $this->statusController->onDispatch($this->mvcEvent);
+
+        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
+            'metadata' => [
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Returned',
+                Lpa::APPLICATION_INVALID_DATE => new DateTime('2019-02-10')
+            ]]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->service->shouldReceive('fetch')
+            ->withArgs(['98765', '12345'])
+            ->once()
+            ->andReturn($dataModel);
+
+        $this->processingStatusService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn([
+                '98765' => ['status' => 'Returned','invalidDate' => new DateTime('2019-02-10')]
+            ]);
+
+        $result = $this->statusController->get('98765');
+
+        $this->assertEquals(new Json([
+            '98765' => [
+                'found' => true,
+                'status' => 'Returned',
+            ]]), $result);
+    }
+
+    public function testGetLpaWithWithdrawnDate()
+    {
+        $this->statusController->onDispatch($this->mvcEvent);
+
+        $lpa = new Lpa(['completedAt' => new DateTime('2019-02-01'),
+            'metadata' => [
+                Lpa::SIRIUS_PROCESSING_STATUS => 'Returned',
+                Lpa::APPLICATION_WITHDRAWN_DATE => new DateTime('2019-02-12')
+            ]]);
+
+        $dataModel = new DataModelEntity($lpa);
+
+        $this->service->shouldReceive('fetch')
+            ->withArgs(['98765', '12345'])
+            ->once()
+            ->andReturn($dataModel);
+
+        $this->processingStatusService->shouldReceive('getStatuses')
+            ->once()
+            ->andReturn([
+                '98765' => ['status' => 'Returned','withdrawnDate' => new DateTime('2019-02-12')]
+            ]);
+
+        $result = $this->statusController->get('98765');
+
+        $this->assertEquals(new Json([
+            '98765' => [
+                'found' => true,
+                'status' => 'Returned',
+            ]]), $result);
     }
 }
