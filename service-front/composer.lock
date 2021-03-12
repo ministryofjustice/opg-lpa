@@ -63,16 +63,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.178.5",
+            "version": "3.178.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5a268a20272c0c9171570ed57f68b629e966deab"
+                "reference": "0aa83b522d5ffa794c02e7411af87a0e241a3082"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5a268a20272c0c9171570ed57f68b629e966deab",
-                "reference": "5a268a20272c0c9171570ed57f68b629e966deab",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0aa83b522d5ffa794c02e7411af87a0e241a3082",
+                "reference": "0aa83b522d5ffa794c02e7411af87a0e241a3082",
                 "shasum": ""
             },
             "require": {
@@ -147,9 +147,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.178.5"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.178.6"
             },
-            "time": "2021-04-15T18:12:46+00:00"
+            "time": "2021-04-19T18:13:17+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -634,16 +634,16 @@
         },
         {
             "name": "kokspflanze/zfc-twig",
-            "version": "4.0.0",
+            "version": "4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kokspflanze/ZfcTwig.git",
-                "reference": "f33a50fa27faba3846f841496936c030f496ad49"
+                "reference": "8b10aef900495ac5a99dc6eee2384756c465eedc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kokspflanze/ZfcTwig/zipball/f33a50fa27faba3846f841496936c030f496ad49",
-                "reference": "f33a50fa27faba3846f841496936c030f496ad49",
+                "url": "https://api.github.com/repos/kokspflanze/ZfcTwig/zipball/8b10aef900495ac5a99dc6eee2384756c465eedc",
+                "reference": "8b10aef900495ac5a99dc6eee2384756c465eedc",
                 "shasum": ""
             },
             "require": {
@@ -651,7 +651,7 @@
                 "laminas/laminas-mvc-plugin-flashmessenger": "^1.0",
                 "laminas/laminas-servicemanager": "^3.0",
                 "laminas/laminas-view": "^2.7",
-                "php": "^7.2.9",
+                "php": "^7.3 || ^8.0",
                 "twig/twig": "^3.0.1"
             },
             "replace": {
@@ -660,7 +660,7 @@
             "require-dev": {
                 "laminas/laminas-modulemanager": "^2.7",
                 "laminas/laminas-navigation": "^2.7",
-                "phpunit/phpunit": "^8.4.3"
+                "phpunit/phpunit": "^8.5.1 || ^9.3"
             },
             "type": "library",
             "extra": {
@@ -669,8 +669,7 @@
                 },
                 "branch-alias": {
                     "dev-release/1.4": "1.4-dev",
-                    "dev-master": "3.x-dev",
-                    "dev-develop": "4.x-dev"
+                    "dev-master": "4.x-dev"
                 }
             },
             "autoload": {
@@ -707,9 +706,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kokspflanze/ZfcTwig/issues",
-                "source": "https://github.com/kokspflanze/ZfcTwig/tree/develop"
+                "source": "https://github.com/kokspflanze/ZfcTwig/tree/4.0.1"
             },
-            "time": "2020-01-07T20:31:06+00:00"
+            "time": "2021-04-20T20:33:27+00:00"
         },
         {
             "name": "laminas/laminas-authentication",
@@ -2629,16 +2628,16 @@
         },
         {
             "name": "laminas/laminas-router",
-            "version": "3.4.4",
+            "version": "3.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-router.git",
-                "reference": "2a7068508af4de67d80ea292e0cc7c37563a33c6"
+                "reference": "aaf2eb364eedeb5c4d5b9ee14cd2938d0f7e89b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-router/zipball/2a7068508af4de67d80ea292e0cc7c37563a33c6",
-                "reference": "2a7068508af4de67d80ea292e0cc7c37563a33c6",
+                "url": "https://api.github.com/repos/laminas/laminas-router/zipball/aaf2eb364eedeb5c4d5b9ee14cd2938d0f7e89b7",
+                "reference": "aaf2eb364eedeb5c4d5b9ee14cd2938d0f7e89b7",
                 "shasum": ""
             },
             "require": {
@@ -2696,7 +2695,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2020-12-16T22:10:51+00:00"
+            "time": "2021-04-19T16:06:00+00:00"
         },
         {
             "name": "laminas/laminas-servicemanager",
@@ -6831,31 +6830,31 @@
         },
         {
             "name": "webimpress/safe-writer",
-            "version": "2.1.0",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webimpress/safe-writer.git",
-                "reference": "5cfafdec5873c389036f14bf832a5efc9390dcdd"
+                "reference": "9d37cc8bee20f7cb2f58f6e23e05097eab5072e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webimpress/safe-writer/zipball/5cfafdec5873c389036f14bf832a5efc9390dcdd",
-                "reference": "5cfafdec5873c389036f14bf832a5efc9390dcdd",
+                "url": "https://api.github.com/repos/webimpress/safe-writer/zipball/9d37cc8bee20f7cb2f58f6e23e05097eab5072e6",
+                "reference": "9d37cc8bee20f7cb2f58f6e23e05097eab5072e6",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2 || ^8.0"
+                "php": "^7.3 || ^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^8.5.8 || ^9.3.7",
-                "vimeo/psalm": "^3.14.2",
-                "webimpress/coding-standard": "^1.1.5"
+                "phpunit/phpunit": "^9.5.4",
+                "vimeo/psalm": "^4.7",
+                "webimpress/coding-standard": "^1.2.2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1.x-dev",
-                    "dev-develop": "2.2.x-dev",
+                    "dev-master": "2.2.x-dev",
+                    "dev-develop": "2.3.x-dev",
                     "dev-release-1.0": "1.0.x-dev"
                 }
             },
@@ -6878,7 +6877,7 @@
             ],
             "support": {
                 "issues": "https://github.com/webimpress/safe-writer/issues",
-                "source": "https://github.com/webimpress/safe-writer/tree/master"
+                "source": "https://github.com/webimpress/safe-writer/tree/2.2.0"
             },
             "funding": [
                 {
@@ -6886,7 +6885,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-08-25T07:21:11+00:00"
+            "time": "2021-04-19T16:34:45+00:00"
         },
         {
             "name": "webmozart/assert",
