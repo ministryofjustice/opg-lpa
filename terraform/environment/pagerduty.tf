@@ -22,14 +22,6 @@ resource "pagerduty_service_integration" "cloudwatch_integration_ops" {
   vendor  = data.pagerduty_vendor.cloudwatch.id
 }
 
-resource "aws_sns_topic" "cloudwatch_to_pagerduty" {
-  name = "CloudWatch-to-PagerDuty-${local.environment}"
-}
-
-
-resource "aws_sns_topic" "cloudwatch_to_pagerduty_ops" {
-  name = "CloudWatch-to-PagerDuty-${local.environment}-Ops"
-}
 
 resource "aws_sns_topic_subscription" "cloudwatch_sns_subscription" {
   topic_arn              = aws_sns_topic.cloudwatch_to_pagerduty.arn
