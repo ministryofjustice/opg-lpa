@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "a69bdb31712f3c83f7707152d18ea79c",
+=======
+    "content-hash": "fddb6c69cfce78e709a66515f7bc41b9",
+>>>>>>> Composer update (inc. opg-lpa-datamodels)
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -68,6 +72,7 @@
         },
         {
             "name": "aws/aws-sdk-php",
+<<<<<<< HEAD
             "version": "3.178.2",
             "source": {
                 "type": "git",
@@ -78,6 +83,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ba05bc572302c124960c2b0a9813169e790fcac6",
                 "reference": "ba05bc572302c124960c2b0a9813169e790fcac6",
+=======
+            "version": "3.174.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aws/aws-sdk-php.git",
+                "reference": "80cc136f47fa808032f411fff70e26f461852510"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/80cc136f47fa808032f411fff70e26f461852510",
+                "reference": "80cc136f47fa808032f411fff70e26f461852510",
+>>>>>>> Composer update (inc. opg-lpa-datamodels)
                 "shasum": ""
             },
             "require": {
@@ -152,9 +169,15 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/aws/aws-sdk-php/tree/3.178.2"
             },
             "time": "2021-04-12T18:16:30+00:00"
+=======
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.174.2"
+            },
+            "time": "2021-03-17T18:13:11+00:00"
+>>>>>>> Composer update (inc. opg-lpa-datamodels)
         },
         {
             "name": "brick/varexporter",
