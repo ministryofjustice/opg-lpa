@@ -16,6 +16,7 @@ data "aws_cloudwatch_log_group" "cloudtrail" {
 }
 
 resource "aws_cloudwatch_log_metric_filter" "breakglass_metric" {
+  count          = local.account.is_production ? 1 : 0
   name           = "BreakGlassConsoleLogin"
   pattern        = "{ ($.eventType = \"AwsConsoleSignIn\") && ($.userIdentity.arn = \"arn:aws:sts::${local.account_id}:assumed-role/breakglass/*\") }"
   log_group_name = data.aws_cloudwatch_log_group.cloudtrail.name
@@ -28,6 +29,7 @@ resource "aws_cloudwatch_log_metric_filter" "breakglass_metric" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "account_breakglass_login_alarm" {
+  count               = local.account.is_production ? 1 : 0
   actions_enabled     = true
   alarm_name          = "${local.account_name} breakglass console login check"
   alarm_actions       = [aws_sns_topic.cloudwatch_to_slack_breakglass_alerts.arn]
