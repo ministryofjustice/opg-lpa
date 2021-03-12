@@ -27,7 +27,6 @@ resource "aws_cloudwatch_log_metric_filter" "breakglass_metric" {
   }
 }
 
-
 resource "aws_cloudwatch_metric_alarm" "account_breakglass_login_alarm" {
   actions_enabled     = true
   alarm_name          = "${local.account_name} breakglass console login check"
