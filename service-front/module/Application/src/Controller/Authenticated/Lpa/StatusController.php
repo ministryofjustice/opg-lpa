@@ -42,15 +42,20 @@ class StatusController extends AbstractLpaController
         //  Determine what statuses should trigger the current status to display as 'done'
         $doneStatuses = array_slice($statuses, 0, array_search($lpaStatus, $statuses));
 
-        // Return either the applicationRejectedDate or the applicationRegistrationDate based on what's received from Sirius
+        // Return the rejected, invalid, withdrawn or registration date.
+        // The metadata used here is stored in the db but is originally
+        // populated from Sirius.
         $metadata = $lpa->getMetadata();
 
+        $returnDate = null;
         if (isset($metadata['application-rejected-date']))
             $returnDate = $metadata['application-rejected-date'];
+        else if (isset($metadata['application-withdrawn-date']))
+            $returnDate = $metadata['application-withdrawn-date'];
+        else if (isset($metadata['application-invalid-date']))
+            $returnDate = $metadata['application-invalid-date'];
         else if (isset($metadata['application-registration-date']))
             $returnDate = $metadata['application-registration-date'];
-        else
-            $returnDate = null;
 
         return new ViewModel([
             'returnDate'   => $returnDate,
