@@ -74,7 +74,9 @@ class StatusControllerTest extends AbstractControllerTest
                         'sirius-processing-status' => 'Returned',
                         'application-receipt-date' => null,
                         'application-registration-date' => null,
-                        'application-rejected-date' => new DateTime('2019-02-11')
+                        'application-rejected-date' => new DateTime('2019-02-11'),
+                        'application-invalid-date' => null,
+                        'application-withdrawn-date' => null
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -88,7 +90,9 @@ class StatusControllerTest extends AbstractControllerTest
                     'status' => 'Returned',
                     'receiptDate' => null,
                     'registrationDate' => null,
-                    'rejectedDate'  => new DateTime('2019-02-11')
+                    'rejectedDate'  => new DateTime('2019-02-11'),
+                    'invalidDate' => null,
+                    'withdrawnDate' => null,
                 ]
             ]
         ), $result);
@@ -120,6 +124,8 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-registration-date' => null,
                         'application-receipt-date' => new DateTime('2019-02-11'),
                         'application-rejected-date' => null,
+                        'application-invalid-date' => null,
+                        'application-withdrawn-date' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -130,7 +136,10 @@ class StatusControllerTest extends AbstractControllerTest
                     'found' => true,
                     'status' => 'Checking',
                     'receiptDate' => new DateTime('2019-02-11'),
-                    'registrationDate' => null,'rejectedDate'  => null
+                    'registrationDate' => null,
+                    'rejectedDate'  => null,
+                    'invalidDate' => null,
+                    'withdrawnDate' => null,
                 ]
             ]
         ), $result);
@@ -165,7 +174,9 @@ class StatusControllerTest extends AbstractControllerTest
                     'status' => 'Received',
                     'receiptDate'  => new DateTime('2019-02-11'),
                     'registrationDate' => null,
-                    'rejectedDate' => null
+                    'rejectedDate' => null,
+                    'invalidDate' => null,
+                    'withdrawnDate' => null,
                 ]
             ]
         ), $result);
@@ -198,7 +209,9 @@ class StatusControllerTest extends AbstractControllerTest
                         'sirius-processing-status' => 'Checking',
                         'application-registration-date' => new DateTime('2019-02-11'),
                         'application-receipt-date' => null,
-                        'application-rejected-date' => null
+                        'application-rejected-date' => null,
+                        'application-invalid-date' => null,
+                        'application-withdrawn-date' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -212,7 +225,9 @@ class StatusControllerTest extends AbstractControllerTest
                     'status' => 'Checking',
                     'receiptDate' => null,
                     'registrationDate'  => new DateTime('2019-02-11'),
-                    'rejectedDate' => null
+                    'rejectedDate' => null,
+                    'invalidDate' => null,
+                    'withdrawnDate' => null,
                 ]
             ]
         ), $result);
@@ -249,7 +264,9 @@ class StatusControllerTest extends AbstractControllerTest
                         'sirius-processing-status' => 'Returned',
                         'application-registration-date' => null,
                         'application-receipt-date' => null,
-                        'application-rejected-date' => new DateTime('2019-02-11')
+                        'application-rejected-date' => new DateTime('2019-02-11'),
+                        'application-invalid-date' => null,
+                        'application-withdrawn-date' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -263,7 +280,9 @@ class StatusControllerTest extends AbstractControllerTest
                     'status' => 'Returned',
                     'receiptDate' => null,
                     'registrationDate' => null,
-                    'rejectedDate'  => new DateTime('2019-02-11')
+                    'rejectedDate'  => new DateTime('2019-02-11'),
+                    'invalidDate' => null,
+                    'withdrawnDate' => null,
                 ]
             ]
         ), $result);
@@ -301,6 +320,8 @@ class StatusControllerTest extends AbstractControllerTest
                         'application-registration-date' => null,
                         'application-receipt-date' => new DateTime('2019-02-11'),
                         'application-rejected-date' => null,
+                        'application-invalid-date' => null,
+                        'application-withdrawn-date' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -314,7 +335,9 @@ class StatusControllerTest extends AbstractControllerTest
                     'status' => 'Checking',
                     'receiptDate' => new DateTime('2019-02-11'),
                     'registrationDate' => null,
-                    'rejectedDate'  => null
+                    'rejectedDate'  => null,
+                    'invalidDate' => null,
+                    'withdrawnDate' => null,
                 ]
             ]
         ), $result);
@@ -402,7 +425,9 @@ class StatusControllerTest extends AbstractControllerTest
                 'status' => 'Checking',
                 'receiptDate' => null,
                 'registrationDate' => new DateTime('2019-02-11'),
-                'rejectedDate' => null
+                'rejectedDate' => null,
+                'invalidDate' => null,
+                'withdrawnDate' => null,
             ]]), $result);
     }
 
@@ -435,7 +460,9 @@ class StatusControllerTest extends AbstractControllerTest
                 'status' => 'Checking',
                 'receiptDate' => null,
                 'registrationDate' => new DateTime('2019-02-11'),
-                'rejectedDate' => null
+                'rejectedDate' => null,
+                'invalidDate' => null,
+                'withdrawnDate' => null,
             ]]), $result);
     }
 
@@ -469,7 +496,9 @@ class StatusControllerTest extends AbstractControllerTest
                         'sirius-processing-status' => 'Checking',
                         'application-registration-date' => new DateTime('2019-02-11') ,
                         'application-receipt-date' => null,
-                        'application-rejected-date' => null
+                        'application-rejected-date' => null,
+                        'application-invalid-date' => null,
+                        'application-withdrawn-date' => null,
                     ]
                 ], '98765', '12345'
             ])->once();
@@ -482,7 +511,9 @@ class StatusControllerTest extends AbstractControllerTest
                 'status' => 'Checking',
                 'receiptDate' => null,
                 'registrationDate' => new DateTime('2019-02-11'),
-                'rejectedDate' => null
+                'rejectedDate' => null,
+                'invalidDate' => null,
+                'withdrawnDate' => null,
             ]]), $result);
     }
 
@@ -517,7 +548,9 @@ class StatusControllerTest extends AbstractControllerTest
                 'status' => 'Returned',
                 'receiptDate' => null,
                 'registrationDate' => null,
-                'rejectedDate' => new DateTime('2019-02-10')
+                'rejectedDate' => new DateTime('2019-02-10'),
+                'invalidDate' => null,
+                'withdrawnDate' => null,
             ]]), $result);
     }
 
@@ -562,7 +595,9 @@ class StatusControllerTest extends AbstractControllerTest
                         'sirius-processing-status' => 'Returned',
                         'application-registration-date' => null,
                         'application-receipt-date' => null,
-                        'application-rejected-date' => new DateTime('2019-02-11')
+                        'application-rejected-date' => new DateTime('2019-02-11'),
+                        'application-invalid-date' => null,
+                        'application-withdrawn-date' => null,
                     ]
                 ], '98765', '12345'])->once();
 
@@ -573,7 +608,9 @@ class StatusControllerTest extends AbstractControllerTest
                         'sirius-processing-status' => 'Received',
                         'application-registration-date' => null,
                         'application-receipt-date' => new DateTime('2019-02-11'),
-                        'application-rejected-date' => null
+                        'application-rejected-date' => null,
+                        'application-invalid-date' => null,
+                        'application-withdrawn-date' => null,
                     ]
                 ], '98766', '12345'])->once();
 
@@ -585,13 +622,19 @@ class StatusControllerTest extends AbstractControllerTest
                 'status' => 'Returned',
                 'receiptDate' => null,
                 'registrationDate' => null,
-                'rejectedDate' => new DateTime('2019-02-11')],
+                'rejectedDate' => new DateTime('2019-02-11'),
+                'invalidDate' => null,
+                'withdrawnDate' => null,
+            ],
             98766 => [
                 'found' => true,
                 'status' => 'Received',
                 'receiptDate' => new DateTime('2019-02-11'),
                 'registrationDate' => null,
-                'rejectedDate' => null]
+                'rejectedDate' => null,
+                'invalidDate' => null,
+                'withdrawnDate' => null,
+            ]
         ]), $result);
     }
 }
