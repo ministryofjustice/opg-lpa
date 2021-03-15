@@ -28,7 +28,6 @@ Then(`I visit the admin sign-in page`, () => {
     cy.visitWithChecks(Cypress.env('adminUrl') + '/sign-in');
 })
 
-
 Then(`I visit the donor page for the test fixture lpa`, () => {
         cy.get('@lpaId').then((lpaId) => {
             cy.visitWithChecks('/lpa/' + lpaId + '/donor');
