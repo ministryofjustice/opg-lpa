@@ -33,8 +33,7 @@ function logInAsSeededUser(){
 }
 
 function logIn(user, password){
-    cy.visit("/login").title().should('include','Sign in');
-    cy.OPGCheckA11y();
+    cy.visitWithChecks("/login").title().should('include','Sign in');
     cy.get('[data-cy=login-email]').clear().type(user);
     cy.get('[data-cy=login-password]').clear().type(password);
     cy.get('[data-cy=login-submit-button]').click();
