@@ -3,7 +3,6 @@ Feature: Create a Property and Finance LPA
 
     I want to create a Property and Finance LPA
 
-    # background steps logs us in and takes us to the type page
     Background:
         Given I ignore application exceptions
         And I create PF LPA test fixture
@@ -95,7 +94,7 @@ Feature: Create a Property and Finance LPA
         Then I am taken to the primary attorney page
         And I cannot find "save"
 
-        # This comment line needed for stitching feature files. Please do not remove
+        # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
         
         # Donor page tests end here and Primary Attorney page tests start. Ultimately a good place to start a new Scenario
 
@@ -260,6 +259,8 @@ Feature: Create a Property and Finance LPA
         When I click "how-jointly-attorney-severally"
         When I click "save"
         Then I am taken to the replacement attorney page
+
+        # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
         # Primary Attorney page tests end here and Replacement Attorney tests start. Ultimately a good place to start a new Scenario
         When I click "save"
