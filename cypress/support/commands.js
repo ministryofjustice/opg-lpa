@@ -31,6 +31,14 @@ Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
     cy.exec('python3 tests/python-api-client/' + pythonCommand)
 });
 
+Cypress.Commands.add("visitWithChecks", (url) => {
+    cy.visit(url);
+    cy.document().then(docStr => {
+        expect(docStr.documentElement.innerHTML).not.to.contain("Oops", "CSRF token mismatch problem detected"); 
+    });
+    cy.OPGCheckA11y();
+});
+
 // window: DOM window instance
 // options: passed directly to axe
 // stopOnError: boolean, default=false; if true, if any violations are
