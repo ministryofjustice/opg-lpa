@@ -92,7 +92,7 @@ return [
                 'ttl_attribute' => getenv('OPG_LPA_COMMON_SESSION_DYNAMODB_TTL_ATTRIBUTE') ?: 'expires',
                 'batch_config' => [
                     // Sleep before each flush to rate limit the garbage collection.
-                    'before' => function(){ sleep(1); },
+                    'before' => function(){ },
                 ]
             ],
             'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
