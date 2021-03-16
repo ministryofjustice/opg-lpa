@@ -212,7 +212,7 @@ casper.test.begin("Checking user can access correspondent page", {
 
         }).waitForText('There is a problem', function(){
 
-            test.assertTextExists( "Select at least one option" , "Correct validation message shown when no contact option chosen");
+            test.assertTextExists( "Select how the correspondent would like to be contacted" , "Correct validation message shown when no contact option chosen");
 
         }).thenClick('input[type="checkbox"][name="correspondence[contactByEmail]"]', function() {
 
