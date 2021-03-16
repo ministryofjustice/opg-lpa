@@ -6,17 +6,18 @@ locals {
     username = local.account.aurora_enabled ? module.api_aurora[0].master_username : aws_db_instance.api[0].username
   }
 
-  opg_project               = "lpa"
-  account_name              = lookup(var.account_mapping, terraform.workspace, "development")
-  account                   = var.accounts[local.account_name]
-  environment               = terraform.workspace
-  cert_prefix_public_facing = local.environment == "production" ? "www." : "*."
-  cert_prefix_internal      = local.account_name == "production" ? "" : "*."
-  dns_namespace_env         = local.environment == "production" ? "" : "${local.environment}."
-  dns_namespace_env_public  = local.environment == "production" ? "www." : "${local.environment}."
-  track_from_date           = "2019-04-01"
-  front_dns                 = "front.lpa"
-  admin_dns                 = "admin.lpa"
+  opg_project                 = "lpa"
+  account_name                = lookup(var.account_mapping, terraform.workspace, "development")
+  account                     = var.accounts[local.account_name]
+  environment                 = terraform.workspace
+  cert_prefix_public_facing   = local.environment == "production" ? "www." : "*."
+  cert_prefix_internal        = local.account_name == "production" ? "" : "*."
+  dns_namespace_env           = local.environment == "production" ? "" : "${local.environment}."
+  dns_namespace_env_public    = local.environment == "production" ? "www." : "${local.environment}."
+  track_from_date             = "2019-04-01"
+  front_dns                   = "front.lpa"
+  admin_dns                   = "admin.lpa"
+  pager_duty_ops_service_name = "Make a Lasting Power of Attorney Ops Monitoring"
 
   mandatory_moj_tags = {
     business-unit = "OPG"
