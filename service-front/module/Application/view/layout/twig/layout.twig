@@ -83,11 +83,12 @@
         {{ accountInfo() }}
         <a name="main-content"></a>
         {% block errorSummary %}{% endblock %}
+        {% block mainTitle %}
         <h1 class="heading-xlarge" data-cy="main-title">
-            {% block supportTitleTop %}{% endblock %}
-            {% block pageTitle %} Make a lasting power of attorney {% endblock %}
+            {% block pageTitle %}Make a lasting power of attorney{% endblock %}
             {% block supportTitleBottom %}{% endblock %}
         </h1>
+        {% endblock %}
 
         <div class="content-body">
 

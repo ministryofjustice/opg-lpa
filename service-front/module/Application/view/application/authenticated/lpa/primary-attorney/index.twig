@@ -5,7 +5,7 @@
 {% block content %}
 
 <li id="primary-attorney-section" class="section current" data-cy="section-current">
-    <h2 class="heading-medium accordion-header flush--top">Who are the attorneys?</h2>
+    <h1 class="heading-medium accordion-header flush--top">Who are the attorneys?</h1>
     <div class="accordion-info">
         <div class="text">
             <p>Attorneys are people the donor appoints to make decisions on their behalf.</p>
@@ -27,9 +27,9 @@
     </div>
 
     {% if (attorneys) %}
-        <h3 class="heading-medium flush--top">
+        <h2 class="heading-medium flush--top">
             The attorney{% if attorneys|length > 1 %}s{% endif %}
-        </h3>
+        </h2>
         <ul>
             {% for attorney in attorneys %}
                 {% include 'application/authenticated/lpa/primary-attorney/partials/attorney.twig' with attorney %}
