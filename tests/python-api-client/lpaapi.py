@@ -64,18 +64,24 @@ def setDonor(lpaId):
     donorDetails = {"name":{"title":"Mrs","first":"Nancy","last":"Garrison"},"otherNames":"","address":{"address1":"Bank End Farm House","address2":"Undercliff Drive","address3":"Ventnor, Isle of Wight","postcode":"PO38 1UL"},"dob":{"date":"1988-10-22T00:00:00.000000+0000"},"email":{"address":"opglpademo+NancyGarrison@gmail.com"},"canSign":False}
     putToAPI(lpaId, donorDetails, 'donor')
 
-def setPrimaryAttorneyDecisions(lpaId):
+def setPrimaryAttorneyDecisions(lpaId, lpaType = 'health-and-welfare'):
+    # "when"  is when LPA starts (PF only) 
     # canSustainLife is for life-sustaining treatment (HW only) 
-    # "how" , is how attorneys makes decisions, can be set to jointly-attorney-severally if there is more than 1 attorney
-    # "when"  is when attorneys step in
-    primaryAttorneyDecisionDetails = {"canSustainLife":True,"how":None,"when":None,"howDetails":None}
+    # "how" , is how attorneys makes decisions, can be set to jointly-attorney-severally if there is more than 1 attorney but there isn't yet at this stage
+    if lpaType == 'health-and-welfare' :
+        primaryAttorneyDecisionDetails = {"canSustainLife":True,"how":None,"when":None,"howDetails":None}
+    else:
+        primaryAttorneyDecisionDetails = {"canSustainLife":None,"how":None,"when":"now","howDetails":None}
     putToAPI(lpaId, primaryAttorneyDecisionDetails, 'primary-attorney-decisions')
 
-def setPrimaryAttorneyDecisionsMultipleAttorneys(lpaId):
+def setPrimaryAttorneyDecisionsMultipleAttorneys(lpaId, lpaType = 'health-and-welfare'):
     # canSustainLife is for life-sustaining treatment (HW only) 
+    # "when"  is when LPA starts (PF only) 
     # "how" , is how attorneys makes decisions, can be set to jointly-attorney-severally if there is more than 1 attorney
-    # "when"  is when attorneys step in
-    primaryAttorneyDecisionDetails = {"canSustainLife":True,"how":"jointly-attorney-severally","when":None,"howDetails":None}
+    if lpaType == 'health-and-welfare' :
+        primaryAttorneyDecisionDetails = {"canSustainLife":True,"how":"jointly-attorney-severally","when":None,"howDetails":None}
+    else:
+        primaryAttorneyDecisionDetails = {"canSustainLife":None,"how":"jointly-attorney-severally","when":"now","howDetails":None}
     putToAPI(lpaId, primaryAttorneyDecisionDetails, 'primary-attorney-decisions')
 
 def setReplacementAttorneyDecisions(lpaId):
