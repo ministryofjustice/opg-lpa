@@ -68,7 +68,7 @@ Feature: Add donor to Health and Welfare LPA
         When I click "save"
         Then I see in the page text
             | There is a problem |
-            | Choose an option |
+            | Select if the donor gives or does not give their attorneys authority to consent to lift-sustaining treatment |
         And I see "Error" in the title
         When I check "canSustainLife-1"
         And I click "save"

@@ -5,12 +5,12 @@ Feature: Create a Health and Welfare LPA
 
     Background:
         Given I ignore application exceptions
-        And I create HW LPA test fixture with a donor and 2 attorneys
+        And I create HW LPA test fixture with a donor and attorneys
 
     @focus, @CleanupFixtures
     Scenario: Create LPA normal path
         When I log in as appropriate test user
-        And I visit the replacement attorney page for the in-progress lpa
+        And I visit the replacement attorney page for the test fixture lpa
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
         When I click "save"

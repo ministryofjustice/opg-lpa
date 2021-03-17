@@ -1,4 +1,5 @@
 import requests
+import sys
 
 apiRoot = "http://localhost:7001"
 s = requests.Session()
@@ -7,17 +8,21 @@ def putToAPI(lpaId, jsonData, pathSuffix = ''):
     token, userId = authenticate()
     pathTemplate = '{apiRoot}/v2/user/{userId}/applications/{lpaId}/{pathSuffix}'
     fullPath = pathTemplate.format(apiRoot = apiRoot, userId = userId, lpaId = lpaId, pathSuffix = pathSuffix)
+    print("Putting ",file=sys.stderr)
+    print(jsonData,file=sys.stderr)
     r = s.put(fullPath, headers=token, json=jsonData)
-#    print(r)
-#    print(r.json())
+    print(r,file=sys.stderr)
+    print(r.json(),file=sys.stderr)
 
 def postToAPI(lpaId, jsonData, pathSuffix = ''):
     token, userId = authenticate()
     pathTemplate = '{apiRoot}/v2/user/{userId}/applications/{lpaId}/{pathSuffix}'
     fullPath = pathTemplate.format(apiRoot = apiRoot, userId = userId, lpaId = lpaId, pathSuffix = pathSuffix)
+    print("Posting ",file=sys.stderr)
+    print(jsonData,file=sys.stderr)
     r = s.post(fullPath, headers=token, json=jsonData)
-#    print(r)
-#    print(r.json())
+    print(r,file=sys.stderr)
+    print(r.json(),file=sys.stderr)
 
 def deleteViaAPI(lpaId, jsonData, pathSuffix = ''):
     token, userId = authenticate()
@@ -52,8 +57,8 @@ def deleteLpa(lpaId):
     print(r)
 
 def setLpaType(lpaId, lpaType = 'health-and-welfare'):
-    lpatype = {"type": lpaType}
-    putToAPI(lpaId, lpaType, 'type')
+    lpaTypeJson = {"type": lpaType}
+    putToAPI(lpaId, lpaTypeJson, 'type')
 
 def setDonor(lpaId):
     donorDetails = {"name":{"title":"Mrs","first":"Nancy","last":"Garrison"},"otherNames":"","address":{"address1":"Bank End Farm House","address2":"Undercliff Drive","address3":"Ventnor, Isle of Wight","postcode":"PO38 1UL"},"dob":{"date":"1988-10-22T00:00:00.000000+0000"},"email":{"address":"opglpademo+NancyGarrison@gmail.com"},"canSign":False}
@@ -64,6 +69,13 @@ def setPrimaryAttorneyDecisions(lpaId):
     # "how" , is how attorneys makes decisions, can be set to jointly-attorney-severally if there is more than 1 attorney
     # "when"  is when attorneys step in
     primaryAttorneyDecisionDetails = {"canSustainLife":True,"how":None,"when":None,"howDetails":None}
+    putToAPI(lpaId, primaryAttorneyDecisionDetails, 'primary-attorney-decisions')
+
+def setPrimaryAttorneyDecisionsMultipleAttorneys(lpaId):
+    # canSustainLife is for life-sustaining treatment (HW only) 
+    # "how" , is how attorneys makes decisions, can be set to jointly-attorney-severally if there is more than 1 attorney
+    # "when"  is when attorneys step in
+    primaryAttorneyDecisionDetails = {"canSustainLife":True,"how":"jointly-attorney-severally","when":None,"howDetails":None}
     putToAPI(lpaId, primaryAttorneyDecisionDetails, 'primary-attorney-decisions')
 
 def setReplacementAttorneyDecisions(lpaId):

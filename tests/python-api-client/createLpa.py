@@ -7,12 +7,9 @@ parser.add_argument('-hw', action='store_true',
 parser.add_argument('-d', action='store_true',
                     default=False,
                     help='Create Donor')
-parser.add_argument('-a1', action='store_true',
+parser.add_argument('-a', action='store_true',
                     default=False,
-                    help='Add 1 attorney')
-parser.add_argument('-a2', action='store_true',
-                    default=False,
-                    help='Add 2 attorneys')
+                    help='Add attorneys')
 args = parser.parse_args()
 
 if args.hw :
@@ -21,13 +18,15 @@ else:
     lpaType = 'property-and-financial'
 
 lpaId = makeNewLpa()
-print(lpaId)
 setLpaType(lpaId, lpaType)
-if args.d :
+# if we specified donor, or we specified attorneys which implies we need a donor, then set the donor
+if args.d or args.a:
     setDonor(lpaId)
-setPrimaryAttorneyDecisions(lpaId)
-if args.a1 :
-    addPrimaryAttorney(lpaId)
-if args.a2 :
+    # this sets life-sustaining treatment to true
+    setPrimaryAttorneyDecisions(lpaId)
+if args.a :
     addPrimaryAttorney(lpaId)
     addSecondPrimaryAttorney(lpaId)
+    # this keeps life-sustaining treatment set to true and allows attorneys to act jointly
+    setPrimaryAttorneyDecisionsMultipleAttorneys(lpaId)
+print(lpaId)
