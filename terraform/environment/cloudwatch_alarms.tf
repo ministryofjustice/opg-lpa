@@ -56,7 +56,8 @@ resource "aws_cloudwatch_log_metric_filter" "csrf_mistmatch_filter" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "front_csrf_mismatch_errors" {
+# disable as not required right now.
+/*resource "aws_cloudwatch_metric_alarm" "front_csrf_mismatch_errors" {
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
   alarm_description         = "CSRF Errors returned to front users for ${local.environment}"
@@ -71,9 +72,9 @@ resource "aws_cloudwatch_metric_alarm" "front_csrf_mismatch_errors" {
   period                    = 60
   statistic                 = "Sum"
   tags                      = merge(local.default_tags, local.front_component_tag)
-  threshold                 = 2
+  threshold                 = 10
   treat_missing_data        = "notBreaching"
-}
+}*/
 
 resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   actions_enabled     = true
