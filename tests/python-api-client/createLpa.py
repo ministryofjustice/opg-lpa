@@ -23,10 +23,10 @@ setLpaType(lpaId, lpaType)
 if args.d or args.a:
     setDonor(lpaId)
     # this sets life-sustaining treatment to true
-    setPrimaryAttorneyDecisions(lpaId)
+    setPrimaryAttorneyDecisions(lpaId, lpaType)
 if args.a :
     addPrimaryAttorney(lpaId)
     addSecondPrimaryAttorney(lpaId)
     # this keeps life-sustaining treatment set to true and allows attorneys to act jointly
-    setPrimaryAttorneyDecisionsMultipleAttorneys(lpaId)
+    setPrimaryAttorneyDecisionsMultipleAttorneys(lpaId, lpaType)
 print(lpaId)
