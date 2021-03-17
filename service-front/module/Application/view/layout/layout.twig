@@ -100,12 +100,10 @@
             {{ flash.render('success', 'alert-success', 'icon-tick') }}
             {{ flash.render('warning', 'alert-warning', 'icon-important-small') }}
 
+            {% block accordionInstructions %}{% endblock %}
             {% block accordionTop %}{% endblock %}
-
             {% block content %}{% endblock %}
-
             {% block accordionBottom %}{% endblock %}
-
         </div>
 
         {% block divider %}
