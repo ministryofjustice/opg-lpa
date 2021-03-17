@@ -5,7 +5,7 @@ Feature: Create a Property and Finance LPA
 
     Background:
         Given I ignore application exceptions
-        And I create PF LPA test fixture with a donor and 2 attorneys
+        And I create PF LPA test fixture with a donor and attorneys
 
     @focus, @CleanupFixtures
     Scenario: Create LPA normal path
@@ -22,6 +22,7 @@ Feature: Create a Property and Finance LPA
         And I can find "use-my-details"
         And I can find "postcode-lookup"
         And I can find "name-title" with 8 options
+        When I force fill out
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | dob-date-day | 01 |

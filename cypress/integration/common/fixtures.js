@@ -39,14 +39,14 @@ Then(`I create HW LPA test fixture with a donor`, () => {
     });
 })
 
-Then(`I create PF LPA test fixture with a donor and 2 attorneys`, () => {
-    cy.runPythonApiCommand("createLpa.py -d -a2").its('stdout').as('lpaId').then(lpaId => {
+Then(`I create PF LPA test fixture with a donor and attorneys`, () => {
+    cy.runPythonApiCommand("createLpa.py -d -a").its('stdout').as('lpaId').then(lpaId => {
         cy.log("Created PF LPA test fixture with donor through the API with id " + lpaId);
     });
 })
  
-Then(`I create HW LPA test fixture with a donor and 2 attorneys`, () => {
-    cy.runPythonApiCommand("createLpa.py -hw -d -a2").its('stdout').as('lpaId').then(lpaId => {
+Then(`I create HW LPA test fixture with a donor and attorneys`, () => {
+    cy.runPythonApiCommand("createLpa.py -hw -d -a").its('stdout').as('lpaId').then(lpaId => {
         cy.log("Created HW LPA test fixture with donor through the API with id " + lpaId);
     });
 })
