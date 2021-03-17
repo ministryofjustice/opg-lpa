@@ -12,7 +12,7 @@ Feature: Add attorneys to a Health and Welfare LPA
         When I log in as appropriate test user
         And I visit the primary attorney page for the test fixture lpa
         
-        # This comment line needed for stitching feature files. Please do not remove
+        # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
         
         When I click "add-attorney"
         Then I can see popup

@@ -11,16 +11,8 @@ Feature: Add attorneys to a Property and Finance LPA
     Scenario: Add Attorneys
         When I log in as appropriate test user
         And I visit the primary attorney page for the test fixture lpa
-        #
-        # next 5 lines are temporarily here, will move out eventually
-        Then I am taken to the when lpa starts page
-        And I see "When can the LPA be used?" in the page text
-        And I can find old style id "#when-no-capacity"
-        When I check "when-now"
-        And I click "save"
-        # above will go eventually
         
-        # This comment line needed for stitching feature files. Please do not remove
+        # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
         When I click "add-attorney"
         Then I can see popup
         And I can find "form-cancel"

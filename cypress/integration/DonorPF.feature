@@ -12,7 +12,7 @@ Feature: Add donor to Property and Finance LPA
         When I log in as appropriate test user
         And I visit the donor page for the test fixture lpa
         Then I see "This LPA covers property and financial affairs" in the page text
-        # This comment line needed for stitching feature files. Please do not remove
+        # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
         # save button should be missing initially
         And I cannot find "save-and-continue"
         When I click "add-donor"
