@@ -1,3 +1,6 @@
+# This is a drop-in replacement for nginx.conf, with request_body_file added.
+# Useful if you want to monitor what the front-end sent to the back-end service-api.
+# More info in docs/runbooks/logging.md, section titled Increasing API logging.
 log_format tracing escape=json '{'
                                '"trace_id": "$trace_id", '
                                '"time_local": "$time_local", '
