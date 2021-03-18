@@ -87,7 +87,11 @@ Then(`I am taken to the life sustaining page`, () => {
 });
  
 Then(`I am taken to the donor page`, () => {
-    cy.url().should('contain','donor').as('donorPageUrl');
+    // We arrive at the donor page when we've just created an lpa through the web, so we store the lpaId for future use at this point
+    cy.url().should('contain','donor').then((donorPageUrl) => { 
+        var lpaId = donorPageUrl.match(/\/(\d+)\//)[1];
+        cy.wrap(lpaId).as('lpaId');
+    });
     checkAccordionHeaderContains('Who is the donor for this LPA?');
 })
 
@@ -109,7 +113,7 @@ function checkOnPageContainingPath(urlPart) {
 function comparePageToPath(urlPart, comparator) {
     // get the current lpaId, put this in the path regex, make sure that's the url we're now on
     var pathRegex = '/lpa/\\d+/' + urlPart;
-    cy.getLpaId().then((lpaId) => { 
+    cy.get('@lpaId').then((lpaId) => { 
         var pathWithLpaId = pathRegex.replace('\\d+', lpaId);
         cy.url().should(comparator, Cypress.config().baseUrl + pathWithLpaId);
     });
