@@ -6,7 +6,8 @@ Given(`I visit {string}`, (url) => {
 })
 
 Then(`I visit the login page`, () => {
-    cy.visitWithChecks('/login');
+    // we do not require extra checks on login page
+    cy.visit('/login');
 })
 
 Then(`I visit the type page`, () => {
@@ -29,13 +30,19 @@ Then(`I visit the admin sign-in page`, () => {
 })
 
 Then(`I visit the donor page for the test fixture lpa`, () => {
-        cy.get('@lpaId').then((lpaId) => {
-            cy.visitWithChecks('/lpa/' + lpaId + '/donor');
-        });
+    visitPageForTestFixture('donor');
 })
 
 Then(`I visit the primary attorney page for the test fixture lpa`, () => {
-        cy.get('@lpaId').then((lpaId) => {
-            cy.visitWithChecks('/lpa/' + lpaId + '/primary-attorney');
-        });
+    visitPageForTestFixture('primary-attorney');
 })
+
+Then(`I visit the replacement attorney page for the test fixture lpa`, () => {
+    visitPageForTestFixture('replacement-attorney');
+})
+
+function visitPageForTestFixture(urlPart) {
+    cy.get('@lpaId').then((lpaId) => {
+        cy.visitWithChecks('/lpa/' + lpaId + '/' + urlPart);
+    });
+}
