@@ -27,10 +27,16 @@
 
 const axeWrapper = require('./axe_wrapper');
 
-Cypress.Commands.add("getLpaId", () => {
-    cy.get('@donorPageUrl').then((donorPageUrl) => {
-        return donorPageUrl.match(/\/(\d+)\//)[1];
+Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
+    cy.exec('python3 tests/python-api-client/' + pythonCommand)
+});
+
+Cypress.Commands.add("visitWithChecks", (url) => {
+    cy.visit(url);
+    cy.document().then(docStr => {
+        expect(docStr.documentElement.innerHTML).not.to.contain("Oops", "CSRF token mismatch problem detected"); 
     });
+    cy.OPGCheckA11y();
 });
 
 Cypress.Commands.add("visitWithChecks", (url) => {
