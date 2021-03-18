@@ -10,12 +10,15 @@ def load_yaml(file_path):
         return yaml.load(yaml_file, Loader=yaml.FullLoader)
 
 # from https://stackoverflow.com/questions/36584338/python-merge-complex-yaml
+# note that if extend_by has a key which is in extend_me whose value is not
+# a dict, the value from extend_by will overwrite the value from extend_me
 def extend_dict(extend_me: dict, extend_by: dict):
     for k, v in extend_by.items():
-        if k in extend_me:
+        if k in extend_me and isinstance(v, dict):
             extend_dict(extend_me.get(k), v)
         else:
             extend_me[k] = v
+
     return extend_me
 
 if __name__ == '__main__':
