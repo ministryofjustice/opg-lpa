@@ -16,7 +16,7 @@ paths:
                     invalidDate: null
                     withdrawnDate: null
                     status: Pending
-                rejected:
+                returned_rejected:
                   value:
                     onlineLpaId: A88668805824
                     receiptDate: '2021-02-11'
@@ -26,7 +26,7 @@ paths:
                     invalidDate: null
                     withdrawnDate: null
                     status: Rejected
-                registered:
+                returned_registered:
                   value:
                     onlineLpaId: A68582508781
                     receiptDate: '2021-03-01'
@@ -36,7 +36,7 @@ paths:
                     invalidDate: null
                     withdrawnDate: null
                     status: Registered
-                invalid:
+                returned_invalid:
                   value:
                     onlineLpaId: A93348314693
                     receiptDate: '2021-01-02'
@@ -46,7 +46,7 @@ paths:
                     invalidDate: '2021-01-05'
                     withdrawnDate: null
                     status: Invalid
-                withdrawn:
+                returned_withdrawn:
                   value:
                     onlineLpaId: A43476377885
                     receiptDate: '2020-05-01'
@@ -56,3 +56,13 @@ paths:
                     invalidDate: null
                     withdrawnDate: '2020-05-06'
                     status: Withdrawn
+                checking:
+                  value:
+                    onlineLpaId: A54171193342
+                    receiptDate: '2020-11-21'
+                    rejectedDate: null
+                    registrationDate: null
+                    cancellationDate: null
+                    invalidDate: null
+                    withdrawnDate: null
+                    status: Perfect
