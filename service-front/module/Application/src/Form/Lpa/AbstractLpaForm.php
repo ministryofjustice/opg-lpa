@@ -8,9 +8,11 @@ use Opg\Lpa\DataModel\Validator\ValidatorResponse;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\FormInterface;
+use Application\Logging\LoggerTrait;
 
 abstract class AbstractLpaForm extends AbstractCsrfForm
 {
+    use LoggerTrait;
     /**
      * LPA object if it was passed in via the constructor
      *
@@ -31,6 +33,7 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
      */
     public function __construct($name = null, $options = [])
     {
+
         //  If an LPA has been passed in the options then extract it and set as a variable now
         if (array_key_exists('lpa', $options)) {
             $this->lpa = $options['lpa'];
@@ -42,6 +45,10 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
 
     public function init()
     {
+        $this->getLogger()->err(sprintf(
+            "{AbstractLpaForm:isValid} init"
+        ));
+
         foreach ($this->formElements as $name => $elm) {
             //  Add the element
             $this->add([
@@ -60,8 +67,13 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
                 'validators'    => (array_key_exists('validators', $elm) ? $elm['validators'] : []),
             ]);
         }
-
+        $this->getLogger()->err(sprintf(
+            "{AbstractLpaForm:isValid} parent init"
+        ));
         parent::init();
+        $this->getLogger()->err(sprintf(
+            "{AbstractLpaForm:isValid} parent init done"
+        ));
     }
 
     /**
@@ -71,18 +83,41 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
      */
     public function isValid()
     {
+        $this->getLogger()->err(sprintf(
+            "{AbstractLpaForm:isValid} about to call parent::isValid [attributes: %s]",
+            json_encode($this->attributes)
+        ));
+
         $result = parent::isValid();
 
+        $this->getLogger()->err(sprintf(
+            "{AbstractLpaForm:isValid} done parent::isValid"
+        ));
+
+
         if ($result) {
+            $this->getLogger()->err(sprintf(
+                "{AbstractLpaForm:isValid} result passed and about to validateByModel"
+            ));
             // do validation though model validators.
             $modelValidationResult = $this->validateByModel();
 
             // if Zend validation was successful, do validation through model.
             $this->isValid = $result = (bool) ($result & $modelValidationResult['isValid']);
+
+            $this->getLogger()->err(sprintf(
+                "{AbstractLpaForm:isValid} done validateByModel [isValid: %s]",
+                $this->isValid
+            ));
+
         }
 
         // merge both zend and LPA model validation error messages.
         if (!$result) {
+            $this->getLogger()->err(sprintf(
+                "{AbstractLpaForm:isValid} result failed"
+            ));
+
             $messages = $this->getInputFilter()->getMessages();
 
             // merge Zend and model validation errors.

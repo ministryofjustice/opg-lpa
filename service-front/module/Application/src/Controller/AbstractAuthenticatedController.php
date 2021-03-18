@@ -108,7 +108,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             return $authenticated;
         }
 
-        $this->getLogger()->info('Request to ' . get_class($this), $this->identity->toArray());
+        $this->getLogger()->info('{AbstractAuthenticatedController:onDispatch} Request to ' . get_class($this), $this->identity->toArray());
 
         //----------------------------------------------------------------------
         // Check if they've signed in since the T&C's changed...
@@ -128,13 +128,14 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             if (!isset($termsSession->seen)) {
                 // Flag that the 'Terms have changed' page will now have been seen...
                 $termsSession->seen = true;
-
+                $this->getLogger()->info('{AbstractAuthenticatedController:onDispatch} Redirect to user/dashboard/terms-changed');
                 return $this->redirect()->toRoute('user/dashboard/terms-changed');
             }
         }
 
         //  If there are no user details set, or they are incomplete, then redirect to the about you new view
         if ($this->requireCompleteUserDetails && (!($this->user instanceof User) || is_null($this->user->name))) {
+            $this->getLogger()->info('{AbstractAuthenticatedController:onDispatch} Redirect to /user/about-you/new');
             return $this->redirect()->toUrl('/user/about-you/new');
         }
 
@@ -150,7 +151,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             $this->getSessionManager()->destroy([
                 'clear_storage' => true
             ]);
-
+            $this->getLogger()->info('{AbstractAuthenticatedController:onDispatch} Redirect to login with timeout');
             return $this->redirect()->toRoute('login', [
                 'state' => 'timeout'
             ]);
@@ -166,7 +167,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
                 $this->identity->tokenExpiresAt()->getTimestamp() - (new DateTime())->getTimestamp()
             );
         }
-
+        $this->getLogger()->info('{AbstractAuthenticatedController:onDispatch} rendering');
         return $view;
     }
 
@@ -205,7 +206,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             }
 
             //---
-
+            $this->getLogger()->info('{AbstractAuthenticatedController:checkAuthenticated} Redirect to login with timeout');
             // Redirect to the About You page
             return $this->redirect()->toRoute('login', [
                 'state' => 'timeout'

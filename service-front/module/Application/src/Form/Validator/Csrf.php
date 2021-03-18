@@ -43,19 +43,27 @@ class Csrf extends LaminasCsrfValidator
      */
     public function isValid($value, $context = null)
     {
-        $hash = $this->getHash(true);
+        $this->getLogger()->err(sprintf(
+            "{CSRF:isValid} [hash: %s]",
+            substr($this->hash, 0, 8)
+        ));
+
+        $hash = $this->getHash();
 
         $this->getLogger()->err(sprintf(
-            "{isValid} Hash value (with regeneration set as true): %s",
-            $hash
+            "{CSRF:isValid} [hash: %s]",
+            substr($hash, 0, 8)
         ));
 
         if ($value !== $hash) {
+            $callStack = json_encode(debug_backtrace() );
             $this->getLogger()->err(sprintf(
-                "Mismatched CSRF provided; expected %s received %s",
-                $value,
-                $this->getHash(),
+                "{CSRF:isValidERROR} Mismatched CSRF provided; [value: %s] [hash: %s] [context: %s]",
+                substr($value, 0, 8),
+                substr($hash, 0, 8),
+                json_encode($context)
             ));
+            $this->getLogger()->err($callStack);
             $this->error(self::NOT_SAME);
             return false;
         }
@@ -67,19 +75,20 @@ class Csrf extends LaminasCsrfValidator
     public function getHash($regenerate = false)
     {
         $isNull = (null === $this->hash);
+        $callStack = json_encode(debug_backtrace() );
 
         $this->getLogger()->err(sprintf(
-            "{getHash} Getting hash [regenerate: %s] [hash: %s] [isNull: %s]",
+            "{CSRF:getHash} Getting hash [regenerate: %s] [isNull: %s] [hash: %s]",
             $regenerate,
-            $this->hash,
-            $isNull
+            $isNull,
+            substr($this->hash, 0, 8)
         ));
-
+        $this->getLogger()->err($callStack);
 
         if ( $isNull || $regenerate) {
 
             $this->getLogger()->err(sprintf(
-                "{getHash} Getting hash - generating new version."
+                "{CSRF:getHash} Generating new hash"
             ));
 
             $this->generateHash();
@@ -101,7 +110,7 @@ class Csrf extends LaminasCsrfValidator
     protected function generateHash()
     {
         $this->getLogger()->err(sprintf(
-            "{generateHash} Generating hash"
+            "{CSRF:generateHash} Generating hash"
         ));
 
         $salt = $this->getSalt();
@@ -114,7 +123,7 @@ class Csrf extends LaminasCsrfValidator
 
         if (!isset($session->token)) {
             $this->getLogger()->err(sprintf(
-                "{generateHash} Generating hash - generating new token"
+                "{CSRF:generateHash} Generating new token "
             ));
             $session->token = hash('sha512', Rand::getBytes(128, true));
         }
@@ -122,11 +131,13 @@ class Csrf extends LaminasCsrfValidator
         $this->hash = hash('sha512', $this->getName() . $session->token . $salt);
 
         $this->getLogger()->err(sprintf(
-            "{generateHash} Generated hash [salt: %s] [token: %s] [hash: %s] [name: %s]",
+            "{CSRF:generateHash} Generated hash [salt: %s] [token: %s] [hash: %s]",
             $salt,
-            $session->token,
-            $this->hash,
-            $this->getName()
+            substr($session->token, 0, 8),
+            substr($this->hash, 0, 8)
         ));
     }
+
+
+
 }

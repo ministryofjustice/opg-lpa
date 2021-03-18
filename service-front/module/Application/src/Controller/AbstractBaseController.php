@@ -100,9 +100,11 @@ abstract class AbstractBaseController extends AbstractActionController
             $cookieRedirect = (bool)$this->params()->fromQuery('cookie');
 
             if (!$cookieRedirect) {
+                $this->getLogger()->info('{AbstractBaseController:checkCookie} Cookie redirect to ' . $routeName);
                 // Cannot see a cookie, so redirect them back to this page (which will set one), ready to check again.
                 return $this->redirect()->toRoute($routeName, array(), ['query' => ['cookie' => '1']]);
             } else {
+                $this->getLogger()->info('{AbstractBaseController:checkCookie} Cookie redirect to enable-cookie');
                 // Cookie is not set even after we've done a redirect, so assume the client doesn't support cookies.
                 return $this->redirect()->toRoute('enable-cookie');
             }
@@ -125,6 +127,7 @@ abstract class AbstractBaseController extends AbstractActionController
         $identity = $this->authenticationService->getIdentity();
 
         if (!is_null($identity)) {
+            $this->getLogger()->info('{AbstractBaseController:preventAuthenticatedUser} Redirect to user/dashboard');
             return $this->redirect()->toRoute('user/dashboard');
         }
 

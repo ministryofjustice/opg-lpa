@@ -2,7 +2,7 @@
 namespace Application\Adapter;
 
 use Exception;
-
+use Application\Logging\LoggerTrait;
 use RuntimeException;
 use Laminas\Cache\Storage\StorageInterface;
 use Aws\DynamoDb\DynamoDbClient;
@@ -12,7 +12,7 @@ use Aws\DynamoDb\DynamoDbClient;
  */
 class DynamoDbKeyValueStore implements StorageInterface
 {
-
+    use LoggerTrait;
     /**
      * The AWS client
      *
@@ -83,6 +83,13 @@ class DynamoDbKeyValueStore implements StorageInterface
             $value = array('B' => $value);
         }
 
+        $this->getLogger()->err(sprintf(
+            "{DynamoDbKeyValueStore:setItem} [table: %s] [key: %s] [value: %s]",
+            $this->tableName,
+            json_encode($key),
+            json_encode($value)
+        ));
+
         $this->client->putItem(array(
             'TableName' => $this->tableName,
             'Item' => array(
@@ -99,6 +106,13 @@ class DynamoDbKeyValueStore implements StorageInterface
     {
         $key = array('S' => $this->formatKey($key));
 
+
+        $this->getLogger()->err(sprintf(
+            "{DynamoDbKeyValueStore:removeItem} [table: %s] [key: %s] ",
+            $this->tableName,
+            json_encode($key)
+        ));
+
         $this->client->deleteItem(array(
             'TableName' => $this->tableName,
             'Key' => array(
@@ -112,6 +126,13 @@ class DynamoDbKeyValueStore implements StorageInterface
      */
     public function getItem($key, & $success = null, & $casToken = null)
     {
+        $this->getLogger()->err(sprintf(
+            "{DynamoDbKeyValueStore:getItem} [table: %s] [key: %s] ",
+            $this->tableName,
+            $key
+        ));
+
+
         try {
             $result = $this->client->getItem(array(
                 'TableName' => $this->tableName,

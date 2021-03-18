@@ -3,17 +3,35 @@
 namespace Application\Form;
 
 use Laminas\Form\Form;
+use Application\Logging\LoggerTrait;
 
 abstract class AbstractForm extends Form
 {
+    use LoggerTrait;
+
     public function init()
     {
+        $this->getLogger()->err(sprintf(
+            "{AbstractForm:init} settingAttributes"
+        ));
         $this->setAttribute('method', 'post');
         $this->setAttribute('novalidate', 'novalidate');
 
+        $this->getLogger()->err(sprintf(
+            "{AbstractForm:init} calling parent init"
+        ));
         parent::init();
+        $this->getLogger()->err(sprintf(
+            "{AbstractForm:init} done parent init"
+        ));
 
+        $this->getLogger()->err(sprintf(
+            "{AbstractForm:init} calling prepare"
+        ));
         $this->prepare();
+        $this->getLogger()->err(sprintf(
+            "{AbstractForm:init} done prepare"
+        ));
     }
 
     /**

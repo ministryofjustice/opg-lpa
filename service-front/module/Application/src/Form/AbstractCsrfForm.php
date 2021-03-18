@@ -4,9 +4,11 @@ namespace Application\Form;
 
 use Application\Form\Validator\Csrf as CsrfValidator;
 use Laminas\Form\Element\Csrf;
+use Application\Logging\LoggerTrait;
 
 abstract class AbstractCsrfForm extends AbstractForm
 {
+    use LoggerTrait;
     /**
      * @var array
      */
@@ -19,9 +21,23 @@ abstract class AbstractCsrfForm extends AbstractForm
 
     public function init()
     {
+        $this->getLogger()->err(sprintf(
+            "{AbstractCsrfForm:init} about to set Csrf"
+        ));
         $this->setCsrf();
 
+        $this->getLogger()->err(sprintf(
+            "{AbstractCsrfForm:init} done set Csrf"
+        ));
+        $this->getLogger()->err(sprintf(
+            "{AbstractCsrfForm:init} about to call parent init"
+        ));
+
         parent::init();
+
+        $this->getLogger()->err(sprintf(
+            "{AbstractCsrfForm:init} done parent init"
+        ));
     }
 
     public function setConfig(array $config)
