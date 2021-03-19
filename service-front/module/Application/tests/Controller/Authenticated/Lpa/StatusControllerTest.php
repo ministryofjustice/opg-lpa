@@ -97,17 +97,14 @@ class StatusControllerTest extends AbstractControllerTest
      * is set by one of the dates returned by Sirius (registrationDate,
      * withdrawnDate, invalidDate or rejectedDate)
      *
-     * @param $metadataFields Fields which should be set in the metadata
-     * for the LPA, which are subsequently used to set the returnDate in the
-     * view (what we want to test). Array of
-     *
-     *     [<fieldName> => <date to set field to as string>, ...]
-     *
-     * @param expectedDateTime string expected
+     * @param $metadataField Field which should be set in the metadata
+     * for the LPA, subsequently used to set the returnDate in the
+     * view (what we want to test).
+     * @param $expectedDateTime string expected
      *
      * @dataProvider metadataFieldNamesProvider
      */
-    public function testIndexActionReturnedDateGeneration($metadataFields, $expectedDateTime)
+    public function testIndexActionReturnedDateGeneration($metadataField, $expectedDateTime)
     {
         $testLpa = clone($this->lpa);
         $testLpaId = $testLpa->id;
@@ -115,9 +112,9 @@ class StatusControllerTest extends AbstractControllerTest
 
         // This is the field we're testing: set dates so we can check
         // in the view that the correct return date is given.
-        array_walk($metadataFields, function ($dateString, $fieldName) {
-            $metadataFields[$fieldName] = new DateTime($dateString);
-        });
+        $metadataFields = [];
+        $metadataFields[$metadataField] = new DateTime($expectedDateTime);
+
         $testLpa->setMetadata(array_merge($testLpa->getMetadata(), $metadataFields));
 
         $this->lpaApplicationService
@@ -154,16 +151,16 @@ class StatusControllerTest extends AbstractControllerTest
 
         // Test what's in the view: has the right date been selected
         // as the return date?
-        $this->assertEquals($expectedDateTime, $result->returnDate);
+        $this->assertEquals($metadataFields[$metadataField], $result->returnDate);
     }
 
     public function metadataFieldNamesProvider()
     {
         return [
-            [['application-rejected-date' => '2020-03-01'], '2020-03-01'],
-            [['application-withdrawn-date' => '2020-04-01'], '2020-04-01'],
-            [['application-invalid-date' => '2020-05-01'], '2020-05-01'],
-            [['application-registration-date' => '2020-06-01'], '2020-06-01'],
+            ['application-rejected-date', '2020-03-01'],
+            ['application-withdrawn-date', '2020-04-01'],
+            ['application-invalid-date', '2020-05-01'],
+            ['application-registration-date', '2020-06-01'],
         ];
     }
 }
