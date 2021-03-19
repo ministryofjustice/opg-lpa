@@ -1,4 +1,4 @@
-{% extends 'layout/twig/accordion-layout.twig' %}
+{% extends 'layout/accordion-layout.twig' %}
 
 {% block htmlTitle %}Who was using the LPA service - {% endblock %}
 
@@ -36,7 +36,7 @@
 {% endif %}
 
 <li id="who-are-you-section" class="section current" data-cy="section-current">
-    <h2 class="heading-medium accordion-header flush--top">Who was using the LPA service?</h2>
+    <h1 class="heading-medium accordion-header flush--top">Who was using the LPA service?</h1>
 
     {% if not form %}
         <div class="accordion-info">

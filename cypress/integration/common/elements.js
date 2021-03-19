@@ -115,3 +115,19 @@ Then('the text in {string} does not overflow', (dataCyReference) => {
         }
     });
 });
+
+/**
+ * Specific to pages in the LPA workflow: checks for whether the <details>
+ * element containing the LPA service use instructions is present or not
+ * and open or not
+ */
+Then('the instructions expandable element should not be present', () => {
+    cy.get("[data-cy=details-instructions]").should('not.exist');
+});
+
+Then('the instructions expandable element should be present and closed', () => {
+    cy.get("[data-cy=details-instructions]").then((els) => {
+        const $els = Cypress.$(els);
+        expect($els.attr('open')).to.not.exist;
+    });
+});

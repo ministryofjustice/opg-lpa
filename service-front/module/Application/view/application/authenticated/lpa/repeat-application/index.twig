@@ -1,4 +1,4 @@
-{% extends 'layout/twig/accordion-layout.twig' %}
+{% extends 'layout/accordion-layout.twig' %}
 
 {% block htmlTitle %}Repeat application - {% endblock %}
 
@@ -62,7 +62,7 @@
 }) ? '' }}
 
 <li id="repeat-application-section" class="section current" data-cy="section-current">
-    <h2 class="heading-medium accordion-header flush--top">Is the donor making a repeat application to register their LPA?</h2>
+    <h1 class="heading-medium accordion-header flush--top">Is the donor making a repeat application to register their LPA?</h1>
     <div class="accordion-info">
         <div class="text">
             <details class="form-group">
@@ -90,7 +90,7 @@
                     {{ formRadio(isRepeatApplication) }}
 
                     <div class="panel panel-border-narrow js-hidden" id="repeat-application-details">
-                        <h3 class="visually-hidden">Repeat application details</h3>
+                        <h2 class="visually-hidden">Repeat application details</h2>
 
                         {{ macros.formGroup(repeatCaseNumber) }}
 

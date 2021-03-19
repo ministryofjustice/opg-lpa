@@ -1,6 +1,14 @@
-{% extends 'layout/twig/accordion-layout.twig' %}
+{% extends 'layout/accordion-layout.twig' %}
 
 {% block htmlTitle %}Type of LPA - {% endblock %}
+
+{%- block accordionInstructions -%}
+    <div class="govuk-details__text text">
+        <p>We'll use your answers to the questions that follow to make a Lasting Power of Attorney (LPA) that you can save and print, get everyone to sign, then send to the Office of the Public Guardian for registration.</p>
+        <p>We'll save the LPA as you progress so you do not need to do it all in one go.</p>
+        <p>If this is the first time you’re making an LPA, you may want to look at our <a href="https://www.lastingpowerofattorney.service.gov.uk/guide#topic-before-you-begin" class="js-guidance" data-journey-click="page:link:help: find out more about how to prepare">Before you begin</a> help page. It explains the decisions the <a href="https://www.lastingpowerofattorney.service.gov.uk/guide#topic-donor" class="js-guidance" data-journey-click="page:link:help: donor">donor</a> has to make about their LPA and the information you’ll need to make an LPA.</p>
+    </div>
+{%- endblock -%}
 
 {% block content %}
 
@@ -33,7 +41,7 @@
 
 <li id="lpa-type-section" class="section current" data-cy="section-current">
 
-    <h2 class="heading-medium accordion-header">What type of LPA do you want to make?</h2>
+    <h1 class="heading-medium accordion-header">What type of LPA do you want to make?</h1>
 
     <div class="accordion-info">
         <div class="text">

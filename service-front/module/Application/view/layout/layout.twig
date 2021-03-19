@@ -83,15 +83,16 @@
         {{ accountInfo() }}
         <a name="main-content"></a>
         {% block errorSummary %}{% endblock %}
+        {% block mainTitle %}
         <h1 class="heading-xlarge" data-cy="main-title">
-            {% block supportTitleTop %}{% endblock %}
-            {% block pageTitle %} Make a lasting power of attorney {% endblock %}
+            {% block pageTitle %}Make a lasting power of attorney{% endblock %}
             {% block supportTitleBottom %}{% endblock %}
         </h1>
+        {% endblock %}
 
         <div class="content-body">
 
-            {% import 'layout/twig/flash.twig' as flash %}
+            {% import 'layout/flash.twig' as flash %}
 
             {{ flash.render('error', 'alert-error', 'icon-cross') }}
             {{ flash.render('info', 'alert-info', 'icon-information') }}
@@ -99,12 +100,10 @@
             {{ flash.render('success', 'alert-success', 'icon-tick') }}
             {{ flash.render('warning', 'alert-warning', 'icon-important-small') }}
 
+            {% block accordionInstructions %}{% endblock %}
             {% block accordionTop %}{% endblock %}
-
             {% block content %}{% endblock %}
-
             {% block accordionBottom %}{% endblock %}
-
         </div>
 
         {% block divider %}
