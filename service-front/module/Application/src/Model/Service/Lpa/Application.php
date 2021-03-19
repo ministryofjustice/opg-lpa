@@ -214,10 +214,9 @@ class Application extends AbstractService implements ApiClientAwareInterface
                             // Note this may set progress to "Completed" again
                             $progress = $metadata[Lpa::SIRIUS_PROCESSING_STATUS];
                         }
-                        if ($processingStatus === 'Returned') {
-                            if (isset($metadata[Lpa::APPLICATION_REJECTED_DATE])) {
-                                $returnDate = $metadata[Lpa::APPLICATION_REJECTED_DATE];
-                            }
+
+                        if ($processingStatus === 'Returned' && isset($metadata[Lpa::APPLICATION_REJECTED_DATE])) {
+                            $returnDate = $metadata[Lpa::APPLICATION_REJECTED_DATE];
                         }
                     }
 
