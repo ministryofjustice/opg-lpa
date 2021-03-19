@@ -211,6 +211,13 @@
                 {{ formElementErrorsV2(dobDay) }}
                 {{ formElementErrorsV2(dob) }}
             </div>
+            
+            <div class="error-group-popup">
+                {{ formElementErrorsV2(dobYear) }}
+                {{ formElementErrorsV2(dobMonth) }}
+                {{ formElementErrorsV2(dobDay) }}
+                {{ formElementErrorsV2(dob) }}
+            </div>
 
             <div class="form-group form-group-day {{ dob.getMessages|length >0 ? 'form-group-error'}}">
                 <label class="form-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
@@ -227,12 +234,6 @@
                 {{ formElement(dobYear) }}
             </div>
 
-            <div class="error-group-popup">
-                {{ formElementErrorsV2(dobYear) }}
-                {{ formElementErrorsV2(dobMonth) }}
-                {{ formElementErrorsV2(dobDay) }}
-                {{ formElementErrorsV2(dob) }}
-            </div>
         </div>
 
     </fieldset>

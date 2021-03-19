@@ -36,31 +36,27 @@
 {% endif %}
 
 <li id="who-are-you-section" class="section current" data-cy="section-current">
-
     <h2 class="heading-medium accordion-header flush--top">Who was using the LPA service?</h2>
 
     {% if not form %}
-    <div class="accordion-info">
-        <div class="text">
-            <p>Thanks, you have already answered this question.</p>
+        <div class="accordion-info">
+            <div class="text">
+                <p>Thanks, you have already answered this question.</p>
 
-            <p>Your answer was saved separately from your LPA and is anonymous. This means that it cannot now be linked to you and you cannot change it.</p>
-
+                <p>Your answer was saved separately from your LPA and is anonymous. This means that it cannot now be linked to you and you cannot change it.</p>
+            </div>
         </div>
-    </div>
-
-    <div class="form-group">
-        <a href="{{ nextUrl }}" role="button" class="button">{{ (finalCheckAccessible(lpa) ? 'Return to final check' : 'Continue') }}</a>
-    </div>
-
+        <div class="form-group">
+            <a href="{{ nextUrl }}" role="button" class="button">{{ (finalCheckAccessible(lpa) ? 'Return to final check' : 'Continue') }}</a>
+        </div>
     {% else %}
-    <div class="accordion-info">
-		<div class="text">
-        	<p>We think we can make this service better by finding out how people use it.</p>
-        	<p>To do this, we'd like to know who was using the digital LPA service - for instance, if a friend, family member or charity helped the donor a lot, or if a professional made it on their behalf.</p>
-        	<p>Your answer will be completely anonymous. It will not be linked to you, this LPA or your personal information.</p>
+        <div class="accordion-info">
+            <div class="text">
+                <p>We think we can make this service better by finding out how people use it.</p>
+                <p>To do this, we'd like to know who was using the digital LPA service - for instance, if a friend, family member or charity helped the donor a lot, or if a professional made it on their behalf.</p>
+                <p>Your answer will be completely anonymous. It will not be linked to you, this LPA or your personal information.</p>
+            </div>
         </div>
-    </div>
 
     {# begin form #}
     {{ form.prepare() ? '' }}
@@ -72,104 +68,99 @@
 
         <div class="form-group {{ who.getMessages|length >0 ? 'form-group-error'}}">
             <fieldset>
-
                 <legend class="visually-hidden">Who was using the LPA service</legend>
 
                 {{ formElementErrorsV2(who) }}
 
                 <div class="multiple-choice">
+                    {{ formElementErrorsV2(whoOptions['donor']) }}
                     {{ formInput(whoOptions['donor']) }}
                     <label class="text block-label" for="{{ whoOptions['donor'].getAttribute('id') }}">
                         {{ whoOptions['donor'].getOption('label')|raw }}
                     </label>
                 </div>
-                {{ formElementErrorsV2(whoOptions['donor']) }}
 
                 <div class="multiple-choice">
+                    {{ formElementErrorsV2(whoOptions['friend-or-family']) }}
                     {{ formInput(whoOptions['friend-or-family']) }}
                     <label class="text block-label" for="{{ whoOptions['friend-or-family'].getAttribute('id') }}">
                         {{ whoOptions['friend-or-family'].getOption('label')|raw }}
                     </label>
                 </div>
-                {{ formElementErrorsV2(whoOptions['friend-or-family']) }}
 
                 <div class="multiple-choice">
+                    {{ formElementErrorsV2(whoOptions['finance-professional']) }}
                     {{ formInput(whoOptions['finance-professional']) }}
                     <label class="text block-label" for="{{ whoOptions['finance-professional'].getAttribute('id') }}">
                         {{ whoOptions['finance-professional'].getOption('label')|raw }}
                     </label>
                 </div>
-                {{ formElementErrorsV2(whoOptions['finance-professional']) }}
 
                 <div class="multiple-choice">
+                    {{ formElementErrorsV2(whoOptions['legal-professional']) }}
                     {{ formInput(whoOptions['legal-professional']) }}
                     <label class="text block-label" for="{{ whoOptions['legal-professional'].getAttribute('id') }}">
                         {{ whoOptions['legal-professional'].getOption('label')|raw }}
                     </label>
                 </div>
-                {{ formElementErrorsV2(whoOptions['legal-professional']) }}
 
                 <div class="multiple-choice">
+                    {{ formElementErrorsV2(whoOptions['estate-planning-professional']) }}
                     {{ formInput(whoOptions['estate-planning-professional']) }}
                     <label class="text block-label" for="{{ whoOptions['estate-planning-professional'].getAttribute('id') }}">
                         {{ whoOptions['estate-planning-professional'].getOption('label')|raw }}
                     </label>
                 </div>
-                {{ formElementErrorsV2(whoOptions['estate-planning-professional']) }}
 
                 <div class="multiple-choice">
+                    {{ formElementErrorsV2(whoOptions['digital-partner']) }}
                     {{ formInput(whoOptions['digital-partner']) }}
                     <label class="text block-label" for="{{ whoOptions['digital-partner'].getAttribute('id') }}">
                         {{ whoOptions['digital-partner'].getOption('label')|raw }}
                     </label>
                 </div>
-                {{ formElementErrorsV2(whoOptions['digital-partner']) }}
 
                 <div class="multiple-choice">
+                    {{ formElementErrorsV2(whoOptions['charity']) }}
                     {{ formInput(whoOptions['charity']) }}
                     <label class="text block-label" for="{{ whoOptions['charity'].getAttribute('id') }}">
                         {{ whoOptions['charity'].getOption('label')|raw }}
                     </label>
                 </div>
-                {{ formElementErrorsV2(whoOptions['charity']) }}
 
                 <div class="multiple-choice">
+                    {{ formElementErrorsV2(whoOptions['organisation']) }}
                     {{ formInput(whoOptions['organisation']) }}
                     <label class="text block-label" for="{{ whoOptions['organisation'].getAttribute('id') }}">
                         {{ whoOptions['organisation'].getOption('label')|raw }}
                     </label>
                 </div>
-                {{ formElementErrorsV2(whoOptions['organisation']) }}
 
                 <div class="multiple-choice" data-target="other-input">
+                    {{ formElementErrorsV2(whoOptions['other']) }}
                     {{ formInput(whoOptions['other']) }}
                     <label class="text block-label" for="{{ whoOptions['other'].getAttribute('id') }}">
                         {{ whoOptions['other'].getOption('label')|raw }}
                     </label>
                 </div>
-                {{ formElementErrorsV2(whoOptions['other']) }}
 
                 <div class="panel panel-border-narrow js-hidden" id="other-input">
                     <label class="form-label" for="{{ other.getAttribute('id') }}">
                         {{ other.getOption('label') }}
-                        {{ formElementErrorsV2(other) }}
                     </label>
+                    {{ formElementErrorsV2(other) }}
                     {{ formText(other) }}
                 </div>
 
                 <div class="multiple-choice">
+                    {{ formElementErrorsV2(whoOptions['notSaid']) }}
                     {{ formInput(whoOptions['notSaid']) }}
                     <label class="text block-label" for="{{ whoOptions['notSaid'].getAttribute('id') }}">
                         {{ whoOptions['notSaid'].getOption('label')|raw }}
                     </label>
                 </div>
-                {{ formElementErrorsV2(whoOptions['notSaid']) }}
-
-
-
             </fieldset>
         </div>
-
         <div class="form-group">
             {{ formElement(form.get('save')) }}
         </div>

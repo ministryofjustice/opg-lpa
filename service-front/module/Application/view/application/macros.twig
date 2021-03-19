@@ -45,9 +45,9 @@
 {% macro formGroup(element) %}
 
 <div class="form-group{{ element.getMessages|length >0 ? ' form-group-error'}}">
+    {{ formElementErrorsV2(element) }}
     <label class="form-label" for="{{ element.getAttribute('id') }}">
         {{ element.getOption('label') }}
-        {{ formElementErrorsV2(element) }}
     </label>
     {{ formElement(element) }}
 </div>
