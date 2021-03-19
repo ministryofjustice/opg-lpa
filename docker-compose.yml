@@ -206,8 +206,8 @@ services:
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-api-app
       ENABLE_XDEBUG: "true"
-      XDEBUG_MODE: 'debug'
-      XDEBUG_CONFIG: client_host=host.docker.internal client_port=9003
+      XDEBUG_MODE: "debug"
+      XDEBUG_CONFIG: client_host=host.docker.internal client_port=9003 mode=develop,debug
 
   api-composer:
     image: composer:latest

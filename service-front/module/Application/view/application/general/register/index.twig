@@ -92,9 +92,9 @@
         {% include 'application/partials/password-rules.twig' %}
 
         <div class="form-group {{ password.getMessages|length >0 ? 'form-group-error'}}">
+            {{ formElementErrorsV2(password) }}
             <label class="form-label" for="{{ password.getAttribute('id') }}">
                 {{ password.getOption('label') }}
-                {{ formElementErrorsV2(password) }}
             </label>
             {{ formElement(password) }}
             <div>

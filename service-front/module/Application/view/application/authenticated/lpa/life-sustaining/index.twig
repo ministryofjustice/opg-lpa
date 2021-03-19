@@ -33,9 +33,7 @@
 
 
 <li id="life-sustaining-section" class="section current" data-cy="section-current">
-
     <h2 class="heading-medium accordion-header flush--top">Who does the donor want to make decisions about life-sustaining treatment?</h2>
-
     <div class="accordion-info">
         <div class="text">
             <p class="text">This is a very important decision. The donor should read the guidance carefully before they answer.</p>
@@ -54,9 +52,7 @@
 
         <fieldset>
             <legend class="visually-hidden">Life-sustaining treatment decision</legend>
-
             <h2 class="heading-medium flush--top text">Who does the donor want to make decisions about life-sustaining treatment?</h2>
-
             <div class="form-group {{ canSustainLife.getMessages|length > 0 ? 'form-group-error'}}">
                 {{ formElementErrorsV2(canSustainLife) }}
 
@@ -71,12 +67,9 @@
                 <div class="panel panel-border-thin">
                     <p class="text">Doctors will make any decisions about life-sustaining treatment, taking into account the donor’s best interests and, where possible, the views of others involved in the donor’s welfare, such as their attorneys and family members.</p>
                 </div>
-
             </div>
         </fieldset>
-
         <p class="text">After the LPA document is printed, the donor will need to sign and date the option they've chosen. This must be witnessed. The witness must also sign and include their full name and address. If they do not,  OPG cannot register the LPA and the donor may have to pay the application fee again.</p>
-
         <div class="form-group">
             {{ formElement(form.get('save')) }}
         </div>

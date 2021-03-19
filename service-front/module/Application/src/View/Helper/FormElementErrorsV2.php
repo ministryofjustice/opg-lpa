@@ -11,7 +11,7 @@ class FormElementErrorsV2 extends \Laminas\Form\View\Helper\FormElementErrors
             return $this;
         }
 
-        $this->setMessageOpenFormat('<span class="error-message text">');
+        $this->setMessageOpenFormat('<span class="error-message text"><span class="visually-hidden">Error:</span>');
         $this->setMessageCloseString('</span>');
         $this->setMessageSeparatorString('<br>');
 
