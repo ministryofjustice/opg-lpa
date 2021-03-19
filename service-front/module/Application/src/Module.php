@@ -306,7 +306,7 @@ class Module implements FormElementProviderInterface
 
             if (file_exists($potentialTwigTemplate)) {
                 // Use the Twig layout
-                $viewModel->setTemplate('layout/twig/layout');
+                $viewModel->setTemplate('layout/layout');
             }
         }
     }
