@@ -166,6 +166,13 @@
                 margin-right: 20px;
             }
         }
+
+        .form-reuse-details {
+            .error-message {
+                left: 0;
+                padding-bottom: 15px;
+            }
+        }
     }
 
     .form-date {
@@ -181,7 +188,8 @@
             position: relative;
             top: 13px;
             left: 150px;
-            width: 280%;
+            width: 80%;
+            padding-bottom: 15px;
         }
     }
 
@@ -193,6 +201,7 @@
                 top: 3px;
                 left: 0;
                 width: 100%;
+                padding-bottom: 0px;
             }
         }
 

@@ -64,7 +64,6 @@
     </div>
 
     <h2 class="heading-medium flush--top">How would you rate your experience with this service?</h2>
-
     <div class="form-group {{ type.getMessages|length >0 ? 'form-group-error'}}">
         <fieldset>
             <legend class="visually-hidden">Experience rating</legend>
@@ -74,23 +73,20 @@
     </div>
 
     <h2 class="heading-medium text">Please take a moment to tell us about your experience, what worked and what did not.</h2>
-
     <fieldset>
         <legend class="group text">
         </legend>
         <div class="form-group {{ details.getMessages|length >0 ? 'form-group-error'}}">
+            {{ formElementErrorsV2(details) }}
             <label class="form-label text" for="{{ details.getAttribute('id') }}">
                 <span class="visually-hidden">Your feedback<br></span>
                 <span class="form-hint">2000 characters max<br></span>
-                {{ formElementErrorsV2(details) }}
             </label>
             {{ formElement(details) }}
         </div>
     </fieldset>
 
-
     <h2 class="heading-medium flush--top">Your email address (optional)</h2>
-
     <fieldset>
         <legend class="group text">
         </legend>
@@ -100,19 +96,17 @@
     </fieldset>
 
     <h2 class="heading-medium flush--top">Your phone number (optional)</h2>
-
     <fieldset>
         <legend class="group text">
         </legend>
         <div class="form-group {{ phone.getMessages|length >0 ? 'form-group-error'}}">
+            {{ formElementErrorsV2(phone) }}
             <label class="form-label text" for="{{ phone.getAttribute('id') }}">
                 <span class="visually-hidden">Your phone number (optional)</span>
-                {{ formElementErrorsV2(phone) }}
             </label>
             {{ formElement(phone) }}
         </div>
     </fieldset>
-
     <input type="submit" name="send" id="send" class="button" data-cy="feedback-submit-button" value="Send feedback">
 
 {{ form().closeTag|raw }}

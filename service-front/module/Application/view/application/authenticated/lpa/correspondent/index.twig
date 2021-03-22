@@ -69,6 +69,7 @@
 
 {{ email.setAttributes({
     id: 'email-address',
+    type: 'text',
     class: 'form-control'
 }) ? '' }}
 
@@ -161,13 +162,7 @@
                 </div>
 
                 <div class="panel panel-border-narrow js-hidden" id="contact-by-phone">
-                    <div class="form-group {{ phone.getMessages|length >0 or contactByPhone.getMessages|length >0 ? 'form-group-error'}}">
-                        <label class="form-label" for="{{ phone.getAttribute('id') }}">
-                            {{ phone.getOption('label') }}
-                            {{ formElementErrorsV2(phone) }}
-                        </label>
-                        {{ formText(phone) }}
-                    </div>
+                    {{ macros.formGroup(phone) }}
                 </div>
 
                 <div class="multiple-choice" {{ contactEmail ? '' : 'data-target="contact-by-email"' }}>
@@ -177,13 +172,7 @@
                 </div>
 
                 <div class="panel panel-border-narrow js-hidden" id="contact-by-email">
-                    <div class="form-group {{ email.getMessages|length >0 or contactByEmail.getMessages|length >0 ? 'form-group-error'}}">
-                        <label class="form-label" for="{{ email.getAttribute('id') }}">
-                            {{ email.getOption('label') }}
-                            {{ formElementErrorsV2(email) }}
-                        </label>
-                        {{ formText(email) }}
-                    </div>
+                    {{ macros.formGroup(email) }}
                 </div>
 
             </fieldset>

@@ -194,7 +194,6 @@
     {{ formElement(form.getCsrf) }}
 
     <h2 class="heading-medium popup-exclude">What is the donor's name?</h2>
-
     <fieldset>
         <legend class="visually-hidden">Add donor details</legend>
 
@@ -219,14 +218,11 @@
                 </div>
             </details>
         </div>
-
     </fieldset>
 
     <h2 class="heading-medium popup-exclude">What is the donor's date of birth?</h2>
-
     <fieldset id="{{ dob.getAttribute('name') }}">
         <legend class="form-label dob-label">Date of birth</legend>
-
         <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'form-group-error'}}">
             <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
@@ -237,42 +233,35 @@
                 {{ formElementErrorsV2(dob) }}
             </div>
 
-            <div class="form-group form-group-day {{ dob.getMessages|length >0 ? 'form-group-error'}}">
-                <label class="form-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
-                {{ formElement(dobDay) }}
-            </div>
-
-            <div class="form-group form-group-month {{ dob.getMessages|length >0 ? 'form-group-error'}}">
-                <label class="form-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
-                {{ formElement(dobMonth) }}
-            </div>
-
-            <div class="form-group form-group-year {{ dob.getMessages|length >0 ? 'form-group-error'}}">
-                <label class="form-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
-                {{ formElement(dobYear) }}
-            </div>
-
             <div class="error-group-popup">
                 {{ formElementErrorsV2(dobYear) }}
                 {{ formElementErrorsV2(dobMonth) }}
                 {{ formElementErrorsV2(dobDay) }}
                 {{ formElementErrorsV2(dob) }}
             </div>
-        </div>
 
+            <div class="form-group form-group-day {{ dob.getMessages|length >0 ? 'form-group-error'}}">
+                <label class="form-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
+                {{ formElement(dobDay) }}
+            </div>
+            <div class="form-group form-group-month {{ dob.getMessages|length >0 ? 'form-group-error'}}">
+                <label class="form-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
+                {{ formElement(dobMonth) }}
+            </div>
+            <div class="form-group form-group-year {{ dob.getMessages|length >0 ? 'form-group-error'}}">
+                <label class="form-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
+                {{ formElement(dobYear) }}
+            </div>
+        </div>
     </fieldset>
 
     <h2 class="heading-medium popup-exclude">What is the donor's email address?</h2>
-
     <fieldset>
         <legend class="visually-hidden">Email address</legend>
-
         {{ macros.formGroup(email) }}
-
     </fieldset>
 
     <h2 class="heading-medium popup-exclude">What is the donor's address?</h2>
-
     <fieldset class="postcodelookup">
         <legend class="visually-hidden">Address</legend>
         <div class="js-PostcodeLookup__postal-add">
@@ -286,16 +275,14 @@
     <div class="single-checkbox-group form-group {{ canSign.getMessages|length >0 ? 'form-group-error'}}">
         <fieldset>
             <legend class="visually-hidden"></legend>
-
             <div class="multiple-choice">
+                {{ formElementErrorsV2(canSign) }}
                 {{ formElement(canSign) }}
                 <label for="{{ canSign.getAttribute('id') }}">
                     {{ canSign.getOption('label') }}
                     <span class="form-hint flush--bottom">We'll add an extra sheet to the LPA so someone can sign on the donor's behalf</span>
-                    {{ formElementErrorsV2(canSign) }}
                 </label>
             </div>
-
         </fieldset>
     </div>
 
