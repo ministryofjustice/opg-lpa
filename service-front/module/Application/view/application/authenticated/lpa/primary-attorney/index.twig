@@ -1,11 +1,11 @@
 {% extends 'layout/accordion-layout.twig' %}
 
-{% block htmlTitle %}Attorneys - {% endblock %}
+{%- set pageTitle = 'Who are the attorneys?' -%}
 
 {% block content %}
 
 <li id="primary-attorney-section" class="section current" data-cy="section-current">
-    <h1 class="heading-medium accordion-header flush--top">Who are the attorneys?</h1>
+    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
     <div class="accordion-info">
         <div class="text">
             <p>Attorneys are people the donor appoints to make decisions on their behalf.</p>

@@ -1,6 +1,6 @@
 {% extends 'layout/accordion-layout.twig' %}
 
-{% block htmlTitle %}Donor - {% endblock %}
+{%- set pageTitle = 'Who is the donor for this LPA?' -%}
 
 {% block content %}
 
@@ -8,7 +8,7 @@
 
 <li id="donor-section" class="section current" data-cy="section-current">
 
-    <h1 class="heading-medium accordion-header flush--top">Who is the donor for this LPA?</h1>
+    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
         <div class="text">
