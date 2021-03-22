@@ -1,8 +1,6 @@
 {% extends 'layout/layout.twig' %}
 
-{% block htmlTitle %}Track your LPA - {% endblock %}
-
-{% block pageTitle %}{{ lpa.document.donor.name }}{% endblock %}
+{%- set pageTitle = lpa.document.donor.name -%}
 
 {% block supportTitleBottom %}
 

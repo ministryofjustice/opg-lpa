@@ -2,8 +2,7 @@
 
 {% set hideFeedbackLink = true %}
 
-{% block htmlTitle %}Send us feedback - {% endblock %}
-{% block pageTitle %}Send us feedback{% endblock %}
+{%- set pageTitle = 'Send us feedback' -%}
 
 {% set type = form.get('rating').setOptions({ label: 'Rate your experience' }) %}
 

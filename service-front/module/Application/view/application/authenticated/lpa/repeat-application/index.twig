@@ -1,6 +1,6 @@
 {% extends 'layout/accordion-layout.twig' %}
 
-{% block htmlTitle %}Repeat application - {% endblock %}
+{%- set pageTitle = 'Is the donor making a repeat application to register their LPA?' -%}
 
 {% block content %}
 
@@ -62,7 +62,7 @@
 }) ? '' }}
 
 <li id="repeat-application-section" class="section current" data-cy="section-current">
-    <h1 class="heading-medium accordion-header flush--top">Is the donor making a repeat application to register their LPA?</h1>
+    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
     <div class="accordion-info">
         <div class="text">
             <details class="form-group">

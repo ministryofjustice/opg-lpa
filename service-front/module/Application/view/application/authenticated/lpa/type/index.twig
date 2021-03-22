@@ -1,6 +1,6 @@
 {% extends 'layout/accordion-layout.twig' %}
 
-{% block htmlTitle %}Type of LPA - {% endblock %}
+{%- set pageTitle = 'What type of LPA do you want to make?' -%}
 
 {%- block accordionInstructions -%}
     <div class="govuk-details__text text">
@@ -41,7 +41,7 @@
 
 <li id="lpa-type-section" class="section current" data-cy="section-current">
 
-    <h1 class="heading-medium accordion-header">What type of LPA do you want to make?</h1>
+    <h1 class="heading-medium accordion-header">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
         <div class="text">
