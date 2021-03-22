@@ -1,4 +1,4 @@
-{% extends isPopup ? 'layout/twig/popup.twig' : 'layout/twig/layout.twig' %}
+{% extends isPopup ? 'layout/popup.twig' : 'layout/layout.twig' %}
 
 {% block htmlTitle %}Replacement attorney details - {% endblock %}
 
@@ -172,7 +172,6 @@
     {{ formElementErrorsV2(form.getCsrf) }}
 
     <h2 class="heading-medium popup-exclude">What is the replacement attorney's name?</h2>
-
     <fieldset>
         <legend class="visually-hidden">Add replacement attorney's name</legend>
 
@@ -183,10 +182,8 @@
     </fieldset>
 
     <h2 class="heading-medium popup-exclude">What is the replacement attorney's date of birth?</h2>
-
     <fieldset id="{{ dob.getAttribute('name') }}">
         <legend class="form-label dob-label">Date of birth</legend>
-
         <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'form-group-error'}}">
             <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
@@ -197,6 +194,12 @@
                 {{ formElementErrorsV2(dob) }}
             </div>
 
+            <div class="error-group-popup">
+                {{ formElementErrorsV2(dobYear) }}
+                {{ formElementErrorsV2(dobMonth) }}
+                {{ formElementErrorsV2(dobDay) }}
+                {{ formElementErrorsV2(dob) }}
+            </div>
 
             <div class="form-group form-group-day {{ dob.getMessages|length >0 ? 'form-group-error'}}">
                 <label class="form-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
@@ -212,20 +215,10 @@
                 <label class="form-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
                 {{ formElement(dobYear) }}
             </div>
-
-            <div class="error-group-popup">
-                {{ formElementErrorsV2(dobYear) }}
-                {{ formElementErrorsV2(dobMonth) }}
-                {{ formElementErrorsV2(dobDay) }}
-                {{ formElementErrorsV2(dob) }}
-            </div>
-
         </div>
-
     </fieldset>
 
     <h2 class="heading-medium popup-exclude">What is the replacement attorney's address?</h2>
-
     <fieldset class="postcodelookup">
         <legend class="visually-hidden">Replacement attorney's address</legend>
         <div class="js-PostcodeLookup__postal-add">

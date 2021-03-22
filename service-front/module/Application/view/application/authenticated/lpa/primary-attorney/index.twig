@@ -1,17 +1,14 @@
-{% extends 'layout/twig/accordion-layout.twig' %}
+{% extends 'layout/accordion-layout.twig' %}
 
 {% block htmlTitle %}Attorneys - {% endblock %}
 
 {% block content %}
 
 <li id="primary-attorney-section" class="section current" data-cy="section-current">
-
-    <h2 class="heading-medium accordion-header flush--top">Who are the attorneys?</h2>
-
+    <h1 class="heading-medium accordion-header flush--top">Who are the attorneys?</h1>
     <div class="accordion-info">
         <div class="text">
             <p>Attorneys are people the donor appoints to make decisions on their behalf.</p>
-
             <ul class="list list-bullet">
                 <li>A donor can have 1 or more attorneys</li>
                 <li>Attorneys must be 18 or over</li>
@@ -30,17 +27,14 @@
     </div>
 
     {% if (attorneys) %}
-
-        <h3 class="heading-medium flush--top">
+        <h2 class="heading-medium flush--top">
             The attorney{% if attorneys|length > 1 %}s{% endif %}
-        </h3>
-
+        </h2>
         <ul>
             {% for attorney in attorneys %}
                 {% include 'application/authenticated/lpa/primary-attorney/partials/attorney.twig' with attorney %}
             {% endfor %}
         </ul>
-
     {% endif %}
 
     <div class="{% if (attorneys) %}action-item{% endif %} form-group">
@@ -54,11 +48,9 @@
     </div>
 
     {% if (attorneys) %}
-
         <div class="form-group">
             <a href="{{ nextUrl }}" role="button" data-cy="save" class="button">{{ (finalCheckAccessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
-
     {% endif %}
 
 </li>

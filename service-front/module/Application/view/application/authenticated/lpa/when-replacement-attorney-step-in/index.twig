@@ -1,4 +1,4 @@
-{% extends 'layout/twig/accordion-layout.twig' %}
+{% extends 'layout/accordion-layout.twig' %}
 
 {% block htmlTitle %}How replacement attorneys step in - {% endblock %}
 
@@ -72,9 +72,7 @@
 {{ whenDetails.setOptions({label:'Details'}) ? '' }}
 
 <li id="when-replacement-attorney-step-in-section" class="section current" data-cy="section-current">
-
-	<h2 class="heading-medium accordion-header flush--top">How should the replacement attorneys step in?</h2>
-
+    <h1 class="heading-medium accordion-header flush--top">How should the replacement attorneys step in?</h1>
     <div class="accordion-info">
 		<div class="text">
 			<p>The donor can choose when their replacement attorneys step in and in what order.</p>
@@ -95,7 +93,6 @@
 			<fieldset>
 	            <legend class="visually-hidden">How should the replacement attorneys step in?</legend>
 
-
 	                {{ formElementErrorsV2(when) }}
 	                {{ formRadio(when) }}
 
@@ -108,8 +105,6 @@
 	                </div>
 	        </fieldset>
 	    </div>
-
-
 		<div class="form-group">
             {{ formElement(form.get('save')) }}
         </div>
