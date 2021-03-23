@@ -132,6 +132,16 @@ Install cypress globally:
 
 The package.json in the root of the repo has all of the required dev dependancies for Cypress. Add plugins to this as needed using `npm i <package-name> --saveDev`
 
+you have 2 options you can use:
+
+For general use  and for exploratory work you can just run:
+
+`
+cypress open
+`
+
+Alternatively, the makefile has a default command to point at the existing cypress tests, and will list them.
+
 Assuming that the dev stack has been already started using `make dc-up`, open a new terminal and run:
 
 ```bash
