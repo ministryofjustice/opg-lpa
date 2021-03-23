@@ -52,7 +52,7 @@ jobs:
           commit-message: Update dependabot for composer and npm
           committer: GitHub <noreply@github.com>  
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          branch: weekly-dependabot-updates-{{ steps.date.output.date }}
+          branch: weekly-dependabot-updates-${{ steps.date.output.date }}
           labels: dependabot-update
-          title: Weekly dependabot update {{steps.date.output.date }}
+          title: Weekly dependabot update ${{steps.date.output.date }}
           draft: true
