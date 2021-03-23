@@ -63,16 +63,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.175.0",
+            "version": "3.175.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "31baa9e0c4330f01eb74b8a7ef086e9d34f8391e"
+                "reference": "fce65d31f033c39cd3615fd2d3e503e212d81a3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/31baa9e0c4330f01eb74b8a7ef086e9d34f8391e",
-                "reference": "31baa9e0c4330f01eb74b8a7ef086e9d34f8391e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fce65d31f033c39cd3615fd2d3e503e212d81a3e",
+                "reference": "fce65d31f033c39cd3615fd2d3e503e212d81a3e",
                 "shasum": ""
             },
             "require": {
@@ -147,9 +147,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.175.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.175.1"
             },
-            "time": "2021-03-19T18:13:22+00:00"
+            "time": "2021-03-22T18:13:37+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -1431,16 +1431,16 @@
         },
         {
             "name": "laminas/laminas-form",
-            "version": "2.16.1",
+            "version": "2.16.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-form.git",
-                "reference": "3ed0b37dd2b54bb2e69f1f0c9e86aeb5e3b0b391"
+                "reference": "4262d6d6f0e7a47ef8db969481e59d58a0118f0e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-form/zipball/3ed0b37dd2b54bb2e69f1f0c9e86aeb5e3b0b391",
-                "reference": "3ed0b37dd2b54bb2e69f1f0c9e86aeb5e3b0b391",
+                "url": "https://api.github.com/repos/laminas/laminas-form/zipball/4262d6d6f0e7a47ef8db969481e59d58a0118f0e",
+                "reference": "4262d6d6f0e7a47ef8db969481e59d58a0118f0e",
                 "shasum": ""
             },
             "require": {
@@ -1449,6 +1449,9 @@
                 "laminas/laminas-stdlib": "^3.3",
                 "laminas/laminas-zendframework-bridge": "^1.1",
                 "php": "^7.3 || ~8.0.0"
+            },
+            "conflict": {
+                "laminas/laminas-code": "< 3.5.0"
             },
             "replace": {
                 "zendframework/zend-form": "^2.14.3"
@@ -1517,7 +1520,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-03-22T06:13:27+00:00"
+            "time": "2021-03-23T06:23:46+00:00"
         },
         {
             "name": "laminas/laminas-http",
