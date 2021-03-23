@@ -26,6 +26,8 @@ jobs:
           tools: composer:v2
       # setup node
       - uses: actions/setup-node@v2
+        with: 
+           node-version: '15'
       # composer
       - name: Update outdated dependencies - composer
         run: |
