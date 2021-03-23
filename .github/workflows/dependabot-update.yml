@@ -25,31 +25,34 @@ jobs:
           php-version: '7.4'
           tools: composer:v2
       # setup node
-      # - uses: actions/setup-node@v2
-      #  with:
-      #    node-version: '14'
-
-      - name: update outdated dependencies - composer
+      - uses: actions/setup-node@v2
+      # composer
+      - name: Update outdated dependencies - composer
         run: |
           echo "running composer updates..."
-          pwd
           cd tests
-          composer update --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
+          composer update --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
           cd ../service-front
-          composer update --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
+          composer update --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
           cd ../service-api
-          composer update --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
+          composer update --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
           cd ../service-admin
-          composer update --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
+          composer update --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
           cd ../service-pdf
-          composer update --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
-
+          composer update --prefer-dist --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
+      # npm
+      - name: Update outdated dependencies - npm
+        run: |
+          echo "running npm updates..."
+          cd service-front
+          npm update
+       # create a datestamp for the branch   
       - name: Get current time
         uses: srfrnk/current-time@master
         id: current-time
         with:
          format: DD-MM-YYYY
-      - name:  check value of branch name
+      - name:  Check value of branch name
         run: echo "branch name to be created $BRANCH_NAME"
         env:
          BRANCH_NAME: "weekly-dependabot-updates-${{ steps.current-time.outputs.formattedTime }}"
@@ -64,7 +67,9 @@ jobs:
           labels: dependabot-update
           title: Weekly dependabot update ${{ steps.current-time.outputs.formattedTime }}
           body:  |
-            **WEEKLY DEPENDABOT UPDATES (${{ steps.current-time.outputs.time }})**
+            **WEEKLY DEPENDABOT UPDATES (${{ steps.current-time.outputs.formattedTime }})**
+            
             This automated PR covers:
             - PHP `Composer`
+            - `NPM`
           draft: true
