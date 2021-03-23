@@ -19,7 +19,7 @@ Set up software on your machine required to run the application locally:
 
 Add a default profile which references your account to `~/.aws/config`:
 
-```
+```ini
 [default]
 region = eu-west-1
 mfa_serial=arn:aws:iam::111111111111:mfa/your.name
@@ -29,7 +29,7 @@ The value for `mfa_serial` is visible in the AWS console under *My security cred
 
 Add a `moj-lpa-dev` profile to `~/.aws/config` which references the default profile; this should include the ARN of the dev operator role from AWS (you'll need webops to supply this):
 
-```
+```ini
 [profile moj-lpa-dev]
 role_arn=arn:aws:iam::111111111111:role/operator
 source_profile = default
@@ -39,7 +39,7 @@ For the next step, you will need a temporary access key. Generate this using the
 
 Add your default profile to aws-vault:
 
-```
+```bash
 aws-vault add default
 ```
 
@@ -47,7 +47,7 @@ When prompted, enter the temporary access key you just generated via the AWS con
 
 Once this is done, check that you have access by running this command:
 
-```
+```bash
 aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id development/opg_lpa_front_email_sendgrid_api_key
 ```
 
@@ -59,14 +59,14 @@ NB This command is run when starting the application locally, which is why you n
 
 Download the repo via:
 
-```
+```bash
 git clone git@github.com:ministryofjustice/opg-lpa.git
 cd opg-lpa
 ```
 
 Within `opg-lpa` directory to *run* the project for the first time use the following:
 
-```
+```bash
 make dc-run
 make
 ```
@@ -80,7 +80,7 @@ The API service will be available (direct) via <http://localhost:7001>
 
 After the first time, you can *run* the project by:
 
-```
+```bash
 make
 ```
 
@@ -126,23 +126,29 @@ with the same command without having to rebuild/restart the container.
 
 the recommended way to run tests for the GUI runner is using npm. see: <https://docs.cypress.io/guides/getting-started/installing-cypress/#System-requirements>. this is useful if you want to see what the tests are physically doing.
 
+**note**: the below assumes that the dev stack has been already started using `make dc-up`.
+
 Install cypress globally:
 
-`npm i -g cypress`
+```bash
+npm i -g cypress
+```
 
-The package.json in the root of the repo has all of the required dev dependancies for Cypress. Add plugins to this as needed using `npm i <package-name> --saveDev`
+The package.json in the root of the repo has all of the required dev dependancies for Cypress. Add plugins to this as needed using
 
-you have 2 options you can use:
+```bash
+npm i <package-name> --saveDev
+```
 
-For general use  and for exploratory work you can just run:
+there are 2 options available:
 
-`
+For general use and exploratory work you can just run:
+
+```bash
 cypress open
-`
+```
 
-Alternatively, the makefile has a default command to point at the existing cypress tests, and will list them.
-
-Assuming that the dev stack has been already started using `make dc-up`, open a new terminal and run:
+Alternatively, the makefile has a default command to point at the existing cypress tests, and will list them. run the following:
 
 ```bash
 make cypress-gui-npm
