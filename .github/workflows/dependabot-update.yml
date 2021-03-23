@@ -44,21 +44,23 @@ jobs:
           cd ../service-pdf
           composer update --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
-      - name: get names of branch 
-        id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      - name: Get current time
+        uses: srfrnk/current-time@master
+        id: current-time
+        with:
+         format: DD-MM-YYYY
       - name:  check value of branch name
         run: echo "branch name to be created $BRANCH_NAME"
         env:
-         BRANCH_NAME: weekly-dependabot-updates-${{ steps.date.output.date }}
+         BRANCH_NAME: "weekly-dependabot-updates-{{ steps.current-time.outputs.formattedTime }}"
       # create PR 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3    
-        with:
-          commit-message: Update dependabot for composer and npm
-          committer: GitHub <noreply@github.com>  
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          branch: weekly-dependabot-updates-${{ steps.date.output.date }}
-          labels: dependabot-update
-          title: Weekly dependabot update ${{steps.date.output.date }}
-          draft: true
+      #- name: Create Pull Request
+      #  uses: peter-evans/create-pull-request@v3    
+      #  with:
+      #    commit-message: Update dependabot for composer and npm
+      #    committer: GitHub <noreply@github.com>  
+      #    author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+      #    branch: weekly-dependabot-updates-${{ steps.current-time.outputs.formattedTime }}
+      #    labels: dependabot-update
+      #    title: Weekly dependabot update ${{ steps.current-time.outputs.formattedTime }}
+      #    draft: true
