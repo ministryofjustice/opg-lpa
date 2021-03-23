@@ -31,6 +31,7 @@ jobs:
       
       - name: update outdated dependencies
         run: |
+          echo "running composer updates..."
           pwd
           cd tests
           composer update --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
@@ -50,7 +51,7 @@ jobs:
         with:
           commit-message: Update dependabot for composer and npm
           committer: GitHub <noreply@github.com>  
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           branch: weekly-dependabot-updates-{{ steps.date.output.date }}
           labels: dependabot-update
           title: Weekly dependabot update {{steps.date.output.date }}
