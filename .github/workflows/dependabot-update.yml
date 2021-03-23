@@ -48,7 +48,9 @@ jobs:
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
       - name:  check value of branch name
-        run: echo "branch name to be created weekly-dependabot-updates-${{ steps.date.output.date }}"
+        run: echo "branch name to be created $BRANCH_NAME"
+        env:
+         BRANCH_NAME: weekly-dependabot-updates-${{ steps.date.output.date }}
       # create PR 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3    
