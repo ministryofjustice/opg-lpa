@@ -28,7 +28,7 @@ jobs:
       # - uses: actions/setup-node@v2
       #  with:
       #    node-version: '14'
-      
+
       - name: update outdated dependencies
         run: |
           echo "running composer updates..."
@@ -44,7 +44,12 @@ jobs:
           cd ../service-pdf
           composer update --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
 
+      - name: get names of branch 
 
+        id: date
+        run: | 
+         echo "::set-output name=date::$(date +'%Y-%m-%d')"
+         echo "branch name to be created: weekly-dependabot-updates-${{ steps.date.output.date }}"
       # create PR 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3    
