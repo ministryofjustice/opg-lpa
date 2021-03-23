@@ -2,8 +2,11 @@
 
 name: Dependabot updates
 
-on: workflow_dispatch
-
+on:
+   workflow_dispatch:
+   push:
+      branches:
+      - LPAL-339-dependabot-weekly-scheduled-action #temporary for testing.
    
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -39,7 +42,7 @@ jobs:
           composer update --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
           cd ../service-pdf
           composer update --prefer-dist --no-suggest --no-interaction --no-scripts --optimize-autoloader --ignore-platform-reqs
-   
+
 
       # create PR 
       - name: Create Pull Request
@@ -50,4 +53,5 @@ jobs:
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com
           branch: weekly-dependabot-updates-{{ steps.date.output.date }}
           labels: dependabot-update
-          
+          title: Weekly dependabot update {{steps.date.output.date }}
+          draft: true
