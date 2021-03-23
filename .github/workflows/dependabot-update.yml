@@ -3,12 +3,10 @@
 name: Dependabot updates
 
 on:
-   workflow_dispatch:
-   push:
-      branches:
-      - LPAL-339-dependabot-weekly-scheduled-action #temporary for testing.
-   
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+  schedule:
+  - cron: '0 8 * * 1' # runs on a monday morning
+  workflow_dispatch:
+  
 jobs:
   # This workflow contains a single job called "build"
   build:
