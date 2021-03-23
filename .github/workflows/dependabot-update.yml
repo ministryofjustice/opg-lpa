@@ -52,7 +52,7 @@ jobs:
       - name:  check value of branch name
         run: echo "branch name to be created $BRANCH_NAME"
         env:
-         BRANCH_NAME: "weekly-dependabot-updates-{{ steps.current-time.outputs.formattedTime }}"
+         BRANCH_NAME: "weekly-dependabot-updates-${{ steps.current-time.outputs.formattedTime }}"
       # create PR 
       #- name: Create Pull Request
       #  uses: peter-evans/create-pull-request@v3    
