@@ -1,4 +1,8 @@
-# This is a basic workflow to help you get started with Actions
+# This workflow automates theprocess of updating and creating a PR for 
+# Dependabot updates. 
+
+# currently this runs against Composer and NPM. 
+# please add any updates to this if you create new package files for PHP or Node based projects.
 
 name: Dependabot updates
 
