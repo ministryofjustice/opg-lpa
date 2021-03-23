@@ -1,17 +1,17 @@
 # LPA Online Service
-The Office of the Public Guardian Lasting Power of Attorney online service: Managed by opg-org-infra &amp; Terraform.
 
+The Office of the Public Guardian Lasting Power of Attorney online service: Managed by opg-org-infra &amp; Terraform.
 
 ## Pre-requisites for Local Development
 
 Set up software on your machine required to run the application locally:
 
-*   Install `make` using the native package manager (assuming you are on Mac or Linux)
-*   Install [docker](https://docs.docker.com/get-docker/)
-*   Install [docker-compose](https://docs.docker.com/compose/install/)
-*   Install `awscli`: while this can be done via brew, this failed for me on Linux, so I used [these instructions](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) instead.
-*   Install [homebrew](https://docs.brew.sh/)
-*   Install dependencies for the Makefile using brew: `brew install aws-vault jq`
+* Install `make` using the native package manager (assuming you are on Mac or Linux)
+* Install [docker](https://docs.docker.com/get-docker/)
+* Install [docker-compose](https://docs.docker.com/compose/install/)
+* Install `awscli`: while this can be done via brew, this failed for me on Linux, so I used [these instructions](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) instead.
+* Install [homebrew](https://docs.brew.sh/)
+* Install dependencies for the Makefile using brew: `brew install aws-vault jq`
 
 ### Access to Amazon secrets
 
@@ -73,13 +73,13 @@ make
 
 The `Makefile` will fetch secrets using `aws secretsmanager` and `docker-compose` commands together to pass along environment variables removing the need for local configuration files.
 
+The LPA Tool service will be available via <https://localhost:7002/home>
+The Admin service will be available via <https://localhost:7003>
 
-The LPA Tool service will be available via https://localhost:7002/home
-The Admin service will be available via https://localhost:7003
-
-The API service will be available (direct) via http://localhost:7001
+The API service will be available (direct) via <http://localhost:7001>
 
 After the first time, you can *run* the project by:
+
 ```
 make
 ```
@@ -87,6 +87,7 @@ make
 ### Tests
 
 To run the unit tests
+
 ```bash
 make dc-unit-tests
 ```
@@ -121,7 +122,28 @@ run the tests:
 You can then modify the tests in your usual editor and re-run the modified tests
 with the same command without having to rebuild/restart the container.
 
-To run the cypress tests in a GUI on Mac, you need to install and start xquartz and socat :
+### Run the Cypress GUI via npm
+
+the recommended way to run tests for the GUI runner is using npm. see: <https://docs.cypress.io/guides/getting-started/installing-cypress/#System-requirements>. this is useful if you want to see what the tests are physically doing.
+
+Install cypress globally:
+
+`npm i -g cypress`
+
+The package.json in the root of the repo has all of the required dev dependancies for Cypress. Add plugins to this as needed using `npm i <package-name> --saveDev`
+
+Assuming that the dev stack has been already started using `make dc-up`, open a new terminal and run:
+
+```bash
+make cypress-gui-npm
+```
+
+You should see a window appear with the features in it. This has been tested on Mac only so "Your Mileage May Vary" :tm:.
+
+### Run Cypress GUI via XQuartz
+
+To run the cypress tests in a GUI on Mac using XQuartz (X Windows), you need to install and start xquartz and socat :
+
 ```bash
 brew install xquartz socat
 socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\"
@@ -140,22 +162,24 @@ You will see the Cypress GUI, which starts a browser (Chrome and Firefox are sup
 You can edit tests and Cypress will (usually, although its not 100% perfect at spotting updates) re-run the
 tests automatically as result.
 
-
 ### Updating composer dependencies
 
 Composer install is run when the app containers are built, and on a standard `docker-compose up`.
 
 It can also be run independently with:
+
 ```bash
 docker-compose run <service>-composer
 ```
 
 New packages can be added with:
+
 ```bash
 docker-compose run <service>-composer composer require author/package
 ```
 
 Packages can be removed with:
+
 ```bash
 docker-compose run <service>-composer composer remove author/package
 ```
