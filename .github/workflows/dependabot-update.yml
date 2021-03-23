@@ -51,4 +51,3 @@ jobs:
           branch: weekly-dependabot-updates-{{ steps.date.output.date }}
           labels: dependabot-update
           
-          echo test, and deploy your project.
