@@ -67,7 +67,8 @@ Then('{string} is a {string} element', (dataCyReference, elementSpecifier) => {
  *
  * numberText: key from MapNumberTextToNumber, e.g. "is a single", "are two"
  * elementSpecifier: type of element dataCyReference is expected to be,
- *     expressed as a key from the MapElementSpecifierToTag array
+ *     expressed as a key from the MapElementSpecifierToTag array; if this
+ *     is not a key in MapElementSpecifierToTag, it is used as-is
  */
 Then('there is {string} {string} element on the page', (numberText, elementSpecifier) => {
     checkNumberOfElements(numberText, elementSpecifier, 'document');
