@@ -27,6 +27,10 @@
     },
 
     trackError: function(error) {
+      if (GOVUK.analytics === undefined) {
+        return;
+      }
+
       var $error = $(error)
       var errorText = $.trim($error.text())
       var errorID = $error.attr('href')
@@ -43,6 +47,10 @@
     },
 
     trackErrorText: function(error){
+      if (GOVUK.analytics === undefined) {
+        return;
+      }
+
       var trackingContext = $('.error-summary-text').data('tracking-context')
       var trackingSummary = $(error).data('tracking-summary')
 
