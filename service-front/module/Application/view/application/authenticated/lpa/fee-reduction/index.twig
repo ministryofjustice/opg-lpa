@@ -1,6 +1,6 @@
 {% extends 'layout/accordion-layout.twig' %}
 
-{% block htmlTitle %}Fee reduction - {% endblock %}
+{%- set pageTitle = 'Does the donor want to apply to pay a reduced fee?' -%}
 
 {% block content %}
 
@@ -19,7 +19,7 @@
 {% set reductionOptionsElement = form.get('reductionOptions') %}
 
 <li id="fee-reduction-section" class="section current" data-cy="section-current">
-    <h1 class="heading-medium accordion-header flush--top">Does the donor want to apply to pay a reduced fee?</h1>
+    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
     <div class="accordion-info">
     	<div class="text">
             <p>If the donor receives certain benefits or has an income of less than £12,000 a year before tax, they might be eligible to pay a reduced fee or no fee at all.</p>
