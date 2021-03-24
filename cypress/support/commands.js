@@ -34,15 +34,23 @@ Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
 Cypress.Commands.add("visitWithChecks", (url) => {
     cy.visit(url);
     cy.document().then(docStr => {
-        expect(docStr.documentElement.innerHTML).not.to.contain("Oops", "CSRF token mismatch problem detected"); 
+        expect(docStr.documentElement.innerHTML).not.to.contain("Oops", "CSRF token mismatch problem detected");
     });
     cy.OPGCheckA11y();
 });
 
 Cypress.Commands.add("visitWithChecks", (url) => {
     cy.visit(url);
-    cy.document().then(docStr => {
-        expect(docStr.documentElement.innerHTML).not.to.contain("Oops", "CSRF token mismatch problem detected"); 
+    cy.document().then(doc => {
+        expect(doc.documentElement.innerHTML).not.to.contain("Oops", "CSRF token mismatch problem detected");
+
+        // check that the page title matches the content of the h1 element on
+        // the page
+        const heading = doc.querySelector("h1");
+        const title = doc.head.querySelector("title");
+        if (heading && title) {
+            expect(title.text).to.contain(heading.textContent.trim());
+        }
     });
     cy.OPGCheckA11y();
 });
