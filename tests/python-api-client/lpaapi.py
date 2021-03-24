@@ -24,6 +24,16 @@ def postToAPI(lpaId, jsonData, pathSuffix = ''):
     print(r,file=sys.stderr)
     print(r.json(),file=sys.stderr)
 
+def patchViaAPI(lpaId, jsonData):
+    token, userId = authenticate()
+    pathTemplate = '{apiRoot}/v2/user/{userId}/applications/{lpaId}'
+    fullPath = pathTemplate.format(apiRoot = apiRoot, userId = userId, lpaId = lpaId)
+    print("Patching ",file=sys.stderr)
+    print(jsonData,file=sys.stderr)
+    r = s.patch(fullPath, headers=token, json=jsonData)
+    print(r,file=sys.stderr)
+    print(r.json(),file=sys.stderr)
+
 def deleteViaAPI(lpaId, jsonData, pathSuffix = ''):
     token, userId = authenticate()
     pathTemplate = '{apiRoot}/v2/user/{userId}/applications/{lpaId}/{pathSuffix}'
@@ -84,10 +94,23 @@ def setPrimaryAttorneyDecisionsMultipleAttorneys(lpaId, lpaType = 'health-and-we
         primaryAttorneyDecisionDetails = {"canSustainLife":None,"how":"jointly-attorney-severally","when":"now","howDetails":None}
     putToAPI(lpaId, primaryAttorneyDecisionDetails, 'primary-attorney-decisions')
 
-def setReplacementAttorneyDecisions(lpaId):
+def setReplacementAttorneyDecisions(lpaId, lpaType = 'health-and-welfare'):
     # "how" , is how replacement attorneys makes decisions, can be set to jointly-attorney-severally if there is more than 1 replacement attorney
     # "when"  is when replacement attorneys step in, can be first or last
-    replacementAttorneyDecisionDetails = {"whenDetails":None,"how":None,"when":"first","howDetails":None}
+    if lpaType == 'health-and-welfare' :
+        replacementAttorneyDecisionDetails = {"canSustainLife":True,"how":None,"when":None,"howDetails":None}
+    else:
+        replacementAttorneyDecisionDetails = {"whenDetails":None,"how":None,"when":"first","howDetails":None}
+    putToAPI(lpaId, replacementAttorneyDecisionDetails, 'replacement-attorney-decisions')
+
+def setReplacementAttorneyDecisionsMultipleAttorneys(lpaId, lpaType = 'health-and-welfare'):
+    # canSustainLife is for life-sustaining treatment (HW only) 
+    # "when"  is when LPA starts (PF only) 
+    # "how" , is how attorneys makes decisions, can be set to jointly-attorney-severally if there is more than 1 attorney
+    if lpaType == 'health-and-welfare' :
+        replacementAttorneyDecisionDetails = {"canSustainLife":True,"how":"jointly-attorney-severally","when":"last","howDetails":None}
+    else:
+        replacementAttorneyDecisionDetails = {"whenDetails":None,"how":"jointly-attorney-severally","when":"last","howDetails":None}
     putToAPI(lpaId, replacementAttorneyDecisionDetails, 'replacement-attorney-decisions')
 
 def addPrimaryAttorney(lpaId):
@@ -108,11 +131,20 @@ def addReplacementAttorney(lpaId):
     replacementAttorneyDetails = {"name":{"title":"Ms","first":"Isobel","last":"Ward"},"dob":{"date":"1937-02-01T00:00:00.000000+0000"},"id":None,"address":{"address1":"2 Westview","address2":"Staplehay","address3":"Trull, Taunton, Somerset","postcode":"TA3 7HF"},"email":None,"type":"human"}
     postToAPI(lpaId, replacementAttorneyDetails, 'replacement-attorneys')
 
+def addSecondReplacementAttorney(lpaId):
+    replacementAttorneyDetails = {"name":{"title":"Mr","first":"Ewan","last":"Adams"},"dob":{"date":"1972-03-12T00:00:00.000000+0000"},"id":None,"address":{"address1":"2 Westview","address2":"Staplehay","address3":"Trull, Taunton, Somerset","postcode":"TA3 7HF"},"email":None,"type":"human"}
+    postToAPI(lpaId, replacementAttorneyDetails, 'replacement-attorneys')
+
 def deleteReplacementAttorney(lpaId, index = 1):
     token, userId = authenticate()
     replacementAttorneyPath = f'{apiRoot}/v2/user/{userId}/applications/{lpaId}/replacement-attorneys/{index}'
     r = s.delete(replacementAttorneyPath, headers=token)
     print(r)
+
+def setReplacementAttorneysConfirmed(lpaId):
+    token, userId = authenticate()
+    metadata = {"metadata":{"replacement-attorneys-confirmed":True}}
+    patchViaAPI(lpaId, metadata)
 
 def setCertificateProvider(lpaId):
     certProvider = {"name":{"title":"Mr","first":"Reece","last":"Richards"},"address":{"address1":"11 Brookside","address2":"Cholsey","address3":"Wallingford, Oxfordshire","postcode":"OX10 9NN"}}

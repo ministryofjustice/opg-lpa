@@ -50,3 +50,15 @@ Then(`I create HW LPA test fixture with a donor and attorneys`, () => {
         cy.log("Created HW LPA test fixture with donor through the API with id " + lpaId);
     });
 })
+
+Then(`I create PF LPA test fixture with a donor, attorneys and replacement attorneys`, () => {
+    cy.runPythonApiCommand("createLpa.py -d -a -r").its('stdout').as('lpaId').then(lpaId => {
+        cy.log("Created PF LPA test fixture with donor through the API with id " + lpaId);
+    });
+})
+ 
+Then(`I create HW LPA test fixture with a donor, attorneys and replacement attorneys`, () => {
+    cy.runPythonApiCommand("createLpa.py -hw -d -a -r").its('stdout').as('lpaId').then(lpaId => {
+        cy.log("Created HW LPA test fixture with donor through the API with id " + lpaId);
+    });
+})
