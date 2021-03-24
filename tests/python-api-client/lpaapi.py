@@ -117,8 +117,11 @@ def addPrimaryAttorney(lpaId):
     primaryAttorneyDetails = {"name":{"title":"Mrs","first":"Amy","last":"Wheeler"},"dob":{"date":"1988-10-22T00:00:00.000000+0000"},"id":None,"address":{"address1":"Brickhill Cottage","address2":"Birch Cross","address3":"Marchington, Uttoxeter, Staffordshire","postcode":"ST14 8NX"},"email":{"address":"opglpademo+AmyWheeler@gmail.com"},"type":"human"}
     postToAPI(lpaId, primaryAttorneyDetails, 'primary-attorneys')
 
-def addSecondPrimaryAttorney(lpaId):
-    primaryAttorneyDetails = {"name":{"title":"Mr","first":"David","last":"Wheeler"},"dob":{"date":"1972-03-12T00:00:00.000000+0000"},"id":None,"address":{"address1":"Brickhill Cottage","address2":"Birch Cross","address3":"Marchington, Uttoxeter, Staffordshire","postcode":"ST14 8NX"},"email":{"address":"opglpademo+DavidWheeler@gmail.com"},"type":"human"}
+def addSecondPrimaryAttorney(lpaId, lpaType = 'health-and-welfare'):
+    if lpaType == 'health-and-welfare' :
+        primaryAttorneyDetails = {"name":{"title":"Mr","first":"David","last":"Wheeler"},"dob":{"date":"1972-03-12T00:00:00.000000+0000"},"id":None,"address":{"address1":"Brickhill Cottage","address2":"Birch Cross","address3":"Marchington, Uttoxeter, Staffordshire","postcode":"ST14 8NX"},"email":{"address":"opglpademo+DavidWheeler@gmail.com"},"type":"human"}
+    else:
+        primaryAttorneyDetails = {"name":"Standard Trust","number":"678437685","id":None,"address":{"address1":"1 Laburnum Place","address2":"Sketty","address3":"Swansea, Abertawe","postcode":"SA2 8HT"},"email":{"address":"opglpademo+trustcorp@gmail.com"},"type":"trust"}
     postToAPI(lpaId, primaryAttorneyDetails, 'primary-attorneys')
 
 def deletePrimaryAttorney(lpaId, index = 1):

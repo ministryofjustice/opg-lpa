@@ -29,7 +29,7 @@ if args.d or args.a:
     setPrimaryAttorneyDecisions(lpaId, lpaType)
 if args.a :
     addPrimaryAttorney(lpaId)
-    addSecondPrimaryAttorney(lpaId)
+    addSecondPrimaryAttorney(lpaId, lpaType)
     # this keeps life-sustaining treatment set to true and allows attorneys to act jointly
     setPrimaryAttorneyDecisionsMultipleAttorneys(lpaId, lpaType)
 if args.r :
