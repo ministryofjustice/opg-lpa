@@ -21,7 +21,7 @@ Feature: Signup
         And I visit link containing "sign in"
         Then I am taken to the login page
 
-    #    @focus
+    @focus
     Scenario: About Me Details have Blank title, month and wrong postcode in address + long names, followed by DOB in future
         Given I log in as standard test user
         Then I see "Make a lasting power of attorney" in the page text
@@ -36,10 +36,7 @@ Feature: Signup
         And I click "save"
         Then I see "There is a problem" in the page text
         And I see "Error" in the title
-
-        # todo - note we should be selecting Mr like we do in the Valid scenario, not typing it in here, but due to system bug, after a previous error we get a text box
-        # instead of a dropdown. The line below will therefore need to change to When I select Mr on name-title, once this bug is fixed
-        When I type "Mr" into "name-title"
+        When I select "Mr" on "name-title"
         And I force fill out
           | name-first| Chris |
           | name-last| Smith |
