@@ -1,6 +1,6 @@
 {% extends 'layout/accordion-layout.twig' %}
 
-{% block htmlTitle %}Preferences and instructions - {% endblock %}
+{%- set pageTitle = 'Preferences and instructions' -%}
 
 {% block content %}
 
@@ -46,7 +46,7 @@
 {{ preferences.setOptions({label: 'Preferences'}) ? '' }}
 
 <li id="preferences-and-instructions-section" class="section current" data-cy="section-current">
-    <h1 class="heading-medium accordion-header flush--top">Preferences and instructions</h1>
+    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
     <div class="accordion-info">
         <div class="text">
             <p>You've entered all the essential information needed for the LPA.</p>
