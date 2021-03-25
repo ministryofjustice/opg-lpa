@@ -8,7 +8,7 @@ Feature: Add People to Notify to a Property and Finance LPA
         And I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider
 
     @focus, @CleanupFixtures
-    Scenario: Create LPA normal path
+    Scenario: Add person to notify
         When I log in as appropriate test user
         And I visit the people to notify page for the test fixture lpa
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove

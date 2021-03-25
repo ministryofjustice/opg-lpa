@@ -8,7 +8,7 @@ Feature: Specify Instructions and Preferences for a Property and Finance LPA
         And I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify
 
     @focus, @CleanupFixtures
-    Scenario: Create LPA normal path
+    Scenario: Specify Instructions and Preferences
         When I log in as appropriate test user
         And I visit the instructions page for the test fixture lpa
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
