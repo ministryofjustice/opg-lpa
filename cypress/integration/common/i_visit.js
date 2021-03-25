@@ -45,6 +45,26 @@ Then(`I visit the certificate provider page for the test fixture lpa`, () => {
     visitPageForTestFixture('certificate-provider');
 })
 
+Then(`I visit the people to notify page for the test fixture lpa`, () => {
+    visitPageForTestFixture('people-to-notify');
+})
+
+Then(`I visit the instructions page for the test fixture lpa`, () => {
+    visitPageForTestFixture('instructions');
+});
+ 
+Then(`I visit the applicant page for the test fixture lpa`, () => {
+    visitPageForTestFixture('applicant');
+});
+ 
+Then(`I visit the correspondent page for the test fixture lpa`, () => {
+    visitPageForTestFixture('correspondent');
+});
+ 
+Then(`I visit the summary page for the test fixture lpa`, () => {
+    visitPageForTestFixture('summary');
+});
+
 function visitPageForTestFixture(urlPart) {
     cy.get('@lpaId').then((lpaId) => {
         cy.visitWithChecks('/lpa/' + lpaId + '/' + urlPart);

@@ -13,6 +13,21 @@ parser.add_argument('-a', action='store_true',
 parser.add_argument('-r', action='store_true',
                     default=False,
                     help='Add Replacement attorneys')
+parser.add_argument('-c', action='store_true',
+                    default=False,
+                    help='Add Certificate Provider')
+parser.add_argument('-n', action='store_true',
+                    default=False,
+                    help='Add Person To Notify')
+parser.add_argument('-i', action='store_true',
+                    default=False,
+                    help='Set Instructions')
+parser.add_argument('-p', action='store_true',
+                    default=False,
+                    help='Set Preference')
+parser.add_argument('-w', action='store_true',
+                    default=False,
+                    help='Set Who is Registering')
 args = parser.parse_args()
 
 if args.hw :
@@ -37,4 +52,14 @@ if args.r :
     addSecondReplacementAttorney(lpaId)
     setReplacementAttorneyDecisionsMultipleAttorneys(lpaId, lpaType)
     setReplacementAttorneysConfirmed(lpaId)
+if args.c :
+    setCertificateProvider(lpaId)
+if args.n :
+    addPersonToNotify(lpaId)
+if args.i :
+    setInstruction(lpaId)
+if args.n :
+    setPreference(lpaId)
+if args.w :
+    setWhoIsRegistering(lpaId)
 print(lpaId)
