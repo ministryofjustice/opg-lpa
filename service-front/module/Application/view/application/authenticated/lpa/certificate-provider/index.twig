@@ -1,12 +1,12 @@
 {% extends 'layout/accordion-layout.twig' %}
 
-{% block htmlTitle %}Certificate provider - {% endblock %}
+{%- set pageTitle = 'Who is the certificate provider?' -%}
 
 {% block content %}
 
 <li id="certificate-provider-section" class="section current" data-cy="section-current">
 
-    <h1 class="heading-medium accordion-header flush--top">Who is the certificate provider?</h1>
+    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
 
