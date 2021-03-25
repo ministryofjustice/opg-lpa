@@ -21,10 +21,7 @@ parser.add_argument('-n', action='store_true',
                     help='Add Person To Notify')
 parser.add_argument('-i', action='store_true',
                     default=False,
-                    help='Set Instructions')
-parser.add_argument('-p', action='store_true',
-                    default=False,
-                    help='Set Preference')
+                    help='Set Instructions and Preferences')
 parser.add_argument('-w', action='store_true',
                     default=False,
                     help='Set Who is Registering')
@@ -58,7 +55,6 @@ if args.n :
     addPersonToNotify(lpaId)
 if args.i :
     setInstruction(lpaId)
-if args.n :
     setPreference(lpaId)
 if args.w :
     setWhoIsRegistering(lpaId)
