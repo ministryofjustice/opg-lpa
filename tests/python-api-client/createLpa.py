@@ -16,9 +16,9 @@ parser.add_argument('-r', action='store_true',
 parser.add_argument('-c', action='store_true',
                     default=False,
                     help='Add Certificate Provider')
-parser.add_argument('-n', action='store_true',
+parser.add_argument('-pn', action='store_true',
                     default=False,
-                    help='Add Person To Notify')
+                    help='Add People To Notify')
 parser.add_argument('-i', action='store_true',
                     default=False,
                     help='Set Instructions and Preferences')
@@ -51,7 +51,7 @@ if args.r :
     setReplacementAttorneysConfirmed(lpaId)
 if args.c :
     setCertificateProvider(lpaId)
-if args.n :
+if args.pn :
     addPersonToNotify(lpaId)
 if args.i :
     setInstruction(lpaId)
