@@ -5,50 +5,14 @@ Feature: Create a Health and Welfare LPA
 
     Background:
         Given I ignore application exceptions
-        And I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider
+        And I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify
 
     @focus, @CleanupFixtures
     Scenario: Create LPA normal path
         When I log in as appropriate test user
-        And I visit the people to notify page for the test fixture lpa
+        And I visit the instructions page for the test fixture lpa
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
-        Then I am taken to the people to notify page
-
-        # Certificate Provider tests end and Person to Notify Tests start. Ultimately a good place to start a new Scenario
-
-        When I click "add"
-        Then I can see popup
-        And I can find "form-cancel"
-        And I can find "name-title" with 8 options
-        # todo - casper just looked for use-my-details. We need ultimately to actually test this
-        And I can find "use-my-details"
-        When I select "Other" on "name-title"
-        And I force fill out
-            | name-title | Sir |
-            | name-first | Anthony |
-            | name-last | Webb |
-            | address-address1 | Brickhill Cottage |
-            | address-address2 | Birch Cross |
-            | address-address3 | Marchington, Uttoxeter, Staffordshire |
-            | address-postcode | BS18 6PL |
-        And I click "form-save"
-        Then I see "Sir Anthony Webb" in the page text
-        When I click "view-change"
-        Then I can see popup
-        And I see form prepopulated with
-            | name-title | Sir |
-            | name-first | Anthony |
-            | name-last | Webb |
-            | address-address1 | Brickhill Cottage |
-            | address-address2 | Birch Cross |
-            | address-address3 | Marchington, Uttoxeter, Staffordshire |
-            | address-postcode | BS18 6PL |
-        And I click "form-cancel"
-        When I click "save"
-
-        # Person to notify tests end here and Instructions tests start. Ultimately a good place to start a new Scenario
-        
         Then I am taken to the instructions page
         When I click "add-extra-preferences"
         And I force fill out  
