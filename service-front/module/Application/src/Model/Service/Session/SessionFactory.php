@@ -70,21 +70,21 @@ class SessionFactory implements FactoryInterface {
         //----------------------------------------
         // Setup the DynamoDb Client
 
-        $dynamoDb = new DynamoDbClient( $config['dynamodb']['client'] );
+//        $dynamoDb = new DynamoDbClient( $config['dynamodb']['client'] );
 
 
         //----------------------------------------
         // Setup the DynamoDb save handler
 
-        $saveHandler = new SaveHandler\CompressedDynamoDB(
-            new SaveHandler\HashedKeyDynamoDbSessionConnection( $dynamoDb, $config['dynamodb']['settings'] )
-        );
+//        $saveHandler = new SaveHandler\CompressedDynamoDB(
+//            new SaveHandler\HashedKeyDynamoDbSessionConnection( $dynamoDb, $config['dynamodb']['settings'] )
+//        );
 
         //-------------------------------
 
         $manager = new SessionManager();
 
-        $manager->setSaveHandler($saveHandler);
+//        $manager->setSaveHandler($saveHandler);
 
         return $manager;
     }
