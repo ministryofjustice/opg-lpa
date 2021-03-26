@@ -1,10 +1,18 @@
 {% extends 'layout/layout.twig' %}
 
+{%- set accordionTop = accordion(lpa).top() -%}
+
 {% block mainTitle %}
     <h3 class="heading-xlarge" data-cy="main-title">
         {{ defaultTitle }}
     </h3>
 {% endblock %}
+
+{%- block backLink %}
+    {%- if previousRouteName -%}
+        <p>&lt; <a href="{{ url(previousRouteName, {'lpa-id': lpa.id}) }}">Back</a></p>
+    {%- endif %}
+{%- endblock -%}
 
 {%- block accordionInstructions -%}
     <details class="govuk-details" data-module="govuk-details" data-role="details-instructions" data-cy="details-instructions">
@@ -24,8 +32,6 @@
 {% block accordionTop %}
     {%- set route = routeName() -%}
     <ul class="accordion" data-cy="accordion">
-        {%- set accordionTop = accordion(lpa).top() -%}
-
         {%- include 'layout/partials/accordion/accordion.twig' with {'items': accordionTop, 'lpa': lpa} -%}
 
         {%- if route['previous'] != 'user/about-you' and route['previous'] != 'user/dashboard' and (accordionTop|last).routeName != 'review-link' -%}

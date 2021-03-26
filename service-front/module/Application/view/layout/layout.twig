@@ -82,6 +82,7 @@
 
     <main id="content" role="main">
         {{ accountInfo() }}
+        {%- block backLink %}{% endblock -%}
         <a name="main-content"></a>
         {% block errorSummary %}{% endblock %}
         {% block mainTitle %}

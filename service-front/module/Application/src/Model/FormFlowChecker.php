@@ -261,6 +261,32 @@ class FormFlowChecker
     }
 
     /**
+     * Given a route name, return the previous route in the LPA flow.
+     * Some routes return null, as it's not possible to go back to a prior
+     * step from that route.
+     *
+     * @param $currentRoute
+     * @return string|null
+     */
+    public function previousRoute($currentRoute)
+    {
+        // we can't go back from LPA type or donor
+        if (in_array($currentRoute, ['lpa/form-type', 'lpa/donor'])) {
+            return null;
+        }
+
+        foreach ($this->nextRouteMap as $fromRoute => $toRoute) {
+            // values in nextRouteMap can be strings or string[]
+            if ((is_array($toRoute) && in_array($currentRoute, $toRoute)) || $currentRoute === $toRoute) {
+                return $fromRoute;
+            }
+        }
+
+        // no matching route, won't show a back link
+        return null;
+    }
+
+    /**
      * Step forwards through the LPA flow until we find a route that is not
      * accessible (based on the associated LPA) then return the last working route
      *

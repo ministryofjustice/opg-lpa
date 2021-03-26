@@ -91,7 +91,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         if (($authenticated = $this->checkAuthenticated()) !== true) {
             return $authenticated;
         }
-        
+
         if (!$this->lpa instanceof Lpa) {
             //404 error returned as either the LPA does not exist in the database, or is not associated with the user
             return $this->notFoundAction();
@@ -136,6 +136,11 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         if (($view instanceof ViewModel) && !($view instanceof JsonModel)) {
             $view->setVariable('lpa', $this->lpa);
         }
+
+        // inject previous route into the view; this may return null,
+        // which we check for in the view template
+        $view->setVariable('previousRouteName',
+            $this->getFlowChecker()->previousRoute($currentRoute));
 
         return $view;
     }
@@ -199,8 +204,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     public function getFlowChecker()
     {
         if ($this->flowChecker == null) {
-            $formFlowChecker = new FormFlowChecker($this->lpa);
-            $this->flowChecker = $formFlowChecker;
+            $this->flowChecker = new FormFlowChecker($this->lpa);
         }
 
         return $this->flowChecker;
@@ -245,5 +249,5 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     {
         return $this->metadata;
     }
-    
+
 }
