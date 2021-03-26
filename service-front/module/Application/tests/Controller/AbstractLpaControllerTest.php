@@ -29,7 +29,7 @@ class AbstractLpaControllerTest extends AbstractControllerTest
 
         $this->assertEquals($result, $response);
     }
-    
+
     public function testOnDispatchNoLpaException()
     {
         $this->lpa = false;
@@ -114,6 +114,8 @@ class AbstractLpaControllerTest extends AbstractControllerTest
         $controller->injectedFlowChecker = $flowChecker;
         $flowChecker->shouldReceive('getNearestAccessibleRoute')
             ->withArgs(['lpa/download', 'lp1'])->andReturn('lpa/download')->once();
+        $flowChecker->shouldReceive('previousRoute')
+            ->withArgs(['lpa/download'])->andReturn(null)->once();
         $this->logger->shouldReceive('info')->withArgs([
             'Request to ApplicationTest\Controller\TestableAbstractLpaController',
             $this->userIdentity->toArray()
