@@ -135,12 +135,12 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
 
         if (($view instanceof ViewModel) && !($view instanceof JsonModel)) {
             $view->setVariable('lpa', $this->lpa);
-        }
 
-        // inject previous route into the view; this may return null,
-        // which we check for in the view template
-        $view->setVariable('previousRouteName',
-            $this->getFlowChecker()->previousRoute($currentRoute));
+            // inject previous route into the view; this may return null,
+            // which we check for in the view template
+            $view->setVariable('previousRouteName',
+                $this->getFlowChecker()->previousRoute($currentRoute));
+        }
 
         return $view;
     }
