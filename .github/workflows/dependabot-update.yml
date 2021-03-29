@@ -7,9 +7,12 @@
 name: Dependabot updates
 
 on:
- push:
-      branches:
-        - dependabot-issue-npm
+# In case we need to change, uncomment out and change name to branch you are fixing on.
+# Commits will make action trigger. 
+# Remember to comment out after work done.
+# push:
+#     branches:
+#      - dependabot-issue-npm
  schedule:
   - cron: '0 8 * * 1' # runs on a monday morning
  workflow_dispatch:
