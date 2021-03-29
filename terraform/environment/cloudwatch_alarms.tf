@@ -44,7 +44,7 @@ resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
   treat_missing_data        = "notBreaching"
 }
 
-resource "aws_cloudwatch_log_metric_filter" "csrf_mistmatch_filter" {
+/* resource "aws_cloudwatch_log_metric_filter" "csrf_mistmatch_filter" {
   name           = "CSRFValuesMismatch"
   pattern        = "{($.priorityName = \"ERR\") && ($.message = \"Mismatched CSRF provided*\")}"
   log_group_name = data.aws_cloudwatch_log_group.online-lpa.name
@@ -54,7 +54,7 @@ resource "aws_cloudwatch_log_metric_filter" "csrf_mistmatch_filter" {
     namespace = "online-lpa/Cloudwatch"
     value     = "1"
   }
-}
+} */
 
 # disable as not required right now.
 /*resource "aws_cloudwatch_metric_alarm" "front_csrf_mismatch_errors" {
