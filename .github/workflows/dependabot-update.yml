@@ -51,9 +51,9 @@ jobs:
       - name: Update outdated dependencies - npm
         run: |
           echo "running npm updates..."
-          npm update --no-optional -f
+          npm update -f
           cd service-front
-          npm update ---no-optional -f
+          npm update -f
        # create a datestamp for the branch
       - name: Get current time
         uses: srfrnk/current-time@master
