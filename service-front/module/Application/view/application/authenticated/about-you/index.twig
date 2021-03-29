@@ -40,15 +40,6 @@
 {% set address2 = form.get('address-address2') %}
 {% set address3 = form.get('address-address3') %}
 {% set postcode = form.get('address-postcode') %}
-{% set titleOptions = [
-      '',
-      'Mr',
-      'Mrs',
-      'Miss',
-      'Ms',
-      'Dr',
-      'Prefer not to say',
-] | json_encode() %}
 
 {# form fields config #}
 {{ title.setAttributes({
