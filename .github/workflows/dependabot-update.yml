@@ -7,9 +7,12 @@
 name: Dependabot updates
 
 on:
-  schedule:
+ push:
+      branches:
+        - dependabot-issue-npm
+ schedule:
   - cron: '0 8 * * 1' # runs on a monday morning
-  workflow_dispatch:
+ workflow_dispatch:
 
 jobs:
   # This workflow contains a single job called "build"
