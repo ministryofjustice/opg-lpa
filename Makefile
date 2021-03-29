@@ -199,3 +199,10 @@ endif
 .PHONY: restitch
 restitch:
 	cypress/stitch.sh
+
+# Start S3 Monitor and call "cypress open";
+# this requires a globally-installed cypress
+.PHONY: cypress-open
+cypress-open:
+	aws-vault exec moj-lpa-dev -- python3 cypress/S3Monitor.py &
+	CYPRESS_userNumber=`node cypress/userNumber.js` cypress open
