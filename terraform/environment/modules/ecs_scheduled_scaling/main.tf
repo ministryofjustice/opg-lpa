@@ -36,7 +36,7 @@ resource "aws_appautoscaling_scheduled_action" "trigger_scale_down" {
   schedule           = var.scale_down_time
 
   # AutoScaling actions need to be executed serially
-  depends_on = ["aws_appautoscaling_scheduled_action.trigger_scale_up"]
+  depends_on = [aws_appautoscaling_scheduled_action.trigger_scale_up]
 
   scalable_target_action {
     min_capacity = each.value.scale_down_to
