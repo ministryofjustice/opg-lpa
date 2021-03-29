@@ -120,7 +120,7 @@
     id: 'email-address',
     class: 'form-control',
     'data-cy': 'email-address'
-}) ? '' }}
+}) ? ''}}
 
 {{ address1.setAttributes({
     id: 'address-address1',
@@ -155,7 +155,7 @@
 {{ dobDay.setOptions({label:'Day'}) ? '' }}
 {{ dobMonth.setOptions({label:'Month'}) ? '' }}
 {{ dobYear.setOptions({label:'Year'}) ? '' }}
-{{ email.setOptions({label:'Email address'}) ? '' }}
+{{ email.setOptions({label:'Email (optional)'}) ? '' }}
 {{ address1.setOptions({label:'Address line 1'}) ? '' }}
 {{ address2.setOptions({label:'Address line 2'}) ? '' }}
 {{ address3.setOptions({label:'Address line 3'}) ? '' }}
@@ -185,18 +185,11 @@
 {{ form().openTag( form )|raw }}
     {{ formElement(form.getCsrf) }}
 
-    <h2 class="heading-medium popup-exclude">What is the attorney's name?</h2>
-
     <fieldset>
-        <legend class="visually-hidden">Add primary attorney's name</legend>
-
         {{ macros.formGroup(title) }}
         {{ macros.formGroup(firstname) }}
         {{ macros.formGroup(lastname) }}
-
     </fieldset>
-
-    <h2 class="heading-medium popup-exclude">What is the attorney's date of birth?</h2>
 
     <fieldset id="{{ dob.getAttribute('name') }}">
         <legend class="form-label dob-label">Date of birth</legend>
@@ -210,7 +203,7 @@
                 {{ formElementErrorsV2(dobDay) }}
                 {{ formElementErrorsV2(dob) }}
             </div>
-            
+
             <div class="error-group-popup">
                 {{ formElementErrorsV2(dobYear) }}
                 {{ formElementErrorsV2(dobMonth) }}
@@ -232,24 +225,14 @@
                 <label class="form-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
                 {{ formElement(dobYear) }}
             </div>
-
         </div>
-
     </fieldset>
-
-    <h2 class="heading-medium popup-exclude">What is the attorney's email address?</h2>
 
     <fieldset>
-        <legend class="visually-hidden">Primary attorney's email address</legend>
-
         {{ macros.formGroup(email) }}
-
     </fieldset>
 
-    <h2 class="heading-medium popup-exclude">What is the attorney's address?</h2>
-
     <fieldset class="postcodelookup">
-        <legend class="visually-hidden">Primary attorney's address</legend>
         <div class="js-PostcodeLookup__postal-add">
             {{ macros.formGroup(address1) }}
             {{ macros.formGroup(address2) }}

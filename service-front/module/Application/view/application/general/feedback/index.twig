@@ -57,56 +57,47 @@
 
     {{ formElement(form.getCsrf) }}
 
-    <div class="text">
-        <p>We will not respond to your feedback directly but will use it to improve this service. If you're happy to be contacted to give further feedback, please leave your email address or phone number.</p>
-        <p>If you have a question about your LPA, please email <a href="mailto:customerservices@publicguardian.gov.uk">customerservices@publicguardian.gov.uk</a> who will be able to help.</p>
-    </div>
-
-    <h2 class="heading-medium flush--top">How would you rate your experience with this service?</h2>
-    <div class="form-group {{ type.getMessages|length >0 ? 'form-group-error'}}">
-        <fieldset>
-            <legend class="visually-hidden">Experience rating</legend>
-                {{ formElementErrorsV2(type) }}
-                {{ formRadio(type) }}
-        </fieldset>
-    </div>
-
-    <h2 class="heading-medium text">Please take a moment to tell us about your experience, what worked and what did not.</h2>
     <fieldset>
-        <legend class="group text">
-        </legend>
-        <div class="form-group {{ details.getMessages|length >0 ? 'form-group-error'}}">
-            {{ formElementErrorsV2(details) }}
-            <label class="form-label text" for="{{ details.getAttribute('id') }}">
-                <span class="visually-hidden">Your feedback<br></span>
-                <span class="form-hint">2000 characters max<br></span>
+        <div class="text">
+            <p>We will not respond to your feedback directly but will use it to improve this service. If you're happy to be contacted to give further feedback, please leave your email address or phone number.</p>
+            <p>If you have a question about your LPA, please email <a href="mailto:customerservices@publicguardian.gov.uk">customerservices@publicguardian.gov.uk</a> who will be able to help.</p>
+        </div>
+
+        <div class="form-group {{ type.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="heading-medium flush--top text" for="{{ type.getAttribute('id') }}">
+                How would you rate your experience with this service?
             </label>
+            {{ formElementErrorsV2(type) }}
+            {{ formRadio(type) }}
+        </div>
+
+        <div class="form-group {{ details.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="heading-medium flush--top text" for="{{ details.getAttribute('id') }}">
+                Please take a moment to tell us about your experience, what worked and what did not.
+            </label>
+            {{ formElementErrorsV2(details) }}
+            <span class="form-hint">2000 characters max</span>
             {{ formElement(details) }}
         </div>
-    </fieldset>
 
-    <h2 class="heading-medium flush--top">Your email address (optional)</h2>
-    <fieldset>
-        <legend class="group text">
-        </legend>
-
-        {{ macros.formGroup(email) }}
-
-    </fieldset>
-
-    <h2 class="heading-medium flush--top">Your phone number (optional)</h2>
-    <fieldset>
-        <legend class="group text">
-        </legend>
-        <div class="form-group {{ phone.getMessages|length >0 ? 'form-group-error'}}">
-            {{ formElementErrorsV2(phone) }}
-            <label class="form-label text" for="{{ phone.getAttribute('id') }}">
-                <span class="visually-hidden">Your phone number (optional)</span>
+        <div class="form-group {{ email.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="heading-medium flush--top text" for="{{ email.getAttribute('id') }}">
+                Your email address (optional)
             </label>
+            {{ formElementErrorsV2(email) }}
+            {{ formElement(email) }}
+        </div>
+
+        <div class="form-group {{ phone.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="heading-medium flush--top text" for="{{ phone.getAttribute('id') }}">
+                Your phone number (optional)
+            </label>
+            {{ formElementErrorsV2(phone) }}
             {{ formElement(phone) }}
         </div>
+
+        <input type="submit" name="send" id="send" class="button" data-cy="feedback-submit-button" value="Send feedback">
     </fieldset>
-    <input type="submit" name="send" id="send" class="button" data-cy="feedback-submit-button" value="Send feedback">
 
 {{ form().closeTag|raw }}
 
