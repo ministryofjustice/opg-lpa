@@ -23,4 +23,5 @@ module "dev_weekdays" {
       scale_up_to   = local.account.autoscaling.pdf.maximum
     }
   }
+  depends_on = [module.api_ecs_autoscaling, module.pdf_ecs_autoscaling, module.front_ecs_autoscaling]
 }
