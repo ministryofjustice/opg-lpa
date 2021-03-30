@@ -16,14 +16,20 @@ Feature: Add a correspondent to a Property and Finance LPA
         Then I am taken to the correspondent page
         And I can find "contactInWelsh-0"
         And I can find "contactInWelsh-1"
+        And I can find "contactByPost"
+        And I can find "contactByPhone"
         When I click "change-correspondent"
         Then I can see popup
         And I see "Which details would you like to reuse?" in the page text
+        # donor is correspondent as default
+        And I see "Mrs Nancy Garrison" in the page text
+        And "contactByEmail" is checked
         # choose new correspondent
         When I check "reuse-details--1"
         And I click "continue"
         Then I see "Correspondent details" in the page text
-        #When I select "Mrs" on "name-title"
+        And I can find "postcode-lookup"
+        And I can find "name-title" with 8 options
         And I force fill out
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
@@ -49,3 +55,11 @@ Feature: Add a correspondent to a Property and Finance LPA
         And I click "continue"
         Then I am taken to the correspondent page
         And I see "Mrs Nancy Garrison" in the page text
+        When I uncheck "contactByEmail"
+        And I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | Select how the correspondent would like to be contacted |
+        When I check "contactByEmail"
+        And I click "save"
+        Then I am taken to the who are you page
