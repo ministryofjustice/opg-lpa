@@ -7,9 +7,15 @@
 name: Dependabot updates
 
 on:
-  schedule:
+# In case we need to change, uncomment out and change name to branch you are fixing on.
+# Commits will make action trigger. 
+# Remember to comment out after work done.
+# push:
+#     branches:
+#      - dependabot-issue-npm
+ schedule:
   - cron: '0 8 * * 1' # runs on a monday morning
-  workflow_dispatch:
+ workflow_dispatch:
 
 jobs:
   # This workflow contains a single job called "build"
@@ -48,9 +54,9 @@ jobs:
       - name: Update outdated dependencies - npm
         run: |
           echo "running npm updates..."
-          npm update
+          npm update -f
           cd service-front
-          npm update
+          npm update -f
        # create a datestamp for the branch
       - name: Get current time
         uses: srfrnk/current-time@master
