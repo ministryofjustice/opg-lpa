@@ -46,9 +46,6 @@ class AuthenticationServiceTest extends MockeryTestCase
         $this->assertEquals($this->adapterInterface, $this->service->getAdapter());
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testConstructorRequiresLpaAdapterInterface() : void
     {
         /** @var AdapterInterface $adapterInterface */
@@ -59,6 +56,8 @@ class AuthenticationServiceTest extends MockeryTestCase
             ' authentication adapter must be injected into' .
             ' Application\Model\Service\Authentication\AuthenticationService at instantiation');
         $this->service = new AuthenticationService($this->storageInterface, $adapterInterface);
+
+        $this->expectException(RuntimeException::class);
     }
 
     public function testVerify() : void

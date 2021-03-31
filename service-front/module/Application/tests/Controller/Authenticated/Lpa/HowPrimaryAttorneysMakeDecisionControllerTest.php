@@ -99,10 +99,6 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
         $this->assertEquals($response, $result);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set primary attorney decisions for id: 91333263035
-     */
     public function testIndexActionPostFailed()
     {
         $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
@@ -121,6 +117,9 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
                     && $primaryAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY
                     && $primaryAttorneyDecisions->howDetails == null;
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set primary attorney decisions for id: 91333263035');
 
         $result = $controller->indexAction();
 

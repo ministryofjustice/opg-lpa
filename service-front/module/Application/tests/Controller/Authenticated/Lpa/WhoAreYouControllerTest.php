@@ -5,6 +5,7 @@ namespace ApplicationTest\Controller\Authenticated\Lpa;
 use Application\Controller\Authenticated\Lpa\WhoAreYouController;
 use Application\Form\Lpa\WhoAreYouForm;
 use ApplicationTest\Controller\AbstractControllerTest;
+use Exception;
 use Mockery;
 use Mockery\MockInterface;
 use RuntimeException;
@@ -123,10 +124,6 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->assertEquals(10, count($result->getVariable('whoOptions')));
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set Who Are You for id: 91333263035
-     */
     public function testIndexActionPostFailed()
     {
         $this->lpa->whoAreYouAnswered = false;
@@ -139,6 +136,9 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setWhoAreYou')->andReturn(false)->once();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('API client failed to set Who Are You for id: 91333263035');
 
         $controller->indexAction();
     }

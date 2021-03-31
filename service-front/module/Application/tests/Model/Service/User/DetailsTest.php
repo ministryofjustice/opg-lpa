@@ -168,10 +168,6 @@ class DetailsTest extends AbstractEmailServiceTest
         $this->assertEquals('test response', $result);
     }
 
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Unable to save details
-     */
     public function testUpdateAllInvalidData() : void
     {
         $this->setUpIdentity(2, 1, 1, 0);
@@ -179,6 +175,9 @@ class DetailsTest extends AbstractEmailServiceTest
         $currentUserJson = FixturesData::getUserJson();
 
         $this->apiClient->shouldReceive('httpGet')->withArgs(['/v2/user/test-id'])->once()->andReturn($currentUserJson);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Unable to save details');
 
         $result = $this->service->updateAllDetails(['id' => '123']);
 
