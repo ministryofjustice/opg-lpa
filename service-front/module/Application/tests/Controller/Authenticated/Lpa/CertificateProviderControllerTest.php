@@ -26,7 +26,7 @@ class CertificateProviderControllerTest extends AbstractControllerTest
      */
     private $form;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

@@ -13,7 +13,7 @@ class LifeSustainingFormTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp()
+    public function setUp() : void
     {
         $this->setUpMainFlowForm(new LifeSustainingForm());
     }

@@ -60,7 +60,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         'email' => ['address' => 'unit@test.com']
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

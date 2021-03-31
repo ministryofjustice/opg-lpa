@@ -32,7 +32,7 @@ class WhoAreYouControllerTest extends AbstractControllerTest
         'who' => 'donor'
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

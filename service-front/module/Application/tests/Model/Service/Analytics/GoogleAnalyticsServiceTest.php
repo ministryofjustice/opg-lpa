@@ -28,7 +28,7 @@ class GoogleAnalyticsServiceTest extends MockeryTestCase
         $this->googleAnalyticsService = new GoogleAnalyticsService($authenticationService, []);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
 

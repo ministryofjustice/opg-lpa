@@ -32,7 +32,7 @@ class FeedbackControllerTest extends AbstractControllerTest
      */
     private $feedbackService;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

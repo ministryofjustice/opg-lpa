@@ -19,7 +19,7 @@ class AboutYouControllerTest extends AbstractControllerTest
     private $form;
     private $postData = [];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

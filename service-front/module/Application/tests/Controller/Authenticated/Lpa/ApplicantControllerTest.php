@@ -20,7 +20,7 @@ class ApplicantControllerTest extends AbstractControllerTest
      */
     private $form;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
