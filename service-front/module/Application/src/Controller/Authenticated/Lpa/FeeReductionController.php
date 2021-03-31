@@ -81,7 +81,7 @@ class FeeReductionController extends AbstractLpaController
         $amount = Calculator::getLowIncomeFee( $isRepeatApplication );
         $amount = number_format(floatval($amount), 2);
         $reductionOptions['reducedFeeLowIncome'] = new Element('reductionOptions', [
-            'label' => "The donor currently has an income of less than £12,000 a year before tax<br><strong class='bold-small'>Fee: £".number_format(floatval($amount), 2)."</strong>",
+            'label' => "The donor currently has an income of less than £12,000 a year before tax<br><strong class='bold-small'>Fee: £".$amount."</strong>",
         ]);
         $reductionOptions['reducedFeeLowIncome']->setAttributes([
             'type' => 'radio',
