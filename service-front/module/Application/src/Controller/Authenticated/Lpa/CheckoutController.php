@@ -13,6 +13,8 @@ use Opg\Lpa\DataModel\Lpa\Payment\Payment;
 use Laminas\View\Helper\ServerUrl;
 use Laminas\View\Model\ViewModel;
 use RuntimeException;
+use function number_format;
+use function floatval;
 
 class CheckoutController extends AbstractLpaController
 {
@@ -36,10 +38,10 @@ class CheckoutController extends AbstractLpaController
         $isRepeatApplication = ($lpa->repeatCaseNumber != null);
 
         $lowIncomeFee = Calculator::getLowIncomeFee($isRepeatApplication);
-        $lowIncomeFee = (floor($lowIncomeFee) == $lowIncomeFee ? $lowIncomeFee : money_format('%i', $lowIncomeFee));
+        $lowIncomeFee = number_format(floatval($lowIncomeFee), 2);
 
         $fullFee = Calculator::getFullFee($isRepeatApplication);
-        $fullFee = (floor($fullFee) == $fullFee  ? $fullFee : money_format('%i', $fullFee));
+        $fullFee = number_format(floatval($fullFee), 2);
 
         // set hidden form for confirming and paying by card.
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\BlankMainFlowForm', [
