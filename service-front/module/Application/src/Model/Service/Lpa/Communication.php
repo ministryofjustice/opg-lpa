@@ -7,6 +7,8 @@ use Application\Model\Service\Mail\Transport\MailTransport;
 use Opg\Lpa\DataModel\Lpa\Lpa;
 use Exception;
 use Laminas\Session\Container;
+use function number_format;
+use function floatval;
 
 /**
  * A model service class for sending emails on LPA creation and completion.
@@ -38,13 +40,14 @@ class Communication extends AbstractEmailService
 
         $data = [
             'lpa' => $lpa,
-            'paymentAmount' => ($lpa->payment->amount > 0 ? money_format('%i', $lpa->payment->amount) : null),
+            'paymentAmount' => (is_numeric($lpa->payment->amount) ? number_format(floatval($lpa->payment->amount), 2) : null),
             'isHealthAndWelfare' => ($lpa->document->type === \Opg\Lpa\DataModel\Lpa\Document\Document::LPA_TYPE_HW),
         ];
 
         try {
             $this->getMailTransport()->sendMessageFromTemplate($to, MailTransport::EMAIL_LPA_REGISTRATION, $data);
         } catch (Exception $e) {
+            print($e);
             return "failed-sending-email";
         }
 
