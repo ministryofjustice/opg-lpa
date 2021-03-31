@@ -173,10 +173,6 @@ class DonorControllerTest extends AbstractControllerTest
         $this->assertEquals("lpa/{$this->lpa->id}/donor", $result->cancelUrl);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to save LPA donor for id: 91333263035
-     */
     public function testAddActionPostFailed()
     {
         /** @var DonorController $controller */
@@ -197,6 +193,9 @@ class DonorControllerTest extends AbstractControllerTest
                     && $donor->email == new EmailAddress($this->postData['email'])
                     && $donor->dob == new Dob($this->postData['dob']);
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to save LPA donor for id: 91333263035');
 
         $controller->addAction();
     }
@@ -278,10 +277,6 @@ class DonorControllerTest extends AbstractControllerTest
         $this->assertEquals("lpa/{$this->lpa->id}/donor", $result->cancelUrl);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to update LPA donor for id: 91333263035
-     */
     public function testEditActionPostFailed()
     {
         /** @var DonorController $controller */
@@ -302,6 +297,9 @@ class DonorControllerTest extends AbstractControllerTest
                 && $donor->dob == new Dob($this->postData['dob'])
                 && $donor->canSign === true;
         })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to update LPA donor for id: 91333263035');
 
         $controller->editAction();
     }

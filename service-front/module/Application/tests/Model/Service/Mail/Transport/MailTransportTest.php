@@ -129,10 +129,6 @@ class MailTransportTest extends AbstractEmailServiceTest
         $this->service->send($message);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Email sending failed: Test error
-     */
     public function testSendPostReturns500() : void
     {
         $message = new Message();
@@ -152,41 +148,41 @@ class MailTransportTest extends AbstractEmailServiceTest
 
         $this->sendgridClient->shouldReceive('mail')->once()->andReturn($mail);
 
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Email sending failed: Test error');
+
         $this->service->send($message);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Mail\Message returns as invalid
-     */
     public function testSendNoFrom() : void
     {
         $message = new Message();
 
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Mail\Message returns as invalid');
+
         $this->service->send($message);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage SendGrid requires at least one TO address
-     */
     public function testSendNoTo() : void
     {
         $message = new Message();
         $message->setFrom('from@test.com');
 
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('SendGrid requires at least one TO address');
+
         $this->service->send($message);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage No message content has been set
-     */
     public function testSendNoMessage() : void
     {
         $message = new Message();
         $message->setFrom('from@test.com');
         $message->setTo('to@test.com');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('No message content has been set');
 
         $this->service->send($message);
     }
@@ -218,21 +214,14 @@ class MailTransportTest extends AbstractEmailServiceTest
         $this->service->sendMessageFromTemplate('to@email.com', 'email-account-activate', [], new DateTime('2019-01-01'));
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Missing template config for MISSING-EMAIL-REF
-     * @throws Exception
-     */
     public function testSendMessageFromTemplateMissingTemplate() : void
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Missing template config for MISSING-EMAIL-REF');
+
         $this->service->sendMessageFromTemplate('to@email.com', 'MISSING-EMAIL-REF', [], new DateTime('2019-01-01'));
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Email subject can not be retrieved from the email template content
-     * @throws Exception
-     */
     public function testSendMessageFromTemplateMissingSubject() : void
     {
         $template = Mockery::mock();
@@ -242,6 +231,9 @@ class MailTransportTest extends AbstractEmailServiceTest
             ->withArgs(['registration.twig'])
             ->once()
             ->andReturn($template);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Email subject can not be retrieved from the email template content');
 
         $this->service->sendMessageFromTemplate('to@email.com', 'email-account-activate', [], new DateTime('2019-01-01'));
     }

@@ -180,10 +180,6 @@ class FeeReductionControllerTest extends AbstractControllerTest
         $this->assertEquals(4, count($result->getVariable('reductionOptions')));
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set payment details for id: 91333263035 in FeeReductionController
-     */
     public function testIndexActionPostFailed()
     {
         /** @var FeeReductionController $controller */
@@ -204,6 +200,9 @@ class FeeReductionControllerTest extends AbstractControllerTest
                     && $payment->reducedFeeLowIncome == null
                     && $payment->reducedFeeUniversalCredit === null;
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set payment details for id: 91333263035 in FeeReductionController');
 
         $controller->indexAction();
     }

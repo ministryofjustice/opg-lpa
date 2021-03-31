@@ -39,10 +39,6 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
         return $controller;
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Required data missing when attempting to load the reuse details screen
-     */
     public function testIndexActionRequiredDataMissing()
     {
         $controller = $this->getController(TestableReuseDetailsController::class);
@@ -50,13 +46,12 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->params->shouldReceive('fromQuery')->once();
 
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Required data missing when attempting to load the reuse details screen');
+
         $controller->indexAction();
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Required data missing when attempting to load the reuse details screen
-     */
     public function testIndexActionGetMissingParameters()
     {
         $controller = $this->getController(TestableReuseDetailsController::class);
@@ -69,6 +64,9 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Required data missing when attempting to load the reuse details screen');
 
         $controller->indexAction();
     }
@@ -146,10 +144,6 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
         $this->assertEquals($queryParameters['actor-name'], $result->actorName);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Calling controller or action could not be determined for processing reuse details request
-     */
     public function testIndexActionPostInvalidRouteMatch()
     {
         $controller = $this->getController(TestableReuseDetailsController::class);
@@ -178,6 +172,9 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData);
         $this->router->shouldReceive('match')->andReturn(null)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Calling controller or action could not be determined for processing reuse details request');
 
         /** @var ViewModel $result */
         $result = $controller->indexAction();

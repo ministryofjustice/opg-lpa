@@ -62,10 +62,6 @@ class LifeSustainingControllerTest extends AbstractControllerTest
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set life sustaining for id: 91333263035
-     */
     public function testIndexActionPostFailed()
     {
         /** @var LifeSustainingController $controller */
@@ -77,6 +73,9 @@ class LifeSustainingControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
             ->withArgs([$this->lpa, $this->lpa->document->primaryAttorneyDecisions])->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set life sustaining for id: 91333263035');
 
         $controller->indexAction();
     }

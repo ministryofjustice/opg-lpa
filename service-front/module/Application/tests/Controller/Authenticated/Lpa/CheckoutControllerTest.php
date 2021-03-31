@@ -107,10 +107,6 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->assertEquals($response, $result);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set payment details for id: 91333263035 in CheckoutController
-     */
     public function testChequeActionFailed()
     {
         $controller = $this->getController(CheckoutController::class);
@@ -120,13 +116,12 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setPayment')
             ->withArgs([$this->lpa, $this->lpa->payment])->andReturn(false)->once();
 
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set payment details for id: 91333263035 in CheckoutController');
+
         $controller->chequeAction();
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set payment details for id: 91333263035 in CheckoutController
-     */
     public function testChequeActionIncorrectAmountFailed()
     {
         $controller = $this->getController(CheckoutController::class);
@@ -135,6 +130,9 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->lpa->payment->amount = 182;
         $this->lpaApplicationService->shouldReceive('setPayment')
             ->withArgs([$this->lpa, $this->lpa->payment])->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set payment details for id: 91333263035 in CheckoutController');
 
         $controller->chequeAction();
     }
@@ -173,16 +171,15 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->assertEquals($response, $result);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Invalid option
-     */
     public function testConfirmActionInvalidAmount()
     {
         $controller = $this->getController(CheckoutController::class);
 
         $this->lpa->payment->method = null;
         $this->lpa->payment->amount = 82;
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Invalid option');
 
         $controller->confirmAction();
     }
@@ -252,10 +249,6 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->assertEquals($response, $result);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Invalid GovPay payment reference: existing
-     */
     public function testPayActionExistingPaymentNull()
     {
         $controller = $this->getController(CheckoutController::class);
@@ -272,6 +265,9 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
         $this->govPayClient->shouldReceive('getPayment')
             ->withArgs([$this->lpa->payment->gatewayReference])->andReturn(null)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Invalid GovPay payment reference: existing');
 
         $controller->payAction();
     }
@@ -369,15 +365,14 @@ class CheckoutControllerTest extends AbstractControllerTest
         $this->assertEquals($response, $result);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Payment id needed
-     */
     public function testPayResponseActionNoGatewayReference()
     {
         $controller = $this->getController(CheckoutController::class);
 
         $this->lpa->payment->gatewayReference = null;
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Payment id needed');
 
         $controller->payResponseAction();
     }

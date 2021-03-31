@@ -63,10 +63,6 @@ class InstructionsControllerTest extends AbstractControllerTest
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set LPA instructions for id: 91333263035
-     */
     public function testIndexActionPostInstructionsFailed()
     {
         /** @var InstructionsController $controller */
@@ -77,13 +73,12 @@ class InstructionsControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setInstructions')
             ->withArgs([$this->lpa, $this->postData['instruction']])->andReturn(false)->once();
 
-         $controller->indexAction();
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set LPA instructions for id: 91333263035');
+
+        $controller->indexAction();
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set LPA preferences for id: 91333263035
-     */
     public function testIndexActionPostPreferencesFailed()
     {
         /** @var InstructionsController $controller */
@@ -95,6 +90,9 @@ class InstructionsControllerTest extends AbstractControllerTest
             ->withArgs([$this->lpa, $this->postData['instruction']])->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('setPreferences')
             ->withArgs([$this->lpa, $this->postData['preference']])->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set LPA preferences for id: 91333263035');
 
         $controller->indexAction();
     }

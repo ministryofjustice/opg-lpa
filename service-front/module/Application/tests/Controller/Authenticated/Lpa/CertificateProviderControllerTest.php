@@ -185,10 +185,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider", $result->cancelUrl);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to save certificate provider for id: 91333263035
-     */
     public function testAddActionPostException()
     {
         /** @var CertificateProviderController $controller */
@@ -205,6 +201,9 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setCertificateProvider')->andReturn(false);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to save certificate provider for id: 91333263035');
 
         $controller->addAction();
     }
@@ -313,10 +312,6 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->assertEquals("lpa/{$this->lpa->id}/certificate-provider", $result->cancelUrl);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to update certificate provider for id: 91333263035
-     */
     public function testEditActionPostException()
     {
         /** @var CertificateProviderController $controller */
@@ -332,6 +327,9 @@ class CertificateProviderControllerTest extends AbstractControllerTest
 
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setCertificateProvider')->andReturn(false);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to update certificate provider for id: 91333263035');
 
         $controller->editAction();
     }
@@ -417,16 +415,15 @@ class CertificateProviderControllerTest extends AbstractControllerTest
         $this->assertEquals(true, $result->isPopup);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to delete certificate provider for id: 91333263035
-     */
     public function testDeleteActionException()
     {
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
 
         $this->lpaApplicationService->shouldReceive('deleteCertificateProvider')->andReturn(false);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to delete certificate provider for id: 91333263035');
 
         $controller->deleteAction();
     }

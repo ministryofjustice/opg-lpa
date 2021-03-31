@@ -71,10 +71,6 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set replacement step in decisions for id: 91333263035
-     */
     public function testIndexActionPostFailed()
     {
         /** @var WhenReplacementAttorneyStepInController $controller */
@@ -88,6 +84,9 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
                 return $lpa->id === $this->lpa->id
                     && $replacementAttorneyDecisions->when === $this->postDataLast['when'];
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set replacement step in decisions for id: 91333263035');
 
         $controller->indexAction();
     }

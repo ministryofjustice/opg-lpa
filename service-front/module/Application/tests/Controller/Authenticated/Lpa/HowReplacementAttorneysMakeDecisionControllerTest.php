@@ -85,10 +85,6 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
         $this->assertEquals($response, $result);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set replacement attorney decisions for id: 91333263035
-     */
     public function testIndexActionPostFailed()
     {
         /** @var HowReplacementAttorneysMakeDecisionController $controller */
@@ -108,6 +104,9 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
                     && $replacementAttorneyDecisions->how == AbstractDecisions::LPA_DECISION_HOW_JOINTLY
                     && $replacementAttorneyDecisions->howDetails == null;
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set replacement attorney decisions for id: 91333263035');
 
         $result = $controller->indexAction();
 

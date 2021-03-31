@@ -241,10 +241,6 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         $this->assertEquals('lpa/primary-attorney/add-trust', $result->switchAttorneyTypeRoute);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to add a primary attorney for id: 91333263035
-     */
     public function testAddActionPostFailed()
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
@@ -262,6 +258,9 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
                     && $primaryAttorney->address == new Address($this->postDataHuman['address'])
                     && $primaryAttorney->email == new EmailAddress($this->postDataHuman['email']);
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to add a primary attorney for id: 91333263035');
 
         $controller->addAction();
     }
@@ -408,10 +407,6 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         $this->assertEquals('lpa/primary-attorney/add', $result->switchAttorneyTypeRoute);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to add a trust corporation attorney for id: 91333263035
-     */
     public function testAddTrustActionPostFailed()
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
@@ -429,6 +424,9 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
                     && $primaryAttorney->address == new Address($this->postDataTrust['address'])
                     && $primaryAttorney->email == new EmailAddress($this->postDataTrust['email']);
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to add a trust corporation attorney for id: 91333263035');
 
         $controller->addTrustAction();
     }
@@ -580,10 +578,6 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to update a primary attorney 0 for id: 91333263035
-     */
     public function testEditActionPostFailed()
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
@@ -605,6 +599,9 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
                     && $primaryAttorney->email == new EmailAddress($this->postDataHuman['email'])
                     && $primaryAttorneyId === 1;
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to update a primary attorney 0 for id: 91333263035');
 
         $controller->editAction();
     }
@@ -828,10 +825,6 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
         $this->assertEquals('Page not found', $result->content);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to delete a primary attorney 0 for id: 91333263035
-     */
     public function testDeleteActionFailed()
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
@@ -844,6 +837,9 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
             ->withArgs([$this->lpa, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(false)->once();
         $this->applicantService->shouldReceive('removeAttorney')
             ->withArgs([$this->lpa, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to delete a primary attorney 0 for id: 91333263035');
 
         $controller->deleteAction();
     }
