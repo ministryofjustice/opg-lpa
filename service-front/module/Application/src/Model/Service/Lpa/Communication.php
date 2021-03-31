@@ -47,7 +47,6 @@ class Communication extends AbstractEmailService
         try {
             $this->getMailTransport()->sendMessageFromTemplate($to, MailTransport::EMAIL_LPA_REGISTRATION, $data);
         } catch (Exception $e) {
-            print($e);
             return "failed-sending-email";
         }
 
