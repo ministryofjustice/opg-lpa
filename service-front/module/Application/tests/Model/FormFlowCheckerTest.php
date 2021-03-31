@@ -111,7 +111,7 @@ class FormFlowCheckerTest extends MockeryTestCase
 
     ];
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $config = require __DIR__ . '/../../config/module.routes.php';
 

@@ -22,7 +22,7 @@ class TypeControllerTest extends AbstractControllerTest
         'type' => Document::LPA_TYPE_HW
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

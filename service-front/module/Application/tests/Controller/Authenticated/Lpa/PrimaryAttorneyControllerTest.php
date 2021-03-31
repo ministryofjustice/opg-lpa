@@ -62,7 +62,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTest
      */
     private $applicantService;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

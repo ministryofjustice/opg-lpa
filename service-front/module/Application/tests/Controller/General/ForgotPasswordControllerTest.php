@@ -28,7 +28,7 @@ class ForgotPasswordControllerTest extends AbstractControllerTest
         'password' => 'newPassword'
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

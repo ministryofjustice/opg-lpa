@@ -22,7 +22,7 @@ class ReuseDetailsControllerTest extends AbstractControllerTest
         'reuse-details' => 1
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

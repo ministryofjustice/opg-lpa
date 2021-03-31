@@ -24,7 +24,7 @@ class FeeReductionControllerTest extends AbstractControllerTest
      */
     private $reductionOptions;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

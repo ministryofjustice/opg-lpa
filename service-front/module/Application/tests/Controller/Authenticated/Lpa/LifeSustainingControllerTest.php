@@ -21,7 +21,7 @@ class LifeSustainingControllerTest extends AbstractControllerTest
         'canSustainLife' => true
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

@@ -33,7 +33,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
      */
     private $response;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->apiKey = 'test-key';
 

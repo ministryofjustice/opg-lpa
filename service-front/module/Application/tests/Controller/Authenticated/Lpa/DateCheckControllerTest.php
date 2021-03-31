@@ -26,7 +26,7 @@ class DateCheckControllerTest extends AbstractControllerTest
         'sign-date-certificate-provider'  => ['day' => 1, 'month' => 2, 'year' => 2016]
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

@@ -22,7 +22,7 @@ class WhenLpaStartsControllerTest extends AbstractControllerTest
         'when' => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

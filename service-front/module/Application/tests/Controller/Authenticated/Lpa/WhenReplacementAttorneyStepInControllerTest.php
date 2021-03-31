@@ -29,7 +29,7 @@ class WhenReplacementAttorneyStepInControllerTest extends AbstractControllerTest
         'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

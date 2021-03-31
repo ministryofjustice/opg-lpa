@@ -28,7 +28,7 @@ class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractControllerTe
      */
     private $applicantService;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

@@ -22,7 +22,7 @@ class InstructionsControllerTest extends AbstractControllerTest
         'preference' => 'Unit test preferences'
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

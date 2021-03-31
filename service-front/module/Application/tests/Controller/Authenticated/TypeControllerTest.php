@@ -24,7 +24,7 @@ class TypeControllerTest extends AbstractControllerTest
         'type' => 'property-and-financial'
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

@@ -23,7 +23,7 @@ class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractControll
         'howDetails' => null
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

@@ -12,7 +12,7 @@ class ReuseDetailsTest extends MockeryTestCase
      */
     private $element;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->element = new ReuseDetails();
 

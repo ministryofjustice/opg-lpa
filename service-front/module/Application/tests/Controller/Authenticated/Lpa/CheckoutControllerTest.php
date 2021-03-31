@@ -36,7 +36,7 @@ class CheckoutControllerTest extends AbstractControllerTest
      */
     private $submitButton;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

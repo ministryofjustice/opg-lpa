@@ -15,7 +15,7 @@ class ChangeEmailAddressTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp()
+    public function setUp() : void
     {
         $form = new ChangeEmailAddress();
 
