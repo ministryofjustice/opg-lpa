@@ -25,9 +25,16 @@ class ReuseDetailsController extends AbstractLpaActorController
 
         //  Check that the required query params have been provided
         $queryParams = $this->params()->fromQuery();
-        $callingUrl = $queryParams['calling-url'];
-        $includeTrusts = $queryParams['include-trusts'];
-        $actorName = $queryParams['actor-name'];
+
+        $callingUrl = null;
+        $includeTrusts = null;
+        $actorName = null;
+
+        if (!is_null($queryParams)) {
+            $callingUrl = $queryParams['calling-url'];
+            $includeTrusts = $queryParams['include-trusts'];
+            $actorName = $queryParams['actor-name'];
+        }
 
         if (is_null($callingUrl) || is_null($includeTrusts) || is_null($actorName)) {
             throw new \RuntimeException('Required data missing when attempting to load the reuse details screen');
