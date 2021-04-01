@@ -4,6 +4,7 @@ resource "aws_cloudwatch_log_group" "application_logs" {
 
   tags = merge(
     local.default_tags,
+    local.shared_component_tag,
     {
       "Name" = "${local.environment}_application_logs"
     },
