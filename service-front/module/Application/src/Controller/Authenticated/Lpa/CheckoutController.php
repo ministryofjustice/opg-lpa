@@ -38,10 +38,7 @@ class CheckoutController extends AbstractLpaController
         $isRepeatApplication = ($lpa->repeatCaseNumber != null);
 
         $lowIncomeFee = Calculator::getLowIncomeFee($isRepeatApplication);
-        $lowIncomeFee = number_format(floatval($lowIncomeFee), 2);
-
         $fullFee = Calculator::getFullFee($isRepeatApplication);
-        $fullFee = number_format(floatval($fullFee), 2);
 
         // set hidden form for confirming and paying by card.
         $form = $this->getFormElementManager()->get('Application\Form\Lpa\BlankMainFlowForm', [

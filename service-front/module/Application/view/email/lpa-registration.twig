@@ -23,7 +23,7 @@
 	Payment reference number: {{ lpa.payment.reference }}<br/>
 	Date of payment: {{ lpa.payment.date|date('j F Y - g:ia', 'Europe/London') }}<br/>
 	Description: {{ (( lpa.document.type == 'property-and-financial' ) ? 'Property and financial affairs' : 'Health and welfare' ) }} LPA for {{ lpa.document.donor.name }}<br/>
-	Amount paid: £{{ paymentAmount }}
+	Amount paid: £{{ moneyFormat(paymentAmount) }}
 </p>
 {% endif %}
 
