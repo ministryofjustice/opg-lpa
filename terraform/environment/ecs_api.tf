@@ -9,6 +9,7 @@ resource "aws_ecs_service" "api" {
   launch_type      = "FARGATE"
   platform_version = "1.3.0"
   propagate_tags   = "TASK_DEFINITION"
+
   network_configuration {
     security_groups = [
       aws_security_group.api_ecs_service.id,
