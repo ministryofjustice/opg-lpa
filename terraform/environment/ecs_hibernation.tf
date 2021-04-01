@@ -9,19 +9,22 @@ module "dev_weekdays" {
     tostring(aws_ecs_service.admin.name) = {
       scale_down_to = 0
       scale_up_to   = local.account.autoscaling.admin.maximum
+      target        = module.admin_ecs_autoscaling.appautoscaling_target
     }
     tostring(aws_ecs_service.api.name) = {
       scale_down_to = 0
       scale_up_to   = local.account.autoscaling.api.maximum
+      target        = module.api_ecs_autoscaling.appautoscaling_target
     }
     tostring(aws_ecs_service.front.name) = {
       scale_down_to = 0
       scale_up_to   = local.account.autoscaling.front.maximum
+      target        = module.front_ecs_autoscaling.appautoscaling_target
     }
     tostring(aws_ecs_service.pdf.name) = {
       scale_down_to = 0
       scale_up_to   = local.account.autoscaling.pdf.maximum
+      target        = module.pdf_ecs_autoscaling.appautoscaling_target
     }
   }
-  depends_on = [module.api_ecs_autoscaling, module.pdf_ecs_autoscaling, module.front_ecs_autoscaling]
 }
