@@ -16,6 +16,7 @@ return [
     'controllers' => [
         'factories' => [
             'DynamoDbController' => 'Application\Controller\Console\DynamoDbControllerFactory',
+            'PingController' => 'Application\ControllerFactory\PingControllerFactory',
         ],
         'abstract_factories' => [
             'Application\ControllerFactory\ControllerAbstractFactory'

@@ -104,7 +104,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
     public function canCreate(ContainerInterface $container, $requestedName)
     {
         $controllerName = $this->getControllerName($requestedName);
-
         return (class_exists($controllerName) && is_subclass_of($controllerName, AbstractBaseController::class));
     }
 
