@@ -69,3 +69,12 @@ variable "tags" {
   description = "the AWS tags to apply to the resources in ths module."
   type        = map(any)
 }
+
+output "appautoscaling_target" {
+  description = "returns the autoscaling target for other scaling operations to use"
+  value = {
+    service_namespace  = aws_appautoscaling_target.ecs_service.service_namespace
+    resource_id        = aws_appautoscaling_target.ecs_service.resource_id
+    scalable_dimension = aws_appautoscaling_target.ecs_service.scalable_dimension
+  }
+}
