@@ -23,5 +23,6 @@ variable "service_config" {
     object({
       scale_down_to = number
       scale_up_to   = number
+      target        = map(any)
   }))
 }
