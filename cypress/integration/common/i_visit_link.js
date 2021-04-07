@@ -26,3 +26,4 @@ Then(`I visit in new tab link named {string}`, (linkName) => {
     cy.get(linkName).should('have.attr', 'target', '_blank').invoke('removeAttr', 'target').click();
     cy.OPGCheckA11y();
 })
+
