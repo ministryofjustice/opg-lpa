@@ -53,8 +53,7 @@ Feature: View Summary for Health and Welfare LPA
             | Name | Sir Anthony Webb | people-to-notify |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ BS18 6PL | |
         And I can find draft download link
-        When I visit link in new tab containing "download a preview"
-        #Then I can download "Draft-Lasting-Power-of-Attorney-LP1H.pdf"
+        And I can get "Draft-Lasting-Power-of-Attorney-LP1H.pdf" from link containing "download a preview"
         When I click back
         And I click "continue"
 
