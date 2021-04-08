@@ -73,7 +73,7 @@ locals {
     "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-            "awslogs-group": "${data.aws_cloudwatch_log_group.online-lpa.name}",
+            "awslogs-group": "${aws_cloudwatch_log_group.application_logs.name}",
             "awslogs-region": "eu-west-1",
             "awslogs-stream-prefix": "${local.environment}.seeding.online-lpa"
         }
