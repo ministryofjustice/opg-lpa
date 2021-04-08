@@ -19,3 +19,13 @@ Feature: Add a correspondent to a Health and Welfare LPA
         When I click "change-correspondent"
         Then I can see popup
         And I see "Which details would you like to reuse?" in the page text
+        # donor is correspondent as default
+        And I see "Mrs Nancy Garrison" in the page text
+        And "contactByEmail" is checked
+        # choose donor as correspondent
+        When I check "reuse-details-1"
+        And I click "continue"
+        Then I am taken to the correspondent page
+        And I see "Mrs Nancy Garrison" in the page text
+        And I click "save"
+        Then I am taken to the who are you page
