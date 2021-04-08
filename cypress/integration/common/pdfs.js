@@ -39,7 +39,6 @@ Then(`I can get pdf from link containing {string}`, (linkText) => {
             cy.request(refreshUrl).then((response) => {
                 expect(response.headers['content-type']).to.contain('application/pdf');
                 expect(response.body).to.have.length.gt(500);
-                cy.log(response);
             });
         });
     });
