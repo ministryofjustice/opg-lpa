@@ -21,14 +21,7 @@ abstract class AbstractCsrfForm extends AbstractForm
 
     public function init()
     {
-        $this->getLogger()->err(sprintf(
-            "{AbstractCsrfForm:init} about to set Csrf"
-        ));
-        $this->setCsrf();
 
-        $this->getLogger()->err(sprintf(
-            "{AbstractCsrfForm:init} done set Csrf"
-        ));
         $this->getLogger()->err(sprintf(
             "{AbstractCsrfForm:init} about to call parent init"
         ));

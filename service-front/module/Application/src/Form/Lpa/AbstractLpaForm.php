@@ -49,6 +49,16 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
             "{AbstractLpaForm:isValid} init"
         ));
 
+        $this->getLogger()->err(sprintf(
+            "{AbstractLpaForm:init} about to set Csrf"
+        ));
+
+        $this->setCsrf();
+
+        $this->getLogger()->err(sprintf(
+            "{AbstractLpaForm:init} done set Csrf"
+        ));
+
         foreach ($this->formElements as $name => $elm) {
             //  Add the element
             $this->add([
