@@ -60,7 +60,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         'email' => ['address' => 'unit@test.com']
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -270,10 +270,6 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->assertEquals('lpa/replacement-attorney/add-trust', $result->switchAttorneyTypeRoute);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to add a replacement attorney for id: 91333263035
-     */
     public function testAddActionPostFailed()
     {
         /** @var ReplacementAttorneyController $controller */
@@ -292,6 +288,9 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
                     && $replacementAttorney->address == new Address($this->postDataHuman['address'])
                     && $replacementAttorney->email == new EmailAddress($this->postDataHuman['email']);
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to add a replacement attorney for id: 91333263035');
 
         $controller->addAction();
     }
@@ -443,10 +442,6 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->assertEquals('lpa/replacement-attorney/add', $result->switchAttorneyTypeRoute);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to add trust corporation replacement attorney for id: 91333263035
-     */
     public function testAddTrustActionPostFailed()
     {
         /** @var ReplacementAttorneyController $controller */
@@ -465,6 +460,9 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
                     && $replacementAttorney->address == new Address($this->postDataTrust['address'])
                     && $replacementAttorney->email == new EmailAddress($this->postDataTrust['email']);
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to add trust corporation replacement attorney for id: 91333263035');
 
         $controller->addTrustAction();
     }
@@ -654,10 +652,6 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to update replacement attorney 1 for id: 91333263035
-     */
     public function testEditActionPostFailed()
     {
         /** @var ReplacementAttorneyController $controller */
@@ -680,6 +674,9 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
                     && $replacementAttorney->email == new EmailAddress($this->postDataHuman['email'])
                     && $replacementAttorneyId === 1;
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to update replacement attorney 1 for id: 91333263035');
 
         $controller->editAction();
     }
@@ -868,10 +865,6 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->assertEquals('Page not found', $result->content);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to delete replacement attorney 0 for id: 91333263035
-     */
     public function testDeleteActionFailed()
     {
         /** @var ReplacementAttorneyController $controller */
@@ -884,6 +877,9 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('deleteReplacementAttorney')
             ->withArgs([$this->lpa, $this->lpa->document->replacementAttorneys[$idx]->id])
             ->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to delete replacement attorney 0 for id: 91333263035');
 
         $controller->deleteAction();
     }

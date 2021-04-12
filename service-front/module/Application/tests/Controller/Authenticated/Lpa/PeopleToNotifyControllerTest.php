@@ -43,7 +43,7 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         ]
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -266,10 +266,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to add a notified person for id: 91333263035
-     */
     public function testAddActionPostFailed()
     {
         /** @var PeopleToNotifyController $controller */
@@ -286,6 +282,9 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
                     && $notifiedPerson->name == new Name($this->postData['name'])
                     && $notifiedPerson->address == new Address($this->postData['address']);
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to add a notified person for id: 91333263035');
 
         $controller->addAction();
     }
@@ -442,10 +441,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->assertEquals($cancelUrl, $result->cancelUrl);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to update notified person 0 for id: 91333263035
-     */
     public function testEditActionPostFailed()
     {
         /** @var PeopleToNotifyController $controller */
@@ -465,6 +460,9 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
                     && $notifiedPerson->name == new Name($this->postData['name'])
                     && $notifiedPerson->address == new Address($this->postData['address']);
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to update notified person 0 for id: 91333263035');
 
         $controller->editAction();
     }
@@ -590,10 +588,6 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $this->assertEquals('Page not found', $result->content);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to delete notified person 0 for id: 91333263035
-     */
     public function testDeleteActionFailed()
     {
         /** @var PeopleToNotifyController $controller */
@@ -605,6 +599,9 @@ class PeopleToNotifyControllerTest extends AbstractControllerTest
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn($idx)->once();
         $this->lpaApplicationService->shouldReceive('deleteNotifiedPerson')
             ->withArgs([$this->lpa, $this->lpa->document->peopleToNotify[$idx]->id])->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to delete notified person 0 for id: 91333263035');
 
         $controller->deleteAction();
     }

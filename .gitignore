@@ -39,3 +39,4 @@ service-front/public/assets/v2/js/application.js.map
 service-front/public/assets/v2/css/fonts.css
 service-front/public/assets/v2/css/govuk-template-print.css
 service-front/public/assets/v2/css/govuk-template.css
+.phpunit.result.cache

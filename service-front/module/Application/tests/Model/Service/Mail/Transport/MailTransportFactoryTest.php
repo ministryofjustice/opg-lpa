@@ -36,11 +36,6 @@ class MailTransportFactoryTest extends MockeryTestCase
         $this->assertInstanceOf(MailTransport::class, $result);
     }
 
-    /**
-     * @throws ContainerException
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Sendgrid settings not found
-     */
     public function testMailTransportFactoryNoSendgridConfig() : void
     {
         /** @var ContainerInterface|MockInterface $container */
@@ -50,9 +45,11 @@ class MailTransportFactoryTest extends MockeryTestCase
             ->once()
             ->andReturn(['email' => ['sendgrid' => []]]);
 
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Sendgrid settings not found');
+
         $factory = new MailTransportFactory();
         $result = $factory($container, null, null);
-
         $this->assertInstanceOf(MailTransport::class, $result);
     }
 }

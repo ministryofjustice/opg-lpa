@@ -22,7 +22,7 @@ class DateCheckTest extends AbstractHttpControllerTestCase
     /**
      * Prepares the environment before running a test.
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -280,12 +280,5 @@ class DateCheckTest extends AbstractHttpControllerTestCase
             'sign-date-attorney-2' => ['Check your dates. The attorney\'s signature date cannot be in the future'],
             'sign-date-applicant-0' => ['Check your dates. The applicant\'s signature date cannot be in the future']
         ], $errors);
-    }
-
-    /**
-     * Cleans up the environment after running a test.
-     */
-    protected function tearDown()
-    {
     }
 }

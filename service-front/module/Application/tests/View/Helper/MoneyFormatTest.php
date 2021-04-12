@@ -7,18 +7,18 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class MoneyFormatTest extends MockeryTestCase
 {
-    public function testInvokeFloor():void
+    public function testInvokeWithWholePounds():void
     {
-        $amount= 50;
+        $amount = 50;
         $moneyFormat = new MoneyFormat();
         $result = $moneyFormat($amount);
 
         $this->assertEquals($amount, $result);
     }
 
-    public function testInvokeCeil():void
+    public function testInvokeWithPoundsAndPence():void
     {
-        $amount= 50.55;
+        $amount = 50.55;
         $moneyFormat = new MoneyFormat();
         $result = $moneyFormat($amount);
 

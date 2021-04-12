@@ -16,7 +16,7 @@ class StatsControllerTest extends AbstractControllerTest
      */
     private $statsService;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

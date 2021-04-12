@@ -15,7 +15,7 @@ class DateCheckFormTest extends MockeryTestCase
     /**
      * Set up the form to test
      */
-    public function setUp()
+    public function setUp() : void
     {
         //  Set up the form with the LPA data
         $lpa = new Lpa([

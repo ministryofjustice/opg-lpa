@@ -107,10 +107,6 @@ class AbstractLpaActorControllerTest extends AbstractControllerTest
         $this->assertNull($result);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to update correspondent for id: 91333263035
-     */
     public function testUpdateCorrespondentDataFailed()
     {
         $controller = $this->getController(TestableAbstractLpaActorController::class);
@@ -118,6 +114,9 @@ class AbstractLpaActorControllerTest extends AbstractControllerTest
         $this->lpa->document->correspondent->who = Correspondence::WHO_ATTORNEY;
 
         $this->lpaApplicationService->shouldReceive('setCorrespondent')->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to update correspondent for id: 91333263035');
 
         $trust = FixturesData::getAttorneyTrust();
         $controller->testUpdateCorrespondentData($trust);

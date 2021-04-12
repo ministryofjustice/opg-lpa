@@ -19,7 +19,7 @@ class ChangeEmailAddressControllerTest extends AbstractControllerTest
         'email' => 'newunit@test.com'
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 

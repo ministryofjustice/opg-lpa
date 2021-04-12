@@ -28,7 +28,7 @@ class GoogleAnalyticsServiceTest extends MockeryTestCase
         $this->googleAnalyticsService = new GoogleAnalyticsService($authenticationService, []);
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
 
@@ -86,10 +86,6 @@ class GoogleAnalyticsServiceTest extends MockeryTestCase
         $this->googleAnalyticsService->sendPageView('host name', 'test/view/path', 'Test Title');
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Test Exception
-     */
     public function testSendPageViewFailed() : void
     {
         $_COOKIE['_ga'] = 'padding.more-padding.12345678.87654321';
@@ -108,6 +104,10 @@ class GoogleAnalyticsServiceTest extends MockeryTestCase
         $analyticsClient->expects('sendPageview')->andThrowExceptions([$exception])->once();
 
         $this->googleAnalyticsService->setAnalyticsClient($analyticsClient);
+
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Test Exception');
 
         $this->googleAnalyticsService->sendPageView('host name', 'test/view/path', 'Test Title');
     }

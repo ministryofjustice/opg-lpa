@@ -15,11 +15,8 @@ class SummaryController extends AbstractLpaController
 
         $isRepeatApplication = ($this->getLpa()->repeatCaseNumber != null);
 
-        $lowIncomeFee = Calculator::getLowIncomeFee( $isRepeatApplication );
-        $lowIncomeFee = (floor( $lowIncomeFee ) == $lowIncomeFee ) ? $lowIncomeFee : money_format('%i', $lowIncomeFee);
-
-        $fullFee = Calculator::getFullFee( $isRepeatApplication );
-        $fullFee = (floor( $fullFee ) == $fullFee ) ? $fullFee : money_format('%i', $fullFee);
+        $lowIncomeFee = Calculator::getLowIncomeFee($isRepeatApplication);
+        $fullFee = Calculator::getFullFee($isRepeatApplication);
 
         $viewParams = [
             'returnRoute' => $returnRoute,

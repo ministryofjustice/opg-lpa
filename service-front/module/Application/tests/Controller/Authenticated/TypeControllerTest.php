@@ -24,7 +24,7 @@ class TypeControllerTest extends AbstractControllerTest
         'type' => 'property-and-financial'
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -91,10 +91,6 @@ class TypeControllerTest extends AbstractControllerTest
         $this->assertEquals($response, $result);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set LPA type for id: 5531003156
-     */
     public function testIndexActionPostSetTypeException()
     {
         /** @var TypeController $controller */
@@ -106,6 +102,9 @@ class TypeControllerTest extends AbstractControllerTest
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setType')
             ->andReturn($lpa->id, $this->postData['type'])->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set LPA type for id: 5531003156');
 
         $controller->indexAction();
     }

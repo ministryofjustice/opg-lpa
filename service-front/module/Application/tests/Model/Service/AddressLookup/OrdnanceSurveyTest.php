@@ -33,7 +33,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
      */
     private $response;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->apiKey = 'test-key';
 
@@ -97,7 +97,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
         $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey, $this->endpoint);
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/bad status code/');
+        $this->expectExceptionMessageMatches('/bad status code/');
 
         $lookup->lookupPostcode('SW1A 2AA');
     }
@@ -114,7 +114,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
         $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey, $this->endpoint);
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/invalid JSON/');
+        $this->expectExceptionMessageMatches('/invalid JSON/');
 
         $lookup->lookupPostcode('SW1A 2AA');
     }
@@ -135,7 +135,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
         $result = $lookup->lookupPostcode('SW1A 2AA');
 
         // We expect an empty array.
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEmpty($result);
     }
 
@@ -185,7 +185,7 @@ class OrdnanceSurveyTest extends MockeryTestCase
         $lookup = new OrdnanceSurvey($this->httpClient, $this->apiKey, $this->endpoint);
         $results = $lookup->lookupPostcode('X1 3XX');
 
-        $this->assertInternalType('array', $results);
+        $this->assertIsArray($results);
         $this->assertCount(count($this->testData), $results);
 
         // Loop over each entry in the test data

@@ -51,7 +51,7 @@ class CorrespondentControllerTest extends AbstractControllerTest
         'phone' => ['number' => '0123456789']
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -302,10 +302,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->assertEquals(false, $result->getVariable('allowEditButton'));
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set correspondent for id: 91333263035
-     */
     public function testIndexActionPostFailure()
     {
         /** @var CorrespondentController $controller */
@@ -320,6 +316,9 @@ class CorrespondentControllerTest extends AbstractControllerTest
                     && $correspondent->contactInWelsh === false
                     && $correspondent->contactByPost === false;
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set correspondent for id: 91333263035');
 
         $controller->indexAction();
     }
@@ -402,10 +401,6 @@ class CorrespondentControllerTest extends AbstractControllerTest
         $this->assertEquals(false, $result->getVariable('allowEditButton'));
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to update correspondent for id: 91333263035
-     */
     public function testEditActionPostFailed()
     {
         /** @var CorrespondentController $controller */
@@ -424,6 +419,9 @@ class CorrespondentControllerTest extends AbstractControllerTest
                     && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
                     && $correspondent->phone == new PhoneNumber($this->postDataCorrespondence['phone']);
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to update correspondent for id: 91333263035');
 
         $controller->editAction();
     }

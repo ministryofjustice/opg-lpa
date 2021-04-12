@@ -49,8 +49,6 @@ class SessionFactoryTest extends MockeryTestCase
 
     /**
      * @throws ContainerException
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Session configuration setting not found
      */
     public function testMailTransportFactoryNoSessionConfig() : void
     {
@@ -59,6 +57,9 @@ class SessionFactoryTest extends MockeryTestCase
         $container->shouldReceive('get')
             ->withArgs(['Config'])
             ->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Session configuration setting not found');
 
         $factory = new SessionFactory();
         $result = $factory($container, null, null);

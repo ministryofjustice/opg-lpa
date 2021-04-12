@@ -108,22 +108,20 @@ class LpaAuthAdapterTest extends MockeryTestCase
         $this->assertEquals([null], $result->getMessages());
     }
 
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Email address not set
-     */
     public function testAuthenticateEmailNotSet() : void
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Email address not set');
+
         $this->adapter->authenticate();
     }
 
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Password not set
-     */
     public function testAuthenticatePasswordNotSet() : void
     {
         $this->adapter->setEmail('test@email.com');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Password not set');
 
         $this->adapter->authenticate();
     }

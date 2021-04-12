@@ -26,7 +26,7 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         'repeatCaseNumber' => '12345'
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -102,10 +102,6 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->assertEquals($this->form, $result->getVariable('form'));
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set repeat case number for id: 91333263035
-     */
     public function testIndexActionPostNoRepeatFailed()
     {
         $this->lpa->repeatCaseNumber = 12345;
@@ -119,13 +115,12 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('deleteRepeatCaseNumber')
             ->withArgs([$this->lpa])->andReturn(false)->once();
 
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set repeat case number for id: 91333263035');
+
         $controller->indexAction();
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set repeat case number for id: 91333263035
-     */
     public function testIndexActionPostRepeatFailed()
     {
         /** @var RepeatApplicationController $controller */
@@ -136,13 +131,12 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
         $this->lpaApplicationService->shouldReceive('setRepeatCaseNumber')
             ->withArgs([$this->lpa, $this->postDataRepeat['repeatCaseNumber']])->andReturn(false)->once();
 
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set repeat case number for id: 91333263035');
+
         $controller->indexAction();
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set payment details for id: 91333263035 in RepeatApplicationController
-     */
     public function testIndexActionPostRepeatSetPaymentFailed()
     {
         /** @var RepeatApplicationController $controller */
@@ -157,6 +151,9 @@ class RepeatApplicationControllerTest extends AbstractControllerTest
                 return $lpa->id === $this->lpa->id
                     && $payment->amount === 41.0;
             })->andReturn(false)->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set payment details for id: 91333263035 in RepeatApplicationController');
 
         $controller->indexAction();
     }
