@@ -163,23 +163,23 @@ class ECSMonitor:
         # retrieve logstreeam for the seeding task started
         # formats and prints simple log output
         log_events = self.aws_logs_client.get_log_events(
-            logGroupName='online-lpa',
+            logGroupName=f"{self.environment}_application_logs",
             logStreamName=self.logStreamName,
             nextToken=self.nextForwardToken,
             startFromHead=False
         )
         for event in log_events['events']:
-            print('timestamp: {0}: message: {1}'.format(
-                event['timestamp'], event['message']))
+            print(f"timestamp: {event['timestamp']}: message: {event['message']}")
         self.nextForwardToken = log_events['nextForwardToken']
 
     def print_task_logs(self):
         # lifecycle for getting log streams
         # get logs while task is running
         # after task finishes, print remaining logs
-        self.logStreamName = '{}.seeding.online-lpa/app/{}'.format(self.environment,
-                                                                   self.seeding_task.rsplit('/', 1)[-1])
-        print("Streaming logs for logstream: ".format(self.logStreamName))
+        seeding_task_split = self.seeding_task.rsplit('/', 1)[-1]
+        self.logStreamName = f"{self.environment}.seeding.online-lpa/app/{seeding_task_split}"
+
+        print(f"Streaming logs for logstream: {self.logStreamName}")
 
         self.nextForwardToken = 'f/0'
 
