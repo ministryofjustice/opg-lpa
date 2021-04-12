@@ -571,7 +571,7 @@ orbs:
 
                 echo plan details:
 
-                terraform plan -lock-timeout=300s -out ${WORKSPACE}.plan -detailed-exitcode 2>&1 | tee  ${WORKSPACE}.log
+                terraform plan -lock-timeout=300s -out ${WORKSPACE}.plan  2>&1 | tee  ${WORKSPACE}.log
 
                 echo summary:
                 cat ${WORKSPACE}.log | grep '\.' | grep '#' || true
