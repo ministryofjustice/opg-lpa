@@ -25,6 +25,7 @@ variable "accounts" {
       aurora_instance_count       = number
       deletion_protection         = bool
       always_on                   = bool
+      log_retention_in_days       = number
       autoscaling = object({
         front = object({
           minimum = number
