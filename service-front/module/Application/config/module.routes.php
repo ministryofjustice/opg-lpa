@@ -297,7 +297,7 @@ return [
                 'options' => [
                     'route'    => '/ping',
                     'defaults' => [
-                        'controller' => 'General\PingController',
+                        'controller' => 'PingController',
                         'action'     => 'index',
                     ],
                 ],
