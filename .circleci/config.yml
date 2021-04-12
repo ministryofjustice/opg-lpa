@@ -590,19 +590,19 @@ orbs:
                    echo terraform scan found a possible destructive change.
                    echo please review before approval
                    #slack message goes here.
-                  curl -X POST -H 'Content-type application/json' ${SLACK_DEV_WEBHOOK}  --data  \<< EOF
-                  '{
-                      attachments :
-                      [
-                          "pretext" : "Approval Needed!",
-                          "fallback": "Pipeline for ${CIRCLE_PULL_REQUEST} needs approval, as some infra may be destroyed / recreated. go to ${CIRCLE_BUILD_URL}",
-                          "color":"#ffff00"
-                      ]
-                    }'
-                    EOF
+                  #curl -X POST -H 'Content-type application/json' ${SLACK_DEV_WEBHOOK}  --data  \<< EOF
+                  #'{
+                   #   attachments :
+                   #   [
+                   #       "pretext" : "Approval Needed!",
+                   #       "fallback": "Pipeline for ${CIRCLE_PULL_REQUEST} needs approval, as some infra may be destroyed / recreated. go to ${CIRCLE_BUILD_URL}",
+                  #        "color":"#ffff00"
+                 #     ]
+                  #  }'
+                #    EOF
                 else
                   echo scan found no issues. auto-approval will take place.
-                  ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh "${CIRCLE_WORKFLOW_ID}" <<parameters.approval_step>>
+                 # ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh "${CIRCLE_WORKFLOW_ID}" <<parameters.approval_step>>
                 fi
 
 
