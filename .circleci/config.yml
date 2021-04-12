@@ -561,6 +561,7 @@ orbs:
               name: Plan Terraform against preproduction and scan for potential issues.
               command: |
                 level=<<parameters.terraform_level>>
+                approval_step=<<parameters.approval_step>>
                 echo checking "${level}" level.
                 cd ~/project/terraform/${level}
                 terraform init -lock-timeout=300s
@@ -602,7 +603,7 @@ orbs:
                 #    EOF
                 else
                   echo scan found no issues. auto-approval will take place.
-                 # ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh "${CIRCLE_WORKFLOW_ID}" <<parameters.approval_step>>
+                  ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh "${CIRCLE_WORKFLOW_ID}" "${approval_step}"
                 fi
 
 
