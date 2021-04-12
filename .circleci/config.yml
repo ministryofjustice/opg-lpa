@@ -6,38 +6,38 @@ pr_build:  &pr_build
         name: cancel_previous_jobs
         filters: { branches: { ignore: [master] } }
 
-    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-        name: front_docker_build
-        ecr_repository_name_prefix: online-lpa/front
-        service_path: service-front
-        filters: { branches: { ignore: [master] } }
+    # - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+    #     name: front_docker_build
+    #     ecr_repository_name_prefix: online-lpa/front
+    #     service_path: service-front
+    #     filters: { branches: { ignore: [master] } }
 
-    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-        name: admin_docker_build
-        ecr_repository_name_prefix: online-lpa/admin
-        service_path: service-admin
-        filters: { branches: { ignore: [master] } }
+    # - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+    #     name: admin_docker_build
+    #     ecr_repository_name_prefix: online-lpa/admin
+    #     service_path: service-admin
+    #     filters: { branches: { ignore: [master] } }
 
-    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-        name: api_docker_build
-        ecr_repository_name_prefix: online-lpa/api
-        service_path: service-api
-        filters: { branches: { ignore: [master] } }
+    # - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+    #     name: api_docker_build
+    #     ecr_repository_name_prefix: online-lpa/api
+    #     service_path: service-api
+    #     filters: { branches: { ignore: [master] } }
 
-    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-        name: pdf_docker_build
-        ecr_repository_name_prefix: online-lpa/pdf
-        service_path: service-pdf
-        build_web: false
-        filters: { branches: { ignore: [master] } }
+    # - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+    #     name: pdf_docker_build
+    #     ecr_repository_name_prefix: online-lpa/pdf
+    #     service_path: service-pdf
+    #     build_web: false
+    #     filters: { branches: { ignore: [master] } }
 
-    - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
-        name: seeding_docker_build
-        ecr_repository_name_prefix: online-lpa/seeding
-        service_path: service-seeding
-        build_web: false
-        unit_test: false
-        filters: { branches: { ignore: [master] } }
+    # - build_containers_and_push_to_ecr/checkout_docker_build_push_web-app:
+    #     name: seeding_docker_build
+    #     ecr_repository_name_prefix: online-lpa/seeding
+    #     service_path: service-seeding
+    #     build_web: false
+    #     unit_test: false
+    #     filters: { branches: { ignore: [master] } }
 
     - infrastructure_and_deployment/lint_account_terraform:
         name: lint_account_terraform_pr_build
@@ -47,64 +47,91 @@ pr_build:  &pr_build
         name: lint_environment_terraform_pr_build
         filters: { branches: { ignore: [master] } }
 
-    - infrastructure_and_deployment/apply_account_terraform:
-        name: dev_account_apply_terraform
+    - infrastructure_and_deployment/plan_check_terraform:
+        name: dev_account_plan_check_terraform_pr_build
         workspace: development
+        terraform_level: account
+        approval_step: "sanity_check_terraform_apply_account_pr_build"
         filters: { branches: { ignore: [master] } }
         requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
 
-    - infrastructure_and_deployment/apply_email_terraform:
-        name: email_apply_terraform
-        workspace: development
-        filters: { branches: { ignore: [master] } }
-        requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
+    - hold_for_approval_account_tf:
+       name:  sanity_check_terraform_apply_account_pr_build
+       type: approval
+       filters: { branches: { ignore: [master] } }
+       requires: [cancel_previous_jobs,dev_account_plan_check_terraform_pr_build ]
 
-    - infrastructure_and_deployment/apply_environment_terraform:
-        name: dev_environment_apply_terraform
+    - infrastructure_and_deployment/plan_check_terraform:
+        name: dev_environment_plan_check_terraform_pr_build
+        terraform_level: environment
+        approval_step: "sanity_check_terraform_apply_environment_pr_build"
         filters: { branches: { ignore: [master] } }
-        requires:
-          [
-            cancel_previous_jobs,
-            lint_environment_terraform_pr_build,
-            dev_account_apply_terraform,
-            front_docker_build,
-            admin_docker_build,
-            api_docker_build,
-            pdf_docker_build,
-            seeding_docker_build,
-          ]
+        requires: [cancel_previous_jobs, lint_environment_terraform_pr_build]
 
-    - ecr_scan_results:
-        name: ecr_scan_results_development
+    - hold_for_approval_account_tf:
+        name:  sanity_check_terraform_apply_environment_pr_build
+        type: approval
         filters: { branches: { ignore: [master] } }
-        requires:
-          [
-            front_docker_build,
-            admin_docker_build,
-            api_docker_build,
-            pdf_docker_build,
-            seeding_docker_build,
-          ]
+        requires: [cancel_previous_jobs,dev_environment_plan_check_terraform_pr_build ]
+    # - infrastructure_and_deployment/apply_account_terraform:
+    #     name: dev_account_apply_terraform
+    #     workspace: development
+    #     filters: { branches: { ignore: [master] } }
+    #     requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
 
-    - infrastructure_and_deployment/seed_environment_databases:
-        name: dev_seed_environment_databases
-        filters: { branches: { ignore: [master] } }
-        requires: [dev_environment_apply_terraform]
+    # - infrastructure_and_deployment/apply_email_terraform:
+    #     name: email_apply_terraform
+    #     workspace: development
+    #     filters: { branches: { ignore: [master] } }
+    #     requires: [cancel_previous_jobs, lint_account_terraform_pr_build]
 
-    - infrastructure_and_deployment/run_cypress_test:
-        name: run_cypress_test
-        filters: { branches: { ignore: [master] } }
-        requires: [dev_seed_environment_databases]
+    # - infrastructure_and_deployment/apply_environment_terraform:
+    #     name: dev_environment_apply_terraform
+    #     filters: { branches: { ignore: [master] } }
+    #     requires:
+    #       [
+    #         cancel_previous_jobs,
+    #         lint_environment_terraform_pr_build,
+    #         dev_account_apply_terraform,
+    #         front_docker_build,
+    #         admin_docker_build,
+    #         api_docker_build,
+    #         pdf_docker_build,
+    #         seeding_docker_build,
+    #       ]
 
-    - infrastructure_and_deployment/run_functional_test:
-        name: run_functional_test
-        filters: { branches: { ignore: [master] } }
-        requires: [dev_seed_environment_databases]
+    # - ecr_scan_results:
+    #     name: ecr_scan_results_development
+    #     filters: { branches: { ignore: [master] } }
+    #     requires:
+    #       [
+    #         front_docker_build,
+    #         admin_docker_build,
+    #         api_docker_build,
+    #         pdf_docker_build,
+    #         seeding_docker_build,
+    #       ]
 
-    - slack_notify_domain:
-        name: post_environment_domains
-        filters: { branches: { ignore: [master] } }
-        requires: [run_functional_test, run_cypress_test]
+    # - infrastructure_and_deployment/seed_environment_databases:
+    #     name: dev_seed_environment_databases
+    #     filters: { branches: { ignore: [master] } }
+    #     requires: [dev_environment_apply_terraform]
+
+    # - infrastructure_and_deployment/run_cypress_test:
+    #     name: run_cypress_test
+    #     filters: { branches: { ignore: [master] } }
+    #     requires: [dev_seed_environment_databases]
+
+    # - infrastructure_and_deployment/run_functional_test:
+    #     name: run_functional_test
+    #     filters: { branches: { ignore: [master] } }
+    #     requires: [dev_seed_environment_databases]
+
+    # - slack_notify_domain:
+    #     name: post_environment_domains
+    #     filters: { branches: { ignore: [master] } }
+    #     requires: [run_functional_test, run_cypress_test]
+
 
 path_to_live: &path_to_live
   jobs:
@@ -426,20 +453,6 @@ orbs:
         resource_class: small
     jobs:
       #----------------------------------------------------
-      # Lambda
-      package_lambda_artifact:
-        executor: python-build
-        steps:
-          - checkout
-          - run: apk add zip
-          - run: pip3 install -r ~/project/workspace_destroyer_lambda/lambda/requirements.txt  --target ~/project/workspace_destroyer_lambda/lambda/vendor
-          - run: cd ~/project/workspace_destroyer_lambda/lambda/vendor; zip -r9 /tmp/lambda_function_payload.zip .
-          - run: cd ~/project/workspace_destroyer_lambda/lambda; zip -g /tmp/lambda_function_payload.zip service.py
-          - persist_to_workspace:
-              root: /tmp
-              paths:
-                - lambda_function_payload.zip
-      #----------------------------------------------------
       # Terraform
       lint_account_terraform:
         parameters:
@@ -525,6 +538,69 @@ orbs:
                 export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
                 echo $TF_WORKSPACE
                 terraform apply -lock-timeout=300s --auto-approve
+
+      plan_check_terraform:
+        # plan check - with gating check
+        executor: terraform14
+        parameters:
+          terraform_level:
+            description: choose account / enviroment for level to check
+            default: environment
+            type: enum
+            enum: ["environment", "account"]
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH//[-_]/}"
+          approval_step:
+            description: approval step to auto approve
+            type: string
+        steps:
+          - checkout
+          - run:
+              name: Plan Terraform against preproduction and scan for potential issues.
+              command: |
+                level=<<parameters.terraform_level>>
+                echo checking "${level}" level.
+                cd ~/project/terraform/${level}
+                terraform init -lock-timeout=300s
+                export WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                echo $WORKSPACE
+                echo plan against preproduction to check for potential issues...
+                terraform workspace select preproduction
+
+                echo plan details:
+
+                terraform plan -lock-timeout=300s -out ${WORKSPACE}.plan -detailed-exitcode 2>&1 | tee  ${WORKSPACE}.log
+
+                echo summary:
+                cat ${WORKSPACE}.log | grep '\.' | grep '#' || true
+
+                echo destructive changes:
+                if [[ "${level}" == "account" ]]; then
+                  cat ${WORKSPACE}.log | grep -E 'destroyed|replaced'
+                else
+                  cat ${TF_WORKSPACE}.log | grep -E 'aws_ecs_(service|cluster)|aws_s3.*|aws_rds.*|aws_db.*|aws_lb.*' | grep -E 'destroyed|replaced'
+                fi
+                if [[ "$?" -eq 0 ]]; then
+                   echo terraform scan found a possible destructive change.
+                   echo please review before approval
+                   #slack message goes here.
+                  curl -X POST -H 'Content-type application/json' --data  \<< EOF
+                  '{
+                      attachments :
+                      [
+                          "pretext" : "Approval Needed!"
+                          "fallback": "Pipeline for ${CIRCLE_PULL_REQUEST} needs approval, as some infra may be destroyed / recreated. go to ${CIRCLE_BUILD_URL}"
+                          "color":"#ffff00"
+                      ]
+                    }'
+                    EOF \
+                    ${SLACK_DEV_WEBHOOK}
+                else
+                  echo scan found no issues. auto-approval will take place.
+                  ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh "${CIRCLE_WORKFLOW_ID}" <<parameters.approval_step>>
+                fi
 
       apply_environment_terraform:
         #
