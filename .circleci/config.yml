@@ -603,7 +603,7 @@ orbs:
                 #    EOF
                 else
                   echo scan found no issues. auto-approval will take place.
-                  ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh "${CIRCLE_WORKFLOW_ID}" "${approval_step}"
+                  ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh "${CIRCLE_WORKFLOW_ID}" "${approval_step}" "${CIRCLECI_API_KEY}"
                 fi
 
 
