@@ -560,6 +560,7 @@ orbs:
           - run:
               name: Plan Terraform against preproduction and scan for potential issues.
               command: |
+                apk update && apk add curl curl-dev bash
                 level=<<parameters.terraform_level>>
                 approval_step=<<parameters.approval_step>>
                 echo checking "${level}" level.
