@@ -44,38 +44,6 @@ resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
   treat_missing_data        = "notBreaching"
 }
 
-/* resource "aws_cloudwatch_log_metric_filter" "csrf_mistmatch_filter" {
-  name           = "CSRFValuesMismatch"
-  pattern        = "{($.priorityName = \"ERR\") && ($.message = \"Mismatched CSRF provided*\")}"
-  log_group_name = data.aws_cloudwatch_log_group.online-lpa.name
-
-  metric_transformation {
-    name      = "EventCount"
-    namespace = "online-lpa/Cloudwatch"
-    value     = "1"
-  }
-} */
-
-# disable as not required right now.
-/*resource "aws_cloudwatch_metric_alarm" "front_csrf_mismatch_errors" {
-  actions_enabled           = true
-  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
-  alarm_description         = "CSRF Errors returned to front users for ${local.environment}"
-  alarm_name                = "${local.environment} public front CSRF errors"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  datapoints_to_alarm       = 1
-  evaluation_periods        = 1
-  insufficient_data_actions = []
-  metric_name               = "EventCount"
-  namespace                 = "online-lpa/Cloudwatch"
-  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
-  period                    = 60
-  statistic                 = "Sum"
-  tags                      = merge(local.default_tags, local.front_component_tag)
-  threshold                 = 10
-  treat_missing_data        = "notBreaching"
-}*/
-
 resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   actions_enabled     = true
   alarm_name          = "${local.environment} pdf messages awaiting processing"
