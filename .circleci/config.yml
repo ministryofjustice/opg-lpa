@@ -578,13 +578,15 @@ orbs:
 
                 echo destructive changes:
                 set +e
-                if [[ "${level}" == "account" ]]; then
+                if [[ "${level}" == "account" ]]
+                then
                   cat ${WORKSPACE}.log | grep -E 'destroyed|replaced'
                 else
                   cat ${WORKSPACE}.log | grep -E 'aws_ecs_(service|cluster)|aws_s3.*|aws_rds.*|aws_db.*|aws_lb.*' | grep -E 'destroyed|replaced'
                 fi
 
-                if [[ "$?" -eq 0 ]]; then
+                if [[ "$?" -eq 0 ]]
+                then
                    echo terraform scan found a possible destructive change.
                    echo please review before approval
                    #slack message goes here.
@@ -602,6 +604,7 @@ orbs:
                   echo scan found no issues. auto-approval will take place.
                   ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh "${CIRCLE_WORKFLOW_ID}" <<parameters.approval_step>>
                 fi
+
 
       apply_environment_terraform:
         #
