@@ -28,11 +28,9 @@ class ECRScanChecker:
 
     def set_iam_role_session(self):
         if os.getenv('CI'):
-            role_arn = 'arn:aws:iam::{}:role/opg-lpa-ci'.format(
-                self.aws_account_id)
+            role_arn = f'arn:aws:iam::{self.aws_account_id}:role/opg-lpa-ci'
         else:
-            role_arn = 'arn:aws:iam::{}:role/operator'.format(
-                self.aws_account_id)
+            role_arn = f'arn:aws:iam::{self.aws_account_id}:role/operator'
 
         sts = boto3.client(
             'sts',
@@ -74,8 +72,7 @@ class ECRScanChecker:
                 }
             )
         except:
-            print("No ECR image scan results for image {0}, tag {1}".format(
-                image, tag))
+            print(f"No ECR image scan results for image {image}, tag {tag}")
 
     def recursive_check_make_report(self, tag):
         print("Checking ECR scan results...")
@@ -85,10 +82,8 @@ class ECRScanChecker:
                     "imageScanFindings"]
                 if findings["findings"] != []:
                     counts = findings["findingSeverityCounts"]
-                    title = "\n\n:warning: *AWS ECR Scan found results for {}:* \n".format(
-                        image)
-                    severity_counts = "Severity finding counts:\n{}\nDisplaying the first {} in order of severity\n\n".format(
-                        counts, self.report_limit)
+                    title = f"\n\n:warning: *AWS ECR Scan found results for {image}:* \n"
+                    severity_counts = f"Severity finding counts:\n{counts}\nDisplaying the first {self.report_limit} in order of severity\n\n"
                     self.report = title + severity_counts
 
                     for finding in findings["findings"]:
@@ -99,12 +94,10 @@ class ECRScanChecker:
 
                         severity = finding["severity"]
                         link = finding["uri"]
-                        result = "*Image:* {0} \n**Tag:* {1} \n*Severity:* {2} \n*CVE:* {3} \n*Description:* {4} \n*Link:* {5}\n\n".format(
-                            image, tag, severity, cve, description, link)
+                        result = f"*Image:* {image} \n**Tag:* {tag} \n*Severity:* {severity} \n*CVE:* {cve} \n*Description:* {description} \n*Link:* {link}\n\n"
                         self.report += result
             except:
-                print("Unable to get ECR image scan results for image {0}, tag {1}".format(
-                    image, tag))
+                print(f"Unable to get ECR image scan results for image {image}, tag {tag}")
         if not self.report :
            self.report = "AWS ECR Scan found no issues.\n"
            print(self.report)
@@ -122,9 +115,7 @@ class ECRScanChecker:
     def post_to_slack(self, slack_webhook):
         if os.getenv('CI'):
 
-            ci_footer = "*Github Branch:* {0}\n\n*CircleCI Job Link:* {1}\n\n".format(
-                os.getenv('CIRCLE_BRANCH'),
-                os.getenv('CIRCLE_BUILD_URL'))
+            ci_footer = f"*Github Branch:* {os.getenv('CIRCLE_BRANCH')}\n\n*CircleCI Job Link:* {os.getenv('CIRCLE_BUILD_URL')}\n\n"
             self.report += ci_footer
 
         post_data = json.dumps({"text": self.report})
