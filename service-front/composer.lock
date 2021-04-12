@@ -63,16 +63,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.176.7",
+            "version": "3.178.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "734dd0535f8e70ebb59be37f522af4e45d006ace"
+                "reference": "45692b97e12a2eed540c0afd106f143aad15e622"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/734dd0535f8e70ebb59be37f522af4e45d006ace",
-                "reference": "734dd0535f8e70ebb59be37f522af4e45d006ace",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/45692b97e12a2eed540c0afd106f143aad15e622",
+                "reference": "45692b97e12a2eed540c0afd106f143aad15e622",
                 "shasum": ""
             },
             "require": {
@@ -147,9 +147,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.176.7"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.178.1"
             },
-            "time": "2021-04-02T18:16:40+00:00"
+            "time": "2021-04-09T18:13:02+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -1431,16 +1431,16 @@
         },
         {
             "name": "laminas/laminas-form",
-            "version": "2.16.2",
+            "version": "2.16.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-form.git",
-                "reference": "4262d6d6f0e7a47ef8db969481e59d58a0118f0e"
+                "reference": "76fe85b3f126183fe965d60e32e2bf6c7c108d61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-form/zipball/4262d6d6f0e7a47ef8db969481e59d58a0118f0e",
-                "reference": "4262d6d6f0e7a47ef8db969481e59d58a0118f0e",
+                "url": "https://api.github.com/repos/laminas/laminas-form/zipball/76fe85b3f126183fe965d60e32e2bf6c7c108d61",
+                "reference": "76fe85b3f126183fe965d60e32e2bf6c7c108d61",
                 "shasum": ""
             },
             "require": {
@@ -1451,7 +1451,7 @@
                 "php": "^7.3 || ~8.0.0"
             },
             "conflict": {
-                "laminas/laminas-code": "< 3.5.0"
+                "laminas/laminas-code": "<3.5.0 || >=4.0.0"
             },
             "replace": {
                 "zendframework/zend-form": "^2.14.3"
@@ -1520,7 +1520,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-03-23T06:23:46+00:00"
+            "time": "2021-04-07T06:22:41+00:00"
         },
         {
             "name": "laminas/laminas-http",
@@ -1665,16 +1665,16 @@
         },
         {
             "name": "laminas/laminas-i18n",
-            "version": "2.11.0",
+            "version": "2.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-i18n.git",
-                "reference": "85678f444b6dcb48e8a04591779e11c24e5bb901"
+                "reference": "5e85a8facc5534e856cc7f5b4326533eede84b8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-i18n/zipball/85678f444b6dcb48e8a04591779e11c24e5bb901",
-                "reference": "85678f444b6dcb48e8a04591779e11c24e5bb901",
+                "url": "https://api.github.com/repos/laminas/laminas-i18n/zipball/5e85a8facc5534e856cc7f5b4326533eede84b8a",
+                "reference": "5e85a8facc5534e856cc7f5b4326533eede84b8a",
                 "shasum": ""
             },
             "require": {
@@ -1746,7 +1746,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2020-10-24T13:14:32+00:00"
+            "time": "2021-04-07T21:10:50+00:00"
         },
         {
             "name": "laminas/laminas-inputfilter",
