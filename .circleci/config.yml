@@ -592,8 +592,8 @@ orbs:
                   '{
                       attachments :
                       [
-                          "pretext" : "Approval Needed!"
-                          "fallback": "Pipeline for ${CIRCLE_PULL_REQUEST} needs approval, as some infra may be destroyed / recreated. go to ${CIRCLE_BUILD_URL}"
+                          "pretext" : "Approval Needed!",
+                          "fallback": "Pipeline for ${CIRCLE_PULL_REQUEST} needs approval, as some infra may be destroyed / recreated. go to ${CIRCLE_BUILD_URL}",
                           "color":"#ffff00"
                       ]
                     }'
