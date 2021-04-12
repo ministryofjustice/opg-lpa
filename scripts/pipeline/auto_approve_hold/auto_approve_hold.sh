@@ -11,6 +11,8 @@ url="https://circleci.com/api/v2/workflow/${ID}/job?circle-token=${API_KEY}"
 # Get workflow details
 workflow=$(curl -s -X GET --header "Content-Type: application/json" "$url")
 
+echo "$workflow"
+
 # Get approval job id
 job_id=$(echo "${workflow}" | jq -r '.items[] | select(.name=="${HOLD_JOB_NAME}") | .approval_request_id ')
 
