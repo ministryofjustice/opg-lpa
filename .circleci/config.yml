@@ -583,12 +583,12 @@ orbs:
                 else
                   cat ${TF_WORKSPACE}.log | grep -E 'aws_ecs_(service|cluster)|aws_s3.*|aws_rds.*|aws_db.*|aws_lb.*' | grep -E 'destroyed|replaced'
                 fi
-                set -e
+
                 if [[ "$?" -eq 0 ]]; then
                    echo terraform scan found a possible destructive change.
                    echo please review before approval
                    #slack message goes here.
-                  curl -X POST -H 'Content-type application/json' --data  \<< EOF
+                  curl -X POST -H 'Content-type application/json' ${SLACK_DEV_WEBHOOK}  --data  \<< EOF
                   '{
                       attachments :
                       [
@@ -597,8 +597,7 @@ orbs:
                           "color":"#ffff00"
                       ]
                     }'
-                    EOF \
-                    ${SLACK_DEV_WEBHOOK}
+                    EOF
                 else
                   echo scan found no issues. auto-approval will take place.
                   ~/project/scripts/pipeline/auto_approve_hold/auto_approve_hold.sh "${CIRCLE_WORKFLOW_ID}" <<parameters.approval_step>>
