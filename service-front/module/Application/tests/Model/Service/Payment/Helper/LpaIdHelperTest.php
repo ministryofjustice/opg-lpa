@@ -12,11 +12,11 @@ class PaymentTest extends AbstractHttpControllerTestCase
     /**
      * Prepares the environment before running a test.
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
     }
-    
+
     public function testPadLpaIdWithStringWhenZeroesNeeded()
     {
         $this->assertEquals(
@@ -24,7 +24,7 @@ class PaymentTest extends AbstractHttpControllerTestCase
             '00000000123'
         );
     }
-    
+
     public function testPadLpaIdWithIntegerWhenZeroesNeeded()
     {
         $this->assertEquals(
@@ -32,7 +32,7 @@ class PaymentTest extends AbstractHttpControllerTestCase
             '00000000123'
         );
     }
-    
+
     public function testPadLpaIdWhenNoZeroesNeeded()
     {
         $this->assertEquals(
@@ -40,7 +40,7 @@ class PaymentTest extends AbstractHttpControllerTestCase
             '12345678901'
         );
     }
-    
+
     public function testPadLpaIdWhenLpaIdIsTooBig()
     {
         $exceptionThrown = false;
@@ -49,7 +49,7 @@ class PaymentTest extends AbstractHttpControllerTestCase
         } catch (\Exception $e) {
             $exceptionThrown = true;
         }
-        
+
         $this->assertTrue($exceptionThrown);
     }
 
@@ -67,12 +67,5 @@ class PaymentTest extends AbstractHttpControllerTestCase
         );
 
         $this->assertTrue(is_numeric($parts[1]));
-    }
-
-    /**
-     * Cleans up the environment after running a test.
-     */
-    protected function tearDown()
-    {
     }
 }

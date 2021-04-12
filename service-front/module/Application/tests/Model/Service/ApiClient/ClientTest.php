@@ -4,6 +4,7 @@ namespace ApplicationTest\Model\Service\ApiClient;
 
 use Application\Logging\Logger;
 use Application\Model\Service\ApiClient\Client;
+use Application\Model\Service\ApiClient\Exception\ApiException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Hamcrest\Matchers;
@@ -153,8 +154,6 @@ class ClientTest extends MockeryTestCase
     }
 
     /**
-     * @expectedException  Application\Model\Service\ApiClient\Exception\ApiException
-     * @expectedExceptionMessage HTTP:404 - Unexpected API response
      * @throws \Http\Client\Exception
      */
     public function testHttpGetNotFound() : void
@@ -172,12 +171,13 @@ class ClientTest extends MockeryTestCase
                      ->withArgs($expectedLoggerArgs)
                      ->once();
 
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('HTTP:404 - Unexpected API response');
+
         $this->client->httpGet('path');
     }
 
     /**
-     * @expectedException  Application\Model\Service\ApiClient\Exception\ApiException
-     * @expectedExceptionMessage HTTP:500 - Unexpected API response
      * @throws \Http\Client\Exception
      */
     public function testHttpError() : void
@@ -194,6 +194,9 @@ class ClientTest extends MockeryTestCase
                      ->withArgs($expectedLoggerArgs)
                      ->once();
 
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('HTTP:500 - Unexpected API response');
+
         $this->client->httpGet('path');
     }
 
@@ -206,10 +209,6 @@ class ClientTest extends MockeryTestCase
         $this->assertNull($result);
     }
 
-    /**
-     * @expectedException  Application\Model\Service\ApiClient\Exception\ApiException
-     * @expectedExceptionMessage HTTP:500 - Unexpected API response
-     */
     public function testHttpDeleteError() : void
     {
         $this->setUpRequest(500, 'An error', 'DELETE');
@@ -223,6 +222,9 @@ class ClientTest extends MockeryTestCase
         $this->logger->shouldReceive('err')
                      ->withArgs($expectedLoggerArgs)
                      ->once();
+
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('HTTP:500 - Unexpected API response');
 
         $this->client->httpDelete('path');
     }
@@ -257,10 +259,6 @@ class ClientTest extends MockeryTestCase
         $this->assertEquals(['test' => 'value'], $result);
     }
 
-    /**
-     * @expectedException  Application\Model\Service\ApiClient\Exception\ApiException
-     * @expectedExceptionMessage HTTP:500 - Unexpected API response
-     */
     public function testHttpPatchError() : void
     {
         $this->setUpRequest(500, 'An error', 'PATCH', 'base_url/path', '{"a":1}');
@@ -274,6 +272,9 @@ class ClientTest extends MockeryTestCase
         $this->logger->shouldReceive('err')
                      ->withArgs($expectedLoggerArgs)
                      ->once();
+
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('HTTP:500 - Unexpected API response');
 
         $this->client->httpPatch('path');
     }
@@ -296,10 +297,6 @@ class ClientTest extends MockeryTestCase
         $this->assertEquals(['test' => 'value'], $result);
     }
 
-    /**
-     * @expectedException  Application\Model\Service\ApiClient\Exception\ApiException
-     * @expectedExceptionMessage HTTP:500 - Unexpected API response
-     */
     public function testHttpPostError() : void
     {
         $this->setUpRequest(500, 'An error', 'POST', 'base_url/path', '{"a":1}');
@@ -313,6 +310,9 @@ class ClientTest extends MockeryTestCase
         $this->logger->shouldReceive('err')
                      ->withArgs($expectedLoggerArgs)
                      ->once();
+
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('HTTP:500 - Unexpected API response');
 
         $this->client->httpPost('path');
     }
@@ -335,10 +335,6 @@ class ClientTest extends MockeryTestCase
         $this->assertEquals(['test' => 'value'], $result);
     }
 
-    /**
-     * @expectedException  Application\Model\Service\ApiClient\Exception\ApiException
-     * @expectedExceptionMessage HTTP:500 - Unexpected API response
-     */
     public function testHttpPutError() : void
     {
         $this->setUpRequest(500, 'An error', 'PUT', 'base_url/path', '{"a":1}');
@@ -347,6 +343,9 @@ class ClientTest extends MockeryTestCase
         $this->logger->shouldReceive('err')
                      ->withArgs(['HTTP:500 - Unexpected API response', ['headers' => ['Token' => 'test token']]])
                      ->once();
+
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('HTTP:500 - Unexpected API response');
 
         $this->client->httpPut('path');
     }

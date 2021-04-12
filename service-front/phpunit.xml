@@ -1,10 +1,11 @@
-<phpunit bootstrap="./module/Application/tests/Bootstrap.php" colors="true">
-    <testsuite name="ApplicationTest">
-        <directory>./module/Application/tests/</directory>
-    </testsuite>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./module/Application/src</directory>
-        </whitelist>
-    </filter>
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./module/Application/tests/Bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">./module/Application/src</directory>
+    </include>
+  </coverage>
+  <testsuite name="ApplicationTest">
+    <directory>./module/Application/tests/</directory>
+  </testsuite>
 </phpunit>

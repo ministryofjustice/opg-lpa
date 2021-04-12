@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
+use Application\View\Helper\MoneyFormat;
 use Laminas\View\Model\ViewModel;
 use Opg\Lpa\DataModel\Lpa\Payment\Calculator;
 use Opg\Lpa\DataModel\Lpa\Payment\Payment;
@@ -10,6 +11,57 @@ use Laminas\Form\Element;
 
 class FeeReductionController extends AbstractLpaController
 {
+    private $moneyFormat;
+
+    /**
+     * Override AbstractLpaController constructor to add in MoneyFormat
+     * instance.
+     *
+     * @param string $lpaId
+     * @param FormElementManager $formElementManager
+     * @param SessionManager $sessionManager
+     * @param AuthenticationService $authenticationService
+     * @param array $config
+     * @param Container $userDetailsSession
+     * @param LpaApplicationService $lpaApplicationService
+     * @param UserService $userService
+     * @param ReplacementAttorneyCleanup $replacementAttorneyCleanup
+     * @param Metadata $metadata
+     * @param MoneyFormat $moneyFormat
+     */
+    public function __construct(
+        $lpaId,
+        $formElementManager,
+        $sessionManager,
+        $authenticationService,
+        $config,
+        $userDetailsSession,
+        $lpaApplicationService,
+        $userService,
+        $replacementAttorneyCleanup,
+        $metadata,
+        $moneyFormat = null
+    ) {
+        parent::__construct(
+            $lpaId,
+            $formElementManager,
+            $sessionManager,
+            $authenticationService,
+            $config,
+            $userDetailsSession,
+            $lpaApplicationService,
+            $userService,
+            $replacementAttorneyCleanup,
+            $metadata
+        );
+
+        if (is_null($moneyFormat)) {
+            $moneyFormat = new MoneyFormat();
+        }
+
+        $this->moneyFormat = $moneyFormat;
+    }
+
     public function indexAction()
     {
         $lpa = $this->getLpa();
@@ -54,8 +106,8 @@ class FeeReductionController extends AbstractLpaController
 
         $reductionOptions = [];
 
-        $amount = Calculator::getBenefitsFee( $isRepeatApplication );
-        $amount = ( floor( $amount ) == $amount ) ? $amount : money_format('%i', $amount);
+        $amount = Calculator::getBenefitsFee($isRepeatApplication);
+        $amount = call_user_func($this->moneyFormat, $amount);
         $reductionOptions['reducedFeeReceivesBenefits'] = new Element('reductionOptions', [
             'label' => "The donor currently claims one of <a class=\"js-guidance\" href=\"/guide#topic-fees-reductions-and-exemptions\" data-journey-click=\"page:link:help: these means-tested benefits\">these means-tested benefits</a> and has not been awarded personal injury damages of more than £16,000<br><strong class='bold-small'>Fee: £".$amount."</strong>"
         ]);
@@ -76,8 +128,8 @@ class FeeReductionController extends AbstractLpaController
             'checked' => (($reduction->getValue() == 'reducedFeeUniversalCredit')? 'checked':null),
         ]);
 
-        $amount = Calculator::getLowIncomeFee( $isRepeatApplication );
-        $amount = ( floor( $amount ) == $amount ) ? $amount : money_format('%i', $amount);
+        $amount = Calculator::getLowIncomeFee($isRepeatApplication);
+        $amount = call_user_func($this->moneyFormat, $amount);
         $reductionOptions['reducedFeeLowIncome'] = new Element('reductionOptions', [
             'label' => "The donor currently has an income of less than £12,000 a year before tax<br><strong class='bold-small'>Fee: £".$amount."</strong>",
         ]);
@@ -88,8 +140,8 @@ class FeeReductionController extends AbstractLpaController
             'checked' => (($reduction->getValue() == 'reducedFeeLowIncome')? 'checked':null),
         ]);
 
-        $amount = Calculator::getFullFee( $isRepeatApplication );
-        $amount = ( floor( $amount ) == $amount ) ? $amount : money_format('%i', $amount);
+        $amount = Calculator::getFullFee($isRepeatApplication);
+        $amount = call_user_func($this->moneyFormat, $amount);
         $reductionOptions['notApply'] = new Element('reductionOptions', [
             'label' => "The donor is not applying for a reduced fee<br><strong class='bold-small'>Fee: £".$amount."</strong>",
         ]);

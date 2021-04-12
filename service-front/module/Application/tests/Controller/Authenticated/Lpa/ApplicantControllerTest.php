@@ -20,7 +20,7 @@ class ApplicantControllerTest extends AbstractControllerTest
      */
     private $form;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -130,10 +130,6 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->assertEquals($response, $result);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage API client failed to set applicant for id: 91333263035
-     */
     public function testIndexActionPostDonorRegisteringValueChangedException()
     {
         /** @var ApplicantController $controller */
@@ -147,6 +143,9 @@ class ApplicantControllerTest extends AbstractControllerTest
         $this->setPostValid($this->form, $postData);
         $this->lpaApplicationService->shouldReceive('setWhoIsRegistering')
             ->withArgs([$this->lpa, Correspondence::WHO_DONOR])->andReturn(false);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('API client failed to set applicant for id: 91333263035');
 
         $controller->indexAction();
     }

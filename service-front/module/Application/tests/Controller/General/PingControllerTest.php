@@ -126,7 +126,7 @@ class PingControllerTest extends MockeryTestCase
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(200, $result->getStatusCode());
-        $this->assertContains('<pingdom_http_custom_check><status>OK</status>', $result->getContent());
+        $this->assertStringContainsString('<pingdom_http_custom_check><status>OK</status>', $result->getContent());
     }
 
     public function testPingdomActionError()
@@ -142,6 +142,6 @@ class PingControllerTest extends MockeryTestCase
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(500, $result->getStatusCode());
-        $this->assertContains('<pingdom_http_custom_check><status>ERROR</status>', $result->getContent());
+        $this->assertStringContainsString('<pingdom_http_custom_check><status>ERROR</status>', $result->getContent());
     }
 }
