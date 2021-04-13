@@ -39,8 +39,7 @@ function approve_job(){
     curl \
     --header "Content-Type: application/json" \
     -X POST \
-    --header "authorization: Basic ${API_KEY}" \
-    "https://circleci.com/api/v2/workflow/${ID}/approve/${APPROVAL_ID}"
+    "https://circleci.com/api/v2/workflow/${ID}/approve/${APPROVAL_ID}?circle-token=${API_KEY}"
 }
 
 echo "begin search"
