@@ -16,7 +16,7 @@ function get_workflow_approval_by_name(){
     # Get workflow details
     echo "value of next token passed in: $1"
     urlbase="https://circleci.com/api/v2/workflow/${ID}/job?circle-token=${API_KEY}"
-    url=urlbase
+    url=${urlbase}
     if [[ -n "$1" ]]
     then
         echo "looking at next page in workflow..."
@@ -43,7 +43,7 @@ function approve_job(){
 }
 
 echo "begin search"
-until  [[ "${NEXT_PAGE_TOKEN}" == "null" ]
+until  [[ "${NEXT_PAGE_TOKEN}" == "null" ]]
 do
     echo "in loop start. next page token: ${NEXT_PAGE_TOKEN}"
     get_workflow_approval_by_name "${NEXT_PAGE_TOKEN}"
