@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -euox pipefail
+set -euo pipefail
 
 ID="$1"
 HOLD_JOB_NAME="$2"
