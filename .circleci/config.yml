@@ -591,7 +591,6 @@ orbs:
                 else
                   cat ${WORKSPACE}.log | grep -E 'aws_ecs_(service|cluster)|aws_s3.*|aws_rds.*|aws_db.*|aws_lb.*' | grep -E 'destroyed|replaced'
                 fi
-                set -e
                 if [[ "$?" -eq 0 ]]
                 then
                    echo terraform scan found a possible destructive change.
