@@ -34,7 +34,7 @@ class DataFactoryTest extends MockeryTestCase
         $factory = new DataFactory();
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp( '/cannot be created with this factory/' );
+        $this->expectExceptionMessageMatches('/cannot be created with this factory/');
 
         $factory($this->container, \stdClass::class);
     }
