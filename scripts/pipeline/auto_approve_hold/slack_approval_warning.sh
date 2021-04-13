@@ -1,8 +1,8 @@
-!/usr/bin/env sh
+#!/usr/bin/env sh
 set -euo pipefail
 SLACK_DEV_WEBHOOK=$1
 echo "notifying slack..."
-curl -X POST -H 'Content-type application/json' ${SLACK_DEV_WEBHOOK}  --data  <<EOF
+curl -X POST -H 'Content-type application/json' ${SLACK_DEV_WEBHOOK}  --data-binary @-  << EOF
 '{
     attachments :
     [
